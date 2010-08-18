@@ -77,12 +77,6 @@ public class HarvestScheduler implements CleanupIF {
     /** The unique instance of this class. */
     private static HarvestScheduler instance;
 
-    /** The period between checking if new jobs should be generated.
-     * This is one minute because that's the finest we can define in a harvest
-     * definition.
-     */
-    private static final int GENERATE_JOBS_PERIOD = 60*1000;
-
     /** Lock guaranteeing that only one timertask is running at a time, and
      * that allows the next timer tasks to drop out if one is still running.
      */
@@ -141,8 +135,10 @@ public class HarvestScheduler implements CleanupIF {
             log.debug("Rescheduling any leftover jobs");
             rescheduleJobs();
             log.debug("Starting scheduling of harvestdefinitions");
+            int dispatchPeriode = 
+            	Settings.getInt(HarvesterSettings.DISPATCH_JOBS_PERIOD);
             log.info("Scheduler running every "
-                          + (GENERATE_JOBS_PERIOD/1000) + " seconds");
+                          + (dispatchPeriode/1000) + " seconds");
             TimerTask task = new TimerTask() {
                 public void run() {
                     try {
@@ -155,15 +151,13 @@ public class HarvestScheduler implements CleanupIF {
                 }
             };
             final GregorianCalendar cal = new GregorianCalendar();
-            // Schedule running every GENERATE_JOBS_PERIOD milliseconds
-            // presently one minut.
+
             scheduleJobs();
             timer = new Timer(true);
             timer.scheduleAtFixedRate(task, cal.getTime(),
-                    GENERATE_JOBS_PERIOD);
+            		dispatchPeriode);
         } catch (Throwable t) {
-            log.warn("Scheduling terminated due to exception",
-                       t);
+            log.warn("Scheduling terminated due to exception", t);
             t.printStackTrace();
         }
     }
@@ -254,11 +248,11 @@ public class HarvestScheduler implements CleanupIF {
             }
         }
 
-        try {
-            final HarvestDefinitionDAO hddao =
-                HarvestDefinitionDAO.getInstance();
-            hddao.generateJobs(new Date());
-            submitNewJobs();
+		try {
+			final HarvestDefinitionDAO hddao = 
+				HarvestDefinitionDAO.getInstance();
+			hddao.generateJobs(new Date());
+			submitNewJobs();
         } finally {
             synchronized (this) {
                 running = false;
@@ -311,7 +305,10 @@ public class HarvestScheduler implements CleanupIF {
         return (secondsPassed / 3600);
     }
 
-    /** Submit those jobs that are ready for submission. */
+	/**
+	 * Submit those jobs that are ready for submission and the harvester queue
+	 * is empty.
+	 * */
     private synchronized void submitNewJobs() {
         final JobDAO dao = JobDAO.getInstance();
         Iterator<Long> jobsToSubmit = dao.getAllJobIds(JobStatus.NEW);

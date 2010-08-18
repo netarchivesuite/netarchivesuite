@@ -66,6 +66,7 @@ import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
@@ -152,17 +153,7 @@ public class HarvestSchedulerTester extends TestCase {
         JobDAO dao = JobDAO.getInstance();
         assertEquals("Should have no jobs before start", 0, dao.getCountJobs());
         TestMessageListener hacoListener = new TestMessageListener();
-        ChannelID result;
-        if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.LOWPRIORITY.toString())) {
-            result = Channels.getAnyLowpriorityHaco();
-        } else {
-            if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.HIGHPRIORITY.toString())) {
-                result = Channels.getAnyHighpriorityHaco();
-            } else {
-                throw new UnknownID(JobPriority.HIGHPRIORITY.toString() + " is not a valid priority");
-            }
-        }
-        JMSConnectionMockupMQ.getInstance().setListener(result, hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), hacoListener);
         hsch = submitNewJobsAndGetSchedulerInstance();
         assertEquals("Should have created one job, but got " 
                     + dao.getCountJobs(),
@@ -294,27 +285,15 @@ public class HarvestSchedulerTester extends TestCase {
      * @throws Exception if HarvestScheduler throws exception
      */
     public void testSubmitNewJobsMakesAliasInfo() throws Exception {
-        Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
-                                                 "submitNewJobs");
+        Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class, "submitNewJobs");
         hsch = submitNewJobsAndGetSchedulerInstance();
         //Get rid of the existing new job
         m.invoke(hsch);
 
         //Add a listener to see what is sent
         TestMessageListener hacoListener = new TestMessageListener();
-        ChannelID result;
-        if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.LOWPRIORITY.toString())) {
-            result = Channels.getAnyLowpriorityHaco();
-        } else
-        {
-            if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.HIGHPRIORITY.toString())) {
-                result = Channels.getAnyHighpriorityHaco();
-            } else
-            {
-                throw new UnknownID(JobPriority.HIGHPRIORITY.toString() + " is not a valid priority");
-            }
-        }
-        JMSConnectionMockupMQ.getInstance().setListener(result, hacoListener);
+
+        JMSConnectionMockupMQ.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), hacoListener);
 
         //Create the following domains:
         //kb.dk with aliases alias1.dk and alias2.dk
@@ -389,32 +368,8 @@ public class HarvestSchedulerTester extends TestCase {
 
         //Add a listener to see what is sent
         TestMessageListener hacoListener = new TestMessageListener();
-        ChannelID result1;
-        if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.LOWPRIORITY.toString())) {
-            result1 = Channels.getAnyLowpriorityHaco();
-        } else
-        {
-            if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.HIGHPRIORITY.toString())) {
-                result1 = Channels.getAnyHighpriorityHaco();
-            } else
-            {
-                throw new UnknownID(JobPriority.HIGHPRIORITY.toString() + " is not a valid priority");
-            }
-        }
-        JMSConnectionMockupMQ.getInstance().setListener(result1, hacoListener);
-        ChannelID result;
-        if (JobPriority.LOWPRIORITY.toString().equals(JobPriority.LOWPRIORITY.toString())) {
-            result = Channels.getAnyLowpriorityHaco();
-        } else
-        {
-            if (JobPriority.LOWPRIORITY.toString().equals(JobPriority.HIGHPRIORITY.toString())) {
-                result = Channels.getAnyHighpriorityHaco();
-            } else
-            {
-                throw new UnknownID(JobPriority.LOWPRIORITY.toString() + " is not a valid priority");
-            }
-        }
-        JMSConnectionMockupMQ.getInstance().setListener(result, hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.LOWPRIORITY), hacoListener);
 
         //Run method
         m.invoke(hsch);
@@ -582,6 +537,14 @@ public class HarvestSchedulerTester extends TestCase {
         assertTrue("Should have found new job", foundNewJob);
     }
 
+    /**
+     * Verifies that new crawler jobs are only dispatched when the message queue to the harvest servers are empty
+     * @throws Exception 
+     */
+    public void testJitHarvestJobDispatching() throws Exception {
+        JobDAO dao = JobDAO.getInstance();
+        TestMessageListener hacoListener = new TestMessageListener();  
+    }
     /**
      * MessageListener used locally to intercept messages sent
      * by the HarvestScheduler.

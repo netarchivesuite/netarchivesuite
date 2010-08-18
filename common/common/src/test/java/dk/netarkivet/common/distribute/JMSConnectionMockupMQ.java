@@ -39,6 +39,7 @@ import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.QueueBrowser;
+import javax.jms.QueueSession;
 import javax.jms.ServerSessionPool;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
@@ -908,5 +909,10 @@ public class JMSConnectionMockupMQ extends JMSConnection {
                 }
             }
         }
+    }
+
+    @Override
+    protected QueueSession getQueueSession() throws JMSException {
+        throw new NotImplementedException("");
     }
 }

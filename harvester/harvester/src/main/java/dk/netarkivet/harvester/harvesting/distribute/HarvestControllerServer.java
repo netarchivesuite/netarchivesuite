@@ -31,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -200,20 +199,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         // If any unprocessed jobs are left on the server, process them now
         processOldJobs();
 
-        // Environment and connections are now ready for processing of messages
-        JobPriority p = JobPriority.valueOf(Settings
-                .get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
-        switch (p) {
-        case HIGHPRIORITY:
-            jobChannel = Channels.getAnyHighpriorityHaco();
-            break;
-        case LOWPRIORITY:
-            jobChannel = Channels.getAnyLowpriorityHaco();
-            break;
-        default:
-            throw new UnknownID(p + " is not a valid priority");
-        }
-        // Only listen for harvesterjobs if enough available space
+		// Environment and connections are now ready for processing of messages
+		jobChannel = JobChannelUtil.getChannel(JobPriority.valueOf(Settings
+				.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY)));
+		// Only listen for harvester jobs if enough available space
         beginListeningIfSpaceAvailable();
     }
 

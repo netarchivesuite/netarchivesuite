@@ -90,22 +90,10 @@ public class HarvestControllerClient {
             throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
-        JobPriority p = job.getPriority();
-        ChannelID result;
-        switch(p) {
-            case LOWPRIORITY:
-                result = Channels.getAnyLowpriorityHaco();
-                break;
-            case HIGHPRIORITY:
-                result = Channels.getAnyHighpriorityHaco();
-                break;
-            default:
-                throw new UnknownID("Job " + job + " has illegal priority "
-                        + p);
-        }
-        DoOneCrawlMessage nMsg =
-                new DoOneCrawlMessage(job, result, metadata);
-        log.debug(sendMessage + nMsg);
+
+		DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, JobChannelUtil
+				.getChannel(job.getPriority()), metadata);
+		log.debug(sendMessage + nMsg);
         jmsConnection.send(nMsg);
     }
 

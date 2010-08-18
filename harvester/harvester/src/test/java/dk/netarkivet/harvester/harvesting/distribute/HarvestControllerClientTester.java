@@ -114,56 +114,32 @@ public class HarvestControllerClientTester extends TestCase {
     }
 
     /**
-     * Test sending + check that we send
-     * a message
+     * Test sending + check that we send a message
      * Uses MessageTestHandler()
      */
     public void testSendingToCorrectQueue() {
         //listen to both priority queues
-        DoOneCrawlMessageListener listener0 = new DoOneCrawlMessageListener();
-        DoOneCrawlMessageListener listener1 = new DoOneCrawlMessageListener();
-        ChannelID result1;
-        if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.LOWPRIORITY.toString())) {
-            result1 = Channels.getAnyLowpriorityHaco();
-        } else
-        {
-            if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.HIGHPRIORITY.toString())) {
-                result1 = Channels.getAnyHighpriorityHaco();
-            } else
-            {
-                throw new UnknownID(JobPriority.HIGHPRIORITY.toString() + " is not a valid priority");
-            }
-        }
-        JMSConnectionFactory.getInstance().setListener(result1, listener0);
-        ChannelID result;
-        if (JobPriority.LOWPRIORITY.toString().equals(JobPriority.LOWPRIORITY.toString())) {
-            result = Channels.getAnyLowpriorityHaco();
-        } else
-        {
-            if (JobPriority.LOWPRIORITY.toString().equals(JobPriority.HIGHPRIORITY.toString())) {
-                result = Channels.getAnyHighpriorityHaco();
-            } else
-            {
-                throw new UnknownID(JobPriority.LOWPRIORITY.toString() + " is not a valid priority");
-            }
-        }
-        JMSConnectionFactory.getInstance().setListener(result, listener1);
-
+        DoOneCrawlMessageListener highPriorityListener = new DoOneCrawlMessageListener();
+        JMSConnectionFactory.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), highPriorityListener);
+        
+        DoOneCrawlMessageListener lowPriorityListener = new DoOneCrawlMessageListener();
+        JMSConnectionFactory.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.LOWPRIORITY), lowPriorityListener);
+        
         //send a high priority job
         hcc.doOneCrawl(TestInfo.getJob(), metadata);
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
-        assertEquals("The HIGHPRIORITY server should have received exactly 1 message", 1, listener0.messages.size());
-        assertEquals("The LOWPRIORITY server should have received exactly 0 messages", 0, listener1.messages.size());
+        assertEquals("The HIGHPRIORITY server should have received exactly 1 message", 1, highPriorityListener.messages.size());
+        assertEquals("The LOWPRIORITY server should have received exactly 0 messages", 0, lowPriorityListener.messages.size());
 
         //reset messages
-        listener0.messages = new ArrayList<DoOneCrawlMessage>();
-        listener1.messages = new ArrayList<DoOneCrawlMessage>();
+        highPriorityListener.messages = new ArrayList<DoOneCrawlMessage>();
+        lowPriorityListener.messages = new ArrayList<DoOneCrawlMessage>();
 
         //send a low priority job
         hcc.doOneCrawl(TestInfo.getJobLowPriority(), metadata);
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
-        assertEquals("The HIGHPRIORITY server should have received exactly 0 message", 0, listener0.messages.size());
-        assertEquals("The LOWPRIORITY server should have received exactly 1 messages", 1, listener1.messages.size());
+        assertEquals("The HIGHPRIORITY server should have received exactly 0 message", 0, highPriorityListener.messages.size());
+        assertEquals("The LOWPRIORITY server should have received exactly 1 messages", 1, lowPriorityListener.messages.size());
     }
 
     /**

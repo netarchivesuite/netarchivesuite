@@ -516,6 +516,7 @@
             <splitByObjectLimit>false</splitByObjectLimit>
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
+            <dispatchperiode>5000</dispatchperiode>
         </scheduler>
         <harvesting>
             <serverDir>server</serverDir>
