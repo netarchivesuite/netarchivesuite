@@ -541,15 +541,25 @@ public class IntegrityTests extends TestCase {
             this.testID = testID;
         }
 
-        public boolean equals(Object o2) {
-            if (o2 == this || !(o2 instanceof NetarkivetMessage)) {
-                return true;
-            }
-            try {
-                return getID().equals(((NetarkivetMessage) o2).getID());
-            } catch (Exception e) {
-                return false;
-            }
+                @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((testID == null) ? 0 : testID.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            TestMessage other = (TestMessage) obj;
+            if (testID == null) {
+                if (other.testID != null) return false;
+            } else if (!testID.equals(other.testID)) return false;
+            return true;
         }
 
         public String toString() {
