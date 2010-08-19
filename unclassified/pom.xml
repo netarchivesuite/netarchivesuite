@@ -21,7 +21,6 @@
         <module>m2-build/netarchivesuite-deploy</module>
         <module>m2-build/netarchivesuite-monitor</module>
         <module>m2-build/netarchivesuite-viewerproxy</module>
-        <!--module>m2-build/netarchivesuite-wayback</module-->
         <module>m2-build/netarchivesuite-wayback</module>
     </modules>
     
@@ -147,18 +146,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>mockobjects</groupId>
-            <artifactId>mockobjects-core</artifactId>
-            <version>0.09</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>mockobjects</groupId>
-            <artifactId>mockobjects-jdk1.4</artifactId>
-            <version>0.09</version>
             <scope>test</scope>
         </dependency>
         <dependency>
