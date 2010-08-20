@@ -34,8 +34,8 @@ import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryCl
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.wayback.WaybackSettings;
 
 import org.apache.commons.logging.Log;

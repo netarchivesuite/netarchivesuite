@@ -22,7 +22,7 @@
  *  USA
  */
 
-package dk.netarkivet.archive.arcrepository.bitpreservation;
+package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * A batch job which returns a list of all files in the bitarchive in which it
