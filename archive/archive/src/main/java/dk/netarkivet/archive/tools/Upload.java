@@ -35,8 +35,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * A tool to force upload of given arc files into the ArcRepository found in
- * settings.xml.
+ * A tool to force upload of given arc or warc files into the ArcRepository 
+ * found in settings.xml.
  * All successfully uploaded files are deleted locally.
  *
  * Usage: java dk.netarkivet.archive.tools.Upload file1 [file2 ...]
@@ -95,7 +95,7 @@ public class Upload {
     /**
      * Checks existence and arcness of all input files.
      * @param fileNames The input files as a String array
-     * @return If all files existed and were arc files,
+     * @return If all files existed and were arc or warc files,
      * a list of Files that is 1-1 with the input files.
      */
     private static List<File> checkExistenceAndArcNess(String[] fileNames) {
@@ -104,10 +104,12 @@ public class Upload {
             try {
             File file = FileUtils.makeValidFileFromExisting(arg);
             if(!FileUtils.ARCS_FILTER.accept(
-                    file.getParentFile(), file.getName())) {
+                    file.getParentFile(), file.getName()) 
+              || !FileUtils.WARCS_FILTER.accept(
+                      file.getParentFile(), file.getName())) {
                 dieWithException("Error checking input file: ",
                         new IOFailure(file.getAbsolutePath()
-                                + " is not an arc file"));
+                                + " is not an arc or warc file"));
             }
             files.add(file);
             } catch (IOFailure e) {
