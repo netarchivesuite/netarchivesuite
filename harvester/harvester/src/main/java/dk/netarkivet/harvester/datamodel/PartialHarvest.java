@@ -157,7 +157,7 @@ public class PartialHarvest extends HarvestDefinition {
      *
      * @return Number of jobs created
      */
-    int createJobs() {
+    public int createJobs() {
         //Generate jobs
         int jobsMade = super.createJobs();
 

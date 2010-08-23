@@ -37,6 +37,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import dk.netarkivet.harvester.scheduler.HarvestJobManager;
 import dk.netarkivet.harvester.scheduler.HarvestScheduler;
 import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 
@@ -48,9 +49,17 @@ public class DefinitionsSiteSection extends SiteSection {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
     /** The scheduler being started to schedule and monitor jobs. */
-    private HarvestScheduler theScheduler;
+    private HarvestScheduler harvestJobDispatcher;
     /** number of pages visible in the left menu. */
     private static final int PAGES_VISIBLE_IN_MENU = 9;
+    
+    /**
+     * Handles the actual processing of the defined harvest job based on the harvests defined in the database.
+     * 
+     * Note: The HarvestJobManager should be promoted to be started as its own application, 
+     * see https://gforge.statsbiblioteket.dk/tracker/?group_id=7&atid=108&func=detail&aid=1963
+     */
+    private HarvestJobManager jobManager;
 
     /**
      * Create a new definition SiteSection object.
@@ -117,11 +126,14 @@ public class DefinitionsSiteSection extends SiteSection {
         JobDAO.getInstance();
         GlobalCrawlerTrapListDAO.getInstance();
 
+        jobManager = new HarvestJobManager();
+        
         // Start the scheduler in a new thread, to allow the website to start 
         // while rescheduling happens.
         new Thread() {
             public void run() {
-                theScheduler = HarvestScheduler.getInstance();
+                jobManager = new HarvestJobManager();
+                jobManager.start();
             }
         }.start();
     }
@@ -131,10 +143,7 @@ public class DefinitionsSiteSection extends SiteSection {
      * the database.
      */
     public void close() {
-        if (theScheduler != null) {
-            theScheduler.close();
-        }
-        theScheduler = null;
+        jobManager.shutdown();
         DBSpecifics.getInstance().shutdownDatabase();
     }
 }

@@ -89,11 +89,13 @@ public class AggregationWorker implements CleanupIF {
                                                          "wayback.index");
 
     /**
-     * Factory method which creates a singleton aggregator and sets it running. It has the side effect of creating the
-     * output directories for the indexer if these do not already exist.
+     * Factory method which creates a singleton aggregator and sets it running. 
+     * It has the side effect of creating the output directories for the indexer
+     *  if these do not already exist.
      *
-     * A temp directory is create if it doesn't exist. The aggregator wouldn't run if am temp directory is already
-     * present, as this might indicate a running aggregator
+     * A temp directory is create if it doesn't exist. The aggregator wouldn't 
+     * run if a temp directory is already present, as this might indicate a 
+     * running aggregator.
      *
      * @return the indexer.
      */
@@ -280,8 +282,10 @@ public class AggregationWorker implements CleanupIF {
     }
 
     /**
-     * Creates the needed working directories. Also checks whether a tem directory exists, which might be an indication
-     * if a unclean shutdown, in which case an IllegalStateException is throw allowing the cleanup of the index directories. 
+     * Creates the needed working directories. Also checks whether a temp 
+     * directory exists, which might be an indication if a unclean shutdown, 
+     * in which case an IllegalStateException is throw allowing the cleanup of 
+     * the index directories. 
      */
     protected void initialize() {
         FileUtils.createDir(indexOutputDir);
