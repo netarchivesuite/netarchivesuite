@@ -48,7 +48,6 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
