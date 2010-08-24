@@ -131,15 +131,16 @@ public class HarvestSchedulerTester extends TestCase {
     /**
      * Test that running the scheduler creates certain jobs.
      * 
-     * @throws Exception
-     *             if HarvestScheduler throws exception
+     * @throws Exception If HarvestScheduler throws exception
      */
     public void testBeginDispatching() throws Exception {
         JobDAO dao = JobDAO.getInstance();
 
         TestMessageListener hacoListener = new TestMessageListener();
         
-        JMSConnectionMockupMQ.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(
+                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), 
+                hacoListener);
 
         startHarvestScheduler();
 
@@ -231,7 +232,9 @@ public class HarvestSchedulerTester extends TestCase {
         // Add a listener to see what is sent
         TestMessageListener hacoListener = new TestMessageListener();
 
-        JMSConnectionMockupMQ.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(
+                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), 
+                hacoListener);
 
         // Create the following domains:
         // kb.dk with aliases alias1.dk and alias2.dk
@@ -293,7 +296,8 @@ public class HarvestSchedulerTester extends TestCase {
      * @throws Exception
      *             if HarvestScheduler throws exception
      */
-    public void testSubmitNewJobsMakesDuplicateReductionInfo() throws Exception {
+    public void testSubmitNewJobsMakesDuplicateReductionInfo() 
+    throws Exception {
         clearNewJobs();
 
         // Make some jobs to submit
@@ -303,8 +307,12 @@ public class HarvestSchedulerTester extends TestCase {
         // Add a listener to see what is sent
         TestMessageListener hacoListener = new TestMessageListener();
         
-        JMSConnectionMockupMQ.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), hacoListener);
-        JMSConnectionMockupMQ.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.LOWPRIORITY), hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(
+                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), 
+                hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(
+                JobChannelUtil.getChannel(JobPriority.LOWPRIORITY), 
+                hacoListener);
 
         submitNewJobs();
         ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())
@@ -471,19 +479,40 @@ public class HarvestSchedulerTester extends TestCase {
     }
 
     /**
-     * Verifies that new crawler jobs are only dispatched when the message queue to the harvest servers are empty
+     * Verifies that new crawler jobs are only dispatched when the message queue
+     *  to the harvest servers are empty
      * @throws Exception 
      */
     public void testJitHarvestJobDispatching() throws Exception {
-        JobDAO dao = JobDAO.getInstance();
-        TestMessageListener hacoListener = new TestMessageListener();  
+        clearNewJobs();
+        
+        TestMessageListener queueListener = new TestMessageListener();         
+
+        JMSConnectionMockupMQ.getInstance().setListener(
+                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), 
+                queueListener);
+        JMSConnectionMockupMQ.getInstance().setListener(
+                JobChannelUtil.getChannel(JobPriority.LOWPRIORITY), 
+                queueListener);              
+
+        assertEquals("Message listener should not have received any messages", 
+                0, queueListener.getNumReceived());
+        //Create new job with ID 2
+        DataModelTestCase.createTestJobs(2L, 15L);
+        
+        submitNewJobs();
+
+//        assertEquals("Message listener should have received", 
+//                1, queueListener.getNumReceived());
+        
     }
     /**
      * MessageListener used locally to intercept messages sent
      * by the HarvestScheduler.
      */
     private class TestMessageListener implements MessageListener {
-        private List<NetarkivetMessage> received = new ArrayList<NetarkivetMessage>();
+        private List<NetarkivetMessage> received = 
+            new ArrayList<NetarkivetMessage>();
 
         public void onMessage(Message msg) {
             synchronized (this) {
@@ -520,6 +549,8 @@ public class HarvestSchedulerTester extends TestCase {
         HarvestJobGeneratorTest.waitForJobGeneration();
         ReflectUtils.getPrivateMethod(HarvestScheduler.class, "submitNewJobs")
                 .invoke(harvestScheduler);
+        ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())
+        .waitForConcurrentTasksToFinish();
     }
 
     /**

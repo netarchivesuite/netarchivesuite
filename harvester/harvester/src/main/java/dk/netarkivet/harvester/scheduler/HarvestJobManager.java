@@ -1,8 +1,3 @@
-package dk.netarkivet.harvester.scheduler;
-
-import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
-import dk.netarkivet.common.utils.CleanupIF;
-
 /* File:    $Id: $
  * Revision: $Revision: $
  * Author:   $Author: $
@@ -26,6 +21,10 @@ import dk.netarkivet.common.utils.CleanupIF;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+package dk.netarkivet.harvester.scheduler;
+
+import dk.netarkivet.common.lifecycle.LifeCycleComponent;
+
 /**
  * Handles the dispatching of scheduled harvest to the harvest servers based on the
  * harvests defined in the database. <p>
@@ -33,7 +32,7 @@ import dk.netarkivet.common.utils.CleanupIF;
  * Handles backup of the harvest job DB (Note, this is note implemented, the backup code should be moved from the 
  * HarvestSchduler to this class).
  */
-public class HarvestJobManager implements ComponentLifeCycle {
+public class HarvestJobManager extends LifeCycleComponent {
     /** The dispatcher being started to send scheduled jobs to the harvest servers. */
     private HarvestScheduler harvestJobDispatcher;
     
@@ -41,22 +40,6 @@ public class HarvestJobManager implements ComponentLifeCycle {
      * Creates the <code>HarvestScheduler</code> and starts it.
      */
     public HarvestJobManager() {
-        harvestJobDispatcher = new HarvestScheduler();
-    }
-
-    @Override
-    public void start() {
-        harvestJobDispatcher.start();
-    }
-
-    /**
-     * Shuts down the <code>HarvestScheduler</code>.
-     * 
-     * @override
-     */
-    public void shutdown() {
-        if (harvestJobDispatcher != null) {
-            harvestJobDispatcher.close();
-        }
+        addChild(harvestJobDispatcher = new HarvestScheduler());
     }
 }

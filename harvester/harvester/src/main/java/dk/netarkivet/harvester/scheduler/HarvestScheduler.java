@@ -123,7 +123,7 @@ public class HarvestScheduler extends LifeCycleComponent {
                         Thread.sleep(dispatchPeriode);                
                     }
                 } catch (InterruptedException e) {
-                    log.info("HarvestJobDispatcher interrupted" + e.getMessage() );
+                    log.info("HarvestJobDispatcher interrupted, " + e.getMessage() );
                 }        
             }
         };
@@ -323,21 +323,11 @@ public class HarvestScheduler extends LifeCycleComponent {
     }
 
     /**
-     * Release allocated resources (JMS connections), stop scheduling harvests,
-     * and nullify the singleton.
-     */
-    public void close() {
-        log.debug("HarvestScheduler closing down.");
-        shutdown();
-        log.trace("HarvestScheduler now closed");
-    }
-
-
-    /**
      * Release allocated resources (JMS connections) and stops dispatching harvest jobs, all without logging.
      * @override
      */
     public void shutdown() {
+        log.debug("HarvestScheduler closing down.");
         if (dispatcherThread != null) {
             synchronized (dispatcherThread) {
                 dispatcherThread.interrupt();

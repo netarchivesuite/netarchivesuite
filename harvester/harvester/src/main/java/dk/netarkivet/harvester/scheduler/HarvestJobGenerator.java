@@ -1,17 +1,3 @@
-package dk.netarkivet.harvester.scheduler;
-
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
-import dk.netarkivet.common.utils.NotificationsFactory;
-import dk.netarkivet.harvester.datamodel.HarvestDefinition;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-
 /* File:    $Id: $
  * Revision: $Revision: $
  * Author:   $Author: $
@@ -34,6 +20,20 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
+package dk.netarkivet.harvester.scheduler;
+
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
+import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.harvester.datamodel.HarvestDefinition;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 
 /**
  * Handles the generation of new jobs based on the harvest definitions in persistent storage. 

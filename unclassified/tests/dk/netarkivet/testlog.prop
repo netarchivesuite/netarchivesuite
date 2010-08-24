@@ -10,4 +10,4 @@ java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter
 
 # Logging levels
 .level=WARNING
-dk.netarkivet.level=INFO
+dk.netarkivet.level=ALL

@@ -132,7 +132,6 @@ public class DefinitionsSiteSection extends SiteSection {
         // while rescheduling happens.
         new Thread() {
             public void run() {
-                jobManager = new HarvestJobManager();
                 jobManager.start();
             }
         }.start();
@@ -143,7 +142,7 @@ public class DefinitionsSiteSection extends SiteSection {
      * the database.
      */
     public void close() {
-        jobManager.shutdown();
+        if (jobManager != null) jobManager.shutdown();
         DBSpecifics.getInstance().shutdownDatabase();
     }
 }
