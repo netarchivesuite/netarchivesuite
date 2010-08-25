@@ -87,9 +87,6 @@ public class HarvestControllerServerTester extends TestCase {
     /** The message to write to log when stopping the server. */
     private static final String CLOSE_MESSAGE = "Closing HarvestControllerServer.";
 
-    /* The client and server used for testing */
-    HarvestControllerClient hcc;
-
     HarvestControllerServer hcs;
 
     /* variables only used by the two harvestInfo test-methods */
@@ -145,9 +142,6 @@ public class HarvestControllerServerTester extends TestCase {
      * @throws NoSuchFieldException
      */
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
-        if (hcc != null) {
-            hcc.close();
-        }
         if (hcs != null) {
             hcs.close();
         }
@@ -231,7 +225,6 @@ public class HarvestControllerServerTester extends TestCase {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
                 .getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
-        hcc = HarvestControllerClient.getInstance();
         // make a dummy job
         Job j = TestInfo.getJob();
         j.setJobID(1L);

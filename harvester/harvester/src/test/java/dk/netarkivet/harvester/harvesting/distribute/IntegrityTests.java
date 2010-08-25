@@ -56,6 +56,7 @@ import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.scheduler.HarvestScheduler;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -75,7 +76,7 @@ public class IntegrityTests extends DataModelTestCase {
     TestInfo info = new TestInfo();
 
     /* The client and server used for testing */
-    HarvestControllerClient hcc;
+    HarvestScheduler harvestScheduler;
     HarvestControllerServer hs;
     private JMSConnection con;
     private boolean done = false;
@@ -122,7 +123,7 @@ public class IntegrityTests extends DataModelTestCase {
                 RememberNotifications.class.getName());
         
         hs = HarvestControllerServer.getInstance();
-        hcc = HarvestControllerClient.getInstance();
+        harvestScheduler = new HarvestScheduler();
 
         // Ensure that System.exit() is caught.
         sm = System.getSecurityManager();
@@ -155,9 +156,6 @@ public class IntegrityTests extends DataModelTestCase {
                                                    "synchronizer");
         field.set(null, null);
         mis.tearDown();
-        if (hcc != null) {
-            hcc.close();
-        }
         if (hs != null) {
             hs.close();
         }
@@ -227,7 +225,7 @@ public class IntegrityTests extends DataModelTestCase {
         // to be uploaded.
         synchronized(listenerDummy) {
             //Send the job
-            hcc.doOneCrawl(j, new ArrayList<MetadataEntry>());
+            harvestScheduler.doOneCrawl(j, new ArrayList<MetadataEntry>());
 
             //wait until we know files are uploaded
             while (!done) {
@@ -340,7 +338,7 @@ public class IntegrityTests extends DataModelTestCase {
         //Submit the job
         //TODO ensure, that we have some alias-metadata to produce here
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
-        hcc.doOneCrawl(j, metadata);
+        harvestScheduler.doOneCrawl(j, metadata);
         //Note: Since this returns, we need to wait for replymessage
         synchronized(listener) {
             while (listener.messages.size() < 2) {

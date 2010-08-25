@@ -30,10 +30,18 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jms.JMSException;
+import javax.jms.QueueBrowser;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.ChannelID;
+import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
@@ -45,12 +53,13 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
-import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerClient;
+import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 
-
 /**
- * This class handles dispatching of scheduled Harvest jobs to the Harvest servers.
+ * This class handles dispatching of scheduled Harvest jobs to the Harvest 
+ * servers.<p>
  * The scheduler loads all active harvest definitions on a regular basis and
  * extracts the scheduling information for each definition.
  * When a harvest definition is scheduled to start the scheduler
@@ -68,30 +77,24 @@ public class HarvestScheduler extends LifeCycleComponent {
     protected static final Log log = LogFactory.getLog(
             HarvestScheduler.class.getName());
 
-    /** The Client to use for communicating with the known harvest servers.   */
-    private HarvestControllerClient hcc;
-
     /** The thread used to control when new dispatches should be run. */
     private Thread dispatcherThread;
-
-    /**
-     * Listener after responses from submitted Harvest jobs.
-     */
-    private static HarvestSchedulerMonitorServer hsmon;
 
     /**
      * Backup-related fields.
      */
      private Date lastBackupDate = null;
      private int backupInitHour; // legal values: 0..23
+     
+     /** Connection to JMS provider. */
+     private JMSConnection jmsConnection;     
 
     /**
      * Create new instance of the HarvestScheduler.
      */
     public HarvestScheduler() {
         log.info("Creating HarvestScheduler");
-        hcc = HarvestControllerClient.getInstance();
-        hsmon = HarvestSchedulerMonitorServer.getInstance();
+        jmsConnection = JMSConnectionFactory.getInstance();
         backupInitHour = Settings.getInt(CommonSettings.DB_BACKUP_INIT_HOUR);
         if (backupInitHour < 0 || backupInitHour > 23) {
             log.warn("Illegal value for backupHour "
@@ -105,10 +108,10 @@ public class HarvestScheduler extends LifeCycleComponent {
     }
 
     /**
-     * Start the thread responsible for reading Harvest definitions from the database,
-     * and dispatching the harvest job to the servers.
+     * Start the thread responsible for reading Harvest definitions from the 
+     * database, and dispatching the harvest job to the servers.
      */
-    public void start() {
+    public void start() {        
         dispatcherThread = new Thread("HarvestSceduler") { 
             public void run() {
                 log.debug("Rescheduling any leftover jobs");
@@ -119,11 +122,16 @@ public class HarvestScheduler extends LifeCycleComponent {
                         " seconds");
                 try {
                     while (!dispatcherThread.isInterrupted()) {
-                        dispatchJobs();
+                        try {
+                            dispatchJobs();
+                        } catch (Exception e) {
+                            log.error("Unable to dispatch new harvest jobs", e);
+                        }
                         Thread.sleep(dispatchPeriode);                
                     }
                 } catch (InterruptedException e) {
-                    log.info("HarvestJobDispatcher interrupted, " + e.getMessage() );
+                    log.info("HarvestJobDispatcher interrupted, " + 
+                            e.getMessage() );
                 }        
             }
         };
@@ -165,8 +173,8 @@ public class HarvestScheduler extends LifeCycleComponent {
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
             if (new Date().after(endTime)) {
                 final String msg = " Job "+ id + " has exceeded its timeout of "
-                + (Settings.getLong( HarvesterSettings.JOB_TIMEOUT_TIME) / 60) + " minutes." +
-                " Changing status to " + "FAILED.";
+                + (Settings.getLong( HarvesterSettings.JOB_TIMEOUT_TIME) / 60) +
+                " minutes." + " Changing status to " + "FAILED.";
                 log.warn(msg);
                 job.setStatus(JobStatus.FAILED);
                 job.appendHarvestErrors(msg);
@@ -190,7 +198,8 @@ public class HarvestScheduler extends LifeCycleComponent {
 
         // ToDo moved to new DB backup class
         if (backupNow()) { // Check if we want to backup the database now?
-            File backupDir = new File("DB-Backup-" + System.currentTimeMillis());
+            File backupDir = new File("DB-Backup-" + 
+                    System.currentTimeMillis());
             try {
                 DBSpecifics.getInstance().backupDatabase(backupDir);
                 lastBackupDate = new Date();
@@ -252,8 +261,8 @@ public class HarvestScheduler extends LifeCycleComponent {
     }
 
 	/**
-	 * Submit those jobs that are ready for submission and the harvester queue
-	 * is empty.
+	 * Submit those jobs that are ready for submission if the relevant 
+	 * message queue is empty.
 	 * */
     synchronized void submitNewJobs() {
         final JobDAO dao = JobDAO.getInstance();
@@ -264,47 +273,51 @@ public class HarvestScheduler extends LifeCycleComponent {
             log.trace("Submitting new jobs.");
         }
 
-        int i = 0;
+        int numberOfSubmittedJobs = 0;
         while (jobsToSubmit.hasNext()) {
             final long jobID = jobsToSubmit.next();
             Job jobToSubmit = null;
             try {
                 jobToSubmit = dao.read(jobID);
-                jobToSubmit.setStatus(JobStatus.SUBMITTED);
-                jobToSubmit.setSubmittedDate(new Date());
-                dao.update(jobToSubmit);
-                //Add alias metadata
-                List<MetadataEntry> metadata
-                        = new ArrayList<MetadataEntry>();
-                MetadataEntry aliasMetadataEntry
-                        = MetadataEntry.makeAliasMetadataEntry(
-                                jobToSubmit.getJobAliasInfo(),
-                                jobToSubmit.getOrigHarvestDefinitionID(),
-                                jobToSubmit.getHarvestNum(),
-                                jobToSubmit.getJobID());
-                if (aliasMetadataEntry != null) {
-                    metadata.add(aliasMetadataEntry);
-                }
                 
-                //Add duplicationReduction MetadataEntry, if Deduplication 
-                //is enabled.
-                if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
-                        jobToSubmit.getOrderXMLdoc())) {
-                    MetadataEntry duplicateReductionMetadataEntry
+                if (isQueueEmpty(jobToSubmit)) {
+                    jobToSubmit.setStatus(JobStatus.SUBMITTED);
+                    jobToSubmit.setSubmittedDate(new Date());
+                    dao.update(jobToSubmit);
+                    //Add alias metadata
+                    List<MetadataEntry> metadata
+                    = new ArrayList<MetadataEntry>();
+                    MetadataEntry aliasMetadataEntry
+                    = MetadataEntry.makeAliasMetadataEntry(
+                            jobToSubmit.getJobAliasInfo(),
+                            jobToSubmit.getOrigHarvestDefinitionID(),
+                            jobToSubmit.getHarvestNum(),
+                            jobToSubmit.getJobID());
+                    if (aliasMetadataEntry != null) {
+                        metadata.add(aliasMetadataEntry);
+                    }
+
+                    //Add duplicationReduction MetadataEntry, if Deduplication 
+                    //is enabled.
+                    if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
+                            jobToSubmit.getOrderXMLdoc())) {
+                        MetadataEntry duplicateReductionMetadataEntry
                         = MetadataEntry.makeDuplicateReductionMetadataEntry(
                                 dao.getJobIDsForDuplicateReduction(jobID),
                                 jobToSubmit.getOrigHarvestDefinitionID(),
                                 jobToSubmit.getHarvestNum(),
                                 jobToSubmit.getJobID()
-                          );
+                        );
 
-                    if (duplicateReductionMetadataEntry != null) {
-                        metadata.add(duplicateReductionMetadataEntry);
+                        if (duplicateReductionMetadataEntry != null) {
+                            metadata.add(duplicateReductionMetadataEntry);
+                        }
                     }
-                }
 
-                hcc.doOneCrawl(jobToSubmit, metadata);
-                log.trace("Job " + jobToSubmit + " sent to harvest queue.");
+                    doOneCrawl(jobToSubmit, metadata);
+                    numberOfSubmittedJobs++;
+                    log.trace("Job " + jobToSubmit + " sent to harvest queue.");
+                }
             } catch (Throwable e) {
                 String message = "Error while scheduling job " + jobID;
                 log.warn(message, e);
@@ -317,30 +330,55 @@ public class HarvestScheduler extends LifeCycleComponent {
                 }
             }
         }
-        if (i > 0) {
-            log.info("Submitted " + i + " jobs for harvesting");
+        if (numberOfSubmittedJobs > 0) {
+            log.info("Submitted " + numberOfSubmittedJobs + " jobs for harvesting");
         }
+    }
+    
+    /**
+     * Checks that the message queue for the given harvest job is empty and 
+     * therefore ready for the next message.
+     * @param job The job to check the queue for
+     * @return Is the queue empty
+     * @throws JMSException Unable to retrieve queue information
+     */
+    private boolean isQueueEmpty(Job job) throws JMSException {
+        ChannelID channelId =  JobChannelUtil.getChannel(job.getPriority());
+        QueueBrowser qBrowser = jmsConnection.createQueueBrowser(channelId);
+        return !qBrowser.getEnumeration().hasMoreElements();
+    }
+    
+    /**
+     * Submit an doOneCrawl request to a HarvestControllerServer with correct
+     * priority.
+     * @param job the specific job to send
+     * @param metadata pre-harvest metadata to store in arcfile.
+     * @throws ArgumentNotValid one of the parameters are null
+     * @throws IOFailure if unable to send the doOneCrawl request to a
+     * harvestControllerServer
+     */
+    public void doOneCrawl(Job job, List<MetadataEntry> metadata)
+            throws ArgumentNotValid, IOFailure {
+        ArgumentNotValid.checkNotNull(job, "job");
+        ArgumentNotValid.checkNotNull(metadata, "metadata");
+
+        DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, 
+                JobChannelUtil.getChannel(job.getPriority()), metadata);
+        log.debug("Send crawl request: " + nMsg);
+        jmsConnection.send(nMsg);
     }
 
     /**
-     * Release allocated resources (JMS connections) and stops dispatching harvest jobs, all without logging.
+     * Release allocated resources (JMS connections) and stops dispatching 
+     * harvest jobs, all without logging.
      * @override
      */
     public void shutdown() {
         log.debug("HarvestScheduler closing down.");
         if (dispatcherThread != null) {
-            synchronized (dispatcherThread) {
-                dispatcherThread.interrupt();
-            }
+            dispatcherThread.interrupt();
+            dispatcherThread = null;
         }
-        dispatcherThread = null;
-        if (hcc != null) {
-            hcc.close();
-            hcc = null;
-        }
-        if (hsmon != null) {
-            hsmon.cleanup();
-        }
-        hsmon = null;
+        jmsConnection = null;
     }
 }

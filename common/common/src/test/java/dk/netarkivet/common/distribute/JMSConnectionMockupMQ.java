@@ -39,6 +39,8 @@ import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.QueueBrowser;
+import javax.jms.QueueReceiver;
+import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.jms.ServerSessionPool;
 import javax.jms.Session;
@@ -403,8 +405,9 @@ public class JMSConnectionMockupMQ extends JMSConnection {
             throw new NotImplementedException("Not implemented");
         }
 
+        @Override
         public Queue createQueue(String string) throws JMSException {
-            throw new NotImplementedException("Not implemented");
+            return new TestQueue(string);
         }
 
         public Topic createTopic(String string) throws JMSException {
@@ -449,7 +452,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
 
     protected static class TestMessageConsumer implements MessageConsumer {
         private MessageListener listener;
-        private TestDestination destination;
+        protected TestDestination destination;
 
         public TestMessageConsumer(Destination destination) {
             this.destination = (TestDestination) destination;
@@ -471,20 +474,40 @@ public class JMSConnectionMockupMQ extends JMSConnection {
             listener = null;
         }
 
+        @Override
         public String getMessageSelector() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        @Override
         public Message receive() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        @Override
         public Message receive(long l) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
         public Message receiveNoWait() throws JMSException {
             throw new NotImplementedException("Not implemented");
+        }
+    }
+    
+    public class TestQueueReceiver 
+    extends TestMessageConsumer 
+    implements QueueReceiver {
+        public TestQueueReceiver(Destination destination) {
+            super(destination);
+        }
+        public Queue getQueue() throws JMSException {
+            return (Queue)destination;
+        }        
+        @Override
+        public Message receiveNoWait() throws JMSException {
+            List<TestObjectMessage> messageQueue = ((TestQueue)getQueue()).messageQueue;
+            if (messageQueue.isEmpty()) return null;
+            else return ((TestQueue)getQueue()).messageQueue.remove(0);
         }
     }
 
@@ -538,6 +561,8 @@ public class JMSConnectionMockupMQ extends JMSConnection {
                     throw new JMSException("Serialization failed: " + e);
                 }
                 new CallOnMessageThread(ml, clone).start();
+            } else if (destination instanceof Queue) {                
+                ((TestQueue)destination).messageQueue.add(testObjectMessage);
             }
             destination.sent.add(testObjectMessage);
         }
@@ -607,6 +632,8 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     }
 
     protected static class TestQueue extends TestDestination implements Queue {
+        protected List<TestObjectMessage> messageQueue = 
+            new ArrayList<TestObjectMessage>();
         public TestQueue(String name) {
             this.name = name;
         }
@@ -910,9 +937,55 @@ public class JMSConnectionMockupMQ extends JMSConnection {
             }
         }
     }
+    
+    public class TestQueueBrowser implements QueueBrowser {
+        private final TestQueue queue;
+        
+        public TestQueueBrowser(TestQueue queue) {
+            this.queue = queue;
+        }
+
+        @Override
+        public void close() throws JMSException {
+        }
+
+        @Override
+        public Enumeration getEnumeration() throws JMSException {
+            return Collections.enumeration(queue.messageQueue);
+        }
+
+        @Override
+        public String getMessageSelector() throws JMSException {
+            return null;
+        }
+        @Override
+        public Queue getQueue() throws JMSException {
+            return queue;
+        }
+    }
+    
+    public class TestQueueSession extends TestSession implements QueueSession {
+        @Override
+        public QueueBrowser createBrowser(Queue queue) throws JMSException {
+            return new TestQueueBrowser((TestQueue)getDestination(queue.getQueueName()));
+        }
+        @Override
+        public QueueReceiver createReceiver(Queue queue) throws JMSException {
+            return new TestQueueReceiver((TestQueue)getDestination(queue.getQueueName()));
+        }
+        @Override
+        public QueueReceiver createReceiver(Queue arg0, String arg1)
+                throws JMSException {
+            return null;
+        }
+        @Override
+        public QueueSender createSender(Queue arg0) throws JMSException {
+            return null;
+        }
+    }
 
     @Override
-    protected QueueSession getQueueSession() throws JMSException {
-        throw new NotImplementedException("");
+    public QueueSession getQueueSession() throws JMSException {
+        return new TestQueueSession();
     }
 }

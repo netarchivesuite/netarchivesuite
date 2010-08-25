@@ -306,7 +306,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
 	 * @throws JMSException
 	 *             Failure to retrieve the <code>QueueBrowser</code> JMS Browser
 	 */
-	protected abstract QueueSession getQueueSession() throws JMSException;
+	public abstract QueueSession getQueueSession() throws JMSException;
 
     /**
      * Clean up. Remove close connection, remove shutdown hook and null the
@@ -566,7 +566,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             String channel, MessageListener messageListener) {
         return channel + CONSUMER_KEY_SEPARATOR + messageListener;
     }
-
+    
     /**
      * Get the channelName embedded in a consumerKey.
      *

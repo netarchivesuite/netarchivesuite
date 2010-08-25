@@ -201,13 +201,13 @@ public class HarvestJobGeneratorTest extends TestCase {
             final Thread[] threads = ThreadUtils.getAllThreads();
             for ( Thread thread : threads ) {
                 if ( thread.getName().indexOf( "JobGeneratorTask") != -1) {
-                    System.out.println("Still waiting for "+thread.getName()+ " after "+waits + " seconds");
                     threadsRemain = true;
                     continue;
                 } 
             }
             if (!threadsRemain) return;
         }
-        throw new TimeoutException(ThreadUtils.getAllThreads().length + "JobGeneratorTask thread remain after 20 seconds" );
+        throw new TimeoutException(ThreadUtils.getAllThreads().length + 
+                "JobGeneratorTask thread remain after 20 seconds" );
     }    
 }

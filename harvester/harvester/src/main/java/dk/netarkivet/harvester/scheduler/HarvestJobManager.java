@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
 package dk.netarkivet.harvester.scheduler;
@@ -26,20 +26,21 @@ package dk.netarkivet.harvester.scheduler;
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 
 /**
- * Handles the dispatching of scheduled harvest to the harvest servers based on the
- * harvests defined in the database. <p>
+ * Handles the dispatching of scheduled harvest to the harvest servers based on 
+ * the harvests defined in the database. <p>
  * 
- * Handles backup of the harvest job DB (Note, this is note implemented, the backup code should be moved from the 
- * HarvestSchduler to this class).
+ * Should handle backup of the harvest job DB (Note, this is not implemented, the 
+ * backup code should be moved from the HarvestSchduler to this class).
  */
 public class HarvestJobManager extends LifeCycleComponent {
-    /** The dispatcher being started to send scheduled jobs to the harvest servers. */
-    private HarvestScheduler harvestJobDispatcher;
     
     /**
-     * Creates the <code>HarvestScheduler</code> and starts it.
+     * Creates the components handling the harvest job management and hooks them
+     * up to the <code>HarvestJobManager</code>s lifecycle.
      */
     public HarvestJobManager() {
-        addChild(harvestJobDispatcher = new HarvestScheduler());
+        addChild(new HarvestScheduler());
+        addChild(new HarvestJobGenerator());
+        addChild(new HarvestSchedulerMonitorServer());
     }
 }

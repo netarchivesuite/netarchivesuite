@@ -202,7 +202,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
     }
 
     @Override
-    protected QueueSession getQueueSession() throws JMSException {
+    public QueueSession getQueueSession() throws JMSException {
         return getConnectionFactory().createQueueConnection().createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
     }
 }
