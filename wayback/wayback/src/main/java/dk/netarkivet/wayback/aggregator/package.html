@@ -6,14 +6,16 @@ Once every {@link dk.netarkivet.wayback.WaybackSettings#WAYBACK_AGGREGATOR_AGGRE
 <UL>
 <li>All new index files found in the {@link dk.netarkivet.wayback.WaybackSettings#WAYBACK_AGGREGATOR_INPUT_DIR} are sorted and merged into a temp intermediate index file.</li>
 <li>The temp intermediate index file is merged into the working intermediate index</li>
-<li>If the Intemediate Index file size exceeds {@link dk.netarkivet.wayback.WaybackSettings#WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE} the following sequence occures
-    <ul><li>The currently active wayback index file is checked to see if can contain the new intermediate file, without reaching the
+<li>If the Intermediate Index file size exceeds {@link dk.netarkivet.wayback.WaybackSettings#WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE} the following sequence occures
+    <ul><li>The currently active wayback index file is checked to see if it can contain indexes from the new intermediate file, without reaching the
         {@link dk.netarkivet.wayback.WaybackSettings#WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE} limit</li>
-    <li> If the limit isn't reach the intermediate index file is merged into the active index file</li>
+    <li> If the limit isn't reach the intermediate index file is merged into the active index file ('wayback.index')</li>
         <li> Else a new wayback main index file is created, this is set to be the active index file, and the
             intermediate indexes are merged to this file.
+
+            The older main index files are name wayback.index.1, wayback.index.2 ..., where the number indicates sequential older index files.
     </ul>
  </li>
- <li>The original unsorted index files are deleted</li>   
+ <li>The original unsorted index files are deleted</li>
     </UL>
 </body>
