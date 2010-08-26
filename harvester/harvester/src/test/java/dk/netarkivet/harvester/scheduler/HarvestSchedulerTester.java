@@ -124,7 +124,7 @@ public class HarvestSchedulerTester extends TestCase {
 
         harvestScheduler = new HarvestScheduler();
 
-        HarvestJobGeneratorTest.generateJobs();
+        HarvestJobGeneratorTest.generateJobs(new Date());
         
         messageReceiver = createMessageReceiver();
     }
@@ -512,6 +512,8 @@ public class HarvestSchedulerTester extends TestCase {
 
         assertEquals("Message queue should have received a message", 
                 1, countQueueMessages());
+        assertEquals("First job should have been marked as submitted",
+                JobStatus.NEW, firstJob.getStatus());
         
         Job secondJob = createJob(JobStatus.NEW);        
         submitNewJobs();
@@ -653,7 +655,6 @@ public class HarvestSchedulerTester extends TestCase {
      * @throws Exception
      */
     private void submitNewJobs() throws Exception {
-        HarvestJobGeneratorTest.waitForJobGeneration();
         ReflectUtils.getPrivateMethod(HarvestScheduler.class, "submitNewJobs")
                 .invoke(harvestScheduler);
         ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())

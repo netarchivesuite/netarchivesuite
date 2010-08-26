@@ -137,10 +137,15 @@ public class AggregationWorker implements CleanupIF {
     /**
      * Runs the actual aggregation. See package description for details.
      *
-     * Is synchronized so several subsequent sheduled runs of the method will have to run one at a time.
+     * Is synchronized so several subsequent scheduled runs of the method will have to run one at a time.
      */
     protected synchronized void runAggregation() {
         String[] fileNamesToProcess = indexInputDir.list();
+        if (fileNamesToProcess == null) {
+            log.warn("Unable find input directory "+indexInputDir+
+                    " skipping this aggregation");
+            return;
+        }
 
         if (fileNamesToProcess.length == 0) {
             if (log.isDebugEnabled()) {

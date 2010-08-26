@@ -30,8 +30,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.utils.IteratorUtils;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
@@ -48,8 +48,11 @@ import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 import dk.netarkivet.harvester.scheduler.HarvestJobGenerator.JobGeneratorTask;
 import dk.netarkivet.testutils.ThreadUtils;
 
-public class HarvestJobGeneratorTest extends TestCase {    
-    private final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+public class HarvestJobGeneratorTest extends DataModelTestCase {  
+    
+    public HarvestJobGeneratorTest(String s) {
+        super(s);
+    }
 
     /**
      * Test that we can get jobs created from HDs.
@@ -57,6 +60,7 @@ public class HarvestJobGeneratorTest extends TestCase {
      * @throws Exception
      */
     public void testGenerateJobs() throws Exception {
+        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         TemplateDAO.getInstance();
 
         final GregorianCalendar cal = new GregorianCalendar();
@@ -76,7 +80,7 @@ public class HarvestJobGeneratorTest extends TestCase {
         hddao.delete(new Long(43));
         cal.setTime(new Date()); // reset
         now = cal.getTime();
-        generateJobs(0);
+        generateJobs(now);
         JobDAO jobdao = JobDAO.getInstance();
         List<Job> jobs = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
         assertEquals("Should get no job for the HD in the future", 0, jobs
@@ -101,14 +105,14 @@ public class HarvestJobGeneratorTest extends TestCase {
         "");
         hd2.setSubmissionDate(new Date());
         hddao.create(hd2);
-        generateJobs(0);
+        generateJobs(now);
         List<Job> jobs1 = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
         assertEquals("Should get jobs for no new defs immediately", 0, jobs1
                 .size());
 
         cal.add(Calendar.DAY_OF_MONTH, 1);
         now = cal.getTime();
-        generateJobs(2);
+        generateJobs(now);
         jobs1 = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
         assertEquals("Should get jobs for both new defs after a day", 2, jobs1
                 .size());
@@ -128,7 +132,7 @@ public class HarvestJobGeneratorTest extends TestCase {
                 + ", but we got " + jobs1, j1.getOrigHarvestDefinitionID()
                 .equals(hd2.getOid())
                 || j2.getOrigHarvestDefinitionID().equals(hd2.getOid()));
-        generateJobs(1);
+        generateJobs(now);
         List<Job> jobs2 = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
         assertEquals(
                 "Should generate one more job because we are past the time"
@@ -138,62 +142,16 @@ public class HarvestJobGeneratorTest extends TestCase {
     
     /**
      * Run job generation and wait for the threads created to finish.
-     */
-    public static void generateJobs() throws Exception {
-        generateJobs(-1);
-    }
-    
-    /**
-     * Run job generation and wait for the threads created to finish.
      *
-     * @param hddao       The dao to run on.
-     * @param now         The time that job generation should be done for
-     * @param expectedHDs How many harvest definitions to expect jobs being created
-     *                    from, or -1 to not check thread count.
-     * @throws InterruptedException
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
+     * @throws Exception
      */
-    private static void generateJobs(int expectedHDs)
-            throws Exception {
-            JobGeneratorTask generator = new JobGeneratorTask(); 
-            String threadPrefix = "Thread-";
-            int beforeCount = countThreadsNamed(threadPrefix);
-            generator.run();
-            int afterCount = countThreadsNamed(threadPrefix);
-            if (expectedHDs != -1) {
-                assertEquals("Expected " + expectedHDs
-                             + " harvest definitions to start scheduling",
-                             expectedHDs, afterCount - beforeCount);
-            }
+    static void generateJobs(Date time)
+    throws Exception {
+        JobGeneratorTask.generateJobs(time);
         waitForJobGeneration();
     }
 
-
-    /**
-     * Count the number of threads whose name starts with the given prefix. For
-     * this to make sense, we must be sure that all threads with the given prefix
-     * are waiting, e.g. on a synchronized object.
-     *
-     * @param threadPrefix A prefix, e.g. "Thread-"
-     * @return The number of running threads with the given prefix.
-     */
-    private static int countThreadsNamed(final String threadPrefix) {
-        final Thread[] threads = new Thread[Thread.activeCount()];
-        Thread.enumerate(threads);
-        int count = 0;
-        for (int i = 0; i < threads.length; i++) {
-            // This is a sub-thread.
-            if (threads[i] != null
-                && threads[i].getName().startsWith(threadPrefix)) {
-                count++;
-            }
-        }
-        return count;
-    }
-    
-
-    public static void waitForJobGeneration() 
+    private static void waitForJobGeneration() 
     throws TimeoutException, InterruptedException {
         for (int waits = 1; waits <= 20 ; waits++ ) {
             boolean threadsRemain = false;

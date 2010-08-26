@@ -36,18 +36,21 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 
 /**
- * Handles the generation of new jobs based on the harvest definitions in persistent storage. 
- * The <code>HarvestJobGenerator</code> continuously scans the harvest definition database for harvest which 
- * should be run now. If a HD defines a harvest which should be run, a Harvest Job is created in the harvest
- * job database.
+ * Handles the generation of new jobs based on the harvest definitions in 
+ * persistent storage. The <code>HarvestJobGenerator</code> continuously scans 
+ * the harvest definition database for harvest which should be run now. If a HD 
+ * defines a harvest which should be run, a Harvest Job is created in the 
+ * harvest job database.
  */
 public class HarvestJobGenerator implements ComponentLifeCycle {
-    private static final Log log = LogFactory.getLog(HarvestJobGenerator.class.getName());
+    private static final Log log = 
+        LogFactory.getLog(HarvestJobGenerator.class.getName());
 
     /** The Timer used to schedule the generator jobs. */
     private Timer generationTimer;
 
-    private static final HarvestDefinitionDAO haDefinitionDAO = HarvestDefinitionDAO.getInstance();
+    private static final HarvestDefinitionDAO haDefinitionDAO = 
+        HarvestDefinitionDAO.getInstance();
 
     /** 
      * The period between checking if new jobs should be generated.
@@ -62,7 +65,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     @Override
     public void start() {
         generationTimer = new Timer(true);
-        generationTimer.scheduleAtFixedRate(new JobGeneratorTask(), 0, GENERATE_JOBS_PERIOD);
+        generationTimer.scheduleAtFixedRate(new JobGeneratorTask(), 0, 
+                GENERATE_JOBS_PERIOD);
     }
 
     @Override
@@ -73,20 +77,37 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     /**
      * Contains the functionality for the individual JobGenerations 
      */
-    public static class JobGeneratorTask extends TimerTask {
+    static class JobGeneratorTask extends TimerTask {
+
         @Override
         public synchronized void run() {
-            final Iterable<Long> readyHarvestDefinitions = haDefinitionDAO.getReadyHarvestDefinitions(new Date());
-            for (final Long id : readyHarvestDefinitions) {                
-                final HarvestDefinition harvestDefinition = haDefinitionDAO.read(id);
+            generateJobs(new Date());
+        }          
 
-                if (!harvestDefinition.runNow(new Date())) {
-                    log.trace("The harvestdefinition '" +  harvestDefinition.getName()
-                            + "' should not run now.");
+        /**
+         * Check if jobs should be generated for any ready harvest definitions 
+         * for the specified time.
+         * @param timeToGenerateJobsFor Jobs will be generated which should be 
+         * run at this time. 
+         * Note: In a production system the provided time will normally be 
+         * current time, but during testing we need to simulated other 
+         * points-in-time  
+         */
+        static void generateJobs(Date timeToGenerateJobsFor) {
+            final Iterable<Long> readyHarvestDefinitions = 
+                haDefinitionDAO.getReadyHarvestDefinitions(timeToGenerateJobsFor);
+            for (final Long id : readyHarvestDefinitions) {                
+                final HarvestDefinition harvestDefinition = 
+                    haDefinitionDAO.read(id);
+
+                if (!harvestDefinition.runNow(timeToGenerateJobsFor)) {
+                    log.trace("The harvestdefinition '" +  
+                            harvestDefinition.getName() +
+                    "' should not run now.");
                     log.trace("numEvents: " + harvestDefinition.getNumEvents());
                     continue;
                 }
-                
+
                 new Thread("JobGeneratorTask-"+id) {
                     public void run() {
                         try {
@@ -102,17 +123,21 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                                 hd.setActive(false);
                                 haDefinitionDAO.update(hd);
                                 String errMsg = "Exception while scheduling"
-                                    + "harvestdefinition '"+ harvestDefinition.getName()
-                                    + "'. The harvestdefinition has been" + " deactivated!";
+                                    + "harvestdefinition '"+ 
+                                    harvestDefinition.getName() + "'. The " +
+                                    "harvestdefinition has been deactivated!";
                                 log.warn(errMsg, e);
-                                NotificationsFactory.getInstance().errorEvent(errMsg, e);
+                                NotificationsFactory.getInstance().
+                                errorEvent(errMsg, e);
                             } catch (Exception e1) {
-                                String errMsg = "Exception while scheduling" + "harvestdefinition '"
-                                    + harvestDefinition.getName() + "'. The harvestdefinition couldn't be"
-                                    + " deactivated!";
+                                String errMsg = "Exception while scheduling" + 
+                                "harvestdefinition '" + harvestDefinition.getName() 
+                                + "'. The harvestdefinition couldn't be " +
+                                "deactivated!";
                                 log.warn(errMsg, e);
                                 log.warn("Unable to deactivate", e1);
-                                NotificationsFactory.getInstance().errorEvent(errMsg, e);
+                                NotificationsFactory.getInstance().
+                                errorEvent(errMsg, e);
                             }
                         } 
                     }
