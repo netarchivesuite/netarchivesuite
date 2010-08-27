@@ -24,6 +24,8 @@ package dk.netarkivet.common.distribute;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.QueueConnection;
+
 import java.util.Arrays;
 import javax.jms.QueueSession;
 import javax.jms.Session;
@@ -95,6 +97,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * use.
      */
     public static String JMS_BROKER_PORT = "settings.common.jms.port";
+
+    private QueueConnection qConnection;
 
     /** Constructor. */
     private JMSConnectionSunMQ() {
@@ -202,7 +206,10 @@ public class JMSConnectionSunMQ extends JMSConnection {
     }
 
     @Override
-    public QueueSession getQueueSession() throws JMSException {
-        return getConnectionFactory().createQueueConnection().createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+    public synchronized QueueSession getQueueSession() throws JMSException {
+        if (qConnection == null ) {
+            qConnection = getConnectionFactory().createQueueConnection();
+        }
+        return qConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
     }
 }
