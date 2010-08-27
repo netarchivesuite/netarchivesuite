@@ -48,6 +48,7 @@ import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.scheduler.HarvestScheduler;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -59,8 +60,7 @@ public class IntegrityTestsHCSJMSException extends TestCase{
 
     TestInfo info = new TestInfo();
 
-    /* The client and server used for testing */
-    HarvestControllerClient hcc;
+    /* The server used for testing */
     HarvestControllerServer hs;
     private SecurityManager originalSM;
     ReloadSettings rs = new ReloadSettings();
@@ -90,7 +90,6 @@ public class IntegrityTestsHCSJMSException extends TestCase{
         TestUtils.resetDAOs();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
         hs = HarvestControllerServer.getInstance();
-        hcc = HarvestControllerClient.getInstance();
         originalSM = System.getSecurityManager();
         SecurityManager manager = new SecurityManager() {
             public void checkPermission(Permission perm) {
@@ -107,9 +106,6 @@ public class IntegrityTestsHCSJMSException extends TestCase{
      * After test is done close test-objects.
      */
     public void tearDown() {
-        if (hcc != null) {
-            hcc.close();
-        }
         if (hs != null) {
             hs.close();
         }
@@ -139,7 +135,8 @@ public class IntegrityTestsHCSJMSException extends TestCase{
                 j.getOrigHarvestDefinitionID());
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
-        hcc.doOneCrawl(j, new ArrayList<MetadataEntry>());
+        HarvestScheduler harvesteScheduler = new HarvestScheduler();
+        harvesteScheduler.doOneCrawl(j, new ArrayList<MetadataEntry>());
         //Trigger the exception handler - should not try to exit
         qel.onException(new JMSException("Some exception"));
         // Wait for harvester to finish and try to exit

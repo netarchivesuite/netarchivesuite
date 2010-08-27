@@ -44,7 +44,6 @@ public class HarvestingDistributeTesterSuite {
         suite.addTestSuite(DomainStatsTester.class);
         suite.addTestSuite(DoOneCrawlMessageTester.class);
         suite.addTestSuite(HarvestControllerServerTester.class);
-        suite.addTestSuite(HarvestControllerClientTester.class);
         suite.addTestSuite(MetadataEntryTester.class);
         suite.addTestSuite(PersistentJobDataTester.class);
     }
