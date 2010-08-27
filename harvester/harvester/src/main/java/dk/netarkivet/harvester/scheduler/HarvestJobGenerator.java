@@ -169,7 +169,15 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                                 NotificationsFactory.getInstance().
                                 errorEvent(errMsg, e);
                             }
-                        } 
+                        } finally {
+                            harvestDefinitionsBeingScheduled.
+                            remove(id);
+                            log.debug("Removed '" + harvestDefinition.getName()
+                                    + "' from list of harvestdefinitions to be "
+                                    + "scheduled. Harvestdefinitions still to "
+                                    + "be scheduled: "
+                                    + harvestDefinitionsBeingScheduled);
+                        }
                     }
                 }.start();
             }
