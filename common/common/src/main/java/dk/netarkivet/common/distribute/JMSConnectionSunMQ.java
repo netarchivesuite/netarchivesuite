@@ -210,6 +210,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
         if (qConnection == null ) {
             qConnection = getConnectionFactory().createQueueConnection();
         }
-        return qConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+        boolean transacted = false;
+        return qConnection.createQueueSession(transacted, Session.AUTO_ACKNOWLEDGE);
     }
 }

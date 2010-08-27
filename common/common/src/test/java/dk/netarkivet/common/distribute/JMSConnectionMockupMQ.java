@@ -567,6 +567,11 @@ public class JMSConnectionMockupMQ extends JMSConnection {
             destination.sent.add(testObjectMessage);
         }
 
+        private void checkForExceptionsToThrow() {
+            // TODO Auto-generated method stub
+            
+        }
+
         public void setDisableMessageID(boolean b) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }

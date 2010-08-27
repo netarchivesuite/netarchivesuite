@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
 /* File:    $Id: $
  * Revision: $Revision: $
  * Author:   $Author: $
@@ -45,7 +47,7 @@ public class LifeCycleComponent implements ComponentLifeCycle {
 
     @Override
     public void start() {
-        log.debug("Starting "+toString());
+        log.debug("Starting " + toString());
         for (ComponentLifeCycle child: children) {
             child.start();
         }
@@ -53,7 +55,7 @@ public class LifeCycleComponent implements ComponentLifeCycle {
     
     @Override
     public void shutdown() {
-        log.debug("Shutting down "+toString());
+        log.debug("Shutting down " + toString());
         for (ComponentLifeCycle child: children) {
             child.shutdown();
         }
@@ -65,6 +67,7 @@ public class LifeCycleComponent implements ComponentLifeCycle {
      * @param childComponent The child to add
      */
     public void addChild(ComponentLifeCycle childComponent) {
+        ArgumentNotValid.checkNotNull(childComponent, "Child can not be null");
         children.add(childComponent);        
     }
 }

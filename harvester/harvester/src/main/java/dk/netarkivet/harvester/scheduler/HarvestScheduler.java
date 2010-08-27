@@ -48,7 +48,6 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -112,7 +111,8 @@ public class HarvestScheduler extends LifeCycleComponent {
      * database, and dispatching the harvest job to the servers.
      */
     public void start() {        
-        dispatcherThread = new Thread("HarvestSceduler") { 
+        //ToDo implement real scheduling with timeout functionality.
+        dispatcherThread = new Thread("HarvestScheduler") { 
             public void run() {
                 log.debug("Rescheduling any leftover jobs");
                 rescheduleSubmittedJobs();
@@ -172,7 +172,7 @@ public class HarvestScheduler extends LifeCycleComponent {
             Date endTime = new Date();
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
             if (new Date().after(endTime)) {
-                final String msg = " Job "+ id + " has exceeded its timeout of "
+                final String msg = " Job " + id + " has exceeded its timeout of "
                 + (Settings.getLong( HarvesterSettings.JOB_TIMEOUT_TIME) / 60) +
                 " minutes." + " Changing status to " + "FAILED.";
                 log.warn(msg);
@@ -196,7 +196,8 @@ public class HarvestScheduler extends LifeCycleComponent {
         // settings.harvester.scheduler.jobtimeouttime time.
         stopTimeoutJobs();
 
-        // ToDo moved to new DB backup class
+        // To be removed when the Harvestjob functionality is moved to its own
+        // application connected to a database server
         if (backupNow()) { // Check if we want to backup the database now?
             File backupDir = new File("DB-Backup-" + 
                     System.currentTimeMillis());
@@ -224,7 +225,7 @@ public class HarvestScheduler extends LifeCycleComponent {
      */
     private boolean backupNow() {
         // Never backup while making jobs
-        if (HarvestDefinitionDAO.getInstance().isGeneratingJobs()) {
+        if (HarvestJobGenerator.isGeneratingJobs()) {
             return false;
         }
         Calendar cal = Calendar.getInstance();
@@ -280,7 +281,8 @@ public class HarvestScheduler extends LifeCycleComponent {
             try {
                 jobToSubmit = dao.read(jobID);
                 
-                if (isQueueEmpty(jobToSubmit)) {
+                if (isQueueEmpty(JobChannelUtil.getChannel(
+                        jobToSubmit.getPriority()))) {
                     jobToSubmit.setStatus(JobStatus.SUBMITTED);
                     jobToSubmit.setSubmittedDate(new Date());
                     dao.update(jobToSubmit);
@@ -342,8 +344,7 @@ public class HarvestScheduler extends LifeCycleComponent {
      * @return Is the queue empty
      * @throws JMSException Unable to retrieve queue information
      */
-    private boolean isQueueEmpty(Job job) throws JMSException {
-        ChannelID channelId =  JobChannelUtil.getChannel(job.getPriority());
+    private boolean isQueueEmpty(ChannelID channelId) throws JMSException {
         QueueBrowser qBrowser = jmsConnection.createQueueBrowser(channelId);
         return !qBrowser.getEnumeration().hasMoreElements();
     }

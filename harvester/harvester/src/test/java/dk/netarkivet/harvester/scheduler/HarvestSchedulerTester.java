@@ -140,6 +140,7 @@ public class HarvestSchedulerTester extends TestCase {
         TestUtils.resetDAOs();
         jmsConnection.tearDown();
         reloadSettings.tearDown();
+        HarvestJobGenerator.clearGeneratingJobs();
     }
 
     /**
@@ -541,17 +542,25 @@ public class HarvestSchedulerTester extends TestCase {
      */
     public void testSendingToCorrectQueue() {
         //listen to both priority queues
-        DoOneCrawlMessageListener highPriorityListener = new DoOneCrawlMessageListener();
-        JMSConnectionFactory.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), highPriorityListener);
+        DoOneCrawlMessageListener highPriorityListener = 
+            new DoOneCrawlMessageListener();
+        JMSConnectionFactory.getInstance().setListener(
+                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), 
+                highPriorityListener);
         
-        DoOneCrawlMessageListener lowPriorityListener = new DoOneCrawlMessageListener();
-        JMSConnectionFactory.getInstance().setListener(JobChannelUtil.getChannel(JobPriority.LOWPRIORITY), lowPriorityListener);
+        DoOneCrawlMessageListener lowPriorityListener = 
+            new DoOneCrawlMessageListener();
+        JMSConnectionFactory.getInstance().setListener(JobChannelUtil.
+                getChannel(JobPriority.LOWPRIORITY), lowPriorityListener);
         
         //send a high priority job
         harvestScheduler.doOneCrawl(TestInfo.getJob(), metadata);
-        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
-        assertEquals("The HIGHPRIORITY server should have received exactly 1 message", 1, highPriorityListener.messages.size());
-        assertEquals("The LOWPRIORITY server should have received exactly 0 messages", 0, lowPriorityListener.messages.size());
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
+        waitForConcurrentTasksToFinish();
+        assertEquals("The HIGHPRIORITY server should have received exactly 1 " +
+        		"message", 1, highPriorityListener.messages.size());
+        assertEquals("The LOWPRIORITY server should have received exactly 0 " +
+        		"messages", 0, lowPriorityListener.messages.size());
 
         //reset messages
         highPriorityListener.messages = new ArrayList<DoOneCrawlMessage>();
@@ -559,9 +568,12 @@ public class HarvestSchedulerTester extends TestCase {
 
         //send a low priority job
         harvestScheduler.doOneCrawl(TestInfo.getJobLowPriority(), metadata);
-        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
-        assertEquals("The HIGHPRIORITY server should have received exactly 0 message", 0, highPriorityListener.messages.size());
-        assertEquals("The LOWPRIORITY server should have received exactly 1 messages", 1, lowPriorityListener.messages.size());
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
+        waitForConcurrentTasksToFinish();
+        assertEquals("The HIGHPRIORITY server should have received exactly 0 " +
+        		"message", 0, highPriorityListener.messages.size());
+        assertEquals("The LOWPRIORITY server should have received exactly 1 " +
+        		"messages", 1, lowPriorityListener.messages.size());
     }
 
     /**
@@ -576,6 +588,38 @@ public class HarvestSchedulerTester extends TestCase {
             // expected case
         }
     }
+    
+    /**
+     * The <code>HarvestScheduler</code> should continue to run, even though 
+     * exceptions are throw during dispatching.
+     * @throws InterruptedException 
+     */
+    public void schedulingRobustnessTest() throws InterruptedException {
+        JobDAO dao = JobDAO.getInstance();
+        
+        // Something to generate an exception in the dispatch loop
+        
+        startHarvestScheduler();
+
+        assertEquals("Should have created one job after starting job dispatching", 1, dao.getCountJobs());
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
+        assertEquals("The job should still be marked as new", 1, 
+                IteratorUtils.toList(dao.getAll(JobStatus.NEW)).size());
+        assertEquals("The job should not have been marked as submitted", 0, 
+                IteratorUtils.toList(dao.getAll(JobStatus.SUBMITTED)).size());
+        
+        TestMessageListener normalMessageListener = new TestMessageListener();
+        JMSConnectionMockupMQ.getInstance().setListener(JobChannelUtil.
+                getChannel(JobPriority.HIGHPRIORITY), normalMessageListener);
+        // Wait for next dispatch run
+        Thread.sleep(5000);
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance())
+        .waitForConcurrentTasksToFinish();
+        assertEquals("The job should have been marked as submitted", 0,
+                IteratorUtils.toList(dao.getAll(JobStatus.SUBMITTED)).size());
+        assertTrue("Should have received a message", normalMessageListener
+                .getNumReceived() == 1);
+    }
 
     /**
      * Verify the logger logs every call to all messages available
@@ -583,11 +627,12 @@ public class HarvestSchedulerTester extends TestCase {
      */
     public void testLogSendingMessage() throws IOException {
         harvestScheduler.doOneCrawl(TestInfo.getJob(), metadata);
-        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
+        waitForConcurrentTasksToFinish();
 
         StringAsserts.assertStringContains(
-                "Logfile does has NOT logged the sending of a DoOneCrawlMessage",
-                "Send crawl request",
+                "Logfile does has NOT logged the sending of a " +
+                "DoOneCrawlMessage", "Send crawl request",
                 FileUtils.readFile(TestInfo.LOG_FILE));
     }
 
@@ -595,7 +640,8 @@ public class HarvestSchedulerTester extends TestCase {
      * Utility class to listen to and record all CrawlStatusMessages
      */
     public class DoOneCrawlMessageListener implements MessageListener {
-        public List<DoOneCrawlMessage> messages = new ArrayList<DoOneCrawlMessage>();
+        public List<DoOneCrawlMessage> messages =
+            new ArrayList<DoOneCrawlMessage>();
 
         public void onMessage(Message message) {
             NetarkivetMessage naMsg = JMSConnection.unpack(message);

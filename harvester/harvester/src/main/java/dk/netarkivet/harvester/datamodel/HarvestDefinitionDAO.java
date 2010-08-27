@@ -23,12 +23,9 @@
 package dk.netarkivet.harvester.datamodel;
 
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
  * A Data Access Object for harvest definitions.
@@ -52,12 +48,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     private static HarvestDefinitionDAO instance;
     /** The log. */
     protected final Log log = LogFactory.getLog(getClass());
-
-    /** The set of HDs (or rather their OIDs) that are currently being
-     * scheduled in a separate thread.
-     * This set is a SynchronizedSet
-     */
-    private Set<Long> harvestDefinitionsBeingScheduled = Collections.synchronizedSet(new HashSet<Long>());
 
     /**
      * Default constructor.
@@ -229,16 +219,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      */
     static void reset() {
         instance = null;
-    }
-
-    /** Returns true if any harvestdefinition is in the middle of having
-     * jobs scheduled.  Notice that this synchronizes with generateJobs.
-     *
-     * @return true if there is at least one harvestdefinition currently
-     * scheduling jobs.
-     */
-    public boolean isGeneratingJobs() {
-        return !harvestDefinitionsBeingScheduled.isEmpty();
     }
 
     /** Return whether the given harvestdefinition can be deleted.

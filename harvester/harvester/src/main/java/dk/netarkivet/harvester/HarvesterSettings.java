@@ -191,6 +191,14 @@ public class HarvesterSettings {
      */
     public static String DISPATCH_JOBS_PERIOD = 
     	"settings.harvester.scheduler.dispatchperiode";
+    
+    /** 
+     * The period between checking if new jobs should be generated.
+     * This is one minute because that's the finest we can define in a harvest
+     * definition.
+     */
+    public static String GENERATE_JOBS_PERIOD = 
+        "settings.harvester.scheduler.jobgenerationperiode";
 
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br> Each job gets a
