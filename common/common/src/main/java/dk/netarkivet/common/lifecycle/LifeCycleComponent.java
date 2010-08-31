@@ -1,17 +1,7 @@
-package dk.netarkivet.common.lifecycle;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
-/* File:    $Id: $
- * Revision: $Revision: $
- * Author:   $Author: $
- * Date:     $Date: $
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -30,6 +20,15 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
+package dk.netarkivet.common.lifecycle;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /** 
  * Takes care of the lifecycling of subcomponents(children). 

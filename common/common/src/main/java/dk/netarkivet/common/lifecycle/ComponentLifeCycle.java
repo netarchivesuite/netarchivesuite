@@ -1,9 +1,7 @@
-package dk.netarkivet.common.lifecycle;
-
-/* File:    $Id: $
- * Revision: $Revision: $
- * Author:   $Author: $
- * Date:     $Date: $
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -22,6 +20,7 @@ package dk.netarkivet.common.lifecycle;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
+package dk.netarkivet.common.lifecycle;
 
 /**
  * Extends the default construction -> deconstruction object life cycle with 

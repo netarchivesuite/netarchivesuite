@@ -105,7 +105,7 @@ public class Upload {
             File file = FileUtils.makeValidFileFromExisting(arg);
             if(!FileUtils.ARCS_FILTER.accept(
                     file.getParentFile(), file.getName()) 
-              || !FileUtils.WARCS_FILTER.accept(
+              && !FileUtils.WARCS_FILTER.accept(
                       file.getParentFile(), file.getName())) {
                 dieWithException("Error checking input file: ",
                         new IOFailure(file.getAbsolutePath()
