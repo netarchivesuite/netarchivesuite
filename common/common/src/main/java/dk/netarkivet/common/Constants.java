@@ -77,7 +77,7 @@ public class Constants {
     /** Patch version number. */
     public static final int PATCHVERSION = 1;
     /** Current status of code. */
-    private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
+    private static final CodeStatus BUILDSTATUS = CodeStatus.CODEFREEZE;
 
     /** Current version of Heritrix used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.4";
@@ -134,7 +134,6 @@ public class Constants {
     public static String getHeritrixVersionString() {
         return HERITRIX_VERSION;
     }
-
 
     /**
      * Get a formatter that can read and write a date in ISO format including
