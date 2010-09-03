@@ -101,6 +101,9 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
      * back to the caller.
      */
     public void testBatchExceptionInBatch() {
+    	// reinitiate bitarchive.
+    	Bitarchive.getInstance().close();
+    	archive = Bitarchive.getInstance();
         BatchStatus status =
                 archive.batch(TestInfo.baAppId, new FileBatchJob() {
                     public void initialize(OutputStream os) {
@@ -125,6 +128,9 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
      * once.
      */
     public void testBatchCodeRuns() {
+    	// reinitiate bitarchive.
+    	Bitarchive.getInstance().close();
+    	archive = Bitarchive.getInstance();
         TestFileBatchJob job = new TestFileBatchJob();
         BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
         assertTrue("initialize() should been called on job", job.initialized);
@@ -144,6 +150,9 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
      * Test that the batch code writes its expected output
      */
     public void testBatchCodeOutput() {
+    	// reinitiate bitarchive.
+    	Bitarchive.getInstance().close();
+    	archive = Bitarchive.getInstance();
         FileBatchJob job = new TestFileBatchJob();
         BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
         lbs.getResultFile().copyTo(TestInfo.BATCH_OUTPUT_FILE);
@@ -160,6 +169,9 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
      * Both for multiple entries in a file and in several files.
      */
     public void testBatchCodeRunsAll() {
+    	// reinitiate bitarchive.
+    	Bitarchive.getInstance().close();
+    	archive = Bitarchive.getInstance();
         TestFileBatchJob job = new TestFileBatchJob();
         archive.batch(TestInfo.baAppId, job);
         assertEquals("Number of processed files is incorrect",
@@ -168,6 +180,9 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
 
     /** Test that filters work in BatchJobs. */
     public void testBatchCodeFiltersWork() {
+    	// reinitiate bitarchive.
+    	Bitarchive.getInstance().close();
+    	archive = Bitarchive.getInstance();
         TestFileBatchJob job = new TestFileBatchJob();
         assertBatchJobProcessesCorrectly("No filter", job,
                 "fyensdk.arc", "Upload1.ARC", "Upload2.ARC", "Upload3.ARC");
@@ -217,6 +232,10 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
      * directory, or that tries to write anywhere) cannot be executed.
      */
     public void testIllegalCode() throws IOException {
+    	// reinitiate bitarchive.
+    	Bitarchive.getInstance().close();
+    	archive = Bitarchive.getInstance();
+
         String fyensdk = FileUtils.readFile(new File(TestInfo.WORKING_DIR, "fyensdk.arc"));
         // A class that gets loaded from outside our normal area.
         final File evilClassFile = new File(TestInfo.WORKING_DIR, "EvilBatch.class");

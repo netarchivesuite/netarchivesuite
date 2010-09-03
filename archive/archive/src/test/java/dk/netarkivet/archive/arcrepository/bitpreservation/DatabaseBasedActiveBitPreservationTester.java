@@ -174,16 +174,18 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 	cache.addChecksumInformation(FileUtils.readListFromFile(csFile1), THREE);
 
 	dbabp = DatabaseBasedActiveBitPreservation.getInstance();
+	assertEquals("Replica '" + THREE + "' should initially not be missing any files.",
+			0, dbabp.getNumberOfMissingFiles(THREE));
 	dbabp.findMissingFiles(TWO);
 	
 	assertEquals("Replica '" + TWO + "' should only be missing 1 file.", 
 		1, dbabp.getNumberOfMissingFiles(TWO));
 	assertEquals("Replica '" + TWO + "' should only be missing file '"
-		+ "integrity7.ARC" + '.', Arrays.asList("integrity7.ARC"), 
+		+ "integrity7.ARC" + "'.", Arrays.asList("integrity7.ARC"), 
 		dbabp.getMissingFiles(TWO));
 	
-	assertEquals("Replica '" + THREE + "' should not be missing any files.",
-		0, dbabp.getNumberOfMissingFiles(THREE));
+	assertEquals("Replica '" + THREE + "' should now have a missing file.",
+			1, dbabp.getNumberOfMissingFiles(THREE));
     }
     
     /**

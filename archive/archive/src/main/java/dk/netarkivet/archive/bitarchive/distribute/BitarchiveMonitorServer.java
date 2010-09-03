@@ -429,11 +429,13 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     public void visit(GetChecksumMessage msg) throws ArgumentNotValid { 
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
         
-        log.info("Receiving GetAllChecksumsMessage '" + msg + "'");
+        log.info("Receiving GetChecksumsMessage '" + msg + "'");
         
         // Create batchjob for the GetAllChecksumsMessage.
         ChecksumJob cj = new ChecksumJob();
         cj.processOnlyFileNamed(msg.getArcfileName());
+        cj.setBatchJobTimeout(Settings.getLong(
+        		ArchiveSettings.SINGLE_CHECKSUM_TIMEOUT));
         
         // Execute the batchjob.
         executeConvertedBatch(cj, msg);

@@ -224,4 +224,13 @@ public class ArchiveSettings {
      */
     public static String CHECKSUM_MIN_SPACE_LEFT 
             = "settings.archive.checksum.minSpaceLeft";
+    
+    /**
+     * <b>settings.archive.bitarchive.singleChecksumTimeout</b>: <br>
+     * The path to the settings for the maximum time usage for the calculation
+     * of the checksum for a single file. Used for changing the 
+     * GetChecksumMessage into a batchjob.
+     */
+    public static String SINGLE_CHECKSUM_TIMEOUT
+            = "settings.archive.bitarchive.singleChecksumTimeout";
 }

@@ -291,7 +291,7 @@ public class ArcRepository implements CleanupIF {
             // Recovery from old upload
             ReplicaStoreState storeState = ad.getState(filename,
                     replicaChannelId);
-            log.trace("Recovery from old upload. StoreState: " + storeState);
+            log.debug("Recovery from old upload. StoreState: " + storeState);
             switch (storeState) {
             case UPLOAD_FAILED:
             case UPLOAD_STARTED:

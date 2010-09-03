@@ -224,7 +224,7 @@ public class Bitarchive {
         log.info("Starting batch job on bitarchive application with id '"
                 + bitarchiveAppId + "': " + job.getClass().getName());
         BatchStatus returnStatus;
-
+        
         File tmpFile = null;
         try {
             tmpFile = File.createTempFile("BatchOutput", "",
@@ -237,6 +237,7 @@ public class Bitarchive {
                         + new Date());
                 File[] processFiles
                         = admin.getFilesMatching(job.getFilenamePattern());
+
                 final BatchLocalFiles localBatchRunner =
                     new BatchLocalFiles(processFiles);
                 localBatchRunner.run(job, os);

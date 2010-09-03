@@ -1417,17 +1417,28 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         long fileId = retrieveIdForFile(filename);
         
         try {
-            // Make query for extracting the upload status.
-            String sql = "UPDATE replicafileinfo SET upload_status = ? "
-                + "WHERE replica_id = ? AND file_id = ?";
 
             // init statement.
             PreparedStatement statement = null;
             Connection connection = getDbConnection();
 
-            // complete the SQL statement.
-            statement = DBUtils.prepareStatement(connection, sql, 
-                    state.ordinal(), replicaId, fileId);
+            if(state == ReplicaStoreState.UPLOAD_COMPLETED) {
+            	// Make query for extracting the upload status.
+            	String sql = "UPDATE replicafileinfo SET upload_status = ?, "
+            		+ "filelist_status = ?, checksum_status = ? "
+            		+ "WHERE replica_id = ? AND file_id = ?";
+            	// complete the SQL statement.
+            	statement = DBUtils.prepareStatement(connection, sql, 
+            			state.ordinal(), FileListStatus.OK.ordinal(),
+            			ChecksumStatus.OK.ordinal(), replicaId, fileId);
+            } else {
+            	// Make query for extracting the upload status.
+            	String sql = "UPDATE replicafileinfo SET upload_status = ? "
+            		+ "WHERE replica_id = ? AND file_id = ?";
+            	// complete the SQL statement.
+            	statement = DBUtils.prepareStatement(connection, sql, 
+            			state.ordinal(), replicaId, fileId);
+            }
             
             // execute the update and commit to database.
             statement.executeUpdate();
@@ -1958,7 +1969,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         // return null if the field has no be set for this replica.
         if (result == null) {
-            log.warn("The 'filelist_updated' field has not been set, " 
+            log.debug("The 'filelist_updated' field has not been set, " 
                     + "as no missing files update has been performed yet.");
             return null;
         } else {
@@ -1995,7 +2006,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         // return null if the field has no be set for this replica.
         if (result == null) {
-            log.warn("The 'checksum_updated' field has not been set, " 
+            log.debug("The 'checksum_updated' field has not been set, " 
                     + "as no wrong files update has been performed yet.");
             return null;
         } else {
@@ -2024,9 +2035,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // replicafileinfo table with file_status set to missing for the
         // replica.
         String sql = "SELECT COUNT(*) FROM replicafileinfo WHERE replica_id"
-                + " = ? AND filelist_status = ?";
+                + " = ? AND ( filelist_status = ? OR filelist_status = ?)";
         return DBUtils.selectLongValue(getDbConnection(), sql, replica.getId(),
-                FileListStatus.MISSING.ordinal());
+                FileListStatus.MISSING.ordinal(), 
+                FileListStatus.NO_FILELIST_STATUS.ordinal());
     }
 
     /**
@@ -2049,9 +2061,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // replicafileinfo to the given replica.
         String sql = "SELECT filename FROM replicafileinfo LEFT OUTER JOIN "
                 + "file ON replicafileinfo.file_id = file.file_id "
-                + "WHERE replica_id = ? AND filelist_status = ?";
+                + "WHERE replica_id = ? AND ( filelist_status = ? "
+                + "OR filelist_status = ? )";
         return DBUtils.selectStringList(getDbConnection(), sql, replica.getId(),
-                FileListStatus.MISSING.ordinal());
+                FileListStatus.MISSING.ordinal(), 
+                FileListStatus.NO_FILELIST_STATUS.ordinal());
     }
 
     /**

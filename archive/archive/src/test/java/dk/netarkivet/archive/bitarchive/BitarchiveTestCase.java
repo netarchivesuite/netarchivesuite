@@ -71,7 +71,8 @@ public abstract class BitarchiveTestCase extends TestCase {
             // Copy over the "existing" bit archive.
             TestFileUtils.copyDirectoryNonCVS(getOriginalsDir(),
                                               TestInfo.WORKING_DIR);
-            Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.WORKING_DIR.getAbsolutePath());
+            Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, 
+            		TestInfo.WORKING_DIR.getAbsolutePath());
             archive = Bitarchive.getInstance();
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
