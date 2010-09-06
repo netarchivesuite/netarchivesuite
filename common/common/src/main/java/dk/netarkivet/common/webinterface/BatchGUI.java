@@ -937,7 +937,7 @@ public final class BatchGUI {
             }
         } catch (NetarkivetException e) {
             // Handle unretrievable batchjob.
-            String errMsg = "Unable to instatiate '" + batchClassPath 
+            String errMsg = "Unable to instantiate '" + batchClassPath 
                     + "' as a batchjob.";
             log.warn(errMsg, e);
             
