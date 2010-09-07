@@ -1417,25 +1417,23 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         long fileId = retrieveIdForFile(filename);
         
         try {
-
             // init statement.
             PreparedStatement statement = null;
             Connection connection = getDbConnection();
 
+        	// Make query for updating the upload status
             if(state == ReplicaStoreState.UPLOAD_COMPLETED) {
-            	// Make query for extracting the upload status.
+            	// An UPLOAD_COMPLETE 
+            	// UPLOAD_COMPLETE => filelist_status = OK, checksum_status = OK 
             	String sql = "UPDATE replicafileinfo SET upload_status = ?, "
             		+ "filelist_status = ?, checksum_status = ? "
             		+ "WHERE replica_id = ? AND file_id = ?";
-            	// complete the SQL statement.
             	statement = DBUtils.prepareStatement(connection, sql, 
             			state.ordinal(), FileListStatus.OK.ordinal(),
             			ChecksumStatus.OK.ordinal(), replicaId, fileId);
             } else {
-            	// Make query for extracting the upload status.
             	String sql = "UPDATE replicafileinfo SET upload_status = ? "
             		+ "WHERE replica_id = ? AND file_id = ?";
-            	// complete the SQL statement.
             	statement = DBUtils.prepareStatement(connection, sql, 
             			state.ordinal(), replicaId, fileId);
             }
@@ -1892,6 +1890,18 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         ArgumentNotValid.checkNotNull(filelist, "List<String> filelist");
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
+        // Make sure, that the replica exists in the database.
+        if (!existsReplicaInDB(replica)) {
+            String msg = "Cannot add filelist information, since the replica '"
+                    + replica.toString() 
+                    + "' does not exist within the database.";
+            log.warn(msg);
+            throw new IOFailure(msg);
+        }
+
+        log.info("Starting processing of " + filelist.size() 
+                + " filelist entries for replica " + replica.getId());
+        
         // retrieve the list of files already known by this cache.
         List<Long> missingReplicaRFIs = retrieveReplicaFileInfoGuidsForReplica(
                 replica.getId());
@@ -1938,9 +1948,13 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         // go through the not found replicafileinfo for this replica to change
         // their filelist_status to missing.
-        for (long rfi : missingReplicaRFIs) {
-            // set the replicafileinfo in the database to missing.
-            updateReplicaFileInfoMissingFromFilelist(rfi);
+        if(missingReplicaRFIs.size() > 0) {
+            log.warn("Found " + missingReplicaRFIs.size() + " missing files "
+                    + "for replica '" + replica + "'.");
+            for (long rfi : missingReplicaRFIs) {
+                // set the replicafileinfo in the database to missing.
+                updateReplicaFileInfoMissingFromFilelist(rfi);
+            }
         }
 
         // Update the date for filelist update for this replica.
@@ -2032,8 +2046,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         
         // The SQL statement to retrieve the number of entries in the
-        // replicafileinfo table with file_status set to missing for the
-        // replica.
+        // replicafileinfo table with file_status set to either missing or 
+        // no_status for the replica.
         String sql = "SELECT COUNT(*) FROM replicafileinfo WHERE replica_id"
                 + " = ? AND ( filelist_status = ? OR filelist_status = ?)";
         return DBUtils.selectLongValue(getDbConnection(), sql, replica.getId(),

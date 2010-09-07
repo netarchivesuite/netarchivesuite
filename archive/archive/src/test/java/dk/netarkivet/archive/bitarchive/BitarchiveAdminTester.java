@@ -104,9 +104,9 @@ public class BitarchiveAdminTester extends TestCase {
         assertEquals("File should go to temporary directory",
                      TEMPDIR, tempfile.getParentFile().getName());
         assertEquals("File should go in bitarchive dir",
-                     BA_DIR_2.getAbsolutePath(),
+                     BA_DIR_1.getCanonicalPath(),
                      tempfile.getParentFile()
-                     .getParentFile().getAbsolutePath());
+                     .getParentFile().getCanonicalPath());
 
         // Note: This might fail if something is writing heavily to the disk
         // during unit test execution.
@@ -119,9 +119,9 @@ public class BitarchiveAdminTester extends TestCase {
         assertEquals("File should go to temporary directory",
                      TEMPDIR, tempfile.getParentFile().getName());
         assertEquals("File should go in bitarchive dir",
-                     BA_DIR_2.getAbsolutePath(),
+                     BA_DIR_1.getCanonicalPath(),
                      tempfile.getParentFile()
-                     .getParentFile().getAbsolutePath());
+                     .getParentFile().getCanonicalPath());
     }
 
     public void testGetTemporaryPathThrowsException() throws Exception {
@@ -176,9 +176,9 @@ public class BitarchiveAdminTester extends TestCase {
         assertEquals("File should go to file directory",
                      "filedir", finalfile.getParentFile().getName());
         assertEquals("File should go in bitarchive dir",
-                     BA_DIR_2.getAbsolutePath(),
+                     BA_DIR_1.getCanonicalPath(),
                      finalfile.getParentFile()
-                     .getParentFile().getAbsolutePath());
+                     .getParentFile().getCanonicalPath());
     }
 
     public void testMoveToStorageThrowsException() throws Exception {
@@ -232,7 +232,7 @@ public class BitarchiveAdminTester extends TestCase {
         }
 
         FileUtils.writeBinaryFile(tempfile, "abc".getBytes());
-        FileUtils.removeRecursively(new File(BA_DIR_2, FILEDIR));
+        FileUtils.removeRecursively(new File(BA_DIR_1, FILEDIR));
         try {
             ad.moveToStorage(tempfile);
             fail("Should throw exception when moving fails "
@@ -273,15 +273,15 @@ public class BitarchiveAdminTester extends TestCase {
         assertEquals("Should be right file", "file1", file.getName());
         assertEquals("Should be right file",
                      new File(new File(BA_DIR_1, FILEDIR),
-                             "file1").getAbsolutePath(),
-                     file.getFilePath().getAbsolutePath());
+                             "file1").getCanonicalPath(),
+                     file.getFilePath().getCanonicalPath());
         file = ad.lookup("file3");
         assertNotNull("Should find existing file", file);
         assertEquals("Should be right file", "file3", file.getName());
         assertEquals("Should be right file",
                      new File(new File(BA_DIR_2, FILEDIR),
-                             "file3").getAbsolutePath(),
-                     file.getFilePath().getAbsolutePath());
+                             "file3").getCanonicalPath(),
+                     file.getFilePath().getCanonicalPath());
         file = ad.lookup("none");
         assertNull("Should return null on non-existing file", file);
     }
@@ -354,11 +354,11 @@ public class BitarchiveAdminTester extends TestCase {
         }
 
         String file2path = new File(
-                new File(BA_DIR_1, "filedir"), "file2").getAbsolutePath();
+                new File(BA_DIR_1, "filedir"), "file2").getCanonicalPath();
         assertTrue("Should have " + file2path + " but found " + filePaths,
                 filePaths.contains(file2path));
         String file4path = new File(
-                new File(BA_DIR_2, "filedir"), "file4").getAbsolutePath();
+                new File(BA_DIR_2, "filedir"), "file4").getCanonicalPath();
         assertTrue("Should have " + file4path + " but found " + filePaths,
                 filePaths.contains(file4path));
     }

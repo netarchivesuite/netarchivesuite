@@ -228,8 +228,8 @@ public class ArchiveSettings {
     /**
      * <b>settings.archive.bitarchive.singleChecksumTimeout</b>: <br>
      * The path to the settings for the maximum time usage for the calculation
-     * of the checksum for a single file. Used for changing the 
-     * GetChecksumMessage into a batchjob.
+     * of the checksum for a single file. Used to set a timelimit to the 
+     * batchjob for the GetChecksumMessage.
      */
     public static String SINGLE_CHECKSUM_TIMEOUT
             = "settings.archive.bitarchive.singleChecksumTimeout";
