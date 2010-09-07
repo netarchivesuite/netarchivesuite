@@ -130,7 +130,7 @@ public class BitarchiveAdmin {
 
         try {
             for (String filedirname : filedirnames) {
-                File basedir = new File(filedirname);
+                File basedir = new File(filedirname).getCanonicalFile();
                 File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
 
                 // Ensure that 'filedir' exists. If it doesn't, it is created
@@ -147,9 +147,9 @@ public class BitarchiveAdmin {
                 ApplicationUtils.dirMustExist(atticdir);
 
                 // initialise the variables archivedFiles and archiveTime
-                List<String> filenames = new ArrayList<String>();
-                archivedFiles.put(basedir.getCanonicalFile(), filenames);
-                archiveTime.put(basedir.getCanonicalFile(), 0L);
+                archivedFiles.put(basedir, 
+                        new ArrayList<String>());
+                archiveTime.put(basedir, 0L);
                 updateFileList(basedir);
 
                 final Long bytesUsedInDir = calculateBytesUsed(basedir);
@@ -159,7 +159,9 @@ public class BitarchiveAdmin {
                         + Constants.ATTIC_DIRECTORY_NAME
                         + "'} under base directory: '" + basedir+ "' with "
                         + bytesUsedInDir + " bytes of content and "
-                        + FileUtils.getBytesFree(basedir) + " bytes free");
+                        + FileUtils.getBytesFree(basedir) + " bytes free. "
+                        + "Current number of files archived: " 
+                        + archivedFiles.get(basedir).size());
             }
         } catch (IOException e) {
             throw new IOFailure("Could not retrieve Canonical files.", e);

@@ -16,6 +16,8 @@
             <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
             <!-- The default value amounts to 14 days. -->
             <batchMessageTimeout>1209600000</batchMessageTimeout>
+            <!-- The maximum time for handling a GetChecksumMessage. -->
+            <singleChecksumTimeout>600000</singleChecksumTimeout>
             <thisCredentials>examplecredentials</thisCredentials>
         </bitarchive>
         <checksum>
