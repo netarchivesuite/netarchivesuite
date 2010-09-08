@@ -26,10 +26,9 @@ package dk.netarkivet.common.utils.arc;
 import java.io.File;
 
 /**
- * Static constants for utils.arc testing.
+ * Static constants for utils.arc and also utils.batch testing.
  *
  */
-
 public class TestInfo {
     public static final File BASE_DIR
             = new File("tests/dk/netarkivet/common/utils/arc/data");
@@ -43,4 +42,5 @@ public class TestInfo {
     public static final File INPUT_1 = new File(WORKING_DIR, "input-1.arc");
     public static final File INPUT_2 = new File(WORKING_DIR, "input-2.arc");
     public static final File INPUT_3 = new File(WORKING_DIR, "input-3.arc");
+    public static final File FAIL_ARCHIVE_DIR = new File(WORKING_DIR, "bitarchive1_to_fail");
 }

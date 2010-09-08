@@ -354,26 +354,31 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     }
 
     /**
-     * Sends a BatchMessage to the Arcrepos queue and waits for the
-     * BatchReplyMessage reply before returning.
+     * Runs a batch job on each file in the ArcRepository.
      *
-     * @param job       An object that implements the FileBatchJob interface.
-     *                  The initialize() method will be called before processing
-     *                  and the finish() method will be called afterwards.  The
-     *                  process() method will be called with each File entry.
-     * @param replicaId The id of the archive to execute the job on
-     * @return A local batch status
-     * @throws IOFailure if no results can be read at all
+     * @param job An object that implements the FileBatchJob interface. The
+     *  initialize() method will be called before processing and the finish()
+     *  method will be called afterwards. The process() method will be called
+     *  with each File entry. An optional function postProcess() allows handling
+     *  the combined results of the batchjob, e.g. summing the results, sorting,
+     *  etc.
+     *
+     * @param replicaId The archive to execute the job on.
+     * @param args The arguments for the batchjob. This is allowed to be null.
+     * @return The status of the batch job after it has ended.
+     * @throws ArgumentNotValid If the job is null or the replicaId is either 
+     * null or the empty string.
+     * @throws IOFailure If no result file is returned.
      */
-    public BatchStatus batch(FileBatchJob job, String replicaId) 
-            throws IOFailure{
-        ArgumentNotValid.checkNotNull(job, "job");
-        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
+    public BatchStatus batch(FileBatchJob job, String replicaId, 
+            String... args) throws IOFailure, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
 
         log.debug("Starting batchjob '" + job + "' running on replica '"
                   + replicaId + "'");
         BatchMessage bMsg = new BatchMessage(Channels.getTheRepos(), replyQ,
-                                             job, replicaId);
+                                             job, replicaId, args);
         log.debug("Sending batchmessage to queue '" + Channels.getTheRepos()
                   + "' with replyqueue set to '" + replyQ + "'");
         BatchReplyMessage brMsg =
@@ -529,8 +534,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // make and send the message to the replica.
         GetAllChecksumsMessage gacMsg = new GetAllChecksumsMessage(Channels
                 .getTheRepos(), replyQ, replicaId);
-        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gacMsg,
-                                                               getTimeout);
+        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gacMsg, 0);
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
@@ -589,8 +593,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // make and send the message to the replica.
         GetAllFilenamesMessage gafMsg = new GetAllFilenamesMessage(Channels
                 .getTheRepos(), replyQ, replicaId);
-        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gafMsg,
-                                                               getTimeout);
+        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gafMsg, 0);
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
@@ -650,8 +653,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // make and send the message to the replica.
         GetChecksumMessage gcsMsg = new GetChecksumMessage(Channels
                 .getTheRepos(), replyQ, filename, replicaId);
-        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gcsMsg,
-                                                               getTimeout);
+        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gcsMsg, 0);
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
         log.debug("Reply received after " + (timePassed 
@@ -693,6 +695,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @param credentials A string with the password for allowing changes inside
      * an archive. If it does not correspond to the credentials of the archive, 
      * the correction will not be allowed.
+     * @return The corrupted file from the archive.
      * @throws IOFailure If the message is not handled properly.
      * @throws ArgumentNotValid If the replicaId, the checksum or the 
      * credentials are either null or empty, or if file is null.
@@ -708,7 +711,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         CorrectMessage correctMsg = new CorrectMessage(Channels.getTheRepos(),
                 replyQ, checksum, rm, replicaId, credentials);
         CorrectMessage responseMessage = (CorrectMessage) 
-                sendAndWaitForOneReply(correctMsg, getTimeout);
+                sendAndWaitForOneReply(correctMsg, 0);
 
         if (responseMessage == null) {
             throw new IOFailure("Correct Message timed out before returning."

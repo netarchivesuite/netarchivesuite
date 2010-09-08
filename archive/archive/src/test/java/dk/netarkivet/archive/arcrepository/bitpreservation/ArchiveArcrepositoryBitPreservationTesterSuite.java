@@ -23,6 +23,7 @@
 
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
+import dk.netarkivet.common.utils.batch.ChecksumJobTester;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;

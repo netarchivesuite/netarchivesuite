@@ -26,7 +26,6 @@ package dk.netarkivet.archive.arcrepositoryadmin;
 import java.sql.Date;
 import java.util.List;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.CleanupIF;
 
@@ -39,11 +38,11 @@ public interface BitPreservationDAO extends CleanupIF {
      *       in the same form as checksumJobOutput for implementation of
      *       bitArchive replicas
      *       
-     * @param checksumOutput The parsed output of a checksum job or the output
-     * from a GetAllChecksumMessage.
+     * @param checksumOutput The parsed output of a GetAllChecksumMessage as a 
+     * list of ChecksumJob lines, i.e. filename##checksum.
      * @param replica The replica this checksum job is for.
      */
-    void addChecksumInformation(List<ChecksumEntry> checksumOutput, 
+    void addChecksumInformation(List<String> checksumOutput, 
             Replica replica);
     
     /** Given the output of a file list job, add the results to the database.
@@ -151,6 +150,19 @@ public interface BitPreservationDAO extends CleanupIF {
     void updateChecksumStatus();
     
     /**
+     * Method for updating the status for a specific file for all the replicas.
+     * If the checksums for the replicas differ for some replica, then based on 
+     * a checksum vote, a specific checksum is chosen as the 'correct' one, and
+     * the entries with another checksum than the 'correct one' will be marked
+     * as corrupt.
+     * If no winner of the voting is found, the all instances will be chosen to
+     * have 'UNKNOWN' checksum status.
+     *  
+     * @param filename The name of the file to update the status for.
+     */
+    void updateChecksumStatus(String filename);
+    
+    /**
      * Method for retrieving the entry in the replicafileinfo table for a
      * given file and replica.
      * 
@@ -160,6 +172,16 @@ public interface BitPreservationDAO extends CleanupIF {
      * and replica.
      */
     ReplicaFileInfo getReplicaFileInfo(String filename, Replica replica);
+    
+    /**
+     * Method for updating a specific entry in the replicafileinfo table. 
+     * 
+     * @param filename Name of the file.
+     * @param checksum The checksum of the file.
+     * @param replica The replica where the file exists.
+     */
+    void updateChecksumInformationForFileOnReplica(String filename, 
+            String checksum, Replica replica);
     
     /**
      * Method for cleaning up when done.

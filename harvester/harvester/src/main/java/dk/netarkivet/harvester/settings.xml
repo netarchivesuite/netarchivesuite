@@ -58,6 +58,8 @@
             <splitByObjectLimit>false</splitByObjectLimit>
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
+            <dispatchperiode>5000</dispatchperiode>
+            <jobgenerationperiode>60000</jobgenerationperiode>
         </scheduler>
         <harvesting>
             <serverDir>server</serverDir>
@@ -87,10 +89,10 @@
                 <javaOpts></javaOpts>                
             </heritrix>
             <heritrixLauncher>
-                <class>dk.netarkivet.harvester.harvesting.controller.DefaultHeritrixLauncher</class>
+                <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher</class>
             </heritrixLauncher>
             <heritrixController>
-                <class>dk.netarkivet.harvester.harvesting.controller.JMXHeritrixController</class>
+                <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController</class>
             </heritrixController>
             <deduplication>
                 <enabled>true</enabled>

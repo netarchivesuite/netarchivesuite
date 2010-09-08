@@ -38,7 +38,6 @@ import org.dom4j.io.SAXReader;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
 
-
 /**
  * Contains test information about all harvest definition test data.
  */
@@ -91,7 +90,7 @@ public class TestInfo {
 
     public static final int GUI_WEB_SERVER_PORT = 4242;
     public static final String GUI_WEB_SERVER_WEBBASE = "/jsp";
-    public static final String GUI_WEB_SERVER_JSP_DIRECTORY = "tests/dk/netarkivet/harvester/datamodel/data/jsp";
+    //public static final String GUI_WEB_SERVER_JSP_DIRECTORY = "tests/dk/netarkivet/harvester/datamodel/data/jsp";
     public static HourlyFrequency FREQUENCY = new HourlyFrequency(1);
     public static File HARVEST_DEFINITIONS_DIR = new File(TEMPDIR,
             "harvestdefinitions");
@@ -179,8 +178,6 @@ public class TestInfo {
     static final File EMPTYDBFILE = new File(TOPDATADIR, "emptyhddb.jar");
     public static final File NONEXISTINGDIR =
             new File(TEMPDIR, "nonexisting");
-    public static final String GUI_WEB_SERVER_SITESECTION_CLASS
-            = TestSiteSection.class.getName();
     public static final String HARVESTDEFINITION_SITESECTIONCLASS
             = DefinitionsSiteSection.class.getName();
     public static final String CRAWLER_TRAPS_01 = "crawler_traps_01.txt";

@@ -49,6 +49,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TestInfo;
+import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -384,10 +385,8 @@ public class IntegrityTestsFTP extends TestCase {
                 TestInfo.FIVE_HUNDRED_MEGA_FILE_ZIPPED);
         assertTrue("File '" + TestInfo.FIVE_HUNDRED_MEGA_FILE_ZIPPED +
                 " does not exist!", zipFile.exists());
-
-        if (!TestInfo.unzipTo(zipFile, TestInfo.TEMPDIR)) {
-            logger.warning("Unzipping operation failed!!");
-        }
+        
+        ZipUtils.unzip(zipFile, TestInfo.TEMPDIR);
 
         File unzippedFile = new File(TestInfo.TEMPDIR,
                 TestInfo.FIVE_HUNDRED_MEGA_FILE_UNZIPPED);

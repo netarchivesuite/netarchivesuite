@@ -29,11 +29,13 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
  * Unit tests for FileListJob.
+ * TODO Move unittest to common.utils.batch
  */
 public class FileListJobTester extends TestCase {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,

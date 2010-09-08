@@ -34,7 +34,17 @@ v) repacking the warfile as ROOT.war for deployment
 <project>
     <import file="build.xml" />
 
-    <property name="wayback.conf.root" value="conf/wayback"/>
+   <!-- <property name="wayback.conf.root" value="conf/wayback"/>-->
+
+
+
+    <!--
+    Path to a directory containing spring-framework config files to override
+    the defaults supplied with Wayback and a settings.xml file for the
+    wayback module.
+    The directory may also include a custom web.xml file.
+    -->
+    <property name="wayback.conf.dir" value="${user.home}/wayback_settings/test" />
 
     <!--
     Path to the Wayback webapp as downloaded from
@@ -42,14 +52,7 @@ v) repacking the warfile as ROOT.war for deployment
     TODO: wget this file
     -->
     <property name="wayback.dist.war"
-              value="wayback/lib/wayback-webapp-1.4.2.war" />
-
-    <!--
-    Path to a directory containing spring-framework config files to override
-    the defaults supplied with Wayback.
-    The directory may also include a custom web.xml file.
-    -->
-    <property name="wayback.conf.dir" value="${wayback.conf.root}" />
+              value="${wayback.conf.dir}/wayback-webapp-1.4.2.war" />
 
     <!--
     A NetarchiveSuite settings file to be used by the NetarchiveSuite-Wayback
@@ -59,21 +62,21 @@ v) repacking the warfile as ROOT.war for deployment
     used.
     -->
     <property name="wayback.settings.file"
-              value="${wayback.conf.root}/settings.xml"/>
+              value="${wayback.conf.dir}/settings.xml"/>
 
     <!--
     A NetarchiveSuite specific wayback.xml file, for running a local copy
     of NetarchiveSuite-Wayback.
     -->
     <property name="wayback.wayback.xml.file"
-              value="${wayback.conf.root}/wayback.xml" />
+              value="${wayback.conf.dir}/wayback.xml" />
 
     <!--
     A NetarchiveSuite specific CDXCollection.xml file, for running a local
     copy of NetarchiveSuite-Wayback.
-    -->
+
     <property name="wayback.cdxcollection.xml.file"
-              value="${wayback.conf.root}/CDXCollection.xml" />
+              value="${wayback.conf.dir}/CDXCollection.xml" />-->
     <!--
     The name of the war-file to be generated. Note that for proxy-mode access
     to wayback it must be deployed in the ROOT context. One way of doing this
@@ -113,6 +116,7 @@ v) repacking the warfile as ROOT.war for deployment
         <copy todir="${wayback.tempdir}/WEB-INF">
             <fileset dir="${wayback.conf.dir}">
                 <include name="*.xml" />
+                <exclude name="settings.xml"/>
             </fileset>
         </copy>
         <copy todir="${wayback.tempdir}/WEB-INF/lib" flatten="yes">
@@ -143,10 +147,10 @@ v) repacking the warfile as ROOT.war for deployment
         </copy>
         <copy file="${wayback.settings.file}"
               tofile="${wayback.tempdir}/WEB-INF/conf/settings.xml" />
-        <copy file="${wayback.wayback.xml.file}"
+        <!--<copy file="${wayback.wayback.xml.file}"
               tofile="${wayback.tempdir}/WEB-INF/" />
         <copy file="${wayback.cdxcollection.xml.file}"
-              tofile="${wayback.tempdir}/WEB-INF/" />
+              tofile="${wayback.tempdir}/WEB-INF/" />-->
     </target>
 
     <target name="repack_warfile">

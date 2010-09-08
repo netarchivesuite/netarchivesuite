@@ -26,9 +26,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.common.webinterface.HTMLUtilsTester;
-import dk.netarkivet.common.webinterface.SiteSectionTester;
-
 /**
  * A suite of harvester webinterface tests.
  */
@@ -46,10 +43,8 @@ public class HarvesterWebinterfaceTesterSuite {
         // Not quite working with JSP compilation yet
         //suite.addTestSuite(HarveststatusPerdomainTester.class);
         suite.addTestSuite(HistorySiteSectionTester.class);
-        suite.addTestSuite(HTMLUtilsTester.class);
         suite.addTestSuite(ScheduleDefinitionTester.class);
         suite.addTestSuite(SelectiveHarvestTester.class);
-        suite.addTestSuite(SiteSectionTester.class);
         suite.addTestSuite(SnapshotHarvestDefinitionTester.class);
         suite.addTestSuite(HarvestStatusTester.class);
     }

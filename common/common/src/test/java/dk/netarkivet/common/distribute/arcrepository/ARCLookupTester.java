@@ -53,11 +53,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.arc.ARCKey;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.viewerproxy.ViewerProxySettings;
 
@@ -180,7 +180,7 @@ public class ARCLookupTester extends TestCase {
         BitarchiveRecord result
                 = new BitarchiveRecord(arc);
         arc.close();
-        byte[] wanted = TestUtils.inputStreamToBytes(result.getData(), (int) result.getLength());
+        byte[] wanted = StreamUtils.inputStreamToBytes(result.getData(), (int) result.getLength());
         assertEquals("Did not get expected data: ",
                 new String(got), new String(wanted));
     }

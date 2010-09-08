@@ -33,14 +33,13 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests running a web server, represented by the GUIWebServer() class.
  */
 public class GUIWebServerTester extends TestCase {
-    //TestInfo info = new TestInfo();
+
     private GUIWebServer server;
     ReloadSettings rs = new ReloadSettings();
 
@@ -153,6 +152,4 @@ public class GUIWebServerTester extends TestCase {
             //Expected
         }
     }
-
-
 }

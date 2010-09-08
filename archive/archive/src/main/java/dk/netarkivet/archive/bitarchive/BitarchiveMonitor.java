@@ -526,7 +526,6 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                 BitarchiveMonitor.this.notifyBatchEnded(this);
             }
         }
-
     }
 
     /**

@@ -102,11 +102,19 @@ public class CommonSettings {
             = "settings.common.batch.maxExceptions";
     
     /**
-     * <b>settings.common.batch.timeBetweenLogging</b>: <br>
+     * <b>settings.common.batch.loggingInterval</b>: <br/>
      * The time between logging the status of a batch job.
      */
     public static String BATCH_LOGGING_INTERVAL 
             = "settings.common.batch.loggingInterval";
+    
+    /**
+     * <b>settings.common.batch.defaultBatchTimeout</b>: <br/>
+     * The default timeout for batchjobs. This will be used for batchjobs which
+     * has the batchJobTimeout set to -1 (inherited value from FileBatchJob).
+     */
+    public static String BATCH_DEFAULT_TIMEOUT = 
+        "settings.common.batch.defaultBatchTimeout";
 
     /** 
      * <b>settings.common.monitorregistryClient.class</b>: <br>
@@ -235,15 +243,14 @@ public class CommonSettings {
      * part. */
     public static String SITESECTION_WEBAPPLICATION
             = "settings.common.webinterface.siteSection.webapplication";
-    
+
     /**
      * <b>settings.common.webinterface.harvestStatus.defaultPageSize</b>: <br>
      * The default number of jobs to show in the harvest status section,
      * on one result page. 
      */
     public static String HARVEST_STATUS_DFT_PAGE_SIZE
-            = "settings.common.webinterface.harvestStatus.defaultPageSize";
-
+            = "settings.common.webinterface.harvestStatus.defaultPageSize";    
     /** 
      * <b>settings.common.topLevelDomains.tld</b>: <br>
      * Valid top level domain, like .co.uk, .dk, .org. Is part of repeated 
@@ -394,5 +401,32 @@ public class CommonSettings {
      * The class must implement FreeSpaceProvider-Interface.  */
     public static String FREESPACE_PROVIDER_CLASS
             = "settings.common.freespaceprovider.class";
+
+    /**
+     * <b>settings.common.batch.batchjobs.batchjob.class</b>: <br/>
+     * The list of batchjobs to be runnable from the GUI. Must be the complete 
+     * path to the batchjob classes (e.g. 
+     * dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob).
+     * Must inherit FileBatchJob.
+     */
+    public static String BATCHJOBS_CLASS 
+            = "settings.common.batch.batchjobs.batchjob.class";
     
+    /**
+     * <b>settings.common.batch.batchjobs.batchjob.arcfile</b>: <br/>
+     * The list of the corresponding jar-files containing the batchjob.
+     * This will be used for LoadableJarBatchJobs. If no file is specified, 
+     * it is assumed, that the batchjob exists with the default classpath of 
+     * the involved applications (BitarchiveMonitor, ArcRepository, 
+     * GUIWebServer and BitArchive).
+     */
+    public static String BATCHJOBS_JARFILE 
+            = "settings.common.batch.batchjobs.batchjob.jarfile";    
+
+    /**
+     * <b>settings.common.batch.baseDir</b>: <br/>
+     * The directory where the resulting files will be placed when running a
+     * batchjob through the GUI interface.
+     */
+    public static String BATCHJOBS_BASEDIR = "settings.common.batch.baseDir";
 }

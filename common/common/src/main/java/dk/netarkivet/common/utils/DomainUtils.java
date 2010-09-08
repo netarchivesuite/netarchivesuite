@@ -40,7 +40,7 @@ import dk.netarkivet.common.Constants;
 public class DomainUtils {
     private static final Log log = LogFactory.getLog(DomainUtils.class);
 
-    /** Invalid characters in a domain name, according to RFC3490 */
+    /** Valid characters in a domain name, according to RFC3490 */
     public static final String DOMAINNAME_CHAR_REGEX_STRING
             = "[^\\0000-,.-/:-@\\[-`{-\\0177]+";
 

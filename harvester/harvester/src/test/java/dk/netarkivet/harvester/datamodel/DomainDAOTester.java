@@ -477,7 +477,8 @@ public class DomainDAOTester extends DataModelTestCase {
         List<String> definedregexps = new ArrayList<String>();
         definedregexps.add(".*dr\\.dk.*/.*\\.cgi");
         definedregexps.add(".*statsbiblioteket\\.dk/gentofte.*");
-        d.setCrawlerTraps(definedregexps);
+        boolean strictMode = true;
+        d.setCrawlerTraps(definedregexps, strictMode);
 
         //write and read the crawler traps
         DomainDAO.getInstance().create(d);

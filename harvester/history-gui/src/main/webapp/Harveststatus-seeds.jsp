@@ -95,7 +95,7 @@ for (String domainname : result) {
 }
 %>
 </table>
-</p>
+<p>
 <table><tr><td>
 	<fmt:message key="harveststatus.seeds.total"/>: <%=domainCount%> 
 	<fmt:message key="harveststatus.seeds.domains"/> / <%=seedCount%>

@@ -63,6 +63,7 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * The Arcrepository handles the communication with the different replicas.
@@ -326,7 +327,8 @@ public class ArcRepository implements CleanupIF {
         NetarkivetMessage msg;
         
         // Retrieve the checksum of the file.
-        msg = replicaClient.sendGetChecksumMessage(Channels.getTheRepos(), filename);
+        msg = replicaClient.sendGetChecksumMessage(Channels.getTheRepos(), 
+                filename);
 
         outstandingChecksumFiles.put(msg.getID(), filename);
         log.debug("Checksum job message submitted for file '" + filename 
@@ -739,8 +741,7 @@ public class ArcRepository implements CleanupIF {
             String readFileName = "";
             String checksum = "";
             String[] tokens = line.split(
-                    dk.netarkivet.archive.arcrepository
-                      .bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
+                    ChecksumJob.STRING_FILENAME_SEPARATOR);
             boolean ignoreLine = false;
             
             //Check line format
@@ -1079,8 +1080,8 @@ public class ArcRepository implements CleanupIF {
             arcReposhandler = null;
         }
         if (connectedReplicas != null) {
-            for (ReplicaClient cba : connectedReplicas.values()) {
-                cba.close();
+            for (ReplicaClient rc : connectedReplicas.values()) {
+                rc.close();
             }
             connectedReplicas.clear();
         }

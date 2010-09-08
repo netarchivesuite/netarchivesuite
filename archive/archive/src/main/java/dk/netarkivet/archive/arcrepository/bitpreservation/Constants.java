@@ -30,11 +30,6 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
  */
 public final class Constants {
 
-    /** Characters used for separating a file identifier 
-     * from the checksum in the output from a checksum job.
-     */
-    public static final String STRING_FILENAME_SEPARATOR = "##";
-
     /**
      * On min in milliseconds.
      */

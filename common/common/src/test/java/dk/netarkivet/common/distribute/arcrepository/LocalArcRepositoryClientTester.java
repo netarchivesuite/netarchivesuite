@@ -25,18 +25,15 @@ package dk.netarkivet.common.distribute.arcrepository;
 import java.io.File;
 import java.io.IOException;
 
-import com.sun.messaging.jmq.util.MD5;
-
 import junit.framework.TestCase;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
-import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
+import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;

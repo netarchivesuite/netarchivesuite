@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestInfo;
@@ -54,39 +55,19 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
  *
  */
 public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
-        implements MessageListener {
+        implements MessageListener, ComponentLifeCycle {
     /**
      * The JobDAO.
      */
     private final JobDAO jobDAO = JobDAO.getInstance();
 
-    /**
-     * The unique instance of this class.
-     */
-    private static HarvestSchedulerMonitorServer instance;
-
     /** The private logger for this class. */
     private final Log log = LogFactory.getLog(getClass().getName());
-
-    /**
-     * private to ensure use of getInstance method.
-     */
-    private HarvestSchedulerMonitorServer() {
+    
+    @Override
+    public void start() {
         JMSConnectionFactory.getInstance().setListener(
                 Channels.getTheSched(), this);
-    }
-
-    /**
-     * Get the instance of the HarvestSchedulerMonitor.
-     *
-     * @return The HarvestScheduler instance
-     */
-    static HarvestSchedulerMonitorServer getInstance() {
-        if (instance == null) {
-            instance =
-            new HarvestSchedulerMonitorServer();
-        }
-        return instance;
     }
 
     /**
@@ -304,23 +285,12 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
     }
 
     /**
-     * Close down the HarvestSchedulerMonitorServer singleton.
-     * This removes the HarvestSchedulerMonitorServer as listener
-     * to the JMS scheduler Channel, and resets the singleton.
-     *
+     * Removes the HarvestSchedulerMonitorServer as listener
+     * to the JMS scheduler Channel.
      */
-    public void close() {
+    @Override
+    public void shutdown() {
         JMSConnectionFactory.getInstance().removeListener(
                 Channels.getTheSched(), this);
-        cleanup();
-    }
-
-    /**
-     *  Cleanup method. Resets HarvestSchedulerMonitorServer singleton.
-     *  Note: this cleanup() method is called from
-     *  HarvestScheduler.cleanup(), therefore it needs to be public
-     */
-    public void cleanup() {
-        instance = null;
     }
 }

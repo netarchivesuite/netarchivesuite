@@ -32,6 +32,9 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.QueueBrowser;
+import javax.jms.QueueSession;
 import javax.jms.Session;
 import java.util.Calendar;
 import java.util.Collections;
@@ -78,7 +81,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * queues and topics.
      */
     protected Session session;
-
+    
     /** Map for caching message producers. */
     protected final Map<String, MessageProducer> producers
             = Collections.synchronizedMap(
@@ -277,6 +280,33 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         ArgumentNotValid.checkNotNull(ml, "MessageListener ml");
         removeListener(ml, mq.getName());
     }
+
+	/**
+	 * Creates a QueueBrowser object to peek at the messages on the specified
+	 * queue.
+	 * 
+	 * @return A new QueueBrowser instance with access to the specified queue
+	 * @throws JMSException
+	 *             If unable to create the specified queue browser
+	 */
+	public QueueBrowser createQueueBrowser(ChannelID queueID)
+			throws JMSException {
+		ArgumentNotValid.checkNotNull(queueID, "ChannelID queueID");
+		Queue queue = getQueueSession().createQueue(queueID.getName());
+		return getQueueSession().createBrowser(queue);
+    }
+
+	/**
+	 * Provides a QueueSession instance. Functionality for retrieving a
+	 * <code>QueueSession</code> object isen't available on the generic
+	 * <code>JMSConnectionFactory</code>
+	 * 
+	 * @return A <code>QueueSession</code> object connected to the current JMS
+	 *         broker
+	 * @throws JMSException
+	 *             Failure to retrieve the <code>QueueBrowser</code> JMS Browser
+	 */
+	public abstract QueueSession getQueueSession() throws JMSException;
 
     /**
      * Clean up. Remove close connection, remove shutdown hook and null the
@@ -536,7 +566,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             String channel, MessageListener messageListener) {
         return channel + CONSUMER_KEY_SEPARATOR + messageListener;
     }
-
+    
     /**
      * Get the channelName embedded in a consumerKey.
      *

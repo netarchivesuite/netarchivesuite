@@ -12,6 +12,8 @@ ssh test@kb-test-adm-001.kb.dk " cd ~; if [ -e /home/test/TEST/conf/jmxremote.pa
 ssh test@kb-test-adm-001.kb.dk " cd ~; if [ -e /home/test/TEST/conf/jmxremote.access ]; then chmod u+rwx /home/test/TEST/conf/jmxremote.access; fi; "
 echo copying settings and scripts
 scp -r kb-test-adm-001.kb.dk/* test@kb-test-adm-001.kb.dk:/home/test/TEST/conf/
+echo Installing external jar files.
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then scp -r tests/dk/netarkivet/deploy/data/working/externals test@kb-test-adm-001.kb.dk:/home/test/TEST/external; fi;
 echo Copying harvest definition database
 scp tests/dk/netarkivet/deploy/data/working/database.jar test@kb-test-adm-001.kb.dk:/home/test/TEST/harvestdefinitionbasedir/fullhddb.jar
 echo Unzipping harvest definition database
@@ -38,6 +40,8 @@ if [ $( ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c if exist TEST\\conf\\j
 if [ $( ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c if exist TEST\\conf\\jmxremote.access echo 1 ) ]; then echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c cacls TEST\\conf\\jmxremote.access /P BITARKIV\\ba-test:F; fi;
 echo copying settings and scripts
 scp -r kb-test-bar-010.bitarkiv.kb.dk/* ba-test@kb-test-bar-010.bitarkiv.kb.dk:TEST\\conf\\
+echo Installing external jar files.
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk md "c:\\Documents and Settings\\ba-test\\TEST\\external"; scp -r tests/dk/netarkivet/deploy/data/working/externals/* ba-test@kb-test-bar-010.bitarkiv.kb.dk:"c:\\Documents and Settings\\ba-test\\TEST\\external"; fi;
 echo make password and access files readonly
 ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.access TEST\\conf\\access.privileges"
 ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.password TEST\\.\\jmxremote.password"
@@ -58,6 +62,8 @@ if [ $( ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c if exist TEST\\conf\\j
 if [ $( ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c if exist TEST\\conf\\jmxremote.access echo 1 ) ]; then echo Y | ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c cacls TEST\\conf\\jmxremote.access /P BITARKIV\\ba-test:F; fi;
 echo copying settings and scripts
 scp -r kb-test-bar-011.bitarkiv.kb.dk/* ba-test@kb-test-bar-011.bitarkiv.kb.dk:TEST\\conf\\
+echo Installing external jar files.
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk md "c:\\Documents and Settings\\ba-test\\TEST\\external"; scp -r tests/dk/netarkivet/deploy/data/working/externals/* ba-test@kb-test-bar-011.bitarkiv.kb.dk:"c:\\Documents and Settings\\ba-test\\TEST\\external"; fi;
 echo make password and access files readonly
 ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.access TEST\\conf\\access.privileges"
 ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.password TEST\\.\\jmxremote.password"
@@ -76,6 +82,8 @@ ssh test@kb-test-har-001.kb.dk " cd ~; if [ -e /home/test/TEST/conf/jmxremote.pa
 ssh test@kb-test-har-001.kb.dk " cd ~; if [ -e /home/test/TEST/conf/jmxremote.access ]; then chmod u+rwx /home/test/TEST/conf/jmxremote.access; fi; "
 echo copying settings and scripts
 scp -r kb-test-har-001.kb.dk/* test@kb-test-har-001.kb.dk:/home/test/TEST/conf/
+echo Installing external jar files.
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then scp -r tests/dk/netarkivet/deploy/data/working/externals test@kb-test-har-001.kb.dk:/home/test/TEST/external; fi;
 echo make scripts executable
 ssh test@kb-test-har-001.kb.dk "chmod 700 /home/test/TEST/conf/*.sh "
 echo make password and access files readonly
@@ -96,6 +104,8 @@ ssh test@kb-test-har-002.kb.dk " cd ~; if [ -e /home/test/TEST/conf/jmxremote.pa
 ssh test@kb-test-har-002.kb.dk " cd ~; if [ -e /home/test/TEST/conf/jmxremote.access ]; then chmod u+rwx /home/test/TEST/conf/jmxremote.access; fi; "
 echo copying settings and scripts
 scp -r kb-test-har-002.kb.dk/* test@kb-test-har-002.kb.dk:/home/test/TEST/conf/
+echo Installing external jar files.
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then scp -r tests/dk/netarkivet/deploy/data/working/externals test@kb-test-har-002.kb.dk:/home/test/TEST/external; fi;
 echo make scripts executable
 ssh test@kb-test-har-002.kb.dk "chmod 700 /home/test/TEST/conf/*.sh "
 echo make password and access files readonly
@@ -116,6 +126,8 @@ ssh test@kb-test-acs-001.kb.dk " cd ~; if [ -e /home/test/TEST/conf/jmxremote.pa
 ssh test@kb-test-acs-001.kb.dk " cd ~; if [ -e /home/test/TEST/conf/jmxremote.access ]; then chmod u+rwx /home/test/TEST/conf/jmxremote.access; fi; "
 echo copying settings and scripts
 scp -r kb-test-acs-001.kb.dk/* test@kb-test-acs-001.kb.dk:/home/test/TEST/conf/
+echo Installing external jar files.
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then scp -r tests/dk/netarkivet/deploy/data/working/externals test@kb-test-acs-001.kb.dk:/home/test/TEST/external; fi;
 echo make scripts executable
 ssh test@kb-test-acs-001.kb.dk "chmod 700 /home/test/TEST/conf/*.sh "
 echo make password and access files readonly

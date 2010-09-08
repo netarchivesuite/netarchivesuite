@@ -173,7 +173,7 @@ public class HeritrixLauncherTester extends TestCase {
      */
     public void testStartMissingOrderFile() {
         try {
-        	HeritrixLauncherFactory.getInstance(
+            HeritrixLauncherFactory.getInstance(
                     new HeritrixFiles(mtf.newTmpDir(), 42, 42));
             fail("Expected IOFailure");
         } catch (ArgumentNotValid e) {
@@ -751,6 +751,12 @@ public class HeritrixLauncherTester extends TestCase {
            public long deleteURIs(String arg0, String arg1) {
         	   return 0L;
            }
+
+        @Override
+        public void finalTasks() {
+            // TODO Auto-generated method stub
+            
+        }
 
 
        }

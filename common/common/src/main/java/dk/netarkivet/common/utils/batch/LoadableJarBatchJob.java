@@ -23,25 +23,20 @@
 package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
-import java.io.OutputStream;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.jar.JarFile;
-import java.util.jar.JarEntry;
-import java.util.Enumeration;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.StreamUtils;
 
 /**
  * This implementation of FileBatchJob is a bridge to a jar file given as a File
@@ -60,111 +55,36 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /** The name of the loaded Job. */
     private String jobClass;
-
-    /** Java package separator. */
-    private static final String JAVA_PACKAGE_SEPARATOR = ".";
-
-    /** Directory separator. */
-    private static final String DIRECTOR_SEPARATOR = "/";
-
-    /**
-     * ByteJarLoader is a ClassLoader that stores java classes in a map where
-     * the key to the map is the class name, and the value is the class stored
-     * as a byte array.
-     */
-    static class ByteJarLoader extends ClassLoader implements Serializable {
-        /** The log. */
-        transient Log log = LogFactory.getLog(this.getClass().getName());
-
-        /** The map, that holds the class data. */
-        Map<String, byte[]> binaryData = new HashMap<String, byte[]>();
-
-        /**
-         * Constructor for the ByteLoader.
-         * 
-         * @param files
-         *            An array of files, which are assumed to be jar-files, but
-         *            they need not have the extension .jar
-         */
-        public ByteJarLoader(File... files) {
-            ArgumentNotValid.checkNotNull(files, "File ... files");
-            ArgumentNotValid.checkTrue(files.length != 0,
-                    "Should not be empty array");
-            for (File file : files) {
-                try {
-                    JarFile jarFile = new JarFile(file);
-                    for (Enumeration<JarEntry> e = jarFile.entries(); e
-                            .hasMoreElements();) {
-                        JarEntry entry = e.nextElement();
-                        String name = entry.getName();
-                        InputStream in = jarFile.getInputStream(entry);
-                        ByteArrayOutputStream out = new ByteArrayOutputStream(
-                                (int) entry.getSize());
-                        StreamUtils.copyInputStreamToOutputStream(in, out);
-                        log.debug("Entering data for class '" + name + "'");
-                        binaryData.put(name, out.toByteArray());
-                    }
-                } catch (IOException e) {
-                    throw new IOFailure("Failed to load jar file '"
-                            + file.getAbsolutePath() + "': " + e);
-                }
-            }
-        }
-
-        /**
-         * Lookup and return the Class with the given className. This method overrides the
-         * ClassLoader.findClass method.
-         * 
-         * @param className
-         *            The name of the class to lookup
-         * @throws ClassNotFoundException
-         *             If the class could not be found
-         * @return the Class with the given className.
-         * 
-         */
-        public Class findClass(String className) throws ClassNotFoundException {
-            ArgumentNotValid.checkNotNullOrEmpty(className, "String className");
-            // replace all dots with '/' in the className before looking it up
-            // in the
-            // hashmap
-            // Note: The class is stored in the hashmap with a .class extension
-            String realClassName = className.replace(JAVA_PACKAGE_SEPARATOR,
-                    DIRECTOR_SEPARATOR)
-                    + ".class";
-
-            if (binaryData.isEmpty()) {
-                log.warn("No data loaded for class with name '" + className
-                        + "'");
-            }
-            if (binaryData.containsKey(realClassName)) {
-                final byte[] bytes = binaryData.get(realClassName);
-                return defineClass(className, bytes, 0, bytes.length);
-            } else {
-                return super.findClass(className);
-            }
-        }
-    }
+    
+    /** The arguments for instantiating the batchjob.*/
+    private List<String> args;
 
     /**
      * Load a given class from a jar file.
      * 
-     * @param jarFiles
-     *            The jar file(s) to load from. This file may also contain other
-     *            classes required by the FileBatchJob class.
-     * @param jobClass
-     *            The class to load initially. This must be a subclass of
-     *            FileBatchJob
+     * @param jarFiles The jar file(s) to load from. This file may also contain 
+     * other classes required by the FileBatchJob class.
+     * @param arguments The arguments for the batchjob.
+     * @param jobClass The class to load initially. This must be a subclass of
+     * FileBatchJob.
+     * @throws ArgumentNotValid If any of the arguments are null.
      */
-    public LoadableJarBatchJob(String jobClass, File... jarFiles) {
+    public LoadableJarBatchJob(String jobClass, List<String> arguments, 
+            File... jarFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jarFiles, "File jarFile");
         ArgumentNotValid.checkNotNullOrEmpty(jobClass, "String jobClass");
+        ArgumentNotValid.checkNotNull(arguments, "List<String> arguments");
         this.jobClass = jobClass;
+        this.args = arguments;
         StringBuffer res = new StringBuffer(
                 "Loading loadableJarBatchJob using jarfiles: ");
         for (File jarFile : jarFiles) {
             res.append(jarFile.getName());
         }
         res.append(" and jobclass '" + jobClass);
+        if(!args.isEmpty()) {
+            res.append(", and arguments: '" + args + "'.");
+        }
         log.info(res.toString());
         multipleClassLoader = new ByteJarLoader(jarFiles);
         
@@ -179,8 +99,33 @@ public class LoadableJarBatchJob extends FileBatchJob {
      */
     private void loadBatchJob() throws IOFailure {
         try {
-            loadedJob = (FileBatchJob) multipleClassLoader.loadClass(jobClass)
-                    .newInstance();
+            Class batchClass = multipleClassLoader.loadClass(jobClass);
+            
+            if(args.size() == 0) {
+                // just load if no arguments.
+                loadedJob = (FileBatchJob) batchClass.newInstance();
+            } else {
+                // get argument classes (string only).
+                Class[] argClasses = new Class[args.size()];
+                for(int i = 0; i < args.size(); i++) {
+                    argClasses[i] = String.class;
+                }
+
+                // extract the constructor and instantiate the batchjob.
+                Constructor con = batchClass.getConstructor(argClasses);
+                loadedJob = (FileBatchJob) con.newInstance(args.toArray());
+                log.debug("Loaded batchjob with arguments: '" + args + "'.");
+            }
+        } catch (InvocationTargetException e) {
+            final String msg = "Not allowed to invoke the batchjob '" 
+                + jobClass + "'.";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
+        } catch (NoSuchMethodException e) {
+            final String msg = "No constructor for the arguments '" + args 
+                    + "' can be found for the batchjob '" + jobClass + "'.";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
         } catch (InstantiationException e) {
             final String msg = "Cannot instantiate loaded job class";
             log.warn(msg, e);
@@ -279,5 +224,25 @@ public class LoadableJarBatchJob extends FileBatchJob {
             ClassNotFoundException {
         in.defaultReadObject();
         log = LogFactory.getLog(this.getClass().getName());
+    }
+
+    @Override
+    public boolean postProcess(InputStream input, OutputStream output) {
+        ArgumentNotValid.checkNotNull(input, "InputStream input");
+        ArgumentNotValid.checkNotNull(output, "OutputStream output");
+
+        // Let the loaded job handle the post processing. 
+        log.debug("Post-processing in the loaded batchjob.");
+        loadBatchJob();
+        return loadedJob.postProcess(input, output);
+    }
+    
+    /**
+     * Method for retrieving the name of the loaded class.
+     *  
+     * @return The name of the loaded class.
+     */
+    public String getLoadedJobClass() {
+        return jobClass;
     }
 }

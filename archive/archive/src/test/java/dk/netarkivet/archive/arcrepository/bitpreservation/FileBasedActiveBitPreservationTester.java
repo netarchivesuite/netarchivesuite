@@ -73,7 +73,9 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -357,7 +359,9 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         // into an array.
         final String[] replica = new String[1];
         MockupArcRepositoryClient.instance = new MockupArcRepositoryClient() {
-            public BatchStatus batch(FileBatchJob job, String replicaId) {
+            @Override
+            public BatchStatus batch(FileBatchJob job, String replicaId, 
+                    String... args) {
                 replica[0] = replicaId;
                 File file = new File(
                         new File(TestInfo.WORKING_DIR, "checksums"),
@@ -695,7 +699,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             FileUtils.copyFile(file, f);
         }
 
-        public BatchStatus batch(FileBatchJob job, String locationName) {
+        public BatchStatus batch(FileBatchJob job, String locationName, 
+                String... args) {
             if (overrideBatch != null) {
                 return overrideBatch;
             }

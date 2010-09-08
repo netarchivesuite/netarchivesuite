@@ -270,6 +270,9 @@ public final class ScriptConstants {
     /** echo Creating directories.*/
     static final String ECHO_CREATING_DIRECTORIES = 
         "echo Creating directories.";
+    /** echo Installing external jar files.*/
+    static final String ECHO_INSTALLING_EXTERNAL_JAR_FILES = 
+        "echo Installing external jar files.";
     /** echo make scripts executable.*/
     static final String ECHO_MAKE_EXECUTABLE = "echo make scripts executable";
     /** echo Starting linux application.*/

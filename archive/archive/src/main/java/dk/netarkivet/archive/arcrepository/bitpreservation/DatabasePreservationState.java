@@ -189,7 +189,8 @@ public class DatabasePreservationState implements PreservationState {
        ArgumentNotValid.checkNotNull(replica, "Replica replica");
        
        // return "" if the file is missing.
-       if(entries.get(replica).getFileListState().equals(FileListStatus.MISSING)) {
+       if(entries.get(replica).getFileListState().equals(
+               FileListStatus.MISSING)) {
            return "";
        }
        

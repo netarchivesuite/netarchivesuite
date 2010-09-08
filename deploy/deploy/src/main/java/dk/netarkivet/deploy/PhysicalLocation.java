@@ -66,6 +66,8 @@ public class PhysicalLocation {
     private File arcDatabaseFile;
     /** The optional choice for resetting tempDir.*/
     private boolean resetDirectory;
+    /** The folder for the external jar libraries.*/
+    private File jarFolder;
 
     /**
      * The physical locations is referring to the position in the real world
@@ -81,14 +83,16 @@ public class PhysicalLocation {
      * @param dbFile The harvest definition database.
      * @param arcdbFile The archive database. 
      * @param resetDir Whether the temporary directory should be reset.
+     * @param externalJarFolder The folder containing the external jar 
+     * library files.
      * @throws ArgumentNotValid If one of the following arguments are null:
      * subTreeRoot, parentSettings, param, logProp, securityPolicy; or if the
      * netarchiveSuiteSource if either null or empty. 
      */
     public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource, File logProp,
-            File securityPolicy, File dbFile, File arcdbFile, boolean resetDir) 
-            throws ArgumentNotValid {
+            File securityPolicy, File dbFile, File arcdbFile, boolean resetDir,
+            File externalJarFolder) throws ArgumentNotValid {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(subTreeRoot, 
                 "Element elem (physLocRoot)");
@@ -110,6 +114,7 @@ public class PhysicalLocation {
         databaseFile = dbFile;
         arcDatabaseFile = arcdbFile;
         resetDirectory = resetDir;
+        jarFolder = externalJarFolder;
         
         // retrieve the specific settings for this instance 
         Element tmpSet = physLocRoot.element(
@@ -169,12 +174,12 @@ public class PhysicalLocation {
                 machines.add(new WindowsMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
                         securityPolicyFile, databaseFile, arcDatabaseFile, 
-                        resetDirectory));
+                        resetDirectory, jarFolder));
             } else {
                 machines.add(new LinuxMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
                         securityPolicyFile, databaseFile, arcDatabaseFile,
-                        resetDirectory));
+                        resetDirectory, jarFolder));
             }
         }
     }

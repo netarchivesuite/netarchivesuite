@@ -16,6 +16,7 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ZipUtils;
+import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -52,6 +53,13 @@ public class CreateIndexTester extends TestCase {
         JMSConnectionFactory.getInstance().removeListener(Channels.getTheIndexServer(), listener);
         mjms.tearDown();
         rs.tearDown();
+    }
+    
+    /**
+     * Verify that it has a utility class constructor.
+     */
+    public void testConstructor() {
+        ReflectUtils.testUtilityConstructor(CreateIndex.class);
     }
     
     /**

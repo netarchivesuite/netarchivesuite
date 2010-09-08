@@ -23,7 +23,7 @@ Date:        $Date$
 dk.netarkivet.common.utils.I18n,
 dk.netarkivet.common.webinterface.HTMLUtils,
 dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList,
-dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO,
+dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO,
 dk.netarkivet.harvester.webinterface.TrapAction, dk.netarkivet.harvester.webinterface.TrapAction"
          pageEncoding="UTF-8"
         %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
@@ -46,7 +46,7 @@ dk.netarkivet.harvester.webinterface.TrapAction, dk.netarkivet.harvester.webinte
     // First do any request updates
     TrapAction.processRequest(pageContext, I18N);
     //Now display the results
-    GlobalCrawlerTrapListDBDAO dao = GlobalCrawlerTrapListDBDAO.getInstance();
+    GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
     List<GlobalCrawlerTrapList> activeTrapLists = dao.getAllActive();
     List<GlobalCrawlerTrapList> inactiveTrapLists = dao.getAllInActive();
     HTMLUtils.generateHeader(pageContext);

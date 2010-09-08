@@ -66,49 +66,81 @@ public class BitpreserveFileState {
     private BitpreserveFileState() { }
     
     /**
-     * Extract the name of the bitarchive
-     * (parameter Constants.BITARCHIVE_NAME_PARAM) and whether to update missing
-     * files (parameter Constants.FIND_MISSING_FILES_PARAM) or checksums
-     * (parameter Constants.CHECKSUM_PARAM).
-     *
-     * Does nothing if parameter 'bitarchive' is not set.
+     * Extract the name of the replica
+     * (parameter Constants.BITARCHIVE_NAME_PARAM) and the type of update 
+     * requested (parameter Constants.UPDATE_TYPE_PARAM). The latter is set to
+     * to Constants.FIND_MISSING_FILES_OPTION if the request is to update 
+     * missing files, or to Constants.CHECKSUM_OPTION if the request is to 
+     * update the checksum information.
      *
      * @param context the current JSP context
      *
-     * @throws ForwardedToErrorPage if an unknown bitarchive is posted.
+     * @throws ForwardedToErrorPage if an unknown bitarchive or update type 
+     * is posted, or one of the two required parameters are missing. 
      * @throws ArgumentNotValid If the context is null.
+     * @return an I18N string telling which type of update has just been 
+     * initiated. 
      */
-    public static void processUpdateRequest(PageContext context) 
+    public static String processUpdateRequest(PageContext context) 
             throws ArgumentNotValid, ForwardedToErrorPage {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ServletRequest request = context.getRequest();
+        
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
-        if (bitarchiveName == null) { 
-            log.debug("No replica name found in request, as parameter '"
-                    +  Constants.BITARCHIVE_NAME_PARAM + "' was not set. "
-                    + "Returning without doing anything");
-            return;
+        if (bitarchiveName == null) {
+            HTMLUtils.forwardWithErrorMessage(context, I18N,
+                    "errormsg;missing.parameter.0",
+                    Constants.BITARCHIVE_NAME_PARAM);
+            
+            throw new ForwardedToErrorPage("Parameter '" 
+                    + Constants.BITARCHIVE_NAME_PARAM + "' not set");
         }
+        
+        String updateTypeRequested
+                = request.getParameter(Constants.UPDATE_TYPE_PARAM);
+        if (updateTypeRequested == null) {
+            HTMLUtils.forwardWithErrorMessage(context, I18N,
+                    "errormsg;missing.parameter.0",
+                    Constants.UPDATE_TYPE_PARAM);
+            
+            throw new ForwardedToErrorPage("Parameter '" 
+                    + Constants.UPDATE_TYPE_PARAM + "' not set");
+        }
+                
         if (!Replica.isKnownReplicaName(bitarchiveName)) {
             HTMLUtils.forwardWithErrorMessage(context, I18N,
                                               "errormsg;unknown.bitarchive.0",
                                               bitarchiveName);
-            throw new ForwardedToErrorPage("Unknown bitarchive: "
+            throw new ForwardedToErrorPage("Unknown replica: "
                                            + bitarchiveName);
         }
+        
         Replica bitarchive = Replica.getReplicaFromName(bitarchiveName);
-
-        String findmissingfiles =
-                request.getParameter(Constants.FIND_MISSING_FILES_PARAM);
-        String checksum = request.getParameter(Constants.CHECKSUM_PARAM);
-
-        ActiveBitPreservation preserve
-                = ActiveBitPreservationFactory.getInstance();
-        if (findmissingfiles != null) {
-            preserve.findMissingFiles(bitarchive);
-        } else if (checksum != null) {
-            preserve.findChangedFiles(bitarchive);
+       
+        Locale l = context.getResponse().getLocale();
+        String statusmessage = HTMLUtils.escapeHtmlValues(I18N.getString(
+                l, "initiating;update.of.0.for.replica.1",
+                updateTypeRequested, bitarchiveName));        
+        if (updateTypeRequested.equalsIgnoreCase(
+                Constants.FIND_MISSING_FILES_OPTION)) {
+            // Start new thread for findmissing files action.
+            new BitpreservationUpdateThread(bitarchive, 
+                    BitpreservationUpdateType.FINDMISSING).start();
+            return statusmessage;
+            
+        } else if (updateTypeRequested.equalsIgnoreCase(
+                Constants.CHECKSUM_OPTION)) {
+            // Start new thread for finding corrupt files action.
+            new BitpreservationUpdateThread(bitarchive, 
+                    BitpreservationUpdateType.CHECKSUM).start();
+            return statusmessage;
+        } else {
+            HTMLUtils.forwardWithErrorMessage(context, I18N,
+                    "errormsg;unknown.filestatus.update.type.0",
+                    updateTypeRequested);
+            throw new ForwardedToErrorPage("Unknown filestatus update type: "
+                 + bitarchiveName);
         }
     }
 
@@ -166,12 +198,12 @@ public class BitpreserveFileState {
                     preserve.uploadMissingFiles(ba, filename);
                     res.append(HTMLUtils.escapeHtmlValues(I18N.getString(
                             l,
-                            "file.0.has.been.restored.in.bitarchive.on.1",
+                            "file.0.has.been.restored.in.replica.on.1",
                             filename, ba.getName())));
                     res.append("<br/>");
                 } catch (Exception e) {
                     res.append(I18N.getString(
-                            l, "errormsg;attempt.at.restoring.0.in.bitarchive"
+                            l, "errormsg;attempt.at.restoring.0.in.replica"
                             + ".at.1.failed", filename, ba));
                     res.append("<br/>");
                     res.append(e.getMessage());
@@ -305,7 +337,7 @@ public class BitpreserveFileState {
             } else if (credentials == null) { // param CREDENTIALS_PARAM not set
                 res.append(I18N.getString(
                         l,
-                        "errormsg;lacking.privileges.to.correct.in.bitarchive")
+                        "errormsg;lacking.privileges.to.correct.in.replica")
                 );
                 res.append("<br/>");
             } else {
@@ -320,7 +352,7 @@ public class BitpreserveFileState {
                     res.append("<br/>");
                 } catch (Exception e) {
                     res.append(I18N.getString(
-                            l, "errormsg;attempt.at.restoring.0.in.bitarchive"
+                            l, "errormsg;attempt.at.restoring.0.in.replica"
                             + ".at.1.failed", filename, bitarchive));
                     res.append("<br/>");
                     res.append(e.getMessage());
@@ -397,7 +429,8 @@ public class BitpreserveFileState {
                     + HTMLUtils.localiseLong(
                       activeBitPreservation.getNumberOfFiles(replica), locale));
         out.println("<br/>");
-        long numberOfMissingFiles = activeBitPreservation.getNumberOfMissingFiles(replica);
+        long numberOfMissingFiles
+            = activeBitPreservation.getNumberOfMissingFiles(replica);
         out.println(I18N.getString(
                 locale,
                 "missing.files")
@@ -414,7 +447,8 @@ public class BitpreserveFileState {
             out.print("</a>");
         }
         out.println("<br/>");
-        Date lastMissingFilesupdate = activeBitPreservation.getDateForMissingFiles(replica);
+        Date lastMissingFilesupdate 
+            = activeBitPreservation.getDateForMissingFiles(replica);
         if (lastMissingFilesupdate == null) {
             lastMissingFilesupdate = new Date(0);
         }
@@ -423,8 +457,9 @@ public class BitpreserveFileState {
                 lastMissingFilesupdate));
         out.println("<br/>");
 
-        out.println("<a href=\"" + Constants.FILESTATUS_PAGE + "?"
-                    + Constants.FIND_MISSING_FILES_PARAM + "=1&amp;"
+        out.println("<a href=\"" + Constants.FILESTATUS_UPDATE_PAGE + "?"
+                + Constants.UPDATE_TYPE_PARAM + "=" 
+                    + Constants.FIND_MISSING_FILES_OPTION + "&amp;"
                     + (Constants.BITARCHIVE_NAME_PARAM
                        + "=" + HTMLUtils
                 .encodeAndEscapeHTML(replica.getName())) + "\">" + I18N
@@ -459,7 +494,8 @@ public class BitpreserveFileState {
         out.println("<br/>");
 
         //Number of changed files
-        long numberOfChangedFiles = bitPreservation.getNumberOfChangedFiles(replica);
+        long numberOfChangedFiles
+            = bitPreservation.getNumberOfChangedFiles(replica);
         out.println(I18N.getString(locale, "number.of.files.with.error")
                     + "&nbsp;"
                     + HTMLUtils.localiseLong(numberOfChangedFiles, locale));
@@ -487,10 +523,10 @@ public class BitpreserveFileState {
         out.println("<br/>");
 
         //Link for running a new job
-        out.println("<a href=\"" + Constants.FILESTATUS_PAGE + "?"
-                    + Constants.CHECKSUM_PARAM + "=1&amp;"
-                    + (Constants.BITARCHIVE_NAME_PARAM
-                       + "=" + HTMLUtils
+        out.println("<a href=\"" + Constants.FILESTATUS_UPDATE_PAGE + "?"
+                    + Constants.UPDATE_TYPE_PARAM + "=" 
+                    + Constants.CHECKSUM_OPTION + "&amp;" 
+                    + (Constants.BITARCHIVE_NAME_PARAM + "=" + HTMLUtils
                 .encodeAndEscapeHTML(replica.getName())) + "\">" + I18N
                 .getString(locale, "update") + "</a>");
 

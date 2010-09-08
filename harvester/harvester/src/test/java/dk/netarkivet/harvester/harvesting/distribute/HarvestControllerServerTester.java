@@ -48,7 +48,6 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -86,9 +85,6 @@ public class HarvestControllerServerTester extends TestCase {
 
     /** The message to write to log when stopping the server. */
     private static final String CLOSE_MESSAGE = "Closing HarvestControllerServer.";
-
-    /* The client and server used for testing */
-    HarvestControllerClient hcc;
 
     HarvestControllerServer hcs;
 
@@ -145,9 +141,6 @@ public class HarvestControllerServerTester extends TestCase {
      * @throws NoSuchFieldException
      */
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
-        if (hcc != null) {
-            hcc.close();
-        }
         if (hcs != null) {
             hcs.close();
         }
@@ -197,22 +190,12 @@ public class HarvestControllerServerTester extends TestCase {
         } catch (PermissionDenied e) {
             //expected
         }
-        String priority = Settings.get(
-                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        ChannelID result;
-        if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
-            result = Channels.getAnyLowpriorityHaco();
-        } else
-        {
-            if (priority.equals(JobPriority.HIGHPRIORITY.toString())) {
-                result = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID(priority + " is not a valid priority");
-        }
+        JobPriority priority = JobPriority.valueOf(
+                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
+        ChannelID channel = JobChannelUtil.getChannel(priority);
         assertEquals("Should have no listeners to the HACO queue",
                      0, ((JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance())
-                         .getListeners(result).size());
+                .getInstance()).getListeners(channel).size());
     }
 
     /**
@@ -241,7 +224,6 @@ public class HarvestControllerServerTester extends TestCase {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
                 .getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
-        hcc = HarvestControllerClient.getInstance();
         // make a dummy job
         Job j = TestInfo.getJob();
         j.setJobID(1L);
@@ -316,19 +298,10 @@ public class HarvestControllerServerTester extends TestCase {
         theJob = TestInfo.getJob();
         theJob.setStatus(JobStatus.DONE);
         theJob.setJobID(new Long(42L));
-        String priority = Settings.get(
-                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        ChannelID result;
-        if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
-            result = Channels.getAnyLowpriorityHaco();
-        } else
-        {
-            if (priority.equals(JobPriority.HIGHPRIORITY.toString())) {
-                result = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID(priority + " is not a valid priority");
-        }
-        NetarkivetMessage naMsg = new DoOneCrawlMessage(theJob, result, TestInfo.emptyMetadata);
+        JobPriority priority = JobPriority.valueOf(
+                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
+        NetarkivetMessage naMsg = new DoOneCrawlMessage(
+                theJob, JobChannelUtil.getChannel(priority), TestInfo.emptyMetadata);
         JMSConnectionMockupMQ.updateMsgID(naMsg, "id1");
         ObjectMessage oMsg = JMSConnectionMockupMQ.getObjectMessage(naMsg);
         hcs.onMessage(oMsg);

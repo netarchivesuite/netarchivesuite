@@ -35,7 +35,6 @@ import javax.jms.Session;
 import com.sun.messaging.QueueConnectionFactory;
 import junit.framework.TestCase;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -47,6 +46,7 @@ import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * A test of the behaviour if onMessage() hangs when there is more than one

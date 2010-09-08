@@ -27,20 +27,18 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.externalsoftware.HeritrixTests;
-
 /**
  * This class runs all tests of Heritrix functionality.  Must be run as part
  * of heritrix upgrades.
  */
 public class HeritrixTesterSuite {
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(HeritrixTests.class);
+        suite.addTestSuite(dk.netarkivet.externalsoftware.HeritrixTests.class);
     }
 
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite("HeritrixTesterSuite");
+        suite = new TestSuite(HeritrixTesterSuite.class.getName());
 
         addToSuite(suite);
 
@@ -48,6 +46,6 @@ public class HeritrixTesterSuite {
     }
 
     public static void main(String[] args) {
-        String[] args2 = {"-noloading", "dk.netarkivet.HeritrixTesterSuite"};
+        String[] args2 = {"-noloading", HeritrixTesterSuite.class.getName()};
         TestRunner.main(args2);
     }}

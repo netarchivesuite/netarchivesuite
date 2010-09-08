@@ -21,6 +21,15 @@
  */
 package dk.netarkivet.wayback;
 
+import dk.netarkivet.wayback.aggregator.AggregationWorkerTest;
+import dk.netarkivet.wayback.aggregator.IndexAggregatorTest;
+import dk.netarkivet.wayback.indexer.ArchiveFileDAOTester;
+import dk.netarkivet.wayback.indexer.ArchiveFileTester;
+import dk.netarkivet.wayback.indexer.FileNameHarvesterTester;
+import dk.netarkivet.wayback.indexer.HibernateUtilTester;
+import dk.netarkivet.wayback.indexer.IndexerQueueTester;
+import dk.netarkivet.wayback.indexer.WaybackIndexerTester;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -46,12 +55,20 @@ public class WaybackTesterSuite {
      * @param suite The testsuite to be added
      */
     public static void addToSuite(TestSuite suite) {
+        suite.addTestSuite(ArchiveFileTester.class);
+        suite.addTestSuite(ArchiveFileDAOTester.class);
         suite.addTestSuite(ExtractWaybackCDXBatchJobTester.class);
+        suite.addTestSuite(FileNameHarvesterTester.class);
+        suite.addTestSuite(IndexerQueueTester.class);
         suite.addTestSuite(NetarchiveResourceStoreTester.class);
         suite.addTestSuite(UrlCanonicalizerFactoryTester.class);
         suite.addTestSuite(DeduplicateToCDXAdapterTester.class);
         suite.addTestSuite(ExtractDeduplicateCDXBatchJobTester.class);
         suite.addTestSuite(DeduplicateToCDXApplicationTester.class);
+        suite.addTestSuite(HibernateUtilTester.class);
+        suite.addTestSuite(WaybackIndexerTester.class);
+        suite.addTestSuite(IndexAggregatorTest.class);
+        suite.addTestSuite(AggregationWorkerTest.class);
     }
 
     public static void main(String args[]) {

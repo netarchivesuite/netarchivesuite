@@ -23,6 +23,7 @@
 package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,10 +36,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.CommonSettings;
 
 /**
  * Interface defining a batch job to run on a set of files.
@@ -206,6 +207,24 @@ public abstract class FileBatchJob implements Serializable {
             return exceptions;
     }
     
+    /**
+     * Processes the concatenated result files.
+     * This is intended to be overridden by batchjobs, who they wants a 
+     * different post-processing process than concatenation.
+     *  
+     * @param input The inputstream to the file containing the concatenated 
+     * results.
+     * @param output The outputstream where the resulting data should be 
+     * written.
+     * @return Whether it actually does any post processing.  If false is 
+     * returned then the default concatenated result file is returned.
+     * @throws ArgumentNotValid If the concatenated file is null.
+     */
+    public boolean postProcess(InputStream input, OutputStream output) {
+        // Do not post process. Override in inherited classes to post process.
+        return false;
+    }
+    
     /** Record an exception that occurred during the processFile of this job
      * and that should be returned with the result.  If maxExceptionsReached()
      * returns true, this method silently does nothing.
@@ -269,10 +288,18 @@ public abstract class FileBatchJob implements Serializable {
 
     /**
      * Getter for batchJobTimeout.
+     * If the batchjob has not defined a maximum time (thus set the value to -1)
+     * then the default value from settings are used.
+     *  
      * @return timeout in miliseconds.
      */
     public long getBatchJobTimeout() {
-        return batchJobTimeout;
+        if(batchJobTimeout != -1) {
+            return batchJobTimeout;
+        } else {
+            return Long.parseLong(Settings.get(
+                    CommonSettings.BATCH_DEFAULT_TIMEOUT));
+        }
     }
 
     /** Returns true if we have already recorded the maximum number of

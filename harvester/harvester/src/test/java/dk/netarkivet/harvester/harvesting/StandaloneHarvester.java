@@ -50,8 +50,7 @@ public class StandaloneHarvester {
                            new File(crawlDir, "seeds.txt"));
         System.out.println("Attempting crawl in " + crawlDir);
         HeritrixFiles files = new HeritrixFiles(crawlDir, 1L, 1L);
-        HeritrixLauncher launcher = 
-        	HeritrixLauncherFactory.getInstance(files);
+        HeritrixLauncher launcher = HeritrixLauncherFactory.getInstance(files);
         launcher.doCrawl();
         System.out.println("Crawl ended, results are in " + crawlDir);
     }

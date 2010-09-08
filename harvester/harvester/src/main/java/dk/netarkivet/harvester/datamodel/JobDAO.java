@@ -167,7 +167,7 @@ public abstract class JobDAO implements Iterable<Job> {
      */
     public abstract Iterator<Long> getAllJobIds();
 
-    /** Return status information for all jobs with given job status.
+    /** Return status information for all jobs defined by the supplied query.
      *
      * @param query the user query
      * @throws IOFailure on trouble in database access

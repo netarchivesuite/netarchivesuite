@@ -342,7 +342,9 @@ public class LocalCDXCacheTester extends TestCase {
 
         // Set up a dummy client that serves files out of the workingdir.
         ArcRepositoryClient dummyARC = new JMSArcRepositoryClient() {
-            public BatchStatus batch(FileBatchJob job, String replicaId) {
+            @Override
+            public BatchStatus batch(FileBatchJob job, String replicaId, 
+                    String... args) {
                 batchCounter++;
                 if (batchMustDie) {
                     throw new IOFailure("Committing suicide as ordered, SIR!");

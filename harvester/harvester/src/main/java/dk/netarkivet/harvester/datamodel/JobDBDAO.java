@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -672,14 +673,13 @@ public class JobDBDAO extends JobDAO {
     @Override
     public HarvestStatus getStatusInfo(HarvestStatusQuery query) {
     
-        Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         
         // Obtain total count without limit
         // NB this will be a performance bottleneck if the table gets big
         long totalRowsCount = 0;
         try {
-            s = c.prepareStatement(buildSqlQuery(query, true));
+            s = buildSqlQuery(query, true).getPopulatedStatement();
             ResultSet res = s.executeQuery();
             res.next();
             totalRowsCount = res.getLong(1);
@@ -695,7 +695,7 @@ public class JobDBDAO extends JobDAO {
         
         List<JobStatusInfo> jobs = null;
         try {
-            s = c.prepareStatement(buildSqlQuery(query, false));
+            s = buildSqlQuery(query, false).getPopulatedStatement();
             ResultSet res = s.executeQuery();
             jobs = makeJobStatusInfoListFromResultset(res);
         } catch (SQLException e) {
@@ -1028,13 +1028,69 @@ public class JobDBDAO extends JobDAO {
     }
     
     /**
+      * Internal utility class to build a SQL query using a prepared statement.
+      */
+    private class HarvestStatusQueryBuilder {
+        private String sqlString;
+        // from java.sql.Types
+        private LinkedList<Class<?>> paramClasses = new LinkedList<Class<?>>();
+        private LinkedList<Object> paramValues = new LinkedList<Object>();
+
+        HarvestStatusQueryBuilder() {
+            super();
+        }
+
+        /**
+         * @param sqlString the sqlString to set
+         */
+        void setSqlString(String sqlString) {
+            this.sqlString = sqlString;
+        }
+
+        void addParameter(Class<?> clazz, Object value) {
+            paramClasses.addLast(clazz);
+            paramValues.addLast(value);
+        }
+
+        PreparedStatement getPopulatedStatement() throws SQLException {
+            Connection c = DBConnect.getDBConnection();
+            PreparedStatement stm = c.prepareStatement(sqlString);
+
+            Iterator<Class<?>> pClasses = paramClasses.iterator();
+            Iterator<Object> pValues = paramValues.iterator();
+            int pIndex = 0;
+            while (pClasses.hasNext()) {
+                pIndex++;
+                Class<?> pClass = pClasses.next();
+                Object pVal = pValues.next();
+
+                if (Integer.class.equals(pClass)) {
+                    stm.setInt(pIndex, (Integer)pVal);
+                } else if (Long.class.equals(pClass)) {
+                    stm.setLong(pIndex, (Long) pVal);
+                } else if (String.class.equals(pClass)) {
+                    stm.setString(pIndex, (String) pVal);
+                } else if (java.sql.Date.class.equals(pClass)) {
+                    stm.setDate(pIndex, (java.sql.Date) pVal);
+                } else {
+                    throw new UnknownID("Unexpected parameter class " + pClass);
+                }
+            }
+
+
+            return stm;
+        }
+
+    }
+        
+    /**
      * Builds a query to fetch jobs according to selection criteria.
      * @param query the selection criteria.
      * @param count build a count query instead of selecting columns.
      * @return the proper SQL query.
      */
-    private String buildSqlQuery(HarvestStatusQuery query, boolean count) {
-
+    private HarvestStatusQueryBuilder buildSqlQuery(HarvestStatusQuery query, boolean count) {     
+               HarvestStatusQueryBuilder sq = new HarvestStatusQueryBuilder();
         StringBuffer sql = new StringBuffer("SELECT");
         if (count) {
             sql.append(" count(*)");
@@ -1053,14 +1109,14 @@ public class JobDBDAO extends JobDAO {
         if (jobStatuses.length > 0) {
             if (jobStatuses.length == 1) {
                 int statusOrdinal = jobStatuses[0].ordinal();
-                sql.append(" AND status = ");
-                sql.append(statusOrdinal);
+                sql.append(" AND status = ?");
+                sq.addParameter(Integer.class, statusOrdinal);
             } else {
                 sql.append("AND (status = ");
                 sql.append(jobStatuses[0].ordinal());
                 for (int i = 1; i < jobStatuses.length; i++) {
-                    sql.append(" OR status = ");
-                    sql.append(jobStatuses[i].ordinal());
+                    sql.append(" OR status = ?");
+                    sq.addParameter(Integer.class, jobStatuses[i].ordinal());
                 }
                 sql.append(")");
             }
@@ -1071,39 +1127,37 @@ public class JobDBDAO extends JobDAO {
             if (harvestName.indexOf(
                     HarvestStatusQuery.HARVEST_NAME_WILDCARD) == -1) {
                 // No wildcard, exact match
-                sql.append(" AND harvestdefinitions.name='");
-                sql.append(harvestName);
-                sql.append("'");
+                sql.append(" AND harvestdefinitions.name = ?");
+                sq.addParameter(String.class, harvestName);
             } else {
                 String harvestNamePattern = harvestName.replaceAll("\\*", "%");
-                sql.append(" AND harvestdefinitions.name LIKE '");
-                sql.append(harvestNamePattern);
-                sql.append("'");
+                sql.append(" AND harvestdefinitions.name LIKE ?");
+                sq.addParameter(String.class, harvestNamePattern);
             }
         }
 
         Long harvestRun = query.getHarvestRunNumber();
         if (harvestRun != null) {
-            sql.append(" AND jobs.harvest_num = " + harvestRun);
+            sql.append(" AND jobs.harvest_num = ?");
+            sq.addParameter(Long.class, harvestRun);
         }
 
         Long harvestId = query.getHarvestId();
         if (harvestId != null) {
-            sql.append(" AND harvestdefinitions.harvest_id = " + harvestId);
+            sql.append(" AND harvestdefinitions.harvest_id = ?");
+            sq.addParameter(Long.class, harvestId);
         }
 
         long startDate = query.getStartDate();
         if (startDate != HarvestStatusQuery.DATE_NONE) {
-            sql.append(" AND startdate >= '");
-            sql.append(new java.sql.Date(startDate).toString());
-            sql.append("'");
+            sql.append(" AND startdate >= ?");
+            sq.addParameter(java.sql.Date.class, new java.sql.Date(startDate));
         }
 
         long endDate = query.getEndDate();
         if (endDate != HarvestStatusQuery.DATE_NONE) {
-            sql.append(" AND enddate <= '");
-            sql.append(new java.sql.Date(endDate).toString());
-            sql.append("'");
+            sql.append(" AND enddate <= ?");
+            sq.addParameter(java.sql.Date.class, new java.sql.Date(endDate));
         }
 
         if (!count) {
@@ -1125,6 +1179,7 @@ public class JobDBDAO extends JobDAO {
             }
         }
 
-        return sql.toString();
+        sq.setSqlString(sql.toString());
+        return sq;
     }
 }

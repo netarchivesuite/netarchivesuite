@@ -49,7 +49,7 @@ public class IndexServer implements CleanupIF{
     private static IndexServer instance;
 
     /** Instantiates the two handlers, and starts listening for requests. */
-    public IndexServer() {
+    protected IndexServer() {
         FileBasedCache<Set<Long>> cdxCache = new CDXIndexCache();
         FileBasedCache<Set<Long>> dedupCrawlLogCache
                 = new DedupCrawlLogIndexCache();
@@ -73,7 +73,7 @@ public class IndexServer implements CleanupIF{
      *
      * @return The instance;
      */
-    public static IndexServer getInstance() {
+    public static synchronized IndexServer getInstance() {
         if (instance == null) {
             instance = new IndexServer();
         }

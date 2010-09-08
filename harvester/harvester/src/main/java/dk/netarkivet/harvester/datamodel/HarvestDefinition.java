@@ -241,7 +241,7 @@ public abstract class HarvestDefinition implements Named {
      *
      * @return That number
      */
-    int getNumEvents() {
+    public int getNumEvents() {
         return numEvents;
     }
 
@@ -299,7 +299,7 @@ public abstract class HarvestDefinition implements Named {
      *
      * @return The number of jobs created
      */
-    int createJobs() {
+    public int createJobs() {
         int jobsMade = 0;
         final Iterator<DomainConfiguration> domainConfigurations
                 = getDomainConfigurations();

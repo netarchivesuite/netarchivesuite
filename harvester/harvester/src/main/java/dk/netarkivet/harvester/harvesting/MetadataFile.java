@@ -24,8 +24,6 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
 
-import dk.netarkivet.archive.indexserver.CDXDataCache;
-import dk.netarkivet.archive.indexserver.CrawlLogDataCache;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 

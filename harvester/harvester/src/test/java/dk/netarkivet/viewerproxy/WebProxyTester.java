@@ -68,8 +68,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 
 /**
- * Test the WebProxy class
- *
+ * Test the WebProxy class.
  */
 public class WebProxyTester extends TestCase {
     private static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");

@@ -44,7 +44,7 @@ import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 /**
  * Unit-test for class ScheduleDefinition.
  */
-public class ScheduleDefinitionTester extends WebinterfaceTestCase {
+public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
 
     private static final String DATE_FORMAT = "dd/M yyyy HH:mm";
     private static ScheduleDAO sdao = null;

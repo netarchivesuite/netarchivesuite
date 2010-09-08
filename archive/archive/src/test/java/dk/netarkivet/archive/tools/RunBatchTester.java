@@ -399,7 +399,8 @@ public class RunBatchTester extends TestCase {
         }
         
         int exitCode = pse.getExitValue();
-        assertEquals("The exit code should be 0, but was: " + exitCode, 0, exitCode);
+        assertEquals("The exit code should be 0, but was: " + exitCode, 
+                0, exitCode);
     }
 
     /**

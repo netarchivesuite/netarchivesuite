@@ -1,0 +1,2 @@
+# Seed URIs
+ftp://ftp.klid.dk/OpenOffice/haandbog

@@ -32,9 +32,9 @@ import junit.framework.TestCase;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
 
+import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapter;
 import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapterInterface;
 

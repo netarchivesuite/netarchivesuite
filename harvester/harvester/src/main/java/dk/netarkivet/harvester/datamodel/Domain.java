@@ -865,11 +865,13 @@ public class Domain implements Named {
      * immutably.
      *
      * @param regExps The list defining urls never to be harvested.
+     * @param strictMode If true, we throw ArgumentNotValid exception
+     * if invalid regexps are found 
      *
      * @throws ArgumentNotValid if regExps is null or regExps contains
-     * 	invalid regular expressions.
+     * 	invalid regular expressions (unless strictMode is false).
      */
-    public void setCrawlerTraps(List<String> regExps) {
+    public void setCrawlerTraps(List<String> regExps, boolean strictMode) {
         ArgumentNotValid.checkNotNull(regExps,
                                       "List<String> regExps");
         List<String> cleanedListOfCrawlerTraps = new ArrayList<String>();
@@ -884,13 +886,18 @@ public class Domain implements Named {
             }
         }
         // Validate regexps
-        for (String regexp: cleanedListOfCrawlerTraps) {
-        	try {
-        		Pattern.compile(regexp);
-        	} catch (PatternSyntaxException e) {
-        		throw new ArgumentNotValid("The regular expression '" + regexp
-        				+ "' is invalid. Please correct the expression.");
-        	}
+        for (String regexp : cleanedListOfCrawlerTraps) {
+            try {
+                Pattern.compile(regexp);
+            } catch (PatternSyntaxException e) {
+                final String errMsg = "The regular expression '" + regexp
+                        + "' is invalid. Please correct the expression.";
+                if (strictMode) {
+                    throw new ArgumentNotValid(errMsg, e);
+                } else {
+                    log.warn(errMsg, e);
+                }
+            }
         }
         crawlerTraps = Collections.unmodifiableList(cleanedListOfCrawlerTraps);
     }

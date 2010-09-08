@@ -51,6 +51,7 @@ import dk.netarkivet.common.utils.CommonUtilsTesterSuite;
 import dk.netarkivet.common.utils.arc.CommonUtilsArcTesterSuite;
 import dk.netarkivet.common.utils.batch.CommonUtilsBatchTesterSuite;
 import dk.netarkivet.common.utils.cdx.CommonUtilsCdxTesterSuite;
+import dk.netarkivet.common.webinterface.CommonWebinterfaceTesterSuite;
 import dk.netarkivet.deploy.DeployTesterSuite;
 import dk.netarkivet.harvester.HarvesterTesterSuite;
 import dk.netarkivet.harvester.datamodel.HarvesterDataModelTesterSuite;
@@ -108,6 +109,7 @@ public class UnitTesterSuite {
         CommonExceptionsTesterSuite.addToSuite(suite);
         CommonManagementTesterSuite.addToSuite(suite);
         CommonToolsTesterSuite.addToSuite(suite);
+        CommonWebinterfaceTesterSuite.addToSuite(suite);
         
         /* 
          * Testersuites for the deploy module 

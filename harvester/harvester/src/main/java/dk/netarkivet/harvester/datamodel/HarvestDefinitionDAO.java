@@ -23,12 +23,9 @@
 package dk.netarkivet.harvester.datamodel;
 
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
  * A Data Access Object for harvest definitions.
@@ -52,12 +48,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     private static HarvestDefinitionDAO instance;
     /** The log. */
     protected final Log log = LogFactory.getLog(getClass());
-
-    /** The set of HDs (or rather their OIDs) that are currently being
-     * scheduled in a separate thread.
-     * This set is a SynchronizedSet
-     */
-    private Set<Long> harvestDefinitionsBeingScheduled = Collections.synchronizedSet(new HashSet<Long>());
 
     /**
      * Default constructor.
@@ -187,91 +177,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
         return harvestDefinition.getOid();
     }
 
-    /**
-     * Generate new jobs for the harvestdefinitions in persistent storage.
-     * @param now The current time (hopefully)
-     */
-    public void generateJobs(Date now) {
-        ArgumentNotValid.checkNotNull(now, "now");
-        // loop over all harvestdefinitions that are ready to run
-        for (final Long id : getReadyHarvestDefinitions(now)) {
-            // The synchronization must take place within the loop, as we don't
-            // want to lock everybody out for the entire time.
-            synchronized(this) {
-                // Make every HD run in its own thread, but at most once.
-                if (harvestDefinitionsBeingScheduled.contains(id)) {
-                    // With the small importance of this logmessage,
-                    // we won't spend time looking up the corresponding name for
-                    // the harvestdefinition with this id number.
-                    log.debug("Not creating jobs for harvestdefinition with id #" + id
-                            + " as the previous scheduling is still running");
-                    continue;
-                }
-
-                // Get all heritrix-jobs that
-                // the harvestdefinition consists of !
-                final HarvestDefinition harvestDefinition = read(id);
-
-                if (!harvestDefinition.runNow(now)) {
-                    log.trace("The harvestdefinition '"
-                            +  harvestDefinition.getName()
-                            + "' should not run now.");
-                    log.trace("numEvents: "
-                            + harvestDefinition.getNumEvents());
-                    continue;
-                }
-                harvestDefinitionsBeingScheduled.add(id);
-                // create the jobs
-                final Thread t = new Thread() {
-                    public void run() {
-                        try {
-                            int jobsMade = harvestDefinition.createJobs();
-                            log.info("Created " + jobsMade
-                                    + " jobs for harvest definition '"
-                                    + harvestDefinition.getName() + "'");
-                            update(harvestDefinition);
-                        } catch (Throwable e) {
-                            try {
-                                HarvestDefinition hd
-                                        = read(harvestDefinition.getOid());
-                                hd.setActive(false);
-                                update(hd);
-                                String errMsg = "Exception while scheduling"
-                                        + "harvestdefinition '"
-                                        + harvestDefinition.getName()
-                                        + "'. The harvestdefinition has been"
-                                        + " deactivated!";
-                                log.warn(errMsg, e);
-                                NotificationsFactory.getInstance()
-                                    .errorEvent(errMsg, e);
-                            } catch (Exception e1) {
-                                String errMsg = "Exception while scheduling"
-                                        + "harvestdefinition '"
-                                        + harvestDefinition.getName()
-                                        + "'. The harvestdefinition couldn't be"
-                                        + " deactivated!";
-                                log.warn(errMsg, e);
-                                log.warn("Unable to deactivate", e1);
-                                NotificationsFactory.getInstance()
-                                    .errorEvent(errMsg, e);
-
-                            }
-                        } finally {
-                            harvestDefinitionsBeingScheduled.
-                                remove(id);
-                            log.debug("Removed '" + harvestDefinition.getName()
-                                    + "' from list of harvestdefinitions to be "
-                                    + "scheduled. Harvestdefinitions still to "
-                                    + "be scheduled: "
-                                    + harvestDefinitionsBeingScheduled);
-                        }
-                    }
-                };
-                t.start();
-            }
-        }
-    }
-
     /** Get the IDs of the harvest definitions that are ready to run.
      *
      * @param now
@@ -314,16 +219,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      */
     static void reset() {
         instance = null;
-    }
-
-    /** Returns true if any harvestdefinition is in the middle of having
-     * jobs scheduled.  Notice that this synchronizes with generateJobs.
-     *
-     * @return true if there is at least one harvestdefinition currently
-     * scheduling jobs.
-     */
-    public boolean isGeneratingJobs() {
-        return !harvestDefinitionsBeingScheduled.isEmpty();
     }
 
     /** Return whether the given harvestdefinition can be deleted.

@@ -143,7 +143,7 @@ dk.netarkivet.common.webinterface.HTMLUtils"
 	                    out.println(BitpreserveFileState.makeCheckbox(
 	                            Constants.ADD_COMMAND,
 	                            bitarchive.getName(), filename));
-	                    %><fmt:message key="add.to.archive"/><%
+	                    %><fmt:message key="add.to.replica"/><%
 	                    uploadableFiles++;
 	                } // if (fs.getBitarchiveChecksum(bitarchive).isEmpty())
 	            } // if (fs != null)

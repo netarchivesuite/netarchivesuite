@@ -48,7 +48,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 public final class BitarchiveClient implements ReplicaClient {
     // Each message is assigned a message id
     /** The log.*/
-    protected static Log log = LogFactory.getLog(BitarchiveClient.class);
+    private static Log log = LogFactory.getLog(BitarchiveClient.class);
 
     /** Connection to JMS provider.*/
     private JMSConnection jmsCon;
@@ -159,6 +159,22 @@ public final class BitarchiveClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(msg, "msg");
         jmsCon.resend(msg, this.allBa);
     }
+    
+    /**
+     * Sends a message to terminate a running batchjob.
+     * 
+     * @param batchID The ID of the batchjob to terminate.
+     * @throws ArgumentNotValid If the batchID is either null or the empty 
+     * string.
+     */
+    public void sendBatchTerminationMessage(String batchID) 
+           throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(batchID, "String batchID");
+        // create and send the BatchTerminationMessage.
+        BatchTerminationMessage msg = new BatchTerminationMessage(this.allBa, 
+                batchID);
+        jmsCon.send(msg);
+    }
 
     /**
      * Submit an upload request to the bitarchive.
@@ -167,7 +183,8 @@ public final class BitarchiveClient implements ReplicaClient {
      * @throws IOFailure If access to file denied.
      * @throws ArgumentNotValid If arcfile is null.
      */
-    public void sendUploadMessage(RemoteFile rf) throws IOFailure, ArgumentNotValid {
+    public void sendUploadMessage(RemoteFile rf) throws IOFailure, 
+            ArgumentNotValid {
         ArgumentNotValid.checkNotNull(rf, "rf");
         UploadMessage up = new UploadMessage(anyBa, clientId, rf);
         log.debug("Sending upload message\n" + up.toString());
@@ -182,7 +199,8 @@ public final class BitarchiveClient implements ReplicaClient {
      * @return The submitted message.
      * @throws ArgumentNotValid If message is null.
      */
-    public BatchMessage sendBatchJob(BatchMessage bMsg) throws ArgumentNotValid {
+    public BatchMessage sendBatchJob(BatchMessage bMsg) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(bMsg, "bMsg");
         log.debug("Resending batch message '" + bMsg + "' to bitarchive"
                 + " monitor " + this.theBamon);
@@ -279,7 +297,8 @@ public final class BitarchiveClient implements ReplicaClient {
      * archive though the jms connection.
      * @throws ArgumentNotValid If the GetChecksumMessage is null.
      */
-    public void sendGetChecksumMessage(GetChecksumMessage msg) throws ArgumentNotValid {
+    public void sendGetChecksumMessage(GetChecksumMessage msg) 
+            throws ArgumentNotValid {
         // Validate arguments
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
 

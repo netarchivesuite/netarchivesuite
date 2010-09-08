@@ -110,10 +110,10 @@ public class DomainHistory {
         ArgumentNotValid.checkNotNull(oid, "oid");
         ArgumentNotValid.checkNotNull(cfgName, "cfgName");
 
-        Iterator iter = harvestInfo.iterator();
+        Iterator<HarvestInfo> iter = harvestInfo.iterator();
         HarvestInfo hi;
         while (iter.hasNext()) {
-            hi = (HarvestInfo) iter.next();
+            hi = iter.next();
             if (hi.getHarvestID().equals(oid)
                     && hi.getDomainConfigurationName().equals(cfgName)) {
                 return hi;

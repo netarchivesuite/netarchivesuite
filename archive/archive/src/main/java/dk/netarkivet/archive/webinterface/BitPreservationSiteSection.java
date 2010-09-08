@@ -41,8 +41,9 @@ public class BitPreservationSiteSection extends SiteSection {
                       {"filestatus-checksum",
                               "pagetitle;filestatus.checksum.errors"},
                       {"filestatus-missing", 
-                                  "pagetitle;filestatus.files.missing"}
-
+                                  "pagetitle;filestatus.files.missing"},
+                      {"filestatus-update", 
+                                  "pagetitle;filestatus.update"}
               }, "BitPreservation",
                  Constants.TRANSLATIONS_BUNDLE);
     }

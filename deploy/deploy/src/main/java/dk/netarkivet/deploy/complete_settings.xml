@@ -38,6 +38,9 @@
                 <machine>localhost</machine>
                 <port>1527</port>
                 <dir>admindb</dir>
+                <!-- Reconnect to database default: 5 tries with 5 min between-->
+                <reconnectMaxRetries>5</reconnectMaxRetries>
+                <reconnectRetryDelay>300000</reconnectRetryDelay>
             </database>
         </admin>
     </archive>
@@ -122,6 +125,10 @@
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>
+	    <harvestStatus>
+           	<defaultPageSize>100</defaultPageSize>
+            </harvestStatus>
+
         </webinterface>
         <topLevelDomains>
             <tld>ac</tld>
@@ -210,6 +217,19 @@
             <tld>fk</tld>
             <tld>fm</tld>
             <tld>fo</tld>
+            <tld>aeroport.fr</tld>
+            <tld>asso.fr</tld>
+            <tld>avoues.fr</tld>
+            <tld>chambagri.fr</tld>
+            <tld>com.fr</tld>
+            <tld>gouv.fr</tld>
+            <tld>medecin.fr</tld>
+            <tld>nom.fr</tld>
+            <tld>pharmacien.fr</tld>
+            <tld>port.fr</tld>
+            <tld>prd.fr</tld>
+            <tld>presse.fr</tld>
+            <tld>tm.fr</tld>
             <tld>fr</tld>
             <tld>ga</tld>
             <tld>gb</tld>
@@ -333,6 +353,8 @@
             <tld>pw</tld>
             <tld>py</tld>
             <tld>qa</tld>
+            <tld>asso.re</tld>
+            <tld>com.re</tld>
             <tld>re</tld>
             <tld>ro</tld>
             <tld>ru</tld>
@@ -431,6 +453,19 @@
             <maxExceptions>100</maxExceptions>
             <!-- Time between logging of batch status default 30 seconds. -->
             <loggingInterval>30000</loggingInterval>
+            <!-- Batchjobs without a specified timeout will get this value (one week) -->
+            <defaultBatchTimeout>604800000</defaultBatchTimeout>
+            <baseDir>batch</baseDir>
+            <batchjobs>
+                <batchjob>
+                    <class>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</class>
+                    <jarfile/>
+                </batchjob>
+                <batchjob>
+                    <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</class>
+                    <jarfile/>
+                </batchjob>
+            </batchjobs>
         </batch>
         <replicas> <!-- The entire settings for replicas. -->
             <replica>
@@ -481,6 +516,8 @@
             <splitByObjectLimit>false</splitByObjectLimit>
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
+            <dispatchperiode>5000</dispatchperiode>
+            <jobgenerationperiode>60000</jobgenerationperiode>
         </scheduler>
         <harvesting>
             <serverDir>server</serverDir>
@@ -493,6 +530,13 @@
                 <inactivityTimeout>1800</inactivityTimeout>
                 <!-- 30 minutes -->
                 <noresponseTimeout>1800</noresponseTimeout>
+                <!--  5 minutes -->
+                <monitorResetInterval>300</monitorResetInterval>
+                <!--  10 minutes -->
+                <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
+                <!--  20 seconds -->
+                <crawlLoopWaitTime>20</crawlLoopWaitTime>
+                <abortIfConnectionLost>true</abortIfConnectionLost>
                 <adminName>admin</adminName>
                 <adminPassword>adminPassword</adminPassword>
                 <guiPort>8090</guiPort>
@@ -502,6 +546,9 @@
                 <heapSize>1598M</heapSize>
                 <javaOpts/>                
             </heritrix>
+            <heritrixLauncher>
+                <class>dk.netarkivet.harvester.harvesting.controller.DefaultHeritrixLauncher</class>
+            </heritrixLauncher>
             <heritrixController>
                 <class>dk.netarkivet.harvester.harvesting.controller.JMXHeritrixController</class>
             </heritrixController>

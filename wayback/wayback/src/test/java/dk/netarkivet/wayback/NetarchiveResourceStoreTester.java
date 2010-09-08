@@ -29,8 +29,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 import junit.framework.TestCase;
 import org.archive.io.ArchiveRecordHeader;
@@ -38,7 +41,10 @@ import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.archive.wayback.core.CaptureSearchResult;
+import org.archive.wayback.core.Resource;
 import org.archive.wayback.exception.ResourceNotAvailableException;
+import org.archive.wayback.resourcestore.resourcefile.ArcResource;
+import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
 
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
@@ -47,6 +53,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -56,9 +63,10 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.wayback.indexer.IndexerTestCase;
 
 /** Unit test for testNetarchiveResourceStore */
-public class NetarchiveResourceStoreTester extends TestCase {
+public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
     NetarchiveResourceStore netarchiveResourceStore = null;
     CaptureSearchResult metadataResource = null;
@@ -67,22 +75,23 @@ public class NetarchiveResourceStoreTester extends TestCase {
     CaptureSearchResult httpResource = null;
 
     ReloadSettings rs = new ReloadSettings();
-    JMSArcRepositoryClient arc;
+    ArcRepositoryClient arc;
 
     private final String metadataFile = "2-metadata-1.arc";
     private final String uploadFile = "Upload4.ARC";
 
     @Override
     public void setUp() {
-        rs.setUp();
+        super.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_GET_TIMEOUT, "1000");
+        assertTrue("Should get a mock connection",
+            JMSConnectionFactory.getInstance() instanceof JMSConnectionMockupMQ);
+        arc = (ArcRepositoryClient) ArcRepositoryClientFactory.getPreservationInstance();
 
-        arc = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getPreservationInstance();
-        
         netarchiveResourceStore = new NetarchiveResourceStore();
 
         metadataResource = new CaptureSearchResult();
@@ -114,7 +123,7 @@ public class NetarchiveResourceStoreTester extends TestCase {
         } catch(Exception e) {
             //ups
         }
-        rs.tearDown();
+        super.tearDown();
     }
 
     /**
@@ -136,6 +145,38 @@ public class NetarchiveResourceStoreTester extends TestCase {
             // Expected
         }
 
+    }
+
+    public void testRetrieveRedirect()
+            throws ResourceNotAvailableException, IOException {
+        String cdxLine = "netarkivet.dk/ 20090706131100 http://netarkivet.dk/ text/html 302 3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ http://netarkivet.dk/index-da.php 3311 arcfile_withredirects.arc";
+        NetarchiveResourceStore store = new NetarchiveResourceStore();
+        CaptureSearchResult csr = CDXLineToSearchResultAdapter.doAdapt(cdxLine);        ArcResource resource = (ArcResource) store.retrieveResource(csr);
+        assertNotNull("Should have a resource", resource);
+        assertTrue(resource.getRecordLength()>0);
+        assertFalse(resource.getHttpHeaders().isEmpty());
+        assertEquals(302, resource.getStatusCode());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        resource.getArcRecord().dump(baos);
+        String contents = baos.toString("UTF-8");
+        assertNotNull(contents);
+    }
+
+    public void testRetrieveResource()
+            throws ResourceNotAvailableException, IOException {
+        String cdxLine = "ing.dk/ 20090706131100 http://ing.dk/ text/html 200 Z3UM6JX4FCO6VMVTPM6VBNJPN5D6QLO3 - 3619 arcfile_withredirects.arc";
+        NetarchiveResourceStore store = new NetarchiveResourceStore();
+        CaptureSearchResult csr = CDXLineToSearchResultAdapter.doAdapt(cdxLine);
+        ArcResource resource = (ArcResource) store.retrieveResource(csr);
+        assertNotNull("Should have a resource", resource);
+        assertTrue(resource.getRecordLength()>0);
+        assertFalse(resource.getHttpHeaders().isEmpty());
+        assertEquals(200, resource.getStatusCode());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        resource.getArcRecord().dump(baos);
+        String contents = baos.toString("UTF-8");
+        assertNotNull(contents);
+        assertTrue(contents.contains("Motorola"));
     }
 
     /**

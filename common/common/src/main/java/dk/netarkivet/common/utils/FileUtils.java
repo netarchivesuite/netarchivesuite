@@ -59,24 +59,37 @@ import dk.netarkivet.common.exceptions.UnknownID;
 public class FileUtils {
     /** Extension used for CDX files, including separator . */
     public static final String CDX_EXTENSION = ".cdx";
+    
     /** Extension used for ARC files, including separator . */
     public static final String ARC_EXTENSION = ".arc";
-    /** Extension used for ARC files, including separator . */
+    
+    /** Extension used for gzipped ARC files, including separator . */
     public static final String ARC_GZIPPED_EXTENSION = ".arc.gz";
-
+    
+    /** Extension used for gzipped WARC files, including separator . */
+    public static final String WARC_GZIPPED_EXTENSION = ".warc.gz";
+    
     /** Pattern matching ARC files, including separator.
      * Note: (?i) means case insensitive, (\\.gz)? means .gz is optionally
      * matched, and $ means matches end-of-line. Thus this pattern will match
      * file.arc.gz, file.ARC, file.aRc.GZ, but not
      * file.ARC.open */
     public static final String ARC_PATTERN = "(?i)\\.arc(\\.gz)?$";
+    
     /** Pattern matching open ARC files, including separator .
      * Note: (?i) means case insensitive, (\\.gz)? means .gz is optionally
      * matched, and $ means matches end-of-line. Thus this pattern will match
      * file.arc.gz.open, file.ARC.open, file.arc.GZ.OpEn, but not
      * file.ARC.open.txt */
     public static final String OPEN_ARC_PATTERN = "(?i)\\.arc(\\.gz)?\\.open$";
-
+    
+    /** Pattern matching WARC files, including separator.
+     * Note: (?i) means case insensitive, (\\.gz)? means .gz is optionally
+     * matched, and $ means matches end-of-line. Thus this pattern will match
+     * file.warc.gz, file.WARC, file.WaRc.GZ, but not
+     * file.WARC.open */
+    public static final String WARC_PATTERN = "(?i)\\.warc(\\.gz)?$";
+    
     /** The logger for this class. */
     public static final Log log =
             LogFactory.getLog(FileUtils.class.getName());
@@ -92,7 +105,6 @@ public class FileUtils {
                 }
             };
 
-
     /** A filter that matches files left open by a crashed Heritrix process.
      * Don't work on these files while Heritrix is still working on them.
      */
@@ -103,15 +115,26 @@ public class FileUtils {
                 }
             };
 
-    /** A filter that matches arc files, that is any file that ends on .arc or
-     * .arc.gz in any case. */
-    public static final FilenameFilter ARCS_FILTER =
-            new FilenameFilter() {
-                public boolean accept(File directory, String filename) {
-                    return filename.toLowerCase().matches(".*" + ARC_PATTERN);
-                }
-            };
+    /**
+     * A filter that matches arc files, that is any file that ends on .arc or
+     * .arc.gz in any case.
+     */
+    public static final FilenameFilter ARCS_FILTER = new FilenameFilter() {
+        public boolean accept(File directory, String filename) {
+            return filename.toLowerCase().matches(".*" + ARC_PATTERN);
+        }
+    };
 
+    /**
+     * A filter that matches warc files, that is any file that ends on .warc or
+     * .warc.gz in any case.
+     */
+    public static final FilenameFilter WARCS_FILTER = new FilenameFilter() {
+        public boolean accept(File directory, String filename) {
+            return filename.toLowerCase().matches(".*" + WARC_PATTERN);
+        }
+    };      
+            
     /** How many times we will retry making a unique directory name. */
     private static final int MAX_RETRIES = 10;
     /** How many times we will retry making a directory. */

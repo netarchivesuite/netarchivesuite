@@ -94,20 +94,20 @@ public class DomainnameQueueAssignmentPolicyTester extends TestCase {
                 DEFAULT_CLASS_KEY, policy.getClassKey(null,
                         getCandidateURI("foo.dk#1010#fnord")));
     }
-    
-    public void testTopLevelDomains() throws URIException {
-    	ReloadSettings rs = new ReloadSettings(
-    			new File(
-    					TestInfo.ORIGINALS_DIR, 
-    					"topLevelDomains_settings.xml"));
-    	rs.setUp();
-    	
-    	assertEquals("free.fr", getDomainName("http://test.free.fr"));
-    	assertEquals("test.asso.fr", getDomainName("http://test.asso.fr"));
-    	
-    	rs.tearDown();    	
-    }
 
+    public void testTopLevelDomains() throws URIException {
+        ReloadSettings rs = new ReloadSettings(
+                new File(
+                        TestInfo.ORIGINALS_DIR, 
+                        "topLevelDomains_settings.xml"));
+        rs.setUp();
+        
+        assertEquals("free.fr", getDomainName("http://test.free.fr"));
+        assertEquals("test.asso.fr", getDomainName("http://test.asso.fr"));
+        
+        rs.tearDown();      
+    }
+    
     /** Create an arbitrarily bogus CandidateURI. 
      * As constructor "new UURI("", true)" is no longer visible
      */

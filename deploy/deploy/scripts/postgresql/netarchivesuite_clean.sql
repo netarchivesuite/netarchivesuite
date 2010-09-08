@@ -1,7 +1,7 @@
--- $Id$
--- $Revision$
--- $Date$
--- $Author$ 
+-- $Id: netarchivesuite_clean.sql 1414 2010-05-31 15:52:06Z ngiraud $
+-- $Revision: 1414 $
+-- $Date: 2010-05-31 17:52:06 +0200 (Mon, 31 May 2010) $
+-- $Author: ngiraud $ 
  
 -- PostgreSQL removal script
 -- presupposes PostgresSQL 8.3+

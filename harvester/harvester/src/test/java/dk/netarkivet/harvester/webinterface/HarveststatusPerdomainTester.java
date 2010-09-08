@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import org.apache.jasper.JasperException;
 import org.xml.sax.SAXException;
 
+import dk.netarkivet.common.webinterface.JspTestCase;
 import dk.netarkivet.testutils.StringAsserts;
 
 

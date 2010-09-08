@@ -37,7 +37,6 @@ import junit.framework.TestCase;
 import org.apache.commons.net.ftp.FTPClient;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -53,6 +52,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestMessageListener;
@@ -350,6 +350,7 @@ public class IntegrityTests extends TestCase {
         int beforeCount = Thread.activeCount();
 
         for (int i = 0; i < LARGE_MESSAGE_COUNT; ++i) {
+            //System.out.println("Sending message #" + i);
             bac.get(FILENAME_TO_GET, 0);
             bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                      true)); // only first upload will succeed
@@ -361,20 +362,29 @@ public class IntegrityTests extends TestCase {
                     Channels.getThisReposClient(), FILENAME_TO_GET, "ONE", "FFFF", "42");
             bac.sendRemoveAndGetFileMessage(rMsg);
         }
-
-        while (Thread.activeCount() > beforeCount) {
+        //System.out.println("Sending messages done");
+        System.out.println("Sleeping until active threads are equal to " + beforeCount);
+        long maxAllowedExecutionTime = 300000; // Only run this test for max. 5 minutes.
+        long starttime = System.currentTimeMillis();
+        while (Thread.activeCount() > beforeCount 
+                && System.currentTimeMillis() < starttime + maxAllowedExecutionTime) {
+            //System.out.println("Active count:" + Thread.activeCount());
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
         }
-
+        if (Thread.activeCount() > beforeCount) {
+            fail("Should only be " + beforeCount + ", but was " + Thread.activeCount());
+        }
+        System.out.println("Waiting for concurrent tasks to finish..");
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             //ignore
         }
+        System.out.println("Waiting for concurrent tasks to finish..");
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
 
         //assertEquals("Number of messages received by the server", 4 * LARGE_MESSAGE_COUNT, bas.getCountMessages());
@@ -472,6 +482,7 @@ public class IntegrityTests extends TestCase {
                                                  RemoteFileFactory.getInstance(
                                                          testARCFile, true,
                                                          false, true));
+            assertTrue("uploadMessage should not be null", um != null);
             upLoadedFiles.add(testARCFile.getName());
         } catch (IOException e) {
             throw new IOFailure("Creation of UploadMessage failed", e);

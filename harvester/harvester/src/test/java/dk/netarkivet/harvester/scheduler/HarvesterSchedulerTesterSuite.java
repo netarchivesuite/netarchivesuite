@@ -37,6 +37,7 @@ public class HarvesterSchedulerTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(HarvestSchedulerMonitorServerTester.class);
         suite.addTestSuite(HarvestSchedulerTester.class);
+        suite.addTestSuite(HarvestJobGeneratorTest.class);
     }
 
     public static void main(String args[]) {

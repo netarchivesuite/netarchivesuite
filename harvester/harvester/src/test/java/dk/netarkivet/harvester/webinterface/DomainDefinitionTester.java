@@ -41,7 +41,7 @@ import dk.netarkivet.harvester.datamodel.SeedList;
  * Tests for class DomainDefinition associated with JSP-page
  * Definitions-edit-domain.jsp.
  */
-public class DomainDefinitionTester extends WebinterfaceTestCase {
+public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     public DomainDefinitionTester(String s) {
         super(s);
     }

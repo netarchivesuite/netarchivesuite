@@ -31,6 +31,9 @@
         <jms>
         	<class>dk.netarkivet.common.distribute.JMSConnectionMockupMQ</class>
         </jms>
+        <notifications>
+            <class>dk.netarkivet.common.utils.PrintNotifications</class>
+        </notifications>
 	    <jmx>
     		<!-- to reduce running time of our unittests -->
 			<timeout>2</timeout>

@@ -22,8 +22,11 @@
  */
 package dk.netarkivet.common.distribute;
 
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+import javax.jms.QueueBrowser;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,7 +37,6 @@ import java.util.logging.Logger;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -353,60 +355,21 @@ public class IntegrityTests extends TestCase {
      * @throws Exception On failures
      */
     public void testMsgIds() throws Exception {
-        //Just for emptying the queue
-        String priority1 = Settings.get(
-                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        ChannelID result1;
-        if (priority1.equals(JobPriority.LOWPRIORITY.toString())) {
-            result1 = Channels.getAnyLowpriorityHaco();
-        } else
-        {
-            if (priority1.equals(JobPriority.HIGHPRIORITY.toString())) {
-                result1 = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID(priority1 + " is not a valid priority");
-        }
         conn.setListener(Channels.getAnyBa(),
-                new TestMessageListener(new TestMessage(Channels.getAnyBa(),
-                        result1)));
+                new TestMessageListener(new TestMessage(Channels.getAnyBa(), sendQ)));
         Set<String> set = new HashSet<String>();
 
         for (int i = 0; i < 100; i++) {
-            String priority = Settings.get(
-                    HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-            ChannelID result;
-            if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
-                result = Channels.getAnyLowpriorityHaco();
-            } else
-            {
-                if (priority.equals(JobPriority.HIGHPRIORITY.toString())) {
-                    result = Channels.getAnyHighpriorityHaco();
-                } else
-                throw new UnknownID(priority + " is not a valid priority");
-            }
-            NetarkivetMessage msg
-                    = new TestMessage(Channels.getAnyBa(), result);
+            NetarkivetMessage msg = new TestMessage(Channels.getAnyBa(), sendQ);
             conn.send(msg);
             assertTrue("No msg ID must be there twice", set.add(msg.getID()));
             Logger log = Logger.getLogger(getClass().getName());
             log.finest("Generated message ID " + msg.getID());
         }
         conn = JMSConnectionFactory.getInstance();
-        for (int i = 0; i < 100; i++) {
-            String priority = Settings.get(
-                    HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-            ChannelID result;
-            if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
-                result = Channels.getAnyLowpriorityHaco();
-            } else
-            {
-                if (priority.equals(JobPriority.HIGHPRIORITY.toString())) {
-                    result = Channels.getAnyHighpriorityHaco();
-                } else
-                throw new UnknownID(priority + " is not a valid priority");
-            }
+        for (int i = 0; i < 100; i++) {            
             NetarkivetMessage msg
-                    = new TestMessage(Channels.getAnyBa(), result);
+                    = new TestMessage(Channels.getAnyBa(), sendQ);
             conn.send(msg);
             assertTrue("No msg ID must be there twice", set.add(msg.getID()));
             Logger log = Logger.getLogger(getClass().getName());
@@ -506,6 +469,35 @@ public class IntegrityTests extends TestCase {
                 "Arcrepos queue MessageConsumer should have received message.",
                 nMsg.toString(), mc3.nMsg.toString());
     }
+    
+    
+    /**
+     * Checks that the QueueBrowser created by the <code>JMSConnectionMQ</code> class work correctly. 
+     * @throws JMSException 
+     * @throws InterruptedException 
+     * @see JMSConnection#createQueueBrowser(ChannelID)
+     */
+    public void testQueueBrowsing() throws JMSException, InterruptedException {
+        QueueBrowser queueBrowser = conn.createQueueBrowser(Channels.getTheRepos());
+        TestMessageConsumer mc = new TestMessageConsumer();
+        conn.setListener(Channels.getTheRepos(), mc);        
+
+        assertTrue("Empty queue had size > 0", queueBrowser.getEnumeration().hasMoreElements() == false);
+
+        NetarkivetMessage nMsg = new TestMessage(Channels.getTheRepos(), Channels.getError(), "testQueueSendMessage");
+        
+        synchronized (mc) {
+            conn.send(nMsg);
+            assertTrue("Queue didn't have any messages after dispatching job", queueBrowser.getEnumeration().hasMoreElements() == true);
+            mc.wait();
+        }        
+        
+        assertEquals(
+                "Arcrepos queue MessageConsumer should have received message.",
+                nMsg.toString(), mc.nMsg.toString());
+        
+        assertTrue("Queue not empty after consumation of message", queueBrowser.getEnumeration().hasMoreElements() == false);
+    }
 
     private class TestMessageListener implements MessageListener {
         private NetarkivetMessage expected;
@@ -549,15 +541,25 @@ public class IntegrityTests extends TestCase {
             this.testID = testID;
         }
 
-        public boolean equals(Object o2) {
-            if (o2 == this || !(o2 instanceof NetarkivetMessage)) {
-                return true;
-            }
-            try {
-                return getID().equals(((NetarkivetMessage) o2).getID());
-            } catch (Exception e) {
-                return false;
-            }
+                @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((testID == null) ? 0 : testID.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            TestMessage other = (TestMessage) obj;
+            if (testID == null) {
+                if (other.testID != null) return false;
+            } else if (!testID.equals(other.testID)) return false;
+            return true;
         }
 
         public String toString() {

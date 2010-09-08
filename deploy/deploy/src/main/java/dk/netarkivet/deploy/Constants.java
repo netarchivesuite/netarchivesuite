@@ -270,11 +270,11 @@ public final class Constants {
     /** The offset for the digit to replace during test in the 
      * heritrix jmx port.
      */
-    static final int TEST_OFFSET_HERITRIX_JMX_PORT = 1;
+    static final int TEST_OFFSET_HERITRIX_JMX_PORT = 2;
     /** The offset for the digit to replace during test in the 
      * heritrix gui port.
      */
-    static final int TEST_OFFSET_HERITRIX_GUI_PORT = 1;
+    static final int TEST_OFFSET_HERITRIX_GUI_PORT = 2;
     /** The offset for the digit to replace during test of the
      * port in the archive database url.
      */
@@ -431,6 +431,8 @@ public final class Constants {
     public static final String ARG_EVALUATE = "E";
     /** For giving the optional archive database argument.*/
     public static final String ARG_ARC_DB = "A";
+    /** For installing external libraries through deploy.*/
+    public static final String ARG_JAR_FOLDER = "J";
     
     // Argument values
     /** The long yes argument.*/
@@ -456,6 +458,8 @@ public final class Constants {
     
     /** The regular expression for validating the environment name.*/
     public static final String VALID_REGEX_ENVIRONMENT_NAME = "[a-zA-Z0-9]*";
+    /** The folder for the external jar-files to be copied into.*/
+    public static final String EXTERNAL_JAR_DIRECTORY = "external";
     
     // messages
     /** The error message for error in parsing the arguments.*/
@@ -498,6 +502,10 @@ public final class Constants {
     public static final String MSG_ERROR_NO_BPDB_FILE_FOUND = 
         "Reference to non-existing archive database file " 
         + "(-D argument).";
+    /** The error message when the folder with the external jar-library-files 
+     * does not exist.*/
+    public static final String MSG_ERROR_NO_JAR_FOLDER =
+        "Reference to non-existing external jar-folder.";
     /** The error message for wrong deploy-config file extension.*/
     public static final String MSG_ERROR_CONFIG_EXTENSION = 
         "Config file must be '.xml'!.\n";

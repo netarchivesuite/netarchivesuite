@@ -38,13 +38,12 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * of regular expressions. 
  *
  */
-
 public class GlobalCrawlerTrapList {
 
     /**
      * The unique id of this collection of crawler traps.
      */
-    int id;
+    private int id;
 
     /**
      * The list of traps. Each item is a regular expression matching url's to
@@ -52,7 +51,7 @@ public class GlobalCrawlerTrapList {
      * global_crawler_trap_expressions so we model
      * the traps as a Set to avoid possible duplicates.
      */
-    Set<String> traps;
+    private Set<String> traps;
 
     /**
      * Get the name of the list.
@@ -74,17 +73,17 @@ public class GlobalCrawlerTrapList {
     /**
      * A unique name by which this list is identified.
      */
-    String name;
+    private String name;
 
     /**
      * A free-text description of the traps in this collection.
      */
-    String description;
+    private String description;
 
     /**
      * Whether or not this set of traps is active (in use).
      */
-    boolean isActive;
+    private boolean isActive;
 
     /**
      * Protected constructor used by the DAO to create instances of this class.
@@ -92,7 +91,7 @@ public class GlobalCrawlerTrapList {
      * @param id  the id of this list.
      * @param name a name by which this list is known.
      * @param traps the set of trap expressions.
-     * @param description A textual description of this list.
+     * @param description A textual description of this list (may be null).
      * @param isActive flag indicating whether this list is isActive.
      * @throws ArgumentNotValid if the name is empty or null.
      */
@@ -100,6 +99,7 @@ public class GlobalCrawlerTrapList {
                                     String description, boolean isActive) throws
                                                              ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
+        ArgumentNotValid.checkNotNull(traps, "traps");
         this.id = id;
         this.traps = new HashSet<String>(traps.size());
         this.traps.addAll(traps);
@@ -117,11 +117,11 @@ public class GlobalCrawlerTrapList {
      * @param description A textual description of this list.
      * @param isActive flag indicating whether this list is isActive.
      * @throws IOFailure if the input stream cannot be found or read.
-     * @throws ArgumentNotValid if the input stream is null or the name is null or
-     * empty.
+     * @throws ArgumentNotValid if the input stream is null or the name is 
+     * null or empty.
      */
-    public GlobalCrawlerTrapList(InputStream is, String name, String description,
-                                 boolean isActive) throws IOFailure,
+    public GlobalCrawlerTrapList(InputStream is, String name, 
+            String description, boolean isActive) throws IOFailure,
                                                           ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(is, "is");
@@ -138,8 +138,10 @@ public class GlobalCrawlerTrapList {
 
     /**
      * A utility method to read the list of traps from an InputStream,
-     * line-by-line
+     * line-by-line.
      * @param is  The input stream from which to read.
+     * @throws IOFailure if the input stream cannot be read.
+     * @throws ArgumentNotValid if the input stream is null
      */
     public void setTrapsFromInputStream(InputStream is) {
         ArgumentNotValid.checkNotNull(is, "is");
@@ -147,7 +149,7 @@ public class GlobalCrawlerTrapList {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String line;
         try {
-            while  ( (line = reader.readLine()) != null ) {
+            while ((line = reader.readLine()) != null) {
                   traps.add(line.trim());
             }
         } catch (IOException e) {
@@ -156,7 +158,7 @@ public class GlobalCrawlerTrapList {
     }
 
     /**
-     * Gte the id of this list.
+     * Get the id of this list.
      * @return the id.
      */
     public int getId() {
@@ -197,7 +199,7 @@ public class GlobalCrawlerTrapList {
     }
 
     /**
-     * Set the description of this list
+     * Set the description of this list.
      * @param description the description.
      */
     public void setDescription(String description) {

@@ -39,7 +39,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -51,6 +50,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * A checksum archive in the form of a file (as alternative to a database).<br>
@@ -69,8 +69,8 @@ public final class FileChecksumArchive extends ChecksumArchive {
     /**
      * The character sequence for separating the filename from the checksum.
      */
-    private static final String CHECKSUM_SEPARATOR = dk.netarkivet.archive
-            .arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR;
+    private static final String CHECKSUM_SEPARATOR 
+        = ChecksumJob.STRING_FILENAME_SEPARATOR;
     
     /** The prefix to the filename. */
     private static final String FILENAME_PREFIX = "checksum_";

@@ -29,7 +29,8 @@ import junit.framework.TestCase;
 /** Unittestersuite for the CommonSettings class. */
 public class CommonSettingsTester extends TestCase {
 
-    public void testNoFinalSettingsConstants() {
+    @SuppressWarnings("rawtypes")
+	public void testNoFinalSettingsConstants() {
         Class c = CommonSettings.class;
         Field[] fields = c.getDeclaredFields();
         for (Field f: fields) {

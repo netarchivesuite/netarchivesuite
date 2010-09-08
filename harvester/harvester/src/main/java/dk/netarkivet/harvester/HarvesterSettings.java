@@ -182,6 +182,23 @@ public class HarvesterSettings {
      */
     public static String JOB_TIMEOUT_TIME =
             "settings.harvester.scheduler.jobtimeouttime";
+    
+    /** The period between checking if new jobs should be dispatched to the 
+     * harvest servers. New jobs are dispatched if the relevant harvest job 
+     * queue is empty and new jobs exist for this queue.
+     * This is set to 5 seconds based on a estimate of the harvest servers 
+     * ability to consume messages.
+     */
+    public static String DISPATCH_JOBS_PERIOD = 
+    	"settings.harvester.scheduler.dispatchperiode";
+    
+    /** 
+     * The period between checking if new jobs should be generated.
+     * This is one minute because that's the finest we can define in a harvest
+     * definition.
+     */
+    public static String GENERATE_JOBS_PERIOD = 
+        "settings.harvester.scheduler.jobgenerationperiode";
 
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br> Each job gets a
@@ -393,6 +410,5 @@ public class HarvesterSettings {
      */
     public static String METADATA_LOG_FILE_PATTERN =
             "settings.harvester.harvesting.metadata.logFilePattern";
-    
 }
 

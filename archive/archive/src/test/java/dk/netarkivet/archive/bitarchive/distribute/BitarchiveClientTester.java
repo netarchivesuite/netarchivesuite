@@ -31,13 +31,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
-import dk.netarkivet.archive.checksum.distribute.TestInfo;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -50,12 +48,13 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.MessageAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
@@ -97,7 +96,7 @@ public class BitarchiveClientTester extends TestCase {
     /**
      * Number of ARC records in the file uploaded.
      */
-    private static final int NUM_RECORDS = 13;
+    private static final int NUM_RECORDS = 21;
     private JMSConnectionMockupMQ con;
     ReloadSettings rs = new ReloadSettings();
 
@@ -121,6 +120,7 @@ public class BitarchiveClientTester extends TestCase {
         con.setListener(Channels.getTheRepos(), handler);
         bac = BitarchiveClient.getInstance(ALL_BA, ANY_BA, THE_BAMON);
 
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, PrintNotifications.class.getName());
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER_DIR.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
@@ -311,7 +311,7 @@ public class BitarchiveClientTester extends TestCase {
         assertNotNull("ARC record should be non-null", record);
         assertEquals(ARC_FILE_NAME, record.getFile());
 
-        byte[] contents = TestUtils.inputStreamToBytes(
+        byte[] contents = StreamUtils.inputStreamToBytes(
                 record.getData(), (int) record.getLength());
 
         String targetcontents = FileUtils.readFile(ARC_RECORD_FILE);
@@ -394,6 +394,7 @@ public class BitarchiveClientTester extends TestCase {
      * chekcs that - exactly one reply was generated - that the reply had its OK
      * flag set to true - that the output file contains a text that indicates
      * proper processing was done.
+     * @throws Exception 
      */
     private void verifyBatchWentWell() {
         // Wait for up to 10 seconds to see if the message gets back
@@ -418,10 +419,13 @@ public class BitarchiveClientTester extends TestCase {
         }
         msg.getResultFile().copyTo(BATCH_OUTPUT_FILE);
 
-        FileAsserts.assertFileContains("Expected record report not found: ",
-                                       "Records Processed = " + NUM_RECORDS,
-                                       BATCH_OUTPUT_FILE);
-
+        try {
+            FileAsserts.assertFileContains("Expected record report not found: " 
+                    + NUM_RECORDS + ", but found: " + FileUtils.readFile(BATCH_OUTPUT_FILE), 
+                    "Records Processed = " + NUM_RECORDS, BATCH_OUTPUT_FILE);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
     }
 
     /**
@@ -456,6 +460,9 @@ public class BitarchiveClientTester extends TestCase {
         // make sure, that the listener 'handler' is the only one on the TheBamon queue
         BitarchiveMonitorServer.getInstance().close();
         con.setListener(Channels.getTheBamon(), handler);
+        con.setListener(Channels.getAllBa(), handler);
+        con.setListener(Channels.getAnyBa(), handler);
+        
         assertEquals("The handler should be the only one listening to the queue TheBamon", 
                 1, con.getListeners(Channels.getTheBamon()).size());
         // check GetChecksum through function
@@ -507,6 +514,18 @@ public class BitarchiveClientTester extends TestCase {
         assertEquals("One CorrectMessage expected to be sent.", 1, handler.correctMsg.size());
         assertEquals("The received message should be one returned by the function", 
                 corMsg, handler.correctMsg.get(0));
+        
+        // check RemoveAndGetFileMessage
+        RemoveAndGetFileMessage ragfMsg = new RemoveAndGetFileMessage(
+                Channels.getTheBamon(), Channels.getError(), "filename.arc",
+                Settings.get(CommonSettings.USE_REPLICA_ID), "checksum", "credentials");
+        bac.sendRemoveAndGetFileMessage(ragfMsg);
+        con.waitForConcurrentTasksToFinish();
+        
+        assertEquals("One GetAndRemoveFileMessage expected, but was: " + handler.ragfMsg, 
+                1, handler.ragfMsg.size());
+        assertEquals("The received message should be one returned by the function",
+                ragfMsg, handler.ragfMsg.get(0));
     }
 
     /* Receive and check messages */
@@ -526,6 +545,8 @@ public class BitarchiveClientTester extends TestCase {
                 = new ArrayList<GetChecksumMessage>();
         public List<CorrectMessage> correctMsg
                 = new ArrayList<CorrectMessage>();
+        public List<RemoveAndGetFileMessage> ragfMsg
+                = new ArrayList<RemoveAndGetFileMessage>();
 
         public MessageTestHandler() {
             //System.out.println("MessageTestHandler initiated!");
@@ -548,8 +569,11 @@ public class BitarchiveClientTester extends TestCase {
         }
 
         public void visit(BatchReplyMessage msg) {
-            // System.out.println("Got batch reply msg " + msg);
             batchReplyMsg.add(msg);
+        }
+        
+        public void visit(RemoveAndGetFileMessage msg) {
+            ragfMsg.add(msg);
         }
         
         public void visit(GetAllFilenamesMessage msg) {

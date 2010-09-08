@@ -23,6 +23,10 @@
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -46,6 +50,8 @@ public class BatchMessage extends ArchiveMessage {
     private FileBatchJob job;
     /** The id of this replica. */
     private String replicaId;
+    /** The list of arguments for the batchjob.*/
+    private List<String> args;
 
     /**
      * Creates a BatchMessage object which can be used to initiate a batch
@@ -58,7 +64,7 @@ public class BatchMessage extends ArchiveMessage {
      */
     public BatchMessage(ChannelID to,
                         FileBatchJob job, String replicaId) {
-        this(to, Channels.getError(), job, replicaId);
+        this(to, Channels.getError(), job, replicaId, new String[]{});
     }
 
     /**
@@ -69,13 +75,22 @@ public class BatchMessage extends ArchiveMessage {
      * @param replyTo The channel whereto the reply to this message is sent.
      * @param job  The batch job to be executed
      * @param replicaId id of this replica.
+     * @param arguments The arguments for initialising the batchjob. This is 
+     * allowed to be null.
+     * @throws ArgumentNotValid If the job is null, or the replica is either 
+     * null or the empty string.
      */
-    public BatchMessage(ChannelID to, ChannelID replyTo,
-                        FileBatchJob job, String replicaId) {
+    public BatchMessage(ChannelID to, ChannelID replyTo, FileBatchJob job, 
+            String replicaId, String... arguments) throws ArgumentNotValid {
         super(to, replyTo);
         ArgumentNotValid.checkNotNull(job, "job");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         this.job = job;
         this.replicaId = replicaId;
+        this.args = new ArrayList<String>();
+        if(arguments != null && !(arguments.length == 0)) {
+            Collections.addAll(this.args, arguments);
+        }
     }
 
   /**
@@ -92,6 +107,14 @@ public class BatchMessage extends ArchiveMessage {
      */
     public String getReplicaId() {
         return replicaId;
+    }
+    
+    /**
+     * Returns the arguments for the batchjob.
+     * @return The arguments for the batchjob.
+     */
+    public List<String> getArgs() {
+        return args;
     }
 
     /**
@@ -113,5 +136,4 @@ public class BatchMessage extends ArchiveMessage {
     public String toString() {
         return super.toString() + " Job: " + job;
     }
-
 }

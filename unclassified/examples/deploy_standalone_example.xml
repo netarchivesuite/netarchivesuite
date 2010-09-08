@@ -6,7 +6,7 @@
 * $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -21,20 +21,33 @@
 * You should have received a copy of the GNU Lesser General Public
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
-* USA
+*  USA
 *
 -->
 <!--
         This file contains an example of a deploy configuration file for the 
-        one machine scenario. Kind of running 'quickstart' on another machine.
--->
+        one machine scenario. Kind of running 'quickstart' on another machine. 
+        Uses HTTP as file transport agent. Requires the availability of 
+        port 7676: JMS broker
+        port 8040-8047 for the http filetransport servers serving the HTTPRemoteFile;         
+        port 8070 for the viewerproxy.
+        port 8074 for the GUIApplication webinterface
+        port 8090-8093 for the Heritrix GUI 
+        port 8110-8117: JMX ports
+        port 8210-8217: RMI ports
 
+        Does not include a checksum replica w/ a ChecksumFileApplication
+        Uses the default ActiveBitPreservation implementation
+        (currently dk.netarkivet.archive.arcrepository.bitpreservation.
+         FileBasedActiveBitPreservation).
+-->
 
 <deployGlobal>
     <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
     <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
     <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
     <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
+    <deployClassPath>lib/dk.netarkivet.wayback.jar</deployClassPath>
     <deployJavaOpt>-Xmx1536m</deployJavaOpt>
     <settings>
         <common>
@@ -42,10 +55,8 @@
             <applicationInstanceId></applicationInstanceId>
             <remoteFile>
                 <class>
-                    dk.netarkivet.common.distribute.FTPRemoteFile
+                    dk.netarkivet.common.distribute.HTTPRemoteFile
                 </class>
-                <serverPort>21</serverPort>
-                <retries>3</retries>
             </remoteFile>
             <jms>
                 <class>
@@ -66,9 +77,9 @@
                 <replica>
                     <replicaId>A</replicaId>
                     <replicaName>ReplicaA</replicaName>
-                    <replicaType>bitArchive</replicaType>
+                    <replicaType>bitarchive</replicaType>
                 </replica>
-            </replicas>
+             </replicas>
             <database>
                 <url></url>
             </database>
@@ -83,14 +94,8 @@
     <thisPhysicalLocation name="NATIONAL_LIBRARY">
         <deployInstallDir>/home/test</deployInstallDir>
         <deployMachineUserName>test</deployMachineUserName>
-    
         <settings>
             <common>
-                <remoteFile>
-                    <serverName>localhost</serverName>
-                    <userName>test</userName>
-                    <userPassword>test123</userPassword>
-                </remoteFile>
                 <useReplicaId>A</useReplicaId> 
                 <mail>
                     <server>post.kb.dk</server>
@@ -118,6 +123,10 @@
                             <port>8110</port> 
                             <rmiPort>8210</rmiPort>
                         </jmx>
+                        <remoteFile>
+                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                        <port>8040</port>
+                        </remoteFile>  
                         <database>
                              <url>jdbc:derby:harvestDatabase/fullhddb</url>
                         </database>
@@ -131,6 +140,10 @@
                             <port>8111</port> 
                             <rmiPort>8211</rmiPort>
                         </jmx>
+                         <remoteFile>
+                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                        <port>8041</port> 
+                        </remoteFile>     
                     </common>
                 </settings>
             </applicationName>
@@ -141,6 +154,10 @@
                             <port>8112</port>  
                             <rmiPort>8212</rmiPort>
                         </jmx>
+                         <remoteFile>
+                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                        <port>8042</port> 
+                        </remoteFile>  
                     </common>
                 </settings>
             </applicationName>
@@ -151,6 +168,10 @@
                             <port>8113</port>  
                             <rmiPort>8213</rmiPort>
                         </jmx>
+ 		        <remoteFile>
+                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                        <port>8043</port>
+                        </remoteFile>  
                     </common>
                     <archive>
                         <bitarchive>
@@ -167,6 +188,10 @@
                             <port>8114</port>
                             <rmiPort>8214</rmiPort>
                         </jmx>
+ 			<remoteFile>
+                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                        <port>8044</port> 
+                        </remoteFile>  
                     </common>
                     <harvester>
                         <harvesting>
@@ -190,6 +215,10 @@
                             <port>8115</port>
                             <rmiPort>8215</rmiPort>
                         </jmx>
+ 			<remoteFile>
+                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                        <port>8045</port> 
+                        </remoteFile>  
                     </common>
                     <harvester>
                         <harvesting>
@@ -212,6 +241,10 @@
                             <port>8116</port>
                             <rmiPort>8216</rmiPort>
                         </jmx>
+ 			<remoteFile>
+                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                        <port>8046</port> 
+                        </remoteFile>  
                     </common>
                 </settings>
             </applicationName>
@@ -224,6 +257,10 @@
                         <http>
                             <port>8070</port>
                         </http>
+ 			<remoteFile>
+                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                        <port>8047</port>
+                        </remoteFile>  
                         <jmx>
                             <port>8117</port>
                             <rmiPort>8217</rmiPort>
@@ -231,6 +268,6 @@
                     </common>
                 </settings>
             </applicationName>
-        </deployMachine>
+      </deployMachine>
     </thisPhysicalLocation>
 </deployGlobal>

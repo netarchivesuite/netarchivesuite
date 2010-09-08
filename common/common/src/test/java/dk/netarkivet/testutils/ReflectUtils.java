@@ -20,7 +20,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 package dk.netarkivet.testutils;
 
 import java.lang.reflect.Constructor;
@@ -29,14 +28,13 @@ import java.lang.reflect.Method;
 
 import dk.netarkivet.deploy.BuildCompleteSettings;
 
-import junit.framework.Assert;;
+import junit.framework.Assert;
 
 
 /**
- * Methods that help in doing common reflection tasks
+ * Methods that help in doing common reflection tasks.
  *
  */
-
 public class ReflectUtils {
     /** Look up a private method and make it accessible for testing.
      *
@@ -89,7 +87,8 @@ public class ReflectUtils {
      * Method for testing the constructor of a utility class (the constructor 
      * should be private).
      */
-    public static void testUtilityConstructor(Class c) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void testUtilityConstructor(Class c) {
         Constructor<BuildCompleteSettings>[] constructors = c.getConstructors();
         
         Assert.assertEquals("There should be no public constructors.", 
@@ -107,7 +106,7 @@ public class ReflectUtils {
                     con.isAccessible());
             
             try {
-                Object instance = con.newInstance(null);
+                Object instance = con.newInstance((Object[]) null);
                 Assert.assertNotNull("It should be possible to instatiate now.", instance);
             } catch (Throwable e) {
                 e.printStackTrace();

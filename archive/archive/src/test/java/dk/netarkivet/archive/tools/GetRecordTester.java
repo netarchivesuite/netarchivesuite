@@ -97,6 +97,23 @@ public class GetRecordTester extends TestCase {
         assertEquals("Should return content unchanged, but was: "
                 + returnedContent, CONTENT, returnedContent);
     }
+    
+    public void testFail() {
+        String expectedResults = "indexfile uri";
+        try {
+            GetRecord.main(new String[]{
+                    TestInfo.INDEX_DIR.getAbsolutePath()});
+            fail("System should exit");
+        } catch (SecurityException e) {
+            assertEquals("Should have exited with failure",
+                    1, pse.getExitValue());
+        }
+        System.out.flush();
+        String returned = pss.getErr();
+        assertTrue("Should contain the required arguments: '" + expectedResults
+                + "', but was: '" + returned + "'.", 
+                returned.contains(expectedResults));
+    }
 
     /**
      * This class is a MessageListener that responds to GetMessage,

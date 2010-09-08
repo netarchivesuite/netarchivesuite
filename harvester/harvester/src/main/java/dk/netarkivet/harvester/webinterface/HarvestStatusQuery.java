@@ -269,6 +269,9 @@ public class HarvestStatusQuery {
     }
 
     public String getHarvestName() {
+        if (harvestName == null) {
+            return ""; 
+        }
         return harvestName;
     }
 

@@ -23,7 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%@page import="dk.netarkivet.common.utils.I18n,
                     dk.netarkivet.common.webinterface.HTMLUtils,
-                    dk.netarkivet.common.webinterface.SiteSection, dk.netarkivet.viewerproxy.Constants"
+                    dk.netarkivet.common.webinterface.SiteSection, 
+                    dk.netarkivet.viewerproxy.Constants"
             pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"

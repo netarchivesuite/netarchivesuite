@@ -128,7 +128,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                         value="<%=HTMLUtils.escapeHtmlValues(checksum.get(0))%>" 
                         name="<%=Constants.CHECKSUM_PARAM%>">
                     <input type="submit" 
-                        value="<fmt:message key="replace.file.in.bitarchive.0">
+                        value="<fmt:message key="replace.file.in.replica.0">
                         <fmt:param><%=bitarchive%></fmt:param></fmt:message>">
                     <%
                     // Either (1) no checksums or more than one checksum were returned from location 'bitarchive' for this file

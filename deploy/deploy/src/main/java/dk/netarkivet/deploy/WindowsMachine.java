@@ -56,13 +56,16 @@ public class WindowsMachine extends Machine {
      * @param dbFile The harvest definition database file.
      * @param arcdbFile The archive database.
      * @param resetDir Whether the temporary directory should be reset.
+     * @param externalJarFolder The folder containing the external jar 
+     * library files.
      */
     public WindowsMachine(Element root, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
                 File logProp, File securityPolicy, File dbFile,
-                File arcdbFile, boolean resetDir) {
+                File arcdbFile, boolean resetDir, File externalJarFolder) {
         super(root, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFile, arcdbFile, resetDir);
+                logProp, securityPolicy, dbFile, arcdbFile, resetDir,
+                externalJarFolder);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_WINDOWS;
@@ -232,6 +235,8 @@ public class WindowsMachine extends Machine {
         res.append(Constants.COLON);
         res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
         res.append(Constants.NEWLINE);
+        // INSTALL EXTERNAL JAR FILES.
+        res.append(osInstallExternalJarFiles());
         // APPLY DATABASE!
         res.append(osInstallDatabase());
         // APPLY ARCHIVE DATABASE!
@@ -860,7 +865,6 @@ public class WindowsMachine extends Machine {
      * @return The script for installing the archive database 
      * (if needed).
      */
-
     @Override
     protected String osInstallArchiveDatabase() {
         String bpDatabaseDir = 
@@ -877,7 +881,56 @@ public class WindowsMachine extends Machine {
 
         return res.toString();
     }
+    
+    /**
+     * This function makes the part of the install script for installing the
+     * external jar files from within the jarFolder.
+     * If the jarFolder is null, then no action will be performed.
+     * 
+     * @return The script for installing the external jar files (if needed).
+     */
+    @Override
+    protected String osInstallExternalJarFiles() {
+        if(jarFolder == null) {
+            return Constants.EMPTY;
+        }
+        
+        StringBuilder res = new StringBuilder();
+        
+        // Comment about copying files.
+        res.append(ScriptConstants.ECHO_INSTALLING_EXTERNAL_JAR_FILES);
+        res.append(Constants.NEWLINE);
+        // if [ -d folder ]; then ssh machine "md installdir/external"; 
+        // scp folder/* machine:installdir/external; fi;
+        res.append(ScriptConstants.LINUX_IF_DIR_EXIST + Constants.SPACE);
+        res.append(jarFolder.getPath());
+        res.append(Constants.SPACE + ScriptConstants.LINUX_THEN 
+                + Constants.SPACE);
+        res.append(ScriptConstants.SSH + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE + ScriptConstants.MD + Constants.SPACE
+                + Constants.QUOTE_MARK);
+        res.append(ScriptConstants.doubleBackslashes(getInstallDirPath()));
+        res.append(Constants.BACKSLASH + Constants.BACKSLASH 
+                + Constants.EXTERNAL_JAR_DIRECTORY + Constants.QUOTE_MARK 
+                + Constants.SEMICOLON);
+        res.append(Constants.SPACE + ScriptConstants.SCP + Constants.SPACE 
+                + ScriptConstants.DASH_R + Constants.SPACE);
+        res.append(jarFolder.getPath());
+        res.append(Constants.SLASH + Constants.STAR);
+        res.append(Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.COLON + Constants.QUOTE_MARK);
+        res.append(ScriptConstants.doubleBackslashes(getInstallDirPath()));
+        res.append(Constants.BACKSLASH + Constants.BACKSLASH 
+                + Constants.EXTERNAL_JAR_DIRECTORY + Constants.QUOTE_MARK);
+        res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.FI 
+                + Constants.SEMICOLON);
+        res.append(Constants.NEWLINE);
 
+        return res.toString();
+    }
+    
     /**
      * Creates the specified directories in the deploy config file.
      * 

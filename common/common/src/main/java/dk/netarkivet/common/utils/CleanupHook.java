@@ -37,7 +37,7 @@ public class CleanupHook extends Thread {
     private CleanupIF app;
     /** The name of the application, which this CleanupHook,
      * should help to cleanup. */
-    private String appName;
+    private String appName;    
 
     /**
      * Returns a ShutdownHook thread for an object with a cleanup() method.
@@ -58,13 +58,10 @@ public class CleanupHook extends Thread {
     public void run() {
         Log log = null;
         try {
-            System.out.println("Cleaning up " + appName);
             log = LogFactory.getLog(appName);
             log.info("Cleaning up " + appName);
         } catch (Throwable e) {
-            System.out.println("Failed to log cleaning up operation on "
-                    + appName);
-            e.printStackTrace();
+            //Ignore
         }
         try {
             app.cleanup();
@@ -82,5 +79,4 @@ public class CleanupHook extends Thread {
             e.printStackTrace();
         }
     }
-
 }

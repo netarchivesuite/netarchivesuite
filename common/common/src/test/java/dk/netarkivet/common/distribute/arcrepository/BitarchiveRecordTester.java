@@ -39,7 +39,7 @@ import org.archive.io.arc.ARCRecord;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
@@ -72,7 +72,7 @@ public class BitarchiveRecordTester extends TestCase {
         ARCReader ar = ARCReaderFactory.get(f);
         ARCRecord record = (ARCRecord) ar.get(2001); // record representing record of size 9471 bytes
         BitarchiveRecord br = new BitarchiveRecord(record);
-        byte[] contents = TestUtils.inputStreamToBytes(
+        byte[] contents = StreamUtils.inputStreamToBytes(
                 br.getData(), (int) br.getLength());
         assertEquals("Should have same length", contents.length, br.getLength());
         // getData(outputStream)
@@ -95,7 +95,7 @@ public class BitarchiveRecordTester extends TestCase {
         ARCReader ar = ARCReaderFactory.get(f);
         ARCRecord record = (ARCRecord) ar.get(11563); // record representing record of size 395390 bytes
         BitarchiveRecord br = new BitarchiveRecord(record);
-        byte[] contents = TestUtils.inputStreamToBytes(
+        byte[] contents = StreamUtils.inputStreamToBytes(
                 br.getData(), (int) br.getLength());
         assertEquals("Should have same length: ",
                 contents.length, br.getLength());

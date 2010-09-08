@@ -31,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -105,7 +104,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     /** The message to write to log when server is stopped. */
     private static final String CLOSED_MESSAGE
             = "Closed down HarvestControllerServer";
-    /** The message to write to log whan starting a crawl. */
+    /** The message to write to log when starting a crawl. */
     private static final String STARTCRAWL_MESSAGE = "Starting crawl of job :";
     /** The message to write to log after ending a crawl. */
     private static final String ENDCRAWL_MESSAGE = "Ending crawl of job :";
@@ -200,20 +199,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         // If any unprocessed jobs are left on the server, process them now
         processOldJobs();
 
-        // Environment and connections are now ready for processing of messages
-        JobPriority p = JobPriority.valueOf(Settings
-                .get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
-        switch (p) {
-        case HIGHPRIORITY:
-            jobChannel = Channels.getAnyHighpriorityHaco();
-            break;
-        case LOWPRIORITY:
-            jobChannel = Channels.getAnyLowpriorityHaco();
-            break;
-        default:
-            throw new UnknownID(p + " is not a valid priority");
-        }
-        // Only listen for harvesterjobs if enough available space
+		// Environment and connections are now ready for processing of messages
+		jobChannel = JobChannelUtil.getChannel(JobPriority.valueOf(Settings
+				.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY)));
+		// Only listen for harvester jobs if enough available space
         beginListeningIfSpaceAvailable();
     }
 
@@ -578,10 +567,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             CrawlStatusMessage csm;
 
             if (crawlException == null && errorMessage.length() == 0) {
-                log.warn("JobID: " + jobID + " done.");
+                log.info("Job with ID " + jobID + " finished with status DONE");
                 csm = new CrawlStatusMessage(jobID, JobStatus.DONE, dhr);
             } else {
-                log.warn("JobID: " + jobID + " failed.");
+                log.warn("Job with ID " + jobID + " finished with status FAILED");
                 csm = new CrawlStatusMessage(jobID, JobStatus.FAILED, dhr);
                 setErrorMessages(csm, crawlException, errorMessage.toString(),
                         dhr == null, failedFiles.size());

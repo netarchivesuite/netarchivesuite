@@ -25,6 +25,8 @@ package dk.netarkivet.common.utils.batch;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -58,6 +60,7 @@ public class LoadableJarBatchJobTester extends TestCase {
     public void testInitialize() {
         FileBatchJob job = new LoadableJarBatchJob(
         		"dk.netarkivet.common.utils.batch.LoadableTestJob",
+        		new ArrayList<String>(),
                 new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar")
                 );
         OutputStream os = new ByteArrayOutputStream();
@@ -68,6 +71,7 @@ public class LoadableJarBatchJobTester extends TestCase {
         try {
             job = new LoadableJarBatchJob(
             		"dk.netarkivet.common.utils.batch.LoadableTestJob$InnerClass",
+                        new ArrayList<String>(),
                 new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar")
                 );
             job.initialize(os);
@@ -78,6 +82,7 @@ public class LoadableJarBatchJobTester extends TestCase {
 
         job = new LoadableJarBatchJob(
         		"dk.netarkivet.common.utils.batch.LoadableTestJob$InnerBatchJob",
+                        new ArrayList<String>(),
         		new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar")
                 );
         os = new ByteArrayOutputStream();
@@ -89,6 +94,7 @@ public class LoadableJarBatchJobTester extends TestCase {
     public void testLoadingJobWithoutPackage() {
         FileBatchJob job = new LoadableJarBatchJob(
         		"ExternalBatchSeveralClassesNoPackage",
+                        new ArrayList<String>(),
                 new File(TestInfo.WORKING_DIR, "ExternalBatchSeveralClassesNoPackage.jar")
                 );
         OutputStream os = new ByteArrayOutputStream();
@@ -100,6 +106,7 @@ public class LoadableJarBatchJobTester extends TestCase {
     public void testLoadingJobWithPackage() {
         FileBatchJob job = new LoadableJarBatchJob(
         		"batch.ExternalBatchSeveralClassesWithPackage",
+                        new ArrayList<String>(),
                 new File(TestInfo.WORKING_DIR, "ExternalBatchSeveralClassesWithPackage.jar")
                 );
         OutputStream os = new ByteArrayOutputStream();
@@ -108,6 +115,61 @@ public class LoadableJarBatchJobTester extends TestCase {
         File metadataFile = new File(TestInfo.WORKING_DIR, "2-metadata-1.arc");
         job.processFile(metadataFile, os);
     }
-    
-    
+
+    /**
+     * Tests the loadable batchjobs with arguments.
+     */
+    public void testJobWithArguments() {
+        List<String> args = new ArrayList<String>();
+        args.add(".*");
+        args.add(".*[.]dk"); // url regex
+        args.add("text/.*"); // mimetype regex
+        FileBatchJob job = new LoadableJarBatchJob("dk.netarkivet.common.utils.batch.UrlSearch", args, 
+                new File(TestInfo.WORKING_DIR, "MimeUrlSearch.jar"));
+        File metadataFile = new File(TestInfo.WORKING_DIR, "input-1.arc");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+        job.initialize(os);
+        job.processFile(metadataFile, os);
+        job.finish(os);
+        
+        String result1 = os.toString();
+        assertTrue("expected: Urls matched = 3, but got:\n" + result1, result1.contains("Urls matched = 3"));
+        assertTrue("expected: Mimetypes mached = 4, but got:\n" + result1, result1.contains("Mimetypes matched = 4"));
+        assertTrue("expected: Url and Mimetype maches = 3, but got:\n" + result1, result1.contains("Url and Mimetype matches = 3"));
+
+        // try with different
+        args.clear();
+        args.add(".*");
+        args.add(".*[.]dk"); // url regex
+        args.add("image/.*"); // mimetype regex
+        job = new LoadableJarBatchJob("dk.netarkivet.common.utils.batch.UrlSearch", args, 
+                new File(TestInfo.WORKING_DIR, "MimeUrlSearch.jar"));
+
+        os = new ByteArrayOutputStream();
+        job.initialize(os);
+        job.processFile(metadataFile, os);
+        job.finish(os);
+        
+        String result2 = os.toString();
+        assertFalse("Expected results to be different, but both was \n" 
+                + result1, result1.equals(result2));
+        
+        // try again with original
+        args.clear();
+        args.add(".*");
+        args.add(".*[.]dk"); // url regex
+        args.add("text/.*"); // mimetype regex
+        job = new LoadableJarBatchJob("dk.netarkivet.common.utils.batch.UrlSearch", args, 
+                new File(TestInfo.WORKING_DIR, "MimeUrlSearch.jar"));
+
+        os = new ByteArrayOutputStream();
+        job.initialize(os);
+        job.processFile(metadataFile, os);
+        job.finish(os);
+        
+        String result3 = os.toString();
+        assertTrue("Expected results to be identical: Results 1\n" + result1 
+                + "\nResults3:\n" + result3, result1.equals(result3));
+    }
 }

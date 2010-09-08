@@ -48,8 +48,7 @@ import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
-import dk.netarkivet.harvester.webinterface.JspTestCase;
-import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
+import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
