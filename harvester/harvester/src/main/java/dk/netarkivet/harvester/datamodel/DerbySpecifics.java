@@ -87,8 +87,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
             s = c.prepareStatement("DROP TABLE " + tableName);
             s.execute();
         } catch (SQLException e) {
-            log.warn("Couldn't drop temporary table " + tableName + "\n" +
-                     ExceptionUtils.getSQLExceptionCause(e), e);
+            log.warn("Couldn't drop temporary table " + tableName 
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -98,9 +98,11 @@ public abstract class DerbySpecifics extends DBSpecifics {
      * Checks that the connection is valid (i.e. still open on the server side).
      * This implementation can be overriden if a specific RDBM is not handling
      * the {@link Connection#isValid(int)} JDBC4 method properly.
-     * @param connection
-     * @param validityTimeout
-     * @return
+     * @param connection A database connection.
+     * @param validityTimeout The time in seconds to wait for the database 
+     * operation used to validate the connection 
+ 
+     * @return true, if the connection is valid; false otherwise
      * @throws SQLException 
      */
     public boolean connectionIsValid(Connection connection, int validityTimeout)

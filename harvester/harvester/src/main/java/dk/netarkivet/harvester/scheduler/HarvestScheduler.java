@@ -118,8 +118,8 @@ public class HarvestScheduler extends LifeCycleComponent {
                 rescheduleSubmittedJobs();
                 int dispatchPeriode = 
                     Settings.getInt(HarvesterSettings.DISPATCH_JOBS_PERIOD);
-                log.info("Scheduling dispatch every " + (dispatchPeriode/1000) +
-                        " seconds");
+                log.info("Scheduling dispatch every " + (dispatchPeriode/1000) 
+                        + " seconds");
                 try {
                     while (!dispatcherThread.isInterrupted()) {
                         try {
@@ -130,8 +130,8 @@ public class HarvestScheduler extends LifeCycleComponent {
                         Thread.sleep(dispatchPeriode);                
                     }
                 } catch (InterruptedException e) {
-                    log.info("HarvestJobDispatcher interrupted, " + 
-                            e.getMessage() );
+                    log.info("HarvestJobDispatcher interrupted, " 
+                            + e.getMessage());
                 }        
             }
         };
@@ -172,9 +172,11 @@ public class HarvestScheduler extends LifeCycleComponent {
             Date endTime = new Date();
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
             if (new Date().after(endTime)) {
-                final String msg = " Job " + id + " has exceeded its timeout of "
-                + (Settings.getLong( HarvesterSettings.JOB_TIMEOUT_TIME) / 60) +
-                " minutes." + " Changing status to " + "FAILED.";
+                final String msg = " Job " + id 
+                    + " has exceeded its timeout of "
+                    + (Settings.getLong(
+                            HarvesterSettings.JOB_TIMEOUT_TIME) / 60) 
+                            + " minutes." + " Changing status to " + "FAILED.";
                 log.warn(msg);
                 job.setStatus(JobStatus.FAILED);
                 job.appendHarvestErrors(msg);
@@ -199,8 +201,8 @@ public class HarvestScheduler extends LifeCycleComponent {
         // To be removed when the Harvestjob functionality is moved to its own
         // application connected to a database server
         if (backupNow()) { // Check if we want to backup the database now?
-            File backupDir = new File("DB-Backup-" + 
-                    System.currentTimeMillis());
+            File backupDir = new File("DB-Backup-" 
+                    + System.currentTimeMillis());
             try {
                 DBSpecifics.getInstance().backupDatabase(backupDir);
                 lastBackupDate = new Date();
@@ -261,10 +263,10 @@ public class HarvestScheduler extends LifeCycleComponent {
         return (secondsPassed / 3600);
     }
 
-	/**
-	 * Submit those jobs that are ready for submission if the relevant 
-	 * message queue is empty.
-	 * */
+    /**
+     * Submit those jobs that are ready for submission if the relevant message
+     * queue is empty.
+     * */
     synchronized void submitNewJobs() {
         final JobDAO dao = JobDAO.getInstance();
         Iterator<Long> jobsToSubmit = dao.getAllJobIds(JobStatus.NEW);
@@ -333,14 +335,15 @@ public class HarvestScheduler extends LifeCycleComponent {
             }
         }
         if (numberOfSubmittedJobs > 0) {
-            log.info("Submitted " + numberOfSubmittedJobs + " jobs for harvesting");
+            log.info("Submitted " + numberOfSubmittedJobs 
+                    + " jobs for harvesting");
         }
     }
     
     /**
      * Checks that the message queue for the given harvest job is empty and 
      * therefore ready for the next message.
-     * @param job The job to check the queue for
+     * @param channelId The id of the channel to check
      * @return Is the queue empty
      * @throws JMSException Unable to retrieve queue information
      */
@@ -372,8 +375,8 @@ public class HarvestScheduler extends LifeCycleComponent {
     /**
      * Release allocated resources (JMS connections) and stops dispatching 
      * harvest jobs, all without logging.
-     * @override
      */
+    @Override
     public void shutdown() {
         log.debug("HarvestScheduler closing down.");
         if (dispatcherThread != null) {

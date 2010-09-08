@@ -21,9 +21,6 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import java.io.File;
-
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
@@ -43,16 +40,16 @@ import org.hibernate.cfg.AnnotationConfiguration;
 public class HibernateUtil {
 
     /** Logger for this class. */
-    private static final Log log = LogFactory.getLog(HibernateUtil.class.getName());
+    private static final Log log = LogFactory.getLog(
+            HibernateUtil.class.getName());
 
-    /**i
-     * key indicating the connection provider to be used by hibernate.
+    /** Key indicating the connection provider to be used by hibernate.
      */
     private static final String CONNECTION_PROVIDER_CLASS
             = "connection.provider_class";
 
     /**
-     * value indicating use of the c3p0 as connection provider. This is hard
+     * Value indicating use of the c3p0 as connection provider. This is hard
      * coded and no other connection providers have been tested.
      */
     private static final String
@@ -163,7 +160,7 @@ public class HibernateUtil {
      * the wayback indexer. This method has the side effect of creating and
      * initialising a SessionFactory object if there is no current open
      * SessionFactory.
-     * @return
+     * @return the abovementioned hibernate session.
      */
     public static Session getSession() {
         initialiseFactory();
