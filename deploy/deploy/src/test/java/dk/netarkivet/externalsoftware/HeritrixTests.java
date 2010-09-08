@@ -287,7 +287,7 @@ public class HeritrixTests extends TestCase {
     				"with a non existing file (" + passwordFile.getAbsolutePath() + ")"); 
     	} catch (IOFailure iof) {
     	    assertTrue("Wrong type of IOFailure thrown: " + iof, 
-    	            iof.getMessage().contains("is missing"));
+    	            iof.getMessage().contains("is possibly missing"));
     		// ok, the right exception was thrown
     	} catch (Exception ex) {
     	    // a different exception than IOFailure was thrown but the
