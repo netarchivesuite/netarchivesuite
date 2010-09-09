@@ -39,10 +39,10 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
 
     /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
-    
+
     /** Number of milliseconds in a second. */
     private static final int MILLIS_PER_SECOND = 1000;
-    
+
     /** How long to wait before aborting a request from a webserver. */
     private static long timeOutInMillisReceivedData =
             Long.parseLong(Settings.get(
@@ -56,7 +56,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
             * MILLIS_PER_SECOND;
     /** The HeritrixController instance used by the HeritrixLauncher. */
     private HeritrixController heritrixController;
- 
+
     /**
      * Constructor for the DefaultHeritrixLauncher.
      * @param files the Heritrix configuration.
@@ -66,7 +66,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
             throws ArgumentNotValid {
         super(files);
     }
-    
+
     /**
      * Get instance of this class.
      *
@@ -155,7 +155,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
             } catch (IOFailure e) {
                 log.debug(errorMessage, e);
             }
-            
+
             HeritrixFiles files = getHeritrixFiles();
             log.info("Job ID: " + files.getJobID()
                      + ", Harvest ID: " + files.getHarvestID()
@@ -234,7 +234,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
                     * to the user) is defined in this class.
                     */
                     synchronized (this) {
-                        wait(WAIT_PERIOD);
+                        wait(1000 * CRAWL_CONTROL_WAIT_PERIOD);
                     }
                 } catch (InterruptedException e) {
                     log.trace("Waiting thread awoken: " + e.getMessage());

@@ -24,9 +24,9 @@ package dk.netarkivet.harvester.harvesting.monitor;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.util.Date;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
@@ -38,14 +38,20 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlS
 
 /**
  * This class is a simple bean storing information about a started job.
+ *
+ * This class is a persistent entity as per Berkeley DB JE DPL API.
  */
 public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
+    /**list of the compare criteria.*/
+    public enum Criteria { JOBID, HOST, PROGRESS, ELAPSED,
+        QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ };
+    /**current compare criteria.*/
+    private StartedJobInfo.Criteria compareCriteria =
+        StartedJobInfo.Criteria.JOBID;
+
     private static final String NOT_AVAILABLE_STRING = "";
-
     private static final long NOT_AVAILABLE_NUM = -1L;
-
-    private static final DecimalFormat DECIMAL = new DecimalFormat("###.##");
 
     /**
      * A text format used to parse Heritrix's short frontier report.
@@ -64,6 +70,11 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
      * The name of the harvest this job belongs to.
      */
     private String harvestName;
+
+    /**
+     * Creation date of the record.
+     */
+    private Date timestamp;
 
     /**
      * URL to the Heritrix admin console.
@@ -146,17 +157,25 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     private CrawlStatus status;
 
     /**
+     * Needed by BDB DPL.
+     */
+    public StartedJobInfo() {
+
+    }
+
+    /**
      * Instantiates all readable fields with default values.
-     * 
-     * @param harvestId
-     *            the ID of the harvest
+     *
+     * @param harvestName
+     *            the name of the harvest
      * @param jobId
      *            the ID of the job
      */
-    protected StartedJobInfo(long harvestId, long jobId) {
+    public StartedJobInfo(String harvestName, long jobId) {
+        this();
+        this.timestamp = new Date(System.currentTimeMillis());
         this.jobId = jobId;
-        this.harvestName = HarvestDefinitionDAO.getInstance().read(harvestId)
-                .getName();
+        this.harvestName = harvestName;
         this.hostUrl = NOT_AVAILABLE_STRING;
         this.progress = NOT_AVAILABLE_NUM;
         this.queuedFilesCount = NOT_AVAILABLE_NUM;
@@ -190,6 +209,13 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     /**
+     * @return the timestamp
+     */
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    /**
      * @return the name of the host on which Heritrix is crawling this job.
      */
     public String getHostName() {
@@ -212,10 +238,10 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     /**
-     * @return the crawl progress as a percentage.
+     * @return the crawl progress as a numeric percentage.
      */
-    public String getProgress() {
-        return DECIMAL.format(progress) + "%";
+    public double getProgress() {
+        return progress;
     }
 
     /**
@@ -258,6 +284,13 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     /**
+     * @return the duration of the crawl so far.
+     */
+    public Long getElapsedSeconds() {
+        return elapsedSeconds;
+    }
+
+    /**
      * @return the number of alerts raised by Heritrix.
      */
     public long getAlertsCount() {
@@ -274,29 +307,29 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     /**
      * @return the current download rate in KB/sec reported by Heritrix.
      */
-    public String getCurrentProcessedKBPerSec() {
-        return DECIMAL.format(currentProcessedKBPerSec);
+    public long getCurrentProcessedKBPerSec() {
+        return currentProcessedKBPerSec;
     }
 
     /**
      * @return the average download rate in KB/sec reported by Heritrix.
      */
-    public String getProcessedKBPerSec() {
-        return DECIMAL.format(processedKBPerSec);
+    public long getProcessedKBPerSec() {
+        return processedKBPerSec;
     }
 
     /**
      * @return the current download rate in URI/sec reported by Heritrix.
      */
-    public String getCurrentProcessedDocsPerSec() {
-        return DECIMAL.format(currentProcessedDocsPerSec);
+    public double getCurrentProcessedDocsPerSec() {
+        return currentProcessedDocsPerSec;
     }
 
     /**
      * @return the average download rate in URI/sec reported by Heritrix.
      */
-    public String getProcessedDocsPerSec() {
-        return DECIMAL.format(processedDocsPerSec);
+    public double getProcessedDocsPerSec() {
+        return processedDocsPerSec;
     }
 
     /**
@@ -316,7 +349,38 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     @Override
     public int compareTo(StartedJobInfo o) {
+
+        if (compareCriteria == StartedJobInfo.Criteria.HOST) {
+            return hostUrl.compareTo(o.hostUrl);
+        }
+        if (compareCriteria == StartedJobInfo.Criteria.PROGRESS) {
+            return new Double(progress).compareTo(new Double(o.progress));
+        }
+        if (compareCriteria == StartedJobInfo.Criteria.ELAPSED) {
+            return new Long(elapsedSeconds).
+            compareTo(new Long(o.elapsedSeconds));
+        }
+        if (compareCriteria == StartedJobInfo.Criteria.QFILES) {
+            return new Long(queuedFilesCount).
+            compareTo(new Long(o.queuedFilesCount));
+        }
+        if (compareCriteria == StartedJobInfo.Criteria.TOTALQ) {
+            return new Long(totalQueuesCount).
+            compareTo(new Long(o.totalQueuesCount));
+        }
+        if (compareCriteria == StartedJobInfo.Criteria.ACTIVEQ) {
+            return new Long(activeQueuesCount).
+            compareTo(new Long(o.activeQueuesCount));
+        }
+        if (compareCriteria == StartedJobInfo.Criteria.EXHAUSTEDQ) {
+            return new Long(exhaustedQueuesCount).
+            compareTo(new Long(o.exhaustedQueuesCount));
+        }
         return new Long(jobId).compareTo(new Long(o.jobId));
+    }
+
+    public void chooseCompareCriteria(StartedJobInfo.Criteria criteria) {
+        compareCriteria = criteria;
     }
 
     @Override
@@ -343,7 +407,11 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
      * @param msg
      *            the {@link CrawlProgressMessage} to process.
      */
-    public void update(CrawlProgressMessage msg) {
+    public static StartedJobInfo build(CrawlProgressMessage msg) {
+
+        String harvestName = HarvestDefinitionDAO.getInstance().read(
+                msg.getHarvestID()).getName();
+        StartedJobInfo sji = new StartedJobInfo(harvestName, msg.getJobID());
 
         CrawlServiceInfo heritrixInfo = msg.getHeritrixStatus();
         CrawlServiceJobInfo jobInfo = msg.getJobStatus();
@@ -352,73 +420,188 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         switch (newStatus) {
         case PRE_CRAWL:
             // Initialize statistics-variables before starting the crawl.
-            this.activeQueuesCount = 0;
-            this.activeToeCount = 0;
-            this.alertsCount = 0;
-            this.currentProcessedDocsPerSec = 0;
-            this.currentProcessedKBPerSec = 0;
-            this.downloadedFilesCount = 0;
-            this.elapsedSeconds = 0;
-            this.hostUrl = "";
-            this.processedDocsPerSec = 0;
-            this.processedKBPerSec = 0;
-            this.progress = 0;
-            this.queuedFilesCount = 0;
-            this.totalQueuesCount = 0;
+            sji.activeQueuesCount = 0;
+            sji.activeToeCount = 0;
+            sji.alertsCount = 0;
+            sji.currentProcessedDocsPerSec = 0;
+            sji.currentProcessedKBPerSec = 0;
+            sji.downloadedFilesCount = 0;
+            sji.elapsedSeconds = 0;
+            sji.hostUrl = "";
+            sji.processedDocsPerSec = 0;
+            sji.processedKBPerSec = 0;
+            sji.progress = 0;
+            sji.queuedFilesCount = 0;
+            sji.totalQueuesCount = 0;
             break;
 
         case CRAWLER_ACTIVE:
+        case CRAWLER_PAUSING:
         case CRAWLER_PAUSED:
             // Update statistics for the crawl
             double discoveredCount = jobInfo.getDiscoveredFilesCount();
             double downloadedCount = jobInfo.getDownloadedFilesCount();
-            this.progress = 100 * downloadedCount / discoveredCount;
+            sji.progress = 100 * downloadedCount / discoveredCount;
 
             String frontierShortReport = jobInfo.getFrontierShortReport();
             if (frontierShortReport != null) {
                 try {
                     Object[] params = FRONTIER_SHORT_FMT
                             .parse(frontierShortReport);
-                    this.totalQueuesCount = Long.parseLong((String) params[0]);
-                    this.activeQueuesCount = Long.parseLong((String) params[1]);
-                    // this.retiredQueuesCount =
+                    sji.totalQueuesCount = Long.parseLong((String) params[0]);
+                    sji.activeQueuesCount = Long.parseLong((String) params[1]);
+                    // sji.retiredQueuesCount =
                     // Long.parseLong((String) params[6]);
-                    this.exhaustedQueuesCount = Long
+                    sji.exhaustedQueuesCount = Long
                             .parseLong((String) params[7]);
                 } catch (ParseException e) {
                     throw new ArgumentNotValid(frontierShortReport, e);
                 }
             }
 
-            this.activeToeCount = jobInfo.getActiveToeCount();
-            this.alertsCount = heritrixInfo.getAlertCount();
-            this.currentProcessedDocsPerSec = jobInfo
+            sji.activeToeCount = jobInfo.getActiveToeCount();
+            sji.alertsCount = heritrixInfo.getAlertCount();
+            sji.currentProcessedDocsPerSec = jobInfo
                     .getCurrentProcessedDocsPerSec();
-            this.currentProcessedKBPerSec = jobInfo
+            sji.currentProcessedKBPerSec = jobInfo
                     .getCurrentProcessedKBPerSec();
-            this.downloadedFilesCount = jobInfo.getDownloadedFilesCount();
-            this.elapsedSeconds = jobInfo.getElapsedSeconds();
-            this.hostUrl = msg.getHostUrl();
-            this.processedDocsPerSec = jobInfo.getProcessedDocsPerSec();
-            this.processedKBPerSec = jobInfo.getProcessedKBPerSec();
-            this.queuedFilesCount = jobInfo.getQueuedUriCount();
+            sji.downloadedFilesCount = jobInfo.getDownloadedFilesCount();
+            sji.elapsedSeconds = jobInfo.getElapsedSeconds();
+            sji.hostUrl = msg.getHostUrl();
+            sji.processedDocsPerSec = jobInfo.getProcessedDocsPerSec();
+            sji.processedKBPerSec = jobInfo.getProcessedKBPerSec();
+            sji.queuedFilesCount = jobInfo.getQueuedUriCount();
             break;
 
         case CRAWLING_FINISHED:
             // Set progress to 100 %, and reset the other values .
-            this.progress = 100;
-            this.hostUrl = "";
-            this.activeQueuesCount = 0;
-            this.activeToeCount = 0;
-            this.currentProcessedDocsPerSec = 0;
-            this.currentProcessedKBPerSec = 0;
-            this.processedDocsPerSec = 0;
-            this.processedKBPerSec = 0;
-            this.queuedFilesCount = 0;
-            this.totalQueuesCount = 0;
+            sji.progress = 100;
+            sji.hostUrl = "";
+            sji.activeQueuesCount = 0;
+            sji.activeToeCount = 0;
+            sji.currentProcessedDocsPerSec = 0;
+            sji.currentProcessedKBPerSec = 0;
+            sji.processedDocsPerSec = 0;
+            sji.processedKBPerSec = 0;
+            sji.queuedFilesCount = 0;
+            sji.totalQueuesCount = 0;
             break;
         }
-        this.status = newStatus;
+        sji.status = newStatus;
+        
+        return sji;
     }
 
+    /**
+     * @param hostUrl the hostUrl to set
+     */
+    public void setHostUrl(String hostUrl) {
+        this.hostUrl = hostUrl;
+    }
+
+    /**
+     * @param progress the progress to set
+     */
+    public void setProgress(double progress) {
+        this.progress = progress;
+    }
+
+    /**
+     * @param queuedFilesCount the queuedFilesCount to set
+     */
+    public void setQueuedFilesCount(long queuedFilesCount) {
+        this.queuedFilesCount = queuedFilesCount;
+    }
+
+    /**
+     * @param downloadedFilesCount the downloadedFilesCount to set
+     */
+    public void setDownloadedFilesCount(long downloadedFilesCount) {
+        this.downloadedFilesCount = downloadedFilesCount;
+    }
+
+    /**
+     * @param totalQueuesCount the totalQueuesCount to set
+     */
+    public void setTotalQueuesCount(long totalQueuesCount) {
+        this.totalQueuesCount = totalQueuesCount;
+    }
+
+    /**
+     * @param activeQueuesCount the activeQueuesCount to set
+     */
+    public void setActiveQueuesCount(long activeQueuesCount) {
+        this.activeQueuesCount = activeQueuesCount;
+    }
+
+    /**
+     * @param exhaustedQueuesCount the exhaustedQueuesCount to set
+     */
+    public void setExhaustedQueuesCount(long exhaustedQueuesCount) {
+        this.exhaustedQueuesCount = exhaustedQueuesCount;
+    }
+
+    /**
+     * @param elapsedSeconds the elapsedSeconds to set
+     */
+    public void setElapsedSeconds(long elapsedSeconds) {
+        this.elapsedSeconds = elapsedSeconds;
+    }
+
+    /**
+     * @param currentProcessedKBPerSec the currentProcessedKBPerSec to set
+     */
+    public void setCurrentProcessedKBPerSec(long currentProcessedKBPerSec) {
+        this.currentProcessedKBPerSec = currentProcessedKBPerSec;
+    }
+
+    /**
+     * @param processedKBPerSec the processedKBPerSec to set
+     */
+    public void setProcessedKBPerSec(long processedKBPerSec) {
+        this.processedKBPerSec = processedKBPerSec;
+    }
+
+    /**
+     * @param currentProcessedDocsPerSec the currentProcessedDocsPerSec to set
+     */
+    public void setCurrentProcessedDocsPerSec(
+            double currentProcessedDocsPerSec) {
+        this.currentProcessedDocsPerSec = currentProcessedDocsPerSec;
+    }
+
+    /**
+     * @param processedDocsPerSec the processedDocsPerSec to set
+     */
+    public void setProcessedDocsPerSec(double processedDocsPerSec) {
+        this.processedDocsPerSec = processedDocsPerSec;
+    }
+
+    /**
+     * @param activeToeCount the activeToeCount to set
+     */
+    public void setActiveToeCount(int activeToeCount) {
+        this.activeToeCount = activeToeCount;
+    }
+
+    /**
+     * @param alertsCount the alertsCount to set
+     */
+    public void setAlertsCount(long alertsCount) {
+        this.alertsCount = alertsCount;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(CrawlStatus status) {
+        this.status = status;
+    }
+
+    /**
+     * @param timestamp the timestamp to set
+     */
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 }

@@ -48,7 +48,7 @@ public class TestInfo {
     static final StopReason DEFAULT_STOPREASON = StopReason.DOWNLOAD_COMPLETE;
 
     //General dirs:
-    private static final File BASEDIR = new File("tests/dk/netarkivet/harvester/harvesting/data");
+    protected static final File BASEDIR = new File("tests/dk/netarkivet/harvester/harvesting/data");
     
     private static final File FUTURE_BASEDIR = new File("tests/dk/netarkivet/harvester/data");
     private static final File TEMPLATES_DIR = new File(FUTURE_BASEDIR, "originals/order_templates");

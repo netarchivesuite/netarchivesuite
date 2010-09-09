@@ -143,6 +143,50 @@ public class TLDInfo implements Comparable<TLDInfo> {
         }
         return tld;
     }
+    /** Get the TLD for a given domain including multilevel TLD.
+    *  for example .gouv.fr is level 2 TLD
+    * @param domain A domain, as specified by the global domain regexp.
+    * @param maxLevel maximum level for TLD (can't be 0).
+    * @return The TLD of the domain, or a special placeholder for IP addresses.
+    */
+   static String getMultiLevelTLD(String domain, int maxLevel) {
+       ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
+       String tld;
+       if (dk.netarkivet.common.Constants.IP_KEY_REGEXP.matcher(domain)
+               .matches()) {
+           tld = IP_ADDRESS_NAME;
+       } else {
+           // We know the format of domains, so we can assume one or more dot
+           int numberOfLevel = getTLDLevel(domain);
+           tld = domain;
+           while (numberOfLevel>=maxLevel){
+               tld = tld.substring(tld.indexOf('.') + 1);
+               numberOfLevel--;
+           }
+       }
+       return tld;
+   }
+   
+   /** Return TLD level of the domain.
+    * 
+    * @param domain A domain
+    * @return TLD level of the domain 1 for IP addresses
+    */
+   static int getTLDLevel(String domain) {
+         if (dk.netarkivet.common.Constants.IP_KEY_REGEXP.matcher(domain)
+                                                               .matches()) {
+              return 1;
+           } else {
+               int nbLevel = 0;
+               for(int i = 0; i < domain.length(); i++) {
+                   char c = domain.charAt(i);
+                   if(c == '.') {
+                        nbLevel++;
+                   }
+               }
+               return nbLevel;
+           }
+   }
 
     /** True if this TLDinfo accumulates IP address information.
      *

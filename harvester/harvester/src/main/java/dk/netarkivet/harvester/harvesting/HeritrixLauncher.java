@@ -54,11 +54,11 @@ public abstract class HeritrixLauncher {
     private Object[] args;
 
     /**
-     * The period to wait in milliseconds before checking if Heritrix has done
+     * The period to wait in seconds before checking if Heritrix has done
      * anything.
      */
-    protected static final int WAIT_PERIOD 
-        = 1000 * Settings.getInt(HarvesterSettings.CRAWL_LOOP_WAIT_TIME);
+    protected static final int CRAWL_CONTROL_WAIT_PERIOD 
+        = Settings.getInt(HarvesterSettings.CRAWL_LOOP_WAIT_TIME);
 
     //Attributes regarding deduplication.
 
@@ -228,17 +228,4 @@ public abstract class HeritrixLauncher {
         return jmsConnection;
     }
 
-    /**
-     * Wait the amount of time configured in 
-     * {@link HarvesterSettings#CRAWL_LOOP_WAIT_TIME}.
-     */
-    protected void waitSomeTime() {
-        try {
-            synchronized (this) {
-                wait(WAIT_PERIOD);
-            }
-        } catch (InterruptedException e) {
-            log.trace("Waiting thread awoken: " + e.getMessage());
-        }
-    }
 }

@@ -25,8 +25,9 @@ package dk.netarkivet.harvester;
 import java.util.regex.Pattern;
 
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
-import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
+import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 
 /** Settings specific to the harvester module of NetarchiveSuite. */
 public class HarvesterSettings {
@@ -158,6 +159,51 @@ public class HarvesterSettings {
             = "settings.harvester.scheduler.jobs.maxTotalSize";
 
     /**
+     * <b>settings.harvester.scheduler.jobs.useFrontierBudget</b>: <br>
+     * When this flag is set to 'true', if a URI count budget is set, it will
+     * also be used, majored by a configurable factor
+     * ({@link #JOBS_FRONTIER_BUDGET_FACTOR}), in the frontier
+     * budget system (queue-total-budget).
+     *
+     * Default value is 'false'.
+     */
+    public static String JOBS_USE_FRONTIER_BUDGET
+            = "settings.harvester.scheduler.jobs.useFrontierBudget";
+
+    /**
+     * <b>settings.harvester.scheduler.jobs.frontierBudgetFactor</b>: <br>
+     * If {@link #JOBS_USE_FRONTIER_BUDGET} is set to true, the value of the
+     * 'queue-total-budget' frontier attribute is computed by multiplying the
+     * URI budget by this factor.
+     *
+     * Default value is 0.
+     */
+    public static String JOBS_FRONTIER_BUDGET_FACTOR
+            = "settings.harvester.scheduler.jobs.frontierBudgetFactor";
+
+    /**
+     * <b>settings.harvester.scheduler.jobs.frontierErrorPenaltyFactor</b>: <br>
+     * If {@link #JOBS_USE_FRONTIER_BUDGET} is set to true, the value of the
+     * 'error-penalty-amount' frontier attribute is computed by multiplying the
+     * URI budget by this factor.
+     *
+     * Default value is 0.
+     */
+    public static String JOBS_FRONTIER_ERROR_PENALTY_FACTOR
+            = "settings.harvester.scheduler.jobs.frontierErrorPenaltyFactor";
+
+    /**
+     * <b>settings.harvester.scheduler.jobs.frontierBalanceReplenishFactor</b>: <br>
+     * If {@link #JOBS_USE_FRONTIER_BUDGET} is set to true, the value of the
+     * 'balance-replenish-amount' frontier attribute is computed by multiplying the
+     * URI budget by this factor.
+     *
+     * Default value is 0.
+     */
+    public static String JOBS_FRONTIER_BALANCE_REPLENISH_FACTOR =
+        "settings.harvester.scheduler.jobs.frontierBalanceReplenishFactor";
+
+    /**
      * <b>settings.harvester.scheduler.configChunkSize</b>: <br> How many domain
      * configurations we will process in one go before making jobs out of them.
      * This amount of domains will be stored in memory at the same time.  To
@@ -254,14 +300,38 @@ public class HarvesterSettings {
     public static String CRAWLER_TIMEOUT_NON_RESPONDING
             = "settings.harvester.harvesting.heritrix.noresponseTimeout";
     /**
-     * <b>settings.harvester.harvesting.heritrix.monitorResetInterval</b>:<br>
-     * Time interval in seconds after which the {@link HarvestMonitorServer}
-     * will clean job state data. This is a simple way to avoid detecting 
-     * the end of a job. 
+     * <b>settings.harvester.monitor.refreshInterval</b>:<br>
+     * Time interval in seconds after which the harvest monitor pages will be
+     * automatically refreshed.
      */
-    public static String HARVEST_MONITOR_RESET_INTERVAL =
-        "settings.harvester.harvesting.heritrix.monitorResetInterval";
-    
+    public static String HARVEST_MONITOR_REFRESH_INTERVAL =
+        "settings.harvester.monitor.refreshInterval";
+
+    /**
+     * <b>settings.harvester.monitor.historySampleRate</b>:<br>
+     * Time interval in seconds between historical records stores in the DB.
+     * Default value is 5 minutes.
+     */
+    public static String HARVEST_MONITOR_HISTORY_SAMPLE_RATE =
+        "settings.harvester.monitor.historySampleRate";
+
+    /**
+     * <b>settings.harvester.monitor.historyChartGenIntervall</b>:<br>
+     * Time interval in seconds between regenerating the chart of historical
+     * data for a running job.
+     * Default value is 5 minutes.
+     */
+    public static String HARVEST_MONITOR_HISTORY_CHART_GEN_INTERVAL =
+        "settings.harvester.monitor.historyChartGenInterval";
+
+    /**
+     * <b>settings.harvester.monitor.displayedHistorySize</b>:<br>
+     * Maximum number of most recent history records displayed on the
+     * running job details page.
+     */
+    public static String HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE =
+        "settings.harvester.monitor.displayedHistorySize";
+
     /**
      * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>
      * Time interval in seconds to wait during a crawl loop in the
@@ -269,7 +339,31 @@ public class HarvesterSettings {
      */
     public static String CRAWL_LOOP_WAIT_TIME =
         "settings.harvester.harvesting.heritrix.crawlLoopWaitTime";
-    
+
+    /**
+     * <b>settings.harvester.harvesting.frontier.frontierReportWaitTime</b>:<br>
+     * Time interval in seconds to wait between two requests to generate a full
+     * frontier report. Default value is 600 seconds (10 min).
+     */
+    public static String FRONTIER_REPORT_WAIT_TIME =
+        "settings.harvester.harvesting.frontier.frontierReportWaitTime";
+
+
+    /**
+     * <b>settings.harvester.harvesting.frontier.filter.class</b>
+     * Defines a filter to apply to the full frontier report.
+     */
+    public static String FRONTIER_REPORT_FILTER_CLASS =
+            "settings.harvester.harvesting.frontier.filter.class";
+
+    /**
+     * <b>settings.harvester.harvesting.frontier.filter.args</b>
+     * Defines a frontier report filter's arguments. Arguments should be
+     * separated by semicolons.
+     */
+    public static String FRONTIER_REPORT_FILTER_ARGS =
+            "settings.harvester.harvesting.frontier.filter.args";
+
     /**
      * <b>settings.harvester.harvesting.heritrix.abortIfConnectionLost</b>:<br>
      * Boolean flag. If set to true, the harvest controller will abort the 
@@ -410,5 +504,17 @@ public class HarvesterSettings {
      */
     public static String METADATA_LOG_FILE_PATTERN =
             "settings.harvester.harvesting.metadata.logFilePattern";
+
+    /**
+     * <b>settings.harvester.harvesting.metadata.generateArcFilesReport</b> This setting
+     * is a boolean flag that enables/disables the generation of an ARC files report.
+     * Default value is 'true'.
+     *
+     * @see HarvestDocumentation#documentHarvest(java.io.File, long, long)
+     */
+    public static String METADATA_GENERATE_ARCFILES_REPORT =
+            "settings.harvester.harvesting.metadata.generateArcFilesReport";
+
+
 }
 

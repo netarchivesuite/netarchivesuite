@@ -42,9 +42,9 @@ import dk.netarkivet.harvester.datamodel.TemplateDAO;
  * Contains utility methods for supporting event harvest GUI.
  *
  */
-public class EventHarvest {
+public final class EventHarvest {
     
-    final static Log log = LogFactory.getLog(EventHarvest.class.getName());
+    static final Log log = LogFactory.getLog(EventHarvest.class.getName());
     
     /**
      * Private Constructor. Instances are not meaningful.
@@ -112,9 +112,13 @@ public class EventHarvest {
         long maxBytes = HTMLUtils.parseOptionalLong(context,
                 Constants.MAX_BYTES_PARAM, dk.netarkivet.harvester
                     .datamodel.Constants.DEFAULT_MAX_BYTES);
+        long maxObjectsL = HTMLUtils.parseOptionalLong(context,
+                Constants.MAX_OBJECTS_PARAM, dk.netarkivet.harvester
+                    .datamodel.Constants.DEFAULT_MAX_OBJECTS);
+        int maxObjects = (int) maxObjectsL;
         // All parameters are valid, so call method
         try {
-            eventHarvest.addSeeds(seeds, orderTemplate, maxBytes);
+            eventHarvest.addSeeds(seeds, orderTemplate, maxBytes, maxObjects);
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;error.adding.seeds.to.0", eventHarvest.getName(),
@@ -133,20 +137,25 @@ public class EventHarvest {
      * seeds are to be added
      * @param seeds The seeds as a String
      * @param maxbytesString The given maxbytes as a string
-     * @param maxobjectsString The given maxobjects as a string (currently not used)
+     * @param maxobjectsString The given maxobjects as a string 
+     * (currently not used)
      * @param maxrateString The given maxrate as a string (currently not used)
      * @param ordertemplate The name of the ordertemplate to use
      */
-    public static void addConfigurationsFromSeedsFile(PageContext context, I18n i18n,
-            PartialHarvest eventHarvest, String seeds, String maxbytesString, 
-            String maxobjectsString, String maxrateString, String ordertemplate) {
+    public static void addConfigurationsFromSeedsFile(PageContext context, 
+            I18n i18n, PartialHarvest eventHarvest, String seeds, 
+            String maxbytesString, String maxobjectsString, 
+            String maxrateString, String ordertemplate) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
-        ArgumentNotValid.checkNotNull(eventHarvest, "PartialHarvest eventHarvest");
+        ArgumentNotValid.checkNotNull(eventHarvest,
+                                      "PartialHarvest eventHarvest");
         ArgumentNotValid.checkNotNull(seeds, "String seeds");
         ArgumentNotValid.checkNotNull(ordertemplate, "String ordertemplate");
         
         long maxBytes = 0L;
+        int maxObjects = 0;
+        
         try {
             if (maxbytesString == null){
                 maxBytes = dk.netarkivet.harvester.datamodel
@@ -158,6 +167,19 @@ public class EventHarvest {
                         dk.netarkivet.harvester.datamodel
                         .Constants.DEFAULT_MAX_BYTES);
             }
+            
+            if (maxbytesString == null){
+                maxObjects = (int) dk.netarkivet.harvester.datamodel
+                    .Constants.DEFAULT_MAX_OBJECTS;
+            } else {
+                Locale loc = HTMLUtils.getLocaleObject(context);
+                long maxObjectsL = HTMLUtils.parseLong(
+                        loc, maxbytesString,  Constants.MAX_OBJECTS_PARAM, 
+                        dk.netarkivet.harvester.datamodel
+                        .Constants.DEFAULT_MAX_OBJECTS);
+                maxObjects = (int) maxObjectsL;
+            }
+ 
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n, 
                     "Exception.thrown.when.adding.seeds", e);
@@ -174,7 +196,7 @@ public class EventHarvest {
 
         // All parameters are valid, so call method
         try {
-            eventHarvest.addSeeds(seeds, ordertemplate, maxBytes);
+            eventHarvest.addSeeds(seeds, ordertemplate, maxBytes, maxObjects);
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;error.adding.seeds.to.0", e, eventHarvest.getName(),

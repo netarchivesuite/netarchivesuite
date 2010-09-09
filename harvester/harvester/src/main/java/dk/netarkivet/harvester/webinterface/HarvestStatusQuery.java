@@ -69,9 +69,9 @@ public class HarvestStatusQuery {
     /** The String code to select all harvests. */
     public static final String HARVEST_NAME_ALL = "ALL";
     
-    public static final String HARVEST_NAME_WILDCARD= "*";
-    public static final long PAGE_SIZE_NONE= 0;
-    public static final long DATE_NONE= -1;
+    public static final String HARVEST_NAME_WILDCARD = "*";
+    public static final long PAGE_SIZE_NONE = 0;
+    public static final long DATE_NONE = -1;
     
     public static enum SORT_ORDER {
         ASC, DESC;
@@ -311,6 +311,10 @@ public class HarvestStatusQuery {
 
     public long getPageSize() {
         return pageSize;
+    }
+
+    public void setPageSize(long pageSize) {
+        this.pageSize = pageSize;
     }
 
     public long getStartPageIndex() {

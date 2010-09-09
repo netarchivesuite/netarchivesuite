@@ -23,6 +23,8 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import java.util.List;
+
 /**
  * Number related utilities.
  *
@@ -60,4 +62,19 @@ public class NumberUtils {
         }
         return minInf(l1, l2) == l1 ? -1 : 1;
     }
+    
+    /**
+     * Converts a list to an array of primitive values.
+     * @param list the list to convert
+     * @return an array of primitive values
+     */
+    public static final double[] toPrimitiveArray(List<Double> list) {
+        double[] retArray = new double[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            retArray[i] = list.get(i);
+        }
+        
+        return retArray;
+    }
+    
 }

@@ -1715,9 +1715,11 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Return all TLDs represented by the domains in the domains table.
      * 
+     * @param level maximum level of TLD
+     * @return a list of TLDs
      * @see DomainDAO#getTLDs()
      */
-    public List<TLDInfo> getTLDs() {
+    public List<TLDInfo> getMultiLevelTLD(int level) {
         Map<String, TLDInfo> resultMap = new HashMap<String, TLDInfo>();
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
@@ -1726,13 +1728,22 @@ public class DomainDBDAO extends DomainDAO {
             ResultSet res = s.executeQuery();
             while (res.next()) {
                 String domain = res.getString(1);
-                String tld = TLDInfo.getTLD(domain);
-                TLDInfo i = resultMap.get(tld);
-                if (i == null) {
-                    i = new TLDInfo(tld);
-                    resultMap.put(tld, i);
+                int domainTLDLevel = TLDInfo.getTLDLevel(domain);
+               
+                if(domainTLDLevel > level) { domainTLDLevel = level; }
+                
+                for(int currentLevel = 1; currentLevel <= domainTLDLevel;
+                                                             currentLevel++){
+                        String tld = TLDInfo.getMultiLevelTLD(domain,
+                                                               currentLevel);
+                        TLDInfo i = resultMap.get(tld);
+                        if (i == null) {
+                            i = new TLDInfo(tld);
+                            resultMap.put(tld, i);
+                        }
+                        i.addSubdomain(domain);
+                 
                 }
-                i.addSubdomain(domain);
             }
         } catch (SQLException e) {
             throw new IOFailure("Failure getting TLD-information" + "\n"
@@ -1743,6 +1754,17 @@ public class DomainDBDAO extends DomainDAO {
         List<TLDInfo> resultSet = new ArrayList<TLDInfo>(resultMap.values());
         Collections.sort(resultSet);
         return resultSet;
+    }
+    
+    /**
+     * Return all TLDs represented by the domains in the domains table.
+     * 
+     * @see DomainDAO#getTLDs()
+     * @return a list of level 1 TLDs
+     */
+    public List<TLDInfo> getTLDs() {
+   
+        return getMultiLevelTLD(1);
     }
 
     /**

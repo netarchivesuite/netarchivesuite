@@ -23,8 +23,11 @@
 */
 package dk.netarkivet.common.utils;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -235,6 +238,17 @@ public class StringUtils {
     private static final long HOUR = 60 * 60;
     /** A minute in seconds. */
     private static final long MINUTE = 60;
+    
+    /**
+     * Formats a decimal number
+     */
+    private static final DecimalFormat DECIMAL = new DecimalFormat("###.##");
+    
+    /**
+     * Default date format : yyyy/MM/dd HH:mm:ss 
+     */
+    private static final SimpleDateFormat DEFAULT_DATE = new SimpleDateFormat(
+            "yyyy/MM/dd HH:mm:ss");
 
     /**
      * Formats a duration in seconds as a string of the form "3d 04:12:56".
@@ -278,6 +292,63 @@ public class StringUtils {
      */
     private static String formatDurationLpad(final String s) {
         return (s.length() == 1 ? "0" + s : s);
+    }
+    
+    /**
+     * Formats a numeric percentage, as a decimal number with at most 2 digits.
+     * @param percentage the numeric percentage to format.
+     * @return a formatted percentage string.
+     */
+    public static final String formatPercentage(double percentage) {
+        return formatNumber(percentage) + "%";
+    }
+    
+    /**
+     * Formats a numeric percentage, as a decimal number with at most 2 digits.
+     * @param percentage the numeric percentage to format.
+     * @return a formatted percentage string.
+     */
+    public static final String formatPercentage(long percentage) {
+        return formatNumber(percentage) + "%";
+    }
+    
+    /**
+     * Formats a number, as a decimal number with at most 2 digits.
+     * @param percentage the number to format.
+     * @return a formatted number string.
+     */
+    public static final String formatNumber(double number) {
+        return DECIMAL.format(number);
+    }
+    
+    /**
+     * Formats a number, as a decimal number with at most 2 digits.
+     * @param percentage the number to format.
+     * @return a formatted number string.
+     */
+    public static final String formatNumber(long number) {
+        return DECIMAL.format(number);
+    }
+    
+    /**
+     * Formats the given date (as elapsed milliseconds) using the default
+     * format 'yyyy/MM/dd HH:mm:ss'.
+     * @param millis the date
+     * @return a formatted date string
+     */
+    public static final String formatDate(long millis) {
+        return DEFAULT_DATE.format(new Date(millis));
+    }
+    
+    /**
+     * Formats the given date (as elapsed milliseconds) using the provided 
+     * format pattern.
+     * @param millis the date
+     * @param format the format pattern {@link SimpleDateFormat}
+     * @return a formatted date string
+     */
+    public static final String formatDate(long millis, String format) {
+        return new SimpleDateFormat(format).format(new Date(millis));
     }
     
 }

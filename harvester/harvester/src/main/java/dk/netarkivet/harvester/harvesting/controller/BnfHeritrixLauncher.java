@@ -22,15 +22,21 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
+import dk.netarkivet.harvester.harvesting.frontier.FrontierReportAnalyzer;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 
 /**
@@ -38,15 +44,110 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
  * {@link BnfHeritrixController}. Every turn of the crawl control loop, asks the
  * Heritrix controller to generate a progress report as a 
  * {@link CrawlProgressMessage} and then send this message on the JMS bus to
- * be consulmed by the {@link HarvestMonitorServer} instance.
+ * be consumed by the {@link HarvestMonitorServer} instance.
  */
 public class BnfHeritrixLauncher extends HeritrixLauncher {
 
+    private static class FrontierReportAnalysisExecutor
+    extends ScheduledThreadPoolExecutor {
+
+        public FrontierReportAnalysisExecutor() {
+            // We need only 1 thread
+            super(1);
+        }
+
+        @Override
+        protected void afterExecute(Runnable task, Throwable t) {
+            if (t != null) {
+                log.error("Error during frontier report generation", t);
+            }
+        }
+
+    }
+
+    private static class CrawlControlExecutor
+    extends ScheduledThreadPoolExecutor {
+
+        public CrawlControlExecutor() {
+            // We need only 1 thread
+            super(1);
+        }
+
+        @Override
+        protected void afterExecute(Runnable task, Throwable t) {
+            if (t != null) {
+                log.error("Error during crawl control", t);
+            }
+        }
+
+
+
+    }
+
+    private class CrawlControl implements Runnable {
+
+        public Boolean crawlIsFinished = false;
+
+        @Override
+        public void run() {
+            CrawlProgressMessage cpm;
+            try {
+                cpm = heritrixController.getCrawlProgress();
+            } catch (IOFailure iof) {
+                // Log a warning and retry
+                log.warn("IOFailure while getting crawl progress", iof);
+                return;
+            }
+
+            getJMSConnection().send(cpm);
+
+            if (cpm.crawlIsFinished()) {
+                synchronized (crawlIsFinished) {
+                 // Crawl is over, set flag
+                    crawlIsFinished = true;
+                    return;
+                }
+            }
+
+            HeritrixFiles files = getHeritrixFiles();
+            log.info("Job ID: " + files.getJobID() + ", Harvest ID: "
+                    + files.getHarvestID() + ", " + cpm.getHostUrl() + "\n"
+                    + cpm.getProgressStatisticsLegend() + "\n"
+                    + cpm.getJobStatus().getStatus() + " "
+                    + cpm.getJobStatus().getProgressStatistics());
+        }
+
+        /**
+         * @return the crawlIsFinished
+         */
+        protected boolean crawlIsFinished() {
+            synchronized (crawlIsFinished) {
+                return crawlIsFinished;
+            }
+        }
+    }
+
     /** The class logger. */
-    final Log log = LogFactory.getLog(getClass());
+    final static Log log = LogFactory.getLog(BnfHeritrixLauncher.class);
+
+    /**
+     * Wait time in milliseconds (10s).
+     */
+    private final static int SLEEP_TIME_MS = 10 * 60 * 1000;
+
+    /**
+     * Frequency in seconds for generating the full harvest report.
+     * Also serves as delay before the first generation occurs.
+     */
+    final static long FRONTIER_REPORT_GEN_FREQUENCY =
+        Settings.getLong(HarvesterSettings.FRONTIER_REPORT_WAIT_TIME);
 
     /** The CrawlController used. */
     private BnfHeritrixController heritrixController;
+
+    private ScheduledFuture<?> crawlControlHandle = null;
+
+    private ScheduledFuture<?> frontierReportGeneratorHandle = null;
 
     private BnfHeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
         super(files);
@@ -54,13 +155,13 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
     /**
      * Get instance of this class.
-     * 
+     *
      * @param files
      *            Object encapsulating location of Heritrix crawldir and
      *            configuration files
-     * 
+     *
      * @return {@link BnfHeritrixLauncher} object
-     * 
+     *
      * @throws ArgumentNotValid
      *             If either order.xml or seeds.txt does not exist, or argument
      *             files is null.
@@ -75,9 +176,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
      * Initializes an Heritrix controller, then launches the Heritrix instance.
      * Then starts the crawl control loop:
      * <ol>
-     * <li>Waits the amount of time configured in 
+     * <li>Waits the amount of time configured in
      * {@link HarvesterSettings#CRAWL_LOOP_WAIT_TIME}.</li>
-     * <li>Obtains carwl progress information as a {@link CrawlProgressMessage}
+     * <li>Obtains crawl progress information as a {@link CrawlProgressMessage}
      * from the Heritrix controller</li>
      * <li>Sends the progress message via JMS</li>
      * <li>If the crawl if reported as finished, end loop.</li>
@@ -86,40 +187,44 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
     public void doCrawl() throws IOFailure {
         setupOrderfile();
         heritrixController = new BnfHeritrixController(getHeritrixFiles());
+
+        ScheduledFuture<?> crawlControlHandle = null;
+        ScheduledFuture<?> frontierReportGeneratorHandle = null;
         try {
             // Initialize Heritrix settings according to the order.xml
             heritrixController.initialize();
             log.debug("Starting crawl..");
             heritrixController.requestCrawlStart();
 
-            while (true) {
+            // Schedule full frontier report generation
+            FrontierReportAnalysisExecutor frontierReportSched =
+                new FrontierReportAnalysisExecutor();
 
-                // First we wait the configured amount of time
-                waitSomeTime();
+            frontierReportGeneratorHandle =
+                frontierReportSched.scheduleAtFixedRate(
+                        new FrontierReportAnalyzer(heritrixController),
+                        FRONTIER_REPORT_GEN_FREQUENCY,
+                        FRONTIER_REPORT_GEN_FREQUENCY,
+                        TimeUnit.SECONDS);
 
-                CrawlProgressMessage cpm;
+            CrawlControl crawlControl = new CrawlControl();
+            CrawlControlExecutor crawlCtrlSched = new CrawlControlExecutor();
+            crawlControlHandle =
+                crawlCtrlSched.scheduleWithFixedDelay(
+                        crawlControl,
+                        CRAWL_CONTROL_WAIT_PERIOD,
+                        CRAWL_CONTROL_WAIT_PERIOD,
+                        TimeUnit.SECONDS);
+
+            while (! crawlControl.crawlIsFinished()) {
+                // Wait a bit
                 try {
-                    cpm = heritrixController.getCrawlProgress();
-                } catch (IOFailure iof) {
-                    // Log a warning and retry
-                    log.warn("IOFailure while getting crawl progress", iof);
-                    continue;
+                    synchronized (this) {
+                        wait(SLEEP_TIME_MS);
+                    }
+                } catch (InterruptedException e) {
+                    log.trace("Waiting thread awoken: " + e.getMessage());
                 }
-
-                getJMSConnection().send(cpm);
-
-                if (cpm.crawlIsFinished()) {
-                    // Crawl is over, exit the loop
-                    break;
-                }
-
-                HeritrixFiles files = getHeritrixFiles();
-                log.info("Job ID: " + files.getJobID() + ", Harvest ID: "
-                        + files.getHarvestID() + ", " + cpm.getHostUrl() + "\n"
-                        + cpm.getProgressStatisticsLegend() + "\n"
-                        + cpm.getJobStatus().getStatus() + " "
-                        + cpm.getJobStatus().getProgressStatistics());
-
             }
 
         } catch (IOFailure e) {
@@ -129,6 +234,16 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             log.warn("Exception during crawl", e);
             throw new RuntimeException("Exception during crawl", e);
         } finally {
+            // Stop the frontier report generation schedule
+            if (frontierReportGeneratorHandle != null) {
+                frontierReportGeneratorHandle.cancel(true);
+            }
+
+            // Stop the crawl control
+            if (crawlControlHandle != null) {
+                crawlControlHandle.cancel(true);
+            }
+
             if (heritrixController != null) {
                 heritrixController.cleanup(getHeritrixFiles().getCrawlDir());
             }

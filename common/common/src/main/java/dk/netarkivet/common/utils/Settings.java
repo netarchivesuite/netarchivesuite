@@ -213,6 +213,30 @@ public class Settings {
             throw new ArgumentNotValid(msg, e);
         }
     }
+    
+    /**
+     * Gets a setting as a double. This method calls get(key) and then parses the
+     * value as a double.
+     *
+     * @param key name of the setting to retrieve
+     *
+     * @return the retrieved double
+     *
+     * @throws ArgumentNotValid if key is null, the empty string or key is not
+     *                          parseable as a double
+     * @throws UnknownID        if no setting loaded matches key
+     */
+    public static double getDouble(String key)
+            throws UnknownID, ArgumentNotValid {
+        String value = get(key);
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            String msg = "Invalid setting. Value '" + value + "' for key '"
+                         + key + "' could not be parsed as a double.";
+            throw new ArgumentNotValid(msg, e);
+        }
+    }
 
     /**
      * Gets a setting as a file. This method calls get(key) and then returns the

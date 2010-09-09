@@ -48,9 +48,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -424,6 +424,18 @@ public class HarvestDocumentation {
             files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
         }
 
+        
+        // Generate an arcfiles-report.txt if configured to do so.
+        boolean genArcFilesReport = Settings.getBoolean(
+        		HarvesterSettings.METADATA_GENERATE_ARCFILES_REPORT);
+        if (genArcFilesReport) {
+        	files.add(new MetadataFile(
+        			new ArcFilesReportGenerator(crawlDir).generateReport(), 
+        			harvestID, 
+        			jobID, 
+        			heritrixVersion));
+        }
+        
         // Add log files
         File logDir = new File(crawlDir, "logs");
         if (logDir.exists()) {

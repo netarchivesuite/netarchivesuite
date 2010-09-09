@@ -45,8 +45,10 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.NumberUtils;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 
 /**
  * Submitted harvesting jobs are registered with this singleton. The class
@@ -114,6 +116,13 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                     }
                     // The usual case submitted -> started
                     job.setStatus(newStatus);
+                    
+                    // Send the initial progress message
+                    JMSConnectionFactory.getInstance().send(
+                            new CrawlProgressMessage(
+                                    job.getOrigHarvestDefinitionID(), 
+                                    job.getJobID()));
+                    
                     log.debug(job + " has started crawling.");
                     jobDAO.update(job);
                 } else {
@@ -179,6 +188,11 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                 }
                 //Always process the data!
                 processCrawlData(job, cmsg.getDomainHarvestReport());
+                
+                // The job is over in any case, wipe job progress data
+                HarvestMonitorServer.getInstance().notifyJobEnded(
+                        jobID, newStatus);
+                
                 break;
             default:
                 log.warn("CrawlStatusMessage tried to update job status to "

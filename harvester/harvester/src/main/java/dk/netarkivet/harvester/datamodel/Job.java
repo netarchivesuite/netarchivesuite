@@ -82,6 +82,12 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * of all the configurations it is based on.
  */
 public class Job implements Serializable {
+
+    /**
+     * Needed for serialization.
+     */
+    private static final long serialVersionUID = 5255604180587758725L;
+
     private transient Log log = LogFactory.getLog(getClass());
 
     //Persistent fields stored in and read from DAO
@@ -1114,6 +1120,48 @@ public class Job implements Serializable {
                     +  HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH
                     + " element in order.xml: "
                     + orderXMLdoc.asXML());
+        }
+
+        // Should also frontier budget be used?
+        boolean useFrontierBuget =
+            Settings.getBoolean(HarvesterSettings.JOBS_USE_FRONTIER_BUDGET);
+        if (useFrontierBuget && (forceMaxObjectsPerDomain != -1)) {
+
+            // Set in turn 'queue-total-budget', 'error-penalty-amount' and
+            // 'balance-replenish-amount'
+            String[] xpaths = new String[] {
+                    HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH,
+                    HeritrixTemplate.ERROR_PENALTY_AMOUNT_XPATH,
+                    HeritrixTemplate.BALANCE_REPLENISH_AMOUNT_XPATH
+            };
+
+            // Values are set by a multiplicative factor of the desired quota
+            double[] factors = new double[] {
+                    Settings.getDouble(
+                            HarvesterSettings.JOBS_FRONTIER_BUDGET_FACTOR),
+                    Settings.getDouble(
+                            HarvesterSettings
+                                .JOBS_FRONTIER_ERROR_PENALTY_FACTOR),
+                    Settings.getDouble(
+                            HarvesterSettings
+                                .JOBS_FRONTIER_BALANCE_REPLENISH_FACTOR)
+            };
+
+            for (int i = 0; i < xpaths.length; i++) {
+                xpath = xpaths[i];
+                double factor = factors[i];
+
+                Node node = orderXMLdoc.selectSingleNode(xpath);
+                if (node != null) {
+                    node.setText(String.valueOf((int) Math.rint(
+                                    factor * forceMaxObjectsPerDomain)));
+                } else {
+                    throw new IOFailure(
+                            "Unable to locate "
+                            +  xpath + " element in order.xml: "
+                            + orderXMLdoc.asXML());
+                }
+            }
         }
     }
 

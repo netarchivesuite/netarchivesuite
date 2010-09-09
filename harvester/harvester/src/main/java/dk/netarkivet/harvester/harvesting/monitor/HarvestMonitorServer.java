@@ -22,62 +22,46 @@
  */
 package dk.netarkivet.harvester.harvesting.monitor;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.jms.MessageListener;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.JobStatusInfo;
+import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
+import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
+import dk.netarkivet.harvester.harvesting.frontier.ExhaustedQueuesFilter;
+import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
+import dk.netarkivet.harvester.harvesting.frontier.RetiredQueuesFilter;
+import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
+import dk.netarkivet.harvester.scheduler.HarvestJobManager;
 
 /**
  * Listens for {@link CrawlProgressMessage}s on the proper JMS channel, and
  * stores information to be presented in the monitoring console.
  */
-public class HarvestMonitorServer extends HarvesterMessageHandler implements
-        MessageListener {
+public class HarvestMonitorServer
+extends HarvesterMessageHandler
+implements MessageListener, ComponentLifeCycle {
 
-    /**
-     * A "grim reaper" that periodically wipes the started job infos.
-     */
-    private static class WiperThread extends Thread {
-
-        boolean alive = true;
-
-        long cleanInterval = Settings
-                .getLong(HarvesterSettings.HARVEST_MONITOR_RESET_INTERVAL);
-
-        @Override
-        public void run() {
-            while (alive) {
-                instance.cleanJobInfos();
-                try {
-                    Thread.sleep(1000 * cleanInterval);
-                } catch (InterruptedException e) {
-
-                }
-            }
-        }
-
-        public void kill() {
-            alive = false;
-        }
-
-    }
+    /** The logger for this class. */
+    private static final Log LOG = LogFactory
+            .getLog(HarvestMonitorServer.class);
 
     /**
      * Singleton instance of the monitor.
@@ -87,31 +71,48 @@ public class HarvestMonitorServer extends HarvesterMessageHandler implements
     /**
      * The JMS channel on which to listen for {@link CrawlProgressMessage}s.
      */
-    public static final ChannelID JMS_CHANNEL_ID = Channels
-            .getHarvestMonitorServerChannel();
+    public static final ChannelID CRAWL_PROGRESS_CHANNEL_ID =
+        Channels.getHarvestMonitorServerChannel();
 
     /**
-     * Maps instances of {@link StartedJobInfo} to the associated job ID.
+     * The JMS channel on which to listen for {@link FrontierReportMessage}s.
      */
-    private Map<Long, StartedJobInfo> jobInfosByJobId
-        = new HashMap<Long, StartedJobInfo>();
+    public static final ChannelID FRONTIER_CHANNEL_ID =
+        Channels.getFrontierReportMonitorServerChannel();
 
-    /**
-     * The "grim reaper" thread.
-     */
-    private WiperThread wipe;
+    private Map<Long, StartedJobHistoryChartGen> chartGenByJobId =
+        new HashMap<Long, StartedJobHistoryChartGen>();
 
     private HarvestMonitorServer() {
-        JMSConnectionFactory.getInstance().setListener(JMS_CHANNEL_ID, this);
-        wipe = new WiperThread();
-        wipe.start();
+        JMSConnectionFactory.getInstance().setListener(
+                CRAWL_PROGRESS_CHANNEL_ID, this);
+        JMSConnectionFactory.getInstance().setListener(
+                FRONTIER_CHANNEL_ID, this);
     }
 
+    /**
+     * Does nothing.
+     * TODO this class should not be a singleton (see {@link HarvestJobManager})
+     */
     @Override
-    protected void finalize() throws Throwable {
-        wipe.kill();
-        wipe.join();
-        super.finalize();
+    public void start() {
+
+    }
+
+    /**
+     * Close down the HarvestMonitorServer singleton. This removes the
+     * HarvestMonitorServer as listener to the JMS scheduler
+     * and frontier channels, closes the persistence container, and resets
+     * the singleton.
+     *
+     */
+    @Override
+    public void shutdown() {
+        JMSConnectionFactory.getInstance().removeListener(
+                CRAWL_PROGRESS_CHANNEL_ID, this);
+        JMSConnectionFactory.getInstance().removeListener(
+                FRONTIER_CHANNEL_ID, this);
+        instance = null;
     }
 
     /**
@@ -122,26 +123,6 @@ public class HarvestMonitorServer extends HarvesterMessageHandler implements
             instance = new HarvestMonitorServer();
         }
         return instance;
-    }
-
-    /**
-     * Close down the HarvestSchedulerMonitorServer singleton. This removes the
-     * HarvestSchedulerMonitorServer as listener to the JMS scheduler Channel,
-     * and resets the singleton.
-     * 
-     */
-    public void close() {
-        JMSConnectionFactory.getInstance().removeListener(JMS_CHANNEL_ID, this);
-        cleanup();
-    }
-
-    /**
-     * Cleanup method. Resets HarvestSchedulerMonitorServer singleton. Note:
-     * this cleanup() method is called from HarvestScheduler.cleanup(),
-     * therefore it needs to be public
-     */
-    public void cleanup() {
-        instance = null;
     }
 
     @Override
@@ -155,69 +136,137 @@ public class HarvestMonitorServer extends HarvesterMessageHandler implements
             return;
         }
 
-        StartedJobInfo info = jobInfosByJobId.get(jobId);
-        if (info == null) {
-            info = new StartedJobInfo(msg.getHarvestID(), jobId);
-            jobInfosByJobId.put(jobId, info);
+        StartedJobInfo info = StartedJobInfo.build(msg);
+        RunningJobsInfoDAO.getInstance().store(info);
+
+        // Start a chart generator if none has been started yet
+        if (chartGenByJobId.get(jobId) == null) {
+            chartGenByJobId.put(jobId, new StartedJobHistoryChartGen(jobId));
         }
-
-        info.update(msg);
     }
 
     /**
-     * @return the full listing of started job information.
+     * Returns the delay in seconds after which a harvest monitor webpage should
+     * refresh itself.
+     * This delay is set by overriding the value of the
+     * {@link HarvesterSettings#HARVEST_MONITOR_REFRESH_INTERVAL} property.
+     * @return the delay in seconds after which a harvest monitor webpage should
+     * refresh itself
      */
-    public StartedJobInfo[] getAllJobInfos() {
-        TreeSet<StartedJobInfo> infos = new TreeSet<StartedJobInfo>();
-        infos.addAll(jobInfosByJobId.values());
-        return (StartedJobInfo[]) infos
-                .toArray(new StartedJobInfo[infos.size()]);
+    public static final int getAutoRefreshDelay() {
+        return Settings.getInt(
+                HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL);
     }
 
     /**
-     * @return the full listing of started job information, partitioned by
-     *         harvest definition name.
+     * Returns a configurable number of the most recent running job info records
+     * available for the given job ID.
+     * @param jobId
+     * @return the most recent running job info records available
+     * for the given job ID.
+     * @see HarvesterSettings#HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE
      */
-    public Map<String, Set<StartedJobInfo>> getJobInfosByHarvestName() {
+    public static StartedJobInfo[] getMostRecentRunningJobInfos(long jobId) {
+        int displayedHistorySize = Settings.getInt(
+                HarvesterSettings.HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE);
+       return RunningJobsInfoDAO.getInstance().getMostRecentByJobId(
+               jobId,
+               0, // for now. TODO pagination
+               displayedHistorySize);
+    }
 
-        TreeMap<String, Set<StartedJobInfo>> infoMap 
-            = new TreeMap<String, Set<StartedJobInfo>>();
-        for (StartedJobInfo i : jobInfosByJobId.values()) {
-            String harvestName = i.getHarvestName();
-            Set<StartedJobInfo> jobInfos = infoMap.get(harvestName);
-            if (jobInfos == null) {
-                jobInfos = new TreeSet<StartedJobInfo>();
-                infoMap.put(harvestName, jobInfos);
+    @Override
+    public void visit(FrontierReportMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+
+        int insertCount = RunningJobsInfoDAO.getInstance().storeFrontierReport(
+                msg.getFilterId(),
+                msg.getReport());
+        LOG.info("Stored frontier report " + msg.getReport().getJobName()
+                + "-" + msg.getFilterId()
+                + "' (" + msg.getReport().getSize() + " lines)"
+                + ": inserted " + insertCount + " lines in the DB");
+    }
+
+    /**
+     * Retrieves the latest frontier report stored for the given job ID.
+     * @param jobId the job id
+     * @return a frontier report
+     */
+    public InMemoryFrontierReport getFrontierReport(long jobId) {
+        // Right now there's only one filter and it's not user controlled.
+        return RunningJobsInfoDAO.getInstance().getFrontierReport(
+                jobId,
+                new TopTotalEnqueuesFilter().getFilterId());
+    }
+
+    public InMemoryFrontierReport getFrontierRetiredQueues(long jobId) {
+        return RunningJobsInfoDAO.getInstance().getFrontierReport(
+                jobId,
+                new RetiredQueuesFilter().getFilterId());
+    }
+
+    public InMemoryFrontierReport getFrontierExhaustedQueues(long jobId) {
+        return RunningJobsInfoDAO.getInstance().getFrontierReport(
+                jobId,
+                new ExhaustedQueuesFilter().getFilterId());
+    }
+
+    /**
+     * Notifies the monitor that a job ended, and that all progress data
+     * should be wiped.
+     * @param jobId the job id
+     */
+    public void notifyJobEnded(long jobId, JobStatus newStatus) {
+
+        // Delete records in the DB
+        RunningJobsInfoDAO dao = RunningJobsInfoDAO.getInstance();
+        int delCount = dao.removeInfoForJob(jobId);
+        LOG.info("Deleted " + delCount + " running job info records"
+                + " for job ID " + jobId
+                + " on transition to status " + newStatus.name());
+
+        // Stop chart generation
+        StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);
+        if (gen != null) {
+            gen.cleanup();
+        }
+    }
+
+    /**
+     * Default chart image.
+     */
+    private static final String EMPTY_CHART_FILE = "empty-history.png";
+
+    /**
+     * Returns the path of the chart image file, relative to the
+     * webapp directory. If no chart is available, returns a default empty
+     * image.
+     * @param jobId the job id
+     * @return the path of the chart image file, relative to the
+     * webapp directory.
+     */
+    public String getChartFilePath(long jobId) {
+        StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);
+        if (gen != null) {
+            File chartFile = gen.getChartFile();
+            if (chartFile == null) {
+                return EMPTY_CHART_FILE;
             }
-            jobInfos.add(i);
+            return chartFile.getName();
         }
-        return infoMap;
+        return EMPTY_CHART_FILE;
     }
 
     /**
-     * Removes from the list of started jobs any job whose status is not started
-     * (finished or erroneous jobs).
+     * Sets the chart generator locale.
+     * @param jobId
+     * @param loc
      */
-    private void cleanJobInfos() {
-
-        // Fetch the IDs of started jobs
-        List<JobStatusInfo> startedJobs = JobDAO.getInstance().getStatusInfo(
-                JobStatus.STARTED);
-        List<Long> startedJobIds = new ArrayList<Long>();
-        for (JobStatusInfo startedJob : startedJobs) {
-            startedJobIds.add(startedJob.getJobID());
-        }
-
-        // Iterate on monitored jobs, mark zombie records
-        List<Long> idsToRemove = new ArrayList<Long>();
-        for (Long jobId : jobInfosByJobId.keySet()) {
-            if (!startedJobIds.contains(jobId)) {
-                idsToRemove.add(jobId);
-            }
-        }
-        // Remove zombies
-        for (Long jobId : idsToRemove) {
-            jobInfosByJobId.remove(jobId);
+    public void setChartLocale(long jobId, Locale loc) {
+        StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);
+        if (gen != null) {
+            gen.setLocale(loc);
         }
     }
 

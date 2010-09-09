@@ -33,6 +33,8 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
 --%><%@ page import="java.util.Date, java.util.Collection, 
                  java.util.List, java.util.Map, java.util.Set,
                  java.util.Iterator,
+                 dk.netarkivet.common.CommonSettings,
+                 dk.netarkivet.common.utils.Settings,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
@@ -41,7 +43,29 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page"
-       basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
+       basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
+       
+<script type="text/javascript">
+// Displays the next page of results (if available).
+function previousPage() {
+    document.filtersForm.START_PAGE_INDEX.value = 
+        parseInt(document.filtersForm.START_PAGE_INDEX.value) - 1;
+    document.filtersForm.submit();
+}
+
+//Displays the previous page of results (if available).
+function nextPage() {
+    document.filtersForm.START_PAGE_INDEX.value = 
+        parseInt(document.filtersForm.START_PAGE_INDEX.value) + 1;
+    document.filtersForm.submit();
+}
+
+function resetPagination() {
+    document.filtersForm.START_PAGE_INDEX.value = "1";
+}
+</script>   
+       
+<%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
@@ -55,11 +79,6 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     }
     HTMLUtils.generateHeader(pageContext);
 %>
-<h3 class="page_heading"><fmt:message key="harveststatus.seeds.for.harvest.0">
-    <fmt:param><%=HTMLUtils.escapeHtmlValues(harvestName)%></fmt:param></fmt:message>
-</h3>
-
-<table class="selection_table" cols="6">
 <%
 int domainCount = 0;
 int seedCount = 0;
@@ -70,9 +89,127 @@ List<String> result = hddao.getListOfDomainsOfHarvestDefinition(harvestName);
 domainCount += result.size();
 
 for (String domainname : result) {
+    List<String> seeds = hddao.getListOfSeedsOfDomainOfHarvestDefinition(
+        harvestName, domainname);
+    seedCount += seeds.size();
+}
+%>
+<%
+    String startPage=request.getParameter("START_PAGE_INDEX");
+
+    if(startPage == null){
+        startPage="1";
+    }
+
+    long totalResultsCount = result.size();
+    long pageSize = Long.parseLong(Settings.get(
+            CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));  
+    long actualPageSize = (pageSize == 0 ?
+        totalResultsCount : pageSize);
+
+    long startPageIndex = Long.parseLong(startPage);
+    long startIndex = 0;
+    long endIndex = 0;
+    
+    if (totalResultsCount > 0) {
+        startIndex = ((startPageIndex - 1) * actualPageSize);
+        endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
+    }
+    boolean prevLinkActive = false;
+    if (pageSize != 0
+            && totalResultsCount > 0
+            && startIndex > 1) {
+        prevLinkActive = true;
+    }
+    
+    boolean nextLinkActive = false;
+    if (pageSize != 0
+            && totalResultsCount > 0
+            && endIndex < totalResultsCount) {
+        nextLinkActive = true;
+    }
+%>
+
+<fmt:message key="status.results.displayed">
+<fmt:param><%=totalResultsCount%></fmt:param>
+<fmt:param><%=startIndex+1%></fmt:param>
+<fmt:param><%=endIndex%></fmt:param>
+</fmt:message>
+<p style="text-align: right">
+<fmt:message key="status.results.displayed.pagination">
+    <fmt:param>
+        <%
+            if (prevLinkActive) {
+        %>
+        <a href="javascript:previousPage();">
+            <fmt:message key="status.results.displayed.prevPage"/>
+        </a>
+        <%
+            } else {
+        %>
+        <fmt:message key="status.results.displayed.prevPage"/>
+        <%
+            }
+        %>
+    </fmt:param>
+    <fmt:param>
+        <%
+            if (nextLinkActive) {
+        %>
+        <a href="javascript:nextPage();">
+            <fmt:message key="status.results.displayed.nextPage"/>
+        </a>
+        <%
+            } else {
+        %>
+        <fmt:message key="status.results.displayed.nextPage"/>
+        <%
+            }
+        %>
+    </fmt:param>       
+    
+</fmt:message>
+</p>
+
+
+<form method="post" name="filtersForm" action="Harveststatus-seeds.jsp">
+
+
+<%
+String startPagePost=request.getParameter("START_PAGE_INDEX");
+
+if(startPagePost == null){
+    startPagePost="1";
+}
+
+String searchParam=request.getParameter(Constants.HARVEST_PARAM);
+
+%>
+<input type="hidden" 
+       name="START_PAGE_INDEX"
+       value="<%=startPagePost%>"/>
+
+       
+<input type="hidden" 
+       name="<%=Constants.HARVEST_PARAM%>"
+       value="<%=searchParam%>"/>
+              
+</form>
+
+<h3 class="page_heading"><fmt:message key="harveststatus.seeds.for.harvest.0">
+    <fmt:param><%=HTMLUtils.escapeHtmlValues(harvestName)%></fmt:param></fmt:message>
+</h3>
+
+<table class="selection_table" cols="6">
+
+<%
+List<String> matchingDomainsSubList=result.
+subList((int)startIndex,(int)endIndex);
+
+for (String domainname : matchingDomainsSubList) {
 	List<String> seeds = hddao.getListOfSeedsOfDomainOfHarvestDefinition(
 		harvestName, domainname);
-	seedCount += seeds.size();
+//	seedCount += seeds.size();
 	
 	%>
 	<tr>

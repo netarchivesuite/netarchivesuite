@@ -34,6 +34,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     db/derby-10.5.3.0.jar
     db/derbyclient-10.5.3.0.jar
     db/derbytools-10.5.3.0.jar
+    charting/jcommon-1.0.16.jar
+    charting/jfreechart-1.0.13.jar
     commons-cli-1.0.jar
     commons-fileupload-1.2.1.jar
     commons-io-1.4.jar
@@ -91,6 +93,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="db/derby-10.5.3.0.jar"/>
             	<include name="db/derbyclient-10.5.3.0.jar"/>
             	<include name="db/derbytools-10.5.3.0.jar"/>
+            	<include name="charting/jcommon-1.0.16.jar"/>
+            	<include name="charting/jfreechart-1.0.13.jar"/>
             	<include name="commons-cli-1.0.jar"/>
                 <include name="commons-fileupload-1.2.1.jar"/>
                 <include name="commons-net-2.0.jar"/>
@@ -170,7 +174,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
       </delete>
     </target>
 
-    <target name="clean" 
+    <target name="clean"
             description="Remove all compiled code and generated wars and jars">
         <delete dir="${classdir}/dk"/>
         <delete dir="${report.dir}"/>
@@ -331,12 +335,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="derby.properties"/>
             <include name="LICENSE.txt"/>
             <include name="README.txt"/>
-            <!-- Eclipse specific project files --> 
+            <!-- Eclipse specific project files -->
 	        <include name=".project"/>
 	    	<include name=".classpath"/>
 	    	<include name=".checkstyle"/>
 	    	<include name="NetarchiveSuite_checks.xml"/>
-            <!-- Intellij specific project files --> 
+            <!-- Intellij specific project files -->
             <include name="netarchivesuite.iml"/>
 	    	<include name="netarchivesuite.ipr"/>
         </zip>
@@ -345,10 +349,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <target name="releasezipball" depends="javadoc,jarfiles,warfiles"
             description="Build a binary package with all files needed to run the system">
      <!-- Make a copy of the necessary derby-classes without the version information
-            so we can launch derby as a server. 
+            so we can launch derby as a server.
       -->
      <copy file="lib/db/derby-10.5.3.0.jar" toFile="lib/db/derby.jar"/>
-     <copy file="lib/db/derbynet-10.5.3.0.jar" toFile="lib/db/derbynet.jar"/> 
+     <copy file="lib/db/derbynet-10.5.3.0.jar" toFile="lib/db/derbynet.jar"/>
      <zip basedir="." destfile="NetarchiveSuite.zip">
             <include name="docs/apidocs/**"/>
             <include name="conf/**"/>
@@ -372,7 +376,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <jar destfile="lib/dk.netarkivet.common.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/common/**/*.class"/>
             <include name="dk/netarkivet/common/**/*.properties"/>
-            <include name="dk/netarkivet/common/**/*.xml"/> 
+            <include name="dk/netarkivet/common/**/*.xml"/>
             <manifest>
                 <attribute name="Builder" value="${builder}"/>
                 <attribute name="Class-Path" value="${jarclasspath}"/>

@@ -1030,8 +1030,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * - byte limit second
      * - expected number of objects third.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public void testCompareConfigsDesc() throws NoSuchFieldException,
+    public void testCompareConfigsDesc() throws NoSuchFieldException,
                                                 IllegalAccessException,
                                                 InvocationTargetException,
                                                 InstantiationException,

@@ -62,6 +62,7 @@ public class Channels {
     private static final String MONITOR_CHANNEL_PREFIX = "MONITOR";
     
     private static final String HARVEST_MONITOR_CHANNEL_PREFIX = "HARVESTMON";
+    private static final String FRONTIER_MONITOR_CHANNEL_PREFIX = "FRONTIERMON";
     
     private static final String THECR_CHANNEL_PREFIX = "THE_CR";
 
@@ -570,7 +571,7 @@ public class Channels {
             ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
    
-   /** Return the queue for the monitor registry.
+   /** Return the queue for the harvest monitor registry.
    *
    * @return the <code>ChannelID</code> object for the queue.
    */
@@ -580,6 +581,21 @@ public class Channels {
   
   private final ChannelID HARVEST_MONITOR_SERVER = new ChannelID(
           HARVEST_MONITOR_CHANNEL_PREFIX,
+          ChannelID.COMMON,
+          ChannelID.NO_IP,
+          ChannelID.NO_APPLINST_ID,
+          ChannelID.QUEUE);
+  
+  /** Return the queue for the frontier report monitor registry.
+   *
+   * @return the <code>ChannelID</code> object for the queue.
+   */
+  public static ChannelID getFrontierReportMonitorServerChannel() {
+      return getInstance().FRONTIER_MONITOR_SERVER;
+  }
+
+  private final ChannelID FRONTIER_MONITOR_SERVER = new ChannelID(
+          FRONTIER_MONITOR_CHANNEL_PREFIX,
           ChannelID.COMMON,
           ChannelID.NO_IP,
           ChannelID.NO_APPLINST_ID,

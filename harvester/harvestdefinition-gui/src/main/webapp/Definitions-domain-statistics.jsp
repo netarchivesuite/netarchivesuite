@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     int domainCount = dao.getCountDomains();
     %><h2><fmt:message key="prompt;number.of.registered.domains"/> <%=domainCount%></h2>
     <%
-    List<TLDInfo> tldList = dao.getTLDs();
+    List<TLDInfo> tldList = dao.getMultiLevelTLD(2);
     if (tldList.size() > 0) {
     %>
     <table><tr><th><fmt:message key="top.level.domain"/></th><th><fmt:message key="number.of.subdomains"/></th></tr>

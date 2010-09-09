@@ -23,10 +23,8 @@
 package dk.netarkivet.harvester.harvesting.controller;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.management.Attribute;
@@ -40,24 +38,25 @@ import javax.management.remote.JMXConnector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.crawler.framework.CrawlController;
 import org.archive.util.JmxUtils;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.JMXUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
-import dk.netarkivet.harvester.harvesting.MetadataFile;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
+import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport;
 
 /**
  * This implementation of the HeritrixController interface starts Heritrix as a
@@ -166,7 +165,9 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
          * Fetches the progress statistics legend string from an Heritrix
          * instance.
          */
-        progressStatisticsLegend;
+        progressStatisticsLegend,
+        /** Fetches the frontier report */
+        frontierReport;
     }
 
     private static final boolean ABORT_IF_CONN_LOST = Settings
@@ -209,25 +210,6 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      * The name of the main Heritrix MBean.
      */
     private String crawlServiceBeanName;
-
-    /*
-     * The possible values of a request of the status attribute. Copied from
-     * private values in {@link org.archive.crawler.framework.CrawlController}
-     * 
-     * These strings are currently not visible from outside the CrawlController
-     * class. See http://webteam.archive.org/jira/browse/HER-1285
-     */
-    public static enum HeritrixStatus {
-        // NASCENT,
-        // RUNNING,
-        PAUSED, PAUSING,
-        // CHECKPOINTING,
-        // STOPPING,
-        FINISHED,
-        // STARTED,
-        // PREPARING,
-        ILLEGAL;
-    }
 
     /**
      * Create a BnfHeritrixController object.
@@ -453,10 +435,13 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                 jStatus.setStatus(value != null ? (String) value : "?");
                 if (value != null) {
                     String status = (String) value;
-                    if (HeritrixStatus.PAUSED.name().equals(status)
-                            || HeritrixStatus.PAUSING.name().equals(status)) {
+                    if (CrawlController.PAUSING.equals(status)) {
+                    	 cpm.setStatus(CrawlStatus.CRAWLER_PAUSING);
+                    }
+                    else if (CrawlController.PAUSED.equals(status)) {
                         cpm.setStatus(CrawlStatus.CRAWLER_PAUSED);
-                    } else {
+                    } 
+                    else {
                         cpm.setStatus(CrawlStatus.CRAWLER_ACTIVE);
                     }
                 }
@@ -469,7 +454,20 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
 
         return cpm;
     }
-
+    
+    /**
+     * Generates a full frontier report.
+     */
+    public FullFrontierReport getFullFrontierReport() {
+        
+        return FullFrontierReport.parseContentsAsString(
+                jobName, 
+                (String) executeOperationNoRetry(
+                        crawlServiceJobBeanName,
+                        CrawlServiceJobOperation.frontierReport.name(), 
+                        "all"));
+    }
+    
     /**
      * Get the name of the one job we let this Heritrix run. The handling of
      * done jobs depends on Heritrix not being in crawl. This call may take
@@ -549,64 +547,67 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      *            the crawl directory to scan.
      */
     private void waitForReportGeneration(File crawlDir) {
-
-        // Verify that crawlDir is present and can be read
-        if (!crawlDir.isDirectory() || !crawlDir.canRead()) {
-            String message = "'" + crawlDir.getAbsolutePath()
-                    + "' does not exist or is not a directory, "
-                    + "or can't be read.";
-            log.warn(message);
-            throw new ArgumentNotValid(message);
-        }
-
-        // Scan for report files
-        HashMap<String, Long> reportSizes = findReports(crawlDir);
-        long currentTime = System.currentTimeMillis();
-        long waitDeadline = currentTime
-                + 1000
-                * Settings.getLong(
-                        HarvesterSettings.WAIT_FOR_REPORT_GENERATION_TIMEOUT);
-        boolean changed = true;
-        while (changed && (currentTime <= waitDeadline)) {
-            try {
+    	
+    	log.info("Started waiting for Heritrix report generation.");
+    	
+    	long currentTime = System.currentTimeMillis();
+    	long waitSeconds = Settings.getLong(
+                HarvesterSettings.WAIT_FOR_REPORT_GENERATION_TIMEOUT); 
+        long waitDeadline = currentTime + 1000 * waitSeconds;
+    	
+    	while (true && (currentTime <= waitDeadline)) {
+    		
+    		currentTime = System.currentTimeMillis();
+    		
+    		boolean crawlServiceJobExists = false;
+			try {
+				crawlServiceJobExists = getMBeanServerConnection().isRegistered(
+    					JMXUtils.getBeanName(crawlServiceJobBeanName));
+			} catch (IOException e) {
+				log.warn(e);
+				continue;
+			}    		
+    		
+    		if (! crawlServiceJobExists) {
+    			log.info(crawlServiceJobBeanName 
+    					+ " MBean not found, report generation is finished."
+    					+ " Exiting wait loop.");
+    			break;
+    		}
+    		
+    		String status = "";
+    		try {
+    			List<Attribute> atts = getAttributesNoRetry(
+    					crawlServiceJobBeanName, 
+    					new String[] { 
+    							CrawlServiceJobAttribute.Status.name() 
+    					});    	
+    			status = (String) atts.get(0).getValue();
+    		} catch (IOFailure e) {
+    			log.warn(e);
+    			continue;    			
+    		} catch (IndexOutOfBoundsException e) {
+    			// sometimes the array is empty TODO find why
+    			log.warn(e);
+    			continue;
+    		}
+    	
+    		if (CrawlController.FINISHED.equals(status)) {
+    			log.info(crawlServiceJobBeanName 
+    					+ " status is FINISHED, report generation is complete."
+    					+ " Exiting wait loop.");
+    			return;
+    		}
+    		
+    		try {
                 // Wait 20 seconds
                 Thread.sleep(20000);
             } catch (InterruptedException e) {
 
             }
-            HashMap<String, Long> newReportSizes = findReports(crawlDir);
-            changed = !reportSizes.equals(newReportSizes);
-            currentTime = System.currentTimeMillis();
-            reportSizes.clear();
-            reportSizes.putAll(newReportSizes);
-        }
-    }
-
-    /**
-     * Scans the crawl directory for files matching the desired crawl reports,
-     * as defined by {@link MetadataFile#REPORT_FILE_PATTERN}.
-     * 
-     * @param crawlDir
-     *            the directory to scan
-     * @return a map where key are the report filenames, and values their size
-     *         in bytes.
-     */
-    private HashMap<String, Long> findReports(File crawlDir) {
-        HashMap<String, Long> reportSizes = new HashMap<String, Long>();
-
-        File[] files = crawlDir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return (f.isFile() && f.getName().matches(
-                        MetadataFile.REPORT_FILE_PATTERN));
-            }
-        });
-
-        for (File report : files) {
-            reportSizes.put(report.getName(), report.length());
-        }
-
-        return reportSizes;
+    	}
+    	log.info("Waited " + StringUtils.formatDuration(waitSeconds)
+    			+ " for report generation. Will proceed with cleanup.");
     }
 
     /**
@@ -687,7 +688,26 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      */
     private Object executeOperation(String beanName, String operation,
             String... args) {
-        return jmxCall(beanName, true, new String[] {operation}, args);
+        return jmxCall(beanName, true, true, new String[] {operation}, args);
+    }
+    
+    /**
+     * Execute a command on a bean, does not retry if fails
+     * 
+     * @param connection
+     *            Connection to the server holding the bean.
+     * @param beanName
+     *            Name of the bean.
+     * @param operation
+     *            Command to execute.
+     * @param args
+     *            Arguments to the command. Only string arguments are possible
+     *            at the moment.
+     * @return The return value of the executed command.
+     */
+    private Object executeOperationNoRetry(String beanName, String operation,
+            String... args) {
+        return jmxCall(beanName, false, true, new String[] {operation}, args);
     }
 
     /**
@@ -702,7 +722,23 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     @SuppressWarnings("unchecked")
     private List<Attribute> getAttributes(String beanName,
             String[] attributes) {
-        return (List<Attribute>) jmxCall(beanName, false, attributes);
+        return (List<Attribute>) jmxCall(beanName, true, false, attributes);
+    }
+    
+    /**
+     * Get the value of several attributes from a bean, but does not retry if 
+     * the fetch fails.
+     * 
+     * @param beanName
+     *            Name of the bean to get an attribute for.
+     * @param attributes
+     *            Name of the attributes to get.
+     * @return Value of the attribute.
+     */
+    @SuppressWarnings("unchecked")
+    private List<Attribute> getAttributesNoRetry(String beanName,
+            String[] attributes) {
+        return (List<Attribute>) jmxCall(beanName, false, false, attributes);
     }
 
     /**
@@ -719,11 +755,12 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      *            optional arguments for operations
      * @return the object returned by the distant MBean
      */
-    private Object jmxCall(String beanName, boolean isOperation,
+    private Object jmxCall(String beanName, boolean retry, boolean isOperation,
             String[] names, String... args) {
 
-        MBeanServerConnection connection = getMBeanServeConnection();
+        MBeanServerConnection connection = getMBeanServerConnection();
 
+        int maxTries = (retry ? jmxMaxTries : 1);        
         int tries = 0;
         Throwable lastException;
         do {
@@ -748,11 +785,11 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                 lastException = e;
             }
 
-            if (tries < jmxMaxTries) {
+            if (tries < maxTries) {
                 TimeUtils.exponentialBackoffSleep(tries);
             }
 
-        } while (tries < jmxMaxTries);
+        } while (tries < maxTries);
 
         String msg = "";
         if (isOperation) {
@@ -762,7 +799,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             msg = "Failed to read attributes " + Arrays.toString(names)
                     + " of " + beanName;
         }
-        msg += (lastException != null ? "last exception was "
+        msg += (lastException != null ? ", last exception was "
                 + lastException.getClass().getName() : "")
                 + " after " + tries + " attempts";
 
@@ -793,7 +830,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         }
     }
 
-    private MBeanServerConnection getMBeanServeConnection() {
+    private MBeanServerConnection getMBeanServerConnection() {
 
         MBeanServerConnection connection = null;
         int tries = 0;
@@ -883,4 +920,5 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     public boolean isPaused() {
         throw new NotImplementedException("Not implemented");
     }
+    
 }

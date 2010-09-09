@@ -363,15 +363,6 @@ CREATE INDEX jobconfigjob on job_configs(job_id) TABLESPACE tsindex;
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE job_configs TO netarchivesuite;
 
---------------------------------------------------------------------------------
--- Insert Default schedules 
---------------------------------------------------------------------------------
-
-INSERT INTO schedules (name,comments,startdate,enddate,maxrepeats,timeunit,numtimeunits,anytime,onminute,onhour,ondayofweek,ondayofmonth,edition) VALUES ('Once a day','',null,null,null,2,1,true,null,null,null,null,1);
-INSERT INTO schedules (name,comments,startdate,enddate,maxrepeats,timeunit,numtimeunits,anytime,onminute,onhour,ondayofweek,ondayofmonth,edition) VALUES ('Once a month','',null,null,null,4,1,true,null,null,null,null,1);
-INSERT INTO schedules (name,comments,startdate,enddate,maxrepeats,timeunit,numtimeunits,anytime,onminute,onhour,ondayofweek,ondayofmonth,edition) VALUES ('Once a week','',null,null,null,3,1,true,null,null,null,null,1);
-INSERT INTO schedules (name,comments,startdate,enddate,maxrepeats,timeunit,numtimeunits,anytime,onminute,onhour,ondayofweek,ondayofmonth,edition) VALUES ('Once an hour','',null,null,null,1,1,true,null,null,null,null,1);
-
 -- *****************************************************************************
 -- Area: Global Crawler traps
 -- *****************************************************************************
@@ -411,3 +402,91 @@ CREATE INDEX gctexprlistid on global_crawler_trap_expressions(crawler_trap_list_
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE global_crawler_trap_expressions TO netarchivesuite;
 GRANT USAGE ON SEQUENCE global_crawler_trap_expressions_id_seq TO netarchivesuite;
+
+-- *****************************************************************************
+-- Area: Running Jobs Progress History
+-- *****************************************************************************
+
+-- -----------------------------------------------------------------------------
+
+-- This table contains the archived progress information reported by the running
+-- jobs, controlled by a sample rate
+CREATE TABLE runningJobsHistory (
+     jobId bigint NOT NULL, 
+     harvestName varchar(300) NOT NULL,
+     hostUrl varchar(300) NOT NULL,
+     progress numeric NOT NULL,
+     queuedFilesCount bigint NOT NULL,
+     totalQueuesCount bigint NOT NULL,
+     activeQueuesCount bigint NOT NULL,
+     exhaustedQueuesCount bigint NOT NULL,
+     elapsedSeconds bigint NOT NULL,
+     alertsCount bigint NOT NULL,
+     downloadedFilesCount bigint NOT NULL,
+     currentProcessedKBPerSec integer NOT NULL,
+     processedKBPerSec integer NOT NULL,
+     currentProcessedDocsPerSec numeric NOT NULL,
+     processedDocsPerSec numeric NOT NULL,
+     activeToeCount integer NOT NULL,
+     status integer NOT NULL,
+     tstamp timestamp NOT NULL, 
+     CONSTRAINT pkRunningJobsHistory PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)
+);
+
+CREATE INDEX runningJobsHistoryCrawlJobId on runningJobsHistory (jobId) TABLESPACE tsindex;
+CREATE INDEX runningJobsHistoryCrawlTime on runningJobsHistory (elapsedSeconds) TABLESPACE tsindex;
+CREATE INDEX runningJobsHistoryHarvestName on runningJobsHistory (harvestName) TABLESPACE tsindex;
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE runningJobsHistory TO netarchivesuite;
+
+-- This table contains the latest progress information reported by the job,
+-- for evey job
+CREATE TABLE runningJobsMonitor (
+     jobId bigint NOT NULL, 
+     harvestName varchar(300) NOT NULL,
+     hostUrl varchar(300) NOT NULL,
+     progress numeric NOT NULL,
+     queuedFilesCount bigint NOT NULL,
+     totalQueuesCount bigint NOT NULL,
+     activeQueuesCount bigint NOT NULL,
+     exhaustedQueuesCount bigint NOT NULL,
+     elapsedSeconds bigint NOT NULL,
+     alertsCount bigint NOT NULL,
+     downloadedFilesCount bigint NOT NULL,
+     currentProcessedKBPerSec integer NOT NULL,
+     processedKBPerSec integer NOT NULL,
+     currentProcessedDocsPerSec numeric NOT NULL,
+     processedDocsPerSec numeric NOT NULL,
+     activeToeCount integer NOT NULL,
+     status integer NOT NULL,
+     tstamp timestamp NOT NULL, 
+     CONSTRAINT pkRunningJobsMonitor PRIMARY KEY (jobId, harvestName)
+);
+
+CREATE INDEX runningJobsMonitorJobId on runningJobsHistory (jobId) TABLESPACE tsindex;
+CREATE INDEX runningJobsMonitorHarvestName on runningJobsHistory (harvestName) TABLESPACE tsindex;
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE runningJobsMonitor TO netarchivesuite;
+
+-- This table contains frontier report data
+CREATE TABLE frontierReportMonitor (
+     jobId bigint NOT NULL,
+     filterId varchar(200) NOT NULL,     
+     tstamp timestamp NOT NULL,
+     domainName varchar(300) NOT NULL,
+     currentSize bigint NOT NULL,
+     totalEnqueues bigint NOT NULL,
+     sessionBalance bigint NOT NULL,
+     lastCost numeric NOT NULL,
+     averageCost numeric NOT NULL,
+     lastDequeueTime varchar(100) NOT NULL,
+     wakeTime varchar(100) NOT NULL,
+     totalSpend bigint NOT NULL,
+     totalBudget bigint NOT NULL,
+     errorCount bigint NOT NULL,
+     lastPeekUri varchar NOT NULL,
+     lastQueuedUri varchar NOT NULL,
+     CONSTRAINT pkFrontierReportLines UNIQUE (jobId, filterId, domainName)
+);
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE frontierReportMonitor TO netarchivesuite;

@@ -60,6 +60,18 @@ public class HeritrixTemplate {
         "/crawl-order/controller/map[@name='pre-fetch-processors']"
         + "/newObject[@name='QuotaEnforcer']"
         + "/long[@name='group-max-fetch-successes']";
+    /** Xpath needed by Job.editOrderXML_maxObjectsPerDomain(). */
+    public static final String QUEUE_TOTAL_BUDGET_XPATH =
+        "/crawl-order/controller//newObject[@name='frontier']"
+        + "/long[@name='queue-total-budget']";
+    /** Xpath needed by Job.editOrderXML_maxObjectsPerDomain(). */
+    public static final String ERROR_PENALTY_AMOUNT_XPATH =
+        "/crawl-order/controller//newObject[@name='frontier']"
+        + "/integer[@name='error-penalty-amount']";
+    /** Xpath needed by Job.editOrderXML_maxObjectsPerDomain(). */
+    public static final String BALANCE_REPLENISH_AMOUNT_XPATH =
+        "/crawl-order/controller//newObject[@name='frontier']"
+        + "/integer[@name='balance-replenish-amount']";
     /** Xpath needed by Job.editOrderXML_crawlerTraps(). */
     public static final String DECIDERULES_MAP_XPATH = 
         "/crawl-order/controller/newObject"
@@ -128,6 +140,8 @@ public class HeritrixTemplate {
     static {
         requiredXpaths.put(GROUP_MAX_FETCH_SUCCESS_XPATH,
                            Pattern.compile(WHOLE_NUMBER_REGEXP));
+        requiredXpaths.put(QUEUE_TOTAL_BUDGET_XPATH,
+                Pattern.compile(WHOLE_NUMBER_REGEXP));
         requiredXpaths.put(GROUP_MAX_ALL_KB_XPATH,
                            Pattern.compile(WHOLE_NUMBER_REGEXP));
         

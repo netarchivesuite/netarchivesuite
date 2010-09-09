@@ -24,11 +24,12 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import java.io.Serializable;
 
+import org.archive.crawler.framework.CrawlController;
+
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
-import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController.HeritrixStatus;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 
 /**
@@ -42,8 +43,8 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
  *  @see HeritrixLauncher#doCrawl()
  *
  */
-public class CrawlProgressMessage extends HarvesterMessage implements
-        Serializable {
+public class CrawlProgressMessage extends HarvesterMessage 
+implements Serializable {
 
     /**
      * The general status of a job in NAS.
@@ -58,10 +59,14 @@ public class CrawlProgressMessage extends HarvesterMessage implements
          */
         CRAWLER_ACTIVE,
         /**
+         * Heritrix is crawling but is currently pausing.
+         */
+        CRAWLER_PAUSING,
+        /**
          * Heritrix is crawling but has been paused by the user.
          */
         CRAWLER_PAUSED,
-        /**
+         /**
          * Heritrix has finished crawling, post processing of metadata and ARC
          * files remains to be done.
          */
@@ -332,7 +337,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements
      */
     public CrawlProgressMessage(long harvestID, long jobId,
             String progressStatisticsLegend) {
-        super(HarvestMonitorServer.JMS_CHANNEL_ID, Channels.getError());
+        super(HarvestMonitorServer.CRAWL_PROGRESS_CHANNEL_ID, Channels.getError());
         this.harvestID = harvestID;
         this.jobID = jobId;
         this.status = CrawlStatus.PRE_CRAWL;
@@ -423,9 +428,9 @@ public class CrawlProgressMessage extends HarvesterMessage implements
 
         String status = getJobStatus().getStatus();
         if (status != null) {
-            return status.equals(HeritrixStatus.FINISHED)
-                    || status.equals(HeritrixStatus.ILLEGAL);
+            return status.equals(CrawlController.FINISHED);
         }
         return false;
     }
+    
 }

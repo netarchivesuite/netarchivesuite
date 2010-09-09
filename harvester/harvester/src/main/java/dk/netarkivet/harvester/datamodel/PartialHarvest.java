@@ -336,8 +336,10 @@ public class PartialHarvest extends HarvestDefinition {
      * @param seeds a newline-separated list of the seeds to be added
      * @param templateName the name of the template to be used
      * @param maxBytes Maximum number of bytes to harvest per domain
+     * @param maxObjects Maximum number of objects to harvest per domain
      */
-    public void addSeeds(String seeds, String templateName, long maxBytes) {
+    public void addSeeds(String seeds, String templateName, long maxBytes,
+                          int maxObjects) {
         ArgumentNotValid.checkNotNullOrEmpty(seeds, "seeds");
         ArgumentNotValid.checkNotNullOrEmpty(templateName, "templateName");
         if (!TemplateDAO.getInstance().exists(templateName)) {
@@ -350,7 +352,17 @@ public class PartialHarvest extends HarvestDefinition {
             maxBytesS = Long.toString(maxBytes);
             maxBytesS = maxBytesS + maxbytesSuffix;
         }
-        String name = harvestDefName + "_" + templateName + "_" + maxBytesS;
+        
+        final String maxobjectsSuffix = "Objects"; 
+        String maxObjectsS = "Unlimited" + maxobjectsSuffix;
+        if (maxObjects >= 0) {
+            maxObjectsS = Long.toString(maxObjects);
+            maxObjectsS = maxObjectsS + maxobjectsSuffix;
+        }
+
+        
+        String name = harvestDefName + "_" + templateName + "_" 
+                      + maxBytesS+ "_" + maxObjectsS;
 
         // Note: Matches any sort of newline (unix/mac/dos), but won't get empty
         // lines, which is fine for this purpose
@@ -432,6 +444,7 @@ public class PartialHarvest extends HarvestDefinition {
                 dc.setOrderXmlName(templateName);
 
                 dc.setMaxBytes(maxBytes);
+                dc.setMaxObjects(maxObjects);
                 domain.addConfiguration(dc);
             }
 

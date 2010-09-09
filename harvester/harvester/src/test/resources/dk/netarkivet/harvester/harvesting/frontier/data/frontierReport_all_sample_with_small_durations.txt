@@ -1,0 +1,5 @@
+queue currentSize totalEnqueues sessionBalance lastCost (averageCost) lastDequeueTime wakeTime totalSpend/totalBudget errorCount lastPeekUri lastQueuedUri
+tickle1.com 2 2 495 1(1) - 108ms 5/-1 0 dns:photo-origin.tickle.com dns:photo-origin.tickle.com
+tickle2.com 2 2 495 1(1) - 18ms 5/-1 0 dns:photo-origin.tickle.com dns:photo-origin.tickle.com
+tickle3.com 2 2 495 1(1) - 23s14ms 5/-1 0 dns:photo-origin.tickle.com dns:photo-origin.tickle.com
+tickle4.com 2 2 495 1(1) - 8s14ms 5/-1 0 dns:photo-origin.tickle.com dns:photo-origin.tickle.com
