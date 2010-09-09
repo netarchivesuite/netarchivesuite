@@ -50,7 +50,9 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.NotificationsFactory;
 
@@ -1425,33 +1427,34 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             PreparedStatement statement = null;
             Connection connection = getDbConnection();
 
-        	// Make query for updating the upload status
+            // Make query for updating the upload status
             if(state == ReplicaStoreState.UPLOAD_COMPLETED) {
-            	// An UPLOAD_COMPLETE 
-            	// UPLOAD_COMPLETE => filelist_status = OK, checksum_status = OK 
-            	String sql = "UPDATE replicafileinfo SET upload_status = ?, "
-            		+ "filelist_status = ?, checksum_status = ? "
-            		+ "WHERE replica_id = ? AND file_id = ?";
-            	statement = DBUtils.prepareStatement(connection, sql, 
-            			state.ordinal(), FileListStatus.OK.ordinal(),
-            			ChecksumStatus.OK.ordinal(), replicaId, fileId);
+                // An UPLOAD_COMPLETE 
+                // UPLOAD_COMPLETE => filelist_status = OK, checksum_status = OK 
+                String sql = "UPDATE replicafileinfo SET upload_status = ?, "
+                    + "filelist_status = ?, checksum_status = ? "
+                    + "WHERE replica_id = ? AND file_id = ?";
+                statement = DBUtils.prepareStatement(connection, sql, 
+                        state.ordinal(), FileListStatus.OK.ordinal(),
+                        ChecksumStatus.OK.ordinal(), replicaId, fileId);
             } else {
-            	String sql = "UPDATE replicafileinfo SET upload_status = ? "
-            		+ "WHERE replica_id = ? AND file_id = ?";
-            	statement = DBUtils.prepareStatement(connection, sql, 
-            			state.ordinal(), replicaId, fileId);
+                String sql = "UPDATE replicafileinfo SET upload_status = ? "
+                    + "WHERE replica_id = ? AND file_id = ?";
+                statement = DBUtils.prepareStatement(connection, sql, 
+                        state.ordinal(), replicaId, fileId);
             }
-            
+
             // execute the update and commit to database.
             statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            String errMsg = "Problems with updating a ReplicaFileInfo";
-            log.warn(errMsg);
-            throw new IOFailure(errMsg);
+            String errMsg = "Received the following SQL error while updating "
+                + " the database: " + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
-    
+
     /**
      * Creates a new entry for the filename for each replica, and give it the
      * given checksum and set the upload_status = UNKNOWN_UPLOAD_STATUS.
@@ -1895,10 +1898,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * or the result from a GetAllFilenamesMessage.
      * @param replica The replica, which the FilelistBatchjob has run upon.
      * @throws ArgumentNotValid If the filelist or the replica is null.
+     * @throws UnknownID If the replica does not already exist in the database.
      */
     @Override
     public void addFileListInformation(List<String> filelist, Replica replica) 
-            throws ArgumentNotValid {
+            throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNull(filelist, "List<String> filelist");
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -1908,7 +1912,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     + replica.toString() 
                     + "' does not exist within the database.";
             log.warn(msg);
-            throw new IOFailure(msg);
+            throw new UnknownID(msg);
         }
 
         log.info("Starting processing of " + filelist.size() 

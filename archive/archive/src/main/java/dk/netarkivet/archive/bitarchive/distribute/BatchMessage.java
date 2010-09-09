@@ -112,7 +112,8 @@ public class BatchMessage extends ArchiveMessage {
      */
     public String toString() {
         return super.toString() + " Job: " + job.getClass().getName() 
-                + ", on files: " + job.getFilenamePattern();
+                + ", on files: " + job.getFilenamePattern() + ", for replica: "
+                + replicaId;
     }
 
 }

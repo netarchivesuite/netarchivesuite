@@ -220,7 +220,7 @@ public class BitarchiveAdmin {
         File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
         if(!checkArchiveDir(filedir)) {
             throw new UnknownID("The directory '" + filedir + "' is not an "
-                    + " acceptable archive directory.");
+                    + " archive directory.");
         }
         
         String[] dirContent = filedir.list();
