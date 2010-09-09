@@ -161,13 +161,14 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                                       "ChannelID requestReplyTo");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID,
                                              "String bitarchiveBatchID");
-        log.info("Registered Batch job from " + requestID + " with timeout "
-                 + timeout);
         BatchJobStatus bjs = new BatchJobStatus(
                 requestID, requestReplyTo, bitarchiveBatchID,
                 getRunningBitarchiveIDs(), timeout
         );
         runningBatchJobs.put(bitarchiveBatchID, bjs);
+        log.info("Registered Batch job from " + requestID + " with timeout "
+                + timeout + ". Number of outstanding batchjobs are now: " 
+               + runningBatchJobs.size());
     }
 
     /**
@@ -268,6 +269,9 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         // Notify observers that this batch is done
         setChanged();
         notifyObservers(batchJobStatus);
+        log.info("Batchjob '" + batchJobStatus.bitarchiveBatchID + "' finished."
+                + "Number of outstanding batchjobs are now: " 
+                + runningBatchJobs.size());
     }
 
     /**
