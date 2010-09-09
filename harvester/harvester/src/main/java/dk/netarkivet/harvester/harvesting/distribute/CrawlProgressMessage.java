@@ -328,7 +328,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements
      *            the job ID
      * @param progressStatisticsLegend
      *            the legend of the progress statistics summary string
-     * @see {@link CrawlProgressMessage#progressStatisticsLegend}
+     * @see CrawlProgressMessage#progressStatisticsLegend
      */
     public CrawlProgressMessage(long harvestID, long jobId,
             String progressStatisticsLegend) {
