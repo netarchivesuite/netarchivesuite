@@ -197,7 +197,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     public void visit(final BatchEndedMessage beMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(beMsg, "BatchEndedMessage beMsg");
         
-        log.info("Received batch ended from bitarchive '"
+        log.debug("Received batch ended from bitarchive '"
                  + beMsg.getBitarchiveID() + "': " + beMsg);
         bamon.signOfLife(beMsg.getBitarchiveID());
         try {
@@ -406,7 +406,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
         
-        log.info("Receiving GetAllChecksumsMessage '" + msg + "'");
+        log.info("Receiving GetAllFilenamesMessage '" + msg + "'");
 
         // Create batchjob for the GetAllChecksumsMessage.
         FileListJob flj = new FileListJob();

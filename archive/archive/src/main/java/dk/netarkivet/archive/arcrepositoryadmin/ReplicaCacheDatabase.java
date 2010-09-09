@@ -78,6 +78,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     /** max time to wait between retries. */
     private final int delaybetweenretries = 5*60*1000;
     
+    /** The number of entries between logging in either file list or checksum 
+     * list. */
+    private final int LOGGING_ENTRY_INTERVAL = 1000;
+    
     /**
      * Constructor.
      */
@@ -1773,7 +1777,15 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String lastFilename = "";
         String lastChecksum = "";
         
+        int i = 0;
         for (String line : checksumOutput) {
+            // log that it is in progress every so often.
+            if((i % LOGGING_ENTRY_INTERVAL) == 0) {
+                log.info("Processed checksum list entry number " + i 
+                        + " for replica " + replica);
+            }
+            i++;
+            
             // parse the input.
             KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
             String filename = entry.getKey();
@@ -1909,7 +1921,15 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         Collections.sort(filelist);
 
         String lastFileName = "";
+        int i = 0;
         for (String file : filelist) {
+            // log that it is in progress every so often.
+            if((i % LOGGING_ENTRY_INTERVAL) == 0) {
+                log.info("Processed file list entry number " + i 
+                        + " for replica " + replica);
+            }
+            i++;
+            
             // handle duplicates.
             if(file.equals(lastFileName)) {
                 log.warn("There have been found multiple files with the name '" 

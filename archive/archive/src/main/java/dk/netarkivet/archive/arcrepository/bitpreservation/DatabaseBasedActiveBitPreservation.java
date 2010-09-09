@@ -26,6 +26,7 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
 import java.io.File;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,14 @@ public final class DatabaseBasedActiveBitPreservation implements
     /** The instance to contain the access to the database.*/
     private BitPreservationDAO cache;
     
+    /** The list of the replicas, which are having their filelist updated. */
+    private List<Replica> updateFilelistReplicas = Collections.synchronizedList(
+            new ArrayList<Replica>());
+    
+    /** The list of the replicas, which are having their checksums updated. */
+    private List<Replica> updateChecksumReplicas = Collections.synchronizedList(
+            new ArrayList<Replica>());
+    
     /**
      * Constructor.
      * Initialises the database and closeHook.
@@ -116,7 +125,7 @@ public final class DatabaseBasedActiveBitPreservation implements
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
         // send request
-        log.info("Retrieving checksum from replica '" + replica + "'.");
+        log.info("Retrieving filelist from replica '" + replica + "'.");
 
         // Retrieve a file containing the list of filenames of the replica.
         File outputFile = ArcRepositoryClientFactory.getPreservationInstance()
@@ -421,14 +430,25 @@ public final class DatabaseBasedActiveBitPreservation implements
      * retrieved checksum results will be updated. Then a checksum update will 
      * be performed to check for corrupted replicafileinfo.
      * 
+     * Each replica can only be updated once at the time.
+     * 
      * @param replica The replica to find the changed files for.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public synchronized void findChangedFiles(Replica replica) 
+    public void findChangedFiles(Replica replica) 
             throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        
+        // check whether a update of the replica is already in progress.
+        if(updateChecksumReplicas.contains(replica)) {
+            log.warn("A checksum update is already being performed for "
+                    + "replica '" + replica + "'. Operation ignored!");
+            return;
+        }
+
         log.info("Initiating findChangedFiles for replica '" +  replica + "'.");
+        updateChecksumReplicas.add(replica);
 
         // retrieve updated checksums from the replica.
         runChecksum(replica);
@@ -439,20 +459,30 @@ public final class DatabaseBasedActiveBitPreservation implements
         // update to find changes.
         cache.updateChecksumStatus();
         log.info("Completed findChangedFiles for replica '" +  replica + "'.");
+        updateChecksumReplicas.remove(replica);
     }
 
     /**
      * This method retrieves the filelist for the replica, and then it updates
      * the database with this list of filenames.
+     * Each replica can only be updated once at the time.
      * 
      * @param replica The replica to find the missing files for.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public synchronized void findMissingFiles(Replica replica) 
+    public void findMissingFiles(Replica replica) 
             throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        
+        // check whether a update of the replica is already in progress.
+        if(updateFilelistReplicas.contains(replica)) {
+            log.warn("A filelist update is already being performed for "
+                    + "replica '" + replica + "'. Operation ignored!");
+            return;
+        }
         log.info("Initiating findMissingFiles for replica '" +  replica + "'.");
+        updateFilelistReplicas.add(replica);
  
         // retrieve the filelist from the replica.
         List<String> filenames = getFilenamesList(replica);
@@ -460,6 +490,7 @@ public final class DatabaseBasedActiveBitPreservation implements
         // put them into the database.
         cache.addFileListInformation(filenames, replica);
         log.info("Completed findMissingFiles for replica '" +  replica + "'.");
+        updateFilelistReplicas.remove(replica);
     }
 
     /**
