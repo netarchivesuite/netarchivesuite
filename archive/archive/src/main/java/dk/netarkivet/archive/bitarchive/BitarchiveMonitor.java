@@ -270,7 +270,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         setChanged();
         notifyObservers(batchJobStatus);
         log.info("Batchjob '" + batchJobStatus.bitarchiveBatchID + "' finished."
-                + "Number of outstanding batchjobs are now: " 
+                + "The number of outstanding batchjobs are now: " 
                 + runningBatchJobs.size());
     }
 

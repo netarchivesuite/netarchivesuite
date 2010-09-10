@@ -1908,11 +1908,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         // Make sure, that the replica exists in the database.
         if (!existsReplicaInDB(replica)) {
-            String msg = "Cannot add filelist information, since the replica '"
+            String errorMsg = "Cannot add filelist information, since the replica '"
                     + replica.toString() 
                     + "' does not exist within the database.";
-            log.warn(msg);
-            throw new UnknownID(msg);
+            log.warn(errorMsg);
+            throw new UnknownID(errorMsg);
         }
 
         log.info("Starting processing of " + filelist.size() 
