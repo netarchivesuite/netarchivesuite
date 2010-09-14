@@ -32,7 +32,6 @@ import java.util.TimerTask;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
@@ -59,7 +58,7 @@ public class WaybackIndexer implements CleanupIF {
     /**
      * The logger for this class.
      */
-    final static Log log = LogFactory.getLog(WaybackIndexer.class);
+    static final Log log = LogFactory.getLog(WaybackIndexer.class);
 
     /**
      * The singleton instance of this class.
@@ -98,7 +97,7 @@ public class WaybackIndexer implements CleanupIF {
     /**
      * The file represented by WAYBACK_INDEXER_INITIAL_FILES
      * is read line by line and each line is ingested as an
-     * already-indexed archive file
+     * already-indexed archive file.
      */
     private static void ingestInitialFiles() {
         String initialFileString = Settings.
@@ -116,8 +115,8 @@ public class WaybackIndexer implements CleanupIF {
             return;
         }
         if (!initialFile.isFile()) {
-            throw new ArgumentNotValid("The file '" +
-                                       initialFile.getAbsolutePath()
+            throw new ArgumentNotValid("The file '" 
+                                       + initialFile.getAbsolutePath()
                                        + "' does not exist or is not a file");
         }
         BufferedReader br = null;
@@ -159,11 +158,11 @@ public class WaybackIndexer implements CleanupIF {
                  @Override
                  public void run() {
                      super.run();
-                     log.info("Started thread '" +
-                               Thread.currentThread().getName() + "'");
+                     log.info("Started thread '" 
+                             + Thread.currentThread().getName() + "'");
                      IndexerQueue.getInstance().consume();
-                     log.info("Ending thread '" +
-                               Thread.currentThread().getName() + "'");
+                     log.info("Ending thread '"
+                             + Thread.currentThread().getName() + "'");
 
                  }
              }.start();
@@ -172,8 +171,9 @@ public class WaybackIndexer implements CleanupIF {
 
     /**
      * Starts the producer thread. This thread runs on a timer. It downloads a
-     * list of all files in the archive and adds any new ones to the database. It
-     * then checks the database for unindexed files and adds them to the queue.
+     * list of all files in the archive and adds any new ones to the database.
+     * It then checks the database for unindexed files and adds them to the
+     * queue.
      */
     private static void startProducerThread() {
         Long producerDelay =
@@ -189,8 +189,8 @@ public class WaybackIndexer implements CleanupIF {
             }
         };
         Timer producerThreadTimer = new Timer("ProducerThread");
-        producerThreadTimer.schedule
-                (producerTask, producerDelay, producerInterval);
+        producerThreadTimer.schedule(
+                producerTask, producerDelay, producerInterval);
     }
 
     /**
