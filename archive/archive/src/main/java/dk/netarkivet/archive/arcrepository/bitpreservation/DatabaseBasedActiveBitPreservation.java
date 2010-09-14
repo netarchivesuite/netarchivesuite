@@ -449,17 +449,21 @@ public final class DatabaseBasedActiveBitPreservation implements
 
         log.info("Initiating findChangedFiles for replica '" +  replica + "'.");
         updateChecksumReplicas.add(replica);
+        
+        try {
+            // retrieve updated checksums from the replica.
+            runChecksum(replica);
 
-        // retrieve updated checksums from the replica.
-        runChecksum(replica);
+            // make sure, that all replicas are up-to-date.
+            initChecksumStatusUpdate();
 
-        // make sure, that all replicas are up-to-date.
-        initChecksumStatusUpdate();
-
-        // update to find changes.
-        cache.updateChecksumStatus();
-        log.info("Completed findChangedFiles for replica '" +  replica + "'.");
-        updateChecksumReplicas.remove(replica);
+            // update to find changes.
+            cache.updateChecksumStatus();
+            log.info("Completed findChangedFiles for replica '" +  replica 
+                    + "'.");
+        } finally {
+            updateChecksumReplicas.remove(replica);
+        }
     }
 
     /**
@@ -484,13 +488,17 @@ public final class DatabaseBasedActiveBitPreservation implements
         log.info("Initiating findMissingFiles for replica '" +  replica + "'.");
         updateFilelistReplicas.add(replica);
  
-        // retrieve the filelist from the replica.
-        List<String> filenames = getFilenamesList(replica);
+        try {
+            // retrieve the filelist from the replica.
+            List<String> filenames = getFilenamesList(replica);
 
-        // put them into the database.
-        cache.addFileListInformation(filenames, replica);
-        log.info("Completed findMissingFiles for replica '" +  replica + "'.");
-        updateFilelistReplicas.remove(replica);
+            // put them into the database.
+            cache.addFileListInformation(filenames, replica);
+            log.info("Completed findMissingFiles for replica '" +  replica 
+                    + "'.");
+        } finally {
+            updateFilelistReplicas.remove(replica);
+        }
     }
 
     /**
