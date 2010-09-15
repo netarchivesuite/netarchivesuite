@@ -452,11 +452,11 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                              + msg.getID());
                 } finally {
                     // remove from map
-                    batchProcesses.remove(msg.getID());
+                    batchProcesses.remove(msg.getBatchID());
                 }
             }
         };
-        batchProcesses.put(msg.getID(), batchThread);
+        batchProcesses.put(msg.getBatchID(), batchThread);
         batchThread.start();
     }
     

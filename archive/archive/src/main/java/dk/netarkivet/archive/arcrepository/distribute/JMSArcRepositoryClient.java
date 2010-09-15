@@ -352,6 +352,28 @@ public class JMSArcRepositoryClient extends Synchronizer implements
             log.warn("Could not delete remote file on ftp server: " + rf, e);
         }
     }
+    
+    /**
+     * Runs a batch batch job on each file in the ArcRepository.
+     * 
+     * Note: The id for the batchjob is the empty string, which removes the 
+     * possibility of terminating the batchjob remotely while it is running.
+     *
+     * @param job An object that implements the FileBatchJob interface. The
+     *  initialize() method will be called before processing and the finish()
+     *  method will be called afterwards. The process() method will be called
+     *  with each File entry. An optional function postProcess() allows handling
+     *  the combined results of the batchjob, e.g. summing the results, sorting,
+     *  etc.
+     *
+     * @param replicaId The archive to execute the job on.
+     * @param args The arguments for the batchjob.
+     * @return The status of the batch job after it ended.
+     */
+    public BatchStatus batch(FileBatchJob job, String replicaId, 
+            String... args) {
+        return batch(job, replicaId, "", args);
+    }
 
     /**
      * Runs a batch job on each file in the ArcRepository.
@@ -364,13 +386,19 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *  etc.
      *
      * @param replicaId The archive to execute the job on.
+<<<<<<< .mine
+     * @param args The arguments for the batchjob.
+     * @param batchId The id for the batch process.
+     * @return The status of the batch job after it ended.
+=======
      * @param args The arguments for the batchjob. This is allowed to be null.
      * @return The status of the batch job after it has ended.
+>>>>>>> .r1542
      * @throws ArgumentNotValid If the job is null or the replicaId is either 
      * null or the empty string.
      * @throws IOFailure If no result file is returned.
      */
-    public BatchStatus batch(FileBatchJob job, String replicaId, 
+    public BatchStatus batch(FileBatchJob job, String replicaId, String batchId,
             String... args) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
@@ -378,7 +406,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         log.debug("Starting batchjob '" + job + "' running on replica '"
                   + replicaId + "'");
         BatchMessage bMsg = new BatchMessage(Channels.getTheRepos(), replyQ,
-                                             job, replicaId, args);
+                job, replicaId, batchId, args);
         log.debug("Sending batchmessage to queue '" + Channels.getTheRepos()
                   + "' with replyqueue set to '" + replyQ + "'");
         BatchReplyMessage brMsg =

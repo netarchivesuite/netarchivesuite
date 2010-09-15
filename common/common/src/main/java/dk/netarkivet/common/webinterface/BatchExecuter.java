@@ -27,7 +27,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,6 +65,14 @@ public class BatchExecuter extends Thread {
     
     /** The replica where the batchjob should be sent.*/
     private Replica rep;
+    
+    
+    /** 
+     * Map for containing the ids for the running batchjobs.
+     * Map between the name of the batchjob and the ID of the batch message.
+     * */
+    private static Map<String, String> batchjobs = 
+        Collections.synchronizedMap(new HashMap<String, String>());
     
     /**
      * The constructor.
@@ -182,5 +194,14 @@ public class BatchExecuter extends Thread {
             log.error("Fatal error", e);
             throw new IOFailure("Fatal error", e);
         }
+    }
+    
+    /**
+     * Method for retrieving the data for the running batchjobs.
+     * 
+     * @return The set of entries in the map.
+     */
+    public static Set<Map.Entry<String, String>> getRunningBatchjobs() {
+        return batchjobs.entrySet();
     }
 }
