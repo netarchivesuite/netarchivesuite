@@ -816,8 +816,10 @@ public class BitarchiveServerTester extends TestCase {
         //the Bitarchive
         BatchMessage bm =
                 new BatchMessage(Channels.getTheBamon(),
+                        Channels.getError(),
                         new TimedChecksumJob(),
-                        Settings.get(CommonSettings.USE_REPLICA_ID));
+                        Settings.get(CommonSettings.USE_REPLICA_ID),
+                        "TerminateMe", new String[]{});
 
         JMSConnectionMockupMQ.updateMsgID(bm, "ID45");
         bas.visit(bm);
@@ -832,7 +834,7 @@ public class BitarchiveServerTester extends TestCase {
         }
         
         BatchTerminationMessage btm = new BatchTerminationMessage(
-                Channels.getTheBamon(), "ID45");
+                Channels.getTheBamon(), "TerminateMe");
         JMSConnectionMockupMQ.updateMsgID(btm, "BTM1");
         bas.visit(btm);
         

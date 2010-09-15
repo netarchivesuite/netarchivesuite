@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 
 import junit.framework.TestCase;
 
@@ -49,6 +50,8 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
+import dk.netarkivet.common.utils.batch.TestJob;
+import dk.netarkivet.common.webinterface.WebinterfaceTestCase.TestServletRequest;
 import dk.netarkivet.harvester.webinterface.HarvesterWebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -104,6 +107,10 @@ public class BitpreserveFileStatusTester extends TestCase {
         mtf.tearDown();
         rs.tearDown();
         super.tearDown();
+    }
+    
+    public void testUtilityClass() {
+        ReflectUtils.testUtilityConstructor(BitpreserveFileState.class);
     }
 
     public void testProcessMissingRequest() throws Exception {
@@ -299,33 +306,36 @@ public class BitpreserveFileStatusTester extends TestCase {
 //        mockabp.calls.clear();
       }
 
-    /*
+    
     public void testProcessChecksumRequest() throws NoSuchFieldException, IllegalAccessException {
         MockFileBasedActiveBitPreservation mockabp
                 = new MockFileBasedActiveBitPreservation();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        
+        TestServletRequest request = new TestServletRequest();
         Locale l = new Locale("da");
         mockabp.calls.clear();
 
         // Setup to neither run checksum nor find-missing-files.
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+        Map<String, String[]> parameters = new HashMap<String, String[]>();
+        parameters.put(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
                 new String[]{Replica.getReplicaFromId("ONE").getName()});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.FILENAME_PARAM,
+        parameters.put(dk.netarkivet.archive.webinterface.Constants.FILENAME_PARAM,
                 (String[]) null);
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.FIX_ADMIN_CHECKSUM_PARAM,
+        parameters.put(dk.netarkivet.archive.webinterface.Constants.FIX_ADMIN_CHECKSUM_PARAM,
                 (String[]) null);
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.CREDENTIALS_PARAM,
+        parameters.put(dk.netarkivet.archive.webinterface.Constants.CREDENTIALS_PARAM,
                 (String[]) null);
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.CHECKSUM_PARAM,
+        parameters.put(dk.netarkivet.archive.webinterface.Constants.CHECKSUM_PARAM,
                 (String[]) null);
+        request.setParameterMap(parameters);
 
         StringBuilder res = new StringBuilder();
-        PreservationState ps = BitpreserveFileState.processChecksumRequest(res, getDummyPageContext(l, request));
+        PageContext context = 
+            dk.netarkivet.common.webinterface.WebinterfaceTestCase.getDummyPageContext(l, request);
+        
+        PreservationState ps = BitpreserveFileState.processChecksumRequest(res, context);
         assertNull("Only null arguments, should give a null result.", ps);
         
     }
-    */
     
     public void testMakeCheckbox() throws NoSuchFieldException, IllegalAccessException {
         String res = BitpreserveFileState.makeCheckbox("TEST-COMMAND", "TEST-ARG1", "TEST-ARG2");
@@ -387,6 +397,16 @@ public class BitpreserveFileStatusTester extends TestCase {
 
         
         fbabp.calls.clear();
+    }
+    
+    // Tests both printFileName, printFileState 
+    public void testPrints() throws Exception {
+        MockJspWriter jspout = new MockJspWriter();
+        Locale l = new Locale("da");
+        
+        BitpreserveFileState.printFileName(jspout, "filename", 0, l);
+        
+//        jspout.
     }
 
     /** A placeholder for ActiveBitPreservation that's easy to ask questions of. */

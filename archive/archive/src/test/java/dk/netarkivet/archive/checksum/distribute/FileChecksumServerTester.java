@@ -27,8 +27,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.ChecksumFileApplication;
 import dk.netarkivet.common.CommonSettings;
@@ -51,7 +51,6 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
 
 public class FileChecksumServerTester extends TestCase {
 
@@ -299,10 +298,9 @@ public class FileChecksumServerTester extends TestCase {
 
         File tmp = File.createTempFile("tmp1", "tmp", TestInfo.BASE_FILE_DIR);
         gacMsg.getData(tmp);
-	List<ChecksumEntry> content = ChecksumEntry.parseChecksumJob(tmp);
 	
-	assertNotNull("An empty map should be retrievable, not null.", content);
-	assertEquals("The retrieved map should be empty.", 0, content.size());
+	assertNotNull("The file should exist.", tmp.isFile());
+	assertEquals("The file should have 0 lines.", 0, FileUtils.countLines(tmp));
 	
 	GetAllFilenamesMessage gafMsg = new GetAllFilenamesMessage(theCs, 
 		arcReposQ, Replica.getReplicaFromId("ONE").getId());

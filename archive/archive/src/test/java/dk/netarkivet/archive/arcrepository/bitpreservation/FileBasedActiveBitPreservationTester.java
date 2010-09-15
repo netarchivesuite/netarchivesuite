@@ -21,8 +21,6 @@
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -39,7 +37,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.Message;
+import javax.jms.MessageListener;
+
 import junit.framework.TestCase;
+
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.mortbay.log.Log;
@@ -62,9 +64,9 @@ import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
