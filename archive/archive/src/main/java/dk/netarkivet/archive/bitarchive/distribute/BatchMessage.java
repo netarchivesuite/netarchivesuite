@@ -175,6 +175,8 @@ public class BatchMessage extends ArchiveMessage {
      * @see dk.netarkivet.common.distribute.NetarkivetMessage#toString()
      */
     public String toString() {
-        return super.toString() + " Job: " + job;
+        return super.toString() + " Job: " + job.getClass().getName() 
+        + ", on filename-pattern: " + job.getFilenamePattern() 
+        + ", for replica: " + replicaId;
     }
 }

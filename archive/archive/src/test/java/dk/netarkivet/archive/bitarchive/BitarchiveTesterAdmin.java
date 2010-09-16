@@ -81,7 +81,6 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
 
         // upload the file and verify that the file now exists
         archive.upload(new TestRemoteFile(ARC_FILE, false, false, false), ARC_FILE_NAME);
-        archive.close();
 
         // now verify that admin data updated correctly
         arcfile = admin.lookup(ARC_FILE_NAME);

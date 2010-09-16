@@ -169,22 +169,24 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
      * @throws Exception If error!
      */
     public void testMissingFiles() throws Exception {
-	// initialise the database. Clean database and put new intries.
-	ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
-	File csFile1 = makeTemporaryChecksumFile1();
-	cache.addChecksumInformation(FileUtils.readListFromFile(csFile1), THREE);
+        // initialise the database. Clean database and put new intries.
+        ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
+        File csFile1 = makeTemporaryChecksumFile1();
+        cache.addChecksumInformation(FileUtils.readListFromFile(csFile1), THREE);
 
-	dbabp = DatabaseBasedActiveBitPreservation.getInstance();
-	dbabp.findMissingFiles(TWO);
-	
-	assertEquals("Replica '" + TWO + "' should only be missing 1 file.", 
-		1, dbabp.getNumberOfMissingFiles(TWO));
-	assertEquals("Replica '" + TWO + "' should only be missing file '"
-		+ "integrity7.ARC" + '.', Arrays.asList("integrity7.ARC"), 
-		dbabp.getMissingFiles(TWO));
-	
-	assertEquals("Replica '" + THREE + "' should not be missing any files.",
-		0, dbabp.getNumberOfMissingFiles(THREE));
+        dbabp = DatabaseBasedActiveBitPreservation.getInstance();
+        assertEquals("Replica '" + THREE + "' should not be missing any files.",
+                0, dbabp.getNumberOfMissingFiles(THREE));
+        dbabp.findMissingFiles(TWO);
+
+        assertEquals("Replica '" + TWO + "' should only be missing 1 file.", 
+                1, dbabp.getNumberOfMissingFiles(TWO));
+        assertEquals("Replica '" + TWO + "' should only be missing file '"
+                + "integrity7.ARC" + '.', Arrays.asList("integrity7.ARC"), 
+                dbabp.getMissingFiles(TWO));
+
+        assertEquals("Replica '" + THREE + "' should now be missing one file.",
+                1, dbabp.getNumberOfMissingFiles(THREE));
     }
     
     /**

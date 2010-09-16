@@ -104,13 +104,13 @@ public class BitarchiveAdminTester extends TestCase {
         assertEquals("File should go to temporary directory",
                      TEMPDIR, tempfile.getParentFile().getName());
         assertEquals("File should go in bitarchive dir",
-                     BA_DIR_1.getAbsolutePath(),
+                     BA_DIR_2.getCanonicalPath(),
                      tempfile.getParentFile()
-                     .getParentFile().getAbsolutePath());
+                     .getParentFile().getCanonicalPath());
 
         // Note: This might fail if something is writing heavily to the disk
         // during unit test execution.
-        long df = FileUtils.getBytesFree(BA_DIR_1);
+        long df = FileUtils.getBytesFree(BA_DIR_2);
         tempfile = ad.getTemporaryPath(ARC_FILE_NAME, df - Settings.getLong(
                 ArchiveSettings.BITARCHIVE_MIN_SPACE_REQUIRED) - 10000);
 
@@ -119,9 +119,9 @@ public class BitarchiveAdminTester extends TestCase {
         assertEquals("File should go to temporary directory",
                      TEMPDIR, tempfile.getParentFile().getName());
         assertEquals("File should go in bitarchive dir",
-                     BA_DIR_1.getAbsolutePath(),
+                     BA_DIR_2.getCanonicalPath(),
                      tempfile.getParentFile()
-                     .getParentFile().getAbsolutePath());
+                     .getParentFile().getCanonicalPath());
     }
 
     public void testGetTemporaryPathThrowsException() throws Exception {
@@ -176,7 +176,7 @@ public class BitarchiveAdminTester extends TestCase {
         assertEquals("File should go to file directory",
                      "filedir", finalfile.getParentFile().getName());
         assertEquals("File should go in bitarchive dir",
-                     BA_DIR_1.getAbsolutePath(),
+                     BA_DIR_2.getCanonicalPath(),
                      finalfile.getParentFile()
                      .getParentFile().getAbsolutePath());
     }
@@ -232,7 +232,7 @@ public class BitarchiveAdminTester extends TestCase {
         }
 
         FileUtils.writeBinaryFile(tempfile, "abc".getBytes());
-        FileUtils.removeRecursively(new File(BA_DIR_1, FILEDIR));
+        FileUtils.removeRecursively(new File(BA_DIR_2, FILEDIR));
         try {
             ad.moveToStorage(tempfile);
             fail("Should throw exception when moving fails "
@@ -250,6 +250,7 @@ public class BitarchiveAdminTester extends TestCase {
         files = ad.getFiles();
         assertEquals("Adding a dir should change nothing", 4, files.length);
         new File(new File(BA_DIR_1, FILEDIR), "file5").createNewFile();
+        ad.updateFileList(BA_DIR_1);
         files = ad.getFiles();
         assertEquals("Should find new file", 5, files.length);
         FileUtils.removeRecursively(BA_DIR_2);
@@ -271,15 +272,15 @@ public class BitarchiveAdminTester extends TestCase {
         assertEquals("Should be right file", "file1", file.getName());
         assertEquals("Should be right file",
                      new File(new File(BA_DIR_1, FILEDIR),
-                             "file1").getAbsolutePath(),
-                     file.getFilePath().getAbsolutePath());
+                             "file1").getCanonicalPath(),
+                     file.getFilePath().getCanonicalPath());
         file = ad.lookup("file3");
         assertNotNull("Should find existing file", file);
         assertEquals("Should be right file", "file3", file.getName());
         assertEquals("Should be right file",
                      new File(new File(BA_DIR_2, FILEDIR),
-                             "file3").getAbsolutePath(),
-                     file.getFilePath().getAbsolutePath());
+                             "file3").getCanonicalPath(),
+                     file.getFilePath().getCanonicalPath());
         file = ad.lookup("none");
         assertNull("Should return null on non-existing file", file);
     }
@@ -328,6 +329,7 @@ public class BitarchiveAdminTester extends TestCase {
         assertEquals("Adding a dir should change nothing", 4,
                 files.length);
         new File(new File(BA_DIR_1, FILEDIR), "file5").createNewFile();
+        ad.updateFileList(BA_DIR_1);
         files = ad.getFilesMatching(Pattern.compile(".*"));
         assertEquals("Should find new file", 5, files.length);
         FileUtils.removeRecursively(BA_DIR_2);
@@ -346,15 +348,15 @@ public class BitarchiveAdminTester extends TestCase {
                 2, files.length);
         List<String> filePaths = new ArrayList<String>();
         for (File f : files) {
-            filePaths.add(f.getAbsolutePath());
+            filePaths.add(f.getCanonicalPath());
         }
 
         String file2path = new File(
-                new File(BA_DIR_1, "filedir"), "file2").getAbsolutePath();
+                new File(BA_DIR_1, "filedir"), "file2").getCanonicalPath();
         assertTrue("Should have " + file2path + " but found " + filePaths,
                 filePaths.contains(file2path));
         String file4path = new File(
-                new File(BA_DIR_2, "filedir"), "file4").getAbsolutePath();
+                new File(BA_DIR_2, "filedir"), "file4").getCanonicalPath();
         assertTrue("Should have " + file4path + " but found " + filePaths,
                 filePaths.contains(file4path));
     }
