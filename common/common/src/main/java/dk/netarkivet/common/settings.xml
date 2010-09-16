@@ -444,11 +444,11 @@
             <baseDir>batch</baseDir>
             <batchjobs>
                 <batchjob>
-                    <class>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</class>
+                    <class>dk.netarkivet.common.utils.batch.ChecksumJob</class>
                     <jarfile></jarfile>
                 </batchjob>
                 <batchjob>
-                    <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</class>
+                    <class>dk.netarkivet.common.utils.batch.FileListJob</class>
                     <jarfile></jarfile>
                 </batchjob>
             </batchjobs>

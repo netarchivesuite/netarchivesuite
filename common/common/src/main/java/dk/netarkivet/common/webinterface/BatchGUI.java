@@ -241,7 +241,7 @@ public final class BatchGUI {
                 // get the constructor and instantiate it.
                 Constructor construct = findStringConstructor(
                         getBatchClass(jobName));
-                batchjob = (FileBatchJob) construct.newInstance(args);
+                batchjob = (FileBatchJob) construct.newInstance(args.toArray());
             } else {
                 batchjob = new LoadableJarBatchJob(jobName, args, jarfile);
             }
