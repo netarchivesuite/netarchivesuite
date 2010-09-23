@@ -180,6 +180,9 @@ public final class Constants {
     static final String[] SETTINGS_ARCHIVE_DATABASE_PORT =
         ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to the harvest database port leaf from beyond settings.*/
+    static final String[] COMPLETE_HARVEST_DATABASE_PORT =
+        CommonSettings.DB_PORT.split("[.]");
     /** The path to the harvest database port leaf from settings.*/
     static final String[] SETTINGS_HARVEST_DATABASE_PORT =
         CommonSettings.DB_PORT.replace(CommonSettings.SETTINGS + ".", "")
@@ -286,6 +289,10 @@ public final class Constants {
      * port in the archive database url.
      */
     static final int TEST_OFFSET_ARCHIVE_DB_URL_PORT = 2;
+    /** The offset for the digit to replace during test of the
+     * port in the harvest database url.
+     */
+    static final int TEST_OFFSET_HARVEST_DB_URL_PORT = 2;
     /** The index of the offset part of the test argument.*/ 
     static final int TEST_ARGUMENT_OFFSET_INDEX = 0;
     /** The index of the http part of the test argument.*/ 

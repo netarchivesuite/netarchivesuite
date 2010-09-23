@@ -140,7 +140,9 @@ public class CreateTestInstance {
                 new OffsetSystem(Constants.TEST_OFFSET_HERITRIX_JMX_PORT, 
                         Constants.COMPLETE_HARVEST_HERITRIX_JMX_PORT),
                 new OffsetSystem(Constants.TEST_OFFSET_ARCHIVE_DB_URL_PORT,
-                        Constants.COMPLETE_ARCHIVE_DATABASE_PORT)
+                        Constants.COMPLETE_ARCHIVE_DATABASE_PORT),
+                new OffsetSystem(Constants.TEST_OFFSET_HARVEST_DB_URL_PORT,
+                        Constants.COMPLETE_HARVEST_DATABASE_PORT)
                 };
 
         // apply the arguments
