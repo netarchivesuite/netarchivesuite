@@ -193,10 +193,12 @@ public abstract class Machine {
         // Create kill scripts
         createApplicationKillScripts(machineDirectory);
         createOSLocalKillAllScript(machineDirectory);
+        createHarvestDatabaseKillScript(machineDirectory);
         createArchiveDatabaseKillScript(machineDirectory);
         // create start scripts
         createApplicationStartScripts(machineDirectory);
         createOSLocalStartAllScript(machineDirectory);
+        createHarvestDatabaseStartScript(machineDirectory);
         createArchiveDatabaseStartScript(machineDirectory);
         // create restart script
         createRestartScript(machineDirectory);
@@ -902,6 +904,26 @@ public abstract class Machine {
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createArchiveDatabaseKillScript(File dir);
+    
+    /**
+     * Creates a script for starting the harvest database on a given machine.
+     * This is only created if the &lt;deployHarvestDatabaseDir&gt; parameter
+     * is defined on the machine level and the parameter 
+     * &lt;deployHarvestDatabaseExternal&gt; has the value 'true';
+     * 
+     * @param dir The directory where the script will be placed.
+     */
+    protected abstract void createHarvestDatabaseStartScript(File dir);
+    
+    /**
+     * Creates a script for killing the harvest database on a given machine.
+     * This is only created if the &lt;globalHarvestDatabaseDir&gt; parameter
+     * is defined on the machine level, and the and the 
+     * &lt;globalHarvestDatabaseExternal&gt; parameter is set to true.
+     * 
+     * @param dir The directory where the script will be placed.
+     */
+    protected abstract void createHarvestDatabaseKillScript(File dir);
 
     /**
      * Changes the file directory path to the format used in the security 

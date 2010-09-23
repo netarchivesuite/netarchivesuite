@@ -293,12 +293,18 @@ public final class ScriptConstants {
     /** echo Unzipping archive database.*/
     static final String ECHO_UNZIPPING_ARCHIVE_DATABASE = 
         "echo Unzipping archive database";
-    /** echo Starting external database.*/
-    static final String ECHO_START_EXTERNAL_DATABASE = 
-        "echo Starting external database.";
-    /** echo Killing external database.*/
-    static final String ECHO_KILL_EXTERNAL_DATABASE = 
-        "echo Killing external database.";
+    /** echo Starting external admin database.*/
+    static final String ECHO_START_EXTERNAL_ADMIN_DATABASE = 
+        "echo Starting external admin database.";
+    /** echo Killing external admin database.*/
+    static final String ECHO_KILL_EXTERNAL_ADMIN_DATABASE = 
+        "echo Killing external admin database.";
+    /** echo Starting external harvest database.*/
+    static final String ECHO_START_EXTERNAL_HARVEST_DATABASE = 
+        "echo Starting external harvest database.";
+    /** echo Killing external harvest database.*/
+    static final String ECHO_KILL_EXTERNAL_HARVEST_DATABASE = 
+        "echo Killing external harvest database.";
     
     // VB script
     /** Set WshShell= CreateObject(\"WScript.Shell\").*/

@@ -427,7 +427,10 @@
         </topLevelDomains>
         <database>
             <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
-            <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
+            <baseUrl>jdbc:derby:harvestdefinitionbasedir/fullhddb</baseUrl>
+            <machine></machine>
+            <port></port>
+            <dir></dir>            
             <backupInitHour>3</backupInitHour>
             <validityCheckTimeout>0</validityCheckTimeout>
         </database>

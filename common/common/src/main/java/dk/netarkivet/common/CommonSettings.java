@@ -273,13 +273,33 @@ public class CommonSettings {
     public static String DB_IS_DERBY_IF_CONTAINS = "Derby";
 
     /**
-     * <b>settings.common.database.url</b>: <br>
+     * <b>settings.common.database.baseUrl</b>: <br>
      * The URL to use to connect to the database specified in the 
      * DB_SPECIFICS_CLASS setting.
      */
-    public static String DB_URL
-            = "settings.common.database.url";
+    public static String DB_BASE_URL = "settings.common.database.baseUrl";
     
+    /**
+     * <b>settings.common.database.machine</b>: <br>
+     * Used for the external harvest definition database. The machine where
+     * the harvest definition database is located.
+     */
+    public static String DB_MACHINE = "settings.common.database.machine";
+
+    /**
+     * <b>settings.common.database.port</b>: <br>
+     * Used for the external harvest definition database. The port where the
+     * external harvest definition database is attached.
+     */
+    public static String DB_PORT = "settings.common.database.port";
+
+    /**
+     * <b>settings.common.database.dir</b>: <br>
+     * Used for the external harvest definition database. The directory where
+     * the external harvest definition database is located.
+     */
+    public static String DB_DIR = "settings.common.database.dir";
+
     /**
      * <b>settings.common.database.validityCheckTimeout</b>: <br>
      * Timeout in seconds to check for the validity of a JDBC connection on 

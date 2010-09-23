@@ -101,7 +101,10 @@ public final class Constants {
     /** The path to the machine user name.*/
     static final String DEPLOY_MACHINE_USER_NAME = "deployMachineUserName";
     /** The path to the directory for the database.*/
-    static final String DEPLOY_DATABASE_DIR = "deployDatabaseDir";
+    static final String DEPLOY_HARVEST_DATABASE_DIR = 
+        "deployHarvestDatabaseDir";
+    static final String DEPLOY_HARVEST_DATABASE_EXTERNAL =
+        "deployHarvestDatabaseExternal";
     /** The path to the directory for the archive database.*/
     static final String DEPLOY_ARCHIVE_DATABASE_DIR = 
         "deployArchiveDatabaseDir";
@@ -151,7 +154,7 @@ public final class Constants {
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the database directory from the settings branch.*/
     static final String[] DATABASE_URL_SETTING_LEAF_PATH = CommonSettings
-        .DB_URL.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+        .DB_BASE_URL.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The complete path to the port leaf from beyond settings.*/
     static final String[] COMPLETE_HTTP_PORT_LEAF = 
         CommonSettings.HTTP_PORT_NUMBER.split("[.]");
@@ -177,6 +180,10 @@ public final class Constants {
     static final String[] SETTINGS_ARCHIVE_DATABASE_PORT =
         ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to the harvest database port leaf from settings.*/
+    static final String[] SETTINGS_HARVEST_DATABASE_PORT =
+        CommonSettings.DB_PORT.replace(CommonSettings.SETTINGS + ".", "")
+                .split("[.]");
     /** The path to the heritrix jmxPort from the settings branch.*/
     static final String[] SETTINGS_HARVEST_HERITRIX_JMX_PORT =
         HarvesterSettings.HERITRIX_JMX_PORT
@@ -344,10 +351,16 @@ public final class Constants {
     static final String SCRIPT_NAME_START_ALL = "startall";
     /** The name of the restart all application script. 'restart'.*/
     static final String SCRIPT_NAME_RESTART = "restart";
-    /** The name of the archive database start script.*/
-    static final String SCRIPT_NAME_ARC_DB_START = "start_external_database";
-    /** The name of the archive database kill script.*/
-    static final String SCRIPT_NAME_ARC_DB_KILL = "kill_external_database";
+    /** The name of the admin database start script.*/
+    static final String SCRIPT_NAME_ADMIN_DB_START 
+            = "start_external_admin_database";
+    /** The name of the admin database kill script.*/
+    static final String SCRIPT_NAME_ADMIN_DB_KILL 
+            = "kill_external_admin_database";
+    /** The name of the admin database start script.*/
+    static final String SCRIPT_NAME_HD_DB_START = "start_external_hd_database";
+    /** The name of the admin database kill script.*/
+    static final String SCRIPT_NAME_HD_DB_KILL = "kill_external_hd_database";
     /** The name of the wait script for windows. 'wait'.*/
     static final String SCRIPT_NAME_WAIT = "wait";
     /** Prefix for the application kill script. 'kill_' .*/

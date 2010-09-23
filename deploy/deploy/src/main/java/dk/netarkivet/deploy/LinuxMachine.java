@@ -325,7 +325,9 @@ public class LinuxMachine extends Machine {
                     killPrinter.println(ScriptConstants.FI);
                 }
                 
-                // kill the database, if any, after the applications
+                // kill the harvest database, if any, after the applications
+                killPrinter.print(callKillHarvestDatabase());
+                // kill the admin database, if any, after the applications
                 killPrinter.print(callKillArchiveDatabase());
             } finally {
                 // close script
@@ -374,7 +376,9 @@ public class LinuxMachine extends Machine {
                 startPrinter.println(ScriptConstants.CD + Constants.SPACE
                         + getConfDirPath());
 
-                // start the database, if any, before the applications.
+                // start the harvest database, if any, before the applications.
+                startPrinter.print(callStartHarvestDatabase());
+                // start the admin database, if any, before the applications.
                 startPrinter.print(callStartArchiveDatabase());
 
                 startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS
@@ -665,7 +669,7 @@ public class LinuxMachine extends Machine {
     protected String osInstallDatabase() {
         StringBuilder res = new StringBuilder();
 
-        String databaseDir = machineParameters.getDatabaseDirValue();
+        String databaseDir = machineParameters.getHarvestDatabaseDirValue();
         // Do not install if no proper database directory.
         if(databaseDir == null || databaseDir.isEmpty()) {
             return Constants.EMPTY;
@@ -1256,7 +1260,7 @@ public class LinuxMachine extends Machine {
         try {
             // initialise the script file.
             File startArcDBScript = new File(dir, 
-                    Constants.SCRIPT_NAME_ARC_DB_START + scriptExtension);
+                    Constants.SCRIPT_NAME_ADMIN_DB_START + scriptExtension);
             
             // retrieve the port
             String port = settings.getLeafValue(
@@ -1291,7 +1295,7 @@ public class LinuxMachine extends Machine {
                 startDBPrint.print(Constants.SPACE);
                 startDBPrint.print(ScriptConstants.LINUX_DEV_NULL);
                 startDBPrint.print(Constants.SPACE);
-                startDBPrint.print(Constants.SCRIPT_NAME_ARC_DB_START);
+                startDBPrint.print(Constants.SCRIPT_NAME_ADMIN_DB_START);
                 startDBPrint.print(Constants.EXTENSION_LOG_FILES);
                 startDBPrint.print(Constants.SPACE);
                 startDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
@@ -1308,16 +1312,16 @@ public class LinuxMachine extends Machine {
     
     /**
      * Method for generating the command for running the 
-     * external_database_start script. This should be called before the 
+     * external_admin_database_start script. This should be called before the 
      * application on the machines have been started.
      * 
      * <br/> &gt; echo Starting external database
-     * <br/> &gt; if [ -e ./start_external_database.sh ]; then
-     * <br/> &gt;     ./start_external_database.sh &
+     * <br/> &gt; if [ -e ./start_external_admin_database.sh ]; then
+     * <br/> &gt;     ./start_external_admin_database.sh &
      * <br/> &gt;     sleep 5
      * <br/> &gt; fi
      * 
-     * @return The command for running external_database_start script.
+     * @return The command for running external_admin_database_start script.
      */
     protected String callStartArchiveDatabase() {
         // Ignore if no archive database directory has been defined.
@@ -1328,11 +1332,11 @@ public class LinuxMachine extends Machine {
         
         // Constructing filename
         String appScript = Constants.DOT + Constants.SLASH
-                + Constants.SCRIPT_NAME_ARC_DB_START + scriptExtension;
+                + Constants.SCRIPT_NAME_ADMIN_DB_START + scriptExtension;
         
         StringBuilder res = new StringBuilder();
         // echo Starting external database
-        res.append(ScriptConstants.ECHO_START_EXTERNAL_DATABASE);
+        res.append(ScriptConstants.ECHO_START_EXTERNAL_ADMIN_DATABASE);
         res.append(Constants.NEWLINE);
         // if [ -e ./start_external_database.sh ]; then
         res.append(ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
@@ -1381,7 +1385,7 @@ public class LinuxMachine extends Machine {
         try {
             // initialise the script file.
             File killArcDBScript = new File(dir, 
-                    Constants.SCRIPT_NAME_ARC_DB_KILL + scriptExtension);
+                    Constants.SCRIPT_NAME_ADMIN_DB_KILL + scriptExtension);
             
             // retrieve the port for the database.
             String port = settings.getLeafValue(
@@ -1416,7 +1420,7 @@ public class LinuxMachine extends Machine {
                 killDBPrint.print(ScriptConstants.LINUX_DEV_NULL);
                 killDBPrint.print(Constants.GREATER_THAN);
                 killDBPrint.print(Constants.SPACE);
-                killDBPrint.print(Constants.SCRIPT_NAME_ARC_DB_START);
+                killDBPrint.print(Constants.SCRIPT_NAME_ADMIN_DB_START);
                 killDBPrint.print(Constants.EXTENSION_LOG_FILES);
                 killDBPrint.print(Constants.SPACE);
                 killDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
@@ -1453,11 +1457,11 @@ public class LinuxMachine extends Machine {
 
         // Constructing filename
         String appScript = Constants.DOT + Constants.SLASH
-                + Constants.SCRIPT_NAME_ARC_DB_KILL + scriptExtension;
+                + Constants.SCRIPT_NAME_ADMIN_DB_KILL + scriptExtension;
 
         StringBuilder res = new StringBuilder();
         // echo Killing external database
-        res.append(ScriptConstants.ECHO_KILL_EXTERNAL_DATABASE);
+        res.append(ScriptConstants.ECHO_KILL_EXTERNAL_ADMIN_DATABASE);
         res.append(Constants.NEWLINE);
         // if [ -e ./kill_external_database.sh ]; then
         res.append(ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
@@ -1472,6 +1476,265 @@ public class LinuxMachine extends Machine {
         return res.toString();
     }
     
+    /**
+     * Creates a script for starting the harvest database on a given machine.
+     * This is only created if the &lt;deployHarvestDatabaseDir&gt; parameter
+     * is defined on the machine level and the parameter 
+     * &lt;deployHarvestDatabaseExternal&gt; has the value 'true';
+     * 
+     * <br/> &gt; #!/bin/bash
+     * <br/> &gt; cd InstallDir
+     * <br/> &gt; java -cp 'DB-CLASSPATH' 
+     * org.apache.derby.drda.NetworkServerControl start < /dev/null > 
+     * start_external_harvest_database.log 2>&1 &
+     * 
+     * @param dir The directory where the script will be placed.
+     * @throws IOFailure If the script cannot be written.
+     */
+    @Override
+    protected void createHarvestDatabaseStartScript(File dir) throws IOFailure {
+        // Ignore if the harvest database should not be external
+        if(!machineParameters.isHarvestDatabaseExternal()) {
+            return;
+        }
+        // Ignore if no harvest database directory has been defined.
+        String dbDir = machineParameters.getHarvestDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
+        }
+
+        try {
+            // initialise the script file.
+            File startHarvestDBScript = new File(dir, 
+                    Constants.SCRIPT_NAME_HD_DB_START + scriptExtension);
+            
+            // retrieve the port
+            String port = settings.getLeafValue(
+                    Constants.SETTINGS_HARVEST_DATABASE_PORT);
+            
+            // make print writer for writing to file
+            PrintWriter startDBPrint = new PrintWriter(startHarvestDBScript);
+            try {
+                // - #!/bin/bash
+                startDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
+                // - cd InstallDir
+                startDBPrint.print(ScriptConstants.CD + Constants.SPACE);
+                startDBPrint.println(getInstallDirPath());
+                // - java -cp 'DB-CLASSPATH' 
+                // org.apache.derby.drda.NetworkServerControl start  
+                // < /dev/null > start_external_harvest_database.log 2>&1 &
+                startDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
+                startDBPrint.print(machineParameters.writeJavaOptions());
+                startDBPrint.print(Constants.SPACE);
+                startDBPrint.print(ScriptConstants.JAVA_CLASSPATH);
+                startDBPrint.print(Constants.SPACE + getDbClasspaths());
+                startDBPrint.print(ScriptConstants.DERBY_ACCESS_METHOD);
+                // insert the PORT if any specified.
+                if(port != null && !port.isEmpty()) {
+                    startDBPrint.print(Constants.SPACE);
+                    startDBPrint.print(ScriptConstants.DATABASE_PORT_ARGUMENT);
+                    startDBPrint.print(Constants.SPACE);
+                    startDBPrint.print(port);
+                } 
+                startDBPrint.print(Constants.SPACE);
+                startDBPrint.print(ScriptConstants.DERBY_COMMAND_START);
+                startDBPrint.print(Constants.SPACE);
+                startDBPrint.print(ScriptConstants.LINUX_DEV_NULL);
+                startDBPrint.print(Constants.SPACE);
+                startDBPrint.print(Constants.SCRIPT_NAME_HD_DB_START);
+                startDBPrint.print(Constants.EXTENSION_LOG_FILES);
+                startDBPrint.print(Constants.SPACE);
+                startDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
+            } finally {
+                // close file
+                startDBPrint.close();
+            }
+        } catch (IOException e) {
+            // Log the error and throw an IOFailure.
+            log.trace(Constants.MSG_ERROR_DB_START_FILE, e);
+            throw new IOFailure(Constants.MSG_ERROR_DB_START_FILE, e);
+        }
+    }
+    
+    /**
+     * Method for generating the command for running the 
+     * external_harvest_database_start script. This should be called before the 
+     * application on the machines have been started.
+     * 
+     * <br/> &gt; echo Starting external harvest database
+     * <br/> &gt; if [ -e ./start_external_harvest_database.sh ]; then
+     * <br/> &gt;     ./start_external_harvest_database.sh &
+     * <br/> &gt;     sleep 5
+     * <br/> &gt; fi
+     * 
+     * @return The command for running external_harvest_database_start script.
+     */
+    protected String callStartHarvestDatabase() {
+        // Ignore if the harvest database should not be external.
+        if(!machineParameters.isHarvestDatabaseExternal()) {
+            return "";                                                                                  
+        }
+        // Ignore if no archive database directory has been defined.
+        String dbDir = machineParameters.getHarvestDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return "";
+        }
+        
+        // Constructing filename
+        String appScript = Constants.DOT + Constants.SLASH
+                + Constants.SCRIPT_NAME_HD_DB_START + scriptExtension;
+        
+        StringBuilder res = new StringBuilder();
+        // echo Starting external harvest database
+        res.append(ScriptConstants.ECHO_START_EXTERNAL_HARVEST_DATABASE);
+        res.append(Constants.NEWLINE);
+        // if [ -e ./start_external_harvest_database.sh ]; then
+        res.append(ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
+        res.append(appScript + Constants.SPACE + ScriptConstants.LINUX_THEN);
+        res.append(Constants.NEWLINE);
+        //    ./start_external_harvest_database.sh
+        res.append(ScriptConstants.MULTI_SPACE + appScript);
+        res.append(ScriptConstants.LINUX_RUN_BACKGROUND + Constants.NEWLINE);
+        //    sleep 5
+        res.append(ScriptConstants.MULTI_SPACE + ScriptConstants.SLEEP_5);
+        res.append(Constants.NEWLINE);
+        // fi
+        res.append(ScriptConstants.FI + Constants.NEWLINE);        
+
+        return res.toString();
+    }
+
+    /**
+     * Creates a script for killing the harvest database on a given machine.
+     * This is only created if the &lt;globalHarvestDatabaseDir&gt; parameter
+     * is defined on the machine level, and the and the 
+     * &lt;globalHarvestDatabaseExternal&gt; parameter is set to true.
+     * 
+     * The output is appended to the log, thus the '>>' instead of the standard
+     * '>' when redirecting the output.
+     * 
+     * <br/> &gt; #!/bin/bash
+     * <br/> &gt; cd InstallDir
+     * <br/> &gt; java -cp 'DB-CLASSPATH' 
+     * org.apache.derby.drda.NetworkServerControl shutdown < /dev/null >> 
+     * start_external_harvest_database.log 2>&1 &
+     * 
+     * <br/>
+     * where 'PORT' is in the setting: settings.common.database.port
+     * 
+     * @param dir The directory where the script will be placed.
+     * @throws IOFailure If the script cannot be created.
+     */
+    @Override
+    protected void createHarvestDatabaseKillScript(File dir) throws IOFailure {
+        // Ignore if the harvest database should not be external
+        if(!machineParameters.isHarvestDatabaseExternal()) {
+            return;
+        }
+        // Ignore if no harvest database directory has been defined.
+        String dbDir = machineParameters.getHarvestDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
+        }
+        
+        try {
+            // initialise the script file.
+            File killHarvestDBScript = new File(dir, 
+                    Constants.SCRIPT_NAME_HD_DB_KILL + scriptExtension);
+            
+            // retrieve the port for the database.
+            String port = settings.getLeafValue(
+                    Constants.SETTINGS_HARVEST_DATABASE_PORT);
+            
+            // make print writer for writing to file
+            PrintWriter killDBPrint = new PrintWriter(killHarvestDBScript);
+            try {
+                // - #!/bin/bash
+                killDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
+
+                // - cd InstallDir
+                killDBPrint.print(ScriptConstants.CD + Constants.SPACE);
+                killDBPrint.println(getInstallDirPath());
+                // - java -cp 'DB-CLASSPATH' 
+                // org.apache.derby.drda.NetworkServerControl shutdown  
+                // < /dev/null >> start_external_harvest_database.log 2>&1 &
+                killDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
+                killDBPrint.print(ScriptConstants.JAVA_CLASSPATH);
+                killDBPrint.print(Constants.SPACE + getDbClasspaths());
+                killDBPrint.print(ScriptConstants.DERBY_ACCESS_METHOD);
+                // insert the PORT if any specified.
+                if(port != null && !port.isEmpty()) {
+                    killDBPrint.print(Constants.SPACE);
+                    killDBPrint.print(ScriptConstants.DATABASE_PORT_ARGUMENT);
+                    killDBPrint.print(Constants.SPACE);
+                    killDBPrint.print(port);
+                }
+                killDBPrint.print(Constants.SPACE);
+                killDBPrint.print(ScriptConstants.DERBY_COMMAND_KILL);
+                killDBPrint.print(Constants.SPACE);
+                killDBPrint.print(ScriptConstants.LINUX_DEV_NULL);
+                killDBPrint.print(Constants.GREATER_THAN);
+                killDBPrint.print(Constants.SPACE);
+                killDBPrint.print(Constants.SCRIPT_NAME_HD_DB_START);
+                killDBPrint.print(Constants.EXTENSION_LOG_FILES);
+                killDBPrint.print(Constants.SPACE);
+                killDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
+            } finally {
+                // close file
+                killDBPrint.close();
+            }
+        } catch (IOException e) {
+            // Log the error and throw an IOFailure.
+            log.trace(Constants.MSG_ERROR_DB_KILL_FILE, e);
+            throw new IOFailure(Constants.MSG_ERROR_DB_KILL_FILE, e);
+        }
+    }
+    
+    
+    /**
+     * Method for generating the command for running the 
+     * external_database_kill script. This should be called when the 
+     * application on the machines have been killed.
+     * 
+     * <br/> &gt; echo Killing external harvest database
+     * <br/> &gt; if [ -e ./kill_external_harvest_database.sh ]; then
+     * <br/> &gt;     ./kill_external_harvest_database.sh
+     * <br/> &gt; fi
+     * 
+     * @return The command for running external_harvest_database_kill script.
+     */
+    protected String callKillHarvestDatabase() {
+        // Ignore if the harvest database should not be external.
+        if(!machineParameters.isHarvestDatabaseExternal()) {
+            return "";
+        }
+        // Ignore if no harvest database directory has been defined.
+        String dbDir = machineParameters.getHarvestDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return "";
+        }
+
+        // Constructing filename
+        String appScript = Constants.DOT + Constants.SLASH
+                + Constants.SCRIPT_NAME_HD_DB_KILL + scriptExtension;
+
+        StringBuilder res = new StringBuilder();
+        // echo Killing external harvest database
+        res.append(ScriptConstants.ECHO_KILL_EXTERNAL_HARVEST_DATABASE);
+        res.append(Constants.NEWLINE);
+        // if [ -e ./kill_external_harvest_database.sh ]; then
+        res.append(ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
+        res.append(appScript + Constants.SPACE + ScriptConstants.LINUX_THEN);
+        res.append(Constants.NEWLINE);
+        //    ./kill_external_harvest_database.sh
+        res.append(ScriptConstants.MULTI_SPACE + appScript);
+        res.append(Constants.NEWLINE);
+        // fi
+        res.append(ScriptConstants.FI + Constants.NEWLINE);        
+        
+        return res.toString();
+    }
+
     /**
      * Method for combining the classpaths for the database access. <br/>
      * E.g. /home/test/NAS/lib/db/derby.jar:/home/test/NAS/lib/db/derbynet.jar

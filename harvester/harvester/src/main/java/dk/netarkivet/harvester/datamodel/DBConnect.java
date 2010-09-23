@@ -32,6 +32,7 @@ import java.util.WeakHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
@@ -64,7 +65,8 @@ public class DBConnect {
     public static Connection getDBConnection() {
 
         DBSpecifics dbSpec = DBSpecifics.getInstance();
-
+        String url = getDBUrl();
+        
         try {
             int validityCheckTimeout = Settings
                     .getInt(CommonSettings.DB_CONN_VALID_CHECK_TIMEOUT);
@@ -75,11 +77,9 @@ public class DBConnect {
 
             if (renew) {
                 Class.forName(dbSpec.getDriverClassName());
-                connection = DriverManager.getConnection(Settings
-                        .get(CommonSettings.DB_URL));
+                connection = DriverManager.getConnection(url);
                 connectionPool.put(Thread.currentThread(), connection);
-                log.info("Connected to database using DBurl '"
-                        + Settings.get(CommonSettings.DB_URL)
+                log.info("Connected to database using DBurl '" + url
                         + "'  using driver '" + dbSpec.getDriverClassName()
                         + "'");
             }
@@ -92,7 +92,7 @@ public class DBConnect {
             throw new IOFailure(message, e);
         } catch (SQLException e) {
             final String message = "Can't connect to database with DBurl: '"
-                    + Settings.get(CommonSettings.DB_URL) + "' using driver '"
+                    + url + "' using driver '"
                     + dbSpec.getDriverClassName() + "'" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
@@ -135,4 +135,43 @@ public class DBConnect {
         DBUtils.executeSQL(getDBConnection(), sqlStatements);
     }
 
+    /**
+     * Method for retrieving the url for the harvest definition database.
+     * This url will be constructed from the base-url, the machine, 
+     * the port and the directory. If the database is internal, then only the
+     * base-url should have a value.
+     * 
+     * @return The url for the harvest definition database.
+     */
+    public static String getDBUrl() {
+        StringBuilder res = new StringBuilder();
+        res.append(Settings.get(
+                CommonSettings.DB_BASE_URL));
+
+        // append the machine part of the url, if it exists.
+        String tmp = Settings.get(
+                CommonSettings.DB_MACHINE);
+        if(!tmp.isEmpty()) {
+            res.append("://");
+            res.append(tmp);
+        }
+        
+        // append the machine part of the url, if it exists.
+        tmp = Settings.get(
+                CommonSettings.DB_PORT);
+        if(!tmp.isEmpty()) {
+            res.append(":");
+            res.append(tmp);
+        }
+
+        // append the machine part of the url, if it exists.
+        tmp = Settings.get(
+                CommonSettings.DB_DIR);
+        if(!tmp.isEmpty()) {
+            res.append("/");
+            res.append(tmp);
+        }
+
+        return res.toString();
+    }
 }
