@@ -32,7 +32,6 @@ import java.util.WeakHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
