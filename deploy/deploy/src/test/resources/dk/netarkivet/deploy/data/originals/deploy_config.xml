@@ -163,7 +163,7 @@
 
         <deployMachine name="kb-test-adm-001.kb.dk">
             <deployInstallDir>/home/test</deployInstallDir>
-            <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
+            <deployHarvestDatabaseDir>harvestDatabase</deployHarvestDatabaseDir>
             <settings>
                 <archive>
                     <admin>

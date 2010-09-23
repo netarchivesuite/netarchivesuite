@@ -40,9 +40,6 @@
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
             <!-- or get and getFile oprations, (as well as bitArchive monitor)    -->
             <useReplicaId>KB</useReplicaId>
-            <database>
-	        <url/>
-	    </database>
             <!-- tempDir corrected from ./tests/commontempdir -->
             <tempDir>tmpdircommon</tempDir> 
         <mail>

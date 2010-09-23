@@ -443,7 +443,10 @@
         </topLevelDomains>
         <database>
             <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
-            <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
+            <baseUrl>jdbc:derby:harvestdefinitionbasedir/fullhddb</baseUrl>
+            <machine/>
+            <port/>
+            <dir/>            
             <backupInitHour>3</backupInitHour>
             <validityCheckTimeout>0</validityCheckTimeout>
         </database>
@@ -460,11 +463,11 @@
             <baseDir>batch</baseDir>
             <batchjobs>
                 <batchjob>
-                    <class>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</class>
+                    <class>dk.netarkivet.common.utils.batch.ChecksumJob</class>
                     <jarfile/>
                 </batchjob>
                 <batchjob>
-                    <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</class>
+                    <class>dk.netarkivet.common.utils.batch.FileListJob</class>
                     <jarfile/>
                 </batchjob>
             </batchjobs>

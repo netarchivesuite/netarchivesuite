@@ -176,7 +176,7 @@
 
         <deployMachine name="kb-test-adm-001.kb.dk">
             <deployInstallDir>/home/test</deployInstallDir>
-            <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
+            <deployHarvestDatabaseDir>harvestDatabase</deployHarvestDatabaseDir>
             <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
                 <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
