@@ -273,14 +273,14 @@ public class HarvestControllerTester extends TestCase {
      * test constructor behaviour given bad arguments.
      * The introduction of a factory for the HeritrixLauncher hides the actual
      * cause behind the message "Error creating singleton of class 
-     * 'dk.netarkivet.harvester.harvesting.controller.DefaultHeritrixLauncher'.
+     * 'dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher'.
      */
     public void testRunHarvest() throws Exception {
         HeritrixFiles files = new HeritrixFiles(
                 new File(TestInfo.WORKING_DIR, "bogus"), 42L, 23L);
         hc = HarvestController.getInstance();
         String cause =  "Error creating singleton of class '"
-            + "dk.netarkivet.harvester.harvesting.controller.DefaultHeritrixLauncher':";
+            + "dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher':";
         //String cause = "File 'order.xml' must exist.*bogus/order.xml:"
         try {
             hc.runHarvest(files);
