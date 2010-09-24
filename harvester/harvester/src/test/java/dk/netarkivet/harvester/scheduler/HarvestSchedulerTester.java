@@ -112,7 +112,7 @@ public class HarvestSchedulerTester extends TestCase {
                 TestInfo.TESTLOGPROP);
         LogManager.getLogManager().readConfiguration(testLogPropertiesStream);
         testLogPropertiesStream.close();
-        Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
+        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                 + TestInfo.WORKING_DIR.getCanonicalPath() + "/fullhddb");
         DatabaseTestUtils.getHDDB(new File(TestInfo.BASEDIR, "fullhddb.jar"),
                 "fullhddb", TestInfo.WORKING_DIR);

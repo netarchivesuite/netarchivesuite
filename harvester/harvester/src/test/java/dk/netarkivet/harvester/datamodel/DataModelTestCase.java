@@ -83,7 +83,7 @@ public class DataModelTestCase extends TestCase {
         derbyLog.setUp();
         String derbyDBUrl = "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath()
         + "/fullhddb";
-        Settings.set(CommonSettings.DB_URL, derbyDBUrl);
+        Settings.set(CommonSettings.DB_BASE_URL, derbyDBUrl);
         
         commonTempdir.mkdir();
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
@@ -100,7 +100,7 @@ public class DataModelTestCase extends TestCase {
                     + TestInfo.DBFILE.getAbsolutePath());
         }
 
-        assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_URL),
+        assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL),
                 derbyDBUrl);
       }
 

@@ -52,7 +52,7 @@ public class TemplateDAOTesterAlternate extends TestCase {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-        Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
+        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                 + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
@@ -67,7 +67,7 @@ public class TemplateDAOTesterAlternate extends TestCase {
         }
 
         assertEquals("DBUrl wrong",
-                Settings.get(CommonSettings.DB_URL), "jdbc:derby:" 
+                Settings.get(CommonSettings.DB_BASE_URL), "jdbc:derby:" 
                 + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
         TemplateDAO.getInstance();
     }

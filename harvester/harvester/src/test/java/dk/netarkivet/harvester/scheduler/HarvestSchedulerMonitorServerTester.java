@@ -107,7 +107,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         //JobDAO.reset();
-        Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
+        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                 + WORKING.getCanonicalPath() + "/fullhddb");
         DatabaseTestUtils.getHDDB(new File(BASEDIR, "fullhddb.jar"),
                 "fullhddb", WORKING);

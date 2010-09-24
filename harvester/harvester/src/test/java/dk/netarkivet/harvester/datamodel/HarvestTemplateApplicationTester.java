@@ -69,7 +69,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
         TestUtils.resetDAOs();
-        Settings.set(CommonSettings.DB_URL,
+        Settings.set(CommonSettings.DB_BASE_URL,
                 "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
         DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
                 TestInfo.TEMPDIR);

@@ -56,7 +56,7 @@ public class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
-        Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
+        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                                             + HARVEST_DEFINITION_BASEDIR.getCanonicalPath()
                                             + "/fullhddb");
         DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
