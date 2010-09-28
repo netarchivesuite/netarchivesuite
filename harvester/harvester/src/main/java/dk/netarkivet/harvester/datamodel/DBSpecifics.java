@@ -43,7 +43,7 @@ import dk.netarkivet.common.utils.SettingsFactory;
  * Abstract collection of DB methods that are not standard SQL. This class is a
  * singleton class whose actual implementation is provided by a subclass as
  * determined by the DB_SPECIFICS_CLASS setting.
- * 
+ *
  */
 public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
@@ -54,7 +54,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Get the singleton instance of the DBSpecifics implementation class.
-     * 
+     *
      * @return An instance of DBSpecifics with implementations for a given DB.
      */
     public static synchronized DBSpecifics getInstance() {
@@ -67,7 +67,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     /**
      * Shutdown the database system, if running embeddedly. Otherwise, this is
      * ignored.
-     * 
+     *
      * Will log a warning on errors, but otherwise ignore them.
      */
     public abstract void shutdownDatabase();
@@ -78,7 +78,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * varchar(Constants.MAX_NAME_SIZE) + config_name
      * varchar(Constants.MAX_NAME_SIZE) All rows in the table must be deleted at
      * commit or rollback.
-     * 
+     *
      * @param c
      *            The DB connection to use.
      * @throws SQLException
@@ -92,7 +92,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * Dispose of a temporary table gotten with getTemporaryTable. This can be
      * expected to be called from within a finally clause, so it mustn't throw
      * exceptions.
-     * 
+     *
      * @param c
      *            The DB connection to use.
      * @param tableName
@@ -105,7 +105,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * is expected to perform the backups, this method should do nothing. This
      * method gets called within one hour of the hour-of-day indicated by the
      * DB_BACKUP_INIT_HOUR settings.
-     * 
+     *
      * @param backupDir
      *            Directory to which the database should be backed up
      * @throws SQLException
@@ -118,7 +118,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     /**
      * Get the name of the JDBC driver class that handles interfacing to this
      * server.
-     * 
+     *
      * @return The name of a JDBC driver class
      */
     public abstract String getDriverClassName();
@@ -127,7 +127,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * Update a table to a newer version, if necessary. This will check the
      * schemaversions table to see the current version and perform a
      * table-specific update if required.
-     * 
+     *
      * @param tableName
      *            The table to update
      * @param toVersion
@@ -269,6 +269,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                                 + "' from version " + currentVersion
                                 + " to version " + toVersion);
             }
+        } else if ("runningJobsHistory".equals(tableName)
+                || "runningJobsMonitor".equals(tableName)
+                || "frontierReportMonitor".equals(tableName)) {
+          log.info("No migration needed yet for running jobs history tables.");
         } else {
             // This includes cases where currentVersion < toVersion
             // for all tables that does not have migration functions yet
@@ -283,7 +287,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * change of the field forcemaxbytes from int to bigint and setting its
      * default to -1. Furthermore the default value for field num_configs is set
      * to 0.
-     * 
+     *
      * @throws IOFailure
      *             in case of problems in interacting with the database
      */
@@ -292,7 +296,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     /**
      * Migrates the 'jobs' table from version 4 to version 5 consisting of
      * adding new fields 'resubmitted_as_job' and 'submittedDate'.
-     * 
+     *
      * @throws IOFailure
      *             in case of problems in interacting with the database
      */
@@ -325,7 +329,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * Checks that the connection is valid (i.e. still open on the server side).
      * This implementation can be overriden if a specific RDBM is not handling
      * the {@link Connection#isValid(int)} JDBC4 method properly.
-     * 
+     *
      * @param connection
      *            the connection to check
      * @param validityTimeout
@@ -333,7 +337,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      *            validate the connection to complete. If the timeout period
      *            expires before the operation completes, this method returns
      *            false.
-     * 
+     *
      * @return true if the connection is valid false otherwise.
      * @see Connection#isValid(int)
      * @throws SQLException
@@ -345,7 +349,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * Formats the LIMIT sub-clause of an SQL order clause. This sub-clause
      * allows to paginate query results and its syntax might be dependant on the
      * target RDBMS
-     * 
+     *
      * @param limit
      *            the maximum number of rows to fetch.
      * @param offset
@@ -358,7 +362,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     /**
      * Returns true if the target RDBMS supports CLOBs. If possible seedlists
      * will be stored as CLOBs.
-     * 
+     *
      * @return true if CLOBs are supported, false otherwise.
      */
     public abstract boolean supportsClob();
