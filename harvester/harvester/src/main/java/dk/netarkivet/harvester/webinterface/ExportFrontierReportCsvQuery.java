@@ -38,6 +38,9 @@ import dk.netarkivet.harvester.harvesting.frontier.FrontierReportCsvExport;
 import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 
+/**
+ * UI query to export the frontier report extract as a CSV file.
+ */
 public class ExportFrontierReportCsvQuery {
 
     /**
@@ -84,6 +87,11 @@ public class ExportFrontierReportCsvQuery {
         jobId = Long.parseLong(jobIdStr);
     }
 
+    /**
+     * Performs the export.
+     * @param context the page context
+     * @param i18n the internationalization package to use.
+     */
     public void doExport(PageContext context, I18n i18n) {
 
         String filterId = new TopTotalEnqueuesFilter().getFilterId();

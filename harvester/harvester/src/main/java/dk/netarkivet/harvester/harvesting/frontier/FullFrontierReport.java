@@ -84,7 +84,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
             this.totalEnqueues = l.getTotalEnqueues();
         }
 
-        public String getQueueName() {
+        public String getQueueId() {
             return domainName;
         }
 
@@ -110,8 +110,6 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     @Entity
     static class PersistentLine extends FrontierReportLine {
-
-        private static final long serialVersionUID = 3961923845187195587L;
 
         @PrimaryKey
         private PersistentLineKey primaryKey;
@@ -276,7 +274,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
     /**
      * Returns the N lines with the biggest totalEnqueues values,
      * corresponding to active queues (i.e. not exhasuted or retired).
-     * @param howMany how many lines to fetch
+     * @param howMany how many lines to fetch (N)
      * @return the N lines with the biggest totalEnqueues values.
      */
     public FrontierReportLine[] getBiggestTotalEnqueues(int howMany) {
@@ -420,6 +418,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
             }
         }
 
+        // Open a cursor on the BDB data.
         EntityCursor<PersistentLine> cursor = null;
         try {
 

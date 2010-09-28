@@ -200,12 +200,24 @@ implements MessageListener, ComponentLifeCycle {
                 new TopTotalEnqueuesFilter().getFilterId());
     }
 
+    /**
+     * Retrieves the latest frontier extract report stored for the given job ID,
+     * that contains only retired queues.
+     * @param jobId the job id
+     * @return a frontier report that contains only retired queues.
+     */
     public InMemoryFrontierReport getFrontierRetiredQueues(long jobId) {
         return RunningJobsInfoDAO.getInstance().getFrontierReport(
                 jobId,
                 new RetiredQueuesFilter().getFilterId());
     }
 
+    /**
+     * Retrieves the latest frontier extract report stored for the given job ID,
+     * that contains only exhausted queues.
+     * @param jobId the job id
+     * @return a frontier report that contains only exhausted queues.
+     */
     public InMemoryFrontierReport getFrontierExhaustedQueues(long jobId) {
         return RunningJobsInfoDAO.getInstance().getFrontierReport(
                 jobId,
@@ -260,8 +272,8 @@ implements MessageListener, ComponentLifeCycle {
 
     /**
      * Sets the chart generator locale.
-     * @param jobId
-     * @param loc
+     * @param jobId the job ID
+     * @param loc the local identifier, e.g. 'fr', 'dk', etc.
      */
     public void setChartLocale(long jobId, Locale loc) {
         StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);

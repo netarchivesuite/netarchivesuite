@@ -40,14 +40,18 @@ import dk.netarkivet.harvester.harvesting.frontier.FrontierReportAnalyzer;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 
 /**
- * BnF specific Heritrix launcher, that forces the use of 
+ * BnF specific Heritrix launcher, that forces the use of
  * {@link BnfHeritrixController}. Every turn of the crawl control loop, asks the
- * Heritrix controller to generate a progress report as a 
+ * Heritrix controller to generate a progress report as a
  * {@link CrawlProgressMessage} and then send this message on the JMS bus to
  * be consumed by the {@link HarvestMonitorServer} instance.
  */
 public class BnfHeritrixLauncher extends HeritrixLauncher {
 
+    /**
+     * This class is an executor for scheduled frontier report analysis tasks.
+     * @see ScheduledThreadPoolExecutor
+     */
     private static class FrontierReportAnalysisExecutor
     extends ScheduledThreadPoolExecutor {
 
@@ -65,6 +69,10 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
     }
 
+    /**
+     * This class is an executor for scheduled crawl control tasks.
+     * @see ScheduledThreadPoolExecutor
+     */
     private static class CrawlControlExecutor
     extends ScheduledThreadPoolExecutor {
 
@@ -84,6 +92,14 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
     }
 
+    /**
+     * This class executes a crawl control task, e.g. queries the crawler for
+     * progress summary, sends the adequate JMS message to the monitor, and
+     * checks whether the crawl is finished, in which case crawl control will
+     * be ended.
+     *
+     * These tasks are scheduled by a {@link CrawlControlExecutor}.
+     */
     private class CrawlControl implements Runnable {
 
         public Boolean crawlIsFinished = false;

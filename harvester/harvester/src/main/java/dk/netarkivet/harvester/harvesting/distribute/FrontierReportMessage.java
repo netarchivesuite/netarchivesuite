@@ -34,21 +34,24 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
  *
  */
 public class FrontierReportMessage extends HarvesterMessage {
-    
-    private static final long serialVersionUID = -4548452045688539567L;
 
     /**
-     * The id of the filter that generated this report. 
+     * The id of the filter that generated this report.
      */
     private String filterId;
-     
+
     /**
      * The report.
      */
     private InMemoryFrontierReport report;
 
+    /**
+     * Builds a frontier report wrapper message.
+     * @param filter the filter that generated the report.
+     * @param report the report to wrap.
+     */
     public FrontierReportMessage(
-            FrontierReportFilter filter, 
+            FrontierReportFilter filter,
             InMemoryFrontierReport report) {
         super(HarvestMonitorServer.FRONTIER_CHANNEL_ID, Channels.getError());
         this.filterId = filter.getFilterId();

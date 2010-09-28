@@ -25,7 +25,7 @@ package dk.netarkivet.harvester.harvesting.frontier;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Filters the N active queues (i.e. not exhasuted or retired)
+ * Filters the N active queues (i.e. not exhausted or retired)
  * with the biggest totalEnqueues values.
  * The size of the list is defined by the setting property
  *

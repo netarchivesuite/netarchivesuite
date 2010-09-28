@@ -51,7 +51,9 @@ public interface FrontierReport {
      * Returns the line of the frontier report corresponding to the
      * queue for the given domain name.
      * @param domainName the domain name.
-     * @return null if no queue for this domain name exists
+     * @return null if no queue for this domain name exists, otherwise the line
+     * of the frontier report corresponding to the queue for the
+     * given domain name.
      */
     FrontierReportLine getLineForDomain(String domainName);
 

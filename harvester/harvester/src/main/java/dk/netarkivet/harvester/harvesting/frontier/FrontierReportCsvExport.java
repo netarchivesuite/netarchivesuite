@@ -28,6 +28,10 @@ import java.lang.reflect.Method;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * Utility class implementing the export of a frontier report object
+ * to a CSV file.
+ */
 public class FrontierReportCsvExport {
 
     /** The logger for this class. */
@@ -98,9 +102,9 @@ public class FrontierReportCsvExport {
 
 
     /**
-     * Ouputs the report as CSV, using the given writer and the given field
+     * Outputs the report as CSV, using the given writer and the given field
      * separator. Note that writer is not closed by this method.
-     * @param pw the writer to ouput to
+     * @param pw the writer to output to
      * @param separator the field separator.
      */
     public static void outputAsCsv(

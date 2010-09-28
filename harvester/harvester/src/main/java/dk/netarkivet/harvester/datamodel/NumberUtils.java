@@ -25,6 +25,8 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.List;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
 /**
  * Number related utilities.
  *
@@ -38,7 +40,7 @@ public class NumberUtils {
      * @return Smallest value
      */
     public static long minInf(long l1, long l2) {
-        if (l1 != Constants.HERITRIX_MAXBYTES_INFINITY 
+        if (l1 != Constants.HERITRIX_MAXBYTES_INFINITY
                 && l2 != Constants.HERITRIX_MAXBYTES_INFINITY) {
             return Math.min(l1, l2);
         } else if (l2 != Constants.HERITRIX_MAXBYTES_INFINITY) {
@@ -62,19 +64,20 @@ public class NumberUtils {
         }
         return minInf(l1, l2) == l1 ? -1 : 1;
     }
-    
+
     /**
      * Converts a list to an array of primitive values.
      * @param list the list to convert
      * @return an array of primitive values
      */
     public static final double[] toPrimitiveArray(List<Double> list) {
+        ArgumentNotValid.checkNotNullOrEmpty(list, "list");
         double[] retArray = new double[list.size()];
         for (int i = 0; i < list.size(); i++) {
             retArray[i] = list.get(i);
         }
-        
+
         return retArray;
     }
-    
+
 }

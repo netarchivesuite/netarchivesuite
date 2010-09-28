@@ -39,7 +39,8 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlS
 /**
  * This class is a simple bean storing information about a started job.
  *
- * This class is a persistent entity as per Berkeley DB JE DPL API.
+ * This class is a persistent entity as per Berkeley DB JE
+ * Direct Persistence Layer API.
  */
 public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
@@ -157,7 +158,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     private CrawlStatus status;
 
     /**
-     * Needed by BDB DPL.
+     * Needed by BDB Direct Persistence Layer.
      */
     public StartedJobInfo() {
 
@@ -403,7 +404,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /**
      * Updates the members from a {@link CrawlProgressMessage} instance.
-     * 
+     *
      * @param msg
      *            the {@link CrawlProgressMessage} to process.
      */
@@ -488,7 +489,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             break;
         }
         sji.status = newStatus;
-        
+
         return sji;
     }
 

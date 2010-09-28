@@ -33,17 +33,17 @@ import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 
 /**
- * 
- * This class wraps information stored in the Heritrix MBeans, CrawlService and 
+ *
+ * This class wraps information stored in the Heritrix MBeans, CrawlService and
  * CrawlService.Job, and represent the crawl progress.
- * 
+ *
  * Additionally this object extends {@link HarvesterMessage} so that it can be
  * sent on the JMS bus to be processed by {@link HarvestMonitorServer}.
- * 
+ *
  *  @see HeritrixLauncher#doCrawl()
  *
  */
-public class CrawlProgressMessage extends HarvesterMessage 
+public class CrawlProgressMessage extends HarvesterMessage
 implements Serializable {
 
     /**
@@ -73,14 +73,10 @@ implements Serializable {
         CRAWLING_FINISHED
     }
 
-    private static final long serialVersionUID = 6304124980961230741L;
-
     /**
      * Wraps CrawlService MBean attributes.
      */
     public class CrawlServiceInfo implements Serializable {
-
-        private static final long serialVersionUID = 3054888645835412666L;
 
         /**
          * The number of alerts raised by Heritrix.
@@ -127,8 +123,6 @@ implements Serializable {
      * Wraps CrawlService.Job MBean attributes.
      */
     public class CrawlServiceJobInfo implements Serializable {
-
-        private static final long serialVersionUID = 3977732833092181475L;
 
         /**
          * The number of URIs currently discovered.
@@ -182,7 +176,7 @@ implements Serializable {
 
         /**
          * The job status.
-         * 
+         *
          * @see HeritrixStatus
          */
         private String status;
@@ -270,7 +264,7 @@ implements Serializable {
 
         /**
          * Helper method that approximates the number of queued URIs.
-         * 
+         *
          * @return the number of queued URIs
          */
         public long getQueuedUriCount() {
@@ -326,7 +320,7 @@ implements Serializable {
     /**
      * Builds an empty message. MBean wrapper values are not set and the
      * appropriate getters should be used to do so.
-     * 
+     *
      * @param harvestID
      *            the harvest definition ID
      * @param jobId
@@ -348,7 +342,7 @@ implements Serializable {
      * Builds an empty message. MBean wrapper values are not set and the
      * appropriate getters should be used to do so. The progressStatisticsLegend
      * is set to the empty string.
-     * 
+     *
      * @param harvestID
      *            the harvest definition ID
      * @param jobId
@@ -404,7 +398,7 @@ implements Serializable {
      * fetch anything. Heritrix may still be fetching stuff, as it takes some
      * time for it to go into full pause mode. This method can be used as an
      * indicator that we should not be worried if Heritrix appears to be idle.
-     * 
+     *
      * @return True if the crawler has been paused, e.g. by using the Heritrix
      *         GUI.
      */
@@ -414,7 +408,7 @@ implements Serializable {
 
     /**
      * Checks whether Heritrix has finished crawling the job.
-     * 
+     *
      * @return true if Heritrix has finished crawling the job, false otherwise.
      */
     public boolean crawlIsFinished() {
@@ -432,5 +426,5 @@ implements Serializable {
         }
         return false;
     }
-    
+
 }

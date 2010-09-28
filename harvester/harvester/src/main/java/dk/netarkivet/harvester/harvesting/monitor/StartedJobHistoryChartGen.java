@@ -109,7 +109,12 @@ class StartedJobHistoryChartGen {
          */
         private final double tickStep;
 
-
+        /**
+         * Builds a time axis resolution.
+         * @param seconds the actual resolution in seconds
+         * @param scaleSeconds the actual "scale" of ticks
+         * @param tickStep the number of ticks in one step.
+         */
         TimeAxisResolution(int seconds, int scaleSeconds, double tickStep) {
             this.seconds = seconds;
             this.scaleSeconds = scaleSeconds;
@@ -139,6 +144,10 @@ class StartedJobHistoryChartGen {
         }
     }
 
+    /**
+     * Executor class used to schedule chart generation.
+     * @see ScheduledThreadPoolExecutor
+     */
     private static class ChartGenExecutor
     extends ScheduledThreadPoolExecutor {
 
@@ -157,6 +166,10 @@ class StartedJobHistoryChartGen {
 
     }
 
+    /**
+     * A chart generation task. Generates a PNG image for a
+     * job progress history.
+     */
     private static class ChartGen implements Runnable {
 
         private final StartedJobHistoryChartGen gen;
@@ -188,6 +201,7 @@ class StartedJobHistoryChartGen {
                 urlValues.add((double) sji.getQueuedFilesCount());
             }
 
+            // Refresh the history png image for the job.
             File pngFile = new File(
                     gen.outputFolder,
                     jobId + "-history.png");
@@ -199,7 +213,7 @@ class StartedJobHistoryChartGen {
             gen.generatePngChart(
                     pngFile,
                     CHART_RESOLUTION[0], CHART_RESOLUTION[1],
-                    null,
+                    null, // no chart title
                     I18N.getString(
                             gen.locale,
                             "running.job.details.chart.legend.crawlTime"),
@@ -467,7 +481,7 @@ class StartedJobHistoryChartGen {
 
     /**
      * Sets the locale.
-     * @param locale
+     * @param locale the locale used for chart text.
      */
     void setLocale(Locale locale) {
         this.locale = locale;

@@ -1,24 +1,24 @@
 -- $Id: netarchivesuite_init.sql 1414 2010-05-31 15:52:06Z ngiraud $
 -- $Revision: 1414 $
 -- $Date: 2010-05-31 17:52:06 +0200 (Mon, 31 May 2010) $
--- $Author: ngiraud $ 
- 
+-- $Author: ngiraud $
+
 -- PostgreSQL creation scripts
 -- presupposes PostgresSQL 8.3+
 -- tested on PostgreSQL 8.4.1-1 (Ubuntu 9.10)
 
 -- Note: it is recommended by DBAs to stores indices in a separate tablespace
--- This script assumes that a tablespace 'tsindex' has been created for this 
--- purpose. In order to create a tablespace, the following procedure should be 
+-- This script assumes that a tablespace 'tsindex' has been created for this
+-- purpose. In order to create a tablespace, the following procedure should be
 -- used (tested on Ubuntu 9.10):
 --
--- identify the data directory (cf. /etc/postgresql/8.4/main//postgresql.conf) 
+-- identify the data directory (cf. /etc/postgresql/8.4/main//postgresql.conf)
 -- execute the following commands :
 --      PG_DATA=/var/lib/postgresql/8.4/main
 --      sudo mkdir $PG_DATA/tsindex
 --      sudo chown postgres:postgres $PG_DATA/tsindex
 -- start psql : psql -U postgres -W
--- execute the query : 
+-- execute the query :
 --      create tablespace tsindex location '/var/lib/postgresql/8.4/main/tsindex';
 
 --
@@ -40,30 +40,30 @@ GRANT USAGE ON SCHEMA netarchivesuite TO netarchivesuite;
 -- Area: Basics
 -- *****************************************************************************
 
-CREATE TABLE schemaversions ( 
-    tablename varchar(100) NOT NULL, 
-    version int NOT NULL 
+CREATE TABLE schemaversions (
+    tablename varchar(100) NOT NULL,
+    version int NOT NULL
 );
 
-INSERT INTO schemaversions ( tablename, version ) 
+INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'domains', 2);
-INSERT INTO schemaversions ( tablename, version ) 
+INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'configurations', 4);
-INSERT INTO schemaversions ( tablename, version ) 
+INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'seedlists', 1);
-INSERT INTO schemaversions ( tablename, version ) 
+INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'passwords', 1);
-INSERT INTO schemaversions ( tablename, version ) 
+INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'ownerinfo', 1);
-INSERT INTO schemaversions ( tablename, version ) 
+INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'historyinfo', 2);
-INSERT INTO schemaversions ( tablename, version ) 
+INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'config_passwords', 1);
-INSERT INTO schemaversions ( tablename, version ) 
+INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'config_seedlists', 1);
-INSERT INTO schemaversions ( tablename, version ) 
+INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'harvestdefinitions', 2);
-INSERT INTO schemaversions ( tablename, version ) 
+INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'partialharvests', 1);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'fullharvests', 3);
@@ -77,7 +77,14 @@ INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'jobs', 5);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'job_configs', 1);
-    
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'runningJobsHistory', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'runningJobsMonitor', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'frontierReportMonitor', 1);
+
+
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE schemaversions TO netarchivesuite;
 
 -- *****************************************************************************
@@ -86,13 +93,13 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE schemaversions TO netarchivesuite;
 
 CREATE TABLE domains (
     domain_id bigint NOT NULL PRIMARY KEY,
-    name varchar(300) NOT NULL UNIQUE, 
+    name varchar(300) NOT NULL UNIQUE,
     comments varchar(30000),
-    defaultconfig bigint NOT NULL, 
+    defaultconfig bigint NOT NULL,
     crawlertraps varchar(1000),
-    edition bigint NOT NULL, 
-    alias bigint, 
-    lastaliasupdate timestamp 
+    edition bigint NOT NULL,
+    alias bigint,
+    lastaliasupdate timestamp
 );
 
 CREATE SEQUENCE domains_id_seq OWNED BY domains.domain_id;
@@ -107,13 +114,13 @@ GRANT USAGE ON SEQUENCE domains_id_seq TO netarchivesuite;
 -- -----------------------------------------------------------------------------
 CREATE TABLE configurations (
     config_id bigint NOT NULL PRIMARY KEY,
-    name varchar(300) NOT NULL, 
+    name varchar(300) NOT NULL,
     comments varchar(30000),
-    domain_id bigint NOT NULL, 
-    template_id bigint NOT NULL, 
+    domain_id bigint NOT NULL,
+    template_id bigint NOT NULL,
     maxobjects int,
-    maxrate int, 
-    overridelimits int, 
+    maxrate int,
+    overridelimits int,
     maxbytes bigint NOT NULL DEFAULT -1
 );
 
@@ -129,18 +136,18 @@ GRANT USAGE ON SEQUENCE configurations_id_seq TO netarchivesuite;
 
 -- -----------------------------------------------------------------------------
 CREATE TABLE config_passwords (
-    config_id bigint NOT NULL, 
+    config_id bigint NOT NULL,
     password_id int NOT NULL,
-    PRIMARY KEY (config_id, password_id) 
+    PRIMARY KEY (config_id, password_id)
 );
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE config_passwords TO netarchivesuite;
 
 -- -----------------------------------------------------------------------------
 CREATE TABLE config_seedlists (
-    config_id bigint NOT NULL, 
+    config_id bigint NOT NULL,
     seedlist_id int NOT NULL,
-    PRIMARY KEY (config_id, seedlist_id) 
+    PRIMARY KEY (config_id, seedlist_id)
 );
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE config_seedlists TO netarchivesuite;
@@ -148,9 +155,9 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE config_seedlists TO netarchivesuite;
 -- -----------------------------------------------------------------------------
 CREATE TABLE seedlists (
     seedlist_id bigint NOT NULL PRIMARY KEY,
-    name varchar (300) NOT NULL, 
+    name varchar (300) NOT NULL,
     comments varchar(30000),
-    domain_id bigint NOT NULL, 
+    domain_id bigint NOT NULL,
     seeds text NOT NULL
 );
 
@@ -166,13 +173,13 @@ GRANT USAGE ON SEQUENCE seedlists_id_seq TO netarchivesuite;
 -- -----------------------------------------------------------------------------
 CREATE TABLE passwords (
     password_id bigint NOT NULL PRIMARY KEY,
-    name varchar (300) NOT NULL, 
+    name varchar (300) NOT NULL,
     comments varchar(30000),
-    domain_id bigint NOT NULL, 
+    domain_id bigint NOT NULL,
     url varchar(300) NOT NULL,
-    realm varchar(300) NOT NULL, 
+    realm varchar(300) NOT NULL,
     username varchar(20) NOT NULL,
-    password varchar(40) NOT NULL 
+    password varchar(40) NOT NULL
 );
 
 CREATE SEQUENCE passwords_id_seq OWNED BY passwords.password_id;
@@ -187,7 +194,7 @@ GRANT USAGE ON SEQUENCE passwords_id_seq TO netarchivesuite;
 -- -----------------------------------------------------------------------------
 CREATE TABLE ownerinfo (
     ownerinfo_id bigint NOT NULL PRIMARY KEY,
-    domain_id bigint NOT NULL, 
+    domain_id bigint NOT NULL,
     created timestamp NOT NULL,
     info varchar(1000) NOT NULL
 );
@@ -203,12 +210,12 @@ GRANT USAGE ON SEQUENCE ownerinfo_id_seq TO netarchivesuite;
 -- -----------------------------------------------------------------------------
 CREATE TABLE historyinfo (
     historyinfo_id bigint NOT NULL PRIMARY KEY,
-    stopreason int NOT NULL, 
+    stopreason int NOT NULL,
     objectcount bigint NOT NULL,
-    bytecount bigint NOT NULL, 
+    bytecount bigint NOT NULL,
     config_id bigint NOT NULL,
-    harvest_id bigint NOT NULL, 
-    job_id bigint, 
+    harvest_id bigint NOT NULL,
+    job_id bigint,
     harvest_time timestamp NOT NULL
 );
 
@@ -231,13 +238,13 @@ GRANT USAGE ON SEQUENCE historyinfo_id_seq TO netarchivesuite;
 
 -- -----------------------------------------------------------------------------
 CREATE TABLE harvestdefinitions (
-     harvest_id bigint NOT NULL PRIMARY KEY, 
+     harvest_id bigint NOT NULL PRIMARY KEY,
      name varchar(300) NOT NULL UNIQUE,
-     comments varchar(30000), 
+     comments varchar(30000),
      numevents int NOT NULL,
-     submitted timestamp NOT NULL, 
+     submitted timestamp NOT NULL,
      isactive bool NOT NULL,
-     edition bigint NOT NULL 
+     edition bigint NOT NULL
 );
 
 CREATE INDEX harvestdefinitionssubmitdate on harvestdefinitions (submitted) TABLESPACE tsindex;
@@ -246,9 +253,9 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvestdefinitions TO netarchivesuite
 
 -- -----------------------------------------------------------------------------
 CREATE TABLE fullharvests (
-     harvest_id bigint NOT NULL PRIMARY KEY, 
+     harvest_id bigint NOT NULL PRIMARY KEY,
      maxobjects bigint NOT NULL,
-     previoushd bigint, 
+     previoushd bigint,
      maxbytes bigint NOT NULL default -1
 );
 
@@ -256,9 +263,9 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE fullharvests TO netarchivesuite;
 
 -- -----------------------------------------------------------------------------
 CREATE TABLE partialharvests (
-     harvest_id bigint NOT NULL PRIMARY KEY, 
+     harvest_id bigint NOT NULL PRIMARY KEY,
      schedule_id bigint NOT NULL,
-     nextdate timestamp 
+     nextdate timestamp
 );
 
 CREATE INDEX partialharvestsnextdate on partialharvests (nextdate) TABLESPACE tsindex;
@@ -267,7 +274,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE partialharvests TO netarchivesuite;
 
 -- -----------------------------------------------------------------------------
 CREATE TABLE harvest_configs (
-     harvest_id bigint NOT NULL, 
+     harvest_id bigint NOT NULL,
      config_id bigint NOT NULL,
      PRIMARY KEY ( harvest_id, config_id )
 );
@@ -281,19 +288,19 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvest_configs TO netarchivesuite;
 -- -----------------------------------------------------------------------------
 CREATE TABLE schedules (
     schedule_id bigint NOT NULL PRIMARY KEY,
-    name varchar(300) NOT NULL UNIQUE, 
-    comments varchar(30000), 
+    name varchar(300) NOT NULL UNIQUE,
+    comments varchar(30000),
     startdate timestamp,
-    enddate timestamp, 
-    maxrepeats bigint, 
+    enddate timestamp,
+    maxrepeats bigint,
     timeunit int NOT NULL,
-    numtimeunits bigint NOT NULL, 
-    anytime bool NOT NULL, 
+    numtimeunits bigint NOT NULL,
+    anytime bool NOT NULL,
     onminute int,
-    onhour int, 
-    ondayofweek int, 
-    ondayofmonth int, 
-    edition bigint NOT NULL 
+    onhour int,
+    ondayofweek int,
+    ondayofmonth int,
+    edition bigint NOT NULL
 );
 
 CREATE SEQUENCE schedules_id_seq OWNED BY schedules.schedule_id;
@@ -310,7 +317,7 @@ GRANT USAGE ON SEQUENCE schedules_id_seq TO netarchivesuite;
 CREATE TABLE ordertemplates (
     template_id bigint NOT NULL PRIMARY KEY,
     name varchar(300) NOT NULL UNIQUE,
-    orderxml text NOT NULL 
+    orderxml text NOT NULL
 );
 
 CREATE SEQUENCE ordertemplates_id_seq OWNED BY ordertemplates.template_id;
@@ -325,38 +332,38 @@ GRANT USAGE ON SEQUENCE ordertemplates_id_seq TO netarchivesuite;
 
 -- -----------------------------------------------------------------------------
 CREATE TABLE jobs (
-    job_id bigint NOT NULL PRIMARY KEY, 
+    job_id bigint NOT NULL PRIMARY KEY,
     harvest_id bigint NOT NULL,
-    status int NOT NULL, 
-    priority int NOT NULL, 
+    status int NOT NULL,
+    priority int NOT NULL,
     forcemaxbytes bigint NOT NULL default -1,
-    forcemaxcount bigint, 
-    orderxml varchar(300) NOT NULL, 
+    forcemaxcount bigint,
+    orderxml varchar(300) NOT NULL,
     orderxmldoc text NOT NULL,
-    seedlist text NOT NULL, 
+    seedlist text NOT NULL,
     harvest_num int NOT NULL,
-    harvest_errors varchar(300), 
+    harvest_errors varchar(300),
     harvest_error_details varchar(10000),
-    upload_errors varchar(300), 
+    upload_errors varchar(300),
     upload_error_details varchar(10000),
-    startdate timestamp, 
-    enddate timestamp, 
+    startdate timestamp,
+    enddate timestamp,
     submitteddate timestamp,
     resubmitted_as_job bigint,
     num_configs int NOT NULL default 0,
-    edition bigint NOT NULL 
+    edition bigint NOT NULL
 );
 
 CREATE INDEX jobstatus on jobs(status) TABLESPACE tsindex;
 CREATE INDEX jobharvestid on jobs(harvest_id) TABLESPACE tsindex;
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE jobs TO netarchivesuite;
- 
+
 -- -----------------------------------------------------------------------------
 CREATE TABLE job_configs (
-    job_id bigint NOT NULL, 
+    job_id bigint NOT NULL,
     config_id bigint NOT NULL,
-    PRIMARY KEY ( job_id, config_id ) 
+    PRIMARY KEY ( job_id, config_id )
 );
 
 CREATE INDEX jobconfigjob on job_configs(job_id) TABLESPACE tsindex;
@@ -373,10 +380,10 @@ CREATE TABLE global_crawler_trap_lists(
     name VARCHAR(300) NOT NULL UNIQUE,
     description VARCHAR(20000),
     isActive bool NOT NULL);
-    
-CREATE SEQUENCE global_crawler_trap_list_id_seq 
+
+CREATE SEQUENCE global_crawler_trap_list_id_seq
 OWNED BY global_crawler_trap_lists.global_crawler_trap_list_id;
-    
+
 ALTER TABLE global_crawler_trap_lists ALTER COLUMN global_crawler_trap_list_id
 SET DEFAULT NEXTVAL('global_crawler_trap_list_id_seq');
 
@@ -390,11 +397,11 @@ CREATE TABLE global_crawler_trap_expressions(
     id bigint not null PRIMARY KEY,
     crawler_trap_list_id bigint NOT NULL,
     trap_expression VARCHAR(1000));
-    
+
 CREATE SEQUENCE global_crawler_trap_expressions_id_seq
 OWNED BY global_crawler_trap_expressions.id;
 
-ALTER TABLE global_crawler_trap_expressions ALTER COLUMN id 
+ALTER TABLE global_crawler_trap_expressions ALTER COLUMN id
 SET DEFAULT NEXTVAL('global_crawler_trap_expressions_id_seq');
 
 CREATE INDEX gctexprid on global_crawler_trap_expressions(id) TABLESPACE tsindex;
@@ -412,7 +419,7 @@ GRANT USAGE ON SEQUENCE global_crawler_trap_expressions_id_seq TO netarchivesuit
 -- This table contains the archived progress information reported by the running
 -- jobs, controlled by a sample rate
 CREATE TABLE runningJobsHistory (
-     jobId bigint NOT NULL, 
+     jobId bigint NOT NULL,
      harvestName varchar(300) NOT NULL,
      hostUrl varchar(300) NOT NULL,
      progress numeric NOT NULL,
@@ -429,7 +436,7 @@ CREATE TABLE runningJobsHistory (
      processedDocsPerSec numeric NOT NULL,
      activeToeCount integer NOT NULL,
      status integer NOT NULL,
-     tstamp timestamp NOT NULL, 
+     tstamp timestamp NOT NULL,
      CONSTRAINT pkRunningJobsHistory PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)
 );
 
@@ -442,7 +449,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE runningJobsHistory TO netarchivesuite
 -- This table contains the latest progress information reported by the job,
 -- for evey job
 CREATE TABLE runningJobsMonitor (
-     jobId bigint NOT NULL, 
+     jobId bigint NOT NULL,
      harvestName varchar(300) NOT NULL,
      hostUrl varchar(300) NOT NULL,
      progress numeric NOT NULL,
@@ -459,7 +466,7 @@ CREATE TABLE runningJobsMonitor (
      processedDocsPerSec numeric NOT NULL,
      activeToeCount integer NOT NULL,
      status integer NOT NULL,
-     tstamp timestamp NOT NULL, 
+     tstamp timestamp NOT NULL,
      CONSTRAINT pkRunningJobsMonitor PRIMARY KEY (jobId, harvestName)
 );
 
@@ -471,7 +478,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE runningJobsMonitor TO netarchivesuite
 -- This table contains frontier report data
 CREATE TABLE frontierReportMonitor (
      jobId bigint NOT NULL,
-     filterId varchar(200) NOT NULL,     
+     filterId varchar(200) NOT NULL,
      tstamp timestamp NOT NULL,
      domainName varchar(300) NOT NULL,
      currentSize bigint NOT NULL,

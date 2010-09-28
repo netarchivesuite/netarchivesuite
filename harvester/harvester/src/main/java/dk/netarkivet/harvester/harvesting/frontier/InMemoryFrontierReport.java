@@ -41,8 +41,6 @@ import java.util.TreeSet;
 public class InMemoryFrontierReport extends AbstractFrontierReport
 implements Serializable {
 
-    private static final long serialVersionUID = 3624222355635443287L;
-
     /**
      * The lines of the report, sorted by natural order.
      */

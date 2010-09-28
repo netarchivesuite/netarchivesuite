@@ -34,22 +34,24 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
+import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
 
 /**
  * This singleton class is in charge of giving out the correct channels.
  */
 
 public class Channels {
-      
+
    /**
-    * Channel type prefixes for the current set of channels. 
+    * Channel type prefixes for the current set of channels.
     */
     private static final String ALLBA_CHANNEL_PREFIX = "ALL_BA";
     private static final String ANYBA_CHANNEL_PREFIX = "ANY_BA";
     private static final String THEBAMON_CHANNEL_PREFIX = "THE_BAMON";
     private static final String THESCHED_CHANNEL_PREFIX = "THE_SCHED";
     private static final String THEREPOS_CHANNEL_PREFIX = "THE_REPOS";
-    private static final String ANYLOWHACO_CHANNEL_PREFIX 
+    private static final String ANYLOWHACO_CHANNEL_PREFIX
         = "ANY_LOWPRIORITY_HACO";
     private static final String ANYHIGHHACO_CHANNEL_PREFIX
         = "ANY_HIGHPRIORITY_HACO";
@@ -57,18 +59,25 @@ public class Channels {
         = "THIS_REPOS_CLIENT";
     private static final String ERROR_CHANNEL_PREFIX = "ERROR";
     private static final String INDEXSERVER_CHANNEL_PREFIX = "INDEX_SERVER";
-    private static final String THISINDEXCLIENT_CHANNEL_PREFIX 
+    private static final String THISINDEXCLIENT_CHANNEL_PREFIX
         = "THIS_INDEX_CLIENT";
     private static final String MONITOR_CHANNEL_PREFIX = "MONITOR";
-    
+
+    /**
+     * Prefix for the channel used to send {@link CrawlProgressMessage}s.
+     */
     private static final String HARVEST_MONITOR_CHANNEL_PREFIX = "HARVESTMON";
+
+    /**
+     * Prefix for the channel used to send {@link FrontierReportMessage}s.
+     */
     private static final String FRONTIER_MONITOR_CHANNEL_PREFIX = "FRONTIERMON";
-    
+
     private static final String THECR_CHANNEL_PREFIX = "THE_CR";
 
     /** Channel part separator. */
     public static final String CHANNEL_PART_SEPARATOR = "_";
-    
+
     /**
      * The one existing instance of the Channels object. Not accessible from the
      * outside at all.
@@ -98,14 +107,14 @@ public class Channels {
      */
     private final Replica useReplica = Replica.getReplicaFromId(
             Settings.get(CommonSettings.USE_REPLICA_ID));
-    
-    /** 
-     * The constructor of Channels class. 
+
+    /**
+     * The constructor of Channels class.
      * Validates that the current value of the setting USE_REPLICA_ID
      * corresponds to one of the replicas listed in the settings.
      * Furthermore we here fill content in the ALL_BA_ARRAY, ANY_BA_ARRAY,
      * THE_BAMON_ARRAY, and initialize ALL_BA, ANY_BA, and THE_BAMON.
-     * 
+     *
      * @throws UnknownID If one of the replicas has an unhandled replica type.
      */
     private Channels() {
@@ -139,40 +148,40 @@ public class Channels {
                 throw new UnknownID("The replica '" + rep + "' does not have "
                         + "a valid replica type.");
             }
-            
+
             // find the 'useReplica'
             if(rep == useReplica) {
                 useReplicaIndex = i;
             }
-            
+
             i++;
         }
-        
+
         // validate the index of the useReplica
         if(useReplicaIndex < 0 || useReplicaIndex >= replicas.size()) {
-            // issue an error, if the use replica could not be found. 
+            // issue an error, if the use replica could not be found.
             throw new ArgumentNotValid(
                     "The useReplica '" + useReplica + "' was not found in the "
                     + "list of replicas: '" + replicas + "'.");
         }
-        
+
         // set the channels for the useReplica
         ALL_BA = ALL_BA_ARRAY[useReplicaIndex];
         ANY_BA = ANY_BA_ARRAY[useReplicaIndex];
         THE_BAMON = THE_BAMON_ARRAY[useReplicaIndex];
         THE_CR = THE_CR_ARRAY[useReplicaIndex];
     }
-    
+
     /**
      * Method for retrieving the list of replicas used for the channels.
-     * The replica ids are in the same order as their channels.  
-     * 
+     * The replica ids are in the same order as their channels.
+     *
      * @return The replica ids in the same order as their channels.
      */
     public static Collection<Replica> getReplicas() {
         return getInstance().replicas;
     }
-    
+
     /**
      * Returns the queue on which HarvestControllers reply with status messages
      * to the HarvestScheduler.
@@ -282,26 +291,26 @@ public class Channels {
      * as it uses THE_BAMON_ARRAY, which is initialized in the constructor.
      */
     private final ChannelID THE_BAMON;
-    
+
     /**
      * Returns the channels for the all Checksum replicas.
-     * 
+     *
      * @return An array of THE_CR channels - one for each replica, though only
-     * the checksum replicas have values (the others are null). 
+     * the checksum replicas have values (the others are null).
      */
     public static final ChannelID[] getAllArchives_CRs() {
         return getInstance().THE_CR_ARRAY;
     }
-    
+
     /** The array containing the 'THE_CR' channels.*/
     private final ChannelID[] THE_CR_ARRAY
         = new ChannelID[replicas.size()];
-   
-    /** 
+
+    /**
      * Method for retrieving the 'THE_CR' channel for this replica.
      * If the replica is not a checksum replica, then an error is thrown.
-     *  
-     * @return the 'THE_CR' channel for this replica. 
+     *
+     * @return the 'THE_CR' channel for this replica.
      * @throws IllegalState If the current replica is not a checksum replica.
      */
     public static ChannelID getTheCR() throws IllegalState {
@@ -314,8 +323,8 @@ public class Channels {
 
         return res;
     }
-    
-    /** The 'THE_CR' channel for this replica. This has the value 'null' if 
+
+    /** The 'THE_CR' channel for this replica. This has the value 'null' if
      * the replica is not a checksum replica.*/
     private final ChannelID THE_CR;
 
@@ -431,7 +440,7 @@ public class Channels {
             if (bamon != null && bamon.getName().equals(
                     Settings.get(CommonSettings.ENVIRONMENT_NAME)
                             + CHANNEL_PART_SEPARATOR + replicaId
-                            + CHANNEL_PART_SEPARATOR 
+                            + CHANNEL_PART_SEPARATOR
                             + THEBAMON_CHANNEL_PREFIX)) {
                 return bamon;
             }
@@ -439,7 +448,7 @@ public class Channels {
         throw new ArgumentNotValid("Did not find a BAMON queue for '"
                 + replicaId + "'");
     }
-    
+
     public static ChannelID getTheCrForReplica(String replicaId) {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ChannelID[] crs = getAllArchives_CRs();
@@ -456,12 +465,12 @@ public class Channels {
         throw new ArgumentNotValid("Did not find a checksum queue for '"
                 + replicaId + "'");
     }
-    
+
     /**
-     * Method for extracting the replica from the name of the identifier 
+     * Method for extracting the replica from the name of the identifier
      * channel.
-     * 
-     * @param channelName The name of the identification channel for the 
+     *
+     * @param channelName The name of the identification channel for the
      * replica.
      * @return Replica who the identification channel belong to.
      * @throws UnknownID If the replicaId does not point to a know replica.
@@ -480,16 +489,16 @@ public class Channels {
             return Replica.getReplicaFromId(parts[1]);
         }
 
-        String errMsg = "The current channel name, '" + channelName 
+        String errMsg = "The current channel name, '" + channelName
                 + "' does not refer to an identification channel";
         Log.warn(errMsg);
         throw new UnknownID(errMsg);
     }
-    
+
     /**
      * The method for retrieving the name of the identification channel for
-     * a replica based on the Id of this replica. 
-     *  
+     * a replica based on the Id of this replica.
+     *
      * @param replicaId The id for the replica whose identification channel
      * name should be retrieved.
      * @return The name of the identification channel for the replica.
@@ -502,11 +511,11 @@ public class Channels {
         return Replica.getReplicaFromId(replicaId)
             .getIdentificationChannel().getName();
     }
-    
+
     /**
-     * The method for retrieving the identification channel for a replica 
-     * based on the Id of this replica. 
-     *  
+     * The method for retrieving the identification channel for a replica
+     * based on the Id of this replica.
+     *
      * @param replicaId The id for the replica whose identification channel
      * name should be retrieved.
      * @return The identification channel for the replica.
@@ -549,7 +558,7 @@ public class Channels {
 
     //TODO Should we use client channels for all our servers?
     private final ChannelID THIS_INDEX_CLIENT = new ChannelID(
-            THISINDEXCLIENT_CHANNEL_PREFIX, 
+            THISINDEXCLIENT_CHANNEL_PREFIX,
             ChannelID.COMMON,
             ChannelID.INCLUDE_IP,
             ChannelID.INCLUDE_APPLINST_ID,
@@ -563,14 +572,14 @@ public class Channels {
     public static ChannelID getTheMonitorServer() {
         return getInstance().THE_MONITOR_SERVER;
     }
-    
+
    private final ChannelID THE_MONITOR_SERVER = new ChannelID(
             MONITOR_CHANNEL_PREFIX,
             ChannelID.COMMON,
             ChannelID.NO_IP,
             ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
-   
+
    /** Return the queue for the harvest monitor registry.
    *
    * @return the <code>ChannelID</code> object for the queue.
@@ -578,14 +587,14 @@ public class Channels {
   public static ChannelID getHarvestMonitorServerChannel() {
       return getInstance().HARVEST_MONITOR_SERVER;
   }
-  
+
   private final ChannelID HARVEST_MONITOR_SERVER = new ChannelID(
           HARVEST_MONITOR_CHANNEL_PREFIX,
           ChannelID.COMMON,
           ChannelID.NO_IP,
           ChannelID.NO_APPLINST_ID,
           ChannelID.QUEUE);
-  
+
   /** Return the queue for the frontier report monitor registry.
    *
    * @return the <code>ChannelID</code> object for the queue.
@@ -614,7 +623,7 @@ public class Channels {
      * @return true, if arg name contains the string "_ALL_"
      */
     public static boolean isTopic(String name) {
-        ArgumentNotValid.checkNotNullOrEmpty(name, "String name"); 
+        ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         return name.contains("_ALL_");
     }
 }

@@ -22,6 +22,9 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
+/**
+ * Base abstract class for frontier report filters.
+ */
 abstract class AbstractFrontierReportFilter implements FrontierReportFilter {
 
     /**

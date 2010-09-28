@@ -35,7 +35,7 @@ interface FrontierReportLineOrderKey {
      * Returns the queue's unique identifier.
      * @return the queue's unique identifier.
      */
-    String getQueueName();
+    String getQueueId();
     
     /**
      * Returns the queue size.

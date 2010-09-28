@@ -1,8 +1,8 @@
 # $Id$
 # $Revision$
 # $Date$
-# $Author$ 
- 
+# $Author$
+
 ## MySQL creation scripts
 ## pressupposes MySQL 5.0.3+
 ## tested on MySQL 5.0.27 (Fedora 3)
@@ -22,10 +22,10 @@ connect fullhddb;
 # Note: "generated always as identity" is replaced by AUTO_INCREMENT
 # mediumtext replaces "clob(8m)"
 # longtext replaces "clob(64m)"
-# Note: We are using 'datetime' instead of 'timestamp', because we often want 
-# to use null-values for these fields. 
-# Type 'datetime' can hold the same information as 'timestamp'    
-# Note also that (as for Derby) indexes are  automatically generated when a 
+# Note: We are using 'datetime' instead of 'timestamp', because we often want
+# to use null-values for these fields.
+# Type 'datetime' can hold the same information as 'timestamp'
+# Note also that (as for Derby) indexes are  automatically generated when a
 # column is unique.
 #
 # PLEASE REFER TO DERBY SQL FOR TABLE DOCUMENTATION
@@ -34,30 +34,30 @@ connect fullhddb;
 # *****************************************************************************
 # Area: Basics
 # *****************************************************************************
-create table IF NOT EXISTS schemaversions ( 
-    tablename varchar(100) not null, 
-    version int not null 
+create table IF NOT EXISTS schemaversions (
+    tablename varchar(100) not null,
+    version int not null
 );
 
-insert into schemaversions ( tablename, version ) 
+insert into schemaversions ( tablename, version )
     values ( 'domains', 2);
-insert into schemaversions ( tablename, version ) 
+insert into schemaversions ( tablename, version )
     values ( 'configurations', 4);
-insert into schemaversions ( tablename, version ) 
+insert into schemaversions ( tablename, version )
     values ( 'seedlists', 1);
-insert into schemaversions ( tablename, version ) 
+insert into schemaversions ( tablename, version )
     values ( 'passwords', 1);
-insert into schemaversions ( tablename, version ) 
+insert into schemaversions ( tablename, version )
     values ( 'ownerinfo', 1);
-insert into schemaversions ( tablename, version ) 
+insert into schemaversions ( tablename, version )
     values ( 'historyinfo', 2);
-insert into schemaversions ( tablename, version ) 
+insert into schemaversions ( tablename, version )
     values ( 'config_passwords', 1);
-insert into schemaversions ( tablename, version ) 
+insert into schemaversions ( tablename, version )
     values ( 'config_seedlists', 1);
-insert into schemaversions ( tablename, version ) 
+insert into schemaversions ( tablename, version )
     values ( 'harvestdefinitions', 2);
-insert into schemaversions ( tablename, version ) 
+insert into schemaversions ( tablename, version )
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version )
     values ( 'fullharvests', 3);
@@ -75,6 +75,12 @@ insert into schemaversions (tablename, version )
     values ( 'global_crawler_trap_lists', 1);
 insert into schemaversions (tablename, version )
     values ( 'global_crawler_trap_expressions', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'runningJobsHistory', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'runningJobsMonitor', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'frontierReportMonitor', 1);
 
 
 # *****************************************************************************
@@ -84,13 +90,13 @@ insert into schemaversions (tablename, version )
 # -----------------------------------------------------------------------------
 create table IF NOT EXISTS domains (
     domain_id bigint not null AUTO_INCREMENT primary key,
-    name varchar(300) not null unique, 
+    name varchar(300) not null unique,
     comments varchar(30000),
-    defaultconfig bigint not null, 
+    defaultconfig bigint not null,
     crawlertraps varchar(1000),
-    edition bigint not null, 
-    alias bigint, 
-    lastaliasupdate datetime 
+    edition bigint not null,
+    alias bigint,
+    lastaliasupdate datetime
 );
 
 create index domainnameid on domains(domain_id, name);
@@ -99,13 +105,13 @@ create index aliasindex on domains(alias);
 # -----------------------------------------------------------------------------
 create table IF NOT EXISTS configurations (
     config_id bigint not null AUTO_INCREMENT primary key,
-    name varchar(300) not null, 
+    name varchar(300) not null,
     comments varchar(30000),
-    domain_id bigint not null, 
-    template_id bigint not null, 
+    domain_id bigint not null,
+    template_id bigint not null,
     maxobjects int,
-    maxrate int, 
-    overridelimits int, 
+    maxrate int,
+    overridelimits int,
     maxbytes bigint not null default -1
 );
 
@@ -115,24 +121,24 @@ create index configdomain on configurations(domain_id);
 
 # -----------------------------------------------------------------------------
 create table IF NOT EXISTS config_passwords (
-    config_id bigint not null, 
+    config_id bigint not null,
     password_id int not null,
-    primary key (config_id, password_id) 
+    primary key (config_id, password_id)
 );
 
 # -----------------------------------------------------------------------------
 create table IF NOT EXISTS config_seedlists (
-    config_id bigint not null, 
+    config_id bigint not null,
     seedlist_id int not null,
-    primary key (config_id, seedlist_id) 
+    primary key (config_id, seedlist_id)
 );
 
 # -----------------------------------------------------------------------------
 create table IF NOT EXISTS seedlists (
     seedlist_id bigint not null AUTO_INCREMENT primary key,
-    name varchar (300) not null, 
+    name varchar (300) not null,
     comments varchar(30000),
-    domain_id bigint not null, 
+    domain_id bigint not null,
     seeds mediumtext not null
 );
 
@@ -142,13 +148,13 @@ create index seedlistdomain on seedlists(domain_id);
 # -----------------------------------------------------------------------------
 create table IF NOT EXISTS passwords (
     password_id bigint not null AUTO_INCREMENT primary key,
-    name varchar (300) not null, 
+    name varchar (300) not null,
     comments varchar(30000),
-    domain_id bigint not null, 
+    domain_id bigint not null,
     url varchar(300) not null,
-    realm varchar(300) not null, 
+    realm varchar(300) not null,
     username varchar(20) not null,
-    password varchar(40) not null 
+    password varchar(40) not null
 );
 
 create index passwordname on passwords(name);
@@ -157,7 +163,7 @@ create index passworddomain on passwords(domain_id);
 # -----------------------------------------------------------------------------
 create table IF NOT EXISTS ownerinfo (
     ownerinfo_id bigint not null AUTO_INCREMENT primary key,
-    domain_id bigint not null, 
+    domain_id bigint not null,
     created datetime not null,
     info varchar(1000) not null
 );
@@ -167,12 +173,12 @@ create index ownerinfodomain on ownerinfo(domain_id);
 # -----------------------------------------------------------------------------
 create table IF NOT EXISTS historyinfo (
     historyinfo_id bigint not null AUTO_INCREMENT primary key,
-    stopreason int not null, 
+    stopreason int not null,
     objectcount bigint not null,
-    bytecount bigint not null, 
+    bytecount bigint not null,
     config_id bigint not null,
-    harvest_id bigint not null, 
-    job_id bigint, 
+    harvest_id bigint not null,
+    job_id bigint,
     harvest_time datetime not null
 );
 
@@ -189,37 +195,37 @@ create index historyinfojob on historyinfo(job_id);
 
 # -----------------------------------------------------------------------------
 create table harvestdefinitions (
-     harvest_id bigint not null primary key, 
+     harvest_id bigint not null primary key,
      name varchar(300) not null unique,
-     comments varchar(30000), 
+     comments varchar(30000),
      numevents int not null,
-     submitted datetime not null, 
+     submitted datetime not null,
      isactive int not null,
-     edition bigint not null 
+     edition bigint not null
 );
 
 create index harvestdefinitionssubmitdate on harvestdefinitions (submitted);
 
 # -----------------------------------------------------------------------------
 create table fullharvests (
-     harvest_id bigint not null primary key, 
+     harvest_id bigint not null primary key,
      maxobjects bigint not null,
-     previoushd bigint, 
+     previoushd bigint,
      maxbytes bigint not null default -1
 );
 
 # -----------------------------------------------------------------------------
 create table partialharvests (
-     harvest_id bigint not null primary key, 
+     harvest_id bigint not null primary key,
      schedule_id bigint not null,
-     nextdate datetime 
+     nextdate datetime
 );
 
 create index partialharvestsnextdate on partialharvests (nextdate);
 
 # -----------------------------------------------------------------------------
 create table harvest_configs (
-     harvest_id bigint not null, 
+     harvest_id bigint not null,
      config_id bigint not null,
      primary key ( harvest_id, config_id )
 );
@@ -231,19 +237,19 @@ create table harvest_configs (
 # -----------------------------------------------------------------------------
 create table schedules (
     schedule_id bigint not null AUTO_INCREMENT primary key,
-    name varchar(300) not null unique, 
-    comments varchar(30000), 
+    name varchar(300) not null unique,
+    comments varchar(30000),
     startdate datetime,
-    enddate datetime, 
-    maxrepeats bigint, 
+    enddate datetime,
+    maxrepeats bigint,
     timeunit int not null,
-    numtimeunits bigint not null, 
-    anytime int not null, 
+    numtimeunits bigint not null,
+    anytime int not null,
     onminute int,
-    onhour int, 
-    ondayofweek int, 
-    ondayofmonth int, 
-    edition bigint not null 
+    onhour int,
+    ondayofweek int,
+    ondayofmonth int,
+    edition bigint not null
 );
 
 # *****************************************************************************
@@ -254,7 +260,7 @@ create table schedules (
 create table ordertemplates (
     template_id bigint not null AUTO_INCREMENT primary key,
     name varchar(300) not null UNIQUE,
-    orderxml longtext not null 
+    orderxml longtext not null
 );
 
 create table global_crawler_trap_lists(
@@ -283,36 +289,36 @@ create table global_crawler_trap_expressions(
 
 # -----------------------------------------------------------------------------
 create table jobs (
-    job_id bigint not null primary key, 
+    job_id bigint not null primary key,
     harvest_id bigint not null,
-    status int not null, 
-    priority int not null, 
+    status int not null,
+    priority int not null,
     forcemaxbytes bigint not null default -1,
-    forcemaxcount bigint, 
-    orderxml varchar(300) not null, 
+    forcemaxcount bigint,
+    orderxml varchar(300) not null,
     orderxmldoc longtext not null,
-    seedlist longtext not null, 
+    seedlist longtext not null,
     harvest_num int not null,
-    harvest_errors varchar(300), 
+    harvest_errors varchar(300),
     harvest_error_details varchar(10000),
-    upload_errors varchar(300), 
+    upload_errors varchar(300),
     upload_error_details varchar(10000),
-    startdate datetime, 
-    enddate datetime, 
+    startdate datetime,
+    enddate datetime,
     submitteddate datetime,
     resubmitted_as_job bigint,
     num_configs int not null default 0,
-    edition bigint not null 
+    edition bigint not null
 );
 
 create index jobstatus on jobs(status);
 create index jobharvestid on jobs(harvest_id);
- 
+
 # -----------------------------------------------------------------------------
 create table job_configs (
-    job_id bigint not null, 
+    job_id bigint not null,
     config_id bigint not null,
-    primary key ( job_id, config_id ) 
+    primary key ( job_id, config_id )
 );
 
 create index jobconfigjob on job_configs(job_id);
@@ -326,7 +332,7 @@ create index jobconfigjob on job_configs(job_id);
 # This table contains the archived progress information reported by the running
 # jobs, controlled by a sample rate
 CREATE TABLE runningJobsHistory (
-     jobId bigint NOT NULL, 
+     jobId bigint NOT NULL,
      harvestName varchar(300) NOT NULL,
      hostUrl varchar(300) NOT NULL,
      progress numeric NOT NULL,
@@ -343,7 +349,7 @@ CREATE TABLE runningJobsHistory (
      processedDocsPerSec numeric NOT NULL,
      activeToeCount integer NOT NULL,
      status integer NOT NULL,
-     tstamp timestamp NOT NULL, 
+     tstamp timestamp NOT NULL,
      PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)
 );
 
@@ -356,7 +362,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE runningJobsHistory TO netarchivesuite
 # This table contains the latest progress information reported by the job,
 # for evey job
 CREATE TABLE runningJobsMonitor (
-     jobId bigint NOT NULL, 
+     jobId bigint NOT NULL,
      harvestName varchar(300) NOT NULL,
      hostUrl varchar(300) NOT NULL,
      progress numeric NOT NULL,
@@ -373,7 +379,7 @@ CREATE TABLE runningJobsMonitor (
      processedDocsPerSec numeric NOT NULL,
      activeToeCount integer NOT NULL,
      status integer NOT NULL,
-     tstamp timestamp NOT NULL, 
+     tstamp timestamp NOT NULL,
      PRIMARY KEY (jobId, harvestName)
 );
 
@@ -383,7 +389,7 @@ CREATE INDEX runningJobsMonitorHarvestName on runningJobsHistory (harvestName);
 # This table contains frontier report data
 CREATE TABLE frontierReportMonitor (
      jobId bigint NOT NULL,
-     filterId varchar(200) NOT NULL,     
+     filterId varchar(200) NOT NULL,
      tstamp timestamp NOT NULL,
      domainName varchar(300) NOT NULL,
      currentSize bigint NOT NULL,
@@ -401,4 +407,3 @@ CREATE TABLE frontierReportMonitor (
      UNIQUE (jobId, filterId(100), domainName(100)) # NB see http://bugs.mysql.com/bug.php?id=6604 about index key length.
 );
 
- 

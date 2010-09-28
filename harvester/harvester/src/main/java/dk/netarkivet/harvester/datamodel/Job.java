@@ -83,11 +83,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
  */
 public class Job implements Serializable {
 
-    /**
-     * Needed for serialization.
-     */
-    private static final long serialVersionUID = 5255604180587758725L;
-
     private transient Log log = LogFactory.getLog(getClass());
 
     //Persistent fields stored in and read from DAO
@@ -143,18 +138,18 @@ public class Job implements Serializable {
     private Date actualStop;
     /** The time when this job was submitted. */
     private Date submittedDate;
-    
+
     /**
      * Edition is used by the DAO to keep track of changes.
      */
     private long edition = -1;
-    
+
     /**
      * Resubmitted as the Job with this ID.
      * If null, this job has not been resubmitted.
      */
     private Long resubmittedAsJobWithID;
-    
+
     /**
      * A map (domainName, domainConfigurationName), must be accessible in order
      * to update job information (see Ass. 2.4.3)
@@ -174,11 +169,11 @@ public class Job implements Serializable {
      * Whether the maxObjects field was defined by the harvest definition or the
      * configuration limit. This is deciding for whether we accept smaller
      * configurations or not when building jobs. True means the limit is defined
-     * by the configuration, false means that it is defined by the 
+     * by the configuration, false means that it is defined by the
      * harvest definition.
      */
     private boolean configurationSetsObjectLimit;
-    
+
     /**
      * Whether the maxBytes field was defined by the harvest definition or the
      * configuration limit. This is deciding for whether we accept smaller
@@ -238,7 +233,7 @@ public class Job implements Serializable {
      * @param priority                 the priority of the job
      * @param forceMaxObjectsPerDomain the maximum number of objects harvested
      *                                 from a domain, overrides individual
-     *                                 configuration settings. 
+     *                                 configuration settings.
      *                                 -1 means no limit
      * @param forceMaxBytesPerDomain The maximum number of objects harvested
      * from a domain, or -1 for no limit.
@@ -288,12 +283,12 @@ public class Job implements Serializable {
         this.priority = priority;
 
         long maxObjects = NumberUtils.minInf(
-                forceMaxObjectsPerDomain, cfg.getMaxObjects());        
+                forceMaxObjectsPerDomain, cfg.getMaxObjects());
         setForceMaxObjectsPerDomain(maxObjects);
         configurationSetsObjectLimit = (maxObjects != forceMaxObjectsPerDomain);
 
         long maxBytes = NumberUtils.minInf(
-                forceMaxBytesPerDomain, cfg.getMaxBytes());        
+                forceMaxBytesPerDomain, cfg.getMaxBytes());
         setMaxBytesPerDomain(maxBytes);
         configurationSetsByteLimit = (maxBytes != forceMaxBytesPerDomain);
 
@@ -526,7 +521,7 @@ public class Job implements Serializable {
      *       <stringList name="regexp-list">
      *          <string>theFirstRegexp</string>
      *          <string>theSecondRegexp</string>
-     *       </stringList> 
+     *       </stringList>
      *     </newObject>
      *
      * @param d The domain for which to generate crawler trap deciderules
@@ -621,8 +616,8 @@ public class Job implements Serializable {
             return false;
         }
 
-        // By default byte limit is used as base criterion for splitting a 
-        // harvest in config chunks, however the configuration can override this 
+        // By default byte limit is used as base criterion for splitting a
+        // harvest in config chunks, however the configuration can override this
         // and instead use object limit.
         boolean splitByObjectLimit = Settings.getBoolean(
                 HarvesterSettings.SPLIT_BY_OBJECTLIMIT);
@@ -631,7 +626,7 @@ public class Job implements Serializable {
                     cfg.getMaxObjects(), forceMaxObjectsPerDomain) < 0
                 || (configurationSetsObjectLimit
                         && NumberUtils.compareInf(
-                                cfg.getMaxObjects(), 
+                                cfg.getMaxObjects(),
                                 forceMaxObjectsPerDomain) != 0)) {
                 return false;
             }
@@ -640,11 +635,11 @@ public class Job implements Serializable {
                     cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
                     || (configurationSetsByteLimit
                             && NumberUtils.compareInf(
-                                    cfg.getMaxBytes(), 
+                                    cfg.getMaxBytes(),
                                     forceMaxBytesPerDomain) != 0)) {
                 return false;
             }
-        } 
+        }
 
         assert (maxCountObjects >= minCountObjects) : "basic invariant";
 
@@ -726,18 +721,18 @@ public class Job implements Serializable {
     public Date getActualStart() {
         return actualStart;
     }
-    
-    /** Get the time when this job was submitted. 
+
+    /** Get the time when this job was submitted.
      * @return the time as Date
      */
     public Date getSubmittedDate() {
         return submittedDate;
     }
-    
+
 
     /**
      * Get a list of Heritrix settings.xml files.
-     * Note that these files have nothing to do with NetarchiveSuite settings 
+     * Note that these files have nothing to do with NetarchiveSuite settings
      * files. They are files that supplement the Heritrix order.xml files,
      * and contain overrides for specific domains.
      *
@@ -830,8 +825,8 @@ public class Job implements Serializable {
         ArgumentNotValid.checkNotNull(doc, "doc");
         this.orderXMLdoc = doc;
     }
-    
-    
+
+
     /**
      * Gets a document representation of the order.xml associated with this Job.
      *
@@ -1029,7 +1024,7 @@ public class Job implements Serializable {
     void setEdition(long edition) {
         this.edition = edition;
     }
-    
+
     /**
      * toString method for the Job class.
      * @see Object#toString()
@@ -1108,15 +1103,15 @@ public class Job implements Serializable {
      */
     private void editOrderXML_maxObjectsPerDomain(
             long forceMaxObjectsPerDomain) {
-              
+
         String xpath = HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH;
         Node groupMaxFectResponsesNode = orderXMLdoc.selectSingleNode(xpath);
         if (groupMaxFectResponsesNode != null) {
             groupMaxFectResponsesNode.setText(
-                    String.valueOf(forceMaxObjectsPerDomain));            
+                    String.valueOf(forceMaxObjectsPerDomain));
         } else {
             throw new IOFailure(
-                    "Unable to locate " 
+                    "Unable to locate "
                     +  HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH
                     + " element in order.xml: "
                     + orderXMLdoc.asXML());
@@ -1153,8 +1148,10 @@ public class Job implements Serializable {
 
                 Node node = orderXMLdoc.selectSingleNode(xpath);
                 if (node != null) {
-                    node.setText(String.valueOf((int) Math.rint(
-                                    factor * forceMaxObjectsPerDomain)));
+                    int value = (int) Math.rint(
+                            factor * forceMaxObjectsPerDomain);
+                    node.setText(String.valueOf(value));
+                    log.debug("Set value of node " + xpath + " to " + value);
                 } else {
                     throw new IOFailure(
                             "Unable to locate "
@@ -1421,6 +1418,6 @@ public class Job implements Serializable {
      */
     public void setResubmittedAsJob(Long resubmittedAsJob) {
         this.resubmittedAsJobWithID = resubmittedAsJob;
-        
+
     }
 }

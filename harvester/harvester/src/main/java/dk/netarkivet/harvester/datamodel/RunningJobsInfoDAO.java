@@ -65,7 +65,7 @@ public abstract class RunningJobsInfoDAO {
      * Stores a {@link StartedJobInfo} record to the persistent storage.
      * The record is stored in the monitor table, and if the elapsed time since
      * the last history sample is equal or superior to the history sample rate,
-     * to the history table.
+     * also to the history table.
      * @param startedJobInfo the record to store.
      */
     public abstract void store(StartedJobInfo startedJobInfo);
@@ -80,22 +80,22 @@ public abstract class RunningJobsInfoDAO {
         getMostRecentByHarvestName();
 
     /**
-     * Returns an array of all chronologically sorted progress records for the
+     * Returns an array of all progress records chronologically sorted for the
      * given job ID.
      * @param jobId the job id.
-     * @return an array of all chronologically sorted progress records for the
+     * @return an array of all progress records chronologically sorted for the
      * given job ID.
      */
     public abstract StartedJobInfo[] getFullJobHistory(long jobId);
 
     /**
-     * Returns an array of chronologically sorted progress records for the
+     * Returns an array of progress records chronologically sorted for the
      * given job ID, starting at a given crawl time, and limited to a given
      * number of records.
      * @param jobId the job id.
      * @param startTime the crawl time (in seconds) to begin.
      * @param limit the maximum number of records to fetch.
-     * @return an array of chronologically sorted progress records for the
+     * @return an array of progress records chronologically sorted for the
      * given job ID, starting at a given crawl time, and limited to a given
      * number of record.
      */
@@ -122,14 +122,14 @@ public abstract class RunningJobsInfoDAO {
             String filterId, InMemoryFrontierReport report);
 
     /**
-     * Returns the list of tyhe available frontier report types.
+     * Returns the list of the available frontier report types.
      * @see FrontierReportFilter#getFilterId()
-     * @return the list of tyhe available frontier report types.
+     * @return the list of the available frontier report types.
      */
     public abstract String[] getFrontierReportFilterTypes();
 
     /**
-     * Retrieve a frontier report from a job idnd a given filter class.
+     * Retrieve a frontier report from a job id and a given filter class.
      * @param jobId the job id
      * @param filterId the id of the filter that produced the report
      * @return a frontier report

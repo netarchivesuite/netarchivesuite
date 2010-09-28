@@ -93,27 +93,27 @@ public class StringUtils {
         }
         return res.toString();
     }
-    
+
     /**
-     * Concatenate the string representation of a maximum number of objects in 
-     * a collection with a given separator between them. If the Collection is 
-     * a List, this method will generate the conjoined string in list order. If 
-     * the objects are not Strings, the toString method will be used to convert 
+     * Concatenate the string representation of a maximum number of objects in
+     * a collection with a given separator between them. If the Collection is
+     * a List, this method will generate the conjoined string in list order. If
+     * the objects are not Strings, the toString method will be used to convert
      * them to strings.
-     *  
+     *
      * @param <T> The type of collection.
      * @param separator The string to separate the entries in the collection
      * with. This is allowed to be the empty string.
      * @param objects The collection to have the string representation of its
-     * entries concatenated. 
-     * @param max The maximum number of objects in the collection to 
-     * concatenate. If this number is 0 or below only the first entry in the 
-     * collection is returned. 
-     * @return The concatenation of the string representation of a limited 
-     * amount of entries in the collection. 
+     * entries concatenated.
+     * @param max The maximum number of objects in the collection to
+     * concatenate. If this number is 0 or below only the first entry in the
+     * collection is returned.
+     * @return The concatenation of the string representation of a limited
+     * amount of entries in the collection.
      * @throws ArgumentNotValid If the separator or the objects are null.
      */
-    public static final <T> String conjoin(String separator, Collection<T> 
+    public static final <T> String conjoin(String separator, Collection<T>
             objects, int max) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(separator, "String separator");
         ArgumentNotValid.checkNotNull(objects, "Collection<T> objects");
@@ -126,14 +126,14 @@ public class StringUtils {
                 res.append(separator);
             }
             res.append(o);
-            
+
             // check if max is reached.
             index++;
             if(index > max) {
                 break;
             }
         }
-        
+
         return res.toString();
     }
 
@@ -231,28 +231,28 @@ public class StringUtils {
         }
         return resultString;
     }
-    
+
     /** A day in seconds. */
     private static final long DAY = 60 * 60 * 24;
     /** An hour in seconds. */
     private static final long HOUR = 60 * 60;
     /** A minute in seconds. */
     private static final long MINUTE = 60;
-    
+
     /**
-     * Formats a decimal number
+     * Formats a decimal number.
      */
     private static final DecimalFormat DECIMAL = new DecimalFormat("###.##");
-    
+
     /**
-     * Default date format : yyyy/MM/dd HH:mm:ss 
+     * Default date format : yyyy/MM/dd HH:mm:ss
      */
     private static final SimpleDateFormat DEFAULT_DATE = new SimpleDateFormat(
             "yyyy/MM/dd HH:mm:ss");
 
     /**
      * Formats a duration in seconds as a string of the form "3d 04:12:56".
-     * 
+     *
      * @param seconds A duration in seconds
      * @return a formatted string of the form "3d 04:12:56"
      */
@@ -283,17 +283,17 @@ public class StringUtils {
             return "-1";
         }
     }
-    
+
     /**
      * Leftpad the string with "0", if the string is only one character long.
      * @param s The given string
-     * @return Return a string leftpadded with a "0" if the string is only one 
+     * @return Return a string leftpadded with a "0" if the string is only one
      * character long, Otherwise just return the string.
      */
     private static String formatDurationLpad(final String s) {
         return (s.length() == 1 ? "0" + s : s);
     }
-    
+
     /**
      * Formats a numeric percentage, as a decimal number with at most 2 digits.
      * @param percentage the numeric percentage to format.
@@ -302,7 +302,7 @@ public class StringUtils {
     public static final String formatPercentage(double percentage) {
         return formatNumber(percentage) + "%";
     }
-    
+
     /**
      * Formats a numeric percentage, as a decimal number with at most 2 digits.
      * @param percentage the numeric percentage to format.
@@ -311,16 +311,16 @@ public class StringUtils {
     public static final String formatPercentage(long percentage) {
         return formatNumber(percentage) + "%";
     }
-    
+
     /**
      * Formats a number, as a decimal number with at most 2 digits.
-     * @param percentage the number to format.
+     * @param number the number to format.
      * @return a formatted number string.
      */
     public static final String formatNumber(double number) {
         return DECIMAL.format(number);
     }
-    
+
     /**
      * Formats a number, as a decimal number with at most 2 digits.
      * @param percentage the number to format.
@@ -329,7 +329,7 @@ public class StringUtils {
     public static final String formatNumber(long number) {
         return DECIMAL.format(number);
     }
-    
+
     /**
      * Formats the given date (as elapsed milliseconds) using the default
      * format 'yyyy/MM/dd HH:mm:ss'.
@@ -339,9 +339,9 @@ public class StringUtils {
     public static final String formatDate(long millis) {
         return DEFAULT_DATE.format(new Date(millis));
     }
-    
+
     /**
-     * Formats the given date (as elapsed milliseconds) using the provided 
+     * Formats the given date (as elapsed milliseconds) using the provided
      * format pattern.
      * @param millis the date
      * @param format the format pattern {@link SimpleDateFormat}
@@ -350,5 +350,5 @@ public class StringUtils {
     public static final String formatDate(long millis, String format) {
         return new SimpleDateFormat(format).format(new Date(millis));
     }
-    
+
 }

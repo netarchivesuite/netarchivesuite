@@ -64,8 +64,6 @@ implements Serializable,
            Comparable<FrontierReportLine>,
            FrontierReportLineOrderKey {
 
-    private static final long serialVersionUID = 6058510590846201287L;
-
     /** The logger for this class. */
     private static final Log LOG = LogFactory.getLog(FrontierReportLine.class);
 
@@ -450,7 +448,7 @@ implements Serializable,
         return domainName.hashCode();
     }
 
-    public String getQueueName() {
+    public String getQueueId() {
         return domainName;
     }
 

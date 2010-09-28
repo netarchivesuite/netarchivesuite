@@ -94,9 +94,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
          * @return the SQL substring that lists columns in proper order.
          */
         static String getColumnsInOrder() {
-            String columns = "";
+            StringBuffer columns = new StringBuffer();
             for (HM_COLUMN c : values()) {
-                columns += c.name() + ", ";
+                columns.append(c.name() + ", ");
             }
             return columns.substring(0, columns.lastIndexOf(","));
         }
@@ -119,16 +119,49 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         1000 * Settings.getLong(
                 HarvesterSettings.HARVEST_MONITOR_HISTORY_SAMPLE_RATE);
 
+    /** The current version needed of the tables 'runningJobsHistory',
+     * 'runningJobsMonitor' and 'frontierReportMonitor'. */
+    static final int TABLE_VERSION_NEEDED = 1;
+
+    public RunningJobsInfoDBDAO() {
+
+        Connection connection = DBConnect.getDBConnection();
+
+        String[] tableNames = new String[] {
+                "runningJobsHistory",
+                "runningJobsMonitor",
+                "frontierReportMonitor"
+        };
+
+        for (String tableName : tableNames) {
+
+            int version = DBUtils.getTableVersion(connection, tableName);
+            if (version < TABLE_VERSION_NEEDED) {
+                log.info("Migrate table '" + tableName + "' to version "
+                        + TABLE_VERSION_NEEDED);
+                DBSpecifics.getInstance().updateTable(
+                        tableName,
+                        TABLE_VERSION_NEEDED);
+            }
+        }
+
+        for (String tableName : tableNames) {
+            DBUtils.checkTableVersion(
+                    connection, tableName, TABLE_VERSION_NEEDED);
+        }
+    }
+
     /**
      * Stores a {@link StartedJobInfo} record to the persistent storage.
      * The record is stored in the monitor table, and if the elapsed time since
      * the last history sample is equal or superior to the history sample rate,
-     * to the history table.
+     * also to the history table.
      * @param startedJobInfo the record to store.
      */
     @Override
     public synchronized void store(StartedJobInfo startedJobInfo) {
-        ArgumentNotValid.checkNotNull(startedJobInfo, "Started job info");
+        ArgumentNotValid.checkNotNull(
+                startedJobInfo, "StartedJobInfo startedJobInfo");
 
         Connection c = DBConnect.getDBConnection();
         PreparedStatement stm = null;
@@ -155,19 +188,24 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         try {
             c.setAutoCommit(false);
 
-            String sql = "INSERT INTO runningJobsMonitor ("
-                + HM_COLUMN.getColumnsInOrder()
-                + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            StringBuffer sql = new StringBuffer();
+
             if (update) {
-                sql = "UPDATE runningJobsMonitor SET ";
+                sql.append("UPDATE runningJobsMonitor SET ");
+
+                StringBuffer columns = new StringBuffer();
                 for (HM_COLUMN setCol : HM_COLUMN.values()) {
-                    sql += setCol.name() + "=?, ";
+                    columns.append(setCol.name() + "=?, ");
                 }
-                sql = sql.substring(0, sql.lastIndexOf(","));
-                sql += " WHERE jobId=? AND harvestName=?";
+                sql.append(columns.substring(0, columns.lastIndexOf(",")));
+                sql.append(" WHERE jobId=? AND harvestName=?");
+            } else {
+                sql.append("INSERT INTO runningJobsMonitor (");
+                sql.append(HM_COLUMN.getColumnsInOrder());
+                sql.append(") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             }
 
-            stm = c.prepareStatement(sql);
+            stm = c.prepareStatement(sql.toString());
             stm.setLong(
                     HM_COLUMN.jobId.rank(), startedJobInfo.getJobId());
             stm.setString(
@@ -335,16 +373,14 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Returns an array of all chronologically sorted progress records for the
+     * Returns an array of all progress records chronologically sorted for the
      * given job ID.
      * @param jobId the job id.
-     * @return an array of all chronologically sorted progress records for the
+     * @return an array of all progress records chronologically sorted for the
      * given job ID.
      */
     @Override
     public StartedJobInfo[] getFullJobHistory(long jobId) {
-        ArgumentNotValid.checkNotNull(jobId, "jobId");
-
         List<StartedJobInfo> infosForJob = new LinkedList<StartedJobInfo>();
 
         Connection c = DBConnect.getDBConnection();

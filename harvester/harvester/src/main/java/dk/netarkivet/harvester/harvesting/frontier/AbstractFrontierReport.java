@@ -22,16 +22,15 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import java.io.PrintWriter;
 import java.io.Serializable;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Base abstract implementation of an Heritrix frontier report wrapper.
  *
  */
 abstract class AbstractFrontierReport implements FrontierReport, Serializable {
-
-    private static final long serialVersionUID = -882316519277441749L;
 
     /**
      * The Heritrix job name.
@@ -55,6 +54,7 @@ abstract class AbstractFrontierReport implements FrontierReport, Serializable {
      * @param jobName the Heritrix job name
      */
     public AbstractFrontierReport(String jobName) {
+        ArgumentNotValid.checkNotNullOrEmpty(jobName, "jobName");
         this.jobName = jobName;
         this.timestamp = System.currentTimeMillis();
     }

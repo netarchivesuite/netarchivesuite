@@ -43,36 +43,36 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  * <li>Job start date (day of month and year)</li>
  * <li>Job end date (day of month and year)</li>
  * </ul>
- * 
+ *
  * The semantics of the date filters is as follows:
  * <ol>
- * <li>If only a start date is specified, will fetch jobs whose start date 
+ * <li>If only a start date is specified, will fetch jobs whose start date
  * is equal or posterior</li>
- * <li>If only an end date is specified, will fetch jobs whose end date 
+ * <li>If only an end date is specified, will fetch jobs whose end date
  * is equal or anterior</li>
- * <li>If both are specified, will fetch jobs whose start and end date are equal 
+ * <li>If both are specified, will fetch jobs whose start and end date are equal
  * or comprised between the specified bounds.</li>
  * </ol>
- * 
+ *
  * The class enforces that end date is set at a date posterior to start date.
- * 
- * Additionally a sort order (applied to job IDs) can be set (ascending or 
+ *
+ * Additionally a sort order (applied to job IDs) can be set (ascending or
  * descending), and the query can be limited to a certain row number and
  * a start index.
- * 
+ *
  */
 public class HarvestStatusQuery {
 
     /** The String code to select all states. */
     public static final String JOBSTATUS_ALL = "ALL";
-    
+
     /** The String code to select all harvests. */
     public static final String HARVEST_NAME_ALL = "ALL";
-    
+
     public static final String HARVEST_NAME_WILDCARD = "*";
     public static final long PAGE_SIZE_NONE = 0;
     public static final long DATE_NONE = -1;
-    
+
     public static enum SORT_ORDER {
         ASC, DESC;
 
@@ -93,7 +93,7 @@ public class HarvestStatusQuery {
         JOB_STATUS(JobStatus.STARTED.name()), JOB_ID_ORDER("ASC"), HARVEST_NAME(
                 HARVEST_NAME_ALL), HARVEST_ID(""), HARVEST_RUN(""), START_DATE(
                 ""), END_DATE(""), PAGE_SIZE(Settings.get(
-                        CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE)), 
+                        CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE)),
                         START_PAGE_INDEX(
                 "1"), RESUBMIT_JOB_IDS("");
 
@@ -112,9 +112,9 @@ public class HarvestStatusQuery {
         }
 
         /**
-         * Extracts the field's value from a servlet request. If the request 
+         * Extracts the field's value from a servlet request. If the request
          * does not define the paraeter's value, it is set to the default
-         * value. 
+         * value.
          * @param req a servlet request
          * @return the field's value
          */
@@ -131,12 +131,12 @@ public class HarvestStatusQuery {
         }
 
     }
-    
+
     // The calendar widget uses a date format that differs from the patterns
     // used by SimpleDateFormat, hence we need two preperties
     public static final String CALENDAR_UI_DATE_FORMAT = "%Y/%m/%d";
-    
-    private static final SimpleDateFormat DATE_FORMAT = 
+
+    private static final SimpleDateFormat DATE_FORMAT =
         new SimpleDateFormat("yyyy/MM/dd");
 
     private Set<JobStatus> jobStatuses = new HashSet<JobStatus>();
@@ -177,7 +177,7 @@ public class HarvestStatusQuery {
     /**
      * Builds a query from a servlet request. Unspecified fields are set to
      * their default value.
-     * 
+     *
      * @param req a servlet request
      */
     public HarvestStatusQuery(ServletRequest req) {
@@ -270,7 +270,7 @@ public class HarvestStatusQuery {
 
     public String getHarvestName() {
         if (harvestName == null) {
-            return ""; 
+            return "";
         }
         return harvestName;
     }
@@ -313,7 +313,12 @@ public class HarvestStatusQuery {
         return pageSize;
     }
 
+    /**
+     * Sets the page size
+     * @param pageSize a positive number.
+     */
     public void setPageSize(long pageSize) {
+        ArgumentNotValid.checkPositive(pageSize, "pageSize");
         this.pageSize = pageSize;
     }
 
