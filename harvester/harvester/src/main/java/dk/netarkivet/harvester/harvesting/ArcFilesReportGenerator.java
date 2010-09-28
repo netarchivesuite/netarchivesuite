@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -50,6 +51,15 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 class ArcFilesReportGenerator {
 
+    private static final Log LOG =
+        LogFactory.getLog(ArcFilesReportGenerator.class);
+
+    private final static SimpleDateFormat ISO_8601_DATE_FORMAT =
+        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+    private final static SimpleDateFormat SOURCE_DATE_FORMAT =
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
     /**
      * Stores the opening date, closing date and size of an ARC file.
      */
@@ -64,7 +74,7 @@ class ArcFilesReportGenerator {
         }
 
         protected void setOpenedDate(String openedDate) {
-            this.openedDate = openedDate;
+            this.openedDate = getIsoDateString(openedDate);
         }
 
         protected String getClosedDate() {
@@ -72,7 +82,7 @@ class ArcFilesReportGenerator {
         }
 
         protected void setClosedDate(String closedDate) {
-            this.closedDate = closedDate;
+            this.closedDate = getIsoDateString(closedDate);
         }
 
         protected long getSize() {
@@ -84,13 +94,20 @@ class ArcFilesReportGenerator {
 
         @Override
         public String toString() {
-            return "\"" + openedDate + "\" \"" + closedDate + "\" "
-            + Long.toString(size);
+            return openedDate + " " + closedDate + " " + Long.toString(size);
+        }
+
+        private String getIsoDateString(String dateStr) {
+            try {
+                return ISO_8601_DATE_FORMAT.format(
+                        SOURCE_DATE_FORMAT.parse(dateStr));
+            } catch (ParseException e) {
+                LOG.warn("Error parsing date token '" + dateStr + "'");
+                return dateStr;
+            }
         }
 
     }
-
-    private static Log log = LogFactory.getLog(ArcFilesReportGenerator.class);
 
     /**
      * Format used to parse and extract values from  lines of heritrix.out
@@ -213,7 +230,7 @@ class ArcFilesReportGenerator {
 
             heritrixOut.close();
         } catch (IOException e) {
-            log.error(e);
+            LOG.error(e);
             return arcFiles;
         }
 
