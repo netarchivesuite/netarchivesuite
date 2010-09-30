@@ -1,8 +1,8 @@
 #!/bin/bash
 cd /home/test/TEST/conf/
 echo Starting external harvest database.
-if [ -e ./start_external_hd_database.sh ]; then
-      ./start_external_hd_database.sh &
+if [ -e ./start_external_harvest_database.sh ]; then
+      ./start_external_harvest_database.sh &
       sleep 5
 fi
 echo Starting external admin database.
@@ -17,9 +17,9 @@ fi
 if [ -e ./start_ArcRepositoryApplication.sh ]; then 
       ./start_ArcRepositoryApplication.sh
 fi
-if [ -e ./start_BitarchiveMonitorApplication.sh ]; then 
-      ./start_BitarchiveMonitorApplication.sh
+if [ -e ./start_BitarchiveMonitorApplication_KBBM.sh ]; then 
+      ./start_BitarchiveMonitorApplication_KBBM.sh
 fi
-if [ -e ./start_BitarchiveMonitorApplication.sh ]; then 
-      ./start_BitarchiveMonitorApplication.sh
+if [ -e ./start_BitarchiveMonitorApplication_SBBM.sh ]; then 
+      ./start_BitarchiveMonitorApplication_SBBM.sh
 fi

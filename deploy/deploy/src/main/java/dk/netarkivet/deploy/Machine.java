@@ -908,8 +908,7 @@ public abstract class Machine {
     /**
      * Creates a script for starting the harvest database on a given machine.
      * This is only created if the &lt;deployHarvestDatabaseDir&gt; parameter
-     * is defined on the machine level and the parameter 
-     * &lt;deployHarvestDatabaseExternal&gt; has the value 'true';
+     * is defined on the machine level.
      * 
      * @param dir The directory where the script will be placed.
      */
@@ -918,8 +917,7 @@ public abstract class Machine {
     /**
      * Creates a script for killing the harvest database on a given machine.
      * This is only created if the &lt;globalHarvestDatabaseDir&gt; parameter
-     * is defined on the machine level, and the and the 
-     * &lt;globalHarvestDatabaseExternal&gt; parameter is set to true.
+     * is defined on the machine level.
      * 
      * @param dir The directory where the script will be placed.
      */

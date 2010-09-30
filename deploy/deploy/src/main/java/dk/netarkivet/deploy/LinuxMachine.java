@@ -1479,8 +1479,7 @@ public class LinuxMachine extends Machine {
     /**
      * Creates a script for starting the harvest database on a given machine.
      * This is only created if the &lt;deployHarvestDatabaseDir&gt; parameter
-     * is defined on the machine level and the parameter 
-     * &lt;deployHarvestDatabaseExternal&gt; has the value 'true';
+     * is defined on the machine level.
      * 
      * <br/> &gt; #!/bin/bash
      * <br/> &gt; cd InstallDir
@@ -1493,10 +1492,6 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected void createHarvestDatabaseStartScript(File dir) throws IOFailure {
-        // Ignore if the harvest database should not be external
-        if(!machineParameters.isHarvestDatabaseExternal()) {
-            return;
-        }
         // Ignore if no harvest database directory has been defined.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
         if(dbDir.isEmpty()) {
@@ -1506,7 +1501,7 @@ public class LinuxMachine extends Machine {
         try {
             // initialise the script file.
             File startHarvestDBScript = new File(dir, 
-                    Constants.SCRIPT_NAME_HD_DB_START + scriptExtension);
+                    Constants.SCRIPT_NAME_HARVEST_DB_START + scriptExtension);
             
             // retrieve the port
             String port = settings.getLeafValue(
@@ -1541,7 +1536,7 @@ public class LinuxMachine extends Machine {
                 startDBPrint.print(Constants.SPACE);
                 startDBPrint.print(ScriptConstants.LINUX_DEV_NULL);
                 startDBPrint.print(Constants.SPACE);
-                startDBPrint.print(Constants.SCRIPT_NAME_HD_DB_START);
+                startDBPrint.print(Constants.SCRIPT_NAME_HARVEST_DB_START);
                 startDBPrint.print(Constants.EXTENSION_LOG_FILES);
                 startDBPrint.print(Constants.SPACE);
                 startDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
@@ -1570,10 +1565,6 @@ public class LinuxMachine extends Machine {
      * @return The command for running external_harvest_database_start script.
      */
     protected String callStartHarvestDatabase() {
-        // Ignore if the harvest database should not be external.
-        if(!machineParameters.isHarvestDatabaseExternal()) {
-            return "";                                                                                  
-        }
         // Ignore if no archive database directory has been defined.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
         if(dbDir.isEmpty()) {
@@ -1582,7 +1573,7 @@ public class LinuxMachine extends Machine {
         
         // Constructing filename
         String appScript = Constants.DOT + Constants.SLASH
-                + Constants.SCRIPT_NAME_HD_DB_START + scriptExtension;
+                + Constants.SCRIPT_NAME_HARVEST_DB_START + scriptExtension;
         
         StringBuilder res = new StringBuilder();
         // echo Starting external harvest database
@@ -1607,8 +1598,7 @@ public class LinuxMachine extends Machine {
     /**
      * Creates a script for killing the harvest database on a given machine.
      * This is only created if the &lt;globalHarvestDatabaseDir&gt; parameter
-     * is defined on the machine level, and the and the 
-     * &lt;globalHarvestDatabaseExternal&gt; parameter is set to true.
+     * is defined on the machine level.
      * 
      * The output is appended to the log, thus the '>>' instead of the standard
      * '>' when redirecting the output.
@@ -1627,10 +1617,6 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected void createHarvestDatabaseKillScript(File dir) throws IOFailure {
-        // Ignore if the harvest database should not be external
-        if(!machineParameters.isHarvestDatabaseExternal()) {
-            return;
-        }
         // Ignore if no harvest database directory has been defined.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
         if(dbDir.isEmpty()) {
@@ -1640,7 +1626,7 @@ public class LinuxMachine extends Machine {
         try {
             // initialise the script file.
             File killHarvestDBScript = new File(dir, 
-                    Constants.SCRIPT_NAME_HD_DB_KILL + scriptExtension);
+                    Constants.SCRIPT_NAME_HARVEST_DB_KILL + scriptExtension);
             
             // retrieve the port for the database.
             String port = settings.getLeafValue(
@@ -1675,7 +1661,7 @@ public class LinuxMachine extends Machine {
                 killDBPrint.print(ScriptConstants.LINUX_DEV_NULL);
                 killDBPrint.print(Constants.GREATER_THAN);
                 killDBPrint.print(Constants.SPACE);
-                killDBPrint.print(Constants.SCRIPT_NAME_HD_DB_START);
+                killDBPrint.print(Constants.SCRIPT_NAME_HARVEST_DB_START);
                 killDBPrint.print(Constants.EXTENSION_LOG_FILES);
                 killDBPrint.print(Constants.SPACE);
                 killDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
@@ -1704,10 +1690,6 @@ public class LinuxMachine extends Machine {
      * @return The command for running external_harvest_database_kill script.
      */
     protected String callKillHarvestDatabase() {
-        // Ignore if the harvest database should not be external.
-        if(!machineParameters.isHarvestDatabaseExternal()) {
-            return "";
-        }
         // Ignore if no harvest database directory has been defined.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
         if(dbDir.isEmpty()) {
@@ -1716,7 +1698,7 @@ public class LinuxMachine extends Machine {
 
         // Constructing filename
         String appScript = Constants.DOT + Constants.SLASH
-                + Constants.SCRIPT_NAME_HD_DB_KILL + scriptExtension;
+                + Constants.SCRIPT_NAME_HARVEST_DB_KILL + scriptExtension;
 
         StringBuilder res = new StringBuilder();
         // echo Killing external harvest database

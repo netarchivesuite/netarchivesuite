@@ -1467,17 +1467,12 @@ public class WindowsMachine extends Machine {
     /**
      * Creates a script for starting the harvest database on a given machine.
      * This is only created if the &lt;deployHarvestDatabaseDir&gt; parameter
-     * is defined on the machine level and the parameter 
-     * &lt;deployHarvestDatabaseExternal&gt; has the value 'true';
+     * is defined on the machine level.
      * 
      * @param dir The directory where the script will be placed.
      */
     @Override
     protected void createHarvestDatabaseStartScript(File dir) {
-        // Ignore if the harvest database should not be external
-        if(!machineParameters.isHarvestDatabaseExternal()) {
-            return;
-        }
         // Ignore if no harvest database directory has been defined.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
         if(dbDir.isEmpty()) {
@@ -1491,17 +1486,12 @@ public class WindowsMachine extends Machine {
     /**
      * Creates a script for killing the harvest database on a given machine.
      * This is only created if the &lt;globalHarvestDatabaseDir&gt; parameter
-     * is defined on the machine level, and the and the 
-     * &lt;globalHarvestDatabaseExternal&gt; parameter is set to true.
+     * is defined on the machine level.
      * 
      * @param dit The directory where the script will be placed.
      */
     @Override
     protected void createHarvestDatabaseKillScript(File dir) {
-        // Ignore if the harvest database should not be external
-        if(!machineParameters.isHarvestDatabaseExternal()) {
-            return;
-        }
         // Ignore if no harvest database directory has been defined.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
         if(dbDir.isEmpty()) {

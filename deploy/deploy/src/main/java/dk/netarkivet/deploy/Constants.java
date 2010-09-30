@@ -103,8 +103,6 @@ public final class Constants {
     /** The path to the directory for the database.*/
     static final String DEPLOY_HARVEST_DATABASE_DIR = 
         "deployHarvestDatabaseDir";
-    static final String DEPLOY_HARVEST_DATABASE_EXTERNAL =
-        "deployHarvestDatabaseExternal";
     /** The path to the directory for the archive database.*/
     static final String DEPLOY_ARCHIVE_DATABASE_DIR = 
         "deployArchiveDatabaseDir";
@@ -365,9 +363,11 @@ public final class Constants {
     static final String SCRIPT_NAME_ADMIN_DB_KILL 
             = "kill_external_admin_database";
     /** The name of the admin database start script.*/
-    static final String SCRIPT_NAME_HD_DB_START = "start_external_hd_database";
+    static final String SCRIPT_NAME_HARVEST_DB_START 
+            = "start_external_harvest_database";
     /** The name of the admin database kill script.*/
-    static final String SCRIPT_NAME_HD_DB_KILL = "kill_external_hd_database";
+    static final String SCRIPT_NAME_HARVEST_DB_KILL 
+            = "kill_external_harvest_database";
     /** The name of the wait script for windows. 'wait'.*/
     static final String SCRIPT_NAME_WAIT = "wait";
     /** Prefix for the application kill script. 'kill_' .*/

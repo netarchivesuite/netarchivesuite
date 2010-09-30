@@ -78,7 +78,7 @@ public class TestInfo {
 	Constants.ARG_INIT_ARG + Constants.ARG_LOG_PROPERTY_FILE;
     public static final String ARGUMENT_OUTPUT_DIRECTORY = 
 	Constants.ARG_INIT_ARG + Constants.ARG_OUTPUT_DIRECTORY;
-    public static final String ARGUMENT_DATABASE_FILE = 
+    public static final String ARGUMENT_HARVEST_DATABASE_FILE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_DATABASE_FILE;
     public static final String ARGUMENT_ARCHIVE_DATABASE_FILE = 
         Constants.ARG_INIT_ARG + Constants.ARG_ARC_DB;

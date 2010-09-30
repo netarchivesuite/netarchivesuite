@@ -88,6 +88,8 @@ public class DeployTester extends TestCase {
      * 
      * This also tests the consequences of non-default jmxremote files 
      * and non-default monitor user-name and Heritrix user-name.
+     * 
+     * Uses only the default databases.
      */
     public void testDeploy() {
         String[] args = {
@@ -96,7 +98,6 @@ public class DeployTester extends TestCase {
                     TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
                     TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
                     TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                    TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
                     TestInfo.ARGUMENT_EVALUATE + "yes",
                     TestInfo.ARGUMENT_JAR_FOLDER + TestInfo.EXTERNALS_DIR
                     };
@@ -129,8 +130,7 @@ public class DeployTester extends TestCase {
         	TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
         	TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
         	TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
-        	TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+        	TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
                 };
         DeployApplication.main(args);
         // compare the resulting output files with the target files
@@ -151,11 +151,11 @@ public class DeployTester extends TestCase {
     
     /** 
      * Test that we can deploy with both databases (harvest database and
-     * bitpreservations database) defined.
+     * admin database) defined explicitly.
      */
     public void testDeployDatabase() {
         String database_it_conf_xml_name = 
-            TestInfo.IT_CONF_DATABASE_FILE.getPath();
+            TestInfo.IT_CONF_FILE.getPath();
         
         String[] args = {
         	TestInfo.ARGUMENT_CONFIG_FILE + database_it_conf_xml_name,
@@ -163,7 +163,7 @@ public class DeployTester extends TestCase {
         	TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
         	TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
         	TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
                 TestInfo.ARGUMENT_ARCHIVE_DATABASE_FILE + arcDatabaseName
                 };
         pss.tearDown();
@@ -195,7 +195,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
                 TestInfo.ARGUMENT_TEST + TestInfo.ARGUMENT_TEST_ARG
 	};
         DeployApplication.main(args);
@@ -225,7 +225,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -249,7 +249,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + "ERROR", 
 		TestInfo.ARGUMENT_CONFIG_FILE + "ERROR", 
 		TestInfo.ARGUMENT_SECURITY_FILE + "ERROR", 
@@ -298,7 +298,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -322,7 +322,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -346,7 +346,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + "security.ERROR",
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -370,7 +370,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + "log.ERROR",
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -394,7 +394,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-		TestInfo.ARGUMENT_DATABASE_FILE + "database.ERROR"
+		TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + "database.ERROR"
 	};
 	DeployApplication.main(args);
 
@@ -467,7 +467,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -492,7 +492,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -517,7 +517,7 @@ public class DeployTester extends TestCase {
 //		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -542,7 +542,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 //		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -566,7 +566,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -590,7 +590,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -614,7 +614,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + "ERROR.policy",
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -638,7 +638,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + "ERROR.prop",
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -662,7 +662,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + "ERROR.jar"
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + "ERROR.jar"
 	};
 	DeployApplication.main(args);
 
@@ -686,7 +686,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
                 TestInfo.ARGUMENT_TEST + "ERROR"
 	};
 	DeployApplication.main(args);
@@ -712,7 +712,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
                 TestInfo.ARGUMENT_TEST + "1000,2000,test,test@kb.dk"
 	};
 	DeployApplication.main(args);

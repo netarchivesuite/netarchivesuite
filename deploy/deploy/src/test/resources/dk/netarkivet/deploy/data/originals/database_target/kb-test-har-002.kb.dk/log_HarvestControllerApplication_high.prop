@@ -5,7 +5,7 @@ handlers=java.util.logging.FileHandler,java.util.logging.ConsoleHandler,dk.netar
 
 #setup the File Handler
 java.util.logging.FileHandler.level=FINE
-java.util.logging.FileHandler.pattern=./log/HarvestControllerApplication%u.log
+java.util.logging.FileHandler.pattern=./log/HarvestControllerApplication_high%u.log
 java.util.logging.FileHandler.limit=1000000
 java.util.logging.FileHandler.count=100
 java.util.logging.FileHandler.append=true

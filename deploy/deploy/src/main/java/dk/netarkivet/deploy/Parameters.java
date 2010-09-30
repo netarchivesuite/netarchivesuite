@@ -49,8 +49,6 @@ public class Parameters {
     private Element machineUserName;
     /** The directory for the harvest definition database.*/
     private Element hdDatabaseDir;
-    /** Whether the harvest definition database is external.*/
-    private Element hdDatabaseExternal;
     /** The directory for the archive database.*/
     private Element arcDatabaseDir;
 
@@ -71,8 +69,6 @@ public class Parameters {
         machineUserName = root.getChild(
                 Constants.DEPLOY_MACHINE_USER_NAME);
         hdDatabaseDir = root.getChild(Constants.DEPLOY_HARVEST_DATABASE_DIR);
-        hdDatabaseExternal = root.getChild(
-                Constants.DEPLOY_HARVEST_DATABASE_EXTERNAL);
         arcDatabaseDir = root.getChild(Constants.DEPLOY_ARCHIVE_DATABASE_DIR);
     }
 
@@ -106,10 +102,6 @@ public class Parameters {
         // copy parent harvest database dir (if any)
         if(parent.hdDatabaseDir != null) {
             hdDatabaseDir = parent.hdDatabaseDir.createCopy();
-        }
-        // copy parent harvest database external (if any)
-        if(parent.hdDatabaseExternal != null) {
-            hdDatabaseExternal = parent.hdDatabaseExternal.createCopy();
         }
         // copy the parent archive database dir (if any)
         if(parent.arcDatabaseDir != null) {
@@ -171,18 +163,6 @@ public class Parameters {
                         + " but " + tmp.size() + " received.");
             }
         }
-        // check if root contains a harvest database external to overwrite 
-        // inherited ones.
-        tmp = root.elements(Constants.DEPLOY_HARVEST_DATABASE_EXTERNAL);
-        if(tmp.size() > 0) {
-            hdDatabaseExternal = tmp.get(0);
-            // log if more than one database directory.
-            if(tmp.size() > 1) {
-                System.out.println("Maximum 1 value expected at: "
-                        + Constants.DEPLOY_HARVEST_DATABASE_EXTERNAL
-                        + " but " + tmp.size() + " received.");
-            }
-        }
         // check if root contains a archive database dir to overwrite 
         // inherited ones.
         tmp = root.elements(Constants.DEPLOY_ARCHIVE_DATABASE_DIR);
@@ -238,19 +218,6 @@ public class Parameters {
         } else {
             return "";
         }
-    }
-    
-    /**
-     * Retrieves whether the harvest definition database should be external.
-     * 
-     * @return True only if the element has the value "true" 
-     * (not case sensitive).
-     */
-    public boolean isHarvestDatabaseExternal() {
-        if(hdDatabaseExternal == null) {
-            return false;
-        }
-        return hdDatabaseExternal.getText().equalsIgnoreCase("true");
     }
     
     /**

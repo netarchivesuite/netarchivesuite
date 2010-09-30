@@ -177,6 +177,18 @@
         <deployMachine name="kb-test-adm-001.kb.dk">
             <deployInstallDir>/home/test</deployInstallDir>
             <deployHarvestDatabaseDir>harvestDatabase</deployHarvestDatabaseDir>
+            <deployAdminDatabaseDir>harvestDatabase</deployAdminDatabaseDir>
+            <settings>
+               <common> 
+                    <database>
+                        <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
+                        <baseUrl>jdbc:derby</baseUrl>
+                        <machine>localhost</machine>
+                        <port>8118</port>
+                        <dir>harvestDatabase/fullhddb</dir>
+                    </database>
+                </common>
+            </settings>
             <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
                 <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
@@ -191,9 +203,6 @@
                             <port>8110</port> 
                             <rmiPort>8210</rmiPort>
                         </jmx>
-                        <database>
-                             <url>jdbc:derby:harvestDatabase/fullhddb</url>
-                        </database>
                     </common>
                 </settings>
             </applicationName>
