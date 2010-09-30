@@ -411,6 +411,7 @@ public final class Constants {
         "dk/netarkivet/harvester/settings.xml",
         "dk/netarkivet/monitor/settings.xml",
         "dk/netarkivet/viewerproxy/settings.xml",
+        "dk/netarkivet/wayback/settings.xml",
         "dk/netarkivet/archive/arcrepository/distribute/"
             + "JMSArcRepositoryClientSettings.xml",
         "dk/netarkivet/archive/indexserver/distribute/"
