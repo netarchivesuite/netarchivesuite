@@ -44,27 +44,9 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
 <fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page"
        basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
-       
-<script type="text/javascript">
-// Displays the next page of results (if available).
-function previousPage() {
-    document.filtersForm.START_PAGE_INDEX.value = 
-        parseInt(document.filtersForm.START_PAGE_INDEX.value) - 1;
-    document.filtersForm.submit();
-}
 
-//Displays the previous page of results (if available).
-function nextPage() {
-    document.filtersForm.START_PAGE_INDEX.value = 
-        parseInt(document.filtersForm.START_PAGE_INDEX.value) + 1;
-    document.filtersForm.submit();
-}
+<script type="text/javascript" src="navigate.js"></script>
 
-function resetPagination() {
-    document.filtersForm.START_PAGE_INDEX.value = "1";
-}
-</script>   
-       
 <%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -130,18 +112,36 @@ for (String domainname : result) {
     }
 %>
 
+<h3 class="page_heading"><fmt:message key="harveststatus.seeds.for.harvest.0">
+    <fmt:param><%=HTMLUtils.escapeHtmlValues(harvestName)%></fmt:param></fmt:message>
+</h3>
+
 <fmt:message key="status.results.displayed">
 <fmt:param><%=totalResultsCount%></fmt:param>
 <fmt:param><%=startIndex+1%></fmt:param>
 <fmt:param><%=endIndex%></fmt:param>
 </fmt:message>
+
+
+<%
+String startPagePost=request.getParameter("START_PAGE_INDEX");
+
+if(startPagePost == null){
+    startPagePost="1";
+}
+
+String searchParam=request.getParameter(Constants.HARVEST_PARAM);
+String searchParamHidden = searchParam.replace(" ","+");
+searchParamHidden = HTMLUtils.encode(searchParamHidden);
+%>
+
 <p style="text-align: right">
 <fmt:message key="status.results.displayed.pagination">
     <fmt:param>
         <%
             if (prevLinkActive) {
         %>
-        <a href="javascript:previousPage();">
+        <a href="javascript:previousPage('<%=Constants.HARVEST_PARAM%>','<%=searchParamHidden%>');">
             <fmt:message key="status.results.displayed.prevPage"/>
         </a>
         <%
@@ -156,7 +156,7 @@ for (String domainname : result) {
         <%
             if (nextLinkActive) {
         %>
-        <a href="javascript:nextPage();">
+        <a href="javascript:nextPage('<%=Constants.HARVEST_PARAM%>','<%=searchParamHidden%>');">
             <fmt:message key="status.results.displayed.nextPage"/>
         </a>
         <%
@@ -173,32 +173,11 @@ for (String domainname : result) {
 
 
 <form method="post" name="filtersForm" action="Harveststatus-seeds.jsp">
-
-
-<%
-String startPagePost=request.getParameter("START_PAGE_INDEX");
-
-if(startPagePost == null){
-    startPagePost="1";
-}
-
-String searchParam=request.getParameter(Constants.HARVEST_PARAM);
-
-%>
 <input type="hidden" 
        name="START_PAGE_INDEX"
        value="<%=startPagePost%>"/>
-
-       
-<input type="hidden" 
-       name="<%=Constants.HARVEST_PARAM%>"
-       value="<%=searchParam%>"/>
-              
 </form>
 
-<h3 class="page_heading"><fmt:message key="harveststatus.seeds.for.harvest.0">
-    <fmt:param><%=HTMLUtils.escapeHtmlValues(harvestName)%></fmt:param></fmt:message>
-</h3>
 
 <table class="selection_table" cols="6">
 

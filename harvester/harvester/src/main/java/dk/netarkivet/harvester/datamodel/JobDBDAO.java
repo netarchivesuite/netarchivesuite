@@ -1124,16 +1124,34 @@ public class JobDBDAO extends JobDAO {
         }
 
         String harvestName = query.getHarvestName();
+        boolean caseSensitiveHarvestName = query.getCaseSensitiveHarvestName();
         if (!harvestName.isEmpty()) {
-            if (harvestName.indexOf(
-                    HarvestStatusQuery.HARVEST_NAME_WILDCARD) == -1) {
-                // No wildcard, exact match
-                sql.append(" AND harvestdefinitions.name = ?");
-                sq.addParameter(String.class, harvestName);
+            if(caseSensitiveHarvestName) {
+                     if (harvestName.indexOf(
+                         HarvestStatusQuery.HARVEST_NAME_WILDCARD) == -1) {
+                         // No wildcard, exact match
+                         sql.append(" AND harvestdefinitions.name = ?");
+                         sq.addParameter(String.class, harvestName);
+                     } else {
+                         String harvestNamePattern =
+                             harvestName.replaceAll("\\*", "%");
+                             sql.append(" AND harvestdefinitions.name LIKE ?");
+                         sq.addParameter(String.class, harvestNamePattern);
+                     }
             } else {
-                String harvestNamePattern = harvestName.replaceAll("\\*", "%");
-                sql.append(" AND harvestdefinitions.name LIKE ?");
-                sq.addParameter(String.class, harvestNamePattern);
+                harvestName = harvestName.toUpperCase();
+                if (harvestName.indexOf(
+                        HarvestStatusQuery.HARVEST_NAME_WILDCARD) == -1) {
+                        // No wildcard, exact match
+                        sql.append(" AND UPPER(harvestdefinitions.name) = ?");
+                        sq.addParameter(String.class, harvestName);
+                    } else {
+                        String harvestNamePattern =
+                                            harvestName.replaceAll("\\*", "%");
+                        sql.append(" AND UPPER(harvestdefinitions.name) " +
+                       		                                " LIKE ?");
+                        sq.addParameter(String.class, harvestNamePattern);
+                    }
             }
         }
 

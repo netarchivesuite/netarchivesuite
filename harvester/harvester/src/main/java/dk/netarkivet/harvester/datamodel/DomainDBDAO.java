@@ -1714,7 +1714,9 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Return all TLDs represented by the domains in the domains table.
-     * 
+     * it was asked that a level X TLD belong appear in TLD list where 
+     * the level is <=X for example bidule.bnf.fr belong to .bnf.fr and to .fr
+     * it appear in the level 1 list of TLD and in the level 2 list
      * @param level maximum level of TLD
      * @return a list of TLDs
      * @see DomainDAO#getTLDs()
@@ -1728,13 +1730,17 @@ public class DomainDBDAO extends DomainDAO {
             ResultSet res = s.executeQuery();
             while (res.next()) {
                 String domain = res.getString(1);
+                //getting the TLD level of the domain
                 int domainTLDLevel = TLDInfo.getTLDLevel(domain);
                
+                //restraining to max level
                 if(domainTLDLevel > level) { domainTLDLevel = level; }
-                
+      
+                //looping from level 1 to level max of the domain
                 for(int currentLevel = 1; currentLevel <= domainTLDLevel;
                                                              currentLevel++){
-                        String tld = TLDInfo.getMultiLevelTLD(domain,
+                    //getting the tld of the domain by level
+                    String tld = TLDInfo.getMultiLevelTLD(domain,
                                                                currentLevel);
                         TLDInfo i = resultMap.get(tld);
                         if (i == null) {
@@ -1742,7 +1748,6 @@ public class DomainDBDAO extends DomainDAO {
                             resultMap.put(tld, i);
                         }
                         i.addSubdomain(domain);
-                 
                 }
             }
         } catch (SQLException e) {

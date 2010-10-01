@@ -42,27 +42,6 @@ displayed, if no domains are found a message is shown.
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"
 />
 
-<script type="text/javascript">
-
-function previousPage() {
-    document.filtersForm.START_PAGE_INDEX.value = 
-        parseInt(document.filtersForm.START_PAGE_INDEX.value) - 1;
-    document.filtersForm.submit();
-}
-
-//Displays the previous page of results (if available).
-function nextPage() {
-    document.filtersForm.START_PAGE_INDEX.value = 
-        parseInt(document.filtersForm.START_PAGE_INDEX.value) + 1;
-    document.filtersForm.submit();
-}
-
-function resetPagination() {
-    document.filtersForm.START_PAGE_INDEX.value = "1";
-}
-
-</script>
-
 <%
     String startPage=request.getParameter("START_PAGE_INDEX");
 
@@ -71,35 +50,17 @@ function resetPagination() {
     }
     long pageSize = Long.parseLong(Settings.get(
             CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
+
+    String startPagePost=request.getParameter("START_PAGE_INDEX");
+
+    if(startPagePost == null){
+        startPagePost="1";
+    }
+
+    String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
+    if(searchParam == null ) searchParam="";
+    searchParam = HTMLUtils.encode(searchParam);
 %>
-
-
-<form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
-
-
-<%
-String startPagePost=request.getParameter("START_PAGE_INDEX");
-
-if(startPagePost == null){
-    startPagePost="1";
-}
-
-String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
-
-%>
-
-
-<input type="hidden" 
-       name="START_PAGE_INDEX"
-       value="<%=startPagePost%>"/>
-<input type="hidden" 
-       name="<%=Constants.DOMAIN_SEARCH_PARAM%>"
-       value="<%=searchParam%>"/>
-              
-</form>
-
-
-
 <%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -122,6 +83,13 @@ String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
                 //Wildcard search with matches, display them
                 HTMLUtils.generateHeader(pageContext);
                 %>
+                
+<form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
+
+<input type="hidden" 
+       name="START_PAGE_INDEX"
+       value="<%=startPagePost%>"/>
+</form>    
 <%
     long totalResultsCount = matchingDomains.size();
     long actualPageSize = (pageSize == 0 ?
@@ -162,13 +130,21 @@ String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
                     <fmt:param><%=startIndex+1%></fmt:param>
                     <fmt:param><%=endIndex%></fmt:param>
                 </fmt:message>
+     
+     
+<script type="text/javascript" src="navigate.js">
+</script>
+
+ 
+
+     
                 <p style="text-align: right">
                     <fmt:message key="status.results.displayed.pagination">
                         <fmt:param>
                         <%
                         if (prevLinkActive) {
                         %>
-                            <a href="javascript:previousPage();">
+                            <a href="javascript:previousPage('<%=Constants.DOMAIN_SEARCH_PARAM%>','<%=searchParam%>');">
                                 <fmt:message key="status.results.displayed.prevPage"/>
                             </a>
                         <%
@@ -183,7 +159,7 @@ String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
                         <%
                         if (nextLinkActive) {
                         %>
-                            <a href="javascript:nextPage();">
+                            <a href="javascript:nextPage('<%=Constants.DOMAIN_SEARCH_PARAM%>','<%=searchParam%>');">
                                 <fmt:message key="status.results.displayed.nextPage"/>
                             </a>
                         <%
@@ -216,6 +192,14 @@ String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
             //Specified and found domain name
             HTMLUtils.generateHeader(pageContext);
             %>
+            
+<form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
+
+<input type="hidden" 
+       name="START_PAGE_INDEX"
+       value="<%=startPagePost%>"/>
+</form>    
+
 <%
 
     List<DomainHarvestInfo> hiList
@@ -247,6 +231,9 @@ String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
     }
 
 %>
+
+
+            
             <fmt:message key="status.results.displayed">
                 <fmt:param><%=totalResultsCount%></fmt:param>
                 <fmt:param><%=startIndex+1%></fmt:param>
@@ -258,7 +245,7 @@ String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
                     <%
                      if (prevLinkActive) {
                     %>
-                        <a href="javascript:previousPage();">
+                        <a href="javascript:previousPage('<%=Constants.DOMAIN_SEARCH_PARAM%>','<%=searchParam%>');">
                             <fmt:message key="status.results.displayed.prevPage"/>
                         </a>
                     <%
@@ -273,7 +260,7 @@ String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
                     <%
                     if (nextLinkActive) {
                     %>
-                        <a href="javascript:nextPage();">
+                        <a href="javascript:nextPage('<%=Constants.DOMAIN_SEARCH_PARAM%>','<%=searchParam%>');">
                             <fmt:message key="status.results.displayed.nextPage"/>
                         </a>
                     <%

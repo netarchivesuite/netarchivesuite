@@ -44,7 +44,7 @@ This page displays a list of running jobs.
     dk.netarkivet.harvester.webinterface.Constants,
     dk.netarkivet.harvester.webinterface.FindRunningJobQuery,
     dk.netarkivet.common.utils.StringUtils,
-    dk.netarkivet.harvester.webinterface.TableSort,
+    dk.netarkivet.common.utils.TableSort,
     dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort"
 	pageEncoding="UTF-8"%>
 
@@ -115,9 +115,9 @@ This page displays a list of running jobs.
 
 
 			//gestion des fleche de trie
-			String incSortPic = "Up Arrow.png";
-            String descSortPic = "Down Arrow.png";
-            String noSortPic = "No Arrow.png";
+			String incSortPic = "&uarr;";
+            String descSortPic = "&darr;";
+            String noSortPic = "";
             String tabArrow[] = new String[9];
             for( int i=0;i<9;i++) {
                 tabArrow[i] =  noSortPic;
@@ -158,7 +158,7 @@ This page displays a list of running jobs.
     + HarvestStatusRunningTablesSort.ColumnId.ID.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.jobId"/>
-            <img src="<%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ID.ordinal()]%>" />
+            <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ID.ordinal()]%>
         </a>
     </th>
     <th class="harvestHeader" rowspan="2">
@@ -166,7 +166,7 @@ This page displays a list of running jobs.
     + HarvestStatusRunningTablesSort.ColumnId.HOST.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.host"/>
-            <img src="<%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.HOST.ordinal()]%>" />
+            <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.HOST.ordinal()]%>
         </a>
     </th>
     <th class="harvestHeader" rowspan="2">
@@ -174,7 +174,7 @@ This page displays a list of running jobs.
     + HarvestStatusRunningTablesSort.ColumnId.PROGRESS.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.progress"/>
-            <img src="<%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.PROGRESS.ordinal()]%>" />
+            <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.PROGRESS.ordinal()]%>
          </a>
     </th>
 
@@ -183,7 +183,7 @@ This page displays a list of running jobs.
     + HarvestStatusRunningTablesSort.ColumnId.ELAPSED.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.elapsedTime"/>
-            <img src="<%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ELAPSED.ordinal()]%>" />
+            <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ELAPSED.ordinal()]%>
         </a>
    </th>
     <%-->th class="harvestHeader" colspan="5"><fmt:message key="table.running.jobs.queues"/></th--%>
@@ -197,7 +197,7 @@ This page displays a list of running jobs.
     + HarvestStatusRunningTablesSort.ColumnId.QFILES.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.queuedFiles"/>
-            <img src="<%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.QFILES.ordinal()]%>" />
+            <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.QFILES.ordinal()]%>
         </a>
     </th>
     <th class="harvestHeader" >
@@ -205,7 +205,7 @@ This page displays a list of running jobs.
     + HarvestStatusRunningTablesSort.ColumnId.TOTALQ.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.totalQueues"/>
-            <img src="<%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.TOTALQ.ordinal()]%>" />
+            <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.TOTALQ.ordinal()]%>
         </a>
     </th>
     <th class="harvestHeader" >
@@ -213,7 +213,7 @@ This page displays a list of running jobs.
     + HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.activeQueues"/>
-            <img src="<%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.ordinal()]%>" />
+            <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.ordinal()]%>
         </a>
     </th>
     <%--th class="harvestHeader"><fmt:message key="table.running.jobs.retiredQueues"/></th--%>
@@ -222,7 +222,7 @@ This page displays a list of running jobs.
     + HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.exhaustedQueues"/>
-            <img src="<%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.ordinal()]%>" />
+            <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.ordinal()]%>
         </a>
     </th>
     <th class="harvestHeader"><fmt:message key="table.running.jobs.currentProcessedDocsPerSec"/></th>

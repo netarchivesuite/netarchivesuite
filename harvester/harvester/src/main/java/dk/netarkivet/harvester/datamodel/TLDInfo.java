@@ -92,12 +92,12 @@ public class TLDInfo implements Comparable<TLDInfo> {
      * @see Object#equals(Object) 
      */
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){ return true; }
+        if (o == null || getClass() != o.getClass()){ return false; }
 
         TLDInfo tldInfo = (TLDInfo) o;
 
-        if (!tldName.equals(tldInfo.tldName)) return false;
+        if (!tldName.equals(tldInfo.tldName)){ return false; }
 
         return true;
     }
@@ -151,6 +151,8 @@ public class TLDInfo implements Comparable<TLDInfo> {
     */
    static String getMultiLevelTLD(String domain, int maxLevel) {
        ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
+       ArgumentNotValid .checkPositive(maxLevel, "max level must be equal to 1" 
+               +" or more");
        String tld;
        if (dk.netarkivet.common.Constants.IP_KEY_REGEXP.matcher(domain)
                .matches()) {

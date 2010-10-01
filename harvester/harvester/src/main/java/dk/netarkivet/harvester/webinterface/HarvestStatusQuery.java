@@ -43,36 +43,36 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  * <li>Job start date (day of month and year)</li>
  * <li>Job end date (day of month and year)</li>
  * </ul>
- *
+ * 
  * The semantics of the date filters is as follows:
  * <ol>
- * <li>If only a start date is specified, will fetch jobs whose start date
+ * <li>If only a start date is specified, will fetch jobs whose start date 
  * is equal or posterior</li>
- * <li>If only an end date is specified, will fetch jobs whose end date
+ * <li>If only an end date is specified, will fetch jobs whose end date 
  * is equal or anterior</li>
  * <li>If both are specified, will fetch jobs whose start and end date are equal
  * or comprised between the specified bounds.</li>
  * </ol>
- *
+ * 
  * The class enforces that end date is set at a date posterior to start date.
- *
- * Additionally a sort order (applied to job IDs) can be set (ascending or
+ * 
+ * Additionally a sort order (applied to job IDs) can be set (ascending or 
  * descending), and the query can be limited to a certain row number and
  * a start index.
- *
+ * 
  */
 public class HarvestStatusQuery {
 
     /** The String code to select all states. */
     public static final String JOBSTATUS_ALL = "ALL";
-
+    
     /** The String code to select all harvests. */
     public static final String HARVEST_NAME_ALL = "ALL";
-
+    
     public static final String HARVEST_NAME_WILDCARD = "*";
     public static final long PAGE_SIZE_NONE = 0;
     public static final long DATE_NONE = -1;
-
+    
     public static enum SORT_ORDER {
         ASC, DESC;
 
@@ -93,7 +93,7 @@ public class HarvestStatusQuery {
         JOB_STATUS(JobStatus.STARTED.name()), JOB_ID_ORDER("ASC"), HARVEST_NAME(
                 HARVEST_NAME_ALL), HARVEST_ID(""), HARVEST_RUN(""), START_DATE(
                 ""), END_DATE(""), PAGE_SIZE(Settings.get(
-                        CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE)),
+                        CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE)), 
                         START_PAGE_INDEX(
                 "1"), RESUBMIT_JOB_IDS("");
 
@@ -156,6 +156,8 @@ public class HarvestStatusQuery {
     private long pageSize;
 
     private long startPageIndex;
+    
+    private boolean caseSensitiveHarvestName=true;
 
     /**
      * Builds a default query that will select all jobs.
@@ -274,7 +276,10 @@ public class HarvestStatusQuery {
         }
         return harvestName;
     }
-
+    
+    public void setHarvestName( String harvestName) {
+        this.harvestName = harvestName;
+    }
     public Long getHarvestId() {
         return harvestId;
     }
@@ -324,6 +329,14 @@ public class HarvestStatusQuery {
 
     public long getStartPageIndex() {
         return startPageIndex;
+    }
+    
+    public void setCaseSensitiveHarvestName(boolean caseSensitiveHarvestName) {
+        this.caseSensitiveHarvestName = caseSensitiveHarvestName;
+    }
+
+    public boolean getCaseSensitiveHarvestName() {
+        return caseSensitiveHarvestName;
     }
 
 }

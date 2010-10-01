@@ -23,7 +23,14 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.util.HashMap;
-/** */
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.TableSort;
+
+/**
+ * class used to manage the sort of tables in the
+ *  harvest status running screen
+ **/
 public class HarvestStatusRunningTablesSort {
     /**list of the column id.*/
     public enum ColumnId { NONE, ID, HOST, PROGRESS, ELAPSED,
@@ -84,7 +91,8 @@ public class HarvestStatusRunningTablesSort {
      * */
     public final ColumnId getSortedColumnIdentByHarvestName(
             final String harvestName) {
-
+        ArgumentNotValid.checkNotNull(harvestName,
+                                                "harvest name can't be null");
         TableSort tbs = getTableSort(harvestName);
         int columnIdInt = tbs.getColumnIdent();
 
@@ -97,7 +105,9 @@ public class HarvestStatusRunningTablesSort {
      * */
     public final TableSort.SortOrder getSortOrderByHarvestName(
             final String harvestName) {
-        TableSort.SortOrder order = TableSort.SortOrder.NONE;
+        ArgumentNotValid.checkNotNull(harvestName,
+                                                "harvest name can't be null");
+       TableSort.SortOrder order = TableSort.SortOrder.NONE;
         TableSort tbs = getTableSort(harvestName);
         order = tbs.getOrder();
 

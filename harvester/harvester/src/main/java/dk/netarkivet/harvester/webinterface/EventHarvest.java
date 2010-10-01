@@ -138,7 +138,6 @@ public final class EventHarvest {
      * @param seeds The seeds as a String
      * @param maxbytesString The given maxbytes as a string
      * @param maxobjectsString The given maxobjects as a string 
-     * (currently not used)
      * @param maxrateString The given maxrate as a string (currently not used)
      * @param ordertemplate The name of the ordertemplate to use
      */

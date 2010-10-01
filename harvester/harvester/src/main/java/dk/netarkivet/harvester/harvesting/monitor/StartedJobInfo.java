@@ -39,8 +39,7 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlS
 /**
  * This class is a simple bean storing information about a started job.
  *
- * This class is a persistent entity as per Berkeley DB JE
- * Direct Persistence Layer API.
+ * This class is a persistent entity as per Berkeley DB JE DPL API.
  */
 public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
@@ -158,7 +157,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     private CrawlStatus status;
 
     /**
-     * Needed by BDB Direct Persistence Layer.
+     * Needed by BDB DPL.
      */
     public StartedJobInfo() {
 
@@ -349,8 +348,12 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     @Override
-    public int compareTo(StartedJobInfo o) {
+    public int compareTo(StartedJobInfo o) throws NullPointerException  {
 
+        if(o == null ) {
+            throw new NullPointerException("StartedJobInfo o can't be null");
+        }
+        
         if (compareCriteria == StartedJobInfo.Criteria.HOST) {
             return hostUrl.compareTo(o.hostUrl);
         }
@@ -380,8 +383,14 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         return new Long(jobId).compareTo(new Long(o.jobId));
     }
 
-    public void chooseCompareCriteria(StartedJobInfo.Criteria criteria) {
-        compareCriteria = criteria;
+    /**
+     * set the criteria used in the compareTo method
+     * that way we can decide how to sort StartedJobInfo
+     * @param criteria the criteria we want to use
+     */
+     public void chooseCompareCriteria(StartedJobInfo.Criteria criteria) {
+         ArgumentNotValid.checkNotNull(criteria, "criteria can't be null");
+         compareCriteria = criteria;
     }
 
     @Override

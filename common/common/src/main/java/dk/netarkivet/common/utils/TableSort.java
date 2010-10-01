@@ -1,10 +1,10 @@
-/* File:       $Id$
- * Revision:   $Revision$
- * Author:     $Author$
- * Date:       $Date$
+/* File:            $Id$
+ * Revision:        $Revision$
+ * Author:          $Author$
+ * Date:            $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.harvester.webinterface;
+package dk.netarkivet.common.utils;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 
 /** contains the data about how a table is sorted.*/
@@ -37,6 +39,12 @@ public class TableSort {
      * @param sortOrder the order of the sort
      * */
     public TableSort(final int columnId, final SortOrder sortOrder) {
+        ArgumentNotValid.checkTrue(
+                sortOrder == TableSort.SortOrder.DESC
+                || sortOrder == TableSort.SortOrder.INCR
+                || sortOrder == TableSort.SortOrder.NONE
+                , "set order invalid");
+
         columnIdent = columnId;
         order = sortOrder;
     }
@@ -65,6 +73,11 @@ public class TableSort {
      * @param sortorder the order of the sort
      * */
     public final void setOrder(final SortOrder sortorder) {
+        ArgumentNotValid.checkTrue(
+                sortorder == TableSort.SortOrder.DESC
+                || sortorder == TableSort.SortOrder.INCR
+                || sortorder == TableSort.SortOrder.NONE
+                , "set order invalid");
         order = sortorder;
     }
 }
