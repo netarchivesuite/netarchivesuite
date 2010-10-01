@@ -29,11 +29,11 @@ resubmit - jobID of a job to resubmit.
 --%>
 
 <%@ page import="
-    java.util.List, 
+    java.util.List,
     java.util.Set,
-    java.util.Date, 
+    java.util.Date,
     java.util.Iterator,
-    java.text.SimpleDateFormat,    
+    java.text.SimpleDateFormat,
     dk.netarkivet.common.exceptions.ForwardedToErrorPage,
     dk.netarkivet.common.utils.I18n,
     dk.netarkivet.common.webinterface.HTMLUtils,
@@ -56,7 +56,7 @@ resubmit - jobID of a job to resubmit.
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 
-    private static final SimpleDateFormat DATE_FMT = 
+    private static final SimpleDateFormat DATE_FMT =
     	new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 %>
 
@@ -67,22 +67,22 @@ resubmit - jobID of a job to resubmit.
     } catch (ForwardedToErrorPage e) {
         return;
     }
-    
+
     //After a resubmit, forward to this page
     if (request.getParameter(Constants.JOB_RESUBMIT_PARAM) != null) {
         response.sendRedirect("Harveststatus-alljobs.jsp");
         return;
     }
     HTMLUtils.generateHeader(pageContext);
-    
+
     HarvestStatusQuery query = new HarvestStatusQuery(request);
-    
+
     //list of information to be shown
-    HarvestStatus results = HarvestStatus.getjobStatusList(query); 
+    HarvestStatus results = HarvestStatus.getjobStatusList(query);
     List<JobStatusInfo> jobStatusList = results.getJobStatusInfo();
     Set<JobStatus> selectedStatuses = query.getSelectedJobStatusesAsSet();
-    
-    boolean generateResubmitForm = selectedStatuses.isEmpty() 
+
+    boolean generateResubmitForm = selectedStatuses.isEmpty()
         || selectedStatuses.contains(JobStatus.FAILED);
 %>
 
@@ -93,12 +93,12 @@ resubmit - jobID of a job to resubmit.
 // Resets the search form to default values.
 function resetForm() {
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_STATUS.name()%>.selectedIndex = 0;
-	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name()%>.selectedIndex = 0;	
+	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name()%>.selectedIndex = 0;
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.HARVEST_NAME.name()%>.selectedIndex = 0;
-	
+
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_DATE.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.END_DATE.name()%>.value = "";
-	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.PAGE_SIZE.name()%>.value = "";	
+	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.PAGE_SIZE.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "";
 }
 
@@ -153,8 +153,8 @@ function resetPagination() {
 <fmt:param>
   <select name="<%=HarvestStatusQuery.UI_FIELD.HARVEST_NAME%>"
           style="width:200px;">
-  
-        <option <%= query.getHarvestName().isEmpty() ? "selected=\"selected\"" : "" %> 
+
+        <option <%= query.getHarvestName().isEmpty() ? "selected=\"selected\"" : "" %>
              value="<%=HarvestStatusQuery.HARVEST_NAME_ALL %>">
              <fmt:message key="status.harvest.all"/>
         </option>
@@ -169,7 +169,7 @@ function resetPagination() {
             	  selected="selected=\"selected\"";
             	  valueInOptions |= true;
               }
-               
+
         %>
         <option
              <%=selected%>
@@ -179,21 +179,21 @@ function resetPagination() {
         <%
           }
           if (! valueInOptions) {
-        %> 
+        %>
         <option selected="selected"
              value="<%=query.getHarvestName()%>">
              <%=query.getHarvestName()%>
-        </option>      
+        </option>
         <%
           }
         %>
-        
+
   </select>
-  
+
 </fmt:param>
 <fmt:param>
 <input name="<%=HarvestStatusQuery.UI_FIELD.START_DATE%>"
-       id="<%=HarvestStatusQuery.UI_FIELD.START_DATE%>" 
+       id="<%=HarvestStatusQuery.UI_FIELD.START_DATE%>"
        size="10"
        value="<%=query.getStartDateAsString()%>"/>
 <script type="text/javascript">
@@ -235,18 +235,18 @@ setupCalendar("<%=HarvestStatusQuery.UI_FIELD.END_DATE%>", "<%=HarvestStatusQuer
     	  pageSizeStr = Long.toString(query.getPageSize());
       }
     %>
-    <input type="text" 
-           name="<%=HarvestStatusQuery.UI_FIELD.PAGE_SIZE%>" 
+    <input type="text"
+           name="<%=HarvestStatusQuery.UI_FIELD.PAGE_SIZE%>"
            size="5"
            value="<%=pageSizeStr%>"/>
 </fmt:param>
 </fmt:message>
 
-<input type="hidden" 
+<input type="hidden"
        name="<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX%>"
        value="<%=query.getStartPageIndex()%>"/>
-   
-<input type="submit" name="upload" 
+
+<input type="submit" name="upload"
        onclick="resetPagination();"
        value="<fmt:message key="status.sort.order.job.show"/>"/>
 
@@ -259,15 +259,15 @@ setupCalendar("<%=HarvestStatusQuery.UI_FIELD.END_DATE%>", "<%=HarvestStatusQuer
 
 <%
     long totalResultsCount = results.getFullResultsCount();
-    
-    long pageSize = query.getPageSize();    
+
+    long pageSize = query.getPageSize();
     long actualPageSize = (pageSize == HarvestStatusQuery.PAGE_SIZE_NONE ?
     	totalResultsCount : pageSize);
 
     long startPageIndex = query.getStartPageIndex();
     long startIndex = 0;
     long endIndex = 0;
-    
+
     if (totalResultsCount > 0) {
         startIndex = ((startPageIndex - 1) * actualPageSize) + 1;
 	    endIndex = Math.min(startIndex + actualPageSize - 1, totalResultsCount);
@@ -286,7 +286,7 @@ setupCalendar("<%=HarvestStatusQuery.UI_FIELD.END_DATE%>", "<%=HarvestStatusQuer
     		&& startIndex > 1) {
     	prevLinkActive = true;
     }
-    
+
     boolean nextLinkActive = false;
     if (pageSize != HarvestStatusQuery.PAGE_SIZE_NONE
     		&& totalResultsCount > 0
@@ -313,7 +313,7 @@ setupCalendar("<%=HarvestStatusQuery.UI_FIELD.END_DATE%>", "<%=HarvestStatusQuer
             }
 	    %>
     </fmt:param>
-    
+
     <fmt:param>
         <%
             if (nextLinkActive) {
@@ -328,8 +328,8 @@ setupCalendar("<%=HarvestStatusQuery.UI_FIELD.END_DATE%>", "<%=HarvestStatusQuer
         <%
             }
         %>
-    </fmt:param>       
-    
+    </fmt:param>
+
 </fmt:message>
 </p>
 
@@ -337,10 +337,10 @@ setupCalendar("<%=HarvestStatusQuery.UI_FIELD.END_DATE%>", "<%=HarvestStatusQuer
 <h3 class="page_heading"><fmt:message key="pagetitle;jobstatus"/></h3>
 
 <%
-if (jobStatusList.isEmpty()) { 
+if (jobStatusList.isEmpty()) {
 %>
     <fmt:message key="table.job.no.jobs"/>
-<% 
+<%
 } else { //Make table with found jobs
 %>
 
@@ -353,11 +353,11 @@ if (jobStatusList.isEmpty()) {
 
 function resubmitToggleSelection() {
     var allChecked = document.getElementById("resubmitJobsForm").resubmit_all.checked;
-    <% 
+    <%
     for (JobStatusInfo js : jobStatusList) {
     	if (js.getStatus().equals(JobStatus.FAILED)) {
     %>
-        document.getElementById("resubmit_<%=js.getJobID()%>").checked=allChecked;        
+        document.getElementById("resubmit_<%=js.getJobID()%>").checked=allChecked;
     <%
         }
     }
@@ -367,18 +367,18 @@ function resubmitToggleSelection() {
 function resubmitSelectedJobs() {
 	var concatenatedIds = "";
 	var selectedCount = 0;
-	<% 
-    for (JobStatusInfo js : jobStatusList) {    	
+	<%
+    for (JobStatusInfo js : jobStatusList) {
     	if (js.getStatus().equals(JobStatus.FAILED)) {
     %>
-    if (document.getElementsByName("resubmitJobsForm")[0].resubmit_<%=js.getJobID()%>.checked) {
+    if (document.getElementById("resubmit_<%=js.getJobID()%>").checked) {
         concatenatedIds = concatenatedIds + ";<%=js.getJobID()%>";
         selectedCount++;
     }
     <%
         }
     }
-	 
+
     %>
 
     if (selectedCount <= 0) {
@@ -396,8 +396,8 @@ function resubmitSelectedJobs() {
 
 <form method="post" name="resubmitJobsForm" id="resubmitJobsForm" action="Harveststatus-alljobs.jsp">
 
-    <input type="hidden" 
-        name="<%=HarvestStatusQuery.UI_FIELD.RESUBMIT_JOB_IDS.name()%>" 
+    <input type="hidden"
+        name="<%=HarvestStatusQuery.UI_FIELD.RESUBMIT_JOB_IDS.name()%>"
         value=""/>
 
 <% } %>
@@ -420,10 +420,10 @@ function resubmitSelectedJobs() {
         int rowcount = 0;
         String detailsPage = "Harveststatus-jobdetails.jsp";
         for (JobStatusInfo js : jobStatusList) {
-        	
+
         	Date startDate = js.getStartDate();
             Date endDate = js.getEndDate();
-            
+
             String detailsLink = detailsPage + "?"
                                  + Constants.JOB_PARAM + "=" + js.getJobID();
             String harvestLink = "Harveststatus-perhd.jsp?"
@@ -435,11 +435,11 @@ function resubmitSelectedJobs() {
             // If the status of the job is RESUBMITTED (and the new job is known),
     		// add a link to the new job
     		// Note: this information was only available from release 3.8.0
-    		// So for historical jobs generated with previous versions of 
-    		// NetarchiveSuite this information is not available. 
+    		// So for historical jobs generated with previous versions of
+    		// NetarchiveSuite this information is not available.
     		if (js.getStatus().equals(JobStatus.RESUBMITTED)
-    			&& js.getResubmittedAsJob() != null) { 
-    	 		jobStatusTdContents += "<br/>(<a href=\"" + detailsPage + "?" 
+    			&& js.getResubmittedAsJob() != null) {
+    	 		jobStatusTdContents += "<br/>(<a href=\"" + detailsPage + "?"
     	 			+ Constants.JOB_PARAM + "=" + js.getResubmittedAsJob() + "\">"
     	 			+ "Job " + js.getResubmittedAsJob() + "</a>" + ")";
     		}
@@ -490,13 +490,13 @@ function resubmitSelectedJobs() {
                 </td>
                 <td><fmt:formatNumber value="<%=js.getConfigCount()%>"/>
                 </td>
-                
+
                 <% if (generateResubmitForm) { %>
                 <td>
-                    <input type="checkbox" name="resubmit_<%=js.getJobID()%>" id="resubmit_<%=js.getJobID()%>" <%= JobStatus.FAILED.equals(js.getStatus()) ? "" : "disabled" %> />                
+                    <input type="checkbox" name="resubmit_<%=js.getJobID()%>" id="resubmit_<%=js.getJobID()%>" <%= JobStatus.FAILED.equals(js.getStatus()) ? "" : "disabled" %> />
                 </td>
                 <% } %>
-                
+
             </tr>
     <%
         }
@@ -508,7 +508,7 @@ function resubmitSelectedJobs() {
   if (generateResubmitForm) {
 %>
 	  <br/>
-	  <br/>	  
+	  <br/>
 
 	  <input type="button" name="go"
 	         value="<fmt:message key="resubmit.jobs.submit"/>"
