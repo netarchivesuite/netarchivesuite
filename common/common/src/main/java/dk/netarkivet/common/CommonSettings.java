@@ -315,15 +315,6 @@ public class CommonSettings {
             = "settings.common.database.validityCheckTimeout";
 
     /**
-     * <b>settings.common.database.backupInitHour</b>: <br>
-     * The earliest time of day backup will be initiated, 0..24 hours.  At
-     * a time shortly after this, a consistent backup copy of the database
-     * will be created.
-     */
-    public static String DB_BACKUP_INIT_HOUR
-            = "settings.common.database.backupInitHour";
-
-    /**
      * <b>settings.common.repository.limitForRecordDatatransferInFile</b>: <br>
      * When the length record exceeds this number, the contents of the record
      * will be transferred using a RemoteFile.

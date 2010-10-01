@@ -486,11 +486,7 @@
                  baseDir and class.-->
             <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
             <!-- The class that handles DB-specific methods -->
-            <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
-            <!-- The earliest time of day backup will be initiated, 0..24
-                 hours.  At a time shortly after this, a consistent backup
-                 copy of the database will be created -->
-            <backupInitHour>3</backupInitHour>
+            <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
         </database>
         <repository>
             <!-- When the length record exceeds this number, the contents of the record

@@ -78,12 +78,6 @@ public class HarvestScheduler extends LifeCycleComponent {
 
     /** The thread used to control when new dispatches should be run. */
     private Thread dispatcherThread;
-
-    /**
-     * Backup-related fields.
-     */
-     private Date lastBackupDate = null;
-     private int backupInitHour; // legal values: 0..23
      
      /** Connection to JMS provider. */
      private JMSConnection jmsConnection;     
@@ -94,16 +88,6 @@ public class HarvestScheduler extends LifeCycleComponent {
     public HarvestScheduler() {
         log.info("Creating HarvestScheduler");
         jmsConnection = JMSConnectionFactory.getInstance();
-        backupInitHour = Settings.getInt(CommonSettings.DB_BACKUP_INIT_HOUR);
-        if (backupInitHour < 0 || backupInitHour > 23) {
-            log.warn("Illegal value for backupHour "
-                    + "(Settting = DB_BACKUP_INIT_HOUR) found: "
-                    + backupInitHour);
-            log.info("BackupHour set to 0");
-            backupInitHour = 0;
-        } else {
-            log.info("Backup hour is " + backupInitHour);
-        }
     }
 
     /**
@@ -197,70 +181,7 @@ public class HarvestScheduler extends LifeCycleComponent {
         // stop STARTED jobs which have been on for more than
         // settings.harvester.scheduler.jobtimeouttime time.
         stopTimeoutJobs();
-
-        // To be removed when the Harvestjob functionality is moved to its own
-        // application connected to a database server
-        if (backupNow()) { // Check if we want to backup the database now?
-            File backupDir = new File("DB-Backup-" 
-                    + System.currentTimeMillis());
-            try {
-                DBSpecifics.getInstance().backupDatabase(backupDir);
-                lastBackupDate = new Date();
-            } catch (SQLException e) {
-                String errMsg = "Unable to backup database to dir: "
-                    + backupDir + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e);
-                log.warn(errMsg, e);
-                NotificationsFactory.getInstance().errorEvent(
-                        errMsg, e); 
-            }
-        }
         submitNewJobs();
-    }
-
-    /**
-     * Is it now time to backup the database?
-     * Check that no jobs are being generated, that we backup as soon as
-     * possible if backup is behind schedule, that we don't backup several
-     * times in an hour, and that the first backup is done at the right time.
-     * @return true, if it is now time to backup the database
-     */
-    private boolean backupNow() {
-        // Never backup while making jobs
-        if (HarvestJobGenerator.isGeneratingJobs()) {
-            return false;
-        }
-        Calendar cal = Calendar.getInstance();
-        boolean isBackupHour = (cal.get(Calendar.HOUR_OF_DAY)
-                == backupInitHour);
-        if (lastBackupDate != null) {
-            int hoursPassed = getHoursPassedSince(lastBackupDate);
-            if (hoursPassed < 1) {
-                return false; // Never backup if it's been done within an hour
-            } else if (hoursPassed > 25) {
-                return true; // Backup at any time if we're behind schedule
-            }
-        }
-        return isBackupHour;
-    }
-
-    /**
-     * Find the number of hours passed since argument theDate.
-     * returns -1, if number of hours passed since theDate is negative.
-     * @param theDate the date compared to current time.
-     * @return the number of hours passed since argument theDate
-     */
-    private int getHoursPassedSince(Date theDate){
-        Calendar currentCal = Calendar.getInstance();
-        Calendar theDateCal = Calendar.getInstance();
-        theDateCal.setTime(theDate);
-        long millisecondsPassed = currentCal.getTimeInMillis()
-                                  - theDateCal.getTimeInMillis();
-        if (millisecondsPassed < 0) {
-            return -1;
-        }
-        int secondsPassed = (int) (millisecondsPassed / 1000L);
-        return (secondsPassed / 3600);
     }
 
     /**

@@ -82,16 +82,6 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
         }
     }    
 
-    /** Returns true if any harvestdefinition is in the middle of having
-     * jobs scheduled.  Notice that this synchronizes with generateJobs.
-     *
-     * @return true if there is at least one harvestdefinition currently
-     * scheduling jobs.
-     */
-    public static boolean isGeneratingJobs() {
-        return !harvestDefinitionsBeingScheduled.isEmpty();
-    }
-
     /**
      * Contains the functionality for the individual JobGenerations 
      */

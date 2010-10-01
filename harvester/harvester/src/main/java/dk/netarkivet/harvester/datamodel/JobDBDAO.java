@@ -563,6 +563,17 @@ public class JobDBDAO extends JobDAO {
                 + "ORDER BY job_id", status.ordinal());
         return idList.iterator();
     }
+    
+   @Override
+   public synchronized Iterator<Long> getAllJobIds(JobStatus status, 
+           JobPriority priority) {
+       ArgumentNotValid.checkNotNull(status, "JobStatus status");
+       List<Long> idList = DBUtils.selectLongList(
+               DBConnect.getDBConnection(),
+               "SELECT job_id FROM jobs WHERE status = ? AND priority =?"
+               + "ORDER BY job_id", status.ordinal(), priority.ordinal());
+       return idList.iterator();
+   }
 
     /**
      * Return a list of all jobs.

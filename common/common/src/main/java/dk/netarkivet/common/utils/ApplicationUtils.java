@@ -33,6 +33,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 import dk.netarkivet.common.management.MBeanConnectorCreator;
 
 /**
@@ -176,6 +177,40 @@ public abstract class ApplicationUtils {
         try {
             log.trace("Adding shutdown hook for " + appName);
             Runtime.getRuntime().addShutdownHook((new CleanupHook(instance)));
+            log.trace("Added shutdown hook for " + appName);
+        } catch (Throwable e) {
+            logExceptionAndPrint("Could not add shutdown hook for class "
+                                 + appName, e);
+            System.exit(EXCEPTION_WHEN_ADDING_SHUTDOWN_HOOK);
+        }
+    }
+    
+    public static void startApp(LifeCycleComponent component) {
+        String appName = component.getClass().getName();
+        Settings.set(CommonSettings.APPLICATION_NAME, appName);
+        logAndPrint("Starting " + appName + "\n"
+                    + Constants.getVersionString());
+        log.info("Using settings files '"
+                    + StringUtils.conjoin(File.pathSeparator,
+                                          Settings.getSettingsFiles()) + "'");
+        dirMustExist(FileUtils.getTempDir());
+        // Start the remote management connector
+        try {
+            MBeanConnectorCreator.exposeJMXMBeanServer();
+            log.trace("Added remote management for " + appName);
+        } catch (Throwable e) {
+            logExceptionAndPrint("Could not add remote management for class "
+                    + appName, e);
+            System.exit(EXCEPTION_WHEN_ADDING_MANAGEMENT);
+        }
+        
+        component.start();
+        logAndPrint(appName + " Running");
+        
+        // Add the shutdown hook
+        try {
+            log.trace("Adding shutdown hook for " + appName);
+            Runtime.getRuntime().addShutdownHook((new ShutdownHook(component)));
             log.trace("Added shutdown hook for " + appName);
         } catch (Throwable e) {
             logExceptionAndPrint("Could not add shutdown hook for class "

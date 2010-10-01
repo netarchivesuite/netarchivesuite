@@ -143,6 +143,20 @@ public abstract class JobDAO implements Iterable<Job> {
      *                          valid states specified in JobStatus.
      */
     public abstract Iterator<Long> getAllJobIds(JobStatus status);
+    
+    /**
+     * Return a list of all job_id's representing jobs with the given status
+     * and priority.
+     *
+     * @param status A given status   
+     * @param status A given priority
+     * @return A list of all job_id's representing jobs with given status
+     * and priority.
+     * @throws ArgumentNotValid If the given status is not one of the six
+     *                          valid states specified in JobStatus.
+     */
+    public abstract Iterator<Long> getAllJobIds(JobStatus status, 
+            JobPriority priority);
 
     /**
      * Return a list of all jobs .

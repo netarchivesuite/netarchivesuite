@@ -40,12 +40,7 @@ public class DerbyServerSpecifics extends DerbySpecifics {
         return new DerbyServerSpecifics();
     }
 
-    /**
-     * Shutdown the database system, if running embeddedly.  Otherwise, this
-     * is ignored.
-     *
-     * Will log a warning on errors, but otherwise ignore them.
-     */
+    @Override
     public void shutdownDatabase() {
     }
 

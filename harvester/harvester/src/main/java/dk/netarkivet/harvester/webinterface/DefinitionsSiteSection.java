@@ -54,14 +54,6 @@ public class DefinitionsSiteSection extends SiteSection {
     private static final int PAGES_VISIBLE_IN_MENU = 9;
     
     /**
-     * Handles the actual processing of the defined harvest job based on the harvests defined in the database.
-     * 
-     * Note: The HarvestJobManager should be promoted to be started as its own application, 
-     * see https://gforge.statsbiblioteket.dk/tracker/?group_id=7&atid=108&func=detail&aid=1963
-     */
-    private HarvestJobManager jobManager;
-
-    /**
      * Create a new definition SiteSection object.
      */
     public DefinitionsSiteSection() {
@@ -125,16 +117,6 @@ public class DefinitionsSiteSection extends SiteSection {
         HarvestDefinitionDAO.getInstance();
         JobDAO.getInstance();
         GlobalCrawlerTrapListDAO.getInstance();
-
-        jobManager = new HarvestJobManager();
-        
-        // Start the scheduler in a new thread, to allow the website to start 
-        // while rescheduling happens.
-        new Thread() {
-            public void run() {
-                jobManager.start();
-            }
-        }.start();
     }
 
     /**
@@ -142,7 +124,6 @@ public class DefinitionsSiteSection extends SiteSection {
      * the database.
      */
     public void close() {
-        if (jobManager != null) jobManager.shutdown();
         DBSpecifics.getInstance().shutdownDatabase();
     }
 }

@@ -33,8 +33,8 @@
         port 8070 for the viewerproxy.
         port 8074 for the GUIApplication webinterface
         port 8090-8093 for the Heritrix GUI 
-        port 8110-8117: JMX ports
-        port 8210-8217: RMI ports
+        port 8110-8118: JMX ports
+        port 8210-8218: RMI ports
 
         Does not include a checksum replica w/ a ChecksumFileApplication
         Uses the default ActiveBitPreservation implementation
@@ -93,7 +93,7 @@
 
     <thisPhysicalLocation name="NATIONAL_LIBRARY">
         <deployInstallDir>/home/test</deployInstallDir>
-        <deployMachineUserName>test</deployMachineUserName>
+        <deployMachineUserName>test</deployMachineUserName>            
         <settings>
             <common>
                 <useReplicaId>A</useReplicaId> 
@@ -110,9 +110,20 @@
                 <baseDir>viewerproxy</baseDir>
             </viewerproxy>
         </settings>
-
         <deployMachine name="localhost">
-            <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
+            <deployHarvestDatabaseDir>harvestDatabase</deployHarvestDatabaseDir>
+            <deployHarvestDatabaseExternal>true</deployHarvestDatabaseExternal>
+            <settings>
+                <common>
+                    <database>
+                       <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
+                       <baseUrl>jdbc:derby</baseUrl>
+                       <machine>localhost</machine>
+                       <port>8119</port>
+                       <dir>harvestDatabase/fullhddb</dir>
+                    </database>
+                </common>
+            </settings>
             <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
                 <settings>
                     <common>
@@ -124,12 +135,9 @@
                             <rmiPort>8210</rmiPort>
                         </jmx>
                         <remoteFile>
-                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                        <port>8040</port>
-                        </remoteFile>  
-                        <database>
-                             <url>jdbc:derby:harvestDatabase/fullhddb</url>
-                        </database>
+                            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                            <port>8040</port>
+                        </remoteFile>
                     </common>
                 </settings>
             </applicationName>
@@ -168,9 +176,9 @@
                             <port>8113</port>  
                             <rmiPort>8213</rmiPort>
                         </jmx>
- 		        <remoteFile>
-                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                        <port>8043</port>
+                        <remoteFile>
+                            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                            <port>8043</port>
                         </remoteFile>  
                     </common>
                     <archive>
@@ -188,9 +196,9 @@
                             <port>8114</port>
                             <rmiPort>8214</rmiPort>
                         </jmx>
- 			<remoteFile>
-                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                        <port>8044</port> 
+                        <remoteFile>
+                            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                            <port>8044</port> 
                         </remoteFile>  
                     </common>
                     <harvester>
@@ -215,9 +223,9 @@
                             <port>8115</port>
                             <rmiPort>8215</rmiPort>
                         </jmx>
- 			<remoteFile>
-                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                        <port>8045</port> 
+                        <remoteFile>
+                            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                            <port>8045</port> 
                         </remoteFile>  
                     </common>
                     <harvester>
@@ -229,7 +237,7 @@
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
-               		    <serverDir>harvester_high</serverDir>
+                        <serverDir>harvester_high</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>
@@ -241,9 +249,9 @@
                             <port>8116</port>
                             <rmiPort>8216</rmiPort>
                         </jmx>
- 			<remoteFile>
-                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                        <port>8046</port> 
+                        <remoteFile>
+                            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                            <port>8046</port> 
                         </remoteFile>  
                     </common>
                 </settings>
@@ -257,9 +265,9 @@
                         <http>
                             <port>8070</port>
                         </http>
- 			<remoteFile>
-                        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                        <port>8047</port>
+                        <remoteFile>
+                            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                            <port>8047</port>
                         </remoteFile>  
                         <jmx>
                             <port>8117</port>
@@ -267,7 +275,17 @@
                         </jmx>
                     </common>
                 </settings>
-            </applicationName>
+            </applicationName>            
+            <applicationName name="dk.netarkivet.harvester.scheduler.HarvestJobManagerApplication">
+                <settings>
+                    <common>
+                        <jmx>
+                            <port>8118</port> 
+                            <rmiPort>8218</rmiPort>
+                        </jmx>
+                    </common>
+                </settings>            
+            </applicationName>  
       </deployMachine>
     </thisPhysicalLocation>
 </deployGlobal>
