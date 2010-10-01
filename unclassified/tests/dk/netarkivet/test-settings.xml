@@ -49,6 +49,15 @@
 	        <userPassword>jms*ftp</userPassword>
     	</remoteFile>
         <tempDir>./tests/commontempdir</tempDir>
+        <database>
+            <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
+            <baseUrl>jdbc:derby:harvestdefinitionbasedir/fullhddb</baseUrl>
+            <machine></machine>
+            <port></port>
+            <dir></dir> 
+            <backupInitHour>3</backupInitHour>
+            <validityCheckTimeout>0</validityCheckTimeout>
+        </database>
         <replicas>
             <!-- All bitarcive replicas in the environment, 
                  e.g., (ONE, "replicaOne", bitarchive) and 
