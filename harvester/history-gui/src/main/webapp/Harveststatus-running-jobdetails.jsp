@@ -103,6 +103,9 @@ This page displays details about a running job.
         "<a href=\"" + HTMLUtils.escapeHtmlValues(harvestUrl)
         + "\">" + HTMLUtils.escapeHtmlValues(harvestName) + "</a>";
 
+    StartedJobInfo latest =
+        HarvestMonitorServer.getMostRecentRunningJobInfo(jobID);
+
     StartedJobInfo[] history =
         HarvestMonitorServer.getMostRecentRunningJobInfos(jobID);
 
@@ -135,7 +138,7 @@ This page displays details about a running job.
 </fmt:message>
 </h3>
 
-<table class="selection_table">
+<table>
 
     <tr class="spacerRowBig"><td>&nbsp;</td></tr>
     <tr><th colspan=2">
@@ -146,25 +149,53 @@ This page displays details about a running job.
 	    <td colspan=2"><ul>
 	       <!-- Link to Heritrix console -->
 	       <li>
-	       <a href="<%=history[0].getHostUrl()%>" target="_blank">
 	           <fmt:message key="running.job.details.heritrixConsoleLink">
-	           <fmt:param><%=history[0].getHostName()%></fmt:param>
+	               <fmt:param>
+                       <a href="<%=latest.getHostUrl()%>" target="_blank">
+                       <fmt:message key="running.job.details.display"/>
+                       </a>
+                   </fmt:param>
+	               <fmt:param>
+	                   <a href="<%=latest.getHostUrl()%>" target="_blank">
+	                   <%=latest.getHostName()%>
+	                   </a>
+	               </fmt:param>
 	           </fmt:message>
-	       </a>
 	       </li>
 	       <!-- Link to job definition page -->
 	       <li>
-           <a href="Harveststatus-jobdetails.jsp?jobID=<%= jobID %>">
-               <fmt:message key="running.job.details.jobDefinitionLink"/>
-           </a>
+	           <fmt:message key="running.job.details.jobDefinitionLink">
+	                <fmt:param>
+	                    <a href="Harveststatus-jobdetails.jsp?jobID=<%= jobID %>">
+	                    <fmt:message key="running.job.details.display"/>
+	                    </a>
+	                </fmt:param>
+	           </fmt:message>
            </li>
 
 	       <% if (frontierReport.getSize() > 0 )  { %>
 	       <!-- Link to frontier section within the page -->
 	       <li>
-           <a href="#frontierReport">
-               <fmt:message key="running.job.details.heritrixFrontierLink"/>
-           </a>
+           <fmt:message key="running.job.details.heritrixFrontierLinks">
+
+                <fmt:param>
+                    <a href="#frontierReport">
+                        <fmt:message key="running.job.details.display"/>
+                    </a>
+                </fmt:param>
+
+                <fmt:param>
+                    <a href="./Harveststatus-frontier-csvexport.jsp?<%= ExportFrontierReportCsvQuery.UI_FIELD.JOB_ID.name() %>=<%= jobID %>">
+                        <fmt:message key="running.job.details.export"/>
+                    </a>
+                </fmt:param>
+
+                <fmt:param>
+	            <%= StringUtils.formatDate(
+	                    frontierReport.getTimestamp(), "yyyy/MM/dd HH:mm") %>
+	            </fmt:param>
+
+           </fmt:message>
            </li>
            <% } %>
 
@@ -189,102 +220,36 @@ This page displays details about a running job.
 	    </ul></td>
     </tr>
     <tr class="spacerRowBig"><td>&nbsp;</td></tr>
-	<tr>
-	    <!-- Charts -->
-	    <td width="60%">
-	       <b><fmt:message key="running.job.details.chartsLabel"/></b>
-	    </td>
-
-	    <!-- History table -->
-	    <td>
-	       <b><fmt:message key="running.job.details.historyTableLabel"/></b>
-	    </td>
-    </tr>
-
-    <tr class="spacerRowSmall">
-        <td colspan="2">&nbsp;</td>
-    </tr>
 
     <tr>
         <!-- Charts -->
-        <td>
+        <td valign="top">
         <img src="<%= HarvestMonitorServer.getInstance().getChartFilePath(jobID) %>" alt="history_<%=jobID %>"/>
         </td>
 
         <!-- History table -->
-        <td width="55%">
-           <table class="selection_table">
+        <td width="55%" valign="top">
+           <table>
                <tr>
                    <th><fmt:message key="running.job.details.table.date"/></th>
                    <th><fmt:message key="table.running.jobs.elapsedTime"/></th>
                    <th><fmt:message key="table.running.jobs.progress"/></th>
                    <th><fmt:message key="table.running.jobs.queuedFiles"/></th>
-                   <th><fmt:message key="running.job.details.table.status"/></th>
                </tr>
                <%
-                   for (StartedJobInfo sji : history) {
+                   for (int i = 0; i < history.length; i++) {
+                       StartedJobInfo sji = history[i];
                %>
-               <tr>
-                   <td><%= StringUtils.formatDate(sji.getTimestamp().getTime(), "yyyy/MM/dd HH:mm") %></td>
+               <tr class="<%= HTMLUtils.getRowClass(i) %>">
+                   <td><%= StringUtils.formatDate(sji.getTimestamp().getTime(), "MM/dd HH:mm") %></td>
                    <td><%= StringUtils.formatDuration(sji.getElapsedSeconds()) %></td>
-                   <td><%= StringUtils.formatPercentage(sji.getProgress()) %></td>
-                   <td><%= sji.getQueuedFilesCount() %></td>
-                   <td>
-                        &nbsp;
-			            <%
-			                String altStatus = "?";
-			                String bullet = "?";
-			                switch (sji.getStatus()) {
-			                    case PRE_CRAWL:
-			                        altStatus = "table.running.jobs.status.preCrawl";
-			                        bullet = "bluebullet.png";
-			                        break;
-			                    case CRAWLER_ACTIVE:
-			                        altStatus = "table.running.jobs.status.crawlerRunning";
-			                        bullet = "greenbullet.png";
-			                        break;
-			                    case CRAWLER_PAUSING:
-			                        altStatus = "table.running.jobs.status.crawlerPausing";
-			                        bullet = "yellowbullet.png";
-			                        break;
-			                    case CRAWLER_PAUSED:
-			                        altStatus = "table.running.jobs.status.crawlerPaused";
-			                        bullet = "redbullet.png";
-			                        break;
-			                    case CRAWLING_FINISHED:
-			                        altStatus = "table.running.jobs.status.crawlFinished";
-			                        bullet = "greybullet.png";
-			                        break;
-
-			                }
-			            %>
-                        <img src="<%=bullet%>" alt="<%=I18N.getString(request.getLocale(), altStatus)%>"/>
-                   </td>
+                   <td align="right"><%= StringUtils.formatPercentage(sji.getProgress()) %></td>
+                   <td align="right"><%= sji.getQueuedFilesCount() %></td>
                </tr>
                <%
                    }
                %>
            </table>
-           <br/><br/>
-			&nbsp;
-			<fmt:message key="table.running.jobs.legend">
-			    <fmt:param>
-			    <img src="bluebullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.preCrawl")%>"/>
-			    </fmt:param>
-			    <fmt:param>
-			    <img src="greenbullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.crawlerRunning")%>"/>
-			    </fmt:param>
-			    <fmt:param>
-			    <img src="yellowbullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.crawlerPausing")%>"/>
-			    </fmt:param>
-			    <fmt:param>
-			    <img src="redbullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.crawlerPaused")%>"/>
-			    </fmt:param>
-			    <fmt:param>
-			    <img src="greybullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.crawlFinished")%>"/>
-			    </fmt:param>
-			</fmt:message>
-			<br/><br/>
         </td>
     </tr>
 
@@ -299,23 +264,13 @@ This page displays details about a running job.
 %>
 
     <tr><th colspan=2">
-        <a id="frontierReport" name="frontierReport">
+        <a id="frontierReport" name="frontierReport"/> <!-- Anchor  -->
         <fmt:message key="running.job.details.frontier.title.TopTotalEnqueuesFilter">
             <fmt:param>
             <%= StringUtils.formatDate(
                     frontierReport.getTimestamp(), "yyyy/MM/dd HH:mm") %>
             </fmt:param>
         </fmt:message>
-        </a>
-        &nbsp;
-        <form method="post"
-              action="./Harveststatus-frontier-csvexport.jsp">
-            <input type="hidden"
-                id="<%= ExportFrontierReportCsvQuery.UI_FIELD.JOB_ID.name() %>"
-                name="<%= ExportFrontierReportCsvQuery.UI_FIELD.JOB_ID.name() %>"
-                value ="<%= jobID %>"/>
-            <input type="submit" value="<fmt:message key="running.job.details.frontier.exportAsCsv"/>"/>
-        </form>
     </th></tr>
     <tr class="spacerRowBig"><td colspan=2">&nbsp;</td></tr>
     <tr>
@@ -326,8 +281,6 @@ This page displays details about a running job.
                    <th><fmt:message key="running.job.details.frontier.totalEnqueues"/></th>
                    <th><fmt:message key="running.job.details.frontier.currentSize"/></th>
                    <th><fmt:message key="running.job.details.frontier.totalSpent"/></th>
-                   <th><fmt:message key="running.job.details.frontier.totalBudget"/></th>
-                   <th><fmt:message key="running.job.details.frontier.lastPeekUri"/></th>
                    <th><fmt:message key="running.job.details.frontier.lastQueuedUri"/></th>
                </tr>
                <%
@@ -340,11 +293,8 @@ This page displays details about a running job.
                 <td align="right">
                     <fmt:formatNumber type="number" value="<%= l.getCurrentSize() %>"/></td>
                 <td align="right"><fmt:formatNumber type="number" value="<%= l.getTotalSpend() %>"/></td>
-                <td align="right"><fmt:formatNumber type="number" value="<%= l.getTotalBudget() %>"/></td>
-                <td><a href="<%= l.getLastPeekUri() %>" target="_blank">
-                    <%= StringUtils.makeEllipsis(l.getLastPeekUri(), 25) %></a></td>
                 <td><a href="<%= l.getLastQueuedUri() %>" target="_blank">
-                <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 25) %></a></td>
+                <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 30) %></a></td>
                </tr>
                <%  } %>
          </table>

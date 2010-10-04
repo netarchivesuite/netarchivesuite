@@ -105,6 +105,13 @@ public abstract class RunningJobsInfoDAO {
             int limit);
 
     /**
+     * Returns the most recent progress record for the given job ID.
+     * @param jobId the job id.
+     * @return the most recent progress record for the given job ID.
+     */
+    public abstract StartedJobInfo getMostRecentByJobId(long jobId);
+
+    /**
      * Removes all monitor and history records pertaining to the given job ID
      * from the persistent storage.
      * @param jobId the job id.

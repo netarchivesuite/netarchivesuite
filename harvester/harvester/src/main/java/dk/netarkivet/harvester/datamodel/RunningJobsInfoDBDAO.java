@@ -40,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -540,6 +541,73 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
         return (StartedJobInfo[]) infosForJob.toArray(
                 new StartedJobInfo[infosForJob.size()]);
+    }
+
+    /**
+     * Returns the most recent progress record for the given job ID.
+     * @param jobId the job id.
+     * @return the most recent progress record for the given job ID.
+     */
+    @Override
+    public StartedJobInfo getMostRecentByJobId(long jobId) {
+        Connection c = DBConnect.getDBConnection();
+
+        try {
+
+            ResultSet rs = c.createStatement().executeQuery(
+                    "SELECT " + HM_COLUMN.getColumnsInOrder()
+                    + " FROM runningJobsMonitor"
+                    + " WHERE jobId=" + jobId);
+
+            if (rs.next()) {
+                String harvestName = rs.getString(HM_COLUMN.harvestName.rank());
+                StartedJobInfo sji = new StartedJobInfo(harvestName, jobId);
+
+                sji.setElapsedSeconds(
+                        rs.getLong(HM_COLUMN.elapsedSeconds.rank()));
+                sji.setHostUrl(rs.getString(HM_COLUMN.hostUrl.rank()));
+                sji.setProgress(rs.getDouble(HM_COLUMN.progress.rank()));
+                sji.setQueuedFilesCount(
+                        rs.getLong(HM_COLUMN.queuedFilesCount.rank()));
+                sji.setTotalQueuesCount(
+                        rs.getLong(HM_COLUMN.totalQueuesCount.rank()));
+                sji.setActiveQueuesCount(
+                        rs.getLong(HM_COLUMN.activeQueuesCount.rank()));
+                sji.setExhaustedQueuesCount(
+                        rs.getLong(HM_COLUMN.exhaustedQueuesCount.rank()));
+                sji.setAlertsCount(
+                        rs.getLong(HM_COLUMN.alertsCount.rank()));
+                sji.setDownloadedFilesCount(
+                        rs.getLong(HM_COLUMN.downloadedFilesCount.rank()));
+                sji.setCurrentProcessedKBPerSec(
+                        rs.getLong(
+                                HM_COLUMN.currentProcessedKBPerSec.rank()));
+                sji.setProcessedKBPerSec(
+                        rs.getLong(HM_COLUMN.processedKBPerSec.rank()));
+                sji.setCurrentProcessedDocsPerSec(
+                        rs.getDouble(
+                              HM_COLUMN.currentProcessedDocsPerSec.rank()));
+                sji.setProcessedDocsPerSec(
+                        rs.getDouble(HM_COLUMN.processedDocsPerSec.rank()));
+                sji.setActiveToeCount(
+                        rs.getInt(HM_COLUMN.activeToeCount.rank()));
+                sji.setStatus(
+                        CrawlStatus.values()[
+                                       rs.getInt(HM_COLUMN.status.rank())]);
+                sji.setTimestamp(new Date(
+                        rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
+
+                return sji;
+            }
+
+        } catch (SQLException e) {
+            String message = "SQL error querying runningJobsMonitor"
+                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        }
+
+        throw new UnknownID("No running job with ID " + jobId);
     }
 
     /**

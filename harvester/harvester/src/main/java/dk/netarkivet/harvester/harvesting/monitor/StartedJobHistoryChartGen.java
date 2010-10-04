@@ -44,10 +44,12 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
@@ -123,10 +125,8 @@ class StartedJobHistoryChartGen {
 
         double[] scale(double[] timeInSeconds) {
             double[] scaledTime = new double[timeInSeconds.length];
-            int i = 0;
-            for (double s : timeInSeconds) {
+            for (int i = 0; i < timeInSeconds.length; i++) {
                 scaledTime[i] = timeInSeconds[i] / this.scaleSeconds;
-                i++;
             }
             return scaledTime;
         }
@@ -225,6 +225,10 @@ class StartedJobHistoryChartGen {
                                         gen.locale,
                                "running.job.details.chart.legend.queuedUris") },
                     NumberUtils.toPrimitiveArray(timeValues),
+                    new double[][]  {
+                        new double[] { 0, 100 },
+                        null
+                    },
                     new double[][] {
                         NumberUtils.toPrimitiveArray(progressValues),
                         NumberUtils.toPrimitiveArray(urlValues)
@@ -268,6 +272,8 @@ class StartedJobHistoryChartGen {
      */
     private static final int[] CHART_RESOLUTION = new int[] { 600, 450 };
 
+    private static final double CHART_AXIS_DIMENSION = 10.0;
+
     private static final String OUTPUT_REL_PATH  =
         "History" + File.separator + "webapp";
 
@@ -303,7 +309,7 @@ class StartedJobHistoryChartGen {
         ChartGenExecutor exec = new ChartGenExecutor();
         genHandle = exec.scheduleWithFixedDelay(
                 new ChartGen(this),
-                GEN_INTERVAL,
+                0,
                 GEN_INTERVAL,
                 TimeUnit.SECONDS);
     }
@@ -340,6 +346,7 @@ class StartedJobHistoryChartGen {
      * @param pxHeight the image height in pixels.
      * @param chartTitle the chart title, may be null.
      * @param xAxisTitle the x axis title
+     * @param yDataSeriesRange the axis range (null for auto)
      * @param yDataSeriesTitles the Y axis titles.
      * @param timeValuesInSeconds the time values in seconds
      * @param yDataSeries the Y axis value series.
@@ -354,6 +361,7 @@ class StartedJobHistoryChartGen {
             String xAxisTitle,
             String[] yDataSeriesTitles,
             double[] timeValuesInSeconds,
+            double[][] yDataSeriesRange,
             double[][] yDataSeries,
             Color[] yDataSeriesColors,
             String[] yDataSeriesTickSuffix,
@@ -362,7 +370,7 @@ class StartedJobHistoryChartGen {
 
         // Domain axis
         NumberAxis xAxis = new NumberAxis(xAxisTitle);
-        xAxis.setFixedDimension(10.0);
+        xAxis.setFixedDimension(CHART_AXIS_DIMENSION);
         xAxis.setLabelPaint(Color.black);
         xAxis.setTickLabelPaint(Color.black);
 
@@ -386,8 +394,9 @@ class StartedJobHistoryChartGen {
 
         // First range axis
         NumberAxis firstYAxis = new NumberAxis(firstDataSetTitle);
-        firstYAxis.setFixedDimension(10.0);
-        firstYAxis.setAutoRangeIncludesZero(true);
+
+        firstYAxis.setFixedDimension(CHART_AXIS_DIMENSION);
+        setAxisRange(firstYAxis, yDataSeriesRange[0]);
         firstYAxis.setLabelPaint(firstDataSetColor);
         firstYAxis.setTickLabelPaint(firstDataSetColor);
         String firstAxisTickSuffix = yDataSeriesTickSuffix[0];
@@ -417,8 +426,10 @@ class StartedJobHistoryChartGen {
             String seriesTitle = yDataSeriesTitles[i];
             Color seriesColor = yDataSeriesColors[i];
             NumberAxis yAxis = new NumberAxis(seriesTitle);;
-            yAxis.setFixedDimension(10.0);
-            yAxis.setAutoRangeIncludesZero(true);
+
+            yAxis.setFixedDimension(CHART_AXIS_DIMENSION);
+            setAxisRange(yAxis, yDataSeriesRange[i]);
+
             yAxis.setLabelPaint(seriesColor);
             yAxis.setTickLabelPaint(seriesColor);
 
@@ -485,6 +496,18 @@ class StartedJobHistoryChartGen {
      */
     void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    private void setAxisRange(NumberAxis axis, double[] range) {
+        if (range == null || range.length != 2) {
+            axis.setAutoRange(true);
+        } else {
+            double lower = range[0];
+            double upper = range[1];
+            ArgumentNotValid.checkTrue(lower < upper, "Incorrect range");
+            axis.setAutoRange(false);
+            axis.setRange(new Range(lower, upper));
+        }
     }
 
 }

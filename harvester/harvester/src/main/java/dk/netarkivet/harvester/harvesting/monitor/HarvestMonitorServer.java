@@ -175,6 +175,17 @@ implements MessageListener, ComponentLifeCycle {
                displayedHistorySize);
     }
 
+    /**
+     * Returns the most recent running job info record available for the given
+     * job ID.
+     * @param jobId
+     * @return the most recent running job info records available
+     * for the given job ID.
+     */
+    public static StartedJobInfo getMostRecentRunningJobInfo(long jobId) {
+       return RunningJobsInfoDAO.getInstance().getMostRecentByJobId(jobId);
+    }
+
     @Override
     public void visit(FrontierReportMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");

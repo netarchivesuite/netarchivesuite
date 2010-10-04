@@ -40,49 +40,49 @@ import dk.netarkivet.harvester.datamodel.NumberUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class StartedJobHistoryChartGenTest extends TestCase {
-    
+
     ReloadSettings rs = new ReloadSettings();
-    
+
     StartedJobHistoryChartGen gen;
-    
+
     @Override
     protected void setUp() throws Exception {
         rs.setUp();
         super.setUp();
-        
+
         Settings.set(
-                CommonSettings.DIR_COMMONTEMPDIR, 
+                CommonSettings.DIR_COMMONTEMPDIR,
                 TestInfo.WORKING_DIR.getPath());
-        
+
         gen = new StartedJobHistoryChartGen(1);
         gen.setLocale(Locale.getDefault());
     }
-    
+
     public void tearDown() throws Exception {
-        
+
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        
+
         super.tearDown();
         rs.tearDown();
-        
+
         gen.cleanup();
     }
-    
+
     public final void testPngGeneration() throws IOException, ParseException {
-        
+
         File testDataDir = new File(TestInfo.BASEDIR, "charting");
         File testData = new File(testDataDir, "job266.csv");
-        
+
         List<Double> timeValues = new LinkedList<Double>();
         List<Double> progressValues = new LinkedList<Double>();
         List<Double> urlValues = new LinkedList<Double>();
         List<Double> randomValues = new LinkedList<Double>();
-        
+
         BufferedReader in = new BufferedReader(new FileReader(testData));
         String line = in.readLine(); // skip header line
         while ((line = in.readLine()) != null) {
             String[] parts = line.split(";");
-            
+
             timeValues.add(
                     Math.floor(Double.parseDouble(parts[0])));
             progressValues.add(
@@ -91,55 +91,64 @@ public class StartedJobHistoryChartGenTest extends TestCase {
             randomValues.add(Math.random());
         }
         in.close();
-        
+
         File pngFile = new File(TestInfo.WORKING_DIR, "266-history.png");
         TestInfo.WORKING_DIR.mkdirs();
         pngFile.createNewFile();
-        
+
         gen.generatePngChart(
-                pngFile, 
-                512, 384, 
+                pngFile,
+                512, 384,
                 "Test history graph",
-                "Crawl time", 
+                "Crawl time",
                 new String[] { "Progress", "URL", "Random" },
                 NumberUtils.toPrimitiveArray(timeValues),
+                new double[][] {
+                    new double[] { 0, 100 },
+                    null,
+                    null
+                },
                 new double[][] {
                     NumberUtils.toPrimitiveArray(progressValues),
                     NumberUtils.toPrimitiveArray(urlValues),
                     NumberUtils.toPrimitiveArray(randomValues)
                 },
-                new Color[] { 
+                new Color[] {
                     Color.red, Color.blue, Color.green },
                     new String[] { "%", "", "" },
                 true,
                 Color.lightGray.brighter().brighter());
-                
+
     }
-    
-    public final void testPngGenerationWithNoData() 
+
+    public final void testPngGenerationWithNoData()
     throws IOException, ParseException {
-        
+
         File pngFile = new File(TestInfo.WORKING_DIR, "empty-history.png");
         TestInfo.WORKING_DIR.mkdirs();
         pngFile.createNewFile();
-        
+
         gen.generatePngChart(
-                pngFile, 
-                512, 384, 
+                pngFile,
+                512, 384,
                 null,
-                "", 
+                "",
                 new String[] { "%", ""},
                 new double[0],
+                new double[][] {
+                        new double[] { 0, 100 },
+                        null
+                },
                 new double[][] {
                         new double[0],
                         new double[0]
                 },
-                new Color[] { 
+                new Color[] {
                     Color.blue, Color.green.darker()},
                 new String[] { "", "" },
                 true,
                 Color.lightGray.brighter().brighter());
-        
+
     }
-    
+
 }
