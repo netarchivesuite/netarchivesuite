@@ -248,6 +248,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             log.debug(message);
             throw new UnknownID(message);
         }
+        log.debug("Reading harvestdefinition w/ id" + harvestDefinitionID);
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
@@ -560,6 +561,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 DBConnect.getDBConnection(),
                 "SELECT harvest_id FROM harvestdefinitions "
                 + "ORDER BY name");
+        log.debug("Getting an iterator for all stored harvestdefinitions.");
         return new FilterIterator<Long, HarvestDefinition>(hds.iterator()) {
             public HarvestDefinition filter(Long id) {
                 return read(id);
@@ -628,6 +630,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      */
     public synchronized HarvestDefinition getHarvestDefinition(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
+        log.debug("Reading harvestdefinition w/ name" + name);
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
