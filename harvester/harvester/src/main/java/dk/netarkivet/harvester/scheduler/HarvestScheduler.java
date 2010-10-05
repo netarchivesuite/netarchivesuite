@@ -50,6 +50,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
@@ -174,73 +175,85 @@ public class HarvestScheduler extends LifeCycleComponent {
     }
 
     /**
-     * Schedule all jobs ready for execution and perform backup if required. 
+     * Dispatched new jobs
+     * Stop jobs with status STARTED, which have been on running for more 
+     * than settings.harvester.scheduler.jobtimeouttime time.
      */
-    synchronized void dispatchJobs() {
-
-        // stop STARTED jobs which have been on for more than
-        // settings.harvester.scheduler.jobtimeouttime time.
+    void dispatchJobs() {
         stopTimeoutJobs();
         submitNewJobs();
     }
 
     /**
-     * Submit those jobs that are ready for submission if the relevant message
-     * queue is empty.
-     * */
+     * Submit the next new job if the relevant message queue is empty. 
+     */
     synchronized void submitNewJobs() {
-        final JobDAO dao = JobDAO.getInstance();
-        Iterator<Long> jobsToSubmit = dao.getAllJobIds(JobStatus.NEW);
-        if (!jobsToSubmit.hasNext()) {
-            log.trace("No jobs to be run at this time");
-        } else {
-            log.trace("Submitting new jobs.");
+        try {
+            for (JobPriority priority: JobPriority.values()) {
+                if (isQueueEmpty(JobChannelUtil.getChannel(priority))) {
+                    submitNextNewJob(priority);
+                }
+            }
+        } catch (JMSException e) {
+            log.error("Unable to determine whether message queue is empty", e);
         }
-
-        int numberOfSubmittedJobs = 0;
-        while (jobsToSubmit.hasNext()) {
+    }
+    
+    /**
+     * Submit the next new job (the one with the lowest ID) with the given 
+     * priority.
+     */
+    private void submitNextNewJob(JobPriority priority) {
+        final JobDAO dao = JobDAO.getInstance();
+        Iterator<Long> jobsToSubmit = dao.getAllJobIds(JobStatus.NEW, priority);
+        if (!jobsToSubmit.hasNext()) {
+            if (log.isTraceEnabled() ) {
+                log.trace("No " + priority + " jobs to be run at this time");
+            }           
+        } else {
+            if (log.isTraceEnabled() ) {
+                log.trace("Submitting new " + priority + " job");
+            }
             final long jobID = jobsToSubmit.next();
             Job jobToSubmit = null;
             try {
                 jobToSubmit = dao.read(jobID);
-                
-                if (isQueueEmpty(JobChannelUtil.getChannel(
-                        jobToSubmit.getPriority()))) {
-                    jobToSubmit.setStatus(JobStatus.SUBMITTED);
-                    jobToSubmit.setSubmittedDate(new Date());
-                    dao.update(jobToSubmit);
-                    //Add alias metadata
-                    List<MetadataEntry> metadata
-                    = new ArrayList<MetadataEntry>();
-                    MetadataEntry aliasMetadataEntry
-                    = MetadataEntry.makeAliasMetadataEntry(
-                            jobToSubmit.getJobAliasInfo(),
+
+                jobToSubmit.setStatus(JobStatus.SUBMITTED);
+                jobToSubmit.setSubmittedDate(new Date());
+                dao.update(jobToSubmit);
+                //Add alias metadata
+                List<MetadataEntry> metadata
+                = new ArrayList<MetadataEntry>();
+                MetadataEntry aliasMetadataEntry
+                = MetadataEntry.makeAliasMetadataEntry(
+                        jobToSubmit.getJobAliasInfo(),
+                        jobToSubmit.getOrigHarvestDefinitionID(),
+                        jobToSubmit.getHarvestNum(),
+                        jobToSubmit.getJobID());
+                if (aliasMetadataEntry != null) {
+                    metadata.add(aliasMetadataEntry);
+                }
+
+                //Add duplicationReduction MetadataEntry, if Deduplication 
+                //is enabled.
+                if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
+                        jobToSubmit.getOrderXMLdoc())) {
+                    MetadataEntry duplicateReductionMetadataEntry
+                    = MetadataEntry.makeDuplicateReductionMetadataEntry(
+                            dao.getJobIDsForDuplicateReduction(jobID),
                             jobToSubmit.getOrigHarvestDefinitionID(),
                             jobToSubmit.getHarvestNum(),
-                            jobToSubmit.getJobID());
-                    if (aliasMetadataEntry != null) {
-                        metadata.add(aliasMetadataEntry);
+                            jobToSubmit.getJobID()
+                    );
+
+                    if (duplicateReductionMetadataEntry != null) {
+                        metadata.add(duplicateReductionMetadataEntry);
                     }
+                }
 
-                    //Add duplicationReduction MetadataEntry, if Deduplication 
-                    //is enabled.
-                    if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
-                            jobToSubmit.getOrderXMLdoc())) {
-                        MetadataEntry duplicateReductionMetadataEntry
-                        = MetadataEntry.makeDuplicateReductionMetadataEntry(
-                                dao.getJobIDsForDuplicateReduction(jobID),
-                                jobToSubmit.getOrigHarvestDefinitionID(),
-                                jobToSubmit.getHarvestNum(),
-                                jobToSubmit.getJobID()
-                        );
-
-                        if (duplicateReductionMetadataEntry != null) {
-                            metadata.add(duplicateReductionMetadataEntry);
-                        }
-                    }
-
-                    doOneCrawl(jobToSubmit, metadata);
-                    numberOfSubmittedJobs++;
+                doOneCrawl(jobToSubmit, metadata);
+                if (log.isTraceEnabled() ) {
                     log.trace("Job " + jobToSubmit + " sent to harvest queue.");
                 }
             } catch (Throwable e) {
@@ -254,10 +267,6 @@ public class HarvestScheduler extends LifeCycleComponent {
                     dao.update(jobToSubmit);
                 }
             }
-        }
-        if (numberOfSubmittedJobs > 0) {
-            log.info("Submitted " + numberOfSubmittedJobs 
-                    + " jobs for harvesting");
         }
     }
     

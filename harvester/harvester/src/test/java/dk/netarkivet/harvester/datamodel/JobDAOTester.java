@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -406,6 +407,57 @@ public class JobDAOTester extends DataModelTestCase {
         //check the priorities
         assertEquals("Jobs should preserve priority", job1.getPriority(),
                      job3.getPriority());
+    }
+    
+    /**
+     * Verifies the functionality of the #getAllJobIds(JobStatus, JobPriority)
+     * @throws SQLException
+     */
+    public void testGetAllJobIdsForStatusAndPriority() throws SQLException {
+        JobDAO jobDAO = JobDAO.getInstance();
+
+        Iterator<Long> idsForNewHighPriorityJobs = 
+            jobDAO.getAllJobIds(JobStatus.NEW, JobPriority.HIGHPRIORITY);        
+        assertTrue("Initiel size of jobs with jobstatus " + JobStatus.NEW + 
+                " and JobPriority " + JobPriority.HIGHPRIORITY + 
+                " larger than zero", !idsForNewHighPriorityJobs.hasNext());
+        
+        Iterator<Long> idsForNewLowPriorityJobs = 
+            jobDAO.getAllJobIds(JobStatus.NEW, JobPriority.LOWPRIORITY);
+        assertTrue("Initiel size of jobs with jobstatus " + JobStatus.NEW + 
+                " and JobPriority " + JobPriority.LOWPRIORITY + 
+                " larger than zero", !idsForNewLowPriorityJobs.hasNext());
+        
+        // Create a high and a low priority job
+        Domain d = Domain.getDefaultDomain("testdomain.dk");
+        DomainDAO.getInstance().create(d);
+        addHarvestDefinitionToDatabaseWithId(1);
+        Job jobHighPriorityID = Job.createJob(new Long(1), 
+                d.getDefaultConfiguration(), 0);
+        Job jobLowPriorityID = Job.createSnapShotJob(new Long(1), 
+                d.getDefaultConfiguration(), 2000, -1, 0);
+        jobDAO.create(jobHighPriorityID);
+        jobDAO.create(jobLowPriorityID);
+        
+        idsForNewHighPriorityJobs = 
+            jobDAO.getAllJobIds(JobStatus.NEW, JobPriority.HIGHPRIORITY);
+        assertTrue("No job with jobstatus " + JobStatus.NEW + 
+                " and JobPriority " + JobPriority.HIGHPRIORITY + 
+                " returned after creating job", 
+                idsForNewHighPriorityJobs.hasNext());
+        Job jobHighPriority = jobDAO.read(idsForNewHighPriorityJobs.next());
+        assertEquals("Job should have high priority", 
+                jobHighPriorityID.getPriority(), jobHighPriority.getPriority());
+        
+        idsForNewLowPriorityJobs = 
+            jobDAO.getAllJobIds(JobStatus.NEW, JobPriority.LOWPRIORITY);
+        assertTrue("No job with jobstatus " + JobStatus.NEW + 
+                " and JobPriority " + JobPriority.LOWPRIORITY + 
+                " returned after creating job", jobDAO.getAllJobIds(JobStatus.NEW, 
+                        JobPriority.LOWPRIORITY).hasNext());        
+        Job jobLowPriority = jobDAO.read(idsForNewLowPriorityJobs.next()); 
+        assertEquals("Job should have low priority", 
+                jobLowPriorityID.getPriority(), jobLowPriority.getPriority());
     }
 
     private void setJobStatus(List<Job> jobs, int i, JobStatus status) {

@@ -177,27 +177,6 @@ public class HarvestSchedulerTester extends TestCase {
     }
 
     /**
-     * Test private method getHoursPassedSince().
-     * 
-     * @throws Exception
-     *             if HarvestScheduler throws exception
-     */
-    public void testGetHoursPassedSince() throws Exception {
-        Calendar calendar = new GregorianCalendar();
-        calendar.add(Calendar.MINUTE, 45);
-        assertEquals("Should return -1 on date after now", -1,
-                getHoursPassedSince(calendar.getTime()));
-
-        calendar.add(Calendar.HOUR, -1);
-        assertEquals("Should return 0 on date close to now", 0,
-                getHoursPassedSince(calendar.getTime()));
-
-        calendar.add(Calendar.HOUR, -12);
-        assertEquals("Should return 12 on date 12 hours before", 12,
-                getHoursPassedSince(calendar.getTime()));
-    }
-
-    /**
      * Test that runNewJobs skips bad jobs without crashing (bug #627). TODO The
      * setActualStop/setActualStart no longer throws exception, so we need to
      * find a way making jobs bad
@@ -312,8 +291,7 @@ public class HarvestSchedulerTester extends TestCase {
     /**
      * Test that runNewJobs makes correct duplication reduction information.
      * 
-     * @throws Exception
-     *             if HarvestScheduler throws exception
+     * @throws Exception If HarvestScheduler throws exception
      */
     public void testSubmitNewJobsMakesDuplicateReductionInfo() 
     throws Exception {
@@ -701,8 +679,7 @@ public class HarvestSchedulerTester extends TestCase {
      * @throws Exception
      */
     private void submitNewJobs() throws Exception {
-        ReflectUtils.getPrivateMethod(HarvestScheduler.class, "submitNewJobs")
-                .invoke(harvestScheduler);
+        harvestScheduler.submitNewJobs();
         ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())
         .waitForConcurrentTasksToFinish();
     }
@@ -716,22 +693,6 @@ public class HarvestSchedulerTester extends TestCase {
     private void rescheduleSubmittedJobs() throws Exception {
         ReflectUtils.getPrivateMethod(HarvestScheduler.class,
                 "rescheduleSubmittedJobs").invoke(harvestScheduler);
-    }
-
-    /**
-     * Calls the <code>getHoursPassedSince</code> method on the current
-     * harvestScheduler test instance
-     * 
-     * @param date
-     *            The date to use in the method call
-     * @throws Exception
-     */
-    private int getHoursPassedSince(Date date) throws Exception {
-        Method getHoursPassedSinceMethod = harvestScheduler.getClass()
-                .getDeclaredMethod("getHoursPassedSince", Date.class);
-        getHoursPassedSinceMethod.setAccessible(true);
-        return ((Integer) getHoursPassedSinceMethod.invoke(harvestScheduler,
-                date)).intValue();
     }
 
     private void startHarvestScheduler() throws InterruptedException {
