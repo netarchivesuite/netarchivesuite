@@ -93,6 +93,11 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             Collections.synchronizedMap(new HashMap<String, BatchJobStatus>());
 
     /**
+     * The timer for keeping track of running batchjobs.
+     */
+    protected Timer batchTimer = new Timer(true);
+    
+    /**
      * Logger for this class.
      */
     private static Log log = LogFactory.getLog(BitarchiveMonitor.class);
@@ -377,8 +382,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             batchTimeoutTask
                     = new BatchTimeoutTask(bitarchiveBatchID);
             batchTimeout = timeout;
-            Timer timer = new Timer(true);
-            timer.schedule(batchTimeoutTask, batchTimeout);
+            batchTimer.schedule(batchTimeoutTask, batchTimeout);
             this.noOfFilesProcessed = 0;
             try {
                 this.batchResultFile = File.createTempFile(
