@@ -30,6 +30,9 @@ import java.util.Set;
 
 import javax.servlet.ServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
@@ -63,6 +66,11 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  */
 public class HarvestStatusQuery {
 
+
+    /** The logger to use.    */
+    protected static final Log log = LogFactory.getLog(
+            HarvestStatusQuery.class.getName());
+    
     /** The String code to select all states. */
     public static final String JOBSTATUS_ALL = "ALL";
     
@@ -181,7 +189,7 @@ public class HarvestStatusQuery {
      * @param req a servlet request
      */
     public HarvestStatusQuery(ServletRequest req) {
-
+        log.debug("Constructing a Query from the current request");
         String[] statuses = (String[]) UI_FIELD.JOB_STATUS.getValues(req);
         for (String s : statuses) {
             if (JOBSTATUS_ALL.equals(s)) {

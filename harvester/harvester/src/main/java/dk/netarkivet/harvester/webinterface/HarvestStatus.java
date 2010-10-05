@@ -27,6 +27,9 @@ import java.util.List;
 
 import javax.servlet.jsp.PageContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -41,6 +44,11 @@ import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.UI_FIELD;
  * This page provides support for the HarvestStatus pages of the web interface.
  */
 public class HarvestStatus {
+    
+    /** The logger to use.    */
+    protected static final Log log = LogFactory.getLog(
+            HarvestStatus.class.getName());
+    
     /** The total number in the full resultset.*/
     private final long fullResultsCount;
     
@@ -155,6 +163,7 @@ public class HarvestStatus {
      * @return a list of job status info objects
      */
     public static HarvestStatus getjobStatusList(HarvestStatusQuery query) {
+        log.info("Getting a jobstatuslist based on the current query. ");
         return JobDAO.getInstance().getStatusInfo(query);
     }
 }

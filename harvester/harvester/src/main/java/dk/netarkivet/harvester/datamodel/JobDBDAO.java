@@ -680,7 +680,7 @@ public class JobDBDAO extends JobDAO {
      */
     @Override
     public HarvestStatus getStatusInfo(HarvestStatusQuery query) {
-    
+        log.debug("Constructing Harveststatus based on given query.");
         PreparedStatement s = null;
         
         // Obtain total count without limit
@@ -715,7 +715,7 @@ public class JobDBDAO extends JobDAO {
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
-    
+        log.debug("Harveststatus constructed based on given query.");
         return new HarvestStatus(totalRowsCount, jobs);
     }
 
