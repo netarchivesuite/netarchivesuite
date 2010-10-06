@@ -323,7 +323,7 @@ public class HarvestStatusQuery {
      * @param pageSize a positive number.
      */
     public void setPageSize(long pageSize) {
-        ArgumentNotValid.checkPositive(pageSize, "pageSize");
+        ArgumentNotValid.checkNotNegative(pageSize, "pageSize");
         this.pageSize = pageSize;
     }
 
