@@ -30,9 +30,6 @@ import java.util.Set;
 
 import javax.servlet.ServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
@@ -53,7 +50,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  * is equal or posterior</li>
  * <li>If only an end date is specified, will fetch jobs whose end date 
  * is equal or anterior</li>
- * <li>If both are specified, will fetch jobs whose start and end date are equal 
+ * <li>If both are specified, will fetch jobs whose start and end date are equal
  * or comprised between the specified bounds.</li>
  * </ol>
  * 
@@ -66,20 +63,15 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  */
 public class HarvestStatusQuery {
 
-
-    /** The logger to use.    */
-    protected static final Log log = LogFactory.getLog(
-            HarvestStatusQuery.class.getName());
-    
     /** The String code to select all states. */
     public static final String JOBSTATUS_ALL = "ALL";
     
     /** The String code to select all harvests. */
     public static final String HARVEST_NAME_ALL = "ALL";
     
-    public static final String HARVEST_NAME_WILDCARD= "*";
-    public static final long PAGE_SIZE_NONE= 0;
-    public static final long DATE_NONE= -1;
+    public static final String HARVEST_NAME_WILDCARD = "*";
+    public static final long PAGE_SIZE_NONE = 0;
+    public static final long DATE_NONE = -1;
     
     public static enum SORT_ORDER {
         ASC, DESC;
@@ -120,9 +112,9 @@ public class HarvestStatusQuery {
         }
 
         /**
-         * Extracts the field's value from a servlet request. If the request 
+         * Extracts the field's value from a servlet request. If the request
          * does not define the paraeter's value, it is set to the default
-         * value. 
+         * value.
          * @param req a servlet request
          * @return the field's value
          */
@@ -139,12 +131,12 @@ public class HarvestStatusQuery {
         }
 
     }
-    
+
     // The calendar widget uses a date format that differs from the patterns
     // used by SimpleDateFormat, hence we need two preperties
     public static final String CALENDAR_UI_DATE_FORMAT = "%Y/%m/%d";
-    
-    private static final SimpleDateFormat DATE_FORMAT = 
+
+    private static final SimpleDateFormat DATE_FORMAT =
         new SimpleDateFormat("yyyy/MM/dd");
 
     private Set<JobStatus> jobStatuses = new HashSet<JobStatus>();
@@ -164,6 +156,8 @@ public class HarvestStatusQuery {
     private long pageSize;
 
     private long startPageIndex;
+    
+    private boolean caseSensitiveHarvestName=true;
 
     /**
      * Builds a default query that will select all jobs.
@@ -185,11 +179,11 @@ public class HarvestStatusQuery {
     /**
      * Builds a query from a servlet request. Unspecified fields are set to
      * their default value.
-     * 
+     *
      * @param req a servlet request
      */
     public HarvestStatusQuery(ServletRequest req) {
-        log.debug("Constructing a Query from the current request");
+
         String[] statuses = (String[]) UI_FIELD.JOB_STATUS.getValues(req);
         for (String s : statuses) {
             if (JOBSTATUS_ALL.equals(s)) {
@@ -278,11 +272,14 @@ public class HarvestStatusQuery {
 
     public String getHarvestName() {
         if (harvestName == null) {
-            return ""; 
+            return "";
         }
         return harvestName;
     }
-
+    
+    public void setHarvestName( String harvestName) {
+        this.harvestName = harvestName;
+    }
     public Long getHarvestId() {
         return harvestId;
     }
@@ -321,8 +318,25 @@ public class HarvestStatusQuery {
         return pageSize;
     }
 
+    /**
+     * Sets the page size
+     * @param pageSize a positive number.
+     */
+    public void setPageSize(long pageSize) {
+        ArgumentNotValid.checkPositive(pageSize, "pageSize");
+        this.pageSize = pageSize;
+    }
+
     public long getStartPageIndex() {
         return startPageIndex;
+    }
+    
+    public void setCaseSensitiveHarvestName(boolean caseSensitiveHarvestName) {
+        this.caseSensitiveHarvestName = caseSensitiveHarvestName;
+    }
+
+    public boolean getCaseSensitiveHarvestName() {
+        return caseSensitiveHarvestName;
     }
 
 }

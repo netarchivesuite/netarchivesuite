@@ -349,10 +349,10 @@ public class HarvesterSettings {
     public static String FRONTIER_REPORT_WAIT_TIME =
         "settings.harvester.harvesting.frontier.frontierReportWaitTime";
 
-
     /**
      * <b>settings.harvester.harvesting.frontier.filter.class</b>
      * Defines a filter to apply to the full frontier report.
+     * the default class: {@link TopTotalEnqueuesFilter}
      */
     public static String FRONTIER_REPORT_FILTER_CLASS =
             "settings.harvester.harvesting.frontier.filter.class";
