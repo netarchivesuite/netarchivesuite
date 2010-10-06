@@ -23,6 +23,7 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -203,6 +204,24 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     protected void createGlobalCrawlerTrapLists() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
         DBConnect.updateTable("global_crawler_trap_expressions", 1);
+    }
+    
+    @Override
+    public void createFrontierReportMonitorTable() {
+        log.warn("Please use the provided SQL scripts to update the DB schema");
+        DBConnect.updateTable("frontierReportMonitor", 1);   
+    }
+
+    @Override
+    public void createRunningJobsHistoryTable() {
+        log.warn("Please use the provided SQL scripts to update the DB schema");
+        DBConnect.updateTable("runningJobsHistory", 1);  
+    }
+
+    @Override
+    public void createRunningJobsMonitorTable() {
+        log.warn("Please use the provided SQL scripts to update the DB schema");
+        DBConnect.updateTable("runningJobsMonitor", 1);  
     }
 
 }

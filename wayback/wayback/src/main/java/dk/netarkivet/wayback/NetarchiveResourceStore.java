@@ -71,7 +71,7 @@ public class NetarchiveResourceStore implements ResourceStore {
     }
 
     /**
-     * Transforms search result into a reasource, acording to ResourceStore
+     * Transforms search result into a resource, according to the ResourceStore
      * interface.
      * @param captureSearchResult the search result.
      * @return a valid resource containing metadata and a link to the ARC
@@ -105,7 +105,7 @@ public class NetarchiveResourceStore implements ResourceStore {
         BitarchiveRecord bitarchiveRecord = client.get(arcfile, offset);
         if (bitarchiveRecord == null) {
             throw new ResourceNotAvailableException("NetarchiveResourceStore: "
-                    + "Bitarchive didn't return requested record.");
+                    + "Bitarchive didn't return the requested record.");
         }
         logger.info("Retrieved resource from file '" + arcfile + "' at offset '"
                     + offset + "'");
@@ -147,7 +147,7 @@ public class NetarchiveResourceStore implements ResourceStore {
             logger.error("Error looking for empty line", e);
             throw new ResourceNotAvailableException(e.getMessage());
         }
-        // fill metedata for ARC record.
+        // fill metadata for ARC record.
         metadata.put(ARCRecordMetaData.URL_FIELD_KEY,
                      captureSearchResult.getUrlKey());
         //TODO the following is the correct way to set the URL. If we do
@@ -209,7 +209,7 @@ public class NetarchiveResourceStore implements ResourceStore {
                     return metadataF;
                 }
         };
-        logger.info("Returning resouce '" + resource + "'");
+        logger.info("Returning resource '" + resource + "'");
         return resource;
     }
 

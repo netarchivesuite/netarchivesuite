@@ -49,6 +49,8 @@ public class HistorySiteSection extends SiteSection {
 
     /** No initialisation necessary in this site section. */
     public void initialize() {
+	// Initialiaze the running jobs tables if necessary
+	
     }
 
     /** No cleanup necessary in this site section. */

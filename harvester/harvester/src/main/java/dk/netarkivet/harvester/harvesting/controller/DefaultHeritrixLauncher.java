@@ -234,7 +234,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
                     * to the user) is defined in this class.
                     */
                     synchronized (this) {
-                        wait(WAIT_PERIOD);
+                        wait(1000 * CRAWL_CONTROL_WAIT_PERIOD);
                     }
                 } catch (InterruptedException e) {
                     log.trace("Waiting thread awoken: " + e.getMessage());

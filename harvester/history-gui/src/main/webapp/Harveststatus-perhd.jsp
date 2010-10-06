@@ -31,8 +31,12 @@ Parameters:
 harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
    displayed.
 
---%><%@ page import="java.util.Date,
+--%>
+<?xml version="1.0" encoding="utf-8"?>
+<%@ page import="java.util.Date,
                  java.util.List,
+                 dk.netarkivet.common.CommonSettings,
+                 dk.netarkivet.common.utils.Settings,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
@@ -105,6 +109,119 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     List<HarvestRunInfo> hrList = hddao.getHarvestRunInfo(hdoid);
     HTMLUtils.generateHeader(pageContext);
 %>
+
+<script type="text/javascript" src="navigate.js"></script>
+
+
+<%
+    String startPage=request.getParameter("START_PAGE_INDEX");
+
+    if(startPage == null){
+        startPage="1";
+    }
+    long pageSize = Long.parseLong(Settings.get(
+            CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
+
+    String startPagePost=request.getParameter("START_PAGE_INDEX");
+
+    if(startPagePost == null){
+        startPagePost="1";
+    }
+
+    String searchParam=request.getParameter(Constants.HARVEST_PARAM);
+    String searchParamHidden = searchParam.replace(" ","+");  
+%>
+
+               
+<form method="post" name="filtersForm" action="Harveststatus-perhd.jsp">
+<input type="hidden" 
+       name="START_PAGE_INDEX"
+       value="<%=startPagePost%>"/>
+</form>    
+
+<%
+    long totalResultsCount = hrList.size();
+    long actualPageSize = (pageSize == 0 ?
+        totalResultsCount : pageSize);
+
+    long startPageIndex = Long.parseLong(startPage);
+    long startIndex = 0;
+    long endIndex = 0;
+    
+    if (totalResultsCount > 0) {
+        startIndex = ((startPageIndex - 1) * actualPageSize);
+        endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
+    }
+
+    boolean prevLinkActive = false;
+    if (pageSize != 0
+            && totalResultsCount > 0
+            && startIndex > 1) {
+        prevLinkActive = true;
+        
+        
+    }
+    
+    boolean nextLinkActive = false;
+    if (pageSize != 0
+            && totalResultsCount > 0
+            && endIndex < totalResultsCount) {
+        nextLinkActive = true;
+    }
+%>     
+
+              <h3 class="page_heading">
+                <fmt:message key="searching.for.0.gave.1.hits">
+                    <fmt:param value="<%=searchParam%>"/>
+                    <fmt:param value="<%=hrList.size()%>"/>
+                </fmt:message>
+                </h3>
+                
+                <fmt:message key="status.results.displayed">
+                    <fmt:param><%=totalResultsCount%></fmt:param>
+                    <fmt:param><%=startIndex+1%></fmt:param>
+                    <fmt:param><%=endIndex%></fmt:param>
+                </fmt:message>
+     
+  
+  
+      
+                <p style="text-align: right">
+                    <fmt:message key="status.results.displayed.pagination">
+                        <fmt:param>
+                        <%
+                        if (prevLinkActive) {
+                        %>
+                            <a href="javascript:previousPage('<%=Constants.HARVEST_PARAM%>','<%=searchParamHidden%>');">
+                                <fmt:message key="status.results.displayed.prevPage"/>
+                            </a>
+                        <%
+                        } else {
+                        %>
+                            <fmt:message key="status.results.displayed.prevPage"/>
+                        <%
+                        }
+                        %>
+                        </fmt:param>
+                        <fmt:param>
+                        <%
+                        if (nextLinkActive) {
+                        %>
+                            <a href="javascript:nextPage('<%=Constants.HARVEST_PARAM%>','<%=searchParamHidden%>');">
+                                <fmt:message key="status.results.displayed.nextPage"/>
+                            </a>
+                        <%
+                        } else {
+                        %>
+                            <fmt:message key="status.results.displayed.nextPage"/>
+                        <%
+                        }
+                        %>
+                        </fmt:param>       
+                    </fmt:message>
+                </p>               
+     
+     
 <h3 class="page_heading"><%=heading%></h3>
 <%
     if (partialhd != null) {
@@ -167,7 +284,10 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     </tr>
     <%
         int rowcount = 0;
-        for (HarvestRunInfo hri : hrList) {
+        List<HarvestRunInfo> matchingSubList=hrList.
+        subList((int)startIndex,(int)endIndex);
+
+        for (HarvestRunInfo hri : matchingSubList) {
     %>
     <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>">
         <td><%=dk.netarkivet.harvester.webinterface.HarvestStatus

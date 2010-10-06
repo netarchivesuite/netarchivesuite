@@ -24,26 +24,27 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import java.io.Serializable;
 
+import org.archive.crawler.framework.CrawlController;
+
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
-import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController.HeritrixStatus;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 
 /**
- * 
- * This class wraps information stored in the Heritrix MBeans, CrawlService and 
+ *
+ * This class wraps information stored in the Heritrix MBeans, CrawlService and
  * CrawlService.Job, and represent the crawl progress.
- * 
+ *
  * Additionally this object extends {@link HarvesterMessage} so that it can be
  * sent on the JMS bus to be processed by {@link HarvestMonitorServer}.
- * 
+ *
  *  @see HeritrixLauncher#doCrawl()
  *
  */
-public class CrawlProgressMessage extends HarvesterMessage implements
-        Serializable {
+public class CrawlProgressMessage extends HarvesterMessage
+implements Serializable {
 
     /**
      * The general status of a job in NAS.
@@ -58,24 +59,24 @@ public class CrawlProgressMessage extends HarvesterMessage implements
          */
         CRAWLER_ACTIVE,
         /**
+         * Heritrix is crawling but is currently pausing.
+         */
+        CRAWLER_PAUSING,
+        /**
          * Heritrix is crawling but has been paused by the user.
          */
         CRAWLER_PAUSED,
-        /**
+         /**
          * Heritrix has finished crawling, post processing of metadata and ARC
          * files remains to be done.
          */
         CRAWLING_FINISHED
     }
 
-    private static final long serialVersionUID = 6304124980961230741L;
-
     /**
      * Wraps CrawlService MBean attributes.
      */
     public class CrawlServiceInfo implements Serializable {
-
-        private static final long serialVersionUID = 3054888645835412666L;
 
         /**
          * The number of alerts raised by Heritrix.
@@ -122,8 +123,6 @@ public class CrawlProgressMessage extends HarvesterMessage implements
      * Wraps CrawlService.Job MBean attributes.
      */
     public class CrawlServiceJobInfo implements Serializable {
-
-        private static final long serialVersionUID = 3977732833092181475L;
 
         /**
          * The number of URIs currently discovered.
@@ -177,7 +176,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements
 
         /**
          * The job status.
-         * 
+         *
          * @see HeritrixStatus
          */
         private String status;
@@ -265,7 +264,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements
 
         /**
          * Helper method that approximates the number of queued URIs.
-         * 
+         *
          * @return the number of queued URIs
          */
         public long getQueuedUriCount() {
@@ -321,18 +320,18 @@ public class CrawlProgressMessage extends HarvesterMessage implements
     /**
      * Builds an empty message. MBean wrapper values are not set and the
      * appropriate getters should be used to do so.
-     * 
+     *
      * @param harvestID
      *            the harvest definition ID
      * @param jobId
      *            the job ID
      * @param progressStatisticsLegend
      *            the legend of the progress statistics summary string
-     * @see CrawlProgressMessage#progressStatisticsLegend
+     * @see {@link CrawlProgressMessage#progressStatisticsLegend}
      */
     public CrawlProgressMessage(long harvestID, long jobId,
             String progressStatisticsLegend) {
-        super(HarvestMonitorServer.JMS_CHANNEL_ID, Channels.getError());
+        super(HarvestMonitorServer.CRAWL_PROGRESS_CHANNEL_ID, Channels.getError());
         this.harvestID = harvestID;
         this.jobID = jobId;
         this.status = CrawlStatus.PRE_CRAWL;
@@ -343,7 +342,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements
      * Builds an empty message. MBean wrapper values are not set and the
      * appropriate getters should be used to do so. The progressStatisticsLegend
      * is set to the empty string.
-     * 
+     *
      * @param harvestID
      *            the harvest definition ID
      * @param jobId
@@ -399,7 +398,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements
      * fetch anything. Heritrix may still be fetching stuff, as it takes some
      * time for it to go into full pause mode. This method can be used as an
      * indicator that we should not be worried if Heritrix appears to be idle.
-     * 
+     *
      * @return True if the crawler has been paused, e.g. by using the Heritrix
      *         GUI.
      */
@@ -409,7 +408,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements
 
     /**
      * Checks whether Heritrix has finished crawling the job.
-     * 
+     *
      * @return true if Heritrix has finished crawling the job, false otherwise.
      */
     public boolean crawlIsFinished() {
@@ -423,9 +422,9 @@ public class CrawlProgressMessage extends HarvesterMessage implements
 
         String status = getJobStatus().getStatus();
         if (status != null) {
-            return status.equals(HeritrixStatus.FINISHED)
-                    || status.equals(HeritrixStatus.ILLEGAL);
+            return status.equals(CrawlController.FINISHED);
         }
         return false;
     }
+
 }

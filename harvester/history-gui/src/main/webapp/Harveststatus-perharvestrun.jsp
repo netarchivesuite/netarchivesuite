@@ -98,7 +98,17 @@ This page displays harvest details for one harvest definition run
 
 
     // List of information to be shown.
-    List<JobStatusInfo> jobStatusList = 
+    //counting maximum number of results
+    long pageSizeBackup=query.getPageSize();
+    query.setPageSize(HarvestStatusQuery.PAGE_SIZE_NONE);
+    List<JobStatusInfo> jobStatusList  = 
+        HarvestStatus.getjobStatusList(query).getJobStatusInfo();
+ 
+    long totalResultsCount = jobStatusList.size();
+    
+    //back to the original parameter
+    query.setPageSize(pageSizeBackup);
+    jobStatusList = 
     	HarvestStatus.getjobStatusList(query).getJobStatusInfo();
                                         
     final String harvestName
@@ -113,13 +123,38 @@ This page displays harvest details for one harvest definition run
     List<String> selectedJobs = new ArrayList<String>();
 %>
 
+<script type="text/javascript">
+
+
+// Displays the next page of results (if available).
+function previousPage() {
+    document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "<%=query.getStartPageIndex() - 1%>";
+    document.filtersForm.submit();
+}
+
+//Displays the previous page of results (if available).
+function nextPage() {
+    document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "<%=query.getStartPageIndex() + 1%>";
+    document.filtersForm.submit();
+}
+
+function resetPagination() {
+    document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "1";
+}
+
+</script>
+
 
 <%--Make line with comboboxes with job status and order to be shown. --%>
-<form method="get" action="Harveststatus-perharvestrun.jsp">
+<form method="get" name="filtersForm" action="Harveststatus-perharvestrun.jsp">
 <input type="hidden" name="<%=Constants.HARVEST_ID_PARAM%>"
        value="<%=request.getParameter(Constants.HARVEST_ID_PARAM)%>"/>
 <input type="hidden" name="<%=Constants.HARVEST_NUM_PARAM%>"
        value="<%=request.getParameter(Constants.HARVEST_NUM_PARAM)%>"/>
+<input type="hidden" 
+       name="<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX%>"
+       value="<%=query.getStartPageIndex()%>"/>
+
 <h4>
 
 <fmt:message key="status.job.filters.group3">
@@ -170,6 +205,7 @@ This page displays harvest details for one harvest definition run
 </fmt:param>
 </fmt:message>
 <input type="submit" name="upload" 
+       onclick="resetPagination();"
        value="<fmt:message key="status.sort.order.job.show"/>"/>
 </h4>
 </form>
@@ -180,6 +216,83 @@ This page displays harvest details for one harvest definition run
         <fmt:param value="<%=harvestNum%>"/>
     </fmt:message>
 </h2>
+
+<%
+    
+    long pageSize = query.getPageSize();    
+    long actualPageSize = (pageSize == HarvestStatusQuery.PAGE_SIZE_NONE ?
+        totalResultsCount : pageSize);
+
+    long startPageIndex = query.getStartPageIndex();
+    long startIndex = 0;
+    long endIndex = 0;
+    
+    if (totalResultsCount > 0) {
+        startIndex = ((startPageIndex - 1) * actualPageSize) + 1;
+        endIndex = Math.min(startIndex + actualPageSize - 1, totalResultsCount);
+    }
+%>
+<fmt:message key="status.results.displayed">
+<fmt:param><%=totalResultsCount%></fmt:param>
+<fmt:param><%=startIndex%></fmt:param>
+<fmt:param><%=endIndex%></fmt:param>
+</fmt:message>
+
+<%
+    boolean prevLinkActive = false;
+    if (pageSize != HarvestStatusQuery.PAGE_SIZE_NONE
+            && totalResultsCount > 0
+            && startIndex > 1) {
+        prevLinkActive = true;
+    }
+    
+    boolean nextLinkActive = false;
+    if (pageSize != HarvestStatusQuery.PAGE_SIZE_NONE
+            && totalResultsCount > 0
+            && endIndex < totalResultsCount) {
+        nextLinkActive = true;
+    }
+
+%>
+<p style="text-align: right">
+<fmt:message key="status.results.displayed.pagination">
+
+    <fmt:param>
+        <%
+            if (prevLinkActive) {
+        %>
+        <a href="javascript:previousPage();">
+            <fmt:message key="status.results.displayed.prevPage"/>
+        </a>
+        <%
+            } else {
+        %>
+        <fmt:message key="status.results.displayed.prevPage"/>
+        <%
+            }
+        %>
+    </fmt:param>
+    
+    <fmt:param>
+        <%
+            if (nextLinkActive) {
+        %>
+        <a href="javascript:nextPage();">
+            <fmt:message key="status.results.displayed.nextPage"/>
+        </a>
+        <%
+            } else {
+        %>
+        <fmt:message key="status.results.displayed.nextPage"/>
+        <%
+            }
+        %>
+    </fmt:param>       
+    
+</fmt:message>
+</p>
+
+
 
 <h3 class="page_heading"><fmt:message key="pagetitle;jobstatus"/></h3>
 <table class="selection_table">

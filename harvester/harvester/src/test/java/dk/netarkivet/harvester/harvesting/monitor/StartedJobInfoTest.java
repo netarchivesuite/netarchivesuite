@@ -23,7 +23,6 @@
 package dk.netarkivet.harvester.harvesting.monitor;
 
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 
 /** Unittests for the StartedJobInfo class. */
 public class StartedJobInfoTest extends DataModelTestCase {
@@ -33,7 +32,7 @@ public class StartedJobInfoTest extends DataModelTestCase {
     }
 
     public void testStartedJobInfo() {
-        StartedJobInfo sji = new StartedJobInfo(42, 450);
+        StartedJobInfo sji = new StartedJobInfo("harvestName", 450);
     }
 
     public void testGetJobId() {
@@ -110,13 +109,6 @@ public class StartedJobInfoTest extends DataModelTestCase {
 
     public void testCompareTo() {
         fail("Not yet implemented");
-    }
-
-    public void testUpdate() {
-        StartedJobInfo sji = new StartedJobInfo(42, 450);
-        CrawlProgressMessage cpm = new CrawlProgressMessage(0, 0);
-        
-        sji.update(cpm);
     }
 
 }

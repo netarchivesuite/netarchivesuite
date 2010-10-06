@@ -87,8 +87,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
             s = c.prepareStatement("DROP TABLE " + tableName);
             s.execute();
         } catch (SQLException e) {
-            log.warn("Couldn't drop temporary table " + tableName 
-                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+            log.warn("Couldn't drop temporary table " + tableName + "\n" +
+                     ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -98,11 +98,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
      * Checks that the connection is valid (i.e. still open on the server side).
      * This implementation can be overriden if a specific RDBM is not handling
      * the {@link Connection#isValid(int)} JDBC4 method properly.
-     * @param connection A database connection.
-     * @param validityTimeout The time in seconds to wait for the database 
-     * operation used to validate the connection 
- 
-     * @return true, if the connection is valid; false otherwise
+     * @param connection
+     * @param validityTimeout
+     * @return
      * @throws SQLException 
      */
     public boolean connectionIsValid(Connection connection, int validityTimeout)
@@ -343,4 +341,94 @@ public abstract class DerbySpecifics extends DBSpecifics {
         DBConnect.updateTable("global_crawler_trap_expressions", 1,
                               createStatement);
     }
-}
+    
+    @Override
+    public void createFrontierReportMonitorTable() {
+        String createStatement = "CREATE TABLE frontierReportMonitor ("
+            + " jobId bigint NOT NULL, "
+            + "filterId varchar(200) NOT NULL,"     
+            + "tstamp timestamp NOT NULL,"
+            + "domainName varchar(300) NOT NULL,"
+            + "currentSize bigint NOT NULL,"
+            + "totalEnqueues bigint NOT NULL,"
+            + "sessionBalance bigint NOT NULL,"
+            + "lastCost numeric NOT NULL,"
+            + "averageCost numeric NOT NULL,"
+            + "lastDequeueTime varchar(100) NOT NULL,"
+            + "wakeTime varchar(100) NOT NULL,"
+            + "totalSpend bigint NOT NULL,"
+            + "totalBudget bigint NOT NULL,"
+            + "errorCount bigint NOT NULL,"
+            + "lastPeekUri varchar(1000) NOT NULL,"
+            + "lastQueuedUri varchar(1000) NOT NULL," 
+            + "UNIQUE (jobId, filterId, domainName)"
+            + ");";
+        DBConnect.updateTable("frontierReportMonitor", 1,
+                createStatement);
+    }
+    
+    @Override
+    public void createRunningJobsHistoryTable() {
+        String createStatement = "CREATE TABLE runningJobsHistory ("
+                + "jobId bigint NOT NULL, "
+                + "harvestName varchar(300) NOT NULL,"
+                + "hostUrl varchar(300) NOT NULL,"
+                + "progress numeric NOT NULL,"
+                + "queuedFilesCount bigint NOT NULL,"
+                + "totalQueuesCount bigint NOT NULL,"
+                + "activeQueuesCount bigint NOT NULL,"
+                + "exhaustedQueuesCount bigint NOT NULL,"
+                + "elapsedSeconds bigint NOT NULL,"
+                + "alertsCount bigint NOT NULL,"
+                + "downloadedFilesCount bigint NOT NULL,"
+                + "currentProcessedKBPerSec int NOT NULL,"
+                + "processedKBPerSec int NOT NULL,"
+                + "currentProcessedDocsPerSec numeric NOT NULL,"
+                + "processedDocsPerSec numeric NOT NULL,"
+                + "activeToeCount integer NOT NULL,"
+                + "status int NOT NULL,"
+                + "tstamp timestamp NOT NULL," 
+                + "PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)"
+                + ");";
+        DBConnect.updateTable("runningJobsHistory", 1,
+                createStatement);
+                      
+        DBUtils.executeSQL(DBConnect.getDBConnection(), 
+                "CREATE INDEX runningJobsHistoryCrawlJobId on runningJobsHistory (jobId);", 
+                "CREATE INDEX runningJobsHistoryCrawlTime on runningJobsHistory (elapsedSeconds);",
+                "CREATE INDEX runningJobsHistoryHarvestName on runningJobsHistory (harvestName);"
+                );
+    }
+
+    @Override
+    public void createRunningJobsMonitorTable() {
+        String createStatement = "CREATE TABLE runningJobsMonitor ("
+            + "jobId bigint NOT NULL, "
+            + "harvestName varchar(300) NOT NULL,"
+            + "hostUrl varchar(300) NOT NULL,"
+            + "progress numeric NOT NULL,"
+            + "queuedFilesCount bigint NOT NULL,"
+            + "totalQueuesCount bigint NOT NULL,"
+            + "activeQueuesCount bigint NOT NULL,"
+            + "exhaustedQueuesCount bigint NOT NULL,"
+            + "elapsedSeconds bigint NOT NULL,"
+            + "alertsCount bigint NOT NULL,"
+            + "downloadedFilesCount bigint NOT NULL,"
+            + "currentProcessedKBPerSec integer NOT NULL,"
+            + "processedKBPerSec integer NOT NULL,"
+            + "currentProcessedDocsPerSec numeric NOT NULL,"
+            + "processedDocsPerSec numeric NOT NULL,"
+            + "activeToeCount integer NOT NULL,"
+            + "status integer NOT NULL,"
+            + "tstamp timestamp NOT NULL, "
+            + "PRIMARY KEY (jobId, harvestName)"
+            + ");";
+        DBConnect.updateTable("runningJobsMonitor", 1,
+                createStatement);
+        DBUtils.executeSQL(DBConnect.getDBConnection(), 
+                "CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId);",
+                "CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName);"
+        );
+        
+    }
+}    

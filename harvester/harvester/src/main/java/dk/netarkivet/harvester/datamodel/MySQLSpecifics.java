@@ -22,6 +22,7 @@
  */
  package dk.netarkivet.harvester.datamodel;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -199,4 +200,23 @@ public class MySQLSpecifics extends DBSpecifics {
         return "LIMIT " + offset + ", " + limit;
     }
 
+    @Override
+    public void createFrontierReportMonitorTable() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void createRunningJobsHistoryTable() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void createRunningJobsMonitorTable() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    
 }
