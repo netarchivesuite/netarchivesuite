@@ -163,7 +163,7 @@ Display all the form information for this domain
         <%-- First column is a two-column table of input fields --%>
         <table>
             <tr>
-                <td><fmt:message key="prompt;name"/></td>
+                <td><fmt:message key="prompt;name"/> </td>
                 <td><span id="focusElement">
                         <input name="<%=Constants.CONFIG_NAME_PARAM%>" size="50"
                             <%=nameString%>/>
@@ -171,7 +171,7 @@ Display all the form information for this domain
                 </td>
             </tr>
             <tr>
-                <td><fmt:message key="prompt;harvest.template"/></td>
+                <td><fmt:message key="prompt;harvest.template"/> </td>
                 <td><select name="<%=Constants.ORDER_XML_NAME_PARAM%>">
                     <%
                         Iterator<String> templates =
@@ -194,17 +194,17 @@ Display all the form information for this domain
             </tr>
             <input name="<%=Constants.MAX_RATE_PARAM%>" type="hidden" <%=load%> />
             <tr>
-                <td><fmt:message key="maximum.number.of.objects"/></td>
+                <td><fmt:message key="prompt;maximum.number.of.objects"/> </td>
                 <td><input name="<%=Constants.MAX_OBJECTS_PARAM%>" size="20" <%=maxObjects%> /></td>
             </tr>
             <tr>
-                <td><fmt:message key="maximum.number.of.bytes"/></td>
+                <td><fmt:message key="prompt;maximum.number.of.bytes"/> </td>
                 <td>
                     <input name="<%=Constants.MAX_BYTES_PARAM%>" size="20" <%=maxBytes%> />
                 </td>
             </tr>
             <tr>
-                <td colspan="2"><fmt:message key="prompt;comments"/></td>
+                <td colspan="2"><fmt:message key="prompt;comments"/> </td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -219,7 +219,7 @@ Display all the form information for this domain
     <td>
         <table>
             <tr>
-                <td><fmt:message key="seed.list"/> <br/>
+                <td><fmt:message key="prompt;seed.list"/> <br/>
                     <select name="<%=Constants.URLLIST_LIST_PARAM%>" multiple="multiple" size="8">
                     <%-- list of url list options --%>
                     <%

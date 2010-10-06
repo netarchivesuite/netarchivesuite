@@ -192,7 +192,6 @@ the user
     <%--Setting of these variables is not currently supported in the system so we
      just use default values as placeholders for a future upgrade --%>
     <input type="hidden" name="<%= Constants.MAX_RATE_PARAM %>" value="-1"/>
-    <input type="hidden" name="<%= Constants.MAX_OBJECTS_PARAM %>" value="-1"/>
     <table class="selection_table">
         <tr>
             <th colspan="2">
@@ -216,6 +215,13 @@ the user
                        value="<%= HTMLUtils.localiseLong(dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES, pageContext) %>"/>
             </td>
         </tr>
+        <tr>
+            <td><fmt:message key="prompt;max.objects.per.domain"/></td>
+            <td><input type="text" name="<%= Constants.MAX_OBJECTS_PARAM %>"
+                       value="<%= HTMLUtils.localiseLong(dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS, pageContext) %>"/>
+            </td>
+        </tr>
+        
         <tr>
             <td><fmt:message key="prompt;harvest.template"/></td>
             <td>
