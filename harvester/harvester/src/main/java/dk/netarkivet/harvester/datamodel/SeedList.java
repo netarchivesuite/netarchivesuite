@@ -32,6 +32,8 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -87,13 +89,21 @@ public class SeedList implements Serializable, Named {
         this.comments = "";
     }
 
-    /** Check urls for validity. Currently accepts all but the empty string.
+    /** Check urls for validity. Currently accepts valid URL specs.
      *
      * @param url The url to check
      * @return true, if it is accepted
      */
     private boolean isAcceptableURL(String url) {
-        return !url.equals("");
+        if (url.isEmpty()) {
+            return false;
+        }
+        try {
+            new URL(url); // We don't use the result, so we don't store it.
+        } catch (MalformedURLException e) {
+            return false;
+        }
+        return true;
     }
 
     /**

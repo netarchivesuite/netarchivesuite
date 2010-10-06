@@ -312,6 +312,16 @@ public abstract class DomainDAO implements Iterable<Domain> {
     public abstract List<TLDInfo> getTLDs();
     
     /**
+     * Get a list of all TLDs present in the domains table.
+     * IP-numbers registered are counted together.
+     *
+     * @param level maximum level of TLD 
+     * @return a list of all TLDs present in the domains table, sorted
+     * alphabetically.
+     */
+    public abstract List<TLDInfo> getMultiLevelTLD(int level);
+    
+    /**
      * Get the HarvestInfo object for a certain job and DomainConfiguration
      * defined by domainName and configName.
      * @param domainName the name of a given domain

@@ -1714,10 +1714,14 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Return all TLDs represented by the domains in the domains table.
-     * 
+     * it was asked that a level X TLD belong appear in TLD list where 
+     * the level is <=X for example bidule.bnf.fr belong to .bnf.fr and to .fr
+     * it appear in the level 1 list of TLD and in the level 2 list
+     * @param level maximum level of TLD
+     * @return a list of TLDs
      * @see DomainDAO#getTLDs()
      */
-    public List<TLDInfo> getTLDs() {
+    public List<TLDInfo> getMultiLevelTLD(int level) {
         Map<String, TLDInfo> resultMap = new HashMap<String, TLDInfo>();
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
@@ -1726,13 +1730,25 @@ public class DomainDBDAO extends DomainDAO {
             ResultSet res = s.executeQuery();
             while (res.next()) {
                 String domain = res.getString(1);
-                String tld = TLDInfo.getTLD(domain);
-                TLDInfo i = resultMap.get(tld);
-                if (i == null) {
-                    i = new TLDInfo(tld);
-                    resultMap.put(tld, i);
+                //getting the TLD level of the domain
+                int domainTLDLevel = TLDInfo.getTLDLevel(domain);
+               
+                //restraining to max level
+                if(domainTLDLevel > level) { domainTLDLevel = level; }
+      
+                //looping from level 1 to level max of the domain
+                for(int currentLevel = 1; currentLevel <= domainTLDLevel;
+                                                             currentLevel++){
+                    //getting the tld of the domain by level
+                    String tld = TLDInfo.getMultiLevelTLD(domain,
+                                                               currentLevel);
+                        TLDInfo i = resultMap.get(tld);
+                        if (i == null) {
+                            i = new TLDInfo(tld);
+                            resultMap.put(tld, i);
+                        }
+                        i.addSubdomain(domain);
                 }
-                i.addSubdomain(domain);
             }
         } catch (SQLException e) {
             throw new IOFailure("Failure getting TLD-information" + "\n"
@@ -1743,6 +1759,17 @@ public class DomainDBDAO extends DomainDAO {
         List<TLDInfo> resultSet = new ArrayList<TLDInfo>(resultMap.values());
         Collections.sort(resultSet);
         return resultSet;
+    }
+    
+    /**
+     * Return all TLDs represented by the domains in the domains table.
+     * 
+     * @see DomainDAO#getTLDs()
+     * @return a list of level 1 TLDs
+     */
+    public List<TLDInfo> getTLDs() {
+   
+        return getMultiLevelTLD(1);
     }
 
     /**

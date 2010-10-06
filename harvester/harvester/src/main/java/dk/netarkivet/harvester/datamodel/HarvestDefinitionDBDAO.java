@@ -248,7 +248,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             log.debug(message);
             throw new UnknownID(message);
         }
-        log.debug("Reading harvestdefinition w/ id" + harvestDefinitionID);
+        log.debug("Reading harvestdefinition w/ id " + harvestDefinitionID);
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
@@ -630,7 +630,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      */
     public synchronized HarvestDefinition getHarvestDefinition(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
-        log.debug("Reading harvestdefinition w/ name" + name);
+        log.debug("Reading harvestdefinition w/ name '" + name + "'");
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
