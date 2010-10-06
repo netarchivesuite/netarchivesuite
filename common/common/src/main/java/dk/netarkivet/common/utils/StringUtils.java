@@ -245,7 +245,7 @@ public class StringUtils {
     private static final DecimalFormat DECIMAL = new DecimalFormat("###.##");
 
     /**
-     * Default date format : yyyy/MM/dd HH:mm:ss
+     * Default date format : yyyy/MM/dd HH:mm:ss .
      */
     private static final SimpleDateFormat DEFAULT_DATE = new SimpleDateFormat(
             "yyyy/MM/dd HH:mm:ss");
@@ -323,7 +323,7 @@ public class StringUtils {
 
     /**
      * Formats a number, as a decimal number with at most 2 digits.
-     * @param percentage the number to format.
+     * @param number the number to format.
      * @return a formatted number string.
      */
     public static final String formatNumber(long number) {
