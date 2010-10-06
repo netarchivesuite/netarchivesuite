@@ -1,7 +1,7 @@
-/* File:       $Id$
- * Revision:   $Revision$
- * Author:     $Author$
- * Date:       $Date$
+/* File:       $Id: StartedJobHistoryChartGen.java 1612 2010-10-04 16:05:47Z ngiraud $
+ * Revision:   $Revision: 1612 $
+ * Author:     $Author: ngiraud $
+ * Date:       $Date: 2010-10-04 18:05:47 +0200 (Mon, 04 Oct 2010) $
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
