@@ -132,9 +132,9 @@
             <version>2.0</version>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
+        	<groupId>jfree</groupId>
+        	<artifactId>jfree-chart</artifactId>
+        	<version>1.0.13</version>
         </dependency>
 		<dependency>
             <groupId>commons-cli</groupId>
