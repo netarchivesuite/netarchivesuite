@@ -141,12 +141,12 @@ This page displays details about a running job.
 <table>
 
     <tr class="spacerRowBig"><td>&nbsp;</td></tr>
-    <tr><th colspan=2">
+    <tr><th colspan="2">
         <fmt:message key="table.running.jobs.harvestName"/>
         &nbsp;<%= harvestLink %>
     </th></tr>
     <tr>
-	    <td colspan=2"><ul>
+	    <td colspan="2"><ul>
 	       <!-- Link to Heritrix console -->
 	       <li>
 	           <fmt:message key="running.job.details.heritrixConsoleLink">
@@ -253,9 +253,9 @@ This page displays details about a running job.
         </td>
     </tr>
 
-    <tr class="spacerRowBig"><td colspan=2">&nbsp;</td></tr>
-    <tr class="spacerRowBig"><td colspan=2">&nbsp;</td></tr>
-    <tr class="spacerRowBig"><td colspan=2">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
 
 <%
 
@@ -263,7 +263,7 @@ This page displays details about a running job.
 
 %>
 
-    <tr><th colspan=2">
+    <tr><th colspan="2">
         <a id="frontierReport" name="frontierReport"/> <!-- Anchor  -->
         <fmt:message key="running.job.details.frontier.title.TopTotalEnqueuesFilter">
             <fmt:param>
@@ -272,9 +272,9 @@ This page displays details about a running job.
             </fmt:param>
         </fmt:message>
     </th></tr>
-    <tr class="spacerRowBig"><td colspan=2">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
     <tr>
-	    <td colspan=2">
+	    <td colspan="2">
 	    <table class="selection_table">
                <tr>
                    <th><fmt:message key="running.job.details.frontier.queueName"/></th>
@@ -305,7 +305,7 @@ This page displays details about a running job.
 
 <% } %>
 
-    <tr class="spacerRowBig"><td colspan=2">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
 
 <%
 
@@ -313,7 +313,7 @@ This page displays details about a running job.
 
 %>
 
-    <tr><th colspan=2">
+    <tr><th colspan="2">
         <a id="frontierReportExhausted" name="frontierReportExhausted">
         <fmt:message key="running.job.details.frontier.title.ExhaustedQueuesFilter">
             <fmt:param>
@@ -323,9 +323,9 @@ This page displays details about a running job.
         </fmt:message>
         </a>
     </th></tr>
-    <tr class="spacerRowBig"><td colspan=2">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
     <tr>
-        <td colspan=2">
+        <td colspan="2">
         <table class="selection_table">
                <tr>
                    <th><fmt:message key="running.job.details.frontier.queueName"/></th>
@@ -355,7 +355,7 @@ This page displays details about a running job.
 
 <% } %>
 
-    <tr class="spacerRowBig"><td colspan=2">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
 
 <%
 
@@ -363,7 +363,7 @@ This page displays details about a running job.
 
 %>
 
-    <tr><th colspan=2">
+    <tr><th colspan="2">
         <a id="frontierReportRetired" name="frontierReportRetired">
         <fmt:message key="running.job.details.frontier.title.RetiredQueuesFilter">
             <fmt:param>
@@ -373,9 +373,9 @@ This page displays details about a running job.
         </fmt:message>
         </a>
     </th></tr>
-    <tr class="spacerRowBig"><td colspan=2">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
     <tr>
-        <td colspan=2">
+        <td colspan="2">
         <table class="selection_table">
                <tr>
                    <th><fmt:message key="running.job.details.frontier.queueName"/></th>
@@ -405,7 +405,7 @@ This page displays details about a running job.
 
 <% } %>
 
-    <tr class="spacerRowBig"><td colspan=2">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
 
 </table>
 

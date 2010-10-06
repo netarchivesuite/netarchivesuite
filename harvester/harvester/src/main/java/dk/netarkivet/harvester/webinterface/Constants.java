@@ -37,17 +37,17 @@ public class Constants {
     }
 
     /** Names of various parameters used in the webinterface. */
-    public static final String JOBSTATUS_PARAM 
+    public static final String JOBSTATUS_PARAM
         = HarvestStatusQuery.UI_FIELD.JOB_STATUS.name();
 
     public static final String JOBIDORDER_PARAM = "jobidorder";
 
     public static final String DOMAIN_SEARCH_PARAM = "domainName";
 
-    public static final String HARVEST_ID_PARAM 
+    public static final String HARVEST_ID_PARAM
         = HarvestStatusQuery.UI_FIELD.HARVEST_ID.name();
 
-    public static final String HARVEST_NUM_PARAM 
+    public static final String HARVEST_NUM_PARAM
         = HarvestStatusQuery.UI_FIELD.HARVEST_RUN.name();
 
     public static final String EDIT_CONFIG_PARAM = "editConfig";
@@ -67,6 +67,8 @@ public class Constants {
     public static final String SCHEDULE_PARAM = "schedulename";
 
     public static final String HARVEST_PARAM = "harvestname";
+
+    public static final String COLUMN_PARAM = "column";
 
     public static final String FROM_FILE_PARAM = "fromFile";
 
@@ -158,7 +160,7 @@ public class Constants {
      * harvester package, and the directory belonging to the viewerproxy
      * package.
      */
-    public static final String DEFINITIONS_SITESECTION_DIRNAME 
+    public static final String DEFINITIONS_SITESECTION_DIRNAME
         = "HarvestDefinition";
 
     public static final String HISTORY_SITESECTION_DIRNAME = "History";
