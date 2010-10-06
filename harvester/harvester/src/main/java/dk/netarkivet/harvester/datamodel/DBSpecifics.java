@@ -40,10 +40,11 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
- * Abstract collection of DB methods that are not standard SQL. This class is a
- * singleton class whose actual implementation is provided by a subclass as
- * determined by the DB_SPECIFICS_CLASS setting.
+ * Defines database specific implementations used by the Harvester. 
  *
+ * The actual actual implementation which is loaded is defined by the 
+ * {@link CommonSettings.DB_SPECIFICS_CLASS} setting. See the sub class list for
+ * available implementations 
  */
 public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
