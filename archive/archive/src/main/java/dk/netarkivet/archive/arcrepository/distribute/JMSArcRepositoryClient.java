@@ -386,14 +386,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *  etc.
      *
      * @param replicaId The archive to execute the job on.
-<<<<<<< .mine
-     * @param args The arguments for the batchjob.
+     * @param args The arguments for the batchjob. This is allowed to be null.
      * @param batchId The id for the batch process.
      * @return The status of the batch job after it ended.
-=======
-     * @param args The arguments for the batchjob. This is allowed to be null.
-     * @return The status of the batch job after it has ended.
->>>>>>> .r1542
      * @throws ArgumentNotValid If the job is null or the replicaId is either 
      * null or the empty string.
      * @throws IOFailure If no result file is returned.
