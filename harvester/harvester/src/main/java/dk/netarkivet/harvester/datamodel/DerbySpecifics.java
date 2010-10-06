@@ -362,7 +362,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
             + "lastPeekUri varchar(1000) NOT NULL,"
             + "lastQueuedUri varchar(1000) NOT NULL," 
             + "UNIQUE (jobId, filterId, domainName)"
-            + ");";
+            + ")";
         DBConnect.updateTable("frontierReportMonitor", 1,
                 createStatement);
     }
@@ -389,14 +389,14 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 + "status int NOT NULL,"
                 + "tstamp timestamp NOT NULL," 
                 + "PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)"
-                + ");";
+                + ")";
         DBConnect.updateTable("runningJobsHistory", 1,
                 createStatement);
                       
         DBUtils.executeSQL(DBConnect.getDBConnection(), 
-                "CREATE INDEX runningJobsHistoryCrawlJobId on runningJobsHistory (jobId);", 
-                "CREATE INDEX runningJobsHistoryCrawlTime on runningJobsHistory (elapsedSeconds);",
-                "CREATE INDEX runningJobsHistoryHarvestName on runningJobsHistory (harvestName);"
+                "CREATE INDEX runningJobsHistoryCrawlJobId on runningJobsHistory (jobId)", 
+                "CREATE INDEX runningJobsHistoryCrawlTime on runningJobsHistory (elapsedSeconds)",
+                "CREATE INDEX runningJobsHistoryHarvestName on runningJobsHistory (harvestName)"
                 );
     }
 
@@ -422,12 +422,12 @@ public abstract class DerbySpecifics extends DBSpecifics {
             + "status integer NOT NULL,"
             + "tstamp timestamp NOT NULL, "
             + "PRIMARY KEY (jobId, harvestName)"
-            + ");";
+            + ")";
         DBConnect.updateTable("runningJobsMonitor", 1,
                 createStatement);
         DBUtils.executeSQL(DBConnect.getDBConnection(), 
-                "CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId);",
-                "CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName);"
+                "CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId)",
+                "CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName)"
         );
         
     }
