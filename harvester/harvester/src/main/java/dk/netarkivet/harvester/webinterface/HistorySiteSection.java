@@ -24,6 +24,7 @@
 package dk.netarkivet.harvester.webinterface;
 
 import dk.netarkivet.common.webinterface.SiteSection;
+import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 
 /**
  * Site section that creates the menu for harvest history.
@@ -49,7 +50,8 @@ public class HistorySiteSection extends SiteSection {
 
     /** No initialisation necessary in this site section. */
     public void initialize() {
-	// Initialiaze the running jobs tables if necessary
+        // Initialize the running jobs tables if necessary
+        RunningJobsInfoDAO.getInstance();
 	
     }
 
