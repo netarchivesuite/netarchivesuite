@@ -568,6 +568,7 @@ public class JobDBDAO extends JobDAO {
    public synchronized Iterator<Long> getAllJobIds(JobStatus status, 
            JobPriority priority) {
        ArgumentNotValid.checkNotNull(status, "JobStatus status");
+       ArgumentNotValid.checkNotNull(priority, "JobPriority priority");
        List<Long> idList = DBUtils.selectLongList(
                DBConnect.getDBConnection(),
                "SELECT job_id FROM jobs WHERE status = ? AND priority =?"

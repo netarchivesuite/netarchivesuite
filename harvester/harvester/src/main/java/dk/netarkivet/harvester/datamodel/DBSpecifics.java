@@ -23,7 +23,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -35,7 +34,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.SettingsFactory;
 
@@ -65,14 +63,6 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     }
 
     /**
-     * Shutdown the database system, if running embeddedly. Otherwise, this is
-     * ignored.
-     * 
-     * Will log a warning on errors, but otherwise ignore them.
-     */
-    public abstract void shutdownDatabase();
-
-    /**
      * Get a temporary table for short-time use. The table should be disposed of
      * with dropTemporaryTable. The table has two columns domain_name
      * varchar(Constants.MAX_NAME_SIZE) + config_name
@@ -99,21 +89,6 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      *            The name of the temporarily created table.
      */
     public abstract void dropJobConfigsTmpTable(Connection c, String tableName);
-
-    /**
-     * Backup the database. For server-based databases, where the administrator
-     * is expected to perform the backups, this method should do nothing. This
-     * method gets called within one hour of the hour-of-day indicated by the
-     * DB_BACKUP_INIT_HOUR settings.
-     * 
-     * @param backupDir
-     *            Directory to which the database should be backed up
-     * @throws SQLException
-     *             On SQL trouble backing up database
-     * @throws PermissionDenied
-     *             if the directory cannot be created.
-     */
-    public abstract void backupDatabase(File backupDir) throws SQLException;
 
     /**
      * Get the name of the JDBC driver class that handles interfacing to this

@@ -23,19 +23,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.utils.DBUtils;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * A class that implement functionality specific to the embedded Derby system.
@@ -47,59 +34,6 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
      */
     public static DBSpecifics getInstance() {
         return new DerbyEmbeddedSpecifics();
-    }
-
-    /**
-     * Shutdown the database system, if running embeddedly.  Otherwise, this
-     * is ignored.
-     * <p/>
-     * Will log a warning on errors, but otherwise ignore them.
-     */
-    public void shutdownDatabase() {
-        try {
-            // This call throws an exception, see
-            // http://db.apache.org/derby/docs/10.2/ref/rrefattrib16471.html
-            DriverManager.getConnection("jdbc:derby:;shutdown=true");
-            log.warn("Shut down Derby embedded database w/o expected warning");
-        } catch (SQLException e) {
-            log.info("Embedded Derby database has been shut down");
-            log.debug("Shutdown down derby gave (as expected) an exception" +
-                      "\n" +
-                      ExceptionUtils.getSQLExceptionCause(e),
-                    e);
-        }
-    }
-
-    /**
-     * Backup the database.  For server-based databases, where the administrator
-     * is expected to perform the backups, this method should do nothing.
-     * This method gets called within one hour of the hour-of-day indicated
-     * by the DB_BACKUP_INIT_HOUR settings.
-     *
-     * @param backupDir Directory to which the database should be backed up
-     * @throws SQLException If the underlying SQL driver throws an exception
-     * @throws PermissionDenied if the directory cannot be created.
-     * @throws IOFailure If we cannot connect to the database
-     */
-    public void backupDatabase(File backupDir) throws SQLException {
-        ArgumentNotValid.checkNotNull(backupDir, "backupDir");
-
-        FileUtils.createDir(backupDir);
-        CallableStatement cs = null;
-        try {
-            Connection c = DBConnect.getDBConnection();
-            cs = c.prepareCall("CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)");
-            cs.setString(1, backupDir.getCanonicalPath());
-            cs.execute();
-            cs.close();
-            log.info("Backed up database to " + backupDir.getCanonicalPath());
-        } catch (IOException e) {
-            String message = "Couldn't back up database to " + backupDir;
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-        } finally {
-            DBUtils.closeStatementIfOpen(cs);
-        }
     }
 
     /** Get the name of the JDBC driver class that handles interfacing

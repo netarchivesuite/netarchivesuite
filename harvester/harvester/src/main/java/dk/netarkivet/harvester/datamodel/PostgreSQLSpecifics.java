@@ -23,7 +23,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,16 +57,6 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      */
     public static DBSpecifics getInstance() {
         return new PostgreSQLSpecifics();
-    }
-
-    /**
-     * Shutdown the database system, if running embeddedly. Otherwise, this is
-     * ignored.
-     * 
-     * Will log a warning on errors, but otherwise ignore them.
-     */
-    public void shutdownDatabase() {
-        log.debug("Attempt to shutdown the database ignored.");
     }
 
     /**
@@ -110,24 +99,6 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      */
     public void dropJobConfigsTmpTable(Connection c, String tableName) {
 
-    }
-
-    /**
-     * Backup the database. For server-based databases, where the administrator
-     * is expected to perform the backups, this method should do nothing. This
-     * method gets called within one hour of the hour-of-day indicated by the
-     * DB_BACKUP_INIT_HOUR settings.
-     * 
-     * @param backupDir
-     *            Directory to which the database should be backed up
-     * @throws SQLException
-     *             This will never happen
-     */
-    public void backupDatabase(File backupDir) throws SQLException {
-        log.warn("Attempt to backup the database to directory '" + backupDir
-                + "'. ignored. "
-                + "Backup of the PostgreSQL database should be done by "
-                + "your SysOp");
     }
 
     /**

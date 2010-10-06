@@ -23,10 +23,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
-import java.sql.SQLException;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Implementation of DB-specific functions for the server-based Derby.
@@ -38,26 +34,6 @@ public class DerbyServerSpecifics extends DerbySpecifics {
      */
     public static DBSpecifics getInstance() {
         return new DerbyServerSpecifics();
-    }
-
-    @Override
-    public void shutdownDatabase() {
-    }
-
-    /**
-     * Backup the database.  For server-based databases, where the administrator
-     * is expected to perform the backups, this method should do nothing.
-     * This method gets called within one hour of the hour-of-day indicated
-     * by the DB_BACKUP_INIT_HOUR settings.
-     *
-     * @param backupDir Directory to which the database should be backed up
-     * @throws SQLException
-     */
-    public void backupDatabase(File backupDir) throws SQLException {
-        ArgumentNotValid.checkNotNull(backupDir, "File backupDir");
-        log.warn("Attempt to backup the database to directory '" 
-                + backupDir.getAbsolutePath() + "'. ignored. " 
-                + "Backup of your external Derby database should be done by your SysOp");
     }
 
     /** Get the name of the JDBC driver class that handles interfacing

@@ -502,6 +502,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <arg value="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication"/>
             <arg value="dk.netarkivet.deploy.DeployApplication"/>
             <arg value="dk.netarkivet.harvester.harvesting.HarvestControllerApplication"/>
+            <arg value="dk.netarkivet.harvester.scheduler.HarvestJobManagerApplication"/>
             <arg value="dk.netarkivet.common.webinterface.GUIApplication"/>
             <arg value="dk.netarkivet.viewerproxy.ViewerProxyApplication"/>
             <arg value="-x"/>

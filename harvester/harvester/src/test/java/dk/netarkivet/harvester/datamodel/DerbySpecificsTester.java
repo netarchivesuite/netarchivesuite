@@ -144,41 +144,4 @@ public class DerbySpecificsTester extends DataModelTestCase {
             DBUtils.closeStatementIfOpen(s);
         }
     }
-
-    /**
-     * Test backup-functionality of our Derby database.
-     * @throws SQLException If unable to backup derby database.
-     * @throws IOException If unable to get the canonical path of
-     * the backup directory.
-     */
-    public void testBackupDatabase() throws SQLException, IOException {
-        File tempdir = new File(TestInfo.TEMPDIR,
-                                "db-backup-" + System.currentTimeMillis());
-        DBSpecifics.getInstance().backupDatabase(tempdir);
-        assertTrue("Backup dir should exist after calling backup.",
-                tempdir.exists());
-        File backupdir = new File(tempdir, "fullhddb");
-        assertTrue("Backup dir should contain fullhddb dir",
-                backupdir.exists());
-        assertTrue("Backup history file should exist",
-                new File(backupdir, "BACKUP.HISTORY").exists());
-
-        LogUtils.flushLogs(DBConnect.class.getName());
-        FileAsserts.assertFileNotContains(
-                "Should not have warned about non-existing dir being created",
-                TestInfo.LOG_FILE, "WARNING: Non-existing directory created");
-        FileAsserts.assertFileContains("Should have backed-up info",
-                "Backed up database to " + tempdir.getCanonicalPath(),
-                TestInfo.LOG_FILE);
-
-        FileUtils.removeRecursively(tempdir);
-        // Check that it complains if it can't backup
-        try {
-            DBSpecifics.getInstance().backupDatabase(new File("/foo/bar"));
-            fail("Should have complained on illegal backup dir");
-        } catch (PermissionDenied e) {
-            //expected
-        }
-    }
-
 }

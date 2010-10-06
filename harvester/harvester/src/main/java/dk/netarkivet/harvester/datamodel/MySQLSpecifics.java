@@ -22,7 +22,6 @@
  */
  package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -50,16 +49,6 @@ public class MySQLSpecifics extends DBSpecifics {
         return new MySQLSpecifics();
     }
     
-    /**
-     * Shutdown the database system, if running embeddedly.  Otherwise, this
-     * is ignored.
-     *
-     * Will log a warning on errors, but otherwise ignore them.
-     */
-    public void shutdownDatabase() {
-        log.debug("Attempt to shutdown the database ignored.");
-    }
-
     /** Get a temporary table for short-time use.  The table should be
      * disposed of with dropTemporaryTable.  The table has two columns
      * domain_name varchar(Constants.MAX_NAME_SIZE)
@@ -108,21 +97,6 @@ public class MySQLSpecifics extends DBSpecifics {
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
-    }
-
-    /**
-     * Backup the database.  For server-based databases, where the administrator
-     * is expected to perform the backups, this method should do nothing.
-     * This method gets called within one hour of the hour-of-day indicated
-     * by the DB_BACKUP_INIT_HOUR settings.
-     *
-     * @param backupDir Directory to which the database should be backed up
-     * @throws SQLException This will never happen
-     */
-    public void backupDatabase(File backupDir) throws SQLException {
-        log.warn("Attempt to backup the database to directory '" 
-                + backupDir + "'. ignored. " 
-                + "Backup of the MySQL database should be done by your SysOp");
     }
 
     /**

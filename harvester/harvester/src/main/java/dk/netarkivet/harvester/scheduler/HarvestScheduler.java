@@ -22,10 +22,7 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +33,6 @@ import javax.jms.QueueBrowser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -44,10 +40,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 import dk.netarkivet.common.utils.ExceptionUtils;
-import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobPriority;
@@ -192,6 +186,9 @@ public class HarvestScheduler extends LifeCycleComponent {
             for (JobPriority priority: JobPriority.values()) {
                 if (isQueueEmpty(JobChannelUtil.getChannel(priority))) {
                     submitNextNewJob(priority);
+                } else {
+                    if (log.isTraceEnabled()) log.trace("Skipping dispatching of " 
+                            + priority + " jobs, the message queue is full");
                 }
             }
         } catch (JMSException e) {
@@ -211,8 +208,8 @@ public class HarvestScheduler extends LifeCycleComponent {
                 log.trace("No " + priority + " jobs to be run at this time");
             }           
         } else {
-            if (log.isTraceEnabled() ) {
-                log.trace("Submitting new " + priority + " job");
+            if (log.isDebugEnabled() ) {
+                log.debug("Submitting new " + priority + " job");
             }
             final long jobID = jobsToSubmit.next();
             Job jobToSubmit = null;

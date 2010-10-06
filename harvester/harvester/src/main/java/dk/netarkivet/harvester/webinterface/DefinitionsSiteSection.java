@@ -42,8 +42,7 @@ import dk.netarkivet.harvester.scheduler.HarvestScheduler;
 import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 
 /**
- * Site section that creates the menu for data definitions, and starts the
- * harvest scheduler.
+ * Site section that creates the menu for data definitions.
  */
 public class DefinitionsSiteSection extends SiteSection {
     /** Logger for this class. */
@@ -118,12 +117,8 @@ public class DefinitionsSiteSection extends SiteSection {
         JobDAO.getInstance();
         GlobalCrawlerTrapListDAO.getInstance();
     }
-
-    /**
-     * Clean up this site section. This stops the harvest scheduler, and closes
-     * the database.
-     */
+    
+    /** No cleanup necessary in this site section. */
     public void close() {
-        DBSpecifics.getInstance().shutdownDatabase();
     }
 }
