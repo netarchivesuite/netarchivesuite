@@ -34,8 +34,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
-import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
 
 /**
  * This singleton class is in charge of giving out the correct channels.
@@ -64,12 +62,14 @@ public class Channels {
     private static final String MONITOR_CHANNEL_PREFIX = "MONITOR";
 
     /**
-     * Prefix for the channel used to send {@link CrawlProgressMessage}s.
+     * Prefix for the channel used to send {@link dk.netarkivet.harvester.harvesting.
+     * distribute.CrawlProgressMessage}s.
      */
     private static final String HARVEST_MONITOR_CHANNEL_PREFIX = "HARVESTMON";
 
     /**
-     * Prefix for the channel used to send {@link FrontierReportMessage}s.
+     * Prefix for the channel used to send {@link dk.netarkivet.harvester.harvesting.
+     * distribute.FrontierReportMessage}s.
      */
     private static final String FRONTIER_MONITOR_CHANNEL_PREFIX = "FRONTIERMON";
 
