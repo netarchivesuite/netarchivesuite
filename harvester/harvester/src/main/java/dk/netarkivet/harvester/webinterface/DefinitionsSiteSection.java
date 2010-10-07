@@ -30,15 +30,12 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
-import dk.netarkivet.harvester.scheduler.HarvestJobManager;
-import dk.netarkivet.harvester.scheduler.HarvestScheduler;
 import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 
 /**
@@ -47,8 +44,6 @@ import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 public class DefinitionsSiteSection extends SiteSection {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
-    /** The scheduler being started to schedule and monitor jobs. */
-    private HarvestScheduler harvestJobDispatcher;
     /** number of pages visible in the left menu. */
     private static final int PAGES_VISIBLE_IN_MENU = 9;
     
@@ -88,8 +83,7 @@ public class DefinitionsSiteSection extends SiteSection {
 
     /**
      * Initialise the site section. This forces migration of all DAOs, validates
-     * that a default order.xml template exists, and starts the harvest
-     * scheduler.
+     * that a default order.xml template exists.
      *
      * @throws UnknownID If the default order.xml does not exist.
      */

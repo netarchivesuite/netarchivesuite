@@ -185,7 +185,14 @@ public abstract class ApplicationUtils {
         }
     }
     
+    /**
+     * Starts up an LifeCycleComponent. 
+     * 
+     * @param component The component to start.
+     */
     public static void startApp(LifeCycleComponent component) {
+        ArgumentNotValid.checkNotNull(component, "LifeCycleComponent component");
+        
         String appName = component.getClass().getName();
         Settings.set(CommonSettings.APPLICATION_NAME, appName);
         logAndPrint("Starting " + appName + "\n"
