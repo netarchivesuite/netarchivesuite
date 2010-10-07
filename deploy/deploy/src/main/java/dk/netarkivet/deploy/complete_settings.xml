@@ -516,6 +516,10 @@
                 <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
                 <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
                 <maxTotalSize>2000000</maxTotalSize>
+                <useFrontierBudget>false</useFrontierBudget>
+                <frontierBudgetFactor>0</frontierBudgetFactor>
+                <frontierErrorPenaltyFactor>0</frontierErrorPenaltyFactor>
+                <frontierBalanceReplenishFactor>0</frontierBalanceReplenishFactor>
             </jobs>
             <configChunkSize>10000</configChunkSize>
             <splitByObjectLimit>false</splitByObjectLimit>
@@ -524,6 +528,13 @@
             <dispatchperiode>5000</dispatchperiode>
             <jobgenerationperiode>60000</jobgenerationperiode>
         </scheduler>
+        <monitor>
+            <!--  1 minute -->
+            <refreshInterval>60</refreshInterval>
+            <displayedHistorySize>30</displayedHistorySize>
+            <historySampleRate>300</historySampleRate><!--  in seconds, 5 minutes -->
+            <historyChartGenInterval>300</historyChartGenInterval><!--  in seconds, 5 minutes -->
+        </monitor>
         <harvesting>
             <serverDir>server</serverDir>
             <!-- Default is 400000000 bytes (~400 Mbytes). -->
@@ -535,8 +546,6 @@
                 <inactivityTimeout>1800</inactivityTimeout>
                 <!-- 30 minutes -->
                 <noresponseTimeout>1800</noresponseTimeout>
-                <!--  5 minutes -->
-                <monitorResetInterval>300</monitorResetInterval>
                 <!--  10 minutes -->
                 <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
                 <!--  20 seconds -->
@@ -551,6 +560,14 @@
                 <heapSize>1598M</heapSize>
                 <javaOpts/>                
             </heritrix>
+            <frontier>
+                <!-- 10 minutes -->
+                <frontierReportWaitTime>600</frontierReportWaitTime>
+                <filter>
+					<class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
+					<args/>
+                </filter> 	
+            </frontier>
             <heritrixLauncher>
                 <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher</class>
             </heritrixLauncher>
@@ -564,6 +581,7 @@
                 <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
+                <generateArcFilesReport>true</generateArcFilesReport>
             </metadata>
         </harvesting>
     </harvester><monitor>

@@ -818,9 +818,8 @@ public abstract class Machine {
      * in the settings, and thus if the archive database should be 
      * installed on this machine.
      * 
-     * If not specific database is given as deploy argument 
-     * (bitpresevationDatabaseFileName = null) then use the default in the 
-     * NetarchiveSuite.zip package.
+     * If not specific database is given (adminDatabaseFileName = null)
+     * then use the default in the NetarchiveSuite.zip package.
      * Else send the new archive database to the standard database 
      * location, and extract it to the given location.
      * 
@@ -854,6 +853,7 @@ public abstract class Machine {
     
     /**
      * Creates the script for creating the application specified directories.
+     * Also creates the directories along the path to the directories.
      * 
      * @return The script for creating the application specified directories.
      */

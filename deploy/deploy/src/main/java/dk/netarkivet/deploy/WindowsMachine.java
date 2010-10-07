@@ -305,22 +305,12 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
 
-    /** 
-     * The operation system specific path to the installation directory.
-     *  
-     * @return Install path.
-     */
     @Override
     protected String getInstallDirPath() {
         return machineParameters.getInstallDirValue() + Constants.BACKSLASH 
                 + getEnvironmentName();
     }
 
-    /**
-     * The operation system specific path to the conf directory.
-     * 
-     * @return Conf path.
-     */
     @Override
     protected String getConfDirPath() {
         return getInstallDirPath() + Constants.CONF_DIR_WINDOWS;
@@ -599,14 +589,6 @@ public class WindowsMachine extends Machine {
         }
     }
 
-    /**
-     * Makes all the class paths into the operation system specific syntax,
-     * and puts them into a string where they are separated by the operation
-     * system specific separator (':' for linux, ';' for windows).
-     * 
-     * @param app The application which has the class paths.
-     * @return The class paths in operation system specific syntax.
-     */
     @Override
     protected String osGetClassPath(Application app) {
         StringBuilder res = new StringBuilder();
@@ -882,13 +864,6 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
     
-    /**
-     * This function makes the part of the install script for installing the
-     * external jar files from within the jarFolder.
-     * If the jarFolder is null, then no action will be performed.
-     * 
-     * @return The script for installing the external jar files (if needed).
-     */
     @Override
     protected String osInstallExternalJarFiles() {
         if(jarFolder == null) {
@@ -970,18 +945,6 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
 
-    /**
-     * This functions makes the script for creating the new directories.
-     * 
-     * Linux creates directories directly through ssh.
-     * Windows creates an install a script file for installing the directories, 
-     * which has to be sent to the machine, then executed and finally deleted. 
-     * 
-     * @param dir The name of the directory to create.
-     * @param clean Whether the directory should be cleaned\reset.
-     * @return The lines of code for creating the directories.
-     * @see #createInstallDirScript(File)
-     */
     @Override
     protected String scriptCreateDir(String dir, boolean clean) {
         StringBuilder res = new StringBuilder();
@@ -1034,12 +997,6 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
     
-    /**
-     * Creates the script for creating the application specified directories.
-     * Also creates the directories along the path to the directories.
-     * 
-     * @return The script for creating the application specified directories.
-     */
     @Override
     protected String getAppDirectories() {
         StringBuilder res = new StringBuilder();
@@ -1171,12 +1128,6 @@ public class WindowsMachine extends Machine {
         }
     }
 
-    /**
-     * Changes the file directory path to the format used in the security 
-     * policy.
-     * @param path The current path.
-     * @return The formatted path.
-     */
     @Override
     protected String changeFileDirPathForSecurity(String path) {
         path += Constants.BACKSLASH + Constants.SECURITY_FILE_DIR_TAG
@@ -1428,13 +1379,6 @@ public class WindowsMachine extends Machine {
         }
     }
     
-    /**
-     * Creates a script for starting the archive database on a given machine.
-     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
-     * is defined on the machine level.
-     * 
-     * @param dir The directory where the script will be placed.
-     */
     @Override
     protected void createArchiveDatabaseStartScript(File dir) {
         // Ignore if no archive database directory has been defined.
@@ -1444,15 +1388,10 @@ public class WindowsMachine extends Machine {
         }
         
         // TODO NOT SUPPORTED!
+        System.err.println("An Admin Database is not supported on a windows "
+                + "machine. Please fix your deploy configuration.");
     }
 
-    /**
-     * Creates a script for killing the archive database on a given machine.
-     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
-     * is defined on the machine level.
-     * 
-     * @param dir The directory where the script will be placed.
-     */
     @Override
     protected void createArchiveDatabaseKillScript(File dir) {
         // Ignore if no archive database directory has been defined.
@@ -1462,15 +1401,10 @@ public class WindowsMachine extends Machine {
         }
         
         // TODO NOT SUPPORTED!
+        System.err.println("An Admin Database is not supported on a windows "
+                + "machine. Please fix your deploy configuration.");
     }
 
-    /**
-     * Creates a script for starting the harvest database on a given machine.
-     * This is only created if the &lt;deployHarvestDatabaseDir&gt; parameter
-     * is defined on the machine level.
-     * 
-     * @param dir The directory where the script will be placed.
-     */
     @Override
     protected void createHarvestDatabaseStartScript(File dir) {
         // Ignore if no harvest database directory has been defined.
@@ -1480,16 +1414,10 @@ public class WindowsMachine extends Machine {
         }
         
         // TODO NOT SUPPORTED!
-        return;
+        System.err.println("An Harvest Database is not supported on a windows "
+                + "machine. Please fix your deploy configuration.");
     }
     
-    /**
-     * Creates a script for killing the harvest database on a given machine.
-     * This is only created if the &lt;globalHarvestDatabaseDir&gt; parameter
-     * is defined on the machine level.
-     * 
-     * @param dit The directory where the script will be placed.
-     */
     @Override
     protected void createHarvestDatabaseKillScript(File dir) {
         // Ignore if no harvest database directory has been defined.
@@ -1499,6 +1427,7 @@ public class WindowsMachine extends Machine {
         }
 
         // TODO NOT SUPPORTED!
-        return;
+        System.err.println("An Harvest Database is not supported on a windows "
+                + "machine. Please fix your deploy configuration.");
     }
 }

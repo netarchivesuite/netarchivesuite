@@ -72,12 +72,6 @@ public class LinuxMachine extends Machine {
         scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;
     }
 
-    /**
-     * Creates the operation system specific installation script for 
-     * this machine.
-     * 
-     * @return Operation system specific part of the installscript
-     */
     @Override
     protected String osInstallScript() {
         StringBuilder res = new StringBuilder();
@@ -196,11 +190,6 @@ public class LinuxMachine extends Machine {
         return res.toString();
     }
 
-    /**
-     * Creates the operation system specific killing script for this machine.
-     * 
-     * @return Operation system specific part of the killscript.
-     */
     @Override
     protected String osKillScript() {
         StringBuilder res = new StringBuilder();
@@ -252,22 +241,12 @@ public class LinuxMachine extends Machine {
         return res.toString();
     }
 
-    /** 
-     * The operation system specific path to the installation directory.
-     *  
-     * @return Install path.
-     */
     @Override
     protected String getInstallDirPath() {
         return machineParameters.getInstallDirValue() + Constants.SLASH 
                 + getEnvironmentName();
     }
 
-    /**
-     * The operation system specific path to the conf directory.
-     * 
-     * @return Conf path.
-     */
     @Override
     protected String getConfDirPath() {
         return getInstallDirPath() + Constants.CONF_DIR_LINUX;
@@ -633,14 +612,6 @@ public class LinuxMachine extends Machine {
         }
     }
 
-    /**
-     * Makes all the class paths into the operation system specific syntax,
-     * and puts them into a string where they are separated by the operation
-     * system specific separator (':' for linux, ';' for windows).
-     * 
-     * @param app The application which has the class paths.
-     * @return The class paths in operation system specific syntax.
-     */
     @Override
     protected String osGetClassPath(Application app) {
         StringBuilder res = new StringBuilder();
@@ -652,19 +623,6 @@ public class LinuxMachine extends Machine {
         return res.toString();
     }
 
-    /**
-     * Checks if a specific directory for the database is given in the settings,
-     * and thus if the database should be installed on this machine.
-     * 
-     * If no specific database is given (databaseFileName = null) then use the 
-     * standard database extracted from NetarchiveSuite.zip.
-     * Else send the given new database to the standard database location.
-     * 
-     * Extract the database in the standard database location to the specified
-     * database directory.
-     * 
-     * @return The script for installing the database (if needed).
-     */
     @Override
     protected String osInstallDatabase() {
         StringBuilder res = new StringBuilder();
@@ -726,13 +684,6 @@ public class LinuxMachine extends Machine {
         return res.toString();
     }
     
-    /**
-     * This function makes the part of the install script for installing the
-     * external jar files from within the jarFolder.
-     * If the jarFolder is null, then no action will be performed.
-     * 
-     * @return The script for installing the external jar files (if needed).
-     */
     @Override
     protected String osInstallExternalJarFiles() {
         if(jarFolder == null) {
@@ -763,25 +714,12 @@ public class LinuxMachine extends Machine {
         return res.toString();
     }
     
-    /**
-     * Checks if a specific directory for the archive database is given 
-     * in the settings, and thus if the archive database should be 
-     * installed on this machine.
-     * 
-     * If not specific database is given (archiveDatabaseFileName = null)
-     * then use the default in the NetarchiveSuite.zip package.
-     * Else send the new archive database to the standard database 
-     * location, and extract it to the given location.
-     * 
-     * @return The script for installing the archive database 
-     * (if needed).
-     */
     @Override
     protected String osInstallArchiveDatabase() {
-        String bpDatabaseDir = 
+        String adminDatabaseDir = 
             machineParameters.getArchiveDatabaseDirValue();
         // Do not install if no proper archive database directory.
-        if(bpDatabaseDir == null || bpDatabaseDir.isEmpty()) {
+        if(adminDatabaseDir == null || adminDatabaseDir.isEmpty()) {
             return Constants.EMPTY;
         }
 
@@ -820,7 +758,7 @@ public class LinuxMachine extends Machine {
         res.append(getInstallDirPath());
         res.append(Constants.SEMICOLON + Constants.SPACE 
                 + ScriptConstants.LINUX_IF_DIR_EXIST + Constants.SPACE);
-        res.append(bpDatabaseDir);
+        res.append(adminDatabaseDir);
         res.append(Constants.SPACE + ScriptConstants.LINUX_THEN 
                 + Constants.SPACE + ScriptConstants.ECHO + Constants.SPACE);
         res.append(ScriptConstants.DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY);
@@ -830,7 +768,7 @@ public class LinuxMachine extends Machine {
         res.append(Constants.ARCHIVE_DATABASE_BASE_PATH);
         res.append(Constants.SPACE + ScriptConstants.SCRIPT_DIR 
                 + Constants.SPACE);
-        res.append(bpDatabaseDir);
+        res.append(adminDatabaseDir);
         res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.FI
                 + Constants.SEMICOLON + Constants.SPACE + ScriptConstants.EXIT
                 + Constants.SEMICOLON + Constants.SPACE + Constants.QUOTE_MARK);
@@ -908,18 +846,6 @@ public class LinuxMachine extends Machine {
         return res.toString();
     }
     
-    /**
-     * This functions makes the script for creating the new directories.
-     * 
-     * Linux creates directories directly through ssh.
-     * Windows creates an install a script file for installing the directories, 
-     * which has to be sent to the machine, then executed and finally deleted. 
-     * 
-     * @param dir The name of the directory to create.
-     * @param clean Whether the directory should be cleaned\reset.
-     * @return The lines of code for creating the directories.
-     * @see #createInstallDirScript(File)
-     */
     @Override
     protected String scriptCreateDir(String dir, boolean clean) {
         StringBuilder res = new StringBuilder();
@@ -969,11 +895,6 @@ public class LinuxMachine extends Machine {
         return res.toString();
     }
     
-    /**
-     * Creates the script for creating the application specified directories.
-     * 
-     * @return The script for creating the application specified directories.
-     */
     @Override
     protected String getAppDirectories() {
         StringBuilder res = new StringBuilder();
@@ -1044,12 +965,6 @@ public class LinuxMachine extends Machine {
         // Do nothing. Dummy function on linux machine.
     }
 
-    /**
-     * Changes the file directory path to the format used in the security 
-     * policy.
-     * @param path The current path.
-     * @return The formatted path.
-     */
     @Override
     protected String changeFileDirPathForSecurity(String path) {
         path += Constants.SLASH + Constants.SECURITY_FILE_DIR_TAG 
@@ -1058,17 +973,6 @@ public class LinuxMachine extends Machine {
                 ScriptConstants.SECURITY_DIR_SEPARATOR);
     }
 
-    /**
-     * This method does the following:
-     * 
-     * Retrieves the path to the jmxremote.access and jmxremote.password files.
-     * 
-     * Moves these files, if they are different from standard.
-     * 
-     * Makes the jmxremote.access and jmxremote.password files readonly.
-     *  
-     * @return The commands for handling the jmxremote files.
-     */
     @Override
     protected String getJMXremoteFilesCommand() {
         String accessFilePath;
