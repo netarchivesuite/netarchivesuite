@@ -98,7 +98,6 @@ public class BatchMessage extends ArchiveMessage {
      * @param job  The batch job to be executed
      * @param replicaId id of this replica.
      * @param batchId The id for the process which runs the batchjob.
-     * @param arguments The arguments for initialising the batchjob. 
      * @param arguments The arguments for initialising the batchjob. This is 
      * allowed to be null.
      * @throws ArgumentNotValid If the job is null, or the replica is either 
