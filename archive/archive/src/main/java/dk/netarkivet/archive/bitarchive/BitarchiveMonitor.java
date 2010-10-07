@@ -93,9 +93,14 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             Collections.synchronizedMap(new HashMap<String, BatchJobStatus>());
 
     /**
+     * Whether the timer will be created as a daemon-thread.
+     */
+    private static final boolean IS_DAEMON = true;
+    
+    /**
      * The timer for keeping track of running batchjobs.
      */
-    protected Timer batchTimer = new Timer(true);
+    protected final Timer batchTimer = new Timer(IS_DAEMON);
     
     /**
      * Logger for this class.
