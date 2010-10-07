@@ -99,8 +99,10 @@ public abstract class DerbySpecifics extends DBSpecifics {
      * This implementation can be overriden if a specific RDBM is not handling
      * the {@link Connection#isValid(int)} JDBC4 method properly.
      * @param connection
-     * @param validityTimeout
-     * @return
+     * @param validityTimeout The time in seconds to wait for the database operation used to validate the connection 
+     to complete. If the timeout period expires before the operation completes, this method returns false. A 
+     value of 0 indicates a timeout is not applied to the database operation. 
+     * @return true, if the connection is valid; false, otherwise
      * @throws SQLException 
      */
     public boolean connectionIsValid(Connection connection, int validityTimeout)

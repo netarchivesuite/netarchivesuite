@@ -23,7 +23,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

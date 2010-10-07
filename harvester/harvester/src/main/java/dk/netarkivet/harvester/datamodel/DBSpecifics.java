@@ -23,7 +23,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -35,7 +34,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.SettingsFactory;
 
@@ -43,7 +41,7 @@ import dk.netarkivet.common.utils.SettingsFactory;
  * Defines database specific implementations used by the Harvester. 
  *
  * The actual actual implementation which is loaded is defined by the 
- * {@link CommonSettings.DB_SPECIFICS_CLASS} setting. See the sub class list for
+ * {@link CommonSettings#DB_SPECIFICS_CLASS} setting. See the sub class list for
  * available implementations 
  */
 public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
