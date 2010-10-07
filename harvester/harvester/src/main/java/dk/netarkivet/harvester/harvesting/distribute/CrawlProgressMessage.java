@@ -176,8 +176,6 @@ implements Serializable {
 
         /**
          * The job status.
-         *
-         * @see HeritrixStatus
          */
         private String status;
 
