@@ -35,12 +35,12 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 /**
  *
  * This class wraps information stored in the Heritrix MBeans, CrawlService and
- * CrawlService.Job, and represent the crawl progress.
+ * CrawlService.Job, and represents the crawl progress.
  *
  * Additionally this object extends {@link HarvesterMessage} so that it can be
  * sent on the JMS bus to be processed by {@link HarvestMonitorServer}.
  *
- *  @see HeritrixLauncher#doCrawl()
+ * @see HeritrixLauncher#doCrawl()
  *
  */
 public class CrawlProgressMessage extends HarvesterMessage
@@ -327,7 +327,7 @@ implements Serializable {
      *            the job ID
      * @param progressStatisticsLegend
      *            the legend of the progress statistics summary string
-     * @see {@link CrawlProgressMessage#progressStatisticsLegend}
+     * @see CrawlProgressMessage#progressStatisticsLegend
      */
     public CrawlProgressMessage(long harvestID, long jobId,
             String progressStatisticsLegend) {
