@@ -53,6 +53,7 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ.TestObjectMessage;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
@@ -93,7 +94,6 @@ public class HarvestSchedulerTester extends TestCase {
 
     ReloadSettings reloadSettings = new ReloadSettings();
     MockupJMS jmsConnection = new MockupJMS();
-    private QueueReceiver messageReceiver;
 
     private List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
 
@@ -125,8 +125,6 @@ public class HarvestSchedulerTester extends TestCase {
         harvestScheduler = new HarvestScheduler();
 
         HarvestJobGeneratorTest.generateJobs(new Date());
-        
-        messageReceiver = createMessageReceiver();
     }
 
     /**
@@ -204,7 +202,8 @@ public class HarvestSchedulerTester extends TestCase {
         final JobDAO jdao = JobDAO.getInstance();
         jdao.create(bad);
         submitNewJobs();
-        messageReceiver.receiveNoWait();
+
+        createMessageReceiver(JobPriority.HIGHPRIORITY).receiveNoWait();
         
         Job good = Job.createJob(1L, cfg, 1);
         good.setStatus(JobStatus.NEW);
@@ -262,9 +261,6 @@ public class HarvestSchedulerTester extends TestCase {
 
         submitNewJobs();
 
-        ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())
-                .waitForConcurrentTasksToFinish();
-
         assertEquals("Haco listener should have received one message", 1,
                 hacoListener.getNumReceived());
         DoOneCrawlMessage crawlMessage = (DoOneCrawlMessage) hacoListener
@@ -290,36 +286,32 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Test that runNewJobs makes correct duplication reduction information.
-     * 
-     * @throws Exception If HarvestScheduler throws exception
      */
     public void testSubmitNewJobsMakesDuplicateReductionInfo() 
     throws Exception {
         clearNewJobs();
+        
+        QueueReceiver messageReceiver = 
+            createMessageReceiver(JobPriority.LOWPRIORITY);
 
         // Make some jobs to submit
         // Assume 1st jobId is 2, and lastId is 15
-        DataModelTestCase.createTestJobs(2L, 15L);
+        DataModelTestCase.createTestJobs(2L, 15L);        
 
-        // Add a listener to see what is sent
-        TestMessageListener hacoListener = new TestMessageListener();
-        
-        JMSConnectionMockupMQ.getInstance().setListener(
-                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), 
-                hacoListener);
-        JMSConnectionMockupMQ.getInstance().setListener(
-                JobChannelUtil.getChannel(JobPriority.LOWPRIORITY), 
-                hacoListener);
-
+        // Submit all the jobs, and hold on to the last one
+        DoOneCrawlMessage crawlMessage = null;
+        int counter = 0;
         submitNewJobs();
-        ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())
-                .waitForConcurrentTasksToFinish();
-
+        while (countQueueMessages(JobPriority.LOWPRIORITY) > 0) {
+            counter++;
+            TestObjectMessage testObjectMessage = ((TestObjectMessage)
+                    messageReceiver.receiveNoWait());
+            crawlMessage = (DoOneCrawlMessage)testObjectMessage.getObject();
+            submitNewJobs();
+        }
         // Check result
-        assertEquals("Haco listener should have received all messages", 14,
-                hacoListener.getNumReceived());
-        DoOneCrawlMessage crawlMessage = (DoOneCrawlMessage) hacoListener
-                .getReceived();
+        assertEquals("Should have received all low priority messages", 8, 
+                counter);
         assertEquals("Should have 1 metadata entry in last received message",
                 1, crawlMessage.getMetadata().size());
         MetadataEntry metadataEntry = crawlMessage.getMetadata().get(0);
@@ -484,13 +476,13 @@ public class HarvestSchedulerTester extends TestCase {
         clearNewJobs();
 
         assertEquals("Message queue should be empty", 
-                0, countQueueMessages());
+                0, countQueueMessages(JobPriority.HIGHPRIORITY));
         
         Job firstJob = createJob(JobStatus.NEW);        
         submitNewJobs();
 
         assertEquals("Message queue should have received a message", 
-                1, countQueueMessages());
+                1, countQueueMessages(JobPriority.HIGHPRIORITY));
         assertEquals("First job should have been marked as submitted",
                 JobStatus.NEW, firstJob.getStatus());
         
@@ -498,17 +490,18 @@ public class HarvestSchedulerTester extends TestCase {
         submitNewJobs();
         assertEquals("New job should not have been submittet to non-empty " +
         		"message queue", 
-                1, countQueueMessages());   
+                1, countQueueMessages(JobPriority.HIGHPRIORITY));   
         assertEquals("Second job should still have status new",
                 JobStatus.NEW, secondJob.getStatus());
         
-        messageReceiver.receiveNoWait();
+
+        createMessageReceiver(JobPriority.HIGHPRIORITY).receiveNoWait();
         assertEquals("Message should have been removed from queue", 
-        0, countQueueMessages());         
+        0, countQueueMessages(JobPriority.HIGHPRIORITY));         
 
         submitNewJobs();
         assertEquals("Message queue should have received a message for the " +
-        		"next job", 1, countQueueMessages());
+        		"next job", 1, countQueueMessages(JobPriority.HIGHPRIORITY));
         assertEquals("Second job should have been marked as submitted",
                 JobStatus.NEW, secondJob.getStatus());
     }
@@ -666,10 +659,12 @@ public class HarvestSchedulerTester extends TestCase {
      */
     private void clearNewJobs() throws Exception {
         submitNewJobs();
-        while (countQueueMessages() > 0 ) {
-            messageReceiver.receiveNoWait();
+        for (JobPriority priority: JobPriority.values()) {
+            QueueReceiver messageReceiver =  createMessageReceiver(priority);
+            while (countQueueMessages(priority) > 0 ) {                
+                messageReceiver.receiveNoWait();
+            }
         }
-
     }
 
     /**
@@ -726,18 +721,19 @@ public class HarvestSchedulerTester extends TestCase {
      * @return
      * @throws JMSException
      */
-    private QueueReceiver createMessageReceiver() throws JMSException {
+    private QueueReceiver createMessageReceiver(JobPriority priority) 
+    throws JMSException {
         QueueSession qSession = 
             JMSConnectionMockupMQ.getInstance().getQueueSession();
         ChannelID channelId =  
-            JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY);
+            JobChannelUtil.getChannel(priority);
         Queue queue = qSession.createQueue(channelId.getName());
         return qSession.createReceiver(queue);
     }
     
-    private int countQueueMessages() throws JMSException {
+    private int countQueueMessages(JobPriority priority) throws JMSException {
         ChannelID channelId =  
-            JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY);
+            JobChannelUtil.getChannel(priority);
         QueueBrowser qBrowser = 
             JMSConnectionMockupMQ.getInstance().createQueueBrowser(channelId);
         Enumeration messageEnumeration = qBrowser.getEnumeration();
