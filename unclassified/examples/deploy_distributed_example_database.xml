@@ -49,12 +49,6 @@
                     <replicaType>checksum</replicaType>
                 </replica>
             </replicas>
-            <!-- Default bit archive to use for batch jobs (if none is specified) -->
-            <!-- or get and getFile oprations, (as well as bitArchive monitor)    -->
-            <database>
-	        <url></url>
-	    </database>
-
             <!-- tempDir corrected from ./tests/commontempdir -->
             <tempDir>tmpdircommon</tempDir> 
         </common>
@@ -79,7 +73,7 @@
         <harvester>
             <harvesting>
                 <deduplication>
-                    <enabled>false</enabled>
+                    <enabled>true</enabled>
                 </deduplication>
             </harvesting>
         </harvester>
@@ -100,19 +94,19 @@
                 <mail>
                     <server>post.kb.dk</server>
                 </mail>
-                <useReplicaId>A</useReplicaId> 
                 <notifications>
                     <class>dk.netarkivet.common.utils.EMailNotifications</class>
                     <!-- T: receiver to be modified by test -->
                     <receiver>example@netarkivet.dk</receiver> 
                     <sender>example@netarkivet.dk</sender>
                 </notifications>
+                <useReplicaId>A</useReplicaId> 
             </common>
         </settings>
 
         <deployMachine name="east-adm-001.kb.dk">
             <deployInstallDir>/home/test</deployInstallDir>
-            <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
+            <deployHarvestDatabaseDir>harvestDatabase</deployHarvestDatabaseDir>
             <deployArchiveDatabaseDir>adminDB</deployArchiveDatabaseDir>
             <settings>
                 <archive>
@@ -127,6 +121,15 @@
                         </database>
                     </admin>
                 </archive>
+                <common>
+                    <database>
+                        <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
+                        <baseUrl>jdbc:derby</baseUrl>
+                        <machine>localhost</machine>
+                        <port>8118</port>
+                        <dir>harvestDatabase/fullhddb</dir>
+                    </database>
+                </common>
             </settings>
             <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
                 <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
@@ -142,13 +145,9 @@
                             <port>8110</port> 
                             <rmiPort>8210</rmiPort>
                         </jmx>
-                        <database>
-                             <url>jdbc:derby:harvestDatabase/fullhddb</url>
-                        </database>
                     </common>
                 </settings>
             </applicationName>
-            
             <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
                 <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
@@ -166,7 +165,7 @@
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>ABM</applicationInstanceId>
+                        <applicationInstanceId>ABM</applicationInstanceId>            
                         <jmx>
                             <port>8112</port>  
                             <rmiPort>8212</rmiPort>
@@ -186,6 +185,18 @@
                     </common>
                 </settings>
             </applicationName>
+            <applicationName name="dk.netarkivet.harvester.scheduler.HarvestJobManagerApplication">
+                <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
+                <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>    
+                <settings>
+                    <common>
+                        <jmx>
+                            <port>8114</port> 
+                            <rmiPort>8214</rmiPort>
+                        </jmx>
+                    </common>
+                </settings>
+            </applicationName> 
         </deployMachine>
 
         <deployMachine os="windows" name="east-bar-013.bitarkiv.kb.dk">
@@ -211,9 +222,9 @@
             </applicationName>
         </deployMachine>
         
-        <deployMachine os="windows" name="east-bar-011.bitarkiv.kb.dk">
+        <deployMachine os="windows" name="east-bar-014.bitarkiv.kb.dk">
             <deployMachineUserName>ba-test</deployMachineUserName>
-            <deployInstallDir>c:\Documents and Settings\ba-test</deployInstallDir>
+            <deployInstallDir>c:\Users\Ba-test</deployInstallDir>
             <deployJavaOpt>-Xmx1150m</deployJavaOpt>
 
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
@@ -229,7 +240,7 @@
                     <archive>
                         <!-- T: fileDir to be extended with $TESTX by test -->
                         <bitarchive>
-                            <baseFileDir>q:\bitarkiv_1</baseFileDir>
+                            <baseFileDir>d:\bitarkiv_1</baseFileDir>
                         </bitarchive>
                     </archive>
                 </settings>
@@ -247,7 +258,7 @@
                     <archive>
                         <!-- T: fileDir to be extended with $TESTX by test -->
                         <bitarchive>
-                            <baseFileDir>q:\bitarkiv_2</baseFileDir>
+                            <baseFileDir>e:\bitarkiv_2</baseFileDir>
                         </bitarchive>
                     </archive>
                 </settings>
@@ -265,7 +276,7 @@
                     <archive>
                         <!-- T: fileDir to be extended with $TESTX by test -->
                         <bitarchive>
-                            <baseFileDir>q:\bitarkiv_3</baseFileDir>
+                            <baseFileDir>f:\bitarkiv_3</baseFileDir>
                         </bitarchive>
                     </archive>
                 </settings>
@@ -290,9 +301,9 @@
                         <harvesting>
                             <queuePriority>LOWPRIORITY</queuePriority> <!-- on http port-->
                             <heritrix>
-                                <guiPort>8190</guiPort> 
+                                <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
-                                <jmxPort>8191</jmxPort>
+                                <jmxPort>8211</jmxPort>
                                 <jmxUsername>controlRole</jmxUsername>
                                 <jmxPassword>R_D</jmxPassword>
                             </heritrix>
@@ -323,9 +334,9 @@
                         <harvesting>
                             <queuePriority>LOWPRIORITY</queuePriority>
                             <heritrix>
-                                <guiPort>8190</guiPort> 
+                                <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
-                                <jmxPort>8191</jmxPort>
+                                <jmxPort>8211</jmxPort>
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
@@ -348,9 +359,9 @@
                         <harvesting>
                             <queuePriority>HIGHPRIORITY</queuePriority> 
                             <heritrix>
-                                <guiPort>8192</guiPort> 
+                                <guiPort>8113</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8093) -->
-                                <jmxPort>8193</jmxPort> 
+                                <jmxPort>8213</jmxPort> 
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
@@ -400,7 +411,7 @@
                 <settings>
                     <archive>
                         <checksum>
-                            <baseDir>checksumDir</baseDir>
+                            <baseDir>CS</baseDir>
                         </checksum>
                     </archive>
                     <common>
@@ -458,12 +469,17 @@
                         <harvesting>
                             <queuePriority>HIGHPRIORITY</queuePriority>
                             <heritrix>
-                                <guiPort>8190</guiPort> 
+                                <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
-                                <jmxPort>8191</jmxPort>
+                                <jmxPort>8211</jmxPort>
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
+                            <metadata>
+                            	<heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
+                            	<reportFilePattern>.*-report.txt</reportFilePattern>
+                            	<logFilePattern>.*(\.log|\.out)</logFilePattern>
+                            </metadata>
 			    <serverDir>harvester_high</serverDir>
                         </harvesting>
                     </harvester>

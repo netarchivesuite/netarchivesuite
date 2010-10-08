@@ -29,12 +29,13 @@
         one machine scenario. Kind of running 'quickstart' on another machine. 
         Uses HTTP as file transport agent. Requires the availability of 
         port 7676: JMS broker
-        port 8040-8047 for the http filetransport servers serving the HTTPRemoteFile;         
+        port 8040-8048 for the http filetransport servers serving the HTTPRemoteFile;         
         port 8070 for the viewerproxy.
         port 8074 for the GUIApplication webinterface
         port 8090-8093 for the Heritrix GUI 
         port 8110-8118: JMX ports
         port 8210-8218: RMI ports
+        port 8119-8120: databases
 
         Does not include a checksum replica w/ a ChecksumFileApplication
         Uses the default ActiveBitPreservation implementation
@@ -89,6 +90,15 @@
             <jmxUsername>monitorRole</jmxUsername>
             <jmxPassword>test</jmxPassword>
         </monitor>
+        <archive>
+            <bitpreservation>
+                <baseDir>bitpreservation</baseDir>
+                <class>dk.netarkivet.archive.arcrepository.bitpreservation.DatabaseBasedActiveBitPreservation</class>
+            </bitpreservation>
+            <arcrepository>
+                <baseDir>.</baseDir>
+            </arcrepository>
+        </archive>
     </settings>
 
     <thisPhysicalLocation name="NATIONAL_LIBRARY">
@@ -112,8 +122,17 @@
         </settings>
         <deployMachine name="localhost">
             <deployHarvestDatabaseDir>harvestDatabase</deployHarvestDatabaseDir>
-            <deployHarvestDatabaseExternal>true</deployHarvestDatabaseExternal>
+            <deployArchiveDatabaseDir>adminDB</deployArchiveDatabaseDir>
             <settings>
+                <archive>
+                    <database>
+                       <class>dk.netarkivet.arcrepositoryadmin.DerbyServerSpecifics</class>
+                       <baseUrl>jdbc:derby</baseUrl>
+                       <machine>localhost</machine>
+                       <port>8120</port>
+                       <dir>adminDB</dir>
+                    </database>
+                </archive>
                 <common>
                     <database>
                        <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
@@ -283,6 +302,10 @@
                             <port>8118</port> 
                             <rmiPort>8218</rmiPort>
                         </jmx>
+                        <remoteFile>
+                            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                            <port>8048</port>
+                        </remoteFile>  
                     </common>
                 </settings>            
             </applicationName>  

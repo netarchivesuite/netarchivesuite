@@ -25,9 +25,21 @@
 *
 -->
 <!--
-        This file contains an example of a deploy configuration file for the 
+        This file contains an example of a deploy configuration file for the
         one machine scenario. Kind of running 'quickstart' on another machine.
+        Uses HTTP as file transport agent. Requires the availability of
+        port 7676: JMS broker
+        port 8040-8042 for the http filetransport servers serving the HTTPRemoteFile;
+        port 8110-8113: JMX ports
+        port 8210-8213: RMI ports
+        port 8114: admin database
+
+        Does not include a checksum replica w/ a ChecksumFileApplication
+        Uses the default ActiveBitPreservation implementation
+        (currently dk.netarkivet.archive.arcrepository.bitpreservation.
+         FileBasedActiveBitPreservation).
 -->
+
 
 
 <deployGlobal>
@@ -39,14 +51,12 @@
     <deployJavaOpt>-Xmx1536m</deployJavaOpt>
     <settings>
         <common>
-            <environmentName>STANDALONE</environmentName>
+            <environmentName>USER</environmentName>
             <applicationInstanceId></applicationInstanceId>
             <remoteFile>
                 <class>
-                    dk.netarkivet.common.distribute.FTPRemoteFile
+                    dk.netarkivet.common.distribute.HTTPRemoteFile
                 </class>
-                <serverPort>21</serverPort>
-                <retries>3</retries>
             </remoteFile>
             <jms>
                 <class>
@@ -79,11 +89,20 @@
           <jmxUsername>admin</jmxUsername>
             <jmxPassword>admin</jmxPassword>
         </monitor>
+        <archive>
+            <bitpreservation>
+                <baseDir>bitpreservation</baseDir>
+                <class>dk.netarkivet.archive.arcrepository.bitpreservation.DatabaseBasedActiveBitPreservation</class>
+            </bitpreservation>
+            <arcrepository>
+                <baseDir>.</baseDir>
+            </arcrepository>
+        </archive>
     </settings>
 
     <thisPhysicalLocation name="NATIONAL_LIBRARY">
       <!-- TODO chaneg to fit your setup. -->
-      <deployInstallDir>~/run_archive</deployInstallDir>
+      <deployInstallDir>/home/test</deployInstallDir>
       <deployMachineUserName>test</deployMachineUserName>
     
     <settings>
@@ -109,44 +128,71 @@
         </viewerproxy>
     </settings>
 
-    <deployMachine name="localhost">
-        <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
-        <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
+        <deployMachine name="localhost">
+            <deployArchiveDatabaseDir>adminDB</deployArchiveDatabaseDir>
             <settings>
-                <common>
-                    <jmx>
-                        <port>8111</port>
-                        <rmiPort>8211</rmiPort>
-                    </jmx>
-                </common>
-            </settings>
-        </applicationName>
-        <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
-            <settings>
-                <common>
-                    <jmx>
-                        <port>8112</port>
-                        <rmiPort>8212</rmiPort>
-                    </jmx>
-                </common>
-            </settings>
-        </applicationName>
-        <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
-            <settings>
-                <common>
-                    <jmx>
-                        <port>8113</port>
-                        <rmiPort>8213</rmiPort>
-                    </jmx>
-                </common>
                 <archive>
-                    <bitarchive>
-                        <!-- TODO: Point this directory at your ARC files. -->
-                        <baseFileDir>/arcs/</baseFileDir>
-                    </bitarchive>
+                    <admin>
+                        <class>dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin</class>
+                        <database>
+                            <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
+                            <baseUrl>jdbc:derby</baseUrl>
+                            <machine>localhost</machine>
+                            <port>8114</port>
+                            <dir>adminDB</dir>
+                        </database>
+                    </admin>
                 </archive>
             </settings>
-        </applicationName>
-    </deployMachine>
-  </thisPhysicalLocation>
+
+            <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
+                <settings>
+                    <common>
+                        <jmx>
+                            <port>8111</port>
+                            <rmiPort>8211</rmiPort>
+                        </jmx>
+                        <remoteFile>
+                            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                            <port>8040</port>
+                        </remoteFile>
+                    </common>
+                </settings>
+            </applicationName>
+            <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
+                <settings>
+                    <common>
+                        <jmx>
+                            <port>8112</port>
+                            <rmiPort>8212</rmiPort>
+                        </jmx>
+                        <remoteFile>
+                            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                            <port>8041</port>
+                        </remoteFile>
+                    </common>
+                </settings>
+            </applicationName>
+            <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
+                <settings>
+                    <common>
+                        <jmx>
+                            <port>8113</port>
+                            <rmiPort>8213</rmiPort>
+                        </jmx>
+                        <remoteFile>
+                            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+                            <port>8042</port>
+                        </remoteFile>
+                    </common>
+                    <archive>
+                        <bitarchive>
+                            <!-- TODO: Point this directory at your ARC files. -->
+                            <baseFileDir>arcs</baseFileDir>
+                        </bitarchive>
+                    </archive>
+                </settings>
+            </applicationName>
+        </deployMachine>
+    </thisPhysicalLocation>
 </deployGlobal>
