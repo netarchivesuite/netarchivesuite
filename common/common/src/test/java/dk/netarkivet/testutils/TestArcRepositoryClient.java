@@ -33,6 +33,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
+import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
@@ -100,9 +103,9 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
 
         File in = new File(arcDir, arcfile);
         try {
-            ARCReader arcReader = ARCReaderFactory.get(in);
-            ARCRecord arc = (ARCRecord) arcReader.get(index);
-            BitarchiveRecord result = new BitarchiveRecord(arc);
+            ArchiveReader arcReader = ArchiveReaderFactory.get(in);
+            ArchiveRecord arc = arcReader.get(index);
+            BitarchiveRecord result = new BitarchiveRecord(arc, arcfile);
             return result;
         } catch (IOException e) {
             throw new IOFailure("Error reading record from " + arcfile + " offset " + index, e);

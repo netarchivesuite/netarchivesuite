@@ -441,7 +441,8 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
                     return null;
                 } else {
                     return new BitarchiveRecord(
-                            (ARCRecord) ARCReaderFactory.get(file).get(index));
+                            (ARCRecord) ARCReaderFactory.get(file).get(index),
+                            arcfile);
                 }
             } catch (IOException e) {
                 fail("Test failure while reading file '" + file + "'");

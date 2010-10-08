@@ -31,9 +31,9 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCReader;
-import org.archive.io.arc.ARCReaderFactory;
-import org.archive.io.arc.ARCRecord;
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
+import org.archive.io.ArchiveRecord;
 
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -89,13 +89,13 @@ public class Bitarchive {
     }
 
     /**
-     * Get an ARC record out of the archive. Returns null if the arcfile is
-     * not found in this bitarchive.
+     * Get an ARC or WARC record out of the archive. Returns null if the 
+     * archive file is not found in this bitarchive.
      *
      * @param arcfile
-     *            The name of an ARC file.
+     *            The name of an Archive file.
      * @param index
-     *            Index of the ARC record in the file
+     *            Index of the Archive record in the file
      * @return A BitarchiveRecord object for the record in question. This record
      *         contains the data from the file.
      * @throws ArgumentNotValid
@@ -117,8 +117,8 @@ public class Bitarchive {
             log.debug("Get request for file not on this machine: " + arcfile);
             return null;
         }
-        ARCReader arcReader = null;
-        ARCRecord arc = null;
+        ArchiveReader arcReader = null;
+        ArchiveRecord arc = null;
         try {
             if ((barc.getSize() <= index) || (index < 0)) {
                 String s = "GET: index out of bounds: " + arcfile + ":" + index
@@ -127,9 +127,9 @@ public class Bitarchive {
                 throw new ArgumentNotValid(s);
             }
             File in = barc.getFilePath();
-            arcReader = ARCReaderFactory.get(in);
-            arc = (ARCRecord) arcReader.get(index);
-            BitarchiveRecord result = new BitarchiveRecord(arc);
+            arcReader = ArchiveReaderFactory.get(in);
+            arc = arcReader.get(index);
+            BitarchiveRecord result = new BitarchiveRecord(arc, arcfile);
 
             // release resources locked
             log.info("GET: Got " + result.getLength()

@@ -104,6 +104,7 @@ public class UploadTester extends TestCase {
         assertStoreStatus(0, TestInfo.ARC1, true);
         assertStoreStatus(1, TestInfo.ARC2, true);
     }
+    
     /**
      * Verify that non-ARC files are rejected and execution fails.
      * Also verifies that nothing is stored in that case.
@@ -119,7 +120,17 @@ public class UploadTester extends TestCase {
             assertMsgCount(0, 0);
         }
     }
-
+    
+    /**
+     * Verify that uploading a single WARC file works as expected
+     * and deletes the file locally.
+     */
+    public void testMainOneWarcFile() {
+        Upload.main(new String[]{TestInfo.WARC1.getAbsolutePath()});
+        assertMsgCount(1, 0);
+        assertStoreStatus(0, TestInfo.WARC1, true);
+    }
+    
     /**
      * Verify that  the system fails as expected when the store operation
      * fails on the server side. (Local files must NOT be deleted).

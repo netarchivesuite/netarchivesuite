@@ -304,7 +304,7 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
                                     ((Long)headers.get(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY))+ tmp_length);
                         ArchiveRecordHeader header = new ARCRecordMetaData(filename, headers);
                         ARCRecord archiveRecord = new ARCRecord(in, header);
-                        bar = new BitarchiveRecord(archiveRecord);
+                        bar = new BitarchiveRecord(archiveRecord, filename);
                     }
 
                     uploadResource.setUrlKey((String) headers.get(ARCRecordMetaData.URL_FIELD_KEY));
@@ -324,7 +324,8 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
                         final ARCRecordMetaData meta = new ARCRecordMetaData(netMsg.getArcFile(), metadata);
 
                         metadata.put(ARCConstants.LENGTH_FIELD_KEY, Integer.toString(encodedKey.length));
-                        setBitarchiveRecord(new BitarchiveRecord(new ARCRecord(new ByteArrayInputStream(encodedKey),meta)));
+                        setBitarchiveRecord(new BitarchiveRecord(new ARCRecord(new ByteArrayInputStream(encodedKey),meta)
+                        , netMsg.getArcFile()));
                         netMsg.setRecord(bar);
                     } catch (IOException ex) {
                         throw new Error(e);

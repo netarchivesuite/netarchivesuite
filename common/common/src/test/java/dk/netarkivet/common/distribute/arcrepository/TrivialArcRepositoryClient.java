@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCReader;
-import org.archive.io.arc.ARCReaderFactory;
-import org.archive.io.arc.ARCRecord;
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
+import org.archive.io.ArchiveRecord;
 
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -100,12 +100,12 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "arcfile");
         ArgumentNotValid.checkNotNegative(index, "index");  
-        ARCReader reader = null;
-        ARCRecord record = null;
+        ArchiveReader reader = null;
+        ArchiveRecord record = null;
         try {
-            reader = ARCReaderFactory.get(new File(dir, arcfile), index);
-            record = (ARCRecord) reader.get();
-            return new BitarchiveRecord(record);
+            reader = ArchiveReaderFactory.get(new File(dir, arcfile), index);
+            record = reader.get();
+            return new BitarchiveRecord(record, arcfile);
         } catch (IOException e) {
             throw new IOFailure("Error reading record from '"
                     + arcfile + "' offset " + index, e);

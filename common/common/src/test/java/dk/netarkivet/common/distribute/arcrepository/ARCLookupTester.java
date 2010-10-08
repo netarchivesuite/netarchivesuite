@@ -174,11 +174,12 @@ public class ARCLookupTester extends TestCase {
         byte[] got = readFully(is);
         is.close();
         //Read the expected result from the "local" copy
-        File in = new File(TestInfo.WORKING_DIR, TestInfo.GIF_URL_KEY.getFile().getName());
+        String filename = TestInfo.GIF_URL_KEY.getFile().getName();
+        File in = new File(TestInfo.WORKING_DIR, filename);
         arcReader = ARCReaderFactory.get(in, TestInfo.GIF_URL_KEY.getOffset());
         ARCRecord arc = (ARCRecord) arcReader.get();
         BitarchiveRecord result
-                = new BitarchiveRecord(arc);
+                = new BitarchiveRecord(arc, filename);
         arc.close();
         byte[] wanted = StreamUtils.inputStreamToBytes(result.getData(), (int) result.getLength());
         assertEquals("Did not get expected data: ",
@@ -266,7 +267,7 @@ public class ARCLookupTester extends TestCase {
                 ARCReader reader = ARCReaderFactory.get(new File(fileDir, arcFile),
                         index);
                 ARCRecord record = (ARCRecord) reader.get();
-                return new BitarchiveRecord(record);
+                return new BitarchiveRecord(record, arcFile);
             } catch (IOException e) {
                 fail("Can't find file " + arcFile + ": " + e);
                 return null;
@@ -304,7 +305,7 @@ public class ARCLookupTester extends TestCase {
                         = new ARCRecordMetaData(arcFile, metadata);
                 return new BitarchiveRecord(
                         new ARCRecord(new ByteArrayInputStream(data),
-                                      meta));
+                                      meta), arcFile);
             } catch (IOException e) {
                 fail("Cant't create metadata record");
                 return null;

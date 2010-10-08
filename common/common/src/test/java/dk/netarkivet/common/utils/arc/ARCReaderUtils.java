@@ -95,7 +95,7 @@ public class ARCReaderUtils {
                    } else  {
                        arc = (ARCRecord) arcReader.get(key.getOffset());
                        arc.skipHttpHeader();
-                       BitarchiveRecord result = new BitarchiveRecord(arc);
+                       BitarchiveRecord result = new BitarchiveRecord(arc, ArcFile.getName());
 
                        if (result == null) {
                            throw new IOFailure ("result not found");

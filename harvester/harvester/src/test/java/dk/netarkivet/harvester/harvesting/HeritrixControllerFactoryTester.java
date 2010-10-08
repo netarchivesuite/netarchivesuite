@@ -34,9 +34,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.LuceneUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixControllerFactory;
-import dk.netarkivet.harvester.harvesting.controller.JMXHeritrixController;
+
 
 /**
  * Unittest for the HeritrixControllerFactory class.
@@ -84,7 +85,7 @@ public class HeritrixControllerFactoryTester extends TestCase {
         HeritrixController hc
             = HeritrixControllerFactory.getDefaultHeritrixController(files);
         assertTrue("Should have got a JMXHeritricController, not " + hc,
-                hc instanceof JMXHeritrixController);
+                hc instanceof BnfHeritrixController);
     }
 
     /**

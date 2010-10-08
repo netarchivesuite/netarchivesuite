@@ -331,7 +331,7 @@ public class ARCArchiveAccessTester extends TestCase {
                         = new ARCRecordMetaData(arcFile, metadata);
                 return new BitarchiveRecord(
                         new ARCRecord(new ByteArrayInputStream(data),
-                                      meta));
+                                      meta), arcFile);
             } catch (IOException e) {
                 fail("Cant't create metadata record");
                 return null;

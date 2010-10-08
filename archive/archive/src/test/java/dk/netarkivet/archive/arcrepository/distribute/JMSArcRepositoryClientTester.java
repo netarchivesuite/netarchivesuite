@@ -991,7 +991,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
 //                            meta)));
                     setBitarchiveRecord(new BitarchiveRecord(new ARCRecord(
                             new ByteArrayInputStream(encodedKey),
-                            meta)));
+                            meta), netMsg.getArcFile()));
                     netMsg.setRecord(bar);
 
 

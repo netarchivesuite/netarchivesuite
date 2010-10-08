@@ -43,17 +43,21 @@ import java.io.IOException;
 public class ARCReaderTester extends TestCase {
     public static final String ARCHIVE_DIR =
             "tests/dk/netarkivet/common/utils/arc/data/input/";
+    public static final String testFileName = "working.arc";
+    
     public void testARCReaderClose() {
         try {
+            final File testfile = new File(ARCHIVE_DIR + testFileName);
             FileUtils.copyFile(new File(ARCHIVE_DIR + "fyensdk.arc"),
-                    new File(ARCHIVE_DIR + "working.arc"));
-            ARCReader reader = ARCReaderFactory.get(new File(ARCHIVE_DIR + "working.arc"));
+                    testfile);
+            
+            ARCReader reader = ARCReaderFactory.get(testfile);
             ARCRecord record = (ARCRecord) reader.get(0);
             BitarchiveRecord rec =
-                    new BitarchiveRecord(record);
+                    new BitarchiveRecord(record, testFileName);
             record.close();
             reader.close();
-            new File(ARCHIVE_DIR + "working.arc").delete();
+            testfile.delete();
         } catch (IOException e) {
             fail("Should not throw IOException " + e);
         }

@@ -147,7 +147,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         try {
             reader = ARCReaderFactory.get(f, index);
             record = (ARCRecord) reader.get();
-            return new BitarchiveRecord(record);
+            return new BitarchiveRecord(record, arcfile);
         } catch (IOException e) {
             throw new IOFailure("Error reading record from '"
                     + arcfile + "' offset " + index, e);

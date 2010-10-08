@@ -44,6 +44,11 @@ public class TestInfo {
     static final File ARC3 
         = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR, 
                 "test3.arc");
+   /** Warc file to test upload. */
+    static final File WARC1 
+        = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR, 
+            "NAS-20100909163324-00000-mette.kb.dk.warc");
+    
     //An index cache file:
     static final File INDEX_DIR 
         = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR, 
