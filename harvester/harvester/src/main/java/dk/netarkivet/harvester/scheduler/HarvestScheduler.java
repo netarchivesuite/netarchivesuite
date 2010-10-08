@@ -24,8 +24,10 @@ package dk.netarkivet.harvester.scheduler;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jms.JMSException;
 import javax.jms.QueueBrowser;
@@ -33,7 +35,6 @@ import javax.jms.QueueBrowser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -75,7 +76,13 @@ public class HarvestScheduler extends LifeCycleComponent {
     private Thread dispatcherThread;
      
      /** Connection to JMS provider. */
-     private JMSConnection jmsConnection;     
+     private JMSConnection jmsConnection;          
+
+     /** Used for storing a map of the <code>QueueBrowsers</code> used be the 
+      * <code>HarvestScheduler</code>, so they don't need to be created over
+      * and over (see Bug 2059).
+      */
+     private Map<JobPriority, QueueBrowser> queueBrowsers;
 
     /**
      * Create new instance of the HarvestScheduler.
@@ -83,13 +90,14 @@ public class HarvestScheduler extends LifeCycleComponent {
     public HarvestScheduler() {
         log.info("Creating HarvestScheduler");
         jmsConnection = JMSConnectionFactory.getInstance();
+        createQueueBrowsers();
     }
-
+    
     /**
      * Start the thread responsible for reading Harvest definitions from the 
      * database, and dispatching the harvest job to the servers.
      */
-    public void start() {        
+    public void start() {          
         //ToDo implement real scheduling with timeout functionality.
         dispatcherThread = new Thread("HarvestScheduler") { 
             public void run() {
@@ -184,7 +192,7 @@ public class HarvestScheduler extends LifeCycleComponent {
     synchronized void submitNewJobs() {
         try {
             for (JobPriority priority: JobPriority.values()) {
-                if (isQueueEmpty(JobChannelUtil.getChannel(priority))) {
+                if (isQueueEmpty(priority)) {
                     submitNextNewJob(priority);
                 } else {
                     if (log.isTraceEnabled()) log.trace("Skipping dispatching of " 
@@ -270,13 +278,28 @@ public class HarvestScheduler extends LifeCycleComponent {
     /**
      * Checks that the message queue for the given harvest job is empty and 
      * therefore ready for the next message.
-     * @param channelId The id of the channel to check
+     * @param priority The job priority used for the channel of the queue
      * @return Is the queue empty
      * @throws JMSException Unable to retrieve queue information
      */
-    private boolean isQueueEmpty(ChannelID channelId) throws JMSException {
-        QueueBrowser qBrowser = jmsConnection.createQueueBrowser(channelId);
+    private boolean isQueueEmpty(JobPriority priority) throws JMSException {
+        QueueBrowser qBrowser = queueBrowsers.get(priority);
         return !qBrowser.getEnumeration().hasMoreElements();
+    }
+    
+    private void createQueueBrowsers() {
+        queueBrowsers = new HashMap<JobPriority, QueueBrowser>();
+        
+        for (JobPriority priority: JobPriority.values()) {
+            log.debug("Creating QueueBrowser for " + priority + " jobs");
+            try {
+                queueBrowsers.put(priority, 
+                        jmsConnection.createQueueBrowser(
+                                JobChannelUtil.getChannel(priority)));
+            } catch (JMSException e) {
+                log.error("Unable to  create queue browser", e);
+            }
+        }
     }
     
     /**
