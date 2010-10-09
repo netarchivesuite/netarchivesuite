@@ -539,8 +539,8 @@ CREATE TABLE runningJobsMonitor (
      PRIMARY KEY (jobId, harvestName)
 );
 
-CREATE INDEX runningJobsMonitorJobId on runningJobsHistory (jobId);
-CREATE INDEX runningJobsMonitorHarvestName on runningJobsHistory (harvestName);
+CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId);
+CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName);
 
 -- This table contains frontier report data
 CREATE TABLE frontierReportMonitor (

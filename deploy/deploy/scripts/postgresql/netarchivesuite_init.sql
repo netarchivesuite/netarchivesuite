@@ -470,8 +470,8 @@ CREATE TABLE runningJobsMonitor (
      CONSTRAINT pkRunningJobsMonitor PRIMARY KEY (jobId, harvestName)
 );
 
-CREATE INDEX runningJobsMonitorJobId on runningJobsHistory (jobId) TABLESPACE tsindex;
-CREATE INDEX runningJobsMonitorHarvestName on runningJobsHistory (harvestName) TABLESPACE tsindex;
+CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId) TABLESPACE tsindex;
+CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName) TABLESPACE tsindex;
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE runningJobsMonitor TO netarchivesuite;
 
