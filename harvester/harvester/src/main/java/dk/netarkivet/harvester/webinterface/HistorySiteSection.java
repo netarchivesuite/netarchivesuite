@@ -40,10 +40,11 @@ public class HistorySiteSection extends SiteSection {
                       {"alljobs", "pagetitle;all.jobs"},
                       {"perdomain", "pagetitle;all.jobs.per.domain"},
                       {"running", "pagetitle;all.jobs.running"},
+                      {"running-jobdetails", "pagetitle;running.job.details"},
                       {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},
                       {"perharvestrun", "pagetitle;all.jobs.per.harvestrun"},
                       {"jobdetails", "pagetitle;details.for.job"},
-                      {"seeds", "pagetitle;seeds.for.harvestdefinition" }  
+                      {"seeds", "pagetitle;seeds.for.harvestdefinition" }
               }, "History",
                  dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     }
@@ -52,7 +53,7 @@ public class HistorySiteSection extends SiteSection {
     public void initialize() {
         // Initialize the running jobs tables if necessary
         RunningJobsInfoDAO.getInstance();
-	
+
     }
 
     /** No cleanup necessary in this site section. */
