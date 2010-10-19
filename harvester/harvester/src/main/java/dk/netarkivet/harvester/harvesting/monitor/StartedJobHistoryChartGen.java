@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.Locale;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -295,7 +294,7 @@ class StartedJobHistoryChartGen {
      */
     private Locale locale = Locale.getDefault();
 
-    private ScheduledFuture<?> genHandle = null;
+    private ChartGenExecutor genExec = null;
 
     StartedJobHistoryChartGen(long jobId) {
         super();
@@ -306,8 +305,8 @@ class StartedJobHistoryChartGen {
 
         this.jobId = jobId;
 
-        ChartGenExecutor exec = new ChartGenExecutor();
-        genHandle = exec.scheduleWithFixedDelay(
+        genExec = new ChartGenExecutor();
+        genExec.scheduleWithFixedDelay(
                 new ChartGen(this),
                 0,
                 GEN_INTERVAL,
@@ -334,8 +333,8 @@ class StartedJobHistoryChartGen {
             }
         }
 
-        if (genHandle != null) {
-            genHandle.cancel(true);
+        if (genExec != null) {
+            genExec.shutdownNow();
         }
     }
 

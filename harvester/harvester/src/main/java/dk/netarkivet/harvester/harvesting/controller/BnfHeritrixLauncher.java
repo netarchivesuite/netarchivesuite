@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -102,8 +101,6 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
      */
     private class CrawlControl implements Runnable {
 
-        public Boolean crawlIsFinished = false;
-
         @Override
         public void run() {
             CrawlProgressMessage cpm;
@@ -117,29 +114,19 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
             getJMSConnection().send(cpm);
 
+            HeritrixFiles files = getHeritrixFiles();
             if (cpm.crawlIsFinished()) {
-                synchronized (crawlIsFinished) {
-                 // Crawl is over, set flag
-                    crawlIsFinished = true;
-                    return;
-                }
+                log.info("Job ID: " + files.getJobID()
+                        + ": crawl is finished.");
+                crawlIsOver = true;
+                return;
             }
 
-            HeritrixFiles files = getHeritrixFiles();
             log.info("Job ID: " + files.getJobID() + ", Harvest ID: "
                     + files.getHarvestID() + ", " + cpm.getHostUrl() + "\n"
                     + cpm.getProgressStatisticsLegend() + "\n"
                     + cpm.getJobStatus().getStatus() + " "
                     + cpm.getJobStatus().getProgressStatistics());
-        }
-
-        /**
-         * @return the crawlIsFinished
-         */
-        protected boolean crawlIsFinished() {
-            synchronized (crawlIsFinished) {
-                return crawlIsFinished;
-            }
         }
     }
 
@@ -147,9 +134,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
     final static Log log = LogFactory.getLog(BnfHeritrixLauncher.class);
 
     /**
-     * Wait time in milliseconds (10s).
+     * Wait time in milliseconds (100 ms).
      */
-    private final static int SLEEP_TIME_MS = 10 * 60 * 1000;
+    private final static int SLEEP_TIME_MS = 100;
 
     /**
      * Frequency in seconds for generating the full harvest report.
@@ -161,9 +148,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
     /** The CrawlController used. */
     private BnfHeritrixController heritrixController;
 
-    private ScheduledFuture<?> crawlControlHandle = null;
-
-    private ScheduledFuture<?> frontierReportGeneratorHandle = null;
+    private boolean crawlIsOver = false;
 
     private BnfHeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
         super(files);
@@ -204,8 +189,8 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
         setupOrderfile();
         heritrixController = new BnfHeritrixController(getHeritrixFiles());
 
-        ScheduledFuture<?> crawlControlHandle = null;
-        ScheduledFuture<?> frontierReportGeneratorHandle = null;
+        CrawlControlExecutor crawlCtrlSched = null;
+        FrontierReportAnalysisExecutor frontierReportSched = null;
         try {
             // Initialize Heritrix settings according to the order.xml
             heritrixController.initialize();
@@ -213,26 +198,22 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             heritrixController.requestCrawlStart();
 
             // Schedule full frontier report generation
-            FrontierReportAnalysisExecutor frontierReportSched =
-                new FrontierReportAnalysisExecutor();
-
-            frontierReportGeneratorHandle =
-                frontierReportSched.scheduleAtFixedRate(
+            frontierReportSched = new FrontierReportAnalysisExecutor();
+            frontierReportSched.scheduleAtFixedRate(
                         new FrontierReportAnalyzer(heritrixController),
                         FRONTIER_REPORT_GEN_FREQUENCY,
                         FRONTIER_REPORT_GEN_FREQUENCY,
                         TimeUnit.SECONDS);
 
             CrawlControl crawlControl = new CrawlControl();
-            CrawlControlExecutor crawlCtrlSched = new CrawlControlExecutor();
-            crawlControlHandle =
-                crawlCtrlSched.scheduleWithFixedDelay(
+            crawlCtrlSched = new CrawlControlExecutor();
+            crawlCtrlSched.scheduleWithFixedDelay(
                         crawlControl,
                         CRAWL_CONTROL_WAIT_PERIOD,
                         CRAWL_CONTROL_WAIT_PERIOD,
                         TimeUnit.SECONDS);
 
-            while (! crawlControl.crawlIsFinished()) {
+            while (! crawlIsOver) {
                 // Wait a bit
                 try {
                     synchronized (this) {
@@ -251,19 +232,20 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             throw new RuntimeException("Exception during crawl", e);
         } finally {
             // Stop the frontier report generation schedule
-            if (frontierReportGeneratorHandle != null) {
-                frontierReportGeneratorHandle.cancel(true);
+            if (frontierReportSched!= null) {
+                frontierReportSched.shutdownNow();
             }
 
             // Stop the crawl control
-            if (crawlControlHandle != null) {
-                crawlControlHandle.cancel(true);
+            if (crawlCtrlSched != null) {
+                crawlCtrlSched.shutdownNow();
             }
 
             if (heritrixController != null) {
                 heritrixController.cleanup(getHeritrixFiles().getCrawlDir());
             }
         }
-        log.debug("Heritrix is finished crawling...");
+        log.debug("Heritrix has finished crawling...");
+
     }
 }
