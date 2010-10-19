@@ -29,13 +29,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                     dk.netarkivet.common.webinterface.HTMLUtils,
                     dk.netarkivet.common.webinterface.SiteSection, 
                     dk.netarkivet.common.webinterface.BatchGUI,
-                    dk.netarkivet.viewerproxy.Constants"
+                    dk.netarkivet.archive.Constants"
             pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
+/><fmt:setBundle scope="page" basename="<%=Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N 
-            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+            = new I18n(Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
 %><%

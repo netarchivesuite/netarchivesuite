@@ -31,13 +31,21 @@ import dk.netarkivet.common.webinterface.SiteSection;
  * Site section that creates the menu for bit preservation.
  */
 public class BitPreservationSiteSection extends SiteSection {
+	private static final int PAGES_VISIBLE_IN_MENU = 2; 
     /**
      * Create a new bit preservation SiteSection object.
      */
     public BitPreservationSiteSection() {
-        super("mainname;bitpreservation", "Bitpreservation", 1,
+        super("mainname;bitpreservation", "Bitpreservation", 
+        		PAGES_VISIBLE_IN_MENU,
               new String[][]{
                       {"filestatus", "pagetitle;filestatus"},
+                      {"batchoverview", "pagetitle;batchjob.overview"},
+                      // Pages below is not visible in the menu
+                      {"batchjob", "pagetitle;batchjob"},
+                      {"batchjob-retrieve", 
+                          "pagetitle;batchjob.retrieve.resultfile"},
+                      {"batchjob-execute", "pagetitle;batchjob.execute"},
                       {"filestatus-checksum",
                               "pagetitle;filestatus.checksum.errors"},
                       {"filestatus-missing", 

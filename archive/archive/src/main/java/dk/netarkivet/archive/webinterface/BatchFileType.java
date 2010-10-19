@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
  *  USA
  */
-package dk.netarkivet.common.webinterface;
+package dk.netarkivet.archive.webinterface;
 
 /**
  * Enumerator for the different types of files the batchjob can be executed

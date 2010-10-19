@@ -24,19 +24,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 --%><%@page import="dk.netarkivet.common.utils.I18n,
                     dk.netarkivet.common.webinterface.HTMLUtils,
                     dk.netarkivet.common.webinterface.SiteSection, 
-                    dk.netarkivet.common.webinterface.BatchGUI,
-                    dk.netarkivet.viewerproxy.Constants"
+                    dk.netarkivet.common.webinterface.BatchGUI"
             pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=Constants.TRANSLATIONS_BUNDLE%>"/><%!
-    private static final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
+/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE%>"/><%!
+    private static final I18n I18N 
+            = new I18n(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);
+            
 %><%
     HTMLUtils.setUTF8(request);
-    // Get the page title from its URL
     HTMLUtils.generateHeader(pageContext);
 %>
-<h3 class="page_heading"><fmt:message key="pagetitle;qa.batchjob.overview"/></h3>
+<h3 class="page_heading"><fmt:message key="pagetitle;batchjob.overview"/></h3>
 <%
     BatchGUI.getBatchOverviewPage(pageContext);
 %>

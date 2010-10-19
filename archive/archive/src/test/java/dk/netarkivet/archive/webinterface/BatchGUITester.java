@@ -20,7 +20,7 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package dk.netarkivet.common.webinterface;
+package dk.netarkivet.archive.webinterface;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +36,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
+import dk.netarkivet.common.webinterface.JspWriterMockup;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -48,7 +49,8 @@ public class BatchGUITester extends TestCase {
         mtf.setUp();
         rs.setUp();
         
-        Settings.set(CommonSettings.BATCHJOBS_BASEDIR, TestInfo.BATCH_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.BATCHJOBS_BASEDIR, 
+        		TestInfo.BATCH_DIR.getAbsolutePath());
     }
     
     public void tearDown() {

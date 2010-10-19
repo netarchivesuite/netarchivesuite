@@ -31,10 +31,6 @@ public class TestInfo {
     public static final File WORKING_DIR = new File(DATA_DIR, "working");
     public static final File TEMPDIR = new File(DATA_DIR, "working/");
     
-    public static final File BATCH_DIR = new File(WORKING_DIR, "batch");
-    
-    public static final String CONTEXT_CLASS_NAME = "batchjob";
-    
     public static final int GUI_WEB_SERVER_PORT = 4242;
     public static final String GUI_WEB_SERVER_WEBBASE = "/jsp";
     public static final String GUI_WEB_SERVER_JSP_DIRECTORY 

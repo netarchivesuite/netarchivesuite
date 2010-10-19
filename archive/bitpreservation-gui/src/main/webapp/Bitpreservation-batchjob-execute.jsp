@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                     dk.netarkivet.common.webinterface.HTMLUtils,
                     dk.netarkivet.common.webinterface.SiteSection, 
                     dk.netarkivet.common.webinterface.BatchGUI,
-                    dk.netarkivet.viewerproxy.Constants"
+                    dk.netarkivet.archive.Constants"
             pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -36,9 +36,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     // Get the page title from its URL
     HTMLUtils.generateHeader(pageContext);
 %>
-<h3 class="page_heading"><fmt:message key="pagetitle;qa.batchjob"/></h3>
+<h3 class="page_heading"><fmt:message key="pagetitle;batchjob.execute"/></h3>
 <%
-    BatchGUI.getPageForClass(pageContext);
+    BatchGUI.execute(pageContext);
 %>
 <%
     HTMLUtils.generateFooter(out);

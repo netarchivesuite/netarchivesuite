@@ -22,7 +22,7 @@
  *  USA
  */
 
-package dk.netarkivet.common.webinterface;
+package dk.netarkivet.archive.webinterface;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +61,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ByteJarLoader;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
+import dk.netarkivet.common.webinterface.HTMLUtils;
 
 /**
  * Utility class for creating the web page content for the batchjob pages.
@@ -71,7 +72,7 @@ public final class BatchGUI {
 
     /** The language translator.*/
     private static final I18n I18N = new I18n(
-            dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
+    		dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);
     
     /**
      * Private Constructor to prevent instantiation of this utility class.
@@ -95,7 +96,7 @@ public final class BatchGUI {
         
         // retrive the jobs etc.
         String[] jobs = Settings.getAll(CommonSettings.BATCHJOBS_CLASS);
-        Locale locale = context.getRequest().getLocale();
+        Locale locale = context.getResponse().getLocale();
         
         if(jobs.length == 0) {
             out.print("<h3>" + I18N.getString(locale, 
@@ -161,8 +162,8 @@ public final class BatchGUI {
         
         try {
             // Retrieve variables
+            Locale locale = context.getResponse().getLocale();
             ServletRequest request = context.getRequest();
-            Locale locale = request.getLocale();
             String className = request.getParameter(
                     Constants.BATCHJOB_PARAMETER);
             JspWriter out = context.getOut();
@@ -177,7 +178,7 @@ public final class BatchGUI {
             
             // begin form
             out.println("<form method=\"post\" action=\""
-                    + Constants.QA_BATCHJOB_EXECUTE + "?" 
+                    + Constants.URL_BATCHJOB_EXECUTE + "?" 
                     + Constants.BATCHJOB_PARAMETER + "=" + className + "\">");
             
             out.print(getHTMLarguments(c, locale));
@@ -635,7 +636,7 @@ public final class BatchGUI {
                         + I18N.getString(locale, "batchpage;lines", 
                                 new Object[]{}) + "</td>\n");
                 res.append("    <td><a href=" 
-                        + Constants.QA_RETRIEVE_RESULT_FILES 
+                        + Constants.URL_RETRIEVE_RESULT_FILES 
                         + "?filename=" + outputFile.getName() + ">"
                         + I18N.getString(locale, 
                                 "batchpage;Download.outputfile", 
@@ -661,7 +662,7 @@ public final class BatchGUI {
                         + I18N.getString(locale, "batchpage;lines", 
                                 new Object[]{}) + "</td>\n");
                 res.append("    <td><a href=" 
-                        + Constants.QA_RETRIEVE_RESULT_FILES 
+                        + Constants.URL_RETRIEVE_RESULT_FILES 
                         + "?filename=" + errorFile.getName() + ">"
                         + I18N.getString(locale, 
                                 "batchpage;Download.errorfile", 
@@ -882,7 +883,7 @@ public final class BatchGUI {
                     + Constants.ERROR_FILE_EXTENSION);
             
             // write the HTML
-            res.append("    <td><a href=\"" + Constants.QA_BATCHJOB_URL + "?" 
+            res.append("    <td><a href=\"" + Constants.URL_BATCHJOB + "?" 
                     + Constants.BATCHJOB_PARAMETER + "=" + batchClassPath 
                     + "\">" + batchName + "</a></td>\n");
             // add time of last run
@@ -907,7 +908,7 @@ public final class BatchGUI {
             if(outputFile.exists() && outputFile.isFile() 
                     && outputFile.canRead()) {
                 res.append("    <td><a href=" 
-                        + Constants.QA_RETRIEVE_RESULT_FILES 
+                        + Constants.URL_RETRIEVE_RESULT_FILES 
                         + "?filename=" + outputFile.getName() + ">"
                         + I18N.getString(locale, 
                                 "batchpage;Download.outputfile", 
@@ -923,7 +924,7 @@ public final class BatchGUI {
             if(errorFile.exists() && errorFile.isFile() 
                     && errorFile.canRead()) {
                 res.append("    <td><a href=" 
-                        + Constants.QA_RETRIEVE_RESULT_FILES 
+                        + Constants.URL_RETRIEVE_RESULT_FILES 
                         + "?filename=" + errorFile.getName() + ">"
                         + I18N.getString(locale, 
                                 "batchpage;Download.errorfile", 

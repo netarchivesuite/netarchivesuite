@@ -31,7 +31,7 @@ import java.io.StringWriter;
 public class JspWriterMockup extends JspWriter {
     public StringWriter sw = new StringWriter();
 
-    protected JspWriterMockup() {
+    public JspWriterMockup() {
         super(Integer.MAX_VALUE, false);
     }
 

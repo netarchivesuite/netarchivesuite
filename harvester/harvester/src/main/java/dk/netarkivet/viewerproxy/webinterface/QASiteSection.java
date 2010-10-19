@@ -34,7 +34,7 @@ import dk.netarkivet.viewerproxy.Constants;
  */
 public class QASiteSection extends SiteSection {
     /** The amount of pages visible in the QA menu.*/
-    private static final int PAGES_VISIBLE_IN_MENU = 2;
+    private static final int PAGES_VISIBLE_IN_MENU = 1;
     
     /**
      * Create a QA SiteSection object.
@@ -46,12 +46,7 @@ public class QASiteSection extends SiteSection {
         super("sitesection;qa", "QA", PAGES_VISIBLE_IN_MENU,
               new String[][]{
                       {"status", "pagetitle;qa.status"},
-                      {"batchoverview", "pagetitle;qa.batchjob.overview"},
                       // Pages below is not visible in the menu
-                      {"batchjob", "pagetitle;qa.batchjob"},
-                      {"batchjob-retrieve", 
-                          "pagetitle;qa.batchjob.retrieve.resultfile"},
-                      {"batchjob-execute", "pagetitle;qa.batchjob.execute"},
                       {"getreports", "pagetitle;qa.get.reports"},
                       {"getfiles", "pagetitle;qa.get.files"},
                       {"crawlloglines",
