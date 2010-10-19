@@ -32,10 +32,13 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Named;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 
 /**
@@ -87,12 +90,16 @@ public class SeedList implements Serializable, Named {
         this.comments = "";
     }
 
-    /** Check urls for validity. Currents everything but the empty string.        
+    /** Check urls for validity.
+     * Valid seeds are controlled by a configurable regular expression
+     * @see {@link HarvesterSettings#VALID_SEED_REGEX}.
      * @param url The url to check
      * @return true, if it is accepted
      */
     private boolean isAcceptableURL(String url) {
-        if (url.isEmpty()) {
+        Pattern validSeedPattern = Pattern.compile(
+                Settings.get(HarvesterSettings.VALID_SEED_REGEX));
+        if (! validSeedPattern.matcher(url).matches()) {
             return false;
         }
         return true;
