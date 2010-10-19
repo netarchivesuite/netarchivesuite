@@ -24,13 +24,14 @@
 package dk.netarkivet.harvester.scheduler;
 
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 
 /**
- * Handles the dispatching of scheduled harvest to the harvest servers based on 
+ * Handles the dispatching of scheduled harvest to the harvest servers based on
  * the harvests defined in the database. <p>
  */
 public class HarvestJobManager extends LifeCycleComponent {
-    
+
     /**
      * Creates the components handling the harvest job management and hooks them
      * up to the <code>HarvestJobManager</code>s lifecycle.
@@ -39,5 +40,6 @@ public class HarvestJobManager extends LifeCycleComponent {
         addChild(new HarvestScheduler());
         addChild(new HarvestJobGenerator());
         addChild(new HarvestSchedulerMonitorServer());
+        addChild(HarvestMonitorServer.getInstance());
     }
 }
