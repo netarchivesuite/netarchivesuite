@@ -27,8 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                     dk.netarkivet.common.utils.I18n,
                     dk.netarkivet.common.utils.FileUtils,
                     dk.netarkivet.common.webinterface.HTMLUtils,
-                    dk.netarkivet.common.webinterface.SiteSection, 
-                    dk.netarkivet.common.webinterface.BatchGUI,
+                    dk.netarkivet.archive.webinterface.BatchGUI,
                     dk.netarkivet.archive.Constants"
             pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
