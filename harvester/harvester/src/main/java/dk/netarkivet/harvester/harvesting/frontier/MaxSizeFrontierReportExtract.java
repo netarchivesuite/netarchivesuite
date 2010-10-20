@@ -48,7 +48,7 @@ extends AbstractFrontierReportFilter {
             maxSize = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
             maxSize = DEFAULT_SIZE;
-            LOG.warn(args[0] + " not integer!", e);
+            LOG.warn("Report size not specified, hence set to default value!");
         }
     }
 
