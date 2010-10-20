@@ -29,6 +29,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1077,8 +1078,14 @@ public class JobDBDAO extends JobDAO {
 
         long endDate = query.getEndDate();
         if (endDate != HarvestStatusQuery.DATE_NONE) {
-            sql.append(" AND enddate <= ?");
-            sq.addParameter(java.sql.Date.class, new java.sql.Date(endDate));
+            sql.append(" AND enddate < ?");
+            // end date must be set +1 day at midnight
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(endDate);
+            cal.roll(Calendar.DAY_OF_YEAR, 1);
+            sq.addParameter(
+                    java.sql.Date.class,
+                    new java.sql.Date(cal.getTimeInMillis()));
         }
 
         if (!count) {
