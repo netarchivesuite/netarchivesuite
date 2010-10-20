@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  
+<!--
  * File:        $Id$
  * Revision:    $Revision$
  * Author:      $Author$
@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 -->
-<!-- 
+<!--
 	This file contains the default settings used by the harvester module.
 
 	For documentation of the individual settings, please refer to the
@@ -39,9 +39,10 @@
                 <defaultMaxrate>100</defaultMaxrate>
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
                 <defaultMaxobjects>-1</defaultMaxobjects>
-                <!-- Used when creating ids for new jobs after a admin 
+                <!-- Used when creating ids for new jobs after a admin
                 database restore. -->
                 <nextJobId>0</nextJobId>
+                <validSeedRegex>^.*$</validSeedRegex>
             </domain>
         </datamodel>
         <scheduler>
@@ -95,7 +96,7 @@
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
-                <javaOpts></javaOpts>                
+                <javaOpts></javaOpts>
             </heritrix>
             <frontier>
                 <!-- 10 minutes -->
@@ -103,7 +104,7 @@
                 <filter>
 					<class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
 					<args></args>
-                </filter> 	
+                </filter>
             </frontier>
             <heritrixLauncher>
                 <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher</class>

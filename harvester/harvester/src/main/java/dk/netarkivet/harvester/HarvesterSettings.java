@@ -25,6 +25,7 @@ package dk.netarkivet.harvester;
 import java.util.regex.Pattern;
 
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.SeedList;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
@@ -57,6 +58,15 @@ public class HarvesterSettings {
      */
     public static String DEFAULT_SEEDLIST
             = "settings.harvester.datamodel.domain.defaultSeedlist";
+
+    /**
+     * <b>settings.harvester.datamodel.domain.validSeedRegex</b>: <br>
+     * Regular expression used to validate a seed within a seedlist.
+     *
+     * Default value accepts all non-empty strings.
+     */
+    public static String VALID_SEED_REGEX
+            = "settings.harvester.datamodel.domain.validSeedRegex";
 
     /**
      * <b>settings.harvester.datamodel.domain.defaultConfig</b>: <br> The name
@@ -228,23 +238,23 @@ public class HarvesterSettings {
      */
     public static String JOB_TIMEOUT_TIME =
             "settings.harvester.scheduler.jobtimeouttime";
-    
-    /** The period between checking if new jobs should be dispatched to the 
-     * harvest servers. New jobs are dispatched if the relevant harvest job 
+
+    /** The period between checking if new jobs should be dispatched to the
+     * harvest servers. New jobs are dispatched if the relevant harvest job
      * queue is empty and new jobs exist for this queue.
-     * This is set to 5 seconds based on a estimate of the harvest servers 
+     * This is set to 5 seconds based on a estimate of the harvest servers
      * ability to consume messages.
      */
-    public static String DISPATCH_JOBS_PERIOD = 
+    public static String DISPATCH_JOBS_PERIOD =
     	"settings.harvester.scheduler.dispatchperiode";
-    
+
     /**
-	 * <b>settings.harvester.scheduler.jobgenerationperiode</b>: <br> 
+	 * <b>settings.harvester.scheduler.jobgenerationperiode</b>: <br>
      * The period between checking if new jobs should be generated.
      * This is one minute because that's the finest we can define in a harvest
      * definition.
      */
-    public static String GENERATE_JOBS_PERIOD = 
+    public static String GENERATE_JOBS_PERIOD =
         "settings.harvester.scheduler.jobgenerationperiode";
 
     /**
@@ -367,20 +377,20 @@ public class HarvesterSettings {
 
     /**
      * <b>settings.harvester.harvesting.heritrix.abortIfConnectionLost</b>:<br>
-     * Boolean flag. If set to true, the harvest controller will abort the 
+     * Boolean flag. If set to true, the harvest controller will abort the
      * current crawl when the JMX connection is lost. If set to true it will
-     * only log a warning, leaving the crawl operator shutting down harvester 
+     * only log a warning, leaving the crawl operator shutting down harvester
      * manually.
      * Default value is true.
      * @see BnfHeritrixController
      */
     public static String ABORT_IF_CONNECTION_LOST =
         "settings.harvester.harvesting.heritrix.abortIfConnectionLost";
-    
+
     /**
      * <b>settings.harvester.harvesting.heritrix.waitForReportGenerationTimeout</b>:<br>
-     * Maximum time in seconds to wait for Heritrix to generate report files 
-     * once crawling is over. 
+     * Maximum time in seconds to wait for Heritrix to generate report files
+     * once crawling is over.
      */
     public static String WAIT_FOR_REPORT_GENERATION_TIMEOUT =
         "settings.harvester.harvesting.heritrix.waitForReportGenerationTimeout";
@@ -460,7 +470,7 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_CONTROLLER_CLASS =
             "settings.harvester.harvesting.heritrixController.class";
-    
+
     /**
      * <b>settings.harvester.harvesting.heritrixLauncherClass</b>:<br/> The
      * implementation of the HeritrixLauncher abstract class to be used.
