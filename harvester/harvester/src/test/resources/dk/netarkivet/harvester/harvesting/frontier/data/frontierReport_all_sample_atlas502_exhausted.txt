@@ -1,0 +1,7 @@
+queue currentSize totalEnqueues sessionBalance lastCost(averageCost) lastDequeueTime wakeTime totalSpend/totalBudget errorCount lastPeekUri lastQueuedUri
+blogblog.com 0 7 499 1(1) 2010-08-04T12:45:03.053Z - 7/-1 0 http://img1.blogblog.com/img/navbar/icons_orange.png http://img1.blogblog.com/img/navbar/icons_orange.png
+ffxi-atlas.com 0 6 494 1(1) 2010-08-04T12:44:55.925Z - 6/-1 0 http://www.ffxi-atlas.com/banner/ffxiclopedia_banner.png http://www.ffxi-atlas.com/banner/va_banner.png
+youtube.com 0 4 496 1(1) 2010-08-04T12:44:57.187Z - 4/-1 0 http://www.youtube.com/v/Y3ExnwvX62s&hl=en_US&fs=1& http://www.youtube.com/v/7o-W9PChBOc&hl=en_US&fs=1&
+killingifrit.com 0 3 497 1(1) 2010-08-04T12:44:48.597Z - 3/-1 0 http://www.killingifrit.com/images/logo88x31.gif http://www.killingifrit.com/images/logo88x31.gif
+tinycounter.com 0 3 497 1(1) 2010-08-04T12:44:48.782Z - 3/-1 0 http://mycounter.tinycounter.com/index.php?user=NicoSensei http://mycounter.tinycounter.com/index.php?user=NicoSensei
+000webhost.com 0 1 399 1(101) 2010-08-04T12:44:46.360Z - 101/-1 1 http://err.000webhost.com/ http://err.000webhost.com/
