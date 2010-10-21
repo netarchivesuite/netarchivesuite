@@ -169,51 +169,6 @@ public class HarvesterSettings {
             = "settings.harvester.scheduler.jobs.maxTotalSize";
 
     /**
-     * <b>settings.harvester.scheduler.jobs.useFrontierBudget</b>: <br>
-     * When this flag is set to 'true', if a URI count budget is set, it will
-     * also be used, majored by a configurable factor
-     * ({@link #JOBS_FRONTIER_BUDGET_FACTOR}), in the frontier
-     * budget system (queue-total-budget).
-     *
-     * Default value is 'false'.
-     */
-    public static String JOBS_USE_FRONTIER_BUDGET
-            = "settings.harvester.scheduler.jobs.useFrontierBudget";
-
-    /**
-     * <b>settings.harvester.scheduler.jobs.frontierBudgetFactor</b>: <br>
-     * If {@link #JOBS_USE_FRONTIER_BUDGET} is set to true, the value of the
-     * 'queue-total-budget' frontier attribute is computed by multiplying the
-     * URI budget by this factor.
-     *
-     * Default value is 0.
-     */
-    public static String JOBS_FRONTIER_BUDGET_FACTOR
-            = "settings.harvester.scheduler.jobs.frontierBudgetFactor";
-
-    /**
-     * <b>settings.harvester.scheduler.jobs.frontierErrorPenaltyFactor</b>: <br>
-     * If {@link #JOBS_USE_FRONTIER_BUDGET} is set to true, the value of the
-     * 'error-penalty-amount' frontier attribute is computed by multiplying the
-     * URI budget by this factor.
-     *
-     * Default value is 0.
-     */
-    public static String JOBS_FRONTIER_ERROR_PENALTY_FACTOR
-            = "settings.harvester.scheduler.jobs.frontierErrorPenaltyFactor";
-
-    /**
-     * <b>settings.harvester.scheduler.jobs.frontierBalanceReplenishFactor</b>: <br>
-     * If {@link #JOBS_USE_FRONTIER_BUDGET} is set to true, the value of the
-     * 'balance-replenish-amount' frontier attribute is computed by multiplying the
-     * URI budget by this factor.
-     *
-     * Default value is 0.
-     */
-    public static String JOBS_FRONTIER_BALANCE_REPLENISH_FACTOR =
-        "settings.harvester.scheduler.jobs.frontierBalanceReplenishFactor";
-
-    /**
      * <b>settings.harvester.scheduler.configChunkSize</b>: <br> How many domain
      * configurations we will process in one go before making jobs out of them.
      * This amount of domains will be stored in memory at the same time.  To

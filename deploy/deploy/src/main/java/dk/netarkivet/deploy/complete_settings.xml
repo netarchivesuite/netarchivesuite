@@ -446,7 +446,7 @@
             <baseUrl>jdbc:derby</baseUrl>
             <machine>localhost</machine>
             <port>1527</port>
-            <dir>harvestdefinitionbasedir/fullhddb</dir>   
+            <dir>harvestdefinitionbasedir/fullhddb</dir>
             <backupInitHour>3</backupInitHour>
             <validityCheckTimeout>0</validityCheckTimeout>
         </database>
@@ -502,7 +502,7 @@
                 <defaultMaxrate>100</defaultMaxrate>
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
                 <defaultMaxobjects>-1</defaultMaxobjects>
-                <!-- Used when creating ids for new jobs after a admin 
+                <!-- Used when creating ids for new jobs after a admin
                 database restore. -->
                 <nextJobId>0</nextJobId>
             </domain>
@@ -516,10 +516,6 @@
                 <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
                 <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
                 <maxTotalSize>2000000</maxTotalSize>
-                <useFrontierBudget>false</useFrontierBudget>
-                <frontierBudgetFactor>0</frontierBudgetFactor>
-                <frontierErrorPenaltyFactor>0</frontierErrorPenaltyFactor>
-                <frontierBalanceReplenishFactor>0</frontierBalanceReplenishFactor>
             </jobs>
             <configChunkSize>10000</configChunkSize>
             <splitByObjectLimit>false</splitByObjectLimit>
@@ -558,7 +554,7 @@
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
-                <javaOpts/>                
+                <javaOpts/>
             </heritrix>
             <frontier>
                 <!-- 10 minutes -->
@@ -566,7 +562,7 @@
                 <filter>
 					<class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
 					<args/>
-                </filter> 	
+                </filter>
             </frontier>
             <heritrixLauncher>
                 <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher</class>

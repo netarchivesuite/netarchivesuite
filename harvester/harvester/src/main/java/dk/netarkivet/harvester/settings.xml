@@ -54,10 +54,6 @@
                 <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
                 <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
                 <maxTotalSize>2000000</maxTotalSize>
-                <useFrontierBudget>false</useFrontierBudget>
-                <frontierBudgetFactor>0</frontierBudgetFactor>
-                <frontierErrorPenaltyFactor>0</frontierErrorPenaltyFactor>
-                <frontierBalanceReplenishFactor>0</frontierBalanceReplenishFactor>
             </jobs>
             <configChunkSize>10000</configChunkSize>
             <splitByObjectLimit>false</splitByObjectLimit>
