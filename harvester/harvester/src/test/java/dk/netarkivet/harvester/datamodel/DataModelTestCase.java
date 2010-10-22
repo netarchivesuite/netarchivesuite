@@ -111,7 +111,14 @@ public class DataModelTestCase extends TestCase {
         Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
         f.set(null, null);
         derbyLog.tearDown();
+        //don't work on windows derby.log seem to be locked
+        try{
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
+        }
+        catch(IOFailure ie)
+        {
+
+        }
         TestUtils.resetDAOs();
         rs.tearDown();
     }

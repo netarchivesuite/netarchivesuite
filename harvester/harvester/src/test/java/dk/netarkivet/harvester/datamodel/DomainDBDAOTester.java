@@ -335,6 +335,39 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals("Should have three IP subdomains",
                 3, result.get(0).getCount());
     }
+    
+    
+    public void testGetMultiLevelTLD() {
+        //  create some domains.
+        dk.netarkivet.harvester.webinterface.DomainDefinition.createDomains(
+                "bidon.fr","bidon1.gouv.fr","bidon2.gouv.fr",
+                "venstre.dk", "venstre.nu", "sy-jonna.dk", "one.com", "two.com",
+                "one.dk", "two.net", "1.2.3.4", "3.63.102.33",  "2.3.4.3");
+        DomainDAO dao = DomainDAO.getInstance();
+        List<TLDInfo> result = dao.getMultiLevelTLD(1);
+        assertEquals("test level 1: Expected 6 TLDs", 6, result.size());
+        assertEquals("test level 1: Should have two subdomains of .com",
+                2, result.get(1).getCount());
+        assertEquals("test level 1: Should have three IP subdomains",
+                3, result.get(0).getCount());
+
+        List<TLDInfo> result2 = dao.getMultiLevelTLD(2);
+        assertEquals("test level 2: Expected 7 TLDs", 7, result2.size());
+        assertEquals("test level 2: Should have two subdomains of .com",
+                2, result2.get(1).getCount());
+        
+        assertEquals("test level 2: Should have three subdomains of .fr",
+                3, result2.get(3).getCount());
+        
+        assertEquals("test level 2: Should have two subdomains of gouv.fr",
+                2, result2.get(4).getCount());
+        
+        assertEquals("test level 2: Should have three IP subdomains",
+                3, result2.get(0).getCount());
+}
+
+       
+    
 
     public void testGetCountDomains() {
         // create some domains, ignore invalid domains
