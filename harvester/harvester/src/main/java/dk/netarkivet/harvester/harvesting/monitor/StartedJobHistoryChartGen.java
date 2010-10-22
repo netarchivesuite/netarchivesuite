@@ -204,13 +204,20 @@ class StartedJobHistoryChartGen {
             File pngFile = new File(
                     gen.outputFolder,
                     jobId + "-history.png");
-            if (pngFile.exists()) {
-                pngFile.delete();
+
+            File newPngFile;
+            try {
+                newPngFile = File.createTempFile(
+                        jobId + "-history",
+                        "." + System.currentTimeMillis() + ".png");
+            } catch (IOException e) {
+                LOG.warn("Failed to create temp PNG file for job " + jobId);
+                return;
             }
 
             long startTime = System.currentTimeMillis();
             gen.generatePngChart(
-                    pngFile,
+                    newPngFile,
                     CHART_RESOLUTION[0], CHART_RESOLUTION[1],
                     null, // no chart title
                     I18N.getString(
@@ -244,6 +251,9 @@ class StartedJobHistoryChartGen {
                         + ".");
 
             synchronized (gen) {
+                // Overwrite old file, then delete temp file
+                FileUtils.copyFile(newPngFile, pngFile);
+                FileUtils.remove(newPngFile);
                 gen.chartFile = pngFile;
             }
 

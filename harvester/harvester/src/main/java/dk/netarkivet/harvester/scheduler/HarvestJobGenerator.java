@@ -27,8 +27,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,28 +41,49 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 
 /**
- * Handles the generation of new jobs based on the harvest definitions in 
- * persistent storage. The <code>HarvestJobGenerator</code> continuously scans 
- * the harvest definition database for harvest which should be run now. If a HD 
- * defines a harvest which should be run, a Harvest Job is created in the 
+ * Handles the generation of new jobs based on the harvest definitions in
+ * persistent storage. The <code>HarvestJobGenerator</code> continuously scans
+ * the harvest definition database for harvest which should be run now. If a HD
+ * defines a harvest which should be run, a Harvest Job is created in the
  * harvest job database.
  */
 public class HarvestJobGenerator implements ComponentLifeCycle {
-    
+
+    /**
+     * This class is an executor for scheduled job generation tasks.
+     * @see ScheduledThreadPoolExecutor
+     */
+    private static class JobGenerationExec
+    extends ScheduledThreadPoolExecutor {
+
+        public JobGenerationExec() {
+            // We need only 1 thread
+            super(1);
+        }
+
+        @Override
+        protected void afterExecute(Runnable task, Throwable t) {
+            if (t != null) {
+                log.error("Error during job generation", t);
+            }
+        }
+
+    }
+
     /** The set of HDs (or rather their OIDs) that are currently being
      * scheduled in a separate thread.
      * This set is a SynchronizedSet
      */
-    private static Set<Long> harvestDefinitionsBeingScheduled = 
+    private static Set<Long> harvestDefinitionsBeingScheduled =
         Collections.synchronizedSet(new HashSet<Long>());
     
     private static final Log log = 
         LogFactory.getLog(HarvestJobGenerator.class.getName());
 
-    /** The Timer used to schedule the generator jobs. */
-    private Timer generationTimer;
+    /** The executor used to schedule the generator jobs. */
+    private JobGenerationExec genExec;
 
-    private static final HarvestDefinitionDAO haDefinitionDAO = 
+    private static final HarvestDefinitionDAO haDefinitionDAO =
         HarvestDefinitionDAO.getInstance();
 
     /**
@@ -70,22 +91,24 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
      */
     @Override
     public void start() {
-        generationTimer = new Timer(true);
-        generationTimer.scheduleAtFixedRate(new JobGeneratorTask(), 0, 
-                Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD));
+        genExec = new JobGenerationExec();
+        genExec.scheduleAtFixedRate(
+                new JobGeneratorTask(), 0,
+                Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD),
+                TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void shutdown() {
-        if (generationTimer != null) {
-            generationTimer.cancel();
+        if (genExec != null) {
+            genExec.shutdownNow();
         }
     }    
 
     /**
      * Contains the functionality for the individual JobGenerations 
      */
-    static class JobGeneratorTask extends TimerTask {
+    static class JobGeneratorTask implements Runnable {
 
         @Override
         public synchronized void run() {

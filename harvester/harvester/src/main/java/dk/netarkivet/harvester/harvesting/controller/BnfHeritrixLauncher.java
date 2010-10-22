@@ -134,9 +134,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
     final static Log log = LogFactory.getLog(BnfHeritrixLauncher.class);
 
     /**
-     * Wait time in milliseconds (100 ms).
+     * Wait time in milliseconds (10s).
      */
-    private final static int SLEEP_TIME_MS = 100;
+    private final static int SLEEP_TIME_MS = 10 * 60 * 1000;
 
     /**
      * Frequency in seconds for generating the full harvest report.

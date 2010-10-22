@@ -23,11 +23,12 @@
 
 package dk.netarkivet.harvester.scheduler;
 
-import javax.jms.MessageListener;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.jms.MessageListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,7 +49,7 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
-import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
+import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 
 /**
  * Submitted harvesting jobs are registered with this singleton. The class
@@ -189,9 +190,10 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                 //Always process the data!
                 processCrawlData(job, cmsg.getDomainHarvestReport());
 
-                // The job is over in any case, wipe job progress data
-                HarvestMonitorServer.getInstance().notifyJobEnded(
-                        jobID, newStatus);
+                // Send message to notify HarvestMonitorServer that
+                // it should stop monitoring this job
+                JMSConnectionFactory.getInstance().send(
+                        new JobEndedMessage(job.getJobID(), newStatus));
 
                 break;
             default:

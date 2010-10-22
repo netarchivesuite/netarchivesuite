@@ -194,7 +194,8 @@ public class HarvestScheduler extends LifeCycleComponent {
                 if (isQueueEmpty(priority)) {
                     submitNextNewJob(priority);
                 } else {
-                    if (log.isTraceEnabled()) log.trace("Skipping dispatching of " 
+                    if (log.isTraceEnabled()) log.trace(
+                            "Skipping dispatching of "
                             + priority + " jobs, the message queue is full");
                 }
             }
@@ -289,7 +290,7 @@ public class HarvestScheduler extends LifeCycleComponent {
         try {
             return !qBrowser.getEnumeration().hasMoreElements();
         } catch (JMSException e) {
-            log.warn("Failed to tjeck if queues where empty, trying to " +
+            log.warn("Failed to check if queues where empty, trying to " +
             		"reestablish session and queue browsers ", e);
             createQueueBrowsers();
             qBrowser = queueBrowsers.get(priority);

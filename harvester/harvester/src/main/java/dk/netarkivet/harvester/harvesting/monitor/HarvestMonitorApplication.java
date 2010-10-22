@@ -1,7 +1,7 @@
-/* File:    $Id$
- * Revision: $Revision$
- * Author:   $Author$
- * Date:     $Date$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,26 +18,24 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.harvester.scheduler;
+package dk.netarkivet.harvester.harvesting.monitor;
 
-import dk.netarkivet.common.lifecycle.LifeCycleComponent;
+import dk.netarkivet.common.utils.ApplicationUtils;
 
 /**
- * Handles the dispatching of scheduled harvest to the harvest servers based on
- * the harvests defined in the database. <p>
+ * This class is used to start the running jobs monitor server.
+ *
  */
-public class HarvestJobManager extends LifeCycleComponent {
-
-    /**
-     * Creates the components handling the harvest job management and hooks them
-     * up to the <code>HarvestJobManager</code>s lifecycle.
-     */
-    public HarvestJobManager() {
-        addChild(new HarvestScheduler());
-        addChild(new HarvestJobGenerator());
-        addChild(new HarvestSchedulerMonitorServer());
-    }
+public class HarvestMonitorApplication {
+   /**
+    * Runs the GUI web server. Settings are read from config files.
+    *
+    * @param args an empty array
+    */
+   public static void main(String[] args) {
+       ApplicationUtils.startApp(HarvestMonitorServer.class, args);
+   }
 }

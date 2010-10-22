@@ -36,7 +36,7 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
+import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobDAO;
@@ -45,11 +45,11 @@ import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
+import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 import dk.netarkivet.harvester.harvesting.frontier.ExhaustedQueuesFilter;
 import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
 import dk.netarkivet.harvester.harvesting.frontier.RetiredQueuesFilter;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
-import dk.netarkivet.harvester.scheduler.HarvestJobManager;
 
 /**
  * Listens for {@link CrawlProgressMessage}s on the proper JMS channel, and
@@ -57,7 +57,7 @@ import dk.netarkivet.harvester.scheduler.HarvestJobManager;
  */
 public class HarvestMonitorServer
 extends HarvesterMessageHandler
-implements MessageListener, ComponentLifeCycle {
+implements MessageListener, CleanupIF {
 
     /** The logger for this class. */
     private static final Log LOG = LogFactory
@@ -91,23 +91,14 @@ implements MessageListener, ComponentLifeCycle {
     }
 
     /**
-     * Does nothing.
-     * TODO this class should not be a singleton (see {@link HarvestJobManager})
-     */
-    @Override
-    public void start() {
-
-    }
-
-    /**
      * Close down the HarvestMonitorServer singleton. This removes the
      * HarvestMonitorServer as listener to the JMS scheduler
      * and frontier channels, closes the persistence container, and resets
      * the singleton.
      *
+     * @see CleanupIF#cleanup()
      */
-    @Override
-    public void shutdown() {
+    public void cleanup() {
         JMSConnectionFactory.getInstance().removeListener(
                 CRAWL_PROGRESS_CHANNEL_ID, this);
         JMSConnectionFactory.getInstance().removeListener(
@@ -142,6 +133,31 @@ implements MessageListener, ComponentLifeCycle {
         // Start a chart generator if none has been started yet
         if (chartGenByJobId.get(jobId) == null) {
             chartGenByJobId.put(jobId, new StartedJobHistoryChartGen(jobId));
+        }
+    }
+
+    /**
+     * Cleans up the database on transitions to status DONE and FAILED.
+     * @param msg a {@link JobEndedMessage}
+     */
+    @Override
+    public void visit(JobEndedMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+
+        JobStatus newStatus = msg.getJobStatus();
+        long jobId = msg.getJobId();
+
+        // Delete records in the DB
+        RunningJobsInfoDAO dao = RunningJobsInfoDAO.getInstance();
+        int delCount = dao.removeInfoForJob(jobId);
+        LOG.info("Deleted " + delCount + " running job info records"
+                + " for job ID " + jobId
+                + " on transition to status " + newStatus.name());
+
+        // Stop chart generation
+        StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);
+        if (gen != null) {
+            gen.cleanup();
         }
     }
 
@@ -233,27 +249,6 @@ implements MessageListener, ComponentLifeCycle {
         return RunningJobsInfoDAO.getInstance().getFrontierReport(
                 jobId,
                 new ExhaustedQueuesFilter().getFilterId());
-    }
-
-    /**
-     * Notifies the monitor that a job ended, and that all progress data
-     * should be wiped.
-     * @param jobId the job id
-     */
-    public void notifyJobEnded(long jobId, JobStatus newStatus) {
-
-        // Delete records in the DB
-        RunningJobsInfoDAO dao = RunningJobsInfoDAO.getInstance();
-        int delCount = dao.removeInfoForJob(jobId);
-        LOG.info("Deleted " + delCount + " running job info records"
-                + " for job ID " + jobId
-                + " on transition to status " + newStatus.name());
-
-        // Stop chart generation
-        StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);
-        if (gen != null) {
-            gen.cleanup();
-        }
     }
 
     /**
