@@ -89,8 +89,7 @@ public class HarvestScheduler extends LifeCycleComponent {
      */
     public HarvestScheduler() {
         log.info("Creating HarvestScheduler");
-        jmsConnection = JMSConnectionFactory.getInstance();
-        createQueueBrowsers();
+            jmsConnection = JMSConnectionFactory.getInstance();
     }
     
     /**
@@ -283,22 +282,29 @@ public class HarvestScheduler extends LifeCycleComponent {
      * @throws JMSException Unable to retrieve queue information
      */
     private boolean isQueueEmpty(JobPriority priority) throws JMSException {
+        if (queueBrowsers == null) {
+            createQueueBrowsers();
+        }
         QueueBrowser qBrowser = queueBrowsers.get(priority);
-        return !qBrowser.getEnumeration().hasMoreElements();
+        try {
+            return !qBrowser.getEnumeration().hasMoreElements();
+        } catch (JMSException e) {
+            log.warn("Failed to tjeck if queues where empty, trying to " +
+            		"reestablish session and queue browsers ", e);
+            createQueueBrowsers();
+            qBrowser = queueBrowsers.get(priority);
+            return !qBrowser.getEnumeration().hasMoreElements();
+        }
     }
     
-    private void createQueueBrowsers() {
+    private void createQueueBrowsers() throws JMSException {
         queueBrowsers = new HashMap<JobPriority, QueueBrowser>();
         
         for (JobPriority priority: JobPriority.values()) {
             log.debug("Creating QueueBrowser for " + priority + " jobs");
-            try {
-                queueBrowsers.put(priority, 
-                        jmsConnection.createQueueBrowser(
-                                JobChannelUtil.getChannel(priority)));
-            } catch (JMSException e) {
-                log.error("Unable to  create queue browser", e);
-            }
+            queueBrowsers.put(priority, 
+                    jmsConnection.createQueueBrowser(
+                            JobChannelUtil.getChannel(priority)));
         }
     }
     
