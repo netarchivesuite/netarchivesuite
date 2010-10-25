@@ -89,7 +89,7 @@ public class HarvestScheduler extends LifeCycleComponent {
      */
     public HarvestScheduler() {
         log.info("Creating HarvestScheduler");
-            jmsConnection = JMSConnectionFactory.getInstance();
+        jmsConnection = JMSConnectionFactory.getInstance();
     }
     
     /**
@@ -191,13 +191,19 @@ public class HarvestScheduler extends LifeCycleComponent {
     synchronized void submitNewJobs() {
         try {
             for (JobPriority priority: JobPriority.values()) {
-                if (isQueueEmpty(priority)) {
-                    submitNextNewJob(priority);
-                } else {
-                    if (log.isTraceEnabled()) log.trace(
-                            "Skipping dispatching of "
-                            + priority + " jobs, the message queue is full");
-                }
+            	// This check was cause because of memory leak in Bug 2059 
+            	if (Settings.getBoolean( 
+            			HarvesterSettings.SINGLE_JOB_DISPATCHING)) {
+            		if (isQueueEmpty(priority)) {
+            			submitNextNewJob(priority);
+            		} else {
+            			if (log.isTraceEnabled()) log.trace(
+            					"Skipping dispatching of " 
+            					+ priority + " jobs, the message queue is full");
+            		}
+            	} else {
+            		submitNextNewJob(priority);
+            	}
             }
         } catch (JMSException e) {
             log.error("Unable to determine whether message queue is empty", e);
@@ -283,19 +289,19 @@ public class HarvestScheduler extends LifeCycleComponent {
      * @throws JMSException Unable to retrieve queue information
      */
     private boolean isQueueEmpty(JobPriority priority) throws JMSException {
-        if (queueBrowsers == null) {
-            createQueueBrowsers();
-        }
-        QueueBrowser qBrowser = queueBrowsers.get(priority);
-        try {
-            return !qBrowser.getEnumeration().hasMoreElements();
-        } catch (JMSException e) {
-            log.warn("Failed to check if queues where empty, trying to " +
-            		"reestablish session and queue browsers ", e);
-            createQueueBrowsers();
-            qBrowser = queueBrowsers.get(priority);
-            return !qBrowser.getEnumeration().hasMoreElements();
-        }
+    	if (queueBrowsers == null) {
+    		createQueueBrowsers();
+    	}
+    	QueueBrowser qBrowser = queueBrowsers.get(priority);
+    	try {
+    		return !qBrowser.getEnumeration().hasMoreElements();
+    	} catch (JMSException e) {
+    		log.warn("Failed to check if queues where empty, trying to " +
+    				"reestablish session and queue browsers ", e);
+    		createQueueBrowsers();
+    		qBrowser = queueBrowsers.get(priority);
+    		return !qBrowser.getEnumeration().hasMoreElements();
+    	}
     }
     
     private void createQueueBrowsers() throws JMSException {

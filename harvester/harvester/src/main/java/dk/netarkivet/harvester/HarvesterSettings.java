@@ -211,6 +211,17 @@ public class HarvesterSettings {
      */
     public static String GENERATE_JOBS_PERIOD =
         "settings.harvester.scheduler.jobgenerationperiode";
+    
+    /**
+	 * <b>settings.harvester.scheduler.singlejobdispatching</b>: <br>
+     * If true new jobs are dispatched when a Harvester is ready, 
+     * else job are dispatched to the job queue as soon as they are generated.
+     * Note: The ability to switch of <code>singlejobdispatching</code> was 
+     * introduced because of bug 2059, where a memory leak was found caused by 
+     * the singlejobdispatching functionality.
+     */
+    public static String SINGLE_JOB_DISPATCHING =
+        "settings.harvester.scheduler.singlejobdispatching";
 
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br> Each job gets a

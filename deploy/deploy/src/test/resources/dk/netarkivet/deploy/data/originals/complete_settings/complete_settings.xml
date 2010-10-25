@@ -505,6 +505,7 @@
                 <!-- Used when creating ids for new jobs after a admin
                 database restore. -->
                 <nextJobId>0</nextJobId>
+                <validSeedRegex>^.*$</validSeedRegex>
             </domain>
         </datamodel>
         <scheduler>
@@ -522,7 +523,8 @@
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
             <dispatchperiode>5000</dispatchperiode>
-            <jobgenerationperiode>60000</jobgenerationperiode>
+            <jobgenerationperiode>60000</jobgenerationperiode>            
+            <singlejobdispatching>true</singlejobdispatching>
         </scheduler>
         <monitor>
             <!--  1 minute -->
