@@ -41,17 +41,25 @@ import dk.netarkivet.harvester.scheduler.HarvestSchedulerMonitorServer;
 public class JobEndedMessage extends HarvesterMessage
 implements Serializable {
 
+    /**
+     * The associated job's ID.
+     */
     private final long jobId;
+
+    /**
+     * The associated job's current status.
+     */
     private final JobStatus jobStatus;
 
     /**
-     *
-     * @param jobId
-     * @param jobStatus
+     * Constructs a new message.
+     * @param jobId the job ID.
+     * @param jobStatus the job's current status.
      */
     public JobEndedMessage(long jobId, JobStatus jobStatus) {
         super(HarvestMonitorServer.CRAWL_PROGRESS_CHANNEL_ID,
                 Channels.getError());
+        ArgumentNotValid.checkNotNull(jobStatus, "jobStatus");
         this.jobId = jobId;
         if (! (JobStatus.DONE.equals(jobStatus)
                 || JobStatus.FAILED.equals(jobStatus))) {

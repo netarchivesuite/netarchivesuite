@@ -49,6 +49,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
@@ -252,8 +253,12 @@ class StartedJobHistoryChartGen {
 
             synchronized (gen) {
                 // Overwrite old file, then delete temp file
-                FileUtils.copyFile(newPngFile, pngFile);
-                FileUtils.remove(newPngFile);
+                try {
+                    FileUtils.copyFile(newPngFile, pngFile);
+                    FileUtils.remove(newPngFile);
+                } catch (IOFailure iof) {
+                    LOG.error("IOFailure while copying PNG file", iof);
+                }
                 gen.chartFile = pngFile;
             }
 
