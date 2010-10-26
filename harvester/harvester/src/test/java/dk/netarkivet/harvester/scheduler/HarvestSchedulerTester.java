@@ -465,43 +465,44 @@ public class HarvestSchedulerTester extends TestCase {
     }
 
     /**
+     * Functionality disabled because of bug 2059. 
      * Verifies that new crawler jobs are only dispatched when the message queue
      *  to the harvest servers are empty
      * @throws Exception 
      */
-    public void testJitHarvestJobDispatching() throws Exception {
-        clearNewJobs();
-
-        assertEquals("Message queue should be empty", 
-                0, countQueueMessages(JobPriority.HIGHPRIORITY));
-        
-        Job firstJob = createJob(JobStatus.NEW);        
-        submitNewJobs();
-
-        assertEquals("Message queue should have received a message", 
-                1, countQueueMessages(JobPriority.HIGHPRIORITY));
-        assertEquals("First job should have been marked as submitted",
-                JobStatus.NEW, firstJob.getStatus());
-        
-        Job secondJob = createJob(JobStatus.NEW);        
-        submitNewJobs();
-        assertEquals("New job should not have been submittet to non-empty " +
-        		"message queue", 
-                1, countQueueMessages(JobPriority.HIGHPRIORITY));   
-        assertEquals("Second job should still have status new",
-                JobStatus.NEW, secondJob.getStatus());
-        
-
-        createMessageReceiver(JobPriority.HIGHPRIORITY).receiveNoWait();
-        assertEquals("Message should have been removed from queue", 
-        0, countQueueMessages(JobPriority.HIGHPRIORITY));         
-
-        submitNewJobs();
-        assertEquals("Message queue should have received a message for the " +
-        		"next job", 1, countQueueMessages(JobPriority.HIGHPRIORITY));
-        assertEquals("Second job should have been marked as submitted",
-                JobStatus.NEW, secondJob.getStatus());
-    }
+//    public void testJitHarvestJobDispatching() throws Exception {
+//        clearNewJobs();
+//
+//        assertEquals("Message queue should be empty", 
+//                0, countQueueMessages(JobPriority.HIGHPRIORITY));
+//        
+//        Job firstJob = createJob(JobStatus.NEW);        
+//        submitNewJobs();
+//
+//        assertEquals("Message queue should have received a message", 
+//                1, countQueueMessages(JobPriority.HIGHPRIORITY));
+//        assertEquals("First job should have been marked as submitted",
+//                JobStatus.NEW, firstJob.getStatus());
+//        
+//        Job secondJob = createJob(JobStatus.NEW);        
+//        submitNewJobs();
+//        assertEquals("New job should not have been submittet to non-empty " +
+//        		"message queue", 
+//                1, countQueueMessages(JobPriority.HIGHPRIORITY));   
+//        assertEquals("Second job should still have status new",
+//                JobStatus.NEW, secondJob.getStatus());
+//        
+//
+//        createMessageReceiver(JobPriority.HIGHPRIORITY).receiveNoWait();
+//        assertEquals("Message should have been removed from queue", 
+//        0, countQueueMessages(JobPriority.HIGHPRIORITY));         
+//
+//        submitNewJobs();
+//        assertEquals("Message queue should have received a message for the " +
+//        		"next job", 1, countQueueMessages(JobPriority.HIGHPRIORITY));
+//        assertEquals("Second job should have been marked as submitted",
+//                JobStatus.NEW, secondJob.getStatus());
+//    }
     
 
     /**
