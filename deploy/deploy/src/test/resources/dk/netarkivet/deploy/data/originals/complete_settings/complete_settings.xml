@@ -301,6 +301,7 @@
             <tld>ma</tld>
             <tld>mc</tld>
             <tld>md</tld>
+            <tld>me</tld>
             <tld>mg</tld>
             <tld>mh</tld>
             <tld>mil</tld>
@@ -446,7 +447,7 @@
             <baseUrl>jdbc:derby</baseUrl>
             <machine>localhost</machine>
             <port>1527</port>
-            <dir>harvestdefinitionbasedir/fullhddb</dir>
+            <dir>harvestdefinitionbasedir/fullhddb</dir>   
             <backupInitHour>3</backupInitHour>
             <validityCheckTimeout>0</validityCheckTimeout>
         </database>
