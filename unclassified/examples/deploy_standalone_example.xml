@@ -52,7 +52,7 @@
     <deployJavaOpt>-Xmx1536m</deployJavaOpt>
     <settings>
         <common>
-            <environmentName>USER</environmentName>
+            <environmentName>QUICKSTART</environmentName>
             <applicationInstanceId></applicationInstanceId>
             <remoteFile>
                 <class>
@@ -125,13 +125,16 @@
             <deployArchiveDatabaseDir>adminDB</deployArchiveDatabaseDir>
             <settings>
                 <archive>
-                    <database>
-                       <class>dk.netarkivet.arcrepositoryadmin.DerbyServerSpecifics</class>
-                       <baseUrl>jdbc:derby</baseUrl>
-                       <machine>localhost</machine>
-                       <port>8120</port>
-                       <dir>adminDB</dir>
-                    </database>
+                    <admin>
+                        <class>dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin</class>
+                        <database>
+                            <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
+                            <baseUrl>jdbc:derby</baseUrl>
+                            <machine>localhost</machine>
+                            <port>8120</port>
+                            <dir>adminDB</dir>
+                        </database>
+                    </admin>
                 </archive>
                 <common>
                     <database>
