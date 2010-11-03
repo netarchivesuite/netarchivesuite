@@ -575,7 +575,7 @@ public class JobDBDAO extends JobDAO {
        ArgumentNotValid.checkNotNull(priority, "JobPriority priority");
        List<Long> idList = DBUtils.selectLongList(
                DBConnect.getDBConnection(),
-               "SELECT job_id FROM jobs WHERE status = ? AND priority =?"
+               "SELECT job_id FROM jobs WHERE status = ? AND priority = ? "
                + "ORDER BY job_id", status.ordinal(), priority.ordinal());
        return idList.iterator();
    }
