@@ -194,11 +194,11 @@ Display all the form information for this domain
             </tr>
             <input name="<%=Constants.MAX_RATE_PARAM%>" type="hidden" <%=load%> />
             <tr>
-                <td><fmt:message key="prompt;maximum.number.of.objects"/> </td>
+                <td><fmt:message key="maximum.number.of.objects"/> </td>
                 <td><input name="<%=Constants.MAX_OBJECTS_PARAM%>" size="20" <%=maxObjects%> /></td>
             </tr>
             <tr>
-                <td><fmt:message key="prompt;maximum.number.of.bytes"/> </td>
+                <td><fmt:message key="maximum.number.of.bytes"/> </td>
                 <td>
                     <input name="<%=Constants.MAX_BYTES_PARAM%>" size="20" <%=maxBytes%> />
                 </td>
@@ -219,7 +219,7 @@ Display all the form information for this domain
     <td>
         <table>
             <tr>
-                <td><fmt:message key="prompt;seed.list"/> <br/>
+                <td><fmt:message key="seed.list"/> <br/>
                     <select name="<%=Constants.URLLIST_LIST_PARAM%>" multiple="multiple" size="8">
                     <%-- list of url list options --%>
                     <%
