@@ -29,16 +29,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -259,6 +256,7 @@ public class JobDBDAO extends JobDAO {
      * @param jobID Id of the job.
      * @return true if the job exists in any state.
      */
+    @Override
     public synchronized boolean exists(Long jobID) {
         ArgumentNotValid.checkNotNull(jobID, "Long jobID");
         return 1 == DBUtils.selectLongValue(
@@ -293,6 +291,7 @@ public class JobDBDAO extends JobDAO {
      * @throws IOFailure If writing the job to persistent storage fails
      * @throws PermissionDenied If the job has been updated behind our backs
      */
+    @Override
     public synchronized void update(Job job) {
         ArgumentNotValid.checkNotNull(job, "job");
         final Long jobID = job.getJobID();
@@ -386,6 +385,7 @@ public class JobDBDAO extends JobDAO {
      * @throws UnknownID if the job id does not exist.
      * @throws IOFailure if there was some problem talking to the database.
      */
+    @Override
     public synchronized Job read(Long jobID) {
         if (!exists(jobID)) {
             throw new UnknownID("Job id "
@@ -538,6 +538,7 @@ public class JobDBDAO extends JobDAO {
      * @param status A given status.
      * @return A list of all job with given status
      */
+    @Override
     public synchronized Iterator<Job> getAll(JobStatus status) {
         ArgumentNotValid.checkNotNull(status, "JobStatus status");
         List<Long> idList = DBUtils.selectLongList(
@@ -559,6 +560,7 @@ public class JobDBDAO extends JobDAO {
      * @throws ArgumentNotValid If the given status is not one of the
      *                          five valid statuses specified in Job.
      */
+    @Override
     public synchronized Iterator<Long> getAllJobIds(JobStatus status) {
         ArgumentNotValid.checkNotNull(status, "JobStatus status");
         List<Long> idList = DBUtils.selectLongList(
@@ -585,6 +587,7 @@ public class JobDBDAO extends JobDAO {
      *
      * @return A list of all jobs
      */
+    @Override
     public synchronized Iterator<Job> getAll() {
         List<Long> idList = DBUtils.selectLongList(
                 DBConnect.getDBConnection(),
@@ -598,7 +601,6 @@ public class JobDBDAO extends JobDAO {
 
     /**
      * Return a list of all job_ids .
-     *
      * @return A list of all job_ids
      */
     public synchronized Iterator<Long> getAllJobIds(){
@@ -845,6 +847,7 @@ public class JobDBDAO extends JobDAO {
      *
      * @return Number of jobs in 'jobs' table
      */
+    @Override
     public synchronized int getCountJobs() {
         return DBUtils.selectIntValue(DBConnect.getDBConnection(),
                                       "SELECT COUNT(*) FROM jobs");
@@ -853,6 +856,7 @@ public class JobDBDAO extends JobDAO {
     /**
      * @see JobDAO#rescheduleJob(long)
      */
+    @Override
     public synchronized long rescheduleJob(long oldJobID) {
         Connection dbconnection = DBConnect.getDBConnection();
         long newJobID = generateNextID();
@@ -920,94 +924,6 @@ public class JobDBDAO extends JobDAO {
             DBUtils.rollbackIfNeeded(dbconnection, "resubmit job", oldJobID);
         }
         return newJobID;
-    }
-
-    /**
-     * @see JobDAO#getStatusInfo(long, long, boolean)
-     */
-    public List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
-            boolean asc) {
-        ArgumentNotValid.checkNotNegative(harvestId, "long harvestId");
-        ArgumentNotValid.checkNotNegative(harvestNum, "long harvestNum");
-
-        return getStatusInfo(harvestId, harvestNum, asc, getSetWithAllStates());
-    }
-
-    /**
-     * Helper method that returns a set with all JobStatus objects.
-     *
-     * @return a set with all JobStatus objects.
-     */
-    private Set<JobStatus> getSetWithAllStates() {
-        Set<JobStatus>statusSet = new HashSet<JobStatus>();
-        statusSet.addAll(Arrays.asList(JobStatus.values()));
-        return statusSet;
-    }
-
-
-    /**
-     * Get statusInfo.
-     * @see JobDAO#getStatusInfo(long, long, boolean, Set)
-     */
-    public List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
-            boolean asc, Set<JobStatus> selectedStatusSet) {
-        ArgumentNotValid.checkNotNegative(harvestId, "harvestId");
-        ArgumentNotValid.checkNotNegative(harvestNum, "harvestNum");
-        ArgumentNotValid.checkNotNullOrEmpty(selectedStatusSet,
-                "selectedStatusSet");
-
-        String ascdescString = (asc)? HarvestStatusQuery.SORT_ORDER.ASC.name()
-                    : HarvestStatusQuery.SORT_ORDER.DESC.name();
-        StringBuffer statusSortBuffer = new StringBuffer();
-
-        boolean selectAllJobStates = (selectedStatusSet.size()
-                    == JobStatus.values().length);
-
-        if (!selectAllJobStates) {
-           if (selectedStatusSet.size() == 1) {
-               int theWantedStatus = selectedStatusSet.iterator()
-                   .next().ordinal();
-               statusSortBuffer.append(" AND status = ")
-                       .append(theWantedStatus);
-           } else {
-               Iterator<JobStatus> it = selectedStatusSet.iterator();
-               int nextInt = it.next().ordinal();
-               StringBuffer res = new StringBuffer("AND (status = " + nextInt);
-               while (it.hasNext()) {
-                   nextInt = it.next().ordinal();
-                   res.append(" OR status = ").append(nextInt);
-               }
-               res.append(") ");
-               statusSortBuffer.append(res);
-           }
-        }
-
-        Connection dbconnection = DBConnect.getDBConnection();
-        PreparedStatement statement = null;
-        try {
-            statement = dbconnection.prepareStatement(
-                    "SELECT jobs.job_id, status, jobs.harvest_id, "
-                    + "harvestdefinitions.name, harvest_num, harvest_errors,"
-                    + " upload_errors, orderxml, num_configs, submitteddate,"
-                    +   " startdate, enddate, resubmitted_as_job"
-                    + " FROM jobs, harvestdefinitions "
-                    + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id "
-                    + " AND jobs.harvest_id = "
-                    + harvestId
-                    + " AND jobs.harvest_num = "
-                    + harvestNum
-                    + statusSortBuffer.toString()
-                    + " ORDER BY jobs.job_id " + ascdescString);
-            ResultSet res = statement.executeQuery();
-            return makeJobStatusInfoListFromResultset(res);
-        } catch (SQLException e) {
-            String message = "SQL error asking for job status list in database"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-        } finally {
-            DBUtils.closeStatementIfOpen(statement);
-        }
     }
 
     /** Helper-method that constructs a list of JobStatusInfo objects
