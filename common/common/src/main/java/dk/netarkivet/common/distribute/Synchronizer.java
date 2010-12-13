@@ -79,7 +79,9 @@ public class Synchronizer implements MessageListener {
             }
         } else {
             log.warn("Received unexpected reply for unknown message '"
-                    + naMsg.getReplyOfId() + "'. Ignored!!");
+                    + naMsg.getReplyOfId() + "' of type '"
+                    + naMsg.getClass().getName() 
+                    + "'. Ignored!!: " + naMsg.toString());
         }
     }
 
