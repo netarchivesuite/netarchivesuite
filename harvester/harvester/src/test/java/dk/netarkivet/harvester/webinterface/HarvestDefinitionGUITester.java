@@ -107,30 +107,6 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     }
 
     /**
-     * Test that we actually start and stop the HarvestScheduler.
-     * @throws InterruptedException
-     * @throws IOException
-     */
-    public void testSchedulerStarted() throws IOException, InterruptedException {
-        gui = GUIWebServer.getInstance();
-        Thread.sleep(1000);
-        LogUtils.flushLogs(HarvestScheduler.class.getName());
-        FileAsserts.assertFileContains("Scheduler startup should be in log",
-                "Creating HarvestScheduler", TestInfo.LOG_FILE);
-        Thread.sleep(1000);
-        gui.cleanup();
-        Thread.sleep(1000);
-        LogUtils.flushLogs(HarvestScheduler.class.getName());
-        FileAsserts.assertFileContains("Scheduler shutdown should be in log",
-                "HarvestScheduler closing down", TestInfo.LOG_FILE);
-
-        // If we get here without exceptions, everything has shut down nicely
-
-        // Except some threads may be still hanging around, keeping the DB alive.
-        Thread.sleep(1000);
-    }
-
-    /**
      * Test, that GUIWebServer.getInstance throws UnknownID exception
      * if templates tables does not contain the template with name
      * Settings.DOMAIN_DEFAULT_ORDERXML
