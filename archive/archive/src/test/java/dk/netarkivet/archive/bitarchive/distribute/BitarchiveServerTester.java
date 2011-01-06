@@ -471,9 +471,13 @@ public class BitarchiveServerTester extends TestCase {
     /** Test that batch messages can run concurrently. 
      * THIS UNIT TEST CAN OCCATIONALLY FAIL DUE TO SOME RACE-CONDITION
      * 
+     * FIXME: Removed test from unit test suite. Primary purpose of unit test is 
+     * regression testing. Tests which 'can occationally fail' therefore defeats
+     * the purpose of unit testing.
+     * 
      * @throws IOException If unable to read a file. 
      */
-    public void testVisitBatchMessageThreaded() throws IOException {
+    public void failingTestVisitBatchMessageThreaded() throws IOException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
