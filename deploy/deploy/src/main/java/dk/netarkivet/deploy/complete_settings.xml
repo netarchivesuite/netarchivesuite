@@ -508,7 +508,7 @@
                 <defaultMaxobjects>-1</defaultMaxobjects>
                 <!-- Used when creating ids for new jobs after a admin
                 database restore. -->
-                <nextJobId>0</nextJobId>                
+                <nextJobId>0</nextJobId>
                 <validSeedRegex>^.*$</validSeedRegex>
             </domain>
         </datamodel>

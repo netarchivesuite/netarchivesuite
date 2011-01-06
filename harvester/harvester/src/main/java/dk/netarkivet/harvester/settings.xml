@@ -60,7 +60,7 @@
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
             <dispatchperiode>5000</dispatchperiode>
-            <jobgenerationperiode>60000</jobgenerationperiode>            
+            <jobgenerationperiode>60000</jobgenerationperiode>
             <singlejobdispatching>false</singlejobdispatching>
         </scheduler>
         <monitor>
