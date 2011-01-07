@@ -88,7 +88,7 @@ will not appear here.
     }
     Locale currentLocale = response.getLocale();
 %><%= JMXSummaryUtils.generateShowColumn(starredRequest, currentLocale) %>
-<table>
+<table id="system_state_table">
     <tr>
         <%
         if (JMXSummaryUtils.showColumn(starredRequest,
