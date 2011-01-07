@@ -1,52 +1,80 @@
 package dk.netarkivet;
 
-import com.thoughtworks.selenium.*;
-
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
-
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.regex.Pattern;
+import java.util.Set;
 
-public class Test1 extends SeleneseTestNgHelper {
-	  @BeforeTest
-	  @Override
-	  @Parameters({"selenium.url", "selenium.browser"})
-	  public void setUp(@Optional String url, @Optional String browserString)
-	      throws Exception {
-	    super.setUp("http://kb-test-adm-001.kb.dk:8079/", "*firefox");
-	    setCaptureScreenShotOnFailure(true);
-	    selenium.setSpeed("1000");
-	  }
-	
-	@Test public void test1() throws Exception {
-		step1();
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.Selenium;
+
+/**
+ * Test specification: http://netarchive.dk/suite/TEST1
+ */
+public class Test1 {
+
+	private Selenium selenium;
+
+	@BeforeClass
+	@Parameters({"selenium.host","selenium.port","selenium.browser","selenium.url"})
+	public void startSelenium (
+			@Optional("localhost") String host, 
+			@Optional("4444")String port, 
+			@Optional("*firefox") String browser, 
+			@Optional("http://kb-test-adm-001.kb.dk:8079/") String url) {
+		this.selenium = new DefaultSelenium(host, Integer.parseInt(port), browser, url);
+		this.selenium.start();
 	}
-	
+
+	@AfterClass(alwaysRun=true)
+	public void stopSelenium() {
+		this.selenium.stop();
+	}
+
+	/**
+	 * Test specification: http://netarchive.dk/suite/It23JMXMailCheck
+	 */
+	@Test
 	public void step1() throws Exception {
 		selenium.open("/HarvestDefinition/");
 		selenium.click("link=Systemstate");
-		selenium.waitForPageToLoad("3000");
+		selenium.waitForPageToLoad("1000");
 		selenium.click("link=Overview of the system state");
 		selenium.waitForPageToLoad("3000");
-		selenium.getXpathCount("//span[@id='ctl00']");
-		HashSet<Application> expectedApplicationSet = new HashSet<Application>(
+		// We need to click the 'Instance id' link to differentiate between 
+		// instances of the same application running on the same machine
+		selenium.click("link=Instance id");
+		selenium.waitForPageToLoad("3000");
+
+		int numberOfRows = selenium.getXpathCount("//table[@id='system_state_table']/tbody/tr").intValue();
+		Set<Application> expectedApplicationSet = new HashSet<Application>(
 				Arrays.asList(NASSystemUtil.getApplications()));
-		HashSet<Application> displayedApplicationSet = new HashSet<Application>(
-						Arrays.asList(NASSystemUtil.getApplications()));
-		boolean moreTableRows = true;
-		int rowCounter = 1;
-		while (moreTableRows) {
-			if (selenium.getTable("."+rowCounter+".0") == null) {
-				moreTableRows = false;				
-			} else {
-				displayedApplicationSet.add(new Application(
-						selenium.getTable("."+rowCounter+(".0")),
-						selenium.getTable("."+rowCounter+(".1")),
-						selenium.getTable("."+rowCounter+(".2"))));
-			}
+		Set<Application> displayedApplicationSet = new HashSet<Application>();
+
+		for (int rowCounter = 1;rowCounter < numberOfRows; rowCounter++) {
+			System.out.println("Checking row "+rowCounter+", value is: " + selenium.getTable("system_state_table."+rowCounter+".0"));
+
+			displayedApplicationSet.add(new Application(
+					selenium.getTable("system_state_table."+rowCounter+(".0")),
+					selenium.getTable("system_state_table."+rowCounter+(".1")),
+					selenium.getTable("system_state_table."+rowCounter+(".2")),
+					selenium.getTable("system_state_table."+rowCounter+(".3")),
+					selenium.getTable("system_state_table."+rowCounter+(".4"))));
 		}
-		assertEquals(displayedApplicationSet, expectedApplicationSet);
+		
+		NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);
+	}
+
+	/**
+	 * Test specification: http://netarchive.dk/suite/It10DefSelHarv
+	 */
+	@Test(dependsOnMethods={"step1"})
+	public void step2() throws Exception {
+		
 	}
 }
