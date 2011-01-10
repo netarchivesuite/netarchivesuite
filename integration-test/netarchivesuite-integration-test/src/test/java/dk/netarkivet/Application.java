@@ -88,5 +88,4 @@ public class Application {
 			return false;
 		return true;
 	}
-
 }
