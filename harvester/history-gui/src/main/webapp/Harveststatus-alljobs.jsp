@@ -84,7 +84,7 @@ resubmit - jobID of a job to resubmit.
         query.setHarvestName("*"+backHavestName+"*");
     }
     //list of information to be shown
-    HarvestStatus results = HarvestStatus.getjobStatusList(query); 
+    HarvestStatus results = HarvestStatus.getjobStatusList(query);
     List<JobStatusInfo> jobStatusList = results.getJobStatusInfo();
     Set<JobStatus> selectedStatuses = query.getSelectedJobStatusesAsSet();
     
@@ -351,7 +351,7 @@ function resubmitSelectedJobs() {
     for (JobStatusInfo js : jobStatusList) {    	
     	if (js.getStatus().equals(JobStatus.FAILED)) {
     %>
-    if (document.getElementsByName("resubmitJobsForm")[0].resubmit_<%=js.getJobID()%>.checked) {
+    if (document.getElementById("resubmit_<%=js.getJobID()%>").checked) {
         concatenatedIds = concatenatedIds + ";<%=js.getJobID()%>";
         selectedCount++;
     }
@@ -368,16 +368,17 @@ function resubmitSelectedJobs() {
         return;
     }
     concatenatedIds = concatenatedIds.substring(1, concatenatedIds.length);
-    document.getElementsByName("resubmitJobsForm")[0].<%=HarvestStatusQuery.UI_FIELD.RESUBMIT_JOB_IDS.name()%>.value=concatenatedIds;
-    document.getElementsByName("resubmitJobsForm")[0].submit();
+    document.getElementById("resubmitJobsForm").<%=HarvestStatusQuery.UI_FIELD.RESUBMIT_JOB_IDS.name()%>.value=concatenatedIds;
+    document.getElementById("resubmitJobsForm").submit();
 }
 
 </script>
 
 <form method="post" name="resubmitJobsForm" id="resubmitJobsForm" action="Harveststatus-alljobs.jsp">
 
-    <input type="hidden" 
-        name="<%=HarvestStatusQuery.UI_FIELD.RESUBMIT_JOB_IDS.name()%>" 
+    <input type="hidden"
+        name="<%=HarvestStatusQuery.UI_FIELD.RESUBMIT_JOB_IDS.name()%>"
+        id="<%=HarvestStatusQuery.UI_FIELD.RESUBMIT_JOB_IDS.name()%>"
         value=""/>
 
 <% } %>

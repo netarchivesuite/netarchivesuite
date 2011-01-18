@@ -25,10 +25,10 @@ package dk.netarkivet.harvester;
 import java.util.regex.Pattern;
 
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.SeedList;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /** Settings specific to the harvester module of NetarchiveSuite. */
 public class HarvesterSettings {
@@ -186,6 +186,19 @@ public class HarvesterSettings {
      */
     public static String SPLIT_BY_OBJECTLIMIT =
             "settings.harvester.scheduler.splitByObjectLimit";
+
+    /**
+     * <b>settings.harvester.scheduler.useQuotaEnforcer</b>: <br> Controls
+     * whether the domain configuration object limit should be set in
+     * Heritrix's crawl order through the QuotaEnforcer configuration (parameter
+     * set to true) or through the frontier parameter 'queue-total-budget' (
+     * parameter set to false).
+     *
+     * Default value is true, as legacy implementation was to use only
+     * the QuotaEnforcer.
+     */
+    public static String USE_QUOTA_ENFORCER =
+            "settings.harvester.scheduler.useQuotaEnforcer";
 
     /**
      * <b>settings.harvester.scheduler.jobtimeouttime</b>:<br /> Time before a
@@ -443,6 +456,13 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_LAUNCHER_CLASS =
             "settings.harvester.harvesting.heritrixLauncher.class";
+
+    /**
+     * <b>settings.harvester.harvesting.harvestReport</b>:<br/> The
+     * implementation of {@link HarvestReport} interface to be used.
+     */
+    public static String HARVEST_REPORT_CLASS =
+            "settings.harvester.harvesting.harvestReport.class";
 
     /**
      * <b>settings.harvester.harvesting.deduplication.enabled</b>:<br/> This

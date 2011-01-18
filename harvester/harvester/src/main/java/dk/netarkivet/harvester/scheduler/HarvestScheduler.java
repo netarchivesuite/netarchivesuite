@@ -43,14 +43,18 @@ import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HarvestDefinition;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 
 /**
  * This class handles dispatching of scheduled Harvest jobs to the Harvest 
@@ -263,7 +267,20 @@ public class HarvestScheduler extends LifeCycleComponent {
                     }
                 }
 
-                doOneCrawl(jobToSubmit, metadata);
+                // Extract documentary information about the harvest
+                HarvestDefinitionDAO hDao = HarvestDefinitionDAO.getInstance();
+                HarvestDefinition hd = hDao.read(
+                        jobToSubmit.getOrigHarvestDefinitionID());
+
+                // The schedule name can only be documented for focused crawls.
+                String schedule = "";
+                if (! hd.isSnapShot()) {
+                    schedule = ((PartialHarvest) hd).getSchedule().getName();
+                }
+
+                doOneCrawl(jobToSubmit,
+                        hd.getName(), hd.getComments(), schedule,
+                        metadata);
                 if (log.isTraceEnabled() ) {
                     log.trace("Job " + jobToSubmit + " sent to harvest queue.");
                 }
@@ -324,13 +341,22 @@ public class HarvestScheduler extends LifeCycleComponent {
      * @throws IOFailure if unable to send the doOneCrawl request to a
      * harvestControllerServer
      */
-    public void doOneCrawl(Job job, List<MetadataEntry> metadata)
+    public void doOneCrawl(
+            Job job,
+            String origHarvestName,
+            String origHarvestDesc,
+            String origHarvestSchedule,
+            List<MetadataEntry> metadata)
             throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
 
-        DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, 
-                JobChannelUtil.getChannel(job.getPriority()), metadata);
+        DoOneCrawlMessage nMsg = new DoOneCrawlMessage(
+                job,
+                JobChannelUtil.getChannel(job.getPriority()),
+                new HarvestDefinitionInfo(
+                        origHarvestName, origHarvestDesc, origHarvestSchedule),
+                metadata);
         log.debug("Send crawl request: " + nMsg);
         jmsConnection.send(nMsg);
     }

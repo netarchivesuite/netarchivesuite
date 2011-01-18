@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
@@ -50,8 +51,11 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
+import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
 import dk.netarkivet.testutils.ARCTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -112,7 +116,7 @@ public class HarvestControllerTester extends TestCase {
     public void testFailingArcRepositoryClient() {
         // If the harvestController is already instantiated,
         // make sure that isn't any longer.
-        HarvestController hc = HarvestController.getInstance(); 
+        HarvestController hc = HarvestController.getInstance();
         hc.cleanup();
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES,
                      "Not a number");
@@ -126,7 +130,7 @@ public class HarvestControllerTester extends TestCase {
 
     /** Tests the writeHarvestFiles method.
      * FIXME fails when run as part of the UnitTesterSuite.java. See bug 1912.
-     * 
+     *
      * @throws Exception
      */
     public void failingTestWriteHarvestFiles() throws Exception {
@@ -163,7 +167,9 @@ public class HarvestControllerTester extends TestCase {
                     orderXml.exists());
         HarvestController controller = HarvestController.getInstance();
         HeritrixFiles files = controller.writeHarvestFiles(
-                crawlDir, j, metadata);
+                crawlDir, j,
+                new HarvestDefinitionInfo("test", "test", "test"),
+                metadata);
 
         assertTrue("Should have harvest info file after call",
                    harvestInfo.exists());
@@ -177,15 +183,15 @@ public class HarvestControllerTester extends TestCase {
         FileAsserts.assertFileContains("Should have jobID in harvestinfo file",
                                        "<jobId>" + j.getJobID() + "</jobId>", harvestInfo);
         FileAsserts.assertFileContains("Should have harvestID in harvestinfo file",
-                                       "<origHarvestDefinitionID>" 
+                                       "<origHarvestDefinitionID>"
                 + j.getOrigHarvestDefinitionID() + "</origHarvestDefinitionID>",
                                        harvestInfo);
         FileAsserts.assertFileContains("Should have correct order.xml file",
                                        "OneLevel-order", orderXml);
-        
+
         // Verify that order.xml is a valid HeritrixTemplate
         new HeritrixTemplate(XmlUtils.getXmlDoc(orderXml), true);
-        
+
         FileAsserts.assertFileContains("Should have correct seeds.txt file",
                                        j.getSeedListAsString(), seedsTxt);
         FileAsserts.assertFileContains("Should have URL in file",
@@ -207,8 +213,8 @@ public class HarvestControllerTester extends TestCase {
         //There are three files in the zip file replied
         assertEquals("Index directory should contain unzipped files",
                      3, files.getIndexDir().listFiles().length);
-        
-        /** Check, that arcsdir is created in the this method. 
+
+        /** Check, that arcsdir is created in the this method.
          * Part of fixing bug #924. */
         assertTrue("ArcsDir should exist prior to crawl-start",
                 files.getArcsDir().isDirectory());
@@ -269,10 +275,10 @@ public class HarvestControllerTester extends TestCase {
         return ar.isValid();
     }
 
-    /** 
+    /**
      * test constructor behaviour given bad arguments.
      * The introduction of a factory for the HeritrixLauncher hides the actual
-     * cause behind the message "Error creating singleton of class 
+     * cause behind the message "Error creating singleton of class
      * 'dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher'.
      */
     public void testRunHarvest() throws Exception {
@@ -302,16 +308,11 @@ public class HarvestControllerTester extends TestCase {
         // Test that an existing crawl.log is used, or null is returned
         // if no hosts report is found.
 
-        Method generateHeritrixDomainHarvestReport = ReflectUtils.getPrivateMethod(
-                HarvestController.class, "generateHeritrixDomainHarvestReport",
-                HeritrixFiles.class, StringBuilder.class);
-
         hc = HarvestController.getInstance();
         HeritrixFiles files = new HeritrixFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR,
                                                 1L, 1L);
         StringBuilder errs = new StringBuilder();
-        DomainHarvestReport dhr = (DomainHarvestReport)
-                generateHeritrixDomainHarvestReport.invoke(hc, files, errs);
+        HarvestReport dhr = HarvestReportFactory.generateHarvestReport(files);
         assertEquals("Error accumulator should be empty", 0, errs.length());
 
         assertEquals("Returned report should have right contents",
@@ -320,12 +321,22 @@ public class HarvestControllerTester extends TestCase {
 
         File crawlDir2 = new File(TestInfo.CRAWLDIR_ORIGINALS_DIR, "bogus");
         HeritrixFiles files2 = new HeritrixFiles(crawlDir2, 1L, 1L);
-        dhr = (DomainHarvestReport)generateHeritrixDomainHarvestReport.invoke(hc, files2, errs);
-        assertNull("Generated domainHarvestReport should be null",
-                   dhr);
-        assertEquals("Should have expected error message in errs",
-                     "No crawl.log found in '" + crawlDir2.getAbsolutePath() + "/logs/crawl.log'\n",
-                     errs.toString());
+
+        dhr = null;
+        try {
+            dhr = HarvestReportFactory.generateHarvestReport(files2);
+            fail("Should have expected error message in errs" +
+                    "No crawl.log found in '"
+                    + crawlDir2.getAbsolutePath() + "/logs/crawl.log'\n"
+                    + errs.toString());
+        } catch (ArgumentNotValid anv) {
+            assertTrue(anv.getCause()instanceof IOFailure);
+            assertEquals(
+                    "Not a file or not readable: " + crawlDir2.getAbsolutePath()
+                    + "/logs/crawl.log",
+                    ((IOFailure) anv.getCause()).getMessage());
+        }
+        assertNull("Generated harvestReport should be null", dhr);
     }
 
     public void testUploadFiles() throws Exception {
@@ -400,7 +411,7 @@ public class HarvestControllerTester extends TestCase {
 
     public void testFindDefaultStopReason() throws Exception {
         try {
-            HarvestController.findDefaultStopReason(null);
+            AbstractHarvestReport.findDefaultStopReason(null);
             fail("Should throw argument not valid on null argument");
         } catch (ArgumentNotValid e) {
             assertTrue("Should contain varable name in exception",
@@ -408,16 +419,16 @@ public class HarvestControllerTester extends TestCase {
         }
         assertEquals("Download should be completed",
                      StopReason.DOWNLOAD_COMPLETE,
-                     HarvestController.findDefaultStopReason(
+                     AbstractHarvestReport.findDefaultStopReason(
                              new File(TestInfo.CRAWLDIR_ORIGINALS_DIR,
                                       "logs/progress-statistics.log")));
         assertEquals("Download should be unfinished",
                      StopReason.DOWNLOAD_UNFINISHED,
-                     HarvestController.findDefaultStopReason(
+                     AbstractHarvestReport.findDefaultStopReason(
                              TestInfo.NON_EXISTING_FILE));
         assertEquals("Download should be unfinished",
                      StopReason.DOWNLOAD_UNFINISHED,
-                     HarvestController.findDefaultStopReason(
+                     AbstractHarvestReport.findDefaultStopReason(
                              new File(TestInfo.UNFINISHED_CRAWLDIR,
                                       "logs/progress-statistics.log")));
     }

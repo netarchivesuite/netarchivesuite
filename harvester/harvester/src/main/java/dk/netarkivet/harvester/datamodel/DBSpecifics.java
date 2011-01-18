@@ -249,8 +249,11 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             if (currentVersion == 0 && toVersion == 1) {
                 createRunningJobsHistoryTable();
                 currentVersion = 1;
+            } else if (currentVersion == 1 && toVersion == 2) {
+                migrateRunningJobsHistoryTableV1ToV2();
+                currentVersion = 2;
             }
-            if (currentVersion > 1) {
+            if (currentVersion > 2) {
                 throw new NotImplementedException(
                         "No method exists for migrating table '" + tableName
                                 + "' from version " + currentVersion
@@ -260,6 +263,9 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             if (currentVersion == 0 && toVersion == 1) {
                 createRunningJobsMonitorTable();
                 currentVersion = 1;
+            } else if (currentVersion == 1 && toVersion == 2) {
+                migrateRunningJobsMonitorTableV1ToV2();
+                currentVersion = 2;
             }
             if (currentVersion > 1) {
                 throw new NotImplementedException(
@@ -319,6 +325,18 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * consists of altering the default value of field 'maxbytes' to -1.
      */
     protected abstract void migrateFullharvestsv2tov3();
+
+    /**
+     * Migrates the 'runningjobshistory' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    protected abstract void migrateRunningJobsHistoryTableV1ToV2();
+
+    /**
+     * Migrates the 'runningjobsmonitor' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    protected abstract void migrateRunningJobsMonitorTableV1ToV2();
 
     /**
      * Creates the initial (version 1) of table 'global_crawler_trap_lists'.

@@ -298,7 +298,33 @@ public abstract class DerbySpecifics extends DBSpecifics {
             };
         DBConnect.updateTable("jobs", 5, SqlStatements);
     }
-    
+
+    /**
+     * Migrates the 'runningjobshistory' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    @Override
+    protected void migrateRunningJobsHistoryTableV1ToV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobshistory "
+                + "ADD COLUMN retiredQueuesCount bigint not null"
+        };
+        DBConnect.updateTable("runningjobshistory", 2, sqlStatements);
+    }
+
+    /**
+     * Migrates the 'runningjobsmonitor' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    @Override
+    protected void migrateRunningJobsMonitorTableV1ToV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobsmonitor "
+                + "ADD COLUMN retiredQueuesCount bigint not null"
+        };
+        DBConnect.updateTable("runningjobsmonitor", 2, sqlStatements);
+    }
+
     /** Migrates the 'configurations' table from version 3 to version 4.
      * This consists of altering the default value of field 'maxbytes' to -1.
      */
@@ -309,7 +335,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
             };
         DBConnect.updateTable("configurations", 4, SqlStatements);
     }
- 
+
     /** Migrates the 'fullharvests' table from version 2 to version 3.
      * This consists of altering the default value of field 'maxbytes' to -1.
      */

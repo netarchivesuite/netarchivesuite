@@ -23,7 +23,6 @@
 
 package dk.netarkivet.harvester.scheduler;
 
-import javax.jms.JMSException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,8 +30,9 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
+import javax.jms.JMSException;
 
+import junit.framework.TestCase;
 import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
@@ -59,9 +59,10 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.ScheduleDAOTester;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
-import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
+import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
-import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -88,6 +89,9 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         StopReason.DOWNLOAD_COMPLETE;
     ReloadSettings rs = new ReloadSettings();
     private HarvestSchedulerMonitorServer hsms;
+
+    private static final HeritrixFiles HX_FILES =
+        new HeritrixFiles(new File(WORKING, "harvestreports"), 1, 1);
 
     /**
      * setUp method for this set of unit tests.
@@ -182,8 +186,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 CrawlStatusMessage(j1ID, JobStatus.STARTED);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
         // Send a job-done message
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
@@ -225,8 +228,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
 
         // Send a job-failed message
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_failed = new
                 CrawlStatusMessage(j1ID, JobStatus.FAILED, hhr);
         csm_failed.setNotOk("Simulated failed message");
@@ -329,8 +331,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         //
         // Send the "done" message
         //
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
@@ -379,8 +380,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         //
         // Send the "failed" message
         //
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_failed = new
                 CrawlStatusMessage(j1ID, JobStatus.FAILED, hhr);
         csm_failed.setNotOk("Simulated failed message");
@@ -429,7 +429,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 CrawlStatusMessage(j1ID, JobStatus.STARTED);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
         // Send a job-done message
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
@@ -485,8 +485,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Send a job-done message
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(CRAWL_REPORT, 
-                DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
@@ -524,8 +523,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
 
         // Send a job-done message
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csmDone = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
          hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csmDone));
@@ -575,8 +573,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         DomainDAO.getInstance().create(Domain.getDefaultDomain("dr.dk"));
 
         //The host report we use
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                STOP_REASON_CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
 
         //A harvest definition with no limit
         HarvestDefinition snapshot =

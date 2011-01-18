@@ -70,6 +70,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         queuedFilesCount,
         totalQueuesCount,
         activeQueuesCount,
+        retiredQueuesCount,
         exhaustedQueuesCount,
         alertsCount,
         downloadedFilesCount,
@@ -203,7 +204,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             } else {
                 sql.append("INSERT INTO runningJobsMonitor (");
                 sql.append(HM_COLUMN.getColumnsInOrder());
-                sql.append(") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                sql.append(") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             }
 
             stm = c.prepareStatement(sql.toString());
@@ -228,6 +229,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             stm.setLong(
                     HM_COLUMN.activeQueuesCount.rank(),
                     startedJobInfo.getActiveQueuesCount());
+            stm.setLong(
+                    HM_COLUMN.retiredQueuesCount.rank(),
+                    startedJobInfo.getRetiredQueuesCount());
             stm.setLong(
                     HM_COLUMN.exhaustedQueuesCount.rank(),
                     startedJobInfo.getExhaustedQueuesCount());
@@ -301,7 +305,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
             stm = c.prepareStatement("INSERT INTO runningJobsHistory ("
                     + HM_COLUMN.getColumnsInOrder()
-                    + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             stm.setLong(
                     HM_COLUMN.jobId.rank(), startedJobInfo.getJobId());
             stm.setString(
@@ -323,6 +327,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             stm.setLong(
                     HM_COLUMN.activeQueuesCount.rank(),
                     startedJobInfo.getActiveQueuesCount());
+            stm.setLong(
+                    HM_COLUMN.retiredQueuesCount.rank(),
+                    startedJobInfo.getRetiredQueuesCount());
             stm.setLong(
                     HM_COLUMN.exhaustedQueuesCount.rank(),
                     startedJobInfo.getExhaustedQueuesCount());
@@ -454,6 +461,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                         rs.getLong(HM_COLUMN.totalQueuesCount.rank()));
                 sji.setActiveQueuesCount(
                         rs.getLong(HM_COLUMN.activeQueuesCount.rank()));
+                sji.setRetiredQueuesCount(
+                        rs.getLong(HM_COLUMN.retiredQueuesCount.rank()));
                 sji.setExhaustedQueuesCount(
                         rs.getLong(HM_COLUMN.exhaustedQueuesCount.rank()));
                 sji.setAlertsCount(
@@ -573,6 +582,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                         rs.getLong(HM_COLUMN.totalQueuesCount.rank()));
                 sji.setActiveQueuesCount(
                         rs.getLong(HM_COLUMN.activeQueuesCount.rank()));
+                sji.setRetiredQueuesCount(
+                        rs.getLong(HM_COLUMN.retiredQueuesCount.rank()));
                 sji.setExhaustedQueuesCount(
                         rs.getLong(HM_COLUMN.exhaustedQueuesCount.rank()));
                 sji.setAlertsCount(

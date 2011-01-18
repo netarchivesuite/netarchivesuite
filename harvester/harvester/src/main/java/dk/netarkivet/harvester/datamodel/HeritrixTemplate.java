@@ -64,14 +64,6 @@ public class HeritrixTemplate {
     public static final String QUEUE_TOTAL_BUDGET_XPATH =
         "/crawl-order/controller/newObject[@name='frontier']"
         + "/long[@name='queue-total-budget']";
-    /** Xpath needed by Job.editOrderXML_maxObjectsPerDomain(). */
-    public static final String ERROR_PENALTY_AMOUNT_XPATH =
-        "/crawl-order/controller/newObject[@name='frontier']"
-        + "/integer[@name='error-penalty-amount']";
-    /** Xpath needed by Job.editOrderXML_maxObjectsPerDomain(). */
-    public static final String BALANCE_REPLENISH_AMOUNT_XPATH =
-        "/crawl-order/controller/newObject[@name='frontier']"
-        + "/integer[@name='balance-replenish-amount']";
     /** Xpath needed by Job.editOrderXML_crawlerTraps(). */
     public static final String DECIDERULES_MAP_XPATH =
         "/crawl-order/controller/newObject"

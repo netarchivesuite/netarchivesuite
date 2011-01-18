@@ -118,8 +118,8 @@ This page displays a list of running jobs.
 			String incSortPic = "&uarr;";
             String descSortPic = "&darr;";
             String noSortPic = "";
-            String tabArrow[] = new String[9];
-            for( int i=0;i<9;i++) {
+            String tabArrow[] = new String[10];
+            for( int i=0;i<10;i++) {
                 tabArrow[i] =  noSortPic;
             }
             String arrow = noSortPic;
@@ -147,7 +147,7 @@ This page displays a list of running jobs.
 %>
 
 <tr class="spacerRowBig"><td colspan="12">&nbsp;</td></tr>
-<tr><th colspan="12">
+<tr><th colspan="13">
     <fmt:message key="table.running.jobs.harvestName"/>&nbsp;<a href="<%=harvestDetailsLink%>"><%=harvestName %></a>
 </th>
 </tr>
@@ -186,8 +186,7 @@ This page displays a list of running jobs.
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ELAPSED.ordinal()]%>
         </a>
    </th>
-    <%-->th class="harvestHeader" colspan="5"><fmt:message key="table.running.jobs.queues"/></th--%>
-    <th class="harvestHeader" colspan="4"><fmt:message key="table.running.jobs.queues"/></th>
+    <th class="harvestHeader" colspan="5"><fmt:message key="table.running.jobs.queues"/></th>
     <th class="harvestHeader" colspan="3"><fmt:message key="table.running.jobs.performance"/></th>
     <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.alerts"/></th>
 </tr>
@@ -216,7 +215,14 @@ This page displays a list of running jobs.
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.ordinal()]%>
         </a>
     </th>
-    <%--th class="harvestHeader"><fmt:message key="table.running.jobs.retiredQueues"/></th--%>
+    <th class="harvestHeader">
+    <% sortLink=sortBaseLink
+    + HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.hashCode(); %>
+        <a href="<%=sortLink %>">
+            <fmt:message key="table.running.jobs.retiredQueues"/>
+            <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.ordinal()]%>
+        </a>
+    </th>
     <th class="harvestHeader" >
     <% sortLink=sortBaseLink
     + HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.hashCode(); %>
@@ -326,7 +332,7 @@ This page displays a list of running jobs.
         <td align="right"><%=info.getQueuedFilesCount()%></td>
         <td align="right"><%=info.getTotalQueuesCount()%></td>
         <td align="right"><%=info.getActiveQueuesCount()%></td>
-        <%-->td align="right"><%=info.getRetiredQueuesCount()%></td--%>
+        <td align="right"><%=info.getRetiredQueuesCount()%></td>
         <td align="right"><%=info.getExhaustedQueuesCount()%></td>
         <td align="right">
             <%= StringUtils.formatNumber(info.getCurrentProcessedDocsPerSec())

@@ -78,9 +78,9 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'job_configs', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'runningJobsHistory', 1);
+    VALUES ( 'runningJobsHistory', 2);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'runningJobsMonitor', 1);
+    VALUES ( 'runningJobsMonitor', 2);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'frontierReportMonitor', 1);
 
@@ -426,6 +426,7 @@ CREATE TABLE runningJobsHistory (
      queuedFilesCount bigint NOT NULL,
      totalQueuesCount bigint NOT NULL,
      activeQueuesCount bigint NOT NULL,
+     retiredQueuesCount bigint NOT NULL,
      exhaustedQueuesCount bigint NOT NULL,
      elapsedSeconds bigint NOT NULL,
      alertsCount bigint NOT NULL,
@@ -456,6 +457,7 @@ CREATE TABLE runningJobsMonitor (
      queuedFilesCount bigint NOT NULL,
      totalQueuesCount bigint NOT NULL,
      activeQueuesCount bigint NOT NULL,
+     retiredQueuesCount bigint NOT NULL,
      exhaustedQueuesCount bigint NOT NULL,
      elapsedSeconds bigint NOT NULL,
      alertsCount bigint NOT NULL,

@@ -25,10 +25,10 @@ package dk.netarkivet.harvester.harvesting.distribute;
 import java.io.File;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
@@ -86,7 +86,7 @@ public class PersistentJobDataTester extends TestCase {
         PersistentJobData pjd = new PersistentJobData(crawldir);
         Job testJob = TestInfo.getJob();
         testJob.setJobID(42L);
-        pjd.write(testJob);
+        pjd.write(testJob, new HarvestDefinitionInfo("test", "test", "test"));
 
         PersistentJobData pjdNew = new PersistentJobData(crawldir);
 

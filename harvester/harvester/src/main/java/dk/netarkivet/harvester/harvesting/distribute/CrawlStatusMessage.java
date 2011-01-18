@@ -30,6 +30,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
+import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /**
  * Instances of this class are sent by a HarvestControllerServer to the
@@ -46,8 +48,8 @@ public class CrawlStatusMessage extends HarvesterMessage
     private long jobID;
     /** The current state of the crawl-job. */
     private JobStatus statusCode;
-    /** A domainHarvestReport created at the end of the crawl. */
-    private DomainHarvestReport domainHarvestReport;
+    /** A harvestReport created at the end of the crawl. */
+    private HarvestReport harvestReport;
     /** harvest errors encountered. */
     private String harvestErrors;
     /** harvest errrors encountered with details. */
@@ -63,7 +65,7 @@ public class CrawlStatusMessage extends HarvesterMessage
      * @param jobID     the unique identifier for the crawl job
      *                  to which this message refers
      * @param statusCode          All values are accepted, except null
-     * @param domainHarvestReport A calculated domain harvest report
+     * @param harvestReport A calculated domain harvest report
      *                              produced by the crawl.
      *                            May be null for no domain harvest report.
      * @throws ArgumentNotValid   If invalid arguments:
@@ -71,13 +73,13 @@ public class CrawlStatusMessage extends HarvesterMessage
      *                              statusCode == null
      */
     public CrawlStatusMessage(long jobID, JobStatus statusCode,
-                              DomainHarvestReport domainHarvestReport) {
+                              HarvestReport harvestReport) {
         super(Channels.getTheSched(), Channels.getError());
         ArgumentNotValid.checkNotNegative(jobID, "jobID");
         ArgumentNotValid.checkNotNull(statusCode, "statusCode");
         this.jobID = jobID;
         this.statusCode = statusCode;
-        this.domainHarvestReport = domainHarvestReport;
+        this.harvestReport = harvestReport;
     }
     /**
      * Alternate constructor, which does not have the DomainHarvestreport
@@ -85,7 +87,7 @@ public class CrawlStatusMessage extends HarvesterMessage
      * @param jobID (see description for the other constructor)
      * @param statusCode (see description for the other constructor)
      * @see CrawlStatusMessage#CrawlStatusMessage(long,
-     *  JobStatus, DomainHarvestReport)
+     *  JobStatus, AbstractHarvestReport)
      */
     public CrawlStatusMessage(long jobID, JobStatus statusCode) {
         this(jobID, statusCode, null);
@@ -114,8 +116,8 @@ public class CrawlStatusMessage extends HarvesterMessage
      *
      * @return the hosts report.
      */
-    public DomainHarvestReport getDomainHarvestReport() {
-        return domainHarvestReport;
+    public HarvestReport getDomainHarvestReport() {
+        return harvestReport;
     }
 
     /**
@@ -135,8 +137,8 @@ public class CrawlStatusMessage extends HarvesterMessage
      */
     public String toString() {
         String dhr = "";
-        if (domainHarvestReport != null) {
-            dhr = domainHarvestReport.toString();
+        if (harvestReport != null) {
+            dhr = harvestReport.toString();
         }
 
         return "CrawlStatusMessage:\n"

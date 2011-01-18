@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -41,6 +40,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -109,7 +109,8 @@ public class HarvesterMessageHandlerTester extends TestCase {
         Job job = TestInfo.getJob();
         try {
             tmh.visit(new DoOneCrawlMessage(job, Channels.getTheRepos(),
-                                            new ArrayList<MetadataEntry>()));
+                    new HarvestDefinitionInfo("test", "test", "test"),
+                    new ArrayList<MetadataEntry>()));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected

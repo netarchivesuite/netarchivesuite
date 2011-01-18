@@ -38,6 +38,7 @@ import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -85,17 +86,23 @@ public class DoOneCrawlMessageTester extends TestCase {
     /** Test one of constructor. */
     public void testCTOR1() {
         try {
-            new DoOneCrawlMessage(null, CHAN1, TestInfo.emptyMetadata);
+            new DoOneCrawlMessage(
+                    null, CHAN1,
+                    new HarvestDefinitionInfo("test", "test", "test"),
+                    TestInfo.emptyMetadata);
             fail("Calling CTOR with null value for Job should throw exception !");
         } catch (ArgumentNotValid e) {
             //expected case
         }
     }
-    
+
     /** Test two of constructor. */
     public void testCTOR2() {
         try {
-            new DoOneCrawlMessage(TestInfo.getJob(), null, TestInfo.emptyMetadata);
+            new DoOneCrawlMessage(
+                    TestInfo.getJob(), null,
+                    new HarvestDefinitionInfo("test", "test", "test"),
+                    TestInfo.emptyMetadata);
             fail("Calling CTOR with null value for to-queue should throw exception !");
         } catch (ArgumentNotValid e) {
             //expected case
@@ -105,8 +112,11 @@ public class DoOneCrawlMessageTester extends TestCase {
     /** Test three of constructor. */
     public void testCTOR3() {
         try {
-            new DoOneCrawlMessage(TestInfo.getJob(),
-                    CHAN1, null);
+            new DoOneCrawlMessage(
+                    TestInfo.getJob(),
+                    CHAN1,
+                    new HarvestDefinitionInfo("test", "test", "test"),
+                    null);
             fail("Calling CTOR with null value for metadata should throw exception !");
         } catch (ArgumentNotValid e) {
             //expected case
@@ -116,7 +126,9 @@ public class DoOneCrawlMessageTester extends TestCase {
     /** Test four of constructor. */
     public void testCTOR4() {
         try {
-            new DoOneCrawlMessage(TestInfo.getJob(), CHAN1,
+            new DoOneCrawlMessage(
+                    TestInfo.getJob(), CHAN1,
+                    new HarvestDefinitionInfo("test", "test", "test"),
                     TestInfo.emptyMetadata);
         } catch (ArgumentNotValid e) {
             fail("Calling CTOR with valid arguments should not throw exception !");
@@ -126,7 +138,9 @@ public class DoOneCrawlMessageTester extends TestCase {
     /** Test the getJob() method. */
     public void testGetJob() {
         Job j = TestInfo.getJob();
-        DoOneCrawlMessage docm = new DoOneCrawlMessage(j, CHAN1,
+        DoOneCrawlMessage docm = new DoOneCrawlMessage(
+                j, CHAN1,
+                new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
         assertSame("Job is not the same object", j, docm.getJob());
     }
@@ -134,7 +148,9 @@ public class DoOneCrawlMessageTester extends TestCase {
     /** Test the getMetadata() method. */
     public void testGetMetadata() {
         Job j = TestInfo.getJob();
-        DoOneCrawlMessage docm = new DoOneCrawlMessage(j, CHAN1,
+        DoOneCrawlMessage docm = new DoOneCrawlMessage(
+                j, CHAN1,
+                new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
         assertEquals("metadata is not the same object", TestInfo.emptyMetadata,
                 docm.getMetadata());
@@ -151,9 +167,13 @@ public class DoOneCrawlMessageTester extends TestCase {
         Job j = TestInfo.getJob();
         TestInfo.oneMetadata.add(TestInfo.sampleEntry);
         DoOneCrawlMessage docm1 = new DoOneCrawlMessage(j,
-                CHAN1, TestInfo.oneMetadata);
+                CHAN1,
+                new HarvestDefinitionInfo("test", "test", "test"),
+                TestInfo.oneMetadata);
         DoOneCrawlMessage docm2 = new DoOneCrawlMessage(j,
-                CHAN1, TestInfo.oneMetadata);
+                CHAN1,
+                new HarvestDefinitionInfo("test", "test", "test"),
+                TestInfo.oneMetadata);
         docm1.setNotOk("test of errormessage");
         docm2.setNotOk("test of errormessage");
 

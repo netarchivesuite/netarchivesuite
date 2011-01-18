@@ -140,7 +140,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Test that running the scheduler creates certain jobs.
-     * 
+     *
      * @throws Exception If HarvestScheduler throws exception
      */
     public void testBeginDispatching() throws Exception {
@@ -523,7 +523,8 @@ public class HarvestSchedulerTester extends TestCase {
                 getChannel(JobPriority.LOWPRIORITY), lowPriorityListener);
         
         //send a high priority job
-        harvestScheduler.doOneCrawl(TestInfo.getJob(), metadata);
+        harvestScheduler.doOneCrawl(TestInfo.getJob(),
+                "test", "test", "test", metadata);
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
         assertEquals("The HIGHPRIORITY server should have received exactly 1 " +
@@ -536,7 +537,8 @@ public class HarvestSchedulerTester extends TestCase {
         lowPriorityListener.messages = new ArrayList<DoOneCrawlMessage>();
 
         //send a low priority job
-        harvestScheduler.doOneCrawl(TestInfo.getJobLowPriority(), metadata);
+        harvestScheduler.doOneCrawl(TestInfo.getJobLowPriority(),
+                "test", "test", "test", metadata);
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
         assertEquals("The HIGHPRIORITY server should have received exactly 0 " +
@@ -551,7 +553,7 @@ public class HarvestSchedulerTester extends TestCase {
      */
     public void testNullJob() {
         try {
-            harvestScheduler.doOneCrawl(null, metadata);
+            harvestScheduler.doOneCrawl(null, "test", "test", "test", metadata);
             fail("Should throw ArgumentNotValid on NULL job");
         } catch (ArgumentNotValid e) {
             // expected case
@@ -595,7 +597,8 @@ public class HarvestSchedulerTester extends TestCase {
      * Uses the Clients own MessageHandler
      */
     public void testLogSendingMessage() throws IOException {
-        harvestScheduler.doOneCrawl(TestInfo.getJob(), metadata);
+        harvestScheduler.doOneCrawl(TestInfo.getJob(),
+                "test", "test", "test", metadata);
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
 

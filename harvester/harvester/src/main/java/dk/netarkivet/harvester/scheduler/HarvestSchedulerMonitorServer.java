@@ -23,11 +23,6 @@
 
 package dk.netarkivet.harvester.scheduler;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import javax.jms.MessageListener;
 
 import org.apache.commons.logging.Log;
@@ -37,19 +32,14 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
-import dk.netarkivet.harvester.datamodel.Domain;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.HarvestInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.NumberUtils;
-import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
-import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /**
  * Submitted harvesting jobs are registered with this singleton. The class
@@ -66,7 +56,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
 
     /** The private logger for this class. */
     private final Log log = LogFactory.getLog(getClass().getName());
-    
+
     @Override
     public void start() {
         JMSConnectionFactory.getInstance().setListener(
@@ -206,88 +196,25 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
     /**
      * Takes the crawl report from the job and updates the domain information
      * with harvesting history.
-     * If the crawler was unable to generate a DomainHarvestReport,
+     * If the crawler was unable to generate a {@link HarvestReport},
      * it will do nothing.
      * @param job the completed job
      * @param dhr the domain harvest report, or null if none available.
      * @throws ArgumentNotValid if job is null
      */
-    private void processCrawlData(Job job, DomainHarvestReport dhr)
+    private void processCrawlData(Job job, HarvestReport dhr)
     throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(job, "job");
 
-        //If the crawler was unable to generate a DomainHarvestReport,
+        //If the crawler was unable to generate a HarvestReport,
         //we will do nothing.
 
         if (dhr == null) {
             return;
         }
 
-        // Get the map from domain names to domain configurations
-        Map<String, String> configurationMap = job.getDomainConfigurationMap();
-
-        // For each domain harvested, check if it corresponds to a
-        // domain configuration for this Job and if so add a new HarvestInfo
-        // to the DomainHistory of the corresponding Domain object.
-        // TODO:  Information about the domains harvested by the crawler
-        // without a domain configuration for this job is deleted!
-        // Should this information be saved in some way (perhaps stored
-        // in metadata.arc-files?)
-
-        final Set<String> domainNames = new HashSet<String>();
-        domainNames.addAll(dhr.getDomainNames());
-        domainNames.retainAll(configurationMap.keySet());
-        final DomainDAO dao = DomainDAO.getInstance();
-        for (String domainName : domainNames) {
-            Domain domain = dao.read(domainName);
-
-            // Retrieve crawl data from log and add it to HarvestInfo
-            StopReason stopReason = dhr.getStopReason(domainName);
-            long countObjectRetrieved = dhr.getObjectCount(domainName);
-            long bytesReceived = dhr.getByteCount(domainName);
-
-            //If StopReason is SIZE_LIMIT, we check if it's the harvests' size
-            //limit, or rather a configuration size limit.
-
-            //A harvest is considered to have hit the configuration limit if
-            //1) The limit is lowest, or
-            //2) The number of harvested bytes is greater than the limit
-
-            // Note: Even though the per-config-byte-limit might have changed
-            // between the time we calculated the job and now, it's okay we
-            // compare with the new limit, since it gives us the most accurate
-            // result for whether we want to harvest any more.
-            if (stopReason == StopReason.SIZE_LIMIT) {
-                long maxBytesPerDomain = job.getMaxBytesPerDomain();
-                long configMaxBytes = domain.getConfiguration(
-                        configurationMap.get(domainName)).getMaxBytes();
-                if (NumberUtils.compareInf(configMaxBytes, maxBytesPerDomain)
-                    <= 0
-                    || NumberUtils.compareInf(configMaxBytes, bytesReceived)
-                       <= 0) {
-                    stopReason = StopReason.CONFIG_SIZE_LIMIT;
-                }
-            } else if (stopReason == StopReason.OBJECT_LIMIT) {
-                long maxObjectsPerDomain = job.getMaxObjectsPerDomain();
-                long configMaxObjects = domain.getConfiguration(
-                        configurationMap.get(domainName)).getMaxObjects();
-                if (NumberUtils.compareInf(configMaxObjects, maxObjectsPerDomain)
-                    <= 0) {
-                    stopReason = StopReason.CONFIG_OBJECT_LIMIT;
-                }
-            }
-            // Create the HarvestInfo object
-            HarvestInfo hi = new HarvestInfo(
-                    job.getOrigHarvestDefinitionID(), job.getJobID(),
-                    domain.getName(), configurationMap.get(domain.getName()),
-                    new Date(), bytesReceived, countObjectRetrieved,
-                    stopReason);
-
-            // Add HarvestInfo to Domain and make data persistent
-            // by updating DAO
-            domain.getHistory().addHarvestInfo(hi);
-            dao.update(domain);
-        }
+        // Post-process the report.
+        dhr.postProcess(job);
     }
 
     /**

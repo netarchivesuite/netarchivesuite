@@ -50,6 +50,8 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /**
  * This class responds to JMS doOneCrawl messages from the HarvestScheduler and
@@ -371,7 +373,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler
 
             Thread t1;
             // Create thread in which harvesting will occur
-            t1 = new HarvesterThread(job, metadataEntries);
+            t1 = new HarvesterThread(
+                    job,
+                    msg.getOrigHarvestInfo(),
+                    metadataEntries);
             // start thread which will remove this listener, harvest, store, and
             // exit the VM
             t1.start();
@@ -538,7 +543,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         Long jobID = harvestInfo.getJobID();
 
         StringBuilder errorMessage = new StringBuilder();
-        DomainHarvestReport dhr = null;
+        HarvestReport dhr = null;
         List<File> failedFiles = new ArrayList<File>();
 
         HeritrixFiles files =
@@ -604,14 +609,24 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     private class HarvesterThread extends Thread {
         /** The harvester Job in this thread. */   
         private final Job job;
+
+        /**
+         * Stores documentary information about the harvest.
+         */
+        private final HarvestDefinitionInfo origHarvestInfo;
+
         /** The list of metadata associated with this Job. */
         private final List<MetadataEntry> metadataEntries;
-        /** Constructor for the HarvesterThread class. 
+        /** Constructor for the HarvesterThread class.
          * @param job a harvesting job
          * @param metadataEntries metadata associated with the given job
          */
-        public HarvesterThread(Job job, List<MetadataEntry> metadataEntries) {
+        public HarvesterThread(
+                Job job,
+                HarvestDefinitionInfo origHarvestInfo,
+                List<MetadataEntry> metadataEntries) {
             this.job = job;
+            this.origHarvestInfo = origHarvestInfo;
             this.metadataEntries = metadataEntries;
         }
 
@@ -635,8 +650,11 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 File crawlDir = createCrawlDir();
 
                 final HeritrixFiles files =
-                        controller.writeHarvestFiles(crawlDir, job,
-                                                     metadataEntries);
+                        controller.writeHarvestFiles(
+                                crawlDir,
+                                job,
+                                origHarvestInfo,
+                                metadataEntries);
 
                 log.info(STARTCRAWL_MESSAGE + " " + job.getJobID());
 

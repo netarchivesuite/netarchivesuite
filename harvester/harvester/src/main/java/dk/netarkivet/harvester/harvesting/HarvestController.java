@@ -42,17 +42,17 @@ import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
 
 /**
  * This class handles all the things in a single harvest that are not related
@@ -67,19 +67,6 @@ public class HarvestController {
     private static HarvestController instance;
     private Log log
             = LogFactory.getLog(HarvestController.class);
-    /**
-     * String in crawl.log, that Heritrix writes
-     *  as the last entry in the progress-statistics.log.
-     */
-    private static final String HERITRIX_ORDERLY_FINISH_STRING =
-        "CRAWL ENDED";
-
-    /**
-     * String which shows that the harvest was deliberately aborted from
-     * the Heritrix GUI or forcibly stopped by the Netarchive Suite
-     * software due to an inactivity timeout.
-     */
-    private static final String HARVEST_ABORTED = "Ended by operator";
 
     /**
      * The max time to wait for heritrix to close last ARC files (in secs).
@@ -139,12 +126,17 @@ public class HarvestController {
      *                        in.
      * @param job             The Job object containing various harvest setup
      *                        data.
+     * @param hdi             The object encapsulating documentary information
+     *                        about the harvest.
      * @param metadataEntries Any metadata entries sent along with the job that
      *                        should be stored for later use.
      * @return An object encapsulating where these files have been written.
      */
-    public HeritrixFiles writeHarvestFiles(File crawldir, Job job,
-                                         List<MetadataEntry> metadataEntries) {
+    public HeritrixFiles writeHarvestFiles(
+            File crawldir,
+            Job job,
+            HarvestDefinitionInfo hdi,
+            List<MetadataEntry> metadataEntries) {
         final HeritrixFiles files =
             new HeritrixFiles(crawldir,
                               job.getJobID(),
@@ -156,7 +148,7 @@ public class HarvestController {
         // Check that harvestInfo does not yet exist
 
         // Write job data to persistent storage (harvestinfo file)
-        new PersistentJobData(files.getCrawlDir()).write(job);
+        new PersistentJobData(files.getCrawlDir()).write(job, hdi);
         // Create jobId-preharvest-metadata-1.arc for this job
         writePreharvestMetadata(job, metadataEntries, crawldir);
 
@@ -170,7 +162,7 @@ public class HarvestController {
         } else {
             log.debug("Deduplication disabled.");
         }
-        
+
         // Create Heritrix arcs directory before starting Heritrix to ensure
         // the arcs directory exists in advance.
         boolean created = files.getArcsDir().mkdir();
@@ -249,7 +241,7 @@ public class HarvestController {
      *  1) The actual ARC files,
      *  2) The metadata files
      *  The crawl.log is parsed and information for each domain is generated
-     *  and stored in a DomainHarvestReport object which
+     *  and stored in a AbstractHarvestReport object which
      *  is sent along in the crawlstatusmessage.
      *
      * Additionally, any leftover open ARC files are closed and harvest
@@ -261,11 +253,11 @@ public class HarvestController {
      * @return An object containing info about the domains harvested.
      * @throws ArgumentNotValid if an argument isn't valid.
      */
-    public DomainHarvestReport storeFiles(
+    public HarvestReport storeFiles(
             HeritrixFiles files, StringBuilder errorMessage,
             List<File> failedFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
-        ArgumentNotValid.checkNotNull(errorMessage, 
+        ArgumentNotValid.checkNotNull(errorMessage,
                 "StringBuilder errorMessage");
         ArgumentNotValid.checkNotNull(failedFiles, "List<File> failedFiles");
         long jobID = files.getJobID();
@@ -277,7 +269,7 @@ public class HarvestController {
             // Create a metadata ARC file
             HarvestDocumentation.documentHarvest(crawlDir, jobID, harvestID);
             // Upload all files
-            
+
             // Check, if arcsdir is empty
             // Send a notification, if this is the case
             if (inf.getArcFiles().isEmpty()) {
@@ -288,43 +280,16 @@ public class HarvestController {
             } else {
                 uploadFiles(inf.getArcFiles(), errorMessage, failedFiles);
             }
-            
+
             uploadFiles(inf.getMetadataArcFiles(), errorMessage, failedFiles);
-            // Make the domainHarvestReport ready for uploading
-            return generateHeritrixDomainHarvestReport(files, errorMessage);
+
+            // Make the harvestReport ready for uploading
+            return HarvestReportFactory.generateHarvestReport(files);
+
         } catch (IOFailure e) {
             String errMsg = "IOFailure occurred, while trying to upload files";
             log.warn(errMsg, e);
             throw new IOFailure(errMsg, e);
-        }
-    }
-
-    /**
-     * Generate DomainHarvestReport object that contains information about
-     * the domains harvested, or log a warning if the crawl.log was not found.
-     *
-     * @param files The heritrix files object for this crawl to get logs from.
-     * @param errorMessage An accumulator for error messages.
-     * @return A report object with the domainHarvest data, or null for none
-     * present.
-     */
-    private DomainHarvestReport generateHeritrixDomainHarvestReport(
-            HeritrixFiles files,
-            StringBuilder errorMessage) {
-        File heritrixCrawlLog = files.getCrawlLog();
-        File heritrixStatisticsLog = files.getProgressStatisticsLog();
-        StopReason defaultStopReason =
-            findDefaultStopReason(heritrixStatisticsLog);
-
-        if (heritrixCrawlLog.isFile()) {
-            return new HeritrixDomainHarvestReport(heritrixCrawlLog,
-                    defaultStopReason);
-        } else {
-            String errorMsg = "No crawl.log found in '"
-                              + heritrixCrawlLog.getAbsolutePath() + "'";
-            errorMessage.append(errorMsg).append("\n");
-            log.warn(errorMsg);
-            return null;
         }
     }
 
@@ -427,29 +392,4 @@ public class HarvestController {
         return jobIndex.getIndexFile();
     }
 
-    /**
-     * Find out whether we stopped normally in progress statistics log.
-     * @param logFile A progress-statistics.log file.
-     * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with
-     * CRAWL ENDED, StopReason.DOWNLOAD_UNFINISHED otherwise or if file does
-     * not exist.
-     * @throws ArgumentNotValid on null argument.
-     */
-    public static StopReason findDefaultStopReason(File logFile) 
-            throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(logFile, "File logFile");
-        if (!logFile.exists()) {
-            return StopReason.DOWNLOAD_UNFINISHED;
-        }
-        String lastLine = FileUtils.readLastLine(logFile);
-        if (lastLine.contains(HERITRIX_ORDERLY_FINISH_STRING)) {
-            if (lastLine.contains(HARVEST_ABORTED)) {
-               return StopReason.DOWNLOAD_UNFINISHED;
-            } else {
-               return StopReason.DOWNLOAD_COMPLETE;
-            }
-        } else {
-            return StopReason.DOWNLOAD_UNFINISHED;
-        }
-    }
 }

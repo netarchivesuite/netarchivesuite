@@ -110,7 +110,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     /**
      * The number of queues that have been retired when they hit their quota.
      */
-    // private long retiredQueuesCount;
+    private long retiredQueuesCount;
     /**
      * Number of queues entirely processed.
      */
@@ -181,7 +181,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         this.queuedFilesCount = NOT_AVAILABLE_NUM;
         this.totalQueuesCount = NOT_AVAILABLE_NUM;
         this.activeQueuesCount = NOT_AVAILABLE_NUM;
-        // this.retiredQueuesCount = NOT_AVAILABLE_NUM;
+        this.retiredQueuesCount = NOT_AVAILABLE_NUM;
         this.exhaustedQueuesCount = NOT_AVAILABLE_NUM;
         this.elapsedSeconds = NOT_AVAILABLE_NUM;
         this.alertsCount = NOT_AVAILABLE_NUM;
@@ -265,9 +265,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         return activeQueuesCount;
     }
 
-    // public long getRetiredQueuesCount() {
-    // return retiredQueuesCount;
-    // }
+    public long getRetiredQueuesCount() {
+        return retiredQueuesCount;
+    }
 
     /**
      * @return the number of exhausted queues reported by Heritrix.
@@ -460,8 +460,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
                             .parse(frontierShortReport);
                     sji.totalQueuesCount = Long.parseLong((String) params[0]);
                     sji.activeQueuesCount = Long.parseLong((String) params[1]);
-                    // sji.retiredQueuesCount =
-                    // Long.parseLong((String) params[6]);
+                    sji.retiredQueuesCount =
+                        Long.parseLong((String) params[6]);
                     sji.exhaustedQueuesCount = Long
                             .parseLong((String) params[7]);
                 } catch (ParseException e) {
@@ -614,4 +614,12 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
+
+    /**
+     * @param retiredQueuesCount the retiredQueuesCount to set
+     */
+    public void setRetiredQueuesCount(long retiredQueuesCount) {
+        this.retiredQueuesCount = retiredQueuesCount;
+    }
+
 }

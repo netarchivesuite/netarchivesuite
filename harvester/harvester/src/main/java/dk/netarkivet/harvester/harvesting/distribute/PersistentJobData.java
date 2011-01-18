@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,6 +42,56 @@ import dk.netarkivet.harvester.datamodel.JobPriority;
  * Presently the information is stored in a XML-file.
  */
 public class PersistentJobData {
+
+    public static class HarvestDefinitionInfo implements Serializable {
+
+        /**
+         * The original harvest name.
+         */
+        private final String origHarvestName;
+
+        /**
+         * The original harvest description.
+         */
+        private final String origHarvestDesc;
+
+        /**
+         * The name of the schedule for the original harvest definition.
+         */
+        private final String scheduleName;
+
+        public HarvestDefinitionInfo(
+                String origHarvestName,
+                String origHarvestDesc,
+                String scheduleName) {
+            super();
+            this.origHarvestName = origHarvestName;
+            this.origHarvestDesc = origHarvestDesc;
+            this.scheduleName = scheduleName;
+        }
+
+        /**
+         * @return the origHarvestName
+         */
+        public String getOrigHarvestName() {
+            return origHarvestName;
+        }
+
+        /**
+         * @return the origHarvestDesc
+         */
+        public String getOrigHarvestDesc() {
+            return origHarvestDesc;
+        }
+
+        /**
+         * @return the origHarvestScheduleName
+         */
+        public String getScheduleName() {
+            return scheduleName;
+        }
+
+    }
 
     /** the crawlDir. */
     private final File crawlDir;
@@ -66,6 +117,23 @@ public class PersistentJobData {
     /** Key in harvestinfo file for the priority of the job. */
     private static final String PRIORITY_KEY = ROOT_ELEMENT + ".priority";
 
+    /** Key for testing tag addition. */
+    private static final String TEST_KEY = ROOT_ELEMENT + ".test";
+
+    /** Key in harvestinfo file for the original harvest definition name. */
+    private static final String HARVEST_NAME_KEY =
+        ROOT_ELEMENT + ".origHarvestDefinitionName";
+
+    /** Key in harvestinfo file for the original harvest definition
+     * description. */
+    private static final String HARVEST_DESC_KEY =
+        ROOT_ELEMENT + ".origHarvestDefinitionComments";
+
+    /** Key in harvestinfo file for the original harvest definition
+     * schedule, will be empty for broad crawls. */
+    private static final String HARVEST_SCHED_KEY =
+        ROOT_ELEMENT + ".scheduleName";
+
     /** Key in harvestinfo file for the file version. */
     private static final String HARVESTVERSION_KEY = "harvestInfo.version";
     /** Value for current version number. */
@@ -74,7 +142,8 @@ public class PersistentJobData {
     /** String array containing all keys contained in valid xml. */
     private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY,   MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
-        ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY};
+        ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
+        HARVEST_NAME_KEY, HARVEST_DESC_KEY, HARVEST_SCHED_KEY};
 
 
     /** The logger to use. */
@@ -157,7 +226,7 @@ public class PersistentJobData {
      * @throws IOFailure if any failure occurs while persisting data, or if
      * the file has already been written.
      */
-    public void write(Job harvestJob) {
+    public void write(Job harvestJob, HarvestDefinitionInfo hdi) {
         if (exists()) {
             String errorMsg = "Persistent Job data already exists in '"
                     + crawlDir + "'. Aborting";
@@ -179,6 +248,11 @@ public class PersistentJobData {
                 Long.toString(harvestJob.getMaxObjectsPerDomain()));
         sx.add(ORDERXMLNAME_KEY,
                 harvestJob.getOrderXMLName());
+
+        sx.add(HARVEST_NAME_KEY, hdi.getOrigHarvestName());
+        sx.add(HARVEST_DESC_KEY, hdi.getOrigHarvestDesc());
+        sx.add(HARVEST_SCHED_KEY, hdi.getScheduleName());
+
         if (!validHarvestInfo(sx)) {
             String msg = "Could not create a valid harvestinfo file for job "
                     + harvestJob.getJobID();

@@ -1102,17 +1102,21 @@ public class Job implements Serializable {
      */
     private void editOrderXML_maxObjectsPerDomain(
             long forceMaxObjectsPerDomain) {
-              
-        String xpath = HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH;
-        Node groupMaxFectResponsesNode = orderXMLdoc.selectSingleNode(xpath);
-        if (groupMaxFectResponsesNode != null) {
-            groupMaxFectResponsesNode.setText(
-                    String.valueOf(forceMaxObjectsPerDomain));            
+
+        boolean useQuotaEnforcer =
+            Settings.getBoolean(HarvesterSettings.USE_QUOTA_ENFORCER);
+
+        String xpath = (useQuotaEnforcer ?
+                HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH :
+                    HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
+
+        Node orderXmlNode = orderXMLdoc.selectSingleNode(xpath);
+        if (orderXmlNode != null) {
+            orderXmlNode.setText(
+                    String.valueOf(forceMaxObjectsPerDomain));
         } else {
             throw new IOFailure(
-                    "Unable to locate " 
-                    +  HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH
-                    + " element in order.xml: "
+                    "Unable to locate " +  xpath + " element in order.xml: "
                     + orderXMLdoc.asXML());
         }
     }

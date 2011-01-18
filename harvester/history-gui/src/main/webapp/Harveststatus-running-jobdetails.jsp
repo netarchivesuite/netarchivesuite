@@ -202,18 +202,26 @@ This page displays details about a running job.
            <% if (exhaustedQueues.getSize() > 0 )  { %>
            <!-- Link to frontier section within the page -->
            <li>
-           <a href="#frontierReportExhausted">
-               <fmt:message key="running.job.details.exhaustedQueuesLink"/>
-           </a>
+               <fmt:message key="running.job.details.exhaustededQueuesLink">
+                    <fmt:param>
+                        <a href="#frontierReportExhausted">
+                            <fmt:message key="running.job.details.display"/>
+                        </a>
+                    </fmt:param>
+               </fmt:message>
            </li>
            <% } %>
 
            <% if (retiredQueues.getSize() > 0 )  { %>
            <!-- Link to frontier section within the page -->
            <li>
-           <a href="#frontierReportRetired">
-               <fmt:message key="running.job.details.retiredQueuesLink"/>
-           </a>
+	           <fmt:message key="running.job.details.retiredQueuesLink">
+	                <fmt:param>
+	                    <a href="#frontierReportRetired">
+	                        <fmt:message key="running.job.details.display"/>
+	                    </a>
+	                </fmt:param>
+	           </fmt:message>
            </li>
            <% } %>
 
@@ -264,7 +272,7 @@ This page displays details about a running job.
 %>
 
     <tr><th colspan="2">
-        <a id="frontierReport" name="frontierReport"/> <!-- Anchor  -->
+        <a id="frontierReport" name="frontierReport">&nbsp;</a> <!-- Anchor  -->
         <fmt:message key="running.job.details.frontier.title.TopTotalEnqueuesFilter">
             <fmt:param>
             <%= StringUtils.formatDate(
@@ -314,14 +322,13 @@ This page displays details about a running job.
 %>
 
     <tr><th colspan="2">
-        <a id="frontierReportExhausted" name="frontierReportExhausted">
+        <a id="frontierReportExhausted" name="frontierReportExhausted">&nbsp;</a>
         <fmt:message key="running.job.details.frontier.title.ExhaustedQueuesFilter">
             <fmt:param>
             <%= StringUtils.formatDate(
                     exhaustedQueues.getTimestamp(), "yyyy/MM/dd HH:mm") %>
             </fmt:param>
         </fmt:message>
-        </a>
     </th></tr>
     <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
     <tr>
@@ -364,14 +371,13 @@ This page displays details about a running job.
 %>
 
     <tr><th colspan="2">
-        <a id="frontierReportRetired" name="frontierReportRetired">
+        <a id="frontierReportRetired" name="frontierReportRetired">&nbsp;</a>
         <fmt:message key="running.job.details.frontier.title.RetiredQueuesFilter">
             <fmt:param>
             <%= StringUtils.formatDate(
                     retiredQueues.getTimestamp(), "yyyy/MM/dd HH:mm") %>
             </fmt:param>
         </fmt:message>
-        </a>
     </th></tr>
     <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
     <tr>

@@ -50,7 +50,7 @@ public class HarvestingTesterSuite {
         suite.addTestSuite(HeritrixControllerFactoryTester.class);
         suite.addTestSuite(HarvestControllerTester.class);
         suite.addTestSuite(HarvestDocumentationTester.class);
-        suite.addTestSuite(HeritrixDomainHarvestReportTester.class);
+        suite.addTestSuite(LegacyHarvestReportTester.class);
         suite.addTestSuite(HeritrixFilesTester.class);
         suite.addTestSuite(HeritrixLauncherTester.class);
         suite.addTestSuite(IngestableFilesTester.class);

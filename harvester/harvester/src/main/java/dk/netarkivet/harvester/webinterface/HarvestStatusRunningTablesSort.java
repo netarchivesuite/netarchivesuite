@@ -34,7 +34,7 @@ import dk.netarkivet.common.utils.TableSort;
 public class HarvestStatusRunningTablesSort {
     /**list of the column id.*/
     public enum ColumnId { NONE, ID, HOST, PROGRESS, ELAPSED,
-        QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ };
+        QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ, RETIREDQ };
 
     /** map containing the sort data of each table.*/
     private HashMap<String, TableSort> sortData;
@@ -52,34 +52,30 @@ public class HarvestStatusRunningTablesSort {
         if (HarvestStatusRunningTablesSort.ColumnId.ID.hashCode()
                 == columnIdInt) {
             return HarvestStatusRunningTablesSort.ColumnId.ID;
-        } else
-        if (HarvestStatusRunningTablesSort.ColumnId.HOST.hashCode()
+        } else if (HarvestStatusRunningTablesSort.ColumnId.HOST.hashCode()
                     == columnIdInt) {
                 return HarvestStatusRunningTablesSort.ColumnId.HOST;
-        } else
-        if (HarvestStatusRunningTablesSort.ColumnId.PROGRESS.hashCode()
+        } else if (HarvestStatusRunningTablesSort.ColumnId.PROGRESS.hashCode()
                     == columnIdInt) {
                 return HarvestStatusRunningTablesSort.ColumnId.PROGRESS;
-        } else
-        if (HarvestStatusRunningTablesSort.ColumnId.ELAPSED.hashCode()
+        } else if (HarvestStatusRunningTablesSort.ColumnId.ELAPSED.hashCode()
                     == columnIdInt) {
                 return HarvestStatusRunningTablesSort.ColumnId.ELAPSED;
-        } else
-        if (HarvestStatusRunningTablesSort.ColumnId.QFILES.hashCode()
+        } else if (HarvestStatusRunningTablesSort.ColumnId.QFILES.hashCode()
                     == columnIdInt) {
                 return HarvestStatusRunningTablesSort.ColumnId.QFILES;
-        } else
-        if (HarvestStatusRunningTablesSort.ColumnId.TOTALQ.hashCode()
+        } else if (HarvestStatusRunningTablesSort.ColumnId.TOTALQ.hashCode()
                     == columnIdInt) {
                 return HarvestStatusRunningTablesSort.ColumnId.TOTALQ;
-        } else
-        if (HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.hashCode()
+        } else if (HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.hashCode()
                     == columnIdInt) {
                 return HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ;
-        } else
-        if (HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.hashCode()
+        } else if (HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.hashCode()
                     == columnIdInt) {
                 return HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ;
+        } else if (HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.hashCode()
+                == columnIdInt) {
+            return HarvestStatusRunningTablesSort.ColumnId.RETIREDQ;
         }
 
         return HarvestStatusRunningTablesSort.ColumnId.NONE;

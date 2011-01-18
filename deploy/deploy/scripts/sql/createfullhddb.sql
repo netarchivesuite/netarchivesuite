@@ -20,7 +20,7 @@
 -- License along with this library; if not, write to the Free Software
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
- 
+
 -- This script will create, but not populate, a Derby database for the
 -- web archiving system.  The database will be created in the current
 -- directory under the name 'fullhddb'.
@@ -89,6 +89,12 @@ insert into schemaversions (tablename, version )
     values ( 'global_crawler_trap_lists', 1);
 insert into schemaversions (tablename, version )
     values ( 'global_crawler_trap_expressions', 1);
+insert into schemaversions ( tablename, version )
+    values ( 'runningJobsHistory', 2);
+insert into schemaversions ( tablename, version )
+    values ( 'runningJobsMonitor', 2);
+insert into schemaversions ( tablename, version )
+    values ( 'frontierReportMonitor', 1);
 
 --***************************************************************************--
 -- Area: Domains
@@ -497,6 +503,7 @@ CREATE TABLE runningJobsHistory (
      queuedFilesCount bigint NOT NULL,
      totalQueuesCount bigint NOT NULL,
      activeQueuesCount bigint NOT NULL,
+     retiredQueuesCount bigint NOT NULL,
      exhaustedQueuesCount bigint NOT NULL,
      elapsedSeconds bigint NOT NULL,
      alertsCount bigint NOT NULL,
@@ -525,6 +532,7 @@ CREATE TABLE runningJobsMonitor (
      queuedFilesCount bigint NOT NULL,
      totalQueuesCount bigint NOT NULL,
      activeQueuesCount bigint NOT NULL,
+     retiredQueuesCount bigint NOT NULL,
      exhaustedQueuesCount bigint NOT NULL,
      elapsedSeconds bigint NOT NULL,
      alertsCount bigint NOT NULL,

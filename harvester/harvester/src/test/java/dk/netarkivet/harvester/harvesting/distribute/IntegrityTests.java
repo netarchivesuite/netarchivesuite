@@ -23,8 +23,6 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,6 +32,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.LogManager;
+
+import javax.jms.Message;
+import javax.jms.MessageListener;
 
 import dk.netarkivet.TestUtils;
 import dk.netarkivet.archive.indexserver.distribute.IndexRequestClient;
@@ -56,6 +57,7 @@ import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.scheduler.HarvestScheduler;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -225,7 +227,8 @@ public class IntegrityTests extends DataModelTestCase {
         // to be uploaded.
         synchronized(listenerDummy) {
             //Send the job
-            harvestScheduler.doOneCrawl(j, new ArrayList<MetadataEntry>());
+            harvestScheduler.doOneCrawl(j, "test", "test", "test",
+                    new ArrayList<MetadataEntry>());
 
             //wait until we know files are uploaded
             while (!done) {
@@ -338,7 +341,7 @@ public class IntegrityTests extends DataModelTestCase {
         //Submit the job
         //TODO ensure, that we have some alias-metadata to produce here
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
-        harvestScheduler.doOneCrawl(j, metadata);
+        harvestScheduler.doOneCrawl(j, "test", "test", "test", metadata);
         //Note: Since this returns, we need to wait for replymessage
         synchronized(listener) {
             while (listener.messages.size() < 2) {
@@ -378,7 +381,7 @@ public class IntegrityTests extends DataModelTestCase {
         // Get the crawl log
         //
         CrawlStatusMessage csm = listener.messages.get(1);
-        DomainHarvestReport dhr = csm.getDomainHarvestReport();
+        HarvestReport dhr = csm.getDomainHarvestReport();
         assertTrue("Should not be empty", dhr.getDomainNames().size() > 0);
         assertTrue("Did not find expected domain crawled",
                    dhr.getByteCount("netarkivet.dk") > 0);

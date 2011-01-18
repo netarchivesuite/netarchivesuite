@@ -130,13 +130,14 @@ public class IntegrityTestsHCSJMSException extends TestCase{
         QueueConnection qc = (QueueConnection) queueConnectionField.get(con);
         ExceptionListener qel = qc.getExceptionListener();
         //Start a harvest
-        Job j = TestInfo.getJob(); 
+        Job j = TestInfo.getJob();
         DataModelTestCase.addHarvestDefinitionToDatabaseWithId(
                 j.getOrigHarvestDefinitionID());
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
         HarvestScheduler harvesteScheduler = new HarvestScheduler();
-        harvesteScheduler.doOneCrawl(j, new ArrayList<MetadataEntry>());
+        harvesteScheduler.doOneCrawl(j, "test", "test", "test",
+                new ArrayList<MetadataEntry>());
         //Trigger the exception handler - should not try to exit
         qel.onException(new JMSException("Some exception"));
         // Wait for harvester to finish and try to exit

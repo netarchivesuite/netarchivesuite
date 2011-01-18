@@ -109,6 +109,9 @@
             <heritrixController>
                 <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController</class>
             </heritrixController>
+            <harvestReport>
+                <class>dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport</class>
+            </harvestReport>
             <deduplication>
                 <enabled>true</enabled>
             </deduplication>

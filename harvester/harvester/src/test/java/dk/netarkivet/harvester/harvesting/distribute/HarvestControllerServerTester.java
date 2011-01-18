@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,8 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
+import javax.jms.JMSException;
+import javax.jms.ObjectMessage;
 
+import junit.framework.TestCase;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -61,6 +61,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.IngestableFiles;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
@@ -234,6 +235,7 @@ public class HarvestControllerServerTester extends TestCase {
         //
         j.setStatus(JobStatus.DONE);
         NetarkivetMessage nMsg = new DoOneCrawlMessage(j, TestInfo.SERVER_ID,
+                new HarvestDefinitionInfo("test", "test", "test"),
                                                                                                   TestInfo.emptyMetadata);
         JMSConnectionMockupMQ.updateMsgID(nMsg, "UNIQUE_ID");
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
@@ -301,7 +303,9 @@ public class HarvestControllerServerTester extends TestCase {
         JobPriority priority = JobPriority.valueOf(
                 Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
         NetarkivetMessage naMsg = new DoOneCrawlMessage(
-                theJob, JobChannelUtil.getChannel(priority), TestInfo.emptyMetadata);
+                theJob, JobChannelUtil.getChannel(priority),
+                new HarvestDefinitionInfo("test", "test", "test"),
+                TestInfo.emptyMetadata);
         JMSConnectionMockupMQ.updateMsgID(naMsg, "id1");
         ObjectMessage oMsg = JMSConnectionMockupMQ.getObjectMessage(naMsg);
         hcs.onMessage(oMsg);

@@ -22,6 +22,8 @@
 */
 package dk.netarkivet.externalsoftware;
 
+import is.hi.bok.deduplicator.DeDuplicator;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,8 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import is.hi.bok.deduplicator.DeDuplicator;
 import junit.framework.TestCase;
+
 import org.apache.commons.httpclient.URIException;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
@@ -66,24 +68,23 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FixedUURI;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
-import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncherFactory;
 import dk.netarkivet.harvester.harvesting.controller.AbstractJMXHeritrixController;
-import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LuceneUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import dk.netarkivet.common.utils.Settings;
 
 
 /**
@@ -415,9 +416,10 @@ public class HeritrixTests extends TestCase {
         runHeritrix(TestInfo.ORDER_FILE_MAX_OBJECTS,
                     TestInfo.SEEDS_FILE_MAX_OBJECTS, tempDir);
 
+        HeritrixFiles hFiles =
+            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 0L, 0L);
         File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                hostReportFile, StopReason.DOWNLOAD_COMPLETE);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(hFiles);
         Long tv2_objects = hhr.getObjectCount("tv2.dk");
         Long netarkivet_objects = hhr.getObjectCount("netarkivet.dk");
         //int netarkivetHosts = GetHostsForDomain(hostReportFile, "netarkivet.dk");
@@ -660,8 +662,9 @@ public class HeritrixTests extends TestCase {
         LuceneUtils.makeDummyIndex(tempDir);
         runHeritrix(MaxbytesOrderFile, TestInfo.SEEDS_DEFAULT, tempDir);
         File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                hostReportFile, StopReason.DOWNLOAD_COMPLETE);
+        HeritrixFiles hFiles =
+            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 0L, 0L);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(hFiles);
         Long netarkivet_bytes = hhr.getByteCount("netarkivet.dk");
         long lastNetarkivetBytes = getLastFetchedBytesForDomain("netarkivet.dk");
         //System.out.println("last netarkivet bytes: " + lastNetarkivetBytes);

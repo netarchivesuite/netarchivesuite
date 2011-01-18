@@ -160,6 +160,32 @@ public class MySQLSpecifics extends DBSpecifics {
         DBConnect.updateTable("fullharvests", 3, sqlStatements);
     }
 
+    /**
+     * Migrates the 'runningjobshistory' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    @Override
+    protected void migrateRunningJobsHistoryTableV1ToV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobshistory "
+                + "ADD COLUMN retiredQueuesCount bigint not null"
+        };
+        DBConnect.updateTable("runningjobshistory", 2, sqlStatements);
+    }
+
+    /**
+     * Migrates the 'runningjobsmonitor' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    @Override
+    protected void migrateRunningJobsMonitorTableV1ToV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobsmonitor "
+                + "ADD COLUMN retiredQueuesCount bigint not null"
+        };
+        DBConnect.updateTable("runningjobsmonitor", 2, sqlStatements);
+    }
+
     /** Creates the initial (version 1) of table 'global_crawler_trap_lists'. */
     protected void createGlobalCrawlerTrapLists() {
         String createStatement = "CREATE TABLE global_crawler_trap_lists(\n"
