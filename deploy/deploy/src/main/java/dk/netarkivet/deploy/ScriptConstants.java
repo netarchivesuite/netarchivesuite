@@ -125,6 +125,8 @@ public final class ScriptConstants {
     static final String MULTI_SPACE = "      ";
     /** '    '.*/
     static final String MULTI_SPACE_2 = "    ";
+    /** '  '.*/
+    static final String MULTI_SPACE_3 = "  ";
     /** ssh.*/
     static final String SSH = "ssh";
     /** scp.*/
@@ -225,7 +227,6 @@ public final class ScriptConstants {
     static final String JMXREMOTE_HERITRIX_PRIVILEGES = "readwrite";
     /** The argument for the port for the external database: -p. */
     static final String DATABASE_PORT_ARGUMENT = "-p";
-    
     
     // echos
     /** echo.*/
@@ -337,6 +338,41 @@ public final class ScriptConstants {
     static final String VB_WRITE_TF_CLOSE = "tf.close";
     /** WScript.Sleep.*/
     static final String VB_WRITE_WAIT = "WScript.Sleep";
+    /** 'Create a new start-log for the application. */
+    static final String VB_COMMENT_NEW_START_LOG 
+            = "'Create a new start-log for the application";
+    /** CreateObject("Scripting.FileSystemObject").OpenTextFile(".*/
+    static final String VB_OPEN_WRITE_FILE_PREFIX 
+            = "CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"";
+    /** ", 2, True). */
+    static final String VB_OPEN_WRITE_FILE_SUFFIX_2 = "\", 2, True)";
+    /** ", 8, True). */
+    static final String VB_OPEN_WRITE_FILE_SUFFIX_8 = "\", 8, True)";
+    /** .close.*/
+    static final String VB_CLOSE = ".close";
+    /** Do While oExec.Status = 0.*/
+    static final String VB_DO_WHILE_OEXEC_STATUS_0 
+            = "Do While oExec.Status = 0";
+    /** WScript.Sleep 1000.*/
+    static final String VB_WSCRIPT_SLEEP_1000 = "WScript.Sleep 1000";
+    /** Do While. */
+    static final String VB_DO_WHILE = "Do While ";
+    /** oExec.StdOut.*/
+    static final String VB_OEXEC_STD_OUT = "oExec.StdOut";
+    /** oExec.StdErr.*/
+    static final String VB_OEXEC_STD_ERR = "oExec.StdErr";
+    /** .AtEndOfStream <> True. */
+    static final String VB_AT_END_OF_STREAM_FALSE = ".AtEndOfStream <> True";
+    /** Set outFile = . */
+    static final String VB_SET_OUTFILE = "Set outFile = ";
+    /** outFile.WriteLine. */
+    static final String VB_OUTFILE_WRITELINE = "outFile.WriteLine ";
+    /** ReadLine.*/
+    static final String VB_READ_LINE = ".ReadLine";
+    /** outFile.close.*/
+    static final String VB_OUTFILE_CLOSE = "outFile.close";
+    /** Loop. */
+    static final String VB_LOOP = "Loop";
     
     // integers
     /** Number of '-' repeat for the writeDashLine function.*/
