@@ -121,35 +121,35 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         1000 * Settings.getLong(
                 HarvesterSettings.HARVEST_MONITOR_HISTORY_SAMPLE_RATE);
 
-    /** The current version needed of the tables 'runningJobsHistory',
-     * 'runningJobsMonitor' and 'frontierReportMonitor'. */
-    static final int TABLE_VERSION_NEEDED = 1;
-
     public RunningJobsInfoDBDAO() {
 
         Connection connection = DBConnect.getDBConnection();
-
-        String[] tableNames = new String[] {
-                "runningJobsHistory",
-                "runningJobsMonitor",
-                "frontierReportMonitor"
-        };
-
-        for (String tableName : tableNames) {
-
+        
+        /** The current version needed of the tables 'runningJobsHistory',
+         * 'runningJobsMonitor' and 'frontierReportMonitor'. */
+        Map<String,Integer> versionMap = new HashMap<String,Integer>();
+        versionMap.put("runningJobsHistory", 2);
+        versionMap.put("runningJobsMonitor", 2);
+        versionMap.put("frontierReportMonitor", 1);
+    
+        for (Map.Entry<String,Integer> entry : versionMap.entrySet()) {  
+            String tableName = entry.getKey();
+            Integer versionNeeded = entry.getValue();            
             int version = DBUtils.getTableVersion(connection, tableName);
-            if (version < TABLE_VERSION_NEEDED) {
+            if (version < versionNeeded) {
                 log.info("Migrate table '" + tableName + "' to version "
-                        + TABLE_VERSION_NEEDED);
+                        + versionNeeded);
                 DBSpecifics.getInstance().updateTable(
                         tableName,
-                        TABLE_VERSION_NEEDED);
+                        versionNeeded);
             }
         }
-
-        for (String tableName : tableNames) {
+        
+        for (Map.Entry<String,Integer> entry : versionMap.entrySet()) {
+            String tableName = entry.getKey();
+            Integer versionNeeded = entry.getValue();            
             DBUtils.checkTableVersion(
-                    connection, tableName, TABLE_VERSION_NEEDED);
+                    connection, tableName, versionNeeded);
         }
     }
 
