@@ -124,7 +124,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="jetty-dependencies/slf4j-api-1.3.1.jar"/>
                 <include name="jetty-dependencies/slf4j-jcl-1.3.1.jar"/>
                 <include name="sunjms-lib/imq-4.4u1.jar"/>
-                <include name="sunjms-lib/jms-4.4u1jar"/>
+                <include name="sunjms-lib/jms-4.4u1.jar"/>
                 <include name="mail-dependencies/mail-1.4.jar"/>
                 <include name="libidn-0.5.9.jar"/>
                 <include name="lucene-core-2.0.0.jar"/>
