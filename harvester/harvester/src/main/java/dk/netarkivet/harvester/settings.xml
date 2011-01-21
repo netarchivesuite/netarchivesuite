@@ -62,6 +62,7 @@
             <dispatchperiode>5000</dispatchperiode>
             <jobgenerationperiode>60000</jobgenerationperiode>
             <singlejobdispatching>false</singlejobdispatching>
+            <useQuotaEnforcer>true</useQuotaEnforcer>		
         </scheduler>
         <monitor>
             <!--  1 minute -->
