@@ -281,6 +281,8 @@ public class WindowsMachine extends Machine {
      * 
      * pseudocode:
      * - ssh 'login'@'machine' cmd /c 'environmentName'\\conf\\startall.bat
+     * - sleep 5
+     * - ssh 'login'@'machine' "more 'environmentName'\\start_APP.log
      * 
      * variables:
      * 'login' = machine user name
@@ -292,6 +294,7 @@ public class WindowsMachine extends Machine {
     @Override
     protected String osStartScript() {
         StringBuilder res = new StringBuilder();
+        // - ssh 'login'@'machine' cmd /c 'environmentName'\\conf\\startall.bat
         res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.SPACE + Constants.QUOTE_MARK 
@@ -302,6 +305,22 @@ public class WindowsMachine extends Machine {
         res.append(scriptExtension);
         res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.SPACE);
         res.append(Constants.NEWLINE);
+        // - sleep 5
+        res.append(ScriptConstants.SLEEP_5);
+        res.append(Constants.NEWLINE);
+        // - ssh 'login'@'machine' "more 'environmentName'\\start_APP.log"
+        for(Application app : applications) {
+            res.append(ScriptConstants.SSH + Constants.SPACE);
+            res.append(machineUserLogin());
+            res.append(Constants.SPACE + Constants.QUOTE_MARK 
+                    + ScriptConstants.WINDOWS_COMMAND_MORE + Constants.SPACE);
+            res.append(getEnvironmentName() + Constants.BACKSLASH 
+                    + Constants.SCRIPT_NAME_LOCAL_START
+                    + app.getIdentification() + Constants.EXTENSION_LOG_FILES);
+            res.append(Constants.QUOTE_MARK + Constants.SPACE);
+            res.append(Constants.NEWLINE);
+        }
+        
         return res.toString();
     }
 

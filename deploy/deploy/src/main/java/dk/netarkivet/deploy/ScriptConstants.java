@@ -89,6 +89,8 @@ public final class ScriptConstants {
 
     /** cmd /c - Command for running programs on windows.*/
     static final String WINDOWS_COMMAND_RUN = "cmd /c";
+    /** more - the command for reading a log file.*/
+    static final String WINDOWS_COMMAND_MORE = "more";
     /** cmd /c unzip.exe -q -d - Command for unzipping on windows.*/
     static final String WINDOWS_UNZIP_COMMAND = WINDOWS_COMMAND_RUN 
             + " unzip.exe -q -d";
