@@ -554,10 +554,10 @@ public class ArcRepositoryDatabaseTester extends TestCase {
     }
 
     /**
-     * this tests get get()-method for an existing file - getting get File-name
+     * This tests the get()-method for an existing file - getting get File-name
      * out of the BitarchiveRecord.
      */
-    public void testGetFile() throws IOException {
+    public void testArcrepositoryDatabaseGetFile() throws IOException {
         arcRepos.close();
         DummyGetFileMessageReplyServer dServer
                 = new DummyGetFileMessageReplyServer();

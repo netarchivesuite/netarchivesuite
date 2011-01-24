@@ -177,7 +177,7 @@ public class ArcRepositoryTesterGet extends TestCase {
      * this tests get get()-method for an existing file - getting get File-name
      * out of the BitarchiveRecord.
      */
-    public void testGetFile() throws IOException {
+    public void testArcrepositoryGetFile() throws IOException {
         arcRepository.close();
         DummyGetFileMessageReplyServer dServer
         	= new DummyGetFileMessageReplyServer();

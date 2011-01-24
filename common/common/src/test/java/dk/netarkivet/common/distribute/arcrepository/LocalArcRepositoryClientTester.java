@@ -103,7 +103,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
                    new File(dir2, TestInfo.SAMPLE_FILE_COPY.getName()).exists());
     }
 
-    public void testGetFile() throws IOException {
+    public void testGetFileMethod() throws IOException {
         File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
         File dir2 = new File(TestInfo.WORKING_DIR, "dir2");
         Settings.set("settings.common.arcrepositoryClient.fileDir", dir1.getAbsolutePath(),
