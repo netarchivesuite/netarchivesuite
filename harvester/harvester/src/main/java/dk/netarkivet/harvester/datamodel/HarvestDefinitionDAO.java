@@ -239,11 +239,11 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      * version for GUI purposes.
      *
      * @param harvestDefinitionID The ID of the harvest definition.
-     * @return Domain,configuration pairs for that HD. Returns an empty iterable
+     * @return Domain,configuration pairs for that HD. Returns an empty list
      *         for unknown harvest definitions.
      * @throws ArgumentNotValid on null argument.
      */
-    public abstract Iterable<SparseDomainConfiguration>
+    public abstract List<SparseDomainConfiguration>
             getSparseDomainConfigurations(Long harvestDefinitionID);
 
     /**
@@ -301,7 +301,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      * @throws IOFailure        on any other error talking to the database
      */
     public abstract boolean isSnapshot(Long harvestDefinitionID);
-    
+
     /** Get a sorted list of all domainnames of a HarvestDefintion
     *
     * @param harvestName of HarvestDefintion
@@ -310,7 +310,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     * @throws IOFailure        on any other error talking to the database
     */
     public abstract List<String> getListOfDomainsOfHarvestDefinition(String harvestName);
-    
+
     /** Get a sorted list of all seeds of a Domain in a HarvestDefinition.
     *
     * @param harvestName of HarvestDefintion

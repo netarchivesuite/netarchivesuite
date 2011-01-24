@@ -32,9 +32,11 @@ import java.sql.Types;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -64,6 +66,28 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /** The current version needed of the table 'fullharvests'. */
     static final int FULLHARVESTS_VERSION_NEEDED = 3;
 
+    /**
+     * Comparator used for sorting the UI list of
+     * {@link SparseDomainConfiguration}s. Sorts first by domain name
+     * alphabetical order, next by configuration name.
+     *
+     */
+    private class SparseDomainConfigComp
+    implements Comparator<SparseDomainConfiguration> {
+
+        @Override
+        public int compare(SparseDomainConfiguration sdc1,
+                SparseDomainConfiguration sdc2) {
+            int domComp = sdc1.getDomainName().compareTo(sdc2.getDomainName());
+            if (0 == domComp) {
+                return sdc1.getConfigurationName().compareTo(
+                        sdc2.getConfigurationName());
+            }
+            return domComp;
+        }
+
+    }
+
     /** Create a new HarvestDefinitionDAO using database.
      */
     HarvestDefinitionDBDAO() {
@@ -72,14 +96,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         int fullharvestsVersion = DBUtils.getTableVersion(connection,
                                                           "fullharvests"
         );
-        
+
         if (fullharvestsVersion < FULLHARVESTS_VERSION_NEEDED) {
             log.info("Migrate table" + " 'fullharvests' to version "
                     + FULLHARVESTS_VERSION_NEEDED);
-            DBSpecifics.getInstance().updateTable("fullharvests", 
+            DBSpecifics.getInstance().updateTable("fullharvests",
                     FULLHARVESTS_VERSION_NEEDED);
         }
-        
+
         DBUtils.checkTableVersion(connection,
                                   "harvestdefinitions", 2);
         DBUtils.checkTableVersion(connection, "fullharvests", 3);
@@ -303,7 +327,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + " WHERE harvestdefinitions.harvest_id = ?"
                     + "   AND harvestdefinitions.harvest_id "
                             + "= partialharvests.harvest_id"
-                    + "   AND schedules.schedule_id " 
+                    + "   AND schedules.schedule_id "
                             + "= partialharvests.schedule_id");
             s.setLong(1, harvestDefinitionID);
             res = s.executeQuery();
@@ -328,9 +352,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 final String domainName;
                 /** The config name. */
                 final String configName;
-                
-                /** Constructor for the DomainConfigPair class. 
-                 * 
+
+                /** Constructor for the DomainConfigPair class.
+                 *
                  * @param domainName A given domain name
                  * @param configName A name for a specific configuration
                  */
@@ -382,7 +406,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             DBUtils.closeStatementIfOpen(s);
         }
     }
-    
+
     /**
      * @see HarvestDefinitionDAO#describeUsages(Long)
      */
@@ -802,7 +826,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             DBUtils.closeStatementIfOpen(s);
         }
     }
-    
+
     /**
      * @see HarvestDefinitionDAO#mayDelete(HarvestDefinition)
      */
@@ -832,7 +856,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      *         for unknown harvest definitions.
      * @throws ArgumentNotValid on null argument.
      */
-    public Iterable<SparseDomainConfiguration> getSparseDomainConfigurations(
+    public List<SparseDomainConfiguration> getSparseDomainConfigurations(
             Long harvestDefinitionID) {
         ArgumentNotValid.checkNotNull(harvestDefinitionID,
                                       "harvestDefinitionID");
@@ -856,6 +880,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         res.getString(1), res.getString(2));
                 resultList.add(sdc);
             }
+
+            Collections.sort(resultList, new SparseDomainConfigComp());
             return resultList;
         } catch (SQLException e) {
             throw new IOFailure("SQL error getting sparse domains" + "\n"
@@ -1040,8 +1066,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             return name;
         } catch (SQLException e) {
             throw new IOFailure("An error occurred finding the name for "
-                                + "harvest definition " + harvestDefinitionID 
-                                + "\n" 
+                                + "harvest definition " + harvestDefinitionID
+                                + "\n"
                                 + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
@@ -1127,8 +1153,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             DBUtils.closeStatementIfOpen(s);
         }
     }
-    
-    
+
+
     /** Get a sorted list of all domainnames of a HarvestDefinition.
     *
     * @param harvestName of HarvestDefinition
@@ -1141,8 +1167,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-                    // Note: the DISTINCT below is put in deliberately to fix 
-                    // bug 1878: Seeds for domain is shown twice on page 
+                    // Note: the DISTINCT below is put in deliberately to fix
+                    // bug 1878: Seeds for domain is shown twice on page
                     // History/Harveststatus-seeds.jsp
                     "SELECT DISTINCT domains.name"
                     + " FROM     domains,"
@@ -1154,7 +1180,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         + "configurations.config_id"
                     + " AND harvest_configs.harvest_id = "
                         + "harvestdefinitions.harvest_id"
-                    + " AND harvestdefinitions.name = ?" 
+                    + " AND harvestdefinitions.name = ?"
                     + " ORDER BY domains.name");
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
@@ -1199,7 +1225,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     +"        AND configurations.config_id = harvest_configs.config_id"
                     +"        AND harvest_configs.harvest_id = harvestdefinitions.harvest_id"
                     +"        AND configurations.domain_id = domains.domain_id"
-                    +"        AND domains.name = ?" 
+                    +"        AND domains.name = ?"
                     +"        AND harvestdefinitions.name = ?");
             s.setString(1, domainName);
             s.setString(2, harvestName);
@@ -1208,13 +1234,13 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
             while (res.next()) {
                 String seedsOfDomain = res.getString(1);
-                
+
                     StringTokenizer st
                         = new StringTokenizer(seedsOfDomain, "\n");
-                    
+
                     while(st.hasMoreTokens()) {
                         String seed = st.nextToken();
-                        
+
                         boolean bFound = false;
                         for (String entry: seeds) {
                             if (entry.equals(seed)) {
@@ -1222,16 +1248,16 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                                 break;
                             }
                         }
-                        
+
                         // duplicates will not be added
                         if (!bFound) {
                             seeds.add(seed);
                         }
                     }
             }
-            
-            Collections.sort(seeds, Collator.getInstance());     
-            
+
+            Collections.sort(seeds, Collator.getInstance());
+
             return seeds;
         } catch (SQLException e) {
             throw new IOFailure("SQL error getting seeds of a domain" + "\n"
@@ -1240,5 +1266,5 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             DBUtils.closeStatementIfOpen(s);
         }
     }
-    
+
 }

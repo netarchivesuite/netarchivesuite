@@ -156,10 +156,11 @@ DomainConfigurations are posted as pairs
             out.print("<input type=\"text\" name=\"" + Constants.HARVEST_PARAM
                       + "\" value=\""
                       + HTMLUtils.escapeHtmlValues(harvestName)
-                      + "\" readonly=\"readonly\" />  \n");
+                      + "\" size=\"60\""
+                      + " readonly=\"readonly\" />  \n");
         } else {
             out.print("<span id=\"focusElement\"><input type=\"text\" name=\""
-                      + Constants.HARVEST_PARAM + "\" size=\"20\"/></span>\n");
+                      + Constants.HARVEST_PARAM + "\" size=\"60\"/></span>\n");
         }
     %>
 </h4>
@@ -224,21 +225,33 @@ setupNextdateCalendar();
 </script>
 <%
 }
+
+List<SparseDomainConfiguration> sparseDomainConfigurations =
+    new ArrayList<SparseDomainConfiguration>();
+
+if (hdd != null) {
+    sparseDomainConfigurations =
+        hddao.getSparseDomainConfigurations(hdd.getOid());
+}
+
 %>
+<br/>
+<br/>
+<fmt:message key="harvest.configuration.count">
+<fmt:param><%= sparseDomainConfigurations.size() %></fmt:param>
+</fmt:message>
 <br/>
 <br/>
 <table class="selection_table" width="100%">
     <tr>
-        <th width="65%"><fmt:message key="domain"/></th>
-        <th width="25%"><fmt:message key="choose.configuration"/></th>
+        <th width="45%"><fmt:message key="domain"/></th>
+        <th width="35%"><fmt:message key="choose.configuration"/></th>
         <th width="10%"><fmt:message key="remove.from.list"/></th>
     </tr>
     <%
         // New definitions do not contain any domains
         if (hdd != null) {
             int rowcount = 0;
-            Iterable<SparseDomainConfiguration> sparseDomainConfigurations
-                    = hddao.getSparseDomainConfigurations(hdd.getOid());
             for (SparseDomainConfiguration dcc : sparseDomainConfigurations) {
                 //Switch between grey and white every three lines
 
@@ -251,12 +264,12 @@ setupNextdateCalendar();
                         + HTMLUtils.encode(domainName);
     %>
     <tr class="<%= HTMLUtils.getRowClass(rowcount++) %>">
-        <td width="65%">
+        <td width="45%">
             <a href="<%= HTMLUtils.escapeHtmlValues(link) %>">
                 <%= HTMLUtils.escapeHtmlValues(domainName) %>
             </a>
         </td>
-        <td width="25%">
+        <td width="35%">
             <select name="<%= Constants.DOMAIN_IDENTIFIER
             + HTMLUtils.escapeHtmlValues(domainName) %>" style="width: 100%">
                 <%
@@ -359,9 +372,9 @@ setupNextdateCalendar();
         String seedLink = "Definitions-add-event-seeds.jsp?" + Constants.HARVEST_PARAM
                           + "=" + HTMLUtils.encode(harvestName);
         String seedFromFileLink = "Definitions-add-event-seeds.jsp?"
-        					+ Constants.FROM_FILE_PARAM + "=1&" 
+        					+ Constants.FROM_FILE_PARAM + "=1&"
         					+ Constants.HARVEST_PARAM
-                          	+ "=" + HTMLUtils.encode(harvestName);                          
+                          	+ "=" + HTMLUtils.encode(harvestName);
     %>
       <a href="<%= HTMLUtils.escapeHtmlValues(seedLink) %>"><fmt:message key="add.seeds"/></a>
       &nbsp;&nbsp;
