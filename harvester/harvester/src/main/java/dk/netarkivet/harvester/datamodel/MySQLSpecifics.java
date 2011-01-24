@@ -170,7 +170,7 @@ public class MySQLSpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobshistory "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
-        DBConnect.updateTable("runningjobshistory", 2, sqlStatements);
+        DBConnect.updateTable("runningJobsHistory", 2, sqlStatements);
     }
 
     /**
@@ -183,7 +183,7 @@ public class MySQLSpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobsmonitor "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
-        DBConnect.updateTable("runningjobsmonitor", 2, sqlStatements);
+        DBConnect.updateTable("runningJobsMonitor", 2, sqlStatements);
     }
 
     /** Creates the initial (version 1) of table 'global_crawler_trap_lists'. */

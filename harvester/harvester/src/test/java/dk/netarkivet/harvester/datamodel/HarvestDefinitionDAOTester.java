@@ -22,14 +22,12 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -169,7 +167,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
      */
     public void testDelete() {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
-        final Long selectiveOid = new Long(42);
+        final Long selectiveOid = Long.valueOf(42);
         assertTrue("Harvest definition 42 must exist before deletion", hdDAO
                 .exists(selectiveOid));
         assertFalse("Harvest definition 42 should not be deletable", hdDAO
@@ -183,7 +181,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertTrue("Harvest definition 42 must exist after deletion", hdDAO
                 .exists(selectiveOid));
 
-        final Long snapshotOid = new Long(43);
+        final Long snapshotOid = Long.valueOf(43);
 
         FullHarvest fh2 = HarvestDefinition
                 .createFullHarvest(
@@ -238,7 +236,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
      */
     public void testUpdate() {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
-        Long oid = new Long(42);
+        Long oid = Long.valueOf(42);
         HarvestDefinition hd = hdDAO.read(oid);
         assertEquals("Name should be the original before changing",
                      "Testhøstning", hd.getName());
@@ -341,9 +339,9 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
             // expected
         }
         HarvestDefinition hd1 = dao.getHarvestDefinition("Testhøstning");
-        HarvestDefinition hd2 = dao.read(new Long(42L));
+        HarvestDefinition hd2 = dao.read(Long.valueOf(42L));
         assertEquals("Should read correct harvest defintition", hd2, hd1);
-        hd2 = dao.read(new Long(43L));
+        hd2 = dao.read(Long.valueOf(43L));
         hd1 = dao.getHarvestDefinition("Tværhøstning");
         assertEquals("Should read correct harvest defintition", hd2, hd1);
         hd1 = dao.getHarvestDefinition("Ukendt");
@@ -587,8 +585,8 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .getSparsePartialHarvest("Testhøstning");
         assertTrue("Should find a SparsePartialHarvest for harvestname: "
                    + "Tværhøstning", sph != null);
-        assertEquals("Should be the right partial harvest", new Long(42L), sph
-                .getOid());
+        assertEquals("Should be the right partial harvest", Long.valueOf(42L), 
+                sph.getOid());
         assertEquals("Should be the right partial harvest", "Testhøstning",
                      sph.getName());
         assertEquals("Should be the right partial harvest", true, sph
@@ -613,8 +611,8 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .getAllSparsePartialHarvestDefinitions().iterator();
         assertTrue("Should return iterator of known partial HDs", it.hasNext());
         SparsePartialHarvest sph = it.next();
-        assertEquals("Should be the right partial harvest", new Long(42L), sph
-                .getOid());
+        assertEquals("Should be the right partial harvest", Long.valueOf(42L), 
+                sph.getOid());
         assertEquals("Should be the right partial harvest", "Testhøstning",
                      sph.getName());
         assertEquals("Should be the right partial harvest", true, sph
@@ -638,7 +636,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         SparseFullHarvest sph = hddao.getSparseFullHarvest(harvestName);
         assertTrue("Should find a SparseFullHarvest for harvestname: "
                    + harvestName, sph != null);
-        assertEquals("Should be the right full harvest", new Long(43L), sph
+        assertEquals("Should be the right full harvest", Long.valueOf(43L), sph
                 .getOid());
         assertEquals("Should be the right full harvest", harvestName,
                      sph.getName());
@@ -668,8 +666,8 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .getAllSparseFullHarvestDefinitions().iterator();
         assertTrue("Should return iterator of known full HDs", it.hasNext());
         SparseFullHarvest sph = it.next();
-        assertEquals("Should be the right partial harvest", new Long(43L), sph
-                .getOid());
+        assertEquals("Should be the right partial harvest", Long.valueOf(43L), 
+                sph.getOid());
         assertEquals("Should be the right partial harvest", "Tværhøstning",
                      sph.getName());
         assertEquals("Should be the right partial harvest", true, sph
@@ -747,11 +745,4 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         		+ TestInfo.DEFAULT_HARVEST_NAME +  "' should be 0 but was "
         		+ domains.size(), domains.size() == 0);
     }
-    /**
-     * Tests the getHarvestInfo() method.
-     */
-    public void testGetSeeds() {
-    }
-    
-
 }

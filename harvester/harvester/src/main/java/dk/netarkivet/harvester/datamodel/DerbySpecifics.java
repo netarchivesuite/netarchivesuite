@@ -307,9 +307,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
     protected void migrateRunningJobsHistoryTableV1ToV2() {
         String[] sqlStatements = {
                 "ALTER TABLE runningjobshistory "
-                + "ADD COLUMN retiredQueuesCount bigint not null"
+                + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
         };
-        DBConnect.updateTable("runningjobshistory", 2, sqlStatements);
+        DBConnect.updateTable("runningJobsHistory", 2, sqlStatements);
     }
 
     /**
@@ -320,9 +320,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
     protected void migrateRunningJobsMonitorTableV1ToV2() {
         String[] sqlStatements = {
                 "ALTER TABLE runningjobsmonitor "
-                + "ADD COLUMN retiredQueuesCount bigint not null"
+                + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
         };
-        DBConnect.updateTable("runningjobsmonitor", 2, sqlStatements);
+        DBConnect.updateTable("runningJobsMonitor", 2, sqlStatements);
     }
 
     /** Migrates the 'configurations' table from version 3 to version 4.

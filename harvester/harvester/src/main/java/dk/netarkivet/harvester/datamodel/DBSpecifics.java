@@ -224,7 +224,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             }
 
         } else if (tableName.equals("global_crawler_trap_lists")) {
-            if (currentVersion == 0 && toVersion == 1) {
+            if (currentVersion == 0 && toVersion >= 1) {
                 createGlobalCrawlerTrapLists();
                 currentVersion = 1;
             }
@@ -235,7 +235,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                                 + " to version " + toVersion);
             }
         } else if (tableName.equals("global_crawler_trap_expressions")) {
-            if (currentVersion == 0 && toVersion == 1) {
+            if (currentVersion == 0 && toVersion >= 1) {
                 createGlobalCrawlerTrapExpressions();
                 currentVersion = 1;
             }
@@ -246,12 +246,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                                 + " to version " + toVersion);
             }
         } else if ("runningJobsHistory".equals(tableName)) {
-            if (currentVersion == 0 && toVersion == 1) {
+            if (currentVersion == 0 && toVersion >= 1) {
                 createRunningJobsHistoryTable();
                 currentVersion = 1;
-            } else if (currentVersion == 1 && toVersion == 2) {
+            } 
+            if (currentVersion == 1 && toVersion >= 2) {
                 migrateRunningJobsHistoryTableV1ToV2();
-                currentVersion = 2;
             }
             if (currentVersion > 2) {
                 throw new NotImplementedException(
@@ -260,12 +260,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                                 + " to version " + toVersion);
             }
         } else if ("runningJobsMonitor".equals(tableName)) {
-            if (currentVersion == 0 && toVersion == 1) {
+            if (currentVersion == 0 && toVersion >= 1) {
                 createRunningJobsMonitorTable();
                 currentVersion = 1;
-            } else if (currentVersion == 1 && toVersion == 2) {
+            }
+            if (currentVersion == 1 && toVersion >= 2) {
                 migrateRunningJobsMonitorTableV1ToV2();
-                currentVersion = 2;
             }
             if (currentVersion > 1) {
                 throw new NotImplementedException(

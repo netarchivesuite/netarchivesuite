@@ -283,7 +283,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 harvestDef.getDomainConfigurations());
 
         //verify getters and setters
-        Long id = new Long(42);
+        Long id = Long.valueOf(42L);
         harvestDef.setOid(id);
         assertEquals("ID  set expected", id, harvestDef.getOid());
 
@@ -426,7 +426,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                         TestInfo.DEFAULT_HARVEST_NAME,
                         TestInfo.DEFAULT_HARVEST_COMMENT,
                         null, 10000, Constants.DEFAULT_MAX_BYTES);
-        Long id = new Long(42);
+        Long id = Long.valueOf(42L);
         harvestDef.setOid(id);
         harvestDef.setSubmissionDate(new Date());
 
@@ -881,7 +881,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         //An older harvest info that should NOT be returned
         Date then = new Date(time);
         HarvestInfo old_hi0 = new HarvestInfo(
-                new Long(42L), domain0.getName(), config0.getName(),
+                Long.valueOf(42L), domain0.getName(), config0.getName(),
                 then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
         config0.addHarvestInfo(old_hi0);
         dao.update(domain0);
@@ -922,10 +922,10 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         //An newer harvest info that should NOT be returned
         Date later = new Date(time + 2000);
-        HarvestInfo new_hi0 = new HarvestInfo(new Long(43L), domain0.getName(),
+        HarvestInfo newHi0 = new HarvestInfo(Long.valueOf(43L), domain0.getName(),
                                               config0.getName(), later, 1L, 1L,
                                               StopReason.DOWNLOAD_COMPLETE);
-        config0.addHarvestInfo(new_hi0);
+        config0.addHarvestInfo(newHi0);
         dao.update(domain0);
 
 
@@ -1030,7 +1030,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * - byte limit second
      * - expected number of objects third.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
 	public void testCompareConfigsDesc() throws NoSuchFieldException,
                                                 IllegalAccessException,
                                                 InvocationTargetException,

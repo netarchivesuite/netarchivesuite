@@ -137,8 +137,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             Integer versionNeeded = entry.getValue();            
             int version = DBUtils.getTableVersion(connection, tableName);
             if (version < versionNeeded) {
-                log.info("Migrate table '" + tableName + "' to version "
-                        + versionNeeded);
+                log.info("Migrating table '" + tableName + "' from version "
+                        + version + " to version " + versionNeeded);
                 DBSpecifics.getInstance().updateTable(
                         tableName,
                         versionNeeded);

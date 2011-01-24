@@ -29,9 +29,6 @@ import junit.textui.TestRunner;
 import dk.netarkivet.common.webinterface.GUIWebServerTester;
 import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
 
-//import dk.netarkivet.common.webinterface.GUIWebServerTester;
-//import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
-
 /**
  * 
  * Unit-tester suite for the package dk.netarkivet.harvester.datamodel.
@@ -81,6 +78,7 @@ public class HarvesterDataModelTesterSuite {
         suite.addTestSuite(NumberUtilsTester.class);
         suite.addTestSuite(PartialHarvestTester.class);
         suite.addTestSuite(RepeatingScheduleTester.class);
+        suite.addTestSuite(RunningJobsInfoDAOTester.class);
         suite.addTestSuite(ScheduleDAOTester.class);
         suite.addTestSuite(ScheduleDBDAOTester.class);
         suite.addTestSuite(ScheduleTester.class);
