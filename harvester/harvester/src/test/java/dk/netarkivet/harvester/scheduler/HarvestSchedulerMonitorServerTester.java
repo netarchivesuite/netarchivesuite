@@ -74,7 +74,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class HarvestSchedulerMonitorServerTester extends TestCase {
 
 
-    public static JobDAO the_dao;
+    public static JobDAO theDAO;
     public static final File LOG_FILE =
             new File("tests/testlogs/netarkivtest.log");
     public static final File BASEDIR =
@@ -115,7 +115,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 + WORKING.getCanonicalPath() + "/fullhddb");
         DatabaseTestUtils.getHDDB(new File(BASEDIR, "fullhddb.jar"),
                 "fullhddb", WORKING);
-        the_dao = JobDAO.getInstance();
+        theDAO = JobDAO.getInstance();
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                      RememberNotifications.class.getName());
         hsms = new HarvestSchedulerMonitorServer();
@@ -173,13 +173,13 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = dk.netarkivet.harvester.scheduler.TestInfo.getJob();
-        the_dao.create(j1);
+        theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
@@ -191,7 +191,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
         // Job should now have status "done"
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status DONE: ",
                 JobStatus.DONE, j1.getStatus());
         //Look for the domain persistence
@@ -216,11 +216,11 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
@@ -234,7 +234,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         csm_failed.setNotOk("Simulated failed message");
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Job should now have status "done"
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status FAILED: ",
                 JobStatus.FAILED, j1.getStatus());
         //Look for the domain persistence
@@ -258,11 +258,11 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
@@ -276,7 +276,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         csm_failed.setNotOk("Simulated failed message");
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Job should now have status "failed"
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status FAILED: ", JobStatus.FAILED,
                      j1.getStatus());
     }
@@ -301,14 +301,14 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID,
                                    JobStatus.STARTED);
         hsms.visit(csm_start);
-        j1 = the_dao.read(j1.getJobID());
+        j1 = theDAO.read(j1.getJobID());
         assertEquals("Status should now be started: ",
                      JobStatus.STARTED, j1.getStatus());
     }
@@ -323,11 +323,11 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
         //
         // Send the "done" message
         //
@@ -345,7 +345,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         //
         //All usual tests should work and job status should still be done
         //
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status DONE: ",
                 JobStatus.DONE, j1.getStatus());
         //Look for the domain persistence
@@ -372,11 +372,11 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
         //
         // Send the "failed" message
         //
@@ -396,7 +396,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         //
         //All usual tests should work and job status should still be done
         //
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status Failed: ",
                 JobStatus.FAILED, j1.getStatus());
         //Look for the domain persistence
@@ -416,13 +416,13 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
-        the_dao.create(j1);
+        theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
@@ -440,7 +440,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         csm_failed.setNotOk("Failed");
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Job should now have status "failed"
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status Failed: ", JobStatus.FAILED, j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
@@ -465,13 +465,13 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
-        the_dao.create(j1);
+        theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
@@ -490,7 +490,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
         // Job should now have status "failed"
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status Failed: ", JobStatus.FAILED, 
                 j1.getStatus());
         //Look for the domain persistence
@@ -513,13 +513,13 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
-        the_dao.create(j1);
+        theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
 
         // Send a job-done message
@@ -528,7 +528,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
          hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csmDone));
         // Job should now have status "done"
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status DONE: ", JobStatus.DONE, 
                 j1.getStatus());
         //Look for the domain persistence

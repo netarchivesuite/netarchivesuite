@@ -67,7 +67,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         // Avoids tedious rounding problems
         cal.set(Calendar.MILLISECOND, 0);
         // Make sure existing job is in the future
-        PartialHarvest hd = (PartialHarvest) hddao.read(new Long(42));
+        PartialHarvest hd = (PartialHarvest) hddao.read(Long.valueOf(42));
         cal.add(Calendar.YEAR, 2);
         Date now = cal.getTime();
         Schedule s = Schedule.getInstance(now, 2, new WeeklyFrequency(2),
@@ -77,7 +77,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         hd.reset();
         hddao.update(hd);
         // Remove the full harvest -- we don't want it interfering here.
-        hddao.delete(new Long(43));
+        hddao.delete(Long.valueOf(43));
         cal.setTime(new Date()); // reset
         now = cal.getTime();
         generateJobs(now);
