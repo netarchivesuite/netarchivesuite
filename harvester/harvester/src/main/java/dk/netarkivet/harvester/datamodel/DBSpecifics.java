@@ -404,4 +404,25 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * Create the frontierReportMonitor table in the database.
      */
     public abstract void createRunningJobsMonitorTable();
+
+    /**
+     * Migrates the 'jobs' table from version 5 to version 6.
+     * Adds the field 'forcemaxrunningtime'.
+     *
+     * @throws IOFailure
+     *             in case of problems in interacting with the database
+     */
+    protected abstract void migrateJobsv5tov6();
+    
+    /**
+     * Migrates the 'configurations' table from version 4 to version 5. This
+     * consists of altering the field 'maxobjects' from being an int to a bigint.
+     */
+    protected abstract void migrateConfigurationsv4tov5();
+
+    /**
+     * Migrates the 'fullharvests' table from version 3 to version 4. This
+     * consists of adding the field 'maxjobrunningtime'.
+     */
+    protected abstract void migrateFullharvestsv3tov4();
 }

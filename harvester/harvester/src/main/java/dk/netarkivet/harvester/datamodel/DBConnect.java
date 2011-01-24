@@ -116,7 +116,7 @@ public class DBConnect {
             final int newVersion,
             final String... updates) {
         
-        log.info("Updating table to version " + newVersion);
+        log.info("Updating table '" + table + "' to version " + newVersion);
 
         String[] sqlStatements = new String[updates.length + 1];
         String updateSchemaversionSql = null;

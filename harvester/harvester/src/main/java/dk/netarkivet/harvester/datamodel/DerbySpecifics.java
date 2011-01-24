@@ -34,7 +34,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
-import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
  * Derby-specific implementation of DB methods.
@@ -128,162 +127,18 @@ public abstract class DerbySpecifics extends DBSpecifics {
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected synchronized void migrateJobsv3tov4() {
-        // Due to use of old version of Derby, it is not possible to use ALTER
-        // table for the migration. Thus the migration is done by full backup
-        // table of the jobs table.
-        // TODO rewrite to simpler SQL when upgrading Derby version:
-        // <copy values of jobs.forcemaxbytes and jobs.jobid into backup table>
-        // ALTER TABLE jobs DROP COLUMN forcemaxbytes RESTRICT
-        // ALTER TABLE jobs ADD COLUMN forcemaxbytes BIGINT NOT NULL DEFAULT -1
-        // UPDATE TABLE jobs SET forcemaxbytes =
-        // (SELECT forcemaxbytes FROM backupjobcolv3tov4
-        // WHERE jobs.job_id = forcemaxbytesvalues.job_id)
-        // DELETE table backupjobcolv3tov4;
-        String sql;
-        int countOfJobsTable;
-        int countOfBackuptable;
-        String table = "jobs";
-        String tmptable = "backupJobs3to4";
-
-        // Check that temporary table from earlier tries does not exist
-
-        Connection connection = DBConnect.getDBConnection();
-        try {
-            countOfBackuptable = DBUtils
-            .selectIntValue(connection,
-                            "select count(*) from " + tmptable);
-        } catch (IOFailure e) {
-            // expected, otherwise the backupJobs3to4 table exists
-            countOfBackuptable = -1;
-        }
-        if (countOfBackuptable >= 0) {
-            try {
-                countOfJobsTable = DBUtils.selectIntValue(
-                        connection,
-                        "select count(*) from " + table);
-            } catch (IOFailure e) {
-                // close to worst case, but data can still be found in back-up
-                // table
-                String errMsg = "Earlier migration of table "
-                    + table
-                    + " seems to have failed. The "
-                    + table
-                    + " table is missing, but a temporary table named "
-                    + tmptable
-                    + " seem to still contain the data. Please check, "
-                    + "- make a new "
-                    + table
-                    + " table, and insert data from the temporary table.";
-                NotificationsFactory.getInstance().errorEvent(errMsg, e);
-                throw new IOFailure(errMsg);
-            }
-            if (countOfBackuptable != countOfJobsTable) {
-                // close to worst case, but data can maybe still be found in
-                // back-up table
-                String errMsg = "Earlier migration of table "
-                    + table
-                    + " seems to have failed. "
-                    + "Some data from the jobs table is missing, "
-                    + "but a temporary table named "
-                    + tmptable
-                    + "seem to still contain the extra data. Please check, - "
-                    + " and insert missing data in " + table
-                    + " table data from the temporary table.";
-                NotificationsFactory.getInstance().errorEvent(errMsg);
-                throw new IOFailure(errMsg);
-            } else {
-                // backup table exists already. Delete it. 
-                sql = "DROP TABLE " + tmptable;
-                DBUtils.executeSQL(connection, sql);
-            }
-        }
+        // Change the forcemaxbytes from 'int' to 'bigint'.
+        // Procedure for changing the datatype of a derby table was found here:
+        // https://issues.apache.org/jira/browse/DERBY-1515
+        String[] SqlStatements = {
+        "ALTER TABLE jobs ADD COLUMN forcemaxbytes_new bigint NOT NULL DEFAULT -1",
+        "UPDATE jobs SET forcemaxbytes_new = forcemaxbytes",
+        "ALTER TABLE jobs DROP COLUMN forcemaxbytes",
+        "RENAME COLUMN jobs.forcemaxbytes_new TO forcemaxbytes",
+        "ALTER TABLE jobs ALTER COLUMN num_configs SET DEFAULT 0"
         
-        final String partialJobsDefinition = 
-            "job_id bigint not null primary key, "
-            + "harvest_id bigint not null, "
-            + "status int not null, " + "priority int not null, "
-            + "forcemaxbytes bigint not null default -1, "
-            + "forcemaxcount bigint, "
-            + "orderxml varchar(300) not null, "
-            + "orderxmldoc clob(64M) not null, "
-            + "seedlist clob(64M) not null, "
-            + "harvest_num int not null, "
-            + "harvest_errors varchar(300), "
-            + "harvest_error_details varchar(10000), "
-            + "upload_errors varchar(300), "
-            + "upload_error_details varchar(10000), "
-            + "startdate timestamp, " + "enddate timestamp, "
-            + "num_configs int not null default 0, "
-            + "edition bigint not null ";
-            
-            
-        // create backup table for jobs table
-        sql = "CREATE TABLE " + tmptable 
-        + " ("
-        +    partialJobsDefinition
-        + ")";
-        DBUtils.executeSQL(connection, sql);
-
-        // copy contents of jobs table into backup table
-        
-        final String listOfFieldsInJobsTable =
-            "job_id, harvest_id, status, priority, forcemaxbytes, "
-            + "forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, "
-            + "harvest_errors, harvest_error_details, upload_errors, "
-            + "upload_error_details, startdate, enddate, num_configs, edition ";
-        
-        sql = "INSERT INTO " + tmptable
-            + " ( " + listOfFieldsInJobsTable + ") "
-            + "SELECT " + listOfFieldsInJobsTable
-            + "FROM " + table;
-        DBUtils.executeSQL(connection, sql);
-
-        // check everything looks okay
-        countOfJobsTable = DBUtils.selectIntValue(
-                connection, "select count(*) from " + table);
-        countOfBackuptable = DBUtils.selectIntValue(
-                connection, "select count(*) from " + tmptable);
-        if (countOfBackuptable != countOfJobsTable) {
-            throw new IOFailure("Unexpected inconsistency: the number of "
-                    + "backed up entries from " + table
-                    + "does not correspond " + "to the number of entries in "
-                    + table);
-        }
-
-        // Update jobs table to version 4
-        String[] sqlStatements = {
-                // drop jobs table (are backed up in backupJobs3to4)
-                "DROP TABLE " + table,
-
-                // create jobs table again
-                "CREATE TABLE " + table + " (" + partialJobsDefinition + ")",
-
-                // create indices again:
-                "create index jobstatus on " + table + "(status)",
-                "create index jobharvestid on " + table + "(harvest_id)",
-
-                // insert data from backup table to jobs table:
-                "INSERT INTO " + table
-                + " ( " + listOfFieldsInJobsTable + ") "
-                + "SELECT " + listOfFieldsInJobsTable
-                + "FROM " + tmptable };
-        DBConnect.updateTable("jobs", 4, sqlStatements);
-
-        //check everything looks okay
-        countOfJobsTable = DBUtils.selectIntValue(
-                connection, "select count(*) from " + table);
-        countOfBackuptable = DBUtils.selectIntValue(
-                connection, "select count(*) from " + tmptable);
-        if (countOfBackuptable != countOfJobsTable) {
-            throw new IOFailure("Unexpected inconsistency: the number of "
-                    + "backed up entries from " + table
-                    + "does not correspond " + "to the number of entries in "
-                    + table + "although no " + "exception has arised");
-        }
-
-        //drop backup table
-        sql = "DROP TABLE backupJobs3to4";
-        DBUtils.executeSQL(connection, sql);
+        };
+        DBConnect.updateTable("jobs", 4, SqlStatements);
     }
     
     /** Migrates the 'jobs' table from version 4 to version 5
@@ -298,33 +153,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
             };
         DBConnect.updateTable("jobs", 5, SqlStatements);
     }
-
-    /**
-     * Migrates the 'runningjobshistory' table from version 1 to version 2. This
-     * consists of adding the new column 'retiredQueuesCount'.
-     */
-    @Override
-    protected void migrateRunningJobsHistoryTableV1ToV2() {
-        String[] sqlStatements = {
-                "ALTER TABLE runningjobshistory "
-                + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
-        };
-        DBConnect.updateTable("runningJobsHistory", 2, sqlStatements);
-    }
-
-    /**
-     * Migrates the 'runningjobsmonitor' table from version 1 to version 2. This
-     * consists of adding the new column 'retiredQueuesCount'.
-     */
-    @Override
-    protected void migrateRunningJobsMonitorTableV1ToV2() {
-        String[] sqlStatements = {
-                "ALTER TABLE runningjobsmonitor "
-                + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
-        };
-        DBConnect.updateTable("runningJobsMonitor", 2, sqlStatements);
-    }
-
+    
     /** Migrates the 'configurations' table from version 3 to version 4.
      * This consists of altering the default value of field 'maxbytes' to -1.
      */
@@ -457,6 +286,65 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 "CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId)",
                 "CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName)"
         );
-        
+    }
+    
+    // Below DB changes introduced with development release 3.15
+    // with changes to tables 'runningjobshistory', 'runningjobsmonitor',
+    // 'configurations', 'fullharvests', and 'jobs'.
+
+    /**
+     * Migrates the 'runningjobshistory' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    @Override
+    protected void migrateRunningJobsHistoryTableV1ToV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobshistory "
+                + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
+        };
+        DBConnect.updateTable("runningJobsHistory", 2, sqlStatements);
+    }
+
+    /**
+     * Migrates the 'runningjobsmonitor' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    @Override
+    protected void migrateRunningJobsMonitorTableV1ToV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobsmonitor "
+                + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
+        };
+        DBConnect.updateTable("runningJobsMonitor", 2, sqlStatements);
+    }
+
+    @Override
+    protected void migrateConfigurationsv4tov5() { 
+        // Change the maxobjects from 'int' to 'bigint'.
+        // Procedure for changing the datatype of a derby table was found here:
+        // https://issues.apache.org/jira/browse/DERBY-1515
+        String[] SqlStatements = {
+        "ALTER TABLE configurations ADD COLUMN maxobjects_new bigint NOT NULL DEFAULT -1",
+        "UPDATE configurations SET maxobjects_new = maxobjects",
+        "ALTER TABLE configurations DROP COLUMN maxobjects",
+        "RENAME COLUMN configurations.maxobjects_new TO maxobjects"
+        };
+        DBConnect.updateTable("configurations", 5, SqlStatements);
+}
+
+    @Override
+    protected void migrateFullharvestsv3tov4() {
+        // Add new bigint field maxjobrunningtime with default 0
+        String[] sqlStatements 
+        = {"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"};
+        DBConnect.updateTable("fullharvests", 4, sqlStatements);     
+    }
+
+    @Override
+    protected void migrateJobsv5tov6() {
+        // Add new bigint field with default 0
+        String[] sqlStatements 
+        = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0"};
+        DBConnect.updateTable("jobs", 6, sqlStatements);  
     }
 }    

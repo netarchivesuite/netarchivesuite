@@ -160,32 +160,6 @@ public class MySQLSpecifics extends DBSpecifics {
         DBConnect.updateTable("fullharvests", 3, sqlStatements);
     }
 
-    /**
-     * Migrates the 'runningjobshistory' table from version 1 to version 2. This
-     * consists of adding the new column 'retiredQueuesCount'.
-     */
-    @Override
-    protected void migrateRunningJobsHistoryTableV1ToV2() {
-        String[] sqlStatements = {
-                "ALTER TABLE runningjobshistory "
-                + "ADD COLUMN retiredQueuesCount bigint not null"
-        };
-        DBConnect.updateTable("runningJobsHistory", 2, sqlStatements);
-    }
-
-    /**
-     * Migrates the 'runningjobsmonitor' table from version 1 to version 2. This
-     * consists of adding the new column 'retiredQueuesCount'.
-     */
-    @Override
-    protected void migrateRunningJobsMonitorTableV1ToV2() {
-        String[] sqlStatements = {
-                "ALTER TABLE runningjobsmonitor "
-                + "ADD COLUMN retiredQueuesCount bigint not null"
-        };
-        DBConnect.updateTable("runningJobsMonitor", 2, sqlStatements);
-    }
-
     /** Creates the initial (version 1) of table 'global_crawler_trap_lists'. */
     protected void createGlobalCrawlerTrapLists() {
         String createStatement = "CREATE TABLE global_crawler_trap_lists(\n"
@@ -313,6 +287,60 @@ public class MySQLSpecifics extends DBSpecifics {
                 "CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName)"
                 );
     }
-
     
+    // Below DB changes introduced with development release 3.15
+    // with changes to tables 'runningjobshistory', 'runningjobsmonitor',
+    // 'configurations', 'fullharvests', and 'jobs'.
+
+    /**
+     * Migrates the 'runningjobshistory' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    @Override
+    protected void migrateRunningJobsHistoryTableV1ToV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobshistory "
+                + "ADD COLUMN retiredQueuesCount bigint not null"
+        };
+        DBConnect.updateTable("runningJobsHistory", 2, sqlStatements);
+    }
+
+    /**
+     * Migrates the 'runningjobsmonitor' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    @Override
+    protected void migrateRunningJobsMonitorTableV1ToV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobsmonitor "
+                + "ADD COLUMN retiredQueuesCount bigint not null"
+        };
+        DBConnect.updateTable("runningJobsMonitor", 2, sqlStatements);
+    }
+
+    @Override
+    protected void migrateConfigurationsv4tov5() {
+     // Update configurations table to version 5
+        String[] sqlStatements 
+            = {"ALTER TABLE configurations ALTER COLUMN maxobjects TYPE bigint" };
+        DBConnect.updateTable("configurations", 5, sqlStatements);
+    }
+
+    @Override
+    protected void migrateFullharvestsv3tov4() {
+        // Update fullharvests table to version 4
+        String[] sqlStatements 
+            = {"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"};
+        DBConnect.updateTable("fullharvests", 4, sqlStatements);     
+        
+    }
+
+    @Override
+    protected void migrateJobsv5tov6() {
+     // Update jobs table to version 6
+        String[] sqlStatements 
+            = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0 AFTER forcemaxcount"};
+        DBConnect.updateTable("jobs", 6, sqlStatements);     
+        
+    }
 }
