@@ -62,6 +62,8 @@ public class LegacyHarvestReportTester extends TestCase {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestInfo.WORKING_DIR.mkdirs();
+        File logs = new File(TestInfo.WORKING_DIR, "logs");
+        logs.mkdir();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
         FileInputStream fis = new FileInputStream(
