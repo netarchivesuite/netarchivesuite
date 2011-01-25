@@ -206,15 +206,17 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                 migrateConfigurationsv3ov4();
                 currentVersion = 4;
             }
-
+            
             if (currentVersion == 4 && toVersion >= 5) {
+                migrateConfigurationsv4tov5();
+                currentVersion = 5;
+            }
+            if (currentVersion == 5 && toVersion >= 6) {
                 throw new NotImplementedException(
                         "No method exists for migrating table '" + tableName
                                 + "' from version " + currentVersion
                                 + " to version " + toVersion);
             }
-
-            // future updates of the job table are inserted here
 
             if (currentVersion > 5) {
                 throw new IllegalState("Database is in an illegalState: "

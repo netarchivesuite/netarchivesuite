@@ -42,7 +42,7 @@ create table IF NOT EXISTS schemaversions (
 insert into schemaversions ( tablename, version )
     values ( 'domains', 2);
 insert into schemaversions ( tablename, version )
-    values ( 'configurations', 4);
+    values ( 'configurations', 5);
 insert into schemaversions ( tablename, version )
     values ( 'seedlists', 1);
 insert into schemaversions ( tablename, version )
@@ -109,7 +109,7 @@ create table IF NOT EXISTS configurations (
     comments varchar(30000),
     domain_id bigint not null,
     template_id bigint not null,
-    maxobjects int,
+    maxobjects bigint not null default -1,
     maxrate int,
     overridelimits int,
     maxbytes bigint not null default -1

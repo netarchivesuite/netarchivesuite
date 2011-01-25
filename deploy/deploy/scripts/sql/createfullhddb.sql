@@ -56,7 +56,7 @@ create table schemaversions (
 insert into schemaversions ( tablename, version ) 
     values ( 'domains', 2);
 insert into schemaversions ( tablename, version ) 
-    values ( 'configurations', 4);
+    values ( 'configurations', 5);
 insert into schemaversions ( tablename, version ) 
     values ( 'seedlists', 1);
 insert into schemaversions ( tablename, version ) 
@@ -140,7 +140,7 @@ create table configurations (
                                      --  to (represented in table domains)
      template_id bigint not null,    -- Reference to template order.xml
                                      --  (represented in table ordertemplates)
-     maxobjects int,                 -- Max count of objects from the domain
+     maxobjects bigint not null default -1, -- Max count of objects from the domain
      maxrate int,                    -- Max connections per minute
      overridelimits int,             -- True if the configuration's limits
                                      --  should apply in snapshot harvests

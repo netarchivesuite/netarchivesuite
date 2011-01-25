@@ -47,9 +47,9 @@ public class DomainConfiguration implements Named {
     private String configName;
     private String orderXmlName = "";
     /** maximum number of objects harvested for this configuration in a snapshot
-     * harvest.  Note that the default number is a long, but this is an int.
+     * harvest.
      */
-    private int maxObjects;
+    private long maxObjects;
     private int maxRequestRate;
     /** Maximum number of bytes to download in a harvest. */
     private long maxBytes;
@@ -94,7 +94,7 @@ public class DomainConfiguration implements Named {
         this.passwords = passwords;
         this.comments = "";
         this.maxRequestRate = Constants.DEFAULT_MAX_REQUEST_RATE;
-        this.maxObjects = new Long(Constants.DEFAULT_MAX_OBJECTS).intValue();
+        this.maxObjects = Constants.DEFAULT_MAX_OBJECTS;
         this.maxBytes = Constants.DEFAULT_MAX_BYTES;
     }
 
@@ -115,7 +115,7 @@ public class DomainConfiguration implements Named {
      * @param max maximum number of objects to retrieve
      * @throws ArgumentNotValid if max<-1
      */
-    public void setMaxObjects(int max) {
+    public void setMaxObjects(long max) {
         if (max < -MIN_EXPECTATION) {
             String msg = "maxObjects must be either -1 or positive, but was "
                          + max;
@@ -185,7 +185,7 @@ public class DomainConfiguration implements Named {
      *
      * @return maximum number of objects to harvest
      */
-    public int getMaxObjects() {
+    public long getMaxObjects() {
         return maxObjects;
     }
 

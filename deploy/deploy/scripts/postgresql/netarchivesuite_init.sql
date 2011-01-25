@@ -48,7 +48,7 @@ CREATE TABLE schemaversions (
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'domains', 2);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'configurations', 4);
+    VALUES ( 'configurations', 5);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'seedlists', 1);
 INSERT INTO schemaversions ( tablename, version )
@@ -118,7 +118,7 @@ CREATE TABLE configurations (
     comments varchar(30000),
     domain_id bigint NOT NULL,
     template_id bigint NOT NULL,
-    maxobjects int,
+    maxobjects bigint NOT NULL DEFAULT -1,
     maxrate int,
     overridelimits int,
     maxbytes bigint NOT NULL DEFAULT -1
