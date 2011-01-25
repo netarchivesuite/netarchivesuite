@@ -31,6 +31,9 @@
 -->
 <settings>
     <harvester>
+    	<aliases>
+    		<timeout>31536000</timeout>
+    	</aliases>
         <datamodel>
             <domain>
                 <defaultSeedlist>defaultseeds</defaultSeedlist>
@@ -54,6 +57,8 @@
                 <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
                 <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
                 <maxTotalSize>2000000</maxTotalSize>
+                <!-- used to set a limit on how long Heritrix should run. 0 means no limit. -->
+            	<maxTimeToCompleteJob>0</maxTimeToCompleteJob>
             </jobs>
             <configChunkSize>10000</configChunkSize>
             <splitByObjectLimit>false</splitByObjectLimit>
