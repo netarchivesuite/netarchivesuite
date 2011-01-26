@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project relativePaths="false" version="4">
+<project version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
     <buildFile url="file://$PROJECT_DIR$/build.xml">
       <additionalClassPath>
-        <entry path="file:///home/colin/projects/projects/webarkivering/roles/externsoftware/clover-ant-1.3.13/lib/clover.jar" />
+        <entry path="file://$PROJECT_DIR$/../../../colin/projects/projects/webarkivering/roles/externsoftware/clover-ant-1.3.13/lib/clover.jar" />
       </additionalClassPath>
       <antReference projectDefault="true" />
       <customJdkName value="" />
@@ -60,22 +60,24 @@
         </option>
         <option name="IMPORT_LAYOUT_TABLE">
           <value>
-            <package name="javax" withSubpackages="true" />
-            <package name="java" withSubpackages="true" />
+            <package name="javax" withSubpackages="true" static="false" />
+            <package name="java" withSubpackages="true" static="false" />
             <emptyLine />
-            <package name="" withSubpackages="true" />
+            <package name="" withSubpackages="true" static="false" />
             <emptyLine />
-            <package name="dk.netarkivet" withSubpackages="true" />
+            <package name="dk.netarkivet" withSubpackages="true" static="false" />
             <emptyLine />
-            <package name="" withSubpackages="true" />
+            <package name="" withSubpackages="true" static="false" />
             <emptyLine />
-            <package name="" withSubpackages="true" />
+            <package name="" withSubpackages="true" static="false" />
             <emptyLine />
-            <package name="" withSubpackages="true" />
+            <package name="" withSubpackages="true" static="false" />
             <emptyLine />
-            <package name="" withSubpackages="true" />
+            <package name="" withSubpackages="true" static="false" />
             <emptyLine />
-            <package name="" withSubpackages="true" />
+            <package name="" withSubpackages="true" static="false" />
+            <emptyLine />
+            <package name="" withSubpackages="true" static="true" />
           </value>
         </option>
         <option name="RIGHT_MARGIN" value="80" />
@@ -106,15 +108,6 @@
         <option name="HTML_KEEP_LINE_BREAKS_IN_TEXT" value="false" />
         <option name="JSP_PREFER_COMMA_SEPARATED_IMPORT_LIST" value="true" />
         <option name="ENUM_CONSTANTS_WRAP" value="1" />
-        <ADDITIONAL_INDENT_OPTIONS fileType="">
-          <option name="INDENT_SIZE" value="2" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="groovy">
           <option name="INDENT_SIZE" value="2" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
@@ -187,13 +180,21 @@
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
+        <ADDITIONAL_INDENT_OPTIONS fileType="yml">
+          <option name="INDENT_SIZE" value="2" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="4" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
       </value>
     </option>
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="DEPLOY_AFTER_MAKE" value="0" />
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
@@ -209,6 +210,7 @@
       <entry name="?*.jpeg" />
       <entry name="?*.jpg" />
     </wildcardResourcePatterns>
+    <annotationProcessing enabled="false" useClasspath="true" />
   </component>
   <component name="CopyrightManager" default="">
     <module2copyright />
@@ -255,125 +257,127 @@
   </component>
   <component name="IdProvider" IDEtalkID="D36C6F163E695DAE3A55BA4FA982A0F9" />
   <component name="InspectionProjectProfileManager">
-    <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
-    <scopes />
     <profiles>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
         <option name="myLocal" value="false" />
-        <inspection_tool class="BooleanConstructor" level="WARNING" enabled="false" />
-        <inspection_tool class="ClassNamingConvention" level="WARNING" enabled="false">
+        <inspection_tool class="BooleanConstructor" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="ClassNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_regex" value="[A-Z][A-Za-z]*" />
           <option name="m_minLength" value="8" />
           <option name="m_maxLength" value="64" />
         </inspection_tool>
         <inspection_tool class="ClassWithoutToString" level="WARNING" enabled="false" />
-        <inspection_tool class="CloneCallsSuperClone" level="WARNING" enabled="false" />
-        <inspection_tool class="CloneDeclaresCloneNotSupported" level="WARNING" enabled="false" />
-        <inspection_tool class="ConstantConditions" level="WARNING" enabled="false">
+        <inspection_tool class="CloneCallsSuperClone" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="CloneDeclaresCloneNotSupported" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="ConstantConditions" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="false" />
           <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
         </inspection_tool>
-        <inspection_tool class="ConstantNamingConvention" level="WARNING" enabled="false">
+        <inspection_tool class="ConstantNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
+          <option name="onlyCheckImmutables" value="false" />
           <option name="m_regex" value="[A-Z_]*" />
           <option name="m_minLength" value="5" />
           <option name="m_maxLength" value="32" />
         </inspection_tool>
-        <inspection_tool class="ContinueOrBreakFromFinallyBlock" level="WARNING" enabled="false" />
-        <inspection_tool class="EmptyCatchBlock" level="WARNING" enabled="false">
+        <inspection_tool class="ContinueOrBreakFromFinallyBlock" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="EmptyCatchBlock" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_includeComments" value="true" />
           <option name="m_ignoreTestCases" value="true" />
           <option name="m_ignoreIgnoreParameter" value="true" />
         </inspection_tool>
-        <inspection_tool class="EmptyFinallyBlock" level="WARNING" enabled="false" />
-        <inspection_tool class="EmptyStatementBody" level="WARNING" enabled="false">
+        <inspection_tool class="EmptyFinallyBlock" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="EmptyStatementBody" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_reportEmptyBlocks" value="false" />
         </inspection_tool>
-        <inspection_tool class="EmptyTryBlock" level="WARNING" enabled="false" />
-        <inspection_tool class="EqualsBetweenInconvertibleTypes" level="WARNING" enabled="false" />
-        <inspection_tool class="ExtendsObject" level="WARNING" enabled="false" />
-        <inspection_tool class="FinalPrivateMethod" level="WARNING" enabled="false" />
-        <inspection_tool class="FinalStaticMethod" level="WARNING" enabled="false" />
-        <inspection_tool class="FinalizeCallsSuperFinalize" level="WARNING" enabled="false">
+        <inspection_tool class="EmptyTryBlock" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="EqualsBetweenInconvertibleTypes" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="ExtendsObject" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="FinalPrivateMethod" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="FinalStaticMethod" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="FinalizeCallsSuperFinalize" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_ignoreForObjectSubclasses" value="false" />
         </inspection_tool>
-        <inspection_tool class="ForCanBeForeach" level="WARNING" enabled="false">
+        <inspection_tool class="ForCanBeForeach" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="REPORT_INDEXED_LOOP" value="true" />
         </inspection_tool>
-        <inspection_tool class="InfiniteLoopStatement" level="WARNING" enabled="false" />
-        <inspection_tool class="InfiniteRecursion" level="WARNING" enabled="false" />
-        <inspection_tool class="InstanceMethodNamingConvention" level="WARNING" enabled="false">
+        <inspection_tool class="InfiniteLoopStatement" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="InfiniteRecursion" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="InstanceMethodNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_regex" value="[a-z][A-Za-z]*" />
           <option name="m_minLength" value="4" />
           <option name="m_maxLength" value="32" />
         </inspection_tool>
-        <inspection_tool class="InstanceVariableNamingConvention" level="WARNING" enabled="false">
+        <inspection_tool class="InstanceVariableNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_regex" value="m_[a-z][A-Za-z]*" />
           <option name="m_minLength" value="5" />
           <option name="m_maxLength" value="32" />
         </inspection_tool>
-        <inspection_tool class="InterfaceNamingConvention" level="WARNING" enabled="false">
+        <inspection_tool class="InterfaceNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_regex" value="[A-Z][A-Za-z]*" />
           <option name="m_minLength" value="8" />
           <option name="m_maxLength" value="64" />
         </inspection_tool>
-        <inspection_tool class="LocalVariableNamingConvention" level="WARNING" enabled="false">
+        <inspection_tool class="LocalVariableNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_ignoreForLoopParameters" value="false" />
           <option name="m_ignoreCatchParameters" value="false" />
           <option name="m_regex" value="[a-z][A-Za-z]*" />
           <option name="m_minLength" value="1" />
           <option name="m_maxLength" value="20" />
         </inspection_tool>
-        <inspection_tool class="LoopStatementsThatDontLoop" level="WARNING" enabled="false" />
-        <inspection_tool class="ManualArrayCopy" level="WARNING" enabled="false" />
-        <inspection_tool class="MethodNameSameAsClassName" level="WARNING" enabled="false" />
-        <inspection_tool class="NoExplicitFinalizeCalls" level="WARNING" enabled="false" />
-        <inspection_tool class="ParameterNamingConvention" level="WARNING" enabled="false">
+        <inspection_tool class="LoopStatementsThatDontLoop" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="ManualArrayCopy" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="MethodNameSameAsClassName" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="NoExplicitFinalizeCalls" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="ParameterNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_regex" value="[a-z][A-Za-z]*" />
           <option name="m_minLength" value="1" />
           <option name="m_maxLength" value="20" />
         </inspection_tool>
-        <inspection_tool class="PointlessArithmeticExpression" level="WARNING" enabled="false">
+        <inspection_tool class="PointlessArithmeticExpression" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_ignoreExpressionsContainingConstants" value="false" />
         </inspection_tool>
-        <inspection_tool class="RedundantCast" level="WARNING" enabled="false" />
-        <inspection_tool class="ReturnFromFinallyBlock" level="WARNING" enabled="false" />
-        <inspection_tool class="StaticMethodNamingConvention" level="WARNING" enabled="false">
+        <inspection_tool class="RedundantCast" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="ReturnFromFinallyBlock" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="StaticMethodNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_regex" value="[a-z][A-Za-z]*" />
           <option name="m_minLength" value="4" />
           <option name="m_maxLength" value="32" />
         </inspection_tool>
-        <inspection_tool class="StaticVariableNamingConvention" level="WARNING" enabled="false">
+        <inspection_tool class="StaticVariableNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
+          <option name="checkMutableFinals" value="false" />
           <option name="m_regex" value="s_[a-z][A-Za-z]*" />
           <option name="m_minLength" value="5" />
           <option name="m_maxLength" value="32" />
         </inspection_tool>
-        <inspection_tool class="StringConcatenationInLoops" level="WARNING" enabled="false">
+        <inspection_tool class="StringConcatenationInLoops" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="m_ignoreUnlessAssigned" value="false" />
         </inspection_tool>
-        <inspection_tool class="StringConstructor" level="WARNING" enabled="false">
+        <inspection_tool class="StringConstructor" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="ignoreSubstringArguments" value="false" />
         </inspection_tool>
-        <inspection_tool class="StringEquality" level="WARNING" enabled="false" />
-        <inspection_tool class="StringToString" level="WARNING" enabled="false" />
-        <inspection_tool class="SynchronizeOnNonFinalField" level="WARNING" enabled="false" />
-        <inspection_tool class="ThrowFromFinallyBlock" level="WARNING" enabled="false" />
-        <inspection_tool class="TrivialIf" level="WARNING" enabled="false" />
-        <inspection_tool class="UnnecessaryBoxing" level="WARNING" enabled="false" />
-        <inspection_tool class="UnnecessaryReturn" level="WARNING" enabled="false" />
-        <inspection_tool class="UnnecessarySemicolon" level="WARNING" enabled="false" />
-        <inspection_tool class="UnnecessaryTemporaryOnConversionFromString" level="WARNING" enabled="false" />
-        <inspection_tool class="UnnecessaryTemporaryOnConversionToString" level="WARNING" enabled="false" />
-        <inspection_tool class="UnnecessaryUnboxing" level="WARNING" enabled="false" />
-        <inspection_tool class="UnusedAssignment" level="WARNING" enabled="false">
+        <inspection_tool class="StringEquality" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="StringToString" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="SynchronizeOnNonFinalField" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="ThrowFromFinallyBlock" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="TrivialIf" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="UnnecessaryBoxing" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="UnnecessaryReturn" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="UnnecessarySemicolon" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="UnnecessaryTemporaryOnConversionFromString" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="UnnecessaryTemporaryOnConversionToString" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="UnnecessaryUnboxing" enabled="false" level="WARNING" enabled_by_default="false" />
+        <inspection_tool class="UnusedAssignment" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="REPORT_PREFIX_EXPRESSIONS" value="false" />
           <option name="REPORT_POSTFIX_EXPRESSIONS" value="true" />
           <option name="REPORT_REDUNDANT_INITIALIZER" value="true" />
         </inspection_tool>
-        <inspection_tool class="UnusedLabel" level="WARNING" enabled="false" />
+        <inspection_tool class="UnusedLabel" enabled="false" level="WARNING" enabled_by_default="false" />
       </profile>
     </profiles>
+    <option name="PROJECT_PROFILE" value="Project Default" />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="SERVER PROBLEM" />
       <item index="1" class="java.lang.String" itemvalue="INFO" />
@@ -383,6 +387,7 @@
     </list>
   </component>
   <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-target 1.5" />
     <option name="MAXIMUM_HEAP_SIZE" value="512" />
   </component>
   <component name="JavadocGenerationManager">
@@ -407,6 +412,13 @@
     <option name="FILTER_WARNINGS" value="false" />
     <option name="FILTER_INFO" value="true" />
     <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
   </component>
   <component name="Palette2">
     <group name="Swing">
@@ -532,20 +544,28 @@
   <component name="ProjectDetails">
     <option name="projectName" value="netarchivesuite" />
   </component>
-  <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
     <option name="state" value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/trunk/netarchivesuite.ipr" />
   </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/netarchivesuite.iml" filepath="$PROJECT_DIR$/netarchivesuite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-archive/netarchivesuite-archive.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-archive/netarchivesuite-archive.iml" />
+      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-common/netarchivesuite-common.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-common/netarchivesuite-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-deploy/netarchivesuite-deploy.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-deploy/netarchivesuite-deploy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-harvester/netarchivesuite-harvester.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/netarchivesuite-harvester.iml" />
+      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-monitor/netarchivesuite-monitor.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/netarchivesuite-monitor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/netarchivesuite-viewerproxy.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/netarchivesuite-viewerproxy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-wayback/netarchivesuite-wayback.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/netarchivesuite-wayback.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="All Unittests" type="JUnit" factoryName="JUnit" enabled="false" merge="false" runner="emma">
+    <configuration default="false" name="All Unittests" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" runner="emma" />
+      <extension name="snapshooter" />
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -558,7 +578,6 @@
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="ADDITIONAL_CLASS_PATH" />
       <option name="TEST_SEARCH_SCOPE">
         <value defaultName="wholeProject" />
       </option>
@@ -573,7 +592,9 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="All Integritytests" type="JUnit" factoryName="JUnit" enabled="false" merge="false" runner="emma">
+    <configuration default="false" name="All Integritytests" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" runner="emma" />
+      <extension name="snapshooter" />
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -586,7 +607,6 @@
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="ADDITIONAL_CLASS_PATH" />
       <option name="TEST_SEARCH_SCOPE">
         <value defaultName="wholeProject" />
       </option>
@@ -595,7 +615,9 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="All Heritrixtests" type="JUnit" factoryName="JUnit" enabled="false" merge="false" runner="emma">
+    <configuration default="false" name="All Heritrixtests" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" runner="emma" />
+      <extension name="snapshooter" />
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -608,7 +630,6 @@
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="ADDITIONAL_CLASS_PATH" />
       <option name="TEST_SEARCH_SCOPE">
         <value defaultName="wholeProject" />
       </option>
@@ -617,7 +638,9 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="Harvester Data Model Suite" type="JUnit" factoryName="JUnit" enabled="false" merge="false" runner="emma">
+    <configuration default="false" name="Harvester Data Model Suite" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" runner="emma" />
+      <extension name="snapshooter" />
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -630,7 +653,6 @@
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="ADDITIONAL_CLASS_PATH" />
       <option name="TEST_SEARCH_SCOPE">
         <value defaultName="wholeProject" />
       </option>
@@ -653,6 +675,20 @@
         <entry key="$PROJECT_DIR$">
           <value>
             <SvnBranchConfiguration>
+              <option name="branchMap">
+                <map>
+                  <entry key="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/branches">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                  <entry key="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/tags">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                </map>
+              </option>
               <option name="branchUrls">
                 <list>
                   <option value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/branches" />
@@ -697,6 +733,614 @@
     <doccer class="nl.piraya.ideadoc.doccer.DoccerForPrivateDefaultConstructor" enabled="true">
       <template>/**$s$Do$s$not$s$instantiate$s$${CLASS_NAME}.$s$*/</template>
     </doccer>
+  </component>
+  <component name="libraryTable">
+    <library name="Maven: org.mortbay.jetty:jetty:6.1.22">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty/6.1.22/jetty-6.1.22.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty/6.1.22/jetty-6.1.22-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty/6.1.22/jetty-6.1.22-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.mortbay.jetty:jetty-util:6.1.22">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-util/6.1.22/jetty-util-6.1.22.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-util/6.1.22/jetty-util-6.1.22-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-util/6.1.22/jetty-util-6.1.22-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.mortbay.jetty:servlet-api:2.5-20081211">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/servlet-api/2.5-20081211/servlet-api-2.5-20081211.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/servlet-api/2.5-20081211/servlet-api-2.5-20081211-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/servlet-api/2.5-20081211/servlet-api-2.5-20081211-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-logging:commons-logging:1.0.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: dom4j:dom4j:1.5.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/dom4j/dom4j/1.5.2/dom4j-1.5.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/dom4j/dom4j/1.5.2/dom4j-1.5.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/dom4j/dom4j/1.5.2/dom4j-1.5.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: jaxme:jaxme-api:0.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/jaxme/jaxme-api/0.3/jaxme-api-0.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/jaxme/jaxme-api/0.3/jaxme-api-0.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/jaxme/jaxme-api/0.3/jaxme-api-0.3-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: jaxen:jaxen:1.1-beta-4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/jaxen/jaxen/1.1-beta-4/jaxen-1.1-beta-4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/jaxen/jaxen/1.1-beta-4/jaxen-1.1-beta-4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/jaxen/jaxen/1.1-beta-4/jaxen-1.1-beta-4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: msv:xsdlib:20030807">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/msv/xsdlib/20030807/xsdlib-20030807.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/msv/xsdlib/20030807/xsdlib-20030807-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/msv/xsdlib/20030807/xsdlib-20030807-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: msv:relaxngDatatype:20030807">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/msv/relaxngDatatype/20030807/relaxngDatatype-20030807.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/msv/relaxngDatatype/20030807/relaxngDatatype-20030807-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/msv/relaxngDatatype/20030807/relaxngDatatype-20030807-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: pull-parser:pull-parser:2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/pull-parser/pull-parser/2/pull-parser-2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/pull-parser/pull-parser/2/pull-parser-2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/pull-parser/pull-parser/2/pull-parser-2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: xpp3:xpp3:1.1.3.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/xpp3/xpp3/1.1.3.3/xpp3-1.1.3.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/xpp3/xpp3/1.1.3.3/xpp3-1.1.3.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/xpp3/xpp3/1.1.3.3/xpp3-1.1.3.3-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: xml-apis:xml-apis:1.0.b2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.mail:mail:1.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/mail/mail/1.4/mail-1.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/mail/mail/1.4/mail-1.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/mail/mail/1.4/mail-1.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.activation:activation:1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.archive:heritrix:1.14.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/archive/heritrix/1.14.4/heritrix-1.14.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/archive/heritrix/1.14.4/heritrix-1.14.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/archive/heritrix/1.14.4/heritrix-1.14.4-sources.jar!/" />
+        <root url="file://$PROJECT_DIR$/../../old_home/csr/temp/heritrix-1.14.4/src/java" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-httpclient:commons-httpclient:3.0.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-httpclient/commons-httpclient/3.0.1/commons-httpclient-3.0.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-httpclient/commons-httpclient/3.0.1/commons-httpclient-3.0.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-httpclient/commons-httpclient/3.0.1/commons-httpclient-3.0.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: junit:junit:3.8.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/3.8.2/junit-3.8.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/3.8.2/junit-3.8.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/3.8.2/junit-3.8.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-codec:commons-codec:1.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.2/commons-codec-1.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.2/commons-codec-1.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.2/commons-codec-1.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.jms:jms:b22g:4.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/jms/jms/4.1/jms-4.1-b22g.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/jms/jms/4.1/jms-4.1-b22g-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/jms/jms/4.1/jms-4.1-b22g-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.lucene:lucene-core:2.0.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core/2.0.0/lucene-core-2.0.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core/2.0.0/lucene-core-2.0.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core/2.0.0/lucene-core-2.0.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.sun.messaging.mq:imq:4.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/sun/messaging/mq/imq/4.2/imq-4.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/sun/messaging/mq/imq/4.2/imq-4.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/sun/messaging/mq/imq/4.2/imq-4.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-fileupload:commons-fileupload:1.2.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.archive:deduplicator:0.4.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/archive/deduplicator/0.4.0/deduplicator-0.4.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/archive/deduplicator/0.4.0/deduplicator-0.4.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/archive/deduplicator/0.4.0/deduplicator-0.4.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.mortbay.jetty:jsp-2.1-glassfish:2.1.v20100127">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jsp-2.1-glassfish/2.1.v20100127/jsp-2.1-glassfish-2.1.v20100127.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jsp-2.1-glassfish/2.1.v20100127/jsp-2.1-glassfish-2.1.v20100127-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jsp-2.1-glassfish/2.1.v20100127/jsp-2.1-glassfish-2.1.v20100127-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.eclipse.jdt.core.compiler:ecj:3.5.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jdt/core/compiler/ecj/3.5.1/ecj-3.5.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jdt/core/compiler/ecj/3.5.1/ecj-3.5.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jdt/core/compiler/ecj/3.5.1/ecj-3.5.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.mortbay.jetty:jsp-api-2.1-glassfish:2.1.v20100127">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jsp-api-2.1-glassfish/2.1.v20100127/jsp-api-2.1-glassfish-2.1.v20100127.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jsp-api-2.1-glassfish/2.1.v20100127/jsp-api-2.1-glassfish-2.1.v20100127-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jsp-api-2.1-glassfish/2.1.v20100127/jsp-api-2.1-glassfish-2.1.v20100127-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: ant:ant:1.6.5">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-net:commons-net:2.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-net/commons-net/2.0/commons-net-2.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-net/commons-net/2.0/commons-net-2.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-net/commons-net/2.0/commons-net-2.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: jfree:jfreechart:1.0.12">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/jfree/jfreechart/1.0.12/jfreechart-1.0.12.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/jfree/jfreechart/1.0.12/jfreechart-1.0.12-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/jfree/jfreechart/1.0.12/jfreechart-1.0.12-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: jfree:jcommon:1.0.15">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/jfree/jcommon/1.0.15/jcommon-1.0.15.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/jfree/jcommon/1.0.15/jcommon-1.0.15-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/jfree/jcommon/1.0.15/jcommon-1.0.15-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-cli:commons-cli:1.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.0/commons-cli-1.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.0/commons-cli-1.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.0/commons-cli-1.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-lang:commons-lang:1.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/1.0/commons-lang-1.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/1.0/commons-lang-1.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/1.0/commons-lang-1.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.gnu.inet:libidn:0.6.5">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/gnu/inet/libidn/0.6.5/libidn-0.6.5.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/gnu/inet/libidn/0.6.5/libidn-0.6.5-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/gnu/inet/libidn/0.6.5/libidn-0.6.5-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: berkeleydb:je:3.3.82">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/berkeleydb/je/3.3.82/je-3.3.82.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/berkeleydb/je/3.3.82/je-3.3.82-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/berkeleydb/je/3.3.82/je-3.3.82-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: mockobjects:mockobjects-j1.4-j2ee1.3:0.08dev-20030318">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/mockobjects/mockobjects-j1.4-j2ee1.3/0.08dev-20030318/mockobjects-j1.4-j2ee1.3-0.08dev-20030318.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/mockobjects/mockobjects-j1.4-j2ee1.3/0.08dev-20030318/mockobjects-j1.4-j2ee1.3-0.08dev-20030318-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/mockobjects/mockobjects-j1.4-j2ee1.3/0.08dev-20030318/mockobjects-j1.4-j2ee1.3-0.08dev-20030318-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: httpunit:httpunit:1.6">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/httpunit/httpunit/1.6/httpunit-1.6.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/httpunit/httpunit/1.6/httpunit-1.6-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/httpunit/httpunit/1.6/httpunit-1.6-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: xerces:xmlParserAPIs:2.2.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/xerces/xmlParserAPIs/2.2.1/xmlParserAPIs-2.2.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/xerces/xmlParserAPIs/2.2.1/xmlParserAPIs-2.2.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/xerces/xmlParserAPIs/2.2.1/xmlParserAPIs-2.2.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: xerces:xercesImpl:2.6.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: nekohtml:nekohtml:0.9.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/nekohtml/nekohtml/0.9.1/nekohtml-0.9.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/nekohtml/nekohtml/0.9.1/nekohtml-0.9.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/nekohtml/nekohtml/0.9.1/nekohtml-0.9.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: rhino:js:1.5R4.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/rhino/js/1.5R4.1/js-1.5R4.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/rhino/js/1.5R4.1/js-1.5R4.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/rhino/js/1.5R4.1/js-1.5R4.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.servlet:servlet-api:2.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.3/servlet-api-2.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.3/servlet-api-2.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.3/servlet-api-2.3-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: jtidy:jtidy:4aug2000r7-dev">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/jtidy/jtidy/4aug2000r7-dev/jtidy-4aug2000r7-dev.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/jtidy/jtidy/4aug2000r7-dev/jtidy-4aug2000r7-dev-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/jtidy/jtidy/4aug2000r7-dev/jtidy-4aug2000r7-dev-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.archive.wayback:wayback-core:1.4.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/archive/wayback/wayback-core/1.4.2/wayback-core-1.4.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/archive/wayback/wayback-core/1.4.2/wayback-core-1.4.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/archive/wayback/wayback-core/1.4.2/wayback-core-1.4.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.hibernate:hibernate:3.2.7.ga">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate/3.2.7.ga/hibernate-3.2.7.ga.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate/3.2.7.ga/hibernate-3.2.7.ga-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate/3.2.7.ga/hibernate-3.2.7.ga-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: net.sf.ehcache:ehcache:1.2.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-collections:commons-collections:2.1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-collections/commons-collections/2.1.1/commons-collections-2.1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-collections/commons-collections/2.1.1/commons-collections-2.1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-collections/commons-collections/2.1.1/commons-collections-2.1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.transaction:jta:1.0.1B">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/transaction/jta/1.0.1B/jta-1.0.1B-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/transaction/jta/1.0.1B/jta-1.0.1B-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: asm:asm-attrs:1.5.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/asm/asm-attrs/1.5.3/asm-attrs-1.5.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/asm/asm-attrs/1.5.3/asm-attrs-1.5.3-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: antlr:antlr:2.7.6">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/antlr/antlr/2.7.6/antlr-2.7.6.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/antlr/antlr/2.7.6/antlr-2.7.6-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/antlr/antlr/2.7.6/antlr-2.7.6-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: cglib:cglib:2.1_3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/cglib/cglib/2.1_3/cglib-2.1_3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/cglib/cglib/2.1_3/cglib-2.1_3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/cglib/cglib/2.1_3/cglib-2.1_3-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: asm:asm:1.5.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/asm/asm/1.5.3/asm-1.5.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/asm/asm/1.5.3/asm-1.5.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/asm/asm/1.5.3/asm-1.5.3-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.hibernate:hibernate-annotations:3.3.1.GA">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-annotations/3.3.1.GA/hibernate-annotations-3.3.1.GA.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-annotations/3.3.1.GA/hibernate-annotations-3.3.1.GA-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-annotations/3.3.1.GA/hibernate-annotations-3.3.1.GA-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.hibernate:hibernate-commons-annotations:3.0.0.ga">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-commons-annotations/3.0.0.ga/hibernate-commons-annotations-3.0.0.ga.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-commons-annotations/3.0.0.ga/hibernate-commons-annotations-3.0.0.ga-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-commons-annotations/3.0.0.ga/hibernate-commons-annotations-3.0.0.ga-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.hibernate:ejb3-persistence:1.0.1.GA">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/ejb3-persistence/1.0.1.GA/ejb3-persistence-1.0.1.GA.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/ejb3-persistence/1.0.1.GA/ejb3-persistence-1.0.1.GA-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/ejb3-persistence/1.0.1.GA/ejb3-persistence-1.0.1.GA-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: it.unimi.dsi:mg4j:1.0.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/mg4j/1.0.1/mg4j-1.0.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/mg4j/1.0.1/mg4j-1.0.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/mg4j/1.0.1/mg4j-1.0.1-sources.jar!/" />
+      </SOURCES>
+    </library>
   </component>
 </project>
 
