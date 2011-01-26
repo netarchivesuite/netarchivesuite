@@ -36,7 +36,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -46,6 +45,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
@@ -64,7 +64,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /** The logger. */
     private final Log log = LogFactory.getLog(getClass());
     /** The current version needed of the table 'fullharvests'. */
-    static final int FULLHARVESTS_VERSION_NEEDED = 3;
+    static final int FULLHARVESTS_VERSION_NEEDED = 4;
 
     /**
      * Comparator used for sorting the UI list of
@@ -106,7 +106,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
         DBUtils.checkTableVersion(connection,
                                   "harvestdefinitions", 2);
-        DBUtils.checkTableVersion(connection, "fullharvests", 3);
+        DBUtils.checkTableVersion(connection, "fullharvests", 4);
         DBUtils.checkTableVersion(connection, "partialharvests", 1);
         DBUtils.checkTableVersion(connection, "harvest_configs", 1);
     }
@@ -288,6 +288,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             ResultSet res = s.executeQuery();
             if (res.next()) {
                 // Found full harvest
+                log.debug("fullharvest found w/id " + harvestDefinitionID);
                 final String name = res.getString(1);
                 final String comments = res.getString(2);
                 final int numEvents = res.getInt(3);
@@ -296,7 +297,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 final long maxObjects = res.getLong(6);
                 final long maxBytes = res.getLong(7);
                 FullHarvest fh;
-                long prevhd = res.getLong(5);
+                final long prevhd = res.getLong(5);
                 if (!res.wasNull()) {
                     fh = new FullHarvest(name, comments, prevhd, maxObjects,
                                          maxBytes);
@@ -310,6 +311,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 fh.setOid(harvestDefinitionID);
                 fh.setEdition(res.getLong(9));
                 // We found a FullHarvest object, just return it.
+                log.debug("Returned FullHarvest object w/ id "
+                        + harvestDefinitionID);
                 return fh;
             }
             s.close();
@@ -331,73 +334,79 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                             + "= partialharvests.schedule_id");
             s.setLong(1, harvestDefinitionID);
             res = s.executeQuery();
-            res.next();
-            // Have to get configs before creating object, so storing data here.
-            final String name = res.getString(1);
-            final String comments = res.getString(2);
-            final int numEvents = res.getInt(3);
-            final Date submissionDate = new Date(res.getTimestamp(4).getTime());
-            final boolean active = res.getBoolean(5);
-            final long edition = res.getLong(6);
-            final String scheduleName = res.getString(7);
-            final Date nextDate = DBUtils.getDateMaybeNull(res, 8);
-            s.close();
-            // Found partial harvest -- have to find configurations.
-            // To avoid holding on to the readlock while getting domains,
-            // we grab the strings first, then look up domains and configs.
-            final DomainDAO domainDao = DomainDAO.getInstance();
-            /** Helper class that contain (domainName, configName) pairs.*/
-            class DomainConfigPair {
-                /** The domain name. */
-                final String domainName;
-                /** The config name. */
-                final String configName;
+            boolean foundPartialHarvest = res.next();
+            if (foundPartialHarvest) {
+                log.debug("Partialharvest found w/ id " + harvestDefinitionID);
+                // Have to get configs before creating object, so storing data here.
+                final String name = res.getString(1);
+                final String comments = res.getString(2);
+                final int numEvents = res.getInt(3);
+                final Date submissionDate = new Date(res.getTimestamp(4).getTime());
+                final boolean active = res.getBoolean(5);
+                final long edition = res.getLong(6);
+                final String scheduleName = res.getString(7);
+                final Date nextDate = DBUtils.getDateMaybeNull(res, 8);
+                s.close();
+                // Found partial harvest -- have to find configurations.
+                // To avoid holding on to the readlock while getting domains,
+                // we grab the strings first, then look up domains and configs.
+                final DomainDAO domainDao = DomainDAO.getInstance();
+                /** Helper class that contain (domainName, configName) pairs.*/
+                class DomainConfigPair {
+                    /** The domain name. */
+                    final String domainName;
+                    /** The config name. */
+                    final String configName;
 
-                /** Constructor for the DomainConfigPair class.
-                 *
-                 * @param domainName A given domain name
-                 * @param configName A name for a specific configuration
-                 */
-                public DomainConfigPair(String domainName, String configName) {
-                    this.domainName = domainName;
-                    this.configName = configName;
+                    /** Constructor for the DomainConfigPair class.
+                     *
+                     * @param domainName A given domain name
+                     * @param configName A name for a specific configuration
+                     */
+                    public DomainConfigPair(String domainName, String configName) {
+                        this.domainName = domainName;
+                        this.configName = configName;
+                    }
                 }
-            }
-            List<DomainConfigPair> configs
-                    = new ArrayList<DomainConfigPair>();
-            s = c.prepareStatement("SELECT domains.name, configurations.name "
-                    + "FROM domains, configurations, harvest_configs "
-                    + "WHERE harvest_id = ?"
-                    + "  AND configurations.config_id "
-                            + "= harvest_configs.config_id"
-                    + "  AND configurations.domain_id = domains.domain_id");
-            s.setLong(1, harvestDefinitionID);
-            res = s.executeQuery();
-            while (res.next()) {
-                configs.add(new DomainConfigPair(
-                        res.getString(1), res.getString(2)));
-            }
-            s.close();
-            List<DomainConfiguration> configurations =
+                List<DomainConfigPair> configs
+                = new ArrayList<DomainConfigPair>();
+                s = c.prepareStatement("SELECT domains.name, configurations.name "
+                        + "FROM domains, configurations, harvest_configs "
+                        + "WHERE harvest_id = ?"
+                        + "  AND configurations.config_id "
+                        + "= harvest_configs.config_id"
+                        + "  AND configurations.domain_id = domains.domain_id");
+                s.setLong(1, harvestDefinitionID);
+                res = s.executeQuery();
+                while (res.next()) {
+                    configs.add(new DomainConfigPair(
+                            res.getString(1), res.getString(2)));
+                }
+                s.close();
+                List<DomainConfiguration> configurations =
                     new ArrayList<DomainConfiguration>();
-            for (DomainConfigPair domainConfig : configs) {
-                Domain d = domainDao.read(domainConfig.domainName);
-                configurations.add(d.getConfiguration(domainConfig.configName));
-            }
+                for (DomainConfigPair domainConfig : configs) {
+                    Domain d = domainDao.read(domainConfig.domainName);
+                    configurations.add(d.getConfiguration(domainConfig.configName));
+                }
 
-            Schedule schedule =
+                Schedule schedule =
                     ScheduleDAO.getInstance().read(scheduleName);
 
-            PartialHarvest ph = new PartialHarvest(configurations, schedule,
-                    name, comments);
+                PartialHarvest ph = new PartialHarvest(configurations, schedule,
+                        name, comments);
 
-            ph.setNumEvents(numEvents);
-            ph.setSubmissionDate(submissionDate);
-            ph.setActive(active);
-            ph.setEdition(edition);
-            ph.setNextDate(nextDate);
-            ph.setOid(harvestDefinitionID);
-            return ph;
+                ph.setNumEvents(numEvents);
+                ph.setSubmissionDate(submissionDate);
+                ph.setActive(active);
+                ph.setEdition(edition);
+                ph.setNextDate(nextDate);
+                ph.setOid(harvestDefinitionID);
+                return ph;
+            } else {
+                throw new IllegalState("No entries in fullharvests or "
+                        + "partialharvests found for id " + harvestDefinitionID);
+            }
         } catch (SQLException e) {
             throw new IOFailure("SQL Error while reading harvest definition "
                     + harvestDefinitionID + "\n"
@@ -535,6 +544,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 s.setLong(3, fh.getMaxBytes());
                 s.setLong(4, fh.getOid());
                 rows = s.executeUpdate();
+                log.debug(rows + " fullharvests rows updated");
             } else if (hd instanceof PartialHarvest) {
                 PartialHarvest ph = (PartialHarvest) hd;
                 s = c.prepareStatement("UPDATE partialharvests SET "
@@ -547,6 +557,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 DBUtils.setDateMaybeNull(s, 2, ph.getNextDate());
                 s.setLong(3, ph.getOid());
                 rows = s.executeUpdate();
+                log.debug(rows + " partialharvests rows updated");
                 s.close();
                 createHarvestConfigsEntries(c, ph, ph.getOid());
             } else {

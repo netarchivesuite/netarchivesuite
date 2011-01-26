@@ -151,16 +151,19 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             }
             if (currentVersion == 4 && toVersion >= 5) {
                 migrateJobsv4tov5();
+                currentVersion = 5;
             }
-
             if (currentVersion == 5 && toVersion >= 6) {
+                migrateJobsv5tov6();
+            }
+            if (currentVersion == 6 && toVersion >= 7) {
                 throw new NotImplementedException(
                         "No method exists for migrating table '" + tableName
                                 + "' from version " + currentVersion
                                 + " to version " + toVersion);
             }
             // future updates of the job table are inserted here
-            if (currentVersion > 5) {
+            if (currentVersion > 6) {
                 throw new IllegalState("Database is in an illegalState: "
                         + "The current version (" + currentVersion
                         + ") of table '" + tableName
@@ -178,8 +181,13 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                 migrateFullharvestsv2tov3();
                 currentVersion = 3;
             }
-
+            
             if (currentVersion == 3 && toVersion >= 4) {
+                migrateFullharvestsv3tov4();
+                currentVersion = 4;
+            }
+            
+            if (currentVersion == 4 && toVersion >= 5) {
                 throw new NotImplementedException(
                         "No method exists for migrating table '" + tableName
                                 + "' from version " + currentVersion

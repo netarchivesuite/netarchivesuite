@@ -63,7 +63,7 @@ public class DomainDBDAO extends DomainDAO {
     private final Log log = LogFactory.getLog(getClass());
 
     /** The required version of the configurations table. */
-    static final int CONFIGURATIONS_VERSION_NEEDED = 4;
+    static final int CONFIGURATIONS_VERSION_NEEDED = 5;
 
     /**
      * Creates a database-based implementation of the DomainDAO. Will check that
@@ -88,7 +88,7 @@ public class DomainDBDAO extends DomainDAO {
         }
 
         DBUtils.checkTableVersion(connection, "domains", 2);
-        DBUtils.checkTableVersion(connection, "configurations", 4);
+        DBUtils.checkTableVersion(connection, "configurations", 5);
         DBUtils.checkTableVersion(connection, "config_passwords", 1);
         DBUtils.checkTableVersion(connection, "config_seedlists", 1);
         DBUtils.checkTableVersion(connection, "seedlists", 1);

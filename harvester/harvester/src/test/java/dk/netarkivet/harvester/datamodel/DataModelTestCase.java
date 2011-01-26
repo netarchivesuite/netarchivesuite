@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -267,6 +268,18 @@ public class DataModelTestCase extends TestCase {
         statement.setInt(7,1);
         int rows = statement.executeUpdate();
         ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
+        statement.close();
+        String addFullharvestInsert = "INSERT INTO fullharvests "
+            + "( harvest_id, maxobjects, maxbytes, previoushd )"
+            + "VALUES ( ?, ?, ?, ? )";
+        statement = con.prepareStatement(addFullharvestInsert);
+        statement.setLong(1, id);
+        statement.setLong(2, Constants.DEFAULT_MAX_OBJECTS);
+        statement.setLong(3, Constants.DEFAULT_MAX_BYTES);
+        statement.setNull(4, Types.BIGINT);
+        rows = statement.executeUpdate();
+        ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
+        
     }
 
 
