@@ -96,7 +96,7 @@ public class ExtractorOAI extends Extractor {
         }
         try {
             boolean foundResumptionToken = processXml(curi, cs);
-            curi.linkExtractorFinished();
+            //curi.linkExtractorFinished();
             if (foundResumptionToken) numberOfLinksExtracted += 1;
         } finally {
             if (cs != null) {
@@ -142,6 +142,16 @@ public class ExtractorOAI extends Extractor {
         }
         TextUtils.recycleMatcher(m);
         return matches;
+    }
+
+     public String report() {
+        StringBuffer ret = new StringBuffer();
+        ret.append("Processor: org.archive.crawler.extractor.ExtractorHTML\n");
+        ret.append("  Function:          Link extraction on HTML documents\n");
+        ret.append("  CrawlURIs handled: " + this.numberOfCURIsHandled + "\n");
+        ret.append("  Links extracted:   " + this.numberOfLinksExtracted +
+            "\n\n");
+        return ret.toString();
     }
 
 }
