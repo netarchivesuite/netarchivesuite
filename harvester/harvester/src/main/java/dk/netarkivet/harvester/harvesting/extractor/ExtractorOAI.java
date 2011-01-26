@@ -31,26 +31,54 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.extractor.Extractor;
-import org.archive.crawler.extractor.ExtractorXML;
 import org.archive.crawler.extractor.Link;
-import org.archive.crawler.framework.CrawlController;
 import org.archive.io.ReplayCharSequence;
 import org.archive.net.UURI;
-import org.archive.net.UURIFactory;
 import org.archive.util.TextUtils;
 
+/**
+ * This is a link extractor for use with Heritrix. It will find the resumptionToken
+ * in an OAI-PMH listMetadata query and construct the link for the next page of
+ * the results. This extractor will not extract any other links so if there are
+ * additional urls in the OAI metadata then an additional extractor should be used
+ * for these. Typically this means that the extractor chain in the order template
+ * will end:
+ *<newObject name="ExtractorOAI" class="dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI">
+ * <boolean name="enabled">true</boolean>
+ *  <newObject name="ExtractorOAI#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+ *   <map name="rules"/>
+ *  </newObject>
+ *</newObject>
+ *<newObject name="ExtractorXML" class="org.archive.crawler.extractor.ExtractorXML">
+ * <boolean name="enabled">true</boolean>
+ *  <newObject name="ExtractorXML#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+ *   <map name="rules"/>
+ *  </newObject>
+ *</newObject>
+ */
 public class ExtractorOAI extends Extractor {
 
+    /**
+     * Regular expression matching the resumptionToken.
+     */
     private static final String RESUMPTION_TOKEN_MATCH = "(?i)<resumptionToken>\\s*(.*)\\s*</resumptionToken>";
 
      /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
 
-      private long numberOfCURIsHandled = 0;
+    /**
+     * The number of crawl-uris handled by this extractor.
+     */
+    private long numberOfCURIsHandled = 0;
+
+    /**
+     * The number of links extracted by this extractor.
+     */
     private long numberOfLinksExtracted = 0;
 
     /**
-     * @param name
+     * Constructor for this extractor.
+     * @param name the name of this extractor
      */
     public ExtractorOAI(String name) {
         super(name, "Extractor which finds the resumptionToken in an OAI "
@@ -58,6 +86,12 @@ public class ExtractorOAI extends Extractor {
                     + "to the crawl");
     }
 
+    /**
+     * Perform the link extraction on the current crawl uri. This method
+     * does not set linkExtractorFinished() on the current crawlURI, so
+     * subsequent extractors in the chain can find more links.
+     * @param curi the CrawlUI from which to extract the link.
+     */
     @Override
     protected void extract(CrawlURI curi) {
          if (!isHttpTransactionContentToProcess(curi)) {
@@ -68,8 +102,8 @@ public class ExtractorOAI extends Extractor {
             return;
         }
         if ((mimeType.toLowerCase().indexOf("xml") < 0)
-                && (!curi.toString().toLowerCase().endsWith(".rss"))
-                && (!curi.toString().toLowerCase().endsWith(".xml"))) {
+            && (!curi.toString().toLowerCase().endsWith(".rss"))
+            && (!curi.toString().toLowerCase().endsWith(".xml"))) {
             return;
         }
         try {
@@ -80,9 +114,7 @@ public class ExtractorOAI extends Extractor {
         } catch (URIException e) {
             log.error("Cannot get query part from '" + curi + "'", e);
         }
-
-         this.numberOfCURIsHandled++;
-
+        this.numberOfCURIsHandled++;
         ReplayCharSequence cs = null;
         try {
             cs = curi.getHttpRecorder().getReplayCharSequence();
@@ -96,7 +128,6 @@ public class ExtractorOAI extends Extractor {
         }
         try {
             boolean foundResumptionToken = processXml(curi, cs);
-            //curi.linkExtractorFinished();
             if (foundResumptionToken) numberOfLinksExtracted += 1;
         } finally {
             if (cs != null) {
@@ -108,32 +139,29 @@ public class ExtractorOAI extends Extractor {
                 }
             }
         }
-
-        //Expect this code to do something like the following
-        /*try {
-            crawlURI.createAndAddLink("http://blahblah?resumptionToken=foobar",Link.NAVLINK_MISC, Link.NAVLINK_HOP);
-        } catch (URIException e) {
-
-        }*/
     }
 
     /**
-     * Searches for resumption token and adds link if it is found. Returns true iff
-     * a link is added.
-     * @param curi
-     * @param cs
-     * @return
+     * Searches for resumption token and adds link if it is found. Returns true
+     * iff a link is added.
+     * @param curi the CrawlURI.
+     * @param cs the character sequency in which to search.
+     * @return true iff a resumptionToken is found and a link added.
      */
     public boolean processXml(CrawlURI curi, CharSequence cs) {
         Matcher m = TextUtils.getMatcher(RESUMPTION_TOKEN_MATCH, cs);
         boolean matches = m.find();
         if (matches) {
             String token = m.group(1);
-            //Add token to existing url
             UURI oldUri = curi.getUURI();
             try {
-                URI newUri = new URI(oldUri.getScheme(), oldUri.getAuthority(), oldUri.getPath(),"verb=ListRecords&resumptionToken="+token,oldUri.getFragment());
-                curi.createAndAddLink(newUri.toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
+                final String newQueryPart = "verb=ListRecords&resumptionToken="
+                                            + token;
+                URI newUri = new URI(oldUri.getScheme(), oldUri.getAuthority(),
+                                     oldUri.getPath(),
+                                     newQueryPart,oldUri.getFragment());
+                curi.createAndAddLink(newUri.toString(), Link.NAVLINK_MISC,
+                                      Link.NAVLINK_HOP);
             } catch (URISyntaxException e) {
                 log.error(e);
             } catch (URIException e) {
@@ -144,13 +172,18 @@ public class ExtractorOAI extends Extractor {
         return matches;
     }
 
-     public String report() {
+    /**
+     * Return a report from this processor.
+     * @return the report.
+     */
+    @Override
+    public String report() {
         StringBuffer ret = new StringBuffer();
         ret.append("Processor: org.archive.crawler.extractor.ExtractorHTML\n");
         ret.append("  Function:          Link extraction on HTML documents\n");
         ret.append("  CrawlURIs handled: " + this.numberOfCURIsHandled + "\n");
         ret.append("  Links extracted:   " + this.numberOfLinksExtracted +
-            "\n\n");
+                   "\n\n");
         return ret.toString();
     }
 

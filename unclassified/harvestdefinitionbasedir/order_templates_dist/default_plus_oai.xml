@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <crawl-order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="heritrix_settings.xsd">
     <meta>
-        <name>default_orderxml</name>
+        <name>default_plus_oai</name>
         <description>Default Profile w/ XMl and OAI resumption token extraction</description>
         <operator>Admin</operator>
         <organization/>
@@ -333,16 +333,16 @@
                     </map>
                 </newObject>
             </newObject>
-            <newObject name="ExtractorXML" class="org.archive.crawler.extractor.ExtractorXML">
+            <newObject name="ExtractorOAI" class="dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI">
                 <boolean name="enabled">true</boolean>
-                <newObject name="ExtractorXML#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                <newObject name="ExtractorOAI#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
                     <map name="rules">
                     </map>
                 </newObject>
             </newObject>
-            <newObject name="ExtractorOAI" class="dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI">
+            <newObject name="ExtractorXML" class="org.archive.crawler.extractor.ExtractorXML">
                 <boolean name="enabled">true</boolean>
-                <newObject name="ExtractorOAI#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                <newObject name="ExtractorXML#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
                     <map name="rules">
                     </map>
                 </newObject>

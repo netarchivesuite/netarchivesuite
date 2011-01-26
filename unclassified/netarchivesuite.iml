@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" relativePaths="true" type="JAVA_MODULE" version="4">
+<module relativePaths="true" org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
       <configuration />
@@ -654,7 +654,7 @@
     <orderEntry type="library" exported="" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.archive:heritrix:1.14.4" level="project" />
     <orderEntry type="library" exported="" name="Maven: commons-httpclient:commons-httpclient:3.0.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.2" level="project" />
+    <orderEntry type="library" name="Maven: junit:junit:3.8.2" level="project" />
     <orderEntry type="library" exported="" name="Maven: commons-codec:commons-codec:1.2" level="project" />
     <orderEntry type="library" exported="" name="Maven: javax.jms:jms:b22g:4.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.apache.lucene:lucene-core:2.0.0" level="project" />
@@ -670,14 +670,14 @@
     <orderEntry type="library" exported="" name="Maven: jfree:jcommon:1.0.15" level="project" />
     <orderEntry type="library" exported="" name="Maven: commons-cli:commons-cli:1.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: commons-lang:commons-lang:1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: mockobjects:mockobjects-j1.4-j2ee1.3:0.08dev-20030318" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: httpunit:httpunit:1.6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: xerces:xmlParserAPIs:2.2.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: xerces:xercesImpl:2.6.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: nekohtml:nekohtml:0.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: rhino:js:1.5R4.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: javax.servlet:servlet-api:2.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: jtidy:jtidy:4aug2000r7-dev" level="project" />
+    <orderEntry type="library" name="Maven: mockobjects:mockobjects-j1.4-j2ee1.3:0.08dev-20030318" level="project" />
+    <orderEntry type="library" name="Maven: httpunit:httpunit:1.6" level="project" />
+    <orderEntry type="library" name="Maven: xerces:xmlParserAPIs:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: xerces:xercesImpl:2.6.2" level="project" />
+    <orderEntry type="library" name="Maven: nekohtml:nekohtml:0.9.1" level="project" />
+    <orderEntry type="library" name="Maven: rhino:js:1.5R4.1" level="project" />
+    <orderEntry type="library" name="Maven: javax.servlet:servlet-api:2.3" level="project" />
+    <orderEntry type="library" name="Maven: jtidy:jtidy:4aug2000r7-dev" level="project" />
   </component>
 </module>
 
