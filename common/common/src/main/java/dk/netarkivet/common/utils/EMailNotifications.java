@@ -23,6 +23,8 @@
 
 package dk.netarkivet.common.utils;
 
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -82,27 +84,28 @@ public class EMailNotifications extends Notifications {
         String subject = "Netarkivet error: " + message.split("\n")[0];
 
         // Body consists of four parts.
-        String body = "";
+        StringBuffer body = new StringBuffer();
 
         // 1: The host of the message
-        body += SystemUtils.getLocalHostName() + "\n";  
+        body.append("Host: " + SystemUtils.getLocalHostName() + "\n");
+        body.append("Date: " + new Date().toString() + "\n");
 
         // 2: The origin of the message, found by inspecting stack trace
         for (StackTraceElement elm : Thread.currentThread().getStackTrace()) {
             if (!elm.toString().startsWith(getClass().getName())
                 && !elm.toString().startsWith(Notifications.class.getName())
                 && !elm.toString().startsWith(Thread.class.getName())) {
-                body += elm.toString() + "\n";
+                body.append(elm.toString() + "\n");
                 break;
             }
         }
 
         // 3: The given message
-        body += message + "\n";
+        body.append(message + "\n");
 
         // 4: Optionally the exception
         if (e != null) {
-            body += ExceptionUtils.getStackTrace(e);
+            body.append(ExceptionUtils.getStackTrace(e));
         }
 
         try {
@@ -110,7 +113,7 @@ public class EMailNotifications extends Notifications {
             EMailUtils.sendEmail(MAIL_RECEIVER,
                                  MAIL_SENDER,
                                  subject,
-                                 body);
+                                 body.toString());
 
             //Log as error
             log.error("Mailing netarkivet error: " + message, e);
@@ -118,7 +121,7 @@ public class EMailNotifications extends Notifications {
             // On trouble: Log and print it to system out, it's the best we can
             // do!
             String msg = "Could not send email on error notification:\n"
-                         + body + "\n";
+                         + body.toString() + "\n";
             System.err.println(msg);
             e1.printStackTrace(System.err);
             log.error(msg, e1);

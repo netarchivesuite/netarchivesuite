@@ -249,7 +249,6 @@ public class BitarchiveMonitorServerTester extends TestCase {
         ClassAsserts.assertSingleton(BitarchiveMonitorServer.class);
     }
 
-
     /**
      * Verify that the BA monitor can receive a BatchMessage (on the THE_BAMON
      * queue) and forward it to the ALL_BA topic.
@@ -520,7 +519,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         } catch (Exception e) {
             e.printStackTrace();
             throw new PermissionDenied(
-                    "Couldn't call getRunningBAApplicationIds.", e);
+                    "Couldn't call getRunningBitarchiveIDs().", e);
         }
     }
 
@@ -781,7 +780,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
     }
 
     /**
-     * Testing GetAllChecksumMessage.
+     * Testing GetAllFilenamesMessage.
      * 
      * FIXME: Fragile, sometimes fail with: 
 	 * junit.framework.AssertionFailedError: The listener should have one message expected:<1> but was:<0>
@@ -821,7 +820,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
         assertEquals("The listener should have one message", 1, listener.getNumReceived());
         NetarkivetMessage msg = listener.getReceived();
-        assertTrue("The following message should be a GetAllChecksumMessage reply: '" + msg + "'", 
+        assertTrue("The following message should be a GetAllFilenamesMessage reply: '" + msg + "'", 
                 msg instanceof GetAllFilenamesMessage);
 
         GetAllFilenamesMessage returnMsg = (GetAllFilenamesMessage) msg;
@@ -883,7 +882,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         
         assertEquals("The listener should have one message", 1, listener.getNumReceived());
         NetarkivetMessage msg = listener.getReceived();
-        assertTrue("The following message should be a GetAllChecksumMessage reply: '" + msg + "'", 
+        assertTrue("The following message should be a GetChecksumMessage reply: '" + msg + "'", 
                 msg instanceof GetChecksumMessage);
 
         GetChecksumMessage returnMsg = (GetChecksumMessage) msg;
