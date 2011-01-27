@@ -181,4 +181,15 @@ public class WaybackSettings {
      */
     public static String WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE =
             "settings.wayback.aggregator.maxMainIndexFileSize";
+    
+    /** The maximum number of files in the resourcestore cache. 
+     * The default is 100. 
+     */
+    public static String WAYBACK_RESOURCESTORE_CACHE_MAXFILES =
+            "settings.wayback.resourcestore.maxfiles";
+   
+    /** The cachedirectory. */
+    public static String WAYBACK_RESOURCESTORE_CACHE_DIR =
+            "settings.wayback.resourcestore.cachedir";
+    
 }

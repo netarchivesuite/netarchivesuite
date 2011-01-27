@@ -46,5 +46,9 @@
             <!-- 104857600 KB = 100 GB -->
             <maxMainIndexFileSize>104857600</maxMainIndexFileSize>
         </aggregator>
+        <resourcestore>
+        	<cachedir>filecache</cachedir>
+            <maxfiles>100</maxfiles>
+        </resourcestore>
     </wayback>
 </settings>
