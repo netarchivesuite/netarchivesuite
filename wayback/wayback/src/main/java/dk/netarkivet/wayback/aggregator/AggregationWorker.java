@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * The <code>AggregationWorker</code> has the responsibility of ensuring each
  * index in the raw index files ends up appearing exactly once in the index
- * files used by Wayback. If this isn't possibility the fallback is to allow
+ * files used by Wayback. If this isn't possible the fallback is to allow
  * duplicate occurrences of index lines ensuring index lines appears at least
  * once.
  */
@@ -101,9 +101,9 @@ public class AggregationWorker implements CleanupIF {
      * It has the side effect of creating the output directories for the indexer
      *  if these do not already exist.
      *
-     * A temp directory is create if it doesn't exist. The aggregator wouldn't 
-     * run if a temp directory is already present, as this might indicate a 
-     * running aggregator.
+     * A temp directory is create if it doesn't exist. The aggregator won't
+     * run if a temp directory is already present, as this might indicate an 
+     * instance of the aggregator already running.
      *
      * @return the indexer.
      */
@@ -154,14 +154,16 @@ public class AggregationWorker implements CleanupIF {
     protected synchronized void runAggregation() {
         String[] fileNamesToProcess = indexInputDir.list();
         if (fileNamesToProcess == null) {
-            log.warn("Unable find input directory " + indexInputDir 
-                    + " skipping this aggregation");
+            log.warn("Input directory '" + indexInputDir.getAbsolutePath()
+                    + "' was not found: skipping this aggregation");
             return;
         }
 
         if (fileNamesToProcess.length == 0) {
             if (log.isDebugEnabled()) {
-                log.debug("No new raw index files found, skipping aggregation");
+                log.debug("No new raw index files found in '" 
+                		+ indexInputDir.getAbsolutePath()
+                		+ "' skipping aggregation");
             }
             return;
         }
@@ -175,8 +177,9 @@ public class AggregationWorker implements CleanupIF {
                 filesToProcess[i] = new File(indexInputDir, fileNamesToProcess[i]);
             } else {
                 throw new ArgumentNotValid(
-                        "Encountered non-regular file '" + file 
-                        + "' in the index input directory " + indexInputDir);
+                        "Encountered non-regular file '" + file.getName()
+                        + "' in the index input directory '" 
+                        + indexInputDir.getAbsolutePath() + "'");
             }
         }
 
@@ -226,7 +229,7 @@ public class AggregationWorker implements CleanupIF {
     }
 
     /**
-     * See package desciption for the concrete handling of largere index files.
+     * See package description for the concrete handling of larger index files.
      */
     private void handleFinalIndexFileMerge() {
         if (INTERMEDIATE_INDEX_FILE.length() + FINAL_INDEX_FILE.length()

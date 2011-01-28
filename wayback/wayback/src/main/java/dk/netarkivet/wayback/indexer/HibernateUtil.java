@@ -102,6 +102,7 @@ public class HibernateUtil {
     private static void initialiseFactory() {
         if (sessionFactory == null || sessionFactory.isClosed()) {
             try {
+            	log.info("Initialisefactory process initiated");
                 AnnotationConfiguration config = new AnnotationConfiguration();
                 config.setProperty(CONNECTION_PROVIDER_CLASS,
                                    ORG_HIBERNATE_CONNECTION_C3_P0_CONNECTION_PROVIDER);
@@ -133,6 +134,38 @@ public class HibernateUtil {
                    Settings.get(WaybackSettings.HIBERNATE_TRANSACTION_FACTORY));
                 config.setProperty(HIBERNATE_SHOW_SQL,
                               Settings.get(WaybackSettings.HIBERNATE_SHOW_SQL));
+                log.info("Hibernate properties used: " 
+                		+ CONNECTION_PROVIDER_CLASS + " = " 
+                		+ ORG_HIBERNATE_CONNECTION_C3_P0_CONNECTION_PROVIDER 
+                		+ ", " + C3P0_ACQUIRE_INCREMENT + " = "
+                		+ Settings.get(WaybackSettings.C3P0_ACQUIRE_INCREMENT)
+                		+ ", " + C3P0_IDLE_TEST_PERIOD + " = " 
+                		+ Settings.get(WaybackSettings.C3P0_IDLE_PERIOD
+                		+ ", " + C3P0_MAX_SIZE + " = " 
+                		+ Settings.get(WaybackSettings.C3P0_MAX_SIZE) 
+                		+ ", " + C3P0_MAX_STATEMENTS + " = " 
+                		+ Settings.get(WaybackSettings.C3P0_MAX_STATEMENTS)
+                		+ ", " + C3P0_MIN_SIZE + " = "
+                		+ Settings.get(WaybackSettings.C3P0_MIN_SIZE)
+                		+ ", " + C3P0_TIMEOUT + " = " 
+                		+ Settings.get(WaybackSettings.C3P0_TIMEOUT)
+                		+ ", " + HIBERNATE_CONNECTION_DRIVER_CLASS + " = "
+                		+ Settings.get(WaybackSettings.HIBERNATE_DB_DRIVER)
+                		+ ", " + HIBERNATE_CONNECTION_URL + " = " 
+                		+ Settings.get(WaybackSettings.HIBERNATE_DB_URL)
+                		+ ", " + HIBERNATE_DIALECT + " = " 
+                		+ Settings.get(WaybackSettings.HIBERNATE_DIALECT)
+                		+ ", " + HIBERNATE_FORMAT_SQL + " = "
+                		+ Settings.get(WaybackSettings.HIBERNATE_FORMAT_SQL)
+                		+ ", " + HIBERNATE_BYTECODE_USE_REFLECTION_OPTIMIZER + " = " 
+                		+ Settings.get(WaybackSettings.HIBERNATE_REFLECTION_OPTIMIZER)
+                		+ ", " + HIBERNATE_HBM2DDL_AUTO + " = "
+                		+ Settings.get(WaybackSettings.HIBERNATE_HBM2DDL_AUTO)
+                		+ ", " + HIBERNATE_TRANSACTION_FACTORY_CLASS + " = "
+                		+ Settings.get(WaybackSettings.HIBERNATE_TRANSACTION_FACTORY)
+                		+ ", " + HIBERNATE_SHOW_SQL + " = " 
+                		+ Settings.get(WaybackSettings.HIBERNATE_SHOW_SQL)));
+                
                 // Specifically allow unset username/password for the database
                 // so that we can use database without authentication, e.g. in
                 // testing.
@@ -160,7 +193,7 @@ public class HibernateUtil {
      * the wayback indexer. This method has the side effect of creating and
      * initialising a SessionFactory object if there is no current open
      * SessionFactory.
-     * @return the abovementioned hibernate session.
+     * @return the above mentioned hibernate session.
      */
     public static Session getSession() {
         initialiseFactory();
