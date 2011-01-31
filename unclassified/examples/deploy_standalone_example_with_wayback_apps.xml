@@ -398,7 +398,7 @@
                     <wayback>
                         <aggregator>
                             <indexFileInputDir>batchOutputDir</indexFileInputDir>
-                            <indexFileOutputDir>/home/test/wayback_cdx</indexFileOutputDir>
+                            <indexFileOutputDir>indexDir</indexFileOutputDir>
                             <tempAggregatorDir>aggregator_tempdir</tempAggregatorDir>
                             <aggregationInterval>600000</aggregationInterval>
                             <!-- 102400 KB = 100 MB -->
