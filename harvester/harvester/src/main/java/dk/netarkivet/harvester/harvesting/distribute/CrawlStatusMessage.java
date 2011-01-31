@@ -52,7 +52,7 @@ public class CrawlStatusMessage extends HarvesterMessage
     private HarvestReport harvestReport;
     /** harvest errors encountered. */
     private String harvestErrors;
-    /** harvest errrors encountered with details. */
+    /** harvest errors encountered with details. */
     private String harvestErrorDetails;
     /** upload errors encountered. */
     private String uploadErrors;
@@ -87,7 +87,7 @@ public class CrawlStatusMessage extends HarvesterMessage
      * @param jobID (see description for the other constructor)
      * @param statusCode (see description for the other constructor)
      * @see CrawlStatusMessage#CrawlStatusMessage(long,
-     *  JobStatus, AbstractHarvestReport)
+     *  JobStatus, HarvestReport)
      */
     public CrawlStatusMessage(long jobID, JobStatus statusCode) {
         this(jobID, statusCode, null);
