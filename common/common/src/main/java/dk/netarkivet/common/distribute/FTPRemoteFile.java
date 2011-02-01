@@ -37,6 +37,7 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.io.CopyStreamException;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -135,7 +136,7 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
      * <b>settings.common.remoteFile.retries</b>: <br>
      * The setting for the number of times FTPRemoteFile should try before
      * giving up a copyTo operation. */
-    public static final String FTP_COPYTO_RETRIES_SETTINGS
+    public static String FTP_COPYTO_RETRIES_SETTINGS
             = "settings.common.remoteFile.retries";
 
     /**
@@ -172,8 +173,13 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                 }
                 ftpFileName = "-";
             } catch (IOException e) {
+            	String msg = "";
+            	if (e instanceof CopyStreamException) {
+                	CopyStreamException realException = (CopyStreamException) e;
+                	msg += "(real cause = " + realException.getIOException() + ")";
+                }
                 throw new IOFailure("I/O trouble generating checksum on file '"
-                                    + file.getAbsolutePath() + "'", e);
+                                    + file.getAbsolutePath() + "' " + msg, e);
             }
         } else {
             // If the ftpServerName is localhost, it is not going to work across
@@ -227,10 +233,16 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                                       + ": " + getFtpErrorMessage());
                         }
                     } catch (IOException e) {
-                        final String message = "Write operation to '"
+                        String message = "Write operation to '"
                                                + ftpFileName
                                                + "' failed on attempt " + tried
                                                + " of " + FTP_COPYTO_RETRIES;
+                        if (e instanceof CopyStreamException) {
+                        	CopyStreamException realException 
+                        		= (CopyStreamException) e;
+                        	message += "(real cause = " 
+                        		+ realException.getIOException() + ")";
+                        }
                         log.debug(message, e);
                     }
                 }
@@ -258,7 +270,7 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                         in.close();
                     }
                 } catch (IOException e) {
-                    log.warn("Problem closing inputstream");
+                    log.warn("Problem closing inputstream: " + e);
                     // not a serious bug
                 }
                 logOut();
@@ -352,8 +364,12 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                 }
             };
         } catch (IOException e) {
-            final String msg = "Creating inputstream from '" + ftpFileName
-                               + "' failed";
+            String msg = "Creating inputstream from '" + ftpFileName
+                               + "' failed ";
+            if (e instanceof CopyStreamException) {
+            	CopyStreamException realException = (CopyStreamException) e;
+            	msg += "(real cause = " + realException.getIOException() + ")";
+            }
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         }
@@ -402,8 +418,12 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                 }
             }
         } catch (IOException e) {
-            final String msg = "Append operation from '" + ftpFileName
-                    + "' failed";
+            String msg = "Append operation from '" + ftpFileName
+                    + "' failed ";
+            if (e instanceof CopyStreamException) {
+            	CopyStreamException realException = (CopyStreamException) e;
+            	msg += "(real cause = " + realException.getIOException() + ")";
+            }
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
@@ -486,6 +506,11 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
 
             // This only means that PASV is sent before every transfer command.
             currentFTPClient.enterLocalPassiveMode();
+            // Added extra logging about timeouts
+            log.debug("w/ DataTimeout (ms): " 
+                    + currentFTPClient.getDefaultTimeout());
+            log.debug("w/ ConnectTimeout (ms): " 
+                    + currentFTPClient.getConnectTimeout());
         } catch (IOException e) {
             final String msg = "Connect to " + ftpServerName + " from host: "
                                + SystemUtils.getLocalHostName() + " failed";
@@ -509,15 +534,19 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                 currentFTPClient.disconnect();
             }
         } catch (IOException e) {
-            final String msg = "Disconnect from '" + ftpServerName
-                               + "' failed";
+            String msg = "Disconnect from '" + ftpServerName
+                               + "' failed ";
+            if (e instanceof CopyStreamException) {
+            	CopyStreamException realException = (CopyStreamException) e;
+            	msg += "(real cause = " + realException.getIOException() + ")";
+            }
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } catch (NullPointerException e) {
             /*
             * The currentFTPClient.disconnect() call occasionally
             * generates NullPointer-exception. This is a known bug:
-            * http://issues.apache.org/bugzilla/show_bug.cgi?id=26296
+            * https://issues.apache.org/jira/browse/NET-59
             * We can ignore this exception.
             */
         }

@@ -50,7 +50,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     protected final boolean useChecksums;
     /** If true, the file may be deleted after all transfers are done. */
     protected final boolean fileDeletable;
-    /** If true, the file may be downloaded multple times. Otherwise, the
+    /** If true, the file may be downloaded multiple times. Otherwise, the
      * remote file is invalidated after first transfer. */
     protected final boolean multipleDownloads;
     /** The size of the file. */
@@ -58,11 +58,11 @@ public abstract class AbstractRemoteFile implements RemoteFile {
 
     /**
      * Initialise common fields in remote file.
-     * Overriding classes should also initalise checksum field.
+     * Overriding classes should also initialise checksum field.
      *
      * @param file The file to make remote file for.
      * @param useChecksums If true, communications should be checksummed.
-     * @param fileDeletable If true, the file may be downloaded multple times.
+     * @param fileDeletable If true, the file may be downloaded multiple times.
      * Otherwise, the remote file is invalidated after first transfer.
      * @param multipleDownloads If useChecksums is true, contains the file
      * checksum.
