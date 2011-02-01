@@ -200,8 +200,9 @@ public class AggregationWorker implements CleanupIF {
                                   tempIntermediateIndexFile);
             tempIntermediateIndexFile.renameTo(INTERMEDIATE_INDEX_FILE);
             if (log.isDebugEnabled()) {
-                log.debug(
-                        "Merged temporary index file into intermediate index file");
+                log.debug("Merged temporary index file into intermediate index "
+                		+ "file '"
+                		+ INTERMEDIATE_INDEX_FILE.getAbsolutePath() + "'.");
             }
         }
 
@@ -242,8 +243,8 @@ public class AggregationWorker implements CleanupIF {
         if (!FINAL_INDEX_FILE.exists()) {
             INTERMEDIATE_INDEX_FILE.renameTo(FINAL_INDEX_FILE);
             if (log.isDebugEnabled()) {
-                log.debug(
-                        "Promoting Intermediate Index file to final index file");
+                log.debug("Promoting Intermediate Index file to final index "
+                		+ "file '" + FINAL_INDEX_FILE.getAbsolutePath() + "'.");
             }
         } else {
             aggregator.mergeFiles(new File[]{FINAL_INDEX_FILE,
@@ -317,7 +318,9 @@ public class AggregationWorker implements CleanupIF {
         if (temporaryDir.exists()) {
             throw new IllegalStateException(
                     "An temporary Aggregator dir ("
-                    + Settings.get(WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR)
+                    + Settings.getFile(
+                    		WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR)
+                    		.getAbsolutePath()
                     + ") already exists. This indicates that an instance of "
                     + "the aggregator is already running. Please ensure this " 
                     + "is not the case, remove the temp directory and"

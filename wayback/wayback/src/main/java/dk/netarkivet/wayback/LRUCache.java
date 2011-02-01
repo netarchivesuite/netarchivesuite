@@ -89,6 +89,9 @@ public class LRUCache {
             @Override protected boolean removeEldestEntry (Map.Entry<String,File> eldest) {
                 boolean removeEldest = size() > LRUCache.this.cacheSize;
                 if (removeEldest) {
+                	logger.info("Deleting file '"
+                			+ eldest.getValue().getAbsolutePath()
+                			+ "' from cache.");
                     boolean deleted = eldest.getValue().delete();
                     if (!deleted) {
                         logger.warn("Unable to deleted LRU file from cache: " 
