@@ -104,6 +104,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
         @Override
         public void run() {
             CrawlProgressMessage cpm;
+            if (crawlIsOver) { // Don't check again; we are already done
+                return;
+            }
             try {
                 cpm = heritrixController.getCrawlProgress();
             } catch (IOFailure iof) {
