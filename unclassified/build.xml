@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     commons-fileupload-1.2.1.jar
     commons-io-2.0.1.jar
     commons-net-2.2.jar
-    dom4j-1.5.2.jar
+    dom4j-1.6.1.jar
     heritrix/lib/heritrix-1.14.4.jar
     commons-collections-3.1.jar
     heritrix-dependencies/commons-codec-1.3.jar
@@ -101,7 +101,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="commons-fileupload-1.2.1.jar"/>
                 <include name="commons-net-2.2.jar"/>
             	<include name="commons-io-2.0.1.jar"/>
-                <include name="dom4j-1.5.2.jar"/>
+                <include name="dom4j-1.6.1.jar"/>
                 <include name="heritrix/lib/heritrix-1.14.4.jar"/>
                 <include name="commons-collection-3.1.jar"/>
                 <include name="heritrix-dependencies/commons-codec-1.3.jar"/>
