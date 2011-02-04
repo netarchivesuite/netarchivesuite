@@ -32,7 +32,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.DigestInputStream;
 import java.security.DigestOutputStream;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +47,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Class encapsulating upload to & download from an ftp-server.
@@ -135,15 +138,15 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
     /**
      * <b>settings.common.remoteFile.retries</b>: <br>
      * The setting for the number of times FTPRemoteFile should try before
-     * giving up a copyTo operation. */
-    public static String FTP_COPYTO_RETRIES_SETTINGS
+     * giving up a copyTo operation or logOn operation */
+    public static String FTP_RETRIES_SETTINGS
             = "settings.common.remoteFile.retries";
 
     /**
-     * How many times we will retry upload and download.
+     * How many times we will retry upload, download, and logon.
      */
-    private static final transient int FTP_COPYTO_RETRIES
-            = Settings.getInt(FTP_COPYTO_RETRIES_SETTINGS);
+    private static final transient int FTP_RETRIES
+            = Settings.getInt(FTP_RETRIES_SETTINGS);
 
     /**
      * Private constructor used by getInstance() static-method Tries to generate
@@ -198,9 +201,10 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
             // clashing.
             final int aMagicNumber = 100000;
             ftpFileName = file.getName() + "-"
-                          + (int) (Math.random() * aMagicNumber) + "-"
+                          + new Random().nextInt(aMagicNumber) + "-"
                           + new Date().getTime();
             InputStream in;
+            
             try {
                 in = new FileInputStream(localFile);
             } catch (FileNotFoundException e) {
@@ -223,20 +227,20 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                 }
                 boolean success = false;
                 int tried = 0;
-                while (!success && tried < FTP_COPYTO_RETRIES) {
+                while (!success && tried < FTP_RETRIES) {
                     tried++;
                     try {
                         success = currentFTPClient.storeFile(ftpFileName, in);
                         if (!success) {
                             log.debug("FTP store failed attempt '" + tried
-                                      + "' of " + FTP_COPYTO_RETRIES
+                                      + "' of " + FTP_RETRIES
                                       + ": " + getFtpErrorMessage());
                         }
                     } catch (IOException e) {
                         String message = "Write operation to '"
                                                + ftpFileName
                                                + "' failed on attempt " + tried
-                                               + " of " + FTP_COPYTO_RETRIES;
+                                               + " of " + FTP_RETRIES;
                         if (e instanceof CopyStreamException) {
                         	CopyStreamException realException 
                         		= (CopyStreamException) e;
@@ -466,6 +470,7 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
     /**
      * Create FTPClient and log on to ftp-server, if not already connected to
      * ftp-server.  Attempts to set binary mode and passive mode.
+     * Will try at least FTP_RETRIES times
      */
     private void logOn() {
         if (currentFTPClient != null && currentFTPClient.isConnected()) {
@@ -478,44 +483,60 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                   + ftpUserPassword.replaceAll(".", "*") + "@"
                   + ftpServerName + ":" + ftpServerPort);
 
-        try {
-            currentFTPClient.connect(ftpServerName, ftpServerPort);
+        int tries = 0;
+        boolean operationSuccessful = false;
+        while (!operationSuccessful && tries < FTP_RETRIES) {
+            tries++;
+            try {
+                currentFTPClient.connect(ftpServerName, ftpServerPort);
 
-            if (!currentFTPClient.login(ftpUserName, ftpUserPassword)) {
-                final String message = "Could not log in [from host: "
-                                       + SystemUtils.getLocalHostName()
-                                       + "] to '"
-                                       + ftpServerName
-                                       + "' on port " + ftpServerPort
-                                       + " with user '"
-                                       + ftpUserName + "' password '"
-                                       + ftpUserPassword.replaceAll(".", "*")
-                                       + "': " + getFtpErrorMessage();
-                log.warn(message);
-                throw new IOFailure(message);
+                if (!currentFTPClient.login(ftpUserName, ftpUserPassword)) {
+                    final String message = "Could not log in [from host: "
+                        + SystemUtils.getLocalHostName()
+                        + "] to '"
+                        + ftpServerName
+                        + "' on port " + ftpServerPort
+                        + " with user '"
+                        + ftpUserName + "' password '"
+                        + ftpUserPassword.replaceAll(".", "*")
+                        + "': " + getFtpErrorMessage();
+                    log.warn(message);
+                    throw new IOFailure(message);
+                }
+
+                if (!currentFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE)) {
+                    final String message = "Could not set binary on '"
+                        + ftpServerName
+                        + "', losing high bits.  Error: "
+                        + getFtpErrorMessage();
+                    log.warn(message);
+                    throw new IOFailure(message);
+                }
+
+                // This only means that PASV is sent before every transfer command.
+                currentFTPClient.enterLocalPassiveMode();
+                // Added extra logging about timeouts
+                log.debug("w/ DataTimeout (ms): " 
+                        + currentFTPClient.getDefaultTimeout());
+                log.debug("w/ ConnectTimeout (ms): " 
+                        + currentFTPClient.getConnectTimeout());
+                operationSuccessful = true;
+            } catch (IOException e) {
+                final String msg = "Connect to " + ftpServerName
+                + " from host: "
+                + SystemUtils.getLocalHostName() + " failed";
+                if (tries < FTP_RETRIES) {
+                    log.debug(msg + ". Attempt #" + tries + "of max "
+                            + FTP_RETRIES
+                            + ". Will sleep a while before trying to "
+                            + " connect again. Exception: ", e);
+                    TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE); 
+                } else {
+                    log.warn(msg + ". This was the last (#" + tries 
+                            + ") connection attempt");
+                    throw new IOFailure(msg, e);
+                }            
             }
-
-            if (!currentFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE)) {
-                final String message = "Could not set binary on '"
-                                       + ftpServerName
-                                       + "', losing high bits.  Error: "
-                                       + getFtpErrorMessage();
-                log.warn(message);
-                throw new IOFailure(message);
-            }
-
-            // This only means that PASV is sent before every transfer command.
-            currentFTPClient.enterLocalPassiveMode();
-            // Added extra logging about timeouts
-            log.debug("w/ DataTimeout (ms): " 
-                    + currentFTPClient.getDefaultTimeout());
-            log.debug("w/ ConnectTimeout (ms): " 
-                    + currentFTPClient.getConnectTimeout());
-        } catch (IOException e) {
-            final String msg = "Connect to " + ftpServerName + " from host: "
-                               + SystemUtils.getLocalHostName() + " failed";
-            log.warn(msg, e);
-            throw new IOFailure(msg, e);
         }
 
         log.debug("Logged onto ftp://" + ftpUserName + ":"
