@@ -128,7 +128,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
                 }
                 ARCRecord record = null;
                 while (it.hasNext()) {
-                    log.debug("At begin of processing-loop");
+                    log.trace("At begin of processing-loop");
                     // Get a record from the file
                     record = (ARCRecord) it.next();
                     // Process with the job
@@ -172,7 +172,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
                         // records
                         break;
                     }
-                    log.debug("At end of processing-loop");
+                    log.trace("At end of processing-loop");
                 } 
             } finally {
                 try {
