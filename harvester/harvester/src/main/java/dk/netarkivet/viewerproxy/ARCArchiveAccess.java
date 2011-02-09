@@ -42,6 +42,7 @@ import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * The ARCArchiveAccess class implements reading of ARC indexes and files.
@@ -77,8 +78,14 @@ public class ARCArchiveAccess implements URIResolver {
 
     /** Logger for this class. */
     private final Log log = LogFactory.getLog(getClass().getName());
+    
+    /** If the value is true, we will try to lookup w/ ftp instead of http, 
+     * if we don't get a hit in the index. */
+    private final static boolean tryToLookupUriAsFtp = Settings.getBoolean(
+    		ViewerProxySettings.TRY_LOOKUP_URI_AS_FTP); 
+    
 
-    /** Initialise new ARCArchiveAcces with no index file.
+    /** Initialise new ARCArchiveAccess with no index file.
      *
      * @param arcRepositoryClient The arcRepositoryClient to use when retrieving
      * @throws ArgumentNotValid if arcRepositoryClient is null.
@@ -87,6 +94,7 @@ public class ARCArchiveAccess implements URIResolver {
         ArgumentNotValid.checkNotNull(
                 arcRepositoryClient, "ArcRepositoryClient arcRepositoryClient");
         lookup = new ARCLookup(arcRepositoryClient);
+        lookup.setTryToLookupUriAsFtp(tryToLookupUriAsFtp);
     }
 
     /**

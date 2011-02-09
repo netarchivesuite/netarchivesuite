@@ -33,5 +33,6 @@
 <settings>
     <viewerproxy>
         <baseDir>viewerproxy</baseDir>
+	<tryLookupUriAsFtp>false</tryLookupUriAsFtp>
     </viewerproxy>
 </settings>

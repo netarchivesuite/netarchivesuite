@@ -53,4 +53,13 @@ public class ViewerProxySettings {
      * index for the jobs being viewed. This directory can be used by multiple
      * ViewerProxy applications running on the same machine. */
     public static String VIEWERPROXY_DIR = "settings.viewerproxy.baseDir";
+    
+    /**
+     * <b>settings.viewerproxy.tryLookupUriAsFtp</b>: <br>
+     * If we fail to lookup an URI, we will try changing the protocol to ftp,
+     * if this setting is set to true. The default is false.
+     *  
+     */
+    public static String TRY_LOOKUP_URI_AS_FTP = "settings.viewerproxy.tryLookupUriAsFtp";
+    
 }

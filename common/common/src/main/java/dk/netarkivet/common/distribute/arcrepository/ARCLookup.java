@@ -59,6 +59,10 @@ public class ARCLookup {
     /** Logger for this class. */
     private final Log log = LogFactory.getLog(getClass().getName());
 
+    /** If the value is true, we will try to lookup w/ ftp instead of http, 
+     * if we don't get a hit in the index. */
+    private boolean tryToLookupUriAsFtp;
+
     /** Create a new ARCLookup object.
      *
      * @param arcRepositoryClient The interface to the ArcRepository
@@ -70,6 +74,16 @@ public class ARCLookup {
         this.arcRepositoryClient = arcRepositoryClient;
         luceneSearcher = null;
     }
+    
+    /**
+     * 
+     * @param searchForFtpUri if true, we replace the http schema with ftp and 
+     * try again, if unsuccessful with http as the schema
+     */
+    public void setTryToLookupUriAsFtp(boolean searchForFtpUri) {
+    	this.tryToLookupUriAsFtp = searchForFtpUri;
+    }
+    
 
     /** This method sets the current Lucene index this object works
      * on, replacing and closing the current index if one is already set.
@@ -105,6 +119,10 @@ public class ARCLookup {
      * is converted to "%2C"). If this returns no match, the method then
      * searches for a non-url-decoded match. If neither returns a match
      * the method returns null.
+     * 
+     * If the tryToLookupUriAsFtp field is set to true, we will try exchanging
+     * the schema with ftp, whenever we can't lookup the uri with the original
+     * schema.
      *
      * @param uri The URI to find in the archive.  If the URI does not
      * match any entries in the archive, null is returned.
@@ -124,6 +142,19 @@ public class ARCLookup {
             key = luceneLookup(uri.getScheme() + ":" +
                                uri.getRawSchemeSpecificPart());
         }
+        
+        if (key == null && tryToLookupUriAsFtp) {
+        	log.debug("Url not found with the schema '" + uri.getScheme()
+        			+ ". Now trying with 'ftp' as the schema");
+        	final String ftpSchema = "ftp";        	
+        	 key = luceneLookup(ftpSchema + ":" +
+                     uri.getSchemeSpecificPart());
+        	 if (key == null) {
+        		 key = luceneLookup(ftpSchema + ":" +
+                         uri.getRawSchemeSpecificPart());
+        	 }
+        }
+        
         if (key == null) {
             return null; // key not found
         } else {
