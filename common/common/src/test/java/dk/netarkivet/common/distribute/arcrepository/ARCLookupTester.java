@@ -169,7 +169,7 @@ public class ARCLookupTester extends TestCase {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(TestInfo.WORKING_DIR, "serverdir").getAbsolutePath());
 
         // Get the data from the bitarchive
-        InputStream is = lookup.lookup(TestInfo.GIF_URL);
+        InputStream is = lookup.lookup(TestInfo.GIF_URL).getResultStream();
         assertNotNull("Should be able to find image", is);
         byte[] got = readFully(is);
         is.close();
@@ -233,7 +233,7 @@ public class ARCLookupTester extends TestCase {
         realArcRepos.close();
         lookup = new ARCLookup(new TestArcRepositoryClient());
         lookup.setIndex(TestInfo.INDEX_DIR_2_3);
-        InputStream is = lookup.lookup(TestInfo.GIF_URL);
+        InputStream is = lookup.lookup(TestInfo.GIF_URL).getResultStream();
         //Read a header line
         String line1 = readLine(is);
         //Read blank line

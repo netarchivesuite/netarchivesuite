@@ -39,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
+import dk.netarkivet.common.distribute.arcrepository.ResultStream;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -120,7 +121,8 @@ public class ARCArchiveAccess implements URIResolver {
         ArgumentNotValid.checkNotNull(request, "Request request");
         ArgumentNotValid.checkNotNull(response, "Response response");
         URI uri = request.getURI();
-        InputStream content = null;
+        ResultStream content = null;
+        InputStream contentStream = null;
         try {
             content = lookup.lookup(uri);
             if (content == null) {
@@ -129,14 +131,17 @@ public class ARCArchiveAccess implements URIResolver {
                 createNotFoundResponse(uri, response);
                 return URIResolver.NOT_FOUND;
             }
+            contentStream = content.getResultStream();
             // First write the original header.
-            writeHeader(content, response);
+            if (content.containsHeader()) {
+            	writeHeader(contentStream, response);
+            }
             // Now flush the content to the browser.
-            readPage(content, response.getOutputStream());
+            readPage(contentStream, response.getOutputStream());
         } finally {
-            if (content != null) {
+            if (contentStream != null) {
                 try {
-                    content.close();
+                    contentStream.close();
                 } catch (IOException e) {
                     log.debug(
                                   "Error writing response to browser "

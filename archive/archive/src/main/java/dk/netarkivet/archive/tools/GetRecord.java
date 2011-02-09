@@ -132,7 +132,7 @@ public class GetRecord extends ToolRunnerBase {
                 String uri = args[1];
                 ARCLookup lookup = new ARCLookup(arcrep);
                 lookup.setIndex(new File(indexPath));
-                InputStream is = lookup.lookup(new URI(uri));
+                InputStream is = lookup.lookup(new URI(uri)).getResultStream();
                 if (is == null) {
                     throw new IOFailure(
                             "Resource missing in index or repository for '"

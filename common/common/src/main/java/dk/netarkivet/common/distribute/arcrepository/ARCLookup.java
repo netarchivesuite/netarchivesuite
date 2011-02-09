@@ -132,8 +132,9 @@ public class ARCLookup {
      * in the bit archive, or if some other failure happened while finding
      * the file.
      */
-    public InputStream lookup(URI uri) {
+    public ResultStream lookup(URI uri) {
         ArgumentNotValid.checkNotNull(uri, "uri");
+        boolean containsHeader = true;
         // the URI.getSchemeSpecificPart() carries out the url-decoding
         ARCKey key = luceneLookup(uri.getScheme() + ":" +
                                   uri.getSchemeSpecificPart());
@@ -152,6 +153,13 @@ public class ARCLookup {
         	 if (key == null) {
         		 key = luceneLookup(ftpSchema + ":" +
                          uri.getRawSchemeSpecificPart());
+        		 if (key != null) {
+        			// Remember, that the found ftp-records don't have any HTTP Header
+        			 containsHeader = false; 
+        		 }
+        	 } else {
+        		 // Remember, that the found ftp-record don't have any HTTP Header
+        		 containsHeader = false;
         	 }
         }
         
@@ -170,7 +178,7 @@ public class ARCLookup {
                 log.debug(message);
                 throw new IOFailure(message);
             }
-            return bitarchiveRecord.getData();
+            return new ResultStream(bitarchiveRecord.getData(), containsHeader);
         }
     }
 
