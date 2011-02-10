@@ -418,9 +418,10 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
      *            the {@link CrawlProgressMessage} to process.
      */
     public static StartedJobInfo build(CrawlProgressMessage msg) {
-
-        String harvestName = HarvestDefinitionDAO.getInstance().read(
-                msg.getHarvestID()).getName();
+        ArgumentNotValid.checkNotNull(msg, "CrawlProgressMessage msg");
+        String harvestName = HarvestDefinitionDAO.getInstance()
+            .getHarvestName(msg.getHarvestID());
+        
         StartedJobInfo sji = new StartedJobInfo(harvestName, msg.getJobID());
 
         CrawlServiceInfo heritrixInfo = msg.getHeritrixStatus();
