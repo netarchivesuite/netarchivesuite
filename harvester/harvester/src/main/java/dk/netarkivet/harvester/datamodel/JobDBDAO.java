@@ -69,7 +69,7 @@ public class JobDBDAO extends JobDAO {
     private final Log log = LogFactory.getLog(getClass());
 
     /** Version of jobs table needed by our code. */
-    private static final int JOBS_VERSION_NEEDED = 5;
+    private static final int JOBS_VERSION_NEEDED = 6;
 
     /** Version of job_configs table needed by our code. */
     private static final int JOB_CONFIGS_VERSION_NEEDED = 1;
@@ -134,11 +134,12 @@ public class JobDBDAO extends JobDAO {
             statement = dbconnection.prepareStatement(
                     "INSERT INTO jobs "
                     + "(job_id, harvest_id, status, priority, forcemaxcount, "
-                    + "forcemaxbytes, orderxml, orderxmldoc, seedlist, "
+                    + "forcemaxbytes, forcemaxrunningtime, orderxml, "
+                    + "orderxmldoc, seedlist, "
                     + "harvest_num, startdate, enddate, submitteddate, "
                     + "num_configs, edition, resubmitted_as_job) "
                     + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
-                    + "?, ? )");
+                    + "?, ?, ? )");
 
 
             statement.setLong(1, job.getJobID());
@@ -147,26 +148,27 @@ public class JobDBDAO extends JobDAO {
             statement.setInt(4, job.getPriority().ordinal());
             statement.setLong(5, job.getForceMaxObjectsPerDomain());
             statement.setLong(6, job.getMaxBytesPerDomain());
-            DBUtils.setStringMaxLength(statement, 7, job.getOrderXMLName(),
+            statement.setLong(7, job.getMaxJobRunningTime());
+            DBUtils.setStringMaxLength(statement, 8, job.getOrderXMLName(),
                                          Constants.MAX_NAME_SIZE, job,
                                          "order.xml name");
             final String orderreader = job.getOrderXMLdoc().asXML();
-            DBUtils.setClobMaxLength(statement, 8, orderreader,
+            DBUtils.setClobMaxLength(statement, 9, orderreader,
                                        Constants.MAX_ORDERXML_SIZE, job,
                                        "order.xml");
-            DBUtils.setClobMaxLength(statement, 9, job.getSeedListAsString(),
+            DBUtils.setClobMaxLength(statement, 10, job.getSeedListAsString(),
                                        Constants.MAX_COMBINED_SEED_LIST_SIZE,
                                        job, "seedlist");
-            statement.setInt(10, job.getHarvestNum());
-            DBUtils.setDateMaybeNull(statement, 11, job.getActualStart());
-            DBUtils.setDateMaybeNull(statement, 12, job.getActualStop());
-            DBUtils.setDateMaybeNull(statement, 13, job.getSubmittedDate());
+            statement.setInt(11, job.getHarvestNum());
+            DBUtils.setDateMaybeNull(statement, 12, job.getActualStart());
+            DBUtils.setDateMaybeNull(statement, 13, job.getActualStop());
+            DBUtils.setDateMaybeNull(statement, 14, job.getSubmittedDate());
 
             // The size of the configuration map == number of configurations
-            statement.setInt(14, job.getDomainConfigurationMap().size());
+            statement.setInt(15, job.getDomainConfigurationMap().size());
             long initialEdition = 1;
-            statement.setLong(15, initialEdition);
-            DBUtils.setLongMaybeNull(statement, 16, job.getResubmittedAsJob());
+            statement.setLong(16, initialEdition);
+            DBUtils.setLongMaybeNull(statement, 17, job.getResubmittedAsJob());
 
             statement.executeUpdate();
             createJobConfigsEntries(dbconnection, job);
@@ -309,6 +311,7 @@ public class JobDBDAO extends JobDAO {
                     "UPDATE jobs SET "
                     + "harvest_id = ?, status = ?, priority = ?, "
                     + "forcemaxcount = ?, forcemaxbytes = ?, "
+                    + "forcemaxrunningtime = ?,"
                     + "orderxml = ?, "
                     + "orderxmldoc = ?, seedlist = ?, "
                     + "harvest_num = ?, harvest_errors = ?, "
@@ -322,41 +325,42 @@ public class JobDBDAO extends JobDAO {
             statement.setInt(3, job.getPriority().ordinal());
             statement.setLong(4, job.getForceMaxObjectsPerDomain());
             statement.setLong(5, job.getMaxBytesPerDomain());
-            DBUtils.setStringMaxLength(statement, 6, job.getOrderXMLName(),
+            statement.setLong(6, job.getMaxJobRunningTime());
+            DBUtils.setStringMaxLength(statement, 7, job.getOrderXMLName(),
                                          Constants.MAX_NAME_SIZE, job,
                                          "order.xml name");
             final String orderreader = job.getOrderXMLdoc().asXML();
-            DBUtils.setClobMaxLength(statement, 7, orderreader,
+            DBUtils.setClobMaxLength(statement, 8, orderreader,
                                        Constants.MAX_ORDERXML_SIZE, job,
                                        "order.xml");
-            DBUtils.setClobMaxLength(statement, 8, job.getSeedListAsString(),
+            DBUtils.setClobMaxLength(statement, 9, job.getSeedListAsString(),
                                        Constants.MAX_COMBINED_SEED_LIST_SIZE,
                                        job, "seedlist");
-            statement.setInt(9, job.getHarvestNum()); // Not in job yet
-            DBUtils.setStringMaxLength(statement, 10, job.getHarvestErrors(),
+            statement.setInt(10, job.getHarvestNum()); // Not in job yet
+            DBUtils.setStringMaxLength(statement, 11, job.getHarvestErrors(),
                                          Constants.MAX_ERROR_SIZE, job,
                                          "harvest_error");
             DBUtils.setStringMaxLength(
-                    statement, 11, job.getHarvestErrorDetails(),
+                    statement, 12, job.getHarvestErrorDetails(),
                     Constants.MAX_ERROR_DETAIL_SIZE, job,
                     "harvest_error_details");
-            DBUtils.setStringMaxLength(statement, 12, job.getUploadErrors(),
+            DBUtils.setStringMaxLength(statement, 13, job.getUploadErrors(),
                                          Constants.MAX_ERROR_SIZE, job,
                                          "upload_error");
             DBUtils.setStringMaxLength(
-                    statement, 13, job.getUploadErrorDetails(),
+                    statement, 14, job.getUploadErrorDetails(),
                     Constants.MAX_ERROR_DETAIL_SIZE, job,
                     "upload_error_details");
             long edition = job.getEdition() + 1;
-            DBUtils.setDateMaybeNull(statement, 14, job.getActualStart());
-            DBUtils.setDateMaybeNull(statement, 15, job.getActualStop());
-            statement.setInt(16, job.getDomainConfigurationMap().size());
-            statement.setLong(17, edition);
-            DBUtils.setDateMaybeNull(statement, 18, job.getSubmittedDate());
-            DBUtils.setLongMaybeNull(statement, 19, job.getResubmittedAsJob());
+            DBUtils.setDateMaybeNull(statement, 15, job.getActualStart());
+            DBUtils.setDateMaybeNull(statement, 16, job.getActualStop());
+            statement.setInt(17, job.getDomainConfigurationMap().size());
+            statement.setLong(18, edition);
+            DBUtils.setDateMaybeNull(statement, 19, job.getSubmittedDate());
+            DBUtils.setLongMaybeNull(statement, 20, job.getResubmittedAsJob());
 
-            statement.setLong(20, job.getJobID());
-            statement.setLong(21, job.getEdition());
+            statement.setLong(21, job.getJobID());
+            statement.setLong(22, job.getEdition());
             final int rows = statement.executeUpdate();
             if (rows == 0) {
                 String message = "Edition " + job.getEdition()
@@ -397,7 +401,8 @@ public class JobDBDAO extends JobDAO {
         try {
             statement = dbconnection.prepareStatement("SELECT "
                                    + "harvest_id, status, priority, "
-                                   + "forcemaxcount, forcemaxbytes, orderxml, "
+                                   + "forcemaxcount, forcemaxbytes, "
+                                   + "forcemaxrunningtime, orderxml, "
                                    + "orderxmldoc, seedlist, harvest_num,"
                                    + "harvest_errors, harvest_error_details, "
                                    + "upload_errors, upload_error_details, "
@@ -412,35 +417,36 @@ public class JobDBDAO extends JobDAO {
             JobPriority pri = JobPriority.fromOrdinal(result.getInt(3));
             long forceMaxCount = result.getLong(4);
             long forceMaxBytes = result.getLong(5);
-            String orderxml = result.getString(6);
+            long forceMaxRunningTime = result.getLong(6);
+            String orderxml = result.getString(7);
 
             Document orderXMLdoc = null;
 
             boolean useClobs = DBSpecifics.getInstance().supportsClob();
             if (useClobs) {
-                Clob clob = result.getClob(7);
+                Clob clob = result.getClob(8);
                 orderXMLdoc = getOrderXMLdocFromClob(clob);
             } else {
-                orderXMLdoc = XmlUtils.documentFromString(result.getString(7));
+                orderXMLdoc = XmlUtils.documentFromString(result.getString(8));
             }
             String seedlist = "";
             if (useClobs) {
-                Clob clob = result.getClob(8);
+                Clob clob = result.getClob(9);
                 seedlist = clob.getSubString(1, (int) clob.length());
             } else {
-                seedlist = result.getString(8);
+                seedlist = result.getString(9);
             }
 
-            int harvestNum = result.getInt(9);
-            String harvestErrors = result.getString(10);
-            String harvestErrorDetails = result.getString(11);
-            String uploadErrors = result.getString(12);
-            String uploadErrorDetails = result.getString(13);
-            Date startdate = DBUtils.getDateMaybeNull(result, 14);
-            Date stopdate = DBUtils.getDateMaybeNull(result, 15);
-            Date submittedDate = DBUtils.getDateMaybeNull(result, 16);
-            Long edition = result.getLong(17);
-            Long resubmittedAsJob = DBUtils.getLongMaybeNull(result, 18);
+            int harvestNum = result.getInt(10);
+            String harvestErrors = result.getString(11);
+            String harvestErrorDetails = result.getString(12);
+            String uploadErrors = result.getString(13);
+            String uploadErrorDetails = result.getString(14);
+            Date startdate = DBUtils.getDateMaybeNull(result, 15);
+            Date stopdate = DBUtils.getDateMaybeNull(result, 16);
+            Date submittedDate = DBUtils.getDateMaybeNull(result, 17);
+            Long edition = result.getLong(18);
+            Long resubmittedAsJob = DBUtils.getLongMaybeNull(result, 19);
 
             statement.close();
             // IDs should match up in a natural join
@@ -470,7 +476,8 @@ public class JobDBDAO extends JobDAO {
                 configurationMap.put(domainName, configName);
             }
             final Job job = new Job(harvestID, configurationMap,
-                    pri, forceMaxCount, forceMaxBytes, status, orderxml,
+                    pri, forceMaxCount, forceMaxBytes, forceMaxRunningTime, 
+                    status, orderxml,
                     orderXMLdoc, seedlist, harvestNum);
             job.appendHarvestErrors(harvestErrors);
             job.appendHarvestErrorDetails(harvestErrorDetails);

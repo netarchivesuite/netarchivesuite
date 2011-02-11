@@ -195,6 +195,12 @@ public class Job implements Serializable {
      * The total number of objects expected by all added configurations.
      */
     private long totalCountObjects;
+    
+    /**
+     * The max time in seconds given to the harvester for this job. 
+     * 0 is unlimited.
+     */
+    private long forceMaxRunningTime;
 
     /** If true, this job object is still undergoing changes due to having
      * more configurations added.  When set to false, the object is no longer
@@ -236,6 +242,8 @@ public class Job implements Serializable {
      *                                 -1 means no limit
      * @param forceMaxBytesPerDomain The maximum number of objects harvested
      * from a domain, or -1 for no limit.
+     * @param forceMaxJobRunningTime The max time in seconds given to the 
+     *  										harvester for this job
      * @param harvestNum               the run number of the harvest definition
      * @throws ArgumentNotValid if cfg or priority is null or harvestID is
      *                          invalid, or if any limit < -1
@@ -243,6 +251,7 @@ public class Job implements Serializable {
      */
     Job(Long harvestID, DomainConfiguration cfg, JobPriority priority,
         long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
+        long forceMaxJobRunningTime,
         int harvestNum) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
@@ -302,6 +311,10 @@ public class Job implements Serializable {
         // as result of this method-call.
         addConfiguration(cfg);
         addGlobalCrawlerTraps();
+        
+        // Set MaxJobrunningTime for this job
+        setMaxJobRunningTime(forceMaxJobRunningTime);
+        
         status = JobStatus.NEW;
     }
 
@@ -315,6 +328,8 @@ public class Job implements Serializable {
      *                                 configuration settings. 0 means no limit.
      * @param forceMaxBytesPerDomain The maximum number of objects harvested
      * from a domain, or -1 for no limit.
+     * @param forceMaxJobRunningTime The max time in seconds given to the 
+     *  										harvester for this job
      * @param status                   the current status of the job.
      * @param orderXMLname             the name of the order template used.
      * @param orderXMLdoc              the (possibly modified) template
@@ -324,6 +339,7 @@ public class Job implements Serializable {
     Job(Long harvestID, Map<String, String> configurations,
             JobPriority priority,
             long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
+            long forceMaxJobRunningTime,
             JobStatus status,
             String orderXMLname,
             Document orderXMLdoc, String seedlist, int harvestNum) {
@@ -333,6 +349,7 @@ public class Job implements Serializable {
 
         this.forceMaxBytesPerDomain = forceMaxBytesPerDomain;
         this.forceMaxObjectsPerDomain = forceMaxObjectsPerDomain;
+        this.forceMaxRunningTime = forceMaxJobRunningTime;
         this.status = status;
         this.orderXMLname = orderXMLname;
         this.orderXMLdoc = orderXMLdoc;
@@ -357,7 +374,8 @@ public class Job implements Serializable {
         // Use -1 to indicate no limits for max objects and max bytes.
         return new Job(harvestID, cfg, JobPriority.HIGHPRIORITY,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY,
-                Constants.HERITRIX_MAXBYTES_INFINITY, harvestNum);
+                Constants.HERITRIX_MAXBYTES_INFINITY, 
+                Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, harvestNum);
     }
 
     /**
@@ -378,6 +396,8 @@ public class Job implements Serializable {
      *                            domain, overrides individual configuration
      *                            settings unless the domain has overrideLimits
      *                            set.  -1 means no limit.
+     * @param maxJobRunningTime The maximum of seconds which the harvest can 
+     * 							spend on the harvest. 0 means no limit.                                                      
      * @param harvestNum          Which run of the harvest definition this is
      *                           (should always be 1).
      * @return SnapShotJob
@@ -385,10 +405,12 @@ public class Job implements Serializable {
      */
     public static Job createSnapShotJob(Long harvestID, DomainConfiguration cfg,
                                         long maxObjectsPerDomain,
-                                        long maxBytesPerDomain, int harvestNum)
+                                        long maxBytesPerDomain, 
+                                        long maxJobRunningTime, int harvestNum)
             throws ArgumentNotValid {
         return new Job(harvestID, cfg, JobPriority.LOWPRIORITY,
-                maxObjectsPerDomain, maxBytesPerDomain, harvestNum);
+                maxObjectsPerDomain, maxBytesPerDomain, 
+                maxJobRunningTime, harvestNum);
     }
 
     /**
@@ -1005,7 +1027,7 @@ public class Job implements Serializable {
     public long getMaxBytesPerDomain() {
         return forceMaxBytesPerDomain;
     }
-
+    
     /**
      * Get the edition number.
      *
@@ -1034,6 +1056,7 @@ public class Job implements Serializable {
             + getOrigHarvestDefinitionID() + ", priority = " + getPriority()
             + ", forcemaxcount = " + getForceMaxObjectsPerDomain()
             + ", forcemaxbytes = " + getMaxBytesPerDomain()
+            + ", forcemaxrunningtime = " + forceMaxRunningTime
             + ", orderxml = " + getOrderXMLName()
             + ", numconfigs = " + getDomainConfigurationMap().size()
             + ")";
@@ -1079,13 +1102,37 @@ public class Job implements Serializable {
         this.forceMaxBytesPerDomain = maxBytesPerDomain;
         editOrderXML_maxBytesPerDomain(maxBytesPerDomain);
     }
+    
+    /**
+     * Set the maxJobRunningTime value.
+     * @param maxJobRunningTime The maxJobRunningTime in seconds to set,
+     *                          or 0 for no limit.
+     */
+    private void setMaxJobRunningTime(long maxJobRunningTime) {
+        if (!underConstruction) {
+            final String msg = "Cannot modify job "
+                    + this + " as it is no longer under construction";
+            log.debug(msg);
+            throw new IllegalState(msg);
+        }
+        this.forceMaxRunningTime = maxJobRunningTime;
+        editOrderXML_maxJobRunningTime(maxJobRunningTime);
+    }
+    
+    /**
+     * @return Returns the MaxJobRunningTime. 0 means no limit.
+     */
+    public long getMaxJobRunningTime() {
+        return forceMaxRunningTime;
+    }
+    
 
     /**
      * Auxiliary method to modify the orderXMLdoc Document
      * with respect to setting the maximum number of objects to be retrieved
      * per domain.
      * This method updates 'group-max-fetch-success' element of the QuotaEnforcer
-     * pre-fetch processor snode
+     * pre-fetch processor node
      * (org.archive.crawler.frontier.BdbFrontier)
      * with the value of the argument forceMaxObjectsPerDomain
      *
@@ -1166,7 +1213,25 @@ public class Job implements Serializable {
                     + orderXMLdoc.asXML());
         }
     }
-
+    
+    /**
+     * @param maxJobRunningTime Force the job to end after maxJobRunningTime
+     */
+    private void editOrderXML_maxJobRunningTime(long maxJobRunningTime) {
+        // get and set the "max-time-sec" node of the orderXMLdoc
+        String xpath = HeritrixTemplate.MAXTIMESEC_PATH_XPATH;
+        Node groupMaxTimeSecNode = orderXMLdoc.selectSingleNode(xpath);
+        if (groupMaxTimeSecNode != null) {
+        	String currentMaxTimeSec = groupMaxTimeSecNode.getText();
+        	groupMaxTimeSecNode.setText(Long.toString(maxJobRunningTime));
+        } else {
+            throw new IOFailure(
+                    "Unable to locate xpath '" + xpath + "' in the order.xml: "
+                    + orderXMLdoc.asXML());
+        }
+    }
+    
+    
     /**
      * Get the priority of this job.
      *

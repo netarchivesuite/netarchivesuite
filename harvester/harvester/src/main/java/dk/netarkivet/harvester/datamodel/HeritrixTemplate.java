@@ -90,9 +90,6 @@ public class HeritrixTemplate {
             "/crawl-order/controller/map[@name='write-processors']"
             + "/newObject[@name='DeDuplicator']";
 
-
-
-
     /** Xpath to check, that all templates use the same archiver path,
      * {@link dk.netarkivet.common.Constants#ARCDIRECTORY_NAME}.
      * The archive path tells Heritrix to which directory it shall write
@@ -114,7 +111,7 @@ public class HeritrixTemplate {
     /** A regular expression that matches everything.  Except newlines,
      * unless DOTALL is given to Pattern.compile(). */
     private static final String EVERYTHING_REGEXP = ".*";
-
+    
     // These two regexps are copied from
     // org.archive.crawler.datamodel.CrawlOrder because they're private there.
 
@@ -128,6 +125,11 @@ public class HeritrixTemplate {
      * field.  This should be a valid email address.
      */
     private static final String FROM_REGEXP = "\\S+@\\S+\\.\\S+";
+    
+    /** Xpath to check, that all templates have the max-time-sec attribute.
+     */
+    public static final String MAXTIMESEC_PATH_XPATH =
+        "/crawl-order/controller/string[@name='max-time-sec']";
 
     static {
         requiredXpaths.put(GROUP_MAX_FETCH_SUCCESS_XPATH,
@@ -154,6 +156,10 @@ public class HeritrixTemplate {
         //dk.netarkivet.common.Constants.ARCDIRECTORY_NAME.
         requiredXpaths.put(ARCHIVER_PATH_XPATH, Pattern.compile(
                 dk.netarkivet.common.Constants.ARCDIRECTORY_NAME));
+        // max-time-sec attribute needed, so we can't override it set
+        // a timelimit on broad crawls.
+        requiredXpaths.put(MAXTIMESEC_PATH_XPATH, Pattern.compile(
+                WHOLE_NUMBER_REGEXP));
     }
 
     /** Constructor for HeritrixTemplate class.

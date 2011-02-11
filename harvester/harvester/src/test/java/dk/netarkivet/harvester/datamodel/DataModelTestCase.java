@@ -154,104 +154,83 @@ public class DataModelTestCase extends TestCase {
         hddao.create(hd1);
         FullHarvest hd2 = new FullHarvest("HD#2", "No comments", null,
                                           Constants.DEFAULT_MAX_OBJECTS,
-                                          Constants.DEFAULT_MAX_BYTES);
+                                          Constants.DEFAULT_MAX_BYTES,
+                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hd2.setSubmissionDate(new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime());
         hddao.create(hd2);
         FullHarvest hd3 = new FullHarvest("HD#3", "No comments", hd2.getOid(),
                                           Constants.DEFAULT_MAX_OBJECTS,
-                                          Constants.DEFAULT_MAX_BYTES);
+                                          Constants.DEFAULT_MAX_BYTES,
+                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hd3.setSubmissionDate(new GregorianCalendar(1970, Calendar.FEBRUARY, 1).getTime());
         hddao.create(hd3);
         FullHarvest hd4 = new FullHarvest("HD#4", "No comments", null,
                                           Constants.DEFAULT_MAX_OBJECTS,
-                                          Constants.DEFAULT_MAX_BYTES);
+                                          Constants.DEFAULT_MAX_BYTES,
+                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hd4.setSubmissionDate(new GregorianCalendar(1970, Calendar.MARCH, 1).getTime());
         hddao.create(hd4);
         FullHarvest hd5 = new FullHarvest("HD#5", "No comments", hd4.getOid(),
                                           Constants.DEFAULT_MAX_OBJECTS,
-                                          Constants.DEFAULT_MAX_BYTES);
+                                          Constants.DEFAULT_MAX_BYTES,
+                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hd5.setSubmissionDate(new GregorianCalendar(1970, Calendar.APRIL, 1).getTime());
         hddao.create(hd5);
 
         Map<String, String> dcmap = new HashMap<String, String>();
         dcmap.put("netarkivet.dk", hd1.getDomainConfigurations().next().getName());
         Document defaultOrderXmlDocument = TemplateDAO.getInstance().read("default_orderxml").getTemplate();
-        Job j2 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY, Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 0);
+        JobPriority HighPriority = JobPriority.HIGHPRIORITY;
+        JobPriority LowPriority = JobPriority.LOWPRIORITY;
+        Job j2 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 0);
+
         JobDAO.getInstance().create(j2);
         assertEquals("Job IDs in database have changed."
                     + "Please update unit test to reflect.",
                 startJobId, j2.getJobID().longValue());
-        Job j3 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 0);
+                
+        Job j3 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j3);
-        Job j4 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 1);
+        Job j4 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 1);
         JobDAO.getInstance().create(j4);
-        Job j5 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 1);
+        Job j5 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 1);
         JobDAO.getInstance().create(j5);
-        Job j6 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 2);
+        Job j6 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 2); 
         JobDAO.getInstance().create(j6);
-        Job j7 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 2);
+        Job j7 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 2); 
         JobDAO.getInstance().create(j7);
-        Job j8 = new Job(hd2.getOid(), dcmap, JobPriority.LOWPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 0);
+        Job j8 = getNewNetarkivetJob(hd2, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j8);
-        Job j9 = new Job(hd2.getOid(), dcmap, JobPriority.LOWPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 0);
+        Job j9 = getNewNetarkivetJob(hd2, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j9);
-        Job j10 = new Job(hd3.getOid(), dcmap, JobPriority.LOWPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 0);
+        Job j10 = getNewNetarkivetJob(hd3, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j10);
-        Job j11 = new Job(hd3.getOid(), dcmap, JobPriority.LOWPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 0);
+        Job j11 = getNewNetarkivetJob(hd3, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j11);
-        Job j12 = new Job(hd4.getOid(), dcmap, JobPriority.LOWPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 0);
+        Job j12 = getNewNetarkivetJob(hd4, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j12);
-        Job j13 = new Job(hd4.getOid(), dcmap, JobPriority.LOWPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 0);
+        Job j13 = getNewNetarkivetJob(hd4, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j13);
-        Job j14 = new Job(hd5.getOid(), dcmap, JobPriority.LOWPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 0);
+        Job j14 = getNewNetarkivetJob(hd5, dcmap, LowPriority, defaultOrderXmlDocument, 0); 
         JobDAO.getInstance().create(j14);
-        Job j15 = new Job(hd5.getOid(), dcmap, JobPriority.LOWPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", 0);
+        Job j15 = getNewNetarkivetJob(hd5, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j15);
         assertEquals("Job IDs in database have changed. "
                 + "Please update unit test to reflect.", endJobId,
                 j15.getJobID().longValue());
     }
+    
+    private static Job getNewNetarkivetJob(HarvestDefinition hd,
+            Map<String, String> dcmap, JobPriority priority,
+            Document defaultOrderXmlDocument, int harvestNum) {
+        return new Job(hd.getOid(), dcmap, priority, 
+                Constants.DEFAULT_MAX_OBJECTS,
+                Constants.DEFAULT_MAX_BYTES, 
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME,
+                JobStatus.NEW, "default_orderxml",
+                defaultOrderXmlDocument, "netarkivet.dk", harvestNum);
+    }
+
 
     public static void addHarvestDefinitionToDatabaseWithId(long id) throws SQLException {
         Connection con = DBConnect.getDBConnection();

@@ -132,16 +132,19 @@ public abstract class HarvestDefinition implements Named {
      *                        any domain
      * @param maxBytes        the maximum number of bytes harvested from
      *                        any domain  
+     * @param maxJobRunningTime The maximum running time for each job                       
      * @return a snapshot harvestdefinition
      */
     public static FullHarvest createFullHarvest(String harvestDefName,
                                                 String comments,
                                                 Long prevHarvestOid,
                                                 long maxCountObjects,
+                                                long maxJobRunningTime,
                                                 long maxBytes) {
 
         return new FullHarvest(harvestDefName, comments,
-                               prevHarvestOid, maxCountObjects, maxBytes);
+                               prevHarvestOid, maxCountObjects, 
+                               maxBytes, maxJobRunningTime);
     }
 
 

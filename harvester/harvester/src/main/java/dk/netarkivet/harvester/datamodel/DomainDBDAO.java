@@ -88,7 +88,8 @@ public class DomainDBDAO extends DomainDAO {
         }
 
         DBUtils.checkTableVersion(connection, "domains", 2);
-        DBUtils.checkTableVersion(connection, "configurations", 5);
+        DBUtils.checkTableVersion(connection, "configurations", 
+        		CONFIGURATIONS_VERSION_NEEDED);
         DBUtils.checkTableVersion(connection, "config_passwords", 1);
         DBUtils.checkTableVersion(connection, "config_seedlists", 1);
         DBUtils.checkTableVersion(connection, "seedlists", 1);
@@ -1063,7 +1064,7 @@ public class DomainDBDAO extends DomainDAO {
                 String domainconfigName = res.getString(2);
                 String domainConfigComments = res.getString(3);
                 String order = res.getString(4);
-                int maxobjects = res.getInt(5);
+                long maxobjects = res.getLong(5);
                 int maxrate = res.getInt(6);
                 long maxbytes = res.getLong(7);
                 s1 = c.prepareStatement("SELECT seedlists.name "

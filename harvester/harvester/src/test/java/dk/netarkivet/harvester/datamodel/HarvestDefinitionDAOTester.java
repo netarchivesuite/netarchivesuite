@@ -94,7 +94,8 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         /* Test with FullHarvest */
         FullHarvest fHD1 = HarvestDefinition.createFullHarvest(
                 "Full Harvest 1", "Test of full harvest", null, 2000,
-                Constants.DEFAULT_MAX_BYTES);
+                Constants.DEFAULT_MAX_BYTES, 
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         fHD1.setSubmissionDate(new Date(
                 1000 * (System.currentTimeMillis() / 1000)));
         fHD1.setNumEvents(7);
@@ -102,7 +103,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
         FullHarvest fHD2 = HarvestDefinition.createFullHarvest(
                 "Full Harvest 2", "Test of full harvest", fHD1.getOid(), 2000,
-                Constants.DEFAULT_MAX_BYTES);
+                Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         fHD2.setSubmissionDate(new Date(
                 1000 * (System.currentTimeMillis() / 1000)));
         fHD2.setNumEvents(7);
@@ -187,7 +188,8 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .createFullHarvest(
                         "dependsOn43",
                         "This fullharvest depends on #43, which should then be nondeletable",
-                        snapshotOid, 1000, Constants.DEFAULT_MAX_BYTES);
+                        snapshotOid, 1000, Constants.DEFAULT_MAX_BYTES,
+                        Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hdDAO.create(fh2);
         final Long snapshotOid2 = fh2.getOid();
         assertTrue("Harvest definition " + snapshotOid2 + " should exist",

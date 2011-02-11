@@ -290,7 +290,8 @@ public class JobDAOTester extends DataModelTestCase {
         addHarvestDefinitionToDatabaseWithId(TestInfo.HARVESTID);
         DomainConfiguration dc = TestInfo.getDRConfiguration();
         Job job = Job.createSnapShotJob(TestInfo.HARVESTID, dc, 
-                TestInfo.MAX_OBJECTS_PER_DOMAIN, -1, 0);
+                TestInfo.MAX_OBJECTS_PER_DOMAIN, -1L, 
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         dao.create(job);
 
         // check that the modified job can be retrieved
@@ -387,7 +388,8 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("A new job should have high priority",
                 JobPriority.HIGHPRIORITY, job0.getPriority());
         Job job1 = Job.createSnapShotJob(new Long(1), d
-                .getDefaultConfiguration(), 2000, -1, 0);
+                .getDefaultConfiguration(), 2000L, -1L, 
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         assertEquals("A new job should have low priority",
                 JobPriority.LOWPRIORITY, job1.getPriority());
 
@@ -435,7 +437,8 @@ public class JobDAOTester extends DataModelTestCase {
         Job jobHighPriorityID = Job.createJob(new Long(1), 
                 d.getDefaultConfiguration(), 0);
         Job jobLowPriorityID = Job.createSnapShotJob(new Long(1), 
-                d.getDefaultConfiguration(), 2000, -1, 0);
+                d.getDefaultConfiguration(), 2000L, -1L, 
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         jobDAO.create(jobHighPriorityID);
         jobDAO.create(jobLowPriorityID);
         
@@ -527,7 +530,8 @@ public class JobDAOTester extends DataModelTestCase {
         d.addConfiguration(dc);
         d.setDefaultConfiguration(dc.getName());
         ddao.create(d);
-        Job j2 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1, 3);
+        Job j2 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1L, 
+        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 3);
         dao.create(j2);
         j2.appendUploadErrors("Bad stuff");
         j2.appendHarvestErrors("Good harvest");
@@ -601,13 +605,16 @@ public class JobDAOTester extends DataModelTestCase {
         d.addConfiguration(dc);
         d.setDefaultConfiguration(dc.getName());
         ddao.create(d);
-        Job j2 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1, 3);
+        Job j2 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1L, 
+        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 3);
         dao.create(j2);
 
-        Job j3 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1, 4);
+        Job j3 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1L, 
+        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 4);
         dao.create(j3);
 
-        Job j4 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1, 4);
+        Job j4 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1L, 
+        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 4);
         dao.create(j4);
 
         List<JobStatusInfo> infos = dao.getStatusInfo(
@@ -669,7 +676,8 @@ public class JobDAOTester extends DataModelTestCase {
         Domain d = ddao.read("netarkivet.dk");
         DomainConfiguration dc = d.getDefaultConfiguration();
         Date startDate = new Date();
-        Job newJob1 = new Job(42L, dc, JobPriority.HIGHPRIORITY, 10L, -1, 2);
+        Job newJob1 = new Job(42L, dc, JobPriority.HIGHPRIORITY, 10L, -1L, 
+        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 2);
         newJob1.setStatus(JobStatus.SUBMITTED);
         jdao.create(newJob1);
         assertNull("Should have null start date at start, but was "

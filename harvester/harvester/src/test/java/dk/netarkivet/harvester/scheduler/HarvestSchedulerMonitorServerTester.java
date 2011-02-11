@@ -579,7 +579,8 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         HarvestDefinition snapshot =
             new FullHarvest("TestHarvest", "", null,
                     Constants.HERITRIX_MAXOBJECTS_INFINITY,
-                    Constants.HERITRIX_MAXBYTES_INFINITY);
+                    Constants.HERITRIX_MAXBYTES_INFINITY,
+                    Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY);
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest
@@ -587,7 +588,9 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         DomainConfiguration conf = dom.getDefaultConfiguration();
         Job job = Job.createSnapShotJob(snapshot.getOid(), conf,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY,
-                Constants.HERITRIX_MAXBYTES_INFINITY, 0);
+                Constants.HERITRIX_MAXBYTES_INFINITY, 
+                Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY,
+                0);
         dom = DomainDAO.getInstance().read("statsbiblioteket.dk");
         conf = dom.getDefaultConfiguration();
         job.addConfiguration(conf);
@@ -641,12 +644,15 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
         //A harvest definition with low byte limit
         snapshot = new FullHarvest("TestHarvest2", "", null,
-                Constants.HERITRIX_MAXOBJECTS_INFINITY, 10L);
+                Constants.HERITRIX_MAXOBJECTS_INFINITY, 
+                10L,
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest (note: conf is the dr.dk config)
         job = Job.createSnapShotJob(snapshot.getOid(), conf,
-                Constants.HERITRIX_MAXOBJECTS_INFINITY, 10L, 0);
+                Constants.HERITRIX_MAXOBJECTS_INFINITY, 10L, 
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         job.setStatus(JobStatus.STARTED);
         JobDAO.getInstance().create(job);
 

@@ -397,7 +397,8 @@ public class DomainDAOTester extends DataModelTestCase {
         }
 
         HarvestDefinition hd = HarvestDefinition.createFullHarvest("Full Harvest", "Test of full harvest", null, 2000,
-                                                                   Constants.DEFAULT_MAX_BYTES);
+                                                                   Constants.DEFAULT_MAX_BYTES,
+                                                                   Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hd.setSubmissionDate(new Date());
         HarvestDefinitionDAO.getInstance().create(hd);
 

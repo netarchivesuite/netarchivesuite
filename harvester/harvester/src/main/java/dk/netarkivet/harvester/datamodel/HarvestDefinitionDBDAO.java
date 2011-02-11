@@ -63,6 +63,7 @@ import dk.netarkivet.common.utils.FilterIterator;
 public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /** The logger. */
     private final Log log = LogFactory.getLog(getClass());
+    
     /** The current version needed of the table 'fullharvests'. */
     static final int FULLHARVESTS_VERSION_NEEDED = 4;
 
@@ -106,7 +107,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
         DBUtils.checkTableVersion(connection,
                                   "harvestdefinitions", 2);
-        DBUtils.checkTableVersion(connection, "fullharvests", 4);
+        DBUtils.checkTableVersion(connection, "fullharvests", 
+        		FULLHARVESTS_VERSION_NEEDED);
         DBUtils.checkTableVersion(connection, "partialharvests", 1);
         DBUtils.checkTableVersion(connection, "harvest_configs", 1);
     }
@@ -151,15 +153,17 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             if (harvestDefinition instanceof FullHarvest) {
                 FullHarvest fh = (FullHarvest) harvestDefinition;
                 s = connection.prepareStatement("INSERT INTO fullharvests "
-                        + "( harvest_id, maxobjects, maxbytes, previoushd )"
-                        + "VALUES ( ?, ?, ?, ? )");
+                        + "( harvest_id, maxobjects, maxbytes,"
+                        + " maxjobrunningtime, previoushd )"
+                        + "VALUES ( ?, ?, ?, ?, ? )");
                 s.setLong(1, id);
                 s.setLong(2, fh.getMaxCountObjects());
                 s.setLong(3, fh.getMaxBytes());
+                s.setLong(4, fh.getMaxJobRunningTime());
                 if (fh.getPreviousHarvestDefinition() != null) {
-                    s.setLong(4, fh.getPreviousHarvestDefinition().getOid());
+                    s.setLong(5, fh.getPreviousHarvestDefinition().getOid());
                 } else {
-                    s.setNull(4, Types.BIGINT);
+                    s.setNull(5, Types.BIGINT);
                 }
                 s.executeUpdate();
             } else if (harvestDefinition instanceof PartialHarvest) {
@@ -278,8 +282,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         try {
             s = c.prepareStatement(
                                 "SELECT name, comments, numevents, submitted, "
-                                + "previoushd, maxobjects, maxbytes, isactive, "
-                                + "edition "
+                                + "previoushd, maxobjects, maxbytes, "
+                                + "maxjobrunningtime, isactive, edition "
                                 + "FROM harvestdefinitions, fullharvests "
                                 + "WHERE harvestdefinitions.harvest_id = ?"
                                 + "  AND harvestdefinitions.harvest_id "
@@ -296,20 +300,21 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         res.getTimestamp(4).getTime());
                 final long maxObjects = res.getLong(6);
                 final long maxBytes = res.getLong(7);
+                final long maxJobRunningtime = res.getLong(8);
                 FullHarvest fh;
                 final long prevhd = res.getLong(5);
                 if (!res.wasNull()) {
                     fh = new FullHarvest(name, comments, prevhd, maxObjects,
-                                         maxBytes);
+                                         maxBytes, maxJobRunningtime);
                 } else {
                     fh = new FullHarvest(name, comments, null, maxObjects,
-                                         maxBytes);
+                                         maxBytes, maxJobRunningtime);
                 }
                 fh.setSubmissionDate(submissionDate);
                 fh.setNumEvents(numEvents);
-                fh.setActive(res.getBoolean(8));
+                fh.setActive(res.getBoolean(9));
                 fh.setOid(harvestDefinitionID);
-                fh.setEdition(res.getLong(9));
+                fh.setEdition(res.getLong(10));
                 // We found a FullHarvest object, just return it.
                 log.debug("Returned FullHarvest object w/ id "
                         + harvestDefinitionID);
@@ -533,7 +538,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 s = c.prepareStatement("UPDATE fullharvests SET "
                         + "previoushd = ?, "
                         + "maxobjects = ?, "
-                        + "maxbytes = ? "
+                        + "maxbytes = ?, "
+                        + "maxjobrunningtime = ? "
                         + "WHERE harvest_id = ?");
                 if (fh.getPreviousHarvestDefinition() != null) {
                     s.setLong(1, fh.getPreviousHarvestDefinition().getOid());
@@ -542,9 +548,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 }
                 s.setLong(2, fh.getMaxCountObjects());
                 s.setLong(3, fh.getMaxBytes());
-                s.setLong(4, fh.getOid());
+                s.setLong(4, fh.getMaxJobRunningTime());
+                s.setLong(5, fh.getOid());
+                
                 rows = s.executeUpdate();
-                log.debug(rows + " fullharvests rows updated");
+                log.debug(rows + " fullharvests records updated");
             } else if (hd instanceof PartialHarvest) {
                 PartialHarvest ph = (PartialHarvest) hd;
                 s = c.prepareStatement("UPDATE partialharvests SET "
@@ -557,7 +565,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 DBUtils.setDateMaybeNull(s, 2, ph.getNextDate());
                 s.setLong(3, ph.getOid());
                 rows = s.executeUpdate();
-                log.debug(rows + " partialharvests rows updated");
+                log.debug(rows + " partialharvests records updated");
                 s.close();
                 createHarvestConfigsEntries(c, ph, ph.getOid());
             } else {
@@ -1015,6 +1023,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "       harvestdefinitions.edition,"
                     + "       fullharvests.maxobjects,"
                     + "       fullharvests.maxbytes,"
+                    + "       fullharvests.maxjobrunningtime,"
                     + "       fullharvests.previoushd "
                     + "FROM harvestdefinitions, fullharvests"
                     + " WHERE harvestdefinitions.harvest_id "
@@ -1027,7 +1036,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         res.getLong(1),
                         res.getString(2), res.getString(3), res.getInt(4),
                         res.getBoolean(5), res.getLong(6), res.getLong(7),
-                        res.getLong(8), DBUtils.getLongMaybeNull(res, 9));
+                        res.getLong(8), res.getLong(9),
+                        DBUtils.getLongMaybeNull(res, 10));
                 harvests.add(sfh);
             }
             return harvests;
@@ -1141,6 +1151,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "       harvestdefinitions.edition,"
                     + "       fullharvests.maxobjects,"
                     + "       fullharvests.maxbytes,"
+                    + "       fullharvests.maxjobrunningtime,"
                     + "       fullharvests.previoushd "
                     + "FROM harvestdefinitions, fullharvests"
                     + " WHERE harvestdefinitions.name = ?"
@@ -1153,7 +1164,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         res.getLong(1),
                         harvestName, res.getString(2), res.getInt(3),
                         res.getBoolean(4), res.getLong(5), res.getLong(6),
-                        res.getLong(7), DBUtils.getLongMaybeNull(res, 8));
+                        res.getLong(7), res.getLong(8), 
+                        DBUtils.getLongMaybeNull(res, 9));
             } else {
                 return null;
             }

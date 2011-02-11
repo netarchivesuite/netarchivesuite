@@ -425,7 +425,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createFullHarvest(
                         TestInfo.DEFAULT_HARVEST_NAME,
                         TestInfo.DEFAULT_HARVEST_COMMENT,
-                        null, 10000, Constants.DEFAULT_MAX_BYTES);
+                        null, 10000, Constants.DEFAULT_MAX_BYTES,
+                        Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         Long id = Long.valueOf(42L);
         harvestDef.setOid(id);
         harvestDef.setSubmissionDate(new Date());
@@ -769,7 +770,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     public static HarvestDefinition getTestSnapShotHarvestDefinition() {
         HarvestDefinition hd = HarvestDefinition.createFullHarvest(
                 "snapshot",
-                "test", null, 124, Constants.DEFAULT_MAX_BYTES);
+                "test", null, 124, Constants.DEFAULT_MAX_BYTES, 
+              Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hd.setSubmissionDate(new Date());
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
         dao.create(hd);
@@ -803,7 +805,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     public void testCreateSnapShot_scheduleImmediately() {
         HarvestDefinition hd = HarvestDefinition.createFullHarvest(
                 "snapshot", "test", null, 124,
-                Constants.DEFAULT_MAX_BYTES);
+                Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         assertTrue("The job should start immediately", hd.runNow(new Date()));
     }
 
@@ -813,7 +815,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
     public void testCreateSnapShot_Inactive() {
         HarvestDefinition hd = HarvestDefinition.createFullHarvest(
-                "snapshot", "test", null, 124, Constants.DEFAULT_MAX_BYTES);
+                "snapshot", "test", null, 124, Constants.DEFAULT_MAX_BYTES,
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         assertTrue("Active definition expected (default)", hd.getActive());
         assertTrue("The job should start immediately", hd.runNow(new Date()));
         // Inactivate and test again
@@ -861,7 +864,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         HarvestDefinition hd = HarvestDefinition.createFullHarvest(
                 "Full Harvest", "Test of full harvest", null, 2000,
-                 Constants.DEFAULT_MAX_BYTES);
+                 Constants.DEFAULT_MAX_BYTES,
+                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         hd.setSubmissionDate(new Date());
         hddao.create(hd);
@@ -937,7 +941,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 "Just a test",
                 hd.getOid(),
                 9999,
-                Constants.DEFAULT_MAX_BYTES);
+                Constants.DEFAULT_MAX_BYTES,
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         fh.setSubmissionDate(new Date());
         hddao.create(fh);
 
@@ -982,7 +987,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
 
         FullHarvest hd1 = new FullHarvest(
-                "foo", "bar", null, 2, Constants.DEFAULT_MAX_BYTES);
+                "foo", "bar", null, 2, Constants.DEFAULT_MAX_BYTES,
+                Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY);
         hd1.setSubmissionDate(new Date());
         dao.create(hd1);
         FullHarvest hd1a = (FullHarvest) dao.read(hd1.getOid());

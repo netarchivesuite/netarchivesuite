@@ -93,6 +93,7 @@ public class AliasInfo {
      * Is this alias expired?
      * This method depends upon the Constant:
      * dk.netarkivet.harvester.webinterface.Constants.ALIAS_TIMEOUT_IN_MILLISECONDS
+     * Note that this constant is now read from settings.
      * @return true, if alias is expired
      */
     public boolean isExpired() {

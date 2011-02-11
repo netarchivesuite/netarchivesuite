@@ -52,7 +52,9 @@ public class FullHarvestTester extends DataModelTestCase {
     public void testMaxBytes() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         FullHarvest fh = HarvestDefinition.createFullHarvest("testfullharvest",
-                                                             "comment", null, 200L, Constants.DEFAULT_MAX_BYTES);
+                                                             "comment", null, 200L, 
+                                                             Constants.DEFAULT_MAX_BYTES,
+                                                             Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         assertEquals("Should have default number of max bytes from start",
                      Constants.DEFAULT_MAX_BYTES, fh.getMaxBytes());
         final int maxBytes = 201 * 1024 * 1024;
@@ -80,7 +82,9 @@ public class FullHarvestTester extends DataModelTestCase {
     public void testGetDomainsConfigurations() {
         DomainDAO ddao = DomainDAO.getInstance();
         FullHarvest fh = HarvestDefinition.createFullHarvest("testfullharvest",
-                                                             "comment", null, 200L, Constants.DEFAULT_MAX_BYTES);
+                                                             "comment", null, 200L, 
+                                                             Constants.DEFAULT_MAX_BYTES,
+                                                             Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         // Test, at der findes DomainConfiguration objekter for de domæner, der ikke skal springes over.
         // Der findes ikke nogen aliasdomæner i test-databasen, så dette trin skulle gå godt.
         Iterator<Domain> domainIterator = ddao.getAllDomains();
@@ -100,7 +104,9 @@ public class FullHarvestTester extends DataModelTestCase {
         aliasDomain.updateAlias("netarkivet.dk");
         ddao.update(aliasDomain);
         fh = HarvestDefinition.createFullHarvest("testfullharvest-1",
-                                                 "comment", null, 200L, Constants.DEFAULT_MAX_BYTES);
+                                                 "comment", null, 200L, 
+                                                 Constants.DEFAULT_MAX_BYTES,
+                                                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         assertNoAliasDomainConfigurations(fh.getDomainConfigurations());
     }
 
@@ -112,7 +118,8 @@ public class FullHarvestTester extends DataModelTestCase {
     public void testGetDomainsPreviousHarvestAborted() {
           DomainDAO ddao = DomainDAO.getInstance();
         FullHarvest previousHarvest = HarvestDefinition.
-                createFullHarvest("previous", "comment", null, 200L, 10000L);
+                createFullHarvest("previous", "comment", null, 200L, 10000L,
+                		Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         hddao.create(previousHarvest);
         previousHarvest = (FullHarvest) hddao.getHarvestDefinition("previous");
@@ -126,7 +133,9 @@ public class FullHarvestTester extends DataModelTestCase {
                                            StopReason.DOWNLOAD_UNFINISHED);
         d.getHistory().addHarvestInfo(hi);
         ddao.update(d);
-        FullHarvest newHarvest = HarvestDefinition.createFullHarvest("new", "comment", previousHarvest.getOid(), 500L, 100000L);
+        FullHarvest newHarvest = HarvestDefinition.createFullHarvest("new", "comment", 
+        		previousHarvest.getOid(), 500L, 100000L, 
+        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hddao.create(newHarvest);
         newHarvest = (FullHarvest) hddao.getHarvestDefinition("new");
         Iterator<DomainConfiguration> configs = newHarvest.getDomainConfigurations();
@@ -148,14 +157,15 @@ public class FullHarvestTester extends DataModelTestCase {
          DomainDAO ddao = DomainDAO.getInstance();
          // Create a previous FullHarvest for this test previousFullHarvest
          FullHarvest previousFullHarvest = HarvestDefinition.createFullHarvest("previousfullharvest",
-                 "comment", null, 200L, 10000L);
+                 "comment", null, 200L, 10000L, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
          HarvestDefinitionDAO hdao = HarvestDefinitionDAO.getInstance();
          hdao.create(previousFullHarvest);
          previousFullHarvest = (FullHarvest) hdao.getHarvestDefinition("previousfullharvest");
 
          // Create a FullHarvest, that has previousFullHarvest as previous FullHarvest
          FullHarvest fh = HarvestDefinition.createFullHarvest("previousfullharvest",
-                 "comment", previousFullHarvest.getOid(), 200L, Constants.DEFAULT_MAX_BYTES);
+                 "comment", previousFullHarvest.getOid(), 200L, 
+                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
 
          // Create one HarvestInfo objects for netarkivet.dk for this FullHarvest.
          Domain d = ddao.read("netarkivet.dk");

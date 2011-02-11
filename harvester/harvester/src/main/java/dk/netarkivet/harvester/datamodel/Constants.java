@@ -70,10 +70,18 @@ public class Constants {
     public static final int MAX_ERROR_DETAIL_SIZE = 10000;
     /** This is the default number set as max request rate. */
     public static final int DEFAULT_MAX_REQUEST_RATE = 60;
-    /** Max bytes of -1 means infinity. */
+    /** Max bytes of -1 means infinity 
+     * (i.e other factors will determine when the job ends). */
     public static final long HERITRIX_MAXBYTES_INFINITY = -1L;
-    /** Max objects of -1 means infinity. */
+    /** Max objects of -1 means infinity (i.e other factors will determine 
+     * when the job ends). */
     public static final long HERITRIX_MAXOBJECTS_INFINITY = -1L;
+    
+    /** Max job running time of 0 means infinite job running time 
+     * (i.e other factors will determine when the job ends). 
+     */
+    public static final long HERITRIX_MAXJOBRUNNINGTIME_INFINITY = 0L;
+    
     /** This is the default number set as max bytes harvested.
      * Set to the max number of bytes we harvest from any domain per harvest,
      * unless explicitly deciding otherwise. */
