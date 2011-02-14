@@ -66,7 +66,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'partialharvests', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'fullharvests', 3);
+    VALUES ( 'fullharvests', 4);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'harvest_configs', 1);
 INSERT INTO schemaversions ( tablename, version )
@@ -74,7 +74,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'ordertemplates', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'jobs', 5);
+    VALUES ( 'jobs', 6);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'job_configs', 1);
 INSERT INTO schemaversions ( tablename, version )
@@ -254,9 +254,10 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvestdefinitions TO netarchivesuite
 -- -----------------------------------------------------------------------------
 CREATE TABLE fullharvests (
      harvest_id bigint NOT NULL PRIMARY KEY,
-     maxobjects bigint NOT NULL,
+     maxobjects bigint NOT NULL default -1,
      previoushd bigint,
-     maxbytes bigint NOT NULL default -1
+     maxbytes bigint NOT NULL default -1,
+     maxjobrunningtime bigint NOT NULL default 0
 );
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE fullharvests TO netarchivesuite;
@@ -338,6 +339,7 @@ CREATE TABLE jobs (
     priority int NOT NULL,
     forcemaxbytes bigint NOT NULL default -1,
     forcemaxcount bigint,
+    forcemaxrunningtime bigint NOT NULL DEFAULT 0,
     orderxml varchar(300) NOT NULL,
     orderxmldoc text NOT NULL,
     seedlist text NOT NULL,

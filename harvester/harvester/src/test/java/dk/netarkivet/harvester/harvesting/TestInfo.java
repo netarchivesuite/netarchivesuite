@@ -175,11 +175,11 @@ public class TestInfo {
         try {
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
                     Job.class, Long.class, Map.class, JobPriority.class, Long.TYPE,
-                    Long.TYPE, JobStatus.class, String.class, Document.class,
-                    String.class, Integer.TYPE);
+                    Long.TYPE, Long.TYPE, JobStatus.class, String.class, 
+                    Document.class, String.class, Integer.TYPE);
             String seedList = "www.netarkivet.dk";
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 JobPriority.HIGHPRIORITY, -1L, -1L,
+                                 JobPriority.HIGHPRIORITY, -1L, -1L, 0L,
                                  JobStatus.STARTED, "OneLevel-order", d,
                                  seedList, 1);
         } catch (Exception e) {

@@ -74,7 +74,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version ) 
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version ) 
-    values ( 'fullharvests', 3);
+    values ( 'fullharvests', 4);
 insert into schemaversions ( tablename, version ) 
     values ( 'harvest_configs', 1);
 insert into schemaversions ( tablename, version ) 
@@ -82,7 +82,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version ) 
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version ) 
-    values ( 'jobs', 5);
+    values ( 'jobs', 6);
 insert into schemaversions ( tablename, version ) 
     values ( 'job_configs', 1);
 insert into schemaversions (tablename, version )
@@ -297,7 +297,9 @@ create table fullharvests (
     harvest_id bigint not null primary key, -- Unique id for harvest definition
     maxobjects bigint not null,             -- Count of max objects per domain
     previoushd bigint,        -- Harvest that this snapshot harvest is based on
-    maxbytes bigint default -1 -- Maximum number of bytes to harvest per domain
+    maxbytes bigint default -1, -- Maximum number of bytes to harvest per domain
+    maxjobrunningtime bigint default 0 -- maximum snapshot running time 
+                                       -- (0 means no limit)	
 );
 
 -------------------------------------------------------------------------------
@@ -402,6 +404,9 @@ create table jobs (
     forcemaxcount bigint,           -- Max object count that overwrites the
                                     --  maxcount value in the harvest
                                     --  definition
+    forcemaxrunningtime bigint NOT NULL DEFAULT 0, 
+				    -- Max number of seconds that the harvester 
+                                    -- can work on this job
     orderxml varchar(300) not null, -- The order.xml file name that is used
                                     --  here
     orderxmldoc clob(64M) not null, -- The contents of the order.xml file in

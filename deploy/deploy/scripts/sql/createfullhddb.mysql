@@ -60,7 +60,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'fullharvests', 3);
+    values ( 'fullharvests', 4);
 insert into schemaversions ( tablename, version )
     values ( 'harvest_configs', 1);
 insert into schemaversions ( tablename, version )
@@ -68,7 +68,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'jobs', 5);
+    values ( 'jobs', 6);
 insert into schemaversions ( tablename, version )
     values ( 'job_configs', 1);
 insert into schemaversions (tablename, version )
@@ -211,7 +211,8 @@ create table fullharvests (
      harvest_id bigint not null primary key,
      maxobjects bigint not null,
      previoushd bigint,
-     maxbytes bigint not null default -1
+     maxbytes bigint not null default -1,
+     maxjobrunningtime bigint not null default 0
 );
 
 # -----------------------------------------------------------------------------
@@ -295,6 +296,7 @@ create table jobs (
     priority int not null,
     forcemaxbytes bigint not null default -1,
     forcemaxcount bigint,
+    forcemaxrunningtime bigint not null default 0,
     orderxml varchar(300) not null,
     orderxmldoc longtext not null,
     seedlist longtext not null,

@@ -129,7 +129,7 @@ public class HeritrixTemplate {
     /** Xpath to check, that all templates have the max-time-sec attribute.
      */
     public static final String MAXTIMESEC_PATH_XPATH =
-        "/crawl-order/controller/string[@name='max-time-sec']";
+        "/crawl-order/controller/long[@name='max-time-sec']";
 
     static {
         requiredXpaths.put(GROUP_MAX_FETCH_SUCCESS_XPATH,

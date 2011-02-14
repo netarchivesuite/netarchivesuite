@@ -83,7 +83,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Test HarvestScheduler class.
  */
 public class HarvestSchedulerTester extends TestCase {
-    TestInfo info = new TestInfo();
+    //TestInfo info = new TestInfo();
 
     /** The harvestScheduler used for testing. */
     HarvestScheduler harvestScheduler;
@@ -118,7 +118,8 @@ public class HarvestSchedulerTester extends TestCase {
 
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
-
+        
+        HarvestDefinitionDAO.getInstance();
         harvestScheduler = new HarvestScheduler();
 
         HarvestJobGeneratorTest.generateJobs(new Date());

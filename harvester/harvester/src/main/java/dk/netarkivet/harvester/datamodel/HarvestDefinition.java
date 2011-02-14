@@ -139,8 +139,8 @@ public abstract class HarvestDefinition implements Named {
                                                 String comments,
                                                 Long prevHarvestOid,
                                                 long maxCountObjects,
-                                                long maxJobRunningTime,
-                                                long maxBytes) {
+                                                long maxBytes,
+                                                long maxJobRunningTime) {
 
         return new FullHarvest(harvestDefName, comments,
                                prevHarvestOid, maxCountObjects, 
