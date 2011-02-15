@@ -30,30 +30,30 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * contains a header or a stream, which does not.
  */
 public class ResultStream {
-	
-	private final InputStream resultstream;
-	
+	/** The inputstream w/ or without a HTTP header. */
+	private final InputStream inputstream;
+	/** Does the inputstream contains a HTTP header?. */
 	private final boolean containsHeader;
 	
 	/**
 	 * Create a ResultStream with the given inputStream and information
 	 * of whether or not the inputStream contains a header.
-	 * @param resultStream an inputStream w/ the data for a stored URI
+	 * @param inputstream An inputStream w/ the data for a stored URI
 	 * @param containsHeader true, if the stream contains a header, otherwise
 	 * false
 	 */
-	public ResultStream(InputStream resultStream, boolean containsHeader) {
-		ArgumentNotValid.checkNotNull(resultStream, "InputStream resultStream");
-		this.resultstream = resultStream;
+	public ResultStream(InputStream inputstream, boolean containsHeader) {
+		ArgumentNotValid.checkNotNull(inputstream, "InputStream inputstream");
+		this.inputstream = inputstream;
 		this.containsHeader = containsHeader;
 	}
 	
 	/**
 	 * 
-	 * @return the resultStream
+	 * @return the inputstream
 	 */
-	public InputStream getResultStream(){
-		return this.resultstream;
+	public InputStream getInputStream(){
+		return this.inputstream;
 	}
 	
 	/**

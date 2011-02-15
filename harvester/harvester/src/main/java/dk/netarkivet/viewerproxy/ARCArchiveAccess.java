@@ -131,7 +131,7 @@ public class ARCArchiveAccess implements URIResolver {
                 createNotFoundResponse(uri, response);
                 return URIResolver.NOT_FOUND;
             }
-            contentStream = content.getResultStream();
+            contentStream = content.getInputStream();
             // First write the original header.
             if (content.containsHeader()) {
             	writeHeader(contentStream, response);
