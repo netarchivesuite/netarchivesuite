@@ -88,7 +88,8 @@ public class SparseFullHarvest {
      * @param edition             DAO edition of harvest.
      * @param maxCountObjects     Limit for how many objects can be harvested
      * @param maxBytes            Limit for how many bytes can be harvested
-     * @param maxJobRunningTime   Limit on how much time can be used for this job
+     * @param maxJobRunningTime   Limit on how much time can be used for this job. 
+     *                            See {@link #getMaxJobRunningTime()}
      * @param previousFullHarvest This id of the harvestDefinition used to
      *                            create this Fullharvest definition. May be
      *                            null for none

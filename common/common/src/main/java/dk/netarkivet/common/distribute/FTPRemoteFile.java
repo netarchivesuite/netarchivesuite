@@ -470,7 +470,7 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
     /**
      * Create FTPClient and log on to ftp-server, if not already connected to
      * ftp-server.  Attempts to set binary mode and passive mode.
-     * Will try at least FTP_RETRIES times
+     * Will try to login up to FTP_RETRIES times, if login fails.
      */
     private void logOn() {
         if (currentFTPClient != null && currentFTPClient.isConnected()) {
@@ -484,8 +484,8 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                   + ftpServerName + ":" + ftpServerPort);
 
         int tries = 0;
-        boolean operationSuccessful = false;
-        while (!operationSuccessful && tries < FTP_RETRIES) {
+        boolean logOnSuccessful = false;
+        while (!logOnSuccessful && tries < FTP_RETRIES) {
             tries++;
             try {
                 currentFTPClient.connect(ftpServerName, ftpServerPort);
@@ -520,7 +520,7 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                         + currentFTPClient.getDefaultTimeout());
                 log.debug("w/ ConnectTimeout (ms): " 
                         + currentFTPClient.getConnectTimeout());
-                operationSuccessful = true;
+                logOnSuccessful = true;
             } catch (IOException e) {
                 final String msg = "Connect to " + ftpServerName
                 + " from host: "

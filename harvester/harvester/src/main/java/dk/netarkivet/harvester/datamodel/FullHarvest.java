@@ -73,8 +73,8 @@ public class FullHarvest extends HarvestDefinition {
      *                                     fetched per domain
      * @param maxBytes                     Limit for how many bytes can be
      *                                     fetched per domain
-     * @param maxJobRunningTime				Limit on how much time can be spent on each job.
-     * 										0 means no limit                                   
+     * @param maxJobRunningTime            Limit on how much time can be spent on each job.
+     *                                     0 means no limit                                   
      */
     public FullHarvest(String harvestDefName,
                        String comments,
