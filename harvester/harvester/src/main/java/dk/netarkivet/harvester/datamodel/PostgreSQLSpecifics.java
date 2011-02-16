@@ -39,11 +39,11 @@ import dk.netarkivet.common.utils.DBUtils;
 /**
  * PostgreSQL-specific implementation of DB methods.
  * Intended for PostgreSQL 8.3 and above.
- * 
+ *
  *  PostgreSQL does not support the CLOB datatype but instead provides a "text"
- *  data type. 
+ *  data type.
  *  See http://www.postgresql.org/docs/current/static/datatype-character.html.
- * 
+ *
  */
 public class PostgreSQLSpecifics extends DBSpecifics {
 
@@ -52,7 +52,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
 
     /**
      * Get an instance of the PostgreSQL specifics class.
-     * 
+     *
      * @return Instance of the PostgreSQL specifics class.
      */
     public static DBSpecifics getInstance() {
@@ -64,7 +64,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      * with dropTemporaryTable. The table has two columns domain_name
      * varchar(Constants.MAX_NAME_SIZE) config_name
      * varchar(Constants.MAX_NAME_SIZE)
-     * 
+     *
      * @param c
      *            The DB connection to use.
      * @throws SQLException
@@ -91,7 +91,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      * Dispose of a temporary table created with getTemporaryTable. This can be
      * expected to be called from within a finally clause, so it mustn't throw
      * exceptions.
-     * 
+     *
      * @param c
      *            The DB connection to use.
      * @param tableName
@@ -104,7 +104,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     /**
      * Get the name of the JDBC driver class that handles interfacing to this
      * server.
-     * 
+     *
      * @return The name of a JDBC driver class
      */
     public String getDriverClassName() {
@@ -143,7 +143,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      * change of the field forcemaxbytes from int to bigint and setting its
      * default to -1. Furthermore the default value for field num_configs is set
      * to 0.
-     * 
+     *
      * @throws IOFailure
      *             in case of problems in interacting with the database
      */
@@ -159,7 +159,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     /**
      * Migrates the 'jobs' table from version 4 to version 5 consisting of
      * adding new fields 'resubmitted_as_job' and 'submittedDate'.
-     * 
+     *
      * @throws IOFailure
      *             in case of problems in interacting with the database
      */
@@ -177,7 +177,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      */
     protected synchronized void migrateConfigurationsv3ov4() {
         // Update configurations table to version 4
-        String[] sqlStatements 
+        String[] sqlStatements
             = {"ALTER TABLE configurations ALTER maxbytes SET DEFAULT -1" };
         DBConnect.updateTable("configurations", 4, sqlStatements);
     }
@@ -188,7 +188,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      */
     protected synchronized void migrateFullharvestsv2tov3() {
         // Update fullharvests table to version 3
-        String[] sqlStatements 
+        String[] sqlStatements
             = { "ALTER TABLE fullharvests ALTER maxbytes SET DEFAULT -1" };
         DBConnect.updateTable("fullharvests", 3, sqlStatements);
     }
@@ -204,25 +204,25 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         log.warn("Please use the provided SQL scripts to update the DB schema");
         DBConnect.updateTable("global_crawler_trap_expressions", 1);
     }
-    
+
     @Override
     public void createFrontierReportMonitorTable() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        DBConnect.updateTable("frontierReportMonitor", 1);   
+        DBConnect.updateTable("frontierReportMonitor", 1);
     }
 
     @Override
     public void createRunningJobsHistoryTable() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        DBConnect.updateTable("runningJobsHistory", 1);  
+        DBConnect.updateTable("runningJobsHistory", 1);
     }
 
     @Override
     public void createRunningJobsMonitorTable() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        DBConnect.updateTable("runningJobsMonitor", 1);  
+        DBConnect.updateTable("runningJobsMonitor", 1);
     }
-    
+
     // Below DB changes introduced with development release 3.15
     // with changes to tables 'runningjobshistory', 'runningjobsmonitor',
     // 'configurations', 'fullharvests', and 'jobs'.
@@ -252,13 +252,13 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         };
         DBConnect.updateTable("runningJobsMonitor", 2, sqlStatements);
     }
-    
-    
-    
+
+
+
     @Override
     protected void migrateConfigurationsv4tov5() {
         // Update configurations table to version 5
-        String[] sqlStatements 
+        String[] sqlStatements
             = {"ALTER TABLE configurations ALTER COLUMN maxobjects TYPE bigint" };
         DBConnect.updateTable("configurations", 5, sqlStatements);
     }
@@ -266,16 +266,16 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateFullharvestsv3tov4() {
         // Update fullharvests table to version 4
-        String[] sqlStatements 
+        String[] sqlStatements
             = {"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"};
-        DBConnect.updateTable("fullharvests", 4, sqlStatements);     
+        DBConnect.updateTable("fullharvests", 4, sqlStatements);
     }
 
     @Override
     protected void migrateJobsv5tov6() {
-        String[] sqlStatements 
-        = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0 AFTER forcemaxcount"};
-        DBConnect.updateTable("jobs", 6, sqlStatements);     
+        String[] sqlStatements
+        = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0"};
+        DBConnect.updateTable("jobs", 6, sqlStatements);
     }
 
 }
