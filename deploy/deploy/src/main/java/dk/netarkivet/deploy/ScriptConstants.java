@@ -90,7 +90,7 @@ public final class ScriptConstants {
     /** cmd /c - Command for running programs on windows.*/
     static final String WINDOWS_COMMAND_RUN = "cmd /c";
     /** more - the command for reading a log file.*/
-    static final String WINDOWS_COMMAND_MORE = "more";
+    static final String WINDOWS_COMMAND_TYPE = "type";
     /** cmd /c unzip.exe -q -d - Command for unzipping on windows.*/
     static final String WINDOWS_UNZIP_COMMAND = WINDOWS_COMMAND_RUN 
             + " unzip.exe -q -d";
@@ -124,11 +124,11 @@ public final class ScriptConstants {
     /** *.log.*/
     static final String STAR_LOG = "*.log";
     /** '      '.*/
-    static final String MULTI_SPACE = "      ";
+    static final String MULTI_SPACE_6 = "      ";
     /** '    '.*/
-    static final String MULTI_SPACE_2 = "    ";
+    static final String MULTI_SPACE_4 = "    ";
     /** '  '.*/
-    static final String MULTI_SPACE_3 = "  ";
+    static final String MULTI_SPACE_2 = "  ";
     /** ssh.*/
     static final String SSH = "ssh";
     /** scp.*/
@@ -321,7 +321,7 @@ public final class ScriptConstants {
     /** "set f=fso.OpenTextFile(\".\\conf\\".*/
     static final String VB_WRITE_F_PREFIX = 
         "set f=fso.OpenTextFile(\".\\conf\\";
-    /** "\",2,True)".*/
+    /** "\",2,True)". */
     static final String VB_WRITE_F_SURFIX = "\",2,True)";
     /** "f.WriteLine \"taskkill /F /PID \" & oExec.ProcessID".*/
     static final String VB_WRITE_F_KILL = "f.WriteLine \"taskkill /F /PID \""
@@ -346,9 +346,9 @@ public final class ScriptConstants {
     /** CreateObject("Scripting.FileSystemObject").OpenTextFile(".*/
     static final String VB_OPEN_WRITE_FILE_PREFIX 
             = "CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"";
-    /** ", 2, True). */
+    /** ", 2, True). Means "write to new file", e.g. override existing. */
     static final String VB_OPEN_WRITE_FILE_SUFFIX_2 = "\", 2, True)";
-    /** ", 8, True). */
+    /** ", 8, True). Means "append to file" */
     static final String VB_OPEN_WRITE_FILE_SUFFIX_8 = "\", 8, True)";
     /** .close.*/
     static final String VB_CLOSE = ".close";

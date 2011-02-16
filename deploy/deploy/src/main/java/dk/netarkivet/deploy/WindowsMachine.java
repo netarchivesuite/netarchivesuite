@@ -313,7 +313,7 @@ public class WindowsMachine extends Machine {
             res.append(ScriptConstants.SSH + Constants.SPACE);
             res.append(machineUserLogin());
             res.append(Constants.SPACE + Constants.QUOTE_MARK 
-                    + ScriptConstants.WINDOWS_COMMAND_MORE + Constants.SPACE);
+                    + ScriptConstants.WINDOWS_COMMAND_TYPE + Constants.SPACE);
             res.append(getEnvironmentName() + Constants.BACKSLASH 
                     + Constants.SCRIPT_NAME_LOCAL_START
                     + app.getIdentification() + Constants.EXTENSION_LOG_FILES);
@@ -840,53 +840,53 @@ public class WindowsMachine extends Machine {
                 // Do While oExec.Status = 0
                 vbsPrint.println(ScriptConstants.VB_DO_WHILE_OEXEC_STATUS_0);
                 //   WScript.Sleep 1000
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_3
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
                         + ScriptConstants.VB_WSCRIPT_SLEEP_1000);
                 //   Do While oExec.StdOut.AtEndOfStream <> True
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_3
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
                         + ScriptConstants.VB_DO_WHILE
                         + ScriptConstants.VB_OEXEC_STD_OUT
                         + ScriptConstants.VB_AT_END_OF_STREAM_FALSE);
                 //     Set outFile = CreateObject("Scripting.FileSystemObject")
                 // .OpenTextFile("start_APP.log", 8, True)
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
                         + ScriptConstants.VB_SET_OUTFILE
                         + ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
                         + startLogName
                         + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_8);
                 //     outFile.WriteLine oExec.StdOut.ReadLine
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
                         + ScriptConstants.VB_OUTFILE_WRITELINE
                         + ScriptConstants.VB_OEXEC_STD_OUT
                         + ScriptConstants.VB_READ_LINE);
                 //     outFile.close
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
                         + ScriptConstants.VB_OUTFILE_CLOSE);
                 //   Loop
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_3
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
                         + ScriptConstants.VB_LOOP);
                 //   Do While oExec.StdErr.AtEndOfStream <> True
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_3
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
                         + ScriptConstants.VB_DO_WHILE
                         + ScriptConstants.VB_OEXEC_STD_ERR
                         + ScriptConstants.VB_AT_END_OF_STREAM_FALSE);
                 //     Set outFile = CreateObject("Scripting.FileSystemObject")
                 // .OpenTextFile("start_APP.log", 8, True)
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
                         + ScriptConstants.VB_SET_OUTFILE
                         + ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
                         + startLogName 
                         + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_8);
                 //     outFile.WriteLine oExec.StdErr.ReadLine
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
                         + ScriptConstants.VB_OUTFILE_WRITELINE
                         + ScriptConstants.VB_OEXEC_STD_ERR
                         + ScriptConstants.VB_READ_LINE);
                 //     outFile.close
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2 
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4 
                         + ScriptConstants.VB_OUTFILE_CLOSE);
                 //   Loop
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_3
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
                         + ScriptConstants.VB_LOOP);
                 // Loop
                 vbsPrint.println(ScriptConstants.VB_LOOP);
