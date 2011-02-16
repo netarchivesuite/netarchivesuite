@@ -22,17 +22,30 @@
 */
 package dk.netarkivet.harvester.harvesting.report;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.archive.crawler.datamodel.CrawlURI;
+import org.archive.net.UURI;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.FixedUURI;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
+import dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
 
@@ -83,6 +96,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      */
     private StopReason defaultStopReason;
 
+    /** The logger for this class. */
+    private static final Log LOG =
+        LogFactory.getLog(AbstractHarvestReport.class);
+
 
     /**
      * Default constructor that does nothing.
@@ -96,10 +113,9 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     /**
      * Constructor from Heritrix report files. Subclasses might use a different
      * set of Heritrix reports.
-     * @param files
-     * @throws IOFailure
+     * @param files the set of Heritrix reports.
      */
-    public AbstractHarvestReport(HeritrixFiles files) throws IOFailure {
+    public AbstractHarvestReport(HeritrixFiles files) {
         ArgumentNotValid.checkNotNull(files, "files");
         this.heritrixFiles = files;
         this.defaultStopReason = findDefaultStopReason(
@@ -112,7 +128,28 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * crawl, before the ARC files upload.
      */
     @Override
-    public abstract void preProcess(HeritrixFiles files);
+    public void preProcess(HeritrixFiles files) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Starting pre-processing of harvest report for job "
+                    + files.getJobID());
+        }
+        long startTime = System.currentTimeMillis();
+
+        File crawlLog = files.getCrawlLog();
+        if (! crawlLog.isFile() || ! crawlLog.canRead()) {
+            String errorMsg = "Not a file or not readable: "
+                + crawlLog.getAbsolutePath();
+            throw new IOFailure(errorMsg);
+        }
+        parseCrawlLog(files.getCrawlLog());
+
+        if (LOG.isInfoEnabled()) {
+            long time = System.currentTimeMillis() - startTime;
+            LOG.info("Finished pre-processing of harvest report for job "
+                    + files.getJobID() + ", operation took "
+                    + StringUtils.formatDuration(time));
+        }
+    }
 
     /**
      * Post-processing happens on the scheduler side when ARC files
@@ -230,6 +267,138 @@ public abstract class AbstractHarvestReport implements HarvestReport {
             }
         } else {
             return StopReason.DOWNLOAD_UNFINISHED;
+        }
+    }
+
+    /**
+     * Computes the domain-name/byte-count and domain-name/object-count
+     * and domain-name/stopreason maps
+     * for a crawl.log.
+     *
+     * @param file the local file to pe processed
+     * @throws IOFailure if there is problem reading the file
+     */
+    private void parseCrawlLog(File file) throws IOFailure {
+        BufferedReader in = null;
+
+        try {
+            in = new BufferedReader(new FileReader(file));
+            String line;
+            int lineCnt = 0;
+            while ((line = in.readLine()) != null) {
+                ++lineCnt;
+                try {
+                    processHarvestLine(line);
+                } catch (ArgumentNotValid e) {
+                    final String message = "Invalid line in '"
+                                           + file.getAbsolutePath()
+                                           + "' line " + lineCnt + ": '"
+                                           + line + "'. Ignoring.";
+                    LOG.debug(message, e);
+                }
+            }
+        } catch (IOException e) {
+            String msg = "Unable to open/read crawl.log file '"
+                         + file.getAbsolutePath() + "'.";
+            LOG.warn(msg, e);
+            throw new IOFailure(msg, e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    LOG.debug("Unable to close " + file, e);
+                    // Can't throw here, as would destroy the real exception
+                }
+            }
+        }
+    }
+
+    /**
+     * Processes a harvest-line, updating the object and byte maps.
+     *
+     * @param line the line to process.
+     */
+    private void processHarvestLine(String line) throws ArgumentNotValid {
+        //A legal crawl log line has at least 11 parts, + optional annotations
+        String[] parts = line.split("\\s+", 12);
+        if (parts.length < 11) {
+            throw new ArgumentNotValid(
+                    "Not enough fields for line in crawl.log: '" + line + "'.");
+        }
+
+        //Get the domain name from the URL in the fourth field
+        String hostName;
+        // This errormessage is shared by the two exceptions thrown below.
+        String errorMsg =
+            "Unparsable URI in field 4 of crawl.log: '" + parts[3] + "'.";
+        try {
+            UURI uuri = new FixedUURI(parts[3], false);
+            hostName = uuri.getReferencedHost();
+        } catch (URIException e) {
+            throw new ArgumentNotValid(errorMsg, e);
+        }
+        if (hostName == null) {
+            throw new ArgumentNotValid(errorMsg);
+        }
+        String domainName;
+        domainName = DomainUtils.domainNameFromHostname(hostName);
+
+        //Get the response code for the URL in the second field
+        long response;
+        try {
+            response = Long.parseLong(parts[1]);
+        } catch (NumberFormatException e) {
+            throw new ArgumentNotValid("Unparsable response code in field 2 of "
+                                + "crawl.log: '" + parts[1] + "'.");
+        }
+
+        //Get the byte count from annotation field "content-size"
+        //and the stop reason from annotation field if status code is -5003
+        StopReason defaultStopReason = getDefaultStopReason();
+        StopReason stopReason = defaultStopReason;
+        long byteCounter = 0;
+        if (parts.length > 11) { // test if any annotations exist
+            String[] annotations = parts[11].split(",");
+            for (String annotation : annotations) {
+                if (annotation.trim().startsWith(
+                        ContentSizeAnnotationPostProcessor
+                            .CONTENT_SIZE_ANNOTATION_PREFIX)) {
+                    try {
+                        byteCounter = Long.parseLong(annotation.substring(
+                                ContentSizeAnnotationPostProcessor
+                                    .CONTENT_SIZE_ANNOTATION_PREFIX.length()));
+                    } catch (NumberFormatException e) {
+                        throw new ArgumentNotValid("Unparsable annotation in "
+                                            + "field 12 of crawl.log: '"
+                                            + parts[11]
+                                            + "'.", e);
+                    }
+                }
+                if (response == CrawlURI.S_BLOCKED_BY_QUOTA) {
+                    if (annotation.trim().equals("Q:group-max-all-kb")) {
+                        stopReason = StopReason.SIZE_LIMIT;
+                    } else if (annotation.trim()
+                            .equals("Q:group-max-fetch-successes")) {
+                        stopReason = StopReason.OBJECT_LIMIT;
+                    }
+                }
+            }
+        }
+
+        //Update stats for domain
+        DomainStats dhi = getOrCreateDomainStats(domainName);
+
+        //Only count harvested URIs
+        if (response >= 0) {
+            long oldObjectCount = dhi.getObjectCount();
+            dhi.setObjectCount(oldObjectCount + 1);
+            long oldByteCount = dhi.getByteCount();
+            dhi.setByteCount(oldByteCount + byteCounter);
+        }
+        //Only if reason not set
+        if (dhi.getStopReason() == defaultStopReason) {
+            dhi.setStopReason(stopReason);
         }
     }
 

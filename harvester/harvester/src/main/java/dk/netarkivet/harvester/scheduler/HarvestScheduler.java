@@ -43,13 +43,13 @@ import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.PartialHarvest;
+import dk.netarkivet.harvester.datamodel.SparseFullHarvest;
+import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
@@ -57,18 +57,18 @@ import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 
 /**
- * This class handles dispatching of scheduled Harvest jobs to the Harvest 
+ * This class handles dispatching of scheduled Harvest jobs to the Harvest
  * servers.<p>
  * The scheduler loads all active harvest definitions on a regular basis and
  * extracts the scheduling information for each definition.
  * When a harvest definition is scheduled to start the scheduler
  * creates the corresponding harvest jobs and submits these
- * to the active HarvestServers.<p>  
- * 
- * It also handles backup and makes sure backup is not performed while 
+ * to the active HarvestServers.<p>
+ *
+ * It also handles backup and makes sure backup is not performed while
  * jobs are being scheduled.<p>
  *
- * Note: Only one <code>HarvestScheduler</code> should be running at a time. 
+ * Note: Only one <code>HarvestScheduler</code> should be running at a time.
  */
 public class HarvestScheduler extends LifeCycleComponent {
 
@@ -78,11 +78,11 @@ public class HarvestScheduler extends LifeCycleComponent {
 
     /** The thread used to control when new dispatches should be run. */
     private Thread dispatcherThread;
-     
-     /** Connection to JMS provider. */
-     private JMSConnection jmsConnection;          
 
-     /** Used for storing a map of the <code>QueueBrowsers</code> used be the 
+     /** Connection to JMS provider. */
+     private JMSConnection jmsConnection;
+
+     /** Used for storing a map of the <code>QueueBrowsers</code> used be the
       * <code>HarvestScheduler</code>, so they don't need to be created over
       * and over (see Bug 2059).
       */
@@ -95,20 +95,20 @@ public class HarvestScheduler extends LifeCycleComponent {
         log.info("Creating HarvestScheduler");
         jmsConnection = JMSConnectionFactory.getInstance();
     }
-    
+
     /**
-     * Start the thread responsible for reading Harvest definitions from the 
+     * Start the thread responsible for reading Harvest definitions from the
      * database, and dispatching the harvest job to the servers.
      */
-    public void start() {          
+    public void start() {
         //ToDo implement real scheduling with timeout functionality.
-        dispatcherThread = new Thread("HarvestScheduler") { 
+        dispatcherThread = new Thread("HarvestScheduler") {
             public void run() {
                 log.debug("Rescheduling any leftover jobs");
                 rescheduleSubmittedJobs();
-                int dispatchPeriode = 
+                int dispatchPeriode =
                     Settings.getInt(HarvesterSettings.DISPATCH_JOBS_PERIOD);
-                log.info("Scheduling dispatch every " + (dispatchPeriode/1000) 
+                log.info("Scheduling dispatch every " + (dispatchPeriode/1000)
                         + " seconds");
                 try {
                     while (!dispatcherThread.isInterrupted()) {
@@ -117,16 +117,16 @@ public class HarvestScheduler extends LifeCycleComponent {
                         } catch (Exception e) {
                             log.error("Unable to dispatch new harvest jobs", e);
                         }
-                        Thread.sleep(dispatchPeriode);                
+                        Thread.sleep(dispatchPeriode);
                     }
                 } catch (InterruptedException e) {
-                    log.info("HarvestJobDispatcher interrupted, " 
+                    log.info("HarvestJobDispatcher interrupted, "
                             + e.getMessage());
-                }        
+                }
             }
         };
         dispatcherThread.start();
-    } 
+    }
 
     /**
      * Reschedule all jobs with JobStatus SUBMITTED.
@@ -162,10 +162,10 @@ public class HarvestScheduler extends LifeCycleComponent {
             Date endTime = new Date();
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
             if (new Date().after(endTime)) {
-                final String msg = " Job " + id 
+                final String msg = " Job " + id
                     + " has exceeded its timeout of "
                     + (Settings.getLong(
-                            HarvesterSettings.JOB_TIMEOUT_TIME) / 60) 
+                            HarvesterSettings.JOB_TIMEOUT_TIME) / 60)
                             + " minutes." + " Changing status to " + "FAILED.";
                 log.warn(msg);
                 job.setStatus(JobStatus.FAILED);
@@ -181,7 +181,7 @@ public class HarvestScheduler extends LifeCycleComponent {
 
     /**
      * Dispatched new jobs
-     * Stop jobs with status STARTED, which have been on running for more 
+     * Stop jobs with status STARTED, which have been on running for more
      * than settings.harvester.scheduler.jobtimeouttime time.
      */
     void dispatchJobs() {
@@ -190,19 +190,19 @@ public class HarvestScheduler extends LifeCycleComponent {
     }
 
     /**
-     * Submit the next new job if the relevant message queue is empty. 
+     * Submit the next new job if the relevant message queue is empty.
      */
     synchronized void submitNewJobs() {
         try {
             for (JobPriority priority: JobPriority.values()) {
-            	// This check was cause because of memory leak in Bug 2059 
-            	if (Settings.getBoolean( 
+            	// This check was cause because of memory leak in Bug 2059
+            	if (Settings.getBoolean(
             			HarvesterSettings.SINGLE_JOB_DISPATCHING)) {
             		if (isQueueEmpty(priority)) {
             			submitNextNewJob(priority);
             		} else {
             			if (log.isTraceEnabled()) log.trace(
-            					"Skipping dispatching of " 
+            					"Skipping dispatching of "
             					+ priority + " jobs, the message queue is full");
             		}
             	} else {
@@ -213,9 +213,9 @@ public class HarvestScheduler extends LifeCycleComponent {
             log.error("Unable to determine whether message queue is empty", e);
         }
     }
-    
+
     /**
-     * Submit the next new job (the one with the lowest ID) with the given 
+     * Submit the next new job (the one with the lowest ID) with the given
      * priority.
      */
     private void submitNextNewJob(JobPriority priority) {
@@ -224,7 +224,7 @@ public class HarvestScheduler extends LifeCycleComponent {
         if (!jobsToSubmit.hasNext()) {
             if (log.isTraceEnabled() ) {
                 log.trace("No " + priority + " jobs to be run at this time");
-            }           
+            }
         } else {
             if (log.isDebugEnabled() ) {
                 log.debug("Submitting new " + priority + " job");
@@ -250,7 +250,7 @@ public class HarvestScheduler extends LifeCycleComponent {
                     metadata.add(aliasMetadataEntry);
                 }
 
-                //Add duplicationReduction MetadataEntry, if Deduplication 
+                //Add duplicationReduction MetadataEntry, if Deduplication
                 //is enabled.
                 if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
                         jobToSubmit.getOrderXMLdoc())) {
@@ -269,18 +269,33 @@ public class HarvestScheduler extends LifeCycleComponent {
 
                 // Extract documentary information about the harvest
                 HarvestDefinitionDAO hDao = HarvestDefinitionDAO.getInstance();
-                HarvestDefinition hd = hDao.read(
+                String hName = hDao.getHarvestName(
                         jobToSubmit.getOrigHarvestDefinitionID());
 
-                // The schedule name can only be documented for focused crawls.
                 String schedule = "";
-                if (! hd.isSnapShot()) {
-                    schedule = ((PartialHarvest) hd).getSchedule().getName();
+                String hdComments = "";
+                SparseFullHarvest fh = hDao.getSparseFullHarvest(hName);
+                if (fh != null) {
+                    hdComments = fh.getComments();
+                } else {
+                    SparsePartialHarvest ph =
+                        hDao.getSparsePartialHarvest(hName);
+
+                    if (ph == null) {
+                        throw new ArgumentNotValid("No harvest definition "
+                                + "found for id '"
+                                + jobToSubmit.getOrigHarvestDefinitionID()
+                                + "', named '" + hName + "'");
+                    }
+
+                    // The schedule name can only be documented for
+                    // focused crawls.
+                    schedule = ph.getScheduleName();
+
+                    hdComments = ph.getComments();
                 }
 
-                doOneCrawl(jobToSubmit,
-                        hd.getName(), hd.getComments(), schedule,
-                        metadata);
+                doOneCrawl(jobToSubmit, hName, hdComments, schedule, metadata);
                 if (log.isTraceEnabled() ) {
                     log.trace("Job " + jobToSubmit + " sent to harvest queue.");
                 }
@@ -297,9 +312,9 @@ public class HarvestScheduler extends LifeCycleComponent {
             }
         }
     }
-    
+
     /**
-     * Checks that the message queue for the given harvest job is empty and 
+     * Checks that the message queue for the given harvest job is empty and
      * therefore ready for the next message.
      * @param priority The job priority used for the channel of the queue
      * @return Is the queue empty
@@ -320,18 +335,18 @@ public class HarvestScheduler extends LifeCycleComponent {
     		return !qBrowser.getEnumeration().hasMoreElements();
     	}
     }
-    
+
     private void createQueueBrowsers() throws JMSException {
         queueBrowsers = new HashMap<JobPriority, QueueBrowser>();
-        
+
         for (JobPriority priority: JobPriority.values()) {
             log.debug("Creating QueueBrowser for " + priority + " jobs");
-            queueBrowsers.put(priority, 
+            queueBrowsers.put(priority,
                     jmsConnection.createQueueBrowser(
                             JobChannelUtil.getChannel(priority)));
         }
     }
-    
+
     /**
      * Submit an doOneCrawl request to a HarvestControllerServer with correct
      * priority.
@@ -362,7 +377,7 @@ public class HarvestScheduler extends LifeCycleComponent {
     }
 
     /**
-     * Release allocated resources (JMS connections) and stops dispatching 
+     * Release allocated resources (JMS connections) and stops dispatching
      * harvest jobs, all without logging.
      */
     @Override

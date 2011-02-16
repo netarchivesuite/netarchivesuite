@@ -60,11 +60,23 @@ public class PersistentJobData {
          */
         private final String scheduleName;
 
+        /**
+         * Builds a harvest definition info object.
+         * @param origHarvestName the harvest definition's name
+         * @param origHarvestDesc the harvest definition's comments
+         * @param scheduleName the harvest definition's schedule name
+         */
         public HarvestDefinitionInfo(
                 String origHarvestName,
                 String origHarvestDesc,
                 String scheduleName) {
             super();
+            ArgumentNotValid.checkNotNullOrEmpty(
+                    origHarvestName, "origHarvestName");
+            ArgumentNotValid.checkNotNull(
+                    origHarvestDesc, "origHarvestDesc");
+            ArgumentNotValid.checkNotNull(
+                    scheduleName, "scheduleName");
             this.origHarvestName = origHarvestName;
             this.origHarvestDesc = origHarvestDesc;
             this.scheduleName = scheduleName;
@@ -117,9 +129,6 @@ public class PersistentJobData {
     /** Key in harvestinfo file for the priority of the job. */
     private static final String PRIORITY_KEY = ROOT_ELEMENT + ".priority";
 
-    /** Key for testing tag addition. */
-    private static final String TEST_KEY = ROOT_ELEMENT + ".test";
-
     /** Key in harvestinfo file for the original harvest definition name. */
     private static final String HARVEST_NAME_KEY =
         ROOT_ELEMENT + ".origHarvestDefinitionName";
@@ -143,7 +152,7 @@ public class PersistentJobData {
     private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY,   MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
         ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
-        HARVEST_NAME_KEY, HARVEST_DESC_KEY, HARVEST_SCHED_KEY};
+        HARVEST_NAME_KEY};
 
 
     /** The logger to use. */
@@ -250,8 +259,16 @@ public class PersistentJobData {
                 harvestJob.getOrderXMLName());
 
         sx.add(HARVEST_NAME_KEY, hdi.getOrigHarvestName());
-        sx.add(HARVEST_DESC_KEY, hdi.getOrigHarvestDesc());
-        sx.add(HARVEST_SCHED_KEY, hdi.getScheduleName());
+
+        String comments = hdi.getOrigHarvestDesc();
+        if (! comments.isEmpty()) {
+            sx.add(HARVEST_DESC_KEY, comments);
+        }
+
+        String schedName = hdi.getScheduleName();
+        if (! schedName.isEmpty()) {
+            sx.add(HARVEST_SCHED_KEY, schedName);
+        }
 
         if (!validHarvestInfo(sx)) {
             String msg = "Could not create a valid harvestinfo file for job "

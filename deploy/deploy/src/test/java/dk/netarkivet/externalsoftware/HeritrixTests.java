@@ -78,6 +78,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncherFactory;
 import dk.netarkivet.harvester.harvesting.controller.AbstractJMXHeritrixController;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LuceneUtils;
@@ -91,14 +92,14 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
  * Tests various aspects of launching Heritrix and Heritrix' capabilities.
  * Note that some of these tests require much heap space, so JVM parameter
  * -Xmx512M may be required.
- * 
- * 
+ *
+ *
  * Note: after upgrading to Heritrix 1.14.3, the unittest testBug820()
  * that tests if it is still necessary to use FixedUURI does not work any more.
  * //import org.apache.commons.httpclient.URIException;
  * //import org.archive.net.UURI;
  * //import dk.netarkivet.common.utils.FixedUURI;
- * 
+ *
  */
 public class HeritrixTests extends TestCase {
 
@@ -182,8 +183,8 @@ public class HeritrixTests extends TestCase {
                                                  File origSeedsFile,
                                                  File origIndexDir)
             throws IOException {
-        
-        return getHeritrixLauncher(origOrderXml, origSeedsFile, origIndexDir, 
+
+        return getHeritrixLauncher(origOrderXml, origSeedsFile, origIndexDir,
                 new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)),
                 new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)));
     }
@@ -207,7 +208,7 @@ public class HeritrixTests extends TestCase {
             File origIndexDir,
             File jmxPasswordFile,
             File jmxAccessFile) {
-     
+
         if (!origOrderXml.exists()){
             fail ("order-File does not exist: " + origOrderXml.getAbsolutePath());
         }
@@ -234,8 +235,8 @@ public class HeritrixTests extends TestCase {
         }
         FileUtils.copyFile(origSeedsFile,seedsTxt);
         HeritrixFiles files = new HeritrixFiles(crawlDir,
-                TestInfo.JOBID, TestInfo.HARVESTID, 
-                jmxPasswordFile, 
+                TestInfo.JOBID, TestInfo.HARVESTID,
+                jmxPasswordFile,
                 jmxAccessFile);
         /*
         File tempDir = mtf.newTmpDir();
@@ -247,7 +248,7 @@ public class HeritrixTests extends TestCase {
 
         return HeritrixLauncherFactory.getInstance(files);
     }
-        
+
     /**
      * Run heritrix with the given order, seeds file and index.
      *
@@ -266,14 +267,14 @@ public class HeritrixTests extends TestCase {
     /**
      * Check that IOFailure is thrown by the JMXHeritrixController
      * if the JMXPasswordFile does not exist / is hidden / unreadable /
-     * impossible to open for other reasons. 
-     * 
-     */ 
+     * impossible to open for other reasons.
+     *
+     */
     public void testIOFailureThrown() throws IOException {
     	// Here it would make sense to get all the settings files and do the control
-    	// for all of them, but it seems that the Settings are not initialised in the 
-    	// setUp. Therefore the test is made only for jmxremote.password. It would be good 
-    	// to find a way to do the test for all the files. 
+    	// for all of them, but it seems that the Settings are not initialised in the
+    	// setUp. Therefore the test is made only for jmxremote.password. It would be good
+    	// to find a way to do the test for all the files.
     	File passwordFile = new File(TestInfo.WORKING_DIR, "quickstart.jmxremote.password");
 		FileUtils.remove(passwordFile);
     	File tempDir = mtf.newTmpDir();
@@ -285,28 +286,28 @@ public class HeritrixTests extends TestCase {
     		hl.doCrawl();
     		// if the exception is not thrown
     		fail("An IOFailure should have been thrown when launching " +
-    				"with a non existing file (" + passwordFile.getAbsolutePath() + ")"); 
+    				"with a non existing file (" + passwordFile.getAbsolutePath() + ")");
     	} catch (IOFailure iof) {
-    	    assertTrue("Wrong type of IOFailure thrown: " + iof, 
+    	    assertTrue("Wrong type of IOFailure thrown: " + iof,
     	            iof.getMessage().contains("is possibly missing"));
     		// ok, the right exception was thrown
     	} catch (Exception ex) {
     	    // a different exception than IOFailure was thrown but the
     	    // proper IOFailure may be the cause of this exception
-    	    //ex.printStackTrace(); 
-  
-            //System.out.println("ex.getCause().getMessage():" + ex.getCause().getMessage()); 
+    	    //ex.printStackTrace();
+
+            //System.out.println("ex.getCause().getMessage():" + ex.getCause().getMessage());
     	    if (!ex.getCause().getMessage().contains(
     	            "Failed to read the password file '" + passwordFile.getAbsolutePath() + "'")) {
-    	        ex.printStackTrace(); 
+    	        ex.printStackTrace();
     	        fail("An exception different from IOFailure has been thrown " +
-                        "when launching with a non existing file (" 
+                        "when launching with a non existing file ("
                         + passwordFile.getAbsolutePath() + ")" + ExceptionUtils.getStackTrace(ex));
     	    }
     	}
-	}    
+	}
 
-    
+
     /**
      * Check that all urls in the given array are listed in the crawl log.
      * Calls fail() at the first url that is not found or if the crawl log is not
@@ -419,7 +420,7 @@ public class HeritrixTests extends TestCase {
         HeritrixFiles hFiles =
             new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 0L, 0L);
         File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
-        AbstractHarvestReport hhr = new LegacyHarvestReport(hFiles);
+        HarvestReport hhr = new LegacyHarvestReport(hFiles);
         Long tv2_objects = hhr.getObjectCount("tv2.dk");
         Long netarkivet_objects = hhr.getObjectCount("netarkivet.dk");
         //int netarkivetHosts = GetHostsForDomain(hostReportFile, "netarkivet.dk");
@@ -519,7 +520,7 @@ public class HeritrixTests extends TestCase {
         }
 
         // we must harvest at max MAX_OBJECTS + 1 (the harvester some times stops at MAX_OBJECTS + 1)
-        assertTrue("Number of objects harvested is " + num_harvested 
+        assertTrue("Number of objects harvested is " + num_harvested
                 + ".  Exceeds " + TestInfo.MAX_OBJECTS, num_harvested < TestInfo.MAX_OBJECTS + 2);
     }
 
@@ -549,9 +550,9 @@ public class HeritrixTests extends TestCase {
         }
 
         // we must harvest at max MAX_OBJECTS + 1 (the harvester sometimes stops at MAX_OBJECTS + 1)
-        assertTrue("Number of objects harvested(" 
+        assertTrue("Number of objects harvested("
                                 + num_harvested + ") should be less than "
-                                + (TestInfo.MAX_OBJECTS + 2), 
+                                + (TestInfo.MAX_OBJECTS + 2),
                                 num_harvested < TestInfo.MAX_OBJECTS + 2);
     }
 
@@ -847,7 +848,7 @@ public class HeritrixTests extends TestCase {
     }
     /**
      * Test we can harvest from FTP-sites using the FTP processor.
-     * Downloads max 25 files from klid.dk using the seed: 
+     * Downloads max 25 files from klid.dk using the seed:
      * ftp://ftp.klid.dk/OpenOffice/haandbog
      * @throws Exception
      */
@@ -855,7 +856,7 @@ public class HeritrixTests extends TestCase {
         validateOrder(TestInfo.FTPHARVESTING_ORDERXML_FILE);
         File tempDir = mtf.newTmpDir();
         LuceneUtils.makeDummyIndex(tempDir);
-        runHeritrix(TestInfo.FTPHARVESTING_ORDERXML_FILE, 
+        runHeritrix(TestInfo.FTPHARVESTING_ORDERXML_FILE,
                 TestInfo.FTP_HARVESTING_SEEDLIST_FILE, tempDir);
 
         // test that both the heritrix-temp-dir and the bitarchive has at least one file - and has the same file !!
@@ -875,20 +876,20 @@ public class HeritrixTests extends TestCase {
                 ARCRecord a = (ARCRecord) o;
                 urlSet.add(a.getMetaData().getUrl());
             } else {
-                fail("ARCrecords expected, not objects of class" 
+                fail("ARCrecords expected, not objects of class"
                         + o.getClass().getName());
             }
-        }      
+        }
         assertTrue("Should have harvested more than 10 objects but only harvested "
                 + urlSet.size(), urlSet.size() > 10);
         String searchString = "ftp://ftp.klid.dk/OpenOffice/haandbog/Haandbog-2-2.pdf";
         if (!urlSet.contains(searchString)) {
-            fail("Expected to harvest '" + searchString + "' but we only harvested : " 
+            fail("Expected to harvest '" + searchString + "' but we only harvested : "
                     + StringUtils.conjoin(",", urlSet));
         }
     }
-    
-  ///////////////////////////////////////////////////////////////////  
+
+  ///////////////////////////////////////////////////////////////////
   //////////// Helper methods //////////////////////////////////////
   //////////////////////////////////////////////////////////////////
     private void validateOrder(File anOrderFile) {
