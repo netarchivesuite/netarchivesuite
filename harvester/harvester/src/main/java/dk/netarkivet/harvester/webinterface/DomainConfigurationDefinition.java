@@ -138,7 +138,7 @@ public class DomainConfigurationDefinition {
                 context, Constants.MAX_RATE_PARAM,
                 (long) dk.netarkivet.harvester.datamodel.Constants.
                         DEFAULT_MAX_REQUEST_RATE).intValue();
-        int maxObjects = HTMLUtils.parseOptionalLong(
+        long maxObjects = HTMLUtils.parseOptionalLong(
                 context, Constants.MAX_OBJECTS_PARAM,
                 dk.netarkivet.harvester.datamodel.Constants.
                         DEFAULT_MAX_OBJECTS).intValue();
@@ -167,7 +167,7 @@ public class DomainConfigurationDefinition {
      */
     private static void updateDomain(Domain domain,
                                      String configName, String orderXml,
-                                     int load, int maxObjects,
+                                     int load, long maxObjects,
                                      long maxBytes, String[] urlListList,
                                      String comments) {
 
