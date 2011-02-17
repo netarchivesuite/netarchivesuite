@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import java.io.PrintWriter;
 
 
 /**
@@ -56,20 +55,5 @@ public interface FrontierReport {
      * given domain name.
      */
     FrontierReportLine getLineForDomain(String domainName);
-
-    /**
-     * Returns the retired queues, e.g. the queues that have hit the totalBudget
-     * value (queue-total-budget).
-     * @param maxSize maximum count of elements to fetch
-     * @return an array of retired queues of maxSize.
-     */
-    FrontierReportLine[] getRetiredQueues(int maxSize);
-
-    /**
-     * Returns the exhausted queues, e.g. the queues whose current size is zero.
-     * @param maxSize maximum count of elements to fetch
-     * @return an array of exhausted queues.
-     */
-    FrontierReportLine[] getExhaustedQueues(int maxSize);
 
 }

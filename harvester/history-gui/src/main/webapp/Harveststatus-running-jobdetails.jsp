@@ -285,11 +285,15 @@ This page displays details about a running job.
 	    <td colspan="2">
 	    <table class="selection_table">
                <tr>
-                   <th><fmt:message key="running.job.details.frontier.queueName"/></th>
-                   <th><fmt:message key="running.job.details.frontier.totalEnqueues"/></th>
-                   <th><fmt:message key="running.job.details.frontier.currentSize"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.queueName"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.totalEnqueues"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.currentSize"/></th>
+                   <th colspan="2"><fmt:message key="running.job.details.frontier.budget"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.lastQueuedUri"/></th>
+               </tr>
+               <tr>
                    <th><fmt:message key="running.job.details.frontier.totalSpent"/></th>
-                   <th><fmt:message key="running.job.details.frontier.lastQueuedUri"/></th>
+                   <th><fmt:message key="running.job.details.frontier.totalBudget"/></th>
                </tr>
                <%
                    for (FrontierReportLine l : frontierReport.getLines()) {
@@ -300,7 +304,12 @@ This page displays details about a running job.
                     <fmt:formatNumber type="number" value="<%= l.getTotalEnqueues() %>"/></td>
                 <td align="right">
                     <fmt:formatNumber type="number" value="<%= l.getCurrentSize() %>"/></td>
-                <td align="right"><fmt:formatNumber type="number" value="<%= l.getTotalSpend() %>"/></td>
+                <td align="right">
+                    <fmt:formatNumber type="number" value="<%= l.getTotalSpend()%>"/>
+                </td>
+                <td align="right">
+                    <fmt:formatNumber type="number" value="<%= l.getTotalBudget()%>"/>
+                </td>
                 <td><a href="<%= l.getLastQueuedUri() %>" target="_blank">
                 <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 30) %></a></td>
                </tr>
@@ -335,9 +344,13 @@ This page displays details about a running job.
         <td colspan="2">
         <table class="selection_table">
                <tr>
-                   <th><fmt:message key="running.job.details.frontier.queueName"/></th>
-                   <th><fmt:message key="running.job.details.frontier.totalEnqueues"/></th>
-                   <th><fmt:message key="running.job.details.frontier.currentSize"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.queueName"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.totalEnqueues"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.currentSize"/></th>
+                   <th colspan="2"><fmt:message key="running.job.details.frontier.budget"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.lastQueuedUri"/></th>
+               </tr>
+               <tr>
                    <th><fmt:message key="running.job.details.frontier.totalSpent"/></th>
                    <th><fmt:message key="running.job.details.frontier.totalBudget"/></th>
                </tr>
@@ -350,8 +363,14 @@ This page displays details about a running job.
                     <fmt:formatNumber type="number" value="<%= l.getTotalEnqueues() %>"/></td>
                 <td align="right">
                     <fmt:formatNumber type="number" value="<%= l.getCurrentSize() %>"/></td>
-                <td align="right"><fmt:formatNumber type="number" value="<%= l.getTotalSpend() %>"/></td>
-                <td align="right"><fmt:formatNumber type="number" value="<%= l.getTotalBudget() %>"/></td>
+                <td align="right">
+                    <fmt:formatNumber type="number" value="<%= l.getTotalSpend()%>"/>
+                </td>
+                <td align="right">
+                    <fmt:formatNumber type="number" value="<%= l.getTotalBudget()%>"/>
+                </td>
+                <td><a href="<%= l.getLastQueuedUri() %>" target="_blank">
+                <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 30) %></a></td>
                </tr>
                <%  } %>
          </table>
@@ -384,9 +403,13 @@ This page displays details about a running job.
         <td colspan="2">
         <table class="selection_table">
                <tr>
-                   <th><fmt:message key="running.job.details.frontier.queueName"/></th>
-                   <th><fmt:message key="running.job.details.frontier.totalEnqueues"/></th>
-                   <th><fmt:message key="running.job.details.frontier.currentSize"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.queueName"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.totalEnqueues"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.currentSize"/></th>
+                   <th colspan="2"><fmt:message key="running.job.details.frontier.budget"/></th>
+                   <th rowspan="2"><fmt:message key="running.job.details.frontier.lastQueuedUri"/></th>
+               </tr>
+               <tr>
                    <th><fmt:message key="running.job.details.frontier.totalSpent"/></th>
                    <th><fmt:message key="running.job.details.frontier.totalBudget"/></th>
                </tr>
@@ -399,8 +422,14 @@ This page displays details about a running job.
                     <fmt:formatNumber type="number" value="<%= l.getTotalEnqueues() %>"/></td>
                 <td align="right">
                     <fmt:formatNumber type="number" value="<%= l.getCurrentSize() %>"/></td>
-                <td align="right"><fmt:formatNumber type="number" value="<%= l.getTotalSpend() %>"/></td>
-                <td align="right"><fmt:formatNumber type="number" value="<%= l.getTotalBudget() %>"/></td>
+                <td align="right">
+                    <fmt:formatNumber type="number" value="<%= l.getTotalSpend()%>"/>
+                </td>
+                <td align="right">
+                    <fmt:formatNumber type="number" value="<%= l.getTotalBudget()%>"/>
+                </td>
+                <td><a href="<%= l.getLastQueuedUri() %>" target="_blank">
+                <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 30) %></a></td>
                </tr>
                <%  } %>
          </table>

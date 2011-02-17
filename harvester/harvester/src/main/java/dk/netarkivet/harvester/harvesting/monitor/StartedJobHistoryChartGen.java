@@ -158,10 +158,10 @@ class StartedJobHistoryChartGen {
 
         @Override
         protected void afterExecute(Runnable task, Throwable t) {
-            super.afterExecute(task, t);
             if (t != null) {
                 LOG.error("Error history chart generation", t);
             }
+            super.afterExecute(task, t);
         }
 
     }

@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
+import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIterator;
+
 
 public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {
 
@@ -30,10 +32,26 @@ public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {
         InMemoryFrontierReport result = new InMemoryFrontierReport(
                 initialFrontier.getJobName());
 
-        FrontierReportLine[] retired =
-            initialFrontier.getRetiredQueues(getMaxSize());
-        for (FrontierReportLine l : retired) {
-            result.addLine(new FrontierReportLine(l));
+        FullFrontierReport full = (FullFrontierReport) initialFrontier;
+        ReportIterator iter = full.iterateOnSpentBudget();
+        try {
+            int addedLines = 0;
+            int maxSize = getMaxSize();
+            while (addedLines <= maxSize && iter.hasNext()) {
+                FrontierReportLine l = iter.next();
+
+                long totalBudget = l.getTotalBudget();
+                long totalSpent = l.getTotalSpend();
+                long currentSize = l.getCurrentSize();
+                if (currentSize > 0 && totalSpent >= totalBudget) {
+                    result.addLine(new FrontierReportLine(l));
+                    addedLines++;
+                }
+            }
+        } finally {
+            if (iter != null) {
+                iter.close();
+            }
         }
 
         return result;

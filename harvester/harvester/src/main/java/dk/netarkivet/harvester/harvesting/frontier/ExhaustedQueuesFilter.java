@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
+import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIterator;
+
 /**
  * Filters a frontier report to include only lines that represent
  * exhausted queues.
@@ -34,10 +36,14 @@ public class ExhaustedQueuesFilter extends MaxSizeFrontierReportExtract {
         InMemoryFrontierReport result = new InMemoryFrontierReport(
                 initialFrontier.getJobName());
 
-        FrontierReportLine[] exhausted =
-            initialFrontier.getExhaustedQueues(getMaxSize());
-        for (FrontierReportLine l : exhausted) {
-            result.addLine(new FrontierReportLine(l));
+        FullFrontierReport full = (FullFrontierReport) initialFrontier;
+        ReportIterator iter = full.iterateOnDuplicateCurrentSize(0L);
+
+        int maxSize = getMaxSize();
+        int addedLines = 0;
+        while (addedLines <= maxSize && iter.hasNext()) {
+            result.addLine(new FrontierReportLine(iter.next()));
+            addedLines++;
         }
 
         return result;

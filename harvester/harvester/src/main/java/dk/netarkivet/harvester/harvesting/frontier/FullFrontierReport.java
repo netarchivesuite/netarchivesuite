@@ -29,9 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +50,7 @@ import com.sleepycat.persist.model.Relationship;
 import com.sleepycat.persist.model.SecondaryKey;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -134,6 +133,50 @@ public class FullFrontierReport extends AbstractFrontierReport {
             this.domainNameKey = reportLine.getDomainName();
             this.currentSizeKey = reportLine.getCurrentSize();
             this.totalSpendKey = reportLine.getTotalSpend();
+        }
+
+    }
+
+    public class ReportIterator implements Iterator<FrontierReportLine> {
+
+        private final EntityCursor<PersistentLine> cursor;
+        private final Iterator<PersistentLine> iter;
+
+        /**
+         * Returns an iterator on the given sort key.
+         * @param key the sort key
+         */
+        ReportIterator(EntityCursor<PersistentLine> cursor) {
+            this.cursor = cursor;
+            iter = cursor.iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iter.hasNext();
+        }
+
+        @Override
+        public FrontierReportLine next() {
+            return iter.next();
+        }
+
+        @Override
+        public void remove() {
+            throw new ArgumentNotValid("Remove is not supported!");
+        }
+
+        /**
+         * Close method should be called explicitely to free underlying
+         * resources!
+         */
+        public void close() {
+            try {
+                cursor.close();
+            } catch (DatabaseException e) {
+                LOG.error("Error closing entity cursor:\n"
+                        + e.getLocalizedMessage());
+            }
         }
 
     }
@@ -272,58 +315,84 @@ public class FullFrontierReport extends AbstractFrontierReport {
     }
 
     /**
-     * Returns the N lines with the biggest totalEnqueues values,
-     * corresponding to active queues (i.e. not exhasuted or retired).
-     * @param howMany how many lines to fetch (N)
-     * @return the N lines with the biggest totalEnqueues values.
+     * Returns an iterator where lines are ordered by primary key order:
+     * first by decreasing totalEnqueues, then by domain name natural order.
+     * @return an iterator on the report lines.
      */
-    public FrontierReportLine[] getBiggestTotalEnqueues(int howMany) {
-
-        List<FrontierReportLine> topQueues =
-            new LinkedList<FrontierReportLine>();
-
-        EntityCursor<PersistentLine> pkCursor = null;
-        // Queue-total-budget is set globally, get it from first value
-        long totalBudget = -1;
+    public ReportIterator iterateOnTotalEnqueues() {
         try {
-            pkCursor = linesIndex.entities();
-
-            totalBudget = -1;
-            int addedLines = 0;
-            while (addedLines < howMany) {
-                FrontierReportLine fetch = pkCursor.next();
-                if (fetch == null) {
-                    // No more values, break loop
-                    break;
-                }
-
-                if (totalBudget == -1) {
-                    totalBudget = fetch.getTotalBudget();
-                }
-
-                if (fetch.getCurrentSize() > 0
-                        && fetch.getTotalSpend() != totalBudget) {
-                    topQueues.add(fetch);
-                    addedLines++;
-                }
-            }
-
+            return new ReportIterator(linesIndex.entities());
         } catch (DatabaseException e) {
             throw new IOFailure(
                     "Failed to read frontier BDB for job " + getJobName(), e);
-        } finally {
-            if (pkCursor != null) {
-                try {
-                    pkCursor.close();
-                } catch (DatabaseException e) {
-                    LOG.error("Failed to close BDB cursor for job "
-                            + getJobName(), e);
-                }
-            }
         }
+    }
 
-        return (FrontierReportLine[]) topQueues.toArray(
-                new FrontierReportLine[topQueues.size()]);
+    /**
+     * Returns an iterator where lines are ordered by domain name natural order.
+     * @return an iterator on the report lines.
+     */
+    public ReportIterator iterateOnDomainName() {
+        try {
+            return new ReportIterator(linesByDomain.entities());
+        } catch (DatabaseException e) {
+            throw new IOFailure(
+                    "Failed to read frontier BDB for job " + getJobName(), e);
+        }
+    }
+
+    /**
+     * Returns an iterator where lines are ordered by increasing currentSize.
+     * @return an iterator on the report lines.
+     */
+    public ReportIterator iterateOnCurrentSize() {
+        try {
+            return new ReportIterator(linesByCurrentSize.entities());
+        } catch (DatabaseException e) {
+            throw new IOFailure(
+                    "Failed to read frontier BDB for job " + getJobName(), e);
+        }
+    }
+
+    /**
+     * Returns an iterator on lines having a given currentSize.
+     * @return an iterator on the report lines.
+     */
+    public ReportIterator iterateOnDuplicateCurrentSize(long dupValue) {
+        try {
+            return new ReportIterator(
+                    linesByCurrentSize.subIndex(dupValue).entities());
+        } catch (DatabaseException e) {
+            throw new IOFailure(
+                    "Failed to read frontier BDB for job " + getJobName(), e);
+        }
+    }
+
+    /**
+     * Returns an iterator where lines are ordered by increasing totalSpend.
+     * @return an iterator on the report lines.
+     */
+    public ReportIterator iterateOnSpentBudget() {
+        try {
+            return new ReportIterator(linesBySpentBudget.entities());
+        } catch (DatabaseException e) {
+            throw new IOFailure(
+                    "Failed to read frontier BDB for job " + getJobName(), e);
+        }
+    }
+
+    /**
+     * Returns an iterator on lines having a given totalSpend.
+     * @return an iterator on the report lines.
+     */
+    public ReportIterator iterateOnDuplicateSpentBudget(long dupValue) {
+        try {
+            return new ReportIterator(
+                    linesBySpentBudget.subIndex(dupValue).entities());
+        } catch (DatabaseException e) {
+            throw new IOFailure(
+                    "Failed to read frontier BDB for job " + getJobName(), e);
+        }
     }
 
     /**
@@ -387,103 +456,6 @@ public class FullFrontierReport extends AbstractFrontierReport {
      */
     File getStorageDir() {
         return storageDir;
-    }
-
-    /**
-     * Returns the retired queues, e.g. the queues that have hit the totalBudget
-     * value (queue-total-budget).
-     * @param maxSize maximum count of elements to fetch
-     * @return an array of retired queues.
-     */
-    public FrontierReportLine[] getRetiredQueues(int maxSize) {
-
-        // Queue-total-budget is set globally, get it from first value
-        long totalBudget = -1;
-        EntityCursor<PersistentLine> pkc = null;
-        try {
-            pkc = linesIndex.entities();
-            totalBudget = pkc.first().getTotalBudget();
-        } catch (DatabaseException e) {
-            LOG.error("Error while fetching retired queues:\n"
-                    + e.getLocalizedMessage());
-            return new FrontierReportLine[0];
-        } finally {
-            if (pkc != null) {
-                try {
-                    pkc.close();
-                } catch (DatabaseException e) {
-                    LOG.error("Error while fetching retired queues:\n"
-                            + e.getLocalizedMessage());
-                }
-            }
-        }
-
-        // Open a cursor on the BDB data.
-        EntityCursor<PersistentLine> cursor = null;
-        try {
-
-            List<PersistentLine> retired = new ArrayList<PersistentLine>();
-
-            cursor = linesBySpentBudget.subIndex(totalBudget).entities();
-            PersistentLine l = null;
-            while ((l = cursor.next()) != null && retired.size() < maxSize) {
-                retired.add(l);
-            }
-
-            return (FrontierReportLine[]) retired.toArray(
-                    new FrontierReportLine[retired.size()]);
-
-        } catch (DatabaseException e) {
-            LOG.error("Error while fetching exhausted queues:\n"
-                    + e.getLocalizedMessage());
-            return new FrontierReportLine[0];
-        } finally {
-            if (cursor != null) {
-                try {
-                    cursor.close();
-                } catch (DatabaseException e) {
-                    LOG.error("Error closing entity cursor:\n"
-                            + e.getLocalizedMessage());
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns the exhausted queues, e.g. the queues whose current size is zero.
-     * @param maxSize maximum count of elements to fetch
-     * @return an array of exhausted queues.
-     */
-    public FrontierReportLine[] getExhaustedQueues(int maxSize) {
-
-        EntityCursor<PersistentLine> cursor = null;
-        try {
-
-            List<PersistentLine> exhausted = new ArrayList<PersistentLine>();
-
-            cursor = linesByCurrentSize.subIndex(0L).entities();
-            PersistentLine l = null;
-            while ((l = cursor.next()) != null && exhausted.size() < maxSize) {
-                exhausted.add(l);
-            }
-
-            return (FrontierReportLine[]) exhausted.toArray(
-                    new FrontierReportLine[exhausted.size()]);
-
-        } catch (DatabaseException e) {
-            LOG.error("Error while fetching exhausted queues:\n"
-                    + e.getLocalizedMessage());
-            return new FrontierReportLine[0];
-        } finally {
-            if (cursor != null) {
-                try {
-                    cursor.close();
-                } catch (DatabaseException e) {
-                    LOG.error("Error closing entity cursor:\n"
-                            + e.getLocalizedMessage());
-                }
-            }
-        }
     }
 
 }

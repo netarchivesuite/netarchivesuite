@@ -23,8 +23,6 @@
 package dk.netarkivet.harvester.harvesting.frontier;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -94,51 +92,6 @@ implements Serializable {
      */
     public int getSize() {
         return lines.size();
-    }
-
-    /**
-     * Returns the retired queues, e.g. the queues that have hit the totalBudget
-     * value (queue-total-budget).
-     * @param maxSize maximum count of elements to fetch
-     * @return an array of retired queues.
-     */
-    @Override
-    public FrontierReportLine[] getRetiredQueues(int maxSize) {
-        // Get total budget from first line
-        long totalBudget = lines.first().getTotalBudget();
-
-        List<FrontierReportLine> retired = new LinkedList<FrontierReportLine>();
-        for (FrontierReportLine l : lines) {
-            if (retired.size() == maxSize) {
-                break;
-            }
-            if (l.getTotalSpend() == totalBudget) {
-                retired.add(l);
-            }
-        }
-
-        return (FrontierReportLine[]) retired.toArray();
-    }
-
-    /**
-     * Returns the exhausted queues, e.g. the queues whose current size is zero.
-     * @param maxSize maximum count of elements to fetch
-     * @return an array of exhausted queues.
-     */
-    @Override
-    public FrontierReportLine[] getExhaustedQueues(int maxSize) {
-        List<FrontierReportLine> exhausted =
-            new LinkedList<FrontierReportLine>();
-        for (FrontierReportLine l : lines) {
-            if (exhausted.size() == maxSize) {
-                break;
-            }
-            if (l.getCurrentSize() == 0) {
-                exhausted.add(l);
-            }
-        }
-
-        return (FrontierReportLine[]) exhausted.toArray();
     }
 
 }

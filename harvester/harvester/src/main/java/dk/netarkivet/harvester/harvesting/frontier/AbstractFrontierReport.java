@@ -89,10 +89,4 @@ abstract class AbstractFrontierReport implements FrontierReport, Serializable {
     @Override
     public abstract FrontierReportLine getLineForDomain(String domainName);
 
-    @Override
-    public abstract FrontierReportLine[] getRetiredQueues(int maxSize);
-
-    @Override
-    public abstract FrontierReportLine[] getExhaustedQueues(int maxSize);
-
 }

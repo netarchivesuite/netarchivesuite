@@ -64,6 +64,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             if (t != null) {
                 log.error("Error during frontier report generation", t);
             }
+            super.afterExecute(task, t);
         }
 
     }
@@ -85,6 +86,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             if (t != null) {
                 log.error("Error during crawl control", t);
             }
+            super.afterExecute(task, t);
         }
 
 

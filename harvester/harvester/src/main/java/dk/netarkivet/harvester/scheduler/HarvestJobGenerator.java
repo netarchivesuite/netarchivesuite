@@ -66,6 +66,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
             if (t != null) {
                 log.error("Error during job generation", t);
             }
+            super.afterExecute(task, t);
         }
 
     }
@@ -76,8 +77,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
      */
     private static Set<Long> harvestDefinitionsBeingScheduled =
         Collections.synchronizedSet(new HashSet<Long>());
-    
-    private static final Log log = 
+
+    private static final Log log =
         LogFactory.getLog(HarvestJobGenerator.class.getName());
 
     /** The executor used to schedule the generator jobs. */
@@ -103,31 +104,31 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
         if (genExec != null) {
             genExec.shutdownNow();
         }
-    }    
+    }
 
     /**
-     * Contains the functionality for the individual JobGenerations 
+     * Contains the functionality for the individual JobGenerations
      */
     static class JobGeneratorTask implements Runnable {
 
         @Override
         public synchronized void run() {
             generateJobs(new Date());
-        }          
+        }
 
         /**
-         * Check if jobs should be generated for any ready harvest definitions 
+         * Check if jobs should be generated for any ready harvest definitions
          * for the specified time.
-         * @param timeToGenerateJobsFor Jobs will be generated which should be 
-         * run at this time. 
-         * Note: In a production system the provided time will normally be 
-         * current time, but during testing we need to simulated other 
-         * points-in-time  
+         * @param timeToGenerateJobsFor Jobs will be generated which should be
+         * run at this time.
+         * Note: In a production system the provided time will normally be
+         * current time, but during testing we need to simulated other
+         * points-in-time
          */
         static void generateJobs(Date timeToGenerateJobsFor) {
-            final Iterable<Long> readyHarvestDefinitions = 
+            final Iterable<Long> readyHarvestDefinitions =
                 haDefinitionDAO.getReadyHarvestDefinitions(timeToGenerateJobsFor);
-            for (final Long id : readyHarvestDefinitions) {      
+            for (final Long id : readyHarvestDefinitions) {
              // Make every HD run in its own thread, but at most once.
                 if (harvestDefinitionsBeingScheduled.contains(id)) {
                     // With the small importance of this logmessage,
@@ -138,13 +139,13 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                     continue;
                 }
 
-                final HarvestDefinition harvestDefinition = 
+                final HarvestDefinition harvestDefinition =
                     haDefinitionDAO.read(id);
-                
+
                 harvestDefinitionsBeingScheduled.add(id);
 
                 if (!harvestDefinition.runNow(timeToGenerateJobsFor)) {
-                    log.trace("The harvestdefinition '" +  
+                    log.trace("The harvestdefinition '" +
                             harvestDefinition.getName() +
                     "' should not run now.");
                     log.trace("numEvents: " + harvestDefinition.getNumEvents());
@@ -166,15 +167,15 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                                 hd.setActive(false);
                                 haDefinitionDAO.update(hd);
                                 String errMsg = "Exception while scheduling"
-                                    + "harvestdefinition '" + 
+                                    + "harvestdefinition '" +
                                     harvestDefinition.getName() + "'. The " +
                                     "harvestdefinition has been deactivated!";
                                 log.warn(errMsg, e);
                                 NotificationsFactory.getInstance().
                                 errorEvent(errMsg, e);
                             } catch (Exception e1) {
-                                String errMsg = "Exception while scheduling" + 
-                                "harvestdefinition '" + harvestDefinition.getName() 
+                                String errMsg = "Exception while scheduling" +
+                                "harvestdefinition '" + harvestDefinition.getName()
                                 + "'. The harvestdefinition couldn't be " +
                                 "deactivated!";
                                 log.warn(errMsg, e);
@@ -196,7 +197,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
             }
         }
     }
-    
+
     //Hack, used by test
     static void clearGeneratingJobs() {
         harvestDefinitionsBeingScheduled.clear();
