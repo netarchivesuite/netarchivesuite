@@ -141,7 +141,7 @@ public class DomainConfigurationDefinition {
         long maxObjects = HTMLUtils.parseOptionalLong(
                 context, Constants.MAX_OBJECTS_PARAM,
                 dk.netarkivet.harvester.datamodel.Constants.
-                        DEFAULT_MAX_OBJECTS).intValue();
+                        DEFAULT_MAX_OBJECTS);
         long maxBytes = HTMLUtils.parseOptionalLong(
                 context, Constants.MAX_BYTES_PARAM,
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES);
