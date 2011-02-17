@@ -207,16 +207,6 @@ public class JobTester extends DataModelTestCase {
 
         job.setStatus(JobStatus.SUBMITTED);
         assertEquals("Status value set - expected", JobStatus.SUBMITTED, job.getStatus());
-
-        // Test check for invalid status:
-        int invalidStatus = 42;
-        try {
-            job.setStatus(invalidStatus);
-            fail("Should have thrown ArgumentNotValid exception on trying top set job status to "
-                    + invalidStatus);
-        } catch (ArgumentNotValid e) {
-            // expected
-        }
     }
 
     /**
@@ -229,7 +219,7 @@ public class JobTester extends DataModelTestCase {
 
         // Test valid order of status changes:
         for (int i = JobStatus.NEW.ordinal(); i <= JobStatus.FAILED.ordinal(); i++) {
-            job.setStatus(i);
+            job.setStatus(JobStatus.values()[i]);
             assertEquals("Status of job set - expected", i, job.getStatus().ordinal());
         }
 
@@ -239,7 +229,7 @@ public class JobTester extends DataModelTestCase {
         // Test invalid order of status changes:
         for (int i = JobStatus.DONE.ordinal(); i >= JobStatus.NEW.ordinal(); i--) {
             try {
-                job.setStatus(i);
+                job.setStatus(JobStatus.values()[i]);
                 fail("Failed to throw ArgumentNotValid exception on trying to set status to "
                         + i + " on a job with STATUS_FAILED");
             } catch (ArgumentNotValid e) {

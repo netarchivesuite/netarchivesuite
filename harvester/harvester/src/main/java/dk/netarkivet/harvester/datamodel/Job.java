@@ -228,6 +228,9 @@ public class Job implements Serializable {
             = Long.parseLong(Settings.get(
                     HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE));
 
+    private boolean useQuotaEnforcer =
+        Settings.getBoolean(HarvesterSettings.USE_QUOTA_ENFORCER);
+
     private static final int BYTES_PER_HERITRIX_BYTELIMIT_UNIT = 1024;
 
     /**
@@ -962,17 +965,6 @@ public class Job implements Serializable {
     /**
      * Sets status of this job.
      *
-     * @param status Must be one of the values STATUS_NEW, ..., STATUS_FAILED
-     * @throws ArgumentNotValid
-     *  in case of invalid status argument or invalid status change
-     */
-    public void setStatus(int status) {
-        setStatus(JobStatus.fromOrdinal(status));
-    }
-
-    /**
-     * Sets status of this job.
-     *
      * @param newStatus Must be one of the values STATUS_NEW, ..., STATUS_FAILED
      * @throws ArgumentNotValid
      *  in case of invalid status argument or invalid status change
@@ -985,6 +977,13 @@ public class Job implements Serializable {
             log.debug(message);
             throw new ArgumentNotValid(message);
         }
+
+        if ((this.status == JobStatus.NEW
+                || this.status == JobStatus.RESUBMITTED)
+                && newStatus == JobStatus.SUBMITTED) {
+            editOrderXML_fixQuotaEnforcer();
+        }
+
         if (this.status == JobStatus.SUBMITTED
                 && newStatus == JobStatus.STARTED) {
             setActualStart(new Date());
@@ -1150,9 +1149,6 @@ public class Job implements Serializable {
     private void editOrderXML_maxObjectsPerDomain(
             long forceMaxObjectsPerDomain) {
 
-        boolean useQuotaEnforcer =
-            Settings.getBoolean(HarvesterSettings.USE_QUOTA_ENFORCER);
-
         String xpath = (useQuotaEnforcer ?
                 HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH :
                     HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
@@ -1230,8 +1226,39 @@ public class Job implements Serializable {
                     + orderXMLdoc.asXML());
         }
     }
-    
-    
+
+    /**
+     * Activates or deactivates the quota-enforcer, according to how the budget
+     * has been set.
+     */
+    private void editOrderXML_fixQuotaEnforcer() {
+
+        boolean quotaEnabled = true;
+
+        if (! useQuotaEnforcer) {
+            // Quota enforcer should be disabled if there is no byte limit
+            quotaEnabled = forceMaxBytesPerDomain
+                != Constants.HERITRIX_MAXBYTES_INFINITY;
+
+        } else {
+            quotaEnabled =
+                forceMaxObjectsPerDomain
+                    != Constants.HERITRIX_MAXOBJECTS_INFINITY
+                || forceMaxBytesPerDomain
+                != Constants.HERITRIX_MAXBYTES_INFINITY;
+        }
+
+        String xpath = HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
+        Node qeNode = orderXMLdoc.selectSingleNode(xpath);
+        if (qeNode != null) {
+            qeNode.setText(Boolean.toString(quotaEnabled));
+        } else {
+            throw new IOFailure(
+                    "Unable to locate " +  xpath
+                    + " element in order.xml: " + orderXMLdoc.asXML());
+        }
+    }
+
     /**
      * Get the priority of this job.
      *

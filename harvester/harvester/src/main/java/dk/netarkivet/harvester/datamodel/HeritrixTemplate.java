@@ -51,6 +51,11 @@ public class HeritrixTemplate {
     private boolean verified;
 
     /** Xpath needed by Job.editOrderXML_maxBytesPerDomain(). */
+    public static final String QUOTA_ENFORCER_ENABLED_XPATH =
+        "/crawl-order/controller/map[@name='pre-fetch-processors']"
+        + "/newObject[@name='QuotaEnforcer']"
+        + "/boolean[@name='enabled']";;
+    /** Xpath needed by Job.editOrderXML_maxBytesPerDomain(). */
     public static final String GROUP_MAX_ALL_KB_XPATH =
         "/crawl-order/controller/map[@name='pre-fetch-processors']"
         + "/newObject[@name='QuotaEnforcer']"
