@@ -22,8 +22,6 @@
 */
 package dk.netarkivet.harvester.webinterface;
 
-import java.io.IOException;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -34,9 +32,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.TestInfo;
-import dk.netarkivet.harvester.scheduler.HarvestScheduler;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**

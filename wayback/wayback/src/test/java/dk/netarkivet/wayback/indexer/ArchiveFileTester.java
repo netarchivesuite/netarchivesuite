@@ -25,16 +25,9 @@ package dk.netarkivet.wayback.indexer;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
-import dk.netarkivet.testutils.TestFileUtils;
 
 public class ArchiveFileTester extends IndexerTestCase {
     private final File destDir = Settings.getFile(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);

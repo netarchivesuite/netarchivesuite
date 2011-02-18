@@ -50,7 +50,6 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
-import dk.netarkivet.common.utils.batch.TestJob;
 import dk.netarkivet.common.webinterface.WebinterfaceTestCase.TestServletRequest;
 import dk.netarkivet.harvester.webinterface.HarvesterWebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;

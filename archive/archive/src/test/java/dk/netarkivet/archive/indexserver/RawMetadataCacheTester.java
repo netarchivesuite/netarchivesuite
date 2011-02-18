@@ -26,8 +26,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;

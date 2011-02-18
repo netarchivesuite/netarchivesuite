@@ -39,14 +39,12 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
-import junit.framework.TestListener;
 
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
-import dk.netarkivet.archive.arcrepository.bitpreservation.TestInfo;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
@@ -84,7 +82,6 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.CollectionAsserts;
-import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;

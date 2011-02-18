@@ -22,11 +22,10 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import java.util.Date;
 
 final class FrontierTestUtils {
 
-    /** Outputs a frontier lien as a string. */
+    /** Outputs a frontier line as a string. */
     public static String toString(FrontierReportLine l) {
         return l.getDomainName()
             + " " + l.getCurrentSize()

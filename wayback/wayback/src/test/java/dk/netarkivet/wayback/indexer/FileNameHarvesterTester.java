@@ -21,22 +21,7 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.List;
-
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.FileListJob;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.wayback.TestInfo;
-
-import junit.framework.TestCase;
 
 public class FileNameHarvesterTester extends IndexerTestCase {
 

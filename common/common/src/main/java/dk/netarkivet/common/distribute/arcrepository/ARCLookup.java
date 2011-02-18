@@ -25,7 +25,6 @@ package dk.netarkivet.common.distribute.arcrepository;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 import is.hi.bok.deduplicator.DigestIndexer;

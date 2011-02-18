@@ -26,7 +26,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import dk.netarkivet.testutils.ReflectUtils;
 
-import junit.framework.TestCase;
 import org.hibernate.criterion.Restrictions;
 
 public class IndexerQueueTester extends IndexerTestCase {
