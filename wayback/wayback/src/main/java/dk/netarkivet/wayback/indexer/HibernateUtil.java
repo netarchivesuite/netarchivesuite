@@ -140,7 +140,7 @@ public class HibernateUtil {
                 		+ ", " + C3P0_ACQUIRE_INCREMENT + " = "
                 		+ Settings.get(WaybackSettings.C3P0_ACQUIRE_INCREMENT)
                 		+ ", " + C3P0_IDLE_TEST_PERIOD + " = " 
-                		+ Settings.get(WaybackSettings.C3P0_IDLE_PERIOD
+                		+ Settings.get(WaybackSettings.C3P0_IDLE_PERIOD)
                 		+ ", " + C3P0_MAX_SIZE + " = " 
                 		+ Settings.get(WaybackSettings.C3P0_MAX_SIZE) 
                 		+ ", " + C3P0_MAX_STATEMENTS + " = " 
@@ -164,7 +164,7 @@ public class HibernateUtil {
                 		+ ", " + HIBERNATE_TRANSACTION_FACTORY_CLASS + " = "
                 		+ Settings.get(WaybackSettings.HIBERNATE_TRANSACTION_FACTORY)
                 		+ ", " + HIBERNATE_SHOW_SQL + " = " 
-                		+ Settings.get(WaybackSettings.HIBERNATE_SHOW_SQL)));
+                		+ Settings.get(WaybackSettings.HIBERNATE_SHOW_SQL));
                 
                 // Specifically allow unset username/password for the database
                 // so that we can use database without authentication, e.g. in
