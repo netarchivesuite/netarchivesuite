@@ -22,9 +22,9 @@
  */
 
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
-
 
 /**
  * Send JobEndedMessage to the HarvestMonitorServer
@@ -62,8 +62,10 @@ public class SendJobEndedMessage {
             state = JobStatus.DONE;
         }
         JobEndedMessage msg = new JobEndedMessage(jobId, state);
-        JMSConnectionFactory.getInstance().send(msg);
+        JMSConnection con = JMSConnectionFactory.getInstance();
+        con.send(msg);
         System.out.println("jobEndedMessage sent for jobid " + jobId);
+        con.cleanup();
     }
 
 }
