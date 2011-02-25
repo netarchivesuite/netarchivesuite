@@ -917,7 +917,7 @@ public final class BatchGUI {
                                 + " lines</td>\n");
             } else {
                 res.append("    <td>" + I18N.getString(locale, 
-                        "batchpage;No.output.file", new Object[]{}) 
+                        "batchpage;No.outputfile", new Object[]{}) 
                         + "</td>\n");
             }
             // add error file references (retrieval and size)
@@ -933,7 +933,7 @@ public final class BatchGUI {
                                 + " lines</td>\n");
             } else {
                 res.append("    <td>" + I18N.getString(locale, 
-                        "batchpage;No.error.file", new Object[]{}) 
+                        "batchpage;No.errorfile", new Object[]{}) 
                         + "</td>\n");
             }
         } catch (NetarkivetException e) {
