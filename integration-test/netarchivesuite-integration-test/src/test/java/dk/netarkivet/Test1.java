@@ -13,8 +13,6 @@ import org.testng.annotations.Test;
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 
-import dk.netarkivet.page.SystemStatePageHelper;
-
 /**
  * Test specification: http://netarchive.dk/suite/TEST1
  */
@@ -29,11 +27,8 @@ public class Test1 {
 			@Optional("4444")String port, 
 			@Optional("*firefox") String browser, 
 			@Optional("http://kb-test-adm-001.kb.dk:8079/") String url) {
-
-		
-		selenium = new DefaultSelenium(host, Integer.parseInt(port), browser, url);
-		selenium.start();
-	    selenium.open("/HarvestDefinition/");
+		this.selenium = new DefaultSelenium(host, Integer.parseInt(port), browser, url);
+		this.selenium.start();
 	}
 
 	@AfterClass(alwaysRun=true)
@@ -41,36 +36,38 @@ public class Test1 {
 		this.selenium.stop();
 	}
 
-	/** 
-	 * See http://netarchive.dk/suite/It23JMXMailCheck
-	 * 
-	 * @throws Exception
+	/**
+	 * Test specification: http://netarchive.dk/suite/It23JMXMailCheck
 	 */
 	@Test
 	public void step1() throws Exception {
-		// Click 'Systemstate'->'Overview of the system state' 
-		SystemStatePageHelper systemStatePage = new SystemStatePageHelper(selenium);		
-		systemStatePage.loadPage();
+		selenium.open("/HarvestDefinition/");
+		selenium.click("link=Systemstate");
+		selenium.waitForPageToLoad("3000");
+		selenium.click("link=Overview of the system state");
+		selenium.waitForPageToLoad("3000");
+		// We need to click the 'Instance id' link to differentiate between 
+		// instances of the same application running on the same machine
+		selenium.click("link=Instance id");
+		selenium.waitForPageToLoad("3000");
 
-	    // Check that all internally developed applications are up and running
+		int numberOfRows = selenium.getXpathCount("//table[@id='system_state_table']/tbody/tr").intValue();
 		Set<Application> expectedApplicationSet = new HashSet<Application>(
 				Arrays.asList(NASSystemUtil.getApplications()));
-		systemStatePage.validateApplicationList(expectedApplicationSet);
+		Set<Application> displayedApplicationSet = new HashSet<Application>();
+
+		for (int rowCounter = 1;rowCounter < numberOfRows; rowCounter++) {
+			System.out.println("Checking row "+rowCounter+", value is: " + selenium.getTable("system_state_table."+rowCounter+".0"));
+
+			displayedApplicationSet.add(new Application(
+					selenium.getTable("system_state_table."+rowCounter+(".0")),
+					selenium.getTable("system_state_table."+rowCounter+(".1")),
+					selenium.getTable("system_state_table."+rowCounter+(".2")),
+					selenium.getTable("system_state_table."+rowCounter+(".3")),
+					selenium.getTable("system_state_table."+rowCounter+(".4"))));
+		}
 		
-		// Check that last status message for each application do not contain errors or warnings");		
-		systemStatePage.checkStringsNotPresentInLog( new String[] {"Error", "Warn"});
-		
-		// Check that there are no empty log messages		
-		systemStatePage.checkNoLogsAre("");
-		
-		// Click on an physical location in the 'Location' column e.g. "K"
-        selenium.click("link=Location");
-        selenium.waitForPageToLoad("3000");
-        selenium.click("//table[@id='system_state_table']/tbody/tr[2]/td[1]/a");
-        selenium.waitForPageToLoad("3000");
-        
-        // Check that you now only see relevant SW applications for the chosen organisation
-        systemStatePage.checkAllLocationAre("K");
+		NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);
 	}
 
 	/**
