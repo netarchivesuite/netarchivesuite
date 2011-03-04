@@ -11,7 +11,7 @@ public class SystemTestTest extends StandaloneTest {
 //		return "env";
 //	}
 
-	@Test
+//	@Test
 	public void setupTest() {
 		
 	}

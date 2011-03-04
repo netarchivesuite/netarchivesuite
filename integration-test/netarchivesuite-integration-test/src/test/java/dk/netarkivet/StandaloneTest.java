@@ -20,7 +20,9 @@ public abstract class StandaloneTest extends SystemTest {
 
 	@BeforeTest
 	public void startTestSystem() throws Exception {
-		runCommandWithEnvironment(getStartupScript());
+		if (System.getProperty("systemtest.redeploy", "true").equals("true")) {
+			runCommandWithEnvironment(getStartupScript());
+		}
 	}
 
 	/**
@@ -51,9 +53,12 @@ public abstract class StandaloneTest extends SystemTest {
 		config.put("StrictHostKeyChecking", "no");
 		session.setConfig(config);
 
-		session.connect(300000);
-
-		String setTimeStampCommand = "export TIMESTAMP=" + lookupRevisionValue();
+		session.connect();
+		
+		String version;
+		if (System.getProperty("systemtest.version") != null) version = System.getProperty("systemtest.version");
+		else version = lookupRevisionValue();
+		String setTimeStampCommand = "export TIMESTAMP=" + version;
 		String setPortCommand = "export PORT=" + getPort();
 		String setMailReceiversCommand = "export MAILRECEIVERS=" + System.getProperty("systemtest.mailrecievers");
 		String setTestCommand = "export TESTX=" + getTestX();
@@ -67,6 +72,7 @@ public abstract class StandaloneTest extends SystemTest {
 			setTestCommand + ";" + 
 			remoteCommand;
 
+		long startTime = System.currentTimeMillis();
 		log.info("Running JSch command: " + command);
 
 		Channel channel = session.openChannel("exec");
@@ -81,7 +87,8 @@ public abstract class StandaloneTest extends SystemTest {
 
 		while(true) {
 			if(channel.isClosed()){
-				log.info("Exit code was " + channel.getExitStatus());
+				log.info("Command finished in " + (System.currentTimeMillis() - startTime)/1000 + " seconds. " +
+						"Exit code was " + channel.getExitStatus());
 				break;
 			}
 			try {
@@ -89,7 +96,7 @@ public abstract class StandaloneTest extends SystemTest {
 			} catch (InterruptedException ie) {
 			}
 		}
-
+		
 		inReader = new BufferedReader(new InputStreamReader(in));
 		errReader = new BufferedReader(new InputStreamReader(err));
 
@@ -98,7 +105,7 @@ public abstract class StandaloneTest extends SystemTest {
 		while ((s = errReader.readLine()) != null) {
 			sb.append(s).append("\n");
 		}
-		log.info(sb);
+		log.debug(sb);
 		while ((s = inReader.readLine()) != null) {
 			sb.append(s).append("\n");
 		}
@@ -117,6 +124,7 @@ public abstract class StandaloneTest extends SystemTest {
 	 * @return
 	 */
 	private String lookupRevisionValue() {
+		if (System.getProperty("systemtest.version") != null) return lookupRevisionValue();
 		String revisionValue = null;
 		File dir = new File("target/deploy");
 

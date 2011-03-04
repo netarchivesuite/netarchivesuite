@@ -16,7 +16,7 @@ import com.thoughtworks.selenium.Selenium;
 /**
  * Test specification: http://netarchive.dk/suite/TEST1
  */
-public class Test1 {
+public class Test1 extends StandaloneTest {
 
 	private Selenium selenium;
 
@@ -27,7 +27,8 @@ public class Test1 {
 			@Optional("4444")String port, 
 			@Optional("*firefox") String browser, 
 			@Optional("http://kb-test-adm-001.kb.dk:8079/") String url) {
-		this.selenium = new DefaultSelenium(host, Integer.parseInt(port), browser, url);
+		this.selenium = new DefaultSelenium(host, Integer.parseInt(port), browser, 
+				"http://kb-test-adm-001.kb.dk:" + getPort() + "/");
 		this.selenium.start();
 	}
 
@@ -41,13 +42,20 @@ public class Test1 {
 	 */
 	@Test
 	public void step1() throws Exception {
+		addDescription("Test specification: http://netarchive.dk/suite/It23JMXMailCheck");
+		addStep("Goto the HarvestDefinition page","");
 		selenium.open("/HarvestDefinition/");
+		addStep("Click the 'Systemstate link' in the left menu","");
 		selenium.click("link=Systemstate");
-		selenium.waitForPageToLoad("3000");
+		selenium.waitForPageToLoad("10000");
+		addStep("Click the 'Overview of the system state' link in the left menu","");
 		selenium.click("link=Overview of the system state");
 		selenium.waitForPageToLoad("3000");
 		// We need to click the 'Instance id' link to differentiate between 
 		// instances of the same application running on the same machine
+		addStep("Click the 'Instance id' link (We need to do this to differentiate between " + 
+		"instances of the same application running on the same machine)",
+		"Verify that the the expected applications are running as they should.");
 		selenium.click("link=Instance id");
 		selenium.waitForPageToLoad("3000");
 

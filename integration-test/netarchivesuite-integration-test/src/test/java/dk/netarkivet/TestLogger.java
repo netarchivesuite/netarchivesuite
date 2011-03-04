@@ -3,7 +3,7 @@ package dk.netarkivet;
 import org.apache.log4j.Logger;
 
 /**
- * This Logger should be used by all the test code to enable seperation of test logs from the applications logs
+ * This Logger should be used by all the test code to enable separation of test logs from the applications logs
  */
 public class TestLogger extends Logger {
 
