@@ -66,6 +66,13 @@
 				<version>1.1</version>
 				<executions>
 					<execution>
+						<id>xvfb</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>xvfb</goal>
+						</goals>
+					</execution>
+					<execution>
 						<phase>pre-integration-test</phase>
 						<goals>
 							<goal>start-server</goal>
@@ -141,6 +148,7 @@
 								<phase>pre-integration-test</phase>
 								<configuration>
 									<target>
+										<property name="build.compiler" value="extJavac"/>
 										<ant antfile="deploy.xml" target="package" />
 										<ant antfile="deploy.xml" target="deploy2test" />
 									</target>
