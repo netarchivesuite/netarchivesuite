@@ -22,14 +22,13 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
+import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor.PeriodicTask;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
@@ -46,52 +45,6 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
  * be consumed by the {@link HarvestMonitorServer} instance.
  */
 public class BnfHeritrixLauncher extends HeritrixLauncher {
-
-    /**
-     * This class is an executor for scheduled frontier report analysis tasks.
-     * @see ScheduledThreadPoolExecutor
-     */
-    private static class FrontierReportAnalysisExecutor
-    extends ScheduledThreadPoolExecutor {
-
-        public FrontierReportAnalysisExecutor() {
-            // We need only 1 thread
-            super(1);
-        }
-
-        @Override
-        protected void afterExecute(Runnable task, Throwable t) {
-            if (t != null) {
-                log.error("Error during frontier report generation", t);
-            }
-            super.afterExecute(task, t);
-        }
-
-    }
-
-    /**
-     * This class is an executor for scheduled crawl control tasks.
-     * @see ScheduledThreadPoolExecutor
-     */
-    private static class CrawlControlExecutor
-    extends ScheduledThreadPoolExecutor {
-
-        public CrawlControlExecutor() {
-            // We need only 1 thread
-            super(1);
-        }
-
-        @Override
-        protected void afterExecute(Runnable task, Throwable t) {
-            if (t != null) {
-                log.error("Error during crawl control", t);
-            }
-            super.afterExecute(task, t);
-        }
-
-
-
-    }
 
     /**
      * This class executes a crawl control task, e.g. queries the crawler for
@@ -194,8 +147,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
         setupOrderfile();
         heritrixController = new BnfHeritrixController(getHeritrixFiles());
 
-        CrawlControlExecutor crawlCtrlSched = null;
-        FrontierReportAnalysisExecutor frontierReportSched = null;
+        PeriodicTaskExecutor exec = null;
         try {
             // Initialize Heritrix settings according to the order.xml
             heritrixController.initialize();
@@ -203,20 +155,17 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             heritrixController.requestCrawlStart();
 
             // Schedule full frontier report generation
-            frontierReportSched = new FrontierReportAnalysisExecutor();
-            frontierReportSched.scheduleAtFixedRate(
+            exec = new PeriodicTaskExecutor(
+                    new PeriodicTask(
+                            "CrawlControl",
+                            new CrawlControl(),
+                            CRAWL_CONTROL_WAIT_PERIOD,
+                            CRAWL_CONTROL_WAIT_PERIOD),
+                    new PeriodicTask(
+                        "FrontierReportAnalyzer",
                         new FrontierReportAnalyzer(heritrixController),
                         FRONTIER_REPORT_GEN_FREQUENCY,
-                        FRONTIER_REPORT_GEN_FREQUENCY,
-                        TimeUnit.SECONDS);
-
-            CrawlControl crawlControl = new CrawlControl();
-            crawlCtrlSched = new CrawlControlExecutor();
-            crawlCtrlSched.scheduleWithFixedDelay(
-                        crawlControl,
-                        CRAWL_CONTROL_WAIT_PERIOD,
-                        CRAWL_CONTROL_WAIT_PERIOD,
-                        TimeUnit.SECONDS);
+                        FRONTIER_REPORT_GEN_FREQUENCY));
 
             while (! crawlIsOver) {
                 // Wait a bit
@@ -236,14 +185,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             log.warn("Exception during crawl", e);
             throw new RuntimeException("Exception during crawl", e);
         } finally {
-            // Stop the frontier report generation schedule
-            if (frontierReportSched!= null) {
-                frontierReportSched.shutdownNow();
-            }
-
-            // Stop the crawl control
-            if (crawlCtrlSched != null) {
-                crawlCtrlSched.shutdownNow();
+            // Stop the crawl control & frontier report analyzer
+            if (exec!= null) {
+                exec.shutdown();
             }
 
             if (heritrixController != null) {

@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.Locale;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,6 +48,7 @@ import org.jfree.ui.RectangleInsets;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
@@ -142,28 +141,6 @@ class StartedJobHistoryChartGen {
             }
             return week; // largest unit
         }
-    }
-
-    /**
-     * Executor class used to schedule chart generation.
-     * @see ScheduledThreadPoolExecutor
-     */
-    private static class ChartGenExecutor
-    extends ScheduledThreadPoolExecutor {
-
-        ChartGenExecutor() {
-            // We need only 1 thread
-            super(1);
-        }
-
-        @Override
-        protected void afterExecute(Runnable task, Throwable t) {
-            if (t != null) {
-                LOG.error("Error history chart generation", t);
-            }
-            super.afterExecute(task, t);
-        }
-
     }
 
     /**
@@ -309,7 +286,7 @@ class StartedJobHistoryChartGen {
      */
     private Locale locale = Locale.getDefault();
 
-    private ChartGenExecutor genExec = null;
+    private PeriodicTaskExecutor genExec = null;
 
     StartedJobHistoryChartGen(long jobId) {
         super();
@@ -320,12 +297,11 @@ class StartedJobHistoryChartGen {
 
         this.jobId = jobId;
 
-        genExec = new ChartGenExecutor();
-        genExec.scheduleWithFixedDelay(
+        genExec = new PeriodicTaskExecutor(
+                "ChartGen",
                 new ChartGen(this),
                 0,
-                GEN_INTERVAL,
-                TimeUnit.SECONDS);
+                GEN_INTERVAL);
     }
 
     /**
@@ -349,7 +325,7 @@ class StartedJobHistoryChartGen {
         }
 
         if (genExec != null) {
-            genExec.shutdownNow();
+            genExec.shutdown();
         }
     }
 

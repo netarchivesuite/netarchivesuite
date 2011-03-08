@@ -27,13 +27,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
+import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -49,28 +48,6 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
  */
 public class HarvestJobGenerator implements ComponentLifeCycle {
 
-    /**
-     * This class is an executor for scheduled job generation tasks.
-     * @see ScheduledThreadPoolExecutor
-     */
-    private static class JobGenerationExec
-    extends ScheduledThreadPoolExecutor {
-
-        public JobGenerationExec() {
-            // We need only 1 thread
-            super(1);
-        }
-
-        @Override
-        protected void afterExecute(Runnable task, Throwable t) {
-            if (t != null) {
-                log.error("Error during job generation", t);
-            }
-            super.afterExecute(task, t);
-        }
-
-    }
-
     /** The set of HDs (or rather their OIDs) that are currently being
      * scheduled in a separate thread.
      * This set is a SynchronizedSet
@@ -82,7 +59,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
         LogFactory.getLog(HarvestJobGenerator.class.getName());
 
     /** The executor used to schedule the generator jobs. */
-    private JobGenerationExec genExec;
+    private PeriodicTaskExecutor genExec;
 
     private static final HarvestDefinitionDAO haDefinitionDAO =
         HarvestDefinitionDAO.getInstance();
@@ -92,17 +69,17 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
      */
     @Override
     public void start() {
-        genExec = new JobGenerationExec();
-        genExec.scheduleAtFixedRate(
-                new JobGeneratorTask(), 0,
-                Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD),
-                TimeUnit.MILLISECONDS);
+        genExec = new PeriodicTaskExecutor(
+                "JobGeneratorTask",
+                new JobGeneratorTask(),
+                0,
+                Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD));
     }
 
     @Override
     public void shutdown() {
         if (genExec != null) {
-            genExec.shutdownNow();
+            genExec.shutdown();
         }
     }
 
