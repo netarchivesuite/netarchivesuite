@@ -77,6 +77,10 @@ INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'jobs', 6);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'job_configs', 1);
+INSERT INTO schemaversions (tablename, version )
+    VALUES ( 'global_crawler_trap_lists', 1);
+INSERT INTO schemaversions (tablename, version )
+    VALUES ( 'global_crawler_trap_expressions', 1);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'runningJobsHistory', 2);
 INSERT INTO schemaversions ( tablename, version )
