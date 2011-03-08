@@ -34,6 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.harvesting.distribute.ReadyForJobMessage;
 
 /**
  * This singleton class is in charge of giving out the correct channels.
@@ -66,6 +67,11 @@ public class Channels {
      * distribute.CrawlProgressMessage}s.
      */
     private static final String HARVEST_MONITOR_CHANNEL_PREFIX = "HARVESTMON";
+
+    /**
+     * Prefix for the channel used to send {@link ReadyForJobMessage}s.
+     */
+    private static final String HARVEST_DISPATCHER_CHANNEL_PREFIX = "HARVESTDISP";
 
     /**
      * Prefix for the channel used to send {@link dk.netarkivet.harvester.harvesting.
@@ -594,6 +600,22 @@ public class Channels {
           ChannelID.NO_IP,
           ChannelID.NO_APPLINST_ID,
           ChannelID.QUEUE);
+
+  /** Return the queue for the harvest dispatcher.
+   *
+   * @return the <code>ChannelID</code> object for the queue.
+   */
+  public static ChannelID getHarvestDispatcherChannel() {
+      return getInstance().HARVEST_DISPATCHER;
+  }
+
+  private final ChannelID HARVEST_DISPATCHER = new ChannelID(
+          HARVEST_DISPATCHER_CHANNEL_PREFIX,
+          ChannelID.COMMON,
+          ChannelID.NO_IP,
+          ChannelID.NO_APPLINST_ID,
+          ChannelID.QUEUE);
+
 
   /** Return the queue for the frontier report monitor registry.
    *

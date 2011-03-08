@@ -37,7 +37,7 @@ public class HarvesterSchedulerTesterSuite {
     public static void addToSuite(TestSuite suite) {
         //Disabled because most tests currently fail
         //suite.addTestSuite(HarvestSchedulerMonitorServerTester.class);
-        suite.addTestSuite(HarvestSchedulerTester.class);
+        suite.addTestSuite(HarvestDispatcherTester.class);
         suite.addTestSuite(HarvestJobGeneratorTest.class);
     }
 

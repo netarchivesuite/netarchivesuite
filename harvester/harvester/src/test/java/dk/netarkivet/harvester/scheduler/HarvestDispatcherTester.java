@@ -80,13 +80,13 @@ import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Test HarvestScheduler class.
+ * Test HarvestDispatcher class.
  */
-public class HarvestSchedulerTester extends TestCase {
+public class HarvestDispatcherTester extends TestCase {
     //TestInfo info = new TestInfo();
 
-    /** The harvestScheduler used for testing. */
-    HarvestScheduler harvestScheduler;
+    /** The harvestDispatcher used for testing. */
+    HarvestDispatcher harvestDispatcher;
     JobGeneratorTask jobGeneratorTask = new JobGeneratorTask();
 
     ReloadSettings reloadSettings = new ReloadSettings();
@@ -94,7 +94,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     private List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
 
-    public HarvestSchedulerTester(String sTestName) {
+    public HarvestDispatcherTester(String sTestName) {
         super(sTestName);
     }
 
@@ -118,9 +118,9 @@ public class HarvestSchedulerTester extends TestCase {
 
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
-        
+
         HarvestDefinitionDAO.getInstance();
-        harvestScheduler = new HarvestScheduler();
+        harvestDispatcher = new HarvestDispatcher();
 
         HarvestJobGeneratorTest.generateJobs(new Date());
     }
@@ -130,7 +130,7 @@ public class HarvestSchedulerTester extends TestCase {
      */
     public void tearDown() throws SQLException, IllegalAccessException,
             NoSuchFieldException {
-        harvestScheduler.shutdown();
+        harvestDispatcher.shutdown();
         DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
@@ -148,9 +148,9 @@ public class HarvestSchedulerTester extends TestCase {
         JobDAO dao = JobDAO.getInstance();
 
         TestMessageListener hacoListener = new TestMessageListener();
-        
+
         JMSConnectionMockupMQ.getInstance().setListener(
-                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), 
+                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY),
                 hacoListener);
 
         startHarvestScheduler();
@@ -176,7 +176,7 @@ public class HarvestSchedulerTester extends TestCase {
      * Test that runNewJobs skips bad jobs without crashing (bug #627). TODO The
      * setActualStop/setActualStart no longer throws exception, so we need to
      * find a way making jobs bad
-     * 
+     *
      * @throws Exception
      *             if HarvestScheduler throws exception
      */
@@ -202,7 +202,7 @@ public class HarvestSchedulerTester extends TestCase {
         submitNewJobs();
 
         createMessageReceiver(JobPriority.HIGHPRIORITY).receiveNoWait();
-        
+
         Job good = Job.createJob(1L, cfg, 1);
         good.setStatus(JobStatus.NEW);
         jdao.create(good);
@@ -217,7 +217,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Test that runNewJobs generates correct alias information for the job.
-     * 
+     *
      * @throws Exception
      *             if HarvestScheduler throws exception
      */
@@ -228,7 +228,7 @@ public class HarvestSchedulerTester extends TestCase {
         TestMessageListener hacoListener = new TestMessageListener();
 
         JMSConnectionMockupMQ.getInstance().setListener(
-                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), 
+                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY),
                 hacoListener);
 
         // Create the following domains:
@@ -285,16 +285,16 @@ public class HarvestSchedulerTester extends TestCase {
     /**
      * Test that runNewJobs makes correct duplication reduction information.
      */
-    public void testSubmitNewJobsMakesDuplicateReductionInfo() 
+    public void testSubmitNewJobsMakesDuplicateReductionInfo()
     throws Exception {
         clearNewJobs();
-        
-        QueueReceiver messageReceiver = 
+
+        QueueReceiver messageReceiver =
             createMessageReceiver(JobPriority.LOWPRIORITY);
 
         // Make some jobs to submit
         // Assume 1st jobId is 2, and lastId is 15
-        DataModelTestCase.createTestJobs(2L, 15L);        
+        DataModelTestCase.createTestJobs(2L, 15L);
 
         // Submit all the jobs, and hold on to the last one
         DoOneCrawlMessage crawlMessage = null;
@@ -308,7 +308,7 @@ public class HarvestSchedulerTester extends TestCase {
             submitNewJobs();
         }
         // Check result
-        assertEquals("Should have received all low priority messages", 8, 
+        assertEquals("Should have received all low priority messages", 8,
                 counter);
         assertEquals("Should have 1 metadata entry in last received message",
                 1, crawlMessage.getMetadata().size());
@@ -370,7 +370,7 @@ public class HarvestSchedulerTester extends TestCase {
         }
         assertTrue("There should be 12 jobs with status STARTED, there are "
                 + size, size == 12);
-        harvestScheduler.dispatchJobs();
+        harvestDispatcher.dispatchJobs();
 
         // check that we have 6 failed and 6 submitted job after we have stopped
         // old jobs
@@ -395,7 +395,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Unit test testing the private method rescheduleJob.
-     * 
+     *
      * @throws Exception
      *             if HarvestScheduler throws exception
      */
@@ -466,37 +466,37 @@ public class HarvestSchedulerTester extends TestCase {
     }
 
     /**
-     * Functionality disabled because of bug 2059. 
+     * Functionality disabled because of bug 2059.
      * Verifies that new crawler jobs are only dispatched when the message queue
      *  to the harvest servers are empty
-     * @throws Exception 
+     * @throws Exception
      */
 //    public void testJitHarvestJobDispatching() throws Exception {
 //        clearNewJobs();
 //
-//        assertEquals("Message queue should be empty", 
+//        assertEquals("Message queue should be empty",
 //                0, countQueueMessages(JobPriority.HIGHPRIORITY));
-//        
-//        Job firstJob = createJob(JobStatus.NEW);        
+//
+//        Job firstJob = createJob(JobStatus.NEW);
 //        submitNewJobs();
 //
-//        assertEquals("Message queue should have received a message", 
+//        assertEquals("Message queue should have received a message",
 //                1, countQueueMessages(JobPriority.HIGHPRIORITY));
 //        assertEquals("First job should have been marked as submitted",
 //                JobStatus.NEW, firstJob.getStatus());
-//        
-//        Job secondJob = createJob(JobStatus.NEW);        
+//
+//        Job secondJob = createJob(JobStatus.NEW);
 //        submitNewJobs();
 //        assertEquals("New job should not have been submittet to non-empty " +
-//        		"message queue", 
-//                1, countQueueMessages(JobPriority.HIGHPRIORITY));   
+//        		"message queue",
+//                1, countQueueMessages(JobPriority.HIGHPRIORITY));
 //        assertEquals("Second job should still have status new",
 //                JobStatus.NEW, secondJob.getStatus());
-//        
+//
 //
 //        createMessageReceiver(JobPriority.HIGHPRIORITY).receiveNoWait();
-//        assertEquals("Message should have been removed from queue", 
-//        0, countQueueMessages(JobPriority.HIGHPRIORITY));         
+//        assertEquals("Message should have been removed from queue",
+//        0, countQueueMessages(JobPriority.HIGHPRIORITY));
 //
 //        submitNewJobs();
 //        assertEquals("Message queue should have received a message for the " +
@@ -504,7 +504,7 @@ public class HarvestSchedulerTester extends TestCase {
 //        assertEquals("Second job should have been marked as submitted",
 //                JobStatus.NEW, secondJob.getStatus());
 //    }
-    
+
 
     /**
      * Test sending + check that we send a message
@@ -512,19 +512,19 @@ public class HarvestSchedulerTester extends TestCase {
      */
     public void testSendingToCorrectQueue() {
         //listen to both priority queues
-        DoOneCrawlMessageListener highPriorityListener = 
+        DoOneCrawlMessageListener highPriorityListener =
             new DoOneCrawlMessageListener();
         JMSConnectionFactory.getInstance().setListener(
-                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY), 
+                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY),
                 highPriorityListener);
-        
-        DoOneCrawlMessageListener lowPriorityListener = 
+
+        DoOneCrawlMessageListener lowPriorityListener =
             new DoOneCrawlMessageListener();
         JMSConnectionFactory.getInstance().setListener(JobChannelUtil.
                 getChannel(JobPriority.LOWPRIORITY), lowPriorityListener);
-        
+
         //send a high priority job
-        harvestScheduler.doOneCrawl(TestInfo.getJob(),
+        harvestDispatcher.doOneCrawl(TestInfo.getJob(),
                 "test", "test", "test", metadata);
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
@@ -538,7 +538,7 @@ public class HarvestSchedulerTester extends TestCase {
         lowPriorityListener.messages = new ArrayList<DoOneCrawlMessage>();
 
         //send a low priority job
-        harvestScheduler.doOneCrawl(TestInfo.getJobLowPriority(),
+        harvestDispatcher.doOneCrawl(TestInfo.getJobLowPriority(),
                 "test", "test", "test", metadata);
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
@@ -554,32 +554,32 @@ public class HarvestSchedulerTester extends TestCase {
      */
     public void testNullJob() {
         try {
-            harvestScheduler.doOneCrawl(null, "test", "test", "test", metadata);
+            harvestDispatcher.doOneCrawl(null, "test", "test", "test", metadata);
             fail("Should throw ArgumentNotValid on NULL job");
         } catch (ArgumentNotValid e) {
             // expected case
         }
     }
-    
+
     /**
-     * The <code>HarvestScheduler</code> should continue to run, even though 
+     * The <code>HarvestScheduler</code> should continue to run, even though
      * exceptions are throw during dispatching.
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public void schedulingRobustnessTest() throws InterruptedException {
         JobDAO dao = JobDAO.getInstance();
-        
+
         // Something to generate an exception in the dispatch loop
-        
+
         startHarvestScheduler();
 
         assertEquals("Should have created one job after starting job dispatching", 1, dao.getCountJobs());
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
-        assertEquals("The job should still be marked as new", 1, 
+        assertEquals("The job should still be marked as new", 1,
                 IteratorUtils.toList(dao.getAll(JobStatus.NEW)).size());
-        assertEquals("The job should not have been marked as submitted", 0, 
+        assertEquals("The job should not have been marked as submitted", 0,
                 IteratorUtils.toList(dao.getAll(JobStatus.SUBMITTED)).size());
-        
+
         TestMessageListener normalMessageListener = new TestMessageListener();
         JMSConnectionMockupMQ.getInstance().setListener(JobChannelUtil.
                 getChannel(JobPriority.HIGHPRIORITY), normalMessageListener);
@@ -598,7 +598,7 @@ public class HarvestSchedulerTester extends TestCase {
      * Uses the Clients own MessageHandler
      */
     public void testLogSendingMessage() throws IOException {
-        harvestScheduler.doOneCrawl(TestInfo.getJob(),
+        harvestDispatcher.doOneCrawl(TestInfo.getJob(),
                 "test", "test", "test", metadata);
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
@@ -624,13 +624,13 @@ public class HarvestSchedulerTester extends TestCase {
             }
         }
     }
-    
+
     /**
      * MessageListener used locally to intercept messages sent
      * by the HarvestScheduler.
      */
     private class TestMessageListener implements MessageListener {
-        private List<NetarkivetMessage> received = 
+        private List<NetarkivetMessage> received =
             new ArrayList<NetarkivetMessage>();
 
         public void onMessage(Message msg) {
@@ -655,7 +655,7 @@ public class HarvestSchedulerTester extends TestCase {
     }
 
     /**
-     * Clears all new Jobs in the database by submitting these. The resulting  
+     * Clears all new Jobs in the database by submitting these. The resulting
      * job message is read from the queue to so the queue is empty.
      * @throws Exception
      */
@@ -663,7 +663,7 @@ public class HarvestSchedulerTester extends TestCase {
         submitNewJobs();
         for (JobPriority priority: JobPriority.values()) {
             QueueReceiver messageReceiver =  createMessageReceiver(priority);
-            while (countQueueMessages(priority) > 0 ) {                
+            while (countQueueMessages(priority) > 0 ) {
                 messageReceiver.receiveNoWait();
             }
         }
@@ -671,40 +671,40 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Calls the <code>submitNewJobs</code> method on the current
-     * harvestScheduler test instance
-     * 
+     * harvestDispatcher test instance
+     *
      * @throws Exception
      */
     private void submitNewJobs() throws Exception {
-        harvestScheduler.submitNewJobs();
+        harvestDispatcher.submitNewJobs();
         ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())
         .waitForConcurrentTasksToFinish();
     }
 
     /**
      * Calls the <code>rescheduleSubmittedJobs</code> method on the current
-     * harvestScheduler test instance
-     * 
+     * harvestDispatcher test instance
+     *
      * @throws Exception
      */
     private void rescheduleSubmittedJobs() throws Exception {
-        ReflectUtils.getPrivateMethod(HarvestScheduler.class,
-                "rescheduleSubmittedJobs").invoke(harvestScheduler);
+        ReflectUtils.getPrivateMethod(HarvestDispatcher.class,
+                "rescheduleLeftOverJobs").invoke(harvestDispatcher);
     }
 
     private void startHarvestScheduler() throws InterruptedException {
-        harvestScheduler.start();
+        harvestDispatcher.start();
         Thread.sleep(3000); //ToDo Let's try to find a more event driven wait
     }
-    
+
     /**
      * Creates a high priority job in to database.
      * @param status The Job status to assign the job
      */
     private Job createJob(JobStatus status) {
-        Iterator<Domain> domainsIterator = 
+        Iterator<Domain> domainsIterator =
             DomainDAO.getInstance().getAllDomains();
-        DomainConfiguration cfg = 
+        DomainConfiguration cfg =
             domainsIterator.next().getDefaultConfiguration();
         final JobDAO jdao = JobDAO.getInstance();
 
@@ -715,28 +715,28 @@ public class HarvestSchedulerTester extends TestCase {
         jdao.getAllJobIds(status);
         return newJob;
     }
-    
+
     /**
-     * Creates a <code>QueueReceiver</code> which removes messages from the 
-     * queue when receive is called (using the test listener will not remove 
+     * Creates a <code>QueueReceiver</code> which removes messages from the
+     * queue when receive is called (using the test listener will not remove
      * messages from the queue)
      * @return
      * @throws JMSException
      */
-    private QueueReceiver createMessageReceiver(JobPriority priority) 
+    private QueueReceiver createMessageReceiver(JobPriority priority)
     throws JMSException {
-        QueueSession qSession = 
+        QueueSession qSession =
             JMSConnectionMockupMQ.getInstance().getQueueSession();
-        ChannelID channelId =  
+        ChannelID channelId =
             JobChannelUtil.getChannel(priority);
         Queue queue = qSession.createQueue(channelId.getName());
         return qSession.createReceiver(queue);
     }
-    
+
     private int countQueueMessages(JobPriority priority) throws JMSException {
-        ChannelID channelId =  
+        ChannelID channelId =
             JobChannelUtil.getChannel(priority);
-        QueueBrowser qBrowser = 
+        QueueBrowser qBrowser =
             JMSConnectionMockupMQ.getInstance().createQueueBrowser(channelId);
         Enumeration messageEnumeration = qBrowser.getEnumeration();
         int numberOfMessages = 0;

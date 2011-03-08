@@ -53,12 +53,12 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         // Add a DefinitionsSiteSection to the list of Sitesections being loaded
         // when GUIWebServer starts.
         Settings.set(
-                CommonSettings.SITESECTION_WEBAPPLICATION, 
+                CommonSettings.SITESECTION_WEBAPPLICATION,
                 TestInfo.HARVESTDEFINITION_JSP_DIR);
         Settings.set(
-                CommonSettings.SITESECTION_CLASS, 
+                CommonSettings.SITESECTION_CLASS,
                 TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
- 
+
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
@@ -121,13 +121,13 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
          assertTrue("Test-requirement not met: "
                  + "DefinitionsSiteSection not in default settings",
                  harvestdefinitionFound);
-         
+
          TemplateDAO dao = TemplateDAO.getInstance();
          // remove default order.xml from dao
         dao.delete(Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML));
          try {
              gui = GUIWebServer.getInstance();
-             
+
              for (SiteSection s: SiteSection.getSections()) {
                  System.out.println(s);
              }

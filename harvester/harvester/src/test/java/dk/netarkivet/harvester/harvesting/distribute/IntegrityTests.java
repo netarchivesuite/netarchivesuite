@@ -58,7 +58,7 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
-import dk.netarkivet.harvester.scheduler.HarvestScheduler;
+import dk.netarkivet.harvester.scheduler.HarvestDispatcher;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -78,7 +78,7 @@ public class IntegrityTests extends DataModelTestCase {
     TestInfo info = new TestInfo();
 
     /* The client and server used for testing */
-    HarvestScheduler harvestScheduler;
+    HarvestDispatcher harvestScheduler;
     HarvestControllerServer hs;
     private JMSConnection con;
     private boolean done = false;
@@ -125,7 +125,7 @@ public class IntegrityTests extends DataModelTestCase {
                 RememberNotifications.class.getName());
         
         hs = HarvestControllerServer.getInstance();
-        harvestScheduler = new HarvestScheduler();
+        harvestScheduler = new HarvestDispatcher();
 
         // Ensure that System.exit() is caught.
         sm = System.getSecurityManager();

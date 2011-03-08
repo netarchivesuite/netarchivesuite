@@ -36,7 +36,7 @@ public class HarvestJobManager extends LifeCycleComponent {
      * up to the <code>HarvestJobManager</code>s lifecycle.
      */
     public HarvestJobManager() {
-        addChild(new HarvestScheduler());
+        addChild(new HarvestDispatcher());
         addChild(new HarvestJobGenerator());
         addChild(new HarvestSchedulerMonitorServer());
     }

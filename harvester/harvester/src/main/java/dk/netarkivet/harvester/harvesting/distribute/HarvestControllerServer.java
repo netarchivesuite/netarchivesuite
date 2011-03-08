@@ -118,6 +118,14 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     /** queue-assignment-policy property. */
     private static final String HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY =
         "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
+
+    /**
+     * The priority of jobs processed by this instance.
+     */
+    private static final JobPriority JOB_PRIORITY =
+        JobPriority.valueOf(
+                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
+
     /** The JMSConnection to use. */
     private JMSConnection jmsConnection;
 
@@ -202,10 +210,12 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         processOldJobs();
 
 		// Environment and connections are now ready for processing of messages
-		jobChannel = JobChannelUtil.getChannel(JobPriority.valueOf(Settings
-				.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY)));
+		jobChannel = JobChannelUtil.getChannel(JOB_PRIORITY);
 		// Only listen for harvester jobs if enough available space
         beginListeningIfSpaceAvailable();
+
+        // Notify the harvest dispatcher that we are ready
+        sendReadyForJobMessage();
     }
 
     /**
@@ -432,7 +442,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     private synchronized void resumeAcceptingJobs() {
         //allow this haco to receive messages
         running = false;
-        log.debug("Starting to accept jobs again.");
+        if (log.isDebugEnabled()) {
+            log.debug("Starting to accept jobs again.");
+        }
+        sendReadyForJobMessage();
     }
 
     /** Stop listening for new crawl requests.
@@ -719,6 +732,14 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                                  ExceptionUtils.getStackTrace(e));
                 throw e;
             }
+        }
+    }
+
+    private void sendReadyForJobMessage() {
+        jmsConnection.send(new ReadyForJobMessage(JOB_PRIORITY));
+        if (log.isDebugEnabled()) {
+            log.debug("Harvest controller ready to harvest "
+                    + JOB_PRIORITY + " jobs.");
         }
     }
 
