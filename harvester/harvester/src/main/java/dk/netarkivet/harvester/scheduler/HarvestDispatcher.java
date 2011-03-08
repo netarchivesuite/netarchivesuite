@@ -224,25 +224,15 @@ implements MessageListener, ComponentLifeCycle {
      * submit "slot" accordingly.
      */
     synchronized void submitNewJobs() {
-
-        boolean didSubmitJobs = true;
-        String logLine = "Ready to submit";
         for (JobPriority p : JobPriority.values()) {
             int readyMessagesCount = getReadyMessageCount(p);
-            logLine += "\n" + readyMessagesCount + " " + p + " jobs";
             for (int i = 0; i < readyMessagesCount; i++) {
                 long submittedJobId = submitNextNewJob(p);
                 if (submittedJobId != -1) {
                     decrementReadyMessageCount(p);
                 }
             }
-            didSubmitJobs &= (readyMessagesCount > 0);
         }
-
-        if (didSubmitJobs && log.isInfoEnabled()) {
-            log.info(logLine);
-        }
-
     }
 
     /**
@@ -424,6 +414,10 @@ implements MessageListener, ComponentLifeCycle {
             Integer count = readyMessageCounter.get(p);
             int newCount = (count == null ? 0 : count.intValue()) + 1;
             readyMessageCounter.put(p, newCount);
+
+            if (log.isInfoEnabled()) {
+                logReadyMessageCount();
+            }
         }
     }
 
@@ -432,7 +426,20 @@ implements MessageListener, ComponentLifeCycle {
             Integer count = readyMessageCounter.get(p);
             int newCount = (count == null ? 0 : count.intValue()) - 1;
             readyMessageCounter.put(p, newCount);
+
+            if (log.isInfoEnabled()) {
+                logReadyMessageCount();
+            }
         }
+    }
+
+    private void logReadyMessageCount() {
+        String logLine = "Ready to submit";
+        for (JobPriority p : JobPriority.values()) {
+            logLine += "\n" + getReadyMessageCount(p) + " " + p + " jobs";
+        }
+        log.info(logLine);
+
     }
 
 }
