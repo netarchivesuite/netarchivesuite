@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.harvesting.frontier;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIterator;
 
 /**
@@ -60,7 +61,8 @@ public class TopTotalEnqueuesFilter extends MaxSizeFrontierReportExtract {
 
                 // Add only lines that are neither retired or exhausted
                 if (fetch.getCurrentSize() > 0
-                        && fetch.getTotalSpend() < totalBudget) {
+                    && (totalBudget == Constants.HERITRIX_MAXOBJECTS_INFINITY
+                            || fetch.getTotalSpend() < totalBudget)) {
                     topRep.addLine(new FrontierReportLine(fetch));
                     addedLines++;
                 }
