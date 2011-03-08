@@ -22,6 +22,7 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
+import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIterator;
 
 
@@ -43,7 +44,8 @@ public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {
                 long totalBudget = l.getTotalBudget();
                 long totalSpent = l.getTotalSpend();
                 long currentSize = l.getCurrentSize();
-                if (currentSize > 0 && totalSpent >= totalBudget) {
+                if (totalBudget != Constants.HERITRIX_MAXOBJECTS_INFINITY
+                        && currentSize > 0 && totalSpent >= totalBudget) {
                     result.addLine(new FrontierReportLine(l));
                     addedLines++;
                 }
