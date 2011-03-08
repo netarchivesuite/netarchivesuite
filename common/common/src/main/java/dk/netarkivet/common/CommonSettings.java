@@ -424,7 +424,7 @@ public class CommonSettings {
             = "settings.common.batch.batchjobs.batchjob.class";
     
     /**
-     * <b>settings.common.batch.batchjobs.batchjob.arcfile</b>: <br/>
+     * <b>settings.common.batch.batchjobs.batchjob.jarfile</b>: <br/>
      * The list of the corresponding jar-files containing the batchjob.
      * This will be used for LoadableJarBatchJobs. If no file is specified, 
      * it is assumed, that the batchjob exists with the default classpath of 
