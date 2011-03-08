@@ -196,13 +196,13 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     @Override
     protected void createGlobalCrawlerTrapExpressions() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        DBConnect.updateTable("global_crawler_trap_lists", 1);
+        DBConnect.updateTable("global_crawler_trap_expressions", 1);
     }
 
     @Override
     protected void createGlobalCrawlerTrapLists() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        DBConnect.updateTable("global_crawler_trap_expressions", 1);
+        DBConnect.updateTable("global_crawler_trap_lists", 1);
     }
 
     @Override
