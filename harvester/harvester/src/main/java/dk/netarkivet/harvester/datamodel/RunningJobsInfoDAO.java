@@ -152,4 +152,10 @@ public abstract class RunningJobsInfoDAO {
      */
     public abstract int deleteFrontierReports(long jobId);
 
+    /**
+     * Returns the ids of jobs for which history records exist.
+     * @return the ids of jobs for which history records exist.
+     */
+    public abstract Long[] getHistoryRecordIds();
+
 }

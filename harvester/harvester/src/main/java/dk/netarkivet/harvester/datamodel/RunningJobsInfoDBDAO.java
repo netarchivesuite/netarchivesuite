@@ -33,7 +33,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -124,17 +126,17 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     public RunningJobsInfoDBDAO() {
 
         Connection connection = DBConnect.getDBConnection();
-        
+
         /** The current version needed of the tables 'runningJobsHistory',
          * 'runningJobsMonitor' and 'frontierReportMonitor'. */
         Map<String,Integer> versionMap = new HashMap<String,Integer>();
         versionMap.put("runningJobsHistory", 2);
         versionMap.put("runningJobsMonitor", 2);
         versionMap.put("frontierReportMonitor", 1);
-    
-        for (Map.Entry<String,Integer> entry : versionMap.entrySet()) {  
+
+        for (Map.Entry<String,Integer> entry : versionMap.entrySet()) {
             String tableName = entry.getKey();
-            Integer versionNeeded = entry.getValue();            
+            Integer versionNeeded = entry.getValue();
             int version = DBUtils.getTableVersion(connection, tableName);
             if (version < versionNeeded) {
                 log.info("Migrating table '" + tableName + "' from version "
@@ -144,10 +146,10 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                         versionNeeded);
             }
         }
-        
+
         for (Map.Entry<String,Integer> entry : versionMap.entrySet()) {
             String tableName = entry.getKey();
-            Integer versionNeeded = entry.getValue();            
+            Integer versionNeeded = entry.getValue();
             DBUtils.checkTableVersion(
                     connection, tableName, versionNeeded);
         }
@@ -498,6 +500,52 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         }
 
         return infoMap;
+    }
+
+    /**
+     * Returns the ids of jobs for which history records exist.
+     * @return the ids of jobs for which history records exist.
+     */
+    @Override
+    public Long[] getHistoryRecordIds() {
+
+        Connection c = DBConnect.getDBConnection();
+
+        Set<Long> jobIds = new TreeSet<Long>();
+        try {
+
+            ResultSet rs = c.createStatement().executeQuery(
+                    "SELECT DISTINCT " + HM_COLUMN.jobId
+                    + " FROM runningJobsMonitor");
+
+            while (rs.next()) {
+                jobIds.add(rs.getLong(HM_COLUMN.jobId.name()));
+            }
+
+            rs = c.createStatement().executeQuery(
+                    "SELECT DISTINCT " + HM_COLUMN.jobId
+                    + " FROM runningJobsHistory");
+
+            while (rs.next()) {
+                jobIds.add(rs.getLong(HM_COLUMN.jobId.name()));
+            }
+
+            rs = c.createStatement().executeQuery(
+                    "SELECT DISTINCT " + HM_COLUMN.jobId
+                    + " FROM frontierReportMonitor");
+
+            while (rs.next()) {
+                jobIds.add(rs.getLong(HM_COLUMN.jobId.name()));
+            }
+
+        } catch (SQLException e) {
+            String message = "SQL error querying running jobs history"
+                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        }
+
+        return (Long[]) jobIds.toArray(new Long[jobIds.size()]);
     }
 
     /**
