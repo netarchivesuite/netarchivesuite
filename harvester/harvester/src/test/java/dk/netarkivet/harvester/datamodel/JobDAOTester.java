@@ -54,7 +54,7 @@ import dk.netarkivet.harvester.webinterface.HarvestStatusTester;
  * Unit tests for the JobDAO class.
  */
 public class JobDAOTester extends DataModelTestCase {
-    Connection c;
+    
     /** We start out with one job in status DONE. */
     private static final int INITIAL_JOB_COUNT = 1;
 
@@ -78,7 +78,7 @@ public class JobDAOTester extends DataModelTestCase {
         		" beginning",
                      INITIAL_JOB_COUNT, dao.getCountJobs());
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
-        HarvestDefinition hd = hdDao.read(new Long(42));
+        HarvestDefinition hd = hdDao.read(Long.valueOf(42));
         int jobsMade = hd.createJobs();
         assertEquals("Must find same number of jobs as we created",
                      jobsMade + INITIAL_JOB_COUNT, dao.getCountJobs());
@@ -91,16 +91,16 @@ public class JobDAOTester extends DataModelTestCase {
     public void testGenerateNextID() {
         JobDAO dao = JobDAO.getInstance();
         assertEquals("Must get id 2 with " + INITIAL_JOB_COUNT + " jobs",
-                     new Long(2), dao.generateNextID());
+                     Long.valueOf(2), dao.generateNextID());
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
-        HarvestDefinition hd = hdDao.read(new Long(42));
+        HarvestDefinition hd = hdDao.read(Long.valueOf(42));
         int jobsMade = hd.createJobs();
         assertEquals("Must get correct id after making some jobs",
-                     new Long(INITIAL_JOB_COUNT + 1 + jobsMade),
+                Long.valueOf(INITIAL_JOB_COUNT + 1 + jobsMade),
                      dao.generateNextID());
         int moreJobsMade = hd.createJobs();
         assertEquals("Must get correct id after making more jobs",
-                     new Long(INITIAL_JOB_COUNT + 1 + jobsMade + moreJobsMade),
+                Long.valueOf(INITIAL_JOB_COUNT + 1 + jobsMade + moreJobsMade),
                      dao.generateNextID());
         Settings.set(dk.netarkivet.harvester.datamodel.Constants.NEXT_JOB_ID,
                 "10");
@@ -357,7 +357,7 @@ public class JobDAOTester extends DataModelTestCase {
         int num_jobs = 5;
         List<Job> jobs = new ArrayList<Job>(num_jobs);
         for (int i = 0; i < num_jobs; i++) {
-            Job j = Job.createJob(new Long(42), cfg, 0);
+            Job j = Job.createJob(Long.valueOf(42), cfg, 0);
             jdao.create(j);
             jobs.add(j);
         }
@@ -382,10 +382,10 @@ public class JobDAOTester extends DataModelTestCase {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
         addHarvestDefinitionToDatabaseWithId(1);
-        Job job0 = Job.createJob(new Long(1), d.getDefaultConfiguration(), 0);
+        Job job0 = Job.createJob(Long.valueOf(1), d.getDefaultConfiguration(), 0);
         assertEquals("A new job should have high priority",
                 JobPriority.HIGHPRIORITY, job0.getPriority());
-        Job job1 = Job.createSnapShotJob(new Long(1), d
+        Job job1 = Job.createSnapShotJob(Long.valueOf(1L), d
                 .getDefaultConfiguration(), 2000L, -1L, 
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         assertEquals("A new job should have low priority",
@@ -432,9 +432,9 @@ public class JobDAOTester extends DataModelTestCase {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
         addHarvestDefinitionToDatabaseWithId(1);
-        Job jobHighPriorityID = Job.createJob(new Long(1), 
+        Job jobHighPriorityID = Job.createJob(Long.valueOf(1), 
                 d.getDefaultConfiguration(), 0);
-        Job jobLowPriorityID = Job.createSnapShotJob(new Long(1), 
+        Job jobLowPriorityID = Job.createSnapShotJob(Long.valueOf(1), 
                 d.getDefaultConfiguration(), 2000L, -1L, 
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         jobDAO.create(jobHighPriorityID);
@@ -472,7 +472,7 @@ public class JobDAOTester extends DataModelTestCase {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
         addHarvestDefinitionToDatabaseWithId(1);
-        Job j = Job.createJob(new Long(1), d.getDefaultConfiguration(), 0);
+        Job j = Job.createJob(Long.valueOf(1), d.getDefaultConfiguration(), 0);
         JobDAO dao = JobDAO.getInstance();
         dao.create(j);
         Job j2 = dao.read(j.getJobID());
@@ -938,4 +938,17 @@ public class JobDAOTester extends DataModelTestCase {
             // expected
         }
     }
+    public static void testGetJobStatusFromId() {
+        JobDAO dao = JobDAO.getInstance();
+        Iterator<Long> iterator = dao.getAllJobIds();
+        while (iterator.hasNext()) {
+            Long id = iterator.next();   
+            Job j = dao.read(id);
+            JobStatus status = dao.getJobStatus(id);
+            assertTrue("The two states should be equal", 
+                    status.equals(j.getStatus()));
+        }
+    }
+    
+    
 }

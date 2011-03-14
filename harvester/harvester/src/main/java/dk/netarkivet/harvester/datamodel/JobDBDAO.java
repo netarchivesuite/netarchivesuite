@@ -1142,4 +1142,21 @@ public class JobDBDAO extends JobDAO {
         sq.setSqlString(sql.toString());
         return sq;
     }
+    
+    /**
+     * Get Jobstatus for the job with the given id.
+     * @param jobID A given Jobid
+     * @return the Jobstatus for the job with the given id.
+     * @throws UnknownID if no job exists with id jobID
+     */
+    public JobStatus getJobStatus(Long jobID) {
+        ArgumentNotValid.checkNotNull(jobID, "Long jobID");
+        Integer statusAsInteger = DBUtils.selectIntValue(DBConnect.getDBConnection(),
+                "SELECT status FROM jobs WHERE job_id = ?", jobID);
+        if (statusAsInteger == null) {
+            throw new UnknownID("No known job with id=" + jobID);
+        }
+        return JobStatus.fromOrdinal(statusAsInteger);
+    }
+    
 }

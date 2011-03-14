@@ -228,5 +228,13 @@ public abstract class JobDAO implements Iterable<Job> {
      * @throws UnknownID if no job exists with id jobID
      * @throws IllegalState if the job with id jobID is not SUBMITTED or FAILED.
      */
-    public abstract long rescheduleJob(long oldJobID); 
+    public abstract long rescheduleJob(long oldJobID);
+    
+    /**
+     * Get Jobstatus for the job with the given id.
+     * @param jobID A given Jobid
+     * @return the Jobstatus for the job with the given id.
+     * @throws UnknownID if no job exists with id jobID
+     */
+    public abstract JobStatus getJobStatus(Long jobID);
 }
