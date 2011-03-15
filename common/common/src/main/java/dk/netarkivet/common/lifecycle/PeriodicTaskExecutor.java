@@ -38,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
  * It actively monitors task execution in a separate "checker" thread, allowing
  * to catch and process any {@link RuntimeException} that would be thrown during
  * task execution, which cannot be done by simply overriding
- * {@link ScheduledThreadPoolExecutor#afterExecute()}.
+ * {@link ScheduledThreadPoolExecutor#afterExecute}.
  *
  * TODO: Currently {@link RuntimeException} are only caught and logged, but the
  * executor stops scheduling future executions. We should implement a
