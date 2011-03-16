@@ -22,7 +22,8 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import dk.netarkivet.harvester.datamodel.Constants;
+import org.archive.crawler.frontier.WorkQueue;
+
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIterator;
 
 
@@ -40,12 +41,7 @@ public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {
             int maxSize = getMaxSize();
             while (addedLines <= maxSize && iter.hasNext()) {
                 FrontierReportLine l = iter.next();
-
-                long totalBudget = l.getTotalBudget();
-                long totalSpent = l.getTotalSpend();
-                long currentSize = l.getCurrentSize();
-                if (totalBudget != Constants.HERITRIX_MAXOBJECTS_INFINITY
-                        && currentSize > 0 && totalSpent >= totalBudget) {
+                if (isOverBudget(l)) {
                     result.addLine(new FrontierReportLine(l));
                     addedLines++;
                 }
@@ -57,6 +53,18 @@ public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {
         }
 
         return result;
+    }
+
+    /**
+     * Determines whether a given frontier queue is retired, e.g. over budget.
+     * @param l a {@link FrontierReportLine} representing a frontier queue
+     * @return true if the queue is retired, false otherwise.
+     * @see WorkQueue#isOverBudget()
+     */
+    private boolean isOverBudget(FrontierReportLine l) {
+        long totalBudget = l.getTotalBudget();
+        return l.getSessionBalance() <= 0
+            || (totalBudget >= 0 && l.getTotalSpend() >= totalBudget);
     }
 
 }
