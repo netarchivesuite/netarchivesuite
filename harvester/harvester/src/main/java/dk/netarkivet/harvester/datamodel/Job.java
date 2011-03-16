@@ -940,7 +940,9 @@ public class Job implements Serializable {
             // This never happens, as we're reading from a string!
             throw new IOFailure("IOException reading from seed string", e);
         }
-        log.debug("Now " + seedListSet.size() + " seeds in the list");
+        if (log.isTraceEnabled()) {
+            log.trace("Now " + seedListSet.size() + " seeds in the list");
+        }
     }
 
     /**
