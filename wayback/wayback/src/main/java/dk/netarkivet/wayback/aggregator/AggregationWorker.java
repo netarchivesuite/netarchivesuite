@@ -309,24 +309,22 @@ public class AggregationWorker implements CleanupIF {
 
     /**
      * Creates the needed working directories. Also checks whether a temp 
-     * directory exists, which might be an indication if a unclean shutdown, 
-     * in which case an IllegalStateException is throw allowing the cleanup of 
-     * the index directories. 
+     * directory exists, which might be an indication if a unclean shutdown. 
      */
     protected void initialize() {
         FileUtils.createDir(indexOutputDir);
         if (temporaryDir.exists()) {
-            throw new IllegalStateException(
+            log.warn(
                     "An temporary Aggregator dir ("
                     + Settings.getFile(
                     		WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR)
                     		.getAbsolutePath()
-                    + ") already exists. This indicates that an instance of "
-                    + "the aggregator is already running. Please ensure this " 
-                    + "is not the case, remove the temp directory and"
-                    + " restart the Aggregator"
-                    );
+                    + ") already exists. This indicates that the previous " +
+                    		"running aggregator wasn't shutdown cleanly. " +
+                    		"The temp dirs will be removed and the aggregation " +
+                    		"on the indexes will be restarted");
         }
+        FileUtils.removeRecursively(temporaryDir);
         FileUtils.createDir(temporaryDir);
     }
 }
