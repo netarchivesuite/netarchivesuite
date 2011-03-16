@@ -39,7 +39,8 @@ import dk.netarkivet.common.utils.Settings;
 *
 * <p>
 * This cache has a fixed maximum number of elements (<code>cacheSize</code>).
-* If the cache is full and another entry is added, the LRU (least recently used) entry is dropped.
+* If the cache is full and another entry is added, the LRU (least recently used)
+* entry is dropped.
 *
 * <p>
 * This class is thread-safe. All methods of this class are synchronized.
@@ -67,10 +68,11 @@ public class LRUCache {
      * Creates a new LRU cache.
      * Using filename as the key, and the cached file as the value.
      * @param dir The directory where the file is stored.
-     * @param cacheSize the maximum number of entries that will be kept in this cache.
+     * @param cacheSize the maximum number of entries that will be kept 
+     * in this cache.
      * 
      */
-    public LRUCache (File dir, int cacheSize) throws IOFailure {
+    public LRUCache(File dir, int cacheSize) throws IOFailure {
         // Validate args
         ArgumentNotValid.checkPositive(cacheSize, "int cacheSize");
         ArgumentNotValid.checkNotNull(dir, "File dir");
@@ -81,17 +83,19 @@ public class LRUCache {
         this.cacheSize = cacheSize;
         this.cacheDir = dir;
         
-        int hashTableCapacity = (int)Math.ceil(cacheSize / hashTableLoadFactor) + 1;
-        map = new LinkedHashMap<String,File>(hashTableCapacity, hashTableLoadFactor, true) {
+        int hashTableCapacity = (int) Math.ceil(
+                cacheSize / hashTableLoadFactor) + 1;
+        map = new LinkedHashMap<String,File>(hashTableCapacity, 
+                hashTableLoadFactor, true) {
             // (an anonymous inner class)
             private static final long serialVersionUID = 1;
 
             @Override protected boolean removeEldestEntry (Map.Entry<String,File> eldest) {
                 boolean removeEldest = size() > LRUCache.this.cacheSize;
                 if (removeEldest) {
-                	logger.info("Deleting file '"
-                			+ eldest.getValue().getAbsolutePath()
-                			+ "' from cache.");
+                    logger.info("Deleting file '"
+                            + eldest.getValue().getAbsolutePath()
+                            + "' from cache.");
                     boolean deleted = eldest.getValue().delete();
                     if (!deleted) {
                         logger.warn("Unable to deleted LRU file from cache: " 
@@ -102,8 +106,8 @@ public class LRUCache {
             }};
             
             // fill up the map with the contents in cachedir
-            // if the contents in cachedir exceeds the given cachesize, change the 
-            // size of the cache
+            // if the contents in cachedir exceeds the given cachesize,  
+            // change the size of the cache
             String[] cachedirFiles = cacheDir.list();
             logger.info("Initializing the cache with the contents of the cachedir '"
                     + cacheDir.getAbsolutePath() + "'");
@@ -134,7 +138,7 @@ public class LRUCache {
     /**
      * @return instance of our Cache
      */
-    public synchronized static LRUCache getInstance() {
+    public static synchronized LRUCache getInstance() {
         if (instance == null) {
             instance = new LRUCache();
         }
@@ -146,21 +150,24 @@ public class LRUCache {
      * Retrieves an entry from the cache.<br>
      * The retrieved entry becomes the MRU (most recently used) entry.
      * @param key the key whose associated value is to be returned.
-     * @return    the value associated to this key, or null if no value with this key exists in the cache.
+     * @return the value associated to this key, or null 
+     * if no value with this key exists in the cache.
      */
     public synchronized File get(String key) {
         return map.get(key); }
 
     /**
-     * Adds an entry to this cache.
-     * The new entry becomes the MRU (most recently used) entry.
-     * If an entry with the specified key already exists in the cache, it is replaced by the new entry.
-     * If the cache is full, the LRU (least recently used) entry is removed from the cache.
-     * @param key    the key with which the specified value is to be associated.
-     * @param value  a value to be associated with the specified key.
+     * Adds an entry to this cache. The new entry becomes the MRU (most recently
+     * used) entry. If an entry with the specified key already exists in the
+     * cache, it is replaced by the new entry. If the cache is full, the LRU
+     * (least recently used) entry is removed from the cache.
+     * 
+     * @param key the key with which the specified value is to be associated.
+     * @param value a value to be associated with the specified key.
      */
     public synchronized void put(String key, File value) {
-        map.put(key, value); }
+        map.put(key, value);
+    }
 
     /**
      * Clears the cache.
@@ -181,4 +188,4 @@ public class LRUCache {
     public File getCacheDir() {
         return cacheDir;
     }
-} 
+}
