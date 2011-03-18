@@ -44,7 +44,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
  *
  */
 public class DomainConfiguration implements Named {
-	/** The name of the configuration. */
+    /** The name of the configuration. */
     private String configName;
     /** The name of the order.xml (Heritrix template) used by this
      * configuration.
@@ -171,7 +171,7 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Returns comments
+     * Returns comments.
      * @return string containing comments
      */
     public String getComments() {
@@ -268,7 +268,7 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Add password
+     * Add password.
      * @param password to add
      */
     public void addPassword(Password password) {
@@ -558,7 +558,7 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * ToString of DomainConfiguration class
+     * ToString of DomainConfiguration class.
      * @return a string with info about the instance of this class.
      */
     public String toString() {

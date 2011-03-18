@@ -92,7 +92,7 @@ public class ArchiveFile {
     }
 
     /**
-     * Gets originalIndexFileName
+     * Gets originalIndexFileName.
      * @return the originalIndexFileName
      */
     public String getOriginalIndexFileName() {
@@ -100,8 +100,8 @@ public class ArchiveFile {
     }
 
     /**
-     * Sets originalIndexFileName
-     * @param originalIndexFileName
+     * Sets originalIndexFileName.
+     * @param originalIndexFileName The new original index filename
      */
     public void setOriginalIndexFileName(String originalIndexFileName) {
         this.originalIndexFileName = originalIndexFileName;
@@ -117,15 +117,15 @@ public class ArchiveFile {
 
     /**
      * Sets indexedDate.
-     * @param indexedDate
+     * @param indexedDate The new indexed date.
      */
     public void setIndexedDate(Date indexedDate) {
         this.indexedDate = indexedDate;
     }
 
     /**
-     * The filename is used as a natural key because it is a fundamental property
-     * of the arcrepository that filenames are unique.
+     * The filename is used as a natural key because it is a fundamental 
+     * property of the arcrepository that filenames are unique.
      * @return the filename.
      */
     @Id
@@ -134,8 +134,8 @@ public class ArchiveFile {
     }
 
     /**
-     * Sets the filename
-     * @param filename
+     * Sets the filename.
+     * @param filename The new filename
      */
     public void setFilename(String filename) {
         this.filename = filename;
@@ -151,7 +151,7 @@ public class ArchiveFile {
 
     /**
      * Sets whether the file has been indexed.
-     * @param indexed
+     * @param indexed The new value of the isIndexed variable.
      */
     public void setIndexed(boolean indexed) {
         isIndexed = indexed;
@@ -167,7 +167,7 @@ public class ArchiveFile {
 
     /**
      * Sets the number of failed indexing attempts.
-     * @param indexingFailedAttempts
+     * @param indexingFailedAttempts The number of failed indexing attempts
      */
     public void setIndexingFailedAttempts(int indexingFailedAttempts) {
         this.indexingFailedAttempts = indexingFailedAttempts;
@@ -179,17 +179,18 @@ public class ArchiveFile {
      * true and the originalIndexFileName field will be set to the (arbitrary)
      * name of the file containing the results. The values are persisted to the
      * datastore.
+     * @throws IllegalState If the indexing has already been done.
      */
     public void index() throws IllegalState {
         log.info("Indexing " + toString());
         if (isIndexed) {
-            throw new IllegalState("Attempted to index file '" + filename +
-                                   "' which is already indexed");
+            throw new IllegalState("Attempted to index file '" + filename 
+                    + "' which is already indexed");
         }
-        //TODO the following if-block could be replaced by some fancier more general
-        //class with methods for associating particular types of archived files
-        //with particular types of batch processor. e.g. something with
-        // a signature like
+        //TODO the following if-block could be replaced by some fancier more 
+        // general class with methods for associating particular types of 
+        // archived files with particular types of batch processor. e.g. 
+        // something with a signature like
         // List<FileBatchJob> getIndexers(ArchiveFile file)
         // This more-flexible approach
         //may be of value when we begin to add warc support.
@@ -207,9 +208,9 @@ public class ArchiveFile {
         // Since we index exactly one file at a time, the batch job
         // is considered to have failed unless the result shows exactly one
         // file processed with no exceptions thrown.
-        if (!batchStatus.getFilesFailed().isEmpty() ||
-            batchStatus.getNoOfFilesProcessed() != 1 ||
-            !batchStatus.getExceptions().isEmpty()) {
+        if (!batchStatus.getFilesFailed().isEmpty() 
+                || batchStatus.getNoOfFilesProcessed() != 1 
+                || !batchStatus.getExceptions().isEmpty()) {
             logBatchError(batchStatus);
         } else {
             collectResults(batchStatus);
@@ -221,7 +222,7 @@ public class ArchiveFile {
      * file in temporary directory, after which they are renamed to the
      * directory WAYBACK_BATCH_OUTPUTDIR. The status of this object is then
      * updated to reflect that the object has been indexed.
-     * @param status
+     * @param status the status of a batch job.
      */
     private void collectResults(BatchStatus status) {
         // Use an arbitrary filename for the output
@@ -266,11 +267,10 @@ public class ArchiveFile {
      * @param status the status of the batch job.
      */
     private void logBatchError(BatchStatus status) {
-        String message = "Error indexing file '" + getFilename() + "\n" +
-                         "Number of files processed: '" +
-                         status.getNoOfFilesProcessed() + "\n" +
-                         "Number of files failed + '" +
-                         status.getFilesFailed().size();
+        String message = "Error indexing file '" + getFilename() + "\n"
+                + "Number of files processed: '"
+                + status.getNoOfFilesProcessed() + "\n"
+                + "Number of files failed + '" + status.getFilesFailed().size();
         if (!status.getExceptions().isEmpty()) {
             message += "\n Exceptions thrown: " + "\n";
             for (FileBatchJob.ExceptionOccurrence e: status.getExceptions()) {
@@ -331,3 +331,4 @@ public class ArchiveFile {
         return result;
     }
 }
+

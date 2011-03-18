@@ -72,7 +72,7 @@ public final class BatchGUI {
 
     /** The language translator.*/
     private static final I18n I18N = new I18n(
-    		dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);
+            dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);
     
     /**
      * Private Constructor to prevent instantiation of this utility class.
@@ -94,7 +94,7 @@ public final class BatchGUI {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         JspWriter out = context.getOut();
         
-        // retrive the jobs etc.
+        // retrieve the jobs etc.
         String[] jobs = Settings.getAll(CommonSettings.BATCHJOBS_CLASS);
         Locale locale = context.getResponse().getLocale();
         
@@ -252,7 +252,7 @@ public final class BatchGUI {
             if(filetype.equals(BatchFileType.Metadata.toString())) {
                 regex += Constants.REGEX_METADATA;
             } else if(filetype.equals(BatchFileType.Content.toString())) {
-                // TODO fix this 'content' regex.
+                // TODO fix this 'content' regex. (NAS-1394)
                 regex += Constants.REGEX_CONTENT;
             } else {
                 regex += Constants.REGEX_ALL;

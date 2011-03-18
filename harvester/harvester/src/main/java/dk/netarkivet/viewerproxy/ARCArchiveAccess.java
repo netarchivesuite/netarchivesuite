@@ -74,7 +74,7 @@ public class ARCArchiveAccess implements URIResolver {
     private static final Pattern HTTP_HEADER_PATTERN =
         Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
 
-    /** The underlying ARC record lookup object */
+    /** The underlying ARC record lookup object. */
     private ARCLookup lookup;
 
     /** Logger for this class. */
@@ -82,8 +82,8 @@ public class ARCArchiveAccess implements URIResolver {
     
     /** If the value is true, we will try to lookup w/ ftp instead of http, 
      * if we don't get a hit in the index. */
-    private final static boolean tryToLookupUriAsFtp = Settings.getBoolean(
-    		ViewerProxySettings.TRY_LOOKUP_URI_AS_FTP); 
+    private static final boolean tryToLookupUriAsFtp = Settings.getBoolean(
+            ViewerProxySettings.TRY_LOOKUP_URI_AS_FTP); 
     
 
     /** Initialise new ARCArchiveAccess with no index file.
@@ -134,7 +134,7 @@ public class ARCArchiveAccess implements URIResolver {
             contentStream = content.getInputStream();
             // First write the original header.
             if (content.containsHeader()) {
-            	writeHeader(contentStream, response);
+                writeHeader(contentStream, response);
             }
             // Now flush the content to the browser.
             readPage(contentStream, response.getOutputStream());

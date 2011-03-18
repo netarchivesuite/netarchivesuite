@@ -61,7 +61,8 @@ public class ExtractorOAI extends Extractor {
     /**
      * Regular expression matching the resumptionToken.
      */
-    private static final String RESUMPTION_TOKEN_MATCH = "(?i)<resumptionToken>\\s*(.*)\\s*</resumptionToken>";
+    private static final String RESUMPTION_TOKEN_MATCH
+        = "(?i)<resumptionToken>\\s*(.*)\\s*</resumptionToken>";
 
      /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
@@ -122,13 +123,15 @@ public class ExtractorOAI extends Extractor {
             log.error("Failed getting ReplayCharSequence: " + e.getMessage());
         }
         if (cs == null) {
-            log.error("Failed getting ReplayCharSequence: " +
-                curi.toString());
+            log.error("Failed getting ReplayCharSequence: "
+                    + curi.toString());
             return;
         }
         try {
             boolean foundResumptionToken = processXml(curi, cs);
-            if (foundResumptionToken) numberOfLinksExtracted += 1;
+            if (foundResumptionToken) {
+                numberOfLinksExtracted += 1;
+            }
         } finally {
             if (cs != null) {
                 try {
@@ -159,7 +162,7 @@ public class ExtractorOAI extends Extractor {
                                             + token;
                 URI newUri = new URI(oldUri.getScheme(), oldUri.getAuthority(),
                                      oldUri.getPath(),
-                                     newQueryPart,oldUri.getFragment());
+                                     newQueryPart, oldUri.getFragment());
                 curi.createAndAddLink(newUri.toString(), Link.NAVLINK_MISC,
                                       Link.NAVLINK_HOP);
             } catch (URISyntaxException e) {
@@ -182,8 +185,8 @@ public class ExtractorOAI extends Extractor {
         ret.append("Processor: org.archive.crawler.extractor.ExtractorHTML\n");
         ret.append("  Function:          Link extraction on HTML documents\n");
         ret.append("  CrawlURIs handled: " + this.numberOfCURIsHandled + "\n");
-        ret.append("  Links extracted:   " + this.numberOfLinksExtracted +
-                   "\n\n");
+        ret.append("  Links extracted:   " + this.numberOfLinksExtracted
+                + "\n\n");
         return ret.toString();
     }
 

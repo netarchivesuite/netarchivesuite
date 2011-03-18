@@ -78,7 +78,7 @@ public class DelegatingController implements Controller {
     private final static I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
 
     /**
-     * Initialise a controller with the relevant instances to control
+     * Initialise a controller with the relevant instances to control.
      *
      * @param mur The missing URL recorder which handles missing URL
      *            collection.

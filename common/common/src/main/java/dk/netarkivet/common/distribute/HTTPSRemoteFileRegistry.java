@@ -114,7 +114,7 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      *
      * @return The unique instance.
      */
-    public synchronized static HTTPRemoteFileRegistry getInstance() {
+    public static synchronized HTTPRemoteFileRegistry getInstance() {
         synchronized (HTTPRemoteFile.class) {
             if (instance == null) {
                 instance = new HTTPSRemoteFileRegistry();
@@ -162,6 +162,9 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      * using the certificate above.
      *
      * @param url The URL to open connection to.
+     * @return an open connection to the given url
+     * @throws IOException If unable to open connection to the URL
+     * @throws IOFailure If the connection is not a secure connection
      */
     protected URLConnection openConnection(URL url) throws IOException {
         URLConnection connection = url.openConnection();

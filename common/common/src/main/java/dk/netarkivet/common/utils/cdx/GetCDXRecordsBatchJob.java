@@ -36,30 +36,33 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Job to get cdx records out of metadata files.
  *
  */
-
 public class GetCDXRecordsBatchJob extends ARCBatchJob {
-
-
+    
+    /** The URL pattern used to retrieve the CDX-records. */ 
     private final Pattern URLMatcher;
+    /** The MIME pattern used to retrieve the CDX-records. */
     private final Pattern mimeMatcher;
 
     /**
-     * TODO: JavaDoc
+     * Constructor.
      */
     public GetCDXRecordsBatchJob() {
         URLMatcher = Pattern.compile(Constants.ALL_PATTERN);
         mimeMatcher = Pattern.compile(Constants.CDX_MIME_PATTERN);
-        batchJobTimeout = 7*Constants.ONE_DAY_IN_MILLIES;
+        batchJobTimeout = 7 * Constants.ONE_DAY_IN_MILLIES;
     }
 
     /**
-     * TODO: JavaDoc
+     * Initialize job. Does nothing
+     * @param os The output stream (unused in this implementation)
      */
     public void initialize(OutputStream os) {
     }
 
     /**
-     * TODO: JavaDoc
+     * Process a single ARCRecord if the record contains cdx.
+     * @param sar The record we want to process
+     * @param os The output stream to write the result to
      */
     public void processRecord(ARCRecord sar, OutputStream os) {
         if (URLMatcher.matcher(sar.getMetaData().getUrl()).matches()
@@ -87,7 +90,8 @@ public class GetCDXRecordsBatchJob extends ARCBatchJob {
     }
 
     /**
-     * TODO: JavaDoc
+     * Finish job. Does nothing
+     * @param os The Outputstream (unused in this implementation)
      */
     public void finish(OutputStream os) {
     }

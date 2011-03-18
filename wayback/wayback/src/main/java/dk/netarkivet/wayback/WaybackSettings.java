@@ -151,11 +151,11 @@ public class WaybackSettings {
             "settings.wayback.indexer.initialFiles";
 
     /**-------------------------Aggregator Settings---------------------------*/
-    /** The directory the Aggregator consumes raw index files from */
+    /** The directory the Aggregator consumes raw index files from. */
     public static String WAYBACK_AGGREGATOR_INPUT_DIR =
             "settings.wayback.aggregator.indexFileInputDir";
 
-    /** The directory the Aggregator places the Aggregated and sorted files into */
+    /** The directory the Aggregator places the Aggregated and sorted files into. */
     public static String WAYBACK_AGGREGATOR_OUTPUT_DIR =
             "settings.wayback.aggregator.indexFileOutputDir";
     
@@ -163,21 +163,22 @@ public class WaybackSettings {
     public static String WAYBACK_AGGREGATOR_TEMP_DIR =
             "settings.wayback.aggregator.tempAggregatorDir";
 
-    /** The time to between each scheduled aggregation run (in miliseconds)*/
+    /** The time to between each scheduled aggregation run (in milliseconds).*/
     public static String WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL =
             "settings.wayback.aggregator.aggregationInterval";
 
-    /** The maximum size of the Intermediate index file in MB. When this limit is reached
-     * a new index file is created and new indexes are added to this file. In
-     * case of a 0 value, the intermediate index file will always be merged into
-     * the main index file.
+    /** The maximum size of the Intermediate index file in MB. When this limit 
+     * is reached a new index file is created and new indexes are added to this 
+     * file. In the case of a 0 value, the intermediate index file will always 
+     * be merged into the main index file.
      */
     public static String WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE =
             "settings.wayback.aggregator.maxIntermediateIndexFileSize";
 
-    /** The maximum size of the main wayback index file in MB. When this limit is reached
-     * a new index file is created and new indexes are added to this file. The
-     * old index file will be rename to ${finalIndexFileSizeLimit}.1
+    /**
+     * The maximum size of the main wayback index file in MB. When this limit is
+     * reached a new index file is created and new indexes are added to this
+     * file. The old index file will be rename to ${finalIndexFileSizeLimit}.
      */
     public static String WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE =
             "settings.wayback.aggregator.maxMainIndexFileSize";

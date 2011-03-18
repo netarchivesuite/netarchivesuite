@@ -35,7 +35,7 @@ public class HarvestInfo {
     /** The date the harvest information was created. */
     private final Date date;
 
-    /** The identifier of the harverst. */
+    /** The identifier of the harvest. */
     private final Long harvestID;
 
     /** The total number of objects retrieved. */
@@ -138,7 +138,7 @@ public class HarvestInfo {
     }
 
     /**
-     * Get the date this harvest information was recorded
+     * Get the date this harvest information was recorded.
      * @return the date the harvest information was recorded
      */
     public Date getDate() {
@@ -146,7 +146,7 @@ public class HarvestInfo {
     }
 
     /**
-     * Get the id of the harvest
+     * Get the id of the harvest.
      * @return the harvest ID
      */
     public Long getHarvestID() {
@@ -162,7 +162,7 @@ public class HarvestInfo {
     }
 
     /**
-     * Get the domain name of the harvest
+     * Get the domain name of the harvest.
      * @return the domain name
      */
     public String getDomainName() {
@@ -170,7 +170,7 @@ public class HarvestInfo {
     }
 
     /**
-     * Get the domain configuration name of the harvest
+     * Get the domain configuration name of the harvest.
      * @return the domain configuration name
      */
     public String getDomainConfigurationName() {

@@ -39,28 +39,28 @@ import org.apache.commons.httpclient.URIException;
 
 public class NetarchiveSuiteUrlOperations {
 
-    public final static String DNS_SCHEME = "dns:";
+    public static final String DNS_SCHEME = "dns:";
 
-    public final static String HTTP_SCHEME = "http://";
+    public static final String HTTP_SCHEME = "http://";
 
-    public final static String HTTPS_SCHEME = "https://";
+    public static final String HTTPS_SCHEME = "https://";
 
-    public final static String FTP_SCHEME = "ftp://";
+    public static final String FTP_SCHEME = "ftp://";
 
-    public final static String MMS_SCHEME = "mms://";
+    public static final String MMS_SCHEME = "mms://";
 
-    public final static String RTSP_SCHEME = "rtsp://";
+    public static final String RTSP_SCHEME = "rtsp://";
 
     // go brewster
-    public final static String WAIS_SCHEME = "wais://";
+    public static final String WAIS_SCHEME = "wais://";
 
-    public final static String ALL_SCHEMES[] = { HTTP_SCHEME, HTTPS_SCHEME,
+    public static final String ALL_SCHEMES[] = { HTTP_SCHEME, HTTPS_SCHEME,
             FTP_SCHEME, MMS_SCHEME, RTSP_SCHEME, WAIS_SCHEME };
 
 
-    public final static char PORT_SEPARATOR = ':';
+    public static final char PORT_SEPARATOR = ':';
 
-    public final static char PATH_START = '/';
+    public static final char PATH_START = '/';
 
 
     private static final String CC_TLDS = "ac|ad|ae|af|ag|ai|al|am|an|ao|aq"
@@ -133,7 +133,7 @@ public class NetarchiveSuiteUrlOperations {
         return resolvedURI.getEscapedURI();
     }
 
-	public static String urlToScheme(final String url) {
+    public static String urlToScheme(final String url) {
         for (final String scheme : ALL_SCHEMES) {
             if (url.startsWith(scheme)) {
                 return scheme;

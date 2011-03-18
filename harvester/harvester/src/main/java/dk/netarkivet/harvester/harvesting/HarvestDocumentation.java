@@ -185,9 +185,7 @@ public class HarvestDocumentation {
             if (arcFilesDir.isDirectory()) {
                 moveAwayForeignFiles(arcFilesDir, jobID);
                 //Generate CDX
-                // TODO: Place r
-                //
-                // esults in IngestableFiles-defined area
+                // TODO: Place results in IngestableFiles-defined area
                 File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
                                                                  "cdx");
                 CDXUtils.generateCDX(arcFilesDir, cdxFilesDir);
@@ -271,12 +269,12 @@ public class HarvestDocumentation {
             result =
                 new URI(
                     CDX_URI_SCHEME,
-                    null,//Don't include user info (e.g. "foo@")
+                    null, //Don't include user info (e.g. "foo@")
                     CDX_URI_AUTHORITY_HOST,
-                    -1,//Don't include port no. (e.g. ":8080")
+                    -1, //Don't include port no. (e.g. ":8080")
                     CDX_URI_PATH,
                     getCDXURIQuery(harvestID, jobID, timeStamp, serialNumber),
-                    null);//Don't include fragment (e.g. "#foo")
+                    null); //Don't include fragment (e.g. "#foo")
         } catch (URISyntaxException e) {
             throw new UnknownID(
                     "Failed to generate URI for "
@@ -427,13 +425,10 @@ public class HarvestDocumentation {
         
         // Generate an arcfiles-report.txt if configured to do so.
         boolean genArcFilesReport = Settings.getBoolean(
-        		HarvesterSettings.METADATA_GENERATE_ARCFILES_REPORT);
+                HarvesterSettings.METADATA_GENERATE_ARCFILES_REPORT);
         if (genArcFilesReport) {
-        	files.add(new MetadataFile(
-        			new ArcFilesReportGenerator(crawlDir).generateReport(), 
-        			harvestID, 
-        			jobID, 
-        			heritrixVersion));
+            files.add(new MetadataFile(new ArcFilesReportGenerator(crawlDir)
+                    .generateReport(), harvestID, jobID, heritrixVersion));
         }
         
         // Add log files

@@ -47,8 +47,8 @@ public abstract class Frequency {
     /** If this Frequency happens any time rather than at a specified time. */
     private boolean isAnytime;
 
-	/** Initialise a frequency with information about how many periods between
-     * events, and whether it's at a specified time in the period.
+    /** Initialise a frequency with information about how many periods 
+     * between events, and whether it's at a specified time in the period.
      *
      * The actual length of the period is defined by subclasses
      *
@@ -196,8 +196,8 @@ public abstract class Frequency {
         ArgumentNotValid.checkPositive(numtimeunits, "int timeunits");
                 
         Frequency freq;
-    	TimeUnit tu = TimeUnit.fromOrdinal(timeunit);
-    	log.debug("Creating a " + tu.name() + " frequency."); 
+        TimeUnit tu = TimeUnit.fromOrdinal(timeunit);
+        log.debug("Creating a " + tu.name() + " frequency."); 
         if (!anytime) {
             ArgumentNotValid.checkTrue(minute != null,
                     "Arg. minute should not be null, if anytime is false");
@@ -211,7 +211,7 @@ public abstract class Frequency {
                     "Arg. dayofmonth should not be null, if anytime is false "
                     + "and we are creating a Monthly frequency.");
         }
-    	
+    
         switch (tu) {
             case HOURLY:
                 if (anytime) {

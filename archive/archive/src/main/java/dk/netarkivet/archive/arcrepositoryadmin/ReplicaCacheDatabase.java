@@ -423,31 +423,6 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 + "replica_id = ?";
         return DBUtils.selectLongList(getDbConnection(), sql, replicaId);
     }
-    
-    /**
-     * Method for retrieving the list of all the replicafileinfo_guids for a
-     * specific file.
-     * 
-     * @param fileId The id for the file.
-     * @return The list of all the replicafileinfo_guids.
-     */
-    private List<Long> retrieveReplicaFileInfoGuidsForFile(long fileId) {
-        // sql for retrieving the replicafileinfo_guids for the fileId.
-        String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
-                + "file_id = ?";
-        return DBUtils.selectLongList(getDbConnection(), sql, fileId);
-    }
-    
-    /**
-     * Method for retrieving a list of all the file_ids in the file table.
-     * 
-     * @return The list of all the file_ids in the file table.
-     */
-    private List<Long> retrieveAllFileIds() {
-        // sql for retrieving all the file_ids in the file table.
-        String sql = "SELECT file_id FROM file";
-        return DBUtils.selectLongList(getDbConnection(), sql);
-    }
 
     /**
      * Method for retrieving the replica type for a specific replica.
@@ -455,11 +430,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param replicaId The id of the replica.
      * @return The type of the replica.
      */
-    private int retrieveReplicaType(String replicaId) {
+    private ReplicaType retrieveReplicaType(String replicaId) {
         // The SQL statement for retrieving the replica_type of a replica with
         // the given replica id.
         String sql = "SELECT replica_type FROM replica WHERE replica_id = ?";
-        return DBUtils.selectIntValue(getDbConnection(), sql, replicaId);
+        return ReplicaType.fromOrdinal(
+                DBUtils.selectIntValue(getDbConnection(), sql, replicaId));
     }
     
     /**
@@ -902,9 +878,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             res.next();
 
             // return the corresponding replica file info.
-            return new ReplicaFileInfo(res.getLong(1), res.getString(2), 
-             res.getLong(3), res.getLong(4), res.getString(5), res.getInt(6),
-             res.getInt(7), res.getInt(8), res.getDate(9), res.getDate(10));
+            return new ReplicaFileInfo(res);
         } catch (SQLException e) {
             final String message = "SQL error while selecting ResultsSet "
                     + "by executing statement '" + sql + "'.";
@@ -1166,7 +1140,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // only the ones which have a valid checksum.
         // Check the checksums against each other if they differ,
         // then set to CORRUPT.
-        List<Long> rfiGuids = retrieveReplicaFileInfoGuidsForFile(fileId);
+        String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
+            + "file_id = ?";
+        List<Long> rfiGuids = DBUtils.selectLongList(getDbConnection(), sql, fileId);
+        
         List<ReplicaFileInfo> rfis = retrieveReplicaFileInfosWithChecksum(
                 rfiGuids);
 
@@ -1714,8 +1691,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      */
     public void updateChecksumStatus() {
         // Get all the fileids
-        List<Long> fileIds = retrieveAllFileIds();
-
+        List<Long> fileIds = DBUtils.selectLongList(getDbConnection(), 
+                "SELECT file_id FROM file");
+        
         // For each fileid
         for (long fileId : fileIds) {
             fileChecksumVote(fileId);
@@ -2212,8 +2190,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // go through the list, and return the first valid bitarchive-replica.
         for (String repId : replicaIds) {
             // Retrieve the replica type.
-            ReplicaType repType = ReplicaType
-                    .fromOrdinal(retrieveReplicaType(repId));
+            ReplicaType repType = retrieveReplicaType(repId);
 
             // If the replica is of type BITARCHIVE then return it.
             if (repType.equals(ReplicaType.BITARCHIVE)) {
@@ -2268,8 +2245,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // go through the list, and return the first valid bitarchive-replica.
         for (String repId : replicaIds) {
             // Retrieve the replica type.
-            ReplicaType repType = ReplicaType.fromOrdinal(
-                    retrieveReplicaType(repId));
+            ReplicaType repType = retrieveReplicaType(repId);
 
             // If the replica is of type BITARCHIVE then return it.
             if (repType.equals(ReplicaType.BITARCHIVE)) {

@@ -49,7 +49,7 @@ import dk.netarkivet.common.utils.arc.ARCKey;
  */
 
 public class ARCLookup {
-    /** The ArcRepositoryClient we use to retrieve records */
+    /** The ArcRepositoryClient we use to retrieve records. */
     private final ViewerArcRepositoryClient arcRepositoryClient;
 
     /** The currently active lucene search engine. */
@@ -80,7 +80,7 @@ public class ARCLookup {
      * try again, if unsuccessful with http as the schema
      */
     public void setTryToLookupUriAsFtp(boolean searchForFtpUri) {
-    	this.tryToLookupUriAsFtp = searchForFtpUri;
+        this.tryToLookupUriAsFtp = searchForFtpUri;
     }
     
 
@@ -92,8 +92,9 @@ public class ARCLookup {
      */
     public void setIndex(File indexDir) {
         ArgumentNotValid.checkNotNull(indexDir, "File indexDir");
-        ArgumentNotValid.checkTrue(indexDir.isDirectory(),
-                                   "indexDir '" + indexDir + "' should be a directory");
+        ArgumentNotValid.checkTrue(
+                indexDir.isDirectory(),
+                "indexDir '" + indexDir + "' should be a directory");
         if (luceneSearcher != null) {
             try {
                 // Existing lucene indices must be shut down
@@ -135,31 +136,32 @@ public class ARCLookup {
         ArgumentNotValid.checkNotNull(uri, "uri");
         boolean containsHeader = true;
         // the URI.getSchemeSpecificPart() carries out the url-decoding
-        ARCKey key = luceneLookup(uri.getScheme() + ":" +
-                                  uri.getSchemeSpecificPart());
+        ARCKey key = luceneLookup(uri.getScheme() + ":" 
+                + uri.getSchemeSpecificPart());
         if (key == null) {
             // the URI.getRawSchemeSpecificPart() returns the uri in non-decoded form
-            key = luceneLookup(uri.getScheme() + ":" +
-                               uri.getRawSchemeSpecificPart());
+            key = luceneLookup(uri.getScheme() + ":" 
+                    + uri.getRawSchemeSpecificPart());
         }
         
         if (key == null && tryToLookupUriAsFtp) {
-        	log.debug("Url not found with the schema '" + uri.getScheme()
-        			+ ". Now trying with 'ftp' as the schema");
-        	final String ftpSchema = "ftp";        	
-        	 key = luceneLookup(ftpSchema + ":" +
-                     uri.getSchemeSpecificPart());
-        	 if (key == null) {
-        		 key = luceneLookup(ftpSchema + ":" +
-                         uri.getRawSchemeSpecificPart());
-        		 if (key != null) {
-        			// Remember, that the found ftp-records don't have any HTTP Header
-        			 containsHeader = false; 
-        		 }
-        	 } else {
-        		 // Remember, that the found ftp-record don't have any HTTP Header
-        		 containsHeader = false;
-        	 }
+            log.debug("Url not found with the schema '" + uri.getScheme()
+                    + ". Now trying with 'ftp' as the schema");
+            final String ftpSchema = "ftp";
+            key = luceneLookup(ftpSchema + ":" + uri.getSchemeSpecificPart());
+            if (key == null) {
+                key = luceneLookup(ftpSchema + ":"
+                        + uri.getRawSchemeSpecificPart());
+                if (key != null) {
+                    // Remember, that the found ftp-records don't have any HTTP
+                    // Header
+                    containsHeader = false;
+                }
+            } else {
+                // Remember, that the found ftp-record don't have any HTTP
+                // Header
+                containsHeader = false;
+            }
         }
         
         if (key == null) {
@@ -204,7 +206,7 @@ public class ARCLookup {
             Document doc = null;
             if (hits != null) {
                 log.debug("Found " + hits.length() + " hits for uri: " +  uri);
-                for (int i = 0 ; i < hits.length(); i++) {
+                for (int i = 0; i < hits.length(); i++) {
                     doc = hits.doc(i);
                     String origin = doc.get(DigestIndexer.FIELD_ORIGIN);
                     // Here is where we will handle multiple hits in the future

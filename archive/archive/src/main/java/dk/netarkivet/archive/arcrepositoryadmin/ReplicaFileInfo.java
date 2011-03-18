@@ -24,6 +24,8 @@
 package dk.netarkivet.archive.arcrepositoryadmin;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -89,6 +91,13 @@ public class ReplicaFileInfo {
         this.filelistCheckdatetime = fDate;
         this.checksumCheckdatetime = cDate;
     }
+    
+    public ReplicaFileInfo(ResultSet res) throws SQLException {
+        this(res.getLong(1), res.getString(2), 
+                res.getLong(3), res.getLong(4), res.getString(5), res.getInt(6),
+                res.getInt(7), res.getInt(8), res.getDate(9), res.getDate(10));
+    }
+    
     
     /**
      * Retrieves this object as as a string. Contains all the variables.

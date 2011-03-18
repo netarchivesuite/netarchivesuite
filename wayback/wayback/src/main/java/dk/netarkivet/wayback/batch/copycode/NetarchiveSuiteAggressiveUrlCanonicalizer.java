@@ -72,14 +72,14 @@ public class NetarchiveSuiteAggressiveUrlCanonicalizer extends
 
     // replace multiple consecutive '/'s in the path.
     while(newPath.contains("//")) {
-        newPath = newPath.replace("//","/");
+        newPath = newPath.replace("//", "/");
     }
 
     // this would remove trailing a '/' character, unless the path is empty
     // but we're not going to do this just yet..
-//		if((newPath.length() > 1) && newPath.endsWith("/")) {
-//			newPath = newPath.substring(0,newPath.length()-1);
-//		}
+    //if((newPath.length() > 1) && newPath.endsWith("/")) {
+    //newPath = newPath.substring(0,newPath.length()-1);
+    //}
 
     StringBuilder sb = new StringBuilder(searchUrl.length());
     sb.append(searchURI.getHostBasename());

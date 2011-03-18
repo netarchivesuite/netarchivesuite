@@ -415,7 +415,7 @@ class StartedJobHistoryChartGen {
             // Create axis
             String seriesTitle = yDataSeriesTitles[i];
             Color seriesColor = yDataSeriesColors[i];
-            NumberAxis yAxis = new NumberAxis(seriesTitle);;
+            NumberAxis yAxis = new NumberAxis(seriesTitle);
 
             yAxis.setFixedDimension(CHART_AXIS_DIMENSION);
             setAxisRange(yAxis, yDataSeriesRange[i]);

@@ -297,17 +297,17 @@ public class ArcRepository implements CleanupIF {
             case UPLOAD_STARTED:
             case DATA_UPLOADED:
                 log.debug("Recovery from old upload. StoreState: " + storeState
-                		+ ". Sending new Checksum request for verifying whether"
-                		+ " the file '" + filename + "' has been succesfully "
-                		+ "uploaded for replica: '" + replica + "'");
+                        + ". Sending new Checksum request for verifying whether"
+                        + " the file '" + filename + "' has been succesfully "
+                        + "uploaded for replica: '" + replica + "'");
                 // Unknown condition in bitarchive. Test with checksum job.
                 if (storeState == ReplicaStoreState.UPLOAD_FAILED) {
                     ad.setState(filename, replicaChannelId,
                             ReplicaStoreState.UPLOAD_STARTED);
                     log.info("ReplicaStoreState for file '" + filename 
-                    		+ "' on replica '" + replica + "' changed from '" 
-                    		+ ReplicaStoreState.UPLOAD_FAILED + "' to '"
-                    		+ ReplicaStoreState.UPLOAD_STARTED + "'");
+                            + "' on replica '" + replica + "' changed from '" 
+                            + ReplicaStoreState.UPLOAD_FAILED + "' to '"
+                            + ReplicaStoreState.UPLOAD_STARTED + "'");
                 }
                 sendChecksumRequestForFile(filename, replicaClient);
                 break;
@@ -713,8 +713,8 @@ public class ArcRepository implements CleanupIF {
         // process the checksum.
         String orgChecksum = ad.getCheckSum(arcfileName);
         if(orgChecksum == null) {
-        	throw new IllegalState("The admin checksum for file '" 
-        			+ arcfileName + "' is null. Should never happen.");
+            throw new IllegalState("The admin checksum for file '" 
+                    + arcfileName + "' is null. Should never happen.");
         }
         String repChannelName = resolveReplicaChannel(msg.getTo().getName());
         processCheckSum(arcfileName, repChannelName, orgChecksum,
@@ -805,7 +805,7 @@ public class ArcRepository implements CleanupIF {
         if (checksumList.size() > 1) {
             //Log and proceed - the checksums are equal
             log.warn("Arcfile '" + arcfileName + "' was found with " 
-                      + checksumList.size() + " occurences of the checksum: "
+                      + checksumList.size() + " occurrences of the checksum: "
                       + checksumList.get(0));
         }
         
@@ -834,7 +834,7 @@ public class ArcRepository implements CleanupIF {
      *            The original checksum.
      * @param reportedChecksum
      *            The checksum calculated by the replica. This value is "",
-     *            if an error has occured (except reply NOT ok from replica).
+     *            if an error has occurred (except reply NOT ok from replica).
      * @param checksumReadOk
      *            Tells whether the checksum was read ok by batch job.
      */
@@ -843,7 +843,7 @@ public class ArcRepository implements CleanupIF {
             String reportedChecksum,
             boolean checksumReadOk) {
         log.debug("Checksum received for file '" + arcFileName 
-        		+ "'... processing");
+                + "'... processing");
         ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "String arcfileName");
         ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, 
             "String replicaChannelName");

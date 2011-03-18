@@ -118,7 +118,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * group so indexing is off by one after scheme).
      * (3) scheme is limited to legal scheme characters
      */
-    final static Pattern RFC2396REGEX = Pattern.compile(
+    static final Pattern RFC2396REGEX = Pattern.compile(
         "^(([a-zA-Z][a-zA-Z\\+\\-\\.]*):)?((//([^/?#]*))?([^?#]*)(\\?([^#]*))?)?(#(.*))?");
     //    12                             34  5          6       7   8          9 A
     //                                2 1             54        6          87 3      A9
@@ -432,8 +432,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
         // UNUSED String uriFragment = checkUriElement(matcher.group(10));
 
         // If a scheme, is it a supported scheme?
-        if (uriScheme != null && uriScheme.length() > 0 &&
-                this.schemes != null) {
+        if (uriScheme != null && uriScheme.length() > 0 
+                && this.schemes != null) {
             if (!(Arrays.binarySearch(schemes, uriScheme)>=0)) {
                 // unsupported; see if silently ignored
                 if((Arrays.binarySearch(ignoredSchemes, uriScheme)>=0)) {

@@ -115,18 +115,17 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
             }
         };
         
-        long reregister_delay = Settings.getLong(MonitorSettings.DEFAULT_REREGISTER_DELAY);
+        long reregisterDelay = Settings.getLong(
+                MonitorSettings.DEFAULT_REREGISTER_DELAY);
         try {
-            reregister_delay = Long.parseLong(Settings.get(
+            reregisterDelay = Long.parseLong(Settings.get(
                     CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY));
-        }
-        catch (NumberFormatException e1) {
+        } catch (NumberFormatException e1) {
             log.warn("Couldn't parse setting " 
                      + CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
                      + ". Only numbers are allowed. Using defaultvalue "
                      + MonitorSettings.DEFAULT_REREGISTER_DELAY);
-        }
-        catch(NetarkivetException e2) {
+        } catch(NetarkivetException e2) {
             log.warn("Couldn't find setting " 
                     + CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
                     + ". Using defaultvalue "
@@ -134,13 +133,13 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
         }
 
         log.info("Registering this client for monitoring every "
-                 + reregister_delay
+                 + reregisterDelay
                  + " minutes, using hostname '"
                  + localHostName + "' and JMX/RMI ports "
                  + jmxPort + "/"
                  + rmiPort);
         registryTimer.scheduleAtFixedRate(timerTask, NOW,
-                                            reregister_delay
+                                            reregisterDelay
                                           * MINUTE_IN_MILLISECONDS);
     }
 

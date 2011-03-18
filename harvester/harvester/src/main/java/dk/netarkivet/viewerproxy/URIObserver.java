@@ -41,14 +41,14 @@ public abstract class URIObserver implements Observer {
      */
     public abstract void notify(URI uri, int responseCode);
 
-    /** Helper class to be able to notify about a pair of <uri,responsecode> */
+    /** Helper class to be able to notify about a pair of <uri,responsecode>. */
     static final class URIResponseCodePair {
-        /** The uri */
+        /** The uri. */
         private final URI uri;
-        /** The response code */
+        /** The response code.*/
         private final int responseCode;
 
-        /** initialise values
+        /** initialise values.
          *
          * @param uri The URI
          * @param code The code

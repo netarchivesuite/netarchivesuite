@@ -36,6 +36,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * type T.
  * Each non-leaf tree can have any number of subnodes, each identified by
  * a String.
+ * @param <T> The leaf type
  */
 public interface StringTree<T> {
     /**
@@ -118,7 +119,7 @@ public interface StringTree<T> {
 
     /**
      * Get a map of the names and values of all subtrees, assuming that all
-     * subtrees are leafs and are uniquely named
+     * subtrees are leafs and are uniquely named.
      *
      * @return Map from subtree names to values of their leaves.
      *

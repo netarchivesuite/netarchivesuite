@@ -88,13 +88,13 @@ public class Constants {
 
     /** The url for the batchjob page.*/
     public static final String URL_BATCHJOB = 
-    	"/BitPreservation/Bitpreservation-batchjob.jsp";
+        "/BitPreservation/Bitpreservation-batchjob.jsp";
     /** The url for retrieval of batchjob result files.*/
     public static final String URL_RETRIEVE_RESULT_FILES = 
-    	"/BitPreservation/Bitpreservation-batchjob-retrieve-resultfile.jsp";
+        "/BitPreservation/Bitpreservation-batchjob-retrieve-resultfile.jsp";
     /** The url for the execution of the batchjobs.*/
     public static final String URL_BATCHJOB_EXECUTE = 
-    	"/BitPreservation/Bitpreservation-batchjob-execute.jsp";
+        "/BitPreservation/Bitpreservation-batchjob-execute.jsp";
 
     /** The context parameter 'filetype'.*/
     public static final String FILETYPE_PARAMETER = "filetype";

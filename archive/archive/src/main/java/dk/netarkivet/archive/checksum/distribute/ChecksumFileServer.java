@@ -311,9 +311,9 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
 
             // Check if the checksum was found. If not throw exception.
             if(checksum == null || checksum.isEmpty()) {
-                // The error is logged, when the exception is catched.
+                // The error is logged, when the exception is caught.
                 throw new IllegalState("Cannot fetch checksum of an entry, "
-                		+ filename + ", which is not within the archive.");
+                        + filename + ", which is not within the archive.");
             } 
             
             // send the checksum of the arc file.

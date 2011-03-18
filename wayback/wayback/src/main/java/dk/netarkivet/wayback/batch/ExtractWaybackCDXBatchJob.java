@@ -50,13 +50,13 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
 
     /**
      * Utility for converting an ArcRecord to a CaptureSearchResult
-     * (wayback's representation of a CDX record)
+     * (wayback's representation of a CDX record).
      */
     private NetarchiveSuiteARCRecordToSearchResultAdapter aToSAdapter;
 
     /**
      * Utility for converting a wayback CaptureSearchResult to a String
-     * representing a line in a CDX file
+     * representing a line in a CDX file.
      */
     private SearchResultToCDXLineAdapter srToCDXAdapter;
 
@@ -68,8 +68,8 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
     }
 
     /**
-     * Constructor
-     * @param timeout specific timout period
+     * Constructor.
+     * @param timeout specific timeout period
      */
     public ExtractWaybackCDXBatchJob(long timeout) {
         batchJobTimeout = timeout;

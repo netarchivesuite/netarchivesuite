@@ -90,30 +90,37 @@ public class NetarchiveCacheResourceStore implements ResourceStore {
         // Try to lookup the file in the cache
         // make synchronized to disallow more than one using 
         // the cache at any one time
-        synchronized (fileCache) { 
-        	File wantedFile = fileCache.get(arcfile);
-        	try {
-        		if (wantedFile != null && wantedFile.exists()) {
-        			logger.debug("Found the file '" + arcfile + "' in the cache. ");
-        			return ResourceFactory.getResource(wantedFile, offset);
-        		} else {
-        			logger.debug("The file '" + arcfile + "' was not found in the cache. ");
-        			// Get file from bitarchive, and place it in the cachedir directory
-        			File fileFromBitarchive = new File(fileCache.getCacheDir(), arcfile);
-        			client.getFile(arcfile, replicaUsed, fileFromBitarchive);
-        			// put into the cache
-        			fileCache.put(arcfile, fileFromBitarchive);
-        			logger.info("File '" + arcfile 
-        					+ "' downloaded from archive and put into the cache '" 
-        					+ fileCache.getCacheDir().getAbsolutePath() + "'.");
-        			return ResourceFactory.getResource(fileFromBitarchive, offset);
-        		}
-        	} catch (IOException e) {
-        		logger.error("Error looking for non existing resource", e);
-        		throw new ResourceNotAvailableException(this.getClass().getName()
-        				+ "Throws Exception when accessing "
-        				+ "CaptureResult given from Wayback.");
-        	}
+        synchronized (fileCache) {
+            File wantedFile = fileCache.get(arcfile);
+            try {
+                if (wantedFile != null && wantedFile.exists()) {
+                    logger.debug("Found the file '" + arcfile
+                            + "' in the cache. ");
+                    return ResourceFactory.getResource(wantedFile, offset);
+                } else {
+                    logger.debug("The file '" + arcfile
+                            + "' was not found in the cache. ");
+                    // Get file from bitarchive, and place it in the cachedir
+                    // directory
+                    File fileFromBitarchive = new File(fileCache.getCacheDir(),
+                            arcfile);
+                    client.getFile(arcfile, replicaUsed, fileFromBitarchive);
+                    // put into the cache
+                    fileCache.put(arcfile, fileFromBitarchive);
+                    logger.info("File '" + arcfile
+                            + "' downloaded from archive and put into the cache '"
+                            + fileCache.getCacheDir().getAbsolutePath()
+                            + "'.");
+                    return ResourceFactory.getResource(fileFromBitarchive,
+                            offset);
+                }
+            } catch (IOException e) {
+                logger.error("Error looking for non existing resource", e);
+                throw new ResourceNotAvailableException(this.getClass()
+                        .getName()
+                        + "Throws Exception when accessing "
+                        + "CaptureResult given from Wayback.");
+            }
         }
     }
 

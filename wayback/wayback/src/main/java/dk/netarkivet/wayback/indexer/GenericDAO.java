@@ -32,7 +32,7 @@ import java.io.Serializable;
  */
 public interface GenericDAO<T, PK extends Serializable> {
 
-     /** Persist the newInstance object into database
+     /** Persist the newInstance object into database.
       * @param newInstance  the object to persist.
       * @return the key assigned to the object.
       */
@@ -56,3 +56,4 @@ public interface GenericDAO<T, PK extends Serializable> {
     void delete(T persistentObject);
 
 }
+
