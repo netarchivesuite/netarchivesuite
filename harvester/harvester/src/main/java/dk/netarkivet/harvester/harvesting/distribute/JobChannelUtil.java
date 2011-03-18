@@ -1,7 +1,7 @@
-/* File:    $Id: $
-* Revision: $Revision: $
-* Author:   $Author: $
-* Date:     $Date: $
+/* File:    $Id$
+* Revision: $Revision$
+* Author:   $Author$
+* Date:     $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -32,29 +32,29 @@ import dk.netarkivet.harvester.datamodel.JobPriority;
  */
 public class JobChannelUtil {
 
-	/**
-	 * Hides constructor to avoid instantiation of this class (all method should
-	 * be accessed statically)
-	 */
-	private JobChannelUtil() {
-	}
+    /**
+     * Hides constructor to avoid instantiation of this class (all method should
+     * be accessed statically).
+     */
+    private JobChannelUtil() {
+    }
 
-	/**
-	 * Finds channels based on the priority of jobs.
-	 * 
-	 * @param jobPriority
-	 *            The job priority the find a channel for
-	 * @return The channel used to send the jobs for the indicated priorities
-	 */
-	public static ChannelID getChannel(JobPriority jobPriority) {
-		switch (jobPriority) {
-		case LOWPRIORITY:
-			return Channels.getAnyLowpriorityHaco();
-		case HIGHPRIORITY:
-			return Channels.getAnyHighpriorityHaco();
-		default:
-			throw new UnknownID("Unable to find channel for job priority "
-					+ jobPriority);
-		}
-	}
+    /**
+     * Finds channels based on the priority of jobs.
+     * 
+     * @param jobPriority
+     *            The job priority the find a channel for
+     * @return The channel used to send the jobs for the indicated priorities
+     */
+    public static ChannelID getChannel(JobPriority jobPriority) {
+        switch (jobPriority) {
+        case LOWPRIORITY:
+            return Channels.getAnyLowpriorityHaco();
+        case HIGHPRIORITY:
+            return Channels.getAnyHighpriorityHaco();
+        default:
+            throw new UnknownID("Unable to find channel for job priority "
+                    + jobPriority);
+        }
+    }
 }
