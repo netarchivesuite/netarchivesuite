@@ -144,7 +144,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
         /**
          * Returns an iterator on the given sort key.
-         * @param key the sort key
+         * @param the cursor (sort key) to iterate on.
          */
         ReportIterator(EntityCursor<PersistentLine> cursor) {
             this.cursor = cursor;
