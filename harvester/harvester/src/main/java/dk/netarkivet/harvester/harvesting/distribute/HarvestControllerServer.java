@@ -58,7 +58,7 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
  * launches a Heritrix crawl with the received job description. The generated
  * ARC files are uploaded to the bitarchives once a harvest job has been
  * completed.
- * 
+ *
  * During its operation CrawlStatus messages are sent to the
  * HarvestSchedulerMonitorServer. When starting the actual harvesting a message
  * is sent with status 'STARTED'. When the harvesting has finished a message is
@@ -85,14 +85,16 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
  * after new jobs, if there is enough room available on the machine. If not, it
  * logs a warning about this, which is also sent as a notification.
  */
-public class HarvestControllerServer extends HarvesterMessageHandler
-        implements CleanupIF {
+public class HarvestControllerServer
+extends HarvesterMessageHandler
+implements CleanupIF {
+
     /** The unique instance of this class. */
     private static HarvestControllerServer instance;
 
     /** The logger to use. */
-    private static final Log log
-            = LogFactory.getLog(HarvestControllerServer.class);
+    private static final Log log =
+        LogFactory.getLog(HarvestControllerServer.class);
 
     /** The message to write to log when starting the server. */
     private static final String STARTING_MESSAGE =
@@ -215,7 +217,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         beginListeningIfSpaceAvailable();
 
         // Notify the harvest dispatcher that we are ready
-        sendReadyForJobMessage();
+        startAcceptingJobs();
     }
 
     /**
@@ -399,7 +401,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             // If we didn't start a thread for crawling after all, accept more
             // messages
             if (t == null) {
-                resumeAcceptingJobs();
+                startAcceptingJobs();
             }
         }
         // Now return from this method letting the thread do the work.
@@ -439,13 +441,17 @@ public class HarvestControllerServer extends HarvesterMessageHandler
      * jobs again, we stop resending messages we get.
      *
      */
-    private synchronized void resumeAcceptingJobs() {
+    private synchronized void startAcceptingJobs() {
         //allow this haco to receive messages
         running = false;
+
+        // Send a ReadyForJobMessage
+        jmsConnection.send(new ReadyForJobMessage(JOB_PRIORITY));
         if (log.isDebugEnabled()) {
-            log.debug("Starting to accept jobs again.");
+            log.debug("Harvest controller ready to harvest "
+                    + JOB_PRIORITY + " jobs.");
         }
-        sendReadyForJobMessage();
+
     }
 
     /** Stop listening for new crawl requests.
@@ -698,7 +704,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 log.info(ENDCRAWL_MESSAGE + " " + job.getJobID());
                 // process serverdir for files not yet uploaded.
                 processOldJobs();
-                resumeAcceptingJobs();
+                startAcceptingJobs();
                 beginListeningIfSpaceAvailable();
             }
         }
@@ -732,14 +738,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                                  ExceptionUtils.getStackTrace(e));
                 throw e;
             }
-        }
-    }
-
-    private void sendReadyForJobMessage() {
-        jmsConnection.send(new ReadyForJobMessage(JOB_PRIORITY));
-        if (log.isDebugEnabled()) {
-            log.debug("Harvest controller ready to harvest "
-                    + JOB_PRIORITY + " jobs.");
         }
     }
 

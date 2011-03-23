@@ -71,18 +71,76 @@ import dk.netarkivet.harvester.harvesting.distribute.ReadyForJobMessage;
  * has been received by the dispatcher. A job of the same priority is then
  * issued.
  *
- * It also handles backup and makes sure backup is not performed while
- * jobs are being scheduled.<p>
+ * <p>
  *
  * Note: Only one <code>HarvestDispatcher</code> should be running at a time.
  */
 public class HarvestDispatcher extends HarvesterMessageHandler
 implements MessageListener, ComponentLifeCycle {
 
+    /**
+     * Encapsulates counters that keep track of how many jobs are ready to
+     * be submitted by priority (i.e. the count of crawlers that have notified
+     * being ready to process a job).
+     */
+    private static class DispatchState {
+        /**
+         * Counts the number of {@link ReadyForJobMessage}s received
+         * for each {@link JobPriority}. This represents the available "slots" for
+         * dispatching new jobs.
+         */
+        private Map<JobPriority, Integer> slots =
+            new HashMap<JobPriority, Integer>();
+
+        public String toString() {
+            String statusLine = "Ready to submit";
+            for (JobPriority p : JobPriority.values()) {
+                statusLine += "\n" + getReadyCount(p) + " " + p + " jobs";
+            }
+            return statusLine;
+        }
+
+        /**
+         * Returns the number of {@link ReadyForJobMessage} for the
+         * given {@link JobPriority}.
+         * @param p the job priority
+         * @return the number of {@link ReadyForJobMessage} for the
+         * given {@link JobPriority}.
+         */
+        private synchronized int getReadyCount(JobPriority p) {
+            Integer count = slots.get(p);
+            return (count == null ? 0 : count.intValue());
+        }
+
+        private synchronized void incrementReadyCount(JobPriority p) {
+            Integer count = slots.get(p);
+            int newCount = (count == null ? 0 : count.intValue()) + 1;
+            slots.put(p, newCount);
+
+            if (log.isInfoEnabled()) {
+                log.info(toString());
+            }
+        }
+
+        private synchronized void decrementReadyCount(JobPriority p) {
+            Integer count = slots.get(p);
+            int newCount = (count == null ? 0 : count.intValue()) - 1;
+            slots.put(p, newCount);
+
+            if (log.isInfoEnabled()) {
+                log.info(toString());
+            }
+        }
+
+    }
+
     /** The logger to use.    */
     protected static final Log log = LogFactory.getLog(
             HarvestDispatcher.class.getName());
 
+    /**
+     * The period in milliseconds between dispatches.
+     */
     private static int dispatchPeriodInMillis =
         Settings.getInt(HarvesterSettings.DISPATCH_JOBS_PERIOD);
 
@@ -93,12 +151,11 @@ implements MessageListener, ComponentLifeCycle {
     private JMSConnection jmsConnection;
 
     /**
-     * Counts the number of {@link ReadyForJobMessage}s received
-     * for each {@link JobPriority}. This represents the available "slots" for
-     * dispatching new jobs.
+     * The state of the job dispatch, encapsulates the counters of jobs that 
+     * are ready to be submitted by priority, following reception of
+     * a {@link ReadyForJobMessage}.
      */
-    private Map<JobPriority, Integer> readyMessageCounter =
-        new HashMap<JobPriority, Integer>();
+    private final DispatchState state = new DispatchState();
 
     /**
      * Create new instance of the HarvestDispatcher.
@@ -126,6 +183,7 @@ implements MessageListener, ComponentLifeCycle {
         rescheduleLeftOverJobs();
 
         //ToDo implement real scheduling with timeout functionality.
+        // See FR https://sbforge.org/jira/browse/NAS-1811
         dispatcherThread = new Thread("HarvestDispatcher") {
             public void run() {
                 if (log.isInfoEnabled()) {
@@ -179,10 +237,10 @@ implements MessageListener, ComponentLifeCycle {
      */
     private void stopTimeoutJobs() {
         final JobDAO dao = JobDAO.getInstance();
-        final Iterator<Long> jobs = dao.getAllJobIds(JobStatus.STARTED);
+        final Iterator<Long> startedJobs = dao.getAllJobIds(JobStatus.STARTED);
         int stoppedJobs = 0;
-        while (jobs.hasNext()) {
-            long id = jobs.next();
+        while (startedJobs.hasNext()) {
+            long id = startedJobs.next();
             Job job = dao.read(id);
 
             long timeDiff =
@@ -223,32 +281,27 @@ implements MessageListener, ComponentLifeCycle {
      * as {@link ReadyForJobMessage}s have been received, and decrements the
      * submit "slot" accordingly.
      */
-    synchronized void submitNewJobs() {
+    void submitNewJobs() {
         for (JobPriority p : JobPriority.values()) {
-            int readyMessagesCount = getReadyMessageCount(p);
+            int readyMessagesCount = state.getReadyCount(p);
             for (int i = 0; i < readyMessagesCount; i++) {
-                long submittedJobId = submitNextNewJob(p);
-                if (submittedJobId != -1) {
-                    decrementReadyMessageCount(p);
-                }
+                submitNextNewJob(p);
             }
         }
     }
 
     /**
      * Submit the next new job (the one with the lowest ID) with the given
-     * priority.
-     * @return the id of the submitted job, or -1 if no job was available,
-     * or submission failed.
+     * priority, and updates the internal counter as needed.
+     * @param priority the job priority
      */
-    private long submitNextNewJob(JobPriority priority) {
+    private void submitNextNewJob(JobPriority priority) {
         final JobDAO dao = JobDAO.getInstance();
         Iterator<Long> jobsToSubmit = dao.getAllJobIds(JobStatus.NEW, priority);
         if (!jobsToSubmit.hasNext()) {
             if (log.isTraceEnabled() ) {
                 log.trace("No " + priority + " jobs to be run at this time");
             }
-            return -1L;
         } else {
             if (log.isDebugEnabled() ) {
                 log.debug("Submitting new " + priority + " job");
@@ -262,10 +315,9 @@ implements MessageListener, ComponentLifeCycle {
                 jobToSubmit.setSubmittedDate(new Date());
                 dao.update(jobToSubmit);
                 //Add alias metadata
-                List<MetadataEntry> metadata
-                = new ArrayList<MetadataEntry>();
-                MetadataEntry aliasMetadataEntry
-                = MetadataEntry.makeAliasMetadataEntry(
+                List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
+                MetadataEntry aliasMetadataEntry =
+                    MetadataEntry.makeAliasMetadataEntry(
                         jobToSubmit.getJobAliasInfo(),
                         jobToSubmit.getOrigHarvestDefinitionID(),
                         jobToSubmit.getHarvestNum(),
@@ -324,9 +376,10 @@ implements MessageListener, ComponentLifeCycle {
                     log.trace("Job " + jobToSubmit + " sent to harvest queue.");
                 }
 
-                return jobToSubmit.getJobID();
+                state.decrementReadyCount(priority);
             } catch (Throwable e) {
-                String message = "Error while scheduling job " + jobID;
+                String message = "Error while scheduling job " + jobID
+                    + ". Job status changed to FAILED";
                 log.warn(message, e);
                 if (jobToSubmit != null) {
                     jobToSubmit.setStatus(JobStatus.FAILED);
@@ -335,7 +388,6 @@ implements MessageListener, ComponentLifeCycle {
                             ExceptionUtils.getStackTrace(e));
                     dao.update(jobToSubmit);
                 }
-                return -1;
             }
         }
     }
@@ -344,6 +396,9 @@ implements MessageListener, ComponentLifeCycle {
      * Submit an doOneCrawl request to a HarvestControllerServer with correct
      * priority.
      * @param job the specific job to send
+     * @param origHarvestName the harvest definition's name
+     * @param origHarvestDesc the harvest definition's description
+     * @param origHarvestSchedule the harvest definition schedule name
      * @param metadata pre-harvest metadata to store in arcfile.
      * @throws ArgumentNotValid one of the parameters are null
      * @throws IOFailure if unable to send the doOneCrawl request to a
@@ -392,54 +447,7 @@ implements MessageListener, ComponentLifeCycle {
     @Override
     public void visit(ReadyForJobMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-        incrementReadyMessageCount(msg.getJobProprity());
-    }
-
-    /**
-     * Returns the number of {@link ReadyForJobMessage} for the
-     * given {@link JobPriority}.
-     * @param p the job priority
-     * @return the number of {@link ReadyForJobMessage} for the
-     * given {@link JobPriority}.
-     */
-    private int getReadyMessageCount(JobPriority p) {
-        synchronized (readyMessageCounter) {
-            Integer count = readyMessageCounter.get(p);
-            return (count == null ? 0 : count.intValue());
-        }
-    }
-
-    private void incrementReadyMessageCount(JobPriority p) {
-        synchronized (readyMessageCounter) {
-            Integer count = readyMessageCounter.get(p);
-            int newCount = (count == null ? 0 : count.intValue()) + 1;
-            readyMessageCounter.put(p, newCount);
-
-            if (log.isInfoEnabled()) {
-                logReadyMessageCount();
-            }
-        }
-    }
-
-    private void decrementReadyMessageCount(JobPriority p) {
-        synchronized (readyMessageCounter) {
-            Integer count = readyMessageCounter.get(p);
-            int newCount = (count == null ? 0 : count.intValue()) - 1;
-            readyMessageCounter.put(p, newCount);
-
-            if (log.isInfoEnabled()) {
-                logReadyMessageCount();
-            }
-        }
-    }
-
-    private void logReadyMessageCount() {
-        String logLine = "Ready to submit";
-        for (JobPriority p : JobPriority.values()) {
-            logLine += "\n" + getReadyMessageCount(p) + " " + p + " jobs";
-        }
-        log.info(logLine);
-
+        state.incrementReadyCount(msg.getJobProprity());
     }
 
 }
