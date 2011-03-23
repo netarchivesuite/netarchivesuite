@@ -23,6 +23,7 @@
 
 package dk.netarkivet.common.lifecycle;
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -30,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * This class wraps a {@link ScheduledThreadPoolExecutor}, allowing to
@@ -153,6 +156,9 @@ public class PeriodicTaskExecutor {
      * @param tasks the task definitions.
      */
     public PeriodicTaskExecutor(PeriodicTask... tasks) {
+
+        ArgumentNotValid.checkNotNull(tasks, "tasks");
+        ArgumentNotValid.checkNotNullOrEmpty(Arrays.asList(tasks), "tasks");
 
         this.tasks = tasks;
         this.exec = new ScheduledThreadPoolExecutor(tasks.length);
