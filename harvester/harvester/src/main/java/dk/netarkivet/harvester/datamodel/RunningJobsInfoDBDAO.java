@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -503,11 +504,12 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Returns the ids of jobs for which history records exist.
+     * Returns the ids of jobs for which history records exist as an
+     * immutable set.
      * @return the ids of jobs for which history records exist.
      */
     @Override
-    public Long[] getHistoryRecordIds() {
+    public Set<Long> getHistoryRecordIds() {
 
         Connection c = DBConnect.getDBConnection();
 
@@ -545,7 +547,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             throw new IOFailure(message, e);
         }
 
-        return (Long[]) jobIds.toArray(new Long[jobIds.size()]);
+        return Collections.unmodifiableSet(jobIds);
     }
 
     /**

@@ -23,11 +23,8 @@
 package dk.netarkivet.harvester.harvesting.monitor;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +44,6 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
@@ -305,10 +301,11 @@ implements MessageListener, CleanupIF {
         Set<Long> idsToRemove = new TreeSet<Long>();
 
         RunningJobsInfoDAO dao = RunningJobsInfoDAO.getInstance();
-        idsToRemove.addAll(Arrays.asList(dao.getHistoryRecordIds()));
+        idsToRemove.addAll(dao.getHistoryRecordIds());
         Iterator<Long> startedJobIds =
             JobDAO.getInstance().getAllJobIds(JobStatus.STARTED);
         while (startedJobIds.hasNext()) {
+            // don't remove records for jobs still in status STARTED
             idsToRemove.remove(startedJobIds.next());
         }
 
