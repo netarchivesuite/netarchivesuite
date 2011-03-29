@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <title>NetarchiveSuite Overview</title>
+</head>
+
+<body>
+<h1>NetarchiveSuite system overview</h1>
+
+<h2>Introduction</h2>
+
+The primary function of the NetarchiveSuite is to plan, schedule and archive web harvests of parts of the internet. We
+use Heritrix as our web-crawler. NetarchiveSuite was released on July 2007 as Open Source under the LGPL license and is
+used by the Danish organization Netarkivet.dk (<a href="http://netarkivet.dk">http://netarkivet.dk</a>). This
+organization has since July 2005 been using NetarchiveSuite to harvest Danish websites as authorized by the latest
+Danish Legal Deposit Act.
+<p>
+    The NetarchiveSuite can organize three different kinds of harvests:
+<ul>
+    <li>Event harvesting (organize harvests of a set of domains related to a specific event e.g. 9/11, Elections and so
+        on).
+    </li>
+    <li>Selective harvesting (recurrent harvests of a set of domains).</li>
+    <li>Snapshot harvesting (organizing a complete snapshot of all known domains).</li>
+</ul>
+The software has been designed with the following in mind:
+<ul>
+    <li>Friendly to non-technicians - designed to be usable by librarians and curators with a minimum of technical
+        supervision.
+    </li>
+    <li>Low maintenance - easy setup of automated harvests, automated bit-integrity checks, and simple curator tools.
+    </li>
+    <li>High bit-preservation security - replication and active integrity tests of large data contents.</li>
+    <li>Loosely coupled - the suite consists of modules that can be used individually, or be used as one large
+        web-archiving system.
+    </li>
+</ul>
+<h2>The modules in the NetarchiveSuite</h2>
+
+The NetarchiveSuite is split into four main modules: One module with common functionality and three modules
+corresponding to processes of harvesting, archiving and accessing, respectively.
+
+<center><img src="doc-files/MainView.jpg" alt="System overview"/></center>
+
+<h3>The Common Module</h3>
+
+The framework and utilities used by the whole suite, like exceptions, settings, messaging, file transfer (RemoteFile),
+and logging. It also defines the Java interfaces used to communicate between the different modules, to support
+alternative implementations.
+
+
+<h3>The Harvester Module</h3>
+
+This module handles defining, scheduling, and performing harvests.
+<ul>
+    <li>Harvesting uses the Heritrix crawler developed by Internet Archive. The harvesting module allows for flexible
+        automated definitions of harvests. The system gives access to the full power of the Heritrix crawler, given
+        adequate knowledge of the Heritrix crawler. NetarchiveSuite wraps the crawler in an easy-to-use interface that
+        handles scheduling and configuring of the crawls, and distributes it to several crawling servers.
+    </li>
+    <li>The harvester module allows for de-duplication, using an index of URLs already crawled and stored in the archive
+        to avoid storing duplicates more than once. This function uses the de-duplicator module from Kristinn
+        Sigurdsson.
+    </li>
+    <li>The harvester module supports packaging metadata about the harvest together with the harvested data.
+    </li>
+</ul>
+
+<h3>The Archive Module</h3>
+This module makes it possible to setup and run a repository with replication, active bit consistency checks for
+bit-preservation, and support for distributed batch jobs on the archive.
+<ul>
+    <li>The archiving component offers a secure environment for storing your harvested material. It is designed for high
+        preservation guarantees on bit preservation.
+    </li>
+    <li>It allows for replication of data on different locations, and distribution of content on several servers on each
+        location. It supports different software and hardware platforms.
+    </li>
+    <li>The module allows for distributed batch jobs, running the same jobs on all servers at a location in parallel,
+        and merging the results.
+    </li>
+    <li>An index of data in the archive allows fast access to the harvested materials.</li>
+</ul>
+
+<h3>The Access (Viewerproxy) Module</h3>
+This module gives access to previously harvested material, through a proxy solution.
+<ul>
+    <li>The viewerproxy component supports transparent access to the harvested data, using a proxy solution, and an
+        archive with an index over URLs stored in the archive.
+    </li>
+    <li>Support for browsing an entire crawl (like a snapshot or event harvest) or a single job (what one machine
+        harvested).
+    </li>
+    <li>Allows for collecting unharvested URLs while browsing, for use in curation, and to include these URLs in the
+        next crawl.
+    </li>
+</ul>
+
+<h2>For developers</h2>
+<ul>
+    <li>The modules are loosely coupled, communicating through Java interfaces, with the implementation replaceable
+        without recompiling.
+    </li>
+    <li>A rich number of settings in an XML structure allows for numerous ways of tweaking the applications for special
+        needs.
+    </li>
+    <li>All design and code is peer-reviewed.</li>
+    <li>There are Javadoc and implementation comments throughout the code.</li>
+    <li>The code is tested with unit tests (coverage of 80%) and thorough release tests.</li>
+    <li>Development happens in a well-defined development model (originally based on evolutionary prototyping).</li>
+    <li>NetarchiveSuite is available under a well-known, integration-friendly, open source license</li>
+</ul>
+</body>
+</html>
