@@ -1,0 +1,3 @@
+dns:www.berlingske.dk 20100525115156 dns:www.berlingske.dk text/dns - YTDTWY3CZLAAAAELU2CWUPU7SJTJEKHR - 1406 68-6-20100525115156-00000-KB-TEST-WAY-001.kb.dk.arc
+berlingske.dk/robots.txt 20100525115157 http://www.berlingske.dk/robots.txt text/plain 200 RFPHFUHRI5SCQ5AXZU4VP767UWINWIDS - 1527 68-6-20100525115156-00000-KB-TEST-WAY-001.kb.dk.arc
+berlingske.dk/ 20100525115157 http://www.berlingske.dk/ text/html 500 3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - 6474 68-6-20100525115156-00000-KB-TEST-WAY-001.kb.dk.arc

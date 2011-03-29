@@ -1,0 +1,3910 @@
+WARC/1.0
+WARC-Type: warcinfo
+WARC-Date: 2010-09-09T16:33:24Z
+WARC-Filename: NAS-20100909163324-00000-mette.kb.dk.warc
+WARC-Record-ID: <urn:uuid:b93f4cc6-4212-4a50-93d2-8f4884ab14c5>
+Content-Type: application/warc-fields
+Content-Length: 403
+
+software: Heritrix/1.14.4 http://crawler.archive.org
+ip: 10.6.1.82
+hostname: mette.kb.dk
+format: WARC File Format 1.0
+conformsTo: http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf
+operator: Admin
+isPartOf: warcTester
+description: Default Profile
+robots: classic
+http-header-user-agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+http-header-from: svc@kb.dk
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: dns:netarkivet.dk
+WARC-Date: 2010-09-09T16:33:24Z
+WARC-IP-Address: 10.6.0.10
+WARC-Record-ID: <urn:uuid:9356599d-fc86-4a40-8256-d56e339b9b46>
+Content-Type: text/dns
+Content-Length: 56
+
+20100909163324
+netarkivet.dk.		7130	IN	A	130.225.27.144
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/robots.txt
+WARC-Date: 2010-09-09T16:33:26Z
+WARC-Payload-Digest: sha1:X6CST3JOSH3IHWHJYAY43MK72GVCTFX3
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:cc1c245e-02bc-4015-bd7a-197ab43bb458>
+Content-Type: application/http; msgtype=response
+Content-Length: 276
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:26 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 11 Jan 2010 12:37:30 GMT
+ETag: "eb946-d-ccf67680"
+Accept-Ranges: bytes
+Content-Length: 13
+Connection: close
+Content-Type: text/plain; charset=UTF-8
+
+#robots.txt
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/robots.txt
+WARC-Date: 2010-09-09T16:33:26Z
+WARC-Concurrent-To: <urn:uuid:cc1c245e-02bc-4015-bd7a-197ab43bb458>
+WARC-Record-ID: <urn:uuid:9765166a-ac01-4d83-bc79-e34cfe8f25f8>
+Content-Type: application/http; msgtype=request
+Content-Length: 158
+
+GET /robots.txt HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/robots.txt
+WARC-Date: 2010-09-09T16:33:26Z
+WARC-Concurrent-To: <urn:uuid:cc1c245e-02bc-4015-bd7a-197ab43bb458>
+WARC-Record-ID: <urn:uuid:d72cacd9-2219-4568-8072-5859998fb7b6>
+Content-Type: application/warc-fields
+Content-Length: 64
+
+via: http://netarkivet.dk/
+hopsFromSeed: P
+fetchTimeMs: 24
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/
+WARC-Date: 2010-09-09T16:33:28Z
+WARC-Payload-Digest: sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:9f71efb0-ffaf-49c8-874a-e75ac6e89d96>
+Content-Type: application/http; msgtype=response
+Content-Length: 241
+
+HTTP/1.1 302 Found
+Date: Thu, 09 Sep 2010 16:33:28 GMT
+Server: Apache/2.0.46 (Red Hat)
+Accept-Ranges: bytes
+X-Powered-By: PHP/4.3.2
+Location: index-da.php
+Content-Length: 0
+Connection: close
+Content-Type: text/html; charset=UTF-8
+
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/
+WARC-Date: 2010-09-09T16:33:28Z
+WARC-Concurrent-To: <urn:uuid:9f71efb0-ffaf-49c8-874a-e75ac6e89d96>
+WARC-Record-ID: <urn:uuid:09701f08-a5d4-4bd1-893e-5608ac87e7d0>
+Content-Type: application/http; msgtype=request
+Content-Length: 148
+
+GET / HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/
+WARC-Date: 2010-09-09T16:33:28Z
+WARC-Concurrent-To: <urn:uuid:9f71efb0-ffaf-49c8-874a-e75ac6e89d96>
+WARC-Record-ID: <urn:uuid:f21213f7-de2e-4d3e-af1d-def399042429>
+Content-Type: application/warc-fields
+Content-Length: 82
+
+seed:
+fetchTimeMs: 23
+outlink: http://netarkivet.dk/index-da.php R Location:
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/index-da.php
+WARC-Date: 2010-09-09T16:33:30Z
+WARC-Payload-Digest: sha1:KCJYF3HAR7UXFQDEHK474AI6ZRZTPKAG
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:e0608310-d030-4cc0-8516-3fa8db16a86f>
+Content-Type: application/http; msgtype=response
+Content-Length: 14371
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:30 GMT
+Server: Apache/2.0.46 (Red Hat)
+Accept-Ranges: bytes
+X-Powered-By: PHP/4.3.2
+Connection: close
+Content-Type: text/html; charset=UTF-8
+
+<html><!-- InstanceBegin template="/Templates/netarkivet_forside.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<!-- InstanceBeginEditable name="doctitle" --> 
+<title>netarkivet.dk</title>
+<!-- InstanceEndEditable -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script type="text/JavaScript">
+<!--
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+
+function email(a,b,c){
+url = 'mailto:' + a + '@' + c + '.' + b;
+location.href=url;
+}
+function emailprint(a,b,c){
+  url = a + '@' + c + '.' + b;
+  document.write(url);
+}
+//-->
+</script>
+<link href="netarkivet.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+
+
+-->
+</style>
+<!-- InstanceBeginEditable name="head" -->
+<style type="text/css">
+<!--
+.style1 {
+	color: #FF0000;
+	font-weight: bold;
+}
+-->
+</style>
+<!-- InstanceEndEditable -->
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="MM_preloadImages('netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif','netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif','netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif','netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif','netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif','netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif','netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif','netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif')">
+<!-- ImageReady Slices (netarkivet_guidelines.psd) -->
+<table id="Ta01" width="841" height="677" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td rowspan="6" valign="top"><img src="netarkivet_alm/billeder/netarkivet_guidelines_01.gif" width="153" height="643" alt=""></td>
+		<td colspan="13">
+			<img src="netarkivet_alm/billeder/netarkivet_guidelines_02.gif" width="688" height="35" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<a href="organisation/index-da.php"><img src="netarkivet_alm/billeder/netarkivet_guidelines_03.gif" alt="" width="102" height="13" border="0" id="Image1" onMouseOver="MM_swapImage('Image1','','netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="nyheder/index-da.php"><img src="netarkivet_alm/billeder/netarkivet_guidelines_04.gif" alt="" width="69" height="13" border="0" id="Image2" onMouseOver="MM_swapImage('Image2','','netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="links/index-da.php"><img src="netarkivet_alm/billeder/netarkivet_guidelines_05.gif" alt="" width="54" height="13" border="0" id="Image3" onMouseOver="MM_swapImage('Image3','','netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="publikationer/index-da.php"><img src="netarkivet_alm/billeder/netarkivet_guidelines_06.gif" alt="" width="109" height="13" border="0" id="Image4" onMouseOver="MM_swapImage('Image4','','netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td colspan="3">
+			<a href="kildetekster/index-da.php"><img src="netarkivet_alm/billeder/netarkivet_guidelines_07.gif" alt="" width="99" height="13" border="0" id="Image5" onMouseOver="MM_swapImage('Image5','','netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="presse/index-da.php"><img src="netarkivet_alm/billeder/netarkivet_guidelines_08.gif" alt="" width="62" height="13" border="0" id="Image6" onMouseOver="MM_swapImage('Image6','','netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="faq/index-da.php"><img src="netarkivet_alm/billeder/netarkivet_guidelines_09.gif" alt="" width="41" height="13" border="0" id="Image7" onMouseOver="MM_swapImage('Image7','','netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<img src="netarkivet_alm/billeder/netarkivet_guidelines_10.gif" width="26" height="13" alt=""></td>
+		<td colspan="2">
+			<a href="index-en.php"><img src="netarkivet_alm/billeder/netarkivet_guidelines_11.gif" alt="" name="Image8" width="56" height="13" border="0" id="Image8" onMouseOver="MM_swapImage('Image8','','netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<img src="netarkivet_alm/billeder/netarkivet_guidelines_12.gif" width="70" height="13" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="13">
+			<img src="netarkivet_alm/billeder/netarkivet_guidelines_13.gif" alt="" width="688" height="69" border="0" usemap="#map1"></td>
+	</tr>
+	<tr>
+		<td colspan="13">
+			<img src="netarkivet_alm/billeder/netarkivet_guidelines_14.gif" width="688" height="26" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="5" rowspan="2" valign="top"><!-- InstanceBeginEditable name="forside" -->
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+
+          <tr>
+            <td><h2>Netarkivet.dk indsamler og bevarer det danske internet. </h2></td>
+          </tr>
+          <tr>
+            <td><div align="right" class="style1"><a href="/forslag" class="style1">Efterlysning: hj&aelig;lp netarkivet</a></div></td>
+          </tr>
+        </table>
+        
+      <p>Den 1. juli 2005 tr&aring;dte en ny pligtafleveringslov i kraft. Det 
+        betyder at <a href="http://www.statsbiblioteket.dk">Statsbiblioteket</a> 
+        og <a href="http://www.kb.dk">Det Kongelige Bibliotek</a> nu indsamler 
+        og bevarer den danske del af internettet. </p>
+        <p>I praksis betyder det, at de to institutioner indsamler internet-materiale   ved hj&aelig;lp af s&aring;kaldte 'h&oslash;stere' (web-crawlere). </p>
+        <p>H&oslash;stere er programmer i stil med dem, s&oslash;gemaskinerne bruger. Netarkivets h&oslash;stere afs&oslash;ger nettet fra en r&aelig;kke startpunkter (i udgangspunktet alle dom&aelig;ner under .dk) og f&oslash;lger links derfra. </p>
+        <p>Det fundne materiale opbevares i et f&aelig;lles arkiv, hvor data af   sikkerhedshensyn opbevares p&aring; begge institutioner. </p>
+        <p>Arkivet er <strong>ikke</strong> offentligt og kan i udgangspunktet kun bruges til   forskningsform&aring;l efter forudg&aring;ende ans&oslash;gning til datatilsynet. </p>
+        <p>I forbindelse med den nye lov er der udformet en vejledning, der opridser   konsekvenserne af loven b&aring;de for nationalbibliotekerne men ogs&aring; for   indholdsproducenter / websites. </p>
+        <p>[<a href="/publikationer/vejledning.pdf">Vejledningen kan   l&aelig;ses her</a>] </p>
+        <p>Se desuden vores <a href="/faq">FAQ</a></p>
+        <p>Se indsamlingsdokumentation<a href="indsamlingsDoku.html"><span class="nyhed_link"> her</span></a></p>
+        <p>Har du sp&oslash;rgsm&aring;l eller kommentarer er du velkommen til at skrive til: <a href="javascript:email('netarkivet-svar','dk','netarkivet')">
+            <script>emailprint('netarkivet-svar','dk','netarkivet')</script>
+            </a></p>
+		<!-- InstanceEndEditable --></td>
+		<td colspan="8">
+			<img src="netarkivet_alm/billeder/netarkivet_guidelines_16.gif" width="280" height="1" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<img src="netarkivet_alm/billeder/netarkivet_guidelines_17.gif" width="22" height="499" alt=""></td>
+		<td colspan="5" valign="top"><!-- InstanceBeginEditable name="nyheder" -->
+        <h3>nyheder</h3>
+<p><span class="nyhed_dato">18. januar 2010:<br>
+</span><span class="nyhed_overskrift">F&oslash;rste ph.d. om Netarkivet </span> <span class="nyhed_link"><a href="nyheder/index-da.php?highlight=20100118">L&aelig;s  mere   he</a></span><a href="http://netarkivet.dk/nyheder/index-da.php"><span class="nyhed_link">r</span></a><a href="publikationer/Fact sheet Webarchiving in Denmark 2009.pdf"><span class="nyhed_link"></span></a>
+<p><span class="nyhed_dato">10. november 2009:<br>
+</span>Kulturministeriet udpeger ny redaktion til Netarkivet.<span class="nyhed_dato"> </span><a href="nyheder/index-da.php?highlight=20091110"><span class="nyhed_link">L&aelig;s mere her</span></a>
+
+<p><span class="nyhed_dato"></span><span class="nyhed_dato">11. august 2009:<br>
+  </span><span class="nyhed_overskrift">Fact sheet webarchiving in Denmark.</span> <a href="publikationer/Fact sheet Webarchiving in Denmark 2009.pdf"><span class="nyhed_link">Se det   her</span></a>
+<p><span class="nyhed_dato">13. juli 2009:<br>
+  </span>Se oversigt over tv&aelig;rsnitsh&oslash;stninger. <a href="tvaersnitsHostninger.html"><span class="nyhed_link">L&aelig;s mere her</span></a>
+<p><span class="nyhed_dato">8. juni 2009:<br>
+  </span>Se opdateret version af selektive h&oslash;stninger. <a href="selektiveHostninger.html"><span class="nyhed_link">L&aelig;s mere her</span></a>
+<p><span class="nyhed_dato">4. december 2008:<br>
+  </span>Erfaringer med h&oslash;stning af det danske net 
+  2005 - 2008: <a href="http://ej.lib.cbs.dk/index.php/dfrevy/article/view/2291/2276"><span class="nyhed_link">L&aelig;s artiklen i DF Revy </span></a>
+<p><span class="nyhed_dato">17. oktober 2008:<br>
+  </span><span class="nyhed_overskrift">Pressemeddelelse om overv&aring;gning</span> <a href="presse/Pressemeddelelse_om_Netarkivet.pdf"><span class="nyhed_link">L&aelig;s her </span></a>
+<p><span class="nyhed_dato">8. september 2008:<br>
+        </span><span class="nyhed_overskrift">Nyhedsbrev august 2008:<BR>
+        </span><a href="nyheder/Newsletter_Netarchive_dk_august2008.pdf?highlight=20080908"><span class="nyhed_link">L&aelig;s mere  her (engelsk) </span></a></p>
+        <p><span class="nyhed_dato">15. juli 2008:<br>
+        </span>Indsamlingsdokumentation nu tilg&aelig;ngelig. <a href="indsamlingsDoku.html"><span class="nyhed_link">L&aelig;s mere her</span></a> </p>
+        <p><span class="nyhed_dato">4. juli 2007:<br>
+</span>NetarchiveSuite udgivet som Open Source.<span class="nyhed_dato">
+</span><a href="nyheder/index-da.php?highlight=20070704"><span class="nyhed_link">L&aelig;s mere her</span></a> </p
+>
+		
+        <p><span class="nyhed_dato">15. februar 2006:<br>
+        </span><span class="nyhed_overskrift">Netarkivets f &oslash;rste erfaringer med indsamling af hele .dk-dom&aelig;net.</span> <a href="publikationer/DFrevy.pdf"><span class="nyhed_link">L&aelig;s artiklen her </span></a><span class="nyhed_dato"><br>
+        </span><br>
+          <span class="nyhed_dato">15. juli 2005:</span><BR>
+          <strong class="nyhed_overskrift">Netarkivets FAQ oprettet</strong> <BR>
+          <a href="faq/index-da.php#faq_robots" class="nyhed_link">L&aelig;s fx. hvorfor</a> netarkivet ikke overholder robots.txt standarden<BR>
+          <BR>
+          <a href="faq/index-da.php#faq_tekprob" class="nyhed_link">L&aelig;s ogs&aring;</a> hvad du   kan g&oslash;re hvis du oplever tekniske problemer med netarkivets crawlere <BR>
+          <BR>
+          <span class="nyhed_dato">22. december 2004:</span><BR>
+          <span class="nyhed_overskrift"><strong>Ny pligtafleveringslov vedtaget</strong> </span><BR>
+          <A href="nyheder/index-da.php?highlight=20041222" class="nyhed_link">L&aelig;s mere her</A> <BR>
+        </p>
+		<!-- InstanceEndEditable --></td>
+		<td colspan="2">
+			<img src="netarkivet_alm/billeder/netarkivet_guidelines_19.gif" width="72" height="499" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="14">
+			<img src="netarkivet_alm/billeder/netarkivet_guidelines_20.gif" width="841" height="33" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="153" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="102" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="69" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="54" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="109" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="74" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="22" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="3" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="62" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="41" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="26" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="54" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="2" height="1" alt=""></td>
+		<td>
+			<img src="netarkivet_alm/billeder/spacer.gif" width="70" height="1" alt=""></td>
+	</tr>
+</table>
+<!-- End ImageReady Slices -->
+
+<map name="map1"><area shape="rect" coords="5,25,288,59" href="/index-da.php">
+</map></body>
+<!-- InstanceEnd --></html>
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/index-da.php
+WARC-Date: 2010-09-09T16:33:30Z
+WARC-Concurrent-To: <urn:uuid:e0608310-d030-4cc0-8516-3fa8db16a86f>
+WARC-Record-ID: <urn:uuid:98d5e625-2240-4d58-9dbf-d7dba2d44152>
+Content-Type: application/http; msgtype=request
+Content-Length: 160
+
+GET /index-da.php HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/index-da.php
+WARC-Date: 2010-09-09T16:33:30Z
+WARC-Concurrent-To: <urn:uuid:e0608310-d030-4cc0-8516-3fa8db16a86f>
+WARC-Record-ID: <urn:uuid:c533cfd0-2234-44ed-a305-610fa5d534c1>
+Content-Type: application/warc-fields
+Content-Length: 6670
+
+seed:
+fetchTimeMs: 44
+outlink: http://netarkivet.dk/netarkivet.css E link/@href
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_01.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_02.gif E img/@src
+outlink: http://netarkivet.dk/organisation/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_03.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif X =JS_MISC
+outlink: http://netarkivet.dk/nyheder/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_04.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif X =JS_MISC
+outlink: http://netarkivet.dk/links/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_05.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif X =JS_MISC
+outlink: http://netarkivet.dk/publikationer/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_06.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif X =JS_MISC
+outlink: http://netarkivet.dk/kildetekster/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_07.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif X =JS_MISC
+outlink: http://netarkivet.dk/presse/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_08.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif X =JS_MISC
+outlink: http://netarkivet.dk/faq/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_09.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_10.gif E img/@src
+outlink: http://netarkivet.dk/index-en.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_11.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_12.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_13.gif E img/@src
+outlink: http://netarkivet.dk/index-da.php E img/@usemap
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_14.gif E img/@src
+outlink: http://netarkivet.dk/forslag L a/@href
+outlink: http://www.statsbiblioteket.dk/ L a/@href
+outlink: http://www.kb.dk/ L a/@href
+outlink: http://netarkivet.dk/publikationer/vejledning.pdf L a/@href
+outlink: http://netarkivet.dk/faq L a/@href
+outlink: http://netarkivet.dk/indsamlingsDoku.html L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_16.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_17.gif E img/@src
+outlink: http://netarkivet.dk/nyheder/index-da.php?highlight=20100118 L a/@href
+outlink: http://netarkivet.dk/nyheder/index-da.php L a/@href
+outlink: http://netarkivet.dk/publikationer/Fact%20sheet%20Webarchiving%20in%20Denmark%202009.pdf L a/@href
+outlink: http://netarkivet.dk/nyheder/index-da.php?highlight=20091110 L a/@href
+outlink: http://netarkivet.dk/publikationer/Fact%20sheet%20Webarchiving%20in%20Denmark%202009.pdf L a/@href
+outlink: http://netarkivet.dk/tvaersnitsHostninger.html L a/@href
+outlink: http://netarkivet.dk/selektiveHostninger.html L a/@href
+outlink: http://ej.lib.cbs.dk/index.php/dfrevy/article/view/2291/2276 L a/@href
+outlink: http://netarkivet.dk/presse/Pressemeddelelse_om_Netarkivet.pdf L a/@href
+outlink: http://netarkivet.dk/nyheder/Newsletter_Netarchive_dk_august2008.pdf?highlight=20080908 L a/@href
+outlink: http://netarkivet.dk/indsamlingsDoku.html L a/@href
+outlink: http://netarkivet.dk/nyheder/index-da.php?highlight=20070704 L a/@href
+outlink: http://netarkivet.dk/publikationer/DFrevy.pdf L a/@href
+outlink: http://netarkivet.dk/faq/index-da.php L a/@href
+outlink: http://netarkivet.dk/faq/index-da.php L a/@href
+outlink: http://netarkivet.dk/nyheder/index-da.php?highlight=20041222 L A/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_19.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/index-da.php L area/@href
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet.css
+WARC-Date: 2010-09-09T16:33:32Z
+WARC-Payload-Digest: sha1:5DHNTUXDJU6DXNRPIJHIGF2AAJGA2RIV
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:1c587a1b-6d2d-4a85-aea7-cadcb35faa92>
+Content-Type: application/http; msgtype=response
+Content-Length: 1577
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:32 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Fri, 06 Jun 2008 11:00:57 GMT
+ETag: "eb927-52f-60594c40"
+Accept-Ranges: bytes
+Content-Length: 1327
+Connection: close
+Content-Type: text/css
+
+h2 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: bold;
+	color: #000000;
+	padding: 3px;
+}
+
+p {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	font-weight: normal;
+}
+a {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #5c8597;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+h3 {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 20px;
+	font-weight: normal;
+	color: #FF6037;
+	letter-spacing: 2px;
+}
+.nyhed_dato {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: #FF6037;
+}
+.nyhed_overskrift {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: #333333;
+}
+.nyhed_link {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #5c8597;
+	text-decoration: none;
+}
+.nyhed_tekst {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #333333;
+}
+
+.nyhed_link:hover {
+	text-decoration: underline;
+}
+dl {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+ul {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+dd {
+	font-size: 11px;
+}
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet.css
+WARC-Date: 2010-09-09T16:33:32Z
+WARC-Concurrent-To: <urn:uuid:1c587a1b-6d2d-4a85-aea7-cadcb35faa92>
+WARC-Record-ID: <urn:uuid:ec80d354-4f7a-4107-8a5c-77afbebafc5a>
+Content-Type: application/http; msgtype=request
+Content-Length: 206
+
+GET /netarkivet.css HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet.css
+WARC-Date: 2010-09-09T16:33:32Z
+WARC-Concurrent-To: <urn:uuid:1c587a1b-6d2d-4a85-aea7-cadcb35faa92>
+WARC-Record-ID: <urn:uuid:384fb991-5032-4f39-9e27-2df5a3ab260d>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif
+WARC-Date: 2010-09-09T16:33:34Z
+WARC-Payload-Digest: sha1:7E2MALHL3YN34SKRDUYQJILUGMHEXJT5
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:680f0649-7fa8-46c6-bc57-2dbbcba6c330>
+Content-Type: application/http; msgtype=response
+Content-Length: 728
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:34 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:12 GMT
+ETag: "13fb6-1de-4094c900"
+Accept-Ranges: bytes
+Content-Length: 478
+Connection: close
+Content-Type: image/gif
+
+GIF89af  ³  Ûäéÿ3 ì‘|åµ«õb>âÁºİØÙøV/ı?ñz]úKéŒç©›àÌÊî†mónN!ù     ,    f   ÿÈI«½8ëÍ» ,S3œe,â@C3Á20¤0*1"cL§ wºS ƒH 4œ$&áfP‡Ÿ ÀÅJ
+ì! ¸‡ÉUñ W.Á0&ŒË ×!‰w	~o`)\e[.UZ	 [ec.
+$CT\5qen•”|œ	\
+_¬	7§x™8U6\J[©g´™^À}nÈo´ ŸHg¥d¦‰i—‰WŒ¦\§]$æpŠ ’®òWÒëa\$TP™äÏ´xÎNauÅW*¾àÚ’ L™3»
+°*ã JœNW‹Üíû&¤@Ç7cŒ	 dİ´G&„1AÆ€?‡îÓ©R¢C N2Ø Û"†´IJ£¤,€E&šˆ;¿ÄJÑQ+>‰qÁ‰Á «*İLuÌB)“›z‚q1’©@âÊmG²uJ…a&!¬„Ld?(^Ì¸±ãÇ#KL¹²åË˜3?  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif
+WARC-Date: 2010-09-09T16:33:34Z
+WARC-Concurrent-To: <urn:uuid:680f0649-7fa8-46c6-bc57-2dbbcba6c330>
+WARC-Record-ID: <urn:uuid:eac4d8d5-54d3-448d-9f66-a207cc6f646b>
+Content-Type: application/http; msgtype=request
+Content-Length: 250
+
+GET /netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif
+WARC-Date: 2010-09-09T16:33:34Z
+WARC-Concurrent-To: <urn:uuid:680f0649-7fa8-46c6-bc57-2dbbcba6c330>
+WARC-Record-ID: <urn:uuid:d969fed8-9360-4ee9-917a-534fdae4555c>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: X
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif
+WARC-Date: 2010-09-09T16:33:36Z
+WARC-Payload-Digest: sha1:36NXWN45ZWC656ROIH6KJZBMDNQ4DDVM
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:8775e73b-155e-45e7-9240-51fab8632007>
+Content-Type: application/http; msgtype=response
+Content-Length: 551
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:36 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:12 GMT
+ETag: "13fb8-12d-4094c900"
+Accept-Ranges: bytes
+Content-Length: 301
+Connection: close
+Content-Type: image/gif
+
+GIF89aE  ³  Ûäéÿ3 åµ«õb>ì‘|İØÙâÁºàÌÊúKı?øV/ñz]î†mç©›éŒ   !ù     ,    E   ÚÈI«½8ë½8’`‚P„¦w’p”%è•§DÂí[¶\5ˆS` ø ‚a1 @*	hàø“2BÒgVÑ£TJC qøµ~Í$ºˆ-M‹©S±@
+fWò3+@WKqkC h.cN‹Mw {?C	@5UR‰RM QNRGPR{|vQDwj´G¹zœN¶· ½š³Ÿ¼¾iZ“Ky‘‹°wI	<]?Ì¸²Ï¥QTR
+×«µÍ
+5±óôõö÷øùúûüıù ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif
+WARC-Date: 2010-09-09T16:33:36Z
+WARC-Concurrent-To: <urn:uuid:8775e73b-155e-45e7-9240-51fab8632007>
+WARC-Record-ID: <urn:uuid:2ddf3f01-4425-4c1e-acb6-811670f71c57>
+Content-Type: application/http; msgtype=request
+Content-Length: 250
+
+GET /netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif
+WARC-Date: 2010-09-09T16:33:36Z
+WARC-Concurrent-To: <urn:uuid:8775e73b-155e-45e7-9240-51fab8632007>
+WARC-Record-ID: <urn:uuid:702b2e3f-fd86-456a-bb46-d68deecd9547>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: X
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif
+WARC-Date: 2010-09-09T16:33:38Z
+WARC-Payload-Digest: sha1:M3NXXI5SZSCK5YSAECJ6DOQQU7TGNMTK
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:b5b0f9b1-3453-4561-8487-e12efa807ab0>
+Content-Type: application/http; msgtype=response
+Content-Length: 498
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:38 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:12 GMT
+ETag: "13fb9-f9-4094c900"
+Accept-Ranges: bytes
+Content-Length: 249
+Connection: close
+Content-Type: image/gif
+
+GIF89a6  ³  Ûäéÿ3 ì‘|õb>åµ«âÁºİØÙı?úKñz]àÌÊéŒøV/ç©›ónNî†m!ù     ,    6   ¦ÈI«½8ë¬ˆš!@øi¤’h Š “&Â4ü ìˆWÀGn	À"€5rËıx9cqPd¯côR¥N¯»‚6À8hfb›­’òU1\ó‚;<^vw‡WG=(LI /q†72)	$;‘ODC
+O nu†7<8ƒF Jk>o	q4—ÁÂÃÄÅÆÇÈÉ ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif
+WARC-Date: 2010-09-09T16:33:38Z
+WARC-Concurrent-To: <urn:uuid:b5b0f9b1-3453-4561-8487-e12efa807ab0>
+WARC-Record-ID: <urn:uuid:5c0c9076-9b7b-4e14-a480-901e524c3a35>
+Content-Type: application/http; msgtype=request
+Content-Length: 250
+
+GET /netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif
+WARC-Date: 2010-09-09T16:33:38Z
+WARC-Concurrent-To: <urn:uuid:b5b0f9b1-3453-4561-8487-e12efa807ab0>
+WARC-Record-ID: <urn:uuid:16b354d9-a530-4ae3-baa3-228d49aa7661>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: X
+fetchTimeMs: 24
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif
+WARC-Date: 2010-09-09T16:33:40Z
+WARC-Payload-Digest: sha1:4MZXUQYBPMATHIXH5IODC2IPL62I2IET
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:63ac1762-5a0e-4c8b-a700-479bef11fe46>
+Content-Type: application/http; msgtype=response
+Content-Length: 705
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:40 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:12 GMT
+ETag: "13fba-1c7-4094c900"
+Accept-Ranges: bytes
+Content-Length: 455
+Connection: close
+Content-Type: image/gif
+
+GIF89am  ³  Ûäéÿ3 åµ«ì‘|õb>İØÙâÁºñz]ı?øV/àÌÊúKç©›î†méŒónN!ù     ,    m   ÿÈI«½8ëÍ»çŠ *R!’!€(²€‰J¡„¤)LoêŠ°4(Ât´@ØûÁ>ƒ€4phB`7 v‚ë$:D ­CÂ6²İ«VŠ5 „;*@GwsR\]f}*bi[ R }VX<gQUR>'‡h Š(Ÿ|=‘m–g"Zƒ	$aµ•QZ	G…Ä”Îha		[ÁÉ¯ZE‘š†Å“«ºtŠÑÁÎRğ›¤c”ëp¹»eSSEà 0rƒºvÉR1ñ$TKP- Œ[Ğnx™ 1"ˆtúMp£êIŒ% 2hÓ
+ €(ãq  J‚gX¹R¤Z)ŒB¡˜$ªÓ›0~9Ú6€D$mKM0P1ÁŒ.V­L!@Æ¥I	:5k3­?L”B*A .	@\c¨®İ»xóêİË·¯ß¿€L¸0€ ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif
+WARC-Date: 2010-09-09T16:33:40Z
+WARC-Concurrent-To: <urn:uuid:63ac1762-5a0e-4c8b-a700-479bef11fe46>
+WARC-Record-ID: <urn:uuid:7e5a69c7-8180-4336-bcd1-1286acf3c1fb>
+Content-Type: application/http; msgtype=request
+Content-Length: 250
+
+GET /netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif
+WARC-Date: 2010-09-09T16:33:40Z
+WARC-Concurrent-To: <urn:uuid:63ac1762-5a0e-4c8b-a700-479bef11fe46>
+WARC-Record-ID: <urn:uuid:8bbcdc4b-6f40-4626-987b-6465de87e223>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: X
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif
+WARC-Date: 2010-09-09T16:33:42Z
+WARC-Payload-Digest: sha1:WV7DQCSXLAZGCCZK5IU2HWAY7HD2WCEJ
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:125af56f-0255-4c4b-8571-f5e6621a39da>
+Content-Type: application/http; msgtype=response
+Content-Length: 657
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:42 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:12 GMT
+ETag: "13fbb-197-4094c900"
+Accept-Ranges: bytes
+Content-Length: 407
+Connection: close
+Content-Type: image/gif
+
+GIF89ac  ³  Ûäéÿ3 åµ«ì‘|õb>âÁºàÌÊİØÙñz]éŒøV/ı?úKónNî†mç©›!ù     ,    c   ÿÈI«½8ëÍ»¯‚ ‚A†@“–Óñ
+éîk¨ë¦€Ç`ğ8œ^µ@öúL€  8 à*’°YÖ«C‡àÁ6Ğ[,
+EV>¸‚Ë`)x±û@n@_jk] ƒ‡Yz
+(Rt%_7…W	‰#$“)PMSZ„P–ˆ…«¦$C†\^YC;WW	©@‰§g—£ —~XÄ¬¸¹„\cgÓ_X"v¯^XÎ¬ wzX¿NPÌUÔÓÅ°.ŠÚßïÌoK#¥Zñ$@¡0EÁ•NÊE‘ó«@')|í’$€Y¦)µec“‹€­B¥DªÔI  !rÇÔŒÔL]áxÓâÍ6Z„®Õk•‹\Ø©åÊXeğKÈ´©Ó§P£JJµªÕ«X³j½ ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif
+WARC-Date: 2010-09-09T16:33:42Z
+WARC-Concurrent-To: <urn:uuid:125af56f-0255-4c4b-8571-f5e6621a39da>
+WARC-Record-ID: <urn:uuid:bd8c80cf-b4ed-41c5-9b47-6c339cecc4d5>
+Content-Type: application/http; msgtype=request
+Content-Length: 250
+
+GET /netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif
+WARC-Date: 2010-09-09T16:33:42Z
+WARC-Concurrent-To: <urn:uuid:125af56f-0255-4c4b-8571-f5e6621a39da>
+WARC-Record-ID: <urn:uuid:b932ade4-ef02-4a70-958c-1b36e6ade588>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: X
+fetchTimeMs: 25
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif
+WARC-Date: 2010-09-09T16:33:44Z
+WARC-Payload-Digest: sha1:X3UMMU2PPK46YHRU235UQPKSTLEA3YAV
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:51376cb5-ea8d-4395-b7b5-4105ddfbd4d6>
+Content-Type: application/http; msgtype=response
+Content-Length: 529
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:44 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:12 GMT
+ETag: "13fbc-117-4094c900"
+Accept-Ranges: bytes
+Content-Length: 279
+Connection: close
+Content-Type: image/gif
+
+GIF89a>  ³  Ûäéÿ3 åµ«ì‘|õb>İØÙâÁºı?ç©›øV/úKñz]éŒàÌÊónNî†m!ù     ,    >   ÄÈI«½8ë‹øÆô}…ä!P0Ã ˜¬«BÊYB I¹ë@nG ‚"PC*™C]ñ†@@X…<€vd3ÂKˆ©•\qİ ôXÑz- ƒ{}pq|„?=`;Z:—;šQu‹"€/v%r%Bd­¯«¡ŒS\dz9|c	LÁÃP-¿µ`·\ŸsÄ<A×	AÕÍßàáâãäåæçß ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif
+WARC-Date: 2010-09-09T16:33:44Z
+WARC-Concurrent-To: <urn:uuid:51376cb5-ea8d-4395-b7b5-4105ddfbd4d6>
+WARC-Record-ID: <urn:uuid:2cedd296-47fe-4569-a12f-27d0b82b4b8a>
+Content-Type: application/http; msgtype=request
+Content-Length: 250
+
+GET /netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif
+WARC-Date: 2010-09-09T16:33:44Z
+WARC-Concurrent-To: <urn:uuid:51376cb5-ea8d-4395-b7b5-4105ddfbd4d6>
+WARC-Record-ID: <urn:uuid:16570644-9ced-44ec-86cf-644001d55e3c>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: X
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif
+WARC-Date: 2010-09-09T16:33:46Z
+WARC-Payload-Digest: sha1:4DISLWHOARCF3JB3VFWSDQA2OWVHAS7E
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:418ef432-8a0b-44a2-95a7-7075c58139a0>
+Content-Type: application/http; msgtype=response
+Content-Length: 458
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:46 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:12 GMT
+ETag: "13fbd-d1-4094c900"
+Accept-Ranges: bytes
+Content-Length: 209
+Connection: close
+Content-Type: image/gif
+
+GIF89a)  ³  Ûäéÿ3 åµ«ì‘|øV/İØÙéŒç©›õb>ñz]ónNı?úKî†mâÁºàÌÊ!ù     ,    )   ~ÈI«½8ß"zŸ]A=Ã`h¨¬«t¬Íd"z©„'%+†äA	İV:
+Eà 8Æ Ï€Ò¢b! 3Ã,yLZ[Šê;!ÜÜÂL!qÜÒê `G”Üf€nTxkS.w@f†“…”xPšŸ ¡ ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif
+WARC-Date: 2010-09-09T16:33:46Z
+WARC-Concurrent-To: <urn:uuid:418ef432-8a0b-44a2-95a7-7075c58139a0>
+WARC-Record-ID: <urn:uuid:e0c0f9b5-4b4c-4a70-8006-de4941538175>
+Content-Type: application/http; msgtype=request
+Content-Length: 250
+
+GET /netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif
+WARC-Date: 2010-09-09T16:33:46Z
+WARC-Concurrent-To: <urn:uuid:418ef432-8a0b-44a2-95a7-7075c58139a0>
+WARC-Record-ID: <urn:uuid:835038a0-3f71-44f3-a91f-a339db968d3e>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: X
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif
+WARC-Date: 2010-09-09T16:33:48Z
+WARC-Payload-Digest: sha1:OULHGSPHG3MNKIEG5RBH2UFI7GPRMYFO
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:c318012e-d46d-417e-ad48-55b64b8dbdd1>
+Content-Type: application/http; msgtype=response
+Content-Length: 542
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:48 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:12 GMT
+ETag: "13fbf-124-4094c900"
+Accept-Ranges: bytes
+Content-Length: 292
+Connection: close
+Content-Type: image/gif
+
+GIF89a8  ³  Ûäéÿ3 ì‘|åµ«õb>İØÙàÌÊúKøV/ç©›ñz]ı?éŒâÁºónNî†m!ù     ,    8   ÑÈI«½8kÛ†à…Å`L‰ $¡aNî'ªĞ î)üŞÏ!
+ Dàà# Æ	`,	‹À3
+øõŒ£îÏU’ÂzœNqè¹m{->…J@,	QYsR\oqK
+!P*w>T]V>G^SNlˆ”}j@•“Ap ”GJ&uŸ«HH	Šb_z'«oQ±*°}<	¥vZx¦Bqfm	J}k¦‘T
+Š7º’éêëìíîïğñòóô ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif
+WARC-Date: 2010-09-09T16:33:48Z
+WARC-Concurrent-To: <urn:uuid:c318012e-d46d-417e-ad48-55b64b8dbdd1>
+WARC-Record-ID: <urn:uuid:13a235eb-edee-4df1-9899-6660d24bd176>
+Content-Type: application/http; msgtype=request
+Content-Length: 250
+
+GET /netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif
+WARC-Date: 2010-09-09T16:33:48Z
+WARC-Concurrent-To: <urn:uuid:c318012e-d46d-417e-ad48-55b64b8dbdd1>
+WARC-Record-ID: <urn:uuid:742b1aac-6026-4a55-92b9-ce0898bfbb09>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: X
+fetchTimeMs: 22
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_01.gif
+WARC-Date: 2010-09-09T16:33:50Z
+WARC-Payload-Digest: sha1:4VTDVM3CT5OLO6Y7LTPMIMBTESCLPNNN
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:4c60dad8-eedd-4080-ae95-d93d9c8433cd>
+Content-Type: application/http; msgtype=response
+Content-Length: 2538
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:50 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:10 GMT
+ETag: "13fe9-8ef-40764480"
+Accept-Ranges: bytes
+Content-Length: 2287
+Connection: close
+Content-Type: image/gif
+
+GIF89a™ ƒÄ  ÿÿÿÛäé‹¨µ•°¾\…—ñM" ¹Åz®àçìÔŞåj‘¤õzYşôñüÓÈù±ú¼¬ûÇºòX0ıéãø¦‘öu                                 !ù     ,    ™ ƒ ÿ` dihª®lë¾p,§Jmßx®ï<>ÿÀ °G,oÂ¤rY::Ÿ>¦t*ƒZÔ¬Vuí·àpÀKÖ‰ÏÔ²Ú†n/×k·<WÏïÕ:Ïwé÷}4]‚†&„…‡‹c‰VŒ‹†’P”•–X˜?Ÿ ¡¢¢¥¦§¨©ª«¬¨œ£±²­µ¶·§¯3³¼¤¸¿À¹º1½Å´ÁÈ¸ÃÄÆ½ÉÏµË0ÍÎĞÖ©Ò/Ô¼×İ¦Ù.Û³ŞŞà-â²äİæ,è±ê×ì+î£ğÖò*ô¾öÉø)ú¡ø=ó‡ (ıš0ø	!2…pb	‰)ş²H£ÆExüx+¤H‰$Kÿš™²•É ,[®zS&¶•(mÎÄÉPçÎ5}–¢™S¨0 EåiPéQA…íét)RªU§6­J@+@®]™~åêUØ²ôÎŠ5KvmÚ¶W·fuëNmÜ±sï²Í5©R´uáöÅê0:»ƒå¦{X°Å¨>_&˜L¹²åË—hŞÌ¹³çÏ Cw.@º´éÓ¨S«^}z	æ×°)‹M»6gÖ¸së6í:¶oË¶ƒzæÓ$0ppZóÓÉ—7ğuïßØ‡kÚ8 Ó 4h €yiç¥'ˆ'o4zëJ°ËßNv÷ã¥4 İ€é÷èGşG]j×É[ÿ}~vßwùíW ÿHš€< ¡{¶Ÿ‚¾5(âf‚ ”Wau„†¬ˆà‡ Â6âˆ%–,Œ¥ñÀ?È"o4ÖˆÙ"îæä“&¡¤L2å•N&8eeUZ‰å—¬i¹åd]Ö÷$€P0Ó‰›˜c–Iß™ª' L ¤npn)çvt²x'rèf˜IIæŸÃš_ŒnX šo&ª(£:	 †¸¸gn}N‰©p’yâih––Æ9ªm`Æ:£”Šrùjm²æZZ¨JŞŠ«®¹òZ£¯´l«~+š±²
+¢²ËÊJé•Î*mÿh¹Neµó]ë ´~ÉmvŞz–m¸Xû[¹æ‚{è¶ÈŠÊîmî6o¯ó’È,˜ê†˜/~û¦{ï°ÿJğ“ı.XğÁÓZë¢ÿ–JZrèùi¥?\°Á¸¨Şx*ÉjÆµn,1†ı]Œ(É—.¬i‡j¨òj	SñË,ºãÌªÕüšÉ8ëŞªNŠîÊB<,›Ë#<ğ³L7½›ÏKF-5¨O[k5iŞÆ£Ÿ~í@ÑÚRÙÖtäz!¯JZx ·gô»f‡¶ÚJH¡ÈyXèÜ³&­t@Ÿ†w€¦ÌwèıwÙYw{³á ·È¶Ü_>sİ¶NnÚá-ö(7ÿàAŠŞfàAN8ÚW÷9¹·tL`ûí¸ç®ûî¼÷ûÆÀkæûğÄ{ğÀ¯üò¿#_0óĞ+ïüóÑWïûôÿZ¯ıîØç»ı÷·w?/øà‹Ï.ùß›_.úÛ«ï-ûÚ»-üÖË-ıÕÛ¯,şÑëO,ÿĞóŸ¯ È<ŞŠ€Ë3à«(=bŠÆsà!H<	2Š‚´ œ08<nƒ½ó`™@BV‰„¼3á	Q¨;Ö…Ís¡ˆ`C2ˆ†Ç³aƒp>Ş‡ğáy(Äú 1ˆEÜÎ“¨D 2Q;K|¢p¢(EÛP±Š´¹"E£Å-‚¦‹^ôÃÈ™ÿ1’QxN<ãÓ¨F1²±e|#ÑHÄ9Æ±v¤#Uh€>úñ€d @ÈBòˆL¤"yH>
+ò‘ì##'IÉJÒ‘‘Ìä-ÉÉN6Ò„š¥$=IJKbR”‘,¥*'yJT>r•°Ld+]9ÈXÚ’³¤å&oiË\êr”¼„¥/ÌXS—Å&()Èd®ò˜´t¦*¡éJi–’š¨´&)±)Jmz’›¡ôf'Á©Iqr’œ™4§)—ÉL@ª³’èLå;YÉÎvúqô¡=İ‰ÏEÆ’ıôg=÷PEşó•EäA›™ĞOêsŸ÷lè%jO‰Nô¡5€E¹ĞZnÿ´£üü(EÛ¹Q\”™% Hw)RŒB4¥+hK=˜Q`Z4¦6•(N5ZÒÂô¤Äì)P‘)T—´¨4­éOZQ¤j°¦<éS•êTBu©IÍ(V5ˆ€®zõ«`kXóx#±šõ¬^%ëˆĞÊÖ±ªµAmkWß
+W¹¶•®²ë]ñJ½²•¯}õëY»Á–°Ã1¬Y›XÅº•±¶qìc!KÉ‚•²‘µlZ1[YÍÎ•³³ñìgAÑ"€´¢1-jK+ÚÕ‚Fµ®õlcË™ÙÒV3¶½mni»ÛØöÖµ¿]mpQ;\Ò´Çålr1»\Ê6²Ïelt;]ÂV°ÿ×åkvñº]ºv÷­ßUkxÉ:Ş<–×çczá¸Ş6¶÷¶ğ¯|çKßúÚ÷¾øÍ¯~÷Ëßşú÷¿ °€LàøÀN°‚Ìà;øÁ°„'Lá
+[øÂÎ°†7Ìá{øÃ ±ˆGLâ›øÄ(N±ŠWÌâ»øÅ0±ŒgLãÛøÆ8Î±wÌãûøÇ@²‡Lä"ùÈHN²’—Ìä&;ùÉP²”§Lå*[ùÊXÎ²–·Ìå.{ùË`³˜ÇLæ2›ùÌhN³š×Ìæ6»ùÍp³œçLç:ÛùÎxÎ³÷Ìç>ûùÏ€´ MèBúĞˆN´¢ÍèF;úÑl´¤'MéJ[úÒ˜Î´¦7ÍéN{úÓ µ¨GMêR›úÔ¨NµªWÍêV»úÕ°µ¬gMëZÛúÖ¸Îµ®wÍë^ûú×À¶°‡MìbûØÈN¶²—Íìf;ûÙĞ¶´§Míj[ûÚØÎ¶¶·Íín‹( ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_01.gif
+WARC-Date: 2010-09-09T16:33:50Z
+WARC-Concurrent-To: <urn:uuid:4c60dad8-eedd-4080-ae95-d93d9c8433cd>
+WARC-Record-ID: <urn:uuid:30c3f0d0-dac2-4095-b49a-b3cf292a0b78>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_01.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_01.gif
+WARC-Date: 2010-09-09T16:33:50Z
+WARC-Concurrent-To: <urn:uuid:4c60dad8-eedd-4080-ae95-d93d9c8433cd>
+WARC-Record-ID: <urn:uuid:c44c2218-74a4-4672-86bb-713c9b9d4126>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_02.gif
+WARC-Date: 2010-09-09T16:33:52Z
+WARC-Payload-Digest: sha1:NC33QYYCLP3RLQIRTPS5VDZQVIQAJH37
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:df6d430c-1954-4ea4-9186-69af1a5ed165>
+Content-Type: application/http; msgtype=response
+Content-Length: 483
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:52 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:10 GMT
+ETag: "13fea-ea-40764480"
+Accept-Ranges: bytes
+Content-Length: 234
+Connection: close
+Content-Type: image/gif
+
+GIF89a°# €  Ûäé   !ù     ,    °#  Á„©Ëí£œ´Ú‹³Ş¼û†âH–æ‰¦êÊ¶îÇòL×öçúÎ÷ş
+‡Ä¢ñˆL*—Ì¦ó	J§ÔªõŠÍj·Ü®÷‹Çä²ùŒN«×ì¶ûËçôºıÏë÷ü¾ÿ(8HXhxˆ˜¨¸ÈØèø)9IYiy‰™©¹ÉÙéù	*:JZjzŠšªºÊÚêú
++;K[k{‹›«»ËÛëû,<L\l|Œœ¬¼ÌÜìü-=M]m}­½Íİí]]  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_02.gif
+WARC-Date: 2010-09-09T16:33:52Z
+WARC-Concurrent-To: <urn:uuid:df6d430c-1954-4ea4-9186-69af1a5ed165>
+WARC-Record-ID: <urn:uuid:12a89807-46e9-426c-922b-d21c947a5a65>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_02.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_02.gif
+WARC-Date: 2010-09-09T16:33:52Z
+WARC-Concurrent-To: <urn:uuid:df6d430c-1954-4ea4-9186-69af1a5ed165>
+WARC-Record-ID: <urn:uuid:b3e72b8e-66c7-4f07-8221-0213e0229e58>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_03.gif
+WARC-Date: 2010-09-09T16:33:54Z
+WARC-Payload-Digest: sha1:GP6GQ3RSSV7LESACJ5GDRS5SOZSIILS5
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:3b1bfa08-193c-48df-a796-3e7a2b509271>
+Content-Type: application/http; msgtype=response
+Content-Length: 728
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:54 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:10 GMT
+ETag: "13feb-1de-40764480"
+Accept-Ranges: bytes
+Content-Length: 478
+Connection: close
+Content-Type: image/gif
+
+GIF89af  ³  Ûäé   uz|¡§«:=>¯¶ºÌÕÙ,./X[]ƒ‰Œ’˜›¾ÆÊfjmILN!ù     ,    f   ÿÈI«½8ëÍ» ,S3œe,â@C3Á20¤0*1"cL§ wºS ƒH 4œ$&áfP‡Ÿ ÀÅJ
+ì! ¸‡ÉUñ W.Á0&ŒË ×!‰w	~o`)\e[.UZ	 [ec.
+$CT\5qen•”|œ	\
+_¬	7§x™8U6\J[©g´™^À}nÈo´ ŸHg¥d¦‰i—‰WŒ¦\§]$æpŠ ’®òWÒëa\$TP™äÏ´xÎNauÅW*¾àÚ’ L™3»
+°*ã JœNW‹Üíû&¤@Ç7cŒ	 dİ´G&„1AÆ€?‡îÓ©R¢C N2Ø Û"†´IJ£¤,€E&šˆ;¿ÄJÑQ+>‰qÁ‰Á «*İLuÌB)“›z‚q1’©@âÊmG²uJ…a&!¬„Ld?(^Ì¸±ãÇ#KL¹²åË˜3?  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_03.gif
+WARC-Date: 2010-09-09T16:33:54Z
+WARC-Concurrent-To: <urn:uuid:3b1bfa08-193c-48df-a796-3e7a2b509271>
+WARC-Record-ID: <urn:uuid:66d84684-f54c-4f5d-9462-404e35343376>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_03.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_03.gif
+WARC-Date: 2010-09-09T16:33:54Z
+WARC-Concurrent-To: <urn:uuid:3b1bfa08-193c-48df-a796-3e7a2b509271>
+WARC-Record-ID: <urn:uuid:484f0225-5180-4205-830e-ba968d870333>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_04.gif
+WARC-Date: 2010-09-09T16:33:56Z
+WARC-Payload-Digest: sha1:LCJRYXKKVGNMUJOLGXK53WEAVZ552OOX
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:9c8a44db-f3b1-4e9d-912e-8109ad1ae17f>
+Content-Type: application/http; msgtype=response
+Content-Length: 551
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:57 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13fec-12d-408586c0"
+Accept-Ranges: bytes
+Content-Length: 301
+Connection: close
+Content-Type: image/gif
+
+GIF89aE  ³  Ûäé   ¡§«:=>uz|ÌÕÙ¯¶º¾ÆÊ,./X[]fjm’˜›ƒ‰Œ   !ù     ,    E   ÚÈI«½8ë½8’`‚P„¦w’p”%è•§DÂí[¶\5ˆS` ø ‚a1 @*	hàø“2BÒgVÑ£TJC qøµ~Í$ºˆ-M‹©S±@
+fWò3+@WKqkC h.cN‹Mw {?C	@5UR‰RM QNRGPR{|vQDwj´G¹zœN¶· ½š³Ÿ¼¾iZ“Ky‘‹°wI	<]?Ì¸²Ï¥QTR
+×«µÍ
+5±óôõö÷øùúûüıù ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_04.gif
+WARC-Date: 2010-09-09T16:33:56Z
+WARC-Concurrent-To: <urn:uuid:9c8a44db-f3b1-4e9d-912e-8109ad1ae17f>
+WARC-Record-ID: <urn:uuid:b445a739-711d-43de-8d0d-763a8d6643d6>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_04.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_04.gif
+WARC-Date: 2010-09-09T16:33:56Z
+WARC-Concurrent-To: <urn:uuid:9c8a44db-f3b1-4e9d-912e-8109ad1ae17f>
+WARC-Record-ID: <urn:uuid:47513ad6-4321-4601-8295-3bed70d661c9>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_05.gif
+WARC-Date: 2010-09-09T16:33:58Z
+WARC-Payload-Digest: sha1:EO4DKE5CWEBIAEIZQLAYY2F2FOCMGBE7
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:4c3a9842-bd4c-4717-997d-13f86d5fafd3>
+Content-Type: application/http; msgtype=response
+Content-Length: 498
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:33:59 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13fee-f9-408586c0"
+Accept-Ranges: bytes
+Content-Length: 249
+Connection: close
+Content-Type: image/gif
+
+GIF89a6  ³  Ûäé   uz|:=>¡§«¯¶ºÌÕÙ¾ÆÊX[],./ƒ‰Œ’˜›ILNfjm!ù     ,    6   ¦ÈI«½8ëœHš!@øi¤’h ‰ “&Â4ü ìˆWÀGn
+ #€5rËıx9cqP\¯côR¥N¯»‚6°8h¦‚›­’ò51\ó‚;<^vw‡WG=(LI /q†72)
+$;‘ODC	O nu†7<8ƒF Jk>o
+q4—ÁÂÃÄÅÆÇÈÉ ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_05.gif
+WARC-Date: 2010-09-09T16:33:58Z
+WARC-Concurrent-To: <urn:uuid:4c3a9842-bd4c-4717-997d-13f86d5fafd3>
+WARC-Record-ID: <urn:uuid:74f656b5-0bfd-49de-89fa-6283e9d758d7>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_05.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_05.gif
+WARC-Date: 2010-09-09T16:33:58Z
+WARC-Concurrent-To: <urn:uuid:4c3a9842-bd4c-4717-997d-13f86d5fafd3>
+WARC-Record-ID: <urn:uuid:c2fb78fb-bb9e-46dc-b2a6-8f16c5465052>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_06.gif
+WARC-Date: 2010-09-09T16:34:01Z
+WARC-Payload-Digest: sha1:5AXVRC2AOFEGKPA732J67GUEVJGL3FDA
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:17d2a7d5-89a9-4604-bf12-6c0c59242334>
+Content-Type: application/http; msgtype=response
+Content-Length: 705
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:01 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13fef-1c7-408586c0"
+Accept-Ranges: bytes
+Content-Length: 455
+Connection: close
+Content-Type: image/gif
+
+GIF89am  ³  Ûäé   ¡§«uz|:=>ÌÕÙ¯¶ºX[],./¾ÆÊ’˜›fjmƒ‰ŒILN!ù     ,    m   ÿÈI«½8ëÍ»çŠ *R!’!€(²€‰J¡„¤)LoêŠ°4(Ât´@ØûÁ>ƒ€4phB`7 v‚ë$:D ­CÂ6²İ«VŠ5 „;*@GwsR\]f}*bi[ R }VX<gQUR>'‡h Š(Ÿ|=‘m–g"Zƒ	$aµ•QZ	G…Ä”Îha		[ÁÉ¯ZE‘š†Å“«ºtŠÑÁÎRğ›¤c”ëp¹»eSSEà 0rƒºvÉR1ñ$TKP- Œ[Ğnx™ 1"ˆtúMp£êIŒ% 2hÓ
+ €(ãq  J‚gX¹R¤Z)ŒB¡˜$ªÓ›0~9Ú6€D$mKM0P1ÁŒ.V­L!@Æ¥I	:5k3­?L”B*A .	@\c¨®İ»xóêİË·¯ß¿€L¸0€ ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_06.gif
+WARC-Date: 2010-09-09T16:34:01Z
+WARC-Concurrent-To: <urn:uuid:17d2a7d5-89a9-4604-bf12-6c0c59242334>
+WARC-Record-ID: <urn:uuid:1351c96b-7f8d-4445-bc9d-402f16ff1bb1>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_06.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_06.gif
+WARC-Date: 2010-09-09T16:34:01Z
+WARC-Concurrent-To: <urn:uuid:17d2a7d5-89a9-4604-bf12-6c0c59242334>
+WARC-Record-ID: <urn:uuid:a78b9a20-f603-4f45-8240-9c6a1775bafd>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_07.gif
+WARC-Date: 2010-09-09T16:34:03Z
+WARC-Payload-Digest: sha1:ZZICEZONJLX77I3LDTM2KCW7TV2RJW3Z
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:b85283a4-e8b1-4ccb-92cb-f9d551a7b19b>
+Content-Type: application/http; msgtype=response
+Content-Length: 657
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:03 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ff0-197-408586c0"
+Accept-Ranges: bytes
+Content-Length: 407
+Connection: close
+Content-Type: image/gif
+
+GIF89ac  ³  Ûäé   ¡§«uz|:=>¯¶º¾ÆÊÌÕÙX[],./ƒ‰ŒILNfjm’˜›!ù     ,    c   ÿÈI«½8ëÍ»¯‚ ‚A†@“–Óñ
+éîk¨ë¦€Ç`ğ8œ^µ@öúL€ 8 à*’°YÖ«C‡àÁ6ĞS(
+‡DV>¸‚Ë`)X±û@n@_jk] ƒ‡Yz	(Rt%_7…W‰#$“)PMSZ„P–ˆ…«¦$C†\^YC;WW©@‰§g—£ —~XÄ¬¸¹„\cgÓ_X"v¯^
+XÎ¬ wzX¿NPÌUÔÓÅ°.ŠÚßïÌoK#¥Zñ$@¡0%Á•NÊE‘ó«@')|í’$€Y¦)µec“‹€­B¥DªÔY  !rÇÔŒÔL]áxÓâÍ6Z„®Õk•‹\Ø©åÊXeğKÈ´©Ó§P£JJµªÕ«X³j½ ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_07.gif
+WARC-Date: 2010-09-09T16:34:03Z
+WARC-Concurrent-To: <urn:uuid:b85283a4-e8b1-4ccb-92cb-f9d551a7b19b>
+WARC-Record-ID: <urn:uuid:c7eebc9d-72b1-4347-a9e7-6a02f2f63b6b>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_07.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_07.gif
+WARC-Date: 2010-09-09T16:34:03Z
+WARC-Concurrent-To: <urn:uuid:b85283a4-e8b1-4ccb-92cb-f9d551a7b19b>
+WARC-Record-ID: <urn:uuid:fccbb356-c5b2-4ac4-a858-729ed87bd1c4>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_08.gif
+WARC-Date: 2010-09-09T16:34:05Z
+WARC-Payload-Digest: sha1:VDPOBIKM6JNE6BZW3V3V7NXGF6FWBXIT
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:2ff3b995-17f1-4dee-a9a7-3a018ed68be4>
+Content-Type: application/http; msgtype=response
+Content-Length: 529
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:05 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ff1-117-408586c0"
+Accept-Ranges: bytes
+Content-Length: 279
+Connection: close
+Content-Type: image/gif
+
+GIF89a>  ³  Ûäé   ¡§«uz|:=>ÌÕÙ¯¶º,./’˜›X[]ƒ‰Œ¾ÆÊILNfjm!ù     ,    >   ÄÈI«½8ë‹øÆô}…ä!P0Ã ˜¬«BÊYB H¹ë	@nG ‚"PC*™C]ñ†@HX…<€vdsÂCˆ©•\qİ ôXÑz- ƒ{}pq|„?=`;Z:—;šQu‹"€/v%r%Bd­¯«¡ŒS\dz9|c	LÁÃP-¿µ`·\ŸsÄ<A×AÕÍßàáâãäåæçß ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_08.gif
+WARC-Date: 2010-09-09T16:34:05Z
+WARC-Concurrent-To: <urn:uuid:2ff3b995-17f1-4dee-a9a7-3a018ed68be4>
+WARC-Record-ID: <urn:uuid:18f8b2be-813d-4add-ae07-81e7da9f0915>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_08.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_08.gif
+WARC-Date: 2010-09-09T16:34:05Z
+WARC-Concurrent-To: <urn:uuid:2ff3b995-17f1-4dee-a9a7-3a018ed68be4>
+WARC-Record-ID: <urn:uuid:db4ee7b1-8368-4f14-be4e-92c27e783e9a>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 22
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_09.gif
+WARC-Date: 2010-09-09T16:34:07Z
+WARC-Payload-Digest: sha1:LWI43KF4TLYXE5OB4B46CAJGPYKJMTKR
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:30d4d0d5-0137-47d1-94d8-9364a2013c68>
+Content-Type: application/http; msgtype=response
+Content-Length: 458
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:07 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ff2-d1-408586c0"
+Accept-Ranges: bytes
+Content-Length: 209
+Connection: close
+Content-Type: image/gif
+
+GIF89a)  ³  Ûäé   ¡§«uz|,./ƒ‰ŒÌÕÙ’˜›:=>X[]ILNfjm¯¶º¾ÆÊ!ù     ,    )   ~ÈI«½8_#zŸA=ÃPh¨¬«t¬ÍT"z©„')«…äA
+İV:Fà 8Æ Ï€Ò¢b! ³Â,yLZ[Šê;!ÜÜÃŒ!qÜÒê `G”Üf€nTxkS.w@	f†“		…”x	PšŸ ¡ ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_09.gif
+WARC-Date: 2010-09-09T16:34:07Z
+WARC-Concurrent-To: <urn:uuid:30d4d0d5-0137-47d1-94d8-9364a2013c68>
+WARC-Record-ID: <urn:uuid:89633725-b407-44b7-8ba9-c3ba41e4dfd8>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_09.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_09.gif
+WARC-Date: 2010-09-09T16:34:07Z
+WARC-Concurrent-To: <urn:uuid:30d4d0d5-0137-47d1-94d8-9364a2013c68>
+WARC-Record-ID: <urn:uuid:f35c7bf9-5053-4311-a2bf-12cd35f6e3a0>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 22
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_10.gif
+WARC-Date: 2010-09-09T16:34:09Z
+WARC-Payload-Digest: sha1:MWC3WWS3JIMG2DNM6IICL5EYTCV2PSX7
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:4ca0c547-450c-4ca9-a518-c23ba4bdc8ef>
+Content-Type: application/http; msgtype=response
+Content-Length: 324
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:09 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ff3-4c-408586c0"
+Accept-Ranges: bytes
+Content-Length: 76
+Connection: close
+Content-Type: image/gif
+
+GIF89a  €  ÛäéÿH!ù     ,       #„©«a díÙH—¼3Ÿ…ŞÇ]cv#)ê²¦K×ö} ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_10.gif
+WARC-Date: 2010-09-09T16:34:09Z
+WARC-Concurrent-To: <urn:uuid:4ca0c547-450c-4ca9-a518-c23ba4bdc8ef>
+WARC-Record-ID: <urn:uuid:c9a62ccd-89fc-4d72-ab8f-88391faec51f>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_10.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_10.gif
+WARC-Date: 2010-09-09T16:34:09Z
+WARC-Concurrent-To: <urn:uuid:4ca0c547-450c-4ca9-a518-c23ba4bdc8ef>
+WARC-Record-ID: <urn:uuid:3bb73c69-8931-410a-b3b7-2b6bb4c510f8>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_11.gif
+WARC-Date: 2010-09-09T16:34:11Z
+WARC-Payload-Digest: sha1:JTOWYEBGPD5F32ZEEC6PSGG2S7IK6TF5
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:053b1f7d-72ad-4465-91e6-675b50fa62a8>
+Content-Type: application/http; msgtype=response
+Content-Length: 542
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:11 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ff4-124-408586c0"
+Accept-Ranges: bytes
+Content-Length: 292
+Connection: close
+Content-Type: image/gif
+
+GIF89a8  ³  Ûäé   uz|¡§«:=>ÌÕÙ¾ÆÊX[]’˜›,./¯¶ºƒ‰ŒILNfjm!ù     ,    8   ÑÈI«½8kË†à…Å`L‰ $¡aNî'ªÀ î)üŞÏ!
+ Eàà# Æ	h,	‹À3
+øõŒ£îÏE’ÂzœNqè¹m{->„JP,	QYsR\oqK!P*w>T]V>G^SNlˆ”}j@•“Ap ”GJ&uŸ«HH	Šb_z'«oQ±*°}<	¥vZx¦Bqfm	J}k¦‘TŠ7º’éêëìíîïğñòóô ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_11.gif
+WARC-Date: 2010-09-09T16:34:11Z
+WARC-Concurrent-To: <urn:uuid:053b1f7d-72ad-4465-91e6-675b50fa62a8>
+WARC-Record-ID: <urn:uuid:e90ae5f9-2baa-4598-ac27-e39721082ecb>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_11.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_11.gif
+WARC-Date: 2010-09-09T16:34:11Z
+WARC-Concurrent-To: <urn:uuid:053b1f7d-72ad-4465-91e6-675b50fa62a8>
+WARC-Record-ID: <urn:uuid:77f7f44b-7841-4841-914e-a0a9562206ea>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_12.gif
+WARC-Date: 2010-09-09T16:34:13Z
+WARC-Payload-Digest: sha1:4JCFDAGUSWHQI7ZDJPZ7TL376T2RIQBK
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:8c14bb54-0bcf-4452-bb49-ada28ce9f33e>
+Content-Type: application/http; msgtype=response
+Content-Length: 318
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:13 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ff5-46-408586c0"
+Accept-Ranges: bytes
+Content-Length: 70
+Connection: close
+Content-Type: image/gif
+
+GIF89aF  €  Ûäé   !ù     ,    F   „©Ëí£œ´Ú‹³Ş¼û†âH–æ‰¦êÊ¶îR  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_12.gif
+WARC-Date: 2010-09-09T16:34:13Z
+WARC-Concurrent-To: <urn:uuid:8c14bb54-0bcf-4452-bb49-ada28ce9f33e>
+WARC-Record-ID: <urn:uuid:7f1ebaf3-ecc6-4f88-b336-65a5f454c6b5>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_12.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_12.gif
+WARC-Date: 2010-09-09T16:34:13Z
+WARC-Concurrent-To: <urn:uuid:8c14bb54-0bcf-4452-bb49-ada28ce9f33e>
+WARC-Record-ID: <urn:uuid:3f475b39-0f13-43c9-b7cf-3f9debda0a98>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 28
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_13.gif
+WARC-Date: 2010-09-09T16:34:15Z
+WARC-Payload-Digest: sha1:PMKEU2EBIPANJEMZ3XPUE3HZWDMHCEQH
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:ab158ca3-30ec-48a1-99d1-77ff3eb6a331>
+Content-Type: application/http; msgtype=response
+Content-Length: 1928
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:15 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ff6-68d-408586c0"
+Accept-Ranges: bytes
+Content-Length: 1677
+Connection: close
+Content-Type: image/gif
+
+GIF89a°E ³  Ûäéÿ3 ì‘|õb>åµ«éŒı?İØÙàÌÊøV/úKâÁºñz]ç©›ónNî†m!ù     ,    °E  ÿÈI«½8ëÍ»ÿ`(dihª®lë¾p,Ïtmßx®ï|ïÿÀ pH,È¤rÉl:ŸĞ¨tJ­Z¯Ø¬vËíz¿à°xL.›Ïè´zÍn»ßğ¸|N¯Ûïø¼~Ïïûÿ€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍCÑĞÒÔÎá¨äå%tåîîäçâõ£Ùæ$äÜr²1x‡Ÿ>{E)˜G‚ Á:ÊÁÓ°0 ½„;E´HA¹vÿHÜ°ñbÆ“YJ.QI¢€V2Ä1RK”8­ÜD²LO53üÌIÔÉP"G¹$…ÃÒ¢P<2KUM/\ÊÕÇV_©„E‘ÕÂØ®	Ğæ€‚ q@@bfX+ _ Ú´éÅ€ o¹ØmPË–Ì:@áÀ'R¸¸-aÌ_Æ¬ùBİ»‘ójàëphô³øÀ#¹ÒZ+&¥¼  \şvàA8ƒK Ğ‚ßß•-¸4ğ ÚÆ ƒãÉ üanTt—]‚ÃíÌvÇ`ÂÔşÊS0¼;sÏ¡›4ñ\õäë€›ÿY•‰÷›|½ÙÓÀz.	€€e‘ƒ`H8ßrÍQ°@4 6(&9“IĞ€?j°`9Àt^ %ŞçI–!GM‡İ ı0àãbw¡‡CnH@‡b#"ığ¤zeUĞSÛ$ˆS‘HV€q ¤¨Å(ã~ÌæerÀå}/N@O90$…ålĞ!Hd*p§eczI"3ªÀ9ÕàyIÑÍ€ZæôbŠldÀ>)ÁF
+Šæ³í·ÑšL:r÷9]…rVğâ¶YGfV©ŒRVh
+æjA••®*k¤8½j±„åiÁ‰äüYUÿD
+h:²ÜÄêÔâ·œY|^ëÌàl£'ˆ4èÀN`í°Ä¢”­yÊªº+¼‹ÊûéİİKÁ»Œ‚w-¶ñîU¦
+´§ë§/¨.¹&p©0 én:Ó¿í0W°ç w< |;:o Ÿ¾ï‚Jú	¿Td°RzÁÆsòÁ,t(®vö{NËV\¿0KĞhLÛl%Ã”ÙqÓf,4—3wt°ÍNÀñK3™Ó\£,ÂsD,r^ådm4FH[í5Ô\…@‡Y®ÍÁÖß W9µ–*÷¬€KàQ¢øe¶§, tÈGö÷¹oÃmõÖ­•P•ÿpR–½÷àòºì³¦‚«ÌA¯0àkâä¬ÂY¬›şk½ºŠ>på–Ë2pºò>ÂTbÒùâ|Ÿ)Á¨¹ü¹î¥ÈOàO3ÿìò@ºj³„|ëEãLÜÒO.â¯Ó}jëÆ/úw-P©Í ³Kİ0>	Ôƒ[Î„Ùø¾÷ö ŸïÒD7\oxP\ú4P¼è™ä:­¢× ûõ·e TB9 Ş:p™îÍ&×Ø@f‚ä#Œj—@ôÙÊ|,ß®üÒ9®o3î [õRH³†ƒ¤`­Ì4ÆQ€†,a1ÂE6&j`{‘1S…PvÈqg8€Ï@¸'ÿâË…^—2àÅ0éP”¨¨6‘	ï¨‰†Æ?tÇubL•‘± “•0ŠQËxP >
+x€ p—-V` [¼µI¶(X#€ûˆHj’FXO^(.@Z€“tÖ(G2D*’‘yäG$)€:FI =Ä– ø,5¤Ë†()¾Tær¼ÈÏA ãCÔ%@Q¬›<"‰*±‡¿œ2§fÆ(BäÚf37°O:3”Ó„^ôféLÔXĞ4¿üK5^Â1¨²Ş¤ 8G†L®pFV¬À2³’	ÆfÓ0` ±l }èb¹¾´:ŸÍ¨F7ÊÑzô£ ©HGJÒ’šô¤(M©JWÊÒ–ºô¥0©LgJÓšÚô¦8Í©NwÊÓú4#  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_13.gif
+WARC-Date: 2010-09-09T16:34:15Z
+WARC-Concurrent-To: <urn:uuid:ab158ca3-30ec-48a1-99d1-77ff3eb6a331>
+WARC-Record-ID: <urn:uuid:4f474490-2cb9-4867-9999-58df328e7eaa>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_13.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_13.gif
+WARC-Date: 2010-09-09T16:34:15Z
+WARC-Concurrent-To: <urn:uuid:ab158ca3-30ec-48a1-99d1-77ff3eb6a331>
+WARC-Record-ID: <urn:uuid:06defefc-d396-4891-b392-07023b93d6de>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_14.gif
+WARC-Date: 2010-09-09T16:34:17Z
+WARC-Payload-Digest: sha1:7L6F7XZDQMMV4LYYUN5ZNVJRAJU4MJA3
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:d02fe4a4-7e26-4b3c-b2ec-bcdd47c5fe6c>
+Content-Type: application/http; msgtype=response
+Content-Length: 453
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:17 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ff7-cc-408586c0"
+Accept-Ranges: bytes
+Content-Length: 204
+Connection: close
+Content-Type: image/gif
+
+GIF89a° €  ÿÿÿ   !ù     ,    °  £„©Ëí£œ´Ú‹³Ş¼û†âH–æ‰¦êÊ¶îÇòL×öçúÎ÷ş
+‡Ä¢ñˆL*—Ì¦ó	J§ÔªõŠÍj·Ü®÷‹Çä²ùŒN«×ì¶ûËçôºıÏë÷ü¾ÿ(8HXhxˆ˜¨¸ÈØèø)9IYiy‰™©¹ÉÙéù	*:JZjzŠšªºÊÚêú
++;K[k{‹›«»ËÛëûìW  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_14.gif
+WARC-Date: 2010-09-09T16:34:17Z
+WARC-Concurrent-To: <urn:uuid:d02fe4a4-7e26-4b3c-b2ec-bcdd47c5fe6c>
+WARC-Record-ID: <urn:uuid:58945e59-04e2-491d-9a9b-080bf9f1fb3b>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_14.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_14.gif
+WARC-Date: 2010-09-09T16:34:17Z
+WARC-Concurrent-To: <urn:uuid:d02fe4a4-7e26-4b3c-b2ec-bcdd47c5fe6c>
+WARC-Record-ID: <urn:uuid:f0f29ac8-3ec7-4e1d-a388-18a4fc8f1e39>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_16.gif
+WARC-Date: 2010-09-09T16:34:19Z
+WARC-Payload-Digest: sha1:FOBREXIPW6KAKDLQ65S7QCNWIODJKEDX
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:dbf4e995-6d37-4c53-b08b-b6b3eb2ba8e5>
+Content-Type: application/http; msgtype=response
+Content-Length: 304
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:19 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ffb-38-408586c0"
+Accept-Ranges: bytes
+Content-Length: 56
+Connection: close
+Content-Type: image/gif
+
+GIF89a €  ÿÿÿ   !ù     ,      „©Ëí£œ´Ú‹³Ş¨  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_16.gif
+WARC-Date: 2010-09-09T16:34:19Z
+WARC-Concurrent-To: <urn:uuid:dbf4e995-6d37-4c53-b08b-b6b3eb2ba8e5>
+WARC-Record-ID: <urn:uuid:8d342eae-790a-4fcb-bfd8-b3a2fb506528>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_16.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_16.gif
+WARC-Date: 2010-09-09T16:34:19Z
+WARC-Concurrent-To: <urn:uuid:dbf4e995-6d37-4c53-b08b-b6b3eb2ba8e5>
+WARC-Record-ID: <urn:uuid:6d4b6ae9-9e34-457b-a73a-b9e49a1b0124>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 24
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_17.gif
+WARC-Date: 2010-09-09T16:34:21Z
+WARC-Payload-Digest: sha1:Q2Z2YBECUJOB4JFCDBGT5SEWKMP4XIOK
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:bdbc32df-6b9b-4c11-8ac9-7b824a5285e5>
+Content-Type: application/http; msgtype=response
+Content-Length: 412
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:21 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ffc-a3-408586c0"
+Accept-Ranges: bytes
+Content-Length: 163
+Connection: close
+Content-Type: image/gif
+
+GIF89a ó€  ÿÿÿ   !ù     ,     ó z„©Ëí£œ´Ú‹³Ş¼û†âH–æ‰¦êÊ¶îÇòL×öçúÎ÷ş
+‡Ä¢ñˆL*—Ì¦ó	J§ÔªõŠÍj·Ü®÷‹Çä²ùŒN«×ì¶ûËçôºıÏë÷ü¾ÿ(8HXhxˆ˜¨¸ÈØèø)9IYiy‰V  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_17.gif
+WARC-Date: 2010-09-09T16:34:21Z
+WARC-Concurrent-To: <urn:uuid:bdbc32df-6b9b-4c11-8ac9-7b824a5285e5>
+WARC-Record-ID: <urn:uuid:cb4e7875-67ef-4cfc-800d-6d0c3bb5071c>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_17.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_17.gif
+WARC-Date: 2010-09-09T16:34:21Z
+WARC-Concurrent-To: <urn:uuid:bdbc32df-6b9b-4c11-8ac9-7b824a5285e5>
+WARC-Record-ID: <urn:uuid:6d7161e9-c077-4b57-868f-dcc9ab1f2a26>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_19.gif
+WARC-Date: 2010-09-09T16:34:23Z
+WARC-Payload-Digest: sha1:4Z36L4FC7YK7G2DEGRMMWLTBOQTNSI5C
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:e8c686b5-d54e-45b4-a9a3-6f8fe578bc6f>
+Content-Type: application/http; msgtype=response
+Content-Length: 545
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:23 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13ffe-127-408586c0"
+Accept-Ranges: bytes
+Content-Length: 295
+Connection: close
+Content-Type: image/gif
+
+GIF89aH ó‘  ÿÿÿÖÖÖiii   !ù     ,    H ó ø„©Ëí£œ´Ú‹³Ş¼û†âH–æ‰¦êÊ¶îÇòL×öçúÎ÷ş
+‡Ä¢ñˆL*—Ì¦ó	J§ÔªõŠÍj·Ü®÷‹Çä²ùŒN«×ì¶ûËçôºıÏë÷ü¾ÿ(8HXhxˆ˜¨¸ÈØèø)9IYiy‰™©¹ÉÙéÙ%ğ9JZjzŠšªºÊÚêú
++;K[k{‹›«»ËÛëû,<L\l|Œœ¬¼ÌÜìü-=M]m}­½Íİíı.>N^n~®¾ÎŞîş/?O_oŸ¯¿Ïßïÿ0 À<ˆ0¡Â…:|1¢Ä  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_19.gif
+WARC-Date: 2010-09-09T16:34:23Z
+WARC-Concurrent-To: <urn:uuid:e8c686b5-d54e-45b4-a9a3-6f8fe578bc6f>
+WARC-Record-ID: <urn:uuid:48959c08-de66-462e-960b-219ad64934db>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_19.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_19.gif
+WARC-Date: 2010-09-09T16:34:23Z
+WARC-Concurrent-To: <urn:uuid:e8c686b5-d54e-45b4-a9a3-6f8fe578bc6f>
+WARC-Record-ID: <urn:uuid:8e9fc132-f61c-4bbd-ae7c-97ee18beda1c>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 22
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif
+WARC-Date: 2010-09-09T16:34:25Z
+WARC-Payload-Digest: sha1:STTVR3FJILXODO63X5B57XKS3VLCTD54
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:81e2cdf9-d84e-4582-8075-21c9e1c28449>
+Content-Type: application/http; msgtype=response
+Content-Length: 500
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:25 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "13fff-fb-408586c0"
+Accept-Ranges: bytes
+Content-Length: 251
+Connection: close
+Content-Type: image/gif
+
+GIF89aI! €  z®   !ù     ,    I!  Ò„©Ëí£œ´Ú‹³Ş¼û†âH–æ‰¦êÊ¶îÇòL×öçúÎ÷ş
+‡Ä¢ñˆL*—Ì¦ó	J§ÔªõŠÍj·Ü®÷‹Çä²ùŒN«×ì¶ûËçôºıÏë÷ü¾ÿ(8HXhxˆ˜¨¸ÈØèø)9IYiy‰™©¹ÉÙéù	*:JZjzŠšªºÊÚêú
++;K[k{‹›«»ËÛëû,<L\l|Œœ¬¼ÌÜìü-=M]m}­½Íİíı.>N^n~®¾ÎŞîş¾Q  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif
+WARC-Date: 2010-09-09T16:34:25Z
+WARC-Concurrent-To: <urn:uuid:81e2cdf9-d84e-4582-8075-21c9e1c28449>
+WARC-Record-ID: <urn:uuid:ae2342b4-29fd-437b-a9b3-018fd55f4f2b>
+Content-Type: application/http; msgtype=request
+Content-Length: 244
+
+GET /netarkivet_alm/billeder/netarkivet_guidelines_20.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif
+WARC-Date: 2010-09-09T16:34:25Z
+WARC-Concurrent-To: <urn:uuid:81e2cdf9-d84e-4582-8075-21c9e1c28449>
+WARC-Record-ID: <urn:uuid:1bf3bf3a-0610-4285-b205-4e50a89c0fe6>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 22
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif
+WARC-Date: 2010-09-09T16:34:27Z
+WARC-Payload-Digest: sha1:5J67LA4YGEZ3MJYSWXTTX7542ROMKNZW
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:cd61ae66-d548-4eaf-9907-d47a67ee073d>
+Content-Type: application/http; msgtype=response
+Content-Length: 291
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:27 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:11 GMT
+ETag: "14000-2b-408586c0"
+Accept-Ranges: bytes
+Content-Length: 43
+Connection: close
+Content-Type: image/gif
+
+GIF89a  €        !ù    ,       D ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif
+WARC-Date: 2010-09-09T16:34:27Z
+WARC-Concurrent-To: <urn:uuid:cd61ae66-d548-4eaf-9907-d47a67ee073d>
+WARC-Record-ID: <urn:uuid:56c6f057-9476-4d65-8e5f-4f5cf09e054f>
+Content-Type: application/http; msgtype=request
+Content-Length: 226
+
+GET /netarkivet_alm/billeder/spacer.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif
+WARC-Date: 2010-09-09T16:34:27Z
+WARC-Concurrent-To: <urn:uuid:cd61ae66-d548-4eaf-9907-d47a67ee073d>
+WARC-Record-ID: <urn:uuid:92acd3d5-6afe-4531-b63a-2aa8d48b2864>
+Content-Type: application/warc-fields
+Content-Length: 76
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: E
+fetchTimeMs: 23
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/organisation/index-da.php
+WARC-Date: 2010-09-09T16:34:29Z
+WARC-Payload-Digest: sha1:LGY6UMQFZN6Y7FTJTTRUSRGKELMEOCA5
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:fdd9c19d-1ac1-4d99-bb0a-d86650d5ded0>
+Content-Type: application/http; msgtype=response
+Content-Length: 8930
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:29 GMT
+Server: Apache/2.0.46 (Red Hat)
+Accept-Ranges: bytes
+X-Powered-By: PHP/4.3.2
+Connection: close
+Content-Type: text/html; charset=UTF-8
+
+<html><!-- InstanceBegin template="/Templates/netarkivet_underside.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>netarkivet.dk</title>
+<!-- InstanceEndEditable -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script type="text/JavaScript">
+<!--
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+
+function email(a,b,c){
+url = 'mailto:' + a + '@' + c + '.' + b;
+location.href=url;
+}
+function emailprint(a,b,c){
+  url = a + '@' + c + '.' + b;
+  document.write(url);
+}
+//-->
+</script>
+<link href="../netarkivet.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+
+
+-->
+</style>
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="MM_preloadImages('../netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif')">
+<!-- ImageReady Slices (netarkivet_guidelines.psd) -->
+<table id="Ta01" width="841" height="677" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td rowspan="6" valign="top"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_01.gif" width="153" height="643" alt=""></td>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_02.gif" width="688" height="35" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<a href="index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_03.gif" alt="" width="102" height="13" border="0" id="Image1" onMouseOver="MM_swapImage('Image1','','../netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../nyheder/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_04.gif" alt="" name="Image2" width="69" height="13" border="0" id="Image2" onMouseOver="MM_swapImage('Image2','','../netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../links/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_05.gif" alt="" width="54" height="13" border="0" id="Image3" onMouseOver="MM_swapImage('Image3','','../netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../publikationer/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_06.gif" alt="" width="109" height="13" border="0" id="Image4" onMouseOver="MM_swapImage('Image4','','../netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td colspan="3">
+			<a href="../kildetekster/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_07.gif" alt="" width="99" height="13" border="0" id="Image5" onMouseOver="MM_swapImage('Image5','','../netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../presse/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_08.gif" alt="" width="62" height="13" border="0" id="Image6" onMouseOver="MM_swapImage('Image6','','../netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../faq/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_09.gif" alt="" width="41" height="13" border="0" id="Image7" onMouseOver="MM_swapImage('Image7','','../netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_10.gif" width="26" height="13" alt=""></td>
+		<td colspan="2">
+			<a href="../index-en.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_11.gif" alt="" name="Image8" width="56" height="13" border="0" id="Image8" onMouseOver="MM_swapImage('Image8','','../netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_12.gif" width="70" height="13" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_13.gif" alt="" width="688" height="69" border="0" usemap="#map1"></td>
+	</tr>
+	<tr>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_14.gif" width="688" height="26" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="11" rowspan="2" valign="top"><!-- InstanceBeginEditable name="tekst" -->
+		  <h3>organisation</h3>
+		  <p><strong>Daglig leder</strong></p>
+		  <p> Claus Lomborg <br>
+		    Statsbiblioteket, &Aring;rhus<br>
+			<a href="javascript:email('clo','dk','netarkivet')">
+            <script>emailprint('clo','dk','netarkivet')</script></a><BR>
+		    89 46 22 53 <BR>
+			41 60 55 66			</p>
+		  <p><strong>Styregruppe</strong></p>
+		  <p> Eva F&oslash;nss-J&oslash;rgensen, Statsbiblioteket, &Aring;rhus<br>
+		    Bjarne Andersen, Statsbiblioteket, &Aring;rhus<br>
+		    Klaus Kj&aelig;rgaard, Statsbiblioteket, &Aring;rhus<br>
+		    Birgit Norsmark Henriksen, Det Kongelige Bibliotek, K&oslash;benhavn<br>
+		    Grethe Jacobsen, Det Kongelige Bibliotek, K&oslash;benhavn<br>
+		    S&oslash;ren Peter Skytte Andersen, Det Kongelige Bibliotek, K&oslash;benhavn</p>
+		  <p>&nbsp;</p>
+		<!-- InstanceEndEditable --></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_19.gif" width="72" height="499" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="14">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_20.gif" width="841" height="33" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="153" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="102" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="69" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="54" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="109" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="74" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="22" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="3" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="62" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="41" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="26" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="54" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="2" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="70" height="1" alt=""></td>
+	</tr>
+</table>
+<!-- End ImageReady Slices -->
+<map name="map1"><area shape="rect" coords="5,25,288,59" href="/index-da.php">
+</map>
+</body>
+<!-- InstanceEnd --></html>
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/organisation/index-da.php
+WARC-Date: 2010-09-09T16:34:29Z
+WARC-Concurrent-To: <urn:uuid:fdd9c19d-1ac1-4d99-bb0a-d86650d5ded0>
+WARC-Record-ID: <urn:uuid:30194a38-4acf-46e7-975c-d64ac7f364c1>
+Content-Type: application/http; msgtype=request
+Content-Length: 217
+
+GET /organisation/index-da.php HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/organisation/index-da.php
+WARC-Date: 2010-09-09T16:34:29Z
+WARC-Concurrent-To: <urn:uuid:fdd9c19d-1ac1-4d99-bb0a-d86650d5ded0>
+WARC-Record-ID: <urn:uuid:ffb85d5b-f770-4ef6-9ab9-9bee1b1ecf86>
+Content-Type: application/warc-fields
+Content-Length: 4974
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: L
+fetchTimeMs: 34
+outlink: http://netarkivet.dk/netarkivet.css E link/@href
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_01.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_02.gif E img/@src
+outlink: http://netarkivet.dk/organisation/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_03.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif X =JS_MISC
+outlink: http://netarkivet.dk/nyheder/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_04.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif X =JS_MISC
+outlink: http://netarkivet.dk/links/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_05.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif X =JS_MISC
+outlink: http://netarkivet.dk/publikationer/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_06.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif X =JS_MISC
+outlink: http://netarkivet.dk/kildetekster/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_07.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif X =JS_MISC
+outlink: http://netarkivet.dk/presse/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_08.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif X =JS_MISC
+outlink: http://netarkivet.dk/faq/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_09.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_10.gif E img/@src
+outlink: http://netarkivet.dk/index-en.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_11.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_12.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_13.gif E img/@src
+outlink: http://netarkivet.dk/organisation/index-da.php E img/@usemap
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_14.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_19.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/index-da.php L area/@href
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/nyheder/index-da.php
+WARC-Date: 2010-09-09T16:34:31Z
+WARC-Payload-Digest: sha1:TDDRTRLNUTHBK7757J3DGQN6PKMCA3LP
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:f9c36df9-5f27-4cc8-83fa-b753de11cb95>
+Content-Type: application/http; msgtype=response
+Content-Length: 13891
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:31 GMT
+Server: Apache/2.0.46 (Red Hat)
+Accept-Ranges: bytes
+X-Powered-By: PHP/4.3.2
+Connection: close
+Content-Type: text/html; charset=UTF-8
+
+<html><!-- InstanceBegin template="/Templates/netarkivet_underside.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>netarkivet.dk</title>
+<!-- InstanceEndEditable -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script type="text/JavaScript">
+<!--
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+
+function email(a,b,c){
+url = 'mailto:' + a + '@' + c + '.' + b;
+location.href=url;
+}
+function emailprint(a,b,c){
+  url = a + '@' + c + '.' + b;
+  document.write(url);
+}
+//-->
+</script>
+<link href="../netarkivet.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+
+
+-->
+</style>
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="MM_preloadImages('../netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif')">
+<!-- ImageReady Slices (netarkivet_guidelines.psd) -->
+<table id="Ta01" width="841" height="677" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td rowspan="6" valign="top"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_01.gif" width="153" height="643" alt=""></td>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_02.gif" width="688" height="35" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<a href="../organisation/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_03.gif" alt="" width="102" height="13" border="0" id="Image1" onMouseOver="MM_swapImage('Image1','','../netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_04.gif" alt="" name="Image2" width="69" height="13" border="0" id="Image2" onMouseOver="MM_swapImage('Image2','','../netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../links/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_05.gif" alt="" width="54" height="13" border="0" id="Image3" onMouseOver="MM_swapImage('Image3','','../netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../publikationer/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_06.gif" alt="" width="109" height="13" border="0" id="Image4" onMouseOver="MM_swapImage('Image4','','../netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td colspan="3">
+			<a href="../kildetekster/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_07.gif" alt="" width="99" height="13" border="0" id="Image5" onMouseOver="MM_swapImage('Image5','','../netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../presse/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_08.gif" alt="" width="62" height="13" border="0" id="Image6" onMouseOver="MM_swapImage('Image6','','../netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../faq/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_09.gif" alt="" width="41" height="13" border="0" id="Image7" onMouseOver="MM_swapImage('Image7','','../netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_10.gif" width="26" height="13" alt=""></td>
+		<td colspan="2">
+			<a href="../index-en.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_11.gif" alt="" name="Image8" width="56" height="13" border="0" id="Image8" onMouseOver="MM_swapImage('Image8','','../netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_12.gif" width="70" height="13" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_13.gif" alt="" width="688" height="69" border="0" usemap="#map1"></td>
+	</tr>
+	<tr>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_14.gif" width="688" height="26" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="11" rowspan="2" valign="top"><!-- InstanceBeginEditable name="tekst" -->
+		  <h3>nyheder</h3>
+		  <table width="100%" border="0" cellspacing="2" cellpadding="2">
+          <tr>
+            <td width="88%" height="80"><p>
+                          </p>
+              <p><strong>18. januar 2010:</strong></p>
+              <p><strong>F&oslash;rste ph.d. om Netarkivet<br>
+                            </strong>Netarkivet fik sin f&oslash;rste ph.d., da Vidar  Falkenberg i december<br>
+forsvarede sin afhandling &ldquo;Netavisernes historie  &ndash; avismediets<br>
+evolution i mediematricens revolution&rdquo; ved  Institut for Informationsog<br>
+medievidenskab, AU.<br>
+Afhandlingen er den f&oslash;rste historiske  unders&oslash;gelse af de danske<br>
+netaviser, og det er samtidig det f&oslash;rste  st&oslash;rre, afsluttede projekt,<br>
+der benytter det arkiverede internetmateriale  i Netarkivet.<br>
+Afhandlingen redeg&oslash;r for netavisens  historiske udvikling i Danmark<br>
+fra 1993 til i dag, og den bidrager blandt  andet med metodiske<br>
+overvejelser i forhold til at benytte  arkiverede netsteder som<br>
+empirisk materiale.<br>
+Netmediets position i mediesystemet  perspektiveres ogs&aring;,<br>
+herunder specielt nettets rolle i kampen om  fordelingen af den<br>
+offentlige mediest&oslash;tte. L&aelig;s mere om <a href="http://www.internetaviser.dk/default.aspx">afhandlingen</a>               </p>              </td>
+            <td width="12%"><div align="right"><a href="http://netarchive.dk/suite"><img src="netarchivesuite.gif" alt="NetarchiveSuite" width="60" height="60" border="0" longdesc="http://netarchive.dk/suite"></a></div></td>
+          </tr>
+        </table>
+		  
+        <p>
+          <strong>10. november 2009:</strong><br>
+          Kulturministeriet har nedsat  ny redaktionsgruppe for 2010 og 2011. Medlemmerne som skal virke som r&aring;dgivende organ for netarkivet er f&oslash;lgende:
+          <br>
+          Lektor Niels Br&uuml;gger, Medievidenskab, Aarhus Universitet <br>
+        Henrik Borberg, Forlaget Multivers <br>
+         Peter Djurup, FDIM <br> Webmanager Tina Sk&aelig;rb&aelig;k, IT Universitetet i K&oslash;benhavn
+                 </p>
+        <p><strong>
+                  4. december 2008:</strong>
+        <p>&quot;Erfaringer med h&oslash;stning af det danske net<br>
+            2005 - 2008&quot; af Grethe Jacobsen: <a href="http://ej.lib.cbs.dk/index.php/dfrevy/article/view/2291/2276">L&aelig;s artiklen p&aring; DFrevy.dk</a>
+          </p>
+          <p><strong>
+                      8. september 2008:</strong><br>
+  Nyhedsbrev fra projektet - march 2007. L&aelig;s det <a href="Newsletter_Netarchive_dk_march2007.pdf"></a> (p&aring; engelsk) <a href="Newsletter_Netarchive_dk_august2008.pdf">here</a>
+                      </p>
+          <p>
+                        <strong>4. juli 2007:</strong><br>
+            Sofwarepakken - NetarchiveSuite - som er udviklet og bruges af netarkivet.dk udgives i dag som open source under LGPL licensen. <br>
+            L&aelig;s meget mere og download softwaren <a href="http://netarchive.dk/suite">her</a> (p&aring; engelsk)
+                      </p>
+          <p><strong>30. marts 2007:</strong><br>
+Nyhedsbrev fra projektet - march 2007. L&aelig;s det <a href="Newsletter_Netarchive_dk_march2007.pdf">her</a> (p&aring; engelsk)</p>
+                                     
+            <p><strong>13. marts 2007:</strong><br>
+                       Netarkivets system (NetarchiveSuite) udgives 1. juli 2007 under LGPL-licensen.</p>
+                 		  	    <p><strong>15. august 2006:</strong><br>
+Netarkivet.dk planl&aelig;gger i &oslash;jeblikket en kommende <b>open source relase</b> af det software projektet har udviklet til opbygning, vedligeholdelse og bevaring af et netarkiv. Den f&oslash;rste release forventes at blive sendt ud i for&aring;ret 2007. Vi vil holde websitet opdateret med planerne. </p>
+		   		  	    <p><strong>11. august 2006:</strong><br>
+A kort internationalt nyhedsbrev omkring aktiviteter i netarkivets f&oslash;rste leve&aring;r. Sendt ud p&aring; 2 internationale webarkiverings-mail-lister. L&aelig;s nyhedsbrevet <a href="Newsletter_Netarchive_dk_august2006.pdf">her</a> (p&aring; engelsk) </p>
+        
+	<p><strong>19. maj 2006:</strong><br>
+         Ny artikel p&aring; netarkivet.dk:
+        &quot;A formal analysis of recovery in a preservational data grid&quot;
+        <a href="/publikationer/index-da.php?highlight=20060519"><span class="nyhed_link">L&aelig;s mere her </span></a></p>
+
+		  <p><strong>15. februar 2006:</strong><br>
+		    Erfaringer med netarkivets f&oslash;rste tv&aelig;rsnitsh&oslash;stning er blevet samlet i artiklen 'DK dom&aelig;net i ord og tal'. L&aelig;s artiklen <a href="../publikationer/index-da.php">her</a> </p>
+					  <p><strong>16. december 2005:</strong><br>
+		  Kulturministeriet har nedsat netarkivets redaktion. Medlemmerne som skal virke som r&aring;dgivende organ for netarkivet er f&oslash;lgende:<br>
+		  Niels Ole Finnemann, Center for Internetforskning, &Aring;rhus Universitet<br>
+	      Henrik Borberg, Forlaget Multivers<br>
+	      Henrik Rewes, Nordjyske Medier<br>
+	      Ellen Christiansen, Institut for Kommunikation, &Aring;lborg Universitet<br>
+	      Karen Westman Hertz, DR Interaktiv<br>
+		  	      <br>
+		           <p><strong>22. december 2004:<br>
+	      Ny pligtafleveringslov vedtaget</strong><br>
+	      Den 22. december 2004 vedtoget folketinget en ny revision af bl.a.  pligtaflveringsloven der betyder at nationalbibliotekerne f&aring;r mulighed  for at indsamle og bevare dansk netmateriale. Loven tr&aring;dte i kraft den  1. juli 2005. <a href="http://pligtaflevering.dk/loven/index.htm" target="_new">Se loven her</a> </p>
+		  		  <p>&nbsp;</p>
+		<!-- InstanceEndEditable --></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_19.gif" width="72" height="499" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="14">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_20.gif" width="841" height="33" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="153" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="102" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="69" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="54" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="109" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="74" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="22" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="3" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="62" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="41" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="26" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="54" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="2" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="70" height="1" alt=""></td>
+	</tr>
+</table>
+<!-- End ImageReady Slices -->
+<map name="map1"><area shape="rect" coords="5,25,288,59" href="/index-da.php">
+</map>
+</body>
+<!-- InstanceEnd --></html>
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/nyheder/index-da.php
+WARC-Date: 2010-09-09T16:34:31Z
+WARC-Concurrent-To: <urn:uuid:f9c36df9-5f27-4cc8-83fa-b753de11cb95>
+WARC-Record-ID: <urn:uuid:4918b3dd-b509-427c-ac13-a4ea3582f5c0>
+Content-Type: application/http; msgtype=request
+Content-Length: 212
+
+GET /nyheder/index-da.php HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/nyheder/index-da.php
+WARC-Date: 2010-09-09T16:34:31Z
+WARC-Concurrent-To: <urn:uuid:f9c36df9-5f27-4cc8-83fa-b753de11cb95>
+WARC-Record-ID: <urn:uuid:ba1ebaf1-81c4-43ca-b89e-cf581c276688>
+Content-Type: application/warc-fields
+Content-Length: 5900
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: L
+fetchTimeMs: 45
+outlink: http://netarkivet.dk/netarkivet.css E link/@href
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_01.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_02.gif E img/@src
+outlink: http://netarkivet.dk/organisation/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_03.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif X =JS_MISC
+outlink: http://netarkivet.dk/nyheder/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_04.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif X =JS_MISC
+outlink: http://netarkivet.dk/links/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_05.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif X =JS_MISC
+outlink: http://netarkivet.dk/publikationer/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_06.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif X =JS_MISC
+outlink: http://netarkivet.dk/kildetekster/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_07.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif X =JS_MISC
+outlink: http://netarkivet.dk/presse/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_08.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif X =JS_MISC
+outlink: http://netarkivet.dk/faq/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_09.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_10.gif E img/@src
+outlink: http://netarkivet.dk/index-en.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_11.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_12.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_13.gif E img/@src
+outlink: http://netarkivet.dk/nyheder/index-da.php E img/@usemap
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_14.gif E img/@src
+outlink: http://www.internetaviser.dk/default.aspx L a/@href
+outlink: http://netarchive.dk/suite L a/@href
+outlink: http://netarkivet.dk/nyheder/netarchivesuite.gif E img/@src
+outlink: http://netarchive.dk/suite E img/@longdesc
+outlink: http://ej.lib.cbs.dk/index.php/dfrevy/article/view/2291/2276 L a/@href
+outlink: http://netarkivet.dk/nyheder/Newsletter_Netarchive_dk_march2007.pdf L a/@href
+outlink: http://netarkivet.dk/nyheder/Newsletter_Netarchive_dk_august2008.pdf L a/@href
+outlink: http://netarchive.dk/suite L a/@href
+outlink: http://netarkivet.dk/nyheder/Newsletter_Netarchive_dk_march2007.pdf L a/@href
+outlink: http://netarkivet.dk/nyheder/Newsletter_Netarchive_dk_august2006.pdf L a/@href
+outlink: http://netarkivet.dk/publikationer/index-da.php?highlight=20060519 L a/@href
+outlink: http://netarkivet.dk/publikationer/index-da.php L a/@href
+outlink: http://pligtaflevering.dk/loven/index.htm L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_19.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/index-da.php L area/@href
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: dns:netarchive.dk
+WARC-Date: 2010-09-09T16:34:31Z
+WARC-IP-Address: 10.6.0.10
+WARC-Record-ID: <urn:uuid:d1e8e640-2522-43d2-a3d2-21f03d51b447>
+Content-Type: text/dns
+Content-Length: 56
+
+20100909163431
+netarchive.dk.		7099	IN	A	130.225.27.144
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/nyheder/netarchivesuite.gif
+WARC-Date: 2010-09-09T16:34:33Z
+WARC-Payload-Digest: sha1:V2KUUX4STTMCW55A7LYI6Z2MZ4LNFFWD
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:3ada68af-c8c6-461b-b64b-0042349cdb3c>
+Content-Type: application/http; msgtype=response
+Content-Length: 1375
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:33 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 09 Jun 2008 12:50:13 GMT
+ETag: "14051-464-40a40b40"
+Accept-Ranges: bytes
+Content-Length: 1124
+Connection: close
+Content-Type: image/gif
+
+GIF89a< < Æi ÿ' ÿ*ÿ.ÿ4ÿ8ÿ;ÿ>ÿB ôJ!ÿE$ñM"ôN%ôQ)øR,ÿP0øU0ôX1øX4ô[5ÿV8ø\8ô^9ÿZ<ø_<ôb=øb@ôeAøfDøiHôlIølLôoMøpPÿnSøsTÿqXøwXÿt[ôzYÿt\üw\øz\ÿx_ø~`ÿ{cü~dødÿhø„hü‚hü…løˆlüˆpø‹pÿ‰tøtüŒtÿŒwüxø’xÿ{ø˜€ü–€ÿ–ƒü™„øœ„ÿš‡øŸˆÿ‹ø¢Œü Œü£ø¦ÿ¤“ü¦”üª˜ÿª›ü­œÿ®Ÿÿ±£ÿ´§ÿµ§ü·¨ÿ¸«ÿ»¯ÿ¿³üÂ´ÿÂ·ÿÅ»ÿÆ»ÿÉ¿ÿÌÃÿĞÇÿÓËÿÖÏÿÚÓÿİ×ÿàÛÿäßÿçãÿëçÿòïÿõóÿø÷ÿüûÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ!şCreated with The GIMP !ù
+  ,    < <  ş€
+‚ƒ„…†‡ˆ‰Š‹ŒˆDN9†;H)†NN+†AC†œ
+biZ…ei°Z„°H…:h°iJ…5° ¨ª¬ƒdiP/`iK´¶„ih?9fiƒ¿iÁÃ„"iY  hcÎi·ƒFi<ã%iO„ÚÜŞƒ+iNãffèê-Isbœ…4Uæ¶Š4gB$`’æ
+@B0Ò„™à€K
+·1$6È®4f4\$„åä—YÙBÚ"&Š¡U´4©P¨1=éÈ¢ÌA.~BÅ´©Ó§P£JŠ
+	l…"p@ Éjª‹`9)¤¡¬22
+ÕJS¬"±ş„¨sE	tmİ"‚‹4\  *âÕ»W¡"ilŒ# q0aC|¥HÓe €i¦8~L(² /(ÇH[*hm^Îƒ<+€0EjaFÍˆíÛ¸sëŞÍ»·ïn@;z&œñâoÓ!«|y¢ãÎ!7nÈª	êØ³kßVRŒJ5‚D“‡ÜªÆBa–”B d£7<‚µ'<á Ÿí|õ‚Ü¥±òá–!A¤‘Ã8¤ñ‚ş)HŸ ¤A†L‘FÎ†Ú‚„Hq„˜MD‚Ã_4‘"!üäw8æ¸[Hˆ¨ +Ô°AWH\W0Ìª0#!XÅS71),Vp5ÈZ	ÒÂ° „/2Ùå ªd!„hG¬$h áD\Â“HP’¤€“@ç\	;?ŒÃÂ…
+Ğ3!.8N eœ¡¦0Î‚ÍY#÷òğÃ˜
+`IÈixq Y|Ò¥d*È'™ñ•ŸÓ	²ÅI`Øfé¡…ĞĞ…TÌJk–
+, a4˜têè¬"  ;
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/nyheder/netarchivesuite.gif
+WARC-Date: 2010-09-09T16:34:33Z
+WARC-Concurrent-To: <urn:uuid:3ada68af-c8c6-461b-b64b-0042349cdb3c>
+WARC-Record-ID: <urn:uuid:3ececaf8-cc2d-4c43-b9de-628b9e086604>
+Content-Type: application/http; msgtype=request
+Content-Length: 227
+
+GET /nyheder/netarchivesuite.gif HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/nyheder/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/nyheder/netarchivesuite.gif
+WARC-Date: 2010-09-09T16:34:33Z
+WARC-Concurrent-To: <urn:uuid:3ada68af-c8c6-461b-b64b-0042349cdb3c>
+WARC-Record-ID: <urn:uuid:e9ede2c9-eb17-4d76-848a-1fbcb927aaca>
+Content-Type: application/warc-fields
+Content-Length: 85
+
+via: http://netarkivet.dk/nyheder/index-da.php
+hopsFromSeed: LE
+fetchTimeMs: 24
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarchive.dk/robots.txt
+WARC-Date: 2010-09-09T16:34:33Z
+WARC-Payload-Digest: sha1:X6CST3JOSH3IHWHJYAY43MK72GVCTFX3
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:f30a420b-23d6-49de-8d19-03e5b5f91e0a>
+Content-Type: application/http; msgtype=response
+Content-Length: 276
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:33 GMT
+Server: Apache/2.0.46 (Red Hat)
+Last-Modified: Mon, 11 Jan 2010 12:37:30 GMT
+ETag: "eb946-d-ccf67680"
+Accept-Ranges: bytes
+Content-Length: 13
+Connection: close
+Content-Type: text/plain; charset=UTF-8
+
+#robots.txt
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarchive.dk/robots.txt
+WARC-Date: 2010-09-09T16:34:33Z
+WARC-Concurrent-To: <urn:uuid:f30a420b-23d6-49de-8d19-03e5b5f91e0a>
+WARC-Record-ID: <urn:uuid:30ec3eac-d11e-418d-90bc-1aebf6688be6>
+Content-Type: application/http; msgtype=request
+Content-Length: 158
+
+GET /robots.txt HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Host: netarchive.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarchive.dk/robots.txt
+WARC-Date: 2010-09-09T16:34:33Z
+WARC-Concurrent-To: <urn:uuid:f30a420b-23d6-49de-8d19-03e5b5f91e0a>
+WARC-Record-ID: <urn:uuid:f419c49d-b624-4b89-8380-b470bdbcd15f>
+Content-Type: application/warc-fields
+Content-Length: 71
+
+via: http://netarchive.dk/suite
+hopsFromSeed: LEP
+fetchTimeMs: 25
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarchive.dk/suite
+WARC-Date: 2010-09-09T16:34:35Z
+WARC-Payload-Digest: sha1:W5ODDRLUUKVQMZVCTYCE7VTKSF7MSSKA
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:67031be1-6594-44d0-a193-e57195ed792d>
+Content-Type: application/http; msgtype=response
+Content-Length: 509
+
+HTTP/1.1 302 Found
+Date: Thu, 09 Sep 2010 16:34:35 GMT
+Server: Apache/2.0.46 (Red Hat)
+Location: http://netarchive.dk/suite/
+Content-Length: 293
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>302 Found</title>
+</head><body>
+<h1>Found</h1>
+<p>The document has moved <a href="http://netarchive.dk/suite/">here</a>.</p>
+<hr />
+<address>Apache/2.0.46 (Red Hat) Server at netarchive.dk Port 80</address>
+</body></html>
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarchive.dk/suite
+WARC-Date: 2010-09-09T16:34:35Z
+WARC-Concurrent-To: <urn:uuid:67031be1-6594-44d0-a193-e57195ed792d>
+WARC-Record-ID: <urn:uuid:61fa396b-5483-478f-a998-70bc119e28f0>
+Content-Type: application/http; msgtype=request
+Content-Length: 205
+
+GET /suite HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/nyheder/index-da.php
+Host: netarchive.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarchive.dk/suite
+WARC-Date: 2010-09-09T16:34:35Z
+WARC-Concurrent-To: <urn:uuid:67031be1-6594-44d0-a193-e57195ed792d>
+WARC-Record-ID: <urn:uuid:2db0c8c1-14bd-40ca-8247-d9f8028b33c6>
+Content-Type: application/warc-fields
+Content-Length: 183
+
+via: http://netarkivet.dk/nyheder/index-da.php
+hopsFromSeed: LE
+fetchTimeMs: 31
+outlink: http://netarchive.dk/suite/ R Location:
+outlink: http://netarchive.dk/suite/ L a/@href
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/links/index-da.php
+WARC-Date: 2010-09-09T16:34:35Z
+WARC-Payload-Digest: sha1:MP7CCE7SP5HNNVUAJBMUIUAVG2PWJNDL
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:2121ccda-9012-465c-8e36-9ff544f2566e>
+Content-Type: application/http; msgtype=response
+Content-Length: 10545
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:35 GMT
+Server: Apache/2.0.46 (Red Hat)
+Accept-Ranges: bytes
+X-Powered-By: PHP/4.3.2
+Connection: close
+Content-Type: text/html; charset=UTF-8
+
+<html><!-- InstanceBegin template="/Templates/netarkivet_underside.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>netarkivet.dk</title>
+<!-- InstanceEndEditable -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script type="text/JavaScript">
+<!--
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+
+function email(a,b,c){
+url = 'mailto:' + a + '@' + c + '.' + b;
+location.href=url;
+}
+function emailprint(a,b,c){
+  url = a + '@' + c + '.' + b;
+  document.write(url);
+}
+//-->
+</script>
+<link href="../netarkivet.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+
+
+-->
+</style>
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="MM_preloadImages('../netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif')">
+<!-- ImageReady Slices (netarkivet_guidelines.psd) -->
+<table id="Ta01" width="841" height="677" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td rowspan="6" valign="top"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_01.gif" width="153" height="643" alt=""></td>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_02.gif" width="688" height="35" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<a href="../organisation/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_03.gif" alt="" width="102" height="13" border="0" id="Image1" onMouseOver="MM_swapImage('Image1','','../netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../nyheder/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_04.gif" alt="" name="Image2" width="69" height="13" border="0" id="Image2" onMouseOver="MM_swapImage('Image2','','../netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_05.gif" alt="" width="54" height="13" border="0" id="Image3" onMouseOver="MM_swapImage('Image3','','../netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../publikationer/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_06.gif" alt="" width="109" height="13" border="0" id="Image4" onMouseOver="MM_swapImage('Image4','','../netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td colspan="3">
+			<a href="../kildetekster/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_07.gif" alt="" width="99" height="13" border="0" id="Image5" onMouseOver="MM_swapImage('Image5','','../netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../presse/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_08.gif" alt="" width="62" height="13" border="0" id="Image6" onMouseOver="MM_swapImage('Image6','','../netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../faq/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_09.gif" alt="" width="41" height="13" border="0" id="Image7" onMouseOver="MM_swapImage('Image7','','../netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_10.gif" width="26" height="13" alt=""></td>
+		<td colspan="2">
+			<a href="../index-en.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_11.gif" alt="" name="Image8" width="56" height="13" border="0" id="Image8" onMouseOver="MM_swapImage('Image8','','../netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_12.gif" width="70" height="13" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_13.gif" alt="" width="688" height="69" border="0" usemap="#map1"></td>
+	</tr>
+	<tr>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_14.gif" width="688" height="26" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="11" rowspan="2" valign="top"><!-- InstanceBeginEditable name="tekst" -->
+		  <h3>links</h3>
+		  <h2><a href="http://www.nla.gov.au/padi/">PADI</a></h2>
+		  <p><strong>Preserving Access to Digital Information</strong>. Australsk site om digital bevaring - herunder alts&aring; ogs&aring; webarkivering. Her findes en omfattende linksamling til projekter og litteratur<br>
+		    <a href="http://www.nla.gov.au/padi/">http://www.nla.gov.au/padi/</a></p>
+		  <h2><a href="http://www.netpreserve.org/about/index.php">IIPC</a></h2>
+		  <p><strong>International Internet Preservation Consortium</strong>. Internationalt netv&aelig;rk for institutioner med interesse i arkivering af internettet. Danmark spiller en aktiv rolle i dette forum.<br>
+		    <a href="http://www.netpreserve.org/about/index.php">http://www.netpreserve.org/about/index.php</a></p>
+		  <h2><a href="http://www.pligtaflevering.dk">Pligtaflevering.dk</a></h2>
+		  <p>F&aelig;lles netsted for informationer om pligtaflevering i Danmark generelt. Herunder ogs&aring; informationer om pligtaflevering af materiale distribueret via elektroniske kommunikationsnetv&aelig;rk som netarkivets virke falder ind under. Her findes links til lovmaterialet mm.<br>
+	    <a href="http://www.pligtaflevering.dk">http://www.pligtaflevering.dk        </a></p>
+		  <h2><a href="http://www.planets-project.eu">PLANETS</a></h2>
+		  <p>EU-projekt om digital bevaring som Danmark repr&aelig;senteret ved Det Kongelige Bibliotek og Statsbiblioteket deltager i. Projektet startede i juni 2006 og netarkivet f&oslash;lger n&oslash;je dets resultater.<br>
+	        <a href="http://www.planets-project.eu">http://www.planets-project.eu</a> </p>
+		  <h2><a href="http://www.digitalpreservationeurope.eu">DPE</a></h2>
+		  <p>EU-projekt om koordinering af udbredelse af det vigtige budskab om digital bevaring. Danmark deltager i dette projekt som forventes at starte i f&oslash;rste halv&aring;r af 2006<br>
+		  <a href="http://www.digitalpreservationeurope.eu">http://www.digitalpreservationeurope.eu</a></p>
+		  <h2><a href="http://cfi.imv.au.dk/">CFI</a></h2>
+		  <p><strong>Center for Internetforskning</strong> ved &Aring;rhus Universitet. Har v&aelig;ret en vigtig medspiller i de 2 pilotprojekter netarkivet har gennemf&oslash;rt fra 2001-2004. Har udgivet en r&aelig;kke tekster der omhandler webarkiveringen som diciplin. <br>
+		    <a href="http://cfi.imv.au.dk/">http://cfi.imv.au.dk/</a></p>
+		  <p>&nbsp;</p>
+		  <p>&nbsp;</p>
+		<!-- InstanceEndEditable --></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_19.gif" width="72" height="499" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="14">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_20.gif" width="841" height="33" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="153" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="102" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="69" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="54" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="109" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="74" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="22" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="3" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="62" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="41" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="26" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="54" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="2" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="70" height="1" alt=""></td>
+	</tr>
+</table>
+<!-- End ImageReady Slices -->
+<map name="map1"><area shape="rect" coords="5,25,288,59" href="/index-da.php">
+</map>
+</body>
+<!-- InstanceEnd --></html>
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/links/index-da.php
+WARC-Date: 2010-09-09T16:34:35Z
+WARC-Concurrent-To: <urn:uuid:2121ccda-9012-465c-8e36-9ff544f2566e>
+WARC-Record-ID: <urn:uuid:a34d3be8-6870-4444-9bb0-854df1da10c0>
+Content-Type: application/http; msgtype=request
+Content-Length: 210
+
+GET /links/index-da.php HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/links/index-da.php
+WARC-Date: 2010-09-09T16:34:35Z
+WARC-Concurrent-To: <urn:uuid:2121ccda-9012-465c-8e36-9ff544f2566e>
+WARC-Record-ID: <urn:uuid:a6779ae9-73a6-471c-8590-b79228e181c5>
+Content-Type: application/warc-fields
+Content-Length: 5599
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: L
+fetchTimeMs: 35
+outlink: http://netarkivet.dk/netarkivet.css E link/@href
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_01.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_02.gif E img/@src
+outlink: http://netarkivet.dk/organisation/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_03.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif X =JS_MISC
+outlink: http://netarkivet.dk/nyheder/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_04.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif X =JS_MISC
+outlink: http://netarkivet.dk/links/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_05.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif X =JS_MISC
+outlink: http://netarkivet.dk/publikationer/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_06.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif X =JS_MISC
+outlink: http://netarkivet.dk/kildetekster/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_07.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif X =JS_MISC
+outlink: http://netarkivet.dk/presse/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_08.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif X =JS_MISC
+outlink: http://netarkivet.dk/faq/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_09.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_10.gif E img/@src
+outlink: http://netarkivet.dk/index-en.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_11.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_12.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_13.gif E img/@src
+outlink: http://netarkivet.dk/links/index-da.php E img/@usemap
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_14.gif E img/@src
+outlink: http://www.nla.gov.au/padi/ L a/@href
+outlink: http://www.nla.gov.au/padi/ L a/@href
+outlink: http://www.netpreserve.org/about/index.php L a/@href
+outlink: http://www.netpreserve.org/about/index.php L a/@href
+outlink: http://www.pligtaflevering.dk/ L a/@href
+outlink: http://www.pligtaflevering.dk/ L a/@href
+outlink: http://www.planets-project.eu/ L a/@href
+outlink: http://www.planets-project.eu/ L a/@href
+outlink: http://www.digitalpreservationeurope.eu/ L a/@href
+outlink: http://www.digitalpreservationeurope.eu/ L a/@href
+outlink: http://cfi.imv.au.dk/ L a/@href
+outlink: http://cfi.imv.au.dk/ L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_19.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/index-da.php L area/@href
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarkivet.dk/publikationer/index-da.php
+WARC-Date: 2010-09-09T16:34:37Z
+WARC-Payload-Digest: sha1:UZQY6MNM7XVPLKA7OMLR5ZY3ORRC7GTK
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:13c5e317-d220-4444-820f-1a3648799043>
+Content-Type: application/http; msgtype=response
+Content-Length: 17968
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:37 GMT
+Server: Apache/2.0.46 (Red Hat)
+Accept-Ranges: bytes
+X-Powered-By: PHP/4.3.2
+Connection: close
+Content-Type: text/html; charset=UTF-8
+
+<html><!-- InstanceBegin template="/Templates/netarkivet_underside.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>netarkivet.dk</title>
+<!-- InstanceEndEditable -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script type="text/JavaScript">
+<!--
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+
+function email(a,b,c){
+url = 'mailto:' + a + '@' + c + '.' + b;
+location.href=url;
+}
+function emailprint(a,b,c){
+  url = a + '@' + c + '.' + b;
+  document.write(url);
+}
+//-->
+</script>
+<link href="../netarkivet.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+
+
+-->
+</style>
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="MM_preloadImages('../netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif','../netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif')">
+<!-- ImageReady Slices (netarkivet_guidelines.psd) -->
+<table id="Ta01" width="841" height="677" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td rowspan="6" valign="top"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_01.gif" width="153" height="643" alt=""></td>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_02.gif" width="688" height="35" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<a href="../organisation/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_03.gif" alt="" width="102" height="13" border="0" id="Image1" onMouseOver="MM_swapImage('Image1','','../netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../nyheder/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_04.gif" alt="" name="Image2" width="69" height="13" border="0" id="Image2" onMouseOver="MM_swapImage('Image2','','../netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../links/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_05.gif" alt="" width="54" height="13" border="0" id="Image3" onMouseOver="MM_swapImage('Image3','','../netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_06.gif" alt="" width="109" height="13" border="0" id="Image4" onMouseOver="MM_swapImage('Image4','','../netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td colspan="3">
+			<a href="../kildetekster/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_07.gif" alt="" width="99" height="13" border="0" id="Image5" onMouseOver="MM_swapImage('Image5','','../netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../presse/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_08.gif" alt="" width="62" height="13" border="0" id="Image6" onMouseOver="MM_swapImage('Image6','','../netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<a href="../faq/index-da.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_09.gif" alt="" width="41" height="13" border="0" id="Image7" onMouseOver="MM_swapImage('Image7','','../netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_10.gif" width="26" height="13" alt=""></td>
+		<td colspan="2">
+			<a href="../index-en.php"><img src="../netarkivet_alm/billeder/netarkivet_guidelines_11.gif" alt="" name="Image8" width="56" height="13" border="0" id="Image8" onMouseOver="MM_swapImage('Image8','','../netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif',1)" onMouseOut="MM_swapImgRestore()"></a></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_12.gif" width="70" height="13" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_13.gif" alt="" width="688" height="69" border="0" usemap="#map1"></td>
+	</tr>
+	<tr>
+		<td colspan="13">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_14.gif" width="688" height="26" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="11" rowspan="2" valign="top"><!-- InstanceBeginEditable name="tekst" -->
+		  <h3>publikationer</h3>
+		  <p><strong> De f&oslash;lgende udgivelser er tilg&aelig;ngelige fra netarkivet.dk: </strong></p>
+		  	      <p><a href="iwaw06-clausen.pdf">"<strong>Overview of the Netarkivet web archiving system</strong>"</a>, oktober 2006. Forfatter: Lars Clausen 
+            (<a href="javascript:email('netarkivet-svar','dk','netarkivet')">
+              <script>emailprint('netarkivet-svar','dk','netarkivet')</script>
+              </a>).
+            P&aring; engelsk. <br>
+            <br>
+        Artiklen pr&aelig;senterer netarkivets system til arkivering og bevaring af internetmateriale. D&aelig;kker processen fra definering af indsamlinger (h&oslash;stninger) til bevaring af de indsamlede bits</p>
+          <p>            Denne artikel er fremlagt ved <a href="http://www.iwaw.net/06/">6th International Web Archiving Workshop (IWAW'06)</a>.</p>
+		            <hr>
+		  	      <p><a href="nhc-kb-dk-msst2006.pdf">"<strong>A formal analysis of recovery in a preservational data grid</strong>"</a>, maj 2006. Forfatter: Niels H. Christensen 
+            (<a href="javascript:email('netarkivet-svar','dk','netarkivet')">
+              <script>emailprint('netarkivet-svar','dk','netarkivet')</script>
+              </a>).
+            P&aring; engelsk. <br>
+            <br>
+            Artiklen pr&aelig;sentere et data-grid implementeret til langtidsopbevaring af digitalt materiale. Grid'ets evne til at genskabe sig selv efter datatab analyseres gennen en formal matematisk model for de relevante implementerede software operationer.          </p>
+          <p>            Denne artikel er fremlagt ved <a href="http://storageconference.org/2006/">Conference on Mass Storage Systems and Technologies (MSST06)</a>.</p>
+		            <hr>
+          <p><a href="DFrevy.pdf">"<strong>DK-dom&aelig;net i ord og tal</strong>"</a>, februar 2006. Forfatter: Bjarne Andersen 
+		  (<a href="javascript:email('bja','dk','netarkivet')">
+		  <script>emailprint('bja','dk','netarkivet')</script>
+		  </a>).
+		  P&aring; dansk. <br>
+              <br>
+        Denne artikel sammenfatter netarkivets erfaringer og statistikker fra den f&oslash;rste tv&aelig;rsnitsh&oslash;stning af hele .dk-dom&aelig;net der fandt sted fra juli til september 2005. </p>
+        <hr>
+          <p><a href="iwaw05-christensen.pdf">"<strong>Preserving the bits of the Danish internet</strong>"</a>, august 2005. Forfatter: Niels H. Christensen 
+		  (<a href="javascript:email('netarkivet-svar','dk','netarkivet')"><script>emailprint('netarkivet-svar','dk','netarkivet')</script></a>).
+		  P&aring; engelsk. <br>
+              <br> 
+              Denne artikel beskriver simuleringer af det bitbevarings setup netarkivet benytter.
+            <br>
+            <br>
+Denne artikel er fremlagt ved <a href="http://www.iwaw.net/05/">5th Internation Web Archiving Workshop (IWAW05)</a>.</p>
+          <hr>
+		  <p><a href="Kanon-Juli05.pdf">"<strong>Kanonf&oslash;de - I anledningen af en ny kulturbevaringslov</strong>"</a>, juli 2005. Forfattere: Svend Larsen, Direkt&oslash;r, Statsbiblioteket og Erland Kolding Nielsen, direkt&oslash;r, Det Kongelige Bibliotek. P&aring; dansk. <br>
+              <br>
+		    Artikel skrevet til Jyllandsposten juli 2005 i anledningen af den nye pligtafleveringslovs ikr&aelig;fttr&aelig;den. </p>
+		  <hr>
+		  <p><a href="vejledning.pdf">"<strong>Vejledning til den nye pligtafleveringslov</strong>"</a>, juni 2005. P&aring; dansk. <br>
+		    <br>
+  Den nye pligtafleveringslov tr&aring;dte i kraft den 1. juli 2005. Dette dokument beskriver i korte tr&aelig;k hvad loven indeb&aelig;rer for b&aring;de de to nationalbiblioteker og netsteder / producenter. </p>
+		  <hr>
+	    <p>		    <a href="webarkivering-webarchiving.pdf">"<strong>Webarkivering</strong>"</a>, april 2005. Forfatter: Birgit  N. Henriksen (<a href="javascript:email('bnh','dk','kb')"><script>emailprint('bnh','dk','kb')</script></a>).  P&aring; dansk. <br>
+	      <br>
+        Denne artikel beskriver webarkivering som disciplin og Netarkivet som projekt.      </p>
+		  <hr>
+		  <p><a href="FormatRepositories-2004.pdf">"<strong>Towards format repositories for web archives</strong>"</a>, august 2004. Hovedforfatter: Niels H. Christensen (<a href="javascript:email('netarkivet-svar','dk','netarkivet')"><script>emailprint('netarkivet-svar','dk','netarkivet')</script></a>).  P&aring; engelsk. <br>
+		    <br>
+	    H&aring;ndteringen af filformater udg&oslash;r en stor udfordring for webarkiver.  Det er synspunktet i denne artikel, at denne udfordring b&oslash;r l&oslash;ses  gennem udvikling af passende format-arkiver. Webarkivernes  formatproblemer - og disse problemers relation til fremvisnings- og  konverterings-software - analyseres ved brug af metoder fra  programmeringssprog-udvikling. Som resultat af analysen opstilles et  antal konkrete krav til et format-arkiv. Et format-arkiv som opfylder  disse krav kan integreres med et webarkivs software og derigennem  tilbyde det automatisk underst&oslash;ttelse af formath&aring;ndtering. </p>
+		  <p> Denne artikel er fremlagt ved <a href="http://www.iwaw.net/04/">4th Internation Web Archiving Workshop (IWAW04)</a>.</p>
+		  <hr>
+		  <p><a href="Etags-2004.pdf">"<strong>Concerning Etags and Datestamps</strong>"</a>, august 2004. Hovedforfatter: Lars Clausen (<a href="javascript:email('netarkivet-svar','dk','netarkivet')">		  </a><a href="javascript:email('netarkivet-svar','dk','netarkivet')"><script>emailprint('netarkivet-svar','dk','netarkivet')</script></a>). P&aring; engelsk. <br>
+		  <br>
+	    Indenfor web arkivering kan man neds&aelig;tte belasteningen af b&aring;de  arkivsystemet og de arkiverede servere betragteligt hvis man kan undg&aring;  at hente u&aelig;ndrede sider. Desv&aelig;rre er de indikatorer, der kan vise  hvorvidt en side er &aelig;ndret, ofte forkerte eller manglende, hvilket kan  for&aring;rsage at man ikke henter &aelig;ndrede sider. I denne artikel unders&oslash;ger  vi kvaliteten af de to &aelig;ndringsindikatorer der defineres i HTTP  protokollen, Last-Modified og Etag. Baseret p&aring; downloads af forsiderne  af danske websteder sammenligner vi p&aring;lideligheden og brugbarheden af  de to indikatorer og overvejer hvorvidt man kan bruge en kombination af  de to til bedre at forudsige side&aelig;ndringer. Sluttelig pr&aelig;senterer vi  ogs&aring; en systematisk m&aring;de at finde den bedste forudsigelsesmetode, og  viser hvordan den finder en uforudset men bedre metode end de oplagte. </p>
+		  <p> Denne artikel er fremlagt ved <a href="http://www.iwaw.net/04/">4th Internation Web Archiving Workshop (IWAW04)</a>.</p>
+	        <hr>
+	        <p><a href="Archival_format_requirements-2004.pdf">"<strong>Archive Format and metadata requirements</strong>"</a>, juli 2004. Hovedforfatter: Steen Sloth Christensen. P&aring; engelsk. <br>
+                <br>
+        Gennemg&aring;r projektets diskussioner omkring arkivformater og metadatakrav i forhold til webarkivering. </p>
+	        <hr>
+        <p><a href="FileFormats-2004.pdf">"<strong>Handling File Formats</strong>"</a>,                     maj 2004. Hovedforfatter: Lars Clausen (<a href="javascript:email('netarkivet-svar','dk','netarkivet')"><script>emailprint('netarkivet-svar','dk','netarkivet')</script>
+        </a>). P&aring; engelsk. </p>
+	        <p> Overvejelser og planer for h&aring;ndtering af problemet med udviklingen af filformater i forbindelse med langtidsarkivering af websider. F&oslash;lgende problemer diskuteres: Kategorisering af formater, bevaring af enkelte aspekter af filer, kriterier for bed&oslash;mmelse af langtidsbrugbarheden af formater, DRM, bevaringsstrategier, og bevaringsprocessen. </p>
+	        <hr>
+	        <p><a href="http://www.rlg.org/en/page.php?Page_ID=17661#article0"><strong>"Web Archive Activities in Denmark"</strong></a>, juni 2004. 
+            Birte Christensen-Dalsgaard (<a href="javascript:email('bcd','dk','statsbiblioteket')"><script>emailprint('bcd','dk','statsbiblioteket')</script></a>). Artikkel i RLG DigiNews. P&aring; engelsk</p>
+	        <hr>
+	        <p><a href="webark-final-rapport-2003.pdf"><strong>&quot;Final Report for The Pilot Project netarkivet.dk&quot;</strong></a>, Februar 2003. P&aring; engelsk</p>
+	        <p>Denne rapport beskriver de erfaringer der blev hentet under pilot-projektet i 2001-2003. Forskellge eksisterende webcrawler blev testet i forbindelse med indsamling af materiale omkring folketings- og kummunal-valget i november 2001. Resultaterne viser, at meget kan indsamles ad automatisk vej, men ogs&aring; at meget af internettets interaktivitet ikke kan indsamles med webcrawler-teknologier.</p>
+	        <p>Pilotprojektet indikerer de &oslash;konomiske behov der stilles, hvis Danmark skal sikre internettet som en vigtig del af den danske kulturarv ligesom rapporten poienterer de lov&aelig;ndringer der er n&oslash;dvendige, hvis pligtafleveringsinstitutionerne skal have mulighed for at indsamle online materiale.            </p>
+	        <hr>
+	        <p><a href="ECDL2001-bnh-08092001.ppt"><strong>"Danish Legal Deposit on the Internet: Current Solutions   and Approaches for the Future"</strong></a>, 5th European Conference, ECDL 2001, Darmstadt,   Germany, September 4-9, 2001. Forfatter: Birgit Henriksen (<a href="javascript:email('bnh','dk','kb')"><script>emailprint('bnh','dk','kb')</script></a>). P&aring; engelsk.</p>
+	        <hr>
+        <p><strong><a href="http://www.deflink.dk/arkiv/dokumenter2.asp?id=695">Proceedings fra konferencen 'Preserving the present for the   future'</a></strong>. 2001 <BR>
+          Flere af indl&aelig;gene p&aring; konferencen om arkivering af internettet er   til&aelig;ngelige p&aring; Danmarks Elektroniske Forskningsbiblioteks website.<br>
+        </p>
+		<!-- InstanceEndEditable --></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_19.gif" width="72" height="499" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="14">
+			<img src="../netarkivet_alm/billeder/netarkivet_guidelines_20.gif" width="841" height="33" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="153" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="102" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="69" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="54" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="109" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="74" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="22" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="3" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="62" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="41" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="26" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="54" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="2" height="1" alt=""></td>
+		<td>
+			<img src="../netarkivet_alm/billeder/spacer.gif" width="70" height="1" alt=""></td>
+	</tr>
+</table>
+<!-- End ImageReady Slices -->
+<map name="map1"><area shape="rect" coords="5,25,288,59" href="/index-da.php">
+</map>
+</body>
+<!-- InstanceEnd --></html>
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarkivet.dk/publikationer/index-da.php
+WARC-Date: 2010-09-09T16:34:37Z
+WARC-Concurrent-To: <urn:uuid:13c5e317-d220-4444-820f-1a3648799043>
+WARC-Record-ID: <urn:uuid:befc6f55-4896-4d66-a347-68206e2f4330>
+Content-Type: application/http; msgtype=request
+Content-Length: 218
+
+GET /publikationer/index-da.php HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarkivet.dk/index-da.php
+Host: netarkivet.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarkivet.dk/publikationer/index-da.php
+WARC-Date: 2010-09-09T16:34:37Z
+WARC-Concurrent-To: <urn:uuid:13c5e317-d220-4444-820f-1a3648799043>
+WARC-Record-ID: <urn:uuid:7aa5aa05-6562-475a-b537-cd76be5b1d06>
+Content-Type: application/warc-fields
+Content-Length: 6354
+
+via: http://netarkivet.dk/index-da.php
+hopsFromSeed: L
+fetchTimeMs: 45
+outlink: http://netarkivet.dk/netarkivet.css E link/@href
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_01.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_02.gif E img/@src
+outlink: http://netarkivet.dk/organisation/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_03.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_03.gif X =JS_MISC
+outlink: http://netarkivet.dk/nyheder/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_04.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_04.gif X =JS_MISC
+outlink: http://netarkivet.dk/links/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_05.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_05.gif X =JS_MISC
+outlink: http://netarkivet.dk/publikationer/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_06.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_06.gif X =JS_MISC
+outlink: http://netarkivet.dk/kildetekster/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_07.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_07.gif X =JS_MISC
+outlink: http://netarkivet.dk/presse/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_08.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_08.gif X =JS_MISC
+outlink: http://netarkivet.dk/faq/index-da.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_09.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_09.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_10.gif E img/@src
+outlink: http://netarkivet.dk/index-en.php L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_11.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_mouseover/billeder/netarkivet_guidelines_11.gif X =JS_MISC
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_12.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_13.gif E img/@src
+outlink: http://netarkivet.dk/publikationer/index-da.php E img/@usemap
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_14.gif E img/@src
+outlink: http://netarkivet.dk/publikationer/iwaw06-clausen.pdf L a/@href
+outlink: http://www.iwaw.net/06/ L a/@href
+outlink: http://netarkivet.dk/publikationer/nhc-kb-dk-msst2006.pdf L a/@href
+outlink: http://storageconference.org/2006/ L a/@href
+outlink: http://netarkivet.dk/publikationer/DFrevy.pdf L a/@href
+outlink: http://netarkivet.dk/publikationer/iwaw05-christensen.pdf L a/@href
+outlink: http://www.iwaw.net/05/ L a/@href
+outlink: http://netarkivet.dk/publikationer/Kanon-Juli05.pdf L a/@href
+outlink: http://netarkivet.dk/publikationer/vejledning.pdf L a/@href
+outlink: http://netarkivet.dk/publikationer/webarkivering-webarchiving.pdf L a/@href
+outlink: http://netarkivet.dk/publikationer/FormatRepositories-2004.pdf L a/@href
+outlink: http://www.iwaw.net/04/ L a/@href
+outlink: http://netarkivet.dk/publikationer/Etags-2004.pdf L a/@href
+outlink: http://www.iwaw.net/04/ L a/@href
+outlink: http://netarkivet.dk/publikationer/Archival_format_requirements-2004.pdf L a/@href
+outlink: http://netarkivet.dk/publikationer/FileFormats-2004.pdf L a/@href
+outlink: http://www.rlg.org/en/page.php?Page_ID=17661 L a/@href
+outlink: http://netarkivet.dk/publikationer/webark-final-rapport-2003.pdf L a/@href
+outlink: http://netarkivet.dk/publikationer/ECDL2001-bnh-08092001.ppt L a/@href
+outlink: http://www.deflink.dk/arkiv/dokumenter2.asp?id=695 L a/@href
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_19.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif E img/@src
+outlink: http://netarkivet.dk/index-da.php L area/@href
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://netarchive.dk/suite/
+WARC-Date: 2010-09-09T16:34:37Z
+WARC-Payload-Digest: sha1:FXNIQOONLPMZ3VNSHHW5Q5YFVYJVIHRH
+WARC-IP-Address: 130.225.27.144
+WARC-Record-ID: <urn:uuid:fbe0e043-f060-4406-98b8-eeda092f3971>
+Content-Type: application/http; msgtype=response
+Content-Length: 15310
+
+HTTP/1.1 200 OK
+Date: Thu, 09 Sep 2010 16:34:37 GMT
+Server: Apache/2.0.46 (Red Hat)
+Vary: Cookie,User-Agent,Accept-Language
+Connection: close
+Content-Type: text/html; charset=utf-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta name="robots" content="index,follow">
+
+<title>Welcome - NetarchiveSuite</title>
+<script type="text/javascript" src="/suite/moin_static193/common/js/common.js"></script>
+
+<script type="text/javascript">
+<!--
+var search_hint = "Search";
+//-->
+</script>
+
+
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="/suite/moin_static193/modern/css/common.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="/suite/moin_static193/modern/css/screen.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="print" href="/suite/moin_static193/modern/css/print.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="projection" href="/suite/moin_static193/modern/css/projection.css">
+
+<!-- css only for MS IE6/IE7 browsers -->
+<!--[if lt IE 8]>
+   <link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="/suite/moin_static193/modern/css/msie.css">
+<![endif]-->
+
+
+
+
+
+<link rel="Start" href="/suite/Welcome">
+<link rel="Alternate" title="Wiki Markup" href="/suite/Welcome?action=raw">
+<link rel="Alternate" media="print" title="Print View" href="/suite/Welcome?action=print">
+<link rel="Appendix" title="netarkivet.gif" href="/suite/Welcome?action=AttachFile&amp;do=view&amp;target=netarkivet.gif">
+<link rel="Appendix" title="package-3.12.zip" href="/suite/Welcome?action=AttachFile&amp;do=view&amp;target=package-3.12.zip">
+<link rel="Appendix" title="transparent_logo.png" href="/suite/Welcome?action=AttachFile&amp;do=view&amp;target=transparent_logo.png">
+<link rel="Appendix" title="wb.odg" href="/suite/Welcome?action=AttachFile&amp;do=view&amp;target=wb.odg">
+<link rel="Appendix" title="wb.png" href="/suite/Welcome?action=AttachFile&amp;do=view&amp;target=wb.png">
+<link rel="Search" href="/suite/FindPage">
+<link rel="Index" href="/suite/TitleIndex">
+<link rel="Glossary" href="/suite/WordIndex">
+<link rel="Help" href="/suite/HelpOnFormatting">
+</head>
+
+<body  lang="en" dir="ltr">
+
+<div id="header">
+<div id="logo"><a href="/suite/Welcome"><img src="/suite/Welcome?action=AttachFile&do=get&target=netarkivet.gif" alt="Logo"/> NetarchiveSuite</a></div>
+
+<form id="searchform" method="get" action="/suite/Welcome">
+<div>
+<input type="hidden" name="action" value="fullsearch">
+<input type="hidden" name="context" value="180">
+<label for="searchinput">Search:</label>
+<input id="searchinput" type="text" name="value" value="" size="20"
+    onfocus="searchFocus(this)" onblur="searchBlur(this)"
+    onkeyup="searchChange(this)" onchange="searchChange(this)" alt="Search">
+<input id="titlesearch" name="titlesearch" type="submit"
+    value="Titles" alt="Search Titles">
+<input id="fullsearch" name="fullsearch" type="submit"
+    value="Text" alt="Search Full Text">
+</div>
+</form>
+<script type="text/javascript">
+<!--// Initialize search form
+var f = document.getElementById('searchform');
+f.getElementsByTagName('label')[0].style.display = 'none';
+var e = document.getElementById('searchinput');
+searchChange(e);
+searchBlur(e);
+//-->
+</script>
+
+<ul id="username"><li><a href="/suite/Welcome?action=login" id="login" rel="nofollow">Login</a></li></ul>
+<div id="locationline">
+
+
+<ul id="pagelocation">
+<li><a class="backlink" href="/suite/Welcome?action=fullsearch&amp;context=180&amp;value=linkto%3A%22Welcome%22" rel="nofollow" title="Click to do a full-text search for this title">Welcome</a></li>
+</ul>
+
+</div>
+
+
+<ul id="navibar">
+<li class="wikilink"><a href="/suite/Get%20NetarchiveSuite">Get NetarchiveSuite</a></li><li class="wikilink"><a href="/suite/Documentation">Documentation</a></li><li class="wikilink"><a href="/suite/Development">Development</a></li><li class="wikilink"><a href="/suite/Communication">Communication</a></li><li class="wikilink"><a href="/suite/External%20Software">External Software</a></li><li class="wikilink"><a href="/suite/FindPage">FindPage</a></li><li class="current"><a href="/suite/Welcome">Welcome</a></li>
+</ul>
+
+<div id="pageline"><hr style="display:none;"></div>
+
+<ul class="editbar"><li><span class="disabled">Immutable Page</span></li><li class="toggleCommentsButton" style="display:none;"><a href="#" class="nbcomment" onClick="toggleComments();return false;">Comments</a></li><li><a class="nbinfo" href="/suite/Welcome?action=info" rel="nofollow">Info</a></li><li><a class="nbattachments" href="/suite/Welcome?action=AttachFile" rel="nofollow">Attachments</a></li><li>
+<form class="actionsmenu" method="GET" action="/suite/Welcome">
+<div>
+    <label>More Actions:</label>
+    <select name="action"
+        onchange="if ((this.selectedIndex != 0) &&
+                      (this.options[this.selectedIndex].disabled == false)) {
+                this.form.submit();
+            }
+            this.selectedIndex = 0;">
+        <option value="raw">Raw Text</option>
+<option value="print">Print View</option>
+<option value="refresh">Delete Cache</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="SpellCheck">Check Spelling</option>
+<option value="LikePages">Like Pages</option>
+<option value="LocalSiteMap">Local Site Map</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="RenamePage" disabled class="disabled">Rename Page</option>
+<option value="DeletePage" disabled class="disabled">Delete Page</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="show" disabled class="disabled">Subscribe User</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="show" disabled class="disabled">Remove Spam</option>
+<option value="show" disabled class="disabled">Revert to this revision</option>
+<option value="PackagePages">Package Pages</option>
+<option value="SyncPages">Sync Pages</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="Load">Load</option>
+<option value="Save">Save</option>
+<option value="SlideShow">SlideShow</option>
+    </select>
+    <input type="submit" value="Do">
+    
+</div>
+<script type="text/javascript">
+<!--// Init menu
+actionsMenuInit('More Actions:');
+//-->
+</script>
+</form>
+</li></ul>
+
+</div>
+
+<div id="page" lang="en" dir="ltr">
+<div dir="ltr" id="content" lang="en"><span class="anchor" id="top"></span>
+<span class="anchor" id="line-1"></span><p class="line867">
+<h1 id="Welcome_to_the_NetarchiveSuite">Welcome to the NetarchiveSuite</h1>
+<span class="anchor" id="line-2"></span><p class="line862">The NetarchiveSuite software is developed by the two national deposit libraries in Denmark, <a class="http" href="http://www.kb.dk/">The Royal Library</a> and <a class="http" href="http://www.statsbiblioteket.dk">The State and University Library</a>, and has been running in production, harvesting the Danish world wide web for three years. The Danish netarchive currently contains over 120 TB of data that are mirrored on two different geographical locations. <span class="anchor" id="line-3"></span><span class="anchor" id="line-4"></span><p class="line862">The NetarchiveSuite is the complete web archiving software package developed within the netarchive.dk project from 2004 and onwards. <span class="anchor" id="line-5"></span>The primary function of the NetarchiveSuite is to plan, schedule and run web harvests of parts of the Internet. It scales to a wide range of tasks, from small, thematic harvests (e.g. related to special events, or special domains) to harvesting and archiving the content of an entire national domain.  <span class="anchor" id="line-6"></span>The software has built-in bit preservation functionality. The systems architecture allows for the software to be distributed among several machines, possibly on more than one geographical location. <span class="anchor" id="line-7"></span>The NetarchiveSuite is built around the Heritrix web crawler, which it uses to harvest the web. You find more information in the <a href="/suite/Overview%203.10">overview</a>. <span class="anchor" id="line-8"></span><span class="anchor" id="line-9"></span><p class="line867"><div dir="ltr" id="News.content" lang="en"><span class="anchor" id="News.top"></span>
+<span class="anchor" id="News.line-1"></span><p class="line862">News about issues related to the NetarchiveSuite and this web is given below (To see earlier news, please refer to <a href="/suite/Old%20News">Old News</a>) <span class="anchor" id="News.line-2"></span><div><table style="width: 864px"><tbody><tr>  <td><p class="line891"><strong>Date</strong> </td>
+  <td><p class="line891"><strong>News</strong> </td>
+</tr>
+<tr>  <td style="vertical-align: top;  text-align: right;"><span class="anchor" id="News.line-3"></span><p class="line862">06/07 2010 </td>
+  <td><p class="line862">Stable release 3.12.1 has been released. See <a href="/suite/ReleaseNotes3_12_1">release notes</a> and <a href="/suite/Get%20NetarchiveSuite">download</a> page </td>
+</tr>
+<tr>  <td style="vertical-align: top;  text-align: right;"><span class="anchor" id="News.line-4"></span><p class="line862">15/06 2010 </td>
+  <td><p class="line862">Development release 3.13.0 has been released. See <a href="/suite/ReleaseNotes3_13_0">release notes</a> and <a href="/suite/Get%20NetarchiveSuite">download</a> page </td>
+</tr>
+<tr>  <td style="vertical-align: top;  text-align: right;"><span class="anchor" id="News.line-5"></span><p class="line862">03/05 2010 </td>
+  <td><p class="line862">Stable release 3.12.0 has been released. See <a href="/suite/ReleaseNotes3_12_0">release notes</a> and <a href="/suite/Get%20NetarchiveSuite">download</a> page </td>
+</tr>
+<tr>  <td style="vertical-align: top;  text-align: right;"><span class="anchor" id="News.line-6"></span><p class="line862">22/12 2009 </td>
+  <td><p class="line862">Development release 3.11.0 has been released. See <a href="/suite/ReleaseNotes3_11_0">release notes</a> and <a href="/suite/Get%20NetarchiveSuite">download</a> page </td>
+</tr>
+<tr>  <td style="vertical-align: top;  text-align: right;"><span class="anchor" id="News.line-7"></span><p class="line862">16/11 2009 </td>
+  <td><p class="line862">Stable release 3.10.0 has been released. See <a href="/suite/ReleaseNotes3_10_0">release notes</a> and <a href="/suite/Get%20NetarchiveSuite">download</a> page </td>
+</tr>
+<tr>  <td style="vertical-align: top;  text-align: right;"><span class="anchor" id="News.line-8"></span><p class="line862">10/9 2009 </td>
+  <td><p class="line862">Stable release 3.8.2 has been released. See <a href="/suite/ReleaseNotes3_8_2">release notes</a> and <a href="/suite/Get%20NetarchiveSuite">download</a> page </td>
+</tr>
+<tr>  <td style="vertical-align: top;  text-align: right;"><span class="anchor" id="News.line-9"></span><p class="line862">10/8 2009 </td>
+  <td><p class="line862">Development release 3.9.0 has been released. See <a href="/suite/ReleaseNotes3_9_0">release notes</a> and <a href="/suite/Get%20NetarchiveSuite">download</a> page </td>
+</tr>
+<tr>  <td style="vertical-align: top;  text-align: right;"><span class="anchor" id="News.line-10"></span><p class="line862">15/7 2009 </td>
+  <td><p class="line862">Stable release 3.8.1 has been released. This is a patch release. See <a href="/suite/ReleaseNotes3_8_1">release notes</a> and <a href="/suite/Get%20NetarchiveSuite">download</a> page </td>
+</tr>
+</tbody></table></div><span class="anchor" id="News.line-11"></span><span class="anchor" id="News.bottom"></span></div> <span class="anchor" id="line-10"></span><span class="anchor" id="line-11"></span><p class="line862">To get started with NetarchiveSuite, <a href="/suite/Get%20NetarchiveSuite">download</a> it and try it out with our <a href="/suite/Quick%20Start%20Manual">Quick Start</a> installation setup, which only requires one standard Linux machine. <span class="anchor" id="line-12"></span><span class="anchor" id="line-13"></span><p class="line874">The software is released with full source under the LGPL license. <span class="anchor" id="line-14"></span><span class="anchor" id="bottom"></span></div><p id="pageinfo" class="info" lang="en" dir="ltr">Welcome  (last edited 2010-08-16 10:24:36 by <span title="??? @ localhost[127.0.0.1]">localhost</span>)</p>
+
+<div id="pagebottom"></div>
+</div>
+
+
+<div id="footer">
+<ul class="editbar"><li><span class="disabled">Immutable Page</span></li><li class="toggleCommentsButton" style="display:none;"><a href="#" class="nbcomment" onClick="toggleComments();return false;">Comments</a></li><li><a class="nbinfo" href="/suite/Welcome?action=info" rel="nofollow">Info</a></li><li><a class="nbattachments" href="/suite/Welcome?action=AttachFile" rel="nofollow">Attachments</a></li><li>
+<form class="actionsmenu" method="GET" action="/suite/Welcome">
+<div>
+    <label>More Actions:</label>
+    <select name="action"
+        onchange="if ((this.selectedIndex != 0) &&
+                      (this.options[this.selectedIndex].disabled == false)) {
+                this.form.submit();
+            }
+            this.selectedIndex = 0;">
+        <option value="raw">Raw Text</option>
+<option value="print">Print View</option>
+<option value="refresh">Delete Cache</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="SpellCheck">Check Spelling</option>
+<option value="LikePages">Like Pages</option>
+<option value="LocalSiteMap">Local Site Map</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="RenamePage" disabled class="disabled">Rename Page</option>
+<option value="DeletePage" disabled class="disabled">Delete Page</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="show" disabled class="disabled">Subscribe User</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="show" disabled class="disabled">Remove Spam</option>
+<option value="show" disabled class="disabled">Revert to this revision</option>
+<option value="PackagePages">Package Pages</option>
+<option value="SyncPages">Sync Pages</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="Load">Load</option>
+<option value="Save">Save</option>
+<option value="SlideShow">SlideShow</option>
+    </select>
+    <input type="submit" value="Do">
+    
+</div>
+<script type="text/javascript">
+<!--// Init menu
+actionsMenuInit('More Actions:');
+//-->
+</script>
+</form>
+</li></ul>
+
+<ul id="credits">
+<li><a href="http://moinmo.in/" title="This site uses the MoinMoin Wiki software.">MoinMoin Powered</a></li><li><a href="http://moinmo.in/Python" title="MoinMoin is written in Python.">Python Powered</a></li><li><a href="http://moinmo.in/GPL" title="MoinMoin is GPL licensed.">GPL licensed</a></li><li><a href="http://validator.w3.org/check?uri=referer" title="Click here to validate this page.">Valid HTML 4.01</a></li>
+</ul>
+
+
+</div>
+</body>
+</html>
+
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://netarchive.dk/suite/
+WARC-Date: 2010-09-09T16:34:37Z
+WARC-Concurrent-To: <urn:uuid:fbe0e043-f060-4406-98b8-eeda092f3971>
+WARC-Record-ID: <urn:uuid:64dece23-e808-49f7-8d6e-91b4c10cdd52>
+Content-Type: application/http; msgtype=request
+Content-Length: 191
+
+GET /suite/ HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/1.14.4 +http://www.kb.dk)
+From: svc@kb.dk
+Connection: close
+Referer: http://netarchive.dk/suite
+Host: netarchive.dk
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://netarchive.dk/suite/
+WARC-Date: 2010-09-09T16:34:37Z
+WARC-Concurrent-To: <urn:uuid:fbe0e043-f060-4406-98b8-eeda092f3971>
+WARC-Record-ID: <urn:uuid:2e48d7a6-84f6-474c-bdc8-234e57620414>
+Content-Type: application/warc-fields
+Content-Length: 4412
+
+via: http://netarchive.dk/suite
+hopsFromSeed: LER
+fetchTimeMs: 823
+outlink: http://netarchive.dk/suite/moin_static193/common/js/common.js E script/@src
+outlink: http://netarchive.dk/suite/moin_static193/modern/css/common.css E link/@href
+outlink: http://netarchive.dk/suite/moin_static193/modern/css/screen.css E link/@href
+outlink: http://netarchive.dk/suite/moin_static193/modern/css/print.css E link/@href
+outlink: http://netarchive.dk/suite/moin_static193/modern/css/projection.css E link/@href
+outlink: http://netarchive.dk/suite/Welcome E link/@href
+outlink: http://netarchive.dk/suite/Welcome?action=raw E link/@href
+outlink: http://netarchive.dk/suite/Welcome?action=print E link/@href
+outlink: http://netarchive.dk/suite/Welcome?action=AttachFile&do=view&target=netarkivet.gif E link/@href
+outlink: http://netarchive.dk/suite/Welcome?action=AttachFile&do=view&target=package-3.12.zip E link/@href
+outlink: http://netarchive.dk/suite/Welcome?action=AttachFile&do=view&target=transparent_logo.png E link/@href
+outlink: http://netarchive.dk/suite/Welcome?action=AttachFile&do=view&target=wb.odg E link/@href
+outlink: http://netarchive.dk/suite/Welcome?action=AttachFile&do=view&target=wb.png E link/@href
+outlink: http://netarchive.dk/suite/FindPage E link/@href
+outlink: http://netarchive.dk/suite/TitleIndex E link/@href
+outlink: http://netarchive.dk/suite/WordIndex E link/@href
+outlink: http://netarchive.dk/suite/HelpOnFormatting E link/@href
+outlink: http://netarchive.dk/suite/Welcome L a/@href
+outlink: http://netarchive.dk/suite/Welcome?action=AttachFile&do=get&target=netarkivet.gif E img/@src
+outlink: http://netarchive.dk/suite/Welcome L form/@action
+outlink: http://netarchive.dk/suite/Welcome?action=login L a/@href
+outlink: http://netarchive.dk/suite/Welcome?action=fullsearch&context=180&value=linkto%3A%22Welcome%22 L a/@href
+outlink: http://netarchive.dk/suite/Get%20NetarchiveSuite L a/@href
+outlink: http://netarchive.dk/suite/Documentation L a/@href
+outlink: http://netarchive.dk/suite/Development L a/@href
+outlink: http://netarchive.dk/suite/Communication L a/@href
+outlink: http://netarchive.dk/suite/External%20Software L a/@href
+outlink: http://netarchive.dk/suite/FindPage L a/@href
+outlink: http://netarchive.dk/suite/Welcome L a/@href
+outlink: http://netarchive.dk/suite/ L a/@href
+outlink: http://netarchive.dk/suite/Welcome?action=info L a/@href
+outlink: http://netarchive.dk/suite/Welcome?action=AttachFile L a/@href
+outlink: http://netarchive.dk/suite/Welcome L form/@action
+outlink: http://www.kb.dk/ L a/@href
+outlink: http://www.statsbiblioteket.dk/ L a/@href
+outlink: http://netarchive.dk/suite/Overview%203.10 L a/@href
+outlink: http://netarchive.dk/suite/Old%20News L a/@href
+outlink: http://netarchive.dk/suite/ReleaseNotes3_12_1 L a/@href
+outlink: http://netarchive.dk/suite/Get%20NetarchiveSuite L a/@href
+outlink: http://netarchive.dk/suite/ReleaseNotes3_13_0 L a/@href
+outlink: http://netarchive.dk/suite/Get%20NetarchiveSuite L a/@href
+outlink: http://netarchive.dk/suite/ReleaseNotes3_12_0 L a/@href
+outlink: http://netarchive.dk/suite/Get%20NetarchiveSuite L a/@href
+outlink: http://netarchive.dk/suite/ReleaseNotes3_11_0 L a/@href
+outlink: http://netarchive.dk/suite/Get%20NetarchiveSuite L a/@href
+outlink: http://netarchive.dk/suite/ReleaseNotes3_10_0 L a/@href
+outlink: http://netarchive.dk/suite/Get%20NetarchiveSuite L a/@href
+outlink: http://netarchive.dk/suite/ReleaseNotes3_8_2 L a/@href
+outlink: http://netarchive.dk/suite/Get%20NetarchiveSuite L a/@href
+outlink: http://netarchive.dk/suite/ReleaseNotes3_9_0 L a/@href
+outlink: http://netarchive.dk/suite/Get%20NetarchiveSuite L a/@href
+outlink: http://netarchive.dk/suite/ReleaseNotes3_8_1 L a/@href
+outlink: http://netarchive.dk/suite/Get%20NetarchiveSuite L a/@href
+outlink: http://netarchive.dk/suite/Get%20NetarchiveSuite L a/@href
+outlink: http://netarchive.dk/suite/Quick%20Start%20Manual L a/@href
+outlink: http://netarchive.dk/suite/ L a/@href
+outlink: http://netarchive.dk/suite/Welcome?action=info L a/@href
+outlink: http://netarchive.dk/suite/Welcome?action=AttachFile L a/@href
+outlink: http://netarchive.dk/suite/Welcome L form/@action
+outlink: http://moinmo.in/ L a/@href
+outlink: http://moinmo.in/Python L a/@href
+outlink: http://moinmo.in/GPL L a/@href
+outlink: http://validator.w3.org/check?uri=referer L a/@href
+
+
+

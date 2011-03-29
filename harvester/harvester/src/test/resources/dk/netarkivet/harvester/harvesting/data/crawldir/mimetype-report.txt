@@ -1,0 +1,10 @@
+[mime-types]                  [#urls]     [#bytes]
+image/gif                          36        79018
+text/html                          31       363083
+text/dns                           12          615
+application/pdf                     6      2120395
+text/plain                          6         1413
+text/css                            5         8486
+application/x-javascript            3         7278
+application/x-tar                   1            1
+image/jpeg                          1            1

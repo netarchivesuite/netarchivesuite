@@ -1,0 +1,10 @@
+[host]                 [#urls]     [#bytes]
+28 87840 www.kb.dk
+28 2326142 www.netarkivet.dk
+26 232402 base.kb.dk
+12 615 dns:
+2 470 mlist.kb.dk
+2 261 rex.kb.dk
+1 1 purl.org
+1 1 search.kb.dk
+1 1 www.imv.au.dk

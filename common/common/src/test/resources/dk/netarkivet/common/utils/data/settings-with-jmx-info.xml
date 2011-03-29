@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings>
+  <archive>
+    <bitarchive>
+      <batchMessageTimeout>172800000</batchMessageTimeout>
+      <thisCredentials>42</thisCredentials>
+      <heartbeatFrequency>1000</heartbeatFrequency>
+      <fileDir>m:\bitarchive</fileDir>
+      <fileDir>n:\bitarchive</fileDir>
+      <fileDir>o:\bitarchive</fileDir>
+      <fileDir>p:\bitarchive</fileDir>
+      <minSpaceLeft>2000000000</minSpaceLeft>
+      <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
+    </bitarchive>
+    <bitpreservation>
+      <baseDir>bitpreservation</baseDir>
+    </bitpreservation>
+    <arcrepository>
+      <baseDir>.</baseDir>
+    </arcrepository>
+  </archive>
+  <common>
+      <database>
+        <driverclass>org.apache.derby.jdbc.EmbeddedDriver</driverclass>
+        <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
+        <backupInitHour>3</backupInitHour>
+        <specificsclass>dk.netarkivet.harvester.datamodel.DerbySpecifics</specificsclass>
+      </database>
+      <database/>
+    <monitorApplicationName>NA</monitorApplicationName>
+    <replicas>
+      <replica>
+        <replicaId>SB</replicaId>
+        <replicaType>bitarchive</replicaType>
+        <replicaName>SBN</replicaName>
+      </replica>
+      <replica>
+        <replicaId>KB</replicaId>
+        <replicaType>bitarchive</replicaType>
+        <replicaName>KBN</replicaName>
+      </replica>
+    </replicas>
+    <useReplicaId>KB</useReplicaId>
+    <thisPhysicalLocation>KB</thisPhysicalLocation>
+    <repository>
+      <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
+    </repository>
+    <indexClient>
+      <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
+      <indexRequestTimeout>43200000</indexRequestTimeout>
+    </indexClient>
+    <arcrepositoryClient>
+      <getTimeout>60000</getTimeout>
+      <storeRetries>3</storeRetries>
+      <storeTimeout>3600000</storeTimeout>
+      <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
+    </arcrepositoryClient>
+    <jmx>
+      <port>8100</port>
+      <rmiPort>8200</rmiPort>
+      <passwordFile>conf/jmxremote.password</passwordFile>
+    </jmx>
+    <remoteFile>
+      <class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
+      <userPassword>ftp*netarkiv</userPassword>
+      <retries>3</retries>
+      <userName>kb-ftp</userName>
+      <serverName>kb-prod-har-002.kb.dk</serverName>
+      <serverPort>21</serverPort>
+    </remoteFile>
+    <webinterface>
+      <siteSection>
+        <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
+        <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
+        <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
+        <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
+        <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
+        <webapplication>webpages/HarvestDefinition.war</webapplication>
+        <webapplication>webpages/History.war</webapplication>
+        <webapplication>webpages/BitPreservation.war</webapplication>
+        <webapplication>webpages/QA.war</webapplication>
+        <webapplication>webpages/Status.war</webapplication>
+      </siteSection>
+      <language>
+        <locale>da</locale>
+        <locale>en</locale>
+        <name>Dansk</name>
+        <name>English</name>
+      </language>
+    </webinterface>
+    <http>
+      <port>8076</port>
+    </http>
+    <tempDir>./tests/commontempdir</tempDir>
+    <notifications>
+      <receiver>netarkiv@netarkivet.dk</receiver>
+      <sender>netarkiv@netarkivet.dk</sender>
+      <class>dk.netarkivet.common.utils.EMailNotifications</class>
+    </notifications>
+    <jms>
+      <broker>kb-prod-adm-001.kb.dk</broker>
+      <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
+      <port>7676</port>
+      <environmentName>UNITTEST</environmentName>
+    </jms>
+    <mail>
+      <server>post.kb.dk</server>
+    </mail>
+    <cacheDir>cache</cacheDir>
+  </common>
+  <viewerproxy>
+    <baseDir>viewerproxy</baseDir>
+  </viewerproxy>
+  <harvester>
+    <datamodel>
+      <domain>
+        <defaultSeedlist>defaultseeds</defaultSeedlist>
+        <defaultOrderxml>default_orderxml</defaultOrderxml>
+        <defaultMaxrate>100</defaultMaxrate>
+        <defaultConfig>defaultconfig</defaultConfig>
+      </domain>
+      <domain/>
+    </datamodel>
+    <harvesting>
+      <serverDir>server</serverDir>
+      <oldjobsDir>oldjobs</oldjobsDir>
+      <queuePriority>HIGHPRIORITY</queuePriority>
+      <heritrix>
+        <noresponseTimeout>1800</noresponseTimeout>
+        <inactivityTimeout>1800</inactivityTimeout>
+      </heritrix>
+    </harvesting>
+    <scheduler>
+      <maxDomainSize>5000</maxDomainSize>
+      <jobs>
+        <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
+        <maxTotalSize>2000000</maxTotalSize>
+        <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
+      </jobs>
+      <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
+      <configChunkSize>10000</configChunkSize>
+      <splitByObjectLimit>false</splitByObjectLimit>
+      <errorFactorBestGuess>20</errorFactorBestGuess>
+      <errorFactorPrevResult>10</errorFactorPrevResult>
+    </scheduler>
+  </harvester>
+  <monitor>
+    <logging>
+      <historySize>100</historySize>
+    </logging>
+  </monitor>
+<deploy>
+<jmxMonitorRolePassword>DetErIkkeVoresSkyld</jmxMonitorRolePassword>
+<numberOfHosts>13</numberOfHosts>
+<host1>
+<name>kb-prod-har-001.kb.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+<jmxport>8102</jmxport>
+<jmxport>8103</jmxport>
+<jmxport>8104</jmxport>
+<jmxport>8105</jmxport>
+</host1>
+<host2>
+<name>kb-prod-bar-014.bitarkiv.kb.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+</host2>
+<host3>
+<name>kb-prod-adm-001.kb.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+<jmxport>8102</jmxport>
+<jmxport>8103</jmxport>
+<jmxport>8104</jmxport>
+</host3>
+<host4>
+<name>kb-prod-bar-013.bitarkiv.kb.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+</host4>
+<host5>
+<name>sb-prod-bar-001.statsbiblioteket.dk</name>
+<jmxport>8100</jmxport>
+</host5>
+<host6>
+<name>kb-prod-bar-010.bitarkiv.kb.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+</host6>
+<host7>
+<name>sb-prod-acs-001.statsbiblioteket.dk</name>
+<jmxport>8100</jmxport>
+</host7>
+<host8>
+<name>sb-prod-har-001.statsbiblioteket.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+<jmxport>8102</jmxport>
+<jmxport>8103</jmxport>
+<jmxport>8104</jmxport>
+<jmxport>8105</jmxport>
+</host8>
+<host9>
+<name>sb-prod-har-002.statsbiblioteket.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+<jmxport>8102</jmxport>
+<jmxport>8103</jmxport>
+<jmxport>8104</jmxport>
+<jmxport>8105</jmxport>
+</host9>
+<host10>
+<name>kb-prod-har-002.kb.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+<jmxport>8102</jmxport>
+<jmxport>8103</jmxport>
+<jmxport>8104</jmxport>
+<jmxport>8105</jmxport>
+</host10>
+<host11>
+<name>kb-prod-bar-011.bitarkiv.kb.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+</host11>
+<host12>
+<name>kb-prod-bar-012.bitarkiv.kb.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+</host12>
+<host13>
+<name>kb-prod-acs-001.kb.dk</name>
+<jmxport>8100</jmxport>
+<jmxport>8101</jmxport>
+<jmxport>8102</jmxport>
+</host13>
+</deploy>
+
+</settings>
