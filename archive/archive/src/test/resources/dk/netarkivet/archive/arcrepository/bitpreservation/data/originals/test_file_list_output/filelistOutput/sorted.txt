@@ -1,6 +1,0 @@
-a.arc
-b.arc
-c.arc
-d.arc
-e.arc
-f.arc

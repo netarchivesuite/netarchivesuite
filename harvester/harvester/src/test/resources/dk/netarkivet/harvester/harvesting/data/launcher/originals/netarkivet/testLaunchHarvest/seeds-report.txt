@@ -1,2 +1,0 @@
-[code] [status] [seed] [redirect]
-200 CRAWLED http://netarkivet.dk/index-da.php

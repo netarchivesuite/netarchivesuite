@@ -1,6 +1,0 @@
-domain.INVALID
-INVALID
-INVALID
-http://test.dk
-www.dr.dk
-http://www.dr.dk

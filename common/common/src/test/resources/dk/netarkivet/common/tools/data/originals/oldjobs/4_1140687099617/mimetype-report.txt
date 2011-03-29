@@ -1,6 +1,0 @@
-[#urls] [#bytes] [mime-types]
-3 30201 application/x-javascript
-3 993 image/gif
-2 17612 text/css
-2 60722 text/html
-1 55 text/dns
