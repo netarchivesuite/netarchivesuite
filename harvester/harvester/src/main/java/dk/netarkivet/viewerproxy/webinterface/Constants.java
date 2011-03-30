@@ -44,4 +44,6 @@ public class Constants {
     /** The domain attribute. */
     public static final String DOMAIN_PARAM = "domain"; 
     
+    /** The regexp attribute. */
+    public static final String REGEXP_PARAM = "regexp";
    }
