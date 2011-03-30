@@ -1,0 +1,246 @@
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *
+ * CSS style rules for the webarchive interface
+ */
+body {
+    font-family: Verdana, Arial, Helvetica, Geneva, sans-serif;
+    background-color: #f0f0f0;
+}
+
+h1 {
+    color: #8b0000;
+    font-weight: bold;
+    font-size: 240%;
+}
+h2 {
+    color: black;
+    font-weight: bold;
+    font-size: 140%;
+}
+
+h3 {
+    font-size:24px;
+    font-weight:bold;
+    background-color: #ACC8E3;
+}
+
+h4 {
+    color: black;
+    font-weight: bold;
+    font-size: 120%;
+}
+h5 {
+    color: black;
+    font-weight: bold;
+    font-size: 100%;
+}
+h6 {
+    color: black;
+    font-weight: bold;
+    font-size: 90%;
+}
+
+
+#main_table {
+    width:100%;
+}
+
+td#menu {
+    width: 18em;
+    background-color: #cccccc;
+}
+
+table#menu_table{
+    width: 18em;
+    background-color: #cccccc;
+}
+
+body,table,tr,td {
+ padding:0;
+ margin:0;
+ border:none;
+}
+
+th {
+font-size:16px;
+font-weight:bold;
+background-color: #ACC8E3;
+text-align: left;
+}
+
+tr {
+font-size:12px;
+font-style:normal;
+}
+
+tr.row0{
+background-color: #CCCCCC;
+}
+
+tr.row1{
+background-color: white;
+}
+
+A { font-family: verdana, Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #336699; }
+
+A:LINK {
+    text-decoration:none ;
+    }
+
+A:VISITED {
+    text-decoration:none ;
+    }
+
+A:HOVER {
+    text-decoration:underline ;
+    }
+
+A:ACTIVE {
+    text-decoration:underline ;
+    }
+
+h3 A{
+    font-size:24px;
+    font-weight:bold;
+    background-color: #ACC8E3;
+}
+
+
+.selection_table  {
+ width:100%;
+}
+.selection_table th {
+text-align: left;
+}
+
+.selection_table .harvestHeader {
+text-align: center;
+background-color: #cce1f4;
+font-size:14px;
+font-weight:bold;
+}
+
+.selection_table .spacerRowSmall {
+margin: 5;
+padding: 0;
+}
+
+.selection_table .spacerRowBig {
+margin: 15;
+padding: 0;
+}
+
+.edit_box{
+    border: 2px solid #D4ECFB;
+    width: 90%;
+    position: relative;
+    left:5%;
+}
+
+input[type=submit] {
+    background-color:#FFFDED;
+    /*position:absolute;
+    right:0%;*/
+}
+
+input[name=addDomains] {
+    position:relative;
+}
+
+[readonly=readonly] {
+    background-color:#ACACAC;
+}
+
+img {
+    border-width: 0;
+}
+
+#error_message{
+    background-color:#FFFDED;
+    font-size: 14pt;
+    position:relative;
+    left:10%;
+    width: 80%;
+    border-color:#E9556A;
+    border-style:ridge;
+    border-width:4pt;
+    padding:4pt;
+
+}
+
+#message{
+    background-color:#FFFDED;
+    font-size: 14pt;
+    position:relative;
+    left:10%;
+    width: 80%;
+    border-color:#EAE4EF;
+    border-style:ridge;
+    border-width:4pt;
+    padding:4pt;
+
+}
+#message a{
+   font-size: 14pt;
+}
+
+form.inlineform {
+    display: inline;
+    font-size: 12pt;
+    border-style:none;
+}
+
+.languagelinks {
+    text-align: right;
+}
+
+.systeminfo {
+    background-color: #ACC8E3;
+    text-align: right;
+}
+
+.sidebarHeader {
+    font-family: sans-serif;
+    font-size: 18pt;
+    color: black;
+    line-height: 54px;
+}
+
+.sidebarHeader:hover {
+    text-decoration: none;
+}
+
+.sidebarHeader img {
+    vertical-align: middle;
+}
+
+.crawlerHost a:link {
+    font-weight:bold;
+}
+
+.crawlerhost a:visited {
+    color: #660099;
+}
