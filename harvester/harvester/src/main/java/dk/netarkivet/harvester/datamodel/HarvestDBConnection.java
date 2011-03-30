@@ -246,6 +246,10 @@ public class HarvestDBConnection {
                 Settings.getInt(CommonSettings.DB_POOL_MAX_SIZE));
         dataSource.setAcquireIncrement(
                 Settings.getInt(CommonSettings.DB_POOL_ACQ_INC));
+
+        // Disable statement pooling
+        dataSource.setMaxStatements(0);
+        dataSource.setMaxStatementsPerConnection(0);
     }
 
 }
