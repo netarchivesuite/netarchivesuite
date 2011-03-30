@@ -123,6 +123,13 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     public abstract void update(HarvestDefinition harvestDefinition);
 
     /**
+     * Activates or deactivates a partial harvest definition,
+     * depending on its activation status.
+     * @param harvestDefinition the harvest definition object
+     */
+    public abstract void flipActive(SparsePartialHarvest harvestDefinition);
+
+    /**
      * Check, if there exists a HarvestDefinition identified by a given OID.
      * @param oid a given OID
      * @return true, if such a harvestdefinition exists.

@@ -247,6 +247,44 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
     }
 
+    /** Create the entries in the harvest_configs table that connect
+     * PartialHarvests and their configurations.
+     *
+     * @param c DB connection
+     * @param hd The harvest to insert entries for.
+     * @param id The id of the harvest -- this may not yet be set on ph
+     * @throws SQLException If a database error occurs during the create
+     * process.
+     */
+    private void createHarvestConfigsEntries(
+            Connection c, SparsePartialHarvest hd) throws SQLException {
+        PreparedStatement s = null;
+        long harvestId = hd.getOid();
+        try {
+            // Create harvest_configs entries
+            s = c.prepareStatement("DELETE FROM harvest_configs "
+                    + "WHERE harvest_id = ?");
+            s.setLong(1, harvestId);
+            s.executeUpdate();
+            s.close();
+            s = c.prepareStatement("INSERT INTO harvest_configs "
+                    + "( harvest_id, config_id ) "
+                    + "SELECT ?, config_id FROM configurations, domains "
+                    + "WHERE domains.name = ? AND configurations.name = ?"
+                    + "  AND domains.domain_id = configurations.domain_id");
+            List<SparseDomainConfiguration> configs =
+                getSparseDomainConfigurations(harvestId);
+            for (SparseDomainConfiguration dc : configs) {
+                s.setLong(1, harvestId);
+                s.setString(2, dc.getDomainName());
+                s.setString(3, dc.getConfigurationName());
+                s.executeUpdate();
+            }
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+        }
+    }
+
     /**
      * Generates the next id of a harvest definition. this implementation
      * retrieves the maximum value of harvest_id in the DB, and
@@ -601,6 +639,79 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
+     * Activates or deactivates a partial harvest definition.
+     * THIs method is actually to be used not to have to read from the DB big
+     * harvest definitions and optimize the activation / deactivation, it is
+     * sort of a lightweight version of update.
+     * @param harvestDefinition the harvest definition object
+     */
+    public void flipActive(SparsePartialHarvest hd) {
+        ArgumentNotValid.checkNotNull(hd, "HarvestDefinition hd");
+        if (hd.getOid() == null || !exists(hd.getOid())) {
+            final String message = "Cannot update non-existing "
+                    + "harvestdefinition '" + hd.getName() + "'";
+            log.debug(message);
+            throw new PermissionDenied(message);
+        }
+        Connection c = HarvestDBConnection.get();
+        PreparedStatement s = null;
+        try {
+            c.setAutoCommit(false);
+            s = c.prepareStatement("UPDATE harvestdefinitions SET "
+                    + "name = ?, "
+                    + "comments = ?, "
+                    + "numevents = ?, "
+                    + "submitted = ?,"
+                    + "isactive = ?,"
+                    + "edition = ? "
+                    + "WHERE harvest_id = ? AND edition = ?");
+            DBUtils.setName(s, 1, hd, Constants.MAX_NAME_SIZE);
+            DBUtils.setComments(s, 2, hd, Constants.MAX_COMMENT_SIZE);
+            s.setInt(3, hd.getNumEvents());
+            s.setTimestamp(4, new Timestamp(hd.getSubmissionDate().getTime()));
+            s.setBoolean(5, ! hd.isActive());
+            long nextEdition = hd.getEdition() + 1;
+            s.setLong(6, nextEdition);
+            s.setLong(7, hd.getOid());
+            s.setLong(8, hd.getEdition());
+            int rows = s.executeUpdate();
+            // Since the HD exists, no rows indicates bad edition
+            if (rows == 0) {
+                String message = "Somebody else must have updated " + hd
+                        + " since edition " + hd.getEdition()
+                        + ", not updating";
+                log.debug(message);
+                throw new PermissionDenied(message);
+            }
+            s.close();
+
+            // Now pull more strings
+            s = c.prepareStatement("UPDATE partialharvests SET "
+                    + "schedule_id = "
+                    + "    (SELECT schedule_id FROM schedules "
+                                + "WHERE schedules.name = ?), "
+                    + "nextdate = ? "
+                    + "WHERE harvest_id = ?");
+            s.setString(1, hd.getScheduleName());
+            DBUtils.setDateMaybeNull(s, 2, hd.getNextDate());
+            s.setLong(3, hd.getOid());
+            rows = s.executeUpdate();
+            log.debug(rows + " partialharvests records updated");
+            s.close();
+            createHarvestConfigsEntries(c, hd);
+
+            c.commit();
+        } catch (SQLException e) {
+            throw new IOFailure("SQL error while updating harvest definition "
+                    + hd + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            DBUtils.rollbackIfNeeded(c, "updating", hd);
+            DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
+        }
+    }
+
+    /**
      * @see HarvestDefinitionDAO#exists(Long)
      */
     public synchronized boolean exists(Long oid) {
@@ -932,13 +1043,13 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement("SELECT domains.name, configurations.name "
-                                   + "FROM domains, configurations,"
-                                   + " harvest_configs "
-                                   + "WHERE harvest_id = ?"
-                                   + "  AND configurations.config_id "
-                                   + "      = harvest_configs.config_id"
-                                   + "  AND configurations.domain_id "
-                                   + "      = domains.domain_id");
+                    + "FROM domains, configurations,"
+                    + " harvest_configs "
+                    + "WHERE harvest_id = ?"
+                    + "  AND configurations.config_id "
+                    + "      = harvest_configs.config_id"
+                    + "  AND configurations.domain_id "
+                    + "      = domains.domain_id");
             s.setLong(1, harvestDefinitionID);
             ResultSet res = s.executeQuery();
             List<SparseDomainConfiguration> resultList
