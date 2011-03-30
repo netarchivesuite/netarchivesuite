@@ -240,6 +240,7 @@ public class HarvestDBConnection {
         }
         dataSource.setJdbcUrl(jdbcUrl);
 
+        // Configure pool size
         dataSource.setMinPoolSize(
                 Settings.getInt(CommonSettings.DB_POOL_MIN_SIZE));
         dataSource.setMaxPoolSize(
@@ -247,9 +248,23 @@ public class HarvestDBConnection {
         dataSource.setAcquireIncrement(
                 Settings.getInt(CommonSettings.DB_POOL_ACQ_INC));
 
-        // Disable statement pooling
-        dataSource.setMaxStatements(0);
-        dataSource.setMaxStatementsPerConnection(0);
+        // Configure statement pooling
+        dataSource.setMaxStatements(
+                Settings.getInt(CommonSettings.DB_POOL_MAX_STM));
+        dataSource.setMaxStatementsPerConnection(
+                Settings.getInt(CommonSettings.DB_POOL_MAX_STM_PER_CONN));
+
+        if (log.isInfoEnabled()) {
+            String msg =
+                "Connection pool initialized with the following values:";
+            msg += "\n- minPoolSize=" + dataSource.getMinPoolSize();
+            msg += "\n- maxPoolSize=" + dataSource.getMaxPoolSize();
+            msg += "\n- acquireIncrement=" + dataSource.getAcquireIncrement();
+            msg += "\n- maxStatements=" + dataSource.getMaxStatements();
+            msg += "\n- maxStatementsPerConnection="
+                + dataSource.getMaxStatementsPerConnection();
+            log.info(msg);
+        }
     }
 
 }

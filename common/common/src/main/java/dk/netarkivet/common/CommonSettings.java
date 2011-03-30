@@ -339,6 +339,30 @@ public class CommonSettings {
         "settings.common.database.pool.acquireInc";
 
     /**
+     * <b>settings.common.database.pool.maxStm</b>: <br>
+     * Configure statement pooling, by setting the global maximum number
+     * of pooled prepared statements for a data source.
+     * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
+     * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
+     * fully deactivated.
+     * @see c3p0 documentation.
+     */
+    public static String DB_POOL_MAX_STM =
+        "settings.common.database.pool.maxStm";
+
+    /**
+     * <b>settings.common.database.pool.maxStmPerConn</b>: <br>
+     * Configure statement pooling, by setting the global maximum number
+     * of pooled prepared statements for a data source.
+     * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
+     * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
+     * fully deactivated.
+     * @see c3p0 documentation.
+     */
+    public static String DB_POOL_MAX_STM_PER_CONN =
+        "settings.common.database.pool.maxStmPerConn";
+
+    /**
      * <b>settings.common.repository.limitForRecordDatatransferInFile</b>: <br>
      * When the length record exceeds this number, the contents of the record
      * will be transferred using a RemoteFile.
@@ -380,83 +404,83 @@ public class CommonSettings {
      * settings.common.replicas.replica.<b>replicaType</b>: <br>
      * The tags for type of the replica, placed under the replica tag.
      * The type is used to identify whether it is a bitarchive or a checksum
-     * replica. NOTE: checksum replicas are not implemented yet 
+     * replica. NOTE: checksum replicas are not implemented yet
      * Possible values are defined in ReplicaType */
     public static String REPLICATYPE_TAG
             = "replicaType";
 
     /**
      * <b>settings.common.replicas.replica.replicaId</b>: <br>
-     * The identifiers of all replicas in the environment. 
+     * The identifiers of all replicas in the environment.
      */
     public static String REPLICA_IDS
             = REPLICAS_SETTINGS + "." + REPLICA_TAG + "." + REPLICAID_TAG;
-    
+
     /**
      * <b>settings.common.replicas.replica.replicaType</b>: <br>
      * The types for all replicas in the environment.
      */
-    public static String REPLICA_TYPES = REPLICAS_SETTINGS + "." + REPLICA_TAG 
+    public static String REPLICA_TYPES = REPLICAS_SETTINGS + "." + REPLICA_TAG
             + "." + REPLICATYPE_TAG;
 
-    /** 
+    /**
      * <b>settings.common.useReplicaId</b>: <br>
      * Default bitarchive to use for e.g. batch jobs (if none is specified). */
     public static String USE_REPLICA_ID
             = "settings.common.useReplicaId";
 
-    /** 
+    /**
      * <b>settings.common.thisPhysicalLocation</b>: <br>
      * Physical location of where the application is running.
      * Only use for System state GUI and deploy */
     public static String THIS_PHYSICAL_LOCATION
             = "settings.common.thisPhysicalLocation";
 
-    /** 
+    /**
      * <b>settings.common.applicationName</b>: <br>
-     * The name of the application, e.g. "BitarchiveServerApplication". 
+     * The name of the application, e.g. "BitarchiveServerApplication".
      * The monitor puts this with each log message. */
     public static String APPLICATION_NAME
             = "settings.common.applicationName";
 
-    /** 
+    /**
      * <b>settings.common.applicationInstanceId</b>: <br>
      * The identifier of the instance of the application.
      * This is used when there are more than one of the same application
      * running on the same machine, e.g. when more harvesters are running
-     * on the same machine or more bitarchive applications are running on 
+     * on the same machine or more bitarchive applications are running on
      * the same machine. */
     public static String APPLICATION_INSTANCE_ID
             = "settings.common.applicationInstanceId";
-    
-    /** 
+
+    /**
      * <b>settings.common.freespaceprovider.class</b>: <br>
-     * The implementation class for free space provider, 
-     * e.g. dk.netarkivet.common.utils.DefaultFreeSpaceProvider. 
+     * The implementation class for free space provider,
+     * e.g. dk.netarkivet.common.utils.DefaultFreeSpaceProvider.
      * The class must implement FreeSpaceProvider-Interface.  */
     public static String FREESPACE_PROVIDER_CLASS
             = "settings.common.freespaceprovider.class";
 
     /**
      * <b>settings.common.batch.batchjobs.batchjob.class</b>: <br/>
-     * The list of batchjobs to be runnable from the GUI. Must be the complete 
-     * path to the batchjob classes (e.g. 
+     * The list of batchjobs to be runnable from the GUI. Must be the complete
+     * path to the batchjob classes (e.g.
      * dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob).
      * Must inherit FileBatchJob.
      */
-    public static String BATCHJOBS_CLASS 
+    public static String BATCHJOBS_CLASS
             = "settings.common.batch.batchjobs.batchjob.class";
-    
+
     /**
      * <b>settings.common.batch.batchjobs.batchjob.arcfile</b>: <br/>
      * The list of the corresponding jar-files containing the batchjob.
-     * This will be used for LoadableJarBatchJobs. If no file is specified, 
-     * it is assumed, that the batchjob exists with the default classpath of 
-     * the involved applications (BitarchiveMonitor, ArcRepository, 
+     * This will be used for LoadableJarBatchJobs. If no file is specified,
+     * it is assumed, that the batchjob exists with the default classpath of
+     * the involved applications (BitarchiveMonitor, ArcRepository,
      * GUIWebServer and BitArchive).
      */
-    public static String BATCHJOBS_JARFILE 
-            = "settings.common.batch.batchjobs.batchjob.jarfile";    
+    public static String BATCHJOBS_JARFILE
+            = "settings.common.batch.batchjobs.batchjob.jarfile";
 
     /**
      * <b>settings.common.batch.baseDir</b>: <br/>
