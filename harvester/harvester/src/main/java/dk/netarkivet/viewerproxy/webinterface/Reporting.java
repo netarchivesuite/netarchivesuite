@@ -67,6 +67,7 @@ public class Reporting {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob fileListJob = new FileListJob();
         fileListJob.processOnlyFilesMatching(jobid + "-.*\\.arc(\\.gz)?");
+        
         File f;
         try {
             f = File.createTempFile(jobid + "-files", ".txt",
@@ -157,13 +158,12 @@ public class Reporting {
         File f;
         File fsorted;
         try {
-            f = File.createTempFile("temp" + "-crawllog-", 
-                    UUID.randomUUID().toString() 
-                    + ".txt", FileUtils.getTempDir());
+            final String uuid = UUID.randomUUID().toString();
+            f = File.createTempFile("temp", uuid + ".txt", 
+                    FileUtils.getTempDir());
             f.deleteOnExit();
-            fsorted = File.createTempFile("temp" + "-crawllog-", 
-                    UUID.randomUUID().toString() 
-                    + "-sorted.txt", FileUtils.getTempDir());
+            fsorted = File.createTempFile("temp", uuid + "-sorted.txt",
+                    FileUtils.getTempDir());
             fsorted.deleteOnExit();
         } catch (IOException e) {
             throw new IOFailure("Unable to create temporary file", e);

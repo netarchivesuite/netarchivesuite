@@ -29,14 +29,15 @@ of the client browser when fmt:setBundle is called. After that, fmt:format
 and reponse.getLocale use this locale.
 
 Parameters:
-domain - the domain to get the log for
 jobid - the id of the job to get the log for
+regexp - the regular expression used to match the wanted extract of the crawl.log.
 --%><%@ page import="java.io.File,
                  java.io.FileInputStream,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.FileUtils,
                  dk.netarkivet.common.utils.I18n,
-                 dk.netarkivet.common.utils.StreamUtils, dk.netarkivet.common.webinterface.HTMLUtils,
+                 dk.netarkivet.common.utils.StreamUtils,
+                 dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.viewerproxy.webinterface.Constants,
                  dk.netarkivet.viewerproxy.webinterface.Reporting"
          pageEncoding="UTF-8"
@@ -50,24 +51,18 @@ jobid - the id of the job to get the log for
     String regexp;
     int jobid;
     File crawlLogExtract;
-    boolean resultPage = false;
     try {
-        HTMLUtils.forwardOnMissingParameter(pageContext, Constants.JOBID_PARAM);
+        HTMLUtils.forwardOnMissingParameter(pageContext, Constants.JOBID_PARAM, Constants.REGEXP_PARAM);
         regexp = request.getParameter(Constants.REGEXP_PARAM);
-        if (regexp != null) {
-          resultPage = true;
-        }
         jobid = HTMLUtils.parseAndCheckInteger(pageContext, Constants.JOBID_PARAM, 1,
                                                Integer.MAX_VALUE);
-        if (resultPage) {                                       	                                          
-        crawlLogExtract = Reporting.getCrawlLogForRegexpInJob(jobid, regexp);
-        }
+        crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
     } catch (ForwardedToErrorPage e) {
         return;
     }
     HTMLUtils.generateHeader(pageContext);
 %>
-<h3><fmt:message key="pagetitle;qa.crawllog.lines.for.job.0.by.regexp.1">
+<h3><fmt:message key="pagetitle;qa.crawllog.lines.for.job.0.matching.regexp.1">
     <fmt:param value="<%=jobid%>"/>
     <fmt:param value="<%=regexp%>"/>
 </fmt:message></h3>

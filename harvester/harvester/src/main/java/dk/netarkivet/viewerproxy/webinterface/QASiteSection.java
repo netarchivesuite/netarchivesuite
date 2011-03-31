@@ -50,7 +50,9 @@ public class QASiteSection extends SiteSection {
                       {"getreports", "pagetitle;qa.get.reports"},
                       {"getfiles", "pagetitle;qa.get.files"},
                       {"crawlloglines",
-                       "pagetitle;qa.crawllog.lines.for.domain"}
+                       "pagetitle;qa.crawllog.lines.for.domain"},
+                      {"searchcrawllog", 
+                           "pagetitle;qa.crawllog.lines.matching.regexp"}
               }, "QA",
                  Constants.TRANSLATIONS_BUNDLE);
     }
