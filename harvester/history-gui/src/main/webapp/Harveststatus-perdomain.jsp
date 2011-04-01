@@ -46,7 +46,7 @@ displayed, if no domains are found a message is shown.
     String startPage=request.getParameter("START_PAGE_INDEX");
 
     if(startPage == null){
-        startPage="1";
+        startPage = "1";
     }
     long pageSize = Long.parseLong(Settings.get(
             CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
@@ -54,11 +54,11 @@ displayed, if no domains are found a message is shown.
     String startPagePost=request.getParameter("START_PAGE_INDEX");
 
     if(startPagePost == null){
-        startPagePost="1";
+        startPagePost = "1";
     }
 
     String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
-    if(searchParam == null ) searchParam="";
+    if (searchParam == null ) searchParam = "";
     searchParam = HTMLUtils.encode(searchParam);
 %>
 <%!
@@ -84,6 +84,7 @@ displayed, if no domains are found a message is shown.
                 HTMLUtils.generateHeader(pageContext);
                 %>
                 
+<script type="text/javascript" src="navigate.js"></script>                
 <form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
 
 <input type="hidden" 
@@ -130,13 +131,6 @@ displayed, if no domains are found a message is shown.
                     <fmt:param><%=startIndex+1%></fmt:param>
                     <fmt:param><%=endIndex%></fmt:param>
                 </fmt:message>
-     
-     
-<script type="text/javascript" src="navigate.js">
-</script>
-
- 
-
      
                 <p style="text-align: right">
                     <fmt:message key="status.results.displayed.pagination">
@@ -193,6 +187,7 @@ displayed, if no domains are found a message is shown.
             HTMLUtils.generateHeader(pageContext);
             %>
             
+<script type="text/javascript" src="navigate.js"></script>            
 <form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
 
 <input type="hidden" 
@@ -201,7 +196,6 @@ displayed, if no domains are found a message is shown.
 </form>    
 
 <%
-
     List<DomainHarvestInfo> hiList
     = DomainDAO.getInstance().getDomainHarvestInfo(domainName);
     long totalResultsCount = hiList.size();
@@ -231,9 +225,6 @@ displayed, if no domains are found a message is shown.
     }
 
 %>
-
-
-            
             <fmt:message key="status.results.displayed">
                 <fmt:param><%=totalResultsCount%></fmt:param>
                 <fmt:param><%=startIndex+1%></fmt:param>
