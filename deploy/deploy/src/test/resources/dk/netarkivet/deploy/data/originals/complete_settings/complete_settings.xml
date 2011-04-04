@@ -51,7 +51,7 @@
         <tempDir>./tests/commontempdir</tempDir>
         <remoteFile>
             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-        <serverName>localhost</serverName><serverPort>21</serverPort><userName>anonymous</userName><userPassword>anonymous</userPassword><retries>3</retries><port>8100</port><certificateKeyStore>conf/keystore</certificateKeyStore><certificateKeyStorePassword>1234</certificateKeyStorePassword><certificatePassword>1234</certificatePassword></remoteFile>
+        <serverName>localhost</serverName><serverPort>21</serverPort><userName>anonymous</userName><userPassword>anonymous</userPassword><retries>3</retries><datatimeout>600</datatimeout><port>8100</port><certificateKeyStore>conf/keystore</certificateKeyStore><certificateKeyStorePassword>1234</certificateKeyStorePassword><certificatePassword>1234</certificatePassword></remoteFile>
         <jms> <!-- Connection data for JMS-->
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
         <broker>localhost</broker><port>7676</port></jms>

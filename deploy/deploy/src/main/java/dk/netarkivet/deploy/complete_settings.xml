@@ -51,7 +51,7 @@
         <tempDir>./tests/commontempdir</tempDir>
         <remoteFile>
             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-        <serverName>localhost</serverName><serverPort>21</serverPort><userName>anonymous</userName><userPassword>anonymous</userPassword><retries>3</retries><port>8100</port><certificateKeyStore>conf/keystore</certificateKeyStore><certificateKeyStorePassword>1234</certificateKeyStorePassword><certificatePassword>1234</certificatePassword></remoteFile>
+        <serverName>localhost</serverName><serverPort>21</serverPort><userName>anonymous</userName><userPassword>anonymous</userPassword><retries>3</retries><datatimeout>600</datatimeout><port>8100</port><certificateKeyStore>conf/keystore</certificateKeyStore><certificateKeyStorePassword>1234</certificateKeyStorePassword><certificatePassword>1234</certificatePassword></remoteFile>
         <jms> <!-- Connection data for JMS-->
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
         <broker>localhost</broker><port>7676</port></jms>
@@ -447,7 +447,7 @@
             <baseUrl>jdbc:derby</baseUrl>
             <machine>localhost</machine>
             <port>1527</port>
-            <dir>harvestdefinitionbasedir/fullhddb</dir>
+            <dir>harvestdefinitionbasedir/fullhddb</dir>   
             <backupInitHour>3</backupInitHour>
             <validityCheckTimeout>0</validityCheckTimeout>
         </database>
@@ -505,7 +505,7 @@
                 <defaultMaxobjects>-1</defaultMaxobjects>
                 <!-- Used when creating ids for new jobs after a admin
                 database restore. -->
-                <nextJobId>0</nextJobId>                
+                <nextJobId>0</nextJobId>
                 <validSeedRegex>^.*$</validSeedRegex>
             </domain>
         </datamodel>
@@ -524,7 +524,7 @@
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
             <dispatchperiode>5000</dispatchperiode>
-            <jobgenerationperiode>60000</jobgenerationperiode>
+            <jobgenerationperiode>60000</jobgenerationperiode>            
             <singlejobdispatching>false</singlejobdispatching>
         </scheduler>
         <monitor>

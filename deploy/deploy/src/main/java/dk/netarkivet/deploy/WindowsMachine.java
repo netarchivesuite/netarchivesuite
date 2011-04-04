@@ -281,6 +281,8 @@ public class WindowsMachine extends Machine {
      * 
      * pseudocode:
      * - ssh 'login'@'machine' cmd /c 'environmentName'\\conf\\startall.bat
+     * - sleep 5
+     * - ssh 'login'@'machine' "more 'environmentName'\\start_APP.log
      * 
      * variables:
      * 'login' = machine user name
@@ -292,6 +294,7 @@ public class WindowsMachine extends Machine {
     @Override
     protected String osStartScript() {
         StringBuilder res = new StringBuilder();
+        // - ssh 'login'@'machine' cmd /c 'environmentName'\\conf\\startall.bat
         res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.SPACE + Constants.QUOTE_MARK 
@@ -302,6 +305,22 @@ public class WindowsMachine extends Machine {
         res.append(scriptExtension);
         res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.SPACE);
         res.append(Constants.NEWLINE);
+        // - sleep 5
+        res.append(ScriptConstants.SLEEP_5);
+        res.append(Constants.NEWLINE);
+        // - ssh 'login'@'machine' "more 'environmentName'\\start_APP.log"
+        for(Application app : applications) {
+            res.append(ScriptConstants.SSH + Constants.SPACE);
+            res.append(machineUserLogin());
+            res.append(Constants.SPACE + Constants.QUOTE_MARK 
+                    + ScriptConstants.WINDOWS_COMMAND_TYPE + Constants.SPACE);
+            res.append(getEnvironmentName() + Constants.BACKSLASH 
+                    + Constants.SCRIPT_NAME_LOCAL_START
+                    + app.getIdentification() + Constants.EXTENSION_LOG_FILES);
+            res.append(Constants.QUOTE_MARK + Constants.SPACE);
+            res.append(Constants.NEWLINE);
+        }
+        
         return res.toString();
     }
 
@@ -713,6 +732,24 @@ public class WindowsMachine extends Machine {
      * - set f = fso.OpenTextFile(".\conf\kill_ps_app.bat", 2, True)
      * - f.WriteLine "taskkill /F /PID " & oExec.ProcessID
      * - f.close
+     * - 'Create a new start-log for the application
+     * - CreateObject("Scripting.FileSystemObject").OpenTextFile("
+     * start_APP.log", 2, True).close
+     * - Do While oExec.Status = 0
+     * -   WScript.Sleep 1000
+     * -   Do While oExec.StdOut.AtEndOfStream <> True
+     * -     Set outFile = CreateObject("Scripting.FileSystemObject")
+     * .OpenTextFile("start_APP.log", 8, True)
+     * -     outFile.WriteLine oExec.StdOut.ReadLine
+     * -     outFile.close
+     * -   Loop
+     * -   Do While oExec.StdErr.AtEndOfStream <> True
+     * -     Set outFile = CreateObject("Scripting.FileSystemObject")
+     * .OpenTextFile("start_APP.log", 8, True)
+     * -     outFile.WriteLine oExec.StdErr.ReadLine
+     * -     outFile.close
+     * -   Loop
+     * - Loop
      * 
      * where:
      * JAVA = the command for starting the java application (very long).
@@ -739,6 +776,8 @@ public class WindowsMachine extends Machine {
                         + scriptExtension;
                 String tmpRunPsName = Constants.FILE_TEMPORARY_RUN_WINDOWS_NAME
                         + id;
+                String startLogName = Constants.SCRIPT_NAME_LOCAL_START
+                    + id + Constants.EXTENSION_LOG_FILES;
 
                 // Set WshShell = CreateObject("WScript.Shell")
                 vbsPrint.println(ScriptConstants.VB_CREATE_SHELL_OBJ);
@@ -789,6 +828,69 @@ public class WindowsMachine extends Machine {
                 vbsPrint.println(ScriptConstants.VB_WRITE_TF_CONTENT);
                 // f.close
                 vbsPrint.println(ScriptConstants.VB_WRITE_TF_CLOSE);
+                
+                // 'Create a new start-log for the application
+                vbsPrint.println(ScriptConstants.VB_COMMENT_NEW_START_LOG);
+                // CreateObject("Scripting.FileSystemObject").OpenTextFile(
+                // "start_APP.log", 2, True).close
+                vbsPrint.println(ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
+                        + startLogName 
+                        + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_2
+                        + ScriptConstants.VB_CLOSE);
+                // Do While oExec.Status = 0
+                vbsPrint.println(ScriptConstants.VB_DO_WHILE_OEXEC_STATUS_0);
+                //   WScript.Sleep 1000
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                        + ScriptConstants.VB_WSCRIPT_SLEEP_1000);
+                //   Do While oExec.StdOut.AtEndOfStream <> True
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                        + ScriptConstants.VB_DO_WHILE
+                        + ScriptConstants.VB_OEXEC_STD_OUT
+                        + ScriptConstants.VB_AT_END_OF_STREAM_FALSE);
+                //     Set outFile = CreateObject("Scripting.FileSystemObject")
+                // .OpenTextFile("start_APP.log", 8, True)
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
+                        + ScriptConstants.VB_SET_OUTFILE
+                        + ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
+                        + startLogName
+                        + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_8);
+                //     outFile.WriteLine oExec.StdOut.ReadLine
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
+                        + ScriptConstants.VB_OUTFILE_WRITELINE
+                        + ScriptConstants.VB_OEXEC_STD_OUT
+                        + ScriptConstants.VB_READ_LINE);
+                //     outFile.close
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
+                        + ScriptConstants.VB_OUTFILE_CLOSE);
+                //   Loop
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                        + ScriptConstants.VB_LOOP);
+                //   Do While oExec.StdErr.AtEndOfStream <> True
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                        + ScriptConstants.VB_DO_WHILE
+                        + ScriptConstants.VB_OEXEC_STD_ERR
+                        + ScriptConstants.VB_AT_END_OF_STREAM_FALSE);
+                //     Set outFile = CreateObject("Scripting.FileSystemObject")
+                // .OpenTextFile("start_APP.log", 8, True)
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
+                        + ScriptConstants.VB_SET_OUTFILE
+                        + ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
+                        + startLogName 
+                        + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_8);
+                //     outFile.WriteLine oExec.StdErr.ReadLine
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
+                        + ScriptConstants.VB_OUTFILE_WRITELINE
+                        + ScriptConstants.VB_OEXEC_STD_ERR
+                        + ScriptConstants.VB_READ_LINE);
+                //     outFile.close
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4 
+                        + ScriptConstants.VB_OUTFILE_CLOSE);
+                //   Loop
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                        + ScriptConstants.VB_LOOP);
+                // Loop
+                vbsPrint.println(ScriptConstants.VB_LOOP);
+
             } finally {
                 // close file
                 vbsPrint.close();
@@ -800,7 +902,6 @@ public class WindowsMachine extends Machine {
             throw new IOFailure(msg, e);
         }
     }
-
 
     /**
      * THIS HAS NOT BEEN IMPLEMENTED FOR WINDOWS YET - ONLY LINUX!

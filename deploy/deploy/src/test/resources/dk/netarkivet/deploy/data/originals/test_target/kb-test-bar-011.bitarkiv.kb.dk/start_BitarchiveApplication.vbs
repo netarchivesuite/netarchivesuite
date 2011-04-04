@@ -7,3 +7,18 @@ f.close
 set tf=fso.OpenTextFile(".\conf\running_BitarchiveApplication",8,True)
 tf.WriteLine "running process: " & oExec.ProcessID
 tf.close
+'Create a new start-log for the application
+CreateObject("Scripting.FileSystemObject").OpenTextFile("start_BitarchiveApplication.log", 2, True).close
+Do While oExec.Status = 0
+  WScript.Sleep 1000
+  Do While oExec.StdOut.AtEndOfStream <> True
+    Set outFile = CreateObject("Scripting.FileSystemObject").OpenTextFile("start_BitarchiveApplication.log", 8, True)
+    outFile.WriteLine oExec.StdOut.ReadLine
+    outFile.close
+  Loop
+  Do While oExec.StdErr.AtEndOfStream <> True
+    Set outFile = CreateObject("Scripting.FileSystemObject").OpenTextFile("start_BitarchiveApplication.log", 8, True)
+    outFile.WriteLine oExec.StdErr.ReadLine
+    outFile.close
+  Loop
+Loop

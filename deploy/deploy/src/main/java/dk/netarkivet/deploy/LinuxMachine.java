@@ -299,7 +299,7 @@ public class LinuxMachine extends Machine {
                     killPrinter.println(ScriptConstants.LINUX_IF_EXIST
                             + Constants.SPACE + appScript + Constants.SPACE
                             + ScriptConstants.LINUX_THEN + Constants.SPACE);
-                    killPrinter.println(ScriptConstants.MULTI_SPACE
+                    killPrinter.println(ScriptConstants.MULTI_SPACE_6
                             + appScript);
                     killPrinter.println(ScriptConstants.FI);
                 }
@@ -374,7 +374,7 @@ public class LinuxMachine extends Machine {
                     startPrinter.println(ScriptConstants.LINUX_IF_EXIST
                             + Constants.SPACE + appScript + Constants.SPACE
                             + ScriptConstants.LINUX_THEN + Constants.SPACE);
-                    startPrinter.println(ScriptConstants.MULTI_SPACE
+                    startPrinter.println(ScriptConstants.MULTI_SPACE_6
                             + appScript);
                     startPrinter.println(ScriptConstants.FI);
                 }
@@ -563,13 +563,13 @@ public class LinuxMachine extends Machine {
                     // else
                     appPrint.println(ScriptConstants.ELSE);
                     //     export CLASSPATH = cp;
-                    appPrint.println(ScriptConstants.MULTI_SPACE_2
+                    appPrint.println(ScriptConstants.MULTI_SPACE_4
                             + ScriptConstants.EXPORT_CLASSPATH
                             + osGetClassPath(app)
                             + ScriptConstants.VALUE_OF_CLASSPATH 
                             + Constants.SEMICOLON);
                     //     JAVA
-                    appPrint.println(ScriptConstants.MULTI_SPACE_2
+                    appPrint.println(ScriptConstants.MULTI_SPACE_4
                             + ScriptConstants.JAVA + Constants.SPACE
                             + app.getMachineParameters().writeJavaOptions()
                             + Constants.SPACE + Constants.DASH 
@@ -1247,10 +1247,10 @@ public class LinuxMachine extends Machine {
         res.append(appScript + Constants.SPACE + ScriptConstants.LINUX_THEN);
         res.append(Constants.NEWLINE);
         //    ./start_external_database.sh
-        res.append(ScriptConstants.MULTI_SPACE + appScript);
+        res.append(ScriptConstants.MULTI_SPACE_6 + appScript);
         res.append(ScriptConstants.LINUX_RUN_BACKGROUND + Constants.NEWLINE);
         //    sleep 5
-        res.append(ScriptConstants.MULTI_SPACE + ScriptConstants.SLEEP_5);
+        res.append(ScriptConstants.MULTI_SPACE_6 + ScriptConstants.SLEEP_5);
         res.append(Constants.NEWLINE);
         // fi
         res.append(ScriptConstants.FI + Constants.NEWLINE);        
@@ -1372,7 +1372,7 @@ public class LinuxMachine extends Machine {
         res.append(appScript + Constants.SPACE + ScriptConstants.LINUX_THEN);
         res.append(Constants.NEWLINE);
         //    ./kill_external_database.sh
-        res.append(ScriptConstants.MULTI_SPACE + appScript);
+        res.append(ScriptConstants.MULTI_SPACE_6 + appScript);
         res.append(Constants.NEWLINE);
         // fi
         res.append(ScriptConstants.FI + Constants.NEWLINE);        
@@ -1488,10 +1488,10 @@ public class LinuxMachine extends Machine {
         res.append(appScript + Constants.SPACE + ScriptConstants.LINUX_THEN);
         res.append(Constants.NEWLINE);
         //    ./start_external_harvest_database.sh
-        res.append(ScriptConstants.MULTI_SPACE + appScript);
+        res.append(ScriptConstants.MULTI_SPACE_6 + appScript);
         res.append(ScriptConstants.LINUX_RUN_BACKGROUND + Constants.NEWLINE);
         //    sleep 5
-        res.append(ScriptConstants.MULTI_SPACE + ScriptConstants.SLEEP_5);
+        res.append(ScriptConstants.MULTI_SPACE_6 + ScriptConstants.SLEEP_5);
         res.append(Constants.NEWLINE);
         // fi
         res.append(ScriptConstants.FI + Constants.NEWLINE);        
@@ -1613,7 +1613,7 @@ public class LinuxMachine extends Machine {
         res.append(appScript + Constants.SPACE + ScriptConstants.LINUX_THEN);
         res.append(Constants.NEWLINE);
         //    ./kill_external_harvest_database.sh
-        res.append(ScriptConstants.MULTI_SPACE + appScript);
+        res.append(ScriptConstants.MULTI_SPACE_6 + appScript);
         res.append(Constants.NEWLINE);
         // fi
         res.append(ScriptConstants.FI + Constants.NEWLINE);        
