@@ -37,6 +37,7 @@
             <userName>anonymous</userName>
             <userPassword>anonymous</userPassword>
             <retries>3</retries>
+            <datatimeout>600</datatimeout>
         </remoteFile>
     </common>
 </settings>
