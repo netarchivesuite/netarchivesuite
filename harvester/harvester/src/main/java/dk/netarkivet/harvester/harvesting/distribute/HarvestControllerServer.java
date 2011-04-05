@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -37,6 +38,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
 import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.ExceptionUtils;
@@ -52,6 +54,7 @@ import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.scheduler.HarvestDispatcher;
 
 /**
  * This class responds to JMS doOneCrawl messages from the HarvestScheduler and
@@ -89,12 +92,50 @@ public class HarvestControllerServer
 extends HarvesterMessageHandler
 implements CleanupIF {
 
+    /**
+     * Task that sends the availability status of the 
+     * {@link HarvestControllerServer} to the 
+     * {@link HarvestDispatcher}.
+     */
+    private static class SendStatusTask implements Runnable {
+
+        /**
+         * The owner harvester.
+         */
+        private final HarvestControllerServer hcs;
+
+        /**
+         * Builds a task from its owner harvester.
+         */
+        public SendStatusTask(HarvestControllerServer hcs) {
+            super();
+            this.hcs = hcs;
+        }
+
+        /**
+         * Sends a {@link HarvesterStatusMessage}.
+         */
+        @Override
+        public void run() {
+            hcs.jmsConnection.send(new HarvesterStatusMessage(
+                    hcs.applicationInstanceId,
+                    HarvestControllerServer.JOB_PRIORITY,
+                    ! hcs.running));
+        }
+    }
+
     /** The unique instance of this class. */
     private static HarvestControllerServer instance;
 
     /** The logger to use. */
     private static final Log log =
         LogFactory.getLog(HarvestControllerServer.class);
+
+    /** The configured application instance id.
+     * @see CommonSettings#APPLICATION_INSTANCE_ID
+     */
+    private final String applicationInstanceId =
+        Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
 
     /** The message to write to log when starting the server. */
     private static final String STARTING_MESSAGE =
@@ -147,7 +188,18 @@ implements CleanupIF {
     
     /** the serverdir, where the harvesting takes place. */
     private final File serverDir;
-    
+
+    /**
+     * The executor used to execute {@link SendStatusTask}s.
+     */
+    private PeriodicTaskExecutor sendStatus;
+
+    /**
+     * Delay in seconds between two status sendings.
+     */
+    private static final int SEND_STATUS_DELAY =
+        Settings.getInt(HarvesterSettings.SEND_STATUS_DELAY);
+
     /**
      * In this constructor, the server creates an instance of the
      * HarvestController, uploads any arc-files from incomplete harvests.
@@ -236,6 +288,13 @@ implements CleanupIF {
             throws IOFailure {
         if (instance == null) {
             instance = new HarvestControllerServer();
+
+            // Start periodically sending the harvester's status
+            instance.sendStatus = new PeriodicTaskExecutor(
+                    "HarvesterStatus",
+                    new SendStatusTask(instance),
+                    0,
+                    SEND_STATUS_DELAY);
         }
         return instance;
     }
@@ -260,6 +319,14 @@ implements CleanupIF {
         if (jmsConnection != null) {
             jmsConnection.removeListener(jobChannel, this);
         }
+
+        // Send a last status message (status unavailable)
+        jmsConnection.send(new HarvesterStatusMessage(
+                applicationInstanceId, JOB_PRIORITY, false));
+
+        // Stop the sending of status messages
+        sendStatus.shutdown();
+
         instance = null;
     }
 
@@ -444,14 +511,6 @@ implements CleanupIF {
     private synchronized void startAcceptingJobs() {
         //allow this haco to receive messages
         running = false;
-
-        // Send a ReadyForJobMessage
-        jmsConnection.send(new ReadyForJobMessage(JOB_PRIORITY));
-        if (log.isDebugEnabled()) {
-            log.debug("Harvest controller ready to harvest "
-                    + JOB_PRIORITY + " jobs.");
-        }
-
     }
 
     /** Stop listening for new crawl requests.

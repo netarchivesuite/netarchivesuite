@@ -71,7 +71,10 @@ public class NumberUtils {
      * @return an array of primitive values
      */
     public static final double[] toPrimitiveArray(List<Double> list) {
-        ArgumentNotValid.checkNotNullOrEmpty(list, "list");
+        ArgumentNotValid.checkNotNull(list, "list");
+        if (list.isEmpty()) {
+            return new double[0];
+        }
         double[] retArray = new double[list.size()];
         for (int i = 0; i < list.size(); i++) {
             retArray[i] = list.get(i);

@@ -28,7 +28,7 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
-import dk.netarkivet.harvester.harvesting.distribute.ReadyForJobMessage;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterStatusMessage;
 
 /**
  * Interface for all classes which handles harvester-related messages received
@@ -78,6 +78,6 @@ public interface HarvesterMessageVisitor {
     *
     * @param msg A received message.
     */
-    void visit(ReadyForJobMessage msg);
+    void visit(HarvesterStatusMessage msg);
 
 }

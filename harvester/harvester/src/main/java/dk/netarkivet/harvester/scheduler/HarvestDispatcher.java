@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jms.MessageListener;
 
@@ -53,10 +55,10 @@ import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
-import dk.netarkivet.harvester.harvesting.distribute.ReadyForJobMessage;
 
 /**
  * This class handles dispatching of scheduled Harvest jobs to the Harvest
@@ -67,9 +69,10 @@ import dk.netarkivet.harvester.harvesting.distribute.ReadyForJobMessage;
  * creates the corresponding harvest jobs and submits these
  * to the active HarvestServers.<p>
  *
- * The dispatching of jobs occurs when at least one {@link ReadyForJobMessage}
- * has been received by the dispatcher. A job of the same priority is then
- * issued.
+ * The dispatching of jobs occurs when the internal state (built by processing
+ *  {@link HarvesterStatusMessage}s) tracksq at least one available harvester
+ *  for a given priority. A job of the same priority is then issued for each 
+ *  available harvester.
  *
  * <p>
  *
@@ -79,57 +82,63 @@ public class HarvestDispatcher extends HarvesterMessageHandler
 implements MessageListener, ComponentLifeCycle {
 
     /**
-     * Encapsulates counters that keep track of how many jobs are ready to
-     * be submitted by priority (i.e. the count of crawlers that have notified
-     * being ready to process a job).
+     * Encapsulates the tracking of available harvesters by priority.
      */
     private static class DispatchState {
         /**
-         * Counts the number of {@link ReadyForJobMessage}s received
-         * for each {@link JobPriority}. This represents the available "slots" for
-         * dispatching new jobs.
+         * Tracks available harvesters for dispatching new jobs.
          */
-        private Map<JobPriority, Integer> slots =
-            new HashMap<JobPriority, Integer>();
+        private Map<JobPriority, Set<String>> availableHarvesters =
+            new HashMap<JobPriority, Set<String>>();
 
         public String toString() {
-            String statusLine = "Ready to submit";
+            String statusLine = "Available harvesters:";
             for (JobPriority p : JobPriority.values()) {
-                statusLine += "\n" + getReadyCount(p) + " " + p + " jobs";
+                Set<String> pSet = availableHarvesters.get(p);
+                statusLine += "\n" + p + ": "
+                    + (pSet == null ? "[]" : pSet.toString());
             }
             return statusLine;
         }
 
         /**
-         * Returns the number of {@link ReadyForJobMessage} for the
+         * Updates the dispatch state by removing a crawler ID if it
+         * declares being unavailable, or adding it otherwise.
+         */
+        public synchronized void updateHarvesterStatus(
+                HarvesterStatusMessage statusMsg) {
+
+            JobPriority p = statusMsg.getJobProprity();
+            String harvesterId = statusMsg.getApplicationInstanceId();
+
+            Set<String> ids = availableHarvesters.get(p);
+            if (ids == null) {
+                ids = new TreeSet<String>();
+                availableHarvesters.put(p, ids);
+            }
+
+            int oldSize = ids.size();
+            if (statusMsg.isAvailable()) {
+                ids.add(harvesterId);
+            } else {
+                ids.remove(harvesterId);
+            }
+
+            if (log.isInfoEnabled() && (oldSize != ids.size())) {
+                log.info(toString());
+            }
+        }
+
+        /**
+         * Returns the number of available harvesters for the
          * given {@link JobPriority}.
          * @param p the job priority
-         * @return the number of {@link ReadyForJobMessage} for the
+         * @return the number of available harvesters for the
          * given {@link JobPriority}.
          */
-        private synchronized int getReadyCount(JobPriority p) {
-            Integer count = slots.get(p);
-            return (count == null ? 0 : count.intValue());
-        }
-
-        private synchronized void incrementReadyCount(JobPriority p) {
-            Integer count = slots.get(p);
-            int newCount = (count == null ? 0 : count.intValue()) + 1;
-            slots.put(p, newCount);
-
-            if (log.isInfoEnabled()) {
-                log.info(toString());
-            }
-        }
-
-        private synchronized void decrementReadyCount(JobPriority p) {
-            Integer count = slots.get(p);
-            int newCount = (count == null ? 0 : count.intValue()) - 1;
-            slots.put(p, newCount);
-
-            if (log.isInfoEnabled()) {
-                log.info(toString());
-            }
+        private synchronized int getAvailableHarvestersCount(JobPriority p) {
+            Set<String> available = availableHarvesters.get(p);
+            return (available == null ? 0 : available.size());
         }
 
     }
@@ -151,9 +160,7 @@ implements MessageListener, ComponentLifeCycle {
     private JMSConnection jmsConnection;
 
     /**
-     * The state of the job dispatch, encapsulates the counters of jobs that 
-     * are ready to be submitted by priority, following reception of
-     * a {@link ReadyForJobMessage}.
+     * The state of the job dispatch, tracks the IDs of available harvesters.
      */
     private final DispatchState state = new DispatchState();
 
@@ -278,13 +285,12 @@ implements MessageListener, ComponentLifeCycle {
 
     /**
      * For each {@link JobPriority}, submits as many jobs
-     * as {@link ReadyForJobMessage}s have been received, and decrements the
-     * submit "slot" accordingly.
+     * as the internal state records available harvesters.
      */
     void submitNewJobs() {
         for (JobPriority p : JobPriority.values()) {
-            int readyMessagesCount = state.getReadyCount(p);
-            for (int i = 0; i < readyMessagesCount; i++) {
+            int availableCount = state.getAvailableHarvestersCount(p);
+            for (int i = 0; i < availableCount; i++) {
                 submitNextNewJob(p);
             }
         }
@@ -376,7 +382,6 @@ implements MessageListener, ComponentLifeCycle {
                     log.trace("Job " + jobToSubmit + " sent to harvest queue.");
                 }
 
-                state.decrementReadyCount(priority);
             } catch (Throwable e) {
                 String message = "Error while scheduling job " + jobID
                     + ". Job status changed to FAILED";
@@ -445,9 +450,9 @@ implements MessageListener, ComponentLifeCycle {
     }
 
     @Override
-    public void visit(ReadyForJobMessage msg) {
+    public void visit(HarvesterStatusMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-        state.incrementReadyCount(msg.getJobProprity());
+        state.updateHarvesterStatus(msg);
     }
 
 }

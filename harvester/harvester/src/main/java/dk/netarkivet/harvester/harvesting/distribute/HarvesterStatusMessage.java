@@ -32,11 +32,11 @@ import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.scheduler.HarvestDispatcher;
 
 /**
- * The {@link HarvestController} sends a {@link ReadyForJobMessage} when it is
- * ready to perform another crawl. {@link ReadyForJobMessage}s are processed
- * by the {@link HarvestDispatcher}.
+ * The {@link HarvestController} periodically sends 
+ * {@link HarvesterStatusMessage}s to the {@link HarvestDispatcher} to notify
+ * it whether it is available for processing a job or already processing one.
  */
-public class ReadyForJobMessage
+public class HarvesterStatusMessage
 extends HarvesterMessage
 implements Serializable {
 
@@ -46,12 +46,30 @@ implements Serializable {
     private final JobPriority jobProprity;
 
     /**
+     * The sender's application instance ID
+     */
+    private final String applicationInstanceId;
+
+    /**
+     * Whether or not the sender is processing a crawl request.
+     */
+    private final boolean isAvailable;
+
+    /**
      * Builds a new message.
      * @param jobPriority the priority of jobs crawled by the sender.
+     * @param applicationInstanceId the sender's application instance ID.
+     * @param isAvailable whether or not the sender is 
+     * processing a crawl request.
      */
-    public ReadyForJobMessage(JobPriority jobPriority) {
+    public HarvesterStatusMessage(
+            String applicationInstanceId,
+            JobPriority jobPriority,
+            boolean isAvailable) {
         super(Channels.getHarvestDispatcherChannel(), Channels.getError());
+        this.applicationInstanceId = applicationInstanceId;
         this.jobProprity = jobPriority;
+        this.isAvailable = isAvailable;
     }
 
     @Override
@@ -64,6 +82,20 @@ implements Serializable {
      */
     public JobPriority getJobProprity() {
         return jobProprity;
+    }
+
+    /**
+     * @return the application instance ID.
+     */
+    public String getApplicationInstanceId() {
+        return applicationInstanceId;
+    }
+
+    /**
+     * @return the availability.
+     */
+    public boolean isAvailable() {
+        return isAvailable;
     }
 
 }
