@@ -229,7 +229,8 @@ public class HarvestDBConnection {
     private static void initDataSource(DBSpecifics dbSpec, String jdbcUrl)
     throws SQLException {
 
-        dataSource = new ComboPooledDataSource();
+        dataSource = new ComboPooledDataSource(
+                HarvestDBConnection.class.getSimpleName());
         try {
             dataSource.setDriverClass(dbSpec.getDriverClassName());
         } catch (PropertyVetoException e) {

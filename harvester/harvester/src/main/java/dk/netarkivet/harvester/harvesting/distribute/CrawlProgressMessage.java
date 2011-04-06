@@ -30,7 +30,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
-import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
  *
@@ -38,7 +38,7 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
  * CrawlService.Job, and represents the crawl progress.
  *
  * Additionally this object extends {@link HarvesterMessage} so that it can be
- * sent on the JMS bus to be processed by {@link HarvestMonitorServer}.
+ * sent on the JMS bus to be processed by {@link HarvestMonitor}.
  *
  * @see HeritrixLauncher#doCrawl()
  *
@@ -329,7 +329,7 @@ implements Serializable {
      */
     public CrawlProgressMessage(long harvestID, long jobId,
             String progressStatisticsLegend) {
-        super(HarvestMonitorServer.CRAWL_PROGRESS_CHANNEL_ID, Channels.getError());
+        super(HarvestMonitor.HARVEST_MONITOR_CHANNEL_ID, Channels.getError());
         this.harvestID = harvestID;
         this.jobID = jobId;
         this.status = CrawlStatus.PRE_CRAWL;

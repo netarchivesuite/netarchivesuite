@@ -538,7 +538,7 @@
             <splitByObjectLimit>false</splitByObjectLimit>
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
-            <dispatchperiode>5000</dispatchperiode>
+            <dispatchperiode>30000</dispatchperiode>
             <jobgenerationperiode>60</jobgenerationperiode>
             <useQuotaEnforcer>true</useQuotaEnforcer>
         </scheduler>
@@ -555,6 +555,7 @@
             <minSpaceLeft>400000000</minSpaceLeft>
             <oldjobsDir>oldjobs</oldjobsDir>
             <queuePriority>HIGHPRIORITY</queuePriority>
+            <sendStatusDelay>1</sendStatusDelay>
             <heritrix>
                 <!-- 30 minutes -->
                 <inactivityTimeout>1800</inactivityTimeout>

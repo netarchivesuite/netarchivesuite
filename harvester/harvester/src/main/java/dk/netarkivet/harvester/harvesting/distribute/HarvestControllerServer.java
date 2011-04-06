@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -37,6 +38,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
 import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.ExceptionUtils;
@@ -85,14 +87,37 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
  * after new jobs, if there is enough room available on the machine. If not, it
  * logs a warning about this, which is also sent as a notification.
  */
-public class HarvestControllerServer extends HarvesterMessageHandler
-        implements CleanupIF {
+public class HarvestControllerServer
+extends HarvesterMessageHandler
+implements CleanupIF {
+
+    private static class SendStatusTask implements Runnable {
+
+        private final HarvestControllerServer hcs;
+
+        public SendStatusTask(HarvestControllerServer hcs) {
+            super();
+            this.hcs = hcs;
+        }
+
+        @Override
+        public void run() {
+            hcs.jmsConnection.send(new HarvesterStatusMessage(
+                    hcs.applicationInstanceId,
+                    HarvestControllerServer.JOB_PRIORITY,
+                    ! hcs.running));
+        }
+    }
+
     /** The unique instance of this class. */
     private static HarvestControllerServer instance;
 
     /** The logger to use. */
-    private static final Log log
-            = LogFactory.getLog(HarvestControllerServer.class);
+    private static final Log log =
+        LogFactory.getLog(HarvestControllerServer.class);
+
+    private final String applicationInstanceId =
+        Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
 
     /** The message to write to log when starting the server. */
     private static final String STARTING_MESSAGE =
@@ -145,6 +170,17 @@ public class HarvestControllerServer extends HarvesterMessageHandler
 
     /** the serverdir, where the harvesting takes place. */
     private final File serverDir;
+
+    /**
+     * The executor used to execute {@link SendStatusTask}s.
+     */
+    private PeriodicTaskExecutor sendStatus;
+
+    /**
+     * Delay in seconds between two status sendings.
+     */
+    private static final int SEND_STATUS_DELAY =
+        Settings.getInt(HarvesterSettings.SEND_STATUS_DELAY);
 
     /**
      * In this constructor, the server creates an instance of the
@@ -215,7 +251,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         beginListeningIfSpaceAvailable();
 
         // Notify the harvest dispatcher that we are ready
-        sendReadyForJobMessage();
+        startAcceptingJobs();
     }
 
     /**
@@ -226,7 +262,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
      *
      * @return The instance
      * @throws PermissionDenied
-     *             If the serverdir or oldjobsdir can't be created
+     *             If the serverdir or oldjobsdir applicationInstanceIdcan't be created
      * @throws IOFailure
      *             if data from old harvests exist, but contain illegal data
      */
@@ -234,6 +270,13 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             throws IOFailure {
         if (instance == null) {
             instance = new HarvestControllerServer();
+
+            // Start periodically sending the harvester's status
+            instance.sendStatus = new PeriodicTaskExecutor(
+                    "HarvesterStatus",
+                    new SendStatusTask(instance),
+                    0,
+                    SEND_STATUS_DELAY);
         }
         return instance;
     }
@@ -258,6 +301,14 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         if (jmsConnection != null) {
             jmsConnection.removeListener(jobChannel, this);
         }
+
+        // Send a last status message (status unavailable)
+        jmsConnection.send(new HarvesterStatusMessage(
+                applicationInstanceId, JOB_PRIORITY, false));
+
+        // Stop the sending of status messages
+        sendStatus.shutdown();
+
         instance = null;
     }
 
@@ -399,7 +450,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             // If we didn't start a thread for crawling after all, accept more
             // messages
             if (t == null) {
-                resumeAcceptingJobs();
+                startAcceptingJobs();
             }
         }
         // Now return from this method letting the thread do the work.
@@ -439,11 +490,9 @@ public class HarvestControllerServer extends HarvesterMessageHandler
      * jobs again, we stop resending messages we get.
      *
      */
-    private synchronized void resumeAcceptingJobs() {
+    private synchronized void startAcceptingJobs() {
         //allow this haco to receive messages
         running = false;
-
-        sendReadyForJobMessage();
     }
 
     /** Stop listening for new crawl requests.
@@ -696,7 +745,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 log.info(ENDCRAWL_MESSAGE + " " + job.getJobID());
                 // process serverdir for files not yet uploaded.
                 processOldJobs();
-                resumeAcceptingJobs();
+                startAcceptingJobs();
                 beginListeningIfSpaceAvailable();
             }
         }
@@ -731,12 +780,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 throw e;
             }
         }
-    }
-
-    private void sendReadyForJobMessage() {
-        jmsConnection.send(new ReadyForJobMessage(JOB_PRIORITY));
-        log.debug("Havest controller ready to harvest "
-                + JOB_PRIORITY + " jobs.");
     }
 
 }

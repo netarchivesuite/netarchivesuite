@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
@@ -55,7 +54,6 @@ public class StartedJobHistoryChartGenTest extends TestCase {
                 TestInfo.WORKING_DIR.getPath());
 
         gen = new StartedJobHistoryChartGen(1);
-        gen.setLocale(Locale.getDefault());
     }
 
     public void tearDown() throws Exception {

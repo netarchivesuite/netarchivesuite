@@ -123,7 +123,7 @@ public class Constants {
      */
     public static String getVersionString() {
         return "Version: " + MAJORVERSION + "." + MINORVERSION + "."
-               + PATCHVERSION + "b_BnF" + " status " + BUILDSTATUS;
+               + PATCHVERSION + "d_BnF" + " status " + BUILDSTATUS;
     }
 
     /**

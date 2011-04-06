@@ -201,7 +201,7 @@ public class PeriodicTaskExecutor {
                 log.trace("checkExecution was interrupted.");
             }
         } catch (ExecutionException e) {
-            log.error("Task threw exception: " + e.getCause());
+            log.error("Task threw exception: " + e.getCause(), e);
         }
     }
 

@@ -283,8 +283,9 @@ class StartedJobHistoryChartGen {
 
     /**
      * The locale for internationalizing the chart.
+     * The locale is set to the system default.
      */
-    private Locale locale = Locale.getDefault();
+    private final Locale locale;
 
     private PeriodicTaskExecutor genExec = null;
 
@@ -296,6 +297,9 @@ class StartedJobHistoryChartGen {
                 + OUTPUT_REL_PATH);
 
         this.jobId = jobId;
+
+        // Set the locale to the system default
+        this.locale = Locale.getDefault();
 
         genExec = new PeriodicTaskExecutor(
                 "ChartGen",
@@ -478,14 +482,6 @@ class StartedJobHistoryChartGen {
             max = Math.max(v, max);
         }
         return max;
-    }
-
-    /**
-     * Sets the locale.
-     * @param locale the locale used for chart text.
-     */
-    void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
     private void setAxisRange(NumberAxis axis, double[] range) {

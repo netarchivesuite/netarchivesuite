@@ -29,12 +29,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
-import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 import dk.netarkivet.harvester.scheduler.HarvestSchedulerMonitorServer;
 
 /**
  * This message is sent by the {@link HarvestSchedulerMonitorServer} to the
- * {@link HarvestMonitorServer} to notify it that a job ended and should not be
+ * {@link HarvestMonitor} to notify it that a job ended and should not be
  * monitored anymore, and that any resource used to monitor this job
  * should be freed.
  */
@@ -57,7 +57,7 @@ implements Serializable {
      * @param jobStatus the job's current status.
      */
     public JobEndedMessage(long jobId, JobStatus jobStatus) {
-        super(HarvestMonitorServer.CRAWL_PROGRESS_CHANNEL_ID,
+        super(HarvestMonitor.HARVEST_MONITOR_CHANNEL_ID,
                 Channels.getError());
         ArgumentNotValid.checkNotNull(jobStatus, "jobStatus");
         this.jobId = jobId;

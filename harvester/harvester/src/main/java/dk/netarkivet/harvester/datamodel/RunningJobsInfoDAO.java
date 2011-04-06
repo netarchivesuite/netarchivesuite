@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import dk.netarkivet.harvester.harvesting.frontier.FrontierReportFilter;
 import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
@@ -151,5 +152,12 @@ public abstract class RunningJobsInfoDAO {
      * @return the update count
      */
     public abstract int deleteFrontierReports(long jobId);
+
+    /**
+     * Returns the ids of jobs for which history records exist, as an immutable
+     * set.
+     * @return the ids of jobs for which history records exist.
+     */
+    public abstract Set<Long> getHistoryRecordIds();
 
 }

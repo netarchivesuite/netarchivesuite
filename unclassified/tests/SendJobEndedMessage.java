@@ -27,7 +27,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 
 /**
- * Send JobEndedMessage to the HarvestMonitorServer
+ * Send JobEndedMessage to the HarvestMonitor
  * with a given JobID, and a FAILED/DONE 
  */
 public class SendJobEndedMessage {

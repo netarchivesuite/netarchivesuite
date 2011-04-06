@@ -27,8 +27,10 @@ import java.util.regex.Pattern;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterStatusMessage;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.scheduler.HarvestDispatcher;
 
 /** Settings specific to the harvester module of NetarchiveSuite. */
 public class HarvesterSettings {
@@ -218,8 +220,11 @@ public class HarvesterSettings {
     /** The period between checking if new jobs should be dispatched to the
      * harvest servers. New jobs are dispatched if the relevant harvest job
      * queue is empty and new jobs exist for this queue.
-     * This is set to 5 seconds based on a estimate of the harvest servers
-     * ability to consume messages.
+     * Note that this should adjusted in regard of
+     * {@link #SEND_STATUS_DELAY}, and be significantly higher.
+     * This is set by default to 30 seconds (an estimate of the harvest servers
+     * ability to consume messages being 5 seconds).
+     *
      */
     public static String DISPATCH_JOBS_PERIOD =
     	"settings.harvester.scheduler.dispatchperiode";
@@ -326,6 +331,17 @@ public class HarvesterSettings {
      */
     public static String CRAWL_LOOP_WAIT_TIME =
         "settings.harvester.harvesting.heritrix.crawlLoopWaitTime";
+
+    /**
+     * <b>settings.harvester.harvesting.sendStatusDelay</b>:<br>
+     * Time interval in seconds to wait before transmitting a
+     * {@link HarvesterStatusMessage} to the {@link HarvestDispatcher}.
+     * Note that this should adjusted in regard of
+     * {@link #DISPATCH_JOBS_PERIOD}, and be significantly smaller.
+     * Default value is 1 second.
+     */
+    public static String SEND_STATUS_DELAY =
+        "settings.harvester.harvesting.sendStatusDelay";
 
     /**
      * <b>settings.harvester.harvesting.frontier.frontierReportWaitTime</b>:<br>

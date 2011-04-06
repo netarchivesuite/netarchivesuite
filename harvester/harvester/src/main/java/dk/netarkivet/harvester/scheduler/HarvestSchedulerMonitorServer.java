@@ -39,7 +39,6 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
-import dk.netarkivet.harvester.harvesting.distribute.ReadyForJobMessage;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /**
@@ -181,7 +180,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                 //Always process the data!
                 processCrawlData(job, cmsg.getDomainHarvestReport());
 
-                // Send message to notify HarvestMonitorServer that
+                // Send message to notify HarvestMonitor that
                 // it should stop monitoring this job
                 JMSConnectionFactory.getInstance().send(
                         new JobEndedMessage(job.getJobID(), newStatus));

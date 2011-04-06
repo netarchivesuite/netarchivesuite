@@ -28,12 +28,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -566,6 +569,55 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             DBUtils.closeStatementIfOpen(stm);
             HarvestDBConnection.release(c);
         }
+    }
+
+    /**
+     * Returns the ids of jobs for which history records exist as an
+     * immutable set.
+     * @return the ids of jobs for which history records exist.
+     */
+    @Override
+    public Set<Long> getHistoryRecordIds() {
+
+        Connection c = HarvestDBConnection.get();
+
+        Set<Long> jobIds = new TreeSet<Long>();
+        try {
+
+            ResultSet rs = c.createStatement().executeQuery(
+                    "SELECT DISTINCT " + HM_COLUMN.jobId
+                    + " FROM runningJobsMonitor");
+
+            while (rs.next()) {
+                jobIds.add(rs.getLong(HM_COLUMN.jobId.name()));
+            }
+
+            rs = c.createStatement().executeQuery(
+                    "SELECT DISTINCT " + HM_COLUMN.jobId
+                    + " FROM runningJobsHistory");
+
+            while (rs.next()) {
+                jobIds.add(rs.getLong(HM_COLUMN.jobId.name()));
+            }
+
+            rs = c.createStatement().executeQuery(
+                    "SELECT DISTINCT " + HM_COLUMN.jobId
+                    + " FROM frontierReportMonitor");
+
+            while (rs.next()) {
+                jobIds.add(rs.getLong(HM_COLUMN.jobId.name()));
+            }
+
+        } catch (SQLException e) {
+            String message = "SQL error querying running jobs history"
+                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+
+        return Collections.unmodifiableSet(jobIds);
     }
 
     /**

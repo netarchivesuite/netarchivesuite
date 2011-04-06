@@ -30,7 +30,9 @@ import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
+import java.net.InetAddress;
 import java.rmi.registry.LocateRegistry;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,14 +55,16 @@ import dk.netarkivet.common.utils.SystemUtils;
  * TODO This implementation is not robust and could be improved. <br/>
  * TODO For instance: - Singleton behaviour <br/>
  * TODO                -Reuse of already created registry <br/>
- * TODO Usage of access rights (for read-only mbeans) (see reference above) 
+ * TODO Usage of access rights (for read-only mbeans) (see reference above)
  *
  */
 
 public class MBeanConnectorCreator {
     public static boolean isExposed = false;
+
     private static final String SERVICE_JMX_RMI_URL
-            = "service:jmx:rmi://localhost:%d/jndi/rmi://localhost:%d/jmxrmi";
+            = "service:jmx:rmi://{0}:{1}/jndi/rmi://{0}:{2}/jmxrmi";
+
     private static final String ENVIRONMENT_PASSWORD_FILE_PROPERTY
             = "jmx.remote.x.password.file";
     private static final Log log = LogFactory.getLog(
@@ -82,9 +86,6 @@ public class MBeanConnectorCreator {
                 int rmiPort = Settings.getInt(CommonSettings.JMX_RMI_PORT);
                 String passwordFile = Settings.get(
                         CommonSettings.JMX_PASSWORD_FILE);
-                log.info("Registering mbean server in registry on port "
-                         + jmxPort + " communicating on port " + rmiPort
-                         + " using password file '" + passwordFile + "'");
 
                 // Create a private registry for the exposing the JMX connector.
                 LocateRegistry.createRegistry(jmxPort);
@@ -92,10 +93,13 @@ public class MBeanConnectorCreator {
                 // registry created above, and listen for rmi callbacks on the
                 // RMI port of this machine, exposing the mbeanserver with the
                 // name "jmxrmi".
+                String canonicalHostName = SystemUtils.getLocalHostName();
                 JMXServiceURL url = new JMXServiceURL(
-                        String.format(SERVICE_JMX_RMI_URL,
-                                      rmiPort,
-                                      jmxPort));
+                        MessageFormat.format(
+                                SERVICE_JMX_RMI_URL,
+                                canonicalHostName,
+                                Integer.toString(rmiPort),
+                                Integer.toString(jmxPort)));
                 // Insert the password file into environment used when creating
                 // the connector server.
                 Map<String, Serializable> env
@@ -114,9 +118,16 @@ public class MBeanConnectorCreator {
                 isExposed = true;
                 // Register the JMX server at the registry.
                 MonitorRegistryClientFactory.getInstance().register(
-                        SystemUtils.getLocalHostName(),
+                        canonicalHostName,
                         Settings.getInt(CommonSettings.JMX_PORT),
                         Settings.getInt(CommonSettings.JMX_RMI_PORT));
+
+                if (log.isInfoEnabled()) {
+                    log.info("Registered mbean server in registry on port "
+                            + jmxPort + " communicating on port " + rmiPort
+                            + " using password file '" + passwordFile + "'."
+                            + "\nService URL is " + url.toString());
+                }
             }
         } catch (IOException e) {
             throw new IOFailure("Error creating and registering an"

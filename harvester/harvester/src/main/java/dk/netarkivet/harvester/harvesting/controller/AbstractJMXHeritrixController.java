@@ -61,7 +61,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 /**
  * Abstract base class for JMX-based Heritrix controllers.
  */
-public abstract class AbstractJMXHeritrixController 
+public abstract class AbstractJMXHeritrixController
 implements HeritrixController {
 
     /** The logger for this class. */
@@ -118,7 +118,7 @@ implements HeritrixController {
 
     /**
      * Create a BnfHeritrixController object.
-     * 
+     *
      * @param files
      *            Files that are used to set up Heritrix.
      */
@@ -129,11 +129,7 @@ implements HeritrixController {
         SystemUtils.checkPortNotUsed(guiPort);
         SystemUtils.checkPortNotUsed(jmxPort);
 
-        try {
-            hostName = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            throw new IOFailure("Failed to find name of localhost", e);
-        }
+        hostName = SystemUtils.getLocalHostName();
 
         try {
             log.info("Starting Heritrix for " + this);
@@ -149,7 +145,7 @@ implements HeritrixController {
              * on all available network interfaces: This is done with argument
              * "--bind /" (default is 127.0.0.1) - listen on a specific port
              * using the port argument: --port <GUI port>
-             * 
+             *
              * We also need to output something like the following to
              * heritrix.out: `date Starting heritrix uname -a java -version
              * JAVA_OPTS ulimit -a
@@ -274,7 +270,7 @@ implements HeritrixController {
     /**
      * Get the login name for accessing the Heritrix GUI. This name can be set
      * in the settings.xml file.
-     * 
+     *
      * @return Name to use for accessing Heritrix web GUI
      */
     private String getHeritrixAdminName() {
@@ -284,7 +280,7 @@ implements HeritrixController {
     /**
      * Get the login password for accessing the Heritrix GUI. This password can
      * be set in the settings.xml file.
-     * 
+     *
      * @return Password to use for accessing the Heritrix GUI
      */
     private String getHeritrixAdminPassword() {
@@ -293,12 +289,12 @@ implements HeritrixController {
 
     /**
      * Change an environment to be suitable for running Heritrix.
-     * 
+     *
      * At the moment, this involves the following:
-     * 
+     *
      * Prepend the Jar files from the lib/heritrix/lib dir to the classpath.
      * Make sure the Heritrix jar file is at the front.
-     * 
+     *
      * @param environment
      *            The environment from a process builder
      * @throws IOFailure
@@ -344,7 +340,7 @@ implements HeritrixController {
     /**
      * Write various info on the system we're using into the given file. This
      * info will later get put into metadata for the crawl.
-     * 
+     *
      * @param outputFile
      *            A file to write to.
      * @param builder
@@ -417,7 +413,7 @@ implements HeritrixController {
     /**
      * Get a string that describes the current controller in terms of job ID,
      * harvest ID, and crawldir.
-     * 
+     *
      * @return A human-readable string describing this controller.
      */
     @Override
@@ -435,7 +431,7 @@ implements HeritrixController {
     /**
      * Return true if the Heritrix process has exited, logging the exit value if
      * so.
-     * 
+     *
      * @return True if the process has exited.
      */
     protected boolean processHasExited() {
@@ -504,11 +500,11 @@ implements HeritrixController {
     /**
      * Return a human-readable description of the job. This will only be visible
      * in the Heritrix GUI.
-     * 
+     *
      * @return String containing various information grabbed from HeritrixFiles.
      */
     protected String getJobDescription() {
-        String dedupPart = (files.getIndexDir() != null) 
+        String dedupPart = (files.getIndexDir() != null)
             ? "with the deduplication index stored in '"
                 + files.getIndexDir().getAbsolutePath() + "'"
                 : "with deduplication disabled";

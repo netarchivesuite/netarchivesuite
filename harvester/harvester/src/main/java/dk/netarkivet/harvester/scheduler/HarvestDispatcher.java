@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jms.MessageListener;
 
@@ -53,10 +55,10 @@ import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
-import dk.netarkivet.harvester.harvesting.distribute.ReadyForJobMessage;
 
 /**
  * This class handles dispatching of scheduled Harvest jobs to the Harvest
@@ -67,18 +69,82 @@ import dk.netarkivet.harvester.harvesting.distribute.ReadyForJobMessage;
  * creates the corresponding harvest jobs and submits these
  * to the active HarvestServers.<p>
  *
- * It also handles backup and makes sure backup is not performed while
- * jobs are being scheduled.<p>
+ * The dispatching of jobs occurs when at least one {@link HarvesterStatusMessage}
+ * has been received by the dispatcher. A job of the same priority is then
+ * issued.
+ *
+ * <p>
  *
  * Note: Only one <code>HarvestDispatcher</code> should be running at a time.
  */
 public class HarvestDispatcher extends HarvesterMessageHandler
 implements MessageListener, ComponentLifeCycle {
 
+    /**
+     * Encapsulates the tracking of available harvesters by priority.
+     */
+    private static class DispatchState {
+        /**
+         * Tracks available harvesters for dispatching new jobs.
+         */
+        private Map<JobPriority, Set<String>> availableHarvesters =
+            new HashMap<JobPriority, Set<String>>();
+
+        public String toString() {
+            String statusLine = "Available harvesters:";
+            for (JobPriority p : JobPriority.values()) {
+                Set<String> pSet = availableHarvesters.get(p);
+                statusLine += "\n" + p + ": "
+                    + (pSet == null ? "[]" : pSet.toString());
+            }
+            return statusLine;
+        }
+
+        public synchronized void updateHarvesterStatus(
+                HarvesterStatusMessage statusMsg) {
+
+            JobPriority p = statusMsg.getJobProprity();
+            String harvesterId = statusMsg.getApplicationInstanceId();
+
+            Set<String> ids = availableHarvesters.get(p);
+            if (ids == null) {
+                ids = new TreeSet<String>();
+                availableHarvesters.put(p, ids);
+            }
+
+            int oldSize = ids.size();
+            if (statusMsg.isAvailable()) {
+                ids.add(harvesterId);
+            } else {
+                ids.remove(harvesterId);
+            }
+
+            if (log.isInfoEnabled() && (oldSize != ids.size())) {
+                log.info(toString());
+            }
+        }
+
+        /**
+         * Returns the number of available harvesters for the
+         * given {@link JobPriority}.
+         * @param p the job priority
+         * @return the number of available harvesters for the
+         * given {@link JobPriority}.
+         */
+        private synchronized int getAvailableHarvestersCount(JobPriority p) {
+            Set<String> available = availableHarvesters.get(p);
+            return (available == null ? 0 : available.size());
+        }
+
+    }
+
     /** The logger to use.    */
     protected static final Log log = LogFactory.getLog(
             HarvestDispatcher.class.getName());
 
+    /**
+     * The period in milliseconds between dispatches.
+     */
     private static int dispatchPeriodInMillis =
         Settings.getInt(HarvesterSettings.DISPATCH_JOBS_PERIOD);
 
@@ -88,8 +154,12 @@ implements MessageListener, ComponentLifeCycle {
     /** Connection to JMS provider. */
     private JMSConnection jmsConnection;
 
-    private Map<JobPriority, Integer> readyMessageCounter =
-        new HashMap<JobPriority, Integer>();
+    /**
+     * The state of the job dispatch, encapsulates the counters of jobs that
+     * are ready to be submitted by priority, following reception of
+     * a {@link HarvesterStatusMessage}.
+     */
+    private final DispatchState state = new DispatchState();
 
     /**
      * Create new instance of the HarvestDispatcher.
@@ -117,6 +187,7 @@ implements MessageListener, ComponentLifeCycle {
         rescheduleLeftOverJobs();
 
         //ToDo implement real scheduling with timeout functionality.
+        // See FR https://sbforge.org/jira/browse/NAS-1811
         dispatcherThread = new Thread("HarvestDispatcher") {
             public void run() {
                 if (log.isInfoEnabled()) {
@@ -158,7 +229,9 @@ implements MessageListener, ComponentLifeCycle {
             }
             resubmitcount++;
         }
-        log.info(resubmitcount + " has been resubmitted.");
+        if (log.isInfoEnabled()) {
+            log.info(resubmitcount + " has been resubmitted.");
+        }
     }
 
     /**
@@ -168,10 +241,10 @@ implements MessageListener, ComponentLifeCycle {
      */
     private void stopTimeoutJobs() {
         final JobDAO dao = JobDAO.getInstance();
-        final Iterator<Long> jobs = dao.getAllJobIds(JobStatus.STARTED);
+        final Iterator<Long> startedJobs = dao.getAllJobIds(JobStatus.STARTED);
         int stoppedJobs = 0;
-        while (jobs.hasNext()) {
-            long id = jobs.next();
+        while (startedJobs.hasNext()) {
+            long id = startedJobs.next();
             Job job = dao.read(id);
 
             long timeDiff =
@@ -191,15 +264,16 @@ implements MessageListener, ComponentLifeCycle {
                 stoppedJobs++;
             }
         }
-        if(stoppedJobs > 0) {
+        if (stoppedJobs > 0) {
             log.warn("Changed " + stoppedJobs + " jobs from STARTED to FAILED");
         }
     }
 
     /**
-     * Dispatched new jobs
-     * Stop jobs with status STARTED, which have been on running for more
+     * Dispatches new jobs.
+     * First stops jobs with status STARTED, which have been on running for more
      * than settings.harvester.scheduler.jobtimeouttime time.
+     * Then submits new jobs if crawlers are free.
      */
     void dispatchJobs() {
         stopTimeoutJobs();
@@ -207,42 +281,31 @@ implements MessageListener, ComponentLifeCycle {
     }
 
     /**
-     * Submit the next new job if the relevant message queue is empty.
+     * For each {@link JobPriority}, submits as many jobs
+     * as {@link HarvesterStatusMessage}s have been received, and decrements the
+     * submit "slot" accordingly.
      */
-    synchronized void submitNewJobs() {
-
-        String logLine = "Ready to submit";
+    void submitNewJobs() {
         for (JobPriority p : JobPriority.values()) {
-            int readyMessagesCount = getReadyMessageCount(p);
-            logLine += "\n" + readyMessagesCount + " " + p + " jobs";
-            for (int i = 0; i < readyMessagesCount; i++) {
-                long submittedJobId = submitNextNewJob(p);
-                if (submittedJobId != -1) {
-                    decrementReadyMessageCount(p);
-                }
+            int availableCount = state.getAvailableHarvestersCount(p);
+            for (int i = 0; i < availableCount; i++) {
+                submitNextNewJob(p);
             }
         }
-
-        if (log.isInfoEnabled()) {
-            log.info(logLine);
-        }
-
     }
 
     /**
      * Submit the next new job (the one with the lowest ID) with the given
-     * priority.
-     * @return the id of the submitted job, or -1 if no job was available,
-     * or -2 if submit failed.
+     * priority, and updates the internal counter as needed.
+     * @param priority the job priority
      */
-    private long submitNextNewJob(JobPriority priority) {
+    private void submitNextNewJob(JobPriority priority) {
         final JobDAO dao = JobDAO.getInstance();
         Iterator<Long> jobsToSubmit = dao.getAllJobIds(JobStatus.NEW, priority);
         if (!jobsToSubmit.hasNext()) {
             if (log.isTraceEnabled() ) {
                 log.trace("No " + priority + " jobs to be run at this time");
             }
-            return -1L;
         } else {
             if (log.isDebugEnabled() ) {
                 log.debug("Submitting new " + priority + " job");
@@ -256,10 +319,9 @@ implements MessageListener, ComponentLifeCycle {
                 jobToSubmit.setSubmittedDate(new Date());
                 dao.update(jobToSubmit);
                 //Add alias metadata
-                List<MetadataEntry> metadata
-                = new ArrayList<MetadataEntry>();
-                MetadataEntry aliasMetadataEntry
-                = MetadataEntry.makeAliasMetadataEntry(
+                List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
+                MetadataEntry aliasMetadataEntry =
+                    MetadataEntry.makeAliasMetadataEntry(
                         jobToSubmit.getJobAliasInfo(),
                         jobToSubmit.getOrigHarvestDefinitionID(),
                         jobToSubmit.getHarvestNum(),
@@ -318,9 +380,9 @@ implements MessageListener, ComponentLifeCycle {
                     log.trace("Job " + jobToSubmit + " sent to harvest queue.");
                 }
 
-                return jobToSubmit.getJobID();
             } catch (Throwable e) {
-                String message = "Error while scheduling job " + jobID;
+                String message = "Error while scheduling job " + jobID
+                    + ". Job status changed to FAILED";
                 log.warn(message, e);
                 if (jobToSubmit != null) {
                     jobToSubmit.setStatus(JobStatus.FAILED);
@@ -329,7 +391,6 @@ implements MessageListener, ComponentLifeCycle {
                             ExceptionUtils.getStackTrace(e));
                     dao.update(jobToSubmit);
                 }
-                return -1;
             }
         }
     }
@@ -338,6 +399,9 @@ implements MessageListener, ComponentLifeCycle {
      * Submit an doOneCrawl request to a HarvestControllerServer with correct
      * priority.
      * @param job the specific job to send
+     * @param origHarvestName the harvest definition's name
+     * @param origHarvestDesc the harvest definition's description
+     * @param origHarvestSchedule the harvest definition schedule name
      * @param metadata pre-harvest metadata to store in arcfile.
      * @throws ArgumentNotValid one of the parameters are null
      * @throws IOFailure if unable to send the doOneCrawl request to a
@@ -384,32 +448,9 @@ implements MessageListener, ComponentLifeCycle {
     }
 
     @Override
-    public void visit(ReadyForJobMessage msg) {
+    public void visit(HarvesterStatusMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-        incrementReadyMessageCount(msg.getJobProprity());
-    }
-
-    private int getReadyMessageCount(JobPriority p) {
-        synchronized (readyMessageCounter) {
-            Integer count = readyMessageCounter.get(p);
-            return (count == null ? 0 : count.intValue());
-        }
-    }
-
-    private void incrementReadyMessageCount(JobPriority p) {
-        synchronized (readyMessageCounter) {
-            Integer count = readyMessageCounter.get(p);
-            int newCount = (count == null ? 0 : count.intValue()) + 1;
-            readyMessageCounter.put(p, newCount);
-        }
-    }
-
-    private void decrementReadyMessageCount(JobPriority p) {
-        synchronized (readyMessageCounter) {
-            Integer count = readyMessageCounter.get(p);
-            int newCount = (count == null ? 0 : count.intValue()) - 1;
-            readyMessageCounter.put(p, newCount);
-        }
+        state.updateHarvesterStatus(msg);
     }
 
 }

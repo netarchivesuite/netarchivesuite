@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This page displays a list of running jobs.
 --%>
 
-<%@page import="dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer"%>
+<%@page import="dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor"%>
 <%@ page
 	import="
     java.util.Date,
@@ -87,7 +87,7 @@ This page displays a list of running jobs.
     HTMLUtils.setUTF8(request);
     HTMLUtils.generateHeader(
             pageContext,
-            HarvestMonitorServer.getAutoRefreshDelay()); // Autorefresh every x seconds
+            HarvestMonitor.getAutoRefreshDelay()); // Autorefresh every x seconds
 %>
 
 <%--Make header of page--%>
