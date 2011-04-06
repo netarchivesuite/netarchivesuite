@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="lib/deduplicator-0.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/jaxen-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/jetty-6.1.22.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-6.1.26.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.2.jar"/>
 	<classpathentry kind="lib" path="lib/libidn-0.5.9.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-2.0.0.jar"/>
@@ -20,7 +20,7 @@
 	<classpathentry kind="lib" path="lib/charting/jcommon-1.0.16.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-dependencies/ant-1.6.5.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-dependencies/core-3.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/jetty-dependencies/jetty-util-6.1.22.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-dependencies/jetty-util-6.1.26.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-dependencies/jsp-2.1-jetty-6.1.26.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-dependencies/jsp-2.1-glassfish-2.1.v20091210.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-dependencies/servlet-api-2.5-20081211.jar"/>
