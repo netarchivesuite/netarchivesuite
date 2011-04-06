@@ -309,7 +309,7 @@ public class AggregationWorker implements CleanupIF {
 
     /**
      * Creates the needed working directories. Also checks whether a temp 
-     * directory exists, which might be an indication if a unclean shutdown. 
+     * directory exists, which might be an indication of a unclean shutdown. 
      */
     protected void initialize() {
         FileUtils.createDir(indexOutputDir);
