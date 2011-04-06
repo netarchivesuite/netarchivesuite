@@ -163,7 +163,7 @@ public class HarvestStatus {
      * @return a list of job status info objects
      */
     public static HarvestStatus getjobStatusList(HarvestStatusQuery query) {
-        log.info("Getting a jobstatuslist based on the current query. ");
+        log.debug("Getting a jobstatuslist based on the current query. ");
         return JobDAO.getInstance().getStatusInfo(query);
     }
 }
