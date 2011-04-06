@@ -35,14 +35,14 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.frontier.FrontierReportAnalyzer;
-import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
  * BnF specific Heritrix launcher, that forces the use of
  * {@link BnfHeritrixController}. Every turn of the crawl control loop, asks the
  * Heritrix controller to generate a progress report as a
  * {@link CrawlProgressMessage} and then send this message on the JMS bus to
- * be consumed by the {@link HarvestMonitorServer} instance.
+ * be consumed by the {@link HarvestMonitor} instance.
  */
 public class BnfHeritrixLauncher extends HeritrixLauncher {
 

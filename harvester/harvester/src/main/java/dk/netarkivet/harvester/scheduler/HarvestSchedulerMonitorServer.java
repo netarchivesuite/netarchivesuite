@@ -180,7 +180,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                 //Always process the data!
                 processCrawlData(job, cmsg.getDomainHarvestReport());
 
-                // Send message to notify HarvestMonitorServer that
+                // Send message to notify HarvestMonitor that
                 // it should stop monitoring this job
                 JMSConnectionFactory.getInstance().send(
                         new JobEndedMessage(job.getJobID(), newStatus));

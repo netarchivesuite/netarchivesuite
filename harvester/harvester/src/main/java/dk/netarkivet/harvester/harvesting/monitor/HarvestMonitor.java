@@ -25,7 +25,6 @@ package dk.netarkivet.harvester.harvesting.monitor;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -58,49 +57,41 @@ import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
  * Listens for {@link CrawlProgressMessage}s on the proper JMS channel, and
  * stores information to be presented in the monitoring console.
  */
-public class HarvestMonitorServer
+public class HarvestMonitor
 extends HarvesterMessageHandler
 implements MessageListener, CleanupIF {
 
     /** The logger for this class. */
     private static final Log LOG = LogFactory
-            .getLog(HarvestMonitorServer.class);
+            .getLog(HarvestMonitor.class);
 
     /**
      * Singleton instance of the monitor.
      */
-    private static HarvestMonitorServer instance;
+    private static HarvestMonitor instance;
 
     /**
      * The JMS channel on which to listen for {@link CrawlProgressMessage}s.
      */
-    public static final ChannelID CRAWL_PROGRESS_CHANNEL_ID =
-        Channels.getHarvestMonitorServerChannel();
-
-    /**
-     * The JMS channel on which to listen for {@link FrontierReportMessage}s.
-     */
-    public static final ChannelID FRONTIER_CHANNEL_ID =
-        Channels.getFrontierReportMonitorServerChannel();
+    public static final ChannelID HARVEST_MONITOR_CHANNEL_ID =
+        Channels.getHarvestMonitorChannel();
 
     private Map<Long, StartedJobHistoryChartGen> chartGenByJobId =
         new HashMap<Long, StartedJobHistoryChartGen>();
 
-    private HarvestMonitorServer() {
+    private HarvestMonitor() {
 
         // Perform initial cleanup (in case apps crashed)
         cleanOnStartup();
 
         // Register for listening JMS messages
         JMSConnectionFactory.getInstance().setListener(
-                CRAWL_PROGRESS_CHANNEL_ID, this);
-        JMSConnectionFactory.getInstance().setListener(
-                FRONTIER_CHANNEL_ID, this);
+                HARVEST_MONITOR_CHANNEL_ID, this);
     }
 
     /**
-     * Close down the HarvestMonitorServer singleton. This removes the
-     * HarvestMonitorServer as listener to the JMS scheduler
+     * Close down the HarvestMonitor singleton. This removes the
+     * HarvestMonitor as listener to the JMS scheduler
      * and frontier channels, closes the persistence container, and resets
      * the singleton.
      *
@@ -108,18 +99,21 @@ implements MessageListener, CleanupIF {
      */
     public void cleanup() {
         JMSConnectionFactory.getInstance().removeListener(
-                CRAWL_PROGRESS_CHANNEL_ID, this);
-        JMSConnectionFactory.getInstance().removeListener(
-                FRONTIER_CHANNEL_ID, this);
+                HARVEST_MONITOR_CHANNEL_ID, this);
+
+        for (StartedJobHistoryChartGen chartGen : chartGenByJobId.values()) {
+            chartGen.cleanup();
+        }
+
         instance = null;
     }
 
     /**
      * @return the singleton instance for this class.
      */
-    public static HarvestMonitorServer getInstance() {
+    public static HarvestMonitor getInstance() {
         if (instance == null) {
-            instance = new HarvestMonitorServer();
+            instance = new HarvestMonitor();
         }
         return instance;
     }
@@ -158,9 +152,11 @@ implements MessageListener, CleanupIF {
         // Delete records in the DB
         RunningJobsInfoDAO dao = RunningJobsInfoDAO.getInstance();
         int delCount = dao.removeInfoForJob(jobId);
-        LOG.info("Deleted " + delCount + " running job info records"
-                + " for job ID " + jobId
-                + " on transition to status " + newStatus.name());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Deleted " + delCount + " running job info records"
+                    + " for job ID " + jobId
+                    + " on transition to status " + newStatus.name());
+        }
 
         // Stop chart generation
         StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);
@@ -217,10 +213,12 @@ implements MessageListener, CleanupIF {
         int insertCount = RunningJobsInfoDAO.getInstance().storeFrontierReport(
                 msg.getFilterId(),
                 msg.getReport());
-        LOG.info("Stored frontier report " + msg.getReport().getJobName()
-                + "-" + msg.getFilterId()
-                + "' (" + msg.getReport().getSize() + " lines)"
-                + ": inserted " + insertCount + " lines in the DB");
+        if (LOG.isInfoEnabled() && insertCount > 0) {
+            LOG.info("Stored frontier report " + msg.getReport().getJobName()
+                    + "-" + msg.getFilterId()
+                    + "' (" + msg.getReport().getSize() + " lines)"
+                    + ": inserted " + insertCount + " lines in the DB");
+        }
     }
 
     /**
@@ -228,7 +226,7 @@ implements MessageListener, CleanupIF {
      * @param jobId the job id
      * @return a frontier report
      */
-    public InMemoryFrontierReport getFrontierReport(long jobId) {
+    public static InMemoryFrontierReport getFrontierReport(long jobId) {
         // Right now there's only one filter and it's not user controlled.
         return RunningJobsInfoDAO.getInstance().getFrontierReport(
                 jobId,
@@ -241,7 +239,7 @@ implements MessageListener, CleanupIF {
      * @param jobId the job id
      * @return a frontier report that contains only retired queues.
      */
-    public InMemoryFrontierReport getFrontierRetiredQueues(long jobId) {
+    public static InMemoryFrontierReport getFrontierRetiredQueues(long jobId) {
         return RunningJobsInfoDAO.getInstance().getFrontierReport(
                 jobId,
                 new RetiredQueuesFilter().getFilterId());
@@ -253,7 +251,8 @@ implements MessageListener, CleanupIF {
      * @param jobId the job id
      * @return a frontier report that contains only exhausted queues.
      */
-    public InMemoryFrontierReport getFrontierExhaustedQueues(long jobId) {
+    public static InMemoryFrontierReport getFrontierExhaustedQueues(
+            long jobId) {
         return RunningJobsInfoDAO.getInstance().getFrontierReport(
                 jobId,
                 new ExhaustedQueuesFilter().getFilterId());
@@ -272,8 +271,11 @@ implements MessageListener, CleanupIF {
      * @return the path of the chart image file, relative to the
      * webapp directory.
      */
-    public String getChartFilePath(long jobId) {
-        StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);
+    public static String getChartFilePath(long jobId) {
+        if (instance == null) {
+            return EMPTY_CHART_FILE;
+        }
+        StartedJobHistoryChartGen gen = instance.chartGenByJobId.get(jobId);
         if (gen != null) {
             File chartFile = gen.getChartFile();
             if (chartFile == null) {
@@ -282,18 +284,6 @@ implements MessageListener, CleanupIF {
             return chartFile.getName();
         }
         return EMPTY_CHART_FILE;
-    }
-
-    /**
-     * Sets the chart generator locale.
-     * @param jobId the job ID
-     * @param loc the local identifier, e.g. 'fr', 'dk', etc.
-     */
-    public void setChartLocale(long jobId, Locale loc) {
-        StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);
-        if (gen != null) {
-            gen.setLocale(loc);
-        }
     }
 
     private void cleanOnStartup() {
@@ -314,7 +304,7 @@ implements MessageListener, CleanupIF {
             delCount += dao.removeInfoForJob(jobId);
             delCount += dao.deleteFrontierReports(jobId);
         }
-        if (delCount > 0 && LOG.isInfoEnabled()) {
+        if (LOG.isInfoEnabled() && delCount > 0) {
             LOG.info("Cleaned up " + delCount + " obsolete history records.");
         }
 

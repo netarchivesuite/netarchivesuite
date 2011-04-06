@@ -38,6 +38,7 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
  * A class representing an HttpServer. This class loads web applications as
@@ -107,6 +108,9 @@ public class GUIWebServer implements CleanupIF {
         //Add default handler, giving 404 page that lists web contexts, and
         //favicon.ico from Jetty
         server.addHandler(new DefaultHandler());
+
+        // Start the harvest monitor server
+        HarvestMonitor.getInstance();
     }
 
     /**
@@ -141,7 +145,7 @@ public class GUIWebServer implements CleanupIF {
             throw new IOFailure(
                     "Web application '" + webapp + "' not found");
         }
-        
+
         // Construct webbase from the name of the webapp.
         // (1) If the webapp is webpages/History, the webbase is /History
         // (2) If the webapp is webpages/History.war, the webbase is /History
@@ -150,7 +154,7 @@ public class GUIWebServer implements CleanupIF {
         if (webappFilename.toLowerCase().endsWith(".war")) {
             webbase = "/" + webappFilename.substring(0, webappFilename.length() - 4);
         }
-        
+
         for (SiteSection section : SiteSection.getSections()) {
             if (webbase.equals("/" + section.getDirname())) {
                 section.initialize();
@@ -200,6 +204,10 @@ public class GUIWebServer implements CleanupIF {
             }
             log.info("HTTP server has been stopped.");
         }
+
+        // Shut down the harvest monitor
+        HarvestMonitor.getInstance().cleanup();
+
         instance = null;
     }
 }

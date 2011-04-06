@@ -35,13 +35,13 @@ import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
-import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
  * Implements the analysis of a full frontier report obtained from Heritrix,
  * as the execution of a sequence of user-defined filters, that each generate
  * a smaller, in-memory frontier report that are sent in a JMS message to the
- * {@link HarvestMonitorServer}.
+ * {@link HarvestMonitor}.
  *
  */
 public class FrontierReportAnalyzer implements Runnable {

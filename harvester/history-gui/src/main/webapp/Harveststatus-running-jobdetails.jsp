@@ -38,7 +38,7 @@ This page displays details about a running job.
     dk.netarkivet.harvester.harvesting.frontier.FrontierReportLine,
     dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport,
     dk.netarkivet.common.utils.StringUtils,
-    dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer,
+    dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor,
     dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo,
     dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
     dk.netarkivet.harvester.webinterface.ExportFrontierReportCsvQuery"
@@ -60,9 +60,6 @@ This page displays details about a running job.
     } catch (ForwardedToErrorPage e) {
         return;
     }
-
-    HarvestMonitorServer.getInstance().setChartLocale(
-            jobID, response.getLocale());
 
     Job job;
     try {
@@ -104,10 +101,10 @@ This page displays details about a running job.
         + "\">" + HTMLUtils.escapeHtmlValues(harvestName) + "</a>";
 
     StartedJobInfo latest =
-        HarvestMonitorServer.getMostRecentRunningJobInfo(jobID);
+        HarvestMonitor.getMostRecentRunningJobInfo(jobID);
 
     StartedJobInfo[] history =
-        HarvestMonitorServer.getMostRecentRunningJobInfos(jobID);
+        HarvestMonitor.getMostRecentRunningJobInfos(jobID);
 
     if (history.length == 0) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
@@ -118,16 +115,16 @@ This page displays details about a running job.
     HTMLUtils.setUTF8(request);
     HTMLUtils.generateHeader(
             pageContext,
-            HarvestMonitorServer.getAutoRefreshDelay()); // Autorefresh every x seconds
+            HarvestMonitor.getAutoRefreshDelay()); // Autorefresh every x seconds
 
     InMemoryFrontierReport frontierReport =
-        HarvestMonitorServer.getInstance().getFrontierReport(jobID);
+        HarvestMonitor.getFrontierReport(jobID);
 
     InMemoryFrontierReport retiredQueues =
-        HarvestMonitorServer.getInstance().getFrontierRetiredQueues(jobID);
+        HarvestMonitor.getFrontierRetiredQueues(jobID);
 
     InMemoryFrontierReport exhaustedQueues =
-        HarvestMonitorServer.getInstance().getFrontierExhaustedQueues(jobID);
+        HarvestMonitor.getFrontierExhaustedQueues(jobID);
 
 %>
 
@@ -232,7 +229,7 @@ This page displays details about a running job.
     <tr>
         <!-- Charts -->
         <td valign="top">
-        <img src="<%= HarvestMonitorServer.getInstance().getChartFilePath(jobID) %>" alt="history_<%=jobID %>"/>
+        <img src="<%= HarvestMonitor.getChartFilePath(jobID) %>" alt="history_<%=jobID %>"/>
         </td>
 
         <!-- History table -->

@@ -73,12 +73,6 @@ public class Channels {
      */
     private static final String HARVEST_DISPATCHER_CHANNEL_PREFIX = "HARVESTDISP";
 
-    /**
-     * Prefix for the channel used to send {@link dk.netarkivet.harvester.harvesting.
-     * distribute.FrontierReportMessage}s.
-     */
-    private static final String FRONTIER_MONITOR_CHANNEL_PREFIX = "FRONTIERMON";
-
     private static final String THECR_CHANNEL_PREFIX = "THE_CR";
 
     /** Channel part separator. */
@@ -590,11 +584,11 @@ public class Channels {
    *
    * @return the <code>ChannelID</code> object for the queue.
    */
-  public static ChannelID getHarvestMonitorServerChannel() {
-      return getInstance().HARVEST_MONITOR_SERVER;
+  public static ChannelID getHarvestMonitorChannel() {
+      return getInstance().HARVEST_MONITOR;
   }
 
-  private final ChannelID HARVEST_MONITOR_SERVER = new ChannelID(
+  private final ChannelID HARVEST_MONITOR = new ChannelID(
           HARVEST_MONITOR_CHANNEL_PREFIX,
           ChannelID.COMMON,
           ChannelID.NO_IP,
@@ -611,22 +605,6 @@ public class Channels {
 
   private final ChannelID HARVEST_DISPATCHER = new ChannelID(
           HARVEST_DISPATCHER_CHANNEL_PREFIX,
-          ChannelID.COMMON,
-          ChannelID.NO_IP,
-          ChannelID.NO_APPLINST_ID,
-          ChannelID.QUEUE);
-
-
-  /** Return the queue for the frontier report monitor registry.
-   *
-   * @return the <code>ChannelID</code> object for the queue.
-   */
-  public static ChannelID getFrontierReportMonitorServerChannel() {
-      return getInstance().FRONTIER_MONITOR_SERVER;
-  }
-
-  private final ChannelID FRONTIER_MONITOR_SERVER = new ChannelID(
-          FRONTIER_MONITOR_CHANNEL_PREFIX,
           ChannelID.COMMON,
           ChannelID.NO_IP,
           ChannelID.NO_APPLINST_ID,

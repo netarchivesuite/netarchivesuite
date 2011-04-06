@@ -27,10 +27,10 @@ import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.frontier.FrontierReportFilter;
 import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
-import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
- * Sends a frontier report to the {@link HarvestMonitorServer}.
+ * Sends a frontier report to the {@link HarvestMonitor}.
  *
  */
 public class FrontierReportMessage extends HarvesterMessage {
@@ -53,7 +53,7 @@ public class FrontierReportMessage extends HarvesterMessage {
     public FrontierReportMessage(
             FrontierReportFilter filter,
             InMemoryFrontierReport report) {
-        super(HarvestMonitorServer.FRONTIER_CHANNEL_ID, Channels.getError());
+        super(HarvestMonitor.HARVEST_MONITOR_CHANNEL_ID, Channels.getError());
         this.filterId = filter.getFilterId();
         this.report = report;
     }
