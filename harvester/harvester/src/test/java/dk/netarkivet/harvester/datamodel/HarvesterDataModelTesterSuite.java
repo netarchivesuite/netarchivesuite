@@ -49,7 +49,7 @@ public class HarvesterDataModelTesterSuite {
         suite.addTestSuite(AliasInfoTester.class);
         suite.addTestSuite(ConstantsTester.class);
         suite.addTestSuite(DailyFrequencyTester.class);
-        suite.addTestSuite(DBConnectTester.class);
+        suite.addTestSuite(HarvestDBConnectionTester.class);
         suite.addTestSuite(DerbySpecificsTester.class);
         suite.addTestSuite(DomainConfigurationTester.class);
         suite.addTestSuite(DomainDAOTester.class);

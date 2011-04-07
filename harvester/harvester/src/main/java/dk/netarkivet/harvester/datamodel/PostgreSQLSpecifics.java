@@ -112,23 +112,6 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     }
 
     @Override
-    public boolean connectionIsValid(
-            Connection connection, int validityTimeout) {
-        // PostgreSQL JDBC driver does not yet implement Connection#isValid,
-        // hence we send a validation request
-        try {
-            Statement stm = connection.createStatement();
-            ResultSet rs = stm.executeQuery("SELECT 1");
-            rs.next();
-            rs.close();
-            stm.close();
-        } catch (SQLException e) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
         return "LIMIT " + limit + " OFFSET " + offset;
     }
@@ -153,7 +136,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
                 "ALTER TABLE jobs ADD COLUMN forcemaxbytes bigint not null default -1",
                 "ALTER TABLE jobs DROP COLUMN num_configs",
                 "ALTER TABLE jobs ADD COLUMN num_configs int not null default 0" };
-        DBConnect.updateTable("jobs", 4, sqlStatements);
+        HarvestDBConnection.updateTable("jobs", 4, sqlStatements);
     }
 
     /**
@@ -168,7 +151,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
                 "ALTER TABLE jobs ADD COLUMN submitteddate datetime "
                         + "AFTER enddate",
                 "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint" };
-        DBConnect.updateTable("jobs", 5, sqlStatements);
+        HarvestDBConnection.updateTable("jobs", 5, sqlStatements);
     }
 
     /**
@@ -179,7 +162,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         // Update configurations table to version 4
         String[] sqlStatements
             = {"ALTER TABLE configurations ALTER maxbytes SET DEFAULT -1" };
-        DBConnect.updateTable("configurations", 4, sqlStatements);
+        HarvestDBConnection.updateTable("configurations", 4, sqlStatements);
     }
 
     /**
@@ -190,37 +173,37 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         // Update fullharvests table to version 3
         String[] sqlStatements
             = { "ALTER TABLE fullharvests ALTER maxbytes SET DEFAULT -1" };
-        DBConnect.updateTable("fullharvests", 3, sqlStatements);
+        HarvestDBConnection.updateTable("fullharvests", 3, sqlStatements);
     }
 
     @Override
     protected void createGlobalCrawlerTrapExpressions() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        DBConnect.updateTable("global_crawler_trap_expressions", 1);
+        HarvestDBConnection.updateTable("global_crawler_trap_expressions", 1);
     }
 
     @Override
     protected void createGlobalCrawlerTrapLists() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        DBConnect.updateTable("global_crawler_trap_lists", 1);
+        HarvestDBConnection.updateTable("global_crawler_trap_lists", 1);
     }
 
     @Override
     public void createFrontierReportMonitorTable() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        DBConnect.updateTable("frontierReportMonitor", 1);
+        HarvestDBConnection.updateTable("frontierReportMonitor", 1);
     }
 
     @Override
     public void createRunningJobsHistoryTable() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        DBConnect.updateTable("runningJobsHistory", 1);
+        HarvestDBConnection.updateTable("runningJobsHistory", 1);
     }
 
     @Override
     public void createRunningJobsMonitorTable() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        DBConnect.updateTable("runningJobsMonitor", 1);
+        HarvestDBConnection.updateTable("runningJobsMonitor", 1);
     }
 
     // Below DB changes introduced with development release 3.15
@@ -237,7 +220,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobshistory "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
-        DBConnect.updateTable("runningJobsHistory", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningJobsHistory", 2, sqlStatements);
     }
 
     /**
@@ -250,7 +233,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobsmonitor "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
-        DBConnect.updateTable("runningJobsMonitor", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningJobsMonitor", 2, sqlStatements);
     }
 
 
@@ -260,7 +243,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         // Update configurations table to version 5
         String[] sqlStatements
             = {"ALTER TABLE configurations ALTER COLUMN maxobjects TYPE bigint" };
-        DBConnect.updateTable("configurations", 5, sqlStatements);
+        HarvestDBConnection.updateTable("configurations", 5, sqlStatements);
     }
 
     @Override
@@ -268,14 +251,14 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         // Update fullharvests table to version 4
         String[] sqlStatements
             = {"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"};
-        DBConnect.updateTable("fullharvests", 4, sqlStatements);
+        HarvestDBConnection.updateTable("fullharvests", 4, sqlStatements);
     }
 
     @Override
     protected void migrateJobsv5tov6() {
         String[] sqlStatements
         = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0"};
-        DBConnect.updateTable("jobs", 6, sqlStatements);
+        HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
     }
 
 }

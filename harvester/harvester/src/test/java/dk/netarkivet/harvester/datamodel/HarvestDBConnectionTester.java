@@ -37,23 +37,24 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 
 /**
- * Test class for the Database utilities in DBConnect,
+ * Test class for the Database utilities in HarvestDBConnection,
  * especially the ones related to backup of the database.
  *
  */
-public class DBConnectTester extends DataModelTestCase {
-	
+public class HarvestDBConnectionTester extends DataModelTestCase {
+
 	private File logfile = new File("tests/testlogs/netarkivtest.log");
-	
-	
-	public DBConnectTester(String s) {
+
+
+	public HarvestDBConnectionTester(String s) {
         super(s);
     }
 
-    
+
     public void setUp() throws Exception {
         super.setUp();
-        FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
+        FileInputStream fis =
+            new FileInputStream("tests/dk/netarkivet/testlog.prop");
         LogManager.getLogManager().reset();
         LogManager.getLogManager().readConfiguration(fis);
         fis.close();
@@ -70,11 +71,11 @@ public class DBConnectTester extends DataModelTestCase {
     }
 
     /**
-     * Simple test if DBConnect.getDBConnection() works or not.
+     * Simple test if HarvestDBConnection.getDBConnection() works or not.
      * Uses Settings.DB_URL set in DataModelTestCase.SetUp()
      */
      public void testGetDBConnection() {
-         Connection c = DBConnect.getDBConnection();
+         Connection c = HarvestDBConnection.get();
          assertTrue("Should return non null Connection", c != null);
      }
 
@@ -82,11 +83,17 @@ public class DBConnectTester extends DataModelTestCase {
      * @throws SQLException
      */
     public void testAutocommitOn() throws SQLException {
-        Connection c = DBConnect.getDBConnection();
-        assertEquals("Connection should have transaction level READ_COMMITTED",
-                     Connection.TRANSACTION_READ_COMMITTED, c.getTransactionIsolation());
-        assertTrue("Connection should have autocommit on",
-                   c.getAutoCommit());
+        Connection c = HarvestDBConnection.get();
+        try {
+            assertEquals(
+                    "Connection should have transaction level READ_COMMITTED",
+                    Connection.TRANSACTION_READ_COMMITTED,
+                    c.getTransactionIsolation());
+            assertTrue("Connection should have autocommit on",
+                    c.getAutoCommit());
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     /** Check that read locks are released after use.
@@ -98,20 +105,20 @@ public class DBConnectTester extends DataModelTestCase {
         final Throwable[] error1 = new Throwable[1];
         Thread t1 = new Thread() {
             public void run() {
+                Connection c = HarvestDBConnection.get();
                 try {
                     waitForState(0, state);
-                    Connection c = DBConnect.getDBConnection();
                     c.setAutoCommit(false);
                     c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-                    DBUtils.selectLongList(DBConnect.getDBConnection(),
-                                           "SELECT domain_id FROM domains"
-                    );
+                    DBUtils.selectLongList(c, "SELECT domain_id FROM domains");
                     state[0] = 1;
                     waitForState(2, state);
                 } catch (Throwable e) {
                     error1[0] = e;
                     state[0] = -1;
                     return;
+                } finally {
+                    HarvestDBConnection.release(c);
                 }
 
             }
@@ -119,9 +126,9 @@ public class DBConnectTester extends DataModelTestCase {
         final Throwable[] error2 = new Throwable[1];
         Thread t2 = new Thread() {
             public void run() {
+                Connection c = HarvestDBConnection.get();
                 try {
                     waitForState(1, state);
-                    Connection c = DBConnect.getDBConnection();
                     c.setAutoCommit(false);
                     PreparedStatement s = c.prepareStatement("DELETE FROM domains WHERE name = ?");
                     s.setString(1, "netarkivet.dk");
@@ -132,6 +139,8 @@ public class DBConnectTester extends DataModelTestCase {
                     error2[0] = e;
                     state[0] = -1;
                     return;
+                } finally {
+                    HarvestDBConnection.release(c);
                 }
             }
         };
@@ -166,8 +175,8 @@ public class DBConnectTester extends DataModelTestCase {
             throw new Error("Other thread failed");
         }
     }
-    
-    /** check DBConnect.setStringMaxLength().
+
+    /** check HarvestDBConnection.setStringMaxLength().
      *  Especially, that bug 970 is solved.
      */
     public void testSetStringMaxLength() throws SQLException {
@@ -175,24 +184,24 @@ public class DBConnectTester extends DataModelTestCase {
     	int id = 1;
     	PreparedStatement s = getPreparedStatementForTestingSetStringMaxLength(id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
     	int fieldNum = 2;
-    	String contents = "contents"; 
+    	String contents = "contents";
     	int maxSize = contents.length();
-    	
+
     	// Verify, that setStringMaxLength works without warnings, if contents.length() <= maxSize
     	// and that storedContents equals to variable 'contents'
-    	DBUtils.setStringMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");    	
- 
-    	// Check, that no WARNING has been written to the log 
-    	LogUtils.flushLogs(DBConnect.class.getName());
+    	DBUtils.setStringMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
+
+    	// Check, that no WARNING has been written to the log
+    	LogUtils.flushLogs(HarvestDBConnection.class.getName());
         FileAsserts.assertFileNotContains("Log should not have given warning as yet",
         		logfile, "setStringMaxLength\nWARNING: fieldname");
-    	// execute query, and retrieve data    	
+    	// execute query, and retrieve data
     	s.execute();
     	String storedContents = retrieveStoredString(id);
     	assertEquals("storedContents differs from original", contents, storedContents);
-    	
+
     	// Verify, that setClobMaxLength issues a warning, if contents.length() > maxSize
-    	// and that storedContents equals to the first maxSize characters of variable 'contents' 
+    	// and that storedContents equals to the first maxSize characters of variable 'contents'
     	id=2;
     	s = getPreparedStatementForTestingSetStringMaxLength(id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
     	maxSize = contents.length() - 2;
@@ -200,42 +209,42 @@ public class DBConnectTester extends DataModelTestCase {
     		DBUtils.setStringMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
     	} catch (PermissionDenied e) {
     		fail("Should never throw PermissionDenied exception");
-    	}    	
-    	//  Check, that WARNING has been written to the log 
-    	LogUtils.flushLogs(DBConnect.class.getName());
+    	}
+    	//  Check, that WARNING has been written to the log
+    	LogUtils.flushLogs(HarvestDBConnection.class.getName());
         FileAsserts.assertFileContains("Log should have given warning",
                 "setStringMaxLength\nWARNING: fieldname", logfile);
         s.execute();
         storedContents = retrieveStoredString(id);
     	assertEquals("storedContents differs from original", contents.substring(0,maxSize), storedContents);
 }
-    
-	/** check DBConnect.setClobMaxLength(). 
+
+	/** check HarvestDBConnection.setClobMaxLength().
      * especially, that bug 970 is solved. */
-    public void testSetClobMaxLength() throws SQLException {   	
+    public void testSetClobMaxLength() throws SQLException {
     	Object dummyObject = null;
     	int id = 3;
     	PreparedStatement s = getPreparedStatementForTestingSetClobMaxLength(id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
     	int fieldNum = 3;
     	String contents = "contents";
     	long maxSize = contents.length();
-    	
+
     	// Verify, that setClobMaxLength works without warnings, if contents.length() <= maxSize
     	// and that storedContents equals to variable 'contents'
     	DBUtils.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
 
     	// Check, that no WARNING has been written to the log
-    	LogUtils.flushLogs(DBConnect.class.getName());
+    	LogUtils.flushLogs(HarvestDBConnection.class.getName());
         FileAsserts.assertFileNotContains("Log should not have given warning as yet",
         		logfile, "setClobMaxLength\nWARNING: fieldname");
-        
+
         s.execute();
         String storedContents = retrieveStoredClob(id);
     	assertEquals("storedContents differs from original", contents, storedContents);
-    
+
     	// Verify, that setClobMaxLength issues a warning, if contents.length() > maxSize
-    	// and that storedContents equals to the first maxSize characters of variable 'contents' 
-    
+    	// and that storedContents equals to the first maxSize characters of variable 'contents'
+
     	id=4;
     	s = getPreparedStatementForTestingSetClobMaxLength(id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
         maxSize = contents.length() - 2;
@@ -245,8 +254,8 @@ public class DBConnectTester extends DataModelTestCase {
     		fail("Should never throw PermissionDenied exception");
     	}
     	// Check, that a WARNING has been written to the log
-    	
-    	LogUtils.flushLogs(DBConnect.class.getName());
+
+    	LogUtils.flushLogs(HarvestDBConnection.class.getName());
         FileAsserts.assertFileContains("Log should have given warning",
                 "setClobMaxLength\nWARNING: fieldname", logfile);
         s.execute();
@@ -256,113 +265,156 @@ public class DBConnectTester extends DataModelTestCase {
 
 
     public void testCreateTable() throws SQLException {
-        deleteTableIfExists("dummy");    
+        deleteTableIfExists("dummy");
         String[] stmts = {
                 "CREATE TABLE dummy (id INT)"
         };
-        DBConnect.updateTable("dummy", 1, stmts);
-        Connection con = DBConnect.getDBConnection();
-        PreparedStatement s = con.prepareStatement("SELECT id FROM dummy");
-        s.executeQuery();
-        assertEquals("Newly created table should have version number 1", 1,
-                     DBUtils.getTableVersion(con, "dummy"));
+        HarvestDBConnection.updateTable("dummy", 1, stmts);
+        Connection con = HarvestDBConnection.get();
+        try {
+            PreparedStatement s = con.prepareStatement("SELECT id FROM dummy");
+            s.executeQuery();
+            assertEquals(
+                    "Newly created table should have version number 1",
+                    1,
+                    DBUtils.getTableVersion(con, "dummy"));
+        } finally {
+            HarvestDBConnection.release(con);
+        }
     }
 
     public void testCreateAndUpdateTable() throws SQLException {
         deleteTableIfExists("dummy");
-        
+
         String[] stmts = {
                 "CREATE TABLE dummy (id INT)"
         };
-        DBConnect.updateTable("dummy", 1, stmts);
+        HarvestDBConnection.updateTable("dummy", 1, stmts);
         String[] stmts2 = {
                 "ALTER TABLE dummy ADD new_field INT"
         };
-        DBConnect.updateTable("dummy", 2, stmts2);
-        Connection con = DBConnect.getDBConnection();
-        PreparedStatement s = con.prepareStatement("SELECT id, new_field FROM "
-                                                   + "dummy");
-        s.executeQuery();
-        assertEquals("Update table should have version number 2", 2,
-                     DBUtils.getTableVersion(con, "dummy"));
+        HarvestDBConnection.updateTable("dummy", 2, stmts2);
+        Connection con = HarvestDBConnection.get();
+        try {
+            PreparedStatement s =
+                con.prepareStatement("SELECT id, new_field FROM dummy");
+            s.executeQuery();
+            assertEquals(
+                    "Update table should have version number 2",
+                    2,
+                    DBUtils.getTableVersion(con, "dummy"));
+        } finally {
+            HarvestDBConnection.release(con);
+        }
     }
-    
+
     public PreparedStatement getPreparedStatementForTestingSetStringMaxLength(int id, String orderxml, String orderxmldoc)
     throws SQLException {
-    	Connection c = DBConnect.getDBConnection();
-    	PreparedStatement s = 
-        	c.prepareStatement("INSERT INTO DBConnectTester (id, orderxml, orderxmldoc) " 
-        		+ " VALUES (?, ?, ?)");
-    	s.setInt(1, id);
-    	DBUtils.setClobMaxLength(s, 3, orderxmldoc, 64000L, null, "fieldName");
-    	return s;
+    	Connection c = HarvestDBConnection.get();
+    	try {
+    	    PreparedStatement s =
+    	        c.prepareStatement("INSERT INTO HarvestDBConnectionTester (id, orderxml, orderxmldoc) "
+    	                + " VALUES (?, ?, ?)");
+    	    s.setInt(1, id);
+    	    DBUtils.setClobMaxLength(s, 3, orderxmldoc, 64000L, null, "fieldName");
+    	    return s;
+    	} finally {
+    	    HarvestDBConnection.release(c);
+    	}
     }
-    
+
     public PreparedStatement getPreparedStatementForTestingSetClobMaxLength(int id, String orderxml, String orderxmldoc)
     throws SQLException {
-    	Connection c = DBConnect.getDBConnection();
-    	PreparedStatement s = 
-        	c.prepareStatement("INSERT INTO DBConnectTester (id, orderxml, orderxmldoc) " 
-        		+ " VALUES (?, ?, ?)");
-    	s.setInt(1, id);
-    	DBUtils.setStringMaxLength(s, 2, orderxml, 300, null, "fieldName");
-    	return s;
+    	Connection c = HarvestDBConnection.get();
+    	try {
+    	    PreparedStatement s =
+    	        c.prepareStatement("INSERT INTO HarvestDBConnectionTester (id, orderxml, orderxmldoc) "
+    	                + " VALUES (?, ?, ?)");
+    	    s.setInt(1, id);
+    	    DBUtils.setStringMaxLength(s, 2, orderxml, 300, null, "fieldName");
+    	    return s;
+    	} finally {
+    	    HarvestDBConnection.release(c);
+    	}
     }
-    
+
     private void createTestTable() throws SQLException {
-    	// create "DBConnectTester" table for testing set*Max methods
-    	Connection c = DBConnect.getDBConnection();
-    	PreparedStatement s = 
-    	c.prepareStatement("CREATE TABLE DBConnectTester ( " 
-    		+ " id int, "
-    		+ " orderxml varchar(300) not null, "
-    		+ " orderxmldoc clob(64M) not null ) ");
-    	s.execute();
+    	// create "HarvestDBConnectionTester" table for testing set*Max methods
+    	Connection c = HarvestDBConnection.get();
+    	try {
+    	    PreparedStatement s =
+    	        c.prepareStatement("CREATE TABLE HarvestDBConnectionTester ( "
+    	                + " id int, "
+    	                + " orderxml varchar(300) not null, "
+    	                + " orderxmldoc clob(64M) not null ) ");
+    	    s.execute();
+    	} finally {
+    	    HarvestDBConnection.release(c);
+    	}
     }
 
     private void dropTestTable() throws SQLException {
-    	//  drop table "DBConnectTester" used for testing set*Max methods
-    	Connection c = DBConnect.getDBConnection();
-    	PreparedStatement s = 
-    		c.prepareStatement("DROP TABLE DBConnectTester");
-    	s.execute();
+    	//  drop table "HarvestDBConnectionTester" used for testing set*Max methods
+    	Connection c = HarvestDBConnection.get();
+    	try {
+    	    PreparedStatement s =
+    	        c.prepareStatement("DROP TABLE HarvestDBConnectionTester");
+    	    s.execute();
+    	} finally {
+    	    HarvestDBConnection.release(c);
+    	}
     }
-    
+
     private String retrieveStoredString(int id) {
-		return 
-			DBUtils.selectStringValue(
-			        DBConnect.getDBConnection(),
-                    "SELECT orderxml from DBConnectTester where id=?",
+        Connection c = HarvestDBConnection.get();
+        try {
+            return DBUtils.selectStringValue(
+                    c,
+                    "SELECT orderxml from HarvestDBConnectionTester where id=?",
                     id);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
 	}
-    
+
     private String retrieveStoredClob(int id) {
-		return 
-			DBUtils.selectStringValue(
-			        DBConnect.getDBConnection(),
-                    "SELECT orderxmldoc from DBConnectTester where id=?",
+        Connection c = HarvestDBConnection.get();
+        try {
+            return DBUtils.selectStringValue(
+                    c,
+                    "SELECT orderxmldoc from HarvestDBConnectionTester where id=?",
                     id);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
 	}
-    
+
     /**
-     * Delete the given table from the table if it exists. 
-     * Furthermore delete the given table from table 'schemaversions' 
+     * Delete the given table from the table if it exists.
+     * Furthermore delete the given table from table 'schemaversions'
      * @param tablename a given table that we want to have deleted
-     * @throws SQLException 
+     * @throws SQLException
      */
-    private void deleteTableIfExists(String tablename) throws SQLException {    
-        Connection con = DBConnect.getDBConnection();
-        DatabaseMetaData metadata = con.getMetaData();
-        ResultSet rs = metadata.getTables(null, null, tablename.toUpperCase(), null);
-        if (rs.next()) { 
-            // A table with the given tablename exists in the database
-            // So delete it!!
-            PreparedStatement s = con.prepareStatement("DROP TABLE " + tablename);
-            s.execute();
-            // delete tablename from schemaversions
-            s = con.prepareStatement("DELETE FROM schemaversions WHERE tablename=?");
-            s.setString(1, tablename);
-            s.execute();
+    private void deleteTableIfExists(String tablename) throws SQLException {
+        Connection con = HarvestDBConnection.get();
+        try {
+            DatabaseMetaData metadata = con.getMetaData();
+            ResultSet rs =
+                metadata.getTables(null, null, tablename.toUpperCase(), null);
+            if (rs.next()) {
+                // A table with the given tablename exists in the database
+                // So delete it!!
+                PreparedStatement s =
+                    con.prepareStatement("DROP TABLE " + tablename);
+                s.execute();
+                // delete tablename from schemaversions
+                s = con.prepareStatement(
+                "DELETE FROM schemaversions WHERE tablename=?");
+                s.setString(1, tablename);
+                s.execute();
+            }
+        } finally {
+            HarvestDBConnection.release(con);
         }
     }
 }

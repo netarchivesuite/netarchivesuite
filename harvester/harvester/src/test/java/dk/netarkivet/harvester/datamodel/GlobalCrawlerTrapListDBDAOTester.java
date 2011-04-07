@@ -73,11 +73,15 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         assertEquals("Should get a unique instance (object identity) of dao.",
                      dao1, dao2);
         // Check that the tables exist
-        Connection con = DBConnect.getDBConnection();
-        con.prepareStatement("SELECT * from global_crawler_trap_lists")
-                .execute();
-        con.prepareStatement("SELECT * from global_crawler_trap_expressions")
-                .execute();        
+        Connection con = HarvestDBConnection.get();
+        try {
+            con.prepareStatement("SELECT * from global_crawler_trap_lists")
+            .execute();
+            con.prepareStatement("SELECT * from global_crawler_trap_expressions")
+            .execute();
+        } finally {
+            HarvestDBConnection.release(con);
+        }
     }
 
      public void testCreate() {
@@ -85,7 +89,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
                = GlobalCrawlerTrapListDAO.getInstance();
        int id = dao.create(list1);
        assertEquals("Should have set list id to returned id", id, list1.getId());
-       try { 
+       try {
            dao.create(list1);
            fail("Should throw ArgumentNotValid exception");
        } catch (ArgumentNotValid e) {
@@ -173,7 +177,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         assertEquals("Should combine the two lists to get 9 distinct traps"
                 , 9, dao.getAllActiveTrapExpressions().size());
     }
-    
+
     public void testExists()  {
         GlobalCrawlerTrapListDAO dao =
             GlobalCrawlerTrapListDAO.getInstance();

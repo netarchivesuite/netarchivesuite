@@ -37,7 +37,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ZipUtils;
-import dk.netarkivet.harvester.datamodel.DBConnect;
+import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.testutils.ReflectUtils;
 
@@ -75,13 +75,13 @@ public class DatabaseTestUtils {
 
         final String dbfile = dbUnzipDir + "/" + dbname;
         try {
-            Field f = DBConnect.class.getDeclaredField("connectionPool");
+            Field f = HarvestDBConnection.class.getDeclaredField("connectionPool");
             f.setAccessible(true);
             connectionPool = (WeakHashMap<Thread,Connection>) f.get(null);
         } catch (NoSuchFieldException e) {
             throw new PermissionDenied("Can't get connectionPool field", e);
         }
-        // Make sure we're using the right DB in DBConnect
+        // Make sure we're using the right DB in HarvestDBConnection
 
         /* Set DB name */
         try {
@@ -93,11 +93,11 @@ public class DatabaseTestUtils {
         dburi = "jdbc:derby:" + dbfile;
         return DriverManager.getConnection(dburi);
             /*
-            Field f = DBConnect.class.getDeclaredField("dbname");
+            Field f = HarvestDBConnection.class.getDeclaredField("dbname");
             f.setAccessible(true);
             f.set(null, Settings.get(Settings.HARVESTDEFINITION_BASEDIR) + "/fullhddb"
                     + ";restoreFrom=" + new File(extractDir, dbname).getAbsolutePath());
-            Method m = DBConnect.class.getDeclaredMethod("getDB", new Class[0]);
+            Method m = HarvestDBConnection.class.getDeclaredMethod("getDB", new Class[0]);
             m.setAccessible(true);
             return (Connection)m.invoke(null);
             */
@@ -126,13 +126,13 @@ public class DatabaseTestUtils {
 
         final String dbfile = dbUnzipDir.getPath();
         try {
-            Field f = DBConnect.class.getDeclaredField("connectionPool");
+            Field f = HarvestDBConnection.class.getDeclaredField("connectionPool");
             f.setAccessible(true);
             connectionPool = (WeakHashMap<Thread,Connection>) f.get(null);
         } catch (NoSuchFieldException e) {
             throw new PermissionDenied("Can't get connectionPool field", e);
         }
-        // Make sure we're using the right DB in DBConnect
+        // Make sure we're using the right DB in HarvestDBConnection
 
         /* Set DB name */
         try {
@@ -144,11 +144,11 @@ public class DatabaseTestUtils {
         dburi = "jdbc:derby:" + dbfile;
         return DriverManager.getConnection(dburi);
             /*
-            Field f = DBConnect.class.getDeclaredField("dbname");
+            Field f = HarvestDBConnection.class.getDeclaredField("dbname");
             f.setAccessible(true);
             f.set(null, Settings.get(Settings.HARVESTDEFINITION_BASEDIR) + "/fullhddb"
                     + ";restoreFrom=" + new File(extractDir, dbname).getAbsolutePath());
-            Method m = DBConnect.class.getDeclaredMethod("getDB", new Class[0]);
+            Method m = HarvestDBConnection.class.getDeclaredMethod("getDB", new Class[0]);
             m.setAccessible(true);
             return (Connection)m.invoke(null);
             */

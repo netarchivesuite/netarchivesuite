@@ -24,6 +24,7 @@
 package dk.netarkivet.harvester.scheduler;
 
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
+import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 
 /**
  * Handles the dispatching of scheduled harvest to the harvest servers based on
@@ -40,4 +41,14 @@ public class HarvestJobManager extends LifeCycleComponent {
         addChild(new HarvestJobGenerator());
         addChild(new HarvestSchedulerMonitorServer());
     }
+
+    @Override
+    public void shutdown() {
+        super.shutdown();
+
+        // Release DB resources
+        HarvestDBConnection.cleanup();
+    }
+
+
 }

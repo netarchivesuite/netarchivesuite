@@ -38,11 +38,11 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
- * Defines database specific implementations used by the Harvester. 
+ * Defines database specific implementations used by the Harvester.
  *
- * The actual actual implementation which is loaded is defined by the 
+ * The actual actual implementation which is loaded is defined by the
  * {@link CommonSettings#DB_SPECIFICS_CLASS} setting. See the sub class list for
- * available implementations 
+ * available implementations
  */
 public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
@@ -122,8 +122,13 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
         ArgumentNotValid.checkPositive(toVersion, "int toVersion");
 
-        int currentVersion = DBUtils.getTableVersion(DBConnect
-                .getDBConnection(), tableName);
+        Connection c = HarvestDBConnection.get();
+        int currentVersion = -1;
+        try {
+            currentVersion = DBUtils.getTableVersion(c, tableName);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
         log.info("Trying to migrate table '" + tableName + "' from version '"
                 + currentVersion + "' to version '" + toVersion + "'.");
         if (currentVersion == toVersion) {
@@ -181,12 +186,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                 migrateFullharvestsv2tov3();
                 currentVersion = 3;
             }
-            
+
             if (currentVersion == 3 && toVersion >= 4) {
                 migrateFullharvestsv3tov4();
                 currentVersion = 4;
             }
-            
+
             if (currentVersion == 4 && toVersion >= 5) {
                 throw new NotImplementedException(
                         "No method exists for migrating table '" + tableName
@@ -214,7 +219,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                 migrateConfigurationsv3ov4();
                 currentVersion = 4;
             }
-            
+
             if (currentVersion == 4 && toVersion >= 5) {
                 migrateConfigurationsv4tov5();
                 currentVersion = 5;
@@ -259,7 +264,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             if (currentVersion == 0 && toVersion >= 1) {
                 createRunningJobsHistoryTable();
                 currentVersion = 1;
-            } 
+            }
             if (currentVersion == 1 && toVersion >= 2) {
                 migrateRunningJobsHistoryTableV1ToV2();
             }
@@ -360,26 +365,6 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     protected abstract void createGlobalCrawlerTrapExpressions();
 
     /**
-     * Checks that the connection is valid (i.e. still open on the server side).
-     * This implementation can be overriden if a specific RDBM is not handling
-     * the {@link Connection#isValid(int)} JDBC4 method properly.
-     *
-     * @param connection
-     *            the connection to check
-     * @param validityTimeout
-     *            the time in seconds to wait for the database operation used to
-     *            validate the connection to complete. If the timeout period
-     *            expires before the operation completes, this method returns
-     *            false.
-     *
-     * @return true if the connection is valid false otherwise.
-     * @see Connection#isValid(int)
-     * @throws SQLException
-     */
-    public abstract boolean connectionIsValid(Connection connection,
-            int validityTimeout) throws SQLException;
-
-    /**
      * Formats the LIMIT sub-clause of an SQL order clause. This sub-clause
      * allows to paginate query results and its syntax might be dependant on the
      * target RDBMS
@@ -400,7 +385,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * @return true if CLOBs are supported, false otherwise.
      */
     public abstract boolean supportsClob();
-    
+
     /**
      * Create the frontierReportMonitor table in the database.
      */
@@ -423,7 +408,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      *             in case of problems in interacting with the database
      */
     protected abstract void migrateJobsv5tov6();
-    
+
     /**
      * Migrates the 'configurations' table from version 4 to version 5. This
      * consists of altering the field 'maxobjects' from being an int to a bigint.

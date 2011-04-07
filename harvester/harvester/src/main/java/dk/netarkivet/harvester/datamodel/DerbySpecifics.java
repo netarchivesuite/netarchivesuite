@@ -92,29 +92,14 @@ public abstract class DerbySpecifics extends DBSpecifics {
             DBUtils.closeStatementIfOpen(s);
         }
     }
-    
-    /**
-     * Checks that the connection is valid (i.e. still open on the server side).
-     * This implementation can be overriden if a specific RDBM is not handling
-     * the {@link Connection#isValid(int)} JDBC4 method properly.
-     * @param connection
-     * @param validityTimeout The time in seconds to wait for the database operation used to validate the connection 
-     to complete. If the timeout period expires before the operation completes, this method returns false. A 
-     value of 0 indicates a timeout is not applied to the database operation. 
-     * @return true, if the connection is valid; false, otherwise
-     * @throws SQLException 
-     */
-    public boolean connectionIsValid(Connection connection, int validityTimeout)
-            throws SQLException {
-        return connection.isValid(validityTimeout);
-    }
+
     @Override
     public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
         // LIMIT sub-clause supported by Derby 10.5.3
         // see http://db.apache.org/derby/docs/10.5/ref/rrefsqljoffsetfetch.html
         return "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
     }
-    
+
     @Override
     public boolean supportsClob() {
         return true;
@@ -136,11 +121,11 @@ public abstract class DerbySpecifics extends DBSpecifics {
         "ALTER TABLE jobs DROP COLUMN forcemaxbytes",
         "RENAME COLUMN jobs.forcemaxbytes_new TO forcemaxbytes",
         "ALTER TABLE jobs ALTER COLUMN num_configs SET DEFAULT 0"
-        
+
         };
-        DBConnect.updateTable("jobs", 4, SqlStatements);
+        HarvestDBConnection.updateTable("jobs", 4, SqlStatements);
     }
-    
+
     /** Migrates the 'jobs' table from version 4 to version 5
      * consisting of adding new fields 'resubmitted_as_job' and 'submittedDate'.
      * @throws IOFailure in case of problems in interacting with the database
@@ -149,11 +134,11 @@ public abstract class DerbySpecifics extends DBSpecifics {
      // Update jobs table to version 5
         String[] SqlStatements = {
                 "ALTER TABLE jobs ADD COLUMN submitteddate timestamp",
-                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"    
+                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"
             };
-        DBConnect.updateTable("jobs", 5, SqlStatements);
+        HarvestDBConnection.updateTable("jobs", 5, SqlStatements);
     }
-    
+
     /** Migrates the 'configurations' table from version 3 to version 4.
      * This consists of altering the default value of field 'maxbytes' to -1.
      */
@@ -162,7 +147,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
         String[] SqlStatements = {
                 "ALTER TABLE configurations ALTER maxbytes WITH DEFAULT -1"
             };
-        DBConnect.updateTable("configurations", 4, SqlStatements);
+        HarvestDBConnection.updateTable("configurations", 4, SqlStatements);
     }
 
     /** Migrates the 'fullharvests' table from version 2 to version 3.
@@ -173,7 +158,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
         String[] SqlStatements = {
                 "ALTER TABLE fullharvests ALTER maxbytes WITH DEFAULT -1"
             };
-        DBConnect.updateTable("fullharvests", 3, SqlStatements);
+        HarvestDBConnection.updateTable("fullharvests", 3, SqlStatements);
     }
 
     @Override
@@ -184,7 +169,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
                                  + "  name VARCHAR(300) NOT NULL UNIQUE,  "
                                  + "  description VARCHAR(30000),"
                                  + "  isActive INT NOT NULL) ";
-        DBConnect.updateTable("global_crawler_trap_lists", 1, createStatement);
+        HarvestDBConnection.updateTable("global_crawler_trap_lists", 1, createStatement);
     }
 
     @Override
@@ -195,15 +180,15 @@ public abstract class DerbySpecifics extends DBSpecifics {
                                  + "    trap_expression VARCHAR(1000),"
                                  + "    PRIMARY KEY (crawler_trap_list_id, "
                                  + "trap_expression))";
-        DBConnect.updateTable("global_crawler_trap_expressions", 1,
+        HarvestDBConnection.updateTable("global_crawler_trap_expressions", 1,
                               createStatement);
     }
-    
+
     @Override
     public void createFrontierReportMonitorTable() {
         String createStatement = "CREATE TABLE frontierReportMonitor ("
             + " jobId bigint NOT NULL, "
-            + "filterId varchar(200) NOT NULL,"     
+            + "filterId varchar(200) NOT NULL,"
             + "tstamp timestamp NOT NULL,"
             + "domainName varchar(300) NOT NULL,"
             + "currentSize bigint NOT NULL,"
@@ -217,13 +202,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
             + "totalBudget bigint NOT NULL,"
             + "errorCount bigint NOT NULL,"
             + "lastPeekUri varchar(1000) NOT NULL,"
-            + "lastQueuedUri varchar(1000) NOT NULL," 
+            + "lastQueuedUri varchar(1000) NOT NULL,"
             + "UNIQUE (jobId, filterId, domainName)"
             + ")";
-        DBConnect.updateTable("frontierReportMonitor", 1,
+        HarvestDBConnection.updateTable("frontierReportMonitor", 1,
                 createStatement);
     }
-    
+
     @Override
     public void createRunningJobsHistoryTable() {
         String createStatement = "CREATE TABLE runningJobsHistory ("
@@ -244,17 +229,22 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 + "processedDocsPerSec numeric NOT NULL,"
                 + "activeToeCount integer NOT NULL,"
                 + "status int NOT NULL,"
-                + "tstamp timestamp NOT NULL," 
+                + "tstamp timestamp NOT NULL,"
                 + "PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)"
                 + ")";
-        DBConnect.updateTable("runningJobsHistory", 1,
+        HarvestDBConnection.updateTable("runningJobsHistory", 1,
                 createStatement);
-                      
-        DBUtils.executeSQL(DBConnect.getDBConnection(), 
-                "CREATE INDEX runningJobsHistoryCrawlJobId on runningJobsHistory (jobId)", 
-                "CREATE INDEX runningJobsHistoryCrawlTime on runningJobsHistory (elapsedSeconds)",
-                "CREATE INDEX runningJobsHistoryHarvestName on runningJobsHistory (harvestName)"
-                );
+
+        Connection c = HarvestDBConnection.get();
+        try {
+        DBUtils.executeSQL(c,
+            "CREATE INDEX runningJobsHistoryCrawlJobId on runningJobsHistory (jobId)",
+            "CREATE INDEX runningJobsHistoryCrawlTime on runningJobsHistory (elapsedSeconds)",
+            "CREATE INDEX runningJobsHistoryHarvestName on runningJobsHistory (harvestName)"
+            );
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     @Override
@@ -280,14 +270,20 @@ public abstract class DerbySpecifics extends DBSpecifics {
             + "tstamp timestamp NOT NULL, "
             + "PRIMARY KEY (jobId, harvestName)"
             + ")";
-        DBConnect.updateTable("runningJobsMonitor", 1,
+        HarvestDBConnection.updateTable("runningJobsMonitor", 1,
                 createStatement);
-        DBUtils.executeSQL(DBConnect.getDBConnection(), 
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            DBUtils.executeSQL(c,
                 "CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId)",
                 "CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName)"
-        );
+            );
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
-    
+
     // Below DB changes introduced with development release 3.15
     // with changes to tables 'runningjobshistory', 'runningjobsmonitor',
     // 'configurations', 'fullharvests', and 'jobs'.
@@ -302,7 +298,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobshistory "
                 + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
         };
-        DBConnect.updateTable("runningJobsHistory", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningJobsHistory", 2, sqlStatements);
     }
 
     /**
@@ -315,11 +311,11 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobsmonitor "
                 + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
         };
-        DBConnect.updateTable("runningJobsMonitor", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningJobsMonitor", 2, sqlStatements);
     }
 
     @Override
-    protected void migrateConfigurationsv4tov5() { 
+    protected void migrateConfigurationsv4tov5() {
         // Change the maxobjects from 'int' to 'bigint'.
         // Procedure for changing the datatype of a derby table was found here:
         // https://issues.apache.org/jira/browse/DERBY-1515
@@ -329,22 +325,22 @@ public abstract class DerbySpecifics extends DBSpecifics {
         "ALTER TABLE configurations DROP COLUMN maxobjects",
         "RENAME COLUMN configurations.maxobjects_new TO maxobjects"
         };
-        DBConnect.updateTable("configurations", 5, SqlStatements);
+        HarvestDBConnection.updateTable("configurations", 5, SqlStatements);
 }
 
     @Override
     protected void migrateFullharvestsv3tov4() {
         // Add new bigint field maxjobrunningtime with default 0
-        String[] sqlStatements 
+        String[] sqlStatements
         = {"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"};
-        DBConnect.updateTable("fullharvests", 4, sqlStatements);     
+        HarvestDBConnection.updateTable("fullharvests", 4, sqlStatements);
     }
 
     @Override
     protected void migrateJobsv5tov6() {
         // Add new bigint field with default 0
-        String[] sqlStatements 
+        String[] sqlStatements
         = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0"};
-        DBConnect.updateTable("jobs", 6, sqlStatements);  
+        HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
     }
-}    
+}

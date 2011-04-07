@@ -29,7 +29,7 @@ import java.sql.SQLException;
 import dk.netarkivet.common.utils.DBUtils;
 
 /**
- * 
+ *
  * Unit test testing the DerbySpecifics class.
  *
  */
@@ -46,96 +46,100 @@ public class DerbySpecificsTester extends DataModelTestCase {
         super.tearDown();
     }
     public void testGetTemporaryTable() {
-        Connection connection = DBConnect.getDBConnection();
-        Connection c = connection;
-        String statement = "SELECT config_name, domain_name "
-                + "FROM session.jobconfignames";
-        PreparedStatement s = null;
-        try {
-            s = c.prepareStatement(statement);
-            s.execute();
-            fail("Should have failed query before table is made");
-        } catch (SQLException e) {
-            // expected
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
+        Connection c = HarvestDBConnection.get();
 
         try {
-            c.setAutoCommit(false);
-            String tmpTable = 
-                DBSpecifics.getInstance().getJobConfigsTmpTable(c);
-            assertEquals("Should have given expected name for Derby temp table",
-                    "session.jobconfignames", tmpTable);
-            s = c.prepareStatement(statement);
-            s.execute();
-            s.close();
-            s = c.prepareStatement("INSERT INTO " + tmpTable
-                    + " VALUES ( ?, ? )");
-            s.setString(1, "foo");
-            s.setString(2, "bar");
-            s.executeUpdate();
-            s.close();
-            String domain =
+            String statement = "SELECT config_name, domain_name "
+                + "FROM session.jobconfignames";
+            PreparedStatement s = null;
+            try {
+                s = c.prepareStatement(statement);
+                s.execute();
+                fail("Should have failed query before table is made");
+            } catch (SQLException e) {
+                // expected
+            } finally {
+                DBUtils.closeStatementIfOpen(s);
+            }
+
+            try {
+                c.setAutoCommit(false);
+                String tmpTable =
+                    DBSpecifics.getInstance().getJobConfigsTmpTable(c);
+                assertEquals("Should have given expected name for Derby temp table",
+                        "session.jobconfignames", tmpTable);
+                s = c.prepareStatement(statement);
+                s.execute();
+                s.close();
+                s = c.prepareStatement("INSERT INTO " + tmpTable
+                        + " VALUES ( ?, ? )");
+                s.setString(1, "foo");
+                s.setString(2, "bar");
+                s.executeUpdate();
+                s.close();
+                String domain =
                     DBUtils.selectStringValue(
-                            connection,
+                            c,
                             "SELECT domain_name FROM " + tmpTable
                             + " WHERE config_name = ?", "bar");
-            assertEquals("Should get expected domain name", "foo", domain);
-            c.commit();
-            c.setAutoCommit(true);
-            DBSpecifics.getInstance().dropJobConfigsTmpTable(c, tmpTable);
-        } catch (SQLException e) {
-            fail("Should not have had SQL exception " + e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
+                assertEquals("Should get expected domain name", "foo", domain);
+                c.commit();
+                c.setAutoCommit(true);
+                DBSpecifics.getInstance().dropJobConfigsTmpTable(c, tmpTable);
+            } catch (SQLException e) {
+                fail("Should not have had SQL exception " + e);
+            } finally {
+                DBUtils.closeStatementIfOpen(s);
+            }
 
-        try {
-            s = c.prepareStatement(statement);
-            s.execute();
-            String domain =
-                    DBUtils.selectStringValue(connection,
-                                              "SELECT domain_name "
+            try {
+                s = c.prepareStatement(statement);
+                s.execute();
+                String domain =
+                    DBUtils.selectStringValue(c,
+                            "SELECT domain_name "
                             + "FROM session.jobconfignames "
                             + "WHERE config_name = 'foo'");
-            fail("Should have failed query after table is dead, "
-                    + "but return domain= " + domain);
-        } catch (SQLException e) {
-            // expected
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
+                fail("Should have failed query after table is dead, "
+                        + "but return domain= " + domain);
+            } catch (SQLException e) {
+                // expected
+            } finally {
+                DBUtils.closeStatementIfOpen(s);
+            }
 
-        // Should be possible to get another temporary table.
-        try {
-            c.setAutoCommit(false);
-            String tmpTable =
-                DBSpecifics.getInstance().getJobConfigsTmpTable(c);
-            assertEquals("Should have given expected name for Derby temp table",
-                    "session.jobconfignames", tmpTable);
-            s = c.prepareStatement(statement);
-            s.execute();
-            s.close();
-            s = c.prepareStatement("INSERT INTO " + tmpTable
-                    + " VALUES ( ?, ? )");
-            s.setString(1, "foo");
-            s.setString(2, "bar");
-            s.executeUpdate();
-            s.close();
-            String domain =
-                    DBUtils.selectStringValue(connection,
-                                              "SELECT domain_name FROM "
+            // Should be possible to get another temporary table.
+            try {
+                c.setAutoCommit(false);
+                String tmpTable =
+                    DBSpecifics.getInstance().getJobConfigsTmpTable(c);
+                assertEquals("Should have given expected name for Derby temp table",
+                        "session.jobconfignames", tmpTable);
+                s = c.prepareStatement(statement);
+                s.execute();
+                s.close();
+                s = c.prepareStatement("INSERT INTO " + tmpTable
+                        + " VALUES ( ?, ? )");
+                s.setString(1, "foo");
+                s.setString(2, "bar");
+                s.executeUpdate();
+                s.close();
+                String domain =
+                    DBUtils.selectStringValue(c,
+                            "SELECT domain_name FROM "
                             + tmpTable
                             + " WHERE config_name = ?", "bar");
-            assertEquals("Should get expected domain name", "foo", domain);
-            c.commit();
-            c.setAutoCommit(true);
-            DBSpecifics.getInstance().dropJobConfigsTmpTable(c, tmpTable);
-        } catch (SQLException e) {
-            fail("Should not have had SQL exception " + e);
+                assertEquals("Should get expected domain name", "foo", domain);
+                c.commit();
+                c.setAutoCommit(true);
+                DBSpecifics.getInstance().dropJobConfigsTmpTable(c, tmpTable);
+            } catch (SQLException e) {
+                fail("Should not have had SQL exception " + e);
+            } finally {
+                DBUtils.closeStatementIfOpen(s);
+            }
         } finally {
-            DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
         }
     }
 }

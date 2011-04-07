@@ -434,9 +434,16 @@
             <baseUrl>jdbc:derby</baseUrl>
             <machine>localhost</machine>
             <port>1527</port>
-            <dir>harvestdefinitionbasedir/fullhddb</dir>   
+            <dir>harvestdefinitionbasedir/fullhddb</dir>
             <backupInitHour>3</backupInitHour>
             <validityCheckTimeout>0</validityCheckTimeout>
+            <pool>
+                <minSize>5</minSize>
+	            <maxSize>10</maxSize>
+	            <acquireInc>5</acquireInc>
+	            <maxStm>0</maxStm>
+                <maxStmPerConn>0</maxStmPerConn>
+	        </pool>
         </database>
         <repository>
             <!-- Currently set to 10 MB -->

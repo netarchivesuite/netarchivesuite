@@ -148,8 +148,6 @@ public class DomainDAOTester extends DataModelTestCase {
 
         assertTrue("The domain should exist before deletion",
                    dao2.exists(wd.getName()));
-        assertTrue("The domain should be deletable",
-                   dao2.mayDelete(wd));
         // perform the deletion
         dao2.delete(TestInfo.DEFAULTNEWDOMAINNAME);
 
@@ -526,7 +524,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
     public void testGetDomainHarvestInfo() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
-        
+
         List<DomainHarvestInfo> info = dao.getDomainHarvestInfo("dr.dk");
         assertEquals("Should have no info for unharvested domain", 0, info.size());
 
@@ -589,8 +587,6 @@ public class DomainDAOTester extends DataModelTestCase {
         Domain d = dao.read(domainName);
 
         // passwords
-        assertTrue("mayDelete should allow deleting",
-                   dao.mayDelete(d.getPassword("alphapassword")));
         d.removePassword("alphapassword");
         dao.update(d);
         // Should not get a failure.
@@ -598,8 +594,6 @@ public class DomainDAOTester extends DataModelTestCase {
         assertFalse("Password should be deleted in stored version",
                     d.hasPassword("alphapassword"));
 
-        assertFalse("mayDelete should not allow deleting",
-                    dao.mayDelete(d.getPassword("testpassword")));
         try {
             d.removePassword("testpassword");
             dao.update(d);
@@ -614,16 +608,12 @@ public class DomainDAOTester extends DataModelTestCase {
                    d.hasPassword("testpassword"));
 
         // seedlists
-        assertTrue("mayDelete should allow deletion",
-                   dao.mayDelete(d.getSeedList("deletable")));
         d.removeSeedList("deletable");
         dao.update(d);
         d = dao.read(domainName);
         assertFalse("Seedlist should be deleted in stored version",
                     d.hasSeedList("deletable"));
 
-        assertFalse("mayDelete should not allow deletion",
-                    dao.mayDelete(d.getSeedList("default")));
         try {
             d.removeSeedList("default");
             dao.update(d);
@@ -819,7 +809,7 @@ public class DomainDAOTester extends DataModelTestCase {
             reference = next;
         }
     }
-    
+
     /** Check constructor of DomainHarvestInfo(). */
     public void testDomainHarvestInfoConstructor() {
         long jobId = 42L;
@@ -840,15 +830,15 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals(jobId, dhi.getJobID());
         assertEquals(harvestName, dhi.getHarvestName());
         assertEquals(harvestId, dhi.getHarvestID());
-        
+
         assertEquals(harvestNum, dhi.getHarvestNum());
         assertEquals(configName, dhi.getConfigName());
         assertEquals(startDate, dhi.getStartDate());
-        assertEquals(endDate, dhi.getEndDate());  
+        assertEquals(endDate, dhi.getEndDate());
         assertEquals(bytesDownloaded, dhi.getBytesDownloaded());
         assertEquals(docsdownloaded, dhi.getDocsDownloaded());
         assertEquals(theReason, dhi.getStopReason());
     }
-    
+
 }
 

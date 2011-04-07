@@ -184,9 +184,6 @@ public abstract class DomainDAO implements Iterable<Domain> {
         }; // Here ends the above return-statement
     }
 
-    /** Close down any connections used by the DAO. */
-    public abstract void close();
-
     /** Use a glob-like matcher to find a subset of domains.
      *
      * In this simple matcher, * stands for any number of arbitrary characters,
@@ -231,45 +228,6 @@ public abstract class DomainDAO implements Iterable<Domain> {
      */
     public abstract boolean mayDelete(DomainConfiguration config);
 
-    /** Return whether the given seedlist can be deleted.
-     * This should be a fairly lightweight method, but is not likely to be
-     * instantaneous.
-     * Note that to increase speed, this method may rely on underlying systems
-     * to enforce transitive invariants.  This means that if this method says
-     * a seedlist can be deleted, the dao may still reject a delete
-     * request.  If this method returns false, deletion will however
-     * definitely not be allowed.
-     * @param seedlist the given seedlist
-     * @return true, if the given seedlist can be deleted, otherwise false.
-     */
-    public abstract boolean mayDelete(SeedList seedlist);
-
-    /** Return whether the given password can be deleted.
-     * This should be a fairly lightweight method, but is not likely to be
-     * instantaneous.
-     * Note that to increase speed, this method may rely on underlying systems
-     * to enforce transitive invariants.  This means that if this method says
-     * a password can be deleted, the dao may still reject a delete
-     * request.  If this method returns false, deletion will however
-     * definitely not be allowed.
-     * @param password the given password
-     * @return true, if the given password can be deleted, otherwise false.
-     */
-    public abstract boolean mayDelete(Password password);
-
-    /** Return whether the given domain can be deleted.
-     * This should be a fairly lightweight method, but is not likely to be
-     * instantaneous.
-     * Note that to increase speed, this method may rely on underlying systems
-     * to enforce transitive invariants.  This means that if this method says
-     * a domain can be deleted, the dao may still reject a delete
-     * request.  If this method returns false, deletion will however
-     * definitely not be allowed.
-     * @param domainName the given domain
-     * @return true, if  the given domain can be deleted, otherwise false.
-     */
-    public abstract boolean mayDelete(Domain domainName);
-
     /**
      * Read a Domain from Database, and return the domain information
      * as a SparseDomain object.
@@ -310,24 +268,24 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * alphabetically.
      */
     public abstract List<TLDInfo> getTLDs();
-    
+
     /**
      * Get a list of all TLDs present in the domains table.
      * IP-numbers registered are counted together.
      *
-     * @param level maximum level of TLD 
+     * @param level maximum level of TLD
      * @return a list of all TLDs present in the domains table, sorted
      * alphabetically.
      */
     public abstract List<TLDInfo> getMultiLevelTLD(int level);
-    
+
     /**
      * Get the HarvestInfo object for a certain job and DomainConfiguration
      * defined by domainName and configName.
      * @param domainName the name of a given domain
      * @param configName the name of a given configuration
      * @param job the job
-     * @return The HarvestInfo object for a certain job and DomainConfiguration 
+     * @return The HarvestInfo object for a certain job and DomainConfiguration
      *  or null, if job has not yet been started.
      */
     public abstract HarvestInfo getDomainJobInfo(Job job, String domainName, String configName);

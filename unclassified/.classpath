@@ -54,5 +54,6 @@
 	<classpathentry kind="lib" path="lib/heritrix-dependencies/commons-lang-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/charting/jfreechart-1.0.13.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/c3p0-0.9.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

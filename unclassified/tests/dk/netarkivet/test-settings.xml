@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  
+<!--
  * File:        $Id$
  * Revision:    $Revision$
  * Author:      $Author$
@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 -->
-<!-- 
+<!--
 	This file contains the settings needed to run our unittests.
 -->
 <settings>
@@ -54,24 +54,23 @@
             <baseUrl>jdbc:derby:harvestdefinitionbasedir/fullhddb</baseUrl>
             <machine></machine>
             <port></port>
-            <dir></dir> 
+            <dir></dir>
             <backupInitHour>3</backupInitHour>
-            <validityCheckTimeout>0</validityCheckTimeout>
         </database>
         <replicas>
-            <!-- All bitarcive replicas in the environment, 
-                 e.g., (ONE, "replicaOne", bitarchive) and 
+            <!-- All bitarcive replicas in the environment,
+                 e.g., (ONE, "replicaOne", bitarchive) and
                  (TWO, "replicaTwo", bitarchive).
                  NOTE: settings for checksum replicas are not use yet -->
             <replica>
                 <replicaId>ONE</replicaId>
                 <replicaType>BiTaRcHiVe</replicaType>
-                <replicaName>BarOne</replicaName>                
+                <replicaName>BarOne</replicaName>
             </replica>
             <replica>
                 <replicaId>TWO</replicaId>
                 <replicaType>bItArChIvE</replicaType>
-                <replicaName>BarTwo</replicaName>                
+                <replicaName>BarTwo</replicaName>
             </replica>
             <replica>
                 <replicaId>THREE</replicaId>
@@ -81,8 +80,8 @@
         </replicas>
         <!-- Default bit archive to use for e.g. batch jobs (if none is specified) -->
         <useReplicaId>ONE</useReplicaId>
-        <!--  Remove the following setting when the code is updated to 
-           use the setting common.replicas.useReplicaId instead of common.useReplicaId  
+        <!--  Remove the following setting when the code is updated to
+           use the setting common.replicas.useReplicaId instead of common.useReplicaId
         -->
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".

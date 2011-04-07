@@ -40,7 +40,7 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 public class MySQLSpecifics extends DBSpecifics {
     /** The log. */
     Log log = LogFactory.getLog(MySQLSpecifics.class);
-    
+
     /**
      * Get an instance of the MySQL specifics class.
      * @return Instance of the MySQL specifics class.
@@ -48,7 +48,7 @@ public class MySQLSpecifics extends DBSpecifics {
     public static DBSpecifics getInstance() {
         return new MySQLSpecifics();
     }
-    
+
     /** Get a temporary table for short-time use.  The table should be
      * disposed of with dropTemporaryTable.  The table has two columns
      * domain_name varchar(Constants.MAX_NAME_SIZE)
@@ -65,7 +65,7 @@ public class MySQLSpecifics extends DBSpecifics {
             s = c.prepareStatement("CREATE TEMPORARY TABLE  "
                     + "jobconfignames "
                     + "( domain_name varchar(" + Constants.MAX_NAME_SIZE + "), "
-                    + " config_name varchar(" + Constants.MAX_NAME_SIZE 
+                    + " config_name varchar(" + Constants.MAX_NAME_SIZE
                     + ") )");
             s.execute();
             s.close();
@@ -108,7 +108,7 @@ public class MySQLSpecifics extends DBSpecifics {
     public String getDriverClassName() {
         return "com.mysql.jdbc.Driver";
     }
-        
+
     /** Migrates the 'jobs' table from version 3 to version 4
      * consisting of a change of the field forcemaxbytes from int to bigint
      * and setting its default to -1.
@@ -122,9 +122,9 @@ public class MySQLSpecifics extends DBSpecifics {
             "ALTER TABLE jobs CHANGE COLUMN num_configs num_configs"
             + " int not null default 0"
         };
-        DBConnect.updateTable("jobs", 4, sqlStatements);
+        HarvestDBConnection.updateTable("jobs", 4, sqlStatements);
     }
-    
+
     /** Migrates the 'jobs' table from version 4 to version 5
      * consisting of adding new fields 'resubmitted_as_job' and 'submittedDate'.
      * @throws IOFailure in case of problems in interacting with the database
@@ -133,11 +133,11 @@ public class MySQLSpecifics extends DBSpecifics {
         String[] sqlStatements = {
                 "ALTER TABLE jobs ADD COLUMN submitteddate datetime "
                     + "AFTER enddate",
-                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"    
+                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"
             };
-        DBConnect.updateTable("jobs", 5, sqlStatements);
+        HarvestDBConnection.updateTable("jobs", 5, sqlStatements);
     }
-    
+
     /** Migrates the 'configurations' table from version 3 to version 4.
      * This consists of altering the default value of field 'maxbytes' to -1.
      */
@@ -146,9 +146,9 @@ public class MySQLSpecifics extends DBSpecifics {
         String[] sqlStatements = {
                 "ALTER TABLE configurations ALTER maxbytes SET DEFAULT -1"
             };
-        DBConnect.updateTable("configurations", 4, sqlStatements);
+        HarvestDBConnection.updateTable("configurations", 4, sqlStatements);
     }
- 
+
     /** Migrates the 'fullharvests' table from version 2 to version 3.
      * This consists of altering the default value of field 'maxbytes' to -1
      */
@@ -157,7 +157,7 @@ public class MySQLSpecifics extends DBSpecifics {
         String[] sqlStatements = {
                 "ALTER TABLE fullharvests ALTER maxbytes SET DEFAULT -1"
         };
-        DBConnect.updateTable("fullharvests", 3, sqlStatements);
+        HarvestDBConnection.updateTable("fullharvests", 3, sqlStatements);
     }
 
     /** Creates the initial (version 1) of table 'global_crawler_trap_lists'. */
@@ -168,10 +168,10 @@ public class MySQLSpecifics extends DBSpecifics {
                                  + "  name VARCHAR(300) NOT NULL UNIQUE, "
                                  + "  description VARCHAR(20000), "
                                  + "  isActive INT NOT NULL )";
-        DBConnect.updateTable("global_crawler_trap_lists", 1, createStatement);
+        HarvestDBConnection.updateTable("global_crawler_trap_lists", 1, createStatement);
     }
 
-    /** Creates the initial (version 1) of 
+    /** Creates the initial (version 1) of
      * table 'global_crawler_trap_expressions'. */
     protected void createGlobalCrawlerTrapExpressions() {
         String createStatement = "CREATE TABLE global_crawler_trap_expressions("
@@ -179,14 +179,8 @@ public class MySQLSpecifics extends DBSpecifics {
                                  + "primary key,"
                                  + "    crawler_trap_list_id INT NOT NULL, "
                                  + "    trap_expression VARCHAR(1000) )";
-        DBConnect.updateTable("global_crawler_trap_expressions", 1,
+        HarvestDBConnection.updateTable("global_crawler_trap_expressions", 1,
                               createStatement);
-    }
-    
-    @Override
-    public boolean connectionIsValid(Connection connection, int validityTimeout)
-            throws SQLException {
-        return connection.isValid(validityTimeout);
     }
 
     @Override
@@ -219,9 +213,9 @@ public class MySQLSpecifics extends DBSpecifics {
              + "lastPeekUri varchar(1000) NOT NULL,"
              + "lastQueuedUri varchar(1000) NOT NULL,"
              // NB see http://bugs.mysql.com/bug.php?id=6604 about index key length.
-             + "UNIQUE (jobId, filterId(100), domainName(100))" 
+             + "UNIQUE (jobId, filterId(100), domainName(100))"
              + ")";
-        DBConnect.updateTable("frontierReportMonitor", 1, createStatement);
+        HarvestDBConnection.updateTable("frontierReportMonitor", 1, createStatement);
 
     }
 
@@ -248,14 +242,19 @@ public class MySQLSpecifics extends DBSpecifics {
              + "tstamp timestamp NOT NULL, "
              + "PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)"
              + ")";
-        DBConnect.updateTable("runningJobsHistory", 1, createStatement);
-        
-        DBUtils.executeSQL(DBConnect.getDBConnection(), 
-                "CREATE INDEX runningJobsHistoryCrawlJobId on runningJobsHistory (jobId)", 
+        HarvestDBConnection.updateTable("runningJobsHistory", 1, createStatement);
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            DBUtils.executeSQL(c,
+                "CREATE INDEX runningJobsHistoryCrawlJobId on runningJobsHistory (jobId)",
                 "CREATE INDEX runningJobsHistoryCrawlTime on runningJobsHistory (elapsedSeconds)",
                 "CREATE INDEX runningJobsHistoryHarvestName on runningJobsHistory (harvestName)",
                 "GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE runningJobsHistory TO netarchivesuite"
-                );
+            );
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     @Override
@@ -281,13 +280,19 @@ public class MySQLSpecifics extends DBSpecifics {
              + "tstamp timestamp NOT NULL,"
              + "PRIMARY KEY (jobId, harvestName)"
              + ")";
-        DBConnect.updateTable("runningJobsMonitor", 1, createStatement);
-        DBUtils.executeSQL(DBConnect.getDBConnection(), 
-                "CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId)",
-                "CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName)"
-                );
+        HarvestDBConnection.updateTable("runningJobsMonitor", 1, createStatement);
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            DBUtils.executeSQL(c,
+                    "CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId)",
+                    "CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName)"
+            );
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
-    
+
     // Below DB changes introduced with development release 3.15
     // with changes to tables 'runningjobshistory', 'runningjobsmonitor',
     // 'configurations', 'fullharvests', and 'jobs'.
@@ -302,7 +307,7 @@ public class MySQLSpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobshistory "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
-        DBConnect.updateTable("runningJobsHistory", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningJobsHistory", 2, sqlStatements);
     }
 
     /**
@@ -315,32 +320,32 @@ public class MySQLSpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobsmonitor "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
-        DBConnect.updateTable("runningJobsMonitor", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningJobsMonitor", 2, sqlStatements);
     }
 
     @Override
     protected void migrateConfigurationsv4tov5() {
      // Update configurations table to version 5
-        String[] sqlStatements 
+        String[] sqlStatements
             = {"ALTER TABLE configurations ALTER COLUMN maxobjects TYPE bigint" };
-        DBConnect.updateTable("configurations", 5, sqlStatements);
+        HarvestDBConnection.updateTable("configurations", 5, sqlStatements);
     }
 
     @Override
     protected void migrateFullharvestsv3tov4() {
         // Update fullharvests table to version 4
-        String[] sqlStatements 
+        String[] sqlStatements
             = {"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"};
-        DBConnect.updateTable("fullharvests", 4, sqlStatements);     
-        
+        HarvestDBConnection.updateTable("fullharvests", 4, sqlStatements);
+
     }
 
     @Override
     protected void migrateJobsv5tov6() {
      // Update jobs table to version 6
-        String[] sqlStatements 
+        String[] sqlStatements
             = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0 AFTER forcemaxcount"};
-        DBConnect.updateTable("jobs", 6, sqlStatements);     
-        
+        HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
+
     }
 }

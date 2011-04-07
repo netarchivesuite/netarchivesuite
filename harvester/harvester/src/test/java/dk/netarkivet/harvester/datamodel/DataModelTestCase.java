@@ -188,16 +188,16 @@ public class DataModelTestCase extends TestCase {
         assertEquals("Job IDs in database have changed."
                     + "Please update unit test to reflect.",
                 startJobId, j2.getJobID().longValue());
-                
+
         Job j3 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j3);
         Job j4 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 1);
         JobDAO.getInstance().create(j4);
         Job j5 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 1);
         JobDAO.getInstance().create(j5);
-        Job j6 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 2); 
+        Job j6 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 2);
         JobDAO.getInstance().create(j6);
-        Job j7 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 2); 
+        Job j7 = getNewNetarkivetJob(hd1, dcmap, HighPriority, defaultOrderXmlDocument, 2);
         JobDAO.getInstance().create(j7);
         Job j8 = getNewNetarkivetJob(hd2, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j8);
@@ -211,7 +211,7 @@ public class DataModelTestCase extends TestCase {
         JobDAO.getInstance().create(j12);
         Job j13 = getNewNetarkivetJob(hd4, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j13);
-        Job j14 = getNewNetarkivetJob(hd5, dcmap, LowPriority, defaultOrderXmlDocument, 0); 
+        Job j14 = getNewNetarkivetJob(hd5, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j14);
         Job j15 = getNewNetarkivetJob(hd5, dcmap, LowPriority, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j15);
@@ -219,13 +219,13 @@ public class DataModelTestCase extends TestCase {
                 + "Please update unit test to reflect.", endJobId,
                 j15.getJobID().longValue());
     }
-    
+
     private static Job getNewNetarkivetJob(HarvestDefinition hd,
             Map<String, String> dcmap, JobPriority priority,
             Document defaultOrderXmlDocument, int harvestNum) {
-        return new Job(hd.getOid(), dcmap, priority, 
+        return new Job(hd.getOid(), dcmap, priority,
                 Constants.DEFAULT_MAX_OBJECTS,
-                Constants.DEFAULT_MAX_BYTES, 
+                Constants.DEFAULT_MAX_BYTES,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME,
                 JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", harvestNum);
@@ -233,32 +233,37 @@ public class DataModelTestCase extends TestCase {
 
 
     public static void addHarvestDefinitionToDatabaseWithId(long id) throws SQLException {
-        Connection con = DBConnect.getDBConnection();
-        final String sqlInsert = "INSERT INTO harvestdefinitions ("
-            + "harvest_id, name, comments, numevents, submitted,isactive,edition)"
-            + "VALUES(?,?,?,?,?,?,?)";
-        PreparedStatement statement = con.prepareStatement(sqlInsert);
-        statement.setLong(1, id);
-        statement.setString(2, "name"+  id);
-        statement.setString(3, "NoComments");
-        statement.setInt(4, 0);
-        statement.setDate(5, new java.sql.Date(System.currentTimeMillis()));
-        statement.setInt(6,0);
-        statement.setInt(7,1);
-        int rows = statement.executeUpdate();
-        ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
-        statement.close();
-        String addFullharvestInsert = "INSERT INTO fullharvests "
-            + "( harvest_id, maxobjects, maxbytes, previoushd )"
-            + "VALUES ( ?, ?, ?, ? )";
-        statement = con.prepareStatement(addFullharvestInsert);
-        statement.setLong(1, id);
-        statement.setLong(2, Constants.DEFAULT_MAX_OBJECTS);
-        statement.setLong(3, Constants.DEFAULT_MAX_BYTES);
-        statement.setNull(4, Types.BIGINT);
-        rows = statement.executeUpdate();
-        ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
-        
+        Connection con = HarvestDBConnection.get();
+        try {
+            final String sqlInsert = "INSERT INTO harvestdefinitions ("
+                + "harvest_id, name, comments, numevents, submitted,"
+                + "isactive,edition)"
+                + "VALUES(?,?,?,?,?,?,?)";
+            PreparedStatement statement = con.prepareStatement(sqlInsert);
+            statement.setLong(1, id);
+            statement.setString(2, "name"+  id);
+            statement.setString(3, "NoComments");
+            statement.setInt(4, 0);
+            statement.setDate(5, new java.sql.Date(System.currentTimeMillis()));
+            statement.setInt(6,0);
+            statement.setInt(7,1);
+            int rows = statement.executeUpdate();
+            ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
+            statement.close();
+            String addFullharvestInsert = "INSERT INTO fullharvests "
+                + "( harvest_id, maxobjects, maxbytes, previoushd )"
+                + "VALUES ( ?, ?, ?, ? )";
+            statement = con.prepareStatement(addFullharvestInsert);
+            statement.setLong(1, id);
+            statement.setLong(2, Constants.DEFAULT_MAX_OBJECTS);
+            statement.setLong(3, Constants.DEFAULT_MAX_BYTES);
+            statement.setNull(4, Types.BIGINT);
+            rows = statement.executeUpdate();
+            ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
+        } finally {
+            HarvestDBConnection.release(con);
+        }
+
     }
 
 

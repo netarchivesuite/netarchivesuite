@@ -44,7 +44,7 @@ import dk.netarkivet.common.utils.DBUtils;
 
 /**
  * Unittests for the class dk.netarkivet.harvester.datamodel.DomainDBDAO.
- * 
+ *
  */
 public class DomainDBDAOTester extends DataModelTestCase {
     public DomainDBDAOTester(String s) {
@@ -185,7 +185,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
             }
         }
         if (scheduleException[0] != null) {
-            System.out.println("Schedule: " 
+            System.out.println("Schedule: "
                     + scheduleException[0]
                     + scheduleException[0].getStackTrace());
         }
@@ -196,10 +196,10 @@ public class DomainDBDAOTester extends DataModelTestCase {
         }
         if (domainException[0] != null) {
             System.out.println("Domain: "
-                    + domainException[0] 
+                    + domainException[0]
                     + domainException[0].getStackTrace());
         }
-        
+
         assertTrue("Should have no exceptions",
                    domainException[0] == null &&
                    hdException[0] == null &&
@@ -335,8 +335,8 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals("Should have three IP subdomains",
                 3, result.get(0).getCount());
     }
-    
-    
+
+
     public void testGetMultiLevelTLD() {
         //  create some domains.
         dk.netarkivet.harvester.webinterface.DomainDefinition.createDomains(
@@ -355,19 +355,19 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals("test level 2: Expected 7 TLDs", 7, result2.size());
         assertEquals("test level 2: Should have two subdomains of .com",
                 2, result2.get(1).getCount());
-        
+
         assertEquals("test level 2: Should have three subdomains of .fr",
                 3, result2.get(3).getCount());
-        
+
         assertEquals("test level 2: Should have two subdomains of gouv.fr",
                 2, result2.get(4).getCount());
-        
+
         assertEquals("test level 2: Should have three IP subdomains",
                 3, result2.get(0).getCount());
 }
 
-       
-    
+
+
 
     public void testGetCountDomains() {
         // create some domains, ignore invalid domains
@@ -386,7 +386,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals("Found too few or too many .com domains",
                 2, dao.getCountDomains("*.com"));
     }
-    
+
     /**
      *  Unittest for method getDomainJobInfo.
      */
@@ -414,29 +414,35 @@ public class DomainDBDAOTester extends DataModelTestCase {
                 10000L,
                 64L,
                 StopReason.OBJECT_LIMIT);
-        long domainId = DBUtils.selectLongValue(
-                DBConnect.getDBConnection(),
-                "SELECT domain_id FROM domains WHERE name=?", theDomainName);
-        long configId = DBUtils.selectLongValue(
-                DBConnect.getDBConnection(),
-                "SELECT config_id FROM configurations WHERE name = ? AND domain_id=?",
-                configName, domainId);
-        
-        insertHarvestInfo(hi1, configId);
-        HarvestInfo hi2 = dao.getDomainJobInfo(j, theDomainName, configName); 
-        assertTrue("The HarvestInfo value should not be null, "
-                + "when job has been completed", hi2 != null);
-        
-        assertEquals("StopReason is wrong", hi1.getStopReason(), hi2.getStopReason());
-        assertEquals("Bytes harvested is wrong", hi1.getSizeDataRetrieved(), 
-                hi2.getSizeDataRetrieved());
-        assertEquals("Objects fetched is wrong", hi1.getCountObjectRetrieved(), 
-                hi2.getCountObjectRetrieved());
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            long domainId = DBUtils.selectLongValue(
+                    c,
+                    "SELECT domain_id FROM domains WHERE name=?", theDomainName);
+            long configId = DBUtils.selectLongValue(
+                    c,
+                    "SELECT config_id FROM configurations WHERE name = ? AND domain_id=?",
+                    configName, domainId);
+
+            insertHarvestInfo(hi1, configId);
+            HarvestInfo hi2 = dao.getDomainJobInfo(j, theDomainName, configName);
+            assertTrue("The HarvestInfo value should not be null, "
+                    + "when job has been completed", hi2 != null);
+
+            assertEquals("StopReason is wrong", hi1.getStopReason(), hi2.getStopReason());
+            assertEquals("Bytes harvested is wrong", hi1.getSizeDataRetrieved(),
+                    hi2.getSizeDataRetrieved());
+            assertEquals("Objects fetched is wrong", hi1.getCountObjectRetrieved(),
+                    hi2.getCountObjectRetrieved());
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
-    
+
     // Copied from DomainDBDAO for local testing
     private void insertHarvestInfo(HarvestInfo harvestInfo, long configId) {
-        Connection c = DBConnect.getDBConnection();
+        Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
             // Note that the config_id is grabbed from the configurations table.
@@ -462,6 +468,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
             throw new IOFailure("SQL error while inserting harvest info", e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
         }
     }
 }

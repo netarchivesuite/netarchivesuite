@@ -54,12 +54,17 @@ import dk.netarkivet.common.utils.FilterIterator;
 public class ScheduleDBDAO extends ScheduleDAO {
     /** The logger. */
     private final Log log = LogFactory.getLog(getClass());
-    
+
     /** Constructor for this class, that only checks that the
      * schedules table has the expected version (1).
      */
     protected ScheduleDBDAO() {
-        DBUtils.checkTableVersion(DBConnect.getDBConnection(), "schedules", 1);
+        Connection c = HarvestDBConnection.get();
+        try {
+            DBUtils.checkTableVersion(c, "schedules", 1);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     /**
@@ -77,7 +82,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             throw new PermissionDenied(msg);
         }
 
-        Connection c = DBConnect.getDBConnection();
+        Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
             s = c.prepareStatement("INSERT INTO schedules "
@@ -97,6 +102,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
         }
     }
 
@@ -144,10 +150,16 @@ public class ScheduleDBDAO extends ScheduleDAO {
     public synchronized boolean exists(String scheduleName) {
         ArgumentNotValid.checkNotNullOrEmpty(
                 scheduleName, "String scheduleName");
-        final int count = DBUtils.selectIntValue(
-                DBConnect.getDBConnection(),
-                "SELECT COUNT(*) FROM schedules WHERE name = ?", scheduleName);
-        return (1 == count);
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            final int count = DBUtils.selectIntValue(
+                    c,
+                    "SELECT COUNT(*) FROM schedules WHERE name = ?", scheduleName);
+            return (1 == count);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     /**
@@ -161,7 +173,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
     public synchronized Schedule read(String scheduleName) {
         ArgumentNotValid.checkNotNullOrEmpty(
                 scheduleName, "String scheduleName");
-        Connection c = DBConnect.getDBConnection();
+        Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
@@ -191,7 +203,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             Integer dayofweek = DBUtils.getIntegerMaybeNull(rs, 11);
             Integer dayofmonth = DBUtils.getIntegerMaybeNull(rs, 12);
             log.debug("Creating frequency for "
-                    + "(timeunit,anytime,numtimeunits,hour, minute, dayofweek," 
+                    + "(timeunit,anytime,numtimeunits,hour, minute, dayofweek,"
                     + "dayofmonth) = (" + timeunit + ", "
                     + anytime + ","
                     + numtimeunits + ","
@@ -219,23 +231,30 @@ public class ScheduleDBDAO extends ScheduleDAO {
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
         }
     }
 
     /**
-     * @see ScheduleDAO#describeUsages(String) 
+     * @see ScheduleDAO#describeUsages(String)
      */
     public String describeUsages(String scheduleName) {
         ArgumentNotValid.checkNotNullOrEmpty(
                 scheduleName, "String scheduleName");
-        return DBUtils.getUsages(DBConnect.getDBConnection(),
-                                 "SELECT harvestdefinitions.name "
-                + "FROM schedules, partialharvests, harvestdefinitions "
-                + "WHERE schedules.name = ?"
-                + "  AND schedules.schedule_id = partialharvests.schedule_id"
-                + "  AND partialharvests.harvest_id " 
-                        + "= harvestdefinitions.harvest_id",
-                scheduleName, scheduleName);
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            return DBUtils.getUsages(c,
+                    "SELECT harvestdefinitions.name "
+                    + "FROM schedules, partialharvests, harvestdefinitions "
+                    + "WHERE schedules.name = ?"
+                    + " AND schedules.schedule_id = partialharvests.schedule_id"
+                    + " AND partialharvests.harvest_id "
+                    + "= harvestdefinitions.harvest_id",
+                    scheduleName, scheduleName);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     /**
@@ -246,7 +265,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * @throws UnknownID        if no schedule exists
      */
     public synchronized void delete(String scheduleName) {
-        Connection c = DBConnect.getDBConnection();
+        Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
             String usages = describeUsages(scheduleName);
@@ -274,6 +293,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             throw new IOFailure(message, e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
         }
     }
 
@@ -292,7 +312,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             throw new PermissionDenied("No schedule with name "
                     + schedule.getName() + " exists");
         }
-        Connection c = DBConnect.getDBConnection();
+        Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
             s = c.prepareStatement("UPDATE schedules "
@@ -328,6 +348,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
         }
     }
 
@@ -337,41 +358,54 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * @return iterator to all available schedules
      */
     public synchronized Iterator<Schedule> getAllSchedules() {
-        List<String> names = DBUtils.selectStringList(
-                DBConnect.getDBConnection(),
-                "SELECT name FROM schedules ORDER BY name");
-        return new FilterIterator<String, Schedule>(names.iterator()) {
-            /**
-             * Returns the object corresponding to the given object,
-             *  or null if that object is to be skipped.
-             *
-             * @param s An object in the source iterator domain
-             * @return An object in this iterators domain, or null
-             */
-            public Schedule filter(String s) {
-                return read(s);
-            }
-        };
+        Connection c = HarvestDBConnection.get();
+        try {
+            List<String> names = DBUtils.selectStringList(
+                    c, "SELECT name FROM schedules ORDER BY name");
+            return new FilterIterator<String, Schedule>(names.iterator()) {
+                /**
+                 * Returns the object corresponding to the given object,
+                 *  or null if that object is to be skipped.
+                 *
+                 * @param s An object in the source iterator domain
+                 * @return An object in this iterators domain, or null
+                 */
+                public Schedule filter(String s) {
+                    return read(s);
+                }
+            };
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
 
     /**
-     * @see ScheduleDAO#getCountSchedules() 
+     * @see ScheduleDAO#getCountSchedules()
      */
     public synchronized int getCountSchedules() {
-        return DBUtils.selectIntValue(DBConnect.getDBConnection(),
-                                      "SELECT COUNT(*) FROM schedules"
-        );
+        Connection c = HarvestDBConnection.get();
+        try {
+            return DBUtils.selectIntValue(c, "SELECT COUNT(*) FROM schedules");
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     /**
-     * @see ScheduleDAO#mayDelete(Schedule)    
+     * @see ScheduleDAO#mayDelete(Schedule)
      */
     public boolean mayDelete(Schedule schedule) {
         ArgumentNotValid.checkNotNull(schedule, "schedule");
-        return !DBUtils.selectAny(DBConnect.getDBConnection(),
-                                  "SELECT harvest_id"
-                + " FROM partialharvests WHERE schedule_id = ?",
-                                  schedule.getID());
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            return !DBUtils.selectAny(c,
+                    "SELECT harvest_id"
+                    + " FROM partialharvests WHERE schedule_id = ?",
+                    schedule.getID());
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 }

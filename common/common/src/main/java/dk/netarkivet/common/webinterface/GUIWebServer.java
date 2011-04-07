@@ -38,6 +38,7 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
@@ -140,7 +141,7 @@ public class GUIWebServer implements CleanupIF {
      */
     private void addWebApplication(String webapp)
             throws IOFailure, ArgumentNotValid, PermissionDenied {
-        
+
         if (!new File(webapp).exists()) {
             throw new IOFailure(
                     "Web application '" + webapp + "' not found");
@@ -204,6 +205,9 @@ public class GUIWebServer implements CleanupIF {
             }
             log.info("HTTP server has been stopped.");
         }
+
+        // Release DB resources
+        HarvestDBConnection.cleanup();
 
         // Shut down the harvest monitor
         HarvestMonitor.getInstance().cleanup();
