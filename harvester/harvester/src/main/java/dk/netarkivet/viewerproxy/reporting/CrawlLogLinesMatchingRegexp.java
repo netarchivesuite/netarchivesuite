@@ -65,7 +65,7 @@ public class CrawlLogLinesMatchingRegexp extends ARCBatchJob {
         this.regexp = regexp;
 
         /**
-        * Two week in miliseconds.
+        * Two weeks in miliseconds.
         */
         batchJobTimeout = 7* Constants.ONE_DAY_IN_MILLIES;
     }
@@ -74,9 +74,11 @@ public class CrawlLogLinesMatchingRegexp extends ARCBatchJob {
      * Does nothing, no initialisation is needed.
      * @param os Not used.
      */
+    @Override
     public void initialize(OutputStream os) {
     }
-
+    
+    @Override
     public ARCBatchFilter getFilter() {
         return new ARCBatchFilter("OnlyCrawlLog") {
             public boolean accept(ARCRecord record) {
@@ -93,6 +95,7 @@ public class CrawlLogLinesMatchingRegexp extends ARCBatchJob {
      * @throws ArgumentNotValid on null parameters
      * @throws IOFailure on trouble processing the record.
      */
+    @Override
     public void processRecord(ARCRecord record, OutputStream os) {
         ArgumentNotValid.checkNotNull(record, "ARCRecord record");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
@@ -122,13 +125,11 @@ public class CrawlLogLinesMatchingRegexp extends ARCBatchJob {
      * Does nothing, no finishing is needed.
      * @param os Not used.
      */
+    @Override
     public void finish(OutputStream os) {
     }
-    
-    /**
-     * Humanly readable representation of this instance.
-     * @return The class content.
-     */
+
+    @Override
     public String toString() {
         return getClass().getName() + ", with arguments: Regexp = " 
             + regexp + ", Filter = " + getFilter();
