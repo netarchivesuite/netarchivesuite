@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.datamodel;
 import java.util.Date;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Named;
 
 /**
  * Sparse version of PartialHarvest to be used for GUI purposes only.
@@ -32,7 +33,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  * @see PartialHarvest
  */
-public class SparsePartialHarvest {
+public class SparsePartialHarvest implements Named {
     /**
      * ID of this harvest.
      */
