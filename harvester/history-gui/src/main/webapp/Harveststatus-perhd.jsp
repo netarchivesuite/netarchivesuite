@@ -45,7 +45,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                  dk.netarkivet.harvester.datamodel.JobStatus,
                  dk.netarkivet.harvester.datamodel.SparseFullHarvest,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
-                 dk.netarkivet.harvester.webinterface.HarvestStatus, 
+                 dk.netarkivet.harvester.webinterface.HarvestStatus,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.HarvestStatusQuery"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
@@ -108,12 +108,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     }
     List<HarvestRunInfo> hrList = hddao.getHarvestRunInfo(hdoid);
     HTMLUtils.generateHeader(pageContext);
-%>
 
-<script type="text/javascript" src="navigate.js"></script>
-
-
-<%
     String startPage=request.getParameter("START_PAGE_INDEX");
 
     if(startPage == null){
@@ -129,15 +124,13 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     }
 
     String searchParam=request.getParameter(Constants.HARVEST_PARAM);
-    String searchParamHidden = searchParam.replace(" ","+");  
 %>
 
-               
 <form method="post" name="filtersForm" action="Harveststatus-perhd.jsp">
-<input type="hidden" 
+<input type="hidden"
        name="START_PAGE_INDEX"
        value="<%=startPagePost%>"/>
-</form>    
+</form>
 
 <%
     long totalResultsCount = hrList.size();
@@ -147,7 +140,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     long startPageIndex = Long.parseLong(startPage);
     long startIndex = 0;
     long endIndex = 0;
-    
+
     if (totalResultsCount > 0) {
         startIndex = ((startPageIndex - 1) * actualPageSize);
         endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
@@ -158,17 +151,17 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
             && totalResultsCount > 0
             && startIndex > 1) {
         prevLinkActive = true;
-        
-        
+
+
     }
-    
+
     boolean nextLinkActive = false;
     if (pageSize != 0
             && totalResultsCount > 0
             && endIndex < totalResultsCount) {
         nextLinkActive = true;
     }
-%>     
+%>
 
               <h3 class="page_heading">
                 <fmt:message key="searching.for.0.gave.1.hits">
@@ -176,23 +169,28 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                     <fmt:param value="<%=hrList.size()%>"/>
                 </fmt:message>
                 </h3>
-                
+
                 <fmt:message key="status.results.displayed">
                     <fmt:param><%=totalResultsCount%></fmt:param>
                     <fmt:param><%=startIndex+1%></fmt:param>
                     <fmt:param><%=endIndex%></fmt:param>
                 </fmt:message>
-     
-  
-  
-      
+
+
+
+
                 <p style="text-align: right">
                     <fmt:message key="status.results.displayed.pagination">
                         <fmt:param>
                         <%
                         if (prevLinkActive) {
+                            String link =
+                                "Harveststatus-perhd.jsp?START_PAGE_INDEX="
+                                + (startPageIndex - 1)
+                                + "&" + Constants.HARVEST_PARAM + "="
+                                + HTMLUtils.encode(searchParam);
                         %>
-                            <a href="javascript:previousPage('<%=Constants.HARVEST_PARAM%>','<%=searchParamHidden%>');">
+                            <a href="<%= link %>">
                                 <fmt:message key="status.results.displayed.prevPage"/>
                             </a>
                         <%
@@ -206,8 +204,13 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                         <fmt:param>
                         <%
                         if (nextLinkActive) {
+                            String link =
+                                "Harveststatus-perhd.jsp?START_PAGE_INDEX="
+                                + (startPageIndex + 1)
+                                + "&" + Constants.HARVEST_PARAM + "="
+                                + HTMLUtils.encode(searchParam);
                         %>
-                            <a href="javascript:nextPage('<%=Constants.HARVEST_PARAM%>','<%=searchParamHidden%>');">
+                            <a href="<%= link %>">
                                 <fmt:message key="status.results.displayed.nextPage"/>
                             </a>
                         <%
@@ -217,11 +220,11 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                         <%
                         }
                         %>
-                        </fmt:param>       
+                        </fmt:param>
                     </fmt:message>
-                </p>               
-     
-     
+                </p>
+
+
 <h3 class="page_heading"><%=heading%></h3>
 <%
     if (partialhd != null) {

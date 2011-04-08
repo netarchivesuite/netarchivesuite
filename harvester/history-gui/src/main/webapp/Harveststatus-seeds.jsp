@@ -30,7 +30,7 @@ Parameters:
 harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
    displayed.
 
---%><%@ page import="java.util.Date, java.util.Collection, 
+--%><%@ page import="java.util.Date, java.util.Collection,
                  java.util.List, java.util.Map, java.util.Set,
                  java.util.Iterator,
                  dk.netarkivet.common.CommonSettings,
@@ -45,8 +45,6 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
 /><fmt:setBundle scope="page"
        basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
 
-<script type="text/javascript" src="navigate.js"></script>
-
 <%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -59,7 +57,8 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                 Constants.HARVEST_PARAM);
         return;
     }
-    HTMLUtils.generateHeader(pageContext);
+    // Include navigate.js
+    HTMLUtils.generateHeader(pageContext, "navigate.js");
 %>
 <%
 int domainCount = 0;
@@ -85,14 +84,14 @@ for (String domainname : result) {
 
     long totalResultsCount = result.size();
     long pageSize = Long.parseLong(Settings.get(
-            CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));  
+            CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
     long actualPageSize = (pageSize == 0 ?
         totalResultsCount : pageSize);
 
     long startPageIndex = Long.parseLong(startPage);
     long startIndex = 0;
     long endIndex = 0;
-    
+
     if (totalResultsCount > 0) {
         startIndex = ((startPageIndex - 1) * actualPageSize);
         endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
@@ -103,7 +102,7 @@ for (String domainname : result) {
             && startIndex > 1) {
         prevLinkActive = true;
     }
-    
+
     boolean nextLinkActive = false;
     if (pageSize != 0
             && totalResultsCount > 0
@@ -166,14 +165,14 @@ searchParamHidden = HTMLUtils.encode(searchParamHidden);
         <%
             }
         %>
-    </fmt:param>       
-    
+    </fmt:param>
+
 </fmt:message>
 </p>
 
 
 <form method="post" name="filtersForm" action="Harveststatus-seeds.jsp">
-<input type="hidden" 
+<input type="hidden"
        name="START_PAGE_INDEX"
        value="<%=startPagePost%>"/>
 </form>
@@ -189,21 +188,21 @@ for (String domainname : matchingDomainsSubList) {
 	List<String> seeds = hddao.getListOfSeedsOfDomainOfHarvestDefinition(
 		harvestName, domainname);
 //	seedCount += seeds.size();
-	
+
 	%>
 	<tr>
 	    <th colspan="2"><%=domainname%> (<%=seeds.size()%>
 	    <fmt:message key="harveststatus.seeds.seeds"/>)</th>
 	</tr>
 	<%
-	for (String seed : seeds) { 
+	for (String seed : seeds) {
 	%>
 	<tr>
 	    <td width="10%">&nbsp;</td>
 	    <td><%=seed%></td>
-<!-- 
+<!--
         <td><a href="http://yourwaybackmachine/wayback/*/<%=seed%>" target="_blank"><%=seed%></a></td>
--->        
+-->
 	</tr>
 	<%
 	}
@@ -213,12 +212,12 @@ for (String domainname : matchingDomainsSubList) {
 </table>
 <p>
 <table><tr><td>
-	<fmt:message key="harveststatus.seeds.total"/>: <%=domainCount%> 
+	<fmt:message key="harveststatus.seeds.total"/>: <%=domainCount%>
 	<fmt:message key="harveststatus.seeds.domains"/> / <%=seedCount%>
 	<fmt:message key="harveststatus.seeds.seeds"/>
 </td></tr></table>
 
-  
+
 <%
 
 HTMLUtils.generateFooter(out);
