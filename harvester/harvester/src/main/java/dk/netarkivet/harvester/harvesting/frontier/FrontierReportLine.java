@@ -468,7 +468,7 @@ implements Serializable,
         try {
             return Long.parseLong(longToken);
         } catch (NumberFormatException e) {
-            LOG.warn(e);
+            // Strange data my occur here, but it's harmless
             return Long.MIN_VALUE;
         }
     }
@@ -485,7 +485,7 @@ implements Serializable,
         try {
             return Double.parseDouble(dblToken);
         } catch (NumberFormatException e) {
-            LOG.warn(e);
+            // Strange data my occur here, but it's harmless
             return Double.MIN_VALUE;
         }
     }
