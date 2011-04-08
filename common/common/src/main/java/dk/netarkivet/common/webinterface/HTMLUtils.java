@@ -1,4 +1,4 @@
- /* File:        $Id$
+/* File:        $Id$
  * Revision:    $Revision$
  * Author:      $Author$
  * Date:        $Date$
@@ -60,48 +60,52 @@ public class HTMLUtils {
 
     /** Web page title placeholder. */
     private static String TITLE_PLACEHOLDER = "STRING_1";
-    
-   private static String WEBPAGE_HEADER_TEMPLATE_TOP = "<!DOCTYPE html "
-       + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \n "
-       + "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
-       + "<html xmlns=\"http://www.w3.org/1999/xhtml\""
-       + " xml:lang=\"en\" lang=\"en\">\n" 
-       + "<head>\n"
-       + "<meta content=\"text/html; charset=UTF-8\" "
-       + "http-equiv= \"content-type\" />"
-       + "<meta http-equiv=\"Expires\" content=\"0\"/>\n"
-       + "<meta http-equiv=\"Cache-Control\" content=\"no-cache\"/>\n"
-       + "<meta http-equiv=\"Pragma\" content=\"no-cache\"/> \n";
-   
-   private static String WEBPAGE_HEADER_AUTOREFRESH
-       = "<meta http-equiv=\"refresh\" content=\""
-           + TITLE_PLACEHOLDER + "\"/> \n";
-   
-   private static String WEBPAGE_HEADER_TEMPLATE_BOTTOM = 
-            "<title>" + TITLE_PLACEHOLDER + "</title>\n"
-            + "<script type=\"text/javascript\">\n"
-            + "<!--\n"
-            + "function giveFocus() {\n"
-            + "    var e = document.getElementById('focusElement');\n"
-            + "    if (e != null) {\n"
-            + "        var elms = e.getElementsByTagName('*');\n"
-            + "        if (elms != null && elms.length != null "
-            + "            && elms.item != null && elms.length > 0) {\n"
-            + "            var e2 = elms.item(0);\n"
-            + "                if (e2 != null && e2.focus != null) {\n"
-            + "            }\n"
-            + "            e2.focus();\n"
-            + "        }\n"
-            + "    }\n"
-            + "}\n"
-            + "-->\n"
-            + "</script>\n"
-            + "<link rel=\"stylesheet\" href=\"./netarkivet.css\" "
-            + "type=\"text/css\" />\n"
-            + "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" "
-            + "href=\"./jscalendar/calendar-win2k-cold-1.css\" "
-            + "title=\"./jscalendar/win2k-cold-1\" />\n"
-            + "</head> <body onload=\"giveFocus()\">\n";
+
+    /** External JavaScript files placeholder. */
+    private static String JS_PLACEHOLDER = "JS_TO_INCLUDE";
+
+    private static String WEBPAGE_HEADER_TEMPLATE_TOP = "<!DOCTYPE html "
+        + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \n "
+        + "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+        + "<html xmlns=\"http://www.w3.org/1999/xhtml\""
+        + " xml:lang=\"en\" lang=\"en\">\n"
+        + "<head>\n"
+        + "<meta content=\"text/html; charset=UTF-8\" "
+        + "http-equiv= \"content-type\" />"
+        + "<meta http-equiv=\"Expires\" content=\"0\"/>\n"
+        + "<meta http-equiv=\"Cache-Control\" content=\"no-cache\"/>\n"
+        + "<meta http-equiv=\"Pragma\" content=\"no-cache\"/> \n";
+
+    private static String WEBPAGE_HEADER_AUTOREFRESH
+    = "<meta http-equiv=\"refresh\" content=\""
+        + TITLE_PLACEHOLDER + "\"/> \n";
+
+    private static String WEBPAGE_HEADER_TEMPLATE_BOTTOM =
+        "<title>" + TITLE_PLACEHOLDER + "</title>\n"
+        + "<script type=\"text/javascript\">\n"
+        + "<!--\n"
+        + "function giveFocus() {\n"
+        + "    var e = document.getElementById('focusElement');\n"
+        + "    if (e != null) {\n"
+        + "        var elms = e.getElementsByTagName('*');\n"
+        + "        if (elms != null && elms.length != null "
+        + "            && elms.item != null && elms.length > 0) {\n"
+        + "            var e2 = elms.item(0);\n"
+        + "                if (e2 != null && e2.focus != null) {\n"
+        + "            }\n"
+        + "            e2.focus();\n"
+        + "        }\n"
+        + "    }\n"
+        + "}\n"
+        + "-->\n"
+        + "</script>\n"
+        + JS_PLACEHOLDER + "\n"
+        + "<link rel=\"stylesheet\" href=\"./netarkivet.css\" "
+        + "type=\"text/css\" />\n"
+        + "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" "
+        + "href=\"./jscalendar/calendar-win2k-cold-1.css\" "
+        + "title=\"./jscalendar/win2k-cold-1\" />\n"
+        + "</head> <body onload=\"giveFocus()\">\n";
 
     /** Logger for this class. */
     private static Log log = LogFactory.getLog(HTMLUtils.class.getName());
@@ -158,15 +162,35 @@ public class HTMLUtils {
      * @throws IOException if an error occurs during writing of output.
      */
     public static void generateHeader(PageContext context)
-            throws IOException {
+    throws IOException {
         ArgumentNotValid.checkNotNull(context, "context");
         String url = ((HttpServletRequest) context.getRequest())
-                .getRequestURL().toString();
+        .getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
         String title = getTitle(url, locale);
         generateHeader(title, context);
     }
-    
+
+    /**
+     * Prints the header information for the webpages in the GUI. This includes
+     * the navigation menu, and links for changing the language.
+     * The title of the page is generated internationalised from sitesections.
+     * If you want to specify it, use the overloaded method.
+     * @param context The context of the web page request.
+     * @throws IOException if an error occurs during writing of output.
+     */
+    public static void generateHeader(
+            PageContext context,
+            String... jsToInclude)
+    throws IOException {
+        ArgumentNotValid.checkNotNull(context, "context");
+        String url = ((HttpServletRequest) context.getRequest())
+        .getRequestURL().toString();
+        Locale locale = context.getResponse().getLocale();
+        String title = getTitle(url, locale);
+        generateHeader(title, context, jsToInclude);
+    }
+
     /**
      * Prints the header information for the webpages in the GUI. This includes
      * the navigation menu, and links for changing the language.
@@ -178,10 +202,10 @@ public class HTMLUtils {
      */
     public static void generateHeader(
             PageContext context, long refreshInSeconds)
-            throws IOException {
+    throws IOException {
         ArgumentNotValid.checkNotNull(context, "context");
         String url = ((HttpServletRequest) context.getRequest())
-                .getRequestURL().toString();
+        .getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
         String title = getTitle(url, locale);
         generateHeader(title, refreshInSeconds, context);
@@ -192,22 +216,36 @@ public class HTMLUtils {
      * the navigation menu, and links for changing the language.
      * @param title An internationalised title of the page.
      * @param context The context of the web page request.
+     * @param jsToInclude path(s) to external .js files to include in header.
      * @throws IOException if an error occurs during writing to output.
      */
-    public static void generateHeader(String title, PageContext context)
-            throws IOException {
+    public static void generateHeader(
+            String title,
+            PageContext context,
+            String... jsToInclude)
+    throws IOException {
         ArgumentNotValid.checkNotNull(title, "title");
         ArgumentNotValid.checkNotNull(context, "context");
-     
+
         JspWriter out = context.getOut();
         String url = ((HttpServletRequest) context.getRequest())
-                .getRequestURL().toString();
+        .getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
         title = escapeHtmlValues(title);
         log.debug("Loaded URL '" + url + "' with title '" + title + "'");
         out.print(WEBPAGE_HEADER_TEMPLATE_TOP);
-        out.print(WEBPAGE_HEADER_TEMPLATE_BOTTOM.replace(
-                TITLE_PLACEHOLDER, title));
+
+        String includeJs = "";
+        if (jsToInclude != null && jsToInclude.length > 0) {
+            for (String js : jsToInclude) {
+                includeJs += "<script type=\"text/javascript\" src=\""
+                    + js + "\"></script>\n";
+            }
+        }
+
+        out.print(WEBPAGE_HEADER_TEMPLATE_BOTTOM
+                .replace(TITLE_PLACEHOLDER, title)
+                .replace(JS_PLACEHOLDER, includeJs));
         // Start the two column / one row table which fills the page
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
@@ -217,7 +255,7 @@ public class HTMLUtils {
         // Language links
         generateLanguageLinks(out);
     }
-    
+
     /**
      * Prints the header information for the webpages in the GUI. This includes
      * the navigation menu, and links for changing the language.
@@ -226,14 +264,16 @@ public class HTMLUtils {
      * @param refreshInSeconds auto-refresh time in seconds
      * @throws IOException if an error occurs during writing to output.
      */
-    public static void generateHeader(String title, long refreshInSeconds,
+    public static void generateHeader(
+            String title,
+            long refreshInSeconds,
             PageContext context) throws IOException {
         ArgumentNotValid.checkNotNull(title, "title");
         ArgumentNotValid.checkNotNull(context, "context");
 
         JspWriter out = context.getOut();
         String url = ((HttpServletRequest) context.getRequest())
-                .getRequestURL().toString();
+        .getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
         title = escapeHtmlValues(title);
         log.debug("Loaded URL '" + url + "' with title '" + title + "'");
@@ -242,8 +282,9 @@ public class HTMLUtils {
             out.print(WEBPAGE_HEADER_AUTOREFRESH.replace(TITLE_PLACEHOLDER,
                     Long.toString(refreshInSeconds)));
         }
-        out.print(WEBPAGE_HEADER_TEMPLATE_BOTTOM.replace(TITLE_PLACEHOLDER,
-                title));
+        out.print(WEBPAGE_HEADER_TEMPLATE_BOTTOM
+                .replace(TITLE_PLACEHOLDER,title)
+                .replace(JS_PLACEHOLDER, ""));
         // Start the two column / one row table which fills the page
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
@@ -273,7 +314,7 @@ public class HTMLUtils {
      * @throws IOException if an error occurs during writing of output.
      */
     private static void generateLanguageLinks(JspWriter out) throws
-                                                             IOException {
+    IOException {
         out.print("<div class=\"languagelinks\">");
         StringTree<String> webinterfaceSettings = Settings.getTree(
                 CommonSettings.WEBINTERFACE_SETTINGS);
@@ -285,10 +326,10 @@ public class HTMLUtils {
                     "<a href=\"lang.jsp?locale=%s&amp;name=%s\">%s</a>&nbsp;",
                     escapeHtmlValues(encode(language.getValue(
                             CommonSettings.WEBINTERFACE_LANGUAGE_LOCALE))),
-                    escapeHtmlValues(encode(language.getValue(
-                            CommonSettings.WEBINTERFACE_LANGUAGE_NAME))),
-                    escapeHtmlValues(language.getValue(
-                            CommonSettings.WEBINTERFACE_LANGUAGE_NAME)))
+                            escapeHtmlValues(encode(language.getValue(
+                                    CommonSettings.WEBINTERFACE_LANGUAGE_NAME))),
+                                    escapeHtmlValues(language.getValue(
+                                            CommonSettings.WEBINTERFACE_LANGUAGE_NAME)))
             );
         }
         out.print("</div>");
@@ -305,16 +346,16 @@ public class HTMLUtils {
      * @throws IOException if the output cannot be written.
      */
     private static void generateNavigationTree(JspWriter out,
-                                               String url, Locale locale)
-            throws IOException {
+            String url, Locale locale)
+    throws IOException {
         out.print("<td valign=\"top\" id=\"menu\">\n");
         // The list of menu items is presented as a 1-column table
         out.print("<table id=\"menu_table\">\n");
         String s = I18N.getString(locale, "sidebar.title.menu");
         out.print("<tr><td><a class=\"sidebarHeader\" href=\"index.jsp\">"
-                 + "<img src=\"transparent_menu_logo.png\" alt=\"" + s + "\"/> "
-                 + s
-                 + "</a></td></tr>\n");
+                + "<img src=\"transparent_menu_logo.png\" alt=\"" + s + "\"/> "
+                + s
+                + "</a></td></tr>\n");
 
         for (SiteSection section : SiteSection.getSections()) {
             section.generateNavigationTree(out, url, locale);
@@ -339,7 +380,7 @@ public class HTMLUtils {
         // Add information about the running system
         out.print("<div class='systeminfo'>");
         out.print("NetarchiveSuite " + Constants.getVersionString()
-                  + ", " + Settings.get(CommonSettings.ENVIRONMENT_NAME));
+                + ", " + Settings.get(CommonSettings.ENVIRONMENT_NAME));
         out.print("</div>");
         // Close the page
         out.print("</body></html>");
@@ -431,7 +472,7 @@ public class HTMLUtils {
             return "";
         }
         return input.replaceAll("&", "&amp;").replaceAll("\\\"", "&quot;")
-                .replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        .replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
 
     /** Encode a string for use in a URL, then escape characters that must be
@@ -512,7 +553,7 @@ public class HTMLUtils {
         // This is a bit of a hack - we know that _if_ we have set it,
         // we have set it to UTF-8, so this way we won't set it twice...
         if (request.getCharacterEncoding() == null
-            || !request.getCharacterEncoding().equals("UTF-8")) {
+                || !request.getCharacterEncoding().equals("UTF-8")) {
             try {
                 request.setCharacterEncoding("UTF-8");
             } catch (UnsupportedEncodingException e) {
@@ -594,8 +635,8 @@ public class HTMLUtils {
      * @throws IOFailure If the forward fails
      */
     public static void forwardWithErrorMessage(PageContext context,
-                                               I18n I18N, String label,
-                                               Object... args) {
+            I18n I18N, String label,
+            Object... args) {
         // Note that we may not want to be to strict here
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
@@ -608,9 +649,9 @@ public class HTMLUtils {
                 label, args));
         context.getRequest().setAttribute("message", msg);
         RequestDispatcher rd
-                = context.getServletContext().getRequestDispatcher(
+        = context.getServletContext().getRequestDispatcher(
                 "/message.jsp");
-        final String errormsg = "Failed to forward on error " + msg;        
+        final String errormsg = "Failed to forward on error " + msg;
         try {
             rd.forward(context.getRequest(), context.getResponse());
         } catch (IOException e) {
@@ -637,20 +678,20 @@ public class HTMLUtils {
      * @throws IOFailure If the forward fails.
      */
     public static void forwardWithRawErrorMessage(PageContext context,
-                                                  I18n i18n, String label,
-                                                  Object... args) {        
+            I18n i18n, String label,
+            Object... args) {
         // Note that we may not want to be to strict here
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
         ArgumentNotValid.checkNotNull(I18N, "I18N");
         ArgumentNotValid.checkNotNull(label, "label");
         ArgumentNotValid.checkNotNull(args, "args");
-        
+
         String msg = i18n.getString(context.getResponse().getLocale(),
                 label, args);
         context.getRequest().setAttribute("message", msg);
         RequestDispatcher rd
-                = context.getServletContext().getRequestDispatcher(
+        = context.getServletContext().getRequestDispatcher(
                 "/message.jsp");
         try {
             rd.forward(context.getRequest(), context.getResponse());
@@ -681,24 +722,24 @@ public class HTMLUtils {
      * @throws IOFailure If the forward fails
      */
     public static void forwardWithErrorMessage(PageContext context,
-                                               I18n i18n, Throwable e,
-                                               String label, Object... args) {
+            I18n i18n, Throwable e,
+            String label, Object... args) {
         // Note that we may not want to be to strict here
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
         ArgumentNotValid.checkNotNull(I18N, "I18N");
         ArgumentNotValid.checkNotNull(label, "label");
         ArgumentNotValid.checkNotNull(args, "args");
-        
+
         String msg = HTMLUtils.escapeHtmlValues(i18n.getString(
                 context.getResponse().getLocale(),
                 label, args));
         context.getRequest().setAttribute("message",
                 msg + "\n" + e.getLocalizedMessage());
         RequestDispatcher rd
-                = context.getServletContext().getRequestDispatcher(
+        = context.getServletContext().getRequestDispatcher(
                 "/message.jsp");
-        final String errormsg = "Failed to forward on error " + msg;        
+        final String errormsg = "Failed to forward on error " + msg;
         try {
             rd.forward(context.getRequest(), context.getResponse());
         } catch (IOException e1) {
@@ -720,13 +761,13 @@ public class HTMLUtils {
      * @throws ForwardedToErrorPage If a parameter is missing
      */
     public static void forwardOnMissingParameter(PageContext context,
-                                                 String... parameters)
-            throws ForwardedToErrorPage {
+            String... parameters)
+    throws ForwardedToErrorPage {
         // Note that we may not want to be to strict here
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
         ArgumentNotValid.checkNotNull(parameters, "parameters");
-        
+
         ServletRequest request = context.getRequest();
         for (String parameter : parameters) {
             String value = request.getParameter(parameter);
@@ -751,12 +792,12 @@ public class HTMLUtils {
      * @throws ForwardedToErrorPage if a parameter was missing or empty
      */
     public static void forwardOnEmptyParameter(PageContext context,
-                                               String... parameters) {
+            String... parameters) {
         // Note that we may not want to be to strict here
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
         ArgumentNotValid.checkNotNull(parameters, "parameters");
-        
+
         forwardOnMissingParameter(context, parameters);
         ServletRequest request = context.getRequest();
         for (String parameter : parameters) {
@@ -781,9 +822,9 @@ public class HTMLUtils {
      * @throws ForwardedToErrorPage if the parameter is none of the given values
      */
     public static void forwardOnIllegalParameter(PageContext context,
-                                                 String parameter,
-                                                 String... legalValues)
-            throws ForwardedToErrorPage {
+            String parameter,
+            String... legalValues)
+    throws ForwardedToErrorPage {
         // Note that we may not want to be to strict here
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
@@ -816,9 +857,9 @@ public class HTMLUtils {
      * parseable integer, or doesn't lie within the limits.
      */
     public static int parseAndCheckInteger(PageContext context,
-                                           String param,
-                                           int minValue, int maxValue)
-            throws ForwardedToErrorPage {
+            String param,
+            int minValue, int maxValue)
+    throws ForwardedToErrorPage {
         // Note that we may not want to be to strict here
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
@@ -860,7 +901,7 @@ public class HTMLUtils {
      * parseable as a long value.
      */
     public static Long parseOptionalLong(PageContext context,
-                                         String param, Long defaultValue) {
+            String param, Long defaultValue) {
         // Note that we may not want to be to strict here
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
@@ -885,7 +926,7 @@ public class HTMLUtils {
      * parseable as a date
      */
     public static Date parseOptionalDate(PageContext context, String param,
-                                         String format, Date defaultValue) {
+            String format, Date defaultValue) {
         ArgumentNotValid.checkNotNullOrEmpty(param, "String param");
         ArgumentNotValid.checkNotNullOrEmpty(format, "String format");
         String paramValue = context.getRequest().getParameter(param);
@@ -895,8 +936,8 @@ public class HTMLUtils {
                 return new SimpleDateFormat(format).parse(paramValue);
             } catch (ParseException e) {
                 forwardWithErrorMessage(context, I18N,
-                            "errormsg;parameter.0.not.a.date.with.format.1.2",
-                            param, format, paramValue);
+                        "errormsg;parameter.0.not.a.date.with.format.1.2",
+                        param, format, paramValue);
                 throw new ForwardedToErrorPage("Invalid value " + paramValue
                         + " for date parameter '" + param + "' with format '"
                         + format + "'", e);
@@ -905,9 +946,9 @@ public class HTMLUtils {
             return defaultValue;
         }
     }
-    
+
     /**
-     * Create a localized string representation of the given long. 
+     * Create a localized string representation of the given long.
      * @param i A long integer
      * @param context The given JSP context
      * @return a localized string representation of the given long
@@ -918,9 +959,9 @@ public class HTMLUtils {
                 HTMLUtils.getLocaleObject(context));
         return nf.format(i);
     }
-    
+
     /**
-     * Create a localized string representation of the given long. 
+     * Create a localized string representation of the given long.
      * @param i A long integer
      * @param locale The given locale.
      * @return a localized string representation of the given long
@@ -930,7 +971,7 @@ public class HTMLUtils {
         NumberFormat nf = NumberFormat.getInstance(locale);
         return nf.format(i);
     }
-    
+
     /**
      * Parse a given String for a long value.
      * @param loc The given Locale.
@@ -945,12 +986,12 @@ public class HTMLUtils {
         ArgumentNotValid.checkNotNull(loc, "Locale loc");
         ArgumentNotValid.checkNotNullOrEmpty(
                 parameterName, "String parameterName");
-        
+
         if (paramValue != null && paramValue.trim().length() > 0) {
             paramValue = paramValue.trim();
             try {
                 return NumberFormat.getInstance(loc)
-                    .parse(paramValue).longValue();
+                .parse(paramValue).longValue();
             } catch (ParseException e) {
                 throw new ForwardedToErrorPage("Invalid value " + paramValue
                         + " for integer parameter '" + parameterName + "'", e);

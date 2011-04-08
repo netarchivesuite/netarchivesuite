@@ -64,7 +64,8 @@ displayed, if no domains are found a message is shown.
 <%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-%><%
+%>
+<%
     HTMLUtils.setUTF8(request);
     String domainName = request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
     if (domainName != null && domainName.length() > 0) {
@@ -81,16 +82,17 @@ displayed, if no domains are found a message is shown.
                 return;
             } else {
                 //Wildcard search with matches, display them
-                HTMLUtils.generateHeader(pageContext);
-                %>
-                
-<script type="text/javascript" src="navigate.js"></script>                
+                // Include navigate.js
+                HTMLUtils.generateHeader(pageContext, "navigate.js");
+%>
+
 <form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
 
-<input type="hidden" 
+<input type="hidden"
        name="START_PAGE_INDEX"
        value="<%=startPagePost%>"/>
-</form>    
+</form>
+
 <%
     long totalResultsCount = matchingDomains.size();
     long actualPageSize = (pageSize == 0 ?
@@ -99,39 +101,39 @@ displayed, if no domains are found a message is shown.
     long startPageIndex = Long.parseLong(startPage);
     long startIndex = 0;
     long endIndex = 0;
-    
+
     if (totalResultsCount > 0) {
         startIndex = ((startPageIndex - 1) * actualPageSize);
         endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
     }
-    
+
     boolean prevLinkActive = false;
     if (pageSize != 0
             && totalResultsCount > 0
             && startIndex > 1) {
         prevLinkActive = true;
     }
-    
+
     boolean nextLinkActive = false;
     if (pageSize != 0
             && totalResultsCount > 0
             && endIndex < totalResultsCount) {
         nextLinkActive = true;
     }
-%>     
+%>
                 <h3 class="page_heading">
                 <fmt:message key="searching.for.0.gave.1.hits">
                     <fmt:param value="<%=domainName%>"/>
                     <fmt:param value="<%=matchingDomains.size()%>"/>
                 </fmt:message>
                 </h3>
-                
+
                 <fmt:message key="status.results.displayed">
                     <fmt:param><%=totalResultsCount%></fmt:param>
                     <fmt:param><%=startIndex+1%></fmt:param>
                     <fmt:param><%=endIndex%></fmt:param>
                 </fmt:message>
-     
+
                 <p style="text-align: right">
                     <fmt:message key="status.results.displayed.pagination">
                         <fmt:param>
@@ -163,11 +165,11 @@ displayed, if no domains are found a message is shown.
                         <%
                         }
                         %>
-                        </fmt:param>       
+                        </fmt:param>
                     </fmt:message>
-                </p>               
+                </p>
 
-                <% 
+                <%
                 List<String> matchingDomainsSubList=matchingDomains.
                 subList((int)startIndex,(int)endIndex);
 
@@ -184,16 +186,16 @@ displayed, if no domains are found a message is shown.
             }
         } else if (DomainDAO.getInstance().exists(domainName)) {
             //Specified and found domain name
-            HTMLUtils.generateHeader(pageContext);
-            %>
-            
-<script type="text/javascript" src="navigate.js"></script>            
+            // Include navigate.js
+            HTMLUtils.generateHeader(pageContext, "navigate.js");
+%>
+
 <form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
 
-<input type="hidden" 
+<input type="hidden"
        name="START_PAGE_INDEX"
        value="<%=startPagePost%>"/>
-</form>    
+</form>
 
 <%
     List<DomainHarvestInfo> hiList
@@ -205,7 +207,7 @@ displayed, if no domains are found a message is shown.
     long startPageIndex = Long.parseLong(startPage);
     long startIndex = 0;
     long endIndex = 0;
-    
+
     if (totalResultsCount > 0) {
         startIndex = ((startPageIndex - 1) * actualPageSize);
         endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
@@ -216,7 +218,7 @@ displayed, if no domains are found a message is shown.
             && startIndex > 1) {
         prevLinkActive = true;
     }
-    
+
     boolean nextLinkActive = false;
     if (pageSize != 0
             && totalResultsCount > 0
@@ -261,7 +263,7 @@ displayed, if no domains are found a message is shown.
                     <%
                     }
                     %>
-                    </fmt:param>       
+                    </fmt:param>
                 </fmt:message>
             </p>
 
@@ -328,13 +330,13 @@ displayed, if no domains are found a message is shown.
                         </td>
                         <td><%=HTMLUtils.escapeHtmlValues(hi.getConfigName())%>
                         </td>
-                        <td><fmt:formatDate type="both" 
+                        <td><fmt:formatDate type="both"
                             value="<%=hi.getStartDate()%>"/></td>
-                        <td><fmt:formatDate type="both" 
+                        <td><fmt:formatDate type="both"
                             value="<%=hi.getEndDate()%>"/></td>
-                        <td><fmt:formatNumber 
+                        <td><fmt:formatNumber
                             value="<%=hi.getBytesDownloaded()%>"/></td>
-                        <td><fmt:formatNumber 
+                        <td><fmt:formatNumber
                             value="<%=hi.getDocsDownloaded()%>"/></td>
                         <td><%
                             if (hi.getStopReason() == null) {
@@ -365,7 +367,7 @@ displayed, if no domains are found a message is shown.
         }
     } else {
        //No search or domain name given, so show the search formular to the user
-        HTMLUtils.generateHeader(pageContext);
+       HTMLUtils.generateHeader(pageContext);
         %>
         <h3 class="page_heading">
             <fmt:message key="find.all.jobs.for.this.domain"/>
@@ -375,7 +377,7 @@ displayed, if no domains are found a message is shown.
             <tr>
                 <td><fmt:message key="prompt;enter.name.of.domain"/></td>
                 <td><span id="focusElement">
-                    <input name="<%=Constants.DOMAIN_SEARCH_PARAM%>" 
+                    <input name="<%=Constants.DOMAIN_SEARCH_PARAM%>"
                         size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>"/>
                     </span>
                 </td>

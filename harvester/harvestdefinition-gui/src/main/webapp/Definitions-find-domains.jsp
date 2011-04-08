@@ -41,8 +41,6 @@ asked if they should be created.
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
 
-<script type="text/javascript" src="navigate.js"></script>
-
 <%! private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
@@ -58,14 +56,15 @@ asked if they should be created.
                         "errormsg;no.matching.domains.for.0", domainName);
                 return;
             } else {
-                HTMLUtils.generateHeader(pageContext);
+                // Include navigate.js
+                HTMLUtils.generateHeader(pageContext, "navigate.js");
                 %><h3 class="page_heading">
                 <fmt:message key="searching.for.0.gave.1.hits">
                     <fmt:param value="<%=domainName%>"/>
                     <fmt:param value="<%=matchingDomains.size()%>"/>
                 </fmt:message>
                 </h3>
-                
+
                 <%
                  String startPage=request.getParameter("START_PAGE_INDEX");
 
@@ -75,31 +74,31 @@ asked if they should be created.
 
                  long totalResultsCount = matchingDomains.size();
                  long pageSize = Long.parseLong(Settings.get(
-                         CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));  
+                         CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
                  long actualPageSize = (pageSize == 0 ?
                          totalResultsCount : pageSize);
 
                  long startPageIndex = Long.parseLong(startPage);
                  long startIndex = 0;
                  long endIndex = 0;
-    
+
                  if (totalResultsCount > 0) {
                      startIndex = ((startPageIndex - 1) * actualPageSize);
-                     endIndex = Math.min(startIndex + actualPageSize , 
+                     endIndex = Math.min(startIndex + actualPageSize ,
                              totalResultsCount);
                  }
                  boolean prevLinkActive = false;
                  if (pageSize != 0 && totalResultsCount > 0 && startIndex > 1) {
                      prevLinkActive = true;
                  }
-    
+
                  boolean nextLinkActive = false;
-                 if (pageSize != 0 && totalResultsCount > 0 
+                 if (pageSize != 0 && totalResultsCount > 0
                          && endIndex < totalResultsCount) {
                      nextLinkActive = true;
                  }
                  %>
-                 
+
                 <fmt:message key="status.results.displayed">
                 <fmt:param><%=totalResultsCount%></fmt:param>
                 <fmt:param><%=startIndex+1%></fmt:param>
@@ -115,7 +114,7 @@ asked if they should be created.
                 String searchParam=request.getParameter(Constants.DOMAIN_PARAM);
                 searchParam = HTMLUtils.encode(searchParam);
                 %>
-                
+
                 <p style="text-align: right">
                     <fmt:message key="status.results.displayed.pagination">
                         <fmt:param>
@@ -123,13 +122,13 @@ asked if they should be created.
                         if (prevLinkActive) {
                         %>
                             <a href="javascript:previousPage('<%=Constants.DOMAIN_PARAM%>','<%=searchParam%>');">
-                                <fmt:message 
+                                <fmt:message
                                 key="status.results.displayed.prevPage"/>
                             </a>
                         <%
                         } else {
                         %>
-                            <fmt:message 
+                            <fmt:message
                             key="status.results.displayed.prevPage"/>
                         <%
                         }
@@ -140,7 +139,7 @@ asked if they should be created.
                         if (nextLinkActive) {
                         %>
                             <a href="javascript:nextPage('<%=Constants.DOMAIN_PARAM%>','<%=searchParam%>');">
-                                <fmt:message 
+                                <fmt:message
                                 key="status.results.displayed.nextPage"/>
                             </a>
                         <%
@@ -150,18 +149,18 @@ asked if they should be created.
                         <%
                         }
                         %>
-                        </fmt:param>       
-    
+                        </fmt:param>
+
                     </fmt:message>
                 </p>
 
-                <form method="post" name="filtersForm" 
+                <form method="post" name="filtersForm"
                 action="Definitions-find-domains.jsp">
                     <input type="hidden" name="START_PAGE_INDEX"
                     value="<%=startPagePost%>"/>
                  </form>
 
-<% 
+<%
                 List<String> matchingDomainsSubList=matchingDomains.
                                       subList((int)startIndex,(int)endIndex);
                 for (String domainS : matchingDomainsSubList) {
@@ -214,13 +213,13 @@ asked if they should be created.
 <h3 class="page_heading"><fmt:message key="pagetitle;find.domains"/></h3>
 
 
-<form method="post"   onclick="resetPagination();" 
+<form method="post"   onclick="resetPagination();"
                                       action="Definitions-find-domains.jsp">
     <table>
         <tr>
             <td><fmt:message key="prompt;enter.name.of.domain.to.find"/></td>
             <td><span id="focusElement">
-                <input name="<%=Constants.DOMAIN_PARAM%>" 
+                <input name="<%=Constants.DOMAIN_PARAM%>"
                 	size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>" value=""/>
                 </span>
             </td>
