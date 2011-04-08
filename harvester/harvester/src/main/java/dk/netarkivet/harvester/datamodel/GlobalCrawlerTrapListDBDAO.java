@@ -67,10 +67,10 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
      */
     protected GlobalCrawlerTrapListDBDAO() {
 
-        Connection c = HarvestDBConnection.get();
+        Connection connection = HarvestDBConnection.get();
         try {
             int trapListVersion =
-                DBUtils.getTableVersion(c,
+                DBUtils.getTableVersion(connection,
                 "global_crawler_trap_lists");
             if (trapListVersion < TRAP_LIST_VERSION_NEEDED) {
                 log.info("Migrating table 'global_crawler_traps_list' from "
@@ -80,7 +80,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
                         "global_crawler_trap_lists", TRAP_LIST_VERSION_NEEDED);
             }
             int expressionListVersion =
-                DBUtils.getTableVersion(c,
+                DBUtils.getTableVersion(connection,
                 "global_crawler_trap_expressions");
             if (expressionListVersion < EXPRESSION_LIST_VERSION_NEEDED) {
                 log.info("Migrating table 'global_crawler_trap_expressions' "
@@ -91,7 +91,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
                         EXPRESSION_LIST_VERSION_NEEDED);
             }
         } finally {
-            HarvestDBConnection.release(c);
+            HarvestDBConnection.release(connection);
         }
     }
 

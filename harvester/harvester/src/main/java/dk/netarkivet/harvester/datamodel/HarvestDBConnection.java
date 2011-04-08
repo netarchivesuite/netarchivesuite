@@ -54,8 +54,11 @@ import dk.netarkivet.common.utils.Settings;
  * The implementation relies on a connection pool. Once acquired through
  * the get() method, a connection must be explicitly returned to the pool
  * by calling the release(Connection) method.
+ *
+ * THis class is intended to be used statically, and hence cannot be
+ * instantiated and is final.
  */
-public class HarvestDBConnection {
+public final class HarvestDBConnection {
 
     private static final Log log =
         LogFactory.getLog(HarvestDBConnection.class);
@@ -64,6 +67,14 @@ public class HarvestDBConnection {
      * The c3p0 pooled datasource backing this implementation.
      */
     private static ComboPooledDataSource dataSource = null;
+
+    /**
+     * Makes sure that the class can't be instantiated, as it is designed to be
+     * used statically.
+     */
+    private HarvestDBConnection() {
+
+    }
 
     /**
      * Get a connection to the harvest definition database from the pool.

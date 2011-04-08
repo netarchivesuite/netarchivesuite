@@ -181,7 +181,7 @@ public class DBUtils {
     /** Execute an SQL statement and return the first long in the result set,
      * or null if resultset is empty.
      *
-     * NB: the provided connection si not closed.
+     * NB: the provided connection is not closed.
      *
      * @param connection connection to database.
      * @param query a query with ? for parameters (must not be null
