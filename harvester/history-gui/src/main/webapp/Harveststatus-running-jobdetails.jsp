@@ -268,7 +268,7 @@ This page displays details about a running job.
 
 %>
 
-    <tr><th colspan="2">
+    <tr><th width="15%" colspan="2">
         <a id="frontierReport" name="frontierReport">&nbsp;</a> <!-- Anchor  -->
         <fmt:message key="running.job.details.frontier.title.TopTotalEnqueuesFilter">
             <fmt:param>
@@ -327,7 +327,7 @@ This page displays details about a running job.
 
 %>
 
-    <tr><th colspan="2">
+    <tr><th width="15%" colspan="2">
         <a id="frontierReportExhausted" name="frontierReportExhausted">&nbsp;</a>
         <fmt:message key="running.job.details.frontier.title.ExhaustedQueuesFilter">
             <fmt:param>
@@ -386,7 +386,7 @@ This page displays details about a running job.
 
 %>
 
-    <tr><th colspan="2">
+    <tr><th width="15%" colspan="2">
         <a id="frontierReportRetired" name="frontierReportRetired">&nbsp;</a>
         <fmt:message key="running.job.details.frontier.title.RetiredQueuesFilter">
             <fmt:param>
