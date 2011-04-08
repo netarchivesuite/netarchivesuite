@@ -82,11 +82,11 @@ INSERT INTO schemaversions (tablename, version )
 INSERT INTO schemaversions (tablename, version )
     VALUES ( 'global_crawler_trap_expressions', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'runningJobsHistory', 2);
+    VALUES ( 'runningjobshistory', 2);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'runningJobsMonitor', 2);
+    VALUES ( 'runningmobsmonitor', 2);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'frontierReportMonitor', 1);
+    VALUES ( 'frontierreportmonitor', 1);
 
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE schemaversions TO netarchivesuite;

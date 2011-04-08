@@ -129,12 +129,14 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         Connection connection = HarvestDBConnection.get();
 
         try {
+
             /** The current version needed of the tables 'runningJobsHistory',
-             * 'runningJobsMonitor' and 'frontierReportMonitor'. */
+             * 'runningJobsMonitor' and 'frontierReportMonitor'.
+             */
             Map<String,Integer> versionMap = new HashMap<String,Integer>();
-            versionMap.put("runningJobsHistory", 2);
-            versionMap.put("runningJobsMonitor", 2);
-            versionMap.put("frontierReportMonitor", 1);
+            versionMap.put("runningjobshistory", 2);
+            versionMap.put("runningjobsmonitor", 2);
+            versionMap.put("frontierreportmonitor", 1);
 
             for (Map.Entry<String,Integer> entry : versionMap.entrySet()) {
                 String tableName = entry.getKey();

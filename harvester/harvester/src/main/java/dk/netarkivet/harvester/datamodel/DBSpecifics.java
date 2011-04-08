@@ -260,7 +260,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                                 + "' from version " + currentVersion
                                 + " to version " + toVersion);
             }
-        } else if ("runningJobsHistory".equals(tableName)) {
+        } else if ("runningjobshistory".equals(tableName)) {
             if (currentVersion == 0 && toVersion >= 1) {
                 createRunningJobsHistoryTable();
                 currentVersion = 1;
@@ -274,7 +274,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                                 + "' from version " + currentVersion
                                 + " to version " + toVersion);
             }
-        } else if ("runningJobsMonitor".equals(tableName)) {
+        } else if ("runningjobsmonitor".equals(tableName)) {
             if (currentVersion == 0 && toVersion >= 1) {
                 createRunningJobsMonitorTable();
                 currentVersion = 1;
@@ -289,7 +289,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                                 + " to version " + toVersion);
             }
             //log.info("No migration needed yet for running jobs history tables.");
-        } else if ("frontierReportMonitor".equals(tableName)) {
+        } else if ("frontierreportmonitor".equals(tableName)) {
             if (currentVersion == 0 && toVersion == 1) {
                 createFrontierReportMonitorTable();
                 currentVersion = 1;
