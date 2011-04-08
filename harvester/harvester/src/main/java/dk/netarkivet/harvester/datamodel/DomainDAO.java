@@ -209,6 +209,9 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * Note that harvest info from before the DB DAOs are unreliable, as
      * harvests cannot be told apart and no dates are available.
      *
+     * The list is ordered first by ascending string order of harvest name,
+     * then by descending run number.
+     *
      * @param domainName Domain to get info for.
      * @return List of DomainHarvestInfo objects with information on that domain.
      *

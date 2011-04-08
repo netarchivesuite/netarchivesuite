@@ -1589,7 +1589,8 @@ public class DomainDBDAO extends DomainDAO {
                     + "     AND historyinfo.harvest_id = "
                     + "harvestdefinitions.harvest_id" + "  ) AS hist"
                     + " LEFT OUTER JOIN jobs"
-                    + "   ON hist.job_id = jobs.job_id");
+                    + "   ON hist.job_id = jobs.job_id"
+                    + " ORDER BY hdname ASC, harvest_num DESC");
             s.setString(1, domainName);
             ResultSet res = s.executeQuery();
             while (res.next()) {

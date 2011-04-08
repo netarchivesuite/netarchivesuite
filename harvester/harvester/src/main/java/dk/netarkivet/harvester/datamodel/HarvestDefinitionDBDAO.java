@@ -919,7 +919,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         + "   AND jobs.harvest_id "
                                     + "= harvestdefinitions.harvest_id"
                         + " GROUP BY name, harvest_num, status"
-                        + " ORDER BY harvest_num");
+                        + " ORDER BY harvest_num DESC");
                 s.setLong(1, harvestID);
                 res = s.executeQuery();
                 while (res.next()) {

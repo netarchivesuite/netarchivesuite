@@ -198,8 +198,8 @@ displayed, if no domains are found a message is shown.
 </form>
 
 <%
-    List<DomainHarvestInfo> hiList
-    = DomainDAO.getInstance().getDomainHarvestInfo(domainName);
+    List<DomainHarvestInfo> hiList =
+        DomainDAO.getInstance().getDomainHarvestInfo(domainName);
     long totalResultsCount = hiList.size();
     long actualPageSize = (pageSize == 0 ?
         totalResultsCount : pageSize);

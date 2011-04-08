@@ -215,6 +215,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     public abstract Iterator<PartialHarvest> getAllPartialHarvestDefinitions();
 
     /** Returns a list with information on the runs of a particular harvest.
+     * The list is ordered by descending run number.
      *
      * @param harvestID ID of an existing harvest
      * @return List of objects with selected information.
