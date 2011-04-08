@@ -76,11 +76,11 @@ insert into schemaversions (tablename, version )
 insert into schemaversions (tablename, version )
     values ( 'global_crawler_trap_expressions', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'runningJobsHistory', 2);
+    VALUES ( 'runningjobsmistory', 2);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'runningJobsMonitor', 2);
+    VALUES ( 'runningjobsmonitor', 2);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'frontierReportMonitor', 1);
+    VALUES ( 'frontierreportmonitor', 1);
 
 
 # *****************************************************************************

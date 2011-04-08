@@ -191,19 +191,19 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     @Override
     public void createFrontierReportMonitorTable() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        HarvestDBConnection.updateTable("frontierReportMonitor", 1);
+        HarvestDBConnection.updateTable("frontierreportmonitor", 1);
     }
 
     @Override
     public void createRunningJobsHistoryTable() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        HarvestDBConnection.updateTable("runningJobsHistory", 1);
+        HarvestDBConnection.updateTable("runningjobshistory", 1);
     }
 
     @Override
     public void createRunningJobsMonitorTable() {
         log.warn("Please use the provided SQL scripts to update the DB schema");
-        HarvestDBConnection.updateTable("runningJobsMonitor", 1);
+        HarvestDBConnection.updateTable("runningjobsmonitor", 1);
     }
 
     // Below DB changes introduced with development release 3.15
@@ -220,7 +220,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobshistory "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
-        HarvestDBConnection.updateTable("runningJobsHistory", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningjobshistory", 2, sqlStatements);
     }
 
     /**
@@ -233,7 +233,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobsmonitor "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
-        HarvestDBConnection.updateTable("runningJobsMonitor", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
     }
 
 

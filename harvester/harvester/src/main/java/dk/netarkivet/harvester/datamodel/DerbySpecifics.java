@@ -205,7 +205,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
             + "lastQueuedUri varchar(1000) NOT NULL,"
             + "UNIQUE (jobId, filterId, domainName)"
             + ")";
-        HarvestDBConnection.updateTable("frontierReportMonitor", 1,
+        HarvestDBConnection.updateTable("frontierreportmonitor", 1,
                 createStatement);
     }
 
@@ -232,7 +232,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 + "tstamp timestamp NOT NULL,"
                 + "PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)"
                 + ")";
-        HarvestDBConnection.updateTable("runningJobsHistory", 1,
+        HarvestDBConnection.updateTable("runningjobshistory", 1,
                 createStatement);
 
         Connection c = HarvestDBConnection.get();
@@ -270,7 +270,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
             + "tstamp timestamp NOT NULL, "
             + "PRIMARY KEY (jobId, harvestName)"
             + ")";
-        HarvestDBConnection.updateTable("runningJobsMonitor", 1,
+        HarvestDBConnection.updateTable("runningjobsmonitor", 1,
                 createStatement);
 
         Connection c = HarvestDBConnection.get();
@@ -298,7 +298,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobshistory "
                 + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
         };
-        HarvestDBConnection.updateTable("runningJobsHistory", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningjobshistory", 2, sqlStatements);
     }
 
     /**
@@ -311,7 +311,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobsmonitor "
                 + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
         };
-        HarvestDBConnection.updateTable("runningJobsMonitor", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
     }
 
     @Override

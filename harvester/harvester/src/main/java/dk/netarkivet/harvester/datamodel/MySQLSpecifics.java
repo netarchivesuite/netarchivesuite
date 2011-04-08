@@ -215,7 +215,7 @@ public class MySQLSpecifics extends DBSpecifics {
              // NB see http://bugs.mysql.com/bug.php?id=6604 about index key length.
              + "UNIQUE (jobId, filterId(100), domainName(100))"
              + ")";
-        HarvestDBConnection.updateTable("frontierReportMonitor", 1, createStatement);
+        HarvestDBConnection.updateTable("frontierreportmonitor", 1, createStatement);
 
     }
 
@@ -242,7 +242,7 @@ public class MySQLSpecifics extends DBSpecifics {
              + "tstamp timestamp NOT NULL, "
              + "PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)"
              + ")";
-        HarvestDBConnection.updateTable("runningJobsHistory", 1, createStatement);
+        HarvestDBConnection.updateTable("runningjobshistory", 1, createStatement);
 
         Connection c = HarvestDBConnection.get();
         try {
@@ -280,7 +280,7 @@ public class MySQLSpecifics extends DBSpecifics {
              + "tstamp timestamp NOT NULL,"
              + "PRIMARY KEY (jobId, harvestName)"
              + ")";
-        HarvestDBConnection.updateTable("runningJobsMonitor", 1, createStatement);
+        HarvestDBConnection.updateTable("runningjobsmonitor", 1, createStatement);
 
         Connection c = HarvestDBConnection.get();
         try {
@@ -307,7 +307,7 @@ public class MySQLSpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobshistory "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
-        HarvestDBConnection.updateTable("runningJobsHistory", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningjobshistory", 2, sqlStatements);
     }
 
     /**
@@ -320,7 +320,7 @@ public class MySQLSpecifics extends DBSpecifics {
                 "ALTER TABLE runningjobsmonitor "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
-        HarvestDBConnection.updateTable("runningJobsMonitor", 2, sqlStatements);
+        HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
     }
 
     @Override
