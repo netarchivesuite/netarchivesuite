@@ -84,7 +84,7 @@ INSERT INTO schemaversions (tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'runningjobshistory', 2);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'runningmobsmonitor', 2);
+    VALUES ( 'runningjobsmonitor', 2);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'frontierreportmonitor', 1);
 
