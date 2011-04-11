@@ -82,11 +82,13 @@ class ArcFilesReportGenerator {
     /**
      * Stores the opening date, closing date and size of an ARC file.
      */
-    class ArcFileStatus {
+    static class ArcFileStatus {
 
-        String openedDate = "";
-        String closedDate = "";
-        long size = -1L;
+        private static final String NOT_AVAILABLE = "?";
+
+        String openedDate = NOT_AVAILABLE;
+        String closedDate = NOT_AVAILABLE;
+        long size = 0;
 
         protected String getOpenedDate() {
             return openedDate;
@@ -121,8 +123,7 @@ class ArcFilesReportGenerator {
                 return ISO_8601_DATE_FORMAT.format(
                         SOURCE_DATE_FORMAT.parse(dateStr));
             } catch (ParseException e) {
-                LOG.warn("Error parsing date token '" + dateStr + "'");
-                return dateStr;
+                return NOT_AVAILABLE;
             }
         }
 
