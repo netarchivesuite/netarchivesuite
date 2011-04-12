@@ -59,14 +59,14 @@ inactive or vice-versa.
         } else {
         	// disallow going to active mode, if no domainconfigurations
         	// associated with this harvestdefinition
-        	if (!hd.isActive() && 
+        	if (!hd.isActive() &&
 				dao.getSparseDomainConfigurations(hd.getOid()).isEmpty()) {
 					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                     	"errormsg;harvestdefinition.0.cannot.be.activated;"
                     	+ "no.domains.selected.for.harvesting", hd.getName());
             	return;
         	}
-	        HarvestDefinitionDAO.getInstance().flipActive(hd);
+	        dao.flipActive(hd);
             response.sendRedirect("Definitions-selective-harvests.jsp");
             return;
         }
