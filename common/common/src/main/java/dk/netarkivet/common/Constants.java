@@ -73,11 +73,11 @@ public class Constants {
     /** Major version number. */
     public static final int MAJORVERSION = 3;
     /** Minor version number. */
-    public static final int MINORVERSION = 15;
+    public static final int MINORVERSION = 16;
     /** Patch version number. */
-    public static final int PATCHVERSION = 1;
+    public static final int PATCHVERSION = 0;
     /** Current status of code. */
-    private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
+    private static final CodeStatus BUILDSTATUS = CodeStatus.CODEFREEZE;
 
     /** Current version of Heritrix used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.4";
