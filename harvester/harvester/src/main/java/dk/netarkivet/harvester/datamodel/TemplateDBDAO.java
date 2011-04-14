@@ -111,7 +111,6 @@ public class TemplateDBDAO extends TemplateDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -186,7 +185,6 @@ public class TemplateDBDAO extends TemplateDAO {
             throw new IOFailure("SQL error creating template " + orderXmlName
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -250,7 +248,6 @@ public class TemplateDBDAO extends TemplateDAO {
             throw new IOFailure("SQL error updating template " + orderXmlName
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -288,7 +285,6 @@ public class TemplateDBDAO extends TemplateDAO {
             throw new IOFailure("SQL error deleting template '" + orderXmlName
                     + "'\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }

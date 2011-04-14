@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  */
 
@@ -64,7 +64,7 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
             log.warn("Shut down Derby embedded database w/o expected warning");
         } catch (SQLException e) {
             log.info("Embedded Derby database has been shut down");
-            log.debug("Shutdown down derby gave (as expected) an exception" 
+            log.debug("Shutdown down derby gave (as expected) an exception"
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
@@ -81,7 +81,7 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
      * @throws IOFailure If we cannot connect to the database
      * @throws ArgumentNotValid If the connection or the backupDir if null.
      */
-    public void backupDatabase(Connection c, File backupDir) throws 
+    public void backupDatabase(Connection c, File backupDir) throws
             PermissionDenied, ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(c, "Connection c");
         ArgumentNotValid.checkNotNull(backupDir, "backupDir");
@@ -98,8 +98,6 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
             throw new IOFailure("Couldn't back up database to " + backupDir, e);
         } catch (SQLException e) {
             throw new IOFailure("Could not execute sql statememt.", e);
-        } finally {
-            DBUtils.closeStatementIfOpen(cs);
         }
     }
 

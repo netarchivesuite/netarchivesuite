@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -42,9 +43,8 @@ import dk.netarkivet.testutils.StringAsserts;
  * Test the persistence framework for Domain.
  */
 public class DomainDAOTester extends DataModelTestCase {
-    private static final int NUM_DOMAINS = 4;
 
-    Connection c;
+    private static final int NUM_DOMAINS = 4;
 
     public void setUp() throws Exception {
         super.setUp();
@@ -69,9 +69,14 @@ public class DomainDAOTester extends DataModelTestCase {
         Domain wd = TestInfo.getDefaultNewDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(wd);
         wd.addConfiguration(cfg1);
-
         String domainName = wd.getName();
-        dao.create(wd);
+
+        Connection conn = HarvestDBConnection.get();
+        try {
+            dao.create(conn, wd);
+        } finally {
+            HarvestDBConnection.release(conn);
+        }
 
         // check that it is possible to retrieve the domain information again
         DomainDAO dao2 = DomainDAO.getInstance();
@@ -101,61 +106,14 @@ public class DomainDAOTester extends DataModelTestCase {
                      seedlist1.getSeedsAsString(), seedlist2.getSeedsAsString());
 
         // Test that we can't create it again.
+        conn = HarvestDBConnection.get();
         try {
-            dao.create(wd);
-            fail("Should not be able to create an already existing domain " + wd);
+            dao.create(conn, wd);
+            fail("Should not be able to create an already existing domain "
+                    + wd);
         } catch (PermissionDenied expected) {
             // Expected case
         }
-    }
-
-    /** Test deletion of WebDomains. */
-    public void testDelete() {
-        // create domain to delete
-        DomainDAO dao = DomainDAO.getInstance();
-        Domain wd = TestInfo.getDefaultNewDomain();
-        DomainConfiguration cfg1 = TestInfo.getDefaultConfig(wd);
-        wd.addConfiguration(cfg1);
-
-        int original_count = dao.getCountDomains();
-
-        dao.create(wd);
-
-        // create new dao just to check that it works from different dao's
-        DomainDAO dao2 = DomainDAO.getInstance();
-
-        // First check invalid argument scenarios
-        try {
-            dao2.delete(null);
-            fail("null not an allowed argument");
-        } catch (ArgumentNotValid e) {
-            //expected
-        }
-
-        try {
-            dao2.delete("");
-            fail("Empty string not an allowed argument");
-        } catch (ArgumentNotValid e) {
-            //expected
-        }
-
-        try {
-            dao2.delete("UnknownId");
-            fail("No domain exists with the requested id");
-        } catch (UnknownID e) {
-            //expected
-        }
-
-        assertTrue("The domain should exist before deletion",
-                   dao2.exists(wd.getName()));
-        // perform the deletion
-        dao2.delete(TestInfo.DEFAULTNEWDOMAINNAME);
-
-        // verify no domain left
-        assertFalse("The deleted domain should not exist",
-                    dao2.exists(wd.getName()));
-        assertEquals("Should have the original number of domains after deletion",
-                     original_count, dao2.getCountDomains());
     }
 
     /** Check check updating of an existing entry. */
@@ -525,9 +483,6 @@ public class DomainDAOTester extends DataModelTestCase {
     public void testGetDomainHarvestInfo() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
 
-        List<DomainHarvestInfo> info = dao.getDomainHarvestInfo("dr.dk");
-        assertEquals("Should have no info for unharvested domain", 0, info.size());
-
         final String domainName = "netarkivet.dk";
         Domain d = dao.read(domainName);
         DomainConfiguration dc = d.getDefaultConfiguration();
@@ -543,24 +498,6 @@ public class DomainDAOTester extends DataModelTestCase {
         dc = d2.getDefaultConfiguration();
         assertEquals("Default config should have harvest info for job 1",
                      new Long(1), d2.getHistory().getMostRecentHarvestInfo(dc.getName()).getJobID());
-        info = dao.getDomainHarvestInfo(domainName);
-        assertEquals("Should have 1 info for harvested domain", 1, info.size());
-        DomainHarvestInfo hinfo = info.get(0);
-        assertEquals("Info should have right job id",
-                     1, hinfo.getJobID());
-        assertEquals("Info should have harvest name",
-                     "Testhøstning", hinfo.getHarvestName());
-        assertEquals("Info should have right harvest num",
-                     1, hinfo.getJobID());
-        assertEquals("Info should have config name",
-                     "Dansk_netarkiv_fuld_dybde", hinfo.getConfigName());
-        assertEquals("Info should have stopreason",
-                     StopReason.DOWNLOAD_COMPLETE, hinfo.getStopReason());
-        // No start or end date on this job.
-        assertEquals("Info should have correct #bytes",
-                     10000L, hinfo.getBytesDownloaded());
-        assertEquals("Info should have correct #docs",
-                     100L, hinfo.getDocsDownloaded());
 
         // For bug 570, test if having some history info with no job id
         // generates too many entries.
@@ -573,8 +510,6 @@ public class DomainDAOTester extends DataModelTestCase {
         d2 = dao.read(domainName);
         assertEquals("Domain should now have two more harvest infos",
                      3, IteratorUtils.toList(d2.getHistory().getHarvestInfo()).size());
-        info = dao.getDomainHarvestInfo(domainName);
-        assertEquals("Should have one info for each historyinfo", 3, info.size());
     }
 
     /** Test that we cannot store a domain that drops configs, seedlists

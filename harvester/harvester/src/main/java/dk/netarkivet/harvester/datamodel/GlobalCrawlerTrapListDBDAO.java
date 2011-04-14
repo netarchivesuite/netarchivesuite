@@ -126,7 +126,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new UnknownID(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(stmt);
             HarvestDBConnection.release(conn);
         }
     }
@@ -165,7 +164,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(stmt);
             HarvestDBConnection.release(conn);
         }
     }
@@ -223,7 +221,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-           DBUtils.closeStatementIfOpen(stmt);
            DBUtils.rollbackIfNeeded(conn, "create trap list", trapList);
            HarvestDBConnection.release(conn);
         }
@@ -265,7 +262,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new UnknownID(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(stmt);
             DBUtils.rollbackIfNeeded(conn, "delete trap list", id);
             HarvestDBConnection.release(conn);
         }
@@ -317,7 +313,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             throw new UnknownID(message, e);
         } finally {
             DBUtils.rollbackIfNeeded(conn, "update trap list", trapList);
-            DBUtils.closeStatementIfOpen(stmt);
             HarvestDBConnection.release(conn);
         }
     }
@@ -367,7 +362,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(stmt);
             HarvestDBConnection.release(conn);
         }
     }
@@ -406,7 +400,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(stmt);
             HarvestDBConnection.release(conn);
         }
     }

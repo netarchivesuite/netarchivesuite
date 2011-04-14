@@ -195,8 +195,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                     + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
                 log.warn(message, e);
                 throw new IOFailure(message, e);
-            } finally {
-                DBUtils.closeStatementIfOpen(stm);
             }
 
             try {
@@ -296,7 +294,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 log.warn(message, e);
                 throw new IOFailure(message, e);
             } finally {
-                DBUtils.closeStatementIfOpen(stm);
                 DBUtils.rollbackIfNeeded(
                         c, "store started job info", startedJobInfo);
             }
@@ -384,7 +381,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 log.warn(message, e);
                 throw new IOFailure(message, e);
             } finally {
-                DBUtils.closeStatementIfOpen(stm);
                 DBUtils.rollbackIfNeeded(
                         c, "store started job info", startedJobInfo);
             }
@@ -431,7 +427,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(stm);
             HarvestDBConnection.release(c);
         }
     }
@@ -615,7 +610,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(stm);
             HarvestDBConnection.release(c);
         }
     }
@@ -728,7 +722,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(stm);
             DBUtils.rollbackIfNeeded(c, "removeInfoForJob", jobId);
             HarvestDBConnection.release(c);
         }
@@ -812,7 +805,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 log.warn(message, e);
                 return 0;
             } finally {
-                DBUtils.closeStatementIfOpen(stm);
                 DBUtils.rollbackIfNeeded(
                         c, "storeFrontierReport delete", jobId);
             }
@@ -881,7 +873,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 log.warn(message, e);
                 return 0;
             } finally {
-                DBUtils.closeStatementIfOpen(stm);
                 DBUtils.rollbackIfNeeded(
                         c, "storeFrontierReport insert", jobId);
             }
@@ -917,7 +908,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(stm);
             HarvestDBConnection.release(c);
         }
 
@@ -970,7 +960,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(stm);
             HarvestDBConnection.release(c);
         }
 
@@ -1007,7 +996,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             log.warn(message, e);
             return 0;
         } finally {
-            DBUtils.closeStatementIfOpen(stm);
             DBUtils.rollbackIfNeeded(c, "deleteFrontierReports", jobId);
             HarvestDBConnection.release(c);
         }

@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
 import org.dom4j.Document;
 import org.dom4j.Node;
 
@@ -328,7 +329,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
                 "venstre.dk", "venstre.nu", "sy-jonna.dk", "one.com", "two.com",
                 "one.dk", "two.net", "1.2.3.4", "3.63.102.33",  "2.3.4.3");
         DomainDAO dao = DomainDAO.getInstance();
-        List<TLDInfo> result = dao.getTLDs();
+        List<TLDInfo> result = dao.getTLDs(1);
         assertEquals("Expected 5 TLDs", 5, result.size());
         assertEquals("Should have two subdomains of .com",
                 2, result.get(1).getCount());
@@ -344,14 +345,14 @@ public class DomainDBDAOTester extends DataModelTestCase {
                 "venstre.dk", "venstre.nu", "sy-jonna.dk", "one.com", "two.com",
                 "one.dk", "two.net", "1.2.3.4", "3.63.102.33",  "2.3.4.3");
         DomainDAO dao = DomainDAO.getInstance();
-        List<TLDInfo> result = dao.getMultiLevelTLD(1);
+        List<TLDInfo> result = dao.getTLDs(1);
         assertEquals("test level 1: Expected 6 TLDs", 6, result.size());
         assertEquals("test level 1: Should have two subdomains of .com",
                 2, result.get(1).getCount());
         assertEquals("test level 1: Should have three IP subdomains",
                 3, result.get(0).getCount());
 
-        List<TLDInfo> result2 = dao.getMultiLevelTLD(2);
+        List<TLDInfo> result2 = dao.getTLDs(2);
         assertEquals("test level 2: Expected 7 TLDs", 7, result2.size());
         assertEquals("test level 2: Should have two subdomains of .com",
                 2, result2.get(1).getCount());
@@ -375,16 +376,8 @@ public class DomainDBDAOTester extends DataModelTestCase {
                 "venstre.dk", "todo.dk", "venstre.nu", "sy-jonna.dk", "one.com",
                 "two.com", "one.net", "two.net");
         DomainDAO dao = DomainDAO.getInstance();
-        List<TLDInfo> result = dao.getTLDs();
+        List<TLDInfo> result = dao.getTLDs(1);
         assertEquals("Too few or too many TLDs found", 4, result.size());
-        assertEquals("Found too few or too many .dk domains",
-                7, dao.getCountDomains("*.dk"));
-        assertEquals("Found too few or too many .nu domains",
-                1, dao.getCountDomains("*.nu"));
-        assertEquals("Found too few or too many .net domains",
-                2, dao.getCountDomains("*.net"));
-        assertEquals("Found too few or too many .com domains",
-                2, dao.getCountDomains("*.com"));
     }
 
     /**
@@ -400,10 +393,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         Map<String,String> dcMap  = j.getDomainConfigurationMap();
         String theDomainName = "netarkivet.dk";
         String configName = dcMap.get(theDomainName);
-        HarvestInfo hi = dao.getDomainJobInfo(j, theDomainName, configName);
-        // Before "running" the job a null value should be returned.
-        assertNull("The HarvestInfo value should be null, "
-                + "when job has not been completed", hi);
+
         // Fake that the job has been run by inserting a historyInfo
         // entry in the database for this job_id, config_id, harvest_id combination.
         HarvestInfo hi1 = new HarvestInfo(j.getOrigHarvestDefinitionID(),
@@ -425,24 +415,17 @@ public class DomainDBDAOTester extends DataModelTestCase {
                     "SELECT config_id FROM configurations WHERE name = ? AND domain_id=?",
                     configName, domainId);
 
-            insertHarvestInfo(hi1, configId);
-            HarvestInfo hi2 = dao.getDomainJobInfo(j, theDomainName, configName);
-            assertTrue("The HarvestInfo value should not be null, "
-                    + "when job has been completed", hi2 != null);
-
-            assertEquals("StopReason is wrong", hi1.getStopReason(), hi2.getStopReason());
-            assertEquals("Bytes harvested is wrong", hi1.getSizeDataRetrieved(),
-                    hi2.getSizeDataRetrieved());
-            assertEquals("Objects fetched is wrong", hi1.getCountObjectRetrieved(),
-                    hi2.getCountObjectRetrieved());
+            insertHarvestInfo(c, hi1, configId);
         } finally {
             HarvestDBConnection.release(c);
         }
     }
 
     // Copied from DomainDBDAO for local testing
-    private void insertHarvestInfo(HarvestInfo harvestInfo, long configId) {
-        Connection c = HarvestDBConnection.get();
+    private void insertHarvestInfo(
+            Connection c,
+            HarvestInfo harvestInfo,
+            long configId) {
         PreparedStatement s = null;
         try {
             // Note that the config_id is grabbed from the configurations table.
@@ -466,9 +449,6 @@ public class DomainDBDAOTester extends DataModelTestCase {
             harvestInfo.setID(DBUtils.getGeneratedID(s));
         } catch (SQLException e) {
             throw new IOFailure("SQL error while inserting harvest info", e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-            HarvestDBConnection.release(c);
         }
     }
 }

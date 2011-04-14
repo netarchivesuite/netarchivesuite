@@ -185,7 +185,6 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(statement);
             DBUtils.rollbackIfNeeded(dbconnection, "create job", job);
             HarvestDBConnection.release(dbconnection);
         }
@@ -249,7 +248,6 @@ public class JobDBDAO extends JobDAO {
                 }
                 dbconnection.commit();
             } finally {
-                DBUtils.closeStatementIfOpen(statement);
                 if (tmpTable != null) {
                     DBSpecifics.getInstance().dropJobConfigsTmpTable(
                             dbconnection, tmpTable);
@@ -396,7 +394,6 @@ public class JobDBDAO extends JobDAO {
             throw new IOFailure(message, e);
         } finally {
             DBUtils.rollbackIfNeeded(dbconnection, "update job", job);
-            DBUtils.closeStatementIfOpen(statement);
             HarvestDBConnection.release(dbconnection);
         }
     }
@@ -531,7 +528,6 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(statement);
             HarvestDBConnection.release(dbconnection);
         }
     }
@@ -713,7 +709,6 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(statement);
             HarvestDBConnection.release(dbconnection);
         }
     }
@@ -772,7 +767,6 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -984,7 +978,6 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(statement);
             DBUtils.rollbackIfNeeded(dbconnection, "resubmit job", oldJobID);
             HarvestDBConnection.release(dbconnection);
         }

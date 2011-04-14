@@ -205,7 +205,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure(message, e);
         } finally {
             DBUtils.rollbackIfNeeded(connection, "creating", harvestDefinition);
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(connection);
         }
     }
@@ -221,29 +220,23 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      */
     private void createHarvestConfigsEntries(
             Connection c, PartialHarvest ph, long id) throws SQLException {
-        PreparedStatement s = null;
-        try {
-            // Create harvest_configs entries
-            s = c.prepareStatement("DELETE FROM harvest_configs "
-                    + "WHERE harvest_id = ?");
+        PreparedStatement s = c.prepareStatement("DELETE FROM harvest_configs "
+                + "WHERE harvest_id = ?");
+        s.setLong(1, id);
+        s.executeUpdate();
+        s.close();
+        s = c.prepareStatement("INSERT INTO harvest_configs "
+                + "( harvest_id, config_id ) "
+                + "SELECT ?, config_id FROM configurations, domains "
+                + "WHERE domains.name = ? AND configurations.name = ?"
+                + "  AND domains.domain_id = configurations.domain_id");
+        for (Iterator<DomainConfiguration> dcs
+                = ph.getDomainConfigurations(); dcs.hasNext();) {
+            DomainConfiguration dc = dcs.next();
             s.setLong(1, id);
+            s.setString(2, dc.getDomain().getName());
+            s.setString(3, dc.getName());
             s.executeUpdate();
-            s.close();
-            s = c.prepareStatement("INSERT INTO harvest_configs "
-                    + "( harvest_id, config_id ) "
-                    + "SELECT ?, config_id FROM configurations, domains "
-                    + "WHERE domains.name = ? AND configurations.name = ?"
-                    + "  AND domains.domain_id = configurations.domain_id");
-            for (Iterator<DomainConfiguration> dcs
-                    = ph.getDomainConfigurations(); dcs.hasNext();) {
-                DomainConfiguration dc = dcs.next();
-                s.setLong(1, id);
-                s.setString(2, dc.getDomain().getName());
-                s.setString(3, dc.getName());
-                s.executeUpdate();
-            }
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -258,30 +251,25 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      */
     private void createHarvestConfigsEntries(
             Connection c, SparsePartialHarvest hd) throws SQLException {
-        PreparedStatement s = null;
         long harvestId = hd.getOid();
-        try {
-            // Create harvest_configs entries
-            s = c.prepareStatement("DELETE FROM harvest_configs "
-                    + "WHERE harvest_id = ?");
+        // Create harvest_configs entries
+        PreparedStatement s = c.prepareStatement("DELETE FROM harvest_configs "
+                + "WHERE harvest_id = ?");
+        s.setLong(1, harvestId);
+        s.executeUpdate();
+        s.close();
+        s = c.prepareStatement("INSERT INTO harvest_configs "
+                + "( harvest_id, config_id ) "
+                + "SELECT ?, config_id FROM configurations, domains "
+                + "WHERE domains.name = ? AND configurations.name = ?"
+                + "  AND domains.domain_id = configurations.domain_id");
+        List<SparseDomainConfiguration> configs =
+            getSparseDomainConfigurations(c, harvestId);
+        for (SparseDomainConfiguration dc : configs) {
             s.setLong(1, harvestId);
+            s.setString(2, dc.getDomainName());
+            s.setString(3, dc.getConfigurationName());
             s.executeUpdate();
-            s.close();
-            s = c.prepareStatement("INSERT INTO harvest_configs "
-                    + "( harvest_id, config_id ) "
-                    + "SELECT ?, config_id FROM configurations, domains "
-                    + "WHERE domains.name = ? AND configurations.name = ?"
-                    + "  AND domains.domain_id = configurations.domain_id");
-            List<SparseDomainConfiguration> configs =
-                getSparseDomainConfigurations(harvestId);
-            for (SparseDomainConfiguration dc : configs) {
-                s.setLong(1, harvestId);
-                s.setString(2, dc.getDomainName());
-                s.setString(3, dc.getConfigurationName());
-                s.executeUpdate();
-            }
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -463,7 +451,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + harvestDefinitionID + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -535,7 +522,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + oid + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.rollbackIfNeeded(c, "deleting harvestdefinition", oid);
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -633,7 +619,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + hd + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.rollbackIfNeeded(c, "updating", hd);
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -698,15 +683,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             rows = s.executeUpdate();
             log.debug(rows + " partialharvests records updated");
             s.close();
-            createHarvestConfigsEntries(c, hd);
-
             c.commit();
         } catch (SQLException e) {
             throw new IOFailure("SQL error while updating harvest definition "
                     + hd + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.rollbackIfNeeded(c, "updating", hd);
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -834,7 +816,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error while getting HD by name" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -997,7 +978,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1042,6 +1022,26 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
+            return getSparseDomainConfigurations(c, harvestDefinitionID);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
+    /**
+     * Get all domain,configuration pairs for a harvest definition in sparse
+     * version.
+     *
+     * @param c a connection to the harvest database
+     * @param harvestDefinitionID The ID of the harvest definition.
+     * @return Domain,configuration pairs for that HD. Returns an empty iterable
+     *         for unknown harvest definitions.
+     */
+    private List<SparseDomainConfiguration> getSparseDomainConfigurations(
+            Connection c,
+            Long harvestDefinitionID) {
+        PreparedStatement s = null;
+        try {
             s = c.prepareStatement("SELECT domains.name, configurations.name "
                     + "FROM domains, configurations,"
                     + " harvest_configs "
@@ -1065,9 +1065,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         } catch (SQLException e) {
             throw new IOFailure("SQL error getting sparse domains" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-            HarvestDBConnection.release(c);
         }
     }
 
@@ -1114,7 +1111,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error getting sparse harvests" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1163,7 +1159,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error getting sparse harvest" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1208,7 +1203,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error getting sparse harvests" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1255,7 +1249,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                                 + "\n"
                                 + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1343,7 +1336,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error getting sparse harvest" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1389,7 +1381,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "harvest definition"
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1461,7 +1452,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error getting seeds of a domain" + "\n"
                                 +ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }

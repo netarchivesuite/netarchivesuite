@@ -101,7 +101,6 @@ public class ScheduleDBDAO extends ScheduleDAO {
             throw new IOFailure("SQL error while creating schedule " + schedule
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -230,7 +229,6 @@ public class ScheduleDBDAO extends ScheduleDAO {
             throw new IOFailure("SQL error reading schedule " + scheduleName
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -292,7 +290,6 @@ public class ScheduleDBDAO extends ScheduleDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -347,7 +344,6 @@ public class ScheduleDBDAO extends ScheduleDAO {
             throw new IOFailure("SQL error while creating schedule " + schedule
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }

@@ -25,16 +25,13 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.DBUtils;
 
 /**
  * PostgreSQL-specific implementation of DB methods.
@@ -73,17 +70,12 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      */
     public String getJobConfigsTmpTable(Connection c) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
-        PreparedStatement s = null;
-        try {
-            s = c.prepareStatement("CREATE TEMPORARY TABLE  "
-                    + "jobconfignames " + "( domain_name varchar("
-                    + Constants.MAX_NAME_SIZE + "), " + " config_name varchar("
-                    + Constants.MAX_NAME_SIZE + ") ) ON COMMIT DROP");
-            s.execute();
-            s.close();
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
+        PreparedStatement s = c.prepareStatement("CREATE TEMPORARY TABLE  "
+                + "jobconfignames " + "( domain_name varchar("
+                + Constants.MAX_NAME_SIZE + "), " + " config_name varchar("
+                + Constants.MAX_NAME_SIZE + ") ) ON COMMIT DROP");
+        s.execute();
+        s.close();
         return "jobconfignames";
     }
 

@@ -889,7 +889,6 @@ public class JobDAOTester extends DataModelTestCase {
                 + jobID + " in database";
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }

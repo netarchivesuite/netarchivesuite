@@ -60,18 +60,13 @@ public class MySQLSpecifics extends DBSpecifics {
      */
     public String getJobConfigsTmpTable(Connection c) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
-        PreparedStatement s = null;
-        try {
-            s = c.prepareStatement("CREATE TEMPORARY TABLE  "
-                    + "jobconfignames "
-                    + "( domain_name varchar(" + Constants.MAX_NAME_SIZE + "), "
-                    + " config_name varchar(" + Constants.MAX_NAME_SIZE
-                    + ") )");
-            s.execute();
-            s.close();
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
+        PreparedStatement s = c.prepareStatement("CREATE TEMPORARY TABLE  "
+                + "jobconfignames "
+                + "( domain_name varchar(" + Constants.MAX_NAME_SIZE + "), "
+                + " config_name varchar(" + Constants.MAX_NAME_SIZE
+                + ") )");
+        s.execute();
+        s.close();
         return "jobconfignames";
     }
 
@@ -94,8 +89,6 @@ public class MySQLSpecifics extends DBSpecifics {
         } catch (SQLException e) {
             log.warn("Couldn't drop temporary table " + tableName + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
         }
     }
 

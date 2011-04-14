@@ -110,8 +110,6 @@ public class DBUtils {
             throw new IOFailure("SQL error preparing statement "
                     + query + " args " + Arrays.toString(args) + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -173,8 +171,6 @@ public class DBUtils {
             throw new IOFailure("Error preparing SQL statement "
                     + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -211,8 +207,6 @@ public class DBUtils {
                 + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -295,8 +289,6 @@ public class DBUtils {
             throw new IOFailure("Error preparing SQL statement "
                     + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -318,28 +310,23 @@ public class DBUtils {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
-        PreparedStatement s = null;
-        try {
-            s = prepareStatement(connection, query, args);
-            ResultSet result = s.executeQuery();
-            Map<String, Long> results = new HashMap<String, Long>();
-            while (result.next()) {
-                String resultString = result.getString(1);
-                long resultLong = result.getLong(2);
-                if ((resultString == null)
-                        || (resultLong == 0L && result.wasNull())) {
-                    String warning = "NULL pointers found in entry ("
-                        + resultString + "," + resultLong
-                        + ") in resultset from query: " + query;
-                    log.warn(warning);
-                    //throw new IOFailure(warning);
-                }
-                results.put(resultString, resultLong);
+        PreparedStatement s = prepareStatement(connection, query, args);
+        ResultSet result = s.executeQuery();
+        Map<String, Long> results = new HashMap<String, Long>();
+        while (result.next()) {
+            String resultString = result.getString(1);
+            long resultLong = result.getLong(2);
+            if ((resultString == null)
+                    || (resultLong == 0L && result.wasNull())) {
+                String warning = "NULL pointers found in entry ("
+                    + resultString + "," + resultLong
+                    + ") in resultset from query: " + query;
+                log.warn(warning);
+                //throw new IOFailure(warning);
             }
-            return results;
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
+            results.put(resultString, resultLong);
         }
+        return results;
     }
 
     /**
@@ -377,8 +364,6 @@ public class DBUtils {
             throw new IOFailure("Error preparing SQL statement "
                     + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -436,26 +421,6 @@ public class DBUtils {
                 + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(msg, e);
             throw new IOFailure(msg, e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
-    }
-
-    /**
-     * Close a statement, if not closed already
-     * Note: This does not throw any a SQLException, because
-     * it is always called inside a finally-clause.
-     * Exceptions are logged as warnings, though.
-     * @param s a statement
-     */
-    public static void closeStatementIfOpen(PreparedStatement s) {
-        if (s != null) {
-            try {
-                s.close();
-            } catch (SQLException e) {
-                log.warn("Error closing SQL statement " + s + "\n"
-                         + ExceptionUtils.getSQLExceptionCause(e), e);
-            }
         }
     }
 
@@ -770,8 +735,6 @@ public class DBUtils {
                                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
-        } finally {
-            closeStatementIfOpen(s);
         }
     }
 
@@ -828,8 +791,6 @@ public class DBUtils {
             throw new IOFailure("Error preparing SQL statement " + query
                     + " args " + Arrays.toString(args) + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            closeStatementIfOpen(s);
         }
     }
 
@@ -887,8 +848,6 @@ public class DBUtils {
             throw new IOFailure("Error preparing SQL statement " + query
                     + " args " + Arrays.toString(args) + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            closeStatementIfOpen(s);
         }
     }
 
@@ -941,7 +900,6 @@ public class DBUtils {
         } finally {
             rollbackIfNeeded(connection, "updating table with SQL: ",
                     StringUtils.conjoin(";", updates) + "'.");
-            closeStatementIfOpen(st);
         }
     }
 }

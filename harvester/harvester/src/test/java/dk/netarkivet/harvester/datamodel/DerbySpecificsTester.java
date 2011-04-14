@@ -58,8 +58,6 @@ public class DerbySpecificsTester extends DataModelTestCase {
                 fail("Should have failed query before table is made");
             } catch (SQLException e) {
                 // expected
-            } finally {
-                DBUtils.closeStatementIfOpen(s);
             }
 
             try {
@@ -88,8 +86,6 @@ public class DerbySpecificsTester extends DataModelTestCase {
                 DBSpecifics.getInstance().dropJobConfigsTmpTable(c, tmpTable);
             } catch (SQLException e) {
                 fail("Should not have had SQL exception " + e);
-            } finally {
-                DBUtils.closeStatementIfOpen(s);
             }
 
             try {
@@ -104,8 +100,6 @@ public class DerbySpecificsTester extends DataModelTestCase {
                         + "but return domain= " + domain);
             } catch (SQLException e) {
                 // expected
-            } finally {
-                DBUtils.closeStatementIfOpen(s);
             }
 
             // Should be possible to get another temporary table.
@@ -135,8 +129,6 @@ public class DerbySpecificsTester extends DataModelTestCase {
                 DBSpecifics.getInstance().dropJobConfigsTmpTable(c, tmpTable);
             } catch (SQLException e) {
                 fail("Should not have had SQL exception " + e);
-            } finally {
-                DBUtils.closeStatementIfOpen(s);
             }
         } finally {
             HarvestDBConnection.release(c);

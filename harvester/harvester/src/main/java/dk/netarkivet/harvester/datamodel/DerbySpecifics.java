@@ -54,18 +54,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
      */
     public String getJobConfigsTmpTable(Connection c) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
-        PreparedStatement s = null;
-        try {
-            s = c.prepareStatement("DECLARE GLOBAL TEMPORARY TABLE "
-                    + "jobconfignames "
-                    + "( domain_name varchar(" + Constants.MAX_NAME_SIZE + "), "
-                    + " config_name varchar(" + Constants.MAX_NAME_SIZE + ") )"
-                    + " ON COMMIT DELETE ROWS NOT LOGGED ON ROLLBACK DELETE ROWS");
-            s.execute();
-            s.close();
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
+        PreparedStatement s = c.prepareStatement("DECLARE GLOBAL TEMPORARY TABLE "
+                + "jobconfignames "
+                + "( domain_name varchar(" + Constants.MAX_NAME_SIZE + "), "
+                + " config_name varchar(" + Constants.MAX_NAME_SIZE + ") )"
+                + " ON COMMIT DELETE ROWS NOT LOGGED ON ROLLBACK DELETE ROWS");
+        s.execute();
+        s.close();
         return "session.jobconfignames";
     }
 
@@ -88,8 +83,6 @@ public abstract class DerbySpecifics extends DBSpecifics {
         } catch (SQLException e) {
             log.warn("Couldn't drop temporary table " + tableName + "\n" +
                      ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
         }
     }
 

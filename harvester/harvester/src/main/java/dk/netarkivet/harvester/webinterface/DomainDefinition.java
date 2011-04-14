@@ -23,10 +23,11 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -242,16 +243,19 @@ public class DomainDefinition {
     public static List<String> createDomains(String... domains) {
         DomainDAO ddao = DomainDAO.getInstance();
         List<String> illegals = new ArrayList<String>();
+        List<Domain> domainsToCreate = new ArrayList<Domain>();
         for (String domain : domains) {
             if (DomainUtils.isValidDomainName(domain) && !ddao.exists(domain)) {
-                Domain dd = Domain.getDefaultDomain(domain);
-                ddao.create(dd);
+                domainsToCreate.add(Domain.getDefaultDomain(domain));
             } else {
                 if (domain.trim().length() > 0) {
                     illegals.add(domain);
                 }
             }
         }
+
+        ddao.create(domainsToCreate);
+
         return illegals;
     }
 
