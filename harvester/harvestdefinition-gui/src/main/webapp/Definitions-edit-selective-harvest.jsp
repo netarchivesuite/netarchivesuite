@@ -137,11 +137,11 @@ DomainConfigurations are posted as pairs
     HTMLUtils.generateHeader(
             pageContext,
             "./jscalendar/calendar.js",
-            "./jscalendar/lang/calendar" + lang + ".js",
+            "./jscalendar/lang/calendar-" + lang + ".js",
             "./jscalendar/calendar-setup.js");
 %>
 
-<jsp:include page="scripts.jsp"/>
+<jsp:include page="calendar-scripts.jsp"/>
 
 <h3 class="page_heading"><fmt:message key="pagetitle;selective.harvest"/></h3>
 
