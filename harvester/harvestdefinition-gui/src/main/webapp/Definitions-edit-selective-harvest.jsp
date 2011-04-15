@@ -127,9 +127,22 @@ DomainConfigurations are posted as pairs
         }
     }
 
-    HTMLUtils.generateHeader(pageContext);
+    // Include JS files for the calendar
+
+    String lang = HTMLUtils.getLocale(request);
+    if (lang.length() >= 2) {
+        lang = lang.substring(0, 2);
+    }
+
+    HTMLUtils.generateHeader(
+            pageContext,
+            "./jscalendar/calendar.js",
+            "./jscalendar/lang/calendar" + lang + ".js",
+            "./jscalendar/calendar-setup.js");
 %>
-<jsp:include page="scripts.jsp" flush="true"/>
+
+<jsp:include page="scripts.jsp"/>
+
 <h3 class="page_heading"><fmt:message key="pagetitle;selective.harvest"/></h3>
 
 <form method="post" action="Definitions-edit-selective-harvest.jsp">

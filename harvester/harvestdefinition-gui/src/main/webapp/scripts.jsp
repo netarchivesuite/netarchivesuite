@@ -22,28 +22,26 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%--
-This page contains javascript suppoting calendar handling.        
---%><%@ page import="dk.netarkivet.common.utils.I18n,
+This page contains javascript supporting calendar handling.
+--%>
+
+<%@ page import="dk.netarkivet.common.utils.I18n,
                 dk.netarkivet.common.webinterface.HTMLUtils,
                 dk.netarkivet.harvester.Constants"
          pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
-%><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=Constants.TRANSLATIONS_BUNDLE%>"/><%!
+%>
+
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+<fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"/>
+
+<fmt:setBundle scope="page" basename="<%=Constants.TRANSLATIONS_BUNDLE%>"/>
+
+<%!
     private static final I18n I18N
             = new I18n(Constants.TRANSLATIONS_BUNDLE);
 %>
-<!-- main calendar program -->
-<script type="text/javascript" src="./jscalendar/calendar.js"></script>
-<!-- language for the calendar, taken from the language set by the user -->
-<script type="text/javascript" src="./jscalendar/lang/calendar<%
-String lang = HTMLUtils.getLocale(request);
-if (lang.length() >= 2) {
-    out.print("-" + lang.substring(0, 2));
-}%>.js"></script>
-<!-- the following script defines the Calendar.setup helper function,
-which makes adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript" src="./jscalendar/calendar-setup.js"></script>
+
 <script type="text/javascript">
     var minutes = 0;
     var hours = 0;
@@ -91,7 +89,7 @@ which makes adding a calendar a matter of 1 or 2 lines of code. -->
     function addCalendars(timeFormat){
         Calendar.setup({
             inputField     :    "<%=dk.netarkivet.harvester.webinterface
-                                      .Constants.HOW_OFTEN_FIELD%>",      
+                                      .Constants.HOW_OFTEN_FIELD%>",
                                                // id of the input field
             ifFormat       :    timeFormat,    // format of the input field
             showsTime      :    true,          // will display a time selector
