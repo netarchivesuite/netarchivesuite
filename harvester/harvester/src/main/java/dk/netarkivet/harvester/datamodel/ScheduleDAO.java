@@ -85,23 +85,6 @@ public abstract class ScheduleDAO implements Iterable<Schedule> {
      */
     public abstract Schedule read(String scheduleName);
 
-    /** Get a string describing usages of the named schedule, or null if it
-     * is not used anywhere.
-     *
-     * @param scheduleName the name of a given Schedule
-     * @return the above mentioned usage-description.
-     */
-    public abstract String describeUsages(String scheduleName);
-
-    /**
-     * Delete a schedule in the DAO.
-     *
-     * @param scheduleName The schedule to delete
-     * @throws ArgumentNotValid if the schedulename is null or empty
-     * @throws UnknownID        if no schedule exists
-     */
-    public abstract void delete(String scheduleName);
-
     /**
      * Update a schedule in the DAO.
      *
@@ -134,19 +117,6 @@ public abstract class ScheduleDAO implements Iterable<Schedule> {
      * @return The number of defined schedules
      */
     public abstract int getCountSchedules();
-
-    /** Return whether the given schedule can be deleted.
-     * This should be a fairly lightweight method, but is not likely to be
-     * instantaneous.
-     * Note that to increase speed, this method may rely on underlying systems
-     * to enforce transitive invariants.  This means that if this method says
-     * a schedule can be deleted, the dao may still reject a delete
-     * request.  If this method returns false, deletion will however
-     * definitely not be allowed.
-     * @param schedule a given Schedule
-     * @return true, if the given schedule can be deleted without problems.
-     */
-    public abstract boolean mayDelete(Schedule schedule);
 
     /**
      * Reset the DAO.  Only for use from within tests.

@@ -121,20 +121,6 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
          assertTrue("Test-requirement not met: "
                  + "DefinitionsSiteSection not in default settings",
                  harvestdefinitionFound);
-
-         TemplateDAO dao = TemplateDAO.getInstance();
-         // remove default order.xml from dao
-        dao.delete(Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML));
-         try {
-             gui = GUIWebServer.getInstance();
-
-             for (SiteSection s: SiteSection.getSections()) {
-                 System.out.println(s);
-             }
-             fail("Should fail if default template is gone");
-         } catch (IOFailure e) {
-             // expected
-         }
      }
 
 }

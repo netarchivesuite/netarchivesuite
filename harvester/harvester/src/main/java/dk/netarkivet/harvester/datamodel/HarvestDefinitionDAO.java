@@ -46,6 +46,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
       * thread-safety.
       */
     private static HarvestDefinitionDAO instance;
+
     /** The log. */
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -77,14 +78,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     public abstract Long create(HarvestDefinition harvestDefinition);
 
     /**
-     * Generates the next id of a harvest definition.
-     * TODO: Maybe this method is not needed in this superclass as an abstract method.
-     * It is really only a helper method for the create() method.
-     * @return id The next available id.
-     */
-    protected abstract Long generateNextID();
-
-    /**
      * Read the stored harvest definition for the given ID.
      *
      * @param harvestDefinitionID An ID number for a harvest definition
@@ -96,22 +89,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      */
     public abstract HarvestDefinition read(Long harvestDefinitionID)
             throws UnknownID, IOFailure;
-
-    /** Return a string describing the current uses of a harvest definition,
-     * or null if the harvest definition is safe to delete (i.e. has never been
-     * run).
-     *
-     * @param oid a given identifier designating a harvest definition.
-     * @return the above mentioned usage-string.
-     */
-    public abstract String describeUsages(Long oid);
-
-    /**
-     * Delete a harvest definition from persistent storage.
-     *
-     * @param oid The ID of a harvest definition to delete.
-     */
-    public abstract void delete(Long oid);
 
     /**
      * Update an existing harvest definition with new info
@@ -162,28 +139,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
 
 
 
-    /**
-     * Edit the harvestdefinition.
-     * @param harvestDefinitionID The ID for the harvestdefintion to be updated
-     * @param harvestDefinition the HarvestDefinition object to used to update
-     *        harvestdefinition with the above ID
-     * @return the ID for the updated harvestdefinition
-     * (this should be equal to harvestDefinitionID?)
-     *
-     */
-    public Long editHarvestDefinition(Long harvestDefinitionID,
-                                      HarvestDefinition harvestDefinition) {
-        ArgumentNotValid.checkNotNull(harvestDefinitionID,
-                "harvestDefinitionID");
-        ArgumentNotValid.checkNotNull(harvestDefinition, "harvestDefinition");
-
-        HarvestDefinition oldhd = read(harvestDefinitionID);
-        harvestDefinition.setOid(oldhd.getOid());
-        harvestDefinition.setSubmissionDate(oldhd.getSubmissionDate());
-        update(harvestDefinition);
-        return harvestDefinition.getOid();
-    }
-
     /** Get the IDs of the harvest definitions that are ready to run.
      *
      * @param now
@@ -202,18 +157,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      */
     public abstract HarvestDefinition getHarvestDefinition(String name);
 
-    /** Returns an iterator of all snapshot harvest definitions.
-     *
-     * @return An iterator (possibly empty) of FullHarvests
-     */
-    public abstract Iterator<FullHarvest> getAllFullHarvestDefinitions();
-
-    /** Returns an iterator of all non-snapshot harvest definitions.
-     *
-     * @return An iterator (possibly empty) of PartialHarvests
-     */
-    public abstract Iterator<PartialHarvest> getAllPartialHarvestDefinitions();
-
     /** Returns a list with information on the runs of a particular harvest.
      * The list is ordered by descending run number.
      *
@@ -228,19 +171,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     static void reset() {
         instance = null;
     }
-
-    /** Return whether the given harvestdefinition can be deleted.
-     * This should be a fairly lightweight method, but is not likely to be
-     * instantaneous.
-     * Note that to increase speed, this method may rely on underlying systems
-     * to enforce transitive invariants.  This means that if this method says
-     * a harvestdefinition can be deleted, the dao may still reject a delete
-     * request.  If this method returns false, deletion will however
-     * definitely not be allowed.
-     * @param hd A given harvestdefinition
-     * @return true, if this HarvestDefinition can be deleted without problems.
-     */
-    public abstract boolean mayDelete(HarvestDefinition hd);
 
     /**
      * Get all domain,configuration pairs for a harvest definition in sparse

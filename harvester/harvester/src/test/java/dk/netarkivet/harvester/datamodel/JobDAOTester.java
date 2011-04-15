@@ -43,7 +43,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -87,28 +86,6 @@ public class JobDAOTester extends DataModelTestCase {
                      2 * jobsMade + INITIAL_JOB_COUNT,
                      dao.getCountJobs());
     }
-
-    public void testGenerateNextID() {
-        JobDAO dao = JobDAO.getInstance();
-        assertEquals("Must get id 2 with " + INITIAL_JOB_COUNT + " jobs",
-                     Long.valueOf(2), dao.generateNextID());
-        HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
-        HarvestDefinition hd = hdDao.read(Long.valueOf(42));
-        int jobsMade = hd.createJobs();
-        assertEquals("Must get correct id after making some jobs",
-                Long.valueOf(INITIAL_JOB_COUNT + 1 + jobsMade),
-                     dao.generateNextID());
-        int moreJobsMade = hd.createJobs();
-        assertEquals("Must get correct id after making more jobs",
-                Long.valueOf(INITIAL_JOB_COUNT + 1 + jobsMade + moreJobsMade),
-                     dao.generateNextID());
-        Settings.set(dk.netarkivet.harvester.datamodel.Constants.NEXT_JOB_ID,
-                "10");
-        assertEquals ("Must get id = 10 after an breakdown of admin machine",
-                     10L, (long)dao.generateNextID());
-
-    }
-
 
     /**
      * This test creates (and stores) a new job and reads it back again

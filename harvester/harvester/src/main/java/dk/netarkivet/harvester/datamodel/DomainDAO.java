@@ -254,7 +254,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * @throws ArgumentNotValid if domainName is null
      */
     public abstract List<AliasInfo> getAliases(String domain);
-    
+
     /**
      * Get a list of all current alias-relations.  The list should be sorted
      * by increasing last-update.  This means any expired aliases will be at
@@ -273,4 +273,17 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * alphabetically.
      */
     public abstract List<TLDInfo> getTLDs(int level);
+
+    /**
+     * Get the HarvestInfo object for a certain job and DomainConfiguration
+     * defined by domainName and configName.
+     * @param domainName the name of a given domain
+     * @param configName the name of a given configuration
+     * @param job the job
+     * @return The HarvestInfo object for a certain job and DomainConfiguration
+     *  or null, if job has not yet been started.
+     */
+    public abstract HarvestInfo getDomainJobInfo(
+            Job job, String domainName, String configName);
+
 }

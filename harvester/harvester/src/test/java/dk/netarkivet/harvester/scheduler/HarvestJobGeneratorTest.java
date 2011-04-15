@@ -48,8 +48,8 @@ import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 import dk.netarkivet.harvester.scheduler.HarvestJobGenerator.JobGeneratorTask;
 import dk.netarkivet.testutils.ThreadUtils;
 
-public class HarvestJobGeneratorTest extends DataModelTestCase {  
-    
+public class HarvestJobGeneratorTest extends DataModelTestCase {
+
     public HarvestJobGeneratorTest(String s) {
         super(s);
     }
@@ -76,8 +76,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         hd.setSchedule(s);
         hd.reset();
         hddao.update(hd);
-        // Remove the full harvest -- we don't want it interfering here.
-        hddao.delete(Long.valueOf(43));
+
         cal.setTime(new Date()); // reset
         now = cal.getTime();
         generateJobs(now);
@@ -92,7 +91,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         cfgs.add(domain.getDefaultConfiguration());
         final ScheduleDAO sdao = ScheduleDAO.getInstance();
         HarvestDefinition hd1 = HarvestDefinition.createPartialHarvest(
-                cfgs, 
+                cfgs,
                 sdao.read("Hver hele time"),
                 "Hele time",
         "");
@@ -139,7 +138,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
                 + " when the next hourly job should have been scheduled.",
                 jobs1.size() + 1, jobs2.size());
     }
-    
+
     /**
      * Run job generation and wait for the threads created to finish.
      *
@@ -151,7 +150,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         waitForJobGeneration();
     }
 
-    private static void waitForJobGeneration() 
+    private static void waitForJobGeneration()
     throws TimeoutException, InterruptedException {
         for (int waits = 1; waits <= 20 ; waits++ ) {
             boolean threadsRemain = false;
@@ -161,11 +160,11 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
                 if ( thread.getName().indexOf( "JobGeneratorTask") != -1) {
                     threadsRemain = true;
                     continue;
-                } 
+                }
             }
             if (!threadsRemain) return;
         }
-        throw new TimeoutException(ThreadUtils.getAllThreads().length + 
+        throw new TimeoutException(ThreadUtils.getAllThreads().length +
                 "JobGeneratorTask thread remain after 20 seconds" );
-    }    
+    }
 }

@@ -144,15 +144,25 @@ public class TemplateDBDAO extends TemplateDAO {
 
         Connection c = HarvestDBConnection.get();
         try {
-            int count = DBUtils.selectIntValue(
-                    c,
-                    "SELECT COUNT(*) FROM ordertemplates WHERE name = ?",
-                    orderXmlName);
-            return count == 1;
+            return exists(c, orderXmlName);
         } finally {
             HarvestDBConnection.release(c);
         }
     }
+
+    /** Return true if the database contains a template with the given name.
+    *
+    * @param orderXmlName Name of an order.xml template (without .xml).
+    * @return True if such a template exists.
+    * @throws ArgumentNotValid If the orderXmlName is null or an empty String
+    */
+   private synchronized boolean exists(Connection c, String orderXmlName) {
+       int count = DBUtils.selectIntValue(
+               c,
+               "SELECT COUNT(*) FROM ordertemplates WHERE name = ?",
+               orderXmlName);
+       return count == 1;
+   }
 
     /** Create a template. The template must not already exist.
      *
@@ -167,13 +177,14 @@ public class TemplateDBDAO extends TemplateDAO {
                 orderXmlName, "String orderXmlName");
         ArgumentNotValid.checkNotNull(orderXml, "HeritrixTemplate orderXml");
 
-        if (exists(orderXmlName)) {
-            throw new PermissionDenied("An order template called "
-                    + orderXmlName + " already exists");
-        }
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
+            if (exists(c, orderXmlName)) {
+                throw new PermissionDenied("An order template called "
+                        + orderXmlName + " already exists");
+            }
+
             s = c.prepareStatement("INSERT INTO ordertemplates "
                     + "( name, orderxml ) VALUES ( ?, ? )");
             DBUtils.setStringMaxLength(s, 1, orderXmlName,
@@ -184,32 +195,6 @@ public class TemplateDBDAO extends TemplateDAO {
         } catch (SQLException e) {
             throw new IOFailure("SQL error creating template " + orderXmlName
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            HarvestDBConnection.release(c);
-        }
-    }
-
-    /** Describe where a given template has been used.
-     *
-     * @param orderXmlName Name of the template.
-     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
-     * @return A string describing the usages of the template, or null if it
-     *  is not used.
-     */
-    public String describeUsages(String orderXmlName) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                orderXmlName, "String orderXmlName");
-
-        Connection c = HarvestDBConnection.get();
-        try {
-            return DBUtils.getUsages(c,
-                    "SELECT DISTINCT domains.name "
-                    + "  FROM domains, configurations, ordertemplates"
-                    + " WHERE ordertemplates.name = ?"
-                    + "   AND configurations.template_id "
-                    +       "= ordertemplates.template_id"
-                    + "   AND domains.domain_id = configurations.domain_id",
-                    orderXmlName, orderXmlName);
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -230,13 +215,14 @@ public class TemplateDBDAO extends TemplateDAO {
                 orderXmlName, "String orderXmlName");
         ArgumentNotValid.checkNotNull(orderXml, "HeritrixTemplate orderXml");
 
-        if (!exists(orderXmlName)) {
-            throw new PermissionDenied("No order template called "
-                    + orderXmlName + " exists");
-        }
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
+            if (! exists(c, orderXmlName)) {
+                throw new PermissionDenied("No order template called "
+                        + orderXmlName + " exists");
+            }
+
             s = c.prepareStatement("UPDATE ordertemplates "
                     + "SET orderxml = ? "
                     + "WHERE name = ?");
@@ -247,43 +233,6 @@ public class TemplateDBDAO extends TemplateDAO {
         } catch (SQLException e) {
             throw new IOFailure("SQL error updating template " + orderXmlName
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            HarvestDBConnection.release(c);
-        }
-    }
-
-    /** Delete a template entirely from the database.
-     *
-     * @param orderXmlName Name of the template to delete.
-     * @throws PermissionDenied if the template is in use or the template
-     * does not exist.
-     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
-     */
-    public synchronized void delete(String orderXmlName) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                orderXmlName, "String orderXmlName");
-        if (!exists(orderXmlName)) {
-            throw new PermissionDenied("No order template called '"
-                    + orderXmlName + "' exists");
-        }
-        Connection c = HarvestDBConnection.get();
-        PreparedStatement s = null;
-        try {
-            String usages = describeUsages(orderXmlName);
-            if (usages != null) {
-                String message = "Cannot delete template '" + orderXmlName
-                        + "' as it is used in " + usages;
-                log.debug(message);
-                throw new PermissionDenied(message);
-            }
-            s = c.prepareStatement("DELETE FROM ordertemplates "
-                                + "WHERE name = ?");
-            s.setString(1, orderXmlName);
-            s.executeUpdate();
-            log.debug("Deleting template '" + orderXmlName + "'");
-        } catch (SQLException e) {
-            throw new IOFailure("SQL error deleting template '" + orderXmlName
-                    + "'\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             HarvestDBConnection.release(c);
         }

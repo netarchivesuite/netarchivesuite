@@ -78,13 +78,6 @@ public abstract class JobDAO implements Iterable<Job> {
     public abstract boolean exists(Long jobID);
 
     /**
-     * Generates the next id of job.
-     *
-     * @return id
-     */
-    abstract Long generateNextID();
-
-    /**
      * Returns the number of jobs existing.
      *
      * @return Number of jobs in jobs dir
@@ -143,17 +136,17 @@ public abstract class JobDAO implements Iterable<Job> {
      *                          valid states specified in JobStatus.
      */
     public abstract Iterator<Long> getAllJobIds(JobStatus status);
-    
+
     /**
      * Return a list of all job_id's representing jobs with the given status
      * and priority.
      *
-     * @param status A given status   
+     * @param status A given status
      * @param priority A given priority
      * @return A list of all job_id's representing jobs with given status
      * and priority.
      */
-    public abstract Iterator<Long> getAllJobIds(JobStatus status, 
+    public abstract Iterator<Long> getAllJobIds(JobStatus status,
             JobPriority priority);
 
     /**
@@ -190,7 +183,7 @@ public abstract class JobDAO implements Iterable<Job> {
     /** Return status information for all jobs with given job status.
      *
      * @param status The status asked for.
-     * @return A list of status objects with the pertinent information for 
+     * @return A list of status objects with the pertinent information for
      *         all jobs with given job status.
      * @throws IOFailure on trouble in database access
      */
@@ -229,7 +222,7 @@ public abstract class JobDAO implements Iterable<Job> {
      * @throws IllegalState if the job with id jobID is not SUBMITTED or FAILED.
      */
     public abstract long rescheduleJob(long oldJobID);
-    
+
     /**
      * Get Jobstatus for the job with the given id.
      * @param jobID A given Jobid

@@ -76,15 +76,16 @@ public class ScheduleDBDAO extends ScheduleDAO {
      */
     public synchronized void create(Schedule schedule) {
         ArgumentNotValid.checkNotNull(schedule, "schedule");
-        if (exists(schedule.getName())) {
-            String msg = "Cannot create already existing schedule " + schedule;
-            log.debug(msg);
-            throw new PermissionDenied(msg);
-        }
 
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
+            if (exists(c, schedule.getName())) {
+                String msg = "Cannot create already existing schedule " + schedule;
+                log.debug(msg);
+                throw new PermissionDenied(msg);
+            }
+
             s = c.prepareStatement("INSERT INTO schedules "
                           + "( name, comments, startdate, enddate, maxrepeats, "
                           + "timeunit, numtimeunits, anytime, onminute, onhour,"
@@ -152,13 +153,23 @@ public class ScheduleDBDAO extends ScheduleDAO {
 
         Connection c = HarvestDBConnection.get();
         try {
-            final int count = DBUtils.selectIntValue(
-                    c,
-                    "SELECT COUNT(*) FROM schedules WHERE name = ?", scheduleName);
-            return (1 == count);
+            return exists(c, scheduleName);
         } finally {
             HarvestDBConnection.release(c);
         }
+    }
+
+    /**
+     * Returns whether a named schedule exists.
+     *
+     * @param scheduleName The name of a schedule
+     * @return True if the schedule exists.
+     */
+    private synchronized boolean exists(Connection c, String scheduleName) {
+        final int count = DBUtils.selectIntValue(
+                c,
+                "SELECT COUNT(*) FROM schedules WHERE name = ?", scheduleName);
+        return (1 == count);
     }
 
     /**
@@ -234,67 +245,6 @@ public class ScheduleDBDAO extends ScheduleDAO {
     }
 
     /**
-     * @see ScheduleDAO#describeUsages(String)
-     */
-    public String describeUsages(String scheduleName) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                scheduleName, "String scheduleName");
-
-        Connection c = HarvestDBConnection.get();
-        try {
-            return DBUtils.getUsages(c,
-                    "SELECT harvestdefinitions.name "
-                    + "FROM schedules, partialharvests, harvestdefinitions "
-                    + "WHERE schedules.name = ?"
-                    + " AND schedules.schedule_id = partialharvests.schedule_id"
-                    + " AND partialharvests.harvest_id "
-                    + "= harvestdefinitions.harvest_id",
-                    scheduleName, scheduleName);
-        } finally {
-            HarvestDBConnection.release(c);
-        }
-    }
-
-    /**
-     * Delete a schedule in the DAO.
-     *
-     * @param scheduleName The schedule to delete
-     * @throws ArgumentNotValid if the schedulename is null or empty
-     * @throws UnknownID        if no schedule exists
-     */
-    public synchronized void delete(String scheduleName) {
-        Connection c = HarvestDBConnection.get();
-        PreparedStatement s = null;
-        try {
-            String usages = describeUsages(scheduleName);
-            if (usages != null) {
-                String message = "Cannot delete schedule " + scheduleName
-                        + " as it is used by the following: " + usages;
-                log.debug(message);
-                throw new PermissionDenied(message);
-            }
-            s = c.prepareStatement("DELETE FROM schedules "
-                                + "WHERE name = ?");
-            s.setString(1, scheduleName);
-            int rows = s.executeUpdate();
-            if (rows == 0) {
-                String message = "No schedules found called " + scheduleName;
-                log.debug(message);
-                throw new UnknownID(message);
-            }
-            log.debug("Deleting schedule " + scheduleName);
-        } catch (SQLException e) {
-            final String message = "SQL error deleting schedule "
-                    + scheduleName + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e);
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-        } finally {
-            HarvestDBConnection.release(c);
-        }
-    }
-
-    /**
      * Update a schedule in the DAO.
      *
      * @param schedule The schedule to update
@@ -305,13 +255,15 @@ public class ScheduleDBDAO extends ScheduleDAO {
      */
     public synchronized void update(Schedule schedule) {
         ArgumentNotValid.checkNotNull(schedule, "schedule");
-        if (!exists(schedule.getName())) {
-            throw new PermissionDenied("No schedule with name "
-                    + schedule.getName() + " exists");
-        }
+
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
+            if (! exists(c, schedule.getName())) {
+                throw new PermissionDenied("No schedule with name "
+                        + schedule.getName() + " exists");
+            }
+
             s = c.prepareStatement("UPDATE schedules "
                                 + "SET name = ?,"
                                 + "    comments = ?,"
@@ -388,20 +340,4 @@ public class ScheduleDBDAO extends ScheduleDAO {
         }
     }
 
-    /**
-     * @see ScheduleDAO#mayDelete(Schedule)
-     */
-    public boolean mayDelete(Schedule schedule) {
-        ArgumentNotValid.checkNotNull(schedule, "schedule");
-
-        Connection c = HarvestDBConnection.get();
-        try {
-            return !DBUtils.selectAny(c,
-                    "SELECT harvest_id"
-                    + " FROM partialharvests WHERE schedule_id = ?",
-                    schedule.getID());
-        } finally {
-            HarvestDBConnection.release(c);
-        }
-    }
 }

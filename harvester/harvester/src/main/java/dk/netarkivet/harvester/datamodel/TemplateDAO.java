@@ -102,20 +102,6 @@ public abstract class TemplateDAO {
     public abstract void create(String orderXmlName, HeritrixTemplate orderXml);
 
     /**
-     * Describe where a given order template is being used.
-     *
-     * @param orderXmlName a given order template
-     * @return A string describing where the given order template is being used.
-     */
-    public abstract String describeUsages(String orderXmlName);
-
-    /**
-     * Delete a orderxml-template with a given name.
-     * @param orderXmlName a given name
-     */
-    public abstract void delete(String orderXmlName);
-
-    /**
      * Update a specific orderxml-template to contain the contents
      * of the orderXml argument.
      * @param orderXmlName the name of a specific orderxml-template

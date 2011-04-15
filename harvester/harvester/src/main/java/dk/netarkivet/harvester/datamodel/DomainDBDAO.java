@@ -117,7 +117,7 @@ public class DomainDBDAO extends DomainDAO {
         ArgumentNotValid.checkNotNull(d, "d");
         ArgumentNotValid.checkNotNullOrEmpty(d.getName(), "d.getName()");
 
-        if (exists(d.getName())) {
+        if (exists(connection, d.getName())) {
             String msg = "Cannot create already existing domain " + d;
             log.debug(msg);
             throw new PermissionDenied(msg);
@@ -1206,11 +1206,20 @@ public class DomainDBDAO extends DomainDAO {
 
         Connection c = HarvestDBConnection.get();
         try {
-            return 1 == DBUtils.selectIntValue(c,
-                "SELECT COUNT(*) FROM domains WHERE name = ?", domainName);
+            return exists(c, domainName);
         } finally {
             HarvestDBConnection.release(c);
         }
+    }
+
+    /**
+     * Return true if a domain with the given name exists.
+     *
+     * @see DomainDAO#exists(String)
+     */
+    private synchronized boolean exists(Connection c, String domainName) {
+        return 1 == DBUtils.selectIntValue(c,
+                "SELECT COUNT(*) FROM domains WHERE name = ?", domainName);
     }
 
     /**
@@ -1357,7 +1366,7 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = null;
         // return all <domain, alias, lastaliasupdate> tuples
         // where alias = domain
-        if (!exists(domain)) {
+        if (! exists(c, domain)) {
             log.debug("domain named '" + domain
                     + "' does not exist. Returning empty result set");
             return resultSet;
@@ -1467,6 +1476,57 @@ public class DomainDBDAO extends DomainDAO {
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             HarvestDBConnection.release(c);
+        }
+    }
+
+    /**
+     * @see DomainDAO#getDomainJobInfo(Job, String, String)
+     */
+    public HarvestInfo getDomainJobInfo(
+            Job j, String domainName, String configName) {
+        ArgumentNotValid.checkNotNull(j, "j");
+        ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkNotNullOrEmpty(configName, "configName");
+        HarvestInfo resultInfo = null;
+
+        Connection connection = HarvestDBConnection.get();
+        PreparedStatement s = null;
+        try {
+            // Get domain_id for domainName
+            long domainId = DBUtils.selectLongValue(connection,
+                    "SELECT domain_id FROM domains WHERE name=?", domainName);
+
+            s = connection.prepareStatement("SELECT stopreason, "
+                    + "objectcount, bytecount, "
+                    + "harvest_time FROM historyinfo WHERE "
+                    + "job_id = ? AND " + "config_id = ? AND "
+                    + "harvest_id = ?");
+            s.setLong(1, j.getJobID());
+            s.setLong(2, DBUtils.selectLongValue(connection,
+                    "SELECT config_id FROM configurations "
+                            + "WHERE name = ? AND domain_id=?", configName,
+                    domainId));
+            s.setLong(3, j.getOrigHarvestDefinitionID());
+            ResultSet res = s.executeQuery();
+            // If no result, the job may not have been run yet
+            // return null HarvestInfo
+            if (res.next()) {
+                StopReason reason = StopReason.getStopReason(res.getInt(1));
+                long objectCount = res.getLong(2);
+                long byteCount = res.getLong(3);
+                Date harvestTime = res.getDate(4);
+                resultInfo = new HarvestInfo(j.getOrigHarvestDefinitionID(),
+                        j.getJobID(), domainName, configName, harvestTime,
+                        byteCount, objectCount, reason);
+            }
+
+            return resultInfo;
+
+        } catch (SQLException e) {
+            throw new IOFailure("Failure getting DomainJobInfo" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            HarvestDBConnection.release(connection);
         }
     }
 
