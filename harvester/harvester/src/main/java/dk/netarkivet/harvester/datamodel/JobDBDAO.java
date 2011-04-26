@@ -413,7 +413,7 @@ public class JobDBDAO extends JobDAO {
     * @throws IOFailure if there was some problem talking to the database.
     */
    @Override
-   public Job read(Long jobID) {
+   public synchronized Job read(Long jobID) {
        Connection connection = HarvestDBConnection.get();
        try {
            return read(connection, jobID);

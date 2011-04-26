@@ -66,7 +66,7 @@ import dk.netarkivet.common.utils.StringUtils;
 public class DomainDBDAO extends DomainDAO {
 
     /** The log. */
-    private final Log log = LogFactory.getLog(DomainDBDAO.class);
+    private static final Log log = LogFactory.getLog(DomainDBDAO.class);
 
     /** The required version of the configurations table. */
     static final int CONFIGURATIONS_VERSION_NEEDED = 5;

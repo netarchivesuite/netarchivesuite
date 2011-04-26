@@ -77,7 +77,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * alphabetical order, next by configuration name.
      *
      */
-    private static class SparseDomainConfigComp
+    private static class SparseDomainConfigurationComparator
     implements Comparator<SparseDomainConfiguration> {
 
         @Override
@@ -905,7 +905,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 resultList.add(sdc);
             }
 
-            Collections.sort(resultList, new SparseDomainConfigComp());
+            Collections.sort(resultList, new SparseDomainConfigurationComparator());
             return resultList;
         } catch (SQLException e) {
             throw new IOFailure("SQL error getting sparse domains" + "\n"
