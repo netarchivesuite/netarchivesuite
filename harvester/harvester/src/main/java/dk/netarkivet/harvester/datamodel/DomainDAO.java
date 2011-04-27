@@ -53,7 +53,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
      *
      * @return the singleton DomainDAO
      */
-    public synchronized static DomainDAO getInstance() {
+    public static synchronized DomainDAO getInstance() {
         if (instance == null) {
             instance = new DomainDBDAO();
         }
@@ -192,7 +192,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
         "previousHarvestDefinition");
         // For each domainConfig, get harvest infos if there is any for the
         // previous harvest definition
-        return new FilterIterator<DomainConfiguration,HarvestInfo>(
+        return new FilterIterator<DomainConfiguration, HarvestInfo>(
                 previousHarvestDefinition.getDomainConfigurations()) {
             /**
              * @see FilterIterator#filter(Object)
@@ -285,5 +285,18 @@ public abstract class DomainDAO implements Iterable<Domain> {
      */
     public abstract HarvestInfo getDomainJobInfo(
             Job job, String domainName, String configName);
-
+    
+    
+    /** Get a list of info about harvests performed on a given domain.
+    *
+    * Note that harvest info from before the DB DAOs are unreliable, as
+    * harvests cannot be told apart and no dates are available.
+    *
+    * @param domainName Domain to get info for.
+    * @return List of DomainHarvestInfo objects with information on that domain.
+    *
+    */
+    public abstract List<DomainHarvestInfo> getDomainHarvestInfo(
+            String domainName);
+    
 }

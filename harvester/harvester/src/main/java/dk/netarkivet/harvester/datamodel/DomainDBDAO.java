@@ -320,7 +320,8 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Update the list of passwords for the given domain, keeping IDs where
      * applicable.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            A domain to update.
      * @throws SQLException
@@ -391,7 +392,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Update the list of seedlists for the given domain, keeping IDs where
      * applicable.
-     *
+     * @param c A connection to the database
      * @param d A domain to update.
      * @throws SQLException
      *             If any database problems occur during the update process.
@@ -453,7 +454,8 @@ public class DomainDBDAO extends DomainDAO {
      * Update the list of configurations for the given domain, keeping IDs where
      * applicable. This also builds the xref tables for passwords and seedlists
      * used in configurations, and so should be run after those are updated.
-     *
+     * @param connection 
+     *            A connection to the database
      * @param d
      *            A domain to update.
      * @throws SQLException
@@ -527,7 +529,8 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Update the list of owner info for the given domain, keeping IDs where
      * applicable.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            A domain to update.
      * @throws SQLException
@@ -562,7 +565,8 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Update the list of harvest info for the given domain, keeping IDs where
      * applicable.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            A domain to update.
      * @throws SQLException
@@ -619,7 +623,8 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Insert new harvest info for a domain.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            A domain to insert on. The domains ID must be correct.
      * @param harvestInfo
@@ -661,7 +666,8 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Insert new owner info for a domain.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            A domain to insert on. The domains ID must be correct.
      * @param doi
@@ -686,7 +692,8 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Insert new seedlist for a domain.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            A domain to insert on. The domains ID must be correct.
      * @param sl
@@ -713,7 +720,8 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Inserts a new password entry into the database.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            A domain to insert on. The domains ID must be correct.
      * @param p
@@ -749,6 +757,8 @@ public class DomainDBDAO extends DomainDAO {
      * Insert the basic configuration info into the DB. This does not establish
      * the connections with seedlists and passwords, use
      * {create,update}Config{Passwords,Seedlists}Entries for that.
+     * @param connection 
+     *            A connection to the database
      *
      * @param d
      *            a domain
@@ -790,7 +800,8 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Delete all entries in the given crossref table that belong to the
      * configuration.
-     *
+     * @param c 
+     *            A connection to the database 
      * @param configId
      *            The domain configuration to remove entries for.
      * @param table
@@ -813,7 +824,8 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Delete all entries from the config_passwords table that refer to the
      * given configuration and insert the current ones.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            A domain to operate on
      * @param dc
@@ -830,7 +842,8 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Create the xref table for passwords used by configurations.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            A domain to operate on.
      * @param dc
@@ -885,7 +898,8 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Create the xref table for seedlists used by configurations.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            A domain to operate on.
      * @param dc
@@ -988,7 +1002,8 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Read the configurations for the domain. This should not be called until
      * after passwords and seedlists are read.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            The domain being read. Its ID must be set.
      * @throws SQLException
@@ -1069,7 +1084,8 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Read owner info entries for the domain.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            The domain being read. Its ID must be set.
      * @throws SQLException
@@ -1092,7 +1108,8 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Read history info entries for the domain.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            The domain being read. Its ID must be set.
      * @throws SQLException
@@ -1135,7 +1152,8 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Read passwords for the domain.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            The domain being read. Its ID must be set.
      * @throws SQLException
@@ -1158,7 +1176,8 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Read seedlists for the domain.
-     *
+     * @param c 
+     *            A connection to the database
      * @param d
      *            The domain being read. Its ID must be set.
      * @throws SQLException
@@ -1366,7 +1385,7 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = null;
         // return all <domain, alias, lastaliasupdate> tuples
         // where alias = domain
-        if (! exists(c, domain)) {
+        if (!exists(c, domain)) {
             log.debug("domain named '" + domain
                     + "' does not exist. Returning empty result set");
             return resultSet;
@@ -1529,5 +1548,67 @@ public class DomainDBDAO extends DomainDAO {
             HarvestDBConnection.release(connection);
         }
     }
+    
+    /**
+     * @see DomainDAO#getDomainHarvestInfo(String)
+     */
+    public List<DomainHarvestInfo> getDomainHarvestInfo(String domainName) {
+       ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+       Connection c = HarvestDBConnection.get();
+       PreparedStatement s = null;
+       final ArrayList<DomainHarvestInfo> domainHarvestInfos 
+           = new ArrayList<DomainHarvestInfo>();
+       try {
+           // For historical reasons, not all historyinfo objects have the
+           // information required to find the job that made them. Therefore,
+           // we must left outer join them onto the jobs list to get the
+           // start date and end date for those where they can be found.
+           s = c.prepareStatement("SELECT jobs.job_id, hdname, hdid,"
+                   + " harvest_num," + " configname, startdate,"
+                   + " enddate, objectcount, bytecount, stopreason"
+                   + " FROM ( "
+                   + "  SELECT harvestdefinitions.name AS hdname,"
+                   + "         harvestdefinitions.harvest_id AS hdid,"
+                   + "         configurations.name AS configname,"
+                   + "         objectcount, bytecount, job_id, stopreason"
+                   + "    FROM domains, configurations, historyinfo, "
+                   + "         harvestdefinitions"
+                   + "   WHERE domains.name = ? "
+                   + "     AND domains.domain_id = configurations.domain_id"
+                   + "     AND historyinfo.config_id = "
+                   + "configurations.config_id"
+                   + "     AND historyinfo.harvest_id = "
+                   + "harvestdefinitions.harvest_id" + "  ) AS hist"
+                   + " LEFT OUTER JOIN jobs"
+                   + "   ON hist.job_id = jobs.job_id");
+           s.setString(1, domainName);
+           ResultSet res = s.executeQuery();
+           while (res.next()) {
+               final int jobID = res.getInt(1);
+               final String harvestName = res.getString(2);
+               final int harvestID = res.getInt(3);
+               final int harvestNum = res.getInt(4);
+               final String configName = res.getString(5);
+               final Date startDate = DBUtils.getDateMaybeNull(res, 6);
+               final Date endDate = DBUtils.getDateMaybeNull(res, 7);
+               final long objectCount = res.getLong(8);
+               final long byteCount = res.getLong(9);
+               final StopReason reason = StopReason.getStopReason(res
+                       .getInt(10));
+               domainHarvestInfos.add(new DomainHarvestInfo(domainName, jobID,
+                       harvestName, harvestID, harvestNum, configName,
+                       startDate, endDate, byteCount, objectCount, reason));
+           }
+           return domainHarvestInfos;
+       } catch (SQLException e) {
+           String message = "SQL error getting domain harvest info for "
+                   + domainName + "\n"
+                   + ExceptionUtils.getSQLExceptionCause(e);
+           log.warn(message, e);
+           throw new IOFailure(message, e);
+       } finally {
+           HarvestDBConnection.release(c);
+       }
+   }
 
 }
