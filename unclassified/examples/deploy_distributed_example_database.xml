@@ -197,18 +197,6 @@
                     </common>
                 </settings>
             </applicationName>
-            <applicationName name="dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorApplication">
-                <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
-                <settings>
-                    <common>
-                        <jmx>
-                            <port>8115</port>
-                            <rmiPort>8215</rmiPort>
-                        </jmx>
-                    </common>
-                </settings>
-            </applicationName> 
         </deployMachine>
 
         <deployMachine os="windows" name="east-bar-013.bitarkiv.kb.dk">

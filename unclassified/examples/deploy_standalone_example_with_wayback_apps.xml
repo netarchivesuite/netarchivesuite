@@ -316,18 +316,6 @@
                     </common>
                 </settings> 
              </applicationName> 
-             <applicationName name="dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorApplication">
-                <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
-                <settings>
-                    <common>
-                        <jmx>
-                            <port>8119</port>
-                            <rmiPort>8219</rmiPort>
-                        </jmx>
-                    </common>
-                </settings>
-            </applicationName>
             <applicationName name="dk.netarkivet.wayback.indexer.WaybackIndexerApplication">
             <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.common.jar</deployClassPath>
