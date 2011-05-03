@@ -28,12 +28,12 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.jfree.util.Log;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StreamUtils;
 
 /**
@@ -58,6 +58,12 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     protected final boolean multipleDownloads;
     /** The size of the file. */
     protected final long filesize;
+
+    /**
+     * A named logger for this class.
+     */
+    private static final transient Log log =
+            LogFactory.getLog(AbstractRemoteFile.class.getName());
 
     /**
      * Initialise common fields in remote file.
@@ -122,7 +128,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
                     }
                 } catch (IOFailure e) {
                     // log problem and try again!
-                    Log.warn("Could not retrieve the file '" + getName() 
+                    log.warn("Could not retrieve the file '" + getName() 
                             + "' in attempt '" + retry + "' with '"
                             + getNumberOfRetries() + "' retries.", e);
                 }
