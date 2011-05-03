@@ -267,4 +267,10 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
         return SystemUtils.getLocalHostName().equals(hostname)
                 && file.isFile() && file.canRead();
     }
+
+    @Override
+    public int getNumberOfRetries() {
+        // TODO make settings for this. 
+        return 1;
+    }
 }

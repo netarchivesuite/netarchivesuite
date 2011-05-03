@@ -28,9 +28,12 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.jfree.util.Log;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StreamUtils;
 
 /**
@@ -100,15 +103,37 @@ public abstract class AbstractRemoteFile implements RemoteFile {
                     + "' does not point to a writable file for remote file '"
                     + file + "'");
         }
-        FileOutputStream fos = null;
         try {
-            try {
-                fos = new FileOutputStream(destFile);
-                appendTo(fos);
-            } finally {
-                if (fos != null) {
-                    fos.close();
+            FileOutputStream fos = null;
+            int retry = 0;
+            boolean success = false;
+            
+            // retry if it fails, but always make at least one attempt.
+            do {
+                try {
+                    try {
+                        fos = new FileOutputStream(destFile);
+                        appendTo(fos);
+                        success = true;
+                    } finally {
+                        if (fos != null) {
+                            fos.close();
+                        }
+                    }
+                } catch (IOFailure e) {
+                    // log problem and try again!
+                    Log.warn("Could not retrieve the file '" + getName() 
+                            + "' in attempt '" + retry + "' with '"
+                            + getNumberOfRetries() + "' retries.", e);
                 }
+                retry++;
+            } while(!success && retry < getNumberOfRetries());
+            
+            // handle case when the retrieval is unsuccessful.
+            if(!success) {
+                throw new IOFailure("Unable to retrieve the file '" 
+                        + getName() + "' in '" + getNumberOfRetries() 
+                        + "' attempts.");
             }
         } catch (Exception e) {
             try {
@@ -161,6 +186,12 @@ public abstract class AbstractRemoteFile implements RemoteFile {
      * should be safe to call this method twice.
      */
     public abstract void cleanup();
+    
+    /**
+     * Method for retrieving the number of retries for retrieving a file.
+     * @return The number of retries for retrieving a file.
+     */
+    public abstract int getNumberOfRetries();
 
     /** Get the size of this remote file.
      * @return The size of this remote file.

@@ -600,5 +600,10 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     public String getChecksum() {
         return checksum;
     }
+
+    @Override
+    public int getNumberOfRetries() {
+        return FTP_RETRIES;
+    }
 }
 
