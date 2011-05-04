@@ -267,4 +267,16 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
         return SystemUtils.getLocalHostName().equals(hostname)
                 && file.isFile() && file.canRead();
     }
+
+    /**
+     * Retrieval of the number of retries for retrieving a file from a HTTP
+     * server. 
+     * TODO define a setting for HTTP retries, just like for the FTP retries.
+     * @return The number of retries. Currently a constant: 1.
+     */
+    @Override
+    public int getNumberOfRetries() {
+        // TODO make settings for this. 
+        return 1;
+    }
 }

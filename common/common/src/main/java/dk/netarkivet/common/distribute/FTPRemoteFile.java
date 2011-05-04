@@ -600,5 +600,16 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     public String getChecksum() {
         return checksum;
     }
+
+    /**
+     * Retrieval of the number of retries for retrieving a file from a FTP
+     * server. Returns the setting for number of retries.
+     * @return The number of retries for the FTP connection, defined in 
+     * settings.
+     */
+    @Override
+    public int getNumberOfRetries() {
+        return FTP_RETRIES;
+    }
 }
 
