@@ -259,6 +259,21 @@ public final class HarvestDBConnection {
         dataSource.setAcquireIncrement(
                 Settings.getInt(CommonSettings.DB_POOL_ACQ_INC));
 
+        // Configure idle connection testing
+        int testPeriod =
+            Settings.getInt(CommonSettings.DB_POOL_IDLE_CONN_TEST_PERIOD);
+        if (testPeriod > 0) {
+            dataSource.setIdleConnectionTestPeriod(testPeriod);
+            dataSource.setTestConnectionOnCheckin(
+                    Settings.getBoolean(
+                            CommonSettings.DB_POOL_IDLE_CONN_TEST_ON_CHECKIN));
+            String testQuery =
+                Settings.get(CommonSettings.DB_POOL_IDLE_CONN_TEST_QUERY);
+            if (! testQuery.isEmpty()) {
+                dataSource.setPreferredTestQuery(testQuery);
+            }
+        }
+
         // Configure statement pooling
         dataSource.setMaxStatements(
                 Settings.getInt(CommonSettings.DB_POOL_MAX_STM));
@@ -266,15 +281,21 @@ public final class HarvestDBConnection {
                 Settings.getInt(CommonSettings.DB_POOL_MAX_STM_PER_CONN));
 
         if (log.isInfoEnabled()) {
-            String msg =
-                "Connection pool initialized with the following values:";
-            msg += "\n- minPoolSize=" + dataSource.getMinPoolSize();
-            msg += "\n- maxPoolSize=" + dataSource.getMaxPoolSize();
-            msg += "\n- acquireIncrement=" + dataSource.getAcquireIncrement();
-            msg += "\n- maxStatements=" + dataSource.getMaxStatements();
-            msg += "\n- maxStatementsPerConnection="
-                + dataSource.getMaxStatementsPerConnection();
-            log.info(msg);
+            StringBuffer msg = new StringBuffer(
+                    "Connection pool initialized with the following values:");
+            msg.append("\n- minPoolSize=" + dataSource.getMinPoolSize())
+            .append("\n- maxPoolSize=" + dataSource.getMaxPoolSize())
+            .append("\n- acquireIncrement=" + dataSource.getAcquireIncrement())
+            .append("\n- maxStatements=" + dataSource.getMaxStatements())
+            .append("\n- maxStatementsPerConnection="
+                + dataSource.getMaxStatementsPerConnection())
+            .append("\n- idleConnTestPeriod="
+                + dataSource.getIdleConnectionTestPeriod())
+            .append("\n- idleConnTestQuery='"
+                + dataSource.getPreferredTestQuery() + "'")
+            .append("\n- idleConnTestOnCheckin="
+                + dataSource.isTestConnectionOnCheckin());
+            log.info(msg.toString());
         }
     }
 

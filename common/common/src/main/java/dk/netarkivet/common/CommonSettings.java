@@ -363,6 +363,33 @@ public class CommonSettings {
         "settings.common.database.pool.maxStmPerConn";
 
     /**
+     * <b>settings.common.database.pool.idleConnTestPeriod</b>: <br>
+     * Configure idle connection testing period in seconds.
+     * Default is 0, which means no idle connection testing
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#idleConnectionTestPeriod"/>
+     */
+    public static String DB_POOL_IDLE_CONN_TEST_PERIOD =
+        "settings.common.database.pool.idleConnTestPeriod";
+
+    /**
+     * <b>settings.common.database.pool.idleConnTestOnCheckin</b>: <br>
+     * Configure if a connection validity should be checked when returned to the pool.
+     * Default is false.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#testConnectionOnCheckin"/>
+     */
+    public static String DB_POOL_IDLE_CONN_TEST_ON_CHECKIN =
+        "settings.common.database.pool.idleConnTestOnCheckin";
+
+    /**
+     * <b>settings.common.database.pool.idleConnTestQuery</b>: <br>
+     * The SQL query to be used when testing an idle connection.
+     * Default is empty, which means using c3p0 defaults.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#preferredTestQuery"/>
+     */
+    public static String DB_POOL_IDLE_CONN_TEST_QUERY =
+        "settings.common.database.pool.idleConnTestQuery";
+
+    /**
      * <b>settings.common.repository.limitForRecordDatatransferInFile</b>: <br>
      * When the length record exceeds this number, the contents of the record
      * will be transferred using a RemoteFile.
