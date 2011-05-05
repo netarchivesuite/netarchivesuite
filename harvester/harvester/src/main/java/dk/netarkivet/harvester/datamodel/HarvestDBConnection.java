@@ -281,20 +281,20 @@ public final class HarvestDBConnection {
                 Settings.getInt(CommonSettings.DB_POOL_MAX_STM_PER_CONN));
 
         if (log.isInfoEnabled()) {
-            StringBuffer msg = new StringBuffer(
+            String msg = new String(
                     "Connection pool initialized with the following values:");
-            msg.append("\n- minPoolSize=" + dataSource.getMinPoolSize())
-            .append("\n- maxPoolSize=" + dataSource.getMaxPoolSize())
-            .append("\n- acquireIncrement=" + dataSource.getAcquireIncrement())
-            .append("\n- maxStatements=" + dataSource.getMaxStatements())
-            .append("\n- maxStatementsPerConnection="
-                + dataSource.getMaxStatementsPerConnection())
-            .append("\n- idleConnTestPeriod="
-                + dataSource.getIdleConnectionTestPeriod())
-            .append("\n- idleConnTestQuery='"
-                + dataSource.getPreferredTestQuery() + "'")
-            .append("\n- idleConnTestOnCheckin="
-                + dataSource.isTestConnectionOnCheckin());
+            msg += "\n- minPoolSize=" + dataSource.getMinPoolSize();
+            msg += "\n- maxPoolSize=" + dataSource.getMaxPoolSize();
+            msg += "\n- acquireIncrement=" + dataSource.getAcquireIncrement();
+            msg += "\n- maxStatements=" + dataSource.getMaxStatements();
+            msg += "\n- maxStatementsPerConnection="
+                + dataSource.getMaxStatementsPerConnection();
+            msg += "\n- idleConnTestPeriod="
+                + dataSource.getIdleConnectionTestPeriod();
+            msg += "\n- idleConnTestQuery='"
+                + dataSource.getPreferredTestQuery() + "'";
+            msg += "\n- idleConnTestOnCheckin="
+                + dataSource.isTestConnectionOnCheckin();
             log.info(msg.toString());
         }
     }
