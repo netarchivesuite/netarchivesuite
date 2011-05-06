@@ -560,6 +560,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * Log out from the FTP server.
      */
     private void logOut() {
+        log.debug("Trying to log out.");
         try {
             if (currentFTPClient != null) {
                 currentFTPClient.disconnect();
