@@ -538,10 +538,10 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 + " from host: "
                 + SystemUtils.getLocalHostName() + " failed";
                 if (tries < FTP_RETRIES) {
-                    log.debug(msg + ". Attempt #" + tries + "of max "
+                    log.debug(msg + ". Attempt #" + tries + " of max "
                             + FTP_RETRIES
                             + ". Will sleep a while before trying to "
-                            + " connect again. Exception: ", e);
+                            + "connect again. Exception: ", e);
                     TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE); 
                 } else {
                     log.warn(msg + ". This was the last (#" + tries 

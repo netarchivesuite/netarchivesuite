@@ -136,10 +136,10 @@ public abstract class AbstractRemoteFile implements RemoteFile {
                 }
                 retry++;
                 if (!success && retry < getNumberOfRetries()) {
-                    log.debug("CopyTo attempt #" + retry + "of max "
+                    log.debug("CopyTo attempt #" + retry + " of max "
                             + getNumberOfRetries()
                             + " failed. Will sleep a while before trying to "
-                            + " copyTo again.");
+                            + "copyTo again.");
                     TimeUtils.exponentialBackoffSleep(retry, Calendar.MINUTE);                 
                 }
             } while(!success && retry < getNumberOfRetries());
