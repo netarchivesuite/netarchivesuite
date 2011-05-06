@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Calendar;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StreamUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Abstract superclass for easy implementation of remote file.
@@ -133,6 +135,13 @@ public abstract class AbstractRemoteFile implements RemoteFile {
                             + getNumberOfRetries() + "' retries.", e);
                 }
                 retry++;
+                if (!success && retry < getNumberOfRetries()) {
+                    log.debug("CopyTo attempt #" + retry + " of max "
+                            + getNumberOfRetries()
+                            + " failed. Will sleep a while before trying to "
+                            + "copyTo again.");
+                    TimeUtils.exponentialBackoffSleep(retry, Calendar.MINUTE);                 
+                }
             } while(!success && retry < getNumberOfRetries());
             
             // handle case when the retrieval is unsuccessful.
