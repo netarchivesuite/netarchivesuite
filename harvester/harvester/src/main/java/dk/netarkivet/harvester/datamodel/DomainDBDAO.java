@@ -50,6 +50,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
 
 /**
@@ -1297,11 +1298,16 @@ public class DomainDBDAO extends DomainDAO {
                     + "=ordertemplates.template_id"
                     + " ORDER BY" + " ordertemplates.name,"
                     + " configurations.maxbytes DESC," + " domains.name");
-            List<Domain> orderedDomains = new LinkedList<Domain>();
+            return new FilterIterator<String, Domain>(domainNames.iterator()) {
+            public Domain filter(String s) {
+                return read(s);
+            }
+        };
+           /* List<Domain> orderedDomains = new LinkedList<Domain>();
             for (String domainName : domainNames) {
                 orderedDomains.add(read(c, domainName));
             }
-            return orderedDomains.iterator();
+            return orderedDomains.iterator();*/
         } finally {
             HarvestDBConnection.release(c);
         }
