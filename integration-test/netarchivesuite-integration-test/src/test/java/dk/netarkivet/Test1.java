@@ -111,12 +111,4 @@ public class Test1 extends StandaloneTest {
 
         NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);
     }
-
-    /**
-     * Test specification: http://netarchive.dk/suite/It10DefSelHarv .
-     */
-    @Test(dependsOnMethods = { "step1" })
-    public void step2() throws Exception {
-
-    }
 }

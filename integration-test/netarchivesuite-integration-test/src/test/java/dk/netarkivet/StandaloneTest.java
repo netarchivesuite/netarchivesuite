@@ -67,6 +67,19 @@ public abstract class StandaloneTest extends SystemTest {
         return "SystemTest";
     }
 
+    /**
+     * Uses ssh to run the indicated command on the test deployment server (kb-prod-udv-001.kb.dk). The system test 
+     * environment variables: 
+     * <ul>
+     * <li>TIMESTAMP = svn revision
+     * <li>PORT = systemtest.port property or 8071 if undefined
+     * <li>MAILRECEIVERS = systemtest.mailrecievers property
+     * <li>TESTX = SystemTest
+     * </ul>
+     * are set prior to running the command.
+     * @param remoteCommand The command to run on the test server
+     * @throws Exception It apparently didn't work.
+     */
     private void runCommandWithEnvironment(String remoteCommand)
             throws Exception {
         BufferedReader inReader = null;

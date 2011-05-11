@@ -26,6 +26,9 @@ public class NASSystemUtil {
     public void startSystem() {
     }
 
+    /**
+     * Defines the standard application setup in the DK test system.
+     */
     public static Application[] getApplications() {
         return new Application[] {
                 new Application("KB-TEST-BAR-013", "BitarchiveServer", null,

@@ -22,6 +22,9 @@
  */
 package dk.netarkivet;
 
+/**
+ * Encapsulates the attributes found for an application in the systemoverview page.
+ */
 public class Application {
     private final String machine;
 
@@ -44,7 +47,6 @@ public class Application {
      */
     public Application(String machine, String application, String instance_Id,
             String priority, String replica) {
-        super();
         this.machine = "".equals(machine) ? null : machine;
         this.application = "".equals(application) ? null : application;
         this.instance_Id = "".equals(instance_Id) ? null : instance_Id;

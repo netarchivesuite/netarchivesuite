@@ -1,3 +1,26 @@
+/* File:    $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package dk.netarkivet.page;
 
 import java.util.HashSet;
@@ -45,19 +68,23 @@ public class SystemStatePageHelper {
         Set<Application> displayedApplicationSet = new HashSet<Application>();
 
         for (int rowCounter = 1;rowCounter < getNumberOfRows(); rowCounter++) {
-            System.out.println("Checking row "+rowCounter+", value is: " + selenium.getTable("system_state_table."+rowCounter+".0"));
-
+           
             displayedApplicationSet.add(new Application(
-                    selenium.getTable("system_state_table."+rowCounter+(".0")),
-                    selenium.getTable("system_state_table."+rowCounter+(".1")),
-                    selenium.getTable("system_state_table."+rowCounter+(".2")),
-                    selenium.getTable("system_state_table."+rowCounter+(".3")),
-                    selenium.getTable("system_state_table."+rowCounter+(".4"))));
+                    selenium.getTable("system_state_table."+rowCounter+".0"),
+                    selenium.getTable("system_state_table."+rowCounter+".1"),
+                    selenium.getTable("system_state_table."+rowCounter+".2"),
+                    selenium.getTable("system_state_table."+rowCounter+".3"),
+                    selenium.getTable("system_state_table."+rowCounter+".4") 
+                    ));
         }
 
         NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);
     }
 
+    /**
+     * Check that all entries in the allocations column in the current system overview table corresponds to the 
+     * indicated string.
+     */
     public void checkAllLocationAre(String string) {
         numberOfRows = -1;
         for (int rowCounter = 1;rowCounter < getNumberOfRows(); rowCounter++) {
@@ -68,6 +95,9 @@ public class SystemStatePageHelper {
         }
     }
 
+    /**
+     * Checks that none of the indicated string are present in the logs column.
+     */
     public void checkStringsNotPresentInLog(String[] strings) {
         for (int rowCounter = 1;rowCounter < getNumberOfRows(); rowCounter++) {
             String log = selenium.getTable("system_state_table."+rowCounter+(".6"));
@@ -80,15 +110,9 @@ public class SystemStatePageHelper {
         }
     }
 
-    public void checkNoLogsAre(String string) {
-        for (int rowCounter = 1;rowCounter < getNumberOfRows(); rowCounter++) {
-            String log = selenium.getTable("system_state_table."+rowCounter+(".6"));
-            NASAssert.assertTrue(!log.equals(string), 
-                    "Found log " + string + " in log on row " + 
-                    rowCounter + " on system state page");
-        }
-    }
-
+    /**
+     * Finds the number of rows in the system overview table.
+     */
     private int getNumberOfRows() {
         if (numberOfRows == -1) {
             numberOfRows = selenium.getXpathCount("//table[@id='system_state_table']/tbody/tr").intValue();

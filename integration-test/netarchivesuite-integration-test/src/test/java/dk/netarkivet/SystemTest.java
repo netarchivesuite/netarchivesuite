@@ -46,7 +46,6 @@ public class SystemTest extends ExtendedTestCase {
     String port, @Optional("*firefox")
     String browser, @Optional("http://kb-test-adm-001.kb.dk")
     String url) {
-
         selenium = new DefaultSelenium(host, Integer.parseInt(port), browser,
                 url + ":" + getPort() + "/");
         selenium.start();
