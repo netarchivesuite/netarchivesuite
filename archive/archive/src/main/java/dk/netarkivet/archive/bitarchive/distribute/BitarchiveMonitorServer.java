@@ -566,11 +566,29 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                     log.debug("Post processing finished.");
                 } else {
                     log.debug("No post processing. Using concatenated file.");
+                    boolean deleted = postFile.delete();
+                    if (deleted) {
+                        log.debug("Failed to deleted temporary file '"
+                                + postFile.getAbsolutePath() + "'");
+                    } else {
+                        log.debug("Deleted temporary file '"
+                                + postFile.getAbsolutePath()
+                                + "' successfully");
+                    }
                     postFile = bjs.batchResultFile;
                 }
             } catch (Exception e) {
                 log.warn("Exception caught during post processing batchjob. "
                         + "Concatenated file used instead.", e);
+                boolean deleted = postFile.delete();
+                if (deleted) {
+                    log.debug("Failed to deleted temporary file '"
+                            + postFile.getAbsolutePath() + "'");
+                } else {
+                    log.debug("Deleted temporary file '"
+                            + postFile.getAbsolutePath()
+                            + "' successfully");
+                }
                 postFile = bjs.batchResultFile;
             }
             
