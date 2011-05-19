@@ -54,4 +54,11 @@ public class JobStatusTester extends TestCase {
         assertEquals(JobStatus.FAILED.getLocalizedString(en), "Failed");
         assertEquals(JobStatus.RESUBMITTED.getLocalizedString(en), "Resubmitted");       
       }
+
+    public void testLegalChange() {
+        JobStatus status = JobStatus.FAILED_REJECTED;
+        assertTrue("Should be legal to change JobStatus from FAILED_REJECTED "
+                   + "back to FAILED", status.legalChange(JobStatus.FAILED));
+    }
+
 }

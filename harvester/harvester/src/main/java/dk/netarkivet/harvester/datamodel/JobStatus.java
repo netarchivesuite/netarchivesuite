@@ -62,7 +62,14 @@ public enum JobStatus {
      * Job status resubmitted is used for a job that had failed and a new job
      * with this jobs data has been submitted.
      */    
-    RESUBMITTED;
+    RESUBMITTED,
+    /**
+     * Job status for a job which has failed and which has been rejected for resubmission.
+     * A Job in this status can be returned to status FAILED if it has been rejected in
+     * error.
+     */
+    FAILED_REJECTED;
+
 
     /** Internationalisation object. */
     private static final I18n I18N
@@ -85,6 +92,8 @@ public enum JobStatus {
     public static String JOBSTATUS_RESUBMITTED_KEY = "status.job.resubmitted";
     /** Localization key for a unknown JobStatus. */
     public static String JOBSTATUS_UNKNOWN_KEY = "status.job.unknown";
+    /** Localization key for a JobStatus FAILED_REJECTED */
+    public static String JOBSTATUS_FAILED_REJECTED_KEY = "status.job.failed_rejected";
     
     
 
@@ -102,6 +111,7 @@ public enum JobStatus {
             case 3: return DONE;
             case 4: return FAILED;
             case 5: return RESUBMITTED;
+            case 6: return FAILED_REJECTED;
             default: throw new ArgumentNotValid(
                     "Invalid job status '" + status + "'");
         }
@@ -147,6 +157,8 @@ public enum JobStatus {
                 return I18N.getString(l, JOBSTATUS_FAILED_KEY);
             case RESUBMITTED:
                 return I18N.getString(l, JOBSTATUS_RESUBMITTED_KEY);
+            case FAILED_REJECTED:
+                return I18N.getString(l, JOBSTATUS_FAILED_REJECTED_KEY);
             default:
                 return I18N.getString(l, JOBSTATUS_UNKNOWN_KEY,
                         this.toString());
@@ -161,6 +173,7 @@ public enum JobStatus {
      */
     public boolean legalChange(JobStatus newStatus) {
         ArgumentNotValid.checkNotNull(newStatus, "JobStatus newStatus");
-        return newStatus.ordinal() >= ordinal();
+        return newStatus.ordinal() >= ordinal()
+               || (newStatus.equals(FAILED) && fromOrdinal(ordinal()).equals(FAILED_REJECTED));
     }
 }

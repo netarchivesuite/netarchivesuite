@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
 
 /**
@@ -45,7 +46,7 @@ public class DerbySpecificsTester extends DataModelTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
-    public void testGetTemporaryTable() {
+    public void testGetTemporaryTable() throws SQLException {
         Connection c = HarvestDBConnection.get();
 
         try {
@@ -91,19 +92,16 @@ public class DerbySpecificsTester extends DataModelTestCase {
             try {
                 s = c.prepareStatement(statement);
                 s.execute();
-                String domain =
+ /*               String domain =
                     DBUtils.selectStringValue(c,
                             "SELECT domain_name "
                             + "FROM session.jobconfignames "
-                            + "WHERE config_name = 'foo'");
-                fail("Should have failed query after table is dead, "
-                        + "but return domain= " + domain);
+                            + "WHERE config_name = 'foo'");*/
+                fail("Should have failed query on selection from table which has "
+                     + "been dropped");
             } catch (SQLException e) {
                 // expected
             }
-
-            // Should be possible to get another temporary table.
-            try {
                 c.setAutoCommit(false);
                 String tmpTable =
                     DBSpecifics.getInstance().getJobConfigsTmpTable(c);
@@ -127,9 +125,7 @@ public class DerbySpecificsTester extends DataModelTestCase {
                 c.commit();
                 c.setAutoCommit(true);
                 DBSpecifics.getInstance().dropJobConfigsTmpTable(c, tmpTable);
-            } catch (SQLException e) {
-                fail("Should not have had SQL exception " + e);
-            }
+
         } finally {
             HarvestDBConnection.release(c);
         }

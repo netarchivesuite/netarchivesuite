@@ -23,6 +23,8 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import javax.servlet.jsp.PageContext;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -73,7 +75,45 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
                 jsiList, hs.getJobStatusInfo());
     }
     
-    
+    public void testRejectFailedJob() throws SQLException {
+        JobDAO jobDAO = JobDBDAO.getInstance();
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(42L);
+        Job job = Job.createJob(42L, DomainDAO.getInstance().read(
+                "netarkivet.dk").getDefaultConfiguration(), 0);
+        jobDAO.create(job);
+        job.setStatus(JobStatus.FAILED);
+        JobDAO.getInstance().update(job);
+        HarvestStatus.rejectFailedJob(null, null, job.getJobID());
+        assertEquals("Job should now be in status FAILED_REJECTED",
+                     jobDAO.read(job.getJobID()).getStatus(), JobStatus.FAILED_REJECTED);
+        try {
+            HarvestStatus.rejectFailedJob(null, null, job.getJobID());
+            fail("Expect to throw exception in rejecting an already rejected job");
+        } catch (Exception e) {
+            //expected
+        }
+
+    }
+
+    public void testUnrejectRejectedJob() throws SQLException {
+        JobDAO jobDAO = JobDBDAO.getInstance();
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(42L);
+        Job job = Job.createJob(42L, DomainDAO.getInstance().read(
+                "netarkivet.dk").getDefaultConfiguration(), 0);
+        jobDAO.create(job);
+        job.setStatus(JobStatus.FAILED_REJECTED);
+        JobDAO.getInstance().update(job);
+        HarvestStatus.unrejectRejectedJob(null, null, job.getJobID());
+        assertEquals("Job should now be in status FAILED",
+                     jobDAO.read(job.getJobID()).getStatus(), JobStatus.FAILED);
+        try {
+            HarvestStatus.unrejectRejectedJob(null, null, job.getJobID());
+            fail("Expect to throw exception in unrejecting a failed job");
+        } catch (Exception e) {
+            //expected
+        }
+    }
+
     public void testProcessRequest() throws Exception {
         
         JobDAO jobDAO = JobDBDAO.getInstance();

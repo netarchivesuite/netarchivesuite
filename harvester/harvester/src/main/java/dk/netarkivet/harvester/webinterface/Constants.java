@@ -122,6 +122,10 @@ public class Constants {
 
     public static final String JOB_RESUBMIT_PARAM = "resubmit";
 
+    public static final String JOB_REJECT_PARAM = "reject";
+
+    public static final String JOB_UNREJECT_PARAM = "unreject";
+
     public static final String SEEDS_PARAM = "seeds";
 
     public static final String ORDER_TEMPLATE_PARAM = "orderTemplate";

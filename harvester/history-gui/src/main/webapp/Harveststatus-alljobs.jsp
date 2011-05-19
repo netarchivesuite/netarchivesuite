@@ -454,13 +454,33 @@ function resubmitSelectedJobs() {
                         //Note: The form is only displayed if Definitions
                         //sitesection is deployed. Thus you cannot change any
                         //state using the history sitesection only.
-                    %><form class ="inlineform" method="post"
+                    %>
+                    <form class ="inlineform" method="post"
                                   action="Harveststatus-alljobs.jsp">
                                 <input type="hidden"
                                        name="<%=Constants.JOB_RESUBMIT_PARAM%>"
                                        value="<%=js.getJobID()%>"/>
                                 <input type="submit"
                                        value="<fmt:message key="button;restart"/>"/>
+                            </form>
+                    <form class ="inlineform" method="post"
+                                  action="Harveststatus-alljobs.jsp">
+                                <input type="hidden"
+                                       name="<%=Constants.JOB_REJECT_PARAM%>"
+                                       value="<%=js.getJobID()%>"/>
+                                <input type="submit"
+                                       value="<fmt:message key="button;reject"/>"/>
+                            </form>
+                    <%
+                        } else if (js.getStatus() == JobStatus.FAILED_REJECTED) {
+                            %>
+                    <form class ="inlineform" method="post"
+                                  action="Harveststatus-alljobs.jsp">
+                                <input type="hidden"
+                                       name="<%=Constants.JOB_UNREJECT_PARAM%>"
+                                       value="<%=js.getJobID()%>"/>
+                                <input type="submit"
+                                       value="<fmt:message key="button;unreject"/>"/>
                             </form>
                     <%
                         }
