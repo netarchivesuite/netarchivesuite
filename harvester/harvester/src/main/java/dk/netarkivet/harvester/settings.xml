@@ -80,7 +80,7 @@
             <!-- Default is 400000000 bytes (~400 Mbytes). -->
             <minSpaceLeft>400000000</minSpaceLeft>
             <oldjobsDir>oldjobs</oldjobsDir>
-            <queuePriority>HIGHPRIORITY</queuePriority>
+            <queuePriority></queuePriority>
             <sendStatusDelay>1</sendStatusDelay>
             <heritrix>
                 <!-- 30 minutes -->
