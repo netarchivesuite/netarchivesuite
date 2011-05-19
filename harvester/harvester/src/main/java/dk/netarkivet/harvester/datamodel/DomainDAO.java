@@ -118,7 +118,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * @param domainName the name of the domain to retrieve
      * @return the retrieved Domain
      */
-    protected abstract Domain read(Connection c, String domainName);
+    protected abstract Domain read(Connection connection, String domainName);
 
     /**
      * Check existence of a domain with the given domainName.

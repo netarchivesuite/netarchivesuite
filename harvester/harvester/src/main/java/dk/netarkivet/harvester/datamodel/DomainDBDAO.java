@@ -114,6 +114,7 @@ public class DomainDBDAO extends DomainDAO {
      *
      * @see DomainDAO#create(Connection,Domain)
      */
+    @Override
     protected void create(Connection connection, Domain d) {
         ArgumentNotValid.checkNotNull(d, "d");
         ArgumentNotValid.checkNotNullOrEmpty(d.getName(), "d.getName()");
@@ -939,6 +940,7 @@ public class DomainDBDAO extends DomainDAO {
      *
      * @see DomainDAO#read(Connection, String)
      */
+    @Override
     protected synchronized Domain read(Connection c, String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         if (!exists(domainName)) {
@@ -1120,7 +1122,8 @@ public class DomainDBDAO extends DomainDAO {
             Connection c,
             Domain d) throws SQLException {
         // Read history info
-        PreparedStatement s = c.prepareStatement("SELECT historyinfo_id, stopreason, "
+        PreparedStatement s = c.prepareStatement(
+                "SELECT historyinfo_id, stopreason, "
                 + "objectcount, bytecount, "
                 + "name, job_id, harvest_id, harvest_time "
                 + "FROM historyinfo, configurations "
@@ -1185,7 +1188,8 @@ public class DomainDBDAO extends DomainDAO {
      *             If database errors occur.
      */
     private void readSeedlists(Connection c, Domain d) throws SQLException {
-        PreparedStatement s = c.prepareStatement("SELECT seedlist_id, name, comments, seeds"
+        PreparedStatement s = c.prepareStatement(
+                "SELECT seedlist_id, name, comments, seeds"
                 + " FROM seedlists WHERE domain_id = ?");
         s.setLong(1, d.getID());
         ResultSet res = s.executeQuery();
@@ -1221,6 +1225,7 @@ public class DomainDBDAO extends DomainDAO {
      *
      * @see DomainDAO#exists(String)
      */
+    @Override
     public synchronized boolean exists(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
 
@@ -1247,6 +1252,7 @@ public class DomainDBDAO extends DomainDAO {
      *
      * @see DomainDAO#getCountDomains()
      */
+    @Override
     public synchronized int getCountDomains() {
         Connection c = HarvestDBConnection.get();
         try {
@@ -1262,6 +1268,7 @@ public class DomainDBDAO extends DomainDAO {
      *
      * @see DomainDAO#getAllDomains()
      */
+    @Override
     public synchronized Iterator<Domain> getAllDomains() {
         Connection c = HarvestDBConnection.get();
         try {
@@ -1284,6 +1291,7 @@ public class DomainDBDAO extends DomainDAO {
      *
      * @see DomainDAO#getAllDomainsInSnapshotHarvestOrder()
      */
+    @Override
     public Iterator<Domain> getAllDomainsInSnapshotHarvestOrder() {
 
         Connection c = HarvestDBConnection.get();
@@ -1316,6 +1324,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * @see DomainDAO#getDomains(String)
      */
+    @Override
     public List<String> getDomains(String glob) {
         ArgumentNotValid.checkNotNullOrEmpty(glob, "glob");
         // SQL uses % and _ instead of * and ?
@@ -1333,6 +1342,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * @see DomainDAO#mayDelete(DomainConfiguration)
      */
+    @Override
     public boolean mayDelete(DomainConfiguration config) {
         ArgumentNotValid.checkNotNull(config, "config");
 
@@ -1361,6 +1371,7 @@ public class DomainDBDAO extends DomainDAO {
      * @throws UnknownID
      *             if domain does not exist
      */
+    @Override
     public synchronized SparseDomain readSparse(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
 
@@ -1384,6 +1395,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * @see DomainDAO#getAliases(String)
      */
+    @Override
     public List<AliasInfo> getAliases(String domain) {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
         List<AliasInfo> resultSet = new ArrayList<AliasInfo>();
@@ -1423,6 +1435,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * @see DomainDAO#getAllAliases()
      */
+    @Override
     public List<AliasInfo> getAllAliases() {
         List<AliasInfo> resultSet = new ArrayList<AliasInfo>();
         Connection c = HarvestDBConnection.get();
@@ -1461,8 +1474,9 @@ public class DomainDBDAO extends DomainDAO {
      * it appear in the level 1 list of TLD and in the level 2 list
      * @param level maximum level of TLD
      * @return a list of TLDs
-     * @see DomainDAO#getTLDs()
+     * @see DomainDAO#getTLDs(int)
      */
+    @Override
     public List<TLDInfo> getTLDs(int level) {
         Map<String, TLDInfo> resultMap = new HashMap<String, TLDInfo>();
         Connection c = HarvestDBConnection.get();
@@ -1492,7 +1506,8 @@ public class DomainDBDAO extends DomainDAO {
                 }
             }
 
-            List<TLDInfo> resultSet = new ArrayList<TLDInfo>(resultMap.values());
+            List<TLDInfo> resultSet
+                = new ArrayList<TLDInfo>(resultMap.values());
             Collections.sort(resultSet);
             return resultSet;
 
@@ -1507,6 +1522,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * @see DomainDAO#getDomainJobInfo(Job, String, String)
      */
+    @Override
     public HarvestInfo getDomainJobInfo(
             Job j, String domainName, String configName) {
         ArgumentNotValid.checkNotNull(j, "j");
@@ -1558,6 +1574,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * @see DomainDAO#getDomainHarvestInfo(String)
      */
+    @Override
     public List<DomainHarvestInfo> getDomainHarvestInfo(String domainName) {
        ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
        Connection c = HarvestDBConnection.get();

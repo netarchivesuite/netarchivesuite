@@ -129,6 +129,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @return The harvestId for the just created harvest definition.
      * @see HarvestDefinitionDAO#create(HarvestDefinition)
      */
+    @Override
     public synchronized Long create(HarvestDefinition harvestDefinition) {
         Connection connection = HarvestDBConnection.get();
         PreparedStatement s = null;
@@ -268,6 +269,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @throws UnknownID if no entry with that ID exists in the database
      * @throws IOFailure If DB-failure occurs?
      */
+    @Override
     public synchronized HarvestDefinition read(
             Long harvestDefinitionID) throws UnknownID, IOFailure {
         Connection c = HarvestDBConnection.get();
@@ -281,6 +283,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Read the stored harvest definition for the given ID.
      * @see HarvestDefinitionDAO#read(Long)
+     * @param c The used database connection
      * @param harvestDefinitionID An ID number for a harvest definition
      * @return A harvest definition that has been read from persistent storage.
      * @throws UnknownID if no entry with that ID exists in the database
@@ -542,15 +545,18 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * sort of a lightweight version of update.
      * @param harvestDefinition the harvest definition object.
      */
-    public synchronized void flipActive(SparsePartialHarvest hd) {
-        ArgumentNotValid.checkNotNull(hd, "HarvestDefinition hd");
+    @Override
+    public synchronized void flipActive(SparsePartialHarvest harvestDefinition) {
+        ArgumentNotValid.checkNotNull(harvestDefinition, 
+                "HarvestDefinition harvestDefinition");
 
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            if (hd.getOid() == null || ! exists(c, hd.getOid())) {
+            if (harvestDefinition.getOid() == null 
+                    || ! exists(c, harvestDefinition.getOid())) {
                 final String message = "Cannot update non-existing "
-                        + "harvestdefinition '" + hd.getName() + "'";
+                        + "harvestdefinition '" + harvestDefinition.getName() + "'";
                 log.debug(message);
                 throw new PermissionDenied(message);
             }
@@ -564,20 +570,20 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "isactive = ?,"
                     + "edition = ? "
                     + "WHERE harvest_id = ? AND edition = ?");
-            DBUtils.setName(s, 1, hd, Constants.MAX_NAME_SIZE);
-            DBUtils.setComments(s, 2, hd, Constants.MAX_COMMENT_SIZE);
-            s.setInt(3, hd.getNumEvents());
-            s.setTimestamp(4, new Timestamp(hd.getSubmissionDate().getTime()));
-            s.setBoolean(5, ! hd.isActive());
-            long nextEdition = hd.getEdition() + 1;
+            DBUtils.setName(s, 1, harvestDefinition, Constants.MAX_NAME_SIZE);
+            DBUtils.setComments(s, 2, harvestDefinition, Constants.MAX_COMMENT_SIZE);
+            s.setInt(3, harvestDefinition.getNumEvents());
+            s.setTimestamp(4, new Timestamp(harvestDefinition.getSubmissionDate().getTime()));
+            s.setBoolean(5, ! harvestDefinition.isActive());
+            long nextEdition = harvestDefinition.getEdition() + 1;
             s.setLong(6, nextEdition);
-            s.setLong(7, hd.getOid());
-            s.setLong(8, hd.getEdition());
+            s.setLong(7, harvestDefinition.getOid());
+            s.setLong(8, harvestDefinition.getEdition());
             int rows = s.executeUpdate();
             // Since the HD exists, no rows indicates bad edition
             if (rows == 0) {
-                String message = "Somebody else must have updated " + hd
-                        + " since edition " + hd.getEdition()
+                String message = "Somebody else must have updated " + harvestDefinition
+                        + " since edition " + harvestDefinition.getEdition()
                         + ", not updating";
                 log.debug(message);
                 throw new PermissionDenied(message);
@@ -591,18 +597,19 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                                 + "WHERE schedules.name = ?), "
                     + "nextdate = ? "
                     + "WHERE harvest_id = ?");
-            s.setString(1, hd.getScheduleName());
-            DBUtils.setDateMaybeNull(s, 2, hd.getNextDate());
-            s.setLong(3, hd.getOid());
+            s.setString(1, harvestDefinition.getScheduleName());
+            DBUtils.setDateMaybeNull(s, 2, harvestDefinition.getNextDate());
+            s.setLong(3, harvestDefinition.getOid());
             rows = s.executeUpdate();
             log.debug(rows + " partialharvests records updated");
             s.close();
             c.commit();
         } catch (SQLException e) {
             throw new IOFailure("SQL error while updating harvest definition "
-                    + hd + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+                    + harvestDefinition + "\n" 
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.rollbackIfNeeded(c, "updating", hd);
+            DBUtils.rollbackIfNeeded(c, "updating", harvestDefinition);
             HarvestDBConnection.release(c);
         }
     }
@@ -610,6 +617,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * @see HarvestDefinitionDAO#exists(Long)
      */
+    @Override
     public synchronized boolean exists(Long oid) {
         Connection c = HarvestDBConnection.get();
         try {
@@ -633,6 +641,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      *
      * @return An iterator that give the existing harvest definitions in turn
      */
+    @Override
     public synchronized Iterator<HarvestDefinition> getAllHarvestDefinitions() {
         Connection c = HarvestDBConnection.get();
         try {
@@ -666,6 +675,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @return Iterator containing the default DomainConfiguration for all
      * domains that are not aliases
      */
+    @Override
     public synchronized Iterator<DomainConfiguration>
             getSnapShotConfigurations() {
         return new FilterIterator<Domain, DomainConfiguration>(
@@ -687,6 +697,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @return List of ready harvest definitions.   No check is performed for
      * whether these are already in the middle of being scheduled.
      */
+    @Override
     public Iterable<Long> getReadyHarvestDefinitions(Date now) {
         ArgumentNotValid.checkNotNull(now, "Date now");
         Connection connection = HarvestDBConnection.get();
@@ -720,6 +731,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @return The HarvestDefinition object with that name, or null if none
      *         has that name.
      */
+    @Override
     public synchronized HarvestDefinition getHarvestDefinition(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         log.debug("Reading harvestdefinition w/ name '" + name + "'");
@@ -747,6 +759,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * @see HarvestDefinitionDAO#getHarvestRunInfo(long)
      */
+    @Override
     public List<HarvestRunInfo> getHarvestRunInfo(long harvestID) {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
@@ -860,12 +873,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      *         for unknown harvest definitions.
      * @throws ArgumentNotValid on null argument.
      */
+    @Override
     public List<SparseDomainConfiguration> getSparseDomainConfigurations(
             Long harvestDefinitionID) {
         ArgumentNotValid.checkNotNull(harvestDefinitionID,
                                       "harvestDefinitionID");
         Connection c = HarvestDBConnection.get();
-        PreparedStatement s = null;
         try {
             return getSparseDomainConfigurations(c, harvestDefinitionID);
         } finally {
@@ -967,6 +980,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @return Sparse version of partial harvest or null for none.
      * @throws ArgumentNotValid on null or empty name.
      */
+    @Override
     public SparsePartialHarvest getSparsePartialHarvest(
             String harvestName) {
         ArgumentNotValid.checkNotNullOrEmpty(harvestName, "harvestName");
@@ -1063,6 +1077,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @throws UnknownID        if no harvest has the given ID.
      * @throws IOFailure        on any other error talking to the database
      */
+    @Override
     public String getHarvestName(Long harvestDefinitionID) {
         ArgumentNotValid.checkNotNull(harvestDefinitionID,
                                       "harvestDefinitionID");
@@ -1109,6 +1124,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @throws ArgumentNotValid on null argument
      * @throws UnknownID        if no harvest has the given ID.
      */
+    @Override
     public boolean isSnapshot(Long harvestDefinitionID) {
         ArgumentNotValid.checkNotNull(harvestDefinitionID,
                                       "harvestDefinitionID");
@@ -1145,6 +1161,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @throws UnknownID        if no harvest has the given ID.
      * @throws IOFailure        on any other error talking to the database
      */
+    @Override
     public SparseFullHarvest getSparseFullHarvest(
             String harvestName) {
         ArgumentNotValid.checkNotNullOrEmpty(harvestName, "harvestName");
@@ -1191,6 +1208,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     * @param harvestName of HarvestDefinition
     * @return List of all domains of the HarvestDefinition.
     */
+    @Override
     public List<String> getListOfDomainsOfHarvestDefinition(
             String harvestName) {
         ArgumentNotValid.checkNotNullOrEmpty(harvestName, "harvestName");
@@ -1236,6 +1254,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     * @param domainName of Domain
     * @return List of all seeds of the Domain in the HarvestDefinition.
     */
+    @Override
     public List<String> getListOfSeedsOfDomainOfHarvestDefinition(
             String harvestName, String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(harvestName, "harvestName");
