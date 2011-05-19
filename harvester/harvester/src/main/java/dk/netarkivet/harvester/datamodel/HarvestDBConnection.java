@@ -215,6 +215,7 @@ public final class HarvestDBConnection {
         }
         if (dataSource != null) {
             dataSource.close();
+            dataSource = null;
         }
     }
 

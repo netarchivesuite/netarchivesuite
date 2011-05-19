@@ -238,6 +238,18 @@ public class JobTester extends DataModelTestCase {
         }
     }
 
+    public void testIllegalJumpInStatus() {
+        DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
+        Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
+        job.setStatus(JobStatus.NEW);
+        try {
+            job.setStatus(JobStatus.DONE);
+            fail("Changed job status directly from NEW to DONE");
+        } catch (ArgumentNotValid e) {
+           //expected
+        }
+    }
+
     /**
      * Test if a configuration is checked with respect to expected number of objects,
      * and that the domain the domain in this configuration is not already in job.

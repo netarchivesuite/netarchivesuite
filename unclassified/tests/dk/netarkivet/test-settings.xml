@@ -56,6 +56,16 @@
             <port></port>
             <dir></dir>
             <backupInitHour>3</backupInitHour>
+            <pool>
+                <minSize>5</minSize>
+	            <maxSize>10</maxSize>
+	            <acquireInc>5</acquireInc>
+	            <maxStm>0</maxStm>
+                <maxStmPerConn>0</maxStmPerConn>
+                <idleConnTestPeriod>0</idleConnTestPeriod>
+                <idleConnTestQuery></idleConnTestQuery>
+                <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
+	        </pool>
         </database>
         <replicas>
             <!-- All bitarcive replicas in the environment,
@@ -93,6 +103,20 @@
         </arcrepositoryClient>
      </common>
      <harvester>
+         <datamodel>
+            <domain>
+                <defaultSeedlist>defaultseeds</defaultSeedlist>
+                <defaultConfig>defaultconfig</defaultConfig>
+                <defaultOrderxml>default_orderxml</defaultOrderxml>
+                <defaultMaxrate>100</defaultMaxrate>
+                <defaultMaxbytes>1000000000</defaultMaxbytes>
+                <defaultMaxobjects>-1</defaultMaxobjects>
+                <!-- Used when creating ids for new jobs after a admin
+                database restore. -->
+                <nextJobId>0</nextJobId>
+                <validSeedRegex>^.*$</validSeedRegex>
+            </domain>
+        </datamodel>
      	<harvesting>
      		<heritrix>
      			<jmxUsername>controlRole</jmxUsername>

@@ -74,13 +74,13 @@ public class DatabaseTestUtils {
         // http://incubator.apache.org/derby/docs/ref/rrefjdbc37352.html
 
         final String dbfile = dbUnzipDir + "/" + dbname;
-        try {
+        /*try {
             Field f = HarvestDBConnection.class.getDeclaredField("connectionPool");
             f.setAccessible(true);
             connectionPool = (WeakHashMap<Thread,Connection>) f.get(null);
         } catch (NoSuchFieldException e) {
             throw new PermissionDenied("Can't get connectionPool field", e);
-        }
+        }*/
         // Make sure we're using the right DB in HarvestDBConnection
 
         /* Set DB name */
@@ -92,6 +92,7 @@ public class DatabaseTestUtils {
         }
         dburi = "jdbc:derby:" + dbfile;
         return DriverManager.getConnection(dburi);
+        //return HarvestDBConnection.get();
             /*
             Field f = HarvestDBConnection.class.getDeclaredField("dbname");
             f.setAccessible(true);
@@ -125,13 +126,13 @@ public class DatabaseTestUtils {
         // http://incubator.apache.org/derby/docs/ref/rrefjdbc37352.html
 
         final String dbfile = dbUnzipDir.getPath();
-        try {
+       /* try {
             Field f = HarvestDBConnection.class.getDeclaredField("connectionPool");
             f.setAccessible(true);
             connectionPool = (WeakHashMap<Thread,Connection>) f.get(null);
         } catch (NoSuchFieldException e) {
             throw new PermissionDenied("Can't get connectionPool field", e);
-        }
+        }*/
         // Make sure we're using the right DB in HarvestDBConnection
 
         /* Set DB name */
@@ -143,6 +144,7 @@ public class DatabaseTestUtils {
         }
         dburi = "jdbc:derby:" + dbfile;
         return DriverManager.getConnection(dburi);
+        //return HarvestDBConnection.get();
             /*
             Field f = HarvestDBConnection.class.getDeclaredField("dbname");
             f.setAccessible(true);
@@ -182,7 +184,7 @@ public class DatabaseTestUtils {
             log.warning(
                     "Expected SQL-exception when shutting down database:" + e);
         }
-        connectionPool.clear();
+        //connectionPool.clear();
         // null field instance in DBSpecifics.
         Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
         f.set(null, null);
