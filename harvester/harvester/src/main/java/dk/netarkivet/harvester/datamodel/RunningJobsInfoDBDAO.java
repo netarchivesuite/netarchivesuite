@@ -848,11 +848,18 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                             FR_COLUMN.totalBudget.rank(), frl.getTotalBudget());
                     stm.setLong(
                             FR_COLUMN.errorCount.rank(), frl.getErrorCount());
-                    stm.setString(
-                            FR_COLUMN.lastPeekUri.rank(), frl.getLastPeekUri());
-                    stm.setString(
+
+                    // URIs are to be truncated to 1000 characters
+                    // (see SQL scripts)
+                    DBUtils.setStringMaxLength(
+                            stm,
+                            FR_COLUMN.lastPeekUri.rank(),
+                            frl.getLastPeekUri(), 1000, frl, "lastPeekUri");
+                    DBUtils.setStringMaxLength(
+                            stm,
                             FR_COLUMN.lastQueuedUri.rank(),
-                            frl.getLastQueuedUri());
+                            frl.getLastQueuedUri(), 1000, frl, "lastQueuedUri");
+
                     stm.addBatch();
                 }
 
