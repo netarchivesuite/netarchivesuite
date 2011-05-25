@@ -568,9 +568,16 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
 
             boolean crawlServiceJobExists = false;
             try {
-                crawlServiceJobExists = getMBeanServerConnection()
-                        .isRegistered(
+                if (crawlServiceJobBeanName != null) {
+                    crawlServiceJobExists =
+                        getMBeanServerConnection().isRegistered(
                                 JMXUtils.getBeanName(crawlServiceJobBeanName));
+                } else {
+                    // An error occurred when initializing the controller
+                    // Simply log a warning for the record
+                    log.warn("crawlServiceJobBeanName is null, earlier " +
+                    		"initialization of controller did not complete.");
+                }
             } catch (IOException e) {
                 log.warn(e);
                 continue;
