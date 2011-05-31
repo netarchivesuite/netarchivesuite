@@ -146,6 +146,9 @@ public abstract class CrawlLogIndexCache extends
                                     addToExistingIndex);
             long count = 0;
             for (Map.Entry<Long, File> entry : rawfiles.entrySet()) {
+                // TODO investigate whether or not this step can be 
+                // easily parallelized using the tips given in page:
+                // http://wiki.apache.org/lucene-java/ImproveIndexingSpeed
                 indexFile(entry.getKey(), entry.getValue(), indexer);
                 count++;
                 log.debug("Finished indexing file " 
