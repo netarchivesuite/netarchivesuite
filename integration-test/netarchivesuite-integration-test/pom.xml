@@ -16,6 +16,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.6.1</version>
@@ -23,12 +28,12 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>0.9.27</version>
+      <version>0.9.28</version>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.14.6</version>
+      <version>6.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.jaccept</groupId>
@@ -39,48 +44,30 @@
     <dependency>
       <groupId>com.jcraft</groupId>
       <artifactId>jsch</artifactId>
-      <version>0.1.42</version>
+      <version>0.1.44-1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.seleniumhq.selenium.client-drivers</groupId>
-      <artifactId>selenium-java-client-driver</artifactId>
-      <version>1.0.2</version>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-remote-control</artifactId>
+      <version>2.0b2</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>commons-cli</artifactId>
-          <groupId>commons-cli</groupId>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>1.6.1</version>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>selenium-maven-plugin</artifactId>
-        <version>1.1</version>
-        <executions>
-          <execution>
-            <id>xvfb</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>xvfb</goal>
-            </goals>
-          </execution>
-          <execution>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>start-server</goal>
-            </goals>
-            <configuration>
-              <background>true</background>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <!-- This module only contains integration tye -->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>

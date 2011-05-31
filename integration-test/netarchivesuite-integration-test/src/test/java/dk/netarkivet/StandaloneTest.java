@@ -24,10 +24,20 @@ package dk.netarkivet;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.slf4j.LoggerFactory;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeTest;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -81,7 +91,7 @@ public abstract class StandaloneTest extends SystemTest {
      * @throws Exception It apparently didn't work.
      */
     private void runCommandWithEnvironment(String remoteCommand)
-            throws Exception {
+    throws Exception {
         BufferedReader inReader = null;
         BufferedReader errReader = null;
         JSch jsch = new JSch();
@@ -95,21 +105,17 @@ public abstract class StandaloneTest extends SystemTest {
 
         session.connect();
 
-        String version;
-        if (System.getProperty("systemtest.version") != null)
-            version = System.getProperty("systemtest.version");
-        else
-            version = lookupRevisionValue();
+        String version = lookupRevisionValue();
         String setTimeStampCommand = "export TIMESTAMP=" + version;
         String setPortCommand = "export PORT=" + getPort();
         String setMailReceiversCommand = "export MAILRECEIVERS="
-                + System.getProperty("systemtest.mailrecievers");
+            + System.getProperty("systemtest.mailrecievers");
         String setTestCommand = "export TESTX=" + getTestX();
         String setPathCommand = "source /etc/bashrc ; source /etc/profile; source ~/.bash_profile";
 
         String command = setPathCommand + ";" + setTimeStampCommand + ";"
-                + setPortCommand + ";" + setMailReceiversCommand + ";"
-                + setTestCommand + ";" + remoteCommand;
+        + setPortCommand + ";" + setMailReceiversCommand + ";"
+        + setTestCommand + ";" + remoteCommand;
 
         long startTime = System.currentTimeMillis();
         log.info("Running JSch command: " + command);
@@ -155,7 +161,7 @@ public abstract class StandaloneTest extends SystemTest {
         if (result.contains("ERROR") || result.contains("Exception")) {
             throw new RuntimeException(
                     "Console output from deployment of NetarchiveSuite to the test system "
-                            + "indicated a error");
+                    + "indicated a error");
         }
     }
 
@@ -167,22 +173,38 @@ public abstract class StandaloneTest extends SystemTest {
      * @return
      */
     private String lookupRevisionValue() {
-        if (System.getProperty("systemtest.version") != null)
-            return lookupRevisionValue();
         String revisionValue = null;
-        File dir = new File("target/deploy");
+        if (System.getProperty("systemtest.version") != null) {
+            revisionValue = System.getProperty("systemtest.version");
+        } else { 
+            File dir = new File("target/deploy");
 
-        String[] children = dir.list();
-        int testXValueStart = "NetarchiveSuite-".length();
-        for (String fileName : children) {
-            int zipPrefixPos = fileName.indexOf(".zip");
-            if (fileName.contains("NetarchiveSuite-")
-                    && zipPrefixPos > testXValueStart) {
-                revisionValue = fileName.substring(testXValueStart,
-                        zipPrefixPos);
-                break;
+            String[] children = dir.list();
+            int testXValueStart = "NetarchiveSuite-".length();
+            for (String fileName : children) {
+                int zipPrefixPos = fileName.indexOf(".zip");
+                if (fileName.contains("NetarchiveSuite-")
+                        && zipPrefixPos > testXValueStart) {
+                    revisionValue = fileName.substring(testXValueStart,
+                            zipPrefixPos);
+                    break;
+                }
             }
         }
         return revisionValue;
+    }
+
+    @AfterMethod
+    public void onFailure(ITestResult result) { 
+        if (!result.isSuccess()) { 
+            log.info("Test failure, dumping screenshot as " + "target/failurescreendumps/" + 
+                    result.getMethod() + ".png");
+            File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+            try {
+                FileUtils.copyFile(scrFile, new File("target/failurescreendumps/" + result.getMethod() + ".png"));
+            } catch (IOException e) {
+                log.error("Failed to save screendump on error");
+            }
+        }
     }
 }

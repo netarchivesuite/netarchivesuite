@@ -26,65 +26,31 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
+import org.openqa.selenium.By;
 import org.testng.annotations.Test;
-
-import com.thoughtworks.selenium.DefaultSelenium;
-import com.thoughtworks.selenium.Selenium;
 
 /**
  * Test specification: http://netarchive.dk/suite/TEST1 .
  */
-public class Test1 extends StandaloneTest {
-
-    private Selenium selenium;
-
-    @BeforeClass
-    @Parameters( { "selenium.host", "selenium.port", "selenium.browser",
-            "selenium.url" })
-    public void startSelenium(@Optional("localhost")
-    String host, @Optional("4444")
-    String port, @Optional("*firefox")
-    String browser, @Optional("http://kb-test-adm-001.kb.dk:8079/")
-    String url) {
-        this.selenium = new DefaultSelenium(host, Integer.parseInt(port),
-                browser, "http://kb-test-adm-001.kb.dk:" + getPort() + "/");
-        this.selenium.start();
-    }
-
-    @AfterClass(alwaysRun = true)
-    public void stopSelenium() {
-        this.selenium.stop();
-    }
+public class SystemOverviewTest extends StandaloneTest {
 
     /**
      * Test specification: http://netarchive.dk/suite/It23JMXMailCheck .
      */
     @Test
-    public void step1() throws Exception {
+    public void generalTest() throws Exception {
         addDescription("Test specification: http://netarchive.dk/suite/It23JMXMailCheck");
         addStep("Goto the HarvestDefinition page", "");
-        selenium.open("/HarvestDefinition/");
-        addStep("Click the 'Systemstate link' in the left menu", "");
-        selenium.click("link=Systemstate");
-        selenium.waitForPageToLoad("10000");
-        addStep(
-                "Click the 'Overview of the system state' link in the left menu",
-                "");
-        selenium.click("link=Overview of the system state");
-        selenium.waitForPageToLoad("3000");
+        driver.get(baseUrl + "/HarvestDefinition/");
+        addStep("Click the 'Systemstate link' in the left menu", "The system state page is displayed");
+        driver.findElement(By.linkText("Systemstate")).click();
         // We need to click the 'Instance id' link to differentiate between
         // instances of the same application running on the same machine
         addStep(
                 "Click the 'Instance id' link (We need to do this to differentiate between "
                         + "instances of the same application running on the same machine)",
                 "Verify that the the expected applications are running as they should.");
-        selenium.click("link=Instance id");
-        selenium.waitForPageToLoad("3000");
-
+        driver.findElement(By.linkText("Instance id")).click();
         int numberOfRows = selenium.getXpathCount(
                 "//table[@id='system_state_table']/tbody/tr").intValue();
         Set<Application> expectedApplicationSet = new HashSet<Application>(
