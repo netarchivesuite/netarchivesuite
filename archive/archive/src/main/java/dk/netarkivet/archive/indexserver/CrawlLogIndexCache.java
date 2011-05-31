@@ -120,6 +120,9 @@ public abstract class CrawlLogIndexCache extends
      * null values are allowed in this map.
      */
     protected void combine(Map<Long, File> rawfiles) {
+        long datasetSize = rawfiles.values().size();
+        log.info("Starting to combine a dataset with " 
+                +  datasetSize + " crawl logs");
         File resultFile = getCacheFile(rawfiles.keySet());
         String indexLocation = resultFile.getAbsolutePath() + ".luceneDir";
         try {
@@ -141,13 +144,18 @@ public abstract class CrawlLogIndexCache extends
                                     includeTimestamp,
                                     includeEtag,
                                     addToExistingIndex);
-
+            long count = 0;
             for (Map.Entry<Long, File> entry : rawfiles.entrySet()) {
                 indexFile(entry.getKey(), entry.getValue(), indexer);
+                count++;
+                log.debug("Finished indexing file " 
+                        + count + " out of " + datasetSize);
             }
             indexer.close(OPTIMIZE_INDEX);
             // Now the index is made, gzip it up.
             ZipUtils.gzipFiles(new File(indexLocation), resultFile);
+            log.info("Completed combining a dataset with " 
+                    + datasetSize + " crawl logs");
         } catch (IOException e) {
             throw new IOFailure("Error setting up craw.log index framework for "
                     + resultFile.getAbsolutePath(), e);
@@ -166,6 +174,8 @@ public abstract class CrawlLogIndexCache extends
     private void indexFile(Long id, File file, DigestIndexer indexer) {
         // variable 'blacklist' set to true results in docs matching the
         // mimefilter being ignored.
+        log.debug("Ingesting the crawl.log file '" + file.getAbsolutePath() 
+                + "' related to job " + id);
         boolean blacklist = useBlacklist;
         final String mimefilter = mimeFilter;
         final boolean verbose = false; //Avoids System.out.println's
@@ -198,7 +208,7 @@ public abstract class CrawlLogIndexCache extends
                     FileUtils.remove(cdxFile);
                 }
             } catch (IOException e) {
-                log.info("Error cleaning up after"
+                log.warn("Error cleaning up after"
                         + " crawl log index cache generation", e);
             }
         }
