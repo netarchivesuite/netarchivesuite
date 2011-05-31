@@ -23,7 +23,6 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.jsp.PageContext;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -206,7 +205,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         	params.put(
             		HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), 
             		new String[]{ "bogus" });
-        	l = HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
+        	HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
             fail("Should have forwarded me to ArgumentNotValid for wrong job status.");
         } catch (ArgumentNotValid e) {
             //Expected
@@ -217,7 +216,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         	params.put(
             		HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), 
             		new String[]{ "XX" });
-        	l = HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
+        	HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
         	fail("Should have forwarded me to ArgumentNotValid for unknown sort order.");
         } catch (ArgumentNotValid e) {
             //Expected
@@ -241,7 +240,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         servletRequest.setParameterMap(parms);
         
         try {
-        	query = new HarvestStatusQuery(servletRequest);
+        	new HarvestStatusQuery(servletRequest);
             fail("Should have forwarded me to an error page on wrong order parameter.");
         } catch (ArgumentNotValid e) {
            //Expected
@@ -284,7 +283,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         // FIXME this says that it should forward to error page on wrong order parameters
         // But it does not!
         try {
-        	query = new HarvestStatusQuery(servletRequest);
+        	new HarvestStatusQuery(servletRequest);
             fail("Should have forwarded me to an error page on wrong order parameter.");
         //} catch (IllegalArgumentException e) {
         //   //Expected

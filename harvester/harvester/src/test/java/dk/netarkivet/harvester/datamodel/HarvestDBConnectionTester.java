@@ -180,9 +180,12 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
      *  Especially, that bug 970 is solved.
      */
     public void testSetStringMaxLength() throws SQLException {
+        Connection c = null;
+        try {
+        c = HarvestDBConnection.get();
     	Object dummyObject = null;
     	int id = 1;
-    	PreparedStatement s = getPreparedStatementForTestingSetStringMaxLength(id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
+    	PreparedStatement s = getPreparedStatementForTestingSetStringMaxLength(c, id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
     	int fieldNum = 2;
     	String contents = "contents";
     	int maxSize = contents.length();
@@ -203,7 +206,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     	// Verify, that setClobMaxLength issues a warning, if contents.length() > maxSize
     	// and that storedContents equals to the first maxSize characters of variable 'contents'
     	id=2;
-    	s = getPreparedStatementForTestingSetStringMaxLength(id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
+    	s = getPreparedStatementForTestingSetStringMaxLength(c, id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
     	maxSize = contents.length() - 2;
     	try {
     		DBUtils.setStringMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
@@ -217,50 +220,65 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         s.execute();
         storedContents = retrieveStoredString(id);
     	assertEquals("storedContents differs from original", contents.substring(0,maxSize), storedContents);
+        } finally {
+            if (c != null) {
+                HarvestDBConnection.release(c);
+            }
+        }
 }
 
 	/** check HarvestDBConnection.setClobMaxLength().
      * especially, that bug 970 is solved. */
     public void testSetClobMaxLength() throws SQLException {
-    	Object dummyObject = null;
-    	int id = 3;
-    	PreparedStatement s = getPreparedStatementForTestingSetClobMaxLength(id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
-    	int fieldNum = 3;
-    	String contents = "contents";
-    	long maxSize = contents.length();
+        Connection c = null;
+        try {
+            c = HarvestDBConnection.get();
 
-    	// Verify, that setClobMaxLength works without warnings, if contents.length() <= maxSize
-    	// and that storedContents equals to variable 'contents'
-    	DBUtils.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
+            Object dummyObject = null;
+            int id = 3;
+            PreparedStatement s = getPreparedStatementForTestingSetClobMaxLength(c, id, 
+                    "nameOfOrderxml", "ContentsOfOrderxmldoc");
+            int fieldNum = 3;
+            String contents = "contents";
+            long maxSize = contents.length();
 
-    	// Check, that no WARNING has been written to the log
-    	LogUtils.flushLogs(HarvestDBConnection.class.getName());
-        FileAsserts.assertFileNotContains("Log should not have given warning as yet",
-        		logfile, "setClobMaxLength\nWARNING: fieldname");
+            // Verify, that setClobMaxLength works without warnings, if contents.length() <= maxSize
+            // and that storedContents equals to variable 'contents'
+            DBUtils.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
 
-        s.execute();
-        String storedContents = retrieveStoredClob(id);
-    	assertEquals("storedContents differs from original", contents, storedContents);
+            // Check, that no WARNING has been written to the log
+            LogUtils.flushLogs(HarvestDBConnection.class.getName());
+            FileAsserts.assertFileNotContains("Log should not have given warning as yet",
+                    logfile, "setClobMaxLength\nWARNING: fieldname");
 
-    	// Verify, that setClobMaxLength issues a warning, if contents.length() > maxSize
-    	// and that storedContents equals to the first maxSize characters of variable 'contents'
+            s.execute();
+            String storedContents = retrieveStoredClob(id);
+            assertEquals("storedContents differs from original", contents, storedContents);
 
-    	id=4;
-    	s = getPreparedStatementForTestingSetClobMaxLength(id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
-        maxSize = contents.length() - 2;
-    	try {
-    		DBUtils.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
-    	} catch (PermissionDenied e) {
-    		fail("Should never throw PermissionDenied exception");
-    	}
-    	// Check, that a WARNING has been written to the log
+            // Verify, that setClobMaxLength issues a warning, if contents.length() > maxSize
+            // and that storedContents equals to the first maxSize characters of variable 'contents'
 
-    	LogUtils.flushLogs(HarvestDBConnection.class.getName());
-        FileAsserts.assertFileContains("Log should have given warning",
-                "setClobMaxLength\nWARNING: fieldname", logfile);
-        s.execute();
-        storedContents = retrieveStoredClob(id);
-    	assertEquals("storedContents differs from original", contents.substring(0,(int) maxSize), storedContents);
+            id=4;
+            s = getPreparedStatementForTestingSetClobMaxLength(c, id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
+            maxSize = contents.length() - 2;
+            try {
+                DBUtils.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
+            } catch (PermissionDenied e) {
+                fail("Should never throw PermissionDenied exception");
+            }
+            // Check, that a WARNING has been written to the log
+
+            LogUtils.flushLogs(HarvestDBConnection.class.getName());
+            FileAsserts.assertFileContains("Log should have given warning",
+                    "setClobMaxLength\nWARNING: fieldname", logfile);
+            s.execute();
+            storedContents = retrieveStoredClob(id);
+            assertEquals("storedContents differs from original", contents.substring(0,(int) maxSize), storedContents);
+        } finally {
+            if ( c != null) {
+                HarvestDBConnection.release(c);
+            }
+        }
     }
 
 
@@ -308,34 +326,26 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         }
     }
 
-    public PreparedStatement getPreparedStatementForTestingSetStringMaxLength(int id, String orderxml, String orderxmldoc)
+    public PreparedStatement getPreparedStatementForTestingSetStringMaxLength(
+            Connection c, int id, String orderxml, String orderxmldoc)
     throws SQLException {
-    	Connection c = HarvestDBConnection.get();
-    	try {
-    	    PreparedStatement s =
-    	        c.prepareStatement("INSERT INTO HarvestDBConnectionTester (id, orderxml, orderxmldoc) "
-    	                + " VALUES (?, ?, ?)");
-    	    s.setInt(1, id);
-    	    DBUtils.setClobMaxLength(s, 3, orderxmldoc, 64000L, null, "fieldName");
-    	    return s;
-    	} finally {
-    	    HarvestDBConnection.release(c);
-    	}
+        PreparedStatement s =
+            c.prepareStatement("INSERT INTO HarvestDBConnectionTester (id, orderxml, orderxmldoc) "
+                    + " VALUES (?, ?, ?)");
+        s.setInt(1, id);
+        DBUtils.setClobMaxLength(s, 3, orderxmldoc, 64000L, null, "fieldName");
+        return s;
     }
 
-    public PreparedStatement getPreparedStatementForTestingSetClobMaxLength(int id, String orderxml, String orderxmldoc)
+    public PreparedStatement getPreparedStatementForTestingSetClobMaxLength(
+            Connection c, int id, String orderxml, String orderxmldoc)
     throws SQLException {
-    	Connection c = HarvestDBConnection.get();
-    	try {
-    	    PreparedStatement s =
-    	        c.prepareStatement("INSERT INTO HarvestDBConnectionTester (id, orderxml, orderxmldoc) "
-    	                + " VALUES (?, ?, ?)");
-    	    s.setInt(1, id);
-    	    DBUtils.setStringMaxLength(s, 2, orderxml, 300, null, "fieldName");
-    	    return s;
-    	} finally {
-    	    HarvestDBConnection.release(c);
-    	}
+        PreparedStatement s =
+            c.prepareStatement("INSERT INTO HarvestDBConnectionTester (id, orderxml, orderxmldoc) "
+                    + " VALUES (?, ?, ?)");
+        s.setInt(1, id);
+        DBUtils.setStringMaxLength(s, 2, orderxml, 300, null, "fieldName");
+        return s;
     }
 
     private void createTestTable() throws SQLException {

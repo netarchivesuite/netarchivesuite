@@ -79,8 +79,6 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 public class HarvestControllerServerTester extends TestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
-    TestInfo info = new TestInfo();
-
     /** The message to write to log when starting the server. */
     private static final String START_MESSAGE = "Starting HarvestControllerServer.";
 
@@ -133,6 +131,8 @@ public class HarvestControllerServerTester extends TestCase {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR,
                      TestInfo.WORKING_DIR.getAbsolutePath() + "/oldjobs");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, 
+                JobPriority.HIGHPRIORITY.toString());
     }
 
     /**
@@ -299,7 +299,7 @@ public class HarvestControllerServerTester extends TestCase {
         hcs = HarvestControllerServer.getInstance();
         theJob = TestInfo.getJob();
         theJob.setStatus(JobStatus.DONE);
-        theJob.setJobID(new Long(42L));
+        theJob.setJobID(Long.valueOf(42L));
         JobPriority priority = JobPriority.valueOf(
                 Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
         NetarkivetMessage naMsg = new DoOneCrawlMessage(
@@ -327,7 +327,7 @@ public class HarvestControllerServerTester extends TestCase {
         hcs = HarvestControllerServer.getInstance();
         // TODO check that new clean Haco does not send any CrawlStatusMessages
         theJob = TestInfo.getJob();
-        theJob.setJobID(new Long(42L)); // Hack: because j.getJobID() == null
+        theJob.setJobID(Long.valueOf(42L)); // Hack: because j.getJobID() == null
 
         jobTempDir = new File(TestInfo.SERVER_DIR, "jobTempDir");
         if (!jobTempDir.mkdir()) {
