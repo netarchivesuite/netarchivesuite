@@ -28,14 +28,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import is.hi.bok.deduplicator.CrawlDataIterator;
 import is.hi.bok.deduplicator.DigestIndexer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.SimpleFSDirectory;
 
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -52,7 +57,6 @@ import dk.netarkivet.common.utils.ZipUtils;
  * getCacheFile().
  * The subclass has to determine in its constructor call which mime types are
  * included.
- *
  */
 public abstract class CrawlLogIndexCache extends
                 CombiningMultiFileBasedCache<Long> implements JobIndexCache {
@@ -124,37 +128,37 @@ public abstract class CrawlLogIndexCache extends
         log.info("Starting to combine a dataset with " 
                 +  datasetSize + " crawl logs");
         File resultFile = getCacheFile(rawfiles.keySet());
+        Set<File> tmpfiles = new HashSet<File>();
         String indexLocation = resultFile.getAbsolutePath() + ".luceneDir";
         try {
-            // Setup Lucene for indexing our crawllogs
-            // MODE_BOTH: Both URL's and Hash are indexed: Alternatives:
-            // DigestIndexer.MODE_HASH or DigestIndexer.MODE_URL
-            String indexingMode = DigestIndexer.MODE_BOTH;
-            // used to be 'equivalent' setting
-            boolean includeNormalizedURL = false;
-            // used to be 'timestamp' setting
-            boolean includeTimestamp = true;
-            // used to be 'etag' setting
-            boolean includeEtag = true;
-            boolean addToExistingIndex = false;
-            DigestIndexer indexer =
-                new DigestIndexer(indexLocation,
-                                    indexingMode,
-                                    includeNormalizedURL,
-                                    includeTimestamp,
-                                    includeEtag,
-                                    addToExistingIndex);
+            DigestIndexer indexer = createStandardIndexer(indexLocation);
             long count = 0;
+            List<Directory> indices = new ArrayList<Directory>();
             for (Map.Entry<Long, File> entry : rawfiles.entrySet()) {
-                // TODO investigate whether or not this step can be 
+                
+                // FIXME investigate whether or not this step can be 
                 // easily parallelized using the tips given in page:
                 // http://wiki.apache.org/lucene-java/ImproveIndexingSpeed
-                indexFile(entry.getKey(), entry.getValue(), indexer);
+                File tmpFile = new File(FileUtils.getTempDir(), 
+                        UUID.randomUUID().toString());
+                tmpfiles.add(tmpFile);
+                String localindexLocation = tmpFile.getAbsolutePath();
+                DigestIndexer localindexer = createStandardIndexer(
+                        localindexLocation);
+                indexFile(entry.getKey(), entry.getValue(), localindexer);
+                indices.add(new SimpleFSDirectory(
+                        new File(localindexLocation)));
+                localindexer.close(OPTIMIZE_INDEX);
                 count++;
                 log.debug("Finished indexing file " 
                         + count + " out of " + datasetSize);
             }
-            indexer.close(OPTIMIZE_INDEX);
+            
+            log.debug("Merging the indices but don't optimize");            
+            indexer.getIndex().addIndexesNoOptimize(
+                    indices.toArray(new Directory[0]));
+            indexer.close(false);
+            
             // Now the index is made, gzip it up.
             ZipUtils.gzipFiles(new File(indexLocation), resultFile);
             log.info("Completed combining a dataset with " 
@@ -164,6 +168,9 @@ public abstract class CrawlLogIndexCache extends
                     + resultFile.getAbsolutePath(), e);
         } finally {
             FileUtils.removeRecursively(new File(indexLocation));
+            for (File temporaryFile : tmpfiles) {
+                FileUtils.removeRecursively(temporaryFile);
+            }
         }
     }
 
@@ -261,5 +268,36 @@ public abstract class CrawlLogIndexCache extends
             throw new IOFailure("Error creating sorted crawl log file for '"
                     + file + "'", e);
         }
+    }
+    
+    /**
+     *  Create standard deduplication indexer.
+     * 
+     * @param indexLocation The full path to the indexing directory
+     * @return the created deduplication indexer.
+     * @throws IOException If unable to open the index.
+     */
+    private static DigestIndexer createStandardIndexer(String indexLocation) 
+    throws IOException {
+        
+        // Setup Lucene for indexing our crawllogs
+        // MODE_BOTH: Both URL's and Hash are indexed: Alternatives:
+        // DigestIndexer.MODE_HASH or DigestIndexer.MODE_URL
+        String indexingMode = DigestIndexer.MODE_BOTH;
+        // used to be 'equivalent' setting
+        boolean includeNormalizedURL = false;
+        // used to be 'timestamp' setting
+        boolean includeTimestamp = true;
+        // used to be 'etag' setting
+        boolean includeEtag = true;
+        boolean addToExistingIndex = false;
+        DigestIndexer indexer =
+            new DigestIndexer(indexLocation,
+                    indexingMode,
+                    includeNormalizedURL,
+                    includeTimestamp,
+                    includeEtag,
+                    addToExistingIndex);
+        return indexer;
     }
 }

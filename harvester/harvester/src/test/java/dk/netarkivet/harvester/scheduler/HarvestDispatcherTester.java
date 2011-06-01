@@ -114,7 +114,7 @@ public class HarvestDispatcherTester extends TestCase {
         DatabaseTestUtils.getHDDB(new File(TestInfo.BASEDIR, "fullhddb.jar"),
                 "fullhddb", TestInfo.WORKING_DIR);
 
-        TestUtils.resetDAOs();
+        //TestUtils.resetDAOs();
 
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());

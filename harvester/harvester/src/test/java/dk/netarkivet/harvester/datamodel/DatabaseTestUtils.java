@@ -29,15 +29,11 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.logging.Logger;
 
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ZipUtils;
-import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.testutils.ReflectUtils;
 
@@ -46,7 +42,7 @@ import dk.netarkivet.testutils.ReflectUtils;
  *
  */
 public class DatabaseTestUtils {
-    private static Map<Thread,Connection> connectionPool;
+    
     private static String dburi;
     protected static final Logger log = 
         Logger.getLogger(DatabaseTestUtils.class.getName());
