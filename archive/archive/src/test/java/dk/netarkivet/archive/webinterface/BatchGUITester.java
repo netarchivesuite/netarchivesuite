@@ -183,7 +183,8 @@ public class BatchGUITester extends TestCase {
     
     public void testExecute() {
         File arcFile = new File(TestInfo.BATCH_DIR, "MimeUrlSearch.jar");
-        assertTrue(arcFile.isFile());
+        assertTrue("The file '" + arcFile.getAbsolutePath() 
+                + "' does not exist or is not a file", arcFile.isFile());
         
         Settings.set("settings.common.batch.batchjobs.batchjob.class", 
                 "dk.netarkivet.common.utils.batch.UrlSearch");

@@ -180,14 +180,15 @@ public class FileUtils {
                         + f.getAbsolutePath());
                 final boolean success = remove(f);
                 if (!success) {
-                        throw new IOFailure("Unable to remove file: '" 
+                    log.warn("Unable to remove file: '" 
                                         + f.getAbsolutePath() + "'");
+                    return false;
                 }
             } else {
                 String errMsg = "Problem with deletion of directory: '" 
                     + f.getAbsolutePath() + "'.";
-                log.debug(errMsg);
-                throw new IOFailure(errMsg);
+                log.warn(errMsg);
+                return false;
             }
         }
 
@@ -200,7 +201,6 @@ public class FileUtils {
      *            A file to completely and utterly remove.
      * @return true if the file did exist, false otherwise.
      * @throws ArgumentNotValid if f is null.
-     * @throws IOFailure If unable to remove file.
      * @throws SecurityException
      *             If a security manager exists and its <code>{@link
      *                           java.lang.SecurityManager#checkDelete}</code>
@@ -222,7 +222,7 @@ public class FileUtils {
                 final String errMsg = "Unable to remove file '"
                     + f.getAbsolutePath() + "'.";
                 log.warn(errMsg);
-                throw new IOFailure(errMsg);
+                return false;
             }
         }
 
