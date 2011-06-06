@@ -147,7 +147,7 @@ public class UnitTesterSuite {
         /* 
          * Testersuites for the wayback module 
          */
-//        WaybackTesterSuite.addToSuite(suite);
+        WaybackTesterSuite.addToSuite(suite);
     }
 
     public static Test suite() {
