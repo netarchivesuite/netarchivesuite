@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     commons-cli-1.0.jar
     commons-fileupload-1.2.1.jar
     commons-io-1.4.jar
-    commons-net-2.2.jar
+    commons-net-3.0.1.jar
     dom4j-1.5.2.jar
     heritrix/lib/heritrix-1.14.4.jar
     commons-collections-3.1.jar
@@ -97,7 +97,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="charting/jfreechart-1.0.13.jar"/>
             	<include name="commons-cli-1.0.jar"/>
                 <include name="commons-fileupload-1.2.1.jar"/>
-                <include name="commons-net-2.2.jar"/>
+                <include name="commons-net-3.0.1.jar"/>
             	<include name="commons-io-1.4.jar"/>
                 <include name="dom4j-1.5.2.jar"/>
                 <include name="heritrix/lib/heritrix-1.14.4.jar"/>
