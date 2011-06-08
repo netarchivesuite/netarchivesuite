@@ -86,6 +86,9 @@ public class DataModelTestCase extends TestCase {
         String derbyDBUrl = "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath()
         + "/fullhddb";
         Settings.set(CommonSettings.DB_BASE_URL, derbyDBUrl);
+        Settings.set(CommonSettings.DB_MACHINE, "");
+        Settings.set(CommonSettings.DB_PORT, "");
+        Settings.set(CommonSettings.DB_DIR, "");
 
         commonTempdir.mkdir();
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
