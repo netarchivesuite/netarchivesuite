@@ -25,9 +25,6 @@ package dk.netarkivet.archive.indexserver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,11 +39,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.StringAsserts;
-
 
 /**
  * Unit test(s) for the DedupCrawlLogIndexCache class.
@@ -98,7 +91,6 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         
         DedupCrawlLogIndexCache cache = new DedupCrawlLogIndexCache();
         File resultFile = cache.getCacheFile(files.keySet());
-        setDummyCDXCache(cache);
 
         cache.combine(files);
 
@@ -108,7 +100,10 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
                 new File(resultFile.getAbsolutePath().substring(0,
                         resultFile.getAbsolutePath().length() - 4)).exists());
         File unzipDir = new File(TestInfo.WORKING_DIR, "luceneindex");
-        unzipDir.mkdir();
+        if (!unzipDir.mkdir()) {
+            fail("Unable to create unzipDir '" + unzipDir.getAbsolutePath() 
+                    + "' for luceneindex: ");
+        }
         File[] resultFiles = resultFile.listFiles();
         for (File f : resultFiles) {
             if (f.getName().endsWith(".gz")) {
@@ -143,47 +138,14 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
     }
 
     public void testGetSortedCDX() throws Exception {
-        Method getSortedCDX = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
-                "getSortedCDX", Long.TYPE);
-        DedupCrawlLogIndexCache logcache = new DedupCrawlLogIndexCache();
-
-        setDummyCDXCache(logcache);
-
-        File reader = (File)getSortedCDX.invoke(logcache, 4L);
+        CDXDataCache dummyindexcache = new CDXDataCache();
+        File cdxUnsorted = dummyindexcache.getCacheFile(4L);
+        
+        File reader = DedupCrawlLogIndexCache.getSortedCDX(cdxUnsorted);
         assertNotNull("Should get a file for an existing job", reader);
-        assertEquals("CDX file returned should contain same as presorted file",
+        assertEquals("CDX file returned should have same content as presorted file",
                 FileUtils.readListFromFile(TestInfo.CDX_CACHE_4),
                 FileUtils.readListFromFile(reader));
-
-        try {
-            getSortedCDX.invoke(logcache, 2L);
-            fail("Should have had exception on unknown ID 2");
-        } catch (InvocationTargetException e) {
-            // Real exception gets wrapped in the invoke call
-            UnknownID cause = (UnknownID)e.getCause();
-            StringAsserts.assertStringContains(
-                    "Should have job ID mentioned in message",
-                    "2", cause.getMessage());
-        }
-    }
-
-    /** Sets up a dummy CDX index cache that just serves the files existing
-     * It even just assumes that you only ask for one id at a time.
-    */
-    private void setDummyCDXCache(DedupCrawlLogIndexCache logcache) throws
-            NoSuchFieldException, IllegalAccessException {
-        CDXDataCache dummyindexcache = new CDXDataCache() {
-            public Long cache(Long id) {
-                File cacheFile = getCacheFile(id);
-                if (cacheFile.exists()) {
-                    return id;
-                }
-                return null;
-            }
-        };
-        Field indexcachefield = ReflectUtils.getPrivateField(CrawlLogIndexCache.class,
-                "cdxcache");
-        indexcachefield.set(logcache, dummyindexcache);
     }
 
     public void testGetCacheFile() throws Exception {

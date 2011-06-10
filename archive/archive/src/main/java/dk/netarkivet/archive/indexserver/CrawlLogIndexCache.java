@@ -28,12 +28,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import is.hi.bok.deduplicator.CrawlDataIterator;
 import is.hi.bok.deduplicator.DigestIndexer;
@@ -44,7 +49,6 @@ import org.apache.lucene.store.SimpleFSDirectory;
 
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 
@@ -63,8 +67,8 @@ public abstract class CrawlLogIndexCache extends
     /** Needed to find origin information, which is file+offset from CDX index.
      */
     private final CDXDataCache cdxcache = new CDXDataCache();
-    /** Optimizes Lucene index, if set to true. */
-    private static final boolean OPTIMIZE_INDEX = true;
+    ///** Optimizes Lucene index, if set to true. */
+    //private static final boolean OPTIMIZE_INDEX = true;
     /** the useBlacklist set to true results in docs matching the
        mimefilter being ignored. */
     private boolean useBlacklist;
@@ -132,31 +136,88 @@ public abstract class CrawlLogIndexCache extends
         String indexLocation = resultFile.getAbsolutePath() + ".luceneDir";
         try {
             DigestIndexer indexer = createStandardIndexer(indexLocation);
+            final boolean verboseIndexing = false;
+            DigestOptions indexingOptions = new DigestOptions(
+                    this.useBlacklist, verboseIndexing, this.mimeFilter);
             long count = 0;
-            List<Directory> indices = new ArrayList<Directory>();
+            Set<IndexingState> outstandingJobs = new HashSet<IndexingState>();
+            final int N_THREADS = 10; // TODO make this a setting
+            
+            ThreadPoolExecutor executor
+            = new ThreadPoolExecutor(N_THREADS, N_THREADS,
+                0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>());
+            
+            executor.setRejectedExecutionHandler(
+            new ThreadPoolExecutor.CallerRunsPolicy());
+
             for (Map.Entry<Long, File> entry : rawfiles.entrySet()) {
-                
-                // FIXME investigate whether or not this step can be 
-                // easily parallelized using the tips given in page:
-                // http://wiki.apache.org/lucene-java/ImproveIndexingSpeed
+                Long jobId = entry.getKey();
+                File crawlLog = entry.getValue();
+                // Generate UUID to ensure a unique filedir for the index.
                 File tmpFile = new File(FileUtils.getTempDir(), 
                         UUID.randomUUID().toString());
                 tmpfiles.add(tmpFile);
                 String localindexLocation = tmpFile.getAbsolutePath();
-                DigestIndexer localindexer = createStandardIndexer(
-                        localindexLocation);
-                indexFile(entry.getKey(), entry.getValue(), localindexer);
-                indices.add(new SimpleFSDirectory(
-                        new File(localindexLocation)));
-                localindexer.close(OPTIMIZE_INDEX);
+                Long cached = cdxcache.cache(jobId);
+                if (cached == null) {
+                    log.warn("Skipping the ingest of logs for job " 
+                            + entry.getKey() 
+                            + ". Unable to retrieve cdx-file for job.");
+                    continue;
+                }
+                File cachedCDXFile = cdxcache.getCacheFile(cached);
+                
+                // Dispatch this indexing task to a separate thread that 
+                // handles the sorting of the logfiles and the generation
+                // of a lucene index for this crawllog and cdxfile.
+                log.debug("Making subthread for indexing job " + jobId 
+                        + " - task " + count + " out of " + datasetSize);
+                Callable<Boolean> task = new DigestIndexerThread(
+                        localindexLocation, jobId, crawlLog,
+                        cachedCDXFile, indexingOptions);
+                Future<Boolean> result = executor.submit(task);
+                outstandingJobs.add(
+                        new IndexingState(jobId, localindexLocation, result));
                 count++;
-                log.debug("Finished indexing file " 
-                        + count + " out of " + datasetSize);
+            }
+            
+            // wait for all the outstanding subtasks to complete.
+            Set<Directory> subindices = new HashSet<Directory>();
+            // TODO add timeout here as well; and add a waitstate here as well 
+            // before checking if something is finished.
+            while (outstandingJobs.size() > 0) {
+                Iterator<IndexingState> iterator = outstandingJobs.iterator();
+                while (iterator.hasNext()) {
+                    Future<Boolean> nextResult;
+                    IndexingState next = iterator.next();
+                    if (next.getResultObject().isDone()) {
+                        nextResult = next.getResultObject();
+                        try {
+                            if (nextResult.get()) {
+                                subindices.add(
+                                        new SimpleFSDirectory(
+                                               new File(next.getIndex())));
+                            } else {
+                                log.warn("Indexing of job " 
+                                        + next.getJobIdentifier() + " failed.");
+                            }
+                        } catch (InterruptedException e) {
+                            log.warn("Unable to get Result back from "
+                                    + "indexing thread", e);
+                        } catch (ExecutionException e) {
+                            log.warn("Unable to get Result back from "
+                                    + "indexing thread", e);
+                        }
+                        //remove the done object from the set
+                        iterator.remove();
+                    }   
+                }
             }
             
             log.debug("Merging the indices but don't optimize");            
             indexer.getIndex().addIndexesNoOptimize(
-                    indices.toArray(new Directory[0]));
+                    subindices.toArray(new Directory[0]));
             indexer.close(false);
             
             // Now the index is made, gzip it up.
@@ -178,25 +239,28 @@ public abstract class CrawlLogIndexCache extends
      * offsets.
      *
      * @param id ID of a job to ingest.
-     * @param file The file containing the jobs crawl.log data.
+     * @param crawllogfile The file containing the crawl.log data for the job
+     * @param cdxfile The file containing the cdx data for the job
+     * @param options The digesting options used.
      * @param indexer The indexer to add to.
      */
-    private void indexFile(Long id, File file, DigestIndexer indexer) {
-        // variable 'blacklist' set to true results in docs matching the
-        // mimefilter being ignored.
-        log.debug("Ingesting the crawl.log file '" + file.getAbsolutePath() 
+    protected static void indexFile(Long id, File crawllogfile, File cdxfile, 
+            DigestIndexer indexer, DigestOptions options) {
+        log.debug("Ingesting the crawl.log file '" 
+                + crawllogfile.getAbsolutePath() 
                 + "' related to job " + id);
-        boolean blacklist = useBlacklist;
-        final String mimefilter = mimeFilter;
-        final boolean verbose = false; //Avoids System.out.println's
+        boolean blacklist = options.getUseBlacklist();
+        final String mimefilter = options.getMimeFilter();
+        final boolean verbose = options.getVerboseMode();
+        
         CrawlDataIterator crawlLogIterator = null;
-        File cdxFile = null;
+        File sortedCdxFile = null;
         File tmpCrawlLog = null;
         BufferedReader cdxBuffer = null;
         try {
-            cdxFile = getSortedCDX(id);
-            cdxBuffer = new BufferedReader(new FileReader(cdxFile));
-            tmpCrawlLog = getSortedCrawlLog(file);
+            sortedCdxFile = getSortedCDX(cdxfile);
+            cdxBuffer = new BufferedReader(new FileReader(sortedCdxFile));
+            tmpCrawlLog = getSortedCrawlLog(crawllogfile);
             crawlLogIterator = new CDXOriginCrawlLogIterator(
                     tmpCrawlLog, cdxBuffer);
             indexer.writeToIndex(
@@ -214,8 +278,8 @@ public abstract class CrawlLogIndexCache extends
                 if (cdxBuffer != null) {
                     cdxBuffer.close();
                 }
-                if (cdxFile != null) {
-                    FileUtils.remove(cdxFile);
+                if (sortedCdxFile != null) {
+                    FileUtils.remove(sortedCdxFile);
                 }
             } catch (IOException e) {
                 log.warn("Error cleaning up after"
@@ -224,28 +288,25 @@ public abstract class CrawlLogIndexCache extends
         }
     }
 
-    /** Get a sorted, temporary CDX file for a given job.
-     *
-     * @param jobid The ID of the job to get a sorted CDX file for.
+    /** Get a sorted, temporary CDX file corresponding to the given CDXfile.
+ 
+     * @param cdxFile A cdxfile 
      * @return A temporary file with CDX info for that just sorted according
      * to the standard CDX sorting rules.  This file will be removed at the
      * exit of the JVM, but should be attempted removed when it is no longer
      * used.
      */
-    private File getSortedCDX(long jobid) {
-        Long cached = cdxcache.cache(jobid);
-        if (cached == null) {
-            throw new UnknownID("Couldn't find cache for job " + jobid);
-        }
+    protected static File getSortedCDX(File cdxFile) {     
         try {
             final File tmpFile = File.createTempFile("sorted", "cdx",
                     FileUtils.getTempDir());
             // This throws IOFailure, if the sorting operation fails 
-            FileUtils.sortCDX(cdxcache.getCacheFile(cached), tmpFile);
+            FileUtils.sortCDX(cdxFile, tmpFile);
             tmpFile.deleteOnExit();
             return tmpFile;
         } catch (IOException e) {
-            throw new IOFailure("Error while making tmp file for " + cached, e);
+            throw new IOFailure("Error while making tmp file for " 
+                    + cdxFile, e);
         }
     }
 
@@ -256,7 +317,7 @@ public abstract class CrawlLogIndexCache extends
      * URL.  The file will be removed upon exit of the JVM, but should be
      * attempted removed when it is no longer used.
      */
-    private static File getSortedCrawlLog(File file) {
+    protected static File getSortedCrawlLog(File file) {
         try {
             File tmpCrawlLog = File.createTempFile("sorted", "crawllog",
                     FileUtils.getTempDir());
@@ -277,7 +338,7 @@ public abstract class CrawlLogIndexCache extends
      * @return the created deduplication indexer.
      * @throws IOException If unable to open the index.
      */
-    private static DigestIndexer createStandardIndexer(String indexLocation) 
+    protected static DigestIndexer createStandardIndexer(String indexLocation) 
     throws IOException {
         
         // Setup Lucene for indexing our crawllogs
