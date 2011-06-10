@@ -79,6 +79,13 @@ public class CommonSettings {
     public static String JMS_BROKER_CLASS = "settings.common.jms.class";
 
     /**
+     * <b>settings.common.jms.retries</b>: <br>
+     * Selects the number of times the JMS connection tries to 
+     * reconnect to the broker.
+     * */
+    public static String JMS_BROKER_RETRIES = "settings.common.jms.retries";
+    
+    /**
      * <b>settings.common.http.port</b>: <br>
      * The *unique* (per host) port number that may or may not be used to serve
      * http. */

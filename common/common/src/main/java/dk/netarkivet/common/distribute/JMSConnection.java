@@ -45,11 +45,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
 
 /**
@@ -71,8 +73,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     protected static final String CONSUMER_KEY_SEPARATOR = "##";
 
     /** The number to times to (re)try whenever a JMSException is thrown. */
-    protected static final int JMS_MAXTRIES = 3;
-
+    static final int JMS_MAXTRIES = Settings.getInt(
+            CommonSettings.JMS_BROKER_RETRIES);
+    
     /** The JMS Connection. */
     protected Connection connection;
 

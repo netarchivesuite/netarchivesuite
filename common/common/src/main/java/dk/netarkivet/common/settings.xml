@@ -38,6 +38,7 @@
         </remoteFile>
         <jms> <!-- Connection data for JMS-->
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
+            <retries>3</retries>
         </jms>
         <http>
             <port></port>
