@@ -23,6 +23,7 @@
 
 package dk.netarkivet.harvester.scheduler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -111,7 +112,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     static class JobGeneratorTask implements Runnable {
 
         @Override
-        public synchronized void run() {
+        public synchronized void run() { 
             generateJobs(new Date());
         }          
 
@@ -125,9 +126,16 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
          * points-in-time  
          */
         static void generateJobs(Date timeToGenerateJobsFor) {
+            log.trace("Datetime to generate jobs for: " + timeToGenerateJobsFor);
             final Iterable<Long> readyHarvestDefinitions = 
                 haDefinitionDAO.getReadyHarvestDefinitions(timeToGenerateJobsFor);
-            for (final Long id : readyHarvestDefinitions) {      
+            if (readyHarvestDefinitions instanceof ArrayList) {
+             ArrayList<Long> defs = (ArrayList<Long>) readyHarvestDefinitions;
+             log.trace("Found " + defs.size() 
+                     + " definitions ready to generate jobs.");
+            }
+           
+            for (final Long id : readyHarvestDefinitions) {
              // Make every HD run in its own thread, but at most once.
                 if (harvestDefinitionsBeingScheduled.contains(id)) {
                     // With the small importance of this logmessage,
