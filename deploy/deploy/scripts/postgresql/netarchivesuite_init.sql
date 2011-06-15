@@ -499,8 +499,8 @@ CREATE TABLE frontierReportMonitor (
      totalSpend bigint NOT NULL,
      totalBudget bigint NOT NULL,
      errorCount bigint NOT NULL,
-     lastPeekUri varchar NOT NULL,
-     lastQueuedUri varchar NOT NULL,
+     lastPeekUri varchar(1000) NOT NULL,
+     lastQueuedUri varchar(1000) NOT NULL,
      CONSTRAINT pkFrontierReportLines UNIQUE (jobId, filterId, domainName)
 );
 
