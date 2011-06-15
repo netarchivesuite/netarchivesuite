@@ -421,6 +421,72 @@ public class DomainDBDAOTester extends DataModelTestCase {
         }
     }
 
+    public void testGetDomainHarvestInfo() {
+        HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
+        HarvestDefinition hd = hdDao.read(new Long(42));
+        hd.createJobs();
+        JobDAO jdao = JobDBDAO.getInstance();
+        Iterator<Job> jobs = jdao.getAll();
+        Job j = jobs.next();
+        Job j1 = jobs.next();
+        Map<String,String> dcMap  = j.getDomainConfigurationMap();
+        String theDomainName = "netarkivet.dk";
+        String configName = dcMap.get(theDomainName);
+        long now = (new Date()).getTime();
+        long day = 3600*24L;
+        j1.setActualStart(new Date(now - day));
+        jdao.update(j1);
+        // Fake that the job has been run by inserting a historyInfo
+        // entry in the database for this job_id, config_id, harvest_id combination.
+        HarvestInfo hi1 = new HarvestInfo(j.getOrigHarvestDefinitionID(),
+                j.getJobID(),
+                theDomainName,
+                configName,
+                new Date(),
+                10000L,
+                64L,
+                StopReason.OBJECT_LIMIT);
+         HarvestInfo hi2 = new HarvestInfo(j1.getOrigHarvestDefinitionID(),
+                j1.getJobID(),
+                theDomainName,
+                configName,
+                new Date(now - day),
+                10000L,
+                64L,
+                StopReason.OBJECT_LIMIT);
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            long domainId = DBUtils.selectLongValue(
+                    c,
+                    "SELECT domain_id FROM domains WHERE name=?", theDomainName);
+            long configId = DBUtils.selectLongValue(
+                    c,
+                    "SELECT config_id FROM configurations WHERE name = ? AND domain_id=?",
+                    configName, domainId);
+            insertHarvestInfo(c, hi1, configId);
+            insertHarvestInfo(c, hi2, configId);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+        DomainDAO dao = DomainDAO.getInstance();
+        List<DomainHarvestInfo> hinfos = dao.getDomainHarvestInfo(theDomainName,
+                                                                  true);
+        Date d0 = hinfos.get(0).getStartDate();
+        Date d1 = hinfos.get(1).getStartDate();
+
+        assertTrue("Should have dates in inverse start order not '" + d0 + "," + d1 +  "'" , d0.after(d1) );
+
+        hinfos = dao.getDomainHarvestInfo(theDomainName,
+                                                                  false);
+        d0 = hinfos.get(0).getStartDate();
+        d1 = hinfos.get(1).getStartDate();
+
+        assertTrue("Should have dates in start order not '" + d0 + "," + d1 +  "'" , d1.after(d0) );
+
+    }
+
+
     // Copied from DomainDBDAO for local testing
     private void insertHarvestInfo(
             Connection c,

@@ -199,7 +199,7 @@ displayed, if no domains are found a message is shown.
 
 <%
     List<DomainHarvestInfo> hiList =
-        DomainDAO.getInstance().getDomainHarvestInfo(domainName);
+        DomainDAO.getInstance().getDomainHarvestInfo(domainName, true);
     long totalResultsCount = hiList.size();
     long actualPageSize = (pageSize == 0 ?
         totalResultsCount : pageSize);
@@ -275,7 +275,8 @@ displayed, if no domains are found a message is shown.
                 </fmt:message>
             </h3>
             <% hiList
-                    = DomainDAO.getInstance().getDomainHarvestInfo(domainName);
+                    = DomainDAO.getInstance().getDomainHarvestInfo(domainName,
+                                                                   true);
             if (hiList == null || hiList.size() == 0) {// No history
             %><p><fmt:message key="domain.0.was.never.harvested">
                   <fmt:param value="<%=domainName%>"/>

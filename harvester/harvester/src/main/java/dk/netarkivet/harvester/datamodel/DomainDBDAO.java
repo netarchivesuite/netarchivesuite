@@ -1570,17 +1570,21 @@ public class DomainDBDAO extends DomainDAO {
             HarvestDBConnection.release(connection);
         }
     }
-    
+
+
+
     /**
-     * @see DomainDAO#getDomainHarvestInfo(String)
+     * @see DomainDAO#getDomainHarvestInfo(String, boolean)
      */
     @Override
-    public List<DomainHarvestInfo> getDomainHarvestInfo(String domainName) {
+    public List<DomainHarvestInfo> getDomainHarvestInfo(String domainName,
+                                                        boolean latestFirst) {
        ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
        Connection c = HarvestDBConnection.get();
        PreparedStatement s = null;
        final ArrayList<DomainHarvestInfo> domainHarvestInfos 
            = new ArrayList<DomainHarvestInfo>();
+       final String ascOrDesc = latestFirst ? "DESC" : "ASC";
        try {
            // For historical reasons, not all historyinfo objects have the
            // information required to find the job that made them. Therefore,
@@ -1603,7 +1607,7 @@ public class DomainDBDAO extends DomainDAO {
                    + "     AND historyinfo.harvest_id = "
                    + "harvestdefinitions.harvest_id" + "  ) AS hist"
                    + " LEFT OUTER JOIN jobs"
-                   + "   ON hist.job_id = jobs.job_id");
+                   + "   ON hist.job_id = jobs.job_id ORDER BY startdate " + ascOrDesc);
            s.setString(1, domainName);
            ResultSet res = s.executeQuery();
            while (res.next()) {

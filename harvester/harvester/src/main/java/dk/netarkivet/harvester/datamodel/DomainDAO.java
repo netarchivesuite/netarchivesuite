@@ -292,11 +292,13 @@ public abstract class DomainDAO implements Iterable<Domain> {
     * Note that harvest info from before the DB DAOs are unreliable, as
     * harvests cannot be told apart and no dates are available.
     *
-    * @param domainName Domain to get info for.
-    * @return List of DomainHarvestInfo objects with information on that domain.
+    *
+     * @param domainName Domain to get info for.
+     * @param latestFirst
+     * @return List of DomainHarvestInfo objects with information on that domain.
     *
     */
     public abstract List<DomainHarvestInfo> getDomainHarvestInfo(
-            String domainName);
+            String domainName, boolean latestFirst);
     
 }
