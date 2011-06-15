@@ -46,6 +46,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
  * This implementation of the HeritrixController interface starts Heritrix
  * as a separate process and uses JMX to communicate with it.  Each instance
  * executes exactly one process that runs exactly one crawl job.
+ * @deprecated Use the {@link BnfHeritrixController} instead
  */
 public class JMXHeritrixController extends AbstractJMXHeritrixController {
     /** The logger for this class. */
