@@ -241,13 +241,13 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             ResultSet resultset = statement.getGeneratedKeys();
             resultset.next();
             long fileId = resultset.getLong(1);
-            System.out.println("Generated key: " + fileId);
             connection.commit();
 
-            // Create the replicafileinfo for each replica.
-            //long fileId = retrieveIdForFile(filename);
+            // Create replicafileinfo for each replica.
             createReplicaFileInfoEntriesInDB(fileId);
-            log.debug("Insert file '" + filename + "' into database completed");
+            log.debug("Insert file '" + filename 
+                    + "' into database completed. Assigned fileID="
+                    + fileId);
             return fileId;
         } catch (SQLException e) {
             throw new IllegalState("Cannot add file '" + filename
