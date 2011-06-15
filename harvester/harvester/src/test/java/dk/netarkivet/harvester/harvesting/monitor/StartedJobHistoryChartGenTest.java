@@ -36,6 +36,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.NumberUtils;
+import dk.netarkivet.harvester.harvesting.monitor.StartedJobHistoryChartGen.TimeAxisResolution;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class StartedJobHistoryChartGenTest extends TestCase {
@@ -147,6 +148,39 @@ public class StartedJobHistoryChartGenTest extends TestCase {
                 true,
                 Color.lightGray.brighter().brighter());
 
+    }
+
+    /**
+     * Tests {@link TimeAxisResolution#findTimeUnit(double)}
+     */
+    public final void testFindTimeUnit() {
+
+        long[] durations = new long[] {
+                2,             // 2s
+                2*60,          // 2min
+                2*60*60,       // 2h
+                14*60*60,      // 16h
+                2*24*3600,     // 2d
+                2*7*24*3600,   // 2w
+                60*24*3600,    // 60d
+                100*7*24*3600  // 100w
+        };
+
+        TimeAxisResolution[] expected = new TimeAxisResolution[] {
+                TimeAxisResolution.second,
+                TimeAxisResolution.minute,
+                TimeAxisResolution.hour,
+                TimeAxisResolution.half_day,
+                TimeAxisResolution.day,
+                TimeAxisResolution.week,
+                TimeAxisResolution.week,
+                TimeAxisResolution.week
+        };
+
+        for (int i = 0; i < durations.length; i++) {
+            assertEquals(
+                    expected[i], TimeAxisResolution.findTimeUnit(durations[i]));
+        }
     }
 
 }

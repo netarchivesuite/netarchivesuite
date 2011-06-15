@@ -69,7 +69,7 @@ class StartedJobHistoryChartGen {
      * Time units used to scale the crawl time values and generate the
      * chart's time axis ticks.
      */
-    private static enum TimeAxisResolution {
+    protected static enum TimeAxisResolution {
         /**
          * One second. Tick step is 10s.
          */
@@ -133,7 +133,7 @@ class StartedJobHistoryChartGen {
         static TimeAxisResolution findTimeUnit(double seconds) {
 
             TimeAxisResolution[] allTus = values();
-            for (int i = 0; i < allTus.length; i++) {
+            for (int i = 0; i < allTus.length - 1; i++) {
                 TimeAxisResolution nextGreater = allTus[i + 1];
                 if (seconds < nextGreater.seconds) {
                     return allTus[i];
