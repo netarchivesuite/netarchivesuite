@@ -178,7 +178,7 @@ public class BatchGUITester extends TestCase {
       PageContext context = new WebinterfaceTestCase.TestPageContext(request, out, l);
 
       BatchGUI.getBatchOverviewPage(context);
-      System.out.println(out.sw.toString());
+      //System.out.println(out.sw.toString());
     }
     
     /**
