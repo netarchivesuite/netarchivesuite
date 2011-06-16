@@ -136,6 +136,12 @@ public class Constants {
 
     public static final String UPLOAD_FILE_PARAM = "upload_file";
 
+    public static final String IS_NEWEST_FIRST = "is_newest_first";
+
+    public static final String TRUE = "true";
+
+    public static final String FALSE = "false";
+
     /**
      * Names of some parameters used in management of global crawler traps.
      */

@@ -60,6 +60,12 @@ displayed, if no domains are found a message is shown.
     String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
     if (searchParam == null ) searchParam = "";
     searchParam = HTMLUtils.encode(searchParam);
+
+    String orderParam = request.getParameter(Constants.IS_NEWEST_FIRST);
+    boolean newestFirst = true;
+    if ((Constants.FALSE).equals(orderParam)) {
+        newestFirst = false;
+    }
 %>
 <%!
     private static final I18n I18N = new I18n(
@@ -91,6 +97,8 @@ displayed, if no domains are found a message is shown.
 <input type="hidden"
        name="START_PAGE_INDEX"
        value="<%=startPagePost%>"/>
+<input type="hidden" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=newestFirst ? Constants.TRUE : Constants.FALSE%>" />
+
 </form>
 
 <%
@@ -190,6 +198,9 @@ displayed, if no domains are found a message is shown.
             HTMLUtils.generateHeader(pageContext, "navigate.js");
 %>
 
+<!--
+This hidden form is triggered by the next-page / previous-page links
+-->
 <form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
 
 <input type="hidden"
@@ -199,7 +210,7 @@ displayed, if no domains are found a message is shown.
 
 <%
     List<DomainHarvestInfo> hiList =
-        DomainDAO.getInstance().getDomainHarvestInfo(domainName, true);
+        DomainDAO.getInstance().getDomainHarvestInfo(domainName, newestFirst);
     long totalResultsCount = hiList.size();
     long actualPageSize = (pageSize == 0 ?
         totalResultsCount : pageSize);
@@ -376,6 +387,11 @@ displayed, if no domains are found a message is shown.
         <form method="get" action="Harveststatus-perdomain.jsp">
         <table>
             <tr>
+                <td><fmt:message key="prompt;newest.first"/>&nbsp;
+                    <input type="radio" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=Constants.TRUE%>" checked="checked"/> 
+                    <fmt:message key="prompt;oldest.first"/>&nbsp;
+                    <input type="radio" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=Constants.FALSE%>"/>
+                </td>
                 <td><fmt:message key="prompt;enter.name.of.domain"/></td>
                 <td><span id="focusElement">
                     <input name="<%=Constants.DOMAIN_SEARCH_PARAM%>"
