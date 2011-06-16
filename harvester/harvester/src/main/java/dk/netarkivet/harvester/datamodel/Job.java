@@ -925,10 +925,8 @@ public class Job implements Serializable {
      * @param seedList List of seeds as one String
      */
     public void setSeedList(String seedList) {
-        //TODO The following is removed, because it breaks a "lot" of unittests.
-        // and it has not been checked up until now.
-        //ArgumentNotValid.checkNotNullOrEmpty(seedList, "seedList");
-        ArgumentNotValid.checkNotNull(seedList, "seedList");
+        ArgumentNotValid.checkNotNullOrEmpty(seedList, "seedList");
+        //ArgumentNotValid.checkNotNull(seedList, "seedList");
         seedListSet = new HashSet<String>();
         BufferedReader reader = new BufferedReader(new StringReader(seedList));
         String seed;

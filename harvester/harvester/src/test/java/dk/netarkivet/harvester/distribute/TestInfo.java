@@ -54,6 +54,6 @@ public class TestInfo {
                              JobPriority.LOWPRIORITY, -1L, -1L, 0L,
                              JobStatus.STARTED, "default_template",
                              DocumentFactory.getInstance().createDocument(),
-                             "", 1);
+                             "http://sbforge.org", 1);
     }
 }
