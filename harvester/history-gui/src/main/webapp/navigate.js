@@ -4,10 +4,12 @@ function previousPage(param,value) {
     	parseInt(document.filtersForm.START_PAGE_INDEX.value) - 1;
 	link=document.filtersForm.action+"?"+"START_PAGE_INDEX="
 		+ document.filtersForm.START_PAGE_INDEX.value;
+    link+="&is_newest_first=" + document.filtersForm.is_newest_first.value;
 	if(value!="") {
 		link=link+"&"+param	+"="+value;
 	}
 	window.location = link;
+
 
 }
 
@@ -17,6 +19,7 @@ function nextPage(param,value) {
     	parseInt(document.filtersForm.START_PAGE_INDEX.value) + 1;
  	link=document.filtersForm.action+"?"
  		+ "START_PAGE_INDEX="+document.filtersForm.START_PAGE_INDEX.value;
+    link+="&is_newest_first=" + document.filtersForm.is_newest_first.value;
 	if(value!="") {
 		link=link+"&"+param	+"="+value;
 	}

@@ -199,13 +199,15 @@ displayed, if no domains are found a message is shown.
 %>
 
 <!--
-This hidden form is triggered by the next-page / previous-page links
+This hidden form is triggered by the next-page / previous-page links but is not actually submitted. Rather the
+hidden fields are set as url parameters by the javascript.
 -->
 <form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
 
 <input type="hidden"
        name="START_PAGE_INDEX"
        value="<%=startPagePost%>"/>
+    <input type="hidden" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=newestFirst ? Constants.TRUE : Constants.FALSE%>"/>
 </form>
 
 <%
@@ -287,7 +289,7 @@ This hidden form is triggered by the next-page / previous-page links
             </h3>
             <% hiList
                     = DomainDAO.getInstance().getDomainHarvestInfo(domainName,
-                                                                   true);
+                                                                   newestFirst);
             if (hiList == null || hiList.size() == 0) {// No history
             %><p><fmt:message key="domain.0.was.never.harvested">
                   <fmt:param value="<%=domainName%>"/>
