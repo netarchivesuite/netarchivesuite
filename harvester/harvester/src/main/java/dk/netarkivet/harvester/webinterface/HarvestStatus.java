@@ -83,7 +83,6 @@ public class HarvestStatus {
     }
 
     /**
-     * //TODO modify to include REJECT and UNREJECT requests for a single job
      * Process a request from Harveststatus-alljobs.
      * 
      * Will resubmit a job if requested, otherwise do nothing.
@@ -126,7 +125,8 @@ public class HarvestStatus {
 
     /**
      * Marks a failed job as rejected for resubmission. Throws a
-     * ForwardedToErrorPage if the job is not in the state FAILED to start with.
+     * ForwardedToErrorPage if jobID is null or if it refers to a job that is
+     * not in the state FAILED to start with.
      * @param context the context for forwarding errors
      * @param i18n  the internationalisation to use
      * @param jobID the job to reject

@@ -238,16 +238,31 @@ public class JobTester extends DataModelTestCase {
         }
     }
 
+    /**
+     * Tests that we cannot cause a job status to decrease in ordinal value
+     * from DONE to NEW
+     */
     public void testIllegalJumpInStatus() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
         Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
-        job.setStatus(JobStatus.NEW);
+        job.setStatus(JobStatus.DONE);
         try {
-            job.setStatus(JobStatus.DONE);
-            fail("Changed job status directly from NEW to DONE");
+            job.setStatus(JobStatus.NEW);
+            fail("Changed job from DONE to NEW");
         } catch (ArgumentNotValid e) {
            //expected
         }
+    }
+
+    /**
+     * Tests the single special case where job status can be reduced in ordinal value from
+     * FAILED_REJECTED to FAILED.
+     */
+    public void testLegalJumpInStatus() {
+        DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
+        Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
+        job.setStatus(JobStatus.FAILED_REJECTED);
+        job.setStatus(JobStatus.FAILED);
     }
 
     /**
