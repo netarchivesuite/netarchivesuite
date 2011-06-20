@@ -563,10 +563,10 @@
     <option name="CUSTOM_FILTER" />
   </component>
   <component name="MavenProjectsManager">
-    <option name="originalFiles">
-      <list>
+    <option name="ignoredFiles">
+      <set>
         <option value="$PROJECT_DIR$/pom.xml" />
-      </list>
+      </set>
     </option>
   </component>
   <component name="Palette2">
@@ -700,18 +700,11 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/netarchivesuite.iml" filepath="$PROJECT_DIR$/netarchivesuite.iml" />
       <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-archive/netarchivesuite-archive.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-archive/netarchivesuite-archive.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-archive/netarchivesuite-archive.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-archive/netarchivesuite-archive.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-common/netarchivesuite-common.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-common/netarchivesuite-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-common/netarchivesuite-common.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-common/netarchivesuite-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-deploy/netarchivesuite-deploy.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-deploy/netarchivesuite-deploy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-deploy/netarchivesuite-deploy.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-deploy/netarchivesuite-deploy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-harvester/netarchivesuite-harvester.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/netarchivesuite-harvester.iml" />
       <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-harvester/netarchivesuite-harvester.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/netarchivesuite-harvester.iml" />
       <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-monitor/netarchivesuite-monitor.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/netarchivesuite-monitor.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-monitor/netarchivesuite-monitor.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/netarchivesuite-monitor.iml" />
       <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/netarchivesuite-viewerproxy.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/netarchivesuite-viewerproxy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/netarchivesuite-viewerproxy.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/netarchivesuite-viewerproxy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-wayback/netarchivesuite-wayback.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/netarchivesuite-wayback.iml" />
       <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-wayback/netarchivesuite-wayback.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/netarchivesuite-wayback.iml" />
     </modules>
   </component>
@@ -905,61 +898,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: antlr:antlr:2.7.6">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/antlr/antlr/2.7.6/antlr-2.7.6.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/antlr/antlr/2.7.6/antlr-2.7.6-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/antlr/antlr/2.7.6/antlr-2.7.6-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: asm:asm-attrs:1.5.3">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/asm/asm-attrs/1.5.3/asm-attrs-1.5.3-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/asm/asm-attrs/1.5.3/asm-attrs-1.5.3-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: asm:asm:1.5.3">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/asm/asm/1.5.3/asm-1.5.3.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/asm/asm/1.5.3/asm-1.5.3-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/asm/asm/1.5.3/asm-1.5.3-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: berkeleydb:je:3.3.82">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/berkeleydb/je/3.3.82/je-3.3.82.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/berkeleydb/je/3.3.82/je-3.3.82-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/berkeleydb/je/3.3.82/je-3.3.82-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: cglib:cglib:2.1_3">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/cglib/cglib/2.1_3/cglib-2.1_3.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/cglib/cglib/2.1_3/cglib-2.1_3-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/cglib/cglib/2.1_3/cglib-2.1_3-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: com.sun.messaging.mq:imq:4.2">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/com/sun/messaging/mq/imq/4.2/imq-4.2.jar!/" />
@@ -991,17 +929,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.2/commons-codec-1.2-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: commons-collections:commons-collections:2.1.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-collections/commons-collections/2.1.1/commons-collections-2.1.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-collections/commons-collections/2.1.1/commons-collections-2.1.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-collections/commons-collections/2.1.1/commons-collections-2.1.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: commons-fileupload:commons-fileupload:1.2.1">
@@ -1081,17 +1008,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/httpunit/httpunit/1.6/httpunit-1.6-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: it.unimi.dsi:mg4j:1.0.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/mg4j/1.0.1/mg4j-1.0.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/mg4j/1.0.1/mg4j-1.0.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/mg4j/1.0.1/mg4j-1.0.1-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: javax.activation:activation:1.1">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1.jar!/" />
@@ -1134,28 +1050,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.3/servlet-api-2.3-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: javax.transaction:jta:1.0.1B">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/transaction/jta/1.0.1B/jta-1.0.1B-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/transaction/jta/1.0.1B/jta-1.0.1B-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: jfree:jcommon:1.0.15">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/jfree/jcommon/1.0.15/jcommon-1.0.15.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/jfree/jcommon/1.0.15/jcommon-1.0.15-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/jfree/jcommon/1.0.15/jcommon-1.0.15-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: jfree:jcommon:1.0.16">
@@ -1224,17 +1118,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/nekohtml/nekohtml/0.9.1/nekohtml-0.9.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: net.sf.ehcache:ehcache:1.2.3">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.apache.lucene:lucene-core:2.9.4">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core/2.9.4/lucene-core-2.9.4.jar!/" />
@@ -1244,17 +1127,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core/2.9.4/lucene-core-2.9.4-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.archive.wayback:wayback-core:1.4.2">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/archive/wayback/wayback-core/1.4.2/wayback-core-1.4.2.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/archive/wayback/wayback-core/1.4.2/wayback-core-1.4.2-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/archive/wayback/wayback-core/1.4.2/wayback-core-1.4.2-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.archive:deduplicator:0.4.0">
@@ -1288,61 +1160,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jdt/core/compiler/ecj/3.5.1/ecj-3.5.1-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.gnu.inet:libidn:0.6.5">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/gnu/inet/libidn/0.6.5/libidn-0.6.5.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/gnu/inet/libidn/0.6.5/libidn-0.6.5-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/gnu/inet/libidn/0.6.5/libidn-0.6.5-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.hibernate:ejb3-persistence:1.0.1.GA">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/ejb3-persistence/1.0.1.GA/ejb3-persistence-1.0.1.GA.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/ejb3-persistence/1.0.1.GA/ejb3-persistence-1.0.1.GA-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/ejb3-persistence/1.0.1.GA/ejb3-persistence-1.0.1.GA-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.hibernate:hibernate-annotations:3.3.1.GA">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-annotations/3.3.1.GA/hibernate-annotations-3.3.1.GA.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-annotations/3.3.1.GA/hibernate-annotations-3.3.1.GA-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-annotations/3.3.1.GA/hibernate-annotations-3.3.1.GA-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.hibernate:hibernate-commons-annotations:3.0.0.ga">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-commons-annotations/3.0.0.ga/hibernate-commons-annotations-3.0.0.ga.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-commons-annotations/3.0.0.ga/hibernate-commons-annotations-3.0.0.ga-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-commons-annotations/3.0.0.ga/hibernate-commons-annotations-3.0.0.ga-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.hibernate:hibernate:3.2.7.ga">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate/3.2.7.ga/hibernate-3.2.7.ga.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate/3.2.7.ga/hibernate-3.2.7.ga-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate/3.2.7.ga/hibernate-3.2.7.ga-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.mortbay.jetty:jetty-util:6.1.26">
@@ -1510,7 +1327,6 @@
         <root url="jar://$PROJECT_DIR$/lib/heritrix/lib/joda-time-1.6.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/heritrix/lib/je-3.3.82.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/heritrix/lib/ant-1.6.2.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/heritrix/lib/jetty-4.2.23.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/mail-dependencies/mail-1.4.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/hibernate/slf4j-log4j12-1.5.2.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/hibernate/dom4j.jar!/" />

@@ -1571,8 +1571,6 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
-
-
     /**
      * @see DomainDAO#getDomainHarvestInfo(String, boolean)
      */

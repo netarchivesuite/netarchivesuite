@@ -294,7 +294,9 @@ public abstract class DomainDAO implements Iterable<Domain> {
     *
     *
      * @param domainName Domain to get info for.
-     * @param latestFirst
+     * @param latestFirst true if histories are to be returned sorted with the
+     * most recent harvests first, false if they are to be sorted with the
+     * oldest harvests first.
      * @return List of DomainHarvestInfo objects with information on that domain.
     *
     */

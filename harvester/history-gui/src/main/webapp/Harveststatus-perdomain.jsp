@@ -386,28 +386,30 @@ hidden fields are set as url parameters by the javascript.
         <h3 class="page_heading">
             <fmt:message key="find.all.jobs.for.this.domain"/>
         </h3>
-        <form method="get" action="Harveststatus-perdomain.jsp">
-        <table>
-            <tr>
-                <td><fmt:message key="prompt;newest.first"/>&nbsp;
-                    <input type="radio" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=Constants.TRUE%>" checked="checked"/> 
-                    <fmt:message key="prompt;oldest.first"/>&nbsp;
-                    <input type="radio" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=Constants.FALSE%>"/>
-                </td>
-                <td><fmt:message key="prompt;enter.name.of.domain"/></td>
-                <td><span id="focusElement">
+<form method="get" action="Harveststatus-perdomain.jsp">
+    <table>
+        <tr>
+            <td><fmt:message key="prompt;enter.name.of.domain"/></td>
+            <td><span id="focusElement">
                     <input name="<%=Constants.DOMAIN_SEARCH_PARAM%>"
-                        size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>"/>
+                           size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>"/>
                     </span>
-                </td>
-                <td><input type="submit" value=
-                                        "<fmt:message key="search"/>"/></td>
-            </tr>
-            <tr>
-                <td colspan="2"><fmt:message key="may.use.wildcards"/></td>
-            </tr>
-        </table>
-        </form>
+            </td>
+            <td><input type="submit" value=
+                    "<fmt:message key="search"/>"/></td>
+        </tr>
+        <tr>
+            <td><fmt:message key="prompt;newest.first"/>&nbsp;
+                <input type="radio" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=Constants.TRUE%>" checked="checked"/>
+                <fmt:message key="prompt;oldest.first"/>&nbsp;
+                <input type="radio" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=Constants.FALSE%>"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><fmt:message key="may.use.wildcards"/></td>
+        </tr>
+    </table>
+</form>
 <%
     }
     HTMLUtils.generateFooter(out);
