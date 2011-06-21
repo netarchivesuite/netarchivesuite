@@ -37,6 +37,8 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -146,8 +148,36 @@ public class RawMetadataCache extends FileBasedCache<Long>
                     + "' for '" + prefix + "'");
             return id;
         } else {
-            log.debug("No data found for job '" + id
-                    + "' for '" + prefix + "'");
+            log.debug("No data found for job '" + id + "' for '" + prefix 
+                    + "' in local bitarchive '" + replicaUsed + "'. "
+                    + "Trying other replicas.");
+            // Try other replicas
+            for(Replica rep : Replica.getKnown()) {
+                // Only use different bitarchive replicas than replicaUsed
+                if(rep.getType().equals(ReplicaType.BITARCHIVE) 
+                        && !rep.getId().equals(replicaUsed)) {
+                    log.debug("Trying to retrieve index data for job '"
+                            + id + "' from '" + rep.getId() + "'.");
+                    b = arcrep.batch(job, rep.getId());
+                    
+                    // Perform same check as 
+                    if (b.hasResultFile() && (b.getNoOfFilesProcessed() 
+                            > b.getFilesFailed().size())) {
+                        File cacheFileName = getCacheFile(id);
+                        b.copyResults(cacheFileName);
+                        log.debug("Cached data for job '" + id
+                                + "' for '" + prefix + "' at '" + rep);
+                        return id;
+                    } else {
+                        log.trace("No data found for job '" + id + "' for '" 
+                                + prefix + "' in local bitarchive '" + rep 
+                                + "'. Trying other replicas.");
+                    }
+                }
+            }
+            
+            log.debug("No data found for job '" + id + "' for '" + prefix 
+                    + "' in any replica.");
             return null;
         }
     }
