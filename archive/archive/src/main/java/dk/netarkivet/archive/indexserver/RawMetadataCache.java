@@ -148,7 +148,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
                     + "' for '" + prefix + "'");
             return id;
         } else {
-            log.debug("No data found for job '" + id + "' for '" + prefix 
+            log.info("No data found for job '" + id + "' for '" + prefix 
                     + "' in local bitarchive '" + replicaUsed + "'. "
                     + "Trying other replicas.");
             // Try other replicas
@@ -160,7 +160,8 @@ public class RawMetadataCache extends FileBasedCache<Long>
                             + id + "' from '" + rep.getId() + "'.");
                     b = arcrep.batch(job, rep.getId());
                     
-                    // Perform same check as 
+                    // Perform same check as for the batchresults from
+                    // the default replica.
                     if (b.hasResultFile() && (b.getNoOfFilesProcessed() 
                             > b.getFilesFailed().size())) {
                         File cacheFileName = getCacheFile(id);
@@ -170,13 +171,12 @@ public class RawMetadataCache extends FileBasedCache<Long>
                         return id;
                     } else {
                         log.trace("No data found for job '" + id + "' for '" 
-                                + prefix + "' in local bitarchive '" + rep 
-                                + "'. Trying other replicas.");
+                                + prefix + "' in bitarchive '" + rep + "'. ");
                     }
                 }
             }
             
-            log.debug("No data found for job '" + id + "' for '" + prefix 
+            log.warn("No data found for job '" + id + "' for '" + prefix 
                     + "' in any replica.");
             return null;
         }
