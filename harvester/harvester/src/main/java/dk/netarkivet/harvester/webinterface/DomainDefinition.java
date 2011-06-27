@@ -44,6 +44,11 @@ import dk.netarkivet.harvester.datamodel.DomainDAO;
  */
 
 public class DomainDefinition {
+    
+    /** Private constructor to prevent public construction of this class.*/
+    private DomainDefinition() {    
+    }
+    
     /**
      * Extracts all required parameters from the request, checks for any
      * inconsistencies, and passes the requisite data to the updateDomain method
@@ -70,8 +75,8 @@ public class DomainDefinition {
      *
      * alias: If set, this domain is an alias of the set domain
      * renewAlias: If set, the alias date should be renewed
-     * @param context
-     * @param i18n
+     * @param context The context of this request
+     * @param i18n I18n information
      * @throws IOFailure on updateerrors in the DAO
      * @throws ForwardedToErrorPage if domain is not found, if the edition is
      * out-of-date, or if parameters are missing or invalid
@@ -117,7 +122,8 @@ public class DomainDefinition {
                     "Unknown default configuration '" + defaultConf + "'");
         }
 
-        String crawlertraps = request.getParameter(Constants.CRAWLERTRAPS_PARAM);
+        String crawlertraps = request.getParameter(
+                Constants.CRAWLERTRAPS_PARAM);
         if (crawlertraps == null) {
             crawlertraps = "";
         }
@@ -147,7 +153,8 @@ public class DomainDefinition {
      * @param crawlertraps the current crawlertraps stated for the domain
      * @param comments User-defined comments for the domain
      * @param alias if this is non-null, this domain is an alias of 'alias'.
-     * @param renewAlias true, if alias is to be updated even if it is not changed
+     * @param renewAlias true, if alias is to be updated even if it is not 
+     * changed
      */
     private static void updateDomain(Domain domain, String defaultConfig,
                                      String crawlertraps, String comments,
@@ -183,7 +190,7 @@ public class DomainDefinition {
         String newAlias;
         // If alias is empty string, this domain is or should not be an alias.
 
-        if (alias.trim().equals("")) {
+        if (alias.trim().isEmpty()) {
             newAlias = null;
         } else {
             newAlias = alias.trim();
@@ -213,7 +220,8 @@ public class DomainDefinition {
     private static boolean needToUpdateAlias(String oldAlias, String newAlias,
                                              boolean renewAlias) {
         boolean needToUpdate = false;
-        if (newAlias == null) { // If new alias is null: update if old alias is different from null
+     // If new alias is null: update if old alias is different from null
+        if (newAlias == null) {
             if (oldAlias != null){
                 needToUpdate = true;
             }

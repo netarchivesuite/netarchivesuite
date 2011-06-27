@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
@@ -103,12 +102,15 @@ public class HarvestStatus {
         // Check if it's a multiple resubmit query        
         String resubmitJobIds = UI_FIELD.RESUBMIT_JOB_IDS.getValue(context
                 .getRequest());
-        Long resubmitJobID = HTMLUtils.parseOptionalLong(context,
-                                                 Constants.JOB_RESUBMIT_PARAM, null);
-        Long rejectJobID = HTMLUtils.parseOptionalLong(context,
-                                                 Constants.JOB_REJECT_PARAM, null);
-        Long unrejectJobID = HTMLUtils.parseOptionalLong(context,
-                                                 Constants.JOB_UNREJECT_PARAM, null);
+        Long resubmitJobID = HTMLUtils.parseOptionalLong(
+                context,
+                Constants.JOB_RESUBMIT_PARAM, null);
+        Long rejectJobID = HTMLUtils.parseOptionalLong(
+                context,
+                Constants.JOB_REJECT_PARAM, null);
+        Long unrejectJobID = HTMLUtils.parseOptionalLong(
+                context,
+                Constants.JOB_UNREJECT_PARAM, null);
         if (!resubmitJobIds.isEmpty()) {
             String[] ids = resubmitJobIds.split(";");
             for (String idStr : ids) {
@@ -131,12 +133,15 @@ public class HarvestStatus {
      * @param i18n  the internationalisation to use
      * @param jobID the job to reject
      */
-    public static void rejectFailedJob(PageContext context, I18n i18n, Long jobID) {
+    public static void rejectFailedJob(PageContext context, 
+            I18n i18n, Long jobID) {
         try {
             Job job = JobDAO.getInstance().read(jobID);
             if (!job.getStatus().equals(JobStatus.FAILED)) {
-                HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;job.unable.to.reject", jobID);
-                throw new ForwardedToErrorPage("Cannot reject job in status " + job.getStatus());
+                HTMLUtils.forwardWithErrorMessage(
+                        context, i18n, "errormsg;job.unable.to.reject", jobID);
+                throw new ForwardedToErrorPage(
+                        "Cannot reject job in status " + job.getStatus());
             }
             job.setStatus(JobStatus.FAILED_REJECTED);
             JobDAO.getInstance().update(job);
@@ -148,7 +153,8 @@ public class HarvestStatus {
                     "errormsg;job.unknown.id.0", jobID);
             throw new ForwardedToErrorPage("Job " + jobID + " not found");
         } catch (IOFailure ioFailure) {
-                      HTMLUtils.forwardWithErrorMessage(context, i18n, ioFailure,
+                      HTMLUtils.forwardWithErrorMessage(
+                              context, i18n, ioFailure,
                     "errormsg;job.unable.to.reject", jobID);
             throw new ForwardedToErrorPage("Error resubmitting job "
                     + jobID);
@@ -158,17 +164,21 @@ public class HarvestStatus {
 
      /**
      * Marks as failed. Throws a
-     * ForwardedToErrorPage if the job is not in the state FAILED_REJECTED to start with.
+     * ForwardedToErrorPage if the job is not in the state FAILED_REJECTED 
+     * to start with.
      * @param context the context for forwarding errors
      * @param i18n  the internationalisation to use
      * @param jobID the job to unreject
      */
-     public static void unrejectRejectedJob(PageContext context, I18n i18n, Long jobID) {
+     public static void unrejectRejectedJob(PageContext context, 
+             I18n i18n, Long jobID) {
          try {
              Job job = JobDAO.getInstance().read(jobID);
               if (!job.getStatus().equals(JobStatus.FAILED_REJECTED)) {
-                HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;job.unable.to.reject", jobID);
-                throw new ForwardedToErrorPage("Cannot unreject job in status " + job.getStatus());
+                HTMLUtils.forwardWithErrorMessage(context, i18n, 
+                        "errormsg;job.unable.to.reject", jobID);
+                throw new ForwardedToErrorPage(
+                        "Cannot unreject job in status " + job.getStatus());
             }
              job.setStatus(JobStatus.FAILED);
              JobDAO.getInstance().update(job);
@@ -180,15 +190,13 @@ public class HarvestStatus {
                      "errormsg;job.unknown.id.0", jobID);
              throw new ForwardedToErrorPage("Job " + jobID + " not found");
          } catch (IOFailure ioFailure) {
-                       HTMLUtils.forwardWithErrorMessage(context, i18n, ioFailure,
+                       HTMLUtils.forwardWithErrorMessage(
+                               context, i18n, ioFailure,
                      "errormsg;job.unable.to.reject", jobID);
              throw new ForwardedToErrorPage("Error resubmitting job "
                      + jobID);
          }
-
     }
-
-
 
     /**
      * Helpermethod to resubmit a job with a given jobID.

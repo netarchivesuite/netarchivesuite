@@ -42,7 +42,8 @@ import dk.netarkivet.harvester.datamodel.JobPriority;
  * Presently the information is stored in a XML-file.
  */
 public class PersistentJobData {
-
+    
+    /** Innerclass containing Info about a harvestjob. */
     public static class HarvestDefinitionInfo implements Serializable {
 
         /**
@@ -107,7 +108,8 @@ public class PersistentJobData {
 
     /** the crawlDir. */
     private final File crawlDir;
-    /** The filename for the file containing the persistent job data, stored in crawlDir. */
+    /** The filename for the file containing the persistent job data, 
+     * stored in crawlDir. */
     private static final String HARVEST_INFO_FILENAME = "harvestInfo.xml";
     /** XML-root element for the persistent Job Data. */
     private static final String ROOT_ELEMENT = "harvestInfo";
@@ -118,11 +120,13 @@ public class PersistentJobData {
     /** Key in harvestinfo file for the maxBytesPerDomain value for the job. */
     private static final String MAXBYTESPERDOMAIN_KEY = ROOT_ELEMENT
                         + ".maxBytesPerDomain";
-    /** Key in harvestinfo file for the maxObjectsPerDomain value for the job. */
+    /** Key in harvestinfo file for the maxObjectsPerDomain value for 
+     * the job. */
     private static final String MAXOBJECTSPERDOMAIN_KEY = ROOT_ELEMENT
                         + ".maxObjectsPerDomain";
     /** Key in harvestinfo file for the orderXMLName of the job. */
-    private static final String ORDERXMLNAME_KEY = ROOT_ELEMENT + ".orderXMLName";
+    private static final String ORDERXMLNAME_KEY = ROOT_ELEMENT 
+        + ".orderXMLName";
     /** Key in harvestinfo file for the harvestID of the job. */
     private static final String ORIGHARVESTDEFINITIONID_KEY = ROOT_ELEMENT
                         + ".origHarvestDefinitionID";
@@ -149,7 +153,8 @@ public class PersistentJobData {
     private static final String HARVESTVERSION_NUMBER = "0.2";
 
     /** String array containing all keys contained in valid xml. */
-    private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY,   MAXBYTESPERDOMAIN_KEY,
+    private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY, 
+        MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
         ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
         HARVEST_NAME_KEY};
@@ -170,7 +175,8 @@ public class PersistentJobData {
     public PersistentJobData(File crawlDir) {
         ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
         if (!crawlDir.isDirectory()) {
-            throw new ArgumentNotValid("Given crawldir '" + crawlDir.getAbsolutePath()
+            throw new ArgumentNotValid("Given crawldir '" 
+                    + crawlDir.getAbsolutePath()
                     + "' does not exist!");
         }
         this.crawlDir = crawlDir;
@@ -232,6 +238,7 @@ public class PersistentJobData {
     /**
      * Write information about given Job to XML-structure.
      * @param harvestJob the given Job
+     * @param hdi Information about the harvestJob.
      * @throws IOFailure if any failure occurs while persisting data, or if
      * the file has already been written.
      */
@@ -261,12 +268,12 @@ public class PersistentJobData {
         sx.add(HARVEST_NAME_KEY, hdi.getOrigHarvestName());
 
         String comments = hdi.getOrigHarvestDesc();
-        if (! comments.isEmpty()) {
+        if (!comments.isEmpty()) {
             sx.add(HARVEST_DESC_KEY, comments);
         }
 
         String schedName = hdi.getScheduleName();
-        if (! schedName.isEmpty()) {
+        if (!schedName.isEmpty()) {
             sx.add(HARVEST_SCHED_KEY, schedName);
         }
 
@@ -316,12 +323,12 @@ public class PersistentJobData {
 
 
         // Verify, that the job priority element is not the empty String
-        if (sx.getString(PRIORITY_KEY).equals("")) {
+        if (sx.getString(PRIORITY_KEY).isEmpty()) {
             return false;
         }
 
         // Verify, that the ORDERXMLNAME element is not the empty String
-        if (sx.getString(ORDERXMLNAME_KEY).equals("")) {
+        if (sx.getString(ORDERXMLNAME_KEY).isEmpty()) {
             return false;
         }
 
@@ -343,7 +350,9 @@ public class PersistentJobData {
             return false;
         }
 
-        /* Check, if the OrigHarvestDefinitionID element contains a long value */
+        /* Check, if the OrigHarvestDefinitionID element contains 
+         * a long value.
+         */
         try {
             Long.valueOf(sx.getString(ORIGHARVESTDEFINITIONID_KEY));
         } catch(Throwable t) {
@@ -372,7 +381,10 @@ public class PersistentJobData {
 
         return true;
     }
-
+    
+    /**
+     * @return the harvestInfoFile.
+     */
     private File getHarvestInfoFile() {
         return new File(crawlDir, HARVEST_INFO_FILENAME);
     }

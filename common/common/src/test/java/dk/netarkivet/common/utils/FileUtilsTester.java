@@ -176,7 +176,10 @@ public class FileUtilsTester extends TestCase{
         final File threaddir = new File(WORKING, "threaddir/dir1/dir2");
         for (int i=0; i<10; i++) {
             threads.clear();
-            threaddir.delete();
+            boolean deleted = threaddir.delete();
+            if (!deleted) {
+                System.out.println("a File could not be deleted");
+            }
             for (int j =0; j <10; j++) {
                 threads.add(new Thread() {
                     public void run() {
@@ -403,4 +406,32 @@ public class FileUtilsTester extends TestCase{
                                            "A single line", "Another line",
                                            "and then one", "A broken", "line");
     }
+    
+    /**
+     *  Unittest for testing that removing a file using FileUtils.remove(File)
+     *  does not throw an exception, if it fails to do so.
+     */
+    public void tetRemoveFile() {
+        File testFile = new File(WORKING, "test");
+        FileUtils.appendToFile(testFile);
+        // change to read-only
+        boolean b = testFile.setReadOnly();
+        b= testFile.delete();
+        if (!b) {
+            fail ("failed when trying to set file to readonly");
+        }
+        boolean removedReadonly = FileUtils.remove(testFile);
+        if (!testFile.exists()) {
+            fail("File should still exist.");
+        }
+        testFile.setWritable(true);
+        boolean removedWritable = FileUtils.remove(testFile);
+        if (removedReadonly) {
+            fail ("File should have returned false when trying to remove readonly-file");
+        }
+        if (!removedWritable) {
+            fail ("File should have returned true when trying to remove readonly-file");
+        }
+    }
+    
 }
