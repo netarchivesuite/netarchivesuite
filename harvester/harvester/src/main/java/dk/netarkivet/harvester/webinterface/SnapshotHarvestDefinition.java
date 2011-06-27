@@ -68,7 +68,7 @@ public class SnapshotHarvestDefinition {
             return;
         }
 
-        HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM);        
+        HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM);
 
         String name = request.getParameter(Constants.HARVEST_PARAM);
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
@@ -81,7 +81,7 @@ public class SnapshotHarvestDefinition {
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES);
         long runningtimeLimit = HTMLUtils.parseOptionalLong(context,
         		 	Constants.JOB_TIMELIMIT_PARAM,
-        		                dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+        		 	dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
 
         Long oldHarvestId = HTMLUtils.parseOptionalLong(context,
                 Constants.OLDSNAPSHOT_PARAM, null);
@@ -105,7 +105,7 @@ public class SnapshotHarvestDefinition {
             }
             // Note, object/bytelimit set to default values, if not set
             hd = new FullHarvest(name, comments, oldHarvestId, objectLimit,
-                                 byteLimit, runningtimeLimit);
+                                 byteLimit, runningtimeLimit, false);
             hd.setActive(false);
             hddao.create(hd);
         } else {

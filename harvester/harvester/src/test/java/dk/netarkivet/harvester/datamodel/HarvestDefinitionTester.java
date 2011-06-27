@@ -988,7 +988,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         FullHarvest hd1 = new FullHarvest(
                 "foo", "bar", null, 2, Constants.DEFAULT_MAX_BYTES,
-                Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY);
+                Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY,
+                false);
         hd1.setSubmissionDate(new Date());
         dao.create(hd1);
         FullHarvest hd1a = (FullHarvest) dao.read(hd1.getOid());

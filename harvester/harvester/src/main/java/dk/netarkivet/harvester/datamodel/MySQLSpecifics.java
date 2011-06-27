@@ -341,4 +341,13 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
 
     }
+    
+    @Override
+    protected void migrateFullharvestsv4tov5() {
+        // Update fullharvests table to version 4
+        String[] sqlStatements
+            = {"ALTER TABLE fullharvests ADD COLUMN isindexready int NOT NULL DEFAULT 0"};
+        HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
+    }
+    
 }

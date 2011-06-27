@@ -74,7 +74,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'fullharvests', 4);
+    values ( 'fullharvests', 5);
 insert into schemaversions ( tablename, version )
     values ( 'harvest_configs', 1);
 insert into schemaversions ( tablename, version )
@@ -298,8 +298,9 @@ create table fullharvests (
     maxobjects bigint not null,             -- Count of max objects per domain
     previoushd bigint,        -- Harvest that this snapshot harvest is based on
     maxbytes bigint default -1, -- Maximum number of bytes to harvest per domain
-    maxjobrunningtime bigint default 0 -- maximum snapshot running time
+    maxjobrunningtime bigint default 0, -- maximum snapshot running time
                                        -- (0 means no limit)
+    isindexready int not null default 0, -- 0 means not ready, 1 means ready 
 );
 
 -------------------------------------------------------------------------------

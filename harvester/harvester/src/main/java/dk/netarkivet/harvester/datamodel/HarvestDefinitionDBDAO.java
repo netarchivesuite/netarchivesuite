@@ -68,9 +68,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /** The logger. */
     private final Log log = LogFactory.getLog(getClass());
 
-    /** The current version needed of the table 'fullharvests'. */
-    static final int FULLHARVESTS_VERSION_NEEDED = 4;
-
     /**
      * Comparator used for sorting the UI list of
      * {@link SparseDomainConfiguration}s. Sorts first by domain name
@@ -98,22 +95,18 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
         Connection connection = HarvestDBConnection.get();
         try {
-            int fullharvestsVersion =
-                DBUtils.getTableVersion(connection, "fullharvests");
-
-            if (fullharvestsVersion < FULLHARVESTS_VERSION_NEEDED) {
-                log.info("Migrate table" + " 'fullharvests' to version "
-                        + FULLHARVESTS_VERSION_NEEDED);
-                DBSpecifics.getInstance().updateTable("fullharvests",
-                        FULLHARVESTS_VERSION_NEEDED);
-            }
-
-            DBUtils.checkTableVersion(connection,
-                    "harvestdefinitions", 2);
-            DBUtils.checkTableVersion(connection, "fullharvests",
-                    FULLHARVESTS_VERSION_NEEDED);
-            DBUtils.checkTableVersion(connection, "partialharvests", 1);
-            DBUtils.checkTableVersion(connection, "harvest_configs", 1);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.FULLHARVESTS_TABLE,
+                    DBSpecifics.FULLHARVESTS_TABLE_REQUIRED_VERSION);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.HARVESTDEFINITIONS_TABLE,
+                    DBSpecifics.HARVESTDEFINITIONS_TABLE_REQUIRED_VERSION);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.PARTIALHARVESTS_TABLE,
+                    DBSpecifics.PARTIALHARVESTS_TABLE_REQUIRED_VERSION);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.HARVESTCONFIGS_TABLE,
+                    DBSpecifics.HARVESTCONFIGS_TABLE_REQUIRED_VERSION);
         } finally {
             HarvestDBConnection.release(connection);
         }
@@ -161,8 +154,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 FullHarvest fh = (FullHarvest) harvestDefinition;
                 s = connection.prepareStatement("INSERT INTO fullharvests "
                         + "( harvest_id, maxobjects, maxbytes,"
-                        + " maxjobrunningtime, previoushd )"
-                        + "VALUES ( ?, ?, ?, ?, ? )");
+                        + " maxjobrunningtime, previoushd, isindexready)"
+                        + "VALUES ( ?, ?, ?, ?, ?, ? )");
                 s.setLong(1, id);
                 s.setLong(2, fh.getMaxCountObjects());
                 s.setLong(3, fh.getMaxBytes());
@@ -172,6 +165,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 } else {
                     s.setNull(5, Types.BIGINT);
                 }
+                s.setBoolean(6, fh.getIndexReady());
                 s.executeUpdate();
             } else if (harvestDefinition instanceof PartialHarvest) {
                 PartialHarvest ph = (PartialHarvest) harvestDefinition;
@@ -293,7 +287,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             Connection c,
             Long harvestDefinitionID) throws UnknownID, IOFailure {
 
-        if (! exists(c, harvestDefinitionID)) {
+        if (!exists(c, harvestDefinitionID)) {
             String message = "Unknown harvest definition "
                 + harvestDefinitionID;
             log.debug(message);
@@ -305,7 +299,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s = c.prepareStatement(
                                 "SELECT name, comments, numevents, submitted, "
                                 + "previoushd, maxobjects, maxbytes, "
-                                + "maxjobrunningtime, isactive, edition "
+                                + "maxjobrunningtime, isindexready, isactive, edition "
                                 + "FROM harvestdefinitions, fullharvests "
                                 + "WHERE harvestdefinitions.harvest_id = ?"
                                 + "  AND harvestdefinitions.harvest_id "
@@ -323,20 +317,23 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 final long maxObjects = res.getLong(6);
                 final long maxBytes = res.getLong(7);
                 final long maxJobRunningtime = res.getLong(8);
+                final boolean isIndexReady = res.getBoolean(9);
                 FullHarvest fh;
                 final long prevhd = res.getLong(5);
                 if (!res.wasNull()) {
                     fh = new FullHarvest(name, comments, prevhd, maxObjects,
-                                         maxBytes, maxJobRunningtime);
+                                         maxBytes, maxJobRunningtime,
+                                         isIndexReady);
                 } else {
                     fh = new FullHarvest(name, comments, null, maxObjects,
-                                         maxBytes, maxJobRunningtime);
+                                         maxBytes, maxJobRunningtime,
+                                         isIndexReady);
                 }
                 fh.setSubmissionDate(submissionDate);
                 fh.setNumEvents(numEvents);
-                fh.setActive(res.getBoolean(9));
+                fh.setActive(res.getBoolean(10));
                 fh.setOid(harvestDefinitionID);
-                fh.setEdition(res.getLong(10));
+                fh.setEdition(res.getLong(11));
                 // We found a FullHarvest object, just return it.
                 log.debug("Returned FullHarvest object w/ id "
                         + harvestDefinitionID);

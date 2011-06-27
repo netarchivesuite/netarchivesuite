@@ -60,7 +60,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'fullharvests', 4);
+    values ( 'fullharvests', 5);
 insert into schemaversions ( tablename, version )
     values ( 'harvest_configs', 1);
 insert into schemaversions ( tablename, version )
@@ -212,7 +212,8 @@ create table fullharvests (
      maxobjects bigint not null,
      previoushd bigint,
      maxbytes bigint not null default -1,
-     maxjobrunningtime bigint not null default 0
+     maxjobrunningtime bigint not null default 0,
+     isindexready int not null default 0
 );
 
 # -----------------------------------------------------------------------------

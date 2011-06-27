@@ -38,6 +38,9 @@ import dk.netarkivet.common.utils.FilterIterator;
  * harvest definitions.
  */
 public class FullHarvest extends HarvestDefinition {
+    /**
+     * The class logger.
+     */
     private final Log log = LogFactory.getLog(getClass());
 
     /**
@@ -61,6 +64,9 @@ public class FullHarvest extends HarvestDefinition {
     /** The ID for the harvestdefinition, this FullHarvest is based upon. */
     private Long previousHarvestDefinitionOid;
 
+    
+    /** a boolean to indicate whether the deduplication index is ready. */
+    private boolean indexReady;
     /**
      * Create new instance of FullHarvest configured according to the properties
      * of the supplied DomainConfiguration.
@@ -73,14 +79,17 @@ public class FullHarvest extends HarvestDefinition {
      *                                     fetched per domain
      * @param maxBytes                     Limit for how many bytes can be
      *                                     fetched per domain
-     * @param maxJobRunningTime            Limit on how much time can be spent on each job.
-     *                                     0 means no limit                                   
+     * @param maxJobRunningTime            Limit on how much time can be spent 
+     *                                      on each job. 0 means no limit 
+     * @param isIndexReady                 Is the deduplication index ready 
+     *                                     for this harvest.               
      */
     public FullHarvest(String harvestDefName,
                        String comments,
                        Long previousHarvestDefinitionOid,
                        long maxCountObjects, long maxBytes,
-                       long maxJobRunningTime) {
+                       long maxJobRunningTime,
+                       boolean isIndexReady) {
         ArgumentNotValid.checkNotNullOrEmpty(harvestDefName, "harvestDefName");
         ArgumentNotValid.checkNotNull(comments, "comments");
 
@@ -91,6 +100,7 @@ public class FullHarvest extends HarvestDefinition {
         this.numEvents = 0;
         this.maxBytes = maxBytes;
         this.maxJobRunningTime = maxJobRunningTime;
+        this.indexReady = isIndexReady;
     }
 
     /**
@@ -331,4 +341,24 @@ public class FullHarvest extends HarvestDefinition {
    public void setMaxJobRunningTime(long maxJobRunningtime) {
        this.maxJobRunningTime = maxJobRunningtime;
    }
+   
+   /**
+    * Is index ready. Used to check, whether or a FullHarvest is
+    * ready for scheduling. The scheduling requires, that the deduplication 
+    * index used by the jobs in the FullHarvest, has allready been prepared
+    * by the IndexServer. 
+    * @return true, if the deduplication index is ready. Otherwise false.
+    */
+   public boolean getIndexReady() {
+       return this.indexReady;
+   }
+   
+   /**
+    * Set the indexReady field.
+    * @param isIndexReady The new value of the indexReady field.
+    */
+   public void setIndexReady(boolean isIndexReady) {
+       this.indexReady = isIndexReady;
+   }
+   
 }

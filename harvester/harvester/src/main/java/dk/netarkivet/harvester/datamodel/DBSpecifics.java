@@ -51,6 +51,73 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     Log log = LogFactory.getLog(DBSpecifics.class);
 
+    /* Constants definining the tables of the Harvester database and the 
+     * required versions of the individual tables.
+     */
+    protected static final String DOMAINS_TABLE = "domains";
+    protected static final int DOMAINS_TABLE_REQUIRED_VERSION = 2;
+
+    protected static final String CONFIGURATIONS_TABLE = "configurations";
+    protected static final int CONFIGURATIONS_TABLE_REQUIRED_VERSION = 5;
+
+    protected static final String SEEDLISTS_TABLE = "seedlists";
+    protected static final int SEEDLISTS_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String PASSWORDS_TABLE = "passwords";
+    protected static final int PASSWORDS_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String OWNERINFO_TABLE = "ownerinfo";
+    protected static final int OWNERINFO_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String HISTORYINFO_TABLE = "historyinfo";
+    protected static final int HISTORYINFO_TABLE_REQUIRED_VERSION = 2;
+
+    protected static final String CONFIGPASSWORDS_TABLE = "config_passwords";
+    protected static final int CONFIGPASSWORDS_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String CONFIGSEEDLISTS_TABLE = "config_seedlists";
+    protected static final int CONFIGSEEDLISTS_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String HARVESTDEFINITIONS_TABLE = "harvestdefinitions";
+    protected static final int HARVESTDEFINITIONS_TABLE_REQUIRED_VERSION = 2;
+
+    protected static final String PARTIALHARVESTS_TABLE = "partialharvests";
+    protected static final int PARTIALHARVESTS_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String FULLHARVESTS_TABLE = "fullharvests";
+    protected static final int FULLHARVESTS_TABLE_REQUIRED_VERSION = 5;
+
+    protected static final String HARVESTCONFIGS_TABLE = "harvest_configs";
+    protected static final int HARVESTCONFIGS_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String SCHEDULES_TABLE = "schedules";
+    protected static final int SCHEDULES_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String ORDERTEMPLATES_TABLE = "ordertemplates"; 
+    protected static final int ORDERTEMPLATES_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String JOBS_TABLE = "jobs";
+    protected static final int JOBS_TABLE_REQUIRED_VERSION = 6;
+
+    protected static final String JOBCONFIGS_TABLE = "job_configs";
+    protected static final int JOBCONFIGS_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String GLOBALCRAWLERTRAPLISTS_TABLE = "global_crawler_trap_lists";
+    protected static final int GLOBALCRAWLERTRAPLISTS_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String GLOBALCRAWLERTRAPEXPRESSIONS_TABLE 
+    = "global_crawler_trap_expressions";
+    protected static final int GLOBALCRAWLERTRAPEXPRESSIONS_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String RUNNINGJOBSHISTORY_TABLE = "runningjobshistory";
+    protected static final int RUNNINGJOBSHISTORY_TABLE_REQUIRED_VERSION = 2;
+
+    protected static final String RUNNINGJOBSMONITOR_TABLE = "runningjobsmonitor";
+    protected static final int RUNNINGJOBSMONITOR_TABLE_REQUIRED_VERSION = 2;
+
+    protected static final String FRONTIERREPORTMONITOR_TABLE = "frontierreportmonitor"; 
+    protected static final int FRONTIERREPORTMONITOR_TABLE_REQUIRED_VERSION = 1;
+
     /**
      * Get the singleton instance of the DBSpecifics implementation class.
      *
@@ -77,7 +144,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * @return The name of the created table
      */
     public abstract String getJobConfigsTmpTable(Connection c)
-            throws SQLException;
+    throws SQLException;
 
     /**
      * Dispose of a temporary table gotten with getTemporaryTable. This can be
@@ -143,170 +210,264 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                     + "(current version is greater than requested version).");
         }
 
-        if (tableName.equals("jobs")) {
-            if (currentVersion < 3) {
-                throw new IllegalState("Database is in an illegalState: "
-                        + "The current version " + currentVersion
-                        + " of table '" + tableName + "' is not acceptable. "
-                        + "(current version is less than open source version).");
-            }
-            if (currentVersion == 3 && toVersion >= 4) {
-                migrateJobsv3tov4();
-                currentVersion = 4;
-            }
-            if (currentVersion == 4 && toVersion >= 5) {
-                migrateJobsv4tov5();
-                currentVersion = 5;
-            }
-            if (currentVersion == 5 && toVersion >= 6) {
-                migrateJobsv5tov6();
-            }
-            if (currentVersion == 6 && toVersion >= 7) {
-                throw new NotImplementedException(
-                        "No method exists for migrating table '" + tableName
-                                + "' from version " + currentVersion
-                                + " to version " + toVersion);
-            }
-            // future updates of the job table are inserted here
-            if (currentVersion > 6) {
-                throw new IllegalState("Database is in an illegalState: "
-                        + "The current version (" + currentVersion
-                        + ") of table '" + tableName
-                        + "' is not an acceptable/known version. ");
-            }
-
-        } else if (tableName.equals("fullharvests")) {
-            if (currentVersion < 2) {
-                throw new IllegalState("Database is in an illegalState: "
-                        + "The current version " + currentVersion
-                        + " of table '" + tableName + "' is not acceptable. "
-                        + "(current version is less than open source version).");
-            }
-            if (currentVersion == 2 && toVersion >= 3) {
-                migrateFullharvestsv2tov3();
-                currentVersion = 3;
-            }
-
-            if (currentVersion == 3 && toVersion >= 4) {
-                migrateFullharvestsv3tov4();
-                currentVersion = 4;
-            }
-
-            if (currentVersion == 4 && toVersion >= 5) {
-                throw new NotImplementedException(
-                        "No method exists for migrating table '" + tableName
-                                + "' from version " + currentVersion
-                                + " to version " + toVersion);
-            }
-
-            // future updates of the job table are inserted here
-
-            if (currentVersion > 4) {
-                throw new IllegalState("Database is in an illegalState: "
-                        + "The current version (" + currentVersion
-                        + ") of table '" + tableName
-                        + "' is not an acceptable/known version. ");
-            }
-
-        } else if (tableName.equals("configurations")) {
-            if (currentVersion < 3) {
-                throw new IllegalState("Database is in an illegalState: "
-                        + "The current version " + currentVersion
-                        + " of table '" + tableName + "' is not acceptable. "
-                        + "(current version is less than open source version).");
-            }
-            if (currentVersion == 3 && toVersion >= 4) {
-                migrateConfigurationsv3ov4();
-                currentVersion = 4;
-            }
-
-            if (currentVersion == 4 && toVersion >= 5) {
-                migrateConfigurationsv4tov5();
-                currentVersion = 5;
-            }
-            if (currentVersion == 5 && toVersion >= 6) {
-                throw new NotImplementedException(
-                        "No method exists for migrating table '" + tableName
-                                + "' from version " + currentVersion
-                                + " to version " + toVersion);
-            }
-
-            if (currentVersion > 5) {
-                throw new IllegalState("Database is in an illegalState: "
-                        + "The current version (" + currentVersion
-                        + ") of table '" + tableName
-                        + "' is not an acceptable/known version. ");
-            }
-
-        } else if (tableName.equals("global_crawler_trap_lists")) {
-            if (currentVersion == 0 && toVersion >= 1) {
-                createGlobalCrawlerTrapLists();
-                currentVersion = 1;
-            }
-            if (currentVersion > 1) {
-                throw new NotImplementedException(
-                        "No method exists for migrating table '" + tableName
-                                + "' from version " + currentVersion
-                                + " to version " + toVersion);
-            }
-        } else if (tableName.equals("global_crawler_trap_expressions")) {
-            if (currentVersion == 0 && toVersion >= 1) {
-                createGlobalCrawlerTrapExpressions();
-                currentVersion = 1;
-            }
-            if (currentVersion > 1) {
-                throw new NotImplementedException(
-                        "No method exists for migrating table '" + tableName
-                                + "' from version " + currentVersion
-                                + " to version " + toVersion);
-            }
-        } else if ("runningjobshistory".equals(tableName)) {
-            if (currentVersion == 0 && toVersion >= 1) {
-                createRunningJobsHistoryTable();
-                currentVersion = 1;
-            }
-            if (currentVersion == 1 && toVersion >= 2) {
-                migrateRunningJobsHistoryTableV1ToV2();
-            }
-            if (currentVersion > 2) {
-                throw new NotImplementedException(
-                        "No method exists for migrating table '" + tableName
-                                + "' from version " + currentVersion
-                                + " to version " + toVersion);
-            }
-        } else if ("runningjobsmonitor".equals(tableName)) {
-            if (currentVersion == 0 && toVersion >= 1) {
-                createRunningJobsMonitorTable();
-                currentVersion = 1;
-            }
-            if (currentVersion == 1 && toVersion >= 2) {
-                migrateRunningJobsMonitorTableV1ToV2();
-            }
-            if (currentVersion > 1) {
-                throw new NotImplementedException(
-                        "No method exists for migrating table '" + tableName
-                                + "' from version " + currentVersion
-                                + " to version " + toVersion);
-            }
-            //log.info("No migration needed yet for running jobs history tables.");
-        } else if ("frontierreportmonitor".equals(tableName)) {
-            if (currentVersion == 0 && toVersion == 1) {
-                createFrontierReportMonitorTable();
-                currentVersion = 1;
-            }
-            if (currentVersion > 1) {
-                throw new NotImplementedException(
-                        "No method exists for migrating table '" + tableName
-                                + "' from version " + currentVersion
-                                + " to version " + toVersion);
-            }
+        if (tableName.equals(JOBS_TABLE)) {
+            upgradeJobsTable(currentVersion, toVersion);
+        } else if (tableName.equals(FULLHARVESTS_TABLE)) {
+            upgradeFullharvestsTable(currentVersion, toVersion);
+        } else if (tableName.equals(CONFIGURATIONS_TABLE)) {
+            upgradeConfigurationsTable(currentVersion, toVersion);
+        } else if (tableName.equals(GLOBALCRAWLERTRAPLISTS_TABLE)) {
+            upgradeGlobalcrawlertraplistsTable(currentVersion, toVersion);
+        } else if (tableName.equals(GLOBALCRAWLERTRAPEXPRESSIONS_TABLE)) {
+            upgradeGlobalcrawlertrapexpressionsTable(currentVersion, toVersion);
+        } else if (tableName.equals(RUNNINGJOBSHISTORY_TABLE)) {
+            upgradeRunningjobshistoryTable(currentVersion, toVersion);
+        } else if (tableName.equals(RUNNINGJOBSMONITOR_TABLE)) {
+            upgradeRunningjobsmonitor(currentVersion, toVersion);
+        } else if (tableName.equals(FRONTIERREPORTMONITOR_TABLE)) {
+            upgradeFrontierreportmonitorTable(currentVersion, toVersion);
+            // Add new if else when other tables need to be upgraded
         } else {
-            // This includes cases where currentVersion < toVersion
-            // for all tables that does not have migration functions yet
             throw new NotImplementedException(
                     "No method exists for migrating table '" + tableName
-                            + "' to version " + toVersion);
+                    + "' to version " + toVersion);
         }
+    }
+
+    /** Migrate the frontierreportmonitor table.
+     * 
+     * @param currentVersion the current version of the frontierreportmonitor table
+     * @param toVersion the required version of the frontierreportmonitor table
+     */
+    private void upgradeFrontierreportmonitorTable(int currentVersion,
+            int toVersion) {
+        if (currentVersion == 0 && toVersion == 1) {
+            createFrontierReportMonitorTable();
+            currentVersion = 1;
+        }
+        // insert new migrations here
+        if (currentVersion > FRONTIERREPORTMONITOR_TABLE_REQUIRED_VERSION) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '"
+                    + FRONTIERREPORTMONITOR_TABLE
+                    + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }    
+    }
+    
+    /** Migrate the runningjobsmonitor table.
+     * 
+     * @param currentVersion the current version of the runningjobsmonitor table
+     * @param toVersion the required version of the runningjobsmonitor table
+     */
+    private void upgradeRunningjobsmonitor(int currentVersion, int toVersion) {
+        if (currentVersion == 0 && toVersion >= 1) {
+            createRunningJobsMonitorTable();
+            currentVersion = 1;
+        }
+        if (currentVersion == 1 && toVersion >= 2) {
+            migrateRunningJobsMonitorTableV1ToV2();
+            currentVersion = 2;
+        }
+        if (currentVersion > RUNNINGJOBSMONITOR_TABLE_REQUIRED_VERSION) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '" 
+                    + RUNNINGJOBSMONITOR_TABLE
+                    + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }
+    }
+    
+    /** Migrate the runningjobshistory table.
+     * 
+     * @param currentVersion the current version of the runningjobshistory table
+     * @param toVersion The required version of the runningjobshistory table
+     */
+    private void upgradeRunningjobshistoryTable(int currentVersion,
+            int toVersion) {
+        if (currentVersion == 0 && toVersion >= 1) {
+            createRunningJobsHistoryTable();
+            currentVersion = 1;
+        }
+        if (currentVersion == 1 && toVersion >= 2) {
+            migrateRunningJobsHistoryTableV1ToV2();
+            currentVersion = 2;
+        }
+        // insert new migrations here
+        if (currentVersion > RUNNINGJOBSHISTORY_TABLE_REQUIRED_VERSION) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '" 
+                    + RUNNINGJOBSHISTORY_TABLE
+                    + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }
+
+    }
+    /** Migrate the globalecrawlertrapexpressions table.
+     * 
+     * @param currentVersion the current version of the jobs table
+     * @param toVersion The required version of the jobs table
+     */
+    private void upgradeGlobalcrawlertrapexpressionsTable(int currentVersion,
+            int toVersion) {
+        if (currentVersion == 0 && toVersion >= 1) {
+            createGlobalCrawlerTrapExpressions();
+            currentVersion = 1;
+        }
+        // insert new migrations here
+        if (currentVersion > GLOBALCRAWLERTRAPEXPRESSIONS_TABLE_REQUIRED_VERSION) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '" 
+                    + GLOBALCRAWLERTRAPEXPRESSIONS_TABLE
+                    + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }
+
+    }
+    /** Migrate the globalecrawlertraplists table.
+     * 
+     * @param currentVersion the current version of the 
+     *  globalecrawlertraplists table
+     * @param toVersion The required version of the 
+     * globalecrawlertraplists table
+     */
+    private void upgradeGlobalcrawlertraplistsTable(int currentVersion,
+            int toVersion) {
+        if (currentVersion == 0 && toVersion >= 1) {
+            createGlobalCrawlerTrapLists();
+            currentVersion = 1;
+        }
+        // insert new migrations here
+        if (currentVersion > GLOBALCRAWLERTRAPLISTS_TABLE_REQUIRED_VERSION) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '" 
+                    + GLOBALCRAWLERTRAPLISTS_TABLE
+                    + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }
+
+    } 
+
+    /** Migrate the jobs table.
+     * 
+     * @param currentVersion the current version of the jobs table
+     * @param toVersion The required version of the jobs table
+     */
+    private void upgradeJobsTable(int currentVersion, int toVersion) {
+        if (currentVersion < 3) {
+            throw new IllegalState("Database is in an illegalState: "
+                    + "The current version " + currentVersion
+                    + " of table '" + JOBS_TABLE + "' is not acceptable. "
+                    + "(current version is less than open source version).");
+        }
+        if (currentVersion == 3 && toVersion >= 4) {
+            migrateJobsv3tov4();
+            currentVersion = 4;
+        }
+        if (currentVersion == 4 && toVersion >= 5) {
+            migrateJobsv4tov5();
+            currentVersion = 5;
+        }
+        if (currentVersion == 5 && toVersion >= 6) {
+            migrateJobsv5tov6();
+            currentVersion = 6;
+        }
+        // future updates of the jobs table are inserted here
+        if (currentVersion == JOBS_TABLE_REQUIRED_VERSION 
+                && toVersion >= JOBS_TABLE_REQUIRED_VERSION + 1) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '" + JOBS_TABLE
+                    + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }
+
+        if (currentVersion > JOBS_TABLE_REQUIRED_VERSION) {
+            throw new IllegalState("Database is in an illegalState: "
+                    + "The current version (" + currentVersion
+                    + ") of table '" + JOBS_TABLE
+                    + "' is not an acceptable/known version. ");
+        }
+
+    }
+
+    /** Migrate the configurations table.
+     * 
+     * @param currentVersion the current version of the configurations table
+     * @param toVersion the required version of the configurations table
+     */
+    private void upgradeConfigurationsTable(int currentVersion, int toVersion) {
+        if (currentVersion < 3) {
+            throw new IllegalState("Database is in an illegalState: "
+                    + "The current version " + currentVersion
+                    + " of table '" + CONFIGURATIONS_TABLE 
+                    + "' is not acceptable. "
+                    + "(current version is less than open source version).");
+        }
+        if (currentVersion == 3 && toVersion >= 4) {
+            migrateConfigurationsv3ov4();
+            currentVersion = 4;
+        }
+
+        if (currentVersion == 4 && toVersion >= 5) {
+            migrateConfigurationsv4tov5();
+            currentVersion = 5;
+        }
+        // insert future migrations here
+        if (currentVersion == CONFIGURATIONS_TABLE_REQUIRED_VERSION 
+                && toVersion >= CONFIGURATIONS_TABLE_REQUIRED_VERSION + 1) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '" 
+                    + CONFIGURATIONS_TABLE
+                    + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }
+
+        if (currentVersion > CONFIGURATIONS_TABLE_REQUIRED_VERSION) {
+            throw new IllegalState("Database is in an illegalState: "
+                    + "The current version (" + currentVersion
+                    + ") of table '" + CONFIGURATIONS_TABLE
+                    + "' is not an acceptable/known version. ");
+        }
+    }   
+
+    /** Migrate the fullharvests table.
+     * 
+     * @param currentVersion the current version of the fullharvests table
+     * @param toVersion the required version of the fullharvests table
+     */
+    private void upgradeFullharvestsTable(int currentVersion, int toVersion) {
+        if (currentVersion < 2) {
+            throw new IllegalState("Database is in an illegalState: "
+                    + "The current version " + currentVersion
+                    + " of table '" + FULLHARVESTS_TABLE 
+                    + "' is not acceptable. "
+                    + "(current version is less than open source version).");
+        }
+        if (currentVersion == 2 && toVersion >= 3) {
+            migrateFullharvestsv2tov3();
+            currentVersion = 3;
+        }
+
+        if (currentVersion == 3 && toVersion >= 4) {
+            migrateFullharvestsv3tov4();
+            currentVersion = 4;
+        }
+        
+        if (currentVersion == 4 && toVersion >= 5) {
+            migrateFullharvestsv4tov5();
+            currentVersion = 5;
+        }
+        
+        // insert future migrations here
+        if (currentVersion == FULLHARVESTS_TABLE_REQUIRED_VERSION 
+                && toVersion >= FULLHARVESTS_TABLE_REQUIRED_VERSION + 1) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '" 
+                    + FULLHARVESTS_TABLE
+                    + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }
+
     }
 
     /**
@@ -411,7 +572,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Migrates the 'configurations' table from version 4 to version 5. This
-     * consists of altering the field 'maxobjects' from being an int to a bigint.
+     * consists of altering the field 'maxobjects' from being an int to a 
+     * bigint.
      */
     protected abstract void migrateConfigurationsv4tov5();
 
@@ -420,4 +582,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * consists of adding the field 'maxjobrunningtime'.
      */
     protected abstract void migrateFullharvestsv3tov4();
+
+    /**
+     * Migrates the 'fullharvests' table from version 4 to version 5. This
+     * consists of adding the field 'isindexready'.
+     */
+    protected abstract void migrateFullharvestsv4tov5();
 }

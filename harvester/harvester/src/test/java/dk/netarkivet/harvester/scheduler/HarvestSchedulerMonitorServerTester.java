@@ -580,7 +580,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
             new FullHarvest("TestHarvest", "", null,
                     Constants.HERITRIX_MAXOBJECTS_INFINITY,
                     Constants.HERITRIX_MAXBYTES_INFINITY,
-                    Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY);
+                    Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, false);
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest
@@ -646,7 +646,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         snapshot = new FullHarvest("TestHarvest2", "", null,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY, 
                 10L,
-                Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, false);
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest (note: conf is the dr.dk config)

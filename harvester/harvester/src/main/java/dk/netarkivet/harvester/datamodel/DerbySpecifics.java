@@ -336,4 +336,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
         = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0"};
         HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
     }
+    
+    @Override
+    protected void migrateFullharvestsv4tov5() {
+        // Add new bigint field isindexready (0 is not ready, 1 is ready).
+        String[] sqlStatements
+        = {"ALTER TABLE fullharvests ADD COLUMN isindexready int NOT NULL DEFAULT 0"};
+        HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
+    }
+    
 }

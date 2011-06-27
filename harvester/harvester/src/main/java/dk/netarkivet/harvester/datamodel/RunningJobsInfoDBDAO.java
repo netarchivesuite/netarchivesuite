@@ -86,7 +86,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         tstamp;
 
         /**
-         * Returns the rank in an SQL query (ordinal + 1 )
+         * Returns the rank in an SQL query (ordinal + 1).
          * @return ordinal() + 1
          */
         int rank() {
@@ -130,33 +130,20 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
         try {
 
-            /** The current version needed of the tables 'runningJobsHistory',
+            /** Update if necessary the current version of the tables 
+             * 'runningJobsHistory',
              * 'runningJobsMonitor' and 'frontierReportMonitor'.
              */
-            Map<String,Integer> versionMap = new HashMap<String,Integer>();
-            versionMap.put("runningjobshistory", 2);
-            versionMap.put("runningjobsmonitor", 2);
-            versionMap.put("frontierreportmonitor", 1);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.RUNNINGJOBSHISTORY_TABLE,
+                    DBSpecifics.RUNNINGJOBSHISTORY_TABLE_REQUIRED_VERSION);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.RUNNINGJOBSMONITOR_TABLE,
+                    DBSpecifics.RUNNINGJOBSMONITOR_TABLE_REQUIRED_VERSION);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.FRONTIERREPORTMONITOR_TABLE,
+                    DBSpecifics.FRONTIERREPORTMONITOR_TABLE_REQUIRED_VERSION);
 
-            for (Map.Entry<String,Integer> entry : versionMap.entrySet()) {
-                String tableName = entry.getKey();
-                Integer versionNeeded = entry.getValue();
-                int version = DBUtils.getTableVersion(connection, tableName);
-                if (version < versionNeeded) {
-                    log.info("Migrating table '" + tableName + "' from version "
-                            + version + " to version " + versionNeeded);
-                    DBSpecifics.getInstance().updateTable(
-                            tableName,
-                            versionNeeded);
-                }
-            }
-
-            for (Map.Entry<String,Integer> entry : versionMap.entrySet()) {
-                String tableName = entry.getKey();
-                Integer versionNeeded = entry.getValue();
-                DBUtils.checkTableVersion(
-                        connection, tableName, versionNeeded);
-            }
         } finally {
             HarvestDBConnection.release(connection);
         }

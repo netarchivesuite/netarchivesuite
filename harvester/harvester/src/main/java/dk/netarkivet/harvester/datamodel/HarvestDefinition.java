@@ -123,6 +123,7 @@ public abstract class HarvestDefinition implements Named {
      * When a previous harvest definition is supplied, only domains not
      * completely harvested by the previous harvestdefinition are included
      * in this harvestdefinition.
+     * indexready set to false.
      *
      * @param harvestDefName  the name of the harvest definition
      * @param comments        description of the harvestdefinition
@@ -132,7 +133,7 @@ public abstract class HarvestDefinition implements Named {
      *                        any domain
      * @param maxBytes        the maximum number of bytes harvested from
      *                        any domain  
-     * @param maxJobRunningTime The maximum running time for each job                       
+     * @param maxJobRunningTime The maximum running time for each job
      * @return a snapshot harvestdefinition
      */
     public static FullHarvest createFullHarvest(String harvestDefName,
@@ -144,7 +145,8 @@ public abstract class HarvestDefinition implements Named {
 
         return new FullHarvest(harvestDefName, comments,
                                prevHarvestOid, maxCountObjects, 
-                               maxBytes, maxJobRunningTime);
+                               maxBytes, maxJobRunningTime,
+                               false);
     }
 
 

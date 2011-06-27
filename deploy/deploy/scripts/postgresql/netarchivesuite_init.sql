@@ -66,7 +66,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'partialharvests', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'fullharvests', 4);
+    VALUES ( 'fullharvests', 5);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'harvest_configs', 1);
 INSERT INTO schemaversions ( tablename, version )
@@ -262,6 +262,7 @@ CREATE TABLE fullharvests (
      previoushd bigint,
      maxbytes bigint NOT NULL default -1,
      maxjobrunningtime bigint NOT NULL default 0
+     isindexready bool NOT NULL
 );
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE fullharvests TO netarchivesuite;

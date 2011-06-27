@@ -159,25 +159,29 @@ public class DataModelTestCase extends TestCase {
         FullHarvest hd2 = new FullHarvest("HD#2", "No comments", null,
                                           Constants.DEFAULT_MAX_OBJECTS,
                                           Constants.DEFAULT_MAX_BYTES,
-                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME,
+                                          false);
         hd2.setSubmissionDate(new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime());
         hddao.create(hd2);
         FullHarvest hd3 = new FullHarvest("HD#3", "No comments", hd2.getOid(),
                                           Constants.DEFAULT_MAX_OBJECTS,
                                           Constants.DEFAULT_MAX_BYTES,
-                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME,
+                                          false);
         hd3.setSubmissionDate(new GregorianCalendar(1970, Calendar.FEBRUARY, 1).getTime());
         hddao.create(hd3);
         FullHarvest hd4 = new FullHarvest("HD#4", "No comments", null,
                                           Constants.DEFAULT_MAX_OBJECTS,
                                           Constants.DEFAULT_MAX_BYTES,
-                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME,
+                                          false);
         hd4.setSubmissionDate(new GregorianCalendar(1970, Calendar.MARCH, 1).getTime());
         hddao.create(hd4);
         FullHarvest hd5 = new FullHarvest("HD#5", "No comments", hd4.getOid(),
                                           Constants.DEFAULT_MAX_OBJECTS,
                                           Constants.DEFAULT_MAX_BYTES,
-                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+                                          Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 
+                                          false);
         hd5.setSubmissionDate(new GregorianCalendar(1970, Calendar.APRIL, 1).getTime());
         hddao.create(hd5);
 

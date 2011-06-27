@@ -61,7 +61,9 @@ public class ScheduleDBDAO extends ScheduleDAO {
     protected ScheduleDBDAO() {
         Connection c = HarvestDBConnection.get();
         try {
-            DBUtils.checkTableVersion(c, "schedules", 1);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.SCHEDULES_TABLE,
+                    DBSpecifics.SCHEDULES_TABLE_REQUIRED_VERSION);
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -331,6 +333,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
     /**
      * @see ScheduleDAO#getCountSchedules()
      */
+    @Override
     public synchronized int getCountSchedules() {
         Connection c = HarvestDBConnection.get();
         try {

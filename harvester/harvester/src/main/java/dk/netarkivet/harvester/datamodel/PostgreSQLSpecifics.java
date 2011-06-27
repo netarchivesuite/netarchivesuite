@@ -253,4 +253,13 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
     }
 
+    @Override
+    protected void migrateFullharvestsv4tov5() {
+        // Update fullharvests table to version 5
+        String[] sqlStatements
+            = {"ALTER TABLE fullharvests ADD COLUMN isindexready bool NOT NULL DEFAULT false"};
+        HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
+        
+    }
+
 }

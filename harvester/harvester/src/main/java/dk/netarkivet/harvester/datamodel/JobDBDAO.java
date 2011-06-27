@@ -67,12 +67,6 @@ public class JobDBDAO extends JobDAO {
     /** The logger for this class. */
     private final Log log = LogFactory.getLog(getClass());
 
-    /** Version of jobs table needed by our code. */
-    private static final int JOBS_VERSION_NEEDED = 6;
-
-    /** Version of job_configs table needed by our code. */
-    private static final int JOB_CONFIGS_VERSION_NEEDED = 1;
-
     /**
      * Create a new JobDAO implemented using database.
      * This constructor also tries to upgrade the jobs and jobs_configs tables
@@ -83,21 +77,13 @@ public class JobDBDAO extends JobDAO {
     protected JobDBDAO() {
         Connection connection = HarvestDBConnection.get();
         try {
-            int jobVersion = DBUtils.getTableVersion(connection,
-            "jobs");
-
-            // Try to upgrade the jobs table to version JOBS_VERSION_NEEDED
-            if (jobVersion < JOBS_VERSION_NEEDED) {
-                log.info("Migrate table" + " 'jobs' to version "
-                        + JOBS_VERSION_NEEDED);
-                DBSpecifics.getInstance().updateTable(
-                        "jobs", JOBS_VERSION_NEEDED);
-            }
-
-            DBUtils.checkTableVersion(connection, "jobs", JOBS_VERSION_NEEDED);
-            DBUtils.checkTableVersion(connection,
-                    "job_configs", JOB_CONFIGS_VERSION_NEEDED
-            );
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.JOBS_TABLE,
+                    DBSpecifics.JOBS_TABLE_REQUIRED_VERSION);
+            
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.JOBCONFIGS_TABLE,
+                    DBSpecifics.JOBCONFIGS_TABLE_REQUIRED_VERSION);
         } finally {
             HarvestDBConnection.release(connection);
         }

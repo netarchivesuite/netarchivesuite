@@ -63,7 +63,9 @@ public class TemplateDBDAO extends TemplateDAO {
     TemplateDBDAO() {
         Connection c = HarvestDBConnection.get();
         try {
-            DBUtils.checkTableVersion(c, "ordertemplates", 1);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.ORDERTEMPLATES_TABLE, 
+                    DBSpecifics.ORDERTEMPLATES_TABLE_REQUIRED_VERSION);
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -218,7 +220,7 @@ public class TemplateDBDAO extends TemplateDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            if (! exists(c, orderXmlName)) {
+            if (!exists(c, orderXmlName)) {
                 throw new PermissionDenied("No order template called "
                         + orderXmlName + " exists");
             }

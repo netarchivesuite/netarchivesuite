@@ -52,16 +52,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             getLog(GlobalCrawlerTrapListDBDAO.class);
 
     /**
-     * version of global_crawler_trap_lists needed by the code.
-     */
-    private static final int TRAP_LIST_VERSION_NEEDED = 1;
-
-    /**
-     * version of global_crawler_trap_expressions needed by the code.
-     */
-    private static final int EXPRESSION_LIST_VERSION_NEEDED = 1;
-
-    /**
      * protected constructor of this class. Checks if any migration
      * are needed before operation starts.
      */
@@ -69,27 +59,12 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
 
         Connection connection = HarvestDBConnection.get();
         try {
-            int trapListVersion =
-                DBUtils.getTableVersion(connection,
-                "global_crawler_trap_lists");
-            if (trapListVersion < TRAP_LIST_VERSION_NEEDED) {
-                log.info("Migrating table 'global_crawler_traps_list' from "
-                        + "version " + trapListVersion + " to "
-                        + TRAP_LIST_VERSION_NEEDED);
-                DBSpecifics.getInstance().updateTable(
-                        "global_crawler_trap_lists", TRAP_LIST_VERSION_NEEDED);
-            }
-            int expressionListVersion =
-                DBUtils.getTableVersion(connection,
-                "global_crawler_trap_expressions");
-            if (expressionListVersion < EXPRESSION_LIST_VERSION_NEEDED) {
-                log.info("Migrating table 'global_crawler_trap_expressions' "
-                        + "from version " + expressionListVersion + " to "
-                        + EXPRESSION_LIST_VERSION_NEEDED);
-                DBSpecifics.getInstance().updateTable(
-                        "global_crawler_trap_expressions",
-                        EXPRESSION_LIST_VERSION_NEEDED);
-            }
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.GLOBALCRAWLERTRAPEXPRESSIONS_TABLE,
+                    DBSpecifics.GLOBALCRAWLERTRAPEXPRESSIONS_TABLE_REQUIRED_VERSION);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.GLOBALCRAWLERTRAPLISTS_TABLE,
+                    DBSpecifics.GLOBALCRAWLERTRAPLISTS_TABLE_REQUIRED_VERSION);
         } finally {
             HarvestDBConnection.release(connection);
         }

@@ -69,9 +69,6 @@ public class DomainDBDAO extends DomainDAO {
     /** The log. */
     private static final Log log = LogFactory.getLog(DomainDBDAO.class);
 
-    /** The required version of the configurations table. */
-    static final int CONFIGURATIONS_VERSION_NEEDED = 5;
-
     /**
      * Creates a database-based implementation of the DomainDAO. Will check that
      * all schemas have correct versions, and update the ones that haven't.
@@ -85,25 +82,37 @@ public class DomainDBDAO extends DomainDAO {
 
         Connection connection = HarvestDBConnection.get();
         try {
-            int configurationsVersion = DBUtils.getTableVersion(connection,
-            "configurations");
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.CONFIGURATIONS_TABLE,
+                    DBSpecifics.CONFIGURATIONS_TABLE_REQUIRED_VERSION);
 
-            if (configurationsVersion < CONFIGURATIONS_VERSION_NEEDED) {
-                log.info("Migrate table" + " 'configurations' to version "
-                        + CONFIGURATIONS_VERSION_NEEDED);
-                DBSpecifics.getInstance().updateTable("configurations",
-                        CONFIGURATIONS_VERSION_NEEDED);
-            }
-
-            DBUtils.checkTableVersion(connection, "domains", 2);
-            DBUtils.checkTableVersion(connection, "configurations",
-                    CONFIGURATIONS_VERSION_NEEDED);
-            DBUtils.checkTableVersion(connection, "config_passwords", 1);
-            DBUtils.checkTableVersion(connection, "config_seedlists", 1);
-            DBUtils.checkTableVersion(connection, "seedlists", 1);
-            DBUtils.checkTableVersion(connection, "passwords", 1);
-            DBUtils.checkTableVersion(connection, "ownerinfo", 1);
-            DBUtils.checkTableVersion(connection, "historyinfo", 2);
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.DOMAINS_TABLE,
+                    DBSpecifics.DOMAINS_TABLE_REQUIRED_VERSION);
+            
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.CONFIGPASSWORDS_TABLE,
+                    DBSpecifics.CONFIGPASSWORDS_TABLE_REQUIRED_VERSION);
+            
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.CONFIGSEEDLISTS_TABLE,
+                    DBSpecifics.CONFIGSEEDLISTS_TABLE_REQUIRED_VERSION);
+          
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.SEEDLISTS_TABLE,
+                    DBSpecifics.SEEDLISTS_TABLE_REQUIRED_VERSION);
+          
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.PASSWORDS_TABLE,
+                    DBSpecifics.PASSWORDS_TABLE_REQUIRED_VERSION);
+            
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.OWNERINFO_TABLE,
+                    DBSpecifics.OWNERINFO_TABLE_REQUIRED_VERSION);
+            
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.HISTORYINFO_TABLE,
+                    DBSpecifics.HISTORYINFO_TABLE_REQUIRED_VERSION);
         } finally {
             HarvestDBConnection.release(connection);
         }
