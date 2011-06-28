@@ -76,5 +76,6 @@
                 <reconnectRetryDelay>300000</reconnectRetryDelay>
             </database>
         </admin>
+        <indexserver><maxthreads>10</maxthreads></indexserver>
     </archive>
 </settings>

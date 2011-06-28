@@ -47,9 +47,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ZipUtils;
 
 /**
@@ -67,8 +69,7 @@ public abstract class CrawlLogIndexCache extends
     /** Needed to find origin information, which is file+offset from CDX index.
      */
     private final CDXDataCache cdxcache = new CDXDataCache();
-    ///** Optimizes Lucene index, if set to true. */
-    //private static final boolean OPTIMIZE_INDEX = true;
+    
     /** the useBlacklist set to true results in docs matching the
        mimefilter being ignored. */
     private boolean useBlacklist;
@@ -141,10 +142,10 @@ public abstract class CrawlLogIndexCache extends
                     this.useBlacklist, verboseIndexing, this.mimeFilter);
             long count = 0;
             Set<IndexingState> outstandingJobs = new HashSet<IndexingState>();
-            final int N_THREADS = 10; // TODO make this a setting
-            
+            final int maxThreads = Settings.getInt(
+                    ArchiveSettings.INDEXSERVER_INDEXING_MAXTHREADS);
             ThreadPoolExecutor executor
-            = new ThreadPoolExecutor(N_THREADS, N_THREADS,
+            = new ThreadPoolExecutor(maxThreads, maxThreads,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>());
             

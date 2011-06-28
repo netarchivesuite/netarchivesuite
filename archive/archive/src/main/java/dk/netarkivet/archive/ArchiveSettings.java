@@ -249,4 +249,13 @@ public class ArchiveSettings {
      */
     public static String SINGLE_CHECKSUM_TIMEOUT
             = "settings.archive.bitarchive.singleChecksumTimeout";
+    
+    /**
+     * <b>settings.archive.indexserver.maxthreads</b>: <br>
+     * Setting for how the max number of threads the deduplication indexer 
+     * shall use.
+     */
+    public static String INDEXSERVER_INDEXING_MAXTHREADS
+            = "settings.archive.indexserver.maxthreads";
+    
 }
