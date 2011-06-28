@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.indexserver.MultiFileBasedCache;
+import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
@@ -350,4 +351,31 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
             }
         }
     }
+    
+    /**
+     * Method to request an Index without having the result sent right away.
+     * @param jobSet The set of job IDs.
+     * @param harvestId The ID of the harvest requesting this index.
+     * @throws IOFailure On trouble in communication or invalid reply types.
+     * @throws IllegalState if message is not OK. 
+     * @throws ArgumentNotValid if the jobSet is null.
+     */
+    protected void requestIndex(Set<Long> jobSet, Long harvestId) throws IOFailure, 
+        IllegalState, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(jobSet, "Set<Long> id");
+        
+        log.info("Requesting an index of type '" + this.requestType
+                + "' for the jobs [" + StringUtils.conjoin(",", jobSet)
+                + "]");
+        //Send request to server
+        IndexRequestMessage irMsg = new IndexRequestMessage(
+                requestType, jobSet, Channels.getHarvestDispatcherChannel(),
+                false, harvestId);
+        JMSConnectionFactory.getInstance().send(irMsg);
+        
+        
+        
+    }
+    
+    
 }

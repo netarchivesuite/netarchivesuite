@@ -24,16 +24,36 @@ package dk.netarkivet.common.distribute.indexserver;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /** A message to send from the IndexServer to HarvestJobManager, that the 
  * index required by harvest with a given ID is ready.
  */
 public class IndexReadyMessage extends NetarkivetMessage {
 
-    protected IndexReadyMessage(ChannelID to, ChannelID replyTo) {
+    /** The ID for a specific harvest. */
+    private Long harvestId;
+    
+    /**
+     * Constructor for the IndexReadyMessage.
+     * @param harvestId The harvestId that requires the index.
+     * @param to The destination channel
+     * @param replyTo The channel to reply to (not really used).
+     */
+    public IndexReadyMessage(Long harvestId, ChannelID to, 
+            ChannelID replyTo) {
         super(to, replyTo);
-        // TODO Auto-generated constructor stub
+        ArgumentNotValid.checkNotNull(harvestId, "Long harvestId");
+        this.harvestId = harvestId;
     }
     
-
+    /**
+     * @return the Id of the harvest that requires this index.
+     */
+    public Long getHarvestId() {
+        return this.harvestId;
+    }
+    
+    
+    
 }

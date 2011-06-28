@@ -26,6 +26,7 @@ package dk.netarkivet.archive.indexserver.distribute;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,7 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
+import dk.netarkivet.common.distribute.indexserver.IndexReadyMessage;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -146,6 +148,7 @@ public class IndexRequestServer extends ArchiveMessageHandler
      * @param irMsg A message requesting an index
      */
     private void doGenerateIndex(final IndexRequestMessage irMsg) {
+        final boolean mustReturnIndex = irMsg.mustReturnIndex();
         try {
             checkMessage(irMsg);
             RequestType type = irMsg.getRequestType();
@@ -161,27 +164,33 @@ public class IndexRequestServer extends ArchiveMessageHandler
                          + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
                          + "]");
                 File cacheFile = handler.getCacheFile(jobIDs);
-                if (cacheFile.isDirectory()) {
-                    // This cache uses multiple files stored in a directory,
-                    // so transfer them all.
-                    File[] cacheFiles = cacheFile.listFiles();
-                    List<RemoteFile> resultFiles = new ArrayList<RemoteFile>(
-                            cacheFiles.length);
-                    for (File f : cacheFiles) {
-                        resultFiles.add(
-                                RemoteFileFactory.getCopyfileInstance(f));
+                if (mustReturnIndex) { // return index now! (default behaviour)
+                    if (cacheFile.isDirectory()) {
+                        // This cache uses multiple files stored in a directory,
+                        // so transfer them all.
+                        File[] cacheFiles = cacheFile.listFiles();
+                        List<RemoteFile> resultFiles 
+                            = new ArrayList<RemoteFile>(cacheFiles.length);
+                        for (File f : cacheFiles) {
+                            resultFiles.add(
+                                    RemoteFileFactory.getCopyfileInstance(f));
+                        }
+                        irMsg.setResultFiles(resultFiles);
+                    } else {
+                        irMsg.setResultFile(
+                                RemoteFileFactory.getCopyfileInstance(
+                                cacheFile));
                     }
-                    irMsg.setResultFiles(resultFiles);
-                } else {
-                    irMsg.setResultFile(RemoteFileFactory.getCopyfileInstance(
-                            cacheFile));
                 }
             } else {
+                Set<Long> missingJobIds = new HashSet<Long>(jobIDs);
+                missingJobIds.removeAll(foundIDs);
                 log.warn("Failed generating index of type '" + type
                          + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
-                         + "], only the jobs ["
-                         + StringUtils.conjoin(",", foundIDs)
-                         + "] are available.");
+                         + "]. Missing data for jobs ["
+                         + StringUtils.conjoin(",", missingJobIds)
+                         + "].");
+                
             }
         } catch (Exception e) {
             log.warn(
@@ -194,11 +203,20 @@ public class IndexRequestServer extends ArchiveMessageHandler
             if (irMsg.isOk()) {
                 state = "successful";
             }
-            log.info("Sending " + state 
-                    + " reply for IndexRequestMessage"
-                    + " back to sender '"
-                    + irMsg.getReplyTo() + "'."); 
-            JMSConnectionFactory.getInstance().reply(irMsg);
+            if (mustReturnIndex) {
+                log.info("Sending " + state 
+                        + " reply for IndexRequestMessage"
+                        + " back to sender '"
+                        + irMsg.getReplyTo() + "'.");
+                JMSConnectionFactory.getInstance().reply(irMsg);
+            } else {
+               log.info("Sending IndexReadyMessage to HarvestJobManager");
+               IndexReadyMessage irm = new IndexReadyMessage(
+                       irMsg.getHarvestId(), 
+                       irMsg.getReplyTo(),
+                       Channels.getTheIndexServer());
+               JMSConnectionFactory.getInstance().send(irm);
+            }
         }
     }
 
