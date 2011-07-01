@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 
@@ -82,4 +83,10 @@ public class TrivialJobIndexCache implements JobIndexCache {
         }
         return new Index<Set<Long>>(cacheFile, jobIDs);
     }
+
+    @Override
+    public void requestIndex(Set<Long> jobSet, Long harvestId) {
+        throw new NotImplementedException(
+        "This feature is not implemented for this type of cache");
+    }    
 }

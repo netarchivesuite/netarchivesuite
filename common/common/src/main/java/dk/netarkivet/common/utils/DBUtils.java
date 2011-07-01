@@ -902,4 +902,22 @@ public class DBUtils {
                     StringUtils.conjoin(";", updates) + "'.");
         }
     }
+    
+    /**
+     * Close a statement, if not closed already
+     * Note: This does not throw any a SQLException, because
+     * it is always called inside a finally-clause.
+     * Exceptions are logged as warnings, though.
+     * @param s a statement
+     */
+    public static void closeStatementIfOpen(PreparedStatement s) {
+        if (s != null) {
+            try {
+                s.close();
+            } catch (SQLException e) {
+                log.warn("Error closing SQL statement " + s + "\n"
+                         + ExceptionUtils.getSQLExceptionCause(e), e);
+            }
+        }
+    }
 }

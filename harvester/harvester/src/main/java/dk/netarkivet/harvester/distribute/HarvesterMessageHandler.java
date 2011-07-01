@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
@@ -71,7 +72,13 @@ public abstract class HarvesterMessageHandler
         ArgumentNotValid.checkNotNull(msg, "msg");
         log.trace("Message received:\n" + msg.toString());
         try {
-            ((HarvesterMessage) JMSConnection.unpack(msg)).accept(this);
+            NetarkivetMessage unpackedMsg = JMSConnection.unpack(msg);
+            if (unpackedMsg instanceof HarvesterMessage) {
+                ((HarvesterMessage) unpackedMsg).accept(this);
+            } else {
+                ((IndexReadyMessage) unpackedMsg).accept(this);
+            }
+            //((HarvesterMessage) ).accept(this);
         } catch (ClassCastException e) {
             log.warn("Invalid message type", e);
         } catch (Throwable e) {
@@ -162,5 +169,15 @@ public abstract class HarvesterMessageHandler
         deny(msg);
     }
 
-
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg a {@link IndexReadyMessage}
+     * @throws PermissionDenied when invoked
+     */
+    @Override
+    public void visit(IndexReadyMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
 }

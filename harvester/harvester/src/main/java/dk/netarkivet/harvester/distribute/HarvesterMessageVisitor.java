@@ -79,5 +79,10 @@ public interface HarvesterMessageVisitor {
     * @param msg A received message.
     */
     void visit(HarvesterStatusMessage msg);
-
+    
+    /** This method should be overridden to handle the receipt of a message.
+    *
+    * @param msg A received message.
+    */
+    void visit(IndexReadyMessage msg);   
 }

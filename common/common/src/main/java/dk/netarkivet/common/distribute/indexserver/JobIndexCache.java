@@ -38,4 +38,12 @@ public interface JobIndexCache {
      */
     Index<Set<Long>> getIndex(Set<Long> jobIDs);
 
+    /**
+     * Request an index from the indexserver. Prepare the indx but don't 
+     * give it to me.
+     * @param jobSet
+     * @param harvestId
+     */
+    void requestIndex(Set<Long> jobSet, Long harvestId);
+
 }

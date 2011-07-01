@@ -24,6 +24,10 @@
 
 package dk.netarkivet.archive.indexserver;
 
+import java.util.Set;
+
+import dk.netarkivet.common.exceptions.NotImplementedException;
+
 /**
  * A CrawlLogIndexCache that takes in all entries in the crawl log.
  *
@@ -35,4 +39,11 @@ public class FullCrawlLogIndexCache extends CrawlLogIndexCache {
     public FullCrawlLogIndexCache() {
         super("fullcrawllogindex", false, ".*");
     }
+
+    @Override
+    public void requestIndex(Set<Long> jobSet, Long harvestId) {
+        throw new NotImplementedException(
+        "This feature is not implemented for this type of cache");
+    }
+
 }

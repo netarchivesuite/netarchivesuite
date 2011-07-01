@@ -104,6 +104,7 @@ implements MessageListener, ComponentLifeCycle {
         /**
          * Updates the dispatch state by removing a crawler ID if it
          * declares being unavailable, or adding it otherwise.
+         * @param statusMsg A message from one of the harvesters
          */
         public synchronized void updateHarvesterStatus(
                 HarvesterStatusMessage statusMsg) {
@@ -305,11 +306,11 @@ implements MessageListener, ComponentLifeCycle {
         final JobDAO dao = JobDAO.getInstance();
         Iterator<Long> jobsToSubmit = dao.getAllJobIds(JobStatus.NEW, priority);
         if (!jobsToSubmit.hasNext()) {
-            if (log.isTraceEnabled() ) {
+            if (log.isTraceEnabled()) {
                 log.trace("No " + priority + " jobs to be run at this time");
             }
         } else {
-            if (log.isDebugEnabled() ) {
+            if (log.isDebugEnabled()) {
                 log.debug("Submitting new " + priority + " job");
             }
             final long jobID = jobsToSubmit.next();
@@ -378,7 +379,7 @@ implements MessageListener, ComponentLifeCycle {
                 }
 
                 doOneCrawl(jobToSubmit, hName, hdComments, schedule, metadata);
-                if (log.isTraceEnabled() ) {
+                if (log.isTraceEnabled()) {
                     log.trace("Job " + jobToSubmit + " sent to harvest queue.");
                 }
 

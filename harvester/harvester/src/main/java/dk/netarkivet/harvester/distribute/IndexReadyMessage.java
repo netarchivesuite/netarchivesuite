@@ -20,16 +20,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.common.distribute.indexserver;
+package dk.netarkivet.harvester.distribute;
 
 import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /** A message to send from the IndexServer to HarvestJobManager, that the 
  * index required by harvest with a given ID is ready.
  */
-public class IndexReadyMessage extends NetarkivetMessage {
+public class IndexReadyMessage extends HarvesterMessage {
 
     /** The ID for a specific harvest. */
     private Long harvestId;
@@ -54,6 +53,10 @@ public class IndexReadyMessage extends NetarkivetMessage {
         return this.harvestId;
     }
     
+    @Override
+    public void accept(HarvesterMessageVisitor v) {
+        v.visit(this);
+    }
     
     
 }

@@ -86,22 +86,24 @@ if (!ihd.iterator().hasNext()) { %>
                     + HTMLUtils.encode(name);
 
             String isActive;
-            String flipActiveText;
+            String flipActiveText="";
+            String flipactiveLink="";
             if (hd.isActive()) {
                 isActive = I18N.getString(response.getLocale(),
                         "active");
-                flipActiveText = I18N.getString(response.getLocale(),
-                        "deactivate");
+                //flipActiveText = I18N.getString(response.getLocale(),
+                //        "deactivate");
+                //flipActiveText = "";
             } else {
                 isActive = I18N.getString(response.getLocale(),
                         "inactive");
                 flipActiveText = I18N.getString(response.getLocale(),
                         "activate");
-            }
-            String flipactiveLink
+                flipactiveLink
                     = "<a href=\"\" onclick=\"document.getElementById('flipActiveForm"
                     + hd.getOid() + "').submit(); return false;\">"
-                    + HTMLUtils.escapeHtmlValues(flipActiveText) + "</a>";
+                    + HTMLUtils.escapeHtmlValues(flipActiveText) + "</a>";        
+            }
     %>
     <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
         <td><%=HTMLUtils.escapeHtmlValues(name)%></td>

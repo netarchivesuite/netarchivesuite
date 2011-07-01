@@ -195,7 +195,8 @@ public abstract class CrawlLogIndexCache extends
                     if (next.getResultObject().isDone()) {
                         nextResult = next.getResultObject();
                         try {
-                            if (nextResult.get()) {
+                            // check, if the indexing failed
+                            if (nextResult.get()) { 
                                 subindices.add(
                                         new SimpleFSDirectory(
                                                new File(next.getIndex())));

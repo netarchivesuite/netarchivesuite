@@ -23,14 +23,20 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.util.Set;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
+import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -171,6 +177,23 @@ public class SnapshotHarvestDefinition {
             HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
             HarvestDefinition hd = dao.getHarvestDefinition(flipactive);
             if (hd != null) {
+                boolean isActive = hd.getActive();
+                boolean useDeduplication = Settings.getBoolean(
+                        HarvesterSettings.DEDUPLICATION_ENABLED);
+                if (!isActive) {
+                    if (useDeduplication) {
+                        // The client for requesting job index.
+                        JobIndexCache jobIndexCache
+                            = IndexClientFactory.getDedupCrawllogInstance();
+                        Long harvestId = hd.getOid();
+                        Set<Long> jobSet = dao.getJobIdsForSnapshotDeduplicationIndex(harvestId);
+                        jobIndexCache.requestIndex(jobSet, harvestId);
+                    } else {
+                        // If deduplication disabled set indexReady to true 
+                        // right now, so the job generation can proceed.
+                        ((FullHarvest) hd).setIndexReady(true);
+                    }
+                } 
                 hd.setActive(!hd.getActive());
                 dao.update(hd);
                 return true;

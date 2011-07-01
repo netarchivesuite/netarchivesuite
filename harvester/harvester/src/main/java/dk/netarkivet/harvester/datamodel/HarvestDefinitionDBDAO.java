@@ -35,10 +35,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
@@ -47,11 +49,14 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FilterIterator;
+import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 
 /**
  * A database-oriented implementation of the HarvestDefinitionDAO.
@@ -489,7 +494,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         + "previoushd = ?, "
                         + "maxobjects = ?, "
                         + "maxbytes = ?, "
-                        + "maxjobrunningtime = ? "
+                        + "maxjobrunningtime = ?, "
+                        + "isindexready = ? "
                         + "WHERE harvest_id = ?");
                 if (fh.getPreviousHarvestDefinition() != null) {
                     s.setLong(1, fh.getPreviousHarvestDefinition().getOid());
@@ -499,7 +505,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 s.setLong(2, fh.getMaxCountObjects());
                 s.setLong(3, fh.getMaxBytes());
                 s.setLong(4, fh.getMaxJobRunningTime());
-                s.setLong(5, fh.getOid());
+                s.setBoolean(5, fh.getIndexReady());
+                s.setLong(6, fh.getOid());
 
                 rows = s.executeUpdate();
                 log.debug(rows + " fullharvests records updated");
@@ -543,7 +550,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @param harvestDefinition the harvest definition object.
      */
     @Override
-    public synchronized void flipActive(SparsePartialHarvest harvestDefinition) {
+    public synchronized void flipActive(
+            SparsePartialHarvest harvestDefinition) {
         ArgumentNotValid.checkNotNull(harvestDefinition, 
                 "HarvestDefinition harvestDefinition");
 
@@ -551,9 +559,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             if (harvestDefinition.getOid() == null 
-                    || ! exists(c, harvestDefinition.getOid())) {
+                    || !exists(c, harvestDefinition.getOid())) {
                 final String message = "Cannot update non-existing "
-                        + "harvestdefinition '" + harvestDefinition.getName() + "'";
+                        + "harvestdefinition '" 
+                        + harvestDefinition.getName() + "'";
                 log.debug(message);
                 throw new PermissionDenied(message);
             }
@@ -579,7 +588,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             int rows = s.executeUpdate();
             // Since the HD exists, no rows indicates bad edition
             if (rows == 0) {
-                String message = "Somebody else must have updated " + harvestDefinition
+                String message = "Somebody else must have updated " 
+                    + harvestDefinition
                         + " since edition " + harvestDefinition.getEdition()
                         + ", not updating";
                 log.debug(message);
@@ -705,7 +715,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + " FROM fullharvests, harvestdefinitions"
                     + " WHERE harvestdefinitions.harvest_id "
                     + "= fullharvests.harvest_id"
-                    + "   AND isactive = ? AND numevents < 1", true);
+                    + " AND isactive = ? "
+                    + " AND numevents < 1 "
+                    + " AND isindexready = ?", true, true);
             ids.addAll(DBUtils.selectLongList(
                     connection,
                     "SELECT partialharvests.harvest_id"
@@ -966,6 +978,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error getting sparse harvests" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1015,6 +1028,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error getting sparse harvest" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1195,6 +1209,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error getting sparse harvest" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1317,4 +1332,104 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
     }
 
+    @Override
+    public Set<Long> getJobIdsForSnapshotDeduplicationIndex(Long harvestId) {
+        ArgumentNotValid.checkNotNull(harvestId, "Long harvestId");
+        Set<Long> jobIds = new HashSet<Long>();
+        if (!isSnapshot(harvestId)) {
+            throw new NotImplementedException(
+                    "This functionality only works for snapshot harvests");
+        }
+        List<Long> harvestDefinitions = getPreviousFullHarvests(harvestId);
+        Connection c = HarvestDBConnection.get();
+        try {
+            List<Long> jobs = new ArrayList<Long>();
+            if (!harvestDefinitions.isEmpty()) {
+                //Select all jobs from a given list of harvest definitions
+                jobs.addAll(DBUtils.selectLongList(
+                    c,
+                    "SELECT jobs.job_id FROM jobs"
+                    + " WHERE jobs.harvest_id IN ("
+                    + StringUtils.conjoin(",", harvestDefinitions)
+                    + ")"));
+            }
+            jobIds.addAll(jobs);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+        
+        return jobIds;
+    }
+
+    private List<Long> getPreviousFullHarvests(Long thisHarvest) {
+            List<Long> results = new ArrayList<Long>();
+            Connection c = HarvestDBConnection.get();
+            //Follow the chain of orginating IDs back
+            for (Long originatingHarvest = thisHarvest; originatingHarvest != null;
+             // Compute next originatingHarvest
+                 originatingHarvest = DBUtils.selectFirstLongValueIfAny(
+                         c,
+                         "SELECT previoushd FROM fullharvests"
+                         + " WHERE fullharvests.harvest_id=?",
+                         originatingHarvest)) {
+                if (!originatingHarvest.equals(thisHarvest)) {
+                    results.add(originatingHarvest);
+                }
+            }
+
+        //Find the first harvest in the chain (but last in the list).
+            Long firstHarvest = thisHarvest;
+            if (!results.isEmpty()) {
+                firstHarvest = results.get(results.size() - 1);
+            }
+        
+        //Find the last harvest in the chain before
+            Long olderHarvest = DBUtils.selectFirstLongValueIfAny(
+                    c, "SELECT fullharvests.harvest_id"
+                    + " FROM fullharvests, harvestdefinitions,"
+                    + "  harvestdefinitions AS currenthd"
+                    + " WHERE currenthd.harvest_id=?"
+                    + " AND fullharvests.harvest_id=harvestdefinitions.harvest_id"
+                    + " AND harvestdefinitions.submitted<currenthd.submitted"
+                    + " ORDER BY harvestdefinitions.submitted "
+                    + HarvestStatusQuery.SORT_ORDER.DESC.name(), firstHarvest);
+            //Follow the chain of orginating IDs back
+            for (Long originatingHarvest = olderHarvest;
+                 originatingHarvest != null;
+                 originatingHarvest = DBUtils.selectFirstLongValueIfAny(
+                         c,
+                         "SELECT previoushd FROM fullharvests"
+                         + " WHERE fullharvests.harvest_id=?",
+                         originatingHarvest)) {
+                results.add(originatingHarvest);
+            }
+            return results;
+    }
+    @Override
+    public void setIndexIsReady(Long harvestId, boolean newValue) {
+        if (!isSnapshot(harvestId)) {
+            throw new NotImplementedException(
+                    "Not implemented for non snapshot harvests");
+        } else {
+            Connection c = HarvestDBConnection.get();
+            String sql = "UPDATE fullharvests SET isindexready=? "
+                + "WHERE harvest_id=?";
+            PreparedStatement s = null;
+            try {
+                s = c.prepareStatement(sql);
+                s.setBoolean(1, newValue);
+                s.setLong(2, harvestId);
+                int rows = s.executeUpdate();
+                log.debug(rows + " entries of table fullharvests updated");
+            } catch (SQLException e) {
+                log.warn("Exception thrown while updating "
+                        + "fullharvests.isindexready field: " 
+                        + ExceptionUtils.getSQLExceptionCause(e), e);
+            } finally {
+                DBUtils.closeStatementIfOpen(s);
+                HarvestDBConnection.release(c);
+            }
+        }
+        
+    }
 }

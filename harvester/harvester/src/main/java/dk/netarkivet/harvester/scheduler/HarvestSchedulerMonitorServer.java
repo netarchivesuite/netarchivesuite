@@ -32,10 +32,12 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
+import dk.netarkivet.harvester.distribute.IndexReadyMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
@@ -235,5 +237,29 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
     public void shutdown() {
         JMSConnectionFactory.getInstance().removeListener(
                 Channels.getTheSched(), this);
+    }
+
+    @Override
+    public void visit(IndexReadyMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        processIndexReadyMessage(msg);
+    }
+    
+    /**
+     * Process an incoming IndexReadyMessage.
+     * @param msg the message
+     */
+    private void processIndexReadyMessage(IndexReadyMessage msg) {
+        // Set isindexready to true
+        Long harvestId = msg.getHarvestId();
+        HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
+        if (dao.isSnapshot(harvestId)) {
+            dao.setIndexIsReady(harvestId, true);
+            log.info("Got message from IndexServer, that index is ready for harvest # "
+                    + harvestId);
+        } else {
+            log.debug("Ignoring IndexreadyMesssage sent on behalf on selective harvest w/id " 
+                    + harvestId);
+        }
     }
 }

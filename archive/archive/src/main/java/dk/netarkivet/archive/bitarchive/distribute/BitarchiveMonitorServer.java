@@ -800,7 +800,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     /**
      * Closes this BitarchiveMonitorServer cleanly.
      */
-    public void cleanup() {
+    public synchronized void cleanup() {
         if (instance != null) {
             con.removeListener(Channels.getTheBamon(), this);
             batchConversions.clear();

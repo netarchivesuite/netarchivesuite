@@ -36,6 +36,7 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
@@ -50,6 +51,7 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
+import dk.netarkivet.harvester.distribute.IndexReadyMessage;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
@@ -798,6 +800,12 @@ implements CleanupIF {
                 throw e;
             }
         }
+    }
+
+    @Override
+    public void visit(IndexReadyMessage msg) {
+        throw new NotImplementedException("This method is not implemented");
+        
     }
 
 }

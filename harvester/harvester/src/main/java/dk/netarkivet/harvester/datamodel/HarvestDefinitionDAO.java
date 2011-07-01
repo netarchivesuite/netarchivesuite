@@ -26,6 +26,7 @@ package dk.netarkivet.harvester.datamodel;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -247,7 +248,8 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     * @throws ArgumentNotValid on null argument
     * @throws IOFailure        on any other error talking to the database
     */
-    public abstract List<String> getListOfDomainsOfHarvestDefinition(String harvestName);
+    public abstract List<String> getListOfDomainsOfHarvestDefinition(
+            String harvestName);
 
     /** Get a sorted list of all seeds of a Domain in a HarvestDefinition.
     *
@@ -257,5 +259,21 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     * @throws ArgumentNotValid on null argument
     * @throws IOFailure        on any other error talking to the database
     */
-    public abstract List<String> getListOfSeedsOfDomainOfHarvestDefinition(String harvestName, String domainName);
+    public abstract List<String> getListOfSeedsOfDomainOfHarvestDefinition(
+            String harvestName, String domainName);
+    
+    /**
+     * Get a collection of jobIds for snapshot deduplication index.
+     * @param harvestId the id of the harvest
+     * @return a collection of jobIds to create a deduplication index.
+     */
+    public abstract Set<Long> getJobIdsForSnapshotDeduplicationIndex(
+            Long harvestId);
+
+    /**
+     * Set the isindexready field available for snapshot harvests.
+     * @param harvestId the ID of the harvest.
+     * @param newValue the new isindexready value 
+     */
+    public abstract void setIndexIsReady(Long harvestId, boolean newValue);
 }

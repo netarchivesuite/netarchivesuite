@@ -41,12 +41,12 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
-import dk.netarkivet.common.distribute.indexserver.IndexReadyMessage;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.distribute.IndexReadyMessage;
 
 /**
  * Index request server singleton.
@@ -210,7 +210,7 @@ public class IndexRequestServer extends ArchiveMessageHandler
                         + irMsg.getReplyTo() + "'.");
                 JMSConnectionFactory.getInstance().reply(irMsg);
             } else {
-               log.info("Sending IndexReadyMessage to HarvestJobManager");
+               log.info("Sending IndexReadyMessage to Scheduler");
                IndexReadyMessage irm = new IndexReadyMessage(
                        irMsg.getHarvestId(), 
                        irMsg.getReplyTo(),

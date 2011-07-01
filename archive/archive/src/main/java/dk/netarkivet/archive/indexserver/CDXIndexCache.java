@@ -32,9 +32,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ProcessUtils;
 
@@ -129,5 +131,11 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
         } finally {
             FileUtils.remove(workFile);
         }
+    }
+
+    @Override
+    public void requestIndex(Set<Long> jobSet, Long harvestId) {
+        throw new NotImplementedException(
+                "This feature is not implemented for this type of cache");
     }
 }
