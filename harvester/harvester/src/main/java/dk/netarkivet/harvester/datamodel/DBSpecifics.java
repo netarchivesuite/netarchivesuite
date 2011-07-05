@@ -196,12 +196,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         } finally {
             HarvestDBConnection.release(c);
         }
-        log.info("Trying to migrate table '" + tableName + "' from version '"
-                + currentVersion + "' to version '" + toVersion + "'.");
         if (currentVersion == toVersion) {
             // Nothing to do. Version of table is already correct.
             return;
         }
+        log.info("Trying to migrate table '" + tableName + "' from version '"
+                + currentVersion + "' to version '" + toVersion + "'.");
 
         if (currentVersion > toVersion) {
             throw new IllegalState("Database is in an illegalState: "
