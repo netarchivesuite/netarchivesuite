@@ -31,8 +31,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -60,8 +62,11 @@ public class DatabaseTestUtils {
      * @throws IllegalAccessException
      */
     public static Connection takeDatabase(File jarfile, String dbname, File dbUnzipDir)
-            throws SQLException, IOException, IllegalAccessException
-    {
+            throws SQLException, IOException, IllegalAccessException {
+
+        Settings.set(CommonSettings.DB_MACHINE, "");
+        Settings.set(CommonSettings.DB_PORT, "");
+        Settings.set(CommonSettings.DB_DIR, "");
         //String dbname = jarfile.getName().substring(0, jarfile.getName().lastIndexOf('.'));
 
         FileUtils.removeRecursively(new File(dbUnzipDir, dbname));
@@ -112,8 +117,10 @@ public class DatabaseTestUtils {
      * @throws IllegalAccessException
      */
     public static Connection takeDatabase(File jarfile, File dbUnzipDir)
-            throws SQLException, IOException, IllegalAccessException
-    {
+            throws SQLException, IOException, IllegalAccessException {
+        Settings.set(CommonSettings.DB_MACHINE, "");
+        Settings.set(CommonSettings.DB_PORT, "");
+        Settings.set(CommonSettings.DB_DIR, "");
         //String dbname = jarfile.getName().substring(0, jarfile.getName().lastIndexOf('.'));
 
         FileUtils.removeRecursively(dbUnzipDir);
@@ -214,5 +221,6 @@ public class DatabaseTestUtils {
     public static void dropHDDB() throws SQLException,
                             NoSuchFieldException, IllegalAccessException {
         dropDatabase();
+        HarvestDBConnection.cleanup();
     }
 }

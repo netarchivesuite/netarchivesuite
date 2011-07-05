@@ -62,13 +62,13 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         super.tearDown();
     }
 
-    /** Simpel unittest for the HarvestStatus constructor and associated getters. */
+    /** Simple unittest for the HarvestStatus constructor and associated getters. */
     public void testHarvestStatusConstructor() {
         List<JobStatusInfo> jsiList = new ArrayList<JobStatusInfo>();
-        HarvestStatus hs = new HarvestStatus(42L, jsiList);
+        HarvestStatus hs = new HarvestStatus(420L, jsiList);
         
         assertEquals("Should have returned the correct fullresultsCount",
-                42L, hs.getFullResultsCount());
+                420L, hs.getFullResultsCount());
         assertEquals("Should have returned the same empty list "
         		+ "of JobstatusInfo objects",
                 jsiList, hs.getJobStatusInfo());
@@ -76,8 +76,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     
     public void testRejectFailedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
-        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(42L);
-        Job job = Job.createJob(42L, DomainDAO.getInstance().read(
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
+        Job job = Job.createJob(420L, DomainDAO.getInstance().read(
                 "netarkivet.dk").getDefaultConfiguration(), 0);
         jobDAO.create(job);
         job.setStatus(JobStatus.FAILED);
@@ -96,8 +96,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
     public void testUnrejectRejectedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
-        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(42L);
-        Job job = Job.createJob(42L, DomainDAO.getInstance().read(
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
+        Job job = Job.createJob(420L, DomainDAO.getInstance().read(
                 "netarkivet.dk").getDefaultConfiguration(), 0);
         jobDAO.create(job);
         job.setStatus(JobStatus.FAILED_REJECTED);
@@ -116,8 +116,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     public void testProcessRequest() throws Exception {
         
         JobDAO jobDAO = JobDBDAO.getInstance();
-        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(42L);
-        Job job = Job.createJob(42L, DomainDAO.getInstance().read(
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
+        Job job = Job.createJob(420L, DomainDAO.getInstance().read(
                 "netarkivet.dk").getDefaultConfiguration(), 0);
         jobDAO.create(job);
 

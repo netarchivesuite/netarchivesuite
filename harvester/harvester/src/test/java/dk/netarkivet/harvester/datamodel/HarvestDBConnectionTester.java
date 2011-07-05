@@ -63,11 +63,6 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
 
     public void tearDown() throws Exception {
         super.tearDown();
-        try {
-        	dropTestTable();
-        } catch (Exception e) {
-        	// Ignore
-        }
     }
 
     /**
