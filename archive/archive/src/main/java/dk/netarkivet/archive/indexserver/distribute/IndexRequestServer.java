@@ -24,16 +24,23 @@
 package dk.netarkivet.archive.indexserver.distribute;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.archive.indexserver.FileBasedCache;
 import dk.netarkivet.common.distribute.Channels;
@@ -43,8 +50,12 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.distribute.IndexReadyMessage;
 
@@ -65,25 +76,93 @@ public class IndexRequestServer extends ArchiveMessageHandler
     private static IndexRequestServer instance;
     /** The handlers for index request types. */
     private Map<RequestType, FileBasedCache<Set<Long>>> handlers;
-
+    
+    /** The connection to the JMSBroker. */
+    private JMSConnection conn;
+    /** A set with the current indexing jobs in progress. */
+    private Set<IndexRequestMessage> currentJobs;
+    /** The max number of concurrent jobs. */
+    private long maxConcurrentJobs;
+    /** Are we listening, now. */
+    private AtomicBoolean isListening = new AtomicBoolean();
+    /**
+     * The directory to store backup copies of the currentJobs.
+     * In case of the indexserver crashing. 
+     */
+    private File requestDir;
     /** Initialise index request server with no handlers, listening to the
      * index JMS channel.
      */
     private IndexRequestServer() {
-        JMSConnection conn = JMSConnectionFactory.getInstance();
-        conn.setListener(Channels.getTheIndexServer(), this);
-        log.info("Index request server is listening for requests on channel '"
-                 + Channels.getTheIndexServer() + "'");
+        maxConcurrentJobs = Settings.getLong(
+                ArchiveSettings.INDEXSERVER_INDEXING_MAXCLIENTS);
+        requestDir = Settings.getFile(
+                ArchiveSettings.INDEXSERVER_INDEXING_REQUESTDIR);
+        currentJobs = new HashSet<IndexRequestMessage>();
+        restoreRequestsfromRequestDir();
+        log.info("" + currentJobs.size()
+                + " indexing jobs in progress that was stored in requestdir: " 
+                + requestDir.getAbsolutePath() );
+        conn = JMSConnectionFactory.getInstance();
+        
+        if (maxConcurrentJobs > currentJobs.size()) {
+            log.info("Enabling listening to the indexserver-queue");
+            conn.setListener(Channels.getTheIndexServer(), this);
+            isListening.set(true);
+            log.info("Index request server is listening for requests on "
+                    + "channel '"
+                    + Channels.getTheIndexServer() + "'");
 
+        } else {
+            log.info("Currently full occupied with indexjobs stored in the " 
+                    + "requestdirectory");
+            isListening.set(false);
+        }
+        
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(
                 RequestType.class);
+    }
+
+    /**
+     * Restore old requests from requestDir.
+     */
+    private void restoreRequestsfromRequestDir() {
+        if (!requestDir.exists()) {
+            log.info("requestdir not found: creating request dir");
+            requestDir.mkdirs();
+            return;
+        }
+        
+        File[] requests = requestDir.listFiles();
+        if (requests != null) {
+            // Fill up the currentJobs 
+            for (File request: requests){
+                if (request.isFile()) {
+                    final IndexRequestMessage msg = restoreMessage(request);
+                    currentJobs.add(msg);
+                    //Start a new thread to handle the actual request.
+                    new Thread(){
+                        public void run() {
+                            doGenerateIndex(msg);
+                        }
+                    }.start();
+                    log.info("Restarting indexjob w/ ID=" + msg.getID());
+                } else {
+                    log.debug("Ignoring directory in requestdir: " 
+                            + request.getAbsolutePath());
+                            
+                }
+            }
+        }
+        
+        
     }
 
     /** Get the unique index request server instance.
      *
      * @return The index request server.
      */
-    public static IndexRequestServer getInstance() {
+    public static synchronized IndexRequestServer getInstance() {
         if (instance == null) {
             instance = new IndexRequestServer();
         }
@@ -130,17 +209,88 @@ public class IndexRequestServer extends ArchiveMessageHandler
      * @param irMsg A message requesting an index.
      * @throws ArgumentNotValid on null parameter
      */
-    public void visit(final IndexRequestMessage irMsg) throws ArgumentNotValid {
+    public synchronized void visit(final IndexRequestMessage irMsg) 
+    throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(irMsg, "IndexRequestMessage irMsg");
+        // save new msg to requestDir
+        try {
+            saveMsg(irMsg);
+            currentJobs.add(irMsg);
 
-        //Start a new thread to handle the actual request.
-        new Thread(){
-            public void run() {
-                doGenerateIndex(irMsg);
+            // Limit the number of concurrently indexing job
+            if (currentJobs.size() >= maxConcurrentJobs) {
+                if (isListening.get()) {
+                    conn.removeListener(Channels.getTheIndexServer(), this);
+                    isListening.set(false);
+                }
             }
-        }.start();
+
+            //Start a new thread to handle the actual request.
+            new Thread(){
+                public void run() {
+                    doGenerateIndex(irMsg);
+                }
+            }.start();
+            log.debug("Now " + currentJobs.size()
+                    + " indexing jobs in progress");
+        } catch (IOException e) {
+            final String errMsg = "Unable to initiate indexing. Send failed "
+                + "message back to sender: " + e; 
+            log.warn(errMsg, e);
+            irMsg.setNotOk(errMsg);
+            JMSConnectionFactory.getInstance().reply(irMsg);
+        }
     }
 
+    /**
+     * Save a IndexRequestMessage to disk.
+     * @param irMsg A message to store to disk
+     * @throws IOException Throws IOExecption, if unable to save message
+     */
+    private void saveMsg(IndexRequestMessage irMsg) throws IOException {
+        File dest = new File(requestDir, irMsg.getID());
+        log.debug("Storing message to " + dest.getAbsolutePath());
+        // Writing message to file
+        FileOutputStream fos = new FileOutputStream(dest);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(irMsg);
+    }
+
+    /**
+     * Restore message from serialized state.
+     * @param serializedObject the object stored as a file.
+     * @return the restored message.
+     */
+    private IndexRequestMessage restoreMessage(File serializedObject) {        
+        Object obj = null;
+        try {
+        // Read the message from disk.
+        FileInputStream fis = new 
+            FileInputStream(serializedObject);
+
+        ObjectInputStream ois = 
+            new ObjectInputStream(fis);
+
+        obj = ois.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new IllegalState(
+                    "Not possible to read the stored message from file '"
+                    + serializedObject.getAbsolutePath() + "':", e);
+        } catch (IOException e) {
+            throw new IOFailure(
+                    "Not possible to read the stored message from file '" 
+                    + serializedObject.getAbsolutePath() + "':", e);
+        }
+        
+        if (obj instanceof IndexRequestMessage){
+            return (IndexRequestMessage) obj;
+        } else {
+            throw new IllegalState("The serialized message is not a " 
+                    + IndexRequestMessage.class.getName() + " but a " 
+                    + obj.getClass().getName());
+        }
+    }
+    
     /**
      * Method that handles generating an index; supposed to be run in its own
      * thread, because it blocks while the index is generated.
@@ -199,6 +349,17 @@ public class IndexRequestServer extends ArchiveMessageHandler
                     e);
             irMsg.setNotOk(e);
         } finally {
+            // Remove job from currentJobs Set and reenable us as listener
+            // if necessary.
+            currentJobs.remove(irMsg);
+            // delete stored message
+            deleteStoredMessage(irMsg);
+            if (!isListening.get()) {
+                if (maxConcurrentJobs > currentJobs.size()) {
+                    log.info("Re-enabling listening to the indexserver-queue");
+                    conn.setListener(Channels.getTheIndexServer(), this);
+                }
+            }
             String state = "failed";
             if (irMsg.isOk()) {
                 state = "successful";
@@ -217,6 +378,25 @@ public class IndexRequestServer extends ArchiveMessageHandler
                        Channels.getTheIndexServer());
                JMSConnectionFactory.getInstance().send(irm);
             }
+        }
+    }
+
+    /**
+     * Deleted stored file for given message.
+     * @param irMsg a given IndexRequestMessage
+     */
+    private void deleteStoredMessage(IndexRequestMessage irMsg) {
+        File expectedSerializedFile = new File(requestDir, irMsg.getID());
+        log.debug("Trying to delete stored serialized message: "
+                + expectedSerializedFile.getAbsolutePath());
+        if (!expectedSerializedFile.exists()) {
+            log.warn("The file does not exist any more.");
+            return;
+        }
+        boolean deleted = FileUtils.remove(expectedSerializedFile);
+        if (!deleted) {
+            log.debug("The file '" + expectedSerializedFile 
+                    + "' was not deleted");
         }
     }
 
@@ -249,7 +429,7 @@ public class IndexRequestServer extends ArchiveMessageHandler
 
     /** Releases the JMS-connection and resets the singleton. */
     public void cleanup() {
-        JMSConnection conn = JMSConnectionFactory.getInstance();
+        conn = JMSConnectionFactory.getInstance();
         conn.removeListener(Channels.getTheIndexServer(), this);
         handlers.clear();
 

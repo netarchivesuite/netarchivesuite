@@ -250,6 +250,22 @@ public class ArchiveSettings {
     public static String SINGLE_CHECKSUM_TIMEOUT
             = "settings.archive.bitarchive.singleChecksumTimeout";
     
+ 
+    /**
+     * <b>settings.archive.indexserver.requestdir</b>: <br>
+     * Setting for where the requests of the indexserver are stored.
+     */
+    public static String INDEXSERVER_INDEXING_REQUESTDIR
+            = "settings.archive.indexserver.requestdir";
+    
+    /**
+     * <b>settings.archive.indexserver.maxclients</b>: <br>
+     * Setting for how the max number of clients the indexserver can handle 
+     * simultaneously.
+     */
+    public static String INDEXSERVER_INDEXING_MAXCLIENTS
+            = "settings.archive.indexserver.maxclients";   
+    
     /**
      * <b>settings.archive.indexserver.maxthreads</b>: <br>
      * Setting for how the max number of threads the deduplication indexer 
