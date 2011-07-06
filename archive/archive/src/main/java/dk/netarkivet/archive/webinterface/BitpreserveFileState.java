@@ -462,8 +462,9 @@ public class BitpreserveFileState {
                     + Constants.FIND_MISSING_FILES_OPTION + "&amp;"
                     + (Constants.BITARCHIVE_NAME_PARAM
                        + "=" + HTMLUtils
-                .encodeAndEscapeHTML(replica.getName())) + "\">" + I18N
-                .getString(locale, "update") + "</a>");
+                .encodeAndEscapeHTML(replica.getName())) + "\">" 
+                + I18N.getString(locale, "update.filestatus.for.0", 
+                        replica.getId()) + "</a>");
         out.println("<br/><br/>");
     }
 
@@ -528,7 +529,8 @@ public class BitpreserveFileState {
                     + Constants.CHECKSUM_OPTION + "&amp;" 
                     + (Constants.BITARCHIVE_NAME_PARAM + "=" + HTMLUtils
                 .encodeAndEscapeHTML(replica.getName())) + "\">" + I18N
-                .getString(locale, "update") + "</a>");
+                .getString(locale, "update.checksum.and.file.status.for.0", 
+                        replica.getId()) + "</a>");
 
         //Separator
         out.println("<br/><br/>");
