@@ -63,4 +63,27 @@ public class TimeUtilsTester extends TestCase {
                 + waited,
                 waited >= 1000);
     }
+    
+    /**
+     * Tests whether the readableTimeInterval function converts numbers correctly.
+     */
+    public void testReadability() {
+        // Test whether it works.
+        assertEquals(TimeUtils.readableTimeInterval(1L), "1 milliseconds");
+        
+        // Test conversion between millisecond and seconds.
+        assertEquals(TimeUtils.readableTimeInterval(5000L), "5 seconds");
+
+        // Test conversion between millisecond and minutes.
+        assertEquals(TimeUtils.readableTimeInterval(900000L), "15 minutes");
+
+        // Test conversion between millisecond and hours.
+        assertEquals(TimeUtils.readableTimeInterval(50400000), "14 hours");
+
+        // Test conversion between millisecond and days.
+        assertEquals(TimeUtils.readableTimeInterval(604800000L), "7 days");
+        
+        // 2,5 hours should be returned in minutes
+        assertEquals(TimeUtils.readableTimeInterval(9000000L), "150 minutes");
+    }
 }

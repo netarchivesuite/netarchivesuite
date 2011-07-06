@@ -31,6 +31,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class TimeUtils {
 
+    public static final long SECOND_IN_MILLIS = 1000;
+    public static final long MINUTE_IN_SECONDS = 60;
+    public static final long HOUR_IN_MINUTES = 60;
+    public static final long DAY_IN_HOURS = 24;
+    
+    
     /** Sleep for an exponentially backing off amount of time, in milliseconds.
      * Thus the first attempt will sleep for 1 ms, the second for 2, the third
      * for 4, etc.
@@ -68,5 +74,42 @@ public class TimeUtils {
         } catch (InterruptedException e) {
             // Early wake-up is not a problem
         }
+    }
+    
+    /**
+     * Method for translating a time in milliseconds to a human readable String.
+     * E.g. the argument "604800000" should result in "7 days".
+     * 
+     * TODO handle larger than days.
+     *  
+     * @param millis The amount of milliseconds.
+     * @return The human readable string. 
+     */
+    public static String readableTimeInterval(long millis) {
+        // check whether it is in seconds (if not return in milliseconds).
+        if((millis % SECOND_IN_MILLIS) != 0) {
+            return millis + " milliseconds";
+        }
+        long seconds = millis/SECOND_IN_MILLIS;
+        
+        // check whether it is in minutes (if not return in seconds).
+        if((seconds % MINUTE_IN_SECONDS) != 0) {
+            return seconds + " seconds";
+        }
+        long minutes = seconds/MINUTE_IN_SECONDS;
+
+        // check whether it is in hours (if not return in minutes).
+        if((minutes % HOUR_IN_MINUTES) != 0) {
+            return minutes + " minutes";
+        }
+        long hours = minutes/HOUR_IN_MINUTES;
+
+        // check whether it is in days (if not return in hours).
+        if((hours % DAY_IN_HOURS) != 0) {
+            return hours + " hours";
+        }
+        long days = hours/DAY_IN_HOURS;
+
+        return days + " days";
     }
 }

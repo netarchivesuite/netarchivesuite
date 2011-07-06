@@ -48,6 +48,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 
 /**
@@ -173,8 +174,8 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         //Send request to server
         IndexRequestMessage irMsg = new IndexRequestMessage(requestType,
                                                             jobSet);
-        log.debug("Waiting " + getIndexTimeout()
-                + " millseconds for the index");
+        log.debug("Waiting " + TimeUtils.readableTimeInterval(
+                getIndexTimeout()) + " for the index");
         NetarkivetMessage msg = getSynchronizer().sendAndWaitForOneReply(
                 irMsg, getIndexTimeout());
 
@@ -373,6 +374,4 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                 false, harvestId);
         JMSConnectionFactory.getInstance().send(irMsg);
     }
-    
-    
 }
