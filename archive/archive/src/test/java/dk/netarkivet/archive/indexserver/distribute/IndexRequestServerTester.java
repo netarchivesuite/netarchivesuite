@@ -229,12 +229,19 @@ public class IndexRequestServerTester extends TestCase {
 
         Set<Long> longFromExtractFile = new HashSet<Long>();
         FileInputStream fis = new FileInputStream(extractFile);
+        try {
         for (int i = 0; i < JOB_SET.size(); i++) {
-            longFromExtractFile.add(new Long(fis.read()));
+            longFromExtractFile.add(Long.valueOf(fis.read()));
         }
         assertEquals("End of file expected after this",
                      -1, fis.read());
-
+        } catch (IOException e) {
+            fail("Exception thrown: " + e);
+        } finally {
+            if (fis != null) {
+                fis.close();
+            }
+        }
         assertTrue(
                 "JOBSET, and the contents of extractfile should be identical",
                 longFromExtractFile.containsAll(JOB_SET));
@@ -311,7 +318,7 @@ public class IndexRequestServerTester extends TestCase {
         //A message to visit with
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
                                                           JOB_SET);
-
+        JMSConnectionMockupMQ.updateMsgID(irm, "dummyID");
         //Execute visit
         server.visit(irm);
         JMSConnectionMockupMQ conn
@@ -330,6 +337,7 @@ public class IndexRequestServerTester extends TestCase {
 
         //Execute new visit
         irm = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+        JMSConnectionMockupMQ.updateMsgID(irm, "dummyID");
         server.visit(irm);
         conn.waitForConcurrentTasksToFinish();
         //Give a little time to reply
