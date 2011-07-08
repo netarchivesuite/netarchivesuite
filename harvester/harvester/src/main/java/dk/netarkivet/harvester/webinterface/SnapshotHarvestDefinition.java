@@ -43,7 +43,6 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.SparseFullHarvest;
 
 /**
  * Contains utility methods for supporting GUI for updating snapshot harvests.
@@ -242,7 +241,7 @@ public class SnapshotHarvestDefinition {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                 "errormsg;harvestdefinition.0.is.based.on."
                 + "unfinished.definition.1",
-                hd.getName());
+                hd.getName(), preHd.getName());
             throw new ForwardedToErrorPage("Harvest definition "
                 + hd.getName() 
                 + " is based on unfinished definition " 
