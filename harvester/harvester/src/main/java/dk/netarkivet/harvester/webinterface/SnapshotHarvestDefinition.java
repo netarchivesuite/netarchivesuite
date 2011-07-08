@@ -23,6 +23,7 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
@@ -40,6 +41,9 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.SparseFullHarvest;
 
 /**
  * Contains utility methods for supporting GUI for updating snapshot harvests.
@@ -86,7 +90,7 @@ public class SnapshotHarvestDefinition {
                 Constants.DOMAIN_BYTELIMIT_PARAM,
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES);
         long runningtimeLimit = HTMLUtils.parseOptionalLong(context,
-        		 	Constants.JOB_TIMELIMIT_PARAM,
+                    Constants.JOB_TIMELIMIT_PARAM,
         		 	dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
 
         Long oldHarvestId = HTMLUtils.parseOptionalLong(context,
@@ -181,6 +185,7 @@ public class SnapshotHarvestDefinition {
                 boolean useDeduplication = Settings.getBoolean(
                         HarvesterSettings.DEDUPLICATION_ENABLED);
                 if (!isActive) {
+                    validatePreHd(hd, context, i18n);
                     if (useDeduplication) {
                         // The client for requesting job index.
                         JobIndexCache jobIndexCache
@@ -206,5 +211,42 @@ public class SnapshotHarvestDefinition {
             }
         }
         return false;
+    }
+
+    /**
+     * Validate the previous harvestDefinition of this FullHarvest.
+     * @param hd A given HarvestDefinition assumed to be FullHarvest
+     * @param context The context of the web request.
+     * @param i18n Translation information
+     */
+    private static void validatePreHd(HarvestDefinition hd, 
+            PageContext context, I18n i18n) {
+        HarvestDefinition preHd = ((FullHarvest) hd)
+        .getPreviousHarvestDefinition();
+        if (preHd == null) {
+            return; // no validation needed
+        }
+        
+        JobDAO dao = JobDAO.getInstance();
+        HarvestStatusQuery hsq = new HarvestStatusQuery(preHd.getOid(), 0);
+        HarvestStatusQuery hsq1 = new HarvestStatusQuery(preHd.getOid(), 0);
+        Set<JobStatus> chosenStates = new HashSet<JobStatus>();
+        chosenStates.add(JobStatus.NEW);
+        chosenStates.add(JobStatus.SUBMITTED);
+        chosenStates.add(JobStatus.STARTED);
+        hsq1.setJobStatus(chosenStates);
+        HarvestStatus hs = dao.getStatusInfo(hsq);
+        HarvestStatus hs1 = dao.getStatusInfo(hsq1);
+        if (hs.getJobStatusInfo().isEmpty() 
+                || !hs1.getJobStatusInfo().isEmpty()) {
+            HTMLUtils.forwardWithErrorMessage(context, i18n,
+                "errormsg;harvestdefinition.0.is.based.on."
+                + "unfinished.definition.1",
+                hd.getName());
+            throw new ForwardedToErrorPage("Harvest definition "
+                + hd.getName() 
+                + " is based on unfinished definition " 
+                + preHd.getName());
+        }
     }
 }

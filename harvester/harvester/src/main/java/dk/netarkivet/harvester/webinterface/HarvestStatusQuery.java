@@ -319,7 +319,7 @@ public class HarvestStatusQuery {
     }
 
     /**
-     * Sets the page size
+     * Sets the page size.
      * @param pageSize a number > 0.
      */
     public void setPageSize(long pageSize) {
@@ -338,5 +338,8 @@ public class HarvestStatusQuery {
     public boolean getCaseSensitiveHarvestName() {
         return caseSensitiveHarvestName;
     }
-
+    
+    public void setJobStatus(Set<JobStatus> chosenStates) {
+       this.jobStatuses = chosenStates;
+    }
 }
