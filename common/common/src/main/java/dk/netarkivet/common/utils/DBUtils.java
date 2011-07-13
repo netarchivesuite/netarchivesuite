@@ -341,7 +341,7 @@ public class DBUtils {
      * @return the list of Long-objects in its result set
      */
     public static List<Long> selectLongList(Connection connection, String query,
-	    Object... args) {
+            Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -407,7 +407,9 @@ public class DBUtils {
             s.setString(1, tablename);
             ResultSet res = s.executeQuery();
             if (!res.next()) {
-                log.warn("Unknown table '" + tablename + "'");
+                log.warn("As yet unknown tablename '" + tablename 
+                        + "' in table schemaversions. The table probably"
+                        + " just needs to be created in the database");
             } else {
                 version = res.getInt(1);
                 if (res.wasNull()) {
@@ -465,7 +467,8 @@ public class DBUtils {
      * @param fieldNum the index of the given field to be set
      * @param o the Named object
      * @param maxFieldSize max size of the comments field
-     * @throws SQLException
+     * @throws SQLException If any trouble accessing the database during 
+     * the operation
      * @throws PermissionDenied If length of o.getComments() is larger than
      * Constants.MAX_COMMENT_SIZE
      */
@@ -490,7 +493,9 @@ public class DBUtils {
      * @param s a prepared statement
      * @param fieldNum the index of the given field to be set
      * @param o the Named object
-     * @throws SQLException
+     * @param maxFieldSize max size of the name field
+     * @throws SQLException  If any trouble accessing the database during 
+     * the operation
      * @throws PermissionDenied If length of o.getName() is larger than
      * Constants.MAX_NAME_SIZE
      */
@@ -515,7 +520,8 @@ public class DBUtils {
      * @param s a prepared statement
      * @param fieldNum the index of the given field to be set
      * @param date the date (may be null)
-     * @throws SQLException
+     * @throws SQLException  If any trouble accessing the database during 
+     * the operation
      */
     public static void setDateMaybeNull(
             PreparedStatement s, int fieldNum, Date date) throws SQLException {
