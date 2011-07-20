@@ -1,7 +1,7 @@
-/*$Id: BitarchiveAdminTester.java 1700 2011-01-05 07:52:38Z mikis $
+/*$Id: BitarchiveAdminTesterONB.java 1700 2011-07-20 14:00:00Z aponb $
 * $Revision: 1700 $
-* $Date: 2011-01-05 08:52:38 +0100 (Mi, 05 Jän 2011) $
-* $Author: mikis $
+* $Date: 2011-07-20 14:00:00 +0100 $
+* $Author: aponb $
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -32,9 +32,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * BitArchiveAdminData test class.
- * Unfortunately, in unit tests there is no way I can be sure to have
- * two directories with different amounts of space free, so first dir is always
- * used...
+ * Checking if directories for the bitarchive will be given back in the right order
  */
 
 public class BitarchiveAdminTesterONB extends TestCase {
