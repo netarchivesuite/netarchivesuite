@@ -75,6 +75,6 @@ public class SystemOverviewTest extends StandaloneTest {
                                     + (".4"))));
         }
 
-        NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);
+        NASAssert.assertEquals(displayedApplicationSet, expectedApplicationSet);
     }
 }
