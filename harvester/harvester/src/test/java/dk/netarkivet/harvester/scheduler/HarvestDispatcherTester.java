@@ -68,6 +68,7 @@ import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.scheduler.HarvestJobGenerator.JobGeneratorTask;
@@ -122,7 +123,7 @@ public class HarvestDispatcherTester extends TestCase {
         HarvestDefinitionDAO.getInstance();
         harvestDispatcher = new HarvestDispatcher();
 
-        HarvestJobGeneratorTest.generateJobs(new Date());
+        //HarvestJobGeneratorTest.generateJobs(new Date());
     }
 
     /**
@@ -136,7 +137,7 @@ public class HarvestDispatcherTester extends TestCase {
         TestUtils.resetDAOs();
         jmsConnection.tearDown();
         reloadSettings.tearDown();
-        HarvestJobGenerator.clearGeneratingJobs();
+        //HarvestJobGenerator.clearGeneratingJobs();
     }
 
     /**
@@ -152,11 +153,15 @@ public class HarvestDispatcherTester extends TestCase {
         JMSConnectionMockupMQ.getInstance().setListener(
                 JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY),
                 hacoListener);
-
+        // Initialize the dispatcher with one ready harvester, so the first job 
+        //is dispatched.
+        harvestDispatcher.visit( new HarvesterStatusMessage(
+                "Intializing", JobPriority.HIGHPRIORITY, true));
+        createJob();
         startHarvestScheduler();
 
         assertEquals(
-                "Should have created one job after starting job dispatching",
+                "Should have submitted the job after starting job dispatching",
                 1, dao.getCountJobs());
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance())
                 .waitForConcurrentTasksToFinish();
@@ -181,38 +186,18 @@ public class HarvestDispatcherTester extends TestCase {
      *             if HarvestScheduler throws exception
      */
     public void testSubmitNewJobs() throws Exception {
-        clearNewJobs();
-        // Create a bad job.
-        final DomainDAO dao = DomainDAO.getInstance();
-        Iterator<Domain> domainsIterator = dao.getAllDomains();
-        assertTrue("Should be at least one domain in domains table",
-                domainsIterator.hasNext());
-        DomainConfiguration cfg = domainsIterator.next()
-                .getDefaultConfiguration();
-        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(7000L);
-        Job bad = Job.createJob(7000L, cfg, 1);
-        bad.setStatus(JobStatus.NEW);
-        bad.setActualStart(new Date());
-        Field stopField = ReflectUtils.getPrivateField(Job.class, "actualStop");
-        Date early = new Date();
-        early.setTime(early.getTime() - 10000);
-        stopField.set(bad, early);
-        final JobDAO jdao = JobDAO.getInstance();
-        jdao.create(bad);
-        submitNewJobs();
 
         createMessageReceiver(JobPriority.HIGHPRIORITY).receiveNoWait();
 
-        Job good = Job.createJob(1L, cfg, 1);
-        good.setStatus(JobStatus.NEW);
-        jdao.create(good);
+        Job job = createJob();
+        // Initialize the dispatcher with one ready harvester, so the first job 
+        //is dispatched.
+        harvestDispatcher.visit( new HarvesterStatusMessage(
+                "Intializing", JobPriority.HIGHPRIORITY, true));
         submitNewJobs();
-        Job newGood = jdao.read(good.getJobID());
+        Job rereadJob = JobDAO.getInstance().read(job.getJobID());
         assertEquals("Good job should have been scheduled",
-                JobStatus.SUBMITTED, newGood.getStatus());
-
-        // TODO: Should also check that a readable but unschedulable job fails,
-        // that would require a connection that throws exceptions sometimes.
+                JobStatus.SUBMITTED, rereadJob.getStatus());
     }
 
     /**
@@ -222,8 +207,6 @@ public class HarvestDispatcherTester extends TestCase {
      *             if HarvestScheduler throws exception
      */
     public void testSubmitNewJobsMakesAliasInfo() throws Exception {
-        clearNewJobs();
-
         // Add a listener to see what is sent
         TestMessageListener hacoListener = new TestMessageListener();
 
@@ -257,6 +240,10 @@ public class HarvestDispatcherTester extends TestCase {
         job.addConfiguration(dc2);
         JobDAO.getInstance().create(job);
 
+        // Initialize the dispatcher with one ready harvester, so the first job 
+        //is dispatched.
+        harvestDispatcher.visit( new HarvesterStatusMessage(
+                "Intializing", JobPriority.HIGHPRIORITY, true));
         submitNewJobs();
 
         assertEquals("Haco listener should have received one message", 1,
@@ -273,7 +260,7 @@ public class HarvestDispatcherTester extends TestCase {
         assertEquals("Should have right url",
                 "metadata://netarkivet.dk/crawl/setup/aliases"
                         + "?majorversion=1&minorversion=0"
-                        + "&harvestid=5678&harvestnum=0&jobid=2", metadataEntry
+                        + "&harvestid=5678&harvestnum=0&jobid=1", metadataEntry
                         .getURL());
         assertEquals("Should have right data",
                 "alias3.dk is an alias for dr.dk\n"
@@ -287,24 +274,28 @@ public class HarvestDispatcherTester extends TestCase {
      */
     public void testSubmitNewJobsMakesDuplicateReductionInfo()
     throws Exception {
-        clearNewJobs();
-
         QueueReceiver messageReceiver =
             createMessageReceiver(JobPriority.LOWPRIORITY);
 
         // Make some jobs to submit
         // Assume 1st jobId is 2, and lastId is 15
-        DataModelTestCase.createTestJobs(2L, 15L);
+        DataModelTestCase.createTestJobs(1L, 14L);
 
         // Submit all the jobs, and hold on to the last one
         DoOneCrawlMessage crawlMessage = null;
         int counter = 0;
+        harvestDispatcher.visit( new HarvesterStatusMessage(
+                "Intializing", JobPriority.LOWPRIORITY, true));
         submitNewJobs();
         while (countQueueMessages(JobPriority.LOWPRIORITY) > 0) {
             counter++;
             TestObjectMessage testObjectMessage = ((TestObjectMessage)
                     messageReceiver.receiveNoWait());
             crawlMessage = (DoOneCrawlMessage)testObjectMessage.getObject();
+            // Initialize the dispatcher with one ready harvester, so the first job 
+            //is dispatched.
+            harvestDispatcher.visit( new HarvesterStatusMessage(
+                    "Intializing", JobPriority.LOWPRIORITY, true));
             submitNewJobs();
         }
         // Check result
@@ -319,9 +310,9 @@ public class HarvestDispatcherTester extends TestCase {
         assertEquals("Should have right url",
                 "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs"
                         + "?majorversion=1&minorversion=0"
-                        + "&harvestid=6&harvestnum=0&jobid=15", metadataEntry
+                        + "&harvestid=6&harvestnum=0&jobid=14", metadataEntry
                         .getURL());
-        assertEquals("Should have right data", "8,9,10,11,12,13", new String(
+        assertEquals("Should have right data", "7,8,9,10,11,12", new String(
                 metadataEntry.getData()));
     }
 
@@ -359,8 +350,7 @@ public class HarvestDispatcherTester extends TestCase {
                 new HarvestStatusQuery()).getJobStatusInfo();
         // Since initial DB contains one NEW job, we now have one of each
         // status plus one extra NEW (i.e. 7 jobs).
-        assertTrue("There should have been 13 jobs now, but there was "
-                + oldInfos.size(), oldInfos.size() == 13);
+        assertEquals("Wrong number of job statuses", oldInfos.size(), 12);
 
         Iterator<Long> ids = jdao.getAllJobIds(JobStatus.STARTED);
         int size = 0;
@@ -413,8 +403,8 @@ public class HarvestDispatcherTester extends TestCase {
         assertTrue("harvestDefinition with ID=" + harvestID
                 + " does not exist, but should have", HarvestDefinitionDAO
                 .getInstance().exists(harvestID));
-        // Create 6 jobs, one in each JobStatus:
-        // (NEW, SUBMITTED, STARTED, DONE, FAILED, RESUBMITTED)
+        // Create 7 jobs, one in each JobStatus:
+        // (NEW, SUBMITTED, STARTED, DONE, FAILED, FAILED_REJECTED, RESUBMITTED)
         for (JobStatus status : JobStatus.values()) {
             Job newJob = Job.createJob(harvestID, cfg, 1);
             newJob.setStatus(status);
@@ -424,11 +414,15 @@ public class HarvestDispatcherTester extends TestCase {
         List<JobStatusInfo> oldInfos = jdao.getStatusInfo(
                 new HarvestStatusQuery()).getJobStatusInfo();
         // Since initial DB contains one NEW job, we now have one of each
-        // status plus one extra NEW (i.e. 7 jobs).
+        // status plus one extra NEW (i.e. 8 jobs).
 
-        assertTrue("There should have been 7 jobs now, but there was "
+        assertTrue("There should have been 8 jobs now, but there was "
                 + oldInfos.size(), oldInfos.size() == 7);
 
+        // Initialize the dispatcher with one ready harvester, so the first job 
+        //is dispatched.
+        harvestDispatcher.visit( new HarvesterStatusMessage(
+                "Intializing", JobPriority.HIGHPRIORITY, true));
         rescheduleSubmittedJobs();
         List<JobStatusInfo> newInfos = jdao.getStatusInfo(
                 new HarvestStatusQuery()).getJobStatusInfo();
@@ -714,6 +708,14 @@ public class HarvestDispatcherTester extends TestCase {
         jdao.create(newJob);
         jdao.getAllJobIds(status);
         return newJob;
+    }
+    
+    /**
+     * Creates a new high priority job in to database.
+     * @param status The Job status to assign the job
+     */
+    private Job createJob() {
+        return createJob(JobStatus.NEW);
     }
 
     /**

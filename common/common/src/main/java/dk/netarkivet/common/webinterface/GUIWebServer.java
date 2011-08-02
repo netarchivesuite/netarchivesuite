@@ -210,7 +210,7 @@ public class GUIWebServer implements CleanupIF {
         HarvestDBConnection.cleanup();
 
         // Shut down the harvest monitor
-        HarvestMonitor.getInstance().cleanup();
+        //HarvestMonitor.getInstance().cleanup();
 
         instance = null;
     }
