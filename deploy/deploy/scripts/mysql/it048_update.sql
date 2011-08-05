@@ -1,7 +1,7 @@
--- $Id: $
--- $Revision: $
--- $Date: $
--- $Author: $
+-- $Id$
+-- $Revision$
+-- $Date$
+-- $Author$
 
 -- MySQL creation scripts
 -- tested on 5.1.41-3ubuntu12.10 (Ubuntu)
