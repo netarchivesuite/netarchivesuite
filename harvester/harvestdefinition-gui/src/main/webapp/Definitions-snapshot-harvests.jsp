@@ -89,11 +89,7 @@ if (!ihd.iterator().hasNext()) { %>
             String flipActiveText="";
             String flipactiveLink="";
             if (hd.isActive()) {
-                isActive = I18N.getString(response.getLocale(),
-                        "active");
-                //flipActiveText = I18N.getString(response.getLocale(),
-                //        "deactivate");
-                //flipActiveText = "";
+                isActive = I18N.getString(response.getLocale(), "active");
             } else {
                 isActive = I18N.getString(response.getLocale(),
                         "inactive");
