@@ -29,6 +29,9 @@ import java.util.Set;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -48,11 +51,19 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  * Contains utility methods for supporting GUI for updating snapshot harvests.
  */
 public class SnapshotHarvestDefinition {
+    
+    
+    /** The logger to use.    */
+    protected static final Log log = LogFactory.getLog(
+            SnapshotHarvestDefinition.class.getName());
+    
     /** Default private constructor to avoid class being instantiated. */
     private SnapshotHarvestDefinition() {
 
     }
 
+    
+    
     /**
      * Extracts all required parameters from the request, checks for
      * any inconsistencies, and passes the requisite data to the
@@ -184,18 +195,28 @@ public class SnapshotHarvestDefinition {
                 boolean useDeduplication = Settings.getBoolean(
                         HarvesterSettings.DEDUPLICATION_ENABLED);
                 if (!isActive) {
-                    validatePreHd(hd, context, i18n);
-                    if (useDeduplication) {
-                        // The client for requesting job index.
-                        JobIndexCache jobIndexCache
-                            = IndexClientFactory.getDedupCrawllogInstance();
-                        Long harvestId = hd.getOid();
-                        Set<Long> jobSet = dao.getJobIdsForSnapshotDeduplicationIndex(harvestId);
-                        jobIndexCache.requestIndex(jobSet, harvestId);
-                    } else {
-                        // If deduplication disabled set indexReady to true 
-                        // right now, so the job generation can proceed.
-                        ((FullHarvest) hd).setIndexReady(true);
+                    if (hd instanceof FullHarvest) {
+                        FullHarvest fhd = (FullHarvest) hd;
+                        validatePreHd(fhd, context, i18n);
+                        if (useDeduplication) {
+                            // The client for requesting job index.
+                            JobIndexCache jobIndexCache
+                                = IndexClientFactory.getDedupCrawllogInstance();
+                            Long harvestId = fhd.getOid();
+                            Set<Long> jobSet 
+                                = dao.getJobIdsForSnapshotDeduplicationIndex(
+                                        harvestId);
+                            jobIndexCache.requestIndex(jobSet, harvestId);
+                        } else {
+                            // If deduplication disabled set indexReady to true 
+                            // right now, so the job generation can proceed.
+                            fhd.setIndexReady(true);
+                        }
+                    } else { // hd is not Fullharvest
+                        log.warn("Harvestdefinition #" + hd.getOid() 
+                                + " is not a FullHarvest "
+                                + " but a " + hd.getClass().getName());
+                        return false;
                     }
                 } 
                 hd.setActive(!hd.getActive());
@@ -214,30 +235,36 @@ public class SnapshotHarvestDefinition {
 
     /**
      * Validate the previous harvestDefinition of this FullHarvest.
-     * @param hd A given HarvestDefinition assumed to be FullHarvest
+     * The validation checks, that the given hs arguments represents a
+     * completed Fullharvest: 
+     * Check 1: It has one or more jobs. 
+     * Check 2: None of the jobs have status NEW,SUBMITTED, or STARTED.
+     * @param hd A given FullHarvest
      * @param context The context of the web request.
      * @param i18n Translation information
      */
-    private static void validatePreHd(HarvestDefinition hd, 
+    private static void validatePreHd(FullHarvest hd, 
             PageContext context, I18n i18n) {
-        HarvestDefinition preHd = ((FullHarvest) hd)
-        .getPreviousHarvestDefinition();
+        HarvestDefinition preHd = hd.getPreviousHarvestDefinition();
         if (preHd == null) {
             return; // no validation needed
         }
         
         JobDAO dao = JobDAO.getInstance();
-        HarvestStatusQuery hsq = new HarvestStatusQuery(preHd.getOid(), 0);
+        // This query represents check one
         HarvestStatusQuery hsq1 = new HarvestStatusQuery(preHd.getOid(), 0);
+        // This query represents check two
+        HarvestStatusQuery hsq2 = new HarvestStatusQuery(preHd.getOid(), 0);
+        // States needed to update the query for check two.
         Set<JobStatus> chosenStates = new HashSet<JobStatus>();
         chosenStates.add(JobStatus.NEW);
         chosenStates.add(JobStatus.SUBMITTED);
         chosenStates.add(JobStatus.STARTED);
-        hsq1.setJobStatus(chosenStates);
-        HarvestStatus hs = dao.getStatusInfo(hsq);
+        hsq2.setJobStatus(chosenStates);
         HarvestStatus hs1 = dao.getStatusInfo(hsq1);
-        if (hs.getJobStatusInfo().isEmpty() 
-                || !hs1.getJobStatusInfo().isEmpty()) {
+        HarvestStatus hs2 = dao.getStatusInfo(hsq2);
+        if (hs1.getJobStatusInfo().isEmpty() 
+                || !hs2.getJobStatusInfo().isEmpty()) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                 "errormsg;harvestdefinition.0.is.based.on."
                 + "unfinished.definition.1",
