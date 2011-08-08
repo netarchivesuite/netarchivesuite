@@ -36,14 +36,14 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /** 
- * This thread handles the indexing of one single crawl-log 
+ * This worker class handles the indexing of one single crawl-log 
  * and associated cdxfile. 
  */ 
-public class DigestIndexerThread implements Callable<Boolean> {
+public class DigestIndexerWorker implements Callable<Boolean> {
 
     /** The log. */
     private static Log log
-            = LogFactory.getLog(DigestIndexerThread.class.getName());
+            = LogFactory.getLog(DigestIndexer.class.getName());
     /** The full path to the index. */
     private String indexlocation;
     /** The ID of the job which logfiles are being indexed. */
@@ -60,14 +60,14 @@ public class DigestIndexerThread implements Callable<Boolean> {
     private boolean optimizeIndex = true;
         
     /**
-     * Constructor for the DigestIndexerThread.
+     * Constructor for the DigestIndexerWorker.
      * @param indexpath The full path to the index
      * @param jobId The ID of the job which logfiles are being indexed
      * @param crawllogfile The crawllog from the job 
      * @param cdxFile The cdxfile from the job
      * @param indexingOptions The options for the indexing process.
      */
-    public DigestIndexerThread(String indexpath, Long jobId, File crawllogfile, 
+    public DigestIndexerWorker(String indexpath, Long jobId, File crawllogfile, 
             File cdxFile, DigestOptions indexingOptions) {
         ArgumentNotValid.checkNotNullOrEmpty(indexpath, "String indexpath");
         ArgumentNotValid.checkNotNull(crawllogfile, "File crawllogfile");
@@ -86,6 +86,7 @@ public class DigestIndexerThread implements Callable<Boolean> {
      * @return true, if the indexing completes successfully;
      * otherwise it returns false
      */
+    @Override
     public Boolean call() {
         try {
             log.info("Starting subindexing task of data from job "

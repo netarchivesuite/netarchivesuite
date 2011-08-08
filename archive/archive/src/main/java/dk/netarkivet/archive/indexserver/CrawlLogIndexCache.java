@@ -52,6 +52,7 @@ import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 
 /**
@@ -128,7 +129,7 @@ public abstract class CrawlLogIndexCache extends
      * @param rawfiles The map from job ID into crawl.log contents. No
      * null values are allowed in this map.
      */
-    protected void combine(Map<Long, File> rawfiles) {
+    protected synchronized void combine(Map<Long, File> rawfiles) {
         long datasetSize = rawfiles.values().size();
         log.info("Starting to combine a dataset with " 
                 +  datasetSize + " crawl logs");
@@ -174,7 +175,7 @@ public abstract class CrawlLogIndexCache extends
                 // of a lucene index for this crawllog and cdxfile.
                 log.debug("Making subthread for indexing job " + jobId 
                         + " - task " + count + " out of " + datasetSize);
-                Callable<Boolean> task = new DigestIndexerThread(
+                Callable<Boolean> task = new DigestIndexerWorker(
                         localindexLocation, jobId, crawlLog,
                         cachedCDXFile, indexingOptions);
                 Future<Boolean> result = executor.submit(task);
@@ -185,10 +186,22 @@ public abstract class CrawlLogIndexCache extends
             
             // wait for all the outstanding subtasks to complete.
             Set<Directory> subindices = new HashSet<Directory>();
-            // TODO add timeout here as well; and add a waitstate here as well 
-            // before checking if something is finished.
+            // Wait two minutes before first completeness-check
+            sleepTwoMinutes();
+            // Deadline for the combine-task
+            long combineTimeout = Settings.getLong(
+                    ArchiveSettings.INDEXSERVER_INDEXING_TIMEOUT);
+            long timeOutTime = System.currentTimeMillis() + combineTimeout;
+            
             while (outstandingJobs.size() > 0) {
                 Iterator<IndexingState> iterator = outstandingJobs.iterator();
+                if (timeOutTime < System.currentTimeMillis()) {
+                   log.warn("Max indexing time exceeded (" + combineTimeout 
+                           + " milliseconds). Indexing stops here, although"
+                           + " missing subindices for " + outstandingJobs 
+                           + " jobs");
+                   break; 
+                }
                 while (iterator.hasNext()) {
                     Future<Boolean> nextResult;
                     IndexingState next = iterator.next();
@@ -215,6 +228,7 @@ public abstract class CrawlLogIndexCache extends
                         iterator.remove();
                     }   
                 }
+                sleepTwoMinutes();
             }
             
             log.debug("Merging the indices but don't optimize");            
@@ -234,6 +248,14 @@ public abstract class CrawlLogIndexCache extends
             for (File temporaryFile : tmpfiles) {
                 FileUtils.removeRecursively(temporaryFile);
             }
+        }
+    }
+
+    private void sleepTwoMinutes() {
+        try {
+            Thread.sleep(TimeUtils.SECOND_IN_MILLIS * 120);
+        } catch (InterruptedException e) {
+            log.trace("Was awoken early from sleep: ", e);
         }
     }
 

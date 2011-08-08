@@ -80,6 +80,7 @@
         <maxclients>20</maxclients>
         <maxthreads>10</maxthreads>
         <requestdir>requests</requestdir>
+        <indexingtimeout>172800000</indexingtimeout>
         </indexserver>
     </archive>
 </settings>

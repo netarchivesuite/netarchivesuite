@@ -260,7 +260,7 @@ public class ArchiveSettings {
     
     /**
      * <b>settings.archive.indexserver.maxclients</b>: <br>
-     * Setting for how the max number of clients the indexserver can handle 
+     * Setting for the max number of clients the indexserver can handle 
      * simultaneously.
      */
     public static String INDEXSERVER_INDEXING_MAXCLIENTS
@@ -268,10 +268,16 @@ public class ArchiveSettings {
     
     /**
      * <b>settings.archive.indexserver.maxthreads</b>: <br>
-     * Setting for how the max number of threads the deduplication indexer 
+     * Setting for the max number of threads the deduplication indexer 
      * shall use.
      */
     public static String INDEXSERVER_INDEXING_MAXTHREADS
             = "settings.archive.indexserver.maxthreads";
-    
+    /**
+     * <b>settings.archive.indexserver.indexingtimeout</b>: <br>
+     * Setting for the indexing timeout in milliseconds. The default is
+     * 172800000 (2 days).
+     */
+    public static String INDEXSERVER_INDEXING_TIMEOUT
+            = "settings.archive.indexserver.indexingtimeout";
 }
