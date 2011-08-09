@@ -64,6 +64,6 @@
 	<classpathentry kind="lib" path="lib/libidn-0.5.9.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-2.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/deduplicator-0.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/wayback-core-1.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/wayback-core-1.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
