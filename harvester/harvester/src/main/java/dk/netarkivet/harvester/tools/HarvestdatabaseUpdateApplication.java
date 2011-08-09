@@ -23,6 +23,9 @@
 package dk.netarkivet.harvester.tools;
 
 import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.ExtendedFieldTypeDBDAO;
+import dk.netarkivet.harvester.datamodel.ExtendedFieldValueDBDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDBDAO;
@@ -42,6 +45,9 @@ public class HarvestdatabaseUpdateApplication {
      */
     public static void main(final String[] args) {
         System.out.println("Beginning database upgrade");
+        ExtendedFieldDBDAO.getInstance();
+        ExtendedFieldTypeDBDAO.getInstance();
+        ExtendedFieldValueDBDAO.getInstance();
         TemplateDAO.getInstance();
         RunningJobsInfoDAO.getInstance();
         JobDBDAO.getInstance();
