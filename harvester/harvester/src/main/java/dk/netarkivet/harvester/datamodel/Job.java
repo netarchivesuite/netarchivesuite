@@ -89,7 +89,9 @@ public class Job implements Serializable {
     private Long jobID;
     /** The Id of the harvestdefinition, that generated this job. */
     private Long origHarvestDefinitionID;
-    /** The status of the job. See the JobStatus class for the possible states. */
+    /** The status of the job. See the JobStatus class for 
+     * the possible states. 
+     */
     private JobStatus status;
     /**
      * The priority of this job.
@@ -246,7 +248,7 @@ public class Job implements Serializable {
      * @param forceMaxBytesPerDomain The maximum number of objects harvested
      * from a domain, or -1 for no limit.
      * @param forceMaxJobRunningTime The max time in seconds given to the 
-     *  										harvester for this job
+     *                              harvester for this job
      * @param harvestNum               the run number of the harvest definition
      * @throws ArgumentNotValid if cfg or priority is null or harvestID is
      *                          invalid, or if any limit < -1
@@ -332,7 +334,7 @@ public class Job implements Serializable {
      * @param forceMaxBytesPerDomain The maximum number of objects harvested
      * from a domain, or -1 for no limit.
      * @param forceMaxJobRunningTime The max time in seconds given to the 
-     *  										harvester for this job
+     *                              harvester for this job
      * @param status                   the current status of the job.
      * @param orderXMLname             the name of the order template used.
      * @param orderXMLdoc              the (possibly modified) template
@@ -400,7 +402,7 @@ public class Job implements Serializable {
      *                            settings unless the domain has overrideLimits
      *                            set.  -1 means no limit.
      * @param maxJobRunningTime The maximum of seconds which the harvest can 
-     * 							spend on the harvest. 0 means no limit.                                                      
+     *                          spend on the harvest. 0 means no limit. 
      * @param harvestNum          Which run of the harvest definition this is
      *                           (should always be 1).
      * @return SnapShotJob
@@ -641,8 +643,8 @@ public class Job implements Serializable {
         }
 
         // By default byte limit is used as base criterion for splitting a 
-        // harvest in config chunks, however the configuration can override this 
-        // and instead use object limit.
+        // harvest in config chunks, however the configuration can override 
+        // this and instead use object limit.
         boolean splitByObjectLimit = Settings.getBoolean(
                 HarvesterSettings.SPLIT_BY_OBJECTLIMIT);
         if (splitByObjectLimit) {
@@ -844,7 +846,11 @@ public class Job implements Serializable {
         }
         this.actualStop = (Date) actualStop.clone();
     }
-
+    
+    /**
+     * Set the orderxml for this job.
+     * @param doc A orderxml to be used by this job
+     */
     public void setOrderXMLDoc(Document doc) {
         ArgumentNotValid.checkNotNull(doc, "doc");
         this.orderXMLdoc = doc;
@@ -926,7 +932,6 @@ public class Job implements Serializable {
      */
     public void setSeedList(String seedList) {
         ArgumentNotValid.checkNotNullOrEmpty(seedList, "seedList");
-        //ArgumentNotValid.checkNotNull(seedList, "seedList");
         seedListSet = new HashSet<String>();
         BufferedReader reader = new BufferedReader(new StringReader(seedList));
         String seed;
@@ -1130,8 +1135,8 @@ public class Job implements Serializable {
      * Auxiliary method to modify the orderXMLdoc Document
      * with respect to setting the maximum number of objects to be retrieved
      * per domain.
-     * This method updates 'group-max-fetch-success' element of the QuotaEnforcer
-     * pre-fetch processor node
+     * This method updates 'group-max-fetch-success' element of the 
+     * QuotaEnforcer pre-fetch processor node
      * (org.archive.crawler.frontier.BdbFrontier)
      * with the value of the argument forceMaxObjectsPerDomain
      *
@@ -1218,8 +1223,10 @@ public class Job implements Serializable {
         String xpath = HeritrixTemplate.MAXTIMESEC_PATH_XPATH;
         Node groupMaxTimeSecNode = orderXMLdoc.selectSingleNode(xpath);
         if (groupMaxTimeSecNode != null) {
-        	String currentMaxTimeSec = groupMaxTimeSecNode.getText();
-        	groupMaxTimeSecNode.setText(Long.toString(maxJobRunningTime));
+            String currentMaxTimeSec = groupMaxTimeSecNode.getText();
+            groupMaxTimeSecNode.setText(Long.toString(maxJobRunningTime));
+            log.trace("Value of groupMaxTimeSecNode changed from " 
+                    + currentMaxTimeSec + " to " + maxJobRunningTime);
         } else {
             throw new IOFailure(
                     "Unable to locate xpath '" + xpath + "' in the order.xml: "
@@ -1235,7 +1242,7 @@ public class Job implements Serializable {
 
         boolean quotaEnabled = true;
 
-        if (! useQuotaEnforcer) {
+        if (!useQuotaEnforcer) {
             // Quota enforcer should be disabled if there is no byte limit
             quotaEnabled = forceMaxBytesPerDomain
                 != Constants.HERITRIX_MAXBYTES_INFINITY;
