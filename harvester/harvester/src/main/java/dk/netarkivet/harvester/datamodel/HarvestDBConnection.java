@@ -130,6 +130,14 @@ public final class HarvestDBConnection {
             final int newVersion,
             final String... updates) {
 
+        Connection c = get();
+        updateTable(c, table, newVersion, updates);
+    }
+    
+    public static void updateTable(Connection c, final String table,
+            final int newVersion,
+            final String... updates) {
+
         if (log.isInfoEnabled()) {
             log.info("Updating table '" + table + "' to version " + newVersion);
         }
@@ -147,13 +155,13 @@ public final class HarvestDBConnection {
         System.arraycopy(updates, 0, sqlStatements, 0, updates.length);
         sqlStatements[updates.length] = updateSchemaversionSql;
 
-        Connection c = get();
         try {
             DBUtils.executeSQL(c, sqlStatements);
         } finally {
             release(c);
         }
     }
+    
 
     /**
      * Method for retrieving the url for the harvest definition database.

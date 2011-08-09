@@ -118,6 +118,16 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     protected static final String FRONTIERREPORTMONITOR_TABLE = "frontierreportmonitor"; 
     protected static final int FRONTIERREPORTMONITOR_TABLE_REQUIRED_VERSION = 1;
 
+    protected static final String EXTENDEDFIELD_TABLE = "extendedfield"; 
+    protected static final int EXTENDEDFIELD_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String EXTENDEDFIELDVALUE_TABLE = "extendedfieldvalue"; 
+    protected static final int EXTENDEDFIELDVALUE_TABLE_REQUIRED_VERSION = 1;
+
+    protected static final String EXTENDEDFIELDTYPE_TABLE = "extendedfieldtype"; 
+    protected static final int EXTENDEDFIELDTYPE_TABLE_REQUIRED_VERSION = 1;
+    
+
     /**
      * Get the singleton instance of the DBSpecifics implementation class.
      *
@@ -226,6 +236,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             upgradeRunningjobsmonitor(currentVersion, toVersion);
         } else if (tableName.equals(FRONTIERREPORTMONITOR_TABLE)) {
             upgradeFrontierreportmonitorTable(currentVersion, toVersion);
+        } else if (tableName.equals(EXTENDEDFIELD_TABLE)) {
+            upgradeExtendedFieldTable(currentVersion, toVersion);
+        } else if (tableName.equals(EXTENDEDFIELDVALUE_TABLE)) {
+            upgradeExtendedFieldValueTable(currentVersion, toVersion);
+        } else if (tableName.equals(EXTENDEDFIELDTYPE_TABLE)) {
+            upgradeExtendedFieldTypeTable(currentVersion, toVersion);
             // Add new if else when other tables need to be upgraded
         } else {
             throw new NotImplementedException(
@@ -234,7 +250,47 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
     }
 
-    /** Migrate the frontierreportmonitor table.
+    private void upgradeExtendedFieldTypeTable(int currentVersion, int toVersion) {
+        if (currentVersion == 0 && toVersion == 1) {
+            createExtendedFieldTypeTable();
+            currentVersion = 1;
+        }
+        if (currentVersion > EXTENDEDFIELDTYPE_TABLE_REQUIRED_VERSION) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '" + EXTENDEDFIELDTYPE_TABLE
+                            + "' from version " + currentVersion
+                            + " to version " + toVersion);
+        }
+	}
+
+	private void upgradeExtendedFieldValueTable(int currentVersion,
+			int toVersion) {
+        if (currentVersion == 0 && toVersion == 1) {
+            createExtendedFieldValueTable();
+            currentVersion = 1;
+        }
+        if (currentVersion > EXTENDEDFIELDVALUE_TABLE_REQUIRED_VERSION) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '" + EXTENDEDFIELDVALUE_TABLE
+                            + "' from version " + currentVersion
+                            + " to version " + toVersion);
+        }
+	}
+
+	private void upgradeExtendedFieldTable(int currentVersion, int toVersion) {
+        if (currentVersion == 0 && toVersion == 1) {
+            createExtendedFieldTable();
+            currentVersion = 1;
+        }
+        if (currentVersion > EXTENDEDFIELD_TABLE_REQUIRED_VERSION) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '" + EXTENDEDFIELD_TABLE
+                            + "' from version " + currentVersion
+                            + " to version " + toVersion);
+        }
+	}
+
+	/** Migrate the frontierreportmonitor table.
      * 
      * @param currentVersion the current version of the frontierreportmonitor table
      * @param toVersion the required version of the frontierreportmonitor table
@@ -588,4 +644,19 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * consists of adding the field 'isindexready'.
      */
     protected abstract void migrateFullharvestsv4tov5();
+    
+    /**
+     * Create the extendedfieldtype table in the database.
+     */
+	protected abstract void createExtendedFieldTypeTable();
+    
+    /**
+     * Create the extendedfield table in the database.
+     */
+    protected abstract void createExtendedFieldTable();
+
+    /**
+     * Create the extendedfieldvalue table in the database.
+     */
+    protected abstract void createExtendedFieldValueTable();
 }

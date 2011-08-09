@@ -45,7 +45,7 @@ public class DefinitionsSiteSection extends SiteSection {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
     /** number of pages visible in the left menu. */
-    private static final int PAGES_VISIBLE_IN_MENU = 9;
+    private static final int PAGES_VISIBLE_IN_MENU = 10;
     
     /**
      * Create a new definition SiteSection object.
@@ -64,6 +64,8 @@ public class DefinitionsSiteSection extends SiteSection {
                           "pagetitle;edit.harvest.templates"},
                       {"edit-global-crawler-traps",
                           "pagetitle;edit.global.crawler.traps"},
+                      {"list-extendedfields",
+                      "pagetitle;list-extendedfields"},
                       // The pages listed below are not visible in the left menu
                       {"upload-harvest-template",
                               "pagetitle;upload.template"},
@@ -76,7 +78,8 @@ public class DefinitionsSiteSection extends SiteSection {
                       {"add-event-seeds", "pagetitle;add.seeds"},
                       {"edit-domain-config", "pagetitle;edit.configuration"},
                       {"edit-domain-seedlist", "pagetitle;edit.seed.list"},
-                      {"edit-schedule", "pagetitle;edit.schedule"}
+                      {"edit-schedule", "pagetitle;edit.schedule"},
+                      {"edit-extendedfield", "pagetitle;edit.extendedfield"}
               }, "HarvestDefinition",
                  dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     }

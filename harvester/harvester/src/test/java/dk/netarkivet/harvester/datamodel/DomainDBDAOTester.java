@@ -60,6 +60,48 @@ public class DomainDBDAOTester extends DataModelTestCase {
         super.tearDown();
     }
 
+    /**
+     *  Unittest for extended Fields
+     */
+    public void testExtendedFields() {
+        ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
+        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "defaultvalue", "");
+        extDAO.create(extField);
+    	
+        ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
+        extField = extDAO2.read(new Long(1));
+        
+        assertEquals(extField.getExtendedFieldID().longValue(), 1);
+
+        Domain d =  Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
+        assertEquals(d.getExtendedFieldValue(new Long(1)).getContent(), "defaultvalue");
+    	
+        DomainDAO dao = DomainDAO.getInstance();
+        dao.create(d);
+        
+        ExtendedFieldValueDAO efvDAO = ExtendedFieldValueDBDAO.getInstance();
+        ExtendedFieldValue efv = efvDAO.read(extField.getExtendedFieldID(), d.getID());
+        
+        assertEquals(efv.getExtendedFieldValueID(), new Long(1));
+        assertEquals(efv.getContent(), "defaultvalue");
+        assertEquals(efv.getExtendedFieldID(), new Long(1));
+        
+        extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test2", "12345", 1, true, 2, "defaultvalue2", "");
+        extDAO.create(extField);
+        
+        d = dao.read(TestInfo.DOMAIN_NAME);
+        List <ExtendedFieldValue> list = d.getExtendedFieldValues();
+
+        assertEquals(list.size(), 2);
+    	efv = list.get(0);
+        assertEquals(efv.getExtendedFieldID(), new Long(1));
+        assertEquals(efv.getContent(), "defaultvalue");
+        
+    	efv = list.get(1);
+        assertEquals(efv.getExtendedFieldID(), new Long(2));
+        assertEquals(efv.getContent(), "defaultvalue2");
+    }
+    
     /** Test that a bad update doesn't kill the DB.
      * @throws Exception
      */

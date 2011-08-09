@@ -297,7 +297,7 @@ public class MySQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateRunningJobsHistoryTableV1ToV2() {
         String[] sqlStatements = {
-                "ALTER TABLE runningjobshistory "
+                "ALTER TABLE runningJobsHistory "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
         HarvestDBConnection.updateTable("runningjobshistory", 2, sqlStatements);
@@ -310,7 +310,7 @@ public class MySQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateRunningJobsMonitorTableV1ToV2() {
         String[] sqlStatements = {
-                "ALTER TABLE runningjobsmonitor "
+                "ALTER TABLE runningJobsMonitor "
                 + "ADD COLUMN retiredQueuesCount bigint not null"
         };
         HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
@@ -320,7 +320,7 @@ public class MySQLSpecifics extends DBSpecifics {
     protected void migrateConfigurationsv4tov5() {
      // Update configurations table to version 5
         String[] sqlStatements
-            = {"ALTER TABLE configurations ALTER COLUMN maxobjects TYPE bigint" };
+            = {"ALTER TABLE configurations MODIFY maxobjects bigint" };
         HarvestDBConnection.updateTable("configurations", 5, sqlStatements);
     }
 
@@ -349,5 +349,56 @@ public class MySQLSpecifics extends DBSpecifics {
             = {"ALTER TABLE fullharvests ADD COLUMN isindexready int NOT NULL DEFAULT 0"};
         HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
     }
+
+	@Override
+	protected void createExtendedFieldTypeTable() {
+		String statements[] = new String[3];
+		statements[0] = ""
+			+ "CREATE TABLE extendedfieldtype "
+			+ "  ( "
+			+ "     extendedfieldtype_id BIGINT NOT NULL PRIMARY KEY, "
+			+ "     name             VARCHAR(50) NOT NULL "
+			+ "  )";
+
+		statements[1] = ""
+			+ "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name ) VALUES ( 1, 'domains')";
+		statements[2] = ""
+			+ "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name ) VALUES ( 2, 'harvestdefinitions')";
+
+	    HarvestDBConnection.updateTable("extendedfieldtype", 1, statements);
+	}
+	
     
+	@Override
+	protected void createExtendedFieldTable() {
+		String createStatement = ""
+			+ "CREATE TABLE extendedfield "
+			+ "  ( "
+			+ "     extendedfield_id BIGINT NOT NULL PRIMARY KEY, "
+			+ "     extendedfieldtype_id BIGINT NOT NULL, "
+			+ "     name             VARCHAR(50) NOT NULL, "
+			+ "     format           VARCHAR(50) NOT NULL, "
+			+ "     defaultvalue     VARCHAR(50) NOT NULL, "
+			+ "     options          VARCHAR(50) NOT NULL, "
+			+ "     datatype         INT NOT NULL, "
+			+ "     mandatory        INT NOT NULL, "
+			+ "     sequencenr       INT "
+			+ "  )";
+		
+	       HarvestDBConnection.updateTable("extendedfield", 1, createStatement);
+	}
+
+	@Override
+	protected void createExtendedFieldValueTable() {
+		String createStatement = ""
+			+ "CREATE TABLE extendedfieldvalue "
+			+ "  ( "
+			+ "     extendedfieldvalue_id BIGINT NOT NULL PRIMARY KEY, "
+			+ "     extendedfield_id      BIGINT NOT NULL, "
+			+ "     instance_id           BIGINT NOT NULL, "
+			+ "     content               VARCHAR(100) NOT NULL "
+			+ "  )";
+		
+	       HarvestDBConnection.updateTable("extendedfieldvalue", 1, createStatement);
+	}
 }

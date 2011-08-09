@@ -64,6 +64,29 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /**
+     * Test extended fields
+     */
+    public void testExtendedFields() {
+        ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
+        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", ExtendedFieldDataTypes.STRING, true, 1, "defaultvalue", "");
+        extDAO.create(extField);
+        
+        extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Boolean", "", ExtendedFieldDataTypes.BOOLEAN, true, 1, "true", "");
+        extDAO.create(extField);
+        
+    	
+        ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
+        extField = extDAO2.read(new Long(1));
+        assertEquals(extField.getExtendedFieldID().longValue(), 1);
+        extField = extDAO2.read(new Long(2));
+        assertEquals(extField.getExtendedFieldID().longValue(), 2);
+
+        Domain d =  Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
+        assertEquals(d.getExtendedFieldValue(new Long(1)).getContent(), "defaultvalue");
+        assertEquals(d.getExtendedFieldValue(new Long(2)).getBooleanValue(), true);
+    }
+    
+    /**
      * Test setters and getters with correct parameters.
      */
     public void testSetAndGet() {

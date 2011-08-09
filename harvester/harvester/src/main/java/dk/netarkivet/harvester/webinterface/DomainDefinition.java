@@ -24,7 +24,11 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
@@ -37,6 +41,13 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.ExtendedField;
+import dk.netarkivet.harvester.datamodel.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.ExtendedFieldDataTypes;
+import dk.netarkivet.harvester.datamodel.ExtendedFieldDefaultValues;
+import dk.netarkivet.harvester.datamodel.ExtendedFieldTypes;
+import dk.netarkivet.harvester.datamodel.ExtendedFieldValue;
 
 /**
  * Utility class for handling update of domain from the domain jsp page.
@@ -142,6 +153,60 @@ public class DomainDefinition {
         }
 
         boolean renewAlias = aliasRenew.equals("yes");
+        
+        ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
+        Iterator<ExtendedField> it = extdao.getAll(ExtendedFieldTypes.DOMAIN).iterator();
+        
+        while(it.hasNext()) {
+		    String value = "";
+        	
+        	ExtendedField ef = it.next();
+        	String parameterName = ef.getJspFieldname();
+        	switch(ef.getDatatype()) {
+	        	case ExtendedFieldDataTypes.BOOLEAN:
+			    	String[] parb = request.getParameterValues(parameterName);
+			    	if (parb != null && parb.length > 0) {
+			    		value = "true";
+			    	}
+			    	else {
+			    		value = "false";
+			    	}
+	        		break;
+	        	case ExtendedFieldDataTypes.SELECT:
+			    	String[] pars = request.getParameterValues(parameterName);
+			    	if (pars != null && pars.length > 0) {
+			    		value = pars[0];
+			    	}
+			    	else {
+			    		value = "";
+			    	}
+			    	
+	        		break;
+	    		default:
+			    	value = request.getParameter(parameterName);
+			    	if (ef.isMandatory()) {
+			    		if (value == null) {
+			    			value = ef.getDefaultValue();
+			    		}
+			    		
+				    	if (value == null || value.length() == 0) {
+			                HTMLUtils.forwardWithErrorMessage(context, i18n,
+			                        "errormsg;extendedfields.field.0.is.empty.but.mandatory", ef.getName());
+			                throw new ForwardedToErrorPage("Mandatory field " + ef.getName() + " is empty.");
+				    	}
+			    	}
+			    	
+			    	ExtendedFieldDefaultValues def = new ExtendedFieldDefaultValues(value, ef.getFormattingPattern(), ef.getDatatype());
+			    	if (!def.isValid()) {
+		                HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;extendedfields.value.invalid");
+		                throw new ForwardedToErrorPage("errormsg;extendedfields.value.invalid");
+			    	}
+	    			break;
+        	}
+
+	    	domain.updateExtendedFieldValue(ef.getExtendedFieldID(), value);
+        }
+        
         updateDomain(domain, defaultConf, crawlertraps, comments, alias,
                 renewAlias);
     }

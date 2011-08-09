@@ -96,6 +96,15 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'frontierreportmonitor', 1);
 
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldtype', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfield', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldvalue', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldhistoryvalue', 1);
+
 --***************************************************************************--
 -- Area: Domains
 -- Contains data on individual domains, including their seeds, ways of
@@ -576,3 +585,33 @@ CREATE TABLE frontierReportMonitor (
      lastQueuedUri varchar(1000) NOT NULL,
      UNIQUE (jobId, filterId, domainName)
 );
+
+create table extendedfieldtype (
+    extendedfieldtype_id bigint not null primary key,
+    name VARCHAR(50) not null
+);
+
+create table extendedfield (
+    extendedfield_id bigint not null primary key,
+    extendedfieldtype_id bigint NOT NULL,
+    name VARCHAR(50) not null,
+    format VARCHAR(50),
+    defaultvalue VARCHAR(50),
+    options VARCHAR(1000),
+    datatype int not null,
+    mandatory int NOT NULL,
+    historize int,
+    sequencenr int
+);
+
+create table extendedfieldvalue (
+    extendedfieldvalue_id bigint not null primary key,
+    content VARCHAR(50) not null,
+    extendedfield_id bigint NOT NULL,
+    instance_id bigint NOT NULL
+);
+
+INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
+    VALUES ( 1, 'domains');
+INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
+    VALUES ( 2, 'harvestdefinitions');

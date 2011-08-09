@@ -113,6 +113,19 @@ public class DomainDBDAO extends DomainDAO {
             DBSpecifics.getInstance().updateTable(
                     DBSpecifics.HISTORYINFO_TABLE,
                     DBSpecifics.HISTORYINFO_TABLE_REQUIRED_VERSION);
+            
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.EXTENDEDFIELDTYPE_TABLE,
+                    DBSpecifics.EXTENDEDFIELDTYPE_TABLE_REQUIRED_VERSION);
+
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.EXTENDEDFIELD_TABLE,
+                    DBSpecifics.EXTENDEDFIELD_TABLE_REQUIRED_VERSION);
+
+            DBSpecifics.getInstance().updateTable(
+                    DBSpecifics.EXTENDEDFIELDVALUE_TABLE,
+                    DBSpecifics.EXTENDEDFIELDVALUE_TABLE_REQUIRED_VERSION);
+            
         } finally {
             HarvestDBConnection.release(connection);
         }
@@ -220,7 +233,9 @@ public class DomainDBDAO extends DomainDAO {
             for (DomainOwnerInfo doi : d.getAllDomainOwnerInfo()) {
                 insertOwnerInfo(connection, d, doi);
             }
-
+            
+            saveExtendedFieldValues(connection, d);            
+            
             connection.commit();
             d.setEdition(initialEdition);
         } catch (SQLException e) {
@@ -304,6 +319,8 @@ public class DomainDBDAO extends DomainDAO {
 
             updateHarvestInfo(connection, d);
 
+            saveExtendedFieldValues(connection, d);            
+            
             // Now that configs are updated, we can set default_config
             s = connection.prepareStatement("UPDATE domains SET "
                     + "defaultconfig = (SELECT config_id"
@@ -1001,6 +1018,7 @@ public class DomainDBDAO extends DomainDAO {
             d.setDefaultConfiguration(defaultconfig);
             readOwnerInfo(c, d);
             readHistoryInfo(c, d);
+            readExtendedFieldValues(c, d);
 
             result = d;
         } catch (SQLException e) {
@@ -1644,5 +1662,62 @@ public class DomainDBDAO extends DomainDAO {
            HarvestDBConnection.release(c);
        }
    }
+    
+    /**
+     * saves all extended Field values for a Domain in the Database 
+     * @param c Connection to Database
+     * @param d Domain where loaded extended Field Values will be set
+     * 
+     * @throws SQLException
+     *             If database errors occur.
+     */
+    private void saveExtendedFieldValues(Connection c, Domain d)
+            throws SQLException {
+    	List<ExtendedFieldValue> list = d.getExtendedFieldValues();
+    	for (int i=0; i < list.size(); i++) {
+    		ExtendedFieldValue efv = list.get(i);
+    		efv.setInstanceID(d.getID());
+    		
+    		ExtendedFieldValueDBDAO dao = new ExtendedFieldValueDBDAO();
+    		if (efv.getExtendedFieldValueID() != null) {
+    			dao.update(c, efv, false);
+    		}
+    		else {
+    			dao.create(c, efv, false);
+    		}
+    	}
+    }
+
+    
+    /**
+     * reads all extended Field values from the database for a domain 
+     * @param c Connection to Database
+     * @param d Domain where loaded extended Field Values will be set
+     * 
+     * @throws SQLException
+     *             If database errors occur.
+     * 
+     */
+    private void readExtendedFieldValues(Connection c, Domain d)
+    throws SQLException {
+		ExtendedFieldDBDAO dao = new ExtendedFieldDBDAO();
+		List<ExtendedField> list = dao.getAll(ExtendedFieldTypes.DOMAIN);
+		
+		for (int i=0; i < list.size(); i++) {
+			ExtendedField ef = list.get(i);
+			
+			ExtendedFieldValueDBDAO dao2 = new ExtendedFieldValueDBDAO();
+			ExtendedFieldValue efv = dao2.read(ef.getExtendedFieldID(), d.getID());
+			if (efv == null) {
+				efv = new ExtendedFieldValue();
+				efv.setExtendedFieldID(ef.getExtendedFieldID());
+				efv.setInstanceID(d.getID());
+				efv.setContent(ef.getDefaultValue());
+			}
+			
+			d.addExtendedFieldValue(efv);
+		}
+}
+    
 
 }

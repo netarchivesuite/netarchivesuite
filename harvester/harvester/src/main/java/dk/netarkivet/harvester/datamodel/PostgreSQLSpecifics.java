@@ -261,5 +261,55 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
         
     }
+    
+	@Override
+	protected void createExtendedFieldTypeTable() {
+		String statements[] = new String[3];
+		statements[0] = ""
+			+ "CREATE TABLE extendedfieldtype "
+			+ "  ( "
+			+ "     extendedfieldtype_id BIGINT NOT NULL PRIMARY KEY, "
+			+ "     name             VARCHAR(50) NOT NULL "
+			+ "  )";
 
+		statements[1] = ""
+			+ "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name ) VALUES ( 1, 'domains')";
+		statements[2] = ""
+			+ "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name ) VALUES ( 2, 'harvestdefinitions')";
+
+	    HarvestDBConnection.updateTable("extendedfieldtype", 1, statements);
+	}
+    
+	@Override
+	protected void createExtendedFieldTable() {
+		String createStatement = ""
+			+ "CREATE TABLE extendedfield "
+			+ "  ( "
+			+ "     extendedfield_id BIGINT NOT NULL PRIMARY KEY, "
+			+ "     extendedfieldtype_id BIGINT NOT NULL, "
+			+ "     name             VARCHAR(50) NOT NULL, "
+			+ "     format           VARCHAR(50) NOT NULL, "
+			+ "     defaultvalue     VARCHAR(50) NOT NULL, "
+			+ "     options          VARCHAR(50) NOT NULL, "
+			+ "     datatype         INT NOT NULL, "
+			+ "     mandatory        INT NOT NULL, "
+			+ "     sequencenr       INT "
+			+ "  )";
+		
+	       HarvestDBConnection.updateTable("extendedfield", 1, createStatement);
+	}
+
+	@Override
+	protected void createExtendedFieldValueTable() {
+		String createStatement = ""
+			+ "CREATE TABLE extendedfieldvalue "
+			+ "  ( "
+			+ "     extendedfieldvalue_id BIGINT NOT NULL PRIMARY KEY, "
+			+ "     extendedfield_id      BIGINT NOT NULL, "
+			+ "     instance_id           BIGINT NOT NULL, "
+			+ "     content               VARCHAR(100) NOT NULL "
+			+ "  )";
+		
+	       HarvestDBConnection.updateTable("extendedfieldvalue", 1, createStatement);
+	}
 }

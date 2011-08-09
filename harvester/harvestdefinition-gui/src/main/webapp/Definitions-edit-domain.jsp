@@ -39,6 +39,7 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                  java.util.Iterator,
                  java.util.List,
                  java.util.Locale,
+                 java.util.HashMap,                 
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.utils.StringUtils,
@@ -49,11 +50,22 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                  dk.netarkivet.harvester.datamodel.DomainConfiguration,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
                  dk.netarkivet.harvester.datamodel.SeedList, 
-                 dk.netarkivet.harvester.webinterface.Constants, 
-                 dk.netarkivet.harvester.webinterface.DomainDefinition"
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.harvester.webinterface.DomainDefinition,
+                 dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition,
+				 dk.netarkivet.harvester.datamodel.ExtendedFieldDAO,
+				 dk.netarkivet.harvester.datamodel.ExtendedFieldDBDAO,
+				 dk.netarkivet.harvester.datamodel.ExtendedFieldTypes,
+                 dk.netarkivet.harvester.datamodel.ExtendedFieldDataTypes,				 
+				 dk.netarkivet.harvester.datamodel.ExtendedField,
+                 dk.netarkivet.harvester.datamodel.ExtendedFieldValue,
+				 dk.netarkivet.harvester.datamodel.ExtendedFieldValueDAO,
+                 dk.netarkivet.harvester.datamodel.ExtendedFieldValueDBDAO
+				 "
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
-%><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
+%>
+<fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -155,6 +167,16 @@ Display all the form information for this domain
                    value='yes'/> <fmt:message key="renew.alias"/>
     <%    }
     }
+    %>
+    <br/>
+
+    <%
+    int extendedFieldType = ExtendedFieldTypes.DOMAIN;
+    %>
+    
+    <%@ include file="extentedfields_element.jspf" %>
+        
+    <%
     Locale loc = HTMLUtils.getLocaleObject(pageContext);
     %>
 
