@@ -182,7 +182,7 @@ public class ArchiveFile {
      * @throws IllegalState If the indexing has already been done.
      */
     public void index() throws IllegalState {
-        log.info("Indexing " + toString());
+        log.info("Indexing " + this.getFilename());
         if (isIndexed) {
             throw new IllegalState("Attempted to index file '" + filename 
                     + "' which is already indexed");
@@ -203,8 +203,11 @@ public class ArchiveFile {
         theJob.processOnlyFileNamed(filename);                
         PreservationArcRepositoryClient client =
                 ArcRepositoryClientFactory.getPreservationInstance();
-        BatchStatus batchStatus = client.batch(theJob, Settings.get(
-                WaybackSettings.WAYBACK_REPLICA));
+        String replicaId = Settings.get(
+                WaybackSettings.WAYBACK_REPLICA);
+        log.info("Submitting " + theJob.getClass().getName() + " for " + getFilename() + " to " + replicaId);
+        BatchStatus batchStatus = client.batch(theJob, replicaId);
+        log.info("Batch job for " + this.getFilename() + " returned");
         // Since we index exactly one file at a time, the batch job
         // is considered to have failed unless the result shows exactly one
         // file processed with no exceptions thrown.
@@ -238,8 +241,9 @@ public class ArchiveFile {
         // Copy the batch output to the temporary directory.
         File batchOutputFile =
                 new File(outDir, outputFilename);
+        log.info("Collecting index for '" + this.getFilename() + "' to '" + batchOutputFile.getAbsolutePath() + "'" );
         status.copyResults(batchOutputFile);
-
+        log.info("Finished collecting index for '" + this.getFilename() + "' to '" + batchOutputFile.getAbsolutePath() + "'" );
         // Read the name of the final batch output directory and create it if
         // necessary
         String finalBatchOutputDir =
@@ -256,7 +260,7 @@ public class ArchiveFile {
         // Update the file status in the object store
         originalIndexFileName = outputFilename;
         isIndexed = true;
-        log.info("Indexed '" + this.filename + "' to '" + originalIndexFileName
+        log.info("Indexed '" + this.filename + "' to '" + finalFile.getAbsolutePath()
                  + "'");
         (new ArchiveFileDAO()).update(this);
     }
