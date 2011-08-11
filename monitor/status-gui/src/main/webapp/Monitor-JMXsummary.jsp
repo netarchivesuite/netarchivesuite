@@ -70,6 +70,10 @@ will not appear here.
             StringBuilder builder = new StringBuilder("/");
             builder.append(JMXSummaryUtils.STATUS_MONITOR_JMXSUMMARY);
             builder.append("?");
+            /**
+             * oldquery is set in the link to remove an application from the summary view. It is used to
+             * enable us to return to the previous view after removing an application.
+             */
             String oldquery = starredRequest.getParameter("oldquery");
             if (oldquery != null) builder.append(java.net.URLDecoder.decode(oldquery));
             response.sendRedirect(builder.toString());
