@@ -77,7 +77,6 @@ public class ChannelID implements Serializable {
      * It has one bit of state information: is it a queue or a topic?
      */
     private String name;
-    private boolean isTopic;
 
     /**
     * Constructor of channel names.
@@ -96,8 +95,7 @@ public class ChannelID implements Serializable {
     */
     ChannelID(String appPref, String replicaId, boolean useNodeId,
         boolean useAppInstId, boolean isTopic) {
-        this.name = constructName(appPref, replicaId, useNodeId, useAppInstId);
-        this.isTopic = isTopic;
+        this.name = constructName(appPref, replicaId, useNodeId, useAppInstId, isTopic);
     }
 
     /**
@@ -115,7 +113,7 @@ public class ChannelID implements Serializable {
     * @throws UnknownID if looking up the local IP number failed.
     */
     private String constructName(String appPref, String replicaId,
-        boolean useNodeId, boolean useAppInstId) {
+        boolean useNodeId, boolean useAppInstId, boolean isTopic) {
         String userId = environmentName;
         String id = "";
         if (useNodeId) {
@@ -131,12 +129,16 @@ public class ChannelID implements Serializable {
             }
         }
         
-        String resultingName = userId + Channels.CHANNEL_PART_SEPARATOR + replicaId 
-            + Channels.CHANNEL_PART_SEPARATOR + appPref;
+        String resultingName = 
+            userId + Channels.CHANNEL_PART_SEPARATOR + 
+            replicaId + Channels.CHANNEL_PART_SEPARATOR 
+            + appPref;
         if (!id.isEmpty()) {
             resultingName += Channels.CHANNEL_PART_SEPARATOR + id; 
         }
-        
+        if (isTopic) {
+            resultingName += Channels.CHANNEL_PART_SEPARATOR + "TOPIC"; 
+        }
         return resultingName;
     }
     /**
@@ -152,18 +154,10 @@ public class ChannelID implements Serializable {
     * @return a nice String representation of the ChannelID.
     */
     public String toString() {
-        return isTopic ? ("[Topic '" + name + "']") : ("[Queue '" + name
+        return Channels.isTopic(name)? ("[Topic '" + name + "']") : ("[Queue '" + name
         + "']");
     }
-    /**
-     * Getter method for isTopic.
-     * This method is package-private because it should only be used
-     * by JMSConnection.
-     * @return Whether this channel is a Topic. If not a Topic, it is a Queue.
-     */
-    boolean isTopic() {
-        return isTopic;
-    }
+    
     /**
      * Method used by Java deserialization.
      * Our coding guidelines prescribes that this method should always
@@ -212,9 +206,6 @@ public class ChannelID implements Serializable {
             return false;
         }
         final ChannelID channelID = (ChannelID) o;
-        if (isTopic != channelID.isTopic) {
-            return false;
-        }
         if (!name.equals(channelID.name)) {
             return false;
         }
@@ -227,7 +218,6 @@ public class ChannelID implements Serializable {
     public int hashCode() {
         int result;
         result = name.hashCode();
-        result = (29 * result) + (isTopic ? 1 : 0);
         return result;
     }
     

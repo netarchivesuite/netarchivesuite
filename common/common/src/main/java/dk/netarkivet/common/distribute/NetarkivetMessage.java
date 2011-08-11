@@ -74,7 +74,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
         // Have not implemented replying to a topic because there is no use
         // for it in our current architecture
-        if (replyTo.isTopic()) {
+        if (Channels.isTopic(replyTo.getName())) {
             throw new ArgumentNotValid("Reply channel must be queue but "
                     + replyTo.toString() + " is a Topic");
         }

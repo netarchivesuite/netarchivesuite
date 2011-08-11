@@ -66,7 +66,6 @@ public class ChannelIDTester extends TestCase {
         q1 = (ChannelID) ois.readObject();
         //Finally, compare their visible states:
         assertEquals("The two channels should have the same name", q1.getName(), q2.getName());
-        assertEquals("The two channels should be of same type (queue or topic)", q1.isTopic(), q2.isTopic());
     }
 
     /**
@@ -86,7 +85,6 @@ public class ChannelIDTester extends TestCase {
         q1 = (ChannelID) ois.readObject();
         //Finally, compare their visible states:
         assertEquals("The two channels should have the same name", q1.getName(), q2.getName());
-        assertEquals("The two channels should be of same type (queue or topic)", q1.isTopic(), q2.isTopic());
     }
 
     /**

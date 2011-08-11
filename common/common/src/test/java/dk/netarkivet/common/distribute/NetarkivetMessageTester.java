@@ -245,8 +245,8 @@ public class NetarkivetMessageTester extends TestCase {
      */
     private String relevantState(NetarkivetMessage m) {
         return m.getID() + "(" + m.getTo().getName() + ","
-            + m.getReplyTo().getName() + "," + m.getReplyTo().isTopic()
-                + ")" + ":" + m.isOk() + (m.isOk() ? "" : m.getErrMsg());
+            + m.getReplyTo().getName() + ")" + ":" + m.isOk() + 
+            (m.isOk() ? "" : m.getErrMsg());
     }
 
     /**
@@ -257,7 +257,5 @@ public class NetarkivetMessageTester extends TestCase {
         public TestMessage(ChannelID to, ChannelID replyTo) {
             super(to, replyTo);
         }
-
     }
-
 }

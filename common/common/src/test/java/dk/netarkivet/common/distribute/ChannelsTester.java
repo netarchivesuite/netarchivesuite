@@ -151,7 +151,8 @@ public class ChannelsTester extends TestCase {
                 Channels.getTheMonitorServer(),
                 Channels.getError(),
                 Channels.getTheSched(),
-                Channels.getThisIndexClient()
+                Channels.getThisIndexClient(),
+                Channels.getHarvestMonitorChannel()
         };
         for (ChannelID queue : queues) {
            String queueName = queue.getName();
@@ -159,7 +160,16 @@ public class ChannelsTester extends TestCase {
                    Channels.isTopic(queueName));
         }
 
-        String topicName = Channels.getAllBa().getName();
-        assertTrue(topicName + " is a topic", Channels.isTopic(topicName));
+
+        ChannelID[]topics = new ChannelID[]{
+                Channels.getAllBa(),
+                Channels.getHarvestDispatcherChannel()                
+        };
+        
+        for (ChannelID topic : topics) {
+            String topicName = topic.getName();
+            assertTrue(topicName + " is a topic",
+                    Channels.isTopic(topicName));
+         }
     }
 }

@@ -608,7 +608,7 @@ public class Channels {
           ChannelID.COMMON,
           ChannelID.NO_IP,
           ChannelID.NO_APPLINST_ID,
-          ChannelID.QUEUE);
+          ChannelID.TOPIC);
 
     /**
      * Reset the instance to re-read the settings. Only for use in tests.
@@ -624,6 +624,6 @@ public class Channels {
      */
     public static boolean isTopic(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
-        return name.contains("_ALL_");
+        return name.contains("_TOPIC");
     }
 }
