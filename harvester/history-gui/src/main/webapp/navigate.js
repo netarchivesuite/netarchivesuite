@@ -21,7 +21,7 @@ function previousPage(param,value) {
 }
 
 /**
- * Displays the previous page of results (if available). This method works by
+ * Displays the next page of results (if available). This method works by
  * setting window.location, not by submitting a form, but it is dependent on
  * the parameter values set in the "filtersForm" form element on the calling
  * page - specifically the start-page index and the is_newest_first flag.
