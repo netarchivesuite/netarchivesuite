@@ -69,6 +69,7 @@ public class Domain implements Named {
     protected static final Log log = LogFactory.getLog(Domain.class);
 
     /** The identification used to lookup the domain. */
+    
     private String domainName;
 
     /**
@@ -202,8 +203,10 @@ public class Domain implements Named {
                 HarvesterSettings.DOMAIN_CONFIG_MAXRATE)));
 
         myDomain.addConfiguration(cfg);
+        // TODO seems unnecessary here. and makes it impossible to make a Domain object 
+        // without database access.
         
-        myDomain.addExtendedFieldValues();
+        //myDomain.addExtendedFieldValues();
 
         return myDomain;
     }
