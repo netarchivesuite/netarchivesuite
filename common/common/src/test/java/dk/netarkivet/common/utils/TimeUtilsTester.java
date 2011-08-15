@@ -69,7 +69,7 @@ public class TimeUtilsTester extends TestCase {
      */
     public void testReadability() {
         // Test whether it works.
-        assertEquals(TimeUtils.readableTimeInterval(1L), "1 milliseconds");
+        assertEquals(TimeUtils.readableTimeInterval(1L), "1 millisecond");
         
         // Test conversion between millisecond and seconds.
         assertEquals(TimeUtils.readableTimeInterval(5000L), "5 seconds");
@@ -81,8 +81,11 @@ public class TimeUtilsTester extends TestCase {
         assertEquals(TimeUtils.readableTimeInterval(50400000), "14 hours");
 
         // Test conversion between millisecond and days.
-        assertEquals(TimeUtils.readableTimeInterval(604800000L), "7 days");
-        
+        assertEquals(TimeUtils.readableTimeInterval(172800000L), "2 days");
+
+        // Test conversion between millisecond and weeks.
+        assertEquals(TimeUtils.readableTimeInterval(604800000L), "1 week");
+
         // 2,5 hours should be returned in minutes
         assertEquals(TimeUtils.readableTimeInterval(9000000L), "150 minutes");
     }
