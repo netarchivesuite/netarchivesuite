@@ -400,32 +400,28 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertEquals("Should have info on 4 runs", 4, runInfos.size());
 
         // Sanity checks
-        int i = 2;
+        
         for (HarvestRunInfo runInfo : runInfos) {
-            assertEquals("Should be for run " + i, i++, runInfo.getRunNr());
             assertEquals("Should be for hd " + newHd, (Long) newHd.getOid(),
                          (Long) runInfo.getHarvestID());
             assertEquals("Should have right HD name ", newHd.getName(), runInfo
                     .getHarvestName());
-            assertEquals("Job stati should sum up", runInfo.getJobCount(),
+            assertEquals("Job states should sum up", runInfo.getJobCount(),
                          runInfo.getJobCount(JobStatus.NEW)
                          + runInfo.getJobCount(JobStatus.SUBMITTED)
                          + runInfo.getJobCount(JobStatus.STARTED)
                          + runInfo.getJobCount(JobStatus.DONE)
                          + runInfo.getJobCount(JobStatus.FAILED)
                          + runInfo.getJobCount(JobStatus.RESUBMITTED));
-            assertFalse("Should not have end date without start date", runInfo
-                    .getStartDate() == null
-                                                                       &&
-                                                                       runInfo.getEndDate()
-                                                                       != null);
-            assertTrue("If done, stop should be after start", runInfo
-                    .getEndDate() == null
-                                                              || runInfo.getStartDate().before(
-                    runInfo.getEndDate()));
+            assertFalse("Should not have end date without start date", 
+                    runInfo.getStartDate() == null 
+                    && runInfo.getEndDate() != null);
+            assertTrue("If done, stop should be after start", 
+                    runInfo.getEndDate() == null 
+                    || runInfo.getStartDate().before(runInfo.getEndDate()));
         }
 
-        HarvestRunInfo i2 = runInfos.get(0);
+        HarvestRunInfo i2 = runInfos.get(3);
         assertEquals("Should have 21 docs", 21, i2.getDocsHarvested());
         assertEquals("Should have 200 bytes", 200, i2.getBytesHarvested());
         assertEquals("Should have 2 done jobs", 2, i2
@@ -438,14 +434,14 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertEquals("Should end at maximum date", getDate(2005, 2, 18), i2
                 .getEndDate());
 
-        HarvestRunInfo i4 = runInfos.get(2);
+        HarvestRunInfo i4 = runInfos.get(1);
         assertEquals("Should have 1 jobs total", 1, i4.getJobCount());
         assertEquals("One job should be submitted", 1, i4
                 .getJobCount(JobStatus.SUBMITTED));
         assertNull("Should not be marked as started", i4.getStartDate());
         assertNull("Should not be marked as ended", i4.getEndDate());
 
-        HarvestRunInfo i5 = runInfos.get(3);
+        HarvestRunInfo i5 = runInfos.get(0);
         assertEquals("Should have 2 jobs total", 2, i5.getJobCount());
         assertEquals("One job should be started", 1, i5
                 .getJobCount(JobStatus.STARTED));
