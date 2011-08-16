@@ -47,6 +47,13 @@ public class DerbySpecificsTester extends DataModelTestCase {
     }
     
     /**
+     * Test added to fool JUnit.
+     */
+    public void testDummy() {
+        
+    }
+    
+    /**
      * FIXME Broken by connection code refactoring 
      * https://sbforge.org/jira/browse/NAS-1924
      * Prefixed with "failing" to disable test.
