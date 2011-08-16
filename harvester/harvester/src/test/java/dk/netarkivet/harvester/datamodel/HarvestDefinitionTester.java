@@ -239,6 +239,11 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         domainConfigs.add(cfg1);
 
         Date before = new Date(System.currentTimeMillis() / 1000 * 1000);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            // Ignore any exceptions
+        }
 
         PartialHarvest harvestDef
                 = HarvestDefinition.createPartialHarvest(
@@ -258,6 +263,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         // created or the schedule starts "now".
         // This should be okay, unless the creation takes more than an hour
         Date firstEvent = harvestDef.getNextDate();
+        
         assertTrue("The first event must not happen before now (" + before
                    + "), but happens at "
                    + firstEvent, firstEvent.compareTo(before) <= 0);
