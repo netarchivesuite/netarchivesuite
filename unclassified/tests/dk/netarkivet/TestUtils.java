@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.DomainDAOTester;
+import dk.netarkivet.harvester.datamodel.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
 import dk.netarkivet.harvester.datamodel.JobDAOTester;
@@ -72,6 +73,7 @@ public class TestUtils {
     }
 
     public static void resetDAOs() {
+        ExtendedFieldDBDAO.reset();
         DomainDAOTester.resetDomainDAO();
         TemplateDAOTester.resetTemplateDAO();
         HarvestDefinitionDAOTester.resetDAO();

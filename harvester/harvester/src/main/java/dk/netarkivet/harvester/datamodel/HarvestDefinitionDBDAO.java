@@ -457,6 +457,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             log.debug(message);
             throw new PermissionDenied(message);
         }
+        HarvestDefinition preHD = null;
+        if (hd instanceof FullHarvest) {
+            preHD = ((FullHarvest) hd).getPreviousHarvestDefinition();
+        }
+        
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
@@ -497,8 +502,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         + "maxjobrunningtime = ?, "
                         + "isindexready = ? "
                         + "WHERE harvest_id = ?");
-                if (fh.getPreviousHarvestDefinition() != null) {
-                    s.setLong(1, fh.getPreviousHarvestDefinition().getOid());
+                //HarvestDefinition preHD = fh.getPreviousHarvestDefinition();
+                if (preHD != null) {
+                    s.setLong(1, preHD.getOid());
                 } else {
                     s.setNull(1, Types.BIGINT);
                 }
