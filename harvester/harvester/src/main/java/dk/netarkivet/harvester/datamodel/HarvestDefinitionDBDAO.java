@@ -502,7 +502,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         + "maxjobrunningtime = ?, "
                         + "isindexready = ? "
                         + "WHERE harvest_id = ?");
-                //HarvestDefinition preHD = fh.getPreviousHarvestDefinition();
                 if (preHD != null) {
                     s.setLong(1, preHD.getOid());
                 } else {
