@@ -112,12 +112,8 @@ implements MessageListener, ComponentLifeCycle {
             JobPriority p = statusMsg.getJobProprity();
             String harvesterId = statusMsg.getApplicationInstanceId();
 
-            Set<String> ids = availableHarvesters.get(p);
-            if (ids == null) {
-                ids = new TreeSet<String>();
-                availableHarvesters.put(p, ids);
-            }
-
+            Set<String> ids = getAvailableHarvesters(p);
+            
             int oldSize = ids.size();
             if (statusMsg.isAvailable()) {
                 ids.add(harvesterId);
@@ -125,21 +121,32 @@ implements MessageListener, ComponentLifeCycle {
                 ids.remove(harvesterId);
             }
 
-            if (log.isInfoEnabled() && (oldSize != ids.size())) {
-                log.info(toString());
+            if ((oldSize != ids.size()) && log.isInfoEnabled()) {
+                StringBuilder message = new StringBuilder();
+                if (oldSize > ids.size()) {
+                    message.append("Harvester '" + harvesterId + "' reported itself as unavailable. ");
+                } else {
+                    message.append("Harvester '" + harvesterId + "' reported itself as available. ");
+                }
+                message.append(toString());
+                log.info(message);
             }
         }
 
         /**
-         * Returns the number of available harvesters for the
+         * Returns the set of available harvesters for the
          * given {@link JobPriority}.
          * @param p the job priority
-         * @return the number of available harvesters for the
+         * @return the set of available harvesters for the
          * given {@link JobPriority}.
          */
-        private synchronized int getAvailableHarvestersCount(JobPriority p) {
+        private synchronized Set<String> getAvailableHarvesters(JobPriority p) {
             Set<String> available = availableHarvesters.get(p);
-            return (available == null ? 0 : available.size());
+            if (available == null) {
+                available = new TreeSet<String>();
+                availableHarvesters.put(p, available);
+            }
+            return available;
         }
 
     }
@@ -290,7 +297,7 @@ implements MessageListener, ComponentLifeCycle {
      */
     void submitNewJobs() {
         for (JobPriority p : JobPriority.values()) {
-            int availableCount = state.getAvailableHarvestersCount(p);
+            int availableCount = state.getAvailableHarvesters(p).size();
             for (int i = 0; i < availableCount; i++) {
                 submitNextNewJob(p);
             }
@@ -310,9 +317,8 @@ implements MessageListener, ComponentLifeCycle {
                 log.trace("No " + priority + " jobs to be run at this time");
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Submitting new " + priority + " job");
-            }
+            log.debug("Submitting new " + priority + " job: ");
+            
             final long jobID = jobsToSubmit.next();
             Job jobToSubmit = null;
             try {
@@ -379,9 +385,8 @@ implements MessageListener, ComponentLifeCycle {
                 }
 
                 doOneCrawl(jobToSubmit, hName, hdComments, schedule, metadata);
-                if (log.isTraceEnabled()) {
-                    log.trace("Job " + jobToSubmit + " sent to harvest queue.");
-                }
+                
+                log.info("Submitting job: " + jobToSubmit);
 
             } catch (Throwable e) {
                 String message = "Error while scheduling job " + jobID
