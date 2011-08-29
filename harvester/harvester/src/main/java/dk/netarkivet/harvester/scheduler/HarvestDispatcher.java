@@ -317,8 +317,9 @@ implements MessageListener, ComponentLifeCycle {
                 log.trace("No " + priority + " jobs to be run at this time");
             }
         } else {
-            log.debug("Submitting new " + priority + " job: ");
-            
+            if (log.isDebugEnabled()) {
+                log.debug("Submitting new " + priority + " job");
+            }
             final long jobID = jobsToSubmit.next();
             Job jobToSubmit = null;
             try {
