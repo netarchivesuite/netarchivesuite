@@ -99,28 +99,8 @@ public class IndexRequestServer extends ArchiveMessageHandler
         requestDir = Settings.getFile(
                 ArchiveSettings.INDEXSERVER_INDEXING_REQUESTDIR);
         currentJobs = new HashSet<IndexRequestMessage>();
-        restoreRequestsfromRequestDir();
-        log.info("" + currentJobs.size()
-                + " indexing jobs in progress that was stored in requestdir: " 
-                + requestDir.getAbsolutePath() );
-        conn = JMSConnectionFactory.getInstance();
-        
-        if (maxConcurrentJobs > currentJobs.size()) {
-            log.info("Enabling listening to the indexserver-queue");
-            conn.setListener(Channels.getTheIndexServer(), this);
-            isListening.set(true);
-            log.info("Index request server is listening for requests on "
-                    + "channel '"
-                    + Channels.getTheIndexServer() + "'");
-
-        } else {
-            log.info("Currently full occupied with indexjobs stored in the " 
-                    + "requestdirectory");
-            isListening.set(false);
-        }
-        
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(
-                RequestType.class);
+                RequestType.class);      
     }
 
     /**
@@ -435,6 +415,32 @@ public class IndexRequestServer extends ArchiveMessageHandler
 
         if (instance != null) {
             instance = null;
+        }
+    }
+    
+    /**
+     * Look for stored messages to be preprocessed, and start processing those.
+     * And start listening for index-requests.
+     */
+    public void start() {
+        restoreRequestsfromRequestDir();
+        log.info("" + currentJobs.size()
+                + " indexing jobs in progress that was stored in requestdir: " 
+                + requestDir.getAbsolutePath() );
+        conn = JMSConnectionFactory.getInstance();
+        
+        if (maxConcurrentJobs > currentJobs.size()) {
+            log.info("Enabling listening to the indexserver-queue");
+            conn.setListener(Channels.getTheIndexServer(), this);
+            isListening.set(true);
+            log.info("Index request server is listening for requests on "
+                    + "channel '"
+                    + Channels.getTheIndexServer() + "'");
+
+        } else {
+            log.info("Currently full occupied with indexjobs stored in the " 
+                    + "requestdirectory");
+            isListening.set(false);
         }
     }
 }

@@ -107,6 +107,7 @@ public class IndexRequestServerTester extends TestCase {
         server = IndexRequestServer.getInstance();
         mmfbc.setMode(MockupMultiFileBasedCache.Mode.FAILING);
         server.setHandler(RequestType.CDX, mmfbc);
+        server.start();
         try {
             server.visit((IndexRequestMessage) null);
             fail("Should throw ArgumentNotValid on null");
@@ -182,6 +183,7 @@ public class IndexRequestServerTester extends TestCase {
         mmfbc.setMode(MockupMultiFileBasedCache.Mode.REPLYING);
         server = IndexRequestServer.getInstance();
         server.setHandler(t, mmfbc);
+        server.start();
 
         //A message to visit with
         IndexRequestMessage irm = new IndexRequestMessage(t, JOB_SET);
@@ -260,6 +262,7 @@ public class IndexRequestServerTester extends TestCase {
         //Start server and set a handler
         server = IndexRequestServer.getInstance();
         server.setHandler(RequestType.CDX, mmfbc);
+        server.start();
 
         //Send OK message
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
@@ -356,6 +359,7 @@ public class IndexRequestServerTester extends TestCase {
         mmfbc.setMode(MockupMultiFileBasedCache.Mode.WAITING);
         server = IndexRequestServer.getInstance();
         server.setHandler(RequestType.CDX, mmfbc);
+        server.start();
 
         //A message to visit with
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,

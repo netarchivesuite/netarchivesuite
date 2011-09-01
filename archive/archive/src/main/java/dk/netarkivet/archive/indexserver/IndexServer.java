@@ -67,6 +67,7 @@ public class IndexServer implements CleanupIF{
                 dedupCrawlLogCache);
         remoteServer.setHandler(RequestType.FULL_CRAWL_LOG,
                 fullCrawlLogCache);
+        remoteServer.start();
     }
 
     /** Get the unique index server instance.
