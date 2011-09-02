@@ -166,8 +166,9 @@ public class RawMetadataCache extends FileBasedCache<Long>
                             > b.getFilesFailed().size())) {
                         File cacheFileName = getCacheFile(id);
                         b.copyResults(cacheFileName);
-                        log.debug("Cached data for job '" + id
-                                + "' for '" + prefix + "' at '" + rep);
+                        log.info("Cached data for job '" + id
+                                + "' for '" + prefix + "' from '" + rep 
+                                + " instead of " + replicaUsed);
                         return id;
                     } else {
                         log.trace("No data found for job '" + id + "' for '" 
