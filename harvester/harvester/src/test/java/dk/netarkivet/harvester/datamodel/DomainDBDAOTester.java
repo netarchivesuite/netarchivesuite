@@ -65,7 +65,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
      *  FIXME disabled because tests requires functionality removed from 
      *  Domain.getDefaultDomain (NAS-1925)
      */
-    public void failingtestExtendedFields() {
+    public void testExtendedFields() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
         ExtendedField extField = new ExtendedField(null, 
                 (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "defaultvalue", "");
@@ -77,11 +77,13 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals(1, extField.getExtendedFieldID().longValue());
 
         Domain d =  Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
-        assertEquals("defaultvalue", d.getExtendedFieldValue(
-                Long.valueOf(1)).getContent());
     	
         DomainDAO dao = DomainDAO.getInstance();
         dao.create(d);
+
+        assertEquals("defaultvalue", d.getExtendedFieldValue(
+                Long.valueOf(1)).getContent());
+        
         
         ExtendedFieldValueDAO efvDAO = ExtendedFieldValueDBDAO.getInstance();
         ExtendedFieldValue efv = efvDAO.read(extField.getExtendedFieldID(), d.getID());

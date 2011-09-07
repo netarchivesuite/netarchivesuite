@@ -203,32 +203,9 @@ public class Domain implements Named {
                 HarvesterSettings.DOMAIN_CONFIG_MAXRATE)));
 
         myDomain.addConfiguration(cfg);
-        // TODO seems unnecessary here. and makes it impossible to make a Domain object 
-        // without database access.
-        
-        //myDomain.addExtendedFieldValues();
 
         return myDomain;
     }
-
-    /**
-     * Adds Defaultvalues for all extended fields of this entity
-     */
-    private void addExtendedFieldValues() {
-    	ExtendedFieldDAO extendedFieldDAO = ExtendedFieldDBDAO.getInstance();
-    	List <ExtendedField> list = extendedFieldDAO.getAll(ExtendedFieldTypes.DOMAIN);
-    	
-    	Iterator<ExtendedField> it = list.iterator();
-    	while (it.hasNext()) {
-    		ExtendedField ef = it.next();
-    		
-    		ExtendedFieldValue efv = new ExtendedFieldValue();
-    		efv.setContent(ef.getDefaultValue());
-    		efv.setExtendedFieldID(ef.getExtendedFieldID());
-    		
-    		extendedFieldValues.add(efv);
-    	}
-	}
 
 	/**
      * Adds a new configuration to the domain. If this is the first
