@@ -105,7 +105,7 @@ public abstract class CrawlLogIndexCache extends
      */
     protected Map<Long, File> prepareCombine(Set<Long> ids) {
         log.info("Starting to generate " + getCacheDir().getName()
-                 + " for jobs: " + ids);
+                 + " for the " + ids.size() + " jobs: " + ids);
         Map<Long, File> returnMap = super.prepareCombine(ids);
         Set<Long> missing = new HashSet<Long>();
         for (Long id : returnMap.keySet()) {
@@ -173,6 +173,7 @@ public abstract class CrawlLogIndexCache extends
                 // Dispatch this indexing task to a separate thread that 
                 // handles the sorting of the logfiles and the generation
                 // of a lucene index for this crawllog and cdxfile.
+                count++;
                 log.debug("Making subthread for indexing job " + jobId 
                         + " - task " + count + " out of " + datasetSize);
                 Callable<Boolean> task = new DigestIndexerWorker(
@@ -181,7 +182,6 @@ public abstract class CrawlLogIndexCache extends
                 Future<Boolean> result = executor.submit(task);
                 outstandingJobs.add(
                         new IndexingState(jobId, localindexLocation, result));
-                count++;
             }
             
             // wait for all the outstanding subtasks to complete.
