@@ -226,7 +226,11 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      *      at junit.framework.Assert.fail(Assert.java:47)
      *      at junit.framework.Assert.assertTrue(Assert.java:20)
      *      at dk.netarkivet.harvester.datamodel.HarvestDefinitionTester.testSetAndGet(HarvestDefinitionTester.java:248)
-     *
+     * SVC (09-09-2011) 
+     * Changed the declaration of Date "before" and "after" from 
+     *  new Date(System.currentTimeMillis() / 1000 * 1000);
+     * to  
+     *  new Date()
      */
     public void testSetAndGet() {
 
@@ -237,8 +241,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         List<DomainConfiguration> domainConfigs
             = new ArrayList<DomainConfiguration>();
         domainConfigs.add(cfg1);
-
-        Date before = new Date(System.currentTimeMillis() / 1000 * 1000);
+        
+        Date before = new Date();
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
@@ -253,8 +257,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         assertNotNull("A valid harvest definition expected", harvestDef);
 
-        Date after = new Date(System.currentTimeMillis() / 1000 * 1000);
-
+        Date after = new Date();
         // verify the start date and the number of events are set correctly
 
         // Note, we can't get the time that was "now" when the HarvestDefinition
