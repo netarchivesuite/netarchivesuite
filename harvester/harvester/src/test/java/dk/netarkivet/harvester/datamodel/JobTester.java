@@ -57,12 +57,10 @@ import org.dom4j.Node;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
-import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 
@@ -1040,4 +1038,36 @@ public class JobTester extends DataModelTestCase {
         assertTrue("Should be several crawler traps present", stringList.elements("string").size()>2);
     }
 
+    /**
+     *  test that Job.setsetSeedList does not accept null and/or empty 
+     *  seedlist.
+     */
+    public void testSetSeedlist() {
+        Job job = Job.createJob(Long.valueOf(42),
+                TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        String nullSeedlist = null;
+        String emptySeedlist = "";
+        String validSeedlist ="http://www.netarkivet.dk\nhttp://www.kb.dk";
+        try {
+            job.setSeedList(nullSeedlist);
+            fail("Operation setSeedList should fail w/ null argument, but didn't");
+        } catch (ArgumentNotValid e) {
+            // Expected
+        }
+        
+        try {
+            job.setSeedList(emptySeedlist);
+            fail("Operation setSeedList should fail w/ empty argument, but didn't");
+        } catch (ArgumentNotValid e) {
+            // Expected
+        }
+
+        try {
+            job.setSeedList(validSeedlist);
+        } catch (ArgumentNotValid e) {
+            fail("Operation setSeedList shouldn't fail w/ valid argument '"
+                    + validSeedlist + "' but did with exception: " + e);
+        }
+        
+    }
 }
