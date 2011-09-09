@@ -32,7 +32,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
 
 --%><%@ page import="java.util.Date, java.util.Collection,
                  java.util.List, java.util.Map, java.util.Set,
-                 java.util.Iterator,
+                 java.util.Iterator,  java.util.HashMap,
                  dk.netarkivet.common.CommonSettings,
                  dk.netarkivet.common.utils.Settings,
                  dk.netarkivet.common.utils.I18n,
@@ -61,17 +61,20 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     HTMLUtils.generateHeader(pageContext, "navigate.js");
 %>
 <%
-int domainCount = 0;
-int seedCount = 0;
+long domainCount = 0;
+long seedCount = 0;
 
 HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+List<String> domainList = hddao.getListOfDomainsOfHarvestDefinition(harvestName);
 
-List<String> result = hddao.getListOfDomainsOfHarvestDefinition(harvestName);
-domainCount += result.size();
+domainCount = domainList.size();
+Map<String, List<String>> seedsMap = new HashMap<String, List<String>>();
 
-for (String domainname : result) {
+
+for (String domainname : domainList) {
     List<String> seeds = hddao.getListOfSeedsOfDomainOfHarvestDefinition(
         harvestName, domainname);
+    seedsMap.put(domainname, seeds);    
     seedCount += seeds.size();
 }
 %>
@@ -82,7 +85,7 @@ for (String domainname : result) {
         startPage="1";
     }
 
-    long totalResultsCount = result.size();
+    long totalResultsCount = domainList.size();
     long pageSize = Long.parseLong(Settings.get(
             CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
     long actualPageSize = (pageSize == 0 ?
@@ -181,14 +184,11 @@ searchParamHidden = HTMLUtils.encode(searchParamHidden);
 <table class="selection_table" cols="6">
 
 <%
-List<String> matchingDomainsSubList=result.
-subList((int)startIndex,(int)endIndex);
+List<String> matchingDomainsSubList = 
+	domainList.subList((int)startIndex, (int)endIndex);
 
 for (String domainname : matchingDomainsSubList) {
-	List<String> seeds = hddao.getListOfSeedsOfDomainOfHarvestDefinition(
-		harvestName, domainname);
-//	seedCount += seeds.size();
-
+	List<String> seeds = seedsMap.get(domainname);	
 	%>
 	<tr>
 	    <th colspan="2"><%=domainname%> (<%=seeds.size()%>
