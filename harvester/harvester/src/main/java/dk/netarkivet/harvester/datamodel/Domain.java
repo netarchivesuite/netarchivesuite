@@ -645,7 +645,7 @@ public class Domain implements Named {
 
     /**
      * Gets all configurations belonging to this domain. The returned list is
-     * sorted by name according to language given in the parameter
+     * sorted by name according to language given in the parameter.
      *
      * @param loc contains the language sorting must adhere to
      *
@@ -1015,9 +1015,9 @@ public class Domain implements Named {
     }
 
     /**
-     * sets a List of extendedFieldValues
+     * sets a List of extendedFieldValues.
      * 
-     * @param aValue List of extended Field objects
+     * @param aList List of extended Field objects
      * 
      */
     public void setExtendedFieldValues(List<ExtendedFieldValue> aList) {
@@ -1025,7 +1025,7 @@ public class Domain implements Named {
     }
 
     /**
-     * adds a Value to the ExtendedFieldValue List
+     * adds a Value to the ExtendedFieldValue List.
      * 
      * @param aValue Valueobject of the extended Field
      */
@@ -1034,7 +1034,7 @@ public class Domain implements Named {
     }
 
     /**
-     * gets a extendedFieldValue by extendedField Is
+     * gets a extendedFieldValue by extendedField ID.
      * 
      * @param aExtendedFieldId id of the extendedfield
      * 
@@ -1051,7 +1051,7 @@ public class Domain implements Named {
     }
 
     /**
-     * updates a extendedFieldValue by extendedField Is
+     * updates a extendedFieldValue by extendedField Id.
      * 
      * @param aExtendedFieldId id of the extendedfield
      * @param aContent id content to set
