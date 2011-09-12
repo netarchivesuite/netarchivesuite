@@ -113,7 +113,8 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
         cache.prepareCombine(jobIDs);
         LogUtils.flushLogs(CrawlLogIndexCache.class.getName());
         FileAsserts.assertFileContains("Should have info about starting index",
-                                       "Starting to generate fullcrawllogindex for jobs: " + jobIDs,
+                                       "Starting to generate fullcrawllogindex for the " 
+                                        + jobIDs.size() + " jobs: " + jobIDs,
                                        TestInfo.LOG_FILE);
     }
 }
