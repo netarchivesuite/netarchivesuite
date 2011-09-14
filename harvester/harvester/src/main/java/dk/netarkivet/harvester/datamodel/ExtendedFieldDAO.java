@@ -103,5 +103,5 @@ public abstract class ExtendedFieldDAO {
      * the implementation of this method must also delete all belonging extended field values.
      *
      */
-    public abstract void delete(long aExtendedfieldId) throws IOFailure;
+    public abstract void delete(long aExtendedfieldID) throws IOFailure;
 }
