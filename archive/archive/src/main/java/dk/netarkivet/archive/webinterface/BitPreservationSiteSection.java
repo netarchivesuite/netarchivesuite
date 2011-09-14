@@ -25,6 +25,7 @@
 package dk.netarkivet.archive.webinterface;
 
 import dk.netarkivet.archive.Constants;
+import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservationFactory;
 import dk.netarkivet.common.webinterface.SiteSection;
 
 /**
@@ -56,8 +57,11 @@ public class BitPreservationSiteSection extends SiteSection {
                  Constants.TRANSLATIONS_BUNDLE);
     }
 
-    /** No initialisation necessary in this site section. */
+    /** Initialize ActiveBitPreservation singleton.
+     *  Should speed up the 1st rendering of the JSP pages. 
+     */
     public void initialize() {
+        ActiveBitPreservationFactory.getInstance();
     }
 
     /** No cleanup necessary in this site section. */
