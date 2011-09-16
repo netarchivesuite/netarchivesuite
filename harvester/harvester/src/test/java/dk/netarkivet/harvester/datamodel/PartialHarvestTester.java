@@ -432,4 +432,29 @@ public class PartialHarvestTester extends DataModelTestCase {
         }
         assertEquals("Three domains shopuld be added", 3, count);
     }
+    
+    /**
+     * Verify that you can delete only DomainConfiguration from the list of
+     * DomainConfigurations associated with a PartialHarvest. 
+     */
+    public void testRemoveDomainconfiguration() {
+        DomainDAO ddao = DomainDAO.getInstance();
+        Domain d = ddao.read("netarkivet.dk");
+        DomainConfiguration dc = d.getDefaultConfiguration();
+        DomainConfigurationKey dcKey = new DomainConfigurationKey(dc.getDomain().getName(), 
+                dc.getName());
+        List<DomainConfiguration> dclist = new ArrayList<DomainConfiguration>();
+        dclist.add(dc);
+        harvest.setDomainConfigurations(dclist);
+        List<DomainConfiguration> configList =
+            IteratorUtils.toList(harvest.getDomainConfigurations());
+        assertTrue("Should have one config now", configList.size() == 1);
+        harvest.removeDomainConfiguration(dcKey);
+        configList =
+            IteratorUtils.toList(harvest.getDomainConfigurations());
+        assertTrue("Should have zero configs now", configList.size() == 0);
+        
+        
+    }
+    
 }

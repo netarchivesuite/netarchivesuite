@@ -54,42 +54,11 @@ import dk.netarkivet.harvester.webinterface.EventHarvest;
 public class PartialHarvest extends HarvestDefinition {
     private final Log log = LogFactory.getLog(getClass());
 
-    /** A local class that ensure that the list of configurations contains
-     * no duplicates.  It provides an equals that makes configurations equal
-     * on <domainname, configname> tuple.
-     */
-    private static class ConfigKey {
-        final String domainName;
-        final String configName;
-        ConfigKey(DomainConfiguration dc) {
-            this.domainName = dc.getDomain().getName();
-            this.configName = dc.getName();
-        }
-
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ConfigKey)) return false;
-
-            final ConfigKey configKey = (ConfigKey) o;
-
-            if (!configName.equals(configKey.configName)) return false;
-            if (!domainName.equals(configKey.domainName)) return false;
-
-            return true;
-        }
-
-        public int hashCode() {
-            int result;
-            result = domainName.hashCode();
-            result = 29 * result + configName.hashCode();
-            return result;
-        }
-    }
     /** Set of domain configurations being harvested by this harvest.
      * Entries in this set are unique on configuration name + domain name.
      */
-    private Map<ConfigKey, DomainConfiguration> domainConfigurations
-            = new HashMap<ConfigKey, DomainConfiguration>();
+    private Map<DomainConfigurationKey, DomainConfiguration> domainConfigurations
+            = new HashMap<DomainConfigurationKey, DomainConfiguration>();
 
     /** The schedule used by this PartialHarvest. */
     private Schedule schedule;
@@ -241,6 +210,18 @@ public class PartialHarvest extends HarvestDefinition {
     }
 
     /**
+     * Remove domainconfiguration from this partialHarvest.
+     * @param dcKey domainCondiguration key
+     */
+    public void removeDomainConfiguration(DomainConfigurationKey dcKey) {
+        if (domainConfigurations.remove(dcKey) == null) {
+            log.warn("Unable to delete domainConfiguration '" 
+                    + dcKey + "' from " + this + ". Reason: didn't exist.");
+        }
+    }
+    
+    
+    /**
      * Returns a List of domain configurations for this harvest definition.
      *
      * @return List containing information about the domain configurations
@@ -269,7 +250,7 @@ public class PartialHarvest extends HarvestDefinition {
     }
 
     private void addConfiguration(DomainConfiguration dc) {
-        domainConfigurations.put(new ConfigKey(dc), dc);
+        domainConfigurations.put(new DomainConfigurationKey(dc), dc);
     }
 
     /**

@@ -115,6 +115,13 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     public abstract boolean exists(Long oid);
 
     /**
+     * Check, if there exists a HarvestDefinition identified by a given name.
+     * @param name a given name
+     * @return true, if such a harvestdefinition exists.
+     */
+    public abstract boolean exists(String name);
+    
+    /**
      * Get a list of all existing harvest definitions.
      *
      * @return An iterator that give the existing harvest definitions in turn
@@ -276,4 +283,20 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      * @param newValue the new isindexready value 
      */
     public abstract void setIndexIsReady(Long harvestId, boolean newValue);
+    
+    /**
+     * Remove Domain configuration from a specific PartialHarvest.
+     * @param ph a specific PartialHarvest
+     * @param key a DomainConfigurationKey uniquely identifying tbe 
+     * domainconfig.
+     */
+    public abstract void removeDomainConfiguration(PartialHarvest ph, 
+            DomainConfigurationKey key);
+    /**
+     * Update the given PartialHarvest (i.e. Selective Harvest) with a new 
+     * time for the next harvestrun.
+     * @param ph A given PartialHarvest (i.e. Selective Harvest).
+     * @param nextdate A new date for the next harvest run.
+     */
+    public abstract void updateNextdate(PartialHarvest ph, Date nextdate);
 }

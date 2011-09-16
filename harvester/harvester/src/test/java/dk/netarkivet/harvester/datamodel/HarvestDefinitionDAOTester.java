@@ -673,4 +673,90 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         		+ TestInfo.DEFAULT_HARVEST_NAME +  "' should be 0 but was "
         		+ domains.size(), domains.size() == 0);
     }
+    
+    /** Test both implementations of the exist function.
+     * @throws Exception
+     */
+    public void testExists() throws Exception {
+        final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+        long harvestexistsid = 43L;
+        long harvestexistsnotid = 44L;
+        String nameShouldExist = hddao.getHarvestName(harvestexistsid);
+        String nameShouldNotExist = "Ciceros collected works";
+        String nullName = null;
+        String emptyName = "";
+        assertTrue("Should exist harvest w/ name " + nameShouldExist,
+                     hddao.exists(nameShouldExist));
+        
+        assertFalse("Should not exist harvest w/ name " + nameShouldNotExist,
+                     hddao.exists(nameShouldNotExist));
+        
+        assertTrue("Should exist harvest w/ id " + harvestexistsid,
+        hddao.exists(harvestexistsid));
+        
+        assertFalse("Should not exist harvest w/ id " + harvestexistsnotid,
+                hddao.exists(harvestexistsnotid)); 
+        
+        try {
+            hddao.exists(nullName);
+            fail("Should throw ArgumentNotvalid when given null arg");
+        } catch (ArgumentNotValid e) {
+            // Expected
+        }
+        
+        try {
+            hddao.exists(emptyName);
+            fail("Should throw ArgumentNotvalid when given empty arg");
+        } catch (ArgumentNotValid e) {
+            // Expected
+        }
+    }
+    
+    /**
+     *  Test the {@link HarvestDefinitionDAO#removeDomainConfiguration(
+     *  PartialHarvest, DomainConfigurationKey)} method.
+     */
+    public void testRemoveDomainConfiguration() {
+        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+        long partialharvestId = 42L;
+        HarvestDefinition hd = hddao.read(partialharvestId);
+        if (!(hd instanceof PartialHarvest)) {
+            fail("harvest w/ id=" + partialharvestId 
+                    + " is not partialHarvest");
+        }
+        PartialHarvest ph = (PartialHarvest) hd;
+        List<DomainConfiguration> configList =
+            IteratorUtils.toList(ph.getDomainConfigurations());
+        assertTrue("Should exist domainfigurations, but doesn't", 
+                configList.size() > 0);
+        int configsize = configList.size();
+        DomainConfiguration dc = configList.get(0);
+        hddao.removeDomainConfiguration(ph, new DomainConfigurationKey(dc));
+        PartialHarvest ph1 = (PartialHarvest) hddao.read(partialharvestId);
+        configList =
+            IteratorUtils.toList(ph1.getDomainConfigurations());
+        assertTrue("DC should have been removed", 
+                configList.size() == configsize - 1);
+        }
+        
+    /**
+     *  Test the {@link HarvestDefinitionDAO#updateNextdate(
+     *  PartialHarvest, Date)} method.
+     */
+    public void testUpdateNextDate() {
+        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+        long partialharvestId = 42L;
+        HarvestDefinition hd = hddao.read(partialharvestId);
+        if (!(hd instanceof PartialHarvest)) {
+            fail("harvest w/ id=" + partialharvestId 
+                    + " is not partialHarvest");
+        }
+        PartialHarvest ph = (PartialHarvest) hd;
+        Date now = new Date();
+        ph.setNextDate(now);
+        hddao.updateNextdate(ph, now);
+        PartialHarvest ph1 = (PartialHarvest) hddao.read(partialharvestId);
+        assertTrue("The date should have been updated in the database", 
+                ph1.getNextDate().equals(now));
+        }     
 }

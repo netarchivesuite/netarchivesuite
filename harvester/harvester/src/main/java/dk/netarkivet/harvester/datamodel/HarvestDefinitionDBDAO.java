@@ -627,10 +627,27 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
+     * @see HarvestDefinitionDAO#exists(String)
+     */
+    @Override
+    public synchronized boolean exists(String name) {
+        ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
+        Connection c = HarvestDBConnection.get();
+        try {
+            return 1 == DBUtils.selectIntValue(c,
+                    "SELECT COUNT(harvest_id) "
+                    + "FROM harvestdefinitions WHERE name = ?", name);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
+    /**
      * @see HarvestDefinitionDAO#exists(Long)
      */
     @Override
     public synchronized boolean exists(Long oid) {
+        ArgumentNotValid.checkNotNull(oid, "Long oid");
         Connection c = HarvestDBConnection.get();
         try {
             return exists(c, oid);
@@ -638,7 +655,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             HarvestDBConnection.release(c);
         }
     }
-
+    
     /**
      * @see HarvestDefinitionDAO#exists(Long)
      */
@@ -1436,5 +1453,77 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             }
         }
         
+    }
+    
+    /**
+     * Removes the entry in harvest_configs, that binds a certain 
+     * domainconfiguration to this PartialHarvest.
+     * And maybe update the edition as well (TBD). 
+     */
+    @Override
+    public void removeDomainConfiguration(PartialHarvest ph,
+            DomainConfigurationKey key) {
+        ArgumentNotValid.checkNotNull(ph, "PartialHarvest ph");
+        if (ph.getOid() == null) {
+            // Don't need to do anything, if PartialHarvest is not
+            // yet stored in database
+            return;
+        }
+        Connection connection = HarvestDBConnection.get();
+        PreparedStatement s = null;
+        try {
+            s = connection.prepareStatement(
+                    "DELETE FROM harvest_configs WHERE "
+                    + "harvest_id = ? and config_id = (SELECT config_id " 
+                    + " FROM configurations, domains "
+                    + "WHERE domains.name = ? AND configurations.name = ?"
+                    + "  AND domains.domain_id = configurations.domain_id)"
+                    );
+            s.setLong(1, ph.getOid());
+            s.setString(2, key.domainName);
+            s.setString(3, key.configName);
+            s.executeUpdate();
+        } catch (SQLException e) {
+            log.warn("Exception thrown while removing "
+                    + " domainconfiguration: "
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            DBUtils.rollbackIfNeeded(connection, "removing DomainConfiguration from ", ph);
+            HarvestDBConnection.release(connection);
+        }
+    }
+    
+    /**
+     * Update the given PartialHarvest (i.e. Selective Harvest) with a new 
+     * time for the next harvestrun.
+     * @See {@link HarvestDefinitionDAO#updateNextdate(PartialHarvest, Date)}
+     */
+    @Override
+    public void updateNextdate(PartialHarvest ph,
+            Date nextdate) {
+        ArgumentNotValid.checkNotNull(ph, "PartialHarvest ph");
+        ArgumentNotValid.checkNotNull(nextdate, "Date nextdate");
+        if (ph.getOid() == null) {
+            // Don't need to do anything, if PartialHarvest is not
+            // yet stored in database
+            return;
+        }
+        Connection connection = HarvestDBConnection.get();
+        PreparedStatement s = null;
+        try {
+            s = connection.prepareStatement("UPDATE partialharvests SET "
+                + "nextdate = ? "
+                + "WHERE harvest_id = ?");
+            DBUtils.setDateMaybeNull(s, 1, ph.getNextDate());
+            s.setLong(2, ph.getOid());
+            s.executeUpdate();
+        } catch (SQLException e) {
+            log.warn("Exception thrown while updating "
+                    + " nextdate: "
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            DBUtils.rollbackIfNeeded(connection, "Updating nextdate from", ph);
+            HarvestDBConnection.release(connection);
+        }
     }
 }

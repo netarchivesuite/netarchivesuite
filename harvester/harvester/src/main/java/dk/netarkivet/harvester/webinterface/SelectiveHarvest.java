@@ -38,6 +38,7 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
+import dk.netarkivet.harvester.datamodel.DomainConfigurationKey;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
@@ -74,23 +75,24 @@ public class SelectiveHarvest {
         if (request.getParameter(Constants.UPDATE_PARAM) == null) {
             return; //nothing to do.
         }
-
+        HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
         PartialHarvest hdd = updateHarvestDefinition(context, i18n,
                 unknownDomains, illegalDomains);
 
         boolean changed = false;
 
         //If the override date is set, parse it and set the override date.
-        Date date = HTMLUtils.parseOptionalDate(
+        Date nextDate = HTMLUtils.parseOptionalDate(
                 context, Constants.NEXTDATE_PARAM,
                 I18n.getString(
                         dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE,
                         context.getResponse().getLocale(),
                         "harvestdefinition.schedule.edit.timeformat"),
                 null);
-        if (date != null) {
-            hdd.setNextDate(date);
-            changed |= true;
+        if (nextDate != null) {
+            hdd.setNextDate(nextDate);
+            hdDao.updateNextdate(hdd, nextDate);
+            //changed |= true;
         }
 
         // Case where we are adding domains that didn't exist before
@@ -110,7 +112,7 @@ public class SelectiveHarvest {
         if (deleteConfig != null) {
             HTMLUtils.forwardOnEmptyParameter(context,
                     Constants.DELETECONFIG_PARAM);
-            changed |= deleteConfig(context, i18n, deleteConfig, hdd);
+            deleteConfig(context, i18n, deleteConfig, hdd);
         }
 
         if (changed) {
@@ -160,7 +162,7 @@ public class SelectiveHarvest {
         // If necessary create harvest from scratch
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         if ((request.getParameter(Constants.CREATENEW_PARAM) != null)) {
-            if (hddao.getHarvestDefinition(name) != null) {
+            if (hddao.exists(name)) {
                 HTMLUtils.forwardWithErrorMessage(context, i18n,
                         "errormsg;harvest.definition.0.already.exists",
                         name);
@@ -185,7 +187,8 @@ public class SelectiveHarvest {
                                 + "\">",
                         "</a>");
                 throw new ForwardedToErrorPage("Harvest definition '"
-                        + name + "' has changed");
+                        + name + "' has changed in the meantime. Old Edition = "
+                        + edition + ". Current edition = " + hdd.getEdition());
             }
             // update the harvest definition
             hdd.setDomainConfigurations(dc);
@@ -203,9 +206,8 @@ public class SelectiveHarvest {
      * @param deleteConfig the configuration to delete, in the form of a
      * domain name, a colon, a configuration name.
      * @param hdd The harvest definition to delete a configuration from
-     * @return True if the harvest definition was changed.
      */
-    private static boolean deleteConfig(PageContext context, I18n i18n,
+    private static void deleteConfig(PageContext context, I18n i18n,
                                         String deleteConfig, PartialHarvest hdd) {
         String[] domainConfigPair = deleteConfig.split(":", 2);
         if (domainConfigPair.length < 2) {
@@ -216,21 +218,10 @@ public class SelectiveHarvest {
         }
         String domainName = domainConfigPair[0];
         String configName = domainConfigPair[1];
-
-        List<DomainConfiguration> confList =
-            new ArrayList<DomainConfiguration>();
-        Iterator<DomainConfiguration> itt = hdd.getDomainConfigurations();
-        // Deletion is a bit cumbersome, so instead we create a new list of
-        // configurations without the configuration to remove
-        while (itt.hasNext()) {
-            DomainConfiguration domConf = itt.next();
-            if (!(domConf.getDomain().getName().equals(domainName)
-                    && domConf.getName().equals(configName))) {
-                confList.add(domConf);
-            }
-        }
-        hdd.setDomainConfigurations(confList);
-        return true;
+        DomainConfigurationKey dcKey = new DomainConfigurationKey(
+                domainName, configName);
+        hdd.removeDomainConfiguration(dcKey);
+        HarvestDefinitionDAO.getInstance().removeDomainConfiguration(hdd, dcKey);
     }
 
     /**
