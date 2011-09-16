@@ -128,6 +128,12 @@ displayed, if no domains are found a message is shown.
             && endIndex < totalResultsCount) {
         nextLinkActive = true;
     }
+    // Avoid bug NAS-1927. 
+    // Dont's show "Search results: 0, displaying results 1 to 0"
+    // but "Search results: 0, displaying results 0 to 0"
+    if (totalResultsCount == 0) {
+    	startIndex = -1;
+    }
 %>
                 <h3 class="page_heading">
                 <fmt:message key="searching.for.0.gave.1.hits">
