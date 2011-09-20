@@ -214,9 +214,27 @@ public class PartialHarvest extends HarvestDefinition {
      * @param dcKey domainCondiguration key
      */
     public void removeDomainConfiguration(DomainConfigurationKey dcKey) {
+        ArgumentNotValid.checkNotNull(dcKey, "DomainConfigurationKey dcKey");
         if (domainConfigurations.remove(dcKey) == null) {
             log.warn("Unable to delete domainConfiguration '" 
                     + dcKey + "' from " + this + ". Reason: didn't exist.");
+        }
+    }
+    
+    /** Add a new domainconfiguration to this PartialHarvest. 
+     * @param newConfiguration A new DomainConfiguration
+     */
+    public void addDomainConfiguration(DomainConfiguration newConfiguration) {
+        ArgumentNotValid.checkNotNull(newConfiguration, 
+                "DomainConfiguration newConfiguration");
+        DomainConfigurationKey key = new DomainConfigurationKey(
+                newConfiguration);
+        if (domainConfigurations.containsKey(key)) {
+            log.warn("Unable to add domainConfiguration '" 
+                    + newConfiguration + "' from " + this 
+                    + ". Reason: does already exist.");
+        } else {
+            domainConfigurations.put(key, newConfiguration);
         }
     }
     

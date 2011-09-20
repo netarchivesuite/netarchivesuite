@@ -74,7 +74,7 @@ public class EventHarvestTester extends HarvesterWebinterfaceTestCase {
      * FIXME Fails in Hudson. Rember to reinclude the test case in the 
      * webinterface test suite when fixed.
      */
-    public void failingTestAddConfigurationsSimpleAdd() {
+    public void testAddConfigurationsSimpleAdd() {
         String seedlist = "http://www.mydomain.dk/page1.jsp?aparam=avalue";
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         TestServletRequest request = new TestServletRequest();
@@ -86,17 +86,20 @@ public class EventHarvestTester extends HarvesterWebinterfaceTestCase {
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
-        EventHarvest.addConfigurations(pageContext, I18N, harvest);
-        String expectedName = harvestName+"_"+order1+"_1000000000Bytes";
+        EventHarvest.addConfigurations(pageContext, I18N, harvest.getName());
+        String expectedDomainConfigurationName = harvestName 
+            + "_" + order1 + "_1000000000Bytes" + "_4Objects";
         // Check that the domain and configuration have been created
         harvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(harvestName);
         Iterator<DomainConfiguration> dci = harvest.getDomainConfigurations();
         DomainConfiguration dc = dci.next();
-        assertEquals("DomainConfiguration should have expected name, ", expectedName, dc.getName());
+        assertEquals("DomainConfiguration should have expected name, ", 
+                expectedDomainConfigurationName, dc.getName());
         assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomain().getName());
         Iterator<SeedList> si = dc.getSeedLists();
         SeedList sl = si.next();
-        assertEquals("Should have expected seedlist name", expectedName, sl.getName());
+        assertEquals("Should have expected seedlist name", 
+                expectedDomainConfigurationName, sl.getName());
         assertEquals("Seedlist should contain specified URL", seedlist, sl.getSeedsAsString().trim());
         //Should be no more domainconfigurations or seedlists
         assertFalse("Should only be one configuration in the harvest", dci.hasNext());

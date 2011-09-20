@@ -25,9 +25,12 @@ package dk.netarkivet.harvester.webinterface;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +52,10 @@ import dk.netarkivet.harvester.datamodel.ScheduleDAO;
  * This class contains the methods for updating data for selective harvests.
  */
 public class SelectiveHarvest {
+    
+    /** The logger. */
+    private static final Log log = LogFactory.getLog(SelectiveHarvest.class);
+    
     /**
      * Utility class. No instances.
      */
@@ -292,7 +299,7 @@ public class SelectiveHarvest {
      * configuration.
      * @param hdd The harvest definition to change.
      * @param domains a whitespace-separated list of domains to create and
- * add to harvest
+     * add to harvest
      * @return True if changes were made to hdd.
      */
     private static boolean addDomainsToHarvest(PartialHarvest hdd,
@@ -306,15 +313,17 @@ public class SelectiveHarvest {
                 Domain domain = Domain.getDefaultDomain(domainName);
                 DomainDAO.getInstance().create(domain);
                 configurations.add(domain.getDefaultConfiguration());
+            } else {
+                log.debug("Ignoring invalid domainname '"
+                        +  domainName + "'.");
             }
         }
         if (configurations.size() > 0) {
-            Iterator<DomainConfiguration> existingConfigurations
-                    = hdd.getDomainConfigurations();
-            while (existingConfigurations.hasNext()) {
-                configurations.add(existingConfigurations.next());
+            log.debug("Adding " + configurations.size() + " configurations");
+            
+            for (DomainConfiguration domainConfig : configurations) {
+                hdd.addDomainConfiguration(domainConfig);
             }
-            hdd.setDomainConfigurations(configurations);
             return true;
         } else {
             return false;

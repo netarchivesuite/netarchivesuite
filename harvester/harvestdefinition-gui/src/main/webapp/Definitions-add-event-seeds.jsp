@@ -130,25 +130,27 @@ harvest.
     	}
     }
     
-    PartialHarvest harvest = (PartialHarvest)
-            HarvestDefinitionDAO.getInstance().
-                    getHarvestDefinition(harvestName);
-    if (harvest == null) {
+    HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance(); 
+    if (!hddao.exists(harvestName)) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                 "errormsg;harvest.0.does.not.exist",
                 harvestName);
         return;
     }
+    // Should we test, that this is in fact a PartialHarvest
+    String harvestComments = hddao.getSparsePartialHarvest(
+    	harvestName).getComments();
+    
     if (update != null && update.length() > 0) {
         try {
             if (!isMultiPart) {
-			  	EventHarvest.addConfigurations(pageContext, I18N, harvest);
+			  	EventHarvest.addConfigurations(pageContext, I18N, harvestName);
 			} else {
 				if (!seedsFileName.isEmpty()) { // File exists
 					String seeds = FileUtils.readFile(seedsFile);			
 					if (!seeds.isEmpty()) {
 						EventHarvest.addConfigurationsFromSeedsFile(
-							pageContext, I18N, harvest, seeds, maxbytesString, 
+							pageContext, I18N, harvestName, seeds, maxbytesString, 
 							maxobjectsString, maxrateString, orderTemplateString);
 					}
 				} else {
@@ -179,7 +181,7 @@ Here we print the comments field from the harvest definition as a service to
 the user
 --%>
 <div class="show_comments">
-    <%=HTMLUtils.escapeHtmlValues(harvest.getComments())%>
+    <%=HTMLUtils.escapeHtmlValues(harvestComments)%>
 </div>
 
 <form action="Definitions-add-event-seeds.jsp" 

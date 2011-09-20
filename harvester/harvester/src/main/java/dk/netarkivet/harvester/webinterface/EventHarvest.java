@@ -35,6 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
@@ -72,18 +73,18 @@ public final class EventHarvest {
      *
      * @param context the current JSP context
      * @param i18n the translation information to use in this context
-     * @param eventHarvest the partial harvest to which these
+     * @param eventHarvestName The name of the partial harvest to which these
      * seeds are to be added
      * @throws ForwardedToErrorPage If maxBytes is not a number,
      *   or if any of the seeds is badly formatted such that no domain name can
      *   be parsed from it, or if orderTemplate is not given or unknown.
      */
     public static void addConfigurations(PageContext context, I18n i18n,
-                                         PartialHarvest eventHarvest) {
+                                         String eventHarvestName) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
-        ArgumentNotValid.checkNotNull(eventHarvest,
-                "PartialHarvest eventHarvest");
+        ArgumentNotValid.checkNotNull(eventHarvestName,
+                "String eventHarvestName");
 
         HTMLUtils.forwardOnMissingParameter(context, Constants.SEEDS_PARAM);
         ServletRequest request = context.getRequest();
@@ -118,10 +119,12 @@ public final class EventHarvest {
         int maxObjects = (int) maxObjectsL;
         // All parameters are valid, so call method
         try {
+            PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance()
+            .getHarvestDefinition(eventHarvestName); 
             eventHarvest.addSeeds(seeds, orderTemplate, maxBytes, maxObjects);
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
-                    "errormsg;error.adding.seeds.to.0", eventHarvest.getName(),
+                    "errormsg;error.adding.seeds.to.0", eventHarvestName,
                     e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
         }
@@ -133,7 +136,7 @@ public final class EventHarvest {
      * Add configurations to an existing selective harvest.
      * @param context The current JSP context
      * @param i18n The translation information to use in this context
-     * @param eventHarvest The partial harvest to which these
+     * @param eventHarvestName The name of the partial harvest to which these
      * seeds are to be added
      * @param seeds The seeds as a String
      * @param maxbytesString The given maxbytes as a string
@@ -142,13 +145,13 @@ public final class EventHarvest {
      * @param ordertemplate The name of the ordertemplate to use
      */
     public static void addConfigurationsFromSeedsFile(PageContext context, 
-            I18n i18n, PartialHarvest eventHarvest, String seeds, 
+            I18n i18n, String eventHarvestName, String seeds, 
             String maxbytesString, String maxobjectsString, 
             String maxrateString, String ordertemplate) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
-        ArgumentNotValid.checkNotNull(eventHarvest,
-                                      "PartialHarvest eventHarvest");
+        ArgumentNotValid.checkNotNullOrEmpty(eventHarvestName,
+                                      "String eventHarvestName");
         ArgumentNotValid.checkNotNull(seeds, "String seeds");
         ArgumentNotValid.checkNotNull(ordertemplate, "String ordertemplate");
         
@@ -195,10 +198,12 @@ public final class EventHarvest {
 
         // All parameters are valid, so call method
         try {
+            PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance()
+                .getHarvestDefinition(eventHarvestName); 
             eventHarvest.addSeeds(seeds, ordertemplate, maxBytes, maxObjects);
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
-                    "errormsg;error.adding.seeds.to.0", e, eventHarvest.getName(),
+                    "errormsg;error.adding.seeds.to.0", e, eventHarvestName,
                     e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
         }
