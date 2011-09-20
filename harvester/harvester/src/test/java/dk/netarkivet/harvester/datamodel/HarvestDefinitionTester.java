@@ -232,7 +232,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * to  
      *  new Date()
      */
-    public void ustableTestSetAndGet() {
+    public void unstableTestSetAndGet() {
 
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);

@@ -806,7 +806,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         bam_server.visit(gafm);
 
         synchronized(this) {
-            wait(50);
+            wait(150);
         }
         
         bam_server.visit(mbb.replyForLatestJob(RemoteFileFactory.getMovefileInstance(

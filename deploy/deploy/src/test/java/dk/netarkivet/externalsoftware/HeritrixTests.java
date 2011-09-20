@@ -662,7 +662,7 @@ public class HeritrixTests extends TestCase {
         File tempDir = mtf.newTmpDir();
         LuceneUtils.makeDummyIndex(tempDir);
         runHeritrix(MaxbytesOrderFile, TestInfo.SEEDS_DEFAULT, tempDir);
-        File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
+        //File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
         HeritrixFiles hFiles =
             new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 0L, 0L);
         AbstractHarvestReport hhr = new LegacyHarvestReport(hFiles);
@@ -1026,7 +1026,7 @@ public class HeritrixTests extends TestCase {
            System.out.println(
                    String.format(
                            "Unrecognized %s value given: %s. Replaced by default %s value: %s",
-                           settingName, settingValue, defaultValue));
+                           settingName, settingValue, settingName, defaultValue));
            settingValue = defaultValue;
        }
        setOrderXMLNode(doc, xpath, settingValue);
