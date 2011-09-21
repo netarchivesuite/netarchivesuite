@@ -310,8 +310,6 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
 		}
 	}
 
-
-
 	@Override
 	public void delete(long aExtendedfield_id) throws IOFailure {
         ArgumentNotValid.checkNotNull(aExtendedfield_id, "aExtendedfield_id");

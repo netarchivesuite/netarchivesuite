@@ -54,7 +54,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
      */
     public String getJobConfigsTmpTable(Connection c) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
-        PreparedStatement s = c.prepareStatement("DECLARE GLOBAL TEMPORARY TABLE "
+        PreparedStatement s = 
+            c.prepareStatement("DECLARE GLOBAL TEMPORARY TABLE "
                 + "jobconfignames "
                 + "( domain_name varchar(" + Constants.MAX_NAME_SIZE + "), "
                 + " config_name varchar(" + Constants.MAX_NAME_SIZE + ") )"
@@ -108,7 +109,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
         // Change the forcemaxbytes from 'int' to 'bigint'.
         // Procedure for changing the datatype of a derby table was found here:
         // https://issues.apache.org/jira/browse/DERBY-1515
-        String[] SqlStatements = {
+        String[] sqlStatements = {
         "ALTER TABLE jobs ADD COLUMN forcemaxbytes_new bigint NOT NULL DEFAULT -1",
         "UPDATE jobs SET forcemaxbytes_new = forcemaxbytes",
         "ALTER TABLE jobs DROP COLUMN forcemaxbytes",
@@ -116,7 +117,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
         "ALTER TABLE jobs ALTER COLUMN num_configs SET DEFAULT 0"
 
         };
-        HarvestDBConnection.updateTable("jobs", 4, SqlStatements);
+        HarvestDBConnection.updateTable("jobs", 4, sqlStatements);
     }
 
     /** Migrates the 'jobs' table from version 4 to version 5
@@ -125,11 +126,11 @@ public abstract class DerbySpecifics extends DBSpecifics {
      */
     protected synchronized void migrateJobsv4tov5() {
      // Update jobs table to version 5
-        String[] SqlStatements = {
+        String[] sqlStatements = {
                 "ALTER TABLE jobs ADD COLUMN submitteddate timestamp",
                 "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"
             };
-        HarvestDBConnection.updateTable("jobs", 5, SqlStatements);
+        HarvestDBConnection.updateTable("jobs", 5, sqlStatements);
     }
 
     /** Migrates the 'configurations' table from version 3 to version 4.
@@ -137,10 +138,10 @@ public abstract class DerbySpecifics extends DBSpecifics {
      */
     protected synchronized void migrateConfigurationsv3ov4() {
      // Update configurations table to version 4
-        String[] SqlStatements = {
+        String[] sqlStatements = {
                 "ALTER TABLE configurations ALTER maxbytes WITH DEFAULT -1"
             };
-        HarvestDBConnection.updateTable("configurations", 4, SqlStatements);
+        HarvestDBConnection.updateTable("configurations", 4, sqlStatements);
     }
 
     /** Migrates the 'fullharvests' table from version 2 to version 3.
@@ -148,10 +149,10 @@ public abstract class DerbySpecifics extends DBSpecifics {
      */
     protected synchronized void migrateFullharvestsv2tov3() {
         // Update fullharvests table to version 3
-        String[] SqlStatements = {
+        String[] sqlStatements = {
                 "ALTER TABLE fullharvests ALTER maxbytes WITH DEFAULT -1"
             };
-        HarvestDBConnection.updateTable("fullharvests", 3, SqlStatements);
+        HarvestDBConnection.updateTable("fullharvests", 3, sqlStatements);
     }
 
     @Override
@@ -162,7 +163,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
                                  + "  name VARCHAR(300) NOT NULL UNIQUE,  "
                                  + "  description VARCHAR(30000),"
                                  + "  isActive INT NOT NULL) ";
-        HarvestDBConnection.updateTable("global_crawler_trap_lists", 1, createStatement);
+        HarvestDBConnection.updateTable(
+                "global_crawler_trap_lists", 1, createStatement);
     }
 
     @Override
@@ -312,13 +314,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
         // Change the maxobjects from 'int' to 'bigint'.
         // Procedure for changing the datatype of a derby table was found here:
         // https://issues.apache.org/jira/browse/DERBY-1515
-        String[] SqlStatements = {
+        String[] sqlStatements = {
         "ALTER TABLE configurations ADD COLUMN maxobjects_new bigint NOT NULL DEFAULT -1",
         "UPDATE configurations SET maxobjects_new = maxobjects",
         "ALTER TABLE configurations DROP COLUMN maxobjects",
         "RENAME COLUMN configurations.maxobjects_new TO maxobjects"
         };
-        HarvestDBConnection.updateTable("configurations", 5, SqlStatements);
+        HarvestDBConnection.updateTable("configurations", 5, sqlStatements);
 }
 
     @Override
@@ -346,53 +348,48 @@ public abstract class DerbySpecifics extends DBSpecifics {
     }
     
 	@Override
-	protected void createExtendedFieldTypeTable() {
-		String statements[] = new String[3];
-		statements[0] = ""
-			+ "CREATE TABLE extendedfieldtype "
-			+ "  ( "
-			+ "     extendedfieldtype_id BIGINT NOT NULL PRIMARY KEY, "
-			+ "     name             VARCHAR(50) NOT NULL "
-			+ "  )";
+    protected void createExtendedFieldTypeTable() {
+        String[] statements = new String[3];
+        statements[0] = "" + "CREATE TABLE extendedfieldtype " + "  ( "
+                + "     extendedfieldtype_id BIGINT NOT NULL PRIMARY KEY, "
+                + "     name             VARCHAR(50) NOT NULL " + "  )";
 
-		statements[1] = ""
-			+ "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name ) VALUES ( 1, 'domains')";
-		statements[2] = ""
-			+ "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name ) VALUES ( 2, 'harvestdefinitions')";
+        statements[1] =
+                    "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )"
+                    + " VALUES ( 1, 'domains')";
+        statements[2] = 
+                    "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name ) "
+                    + "VALUES ( 2, 'harvestdefinitions')";
 
-	    HarvestDBConnection.updateTable("extendedfieldtype", 1, statements);
-	}
+        HarvestDBConnection.updateTable("extendedfieldtype", 1, statements);
+    }
     
 	@Override
-	protected void createExtendedFieldTable() {
-		String createStatement = ""
-			+ "CREATE TABLE extendedfield "
-			+ "  ( "
-			+ "     extendedfield_id BIGINT NOT NULL PRIMARY KEY, "
-			+ "     extendedfieldtype_id BIGINT NOT NULL, "
-			+ "     name             VARCHAR(50) NOT NULL, "
-			+ "     format           VARCHAR(50) NOT NULL, "
-			+ "     defaultvalue     VARCHAR(50) NOT NULL, "
-			+ "     options          VARCHAR(50) NOT NULL, "
-			+ "     datatype         INT NOT NULL, "
-			+ "     mandatory        INT NOT NULL, "
-			+ "     sequencenr       INT "
-			+ "  )";
-		
+    protected void createExtendedFieldTable() {
+        String createStatement = "" + "CREATE TABLE extendedfield " + "  ( "
+                + "     extendedfield_id BIGINT NOT NULL PRIMARY KEY, "
+                + "     extendedfieldtype_id BIGINT NOT NULL, "
+                + "     name             VARCHAR(50) NOT NULL, "
+                + "     format           VARCHAR(50) NOT NULL, "
+                + "     defaultvalue     VARCHAR(50) NOT NULL, "
+                + "     options          VARCHAR(50) NOT NULL, "
+                + "     datatype         INT NOT NULL, "
+                + "     mandatory        INT NOT NULL, "
+                + "     sequencenr       INT " + "  )";
+
         HarvestDBConnection.updateTable("extendedfield", 1, createStatement);
-	}
+    }
 
 	@Override
-	protected void createExtendedFieldValueTable() {
-		String createStatement = ""
-			+ "CREATE TABLE extendedfieldvalue "
-			+ "  ( "
-			+ "     extendedfieldvalue_id BIGINT NOT NULL PRIMARY KEY, "
-			+ "     extendedfield_id      BIGINT NOT NULL, "
-			+ "     instance_id           BIGINT NOT NULL, "
-			+ "     content               VARCHAR(100) NOT NULL "
-			+ "  )";
-		
-	    HarvestDBConnection.updateTable("extendedfieldvalue", 1, createStatement);
-	}
+    protected void createExtendedFieldValueTable() {
+        String createStatement = "" + "CREATE TABLE extendedfieldvalue "
+                + "  ( "
+                + "     extendedfieldvalue_id BIGINT NOT NULL PRIMARY KEY, "
+                + "     extendedfield_id      BIGINT NOT NULL, "
+                + "     instance_id           BIGINT NOT NULL, "
+                + "     content               VARCHAR(100) NOT NULL " + "  )";
+
+        HarvestDBConnection.updateTable("extendedfieldvalue", 1,
+                createStatement);
+    }
 }

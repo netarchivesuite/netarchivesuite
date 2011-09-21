@@ -27,6 +27,10 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+/**
+ * Class for constructing, validationg, and keeping the default
+ * value for a single ExtendedField.
+ */
 public class ExtendedFieldDefaultValues {
 	
 	public final static String[] possibleTrueValues = { "true", "t", "1" };
@@ -37,6 +41,7 @@ public class ExtendedFieldDefaultValues {
 	String format;
 	int datatype;
 	String formattedValue = "";
+	
 	
 	public ExtendedFieldDefaultValues(String aValue, String aFormat, int aDatatype) {
 		value = aValue;

@@ -56,7 +56,12 @@ public abstract class ExtendedFieldDAO {
      */
     protected abstract Connection getConnection();
 
-    public abstract boolean exists(Long aExtendedfield_id);
+    /**
+     * Check if an extendedfield exists for a given ID.
+     * @param aExtendedfieldId a given ID.
+     * @return true, if an extendedfield exists for the given ID
+     */
+    public abstract boolean exists(Long aExtendedfieldId);
     
     /**
      * Creates an instance in persistent storage of the given extended Field.
@@ -74,7 +79,8 @@ public abstract class ExtendedFieldDAO {
                  in case aExtendedFieldID is invalid
      * @throws UnknownID        If the job with the given jobID
      *                          does not exist in persistent storage.
-     * @throws IOFailure If the loaded ID of ExtendedField does not match the expected.
+     * @throws IOFailure If the loaded ID of ExtendedField does not match 
+     * the expected.
      */
     public abstract ExtendedField read(Long aExtendedFieldID)
             throws ArgumentNotValid, UnknownID, IOFailure;
@@ -83,25 +89,26 @@ public abstract class ExtendedFieldDAO {
      * Update a ExtendedField in persistent storage.
      *
      * @param aExtendedField The ExtendedField to update
-     * @throws IOFailure If writing the ExtendedField to persistent storage fails
+     * @throws IOFailure If writing the ExtendedField to persistent 
+     * storage fails
      */
     public abstract void update(ExtendedField aExtendedField) throws IOFailure;
 
     /**
-     * Return a list of all ExtendedFields of the given Extended Field Type
+     * Return a list of all ExtendedFields of the given Extended Field Type.
      *
-     * @param aExtendedFieldType_id extended field type.
+     * @param aExtendedFieldTypeId extended field type.
      * @return A list of all ExtendedFields with given Extended Field Type
-	 */
-    public abstract List<ExtendedField> getAll(long aExtendedFieldType_id);
+     */
+    public abstract List<ExtendedField> getAll(long aExtendedFieldTypeId);
     
     /**
      * deletes an ExtendedField from persistent storage.
+     * The implementation of this method must also delete all 
+     * belonging extended field values.
      *
      * @param aExtendedFieldID The ID of the ExtendedField to read
-	 *
-     * the implementation of this method must also delete all belonging extended field values.
-     *
+     * @throws IOFailure If deleting the ExtendedField fails
      */
-    public abstract void delete(long aExtendedfieldID) throws IOFailure;
+    public abstract void delete(long aExtendedFieldID) throws IOFailure;
 }
