@@ -45,8 +45,8 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://[username[:password]@]gforge.statsbiblioteket.dk/svn/netarchivesuite</connection>
-        <developerConnection>scm:svn:https://[username[:password]@]gforge.statsbiblioteket.dk/svn/netarchivesuite
+        <connection>scm:svn:https://sbforge.org/svn/netarchivesuite</connection>
+        <developerConnection>scm:svn:https://[username[:password]@]sbforge.org/svn/netarchivesuite
         </developerConnection>
         <url>http://kb-prod-udv-001.kb.dk:8060/browse/netarchiveSuite/trunk</url>
     </scm>
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>2.0</version>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
         	<groupId>jfree</groupId>
