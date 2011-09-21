@@ -60,7 +60,7 @@ public class BitarchiveAdmin {
      * be the CanonicalFile (use getCanonicalFile() before access).
      */
     private Map<File, List<String>> archivedFiles 
-    		= Collections.synchronizedMap((HashMap<File, List<String>>)new LinkedHashMap<File, List<String>>());
+    		= Collections.synchronizedMap(new LinkedHashMap<File, List<String>>());
     
     /**
      * Map containing the time for the latest update of the filelist for each
