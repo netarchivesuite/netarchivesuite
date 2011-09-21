@@ -53,14 +53,14 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.DomainDefinition,
                  dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition,
-				 dk.netarkivet.harvester.datamodel.ExtendedFieldDAO,
-				 dk.netarkivet.harvester.datamodel.ExtendedFieldDBDAO,
-				 dk.netarkivet.harvester.datamodel.ExtendedFieldTypes,
-                 dk.netarkivet.harvester.datamodel.ExtendedFieldDataTypes,				 
-				 dk.netarkivet.harvester.datamodel.ExtendedField,
-                 dk.netarkivet.harvester.datamodel.ExtendedFieldValue,
-				 dk.netarkivet.harvester.datamodel.ExtendedFieldValueDAO,
-                 dk.netarkivet.harvester.datamodel.ExtendedFieldValueDBDAO
+				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
+				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO,
+				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes,
+                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes,				 
+				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
+                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue,
+				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO,
+                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO
 				 "
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
@@ -174,7 +174,7 @@ Display all the form information for this domain
     int extendedFieldType = ExtendedFieldTypes.DOMAIN;
     %>
     
-    <%@ include file="extentedfields_element.jspf" %>
+    <%@ include file="extendedfields_element.jspf" %>
         
     <%
     Locale loc = HTMLUtils.getLocaleObject(pageContext);

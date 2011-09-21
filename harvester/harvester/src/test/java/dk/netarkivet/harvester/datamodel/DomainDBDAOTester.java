@@ -42,6 +42,13 @@ import org.dom4j.Node;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
 
 /**
  * Unit tests for the class dk.netarkivet.harvester.datamodel.DomainDBDAO.

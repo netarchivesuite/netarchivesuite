@@ -38,12 +38,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
-import dk.netarkivet.harvester.datamodel.ExtendedField;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldDAO;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldDBDAO;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldDataTypes;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldDefaultValues;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldOptions;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValues;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldOptions;
 
 /**
  * Contains utility methods for creating and editing schedule definitions for

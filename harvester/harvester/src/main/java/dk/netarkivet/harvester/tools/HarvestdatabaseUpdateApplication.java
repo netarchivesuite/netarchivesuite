@@ -23,15 +23,15 @@
 package dk.netarkivet.harvester.tools;
 
 import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldDBDAO;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldTypeDBDAO;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldValueDBDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDBDAO;
 import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
 
 /**
  * Utility for updating the harvestdatabase. This makes sure that all tables

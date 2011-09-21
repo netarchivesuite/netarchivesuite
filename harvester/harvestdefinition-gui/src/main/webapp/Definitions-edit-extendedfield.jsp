@@ -21,21 +21,16 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
---%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedField"%>
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedFieldDAO"%>
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedFieldDBDAO"%>
-<%@page import="dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition"%>
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedFieldDataTypes"%>
-<%@page import="dk.netarkivet.common.exceptions.ForwardedToErrorPage"%>
-
-<%@page import="dk.netarkivet.common.webinterface.HTMLUtils"%>
-<%@page import="dk.netarkivet.archive.Constants"%>
-<%@page import="dk.netarkivet.common.utils.I18n" pageEncoding="UTF-8"%>
-
-
+--%><%@page import="
+			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
+			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
+			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO,
+			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes,
+			dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition,
+			dk.netarkivet.common.exceptions.ForwardedToErrorPage,
+			dk.netarkivet.common.webinterface.HTMLUtils,
+			dk.netarkivet.archive.Constants,			
+			dk.netarkivet.common.utils.I18n" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"/>
 <fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
@@ -43,11 +38,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %>
-
-<%HTMLUtils.setUTF8(request);
-%>
-
 <%
+	HTMLUtils.setUTF8(request);
     String action = request.getParameter(ExtendedFieldDefinition.EXTF_ACTION);
 
     ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();

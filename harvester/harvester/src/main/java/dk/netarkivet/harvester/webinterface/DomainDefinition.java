@@ -41,13 +41,13 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.ExtendedField;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldDAO;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldDBDAO;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldDataTypes;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldDefaultValues;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldTypes;
-import dk.netarkivet.harvester.datamodel.ExtendedFieldValue;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValues;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 
 /**
  * Utility class for handling update of domain from the domain jsp page.

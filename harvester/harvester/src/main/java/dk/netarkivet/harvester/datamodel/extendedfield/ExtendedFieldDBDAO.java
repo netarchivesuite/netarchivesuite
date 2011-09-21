@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.harvester.datamodel;
+package dk.netarkivet.harvester.datamodel.extendedfield;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,6 +38,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.harvester.datamodel.DBSpecifics;
+import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 
 /**
  * A database-based implementation of the ExtendedFieldDBDAO class.
@@ -46,7 +48,10 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
 	/** The logger for this class. */
 	private final Log log = LogFactory.getLog(getClass());
 
-    protected ExtendedFieldDBDAO() {
+	/**
+	 * Constructor for the ExtendedFieldDBDAO object.
+	 */
+    public ExtendedFieldDBDAO() {
 
         Connection connection = HarvestDBConnection.get();
         try {

@@ -26,27 +26,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This is a summary page displaying all known schedules. It takes no
 parameters.
 --%><%@ page import="dk.netarkivet.common.utils.I18n,
-                 dk.netarkivet.common.webinterface.HTMLUtils,
-                 dk.netarkivet.harvester.Constants,
-                 dk.netarkivet.harvester.datamodel.Schedule,
-                 dk.netarkivet.harvester.datamodel.ScheduleDAO"
-    pageEncoding="UTF-8"
+               	dk.netarkivet.common.webinterface.HTMLUtils,
+                dk.netarkivet.harvester.Constants,
+                java.util.List,
+                dk.netarkivet.harvester.datamodel.Schedule,
+                dk.netarkivet.harvester.datamodel.ScheduleDAO,
+                dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
+				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO,
+				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
+				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes,
+				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDAO,
+				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDBDAO,
+				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldType,
+				dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition"			
+				pageEncoding="UTF-8" 
 %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedFieldDAO"%>
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedFieldDBDAO"%>
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedField"%>
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedFieldTypes"%>
-
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedFieldTypeDAO"%>
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedFieldTypeDBDAO"%>
-
-
-
-<%@page import="java.util.List"%>
-<%@page import="dk.netarkivet.harvester.datamodel.ExtendedFieldType"%>
-<%@page import="dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition"%>
 <fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"/>
 <fmt:setBundle scope="page" basename="<%=Constants.TRANSLATIONS_BUNDLE%>"/>
 <%!

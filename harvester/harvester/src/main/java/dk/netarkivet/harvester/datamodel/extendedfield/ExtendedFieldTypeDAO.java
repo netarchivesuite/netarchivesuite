@@ -20,40 +20,41 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+package dk.netarkivet.harvester.datamodel.extendedfield;
 
-package dk.netarkivet.harvester.datamodel;
-
-import java.io.Serializable;
+import java.sql.Connection;
+import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * This class represents one Extended Field Type
+ * Interface for creating and accessing extended fields in persistent storage.
  */
-public class ExtendedFieldType implements Serializable {
-    private Long extendedFieldTypeID;
-    public Long getExtendedFieldTypeID() {
-		return extendedFieldTypeID;
-	}
+public abstract class ExtendedFieldTypeDAO {
+    /** The database singleton model. */
+    protected static ExtendedFieldTypeDAO instance;
 
-	public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
-		this.extendedFieldTypeID = extendedFieldTypeID;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	private String name;
-
-    ExtendedFieldType(Long aExtendedFieldTypeID, String aName) throws ArgumentNotValid {
-    	extendedFieldTypeID = aExtendedFieldTypeID;
-        name = aName;
+    /**
+     * constructor used when creating singleton. Do not call directly.
+     */
+    protected ExtendedFieldTypeDAO() {
     }
 
+    /**
+     * Reset the DAO instance.  Only for use from within tests.
+     */
+    public static void reset() {
+        instance = null;
+    }
+    
+    protected abstract Connection getConnection();
+
+    public abstract boolean exists(Long aExtendedfield_id);
+
+    public abstract ExtendedFieldType read(Long aExtendedFieldID)
+            throws ArgumentNotValid, UnknownID, IOFailure;
+
+    public abstract List<ExtendedFieldType> getAll();
 }
