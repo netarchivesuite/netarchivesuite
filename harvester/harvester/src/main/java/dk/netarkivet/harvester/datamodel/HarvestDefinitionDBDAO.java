@@ -1496,7 +1496,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Update the given PartialHarvest (i.e. Selective Harvest) with a new 
      * time for the next harvestrun.
-     * @See {@link HarvestDefinitionDAO#updateNextdate(PartialHarvest, Date)}
+     * @see HarvestDefinitionDAO#updateNextdate(PartialHarvest, Date)
      */
     @Override
     public void updateNextdate(PartialHarvest ph,

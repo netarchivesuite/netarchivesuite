@@ -322,7 +322,7 @@ public class PartialHarvest extends HarvestDefinition {
      * Takes a seed list and creates any necessary domains, configurations, and
      * seedlists to enable them to be harvested with the given template and
      *  other parameters.
-     * <A href="https://gforge.statsbiblioteket.dk/tracker/?group_id=7&atid=105&func=detail&aid=717">Bug 717</A>
+     * <A href="https://sbforge.org/jira/browse/NAS-1317">JIRA issue NAS-1317</A>
      * addresses this issue.
      * Current naming of the seedlists and domainconfigurations are:
      *  one of <br>
@@ -330,7 +330,7 @@ public class PartialHarvest extends HarvestDefinition {
      *  (if maxbytes is negative)<br>
      *  harvestdefinitionname + "_" + templateName + "_" + maxBytes + "Bytes"
      *  (if maxbytes is zero or postive).
-     * @see EventHarvest#addConfigurations(PageContext,I18n,PartialHarvest)
+     * @see EventHarvest#addConfigurations(PageContext, I18n, String)
      * for details
      * @param seeds a newline-separated list of the seeds to be added
      * @param templateName the name of the template to be used
