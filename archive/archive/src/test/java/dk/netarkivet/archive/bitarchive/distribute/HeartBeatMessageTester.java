@@ -29,6 +29,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
+ * Unittests for the HearBeatMessage class.
  */
 public class HeartBeatMessageTester extends TestCase {
 
@@ -53,19 +54,22 @@ public class HeartBeatMessageTester extends TestCase {
         try {
             hbm = new HeartBeatMessage(baMon, null);
             fail("HeartBeatMessage constructor shouldn't accept null as application ID.");
-        } catch (ArgumentNotValid e) {//Expected.
+        } catch (ArgumentNotValid e) {
+            //Expected.
         }
 
 
         try {
             hbm = new HeartBeatMessage(baMon, "");
             fail("HeartBeatMessage constructor shouldn't accept empty string as application ID.");
-        } catch (ArgumentNotValid e) {//Expected.
+        } catch (ArgumentNotValid e) {
+            //Expected.
         }
 
         // The OK case:
         hbm = new HeartBeatMessage(baMon, baID);
 
+        assertNotNull(hbm);
     }
 
     /**
