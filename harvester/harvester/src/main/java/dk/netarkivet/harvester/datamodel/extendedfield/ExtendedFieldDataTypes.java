@@ -24,13 +24,19 @@
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
 public class ExtendedFieldDataTypes {
-	public static final int STRING = 1;
-	public static final int BOOLEAN = 2;
-	public static final int NUMBER = 3;
-	public static final int TIMESTAMP = 4;
-	public static final int NOTE = 5;
-	public static final int SELECT = 6;
-	
-	public static final int MIN = 1;
-	public static final int MAX = 6;
+    public static final int STRING = 1;
+
+    public static final int BOOLEAN = 2;
+
+    public static final int NUMBER = 3;
+
+    public static final int TIMESTAMP = 4;
+
+    public static final int NOTE = 5;
+
+    public static final int SELECT = 6;
+
+    public static final int MIN = 1;
+
+    public static final int MAX = 6;
 }

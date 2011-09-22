@@ -45,12 +45,12 @@ import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
  * A database-based implementation of the ExtendedFieldDBDAO class.
  */
 public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
-	/** The logger for this class. */
-	private final Log log = LogFactory.getLog(getClass());
+    /** The logger for this class. */
+    private final Log log = LogFactory.getLog(getClass());
 
-	/**
-	 * Constructor for the ExtendedFieldDBDAO object.
-	 */
+    /**
+     * Constructor for the ExtendedFieldDBDAO object.
+     */
     public ExtendedFieldDBDAO() {
 
         Connection connection = HarvestDBConnection.get();
@@ -71,275 +71,283 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             HarvestDBConnection.release(connection);
         }
     }
-	
-	
+
+
     protected Connection getConnection() {
-    	return HarvestDBConnection.get();
+        return HarvestDBConnection.get();
     }
     
 	public synchronized void create(ExtendedField aExtendedField) {
-		ArgumentNotValid.checkNotNull(aExtendedField, "aExtendedField");
+        ArgumentNotValid.checkNotNull(aExtendedField, "aExtendedField");
 
-		Connection connection = getConnection();
-		if (aExtendedField.getExtendedFieldID() != null) {
-			log
-				.warn("The extendedFieldID for this extended Field is already set. "
-						+ "This should probably never happen.");
-		} else {
-			aExtendedField.setExtendedFieldID(generateNextID(connection));
-		}
+        Connection connection = getConnection();
+        if (aExtendedField.getExtendedFieldID() != null) {
+            log.warn(
+                    "The extendedFieldID for this extended Field is already set. "
+                            + "This should probably never happen.");
+        } else {
+            aExtendedField.setExtendedFieldID(generateNextID(connection));
+        }
 
-		log.debug("Creating " + aExtendedField.toString());
+        log.debug("Creating " + aExtendedField.toString());
 
-		PreparedStatement statement = null;
-		try {
-			connection.setAutoCommit(false);
-			statement = connection.prepareStatement(""
-			        + "INSERT INTO extendedfield "
-					+ "            (extendedfield_id, "
-					+ "             extendedfieldtype_id, "
-					+ "             name, "
-					+ "             format, "
-					+ "             defaultvalue, "
-					+ "             options, "
-					+ "             datatype, "
-					+ "             mandatory, "
-					+ "             sequencenr) "
-					+ "VALUES      (?, "
-					+ "             ?, "
-					+ "             ?, "
-					+ "             ?, "
-					+ "             ?, "
-					+ "             ?, "
-					+ "             ?, "
-					+ "             ?, "
-					+ "             ?) ");
+        PreparedStatement statement = null;
+        try {
+            connection.setAutoCommit(false);
+            statement = connection.prepareStatement(""
+                    + "INSERT INTO extendedfield "
+                    + "            (extendedfield_id, "
+                    + "             extendedfieldtype_id, "
+                    + "             name, " + "             format, "
+                    + "             defaultvalue, " + "             options, "
+                    + "             datatype, " + "             mandatory, "
+                    + "             sequencenr) " + "VALUES      (?, "
+                    + "             ?, " + "             ?, "
+                    + "             ?, " + "             ?, "
+                    + "             ?, " + "             ?, "
+                    + "             ?, " + "             ?) ");
 
-			statement.setLong(1, aExtendedField.getExtendedFieldID());
-			statement.setLong(2, aExtendedField.getExtendedFieldTypeID());
-			statement.setString(3, aExtendedField.getName());
-			statement.setString(4, aExtendedField.getFormattingPattern());
-			statement.setString(5, aExtendedField.getDefaultValue());
-			statement.setString(6, aExtendedField.getOptions());
-			statement.setInt(7, aExtendedField.getDatatype());
-			statement.setBoolean(8, aExtendedField.isMandatory());
-			statement.setInt(9, aExtendedField.getSequencenr());
+            statement.setLong(1, aExtendedField.getExtendedFieldID());
+            statement.setLong(2, aExtendedField.getExtendedFieldTypeID());
+            statement.setString(3, aExtendedField.getName());
+            statement.setString(4, aExtendedField.getFormattingPattern());
+            statement.setString(5, aExtendedField.getDefaultValue());
+            statement.setString(6, aExtendedField.getOptions());
+            statement.setInt(7, aExtendedField.getDatatype());
+            statement.setBoolean(8, aExtendedField.isMandatory());
+            statement.setInt(9, aExtendedField.getSequencenr());
 
-			statement.executeUpdate();
-			connection.commit();
-		} catch (SQLException e) {
-			String message = "SQL error creating extended field "
-					+ aExtendedField + " in database" + "\n"
-					+ ExceptionUtils.getSQLExceptionCause(e);
-			log.warn(message, e);
-			throw new IOFailure(message, e);
-		} finally {
-			DBUtils.rollbackIfNeeded(connection, "create extended field",
-					aExtendedField);
-			HarvestDBConnection.release(connection);
-		}
-	}
+            statement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            String message = "SQL error creating extended field "
+                    + aExtendedField + " in database" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        } finally {
+            DBUtils.rollbackIfNeeded(connection, "create extended field",
+                    aExtendedField);
+            HarvestDBConnection.release(connection);
+        }
+    }
 
-	/**
-	 * Generates the next id of a extended field. this implementation
-	 * retrieves the maximum value of extendedfield_id in the DB, and returns this
-	 * value + 1.
-	 * 
-	 * @return The next available ID
-	 */
-	private Long generateNextID(Connection c) {
-		Long maxVal = DBUtils.selectLongValue(c,
-				"SELECT max(extendedfield_id) FROM extendedfield");
-		
-		if (maxVal == null) {
-			maxVal = 0L;
-		}
-		return maxVal + 1L;
-	}
+    /**
+     * Generates the next id of a extended field. this implementation retrieves
+     * the maximum value of extendedfield_id in the DB, and returns this value +
+     * 1.
+     * @param c an open connection to the HarvestDatabase
+     * 
+     * @return The next available ID
+     */
+    private Long generateNextID(Connection c) {
+        Long maxVal = DBUtils.selectLongValue(c,
+                "SELECT max(extendedfield_id) FROM extendedfield");
 
-	/**
-	 * Check whether a particular extended Field exists.
-	 * 
-	 * @param aExtendedfield_id
-	 *            Id of the extended field.
-	 * @return true if the extended field exists.
-	 */
-	public boolean exists(Long aExtendedfield_id) {
-		ArgumentNotValid.checkNotNull(aExtendedfield_id,
-				"Long aExtendedfield_id");
+        if (maxVal == null) {
+            maxVal = 0L;
+        }
+        return maxVal + 1L;
+    }
 
-		Connection c = getConnection();
-		try {
-			return exists(c, aExtendedfield_id);
-		} finally {
-			HarvestDBConnection.release(c);
-		}
+    /**
+     * Check whether a particular extended Field exists.
+     * 
+     * @param aExtendedfieldId
+     *            Id of the extended field.
+     * @return true if the extended field exists.
+     */
+    public boolean exists(Long aExtendedfieldId) {
+        ArgumentNotValid.checkNotNull(aExtendedfieldId,
+                "Long aExtendedfieldId");
 
-	}
+        Connection c = getConnection();
+        try {
+            return exists(c, aExtendedfieldId);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
 
-	private synchronized boolean exists(Connection c, Long aExtendedfield_id) {
-		return 1 == DBUtils
-				.selectLongValue(
-						c,
-						"SELECT COUNT(*) FROM extendedfield WHERE extendedfield_id = ?",
-						aExtendedfield_id);
-	}
+    }
+    
+    /**
+     * Check, if there exists an ExtendedField with a given ID.
+     * @param c An open connection to the HarvestDatabase
+     * @param aExtendedfieldId An Id for a given Extended Field.
+     * @return true, if the extended field with the Id exists; 
+     * otherwise false
+     */
+    private synchronized boolean exists(Connection c, Long aExtendedfieldId) {
+        return 1 == DBUtils
+                .selectLongValue(
+                        c,
+                        "SELECT COUNT(*) FROM extendedfield WHERE extendedfield_id = ?",
+                        aExtendedfieldId);
+    }
 
-	@Override
-	public synchronized void update(ExtendedField aExtendedField) {
-		ArgumentNotValid.checkNotNull(aExtendedField, "aExtendedField");
+    @Override
+    public synchronized void update(ExtendedField aExtendedField) {
+        ArgumentNotValid.checkNotNull(aExtendedField, "aExtendedField");
 
-		Connection connection = getConnection();
-		
-		PreparedStatement statement = null;
-		try {
-			final Long extendedfield_id = aExtendedField.getExtendedFieldID();
-			if (!exists(connection, extendedfield_id)) {
-				throw new UnknownID("Extended Field id " + extendedfield_id
-						+ " is not known in persistent storage");
-			}
+        Connection connection = getConnection();
 
-			connection.setAutoCommit(false);
-			
-			statement = connection.prepareStatement(""
-			    + "UPDATE extendedfield "
-				+ "SET    extendedfield_id = ?, "
-				+ "       extendedfieldtype_id = ?, "
-				+ "       name = ?, "
-				+ "       format = ?, "
-				+ "       defaultvalue = ?, "
-				+ "       options = ?, "
-				+ "       datatype = ?, "
-				+ "       mandatory = ?, "
-				+ "       sequencenr = ? "
-				+ "WHERE  extendedfield_id = ? ");
-			
-			statement.setLong(1, aExtendedField.getExtendedFieldID());
-			statement.setLong(2, aExtendedField.getExtendedFieldTypeID());
-			statement.setString(3, aExtendedField.getName());
-			statement.setString(4, aExtendedField.getFormattingPattern());
-			statement.setString(5, aExtendedField.getDefaultValue());
-			statement.setString(6, aExtendedField.getOptions());
-			statement.setInt(7, aExtendedField.getDatatype());
-			statement.setBoolean(8, aExtendedField.isMandatory());
-			statement.setInt(9, aExtendedField.getSequencenr());
-			statement.setLong(10, aExtendedField.getExtendedFieldID());
-			
-			statement.executeUpdate();
-			connection.commit();
-		} catch (SQLException e) {
-			String message = "SQL error updating extendedfield " + aExtendedField + " in database"
-					+ "\n" + ExceptionUtils.getSQLExceptionCause(e);
-			log.warn(message, e);
-			throw new IOFailure(message, e);
-		} finally {
-			DBUtils.rollbackIfNeeded(connection, "update extendedfield", aExtendedField);
-			HarvestDBConnection.release(connection);
-		}
-	}
+        PreparedStatement statement = null;
+        try {
+            final Long extendedfieldId = aExtendedField.getExtendedFieldID();
+            if (!exists(connection, extendedfieldId)) {
+                throw new UnknownID("Extended Field id " + extendedfieldId
+                        + " is not known in persistent storage");
+            }
 
-	@Override
-	public synchronized ExtendedField read(Long aExtendedfield_id) {
-		ArgumentNotValid.checkNotNull(aExtendedfield_id, "aExtendedfield_id");
-		Connection connection = getConnection();
-		try {
-			return read(connection, aExtendedfield_id);
-		} finally {
-			HarvestDBConnection.release(connection);
-		}
-	}
+            connection.setAutoCommit(false);
 
-	private synchronized ExtendedField read(Connection connection, Long aExtendedfield_id) {
-		if (!exists(connection, aExtendedfield_id)) {
-			throw new UnknownID("Extended Field id " + aExtendedfield_id
-					+ " is not known in persistent storage");
-		}
-		
-		ExtendedField extendedField = null;
-		PreparedStatement statement = null;
-		try {
-			statement = connection.prepareStatement(""
-				+ "SELECT extendedfieldtype_id, "
-				+ "       name, "
-				+ "       format, "
-				+ "       defaultvalue, "
-				+ "       options, "
-				+ "       datatype, "
-				+ "       mandatory, "
-				+ "       sequencenr "
-				+ "FROM   extendedfield "
-				+ "WHERE  extendedfield_id = ? ");
-			
-			statement.setLong(1, aExtendedfield_id);
-			ResultSet result = statement.executeQuery();
-			result.next();
-			
-			long extendedfieldtype_id = result.getLong(1);
-			String name = result.getString(2);
-			String format = result.getString(3);
-			String defaultvalue = result.getString(4);
-			String options = result.getString(5);
-			int datatype = result.getInt(6);
-			boolean mandatory = result.getBoolean(7);
-			int sequencenr = result.getInt(8);
+            statement = connection.prepareStatement(""
+                    + "UPDATE extendedfield " + "SET    extendedfield_id = ?, "
+                    + "       extendedfieldtype_id = ?, " + "       name = ?, "
+                    + "       format = ?, " + "       defaultvalue = ?, "
+                    + "       options = ?, " + "       datatype = ?, "
+                    + "       mandatory = ?, " + "       sequencenr = ? "
+                    + "WHERE  extendedfield_id = ? ");
 
-			extendedField = new ExtendedField(aExtendedfield_id, extendedfieldtype_id, name, format, datatype, mandatory, sequencenr, defaultvalue, options);
+            statement.setLong(1, aExtendedField.getExtendedFieldID());
+            statement.setLong(2, aExtendedField.getExtendedFieldTypeID());
+            statement.setString(3, aExtendedField.getName());
+            statement.setString(4, aExtendedField.getFormattingPattern());
+            statement.setString(5, aExtendedField.getDefaultValue());
+            statement.setString(6, aExtendedField.getOptions());
+            statement.setInt(7, aExtendedField.getDatatype());
+            statement.setBoolean(8, aExtendedField.isMandatory());
+            statement.setInt(9, aExtendedField.getSequencenr());
+            statement.setLong(10, aExtendedField.getExtendedFieldID());
 
-			return extendedField;
-		} catch (SQLException e) {
-			String message = "SQL error reading extended Field " + aExtendedfield_id + " in database"
-					+ "\n" + ExceptionUtils.getSQLExceptionCause(e);
-			log.warn(message, e);
-			throw new IOFailure(message, e);
-		}
-	}
+            statement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            String message = "SQL error updating extendedfield "
+                    + aExtendedField + " in database" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        } finally {
+            DBUtils.rollbackIfNeeded(connection, "update extendedfield",
+                    aExtendedField);
+            HarvestDBConnection.release(connection);
+        }
+    }
 
-	public synchronized List<ExtendedField> getAll(long aExtendedFieldType_id) {
-		Connection c = getConnection();
-		try {
-			List<Long> idList = DBUtils.selectLongList(c,
-					"SELECT extendedfield_id FROM extendedfield WHERE extendedfieldtype_id = ? "
-							+ "ORDER BY sequencenr ASC", aExtendedFieldType_id);
-			List<ExtendedField> extendedFields = new LinkedList<ExtendedField>();
-			for (Long extendedfield_id : idList) {
-				extendedFields.add(read(c, extendedfield_id));
-			}
-			return extendedFields;
-		} finally {
-			HarvestDBConnection.release(c);
-		}
-	}
+    @Override
+    public synchronized ExtendedField read(Long aExtendedfieldId) {
+        ArgumentNotValid.checkNotNull(aExtendedfieldId, "aExtendedfieldId");
+        Connection connection = getConnection();
+        try {
+            return read(connection, aExtendedfieldId);
+        } finally {
+            HarvestDBConnection.release(connection);
+        }
+    }
+    
+    /**
+     * Read an ExtendedField from database.
+     * @param connection A connection to the harvestDatabase
+     * @param aExtendedfieldId The ID for a given ExtendedField 
+     * @return An ExtendedField object for the given ID.
+     */
+    private synchronized ExtendedField read(Connection connection,
+            Long aExtendedfieldId) {
+        if (!exists(connection, aExtendedfieldId)) {
+            throw new UnknownID("Extended Field id " + aExtendedfieldId
+                    + " is not known in persistent storage");
+        }
 
-	@Override
-	public void delete(long aExtendedfield_id) throws IOFailure {
-        ArgumentNotValid.checkNotNull(aExtendedfield_id, "aExtendedfield_id");
+        ExtendedField extendedField = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(""
+                    + "SELECT extendedfieldtype_id, " + "       name, "
+                    + "       format, " + "       defaultvalue, "
+                    + "       options, " + "       datatype, "
+                    + "       mandatory, " + "       sequencenr "
+                    + "FROM   extendedfield " + "WHERE  extendedfield_id = ? ");
 
-		Connection c = getConnection();
+            statement.setLong(1, aExtendedfieldId);
+            ResultSet result = statement.executeQuery();
+            result.next();
+
+            long extendedfieldtypeId = result.getLong(1);
+            String name = result.getString(2);
+            String format = result.getString(3);
+            String defaultvalue = result.getString(4);
+            String options = result.getString(5);
+            int datatype = result.getInt(6);
+            boolean mandatory = result.getBoolean(7);
+            int sequencenr = result.getInt(8);
+
+            extendedField = new ExtendedField(aExtendedfieldId,
+                    extendedfieldtypeId, name, format, datatype, mandatory,
+                    sequencenr, defaultvalue, options);
+
+            return extendedField;
+        } catch (SQLException e) {
+            String message = "SQL error reading extended Field "
+                    + aExtendedfieldId + " in database" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        }
+    }
+    @Override
+    public synchronized List<ExtendedField> getAll(long aExtendedFieldTypeId) {
+        Connection c = getConnection();
+        try {
+            List<Long> idList = DBUtils.selectLongList(c,
+                    "SELECT extendedfield_id FROM extendedfield WHERE extendedfieldtype_id = ? "
+                            + "ORDER BY sequencenr ASC", aExtendedFieldTypeId);
+            List<ExtendedField> extendedFields = new LinkedList<ExtendedField>();
+            for (Long extendedfieldId : idList) {
+                extendedFields.add(read(c, extendedfieldId));
+            }
+            return extendedFields;
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
+    @Override
+    public void delete(long aExtendedfieldId) throws IOFailure {
+        ArgumentNotValid.checkNotNull(aExtendedfieldId, "aExtendedfieldId");
+
+        Connection c = getConnection();
         PreparedStatement stm = null;
         try {
             c.setAutoCommit(false);
 
-            stm = c.prepareStatement("DELETE FROM extendedfieldvalue WHERE extendedfield_id = ?");
-            stm.setLong(1, aExtendedfield_id);
+            stm = c
+                    .prepareStatement("DELETE FROM extendedfieldvalue WHERE extendedfield_id = ?");
+            stm.setLong(1, aExtendedfieldId);
             stm.executeUpdate();
-            stm = c.prepareStatement("DELETE FROM extendedfield WHERE extendedfield_id = ?");
-            stm.setLong(1, aExtendedfield_id);
+            stm = c
+                    .prepareStatement("DELETE FROM extendedfield WHERE extendedfield_id = ?");
+            stm.setLong(1, aExtendedfieldId);
             stm.executeUpdate();
-            
+
             c.commit();
 
         } catch (SQLException e) {
-            String message =
-                "SQL error deleting extended fields for ID " + aExtendedfield_id
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error deleting extended fields for ID "
+                    + aExtendedfieldId + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
         } finally {
-            DBUtils.rollbackIfNeeded(c, "delete extended field", aExtendedfield_id);
+            DBUtils.rollbackIfNeeded(c, "delete extended field",
+                    aExtendedfieldId);
             HarvestDBConnection.release(c);
         }
-		
-	}
 
+    }
+    
+    /**
+     * @return an instance of this class.
+     */
     public static synchronized ExtendedFieldDAO getInstance() {
         if (instance == null) {
             instance = new ExtendedFieldDBDAO();

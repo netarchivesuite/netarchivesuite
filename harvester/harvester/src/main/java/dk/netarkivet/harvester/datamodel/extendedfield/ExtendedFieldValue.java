@@ -26,62 +26,73 @@ package dk.netarkivet.harvester.datamodel.extendedfield;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 public class ExtendedFieldValue {
-	private Long extendedFieldValueID;
+    private Long extendedFieldValueID;
+
     private Long extendedFieldID;
+
     private String content;
+
     private Long instanceID;
-    
+
     public Long getExtendedFieldValueID() {
-		return extendedFieldValueID;
-	}
-	public void setExtendedFieldValueID(Long extendedFieldValueID) {
-		this.extendedFieldValueID = extendedFieldValueID;
-	}
-	public Long getExtendedFieldID() {
-		return extendedFieldID;
-	}
-	public void setExtendedFieldID(Long extendedFieldID) {
-		this.extendedFieldID = extendedFieldID;
-	}
-	
-	public String getContent() {
-		return content;
-	}
-	public void setContent(String content) {
-		this.content = content;
-	}
-	public Long getInstanceID() {
-		return instanceID;
-	}
-	public void setInstanceID(Long instanceID) {
-		this.instanceID = instanceID;
-	}
-	
-	public ExtendedFieldValue() {
-	    content = "";
-	}
-	
-    public ExtendedFieldValue(Long aExtendedFieldValueID, Long aExtendedFieldID, Long aInstanceID, String aContent) throws ArgumentNotValid {
-    	extendedFieldValueID = aExtendedFieldValueID;
-    	extendedFieldID = aExtendedFieldID;
-    	instanceID = aInstanceID;
-    	content = aContent;
+        return extendedFieldValueID;
     }
-    
-	public boolean getBooleanValue() {
-		String aValue = getContent();
-		if (aValue == null) {
-			return false;
-		}
-		
-		aValue = aValue.toLowerCase();
-		for (String val : ExtendedFieldDefaultValues.possibleTrueValues) {
-			if (aValue.equals(val)) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
+
+    public void setExtendedFieldValueID(Long extendedFieldValueID) {
+        this.extendedFieldValueID = extendedFieldValueID;
+    }
+
+    public Long getExtendedFieldID() {
+        return extendedFieldID;
+    }
+
+    public void setExtendedFieldID(Long extendedFieldID) {
+        this.extendedFieldID = extendedFieldID;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Long getInstanceID() {
+        return instanceID;
+    }
+
+    public void setInstanceID(Long instanceID) {
+        this.instanceID = instanceID;
+    }
+
+    public ExtendedFieldValue() {
+        content = "";
+    }
+
+    public ExtendedFieldValue(Long aExtendedFieldValueID,
+            Long aExtendedFieldID, Long aInstanceID, String aContent)
+            throws ArgumentNotValid {
+        extendedFieldValueID = aExtendedFieldValueID;
+        extendedFieldID = aExtendedFieldID;
+        instanceID = aInstanceID;
+        content = aContent;
+    }
+
+    public boolean getBooleanValue() {
+        String aValue = getContent();
+        if (aValue == null) {
+            return false;
+        }
+
+        aValue = aValue.toLowerCase();
+        for (String val : ExtendedFieldDefaultValues.possibleTrueValues) {
+            if (aValue.equals(val)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }

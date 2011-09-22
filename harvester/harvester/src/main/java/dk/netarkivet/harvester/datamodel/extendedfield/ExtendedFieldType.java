@@ -29,30 +29,32 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 
 /**
- * This class represents one Extended Field Type
+ * This class represents one Extended Field Type.
  */
 public class ExtendedFieldType implements Serializable {
     private Long extendedFieldTypeID;
+
     public Long getExtendedFieldTypeID() {
-		return extendedFieldTypeID;
-	}
+        return extendedFieldTypeID;
+    }
 
-	public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
-		this.extendedFieldTypeID = extendedFieldTypeID;
-	}
+    public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
+        this.extendedFieldTypeID = extendedFieldTypeID;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	private String name;
+    private String name;
 
-    ExtendedFieldType(Long aExtendedFieldTypeID, String aName) throws ArgumentNotValid {
-    	extendedFieldTypeID = aExtendedFieldTypeID;
+    ExtendedFieldType(Long aExtendedFieldTypeID, String aName)
+            throws ArgumentNotValid {
+        extendedFieldTypeID = aExtendedFieldTypeID;
         name = aName;
     }
 

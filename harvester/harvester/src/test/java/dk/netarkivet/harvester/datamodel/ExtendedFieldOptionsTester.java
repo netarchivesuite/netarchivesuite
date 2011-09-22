@@ -23,7 +23,7 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldOptions;
 
@@ -38,7 +38,7 @@ public class ExtendedFieldOptionsTester extends TestCase {
     public void testOptions() {
     	String line = null;
     	ExtendedFieldOptions eo = null;
-    	HashMap<String, String> result = null;
+    	Map<String, String> result = null;
     	
     	eo = new ExtendedFieldOptions(line);
     	assertFalse(eo.isValid());

@@ -42,8 +42,8 @@ import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 
 public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
-	/** The logger for this class. */
-	private final Log log = LogFactory.getLog(getClass());
+    /** The logger for this class. */
+    private final Log log = LogFactory.getLog(getClass());
 
     protected ExtendedFieldTypeDBDAO() {
 
@@ -65,89 +65,94 @@ public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
             HarvestDBConnection.release(connection);
         }
     }
-	
+    
     protected Connection getConnection() {
-    	return HarvestDBConnection.get();
+            return HarvestDBConnection.get();
     }
     
+    @Override
+    public boolean exists(Long aExtendedfieldtypeId) {
+        ArgumentNotValid.checkNotNull(aExtendedfieldtypeId,
+                "Long aExtendedfieldtypeId");
 
-	public boolean exists(Long aExtendedfieldtype_id) {
-		ArgumentNotValid.checkNotNull(aExtendedfieldtype_id,
-				"Long aExtendedfieldtype_id");
+        Connection c = getConnection();
+        try {
+            return exists(c, aExtendedfieldtypeId);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
 
-		Connection c = getConnection();
-		try {
-			return exists(c, aExtendedfieldtype_id);
-		} finally {
-			HarvestDBConnection.release(c);
-		}
+    }
 
-	}
+    private synchronized boolean exists(Connection c, Long aExtendedfieldtypeId) {
+        return 1 == DBUtils
+                .selectLongValue(
+                        c,
+                        "SELECT COUNT(*) FROM extendedfieldtype WHERE extendedfieldtype_id = ?",
+                        aExtendedfieldtypeId);
+    }
 
-	private synchronized boolean exists(Connection c, Long aExtendedfieldtype_id) {
-		return 1 == DBUtils
-				.selectLongValue(
-						c,
-						"SELECT COUNT(*) FROM extendedfieldtype WHERE extendedfieldtype_id = ?",
-						aExtendedfieldtype_id);
-	}
+	@Override
+    public synchronized ExtendedFieldType read(Long aExtendedfieldtypeId) {
+        ArgumentNotValid.checkNotNull(aExtendedfieldtypeId,
+                "aExtendedfieldtypeId");
+        Connection connection = getConnection();
+        try {
+            return read(connection, aExtendedfieldtypeId);
+        } finally {
+            HarvestDBConnection.release(connection);
+        }
+    }
 
+	private synchronized ExtendedFieldType read(Connection connection,
+            Long aExtendedfieldtypeId) {
+        if (!exists(connection, aExtendedfieldtypeId)) {
+            throw new UnknownID("Extended FieldType id "
+                    + aExtendedfieldtypeId
+                    + " is not known in persistent storage");
+        }
 
-	public synchronized ExtendedFieldType read(Long aExtendedfieldtype_id) {
-		ArgumentNotValid.checkNotNull(aExtendedfieldtype_id, "aExtendedfieldtype_id");
-		Connection connection = getConnection();
-		try {
-			return read(connection, aExtendedfieldtype_id);
-		} finally {
-			HarvestDBConnection.release(connection);
-		}
-	}
+        ExtendedFieldType extendedFieldType = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("" + "SELECT name "
+                    + "FROM   extendedfieldtype "
+                    + "WHERE  extendedfieldtype_id = ? ");
 
-	private synchronized ExtendedFieldType read(Connection connection, Long aExtendedfieldtype_id) {
-		if (!exists(connection, aExtendedfieldtype_id)) {
-			throw new UnknownID("Extended FieldType id " + aExtendedfieldtype_id
-					+ " is not known in persistent storage");
-		}
-		
-		ExtendedFieldType extendedFieldType = null;
-		PreparedStatement statement = null;
-		try {
-			statement = connection.prepareStatement(""
-				+ "SELECT name "
-				+ "FROM   extendedfieldtype "
-				+ "WHERE  extendedfieldtype_id = ? ");
-			
-			statement.setLong(1, aExtendedfieldtype_id);
-			ResultSet result = statement.executeQuery();
-			result.next();
-			
-			String name = result.getString(1);
+            statement.setLong(1, aExtendedfieldtypeId);
+            ResultSet result = statement.executeQuery();
+            result.next();
 
-			extendedFieldType = new ExtendedFieldType(aExtendedfieldtype_id, name);
+            String name = result.getString(1);
 
-			return extendedFieldType;
-		} catch (SQLException e) {
-			String message = "SQL error reading extended Field " + aExtendedfieldtype_id + " in database"
-					+ "\n" + ExceptionUtils.getSQLExceptionCause(e);
-			log.warn(message, e);
-			throw new IOFailure(message, e);
-		}
-	}
+            extendedFieldType = new ExtendedFieldType(aExtendedfieldtypeId,
+                    name);
 
-	public synchronized List<ExtendedFieldType> getAll() {
-		Connection c = getConnection();
-		try {
-			List<Long> idList = DBUtils.selectLongList(c,
-					"SELECT extendedfieldtype_id FROM extendedfieldtype");
-			List<ExtendedFieldType> extendedFieldTypes = new LinkedList<ExtendedFieldType>();
-			for (Long extendedfieldtype_id : idList) {
-				extendedFieldTypes.add(read(c, extendedfieldtype_id));
-			}
-			return extendedFieldTypes;
-		} finally {
-			HarvestDBConnection.release(c);
-		}
-	}
+            return extendedFieldType;
+        } catch (SQLException e) {
+            String message = "SQL error reading extended Field "
+                    + aExtendedfieldtypeId + " in database" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        }
+    }
+
+	@Override
+    public synchronized List<ExtendedFieldType> getAll() {
+        Connection c = getConnection();
+        try {
+            List<Long> idList = DBUtils.selectLongList(c,
+                    "SELECT extendedfieldtype_id FROM extendedfieldtype");
+            List<ExtendedFieldType> extendedFieldTypes = new LinkedList<ExtendedFieldType>();
+            for (Long extendedfieldtypeId : idList) {
+                extendedFieldTypes.add(read(c, extendedfieldtypeId));
+            }
+            return extendedFieldTypes;
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
 
     public static synchronized ExtendedFieldTypeDAO getInstance() {
         if (instance == null) {

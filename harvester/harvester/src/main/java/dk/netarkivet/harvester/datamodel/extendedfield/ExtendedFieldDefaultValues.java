@@ -32,81 +32,85 @@ import java.text.SimpleDateFormat;
  * value for a single ExtendedField.
  */
 public class ExtendedFieldDefaultValues {
-	
-	public final static String[] possibleTrueValues = { "true", "t", "1" };
-	final static String[] possibleFalseValues = { "false", "f", "0" };
-	
-	boolean valid = false;
-	String value;
-	String format;
-	int datatype;
-	String formattedValue = "";
-	
-	
-	public ExtendedFieldDefaultValues(String aValue, String aFormat, int aDatatype) {
-		value = aValue;
-		format = aFormat;
-		datatype = aDatatype;
-		
-		validate();
-	}
-	
-	private void validate() {
-		switch(datatype) {
-			case ExtendedFieldDataTypes.BOOLEAN:
-				try {
-					formattedValue = checkBoolean(value);
-				}
-				catch(Exception e) {
-					return;
-				}
-				break;
-			case ExtendedFieldDataTypes.NUMBER:
-				if (format != null && format.length() > 0) {
-					DecimalFormat decimalFormat = new DecimalFormat(format);
-					try {
-						decimalFormat.parse(value);
-					} catch (ParseException e) {
-						return;
-					}
-				}
-				break;
-			case ExtendedFieldDataTypes.TIMESTAMP:
-				if (format != null && format.length() > 0) {
-					SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-					try {
-						dateFormat.parse(value);
-					} catch (ParseException e) {
-						return;
-					}
-				}
-				break;
-			default:
-				break;
-		}
-		
-		valid = true;
-	}
-	
-	private String checkBoolean(String aBooleanValue) throws Exception {
-		aBooleanValue = value.toLowerCase().trim();
-		
-		for (String val : possibleTrueValues) {
-			if (aBooleanValue.equals(val)) {
-				return possibleTrueValues[0];
-			}
-		}
 
-		for (String val : possibleFalseValues) {
-			if (aBooleanValue.equals(val)) {
-				return possibleFalseValues[0];
-			}
-		}
-		
-		throw new Exception();
-	}
-	
-	public boolean isValid() {
-		return valid;
-	}
+    public final static String[] possibleTrueValues = { "true", "t", "1" };
+
+    final static String[] possibleFalseValues = { "false", "f", "0" };
+
+    boolean valid = false;
+
+    String value;
+
+    String format;
+
+    int datatype;
+
+    String formattedValue = "";
+
+    public ExtendedFieldDefaultValues(String aValue, String aFormat,
+            int aDatatype) {
+        value = aValue;
+        format = aFormat;
+        datatype = aDatatype;
+
+        validate();
+    }
+
+    private void validate() {
+        switch (datatype) {
+        case ExtendedFieldDataTypes.BOOLEAN:
+            try {
+                formattedValue = checkBoolean(value);
+            } catch (Exception e) {
+                return;
+            }
+            break;
+        case ExtendedFieldDataTypes.NUMBER:
+            if (format != null && format.length() > 0) {
+                DecimalFormat decimalFormat = new DecimalFormat(format);
+                try {
+                    decimalFormat.parse(value);
+                } catch (ParseException e) {
+                    return;
+                }
+            }
+            break;
+        case ExtendedFieldDataTypes.TIMESTAMP:
+            if (format != null && format.length() > 0) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+                try {
+                    dateFormat.parse(value);
+                } catch (ParseException e) {
+                    return;
+                }
+            }
+            break;
+        default:
+            break;
+        }
+
+        valid = true;
+    }
+
+    private String checkBoolean(String aBooleanValue) throws Exception {
+        aBooleanValue = value.toLowerCase().trim();
+
+        for (String val : possibleTrueValues) {
+            if (aBooleanValue.equals(val)) {
+                return possibleTrueValues[0];
+            }
+        }
+
+        for (String val : possibleFalseValues) {
+            if (aBooleanValue.equals(val)) {
+                return possibleFalseValues[0];
+            }
+        }
+
+        throw new Exception();
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
 }

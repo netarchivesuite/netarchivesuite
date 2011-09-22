@@ -23,138 +23,131 @@
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
 import java.io.Serializable;
-import java.util.HashMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Map;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition;
 
 
 /**
- * This class represents one Extended Field
+ * This class represents one Extended Field.
  */
 public class ExtendedField implements Serializable {
-    private transient Log log = LogFactory.getLog(getClass());
-
+    
     /** persistent id of this extended field. */
     private Long extendedFieldID;
-    /** The Id of the Reference to which the extended field belongs */
+    /** The Id of the Reference to which the extended field belongs. */
     private Long extendedFieldTypeID;
 
-	/** name of the extended Field. This name will not be translated. */
+    /**
+     * name of the extended Field. This name will not be translated.
+     */
     private String name;
-    /** formatting patterns of the extended Field */
+    /** formatting patterns of the extended Field. */
     private String formattingPattern;
     /** datatype of the extended Field. see datatype list */
     private int datatype;
-    /** is extendedfield mandatory */
+    /** is extendedfield mandatory. */
     private boolean mandatory;
     /** sequencenr to sort fields. */
     private int sequencenr = 1;
     
-    /** default value for this field */
-	private String defaultValue;
-	/** key-value pairs for Options */
-	private String options;
+    /** default value for this field. */
+    private String defaultValue;
 
+    /** key-value pairs for Options. */
+    private String options;
 
-	public Long getExtendedFieldID() {
-		return extendedFieldID;
-	}
+    public Long getExtendedFieldID() {
+        return extendedFieldID;
+    }
 
-	public void setExtendedFieldID(Long extendedFieldID) {
-		this.extendedFieldID = extendedFieldID;
-	}
+    public void setExtendedFieldID(Long extendedFieldID) {
+        this.extendedFieldID = extendedFieldID;
+    }
 
     public Long getExtendedFieldTypeID() {
-		return extendedFieldTypeID;
-	}
+        return extendedFieldTypeID;
+    }
 
-	public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
-		this.extendedFieldTypeID = extendedFieldTypeID;
-	}
-	
-	public String getName() {
-		return name;
-	}
+    public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
+        this.extendedFieldTypeID = extendedFieldTypeID;
+    }
 
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-
-	public String getFormattingPattern() {
-		return formattingPattern;
-	}
+    public String getFormattingPattern() {
+        return formattingPattern;
+    }
 
 
-	public void setFormattingPattern(String aFormattingPattern) {
-		this.formattingPattern = aFormattingPattern;
-	}
+    public void setFormattingPattern(String aFormattingPattern) {
+        this.formattingPattern = aFormattingPattern;
+    }
 
+    public int getDatatype() {
+        return datatype;
+    }
 
-	public int getDatatype() {
-		return datatype;
-	}
+    public void setDatatype(int datatype) {
+        this.datatype = datatype;
+    }
 
+    public boolean isMandatory() {
+        return mandatory;
+    }
 
-	public void setDatatype(int datatype) {
-		this.datatype = datatype;
-	}
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
 
+    public int getSequencenr() {
+        return sequencenr;
+    }
 
-	public boolean isMandatory() {
-		return mandatory;
-	}
-
-
-	public void setMandatory(boolean mandatory) {
-		this.mandatory = mandatory;
-	}
-
-
-	public int getSequencenr() {
-		return sequencenr;
-	}
-
-
-	public void setSequencenr(int sequencenr) {
-		this.sequencenr = sequencenr;
-	}
+    public void setSequencenr(int sequencenr) {
+        this.sequencenr = sequencenr;
+    }
 
     public String getDefaultValue() {
-		return defaultValue;
-	}
+        return defaultValue;
+    }
 
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
 
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
-	
-	public String getOptions() {
-		return options;
-	}
+    public String getOptions() {
+        return options;
+    }
 
-	public void setOptions(String options) {
-		this.options = options;
-	}
+    public void setOptions(String options) {
+        this.options = options;
+    }
 
-	public ExtendedField(String aExtendedFieldTypeID) {
-        ArgumentNotValid.checkNotNull(aExtendedFieldTypeID, "aExtendedFieldTypeID");
-		
+    public ExtendedField(String aExtendedFieldTypeID) {
+        ArgumentNotValid.checkNotNull(aExtendedFieldTypeID,
+                "aExtendedFieldTypeID");
+
         extendedFieldTypeID = Long.parseLong(aExtendedFieldTypeID);
-	    datatype = ExtendedFieldDataTypes.STRING;
-	    mandatory = false;
-	    name = "";
-	    formattingPattern = "";
-	    defaultValue = "";
-	    options = "";
-	}
-	
-    public ExtendedField(Long aExtendedFieldID, Long aExtendedFieldTypeID, String aName, String aFormattingPattern, int aDatatype, boolean aMandatory, int aSequenceNr, String aDefaultValue, String aOptions) throws ArgumentNotValid {
+        datatype = ExtendedFieldDataTypes.STRING;
+        mandatory = false;
+        name = "";
+        formattingPattern = "";
+        defaultValue = "";
+        options = "";
+    }
+
+    public ExtendedField(Long aExtendedFieldID, Long aExtendedFieldTypeID,
+            String aName, String aFormattingPattern, int aDatatype,
+            boolean aMandatory, int aSequenceNr, String aDefaultValue,
+            String aOptions) throws ArgumentNotValid {
         extendedFieldID = aExtendedFieldID;
         extendedFieldTypeID = aExtendedFieldTypeID;
         name = aName;
@@ -166,14 +159,14 @@ public class ExtendedField implements Serializable {
         options = aOptions;
     }
 
-	public HashMap<String, String> getOptionValues() {
-		ExtendedFieldOptions efo = new ExtendedFieldOptions(getOptions());
-		
-		return efo.getOptions();
-	}
-	
-	public String getJspFieldname() {
-		return ExtendedFieldDefinition.EXTF_PREFIX + getExtendedFieldID() + "_" + getDatatype();
-	}
+    public Map<String, String> getOptionValues() {
+        ExtendedFieldOptions efo = new ExtendedFieldOptions(getOptions());
+        return efo.getOptions();
+    }
+
+    public String getJspFieldname() {
+        return ExtendedFieldDefinition.EXTF_PREFIX + getExtendedFieldID() 
+            + "_" + getDatatype();
+    }
 
 }
