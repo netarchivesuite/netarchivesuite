@@ -37,6 +37,7 @@ import java.io.BufferedReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
@@ -90,9 +91,15 @@ public class WebProxyTester extends TestCase {
         try {
             new Socket(InetAddress.getLocalHost(), httpPort);
             fail("Port already in use before unit test");
+        } catch (BindException e) {
+           // Expected
         } catch (IOException e) {
-            //expected
+        	fail("Port '" + httpPort 
+        			+ "' seems already to be in use before unit test. "
+        			+ " Exception was thrown, but an unexpected one: " 
+        			+ e);
         }
+        
         FileInputStream fis
                 = new FileInputStream("tests/dk/netarkivet/testlog.prop");
         LogManager.getLogManager().readConfiguration(fis);

@@ -89,7 +89,7 @@ public class WebProxy extends DefaultHandler
         try {
             jettyServer.start();
         } catch (Exception e) {
-            throw new IOFailure("Error while starting jetty server");
+            throw new IOFailure("Error while starting jetty server", e);
         }
     }
 
