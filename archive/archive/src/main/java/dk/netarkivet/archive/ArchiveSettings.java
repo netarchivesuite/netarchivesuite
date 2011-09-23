@@ -274,10 +274,21 @@ public class ArchiveSettings {
     public static String INDEXSERVER_INDEXING_MAXTHREADS
             = "settings.archive.indexserver.maxthreads";
     /**
+     * <b>settings.archive.indexserver.checkinterval</b>: <br>
+     * Setting for the time in milliseconds between each 
+     * check of the state of sub-indexing.
+     * Default: 30 seconds (30000 milliseconds).
+     */
+    public static String INDEXSERVER_INDEXING_CHECKINTERVAL
+    		= "settings.archive.indexserver.checkinterval";
+    
+    /**
      * <b>settings.archive.indexserver.indexingtimeout</b>: <br>
      * Setting for the indexing timeout in milliseconds. The default is
      * 172800000 (2 days).
      */
     public static String INDEXSERVER_INDEXING_TIMEOUT
             = "settings.archive.indexserver.indexingtimeout";
+    
+    
 }

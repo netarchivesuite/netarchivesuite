@@ -81,6 +81,10 @@ public abstract class CrawlLogIndexCache extends
     /** The log. */
     private static Log log
             = LogFactory.getLog(CrawlLogIndexCache.class.getName());
+    /** The time to sleep between each check of completeness.*/
+    private final long sleepintervalBetweenCompletenessChecks 
+    	= Settings.getLong(ArchiveSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
+    
     /**
      * Constructor for the CrawlLogIndexCache class.
      * @param name The name of the CrawlLogIndexCache
@@ -115,7 +119,8 @@ public abstract class CrawlLogIndexCache extends
             }
         }
         if (!missing.isEmpty()) {
-            log.info("Data not found for jobs: " +  missing);
+            log.warn("Data not found for " + missing.size() 
+            		+ " jobs: " +  missing);
         }
         for (Long id : missing) {
             returnMap.remove(id);
@@ -186,8 +191,8 @@ public abstract class CrawlLogIndexCache extends
             
             // wait for all the outstanding subtasks to complete.
             Set<Directory> subindices = new HashSet<Directory>();
-            // Wait two minutes before first completeness-check
-            sleepTwoMinutes();
+            // Wait some time before first completeness-check
+            sleepAwhile();
             // Deadline for the combine-task
             long combineTimeout = Settings.getLong(
                     ArchiveSettings.INDEXSERVER_INDEXING_TIMEOUT);
@@ -228,7 +233,7 @@ public abstract class CrawlLogIndexCache extends
                         iterator.remove();
                     }   
                 }
-                sleepTwoMinutes();
+                sleepAwhile();
             }
             
             log.debug("Merging the indices but don't optimize");            
@@ -251,9 +256,9 @@ public abstract class CrawlLogIndexCache extends
         }
     }
 
-    private void sleepTwoMinutes() {
+    private void sleepAwhile() {
         try {
-            Thread.sleep(TimeUtils.SECOND_IN_MILLIS * 120);
+            Thread.sleep(sleepintervalBetweenCompletenessChecks);
         } catch (InterruptedException e) {
             log.trace("Was awoken early from sleep: ", e);
         }
