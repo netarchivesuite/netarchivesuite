@@ -91,13 +91,8 @@ public class WebProxyTester extends TestCase {
         try {
             new Socket(InetAddress.getLocalHost(), httpPort);
             fail("Port already in use before unit test");
-        } catch (BindException e) {
-           // Expected
         } catch (IOException e) {
-        	fail("Port '" + httpPort 
-        			+ "' seems already to be in use before unit test. "
-        			+ " Exception was thrown, but an unexpected one: " 
-        			+ e);
+           // Expected
         }
         
         FileInputStream fis
