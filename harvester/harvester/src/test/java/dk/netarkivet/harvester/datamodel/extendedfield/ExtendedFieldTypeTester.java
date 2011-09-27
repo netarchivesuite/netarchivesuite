@@ -20,10 +20,11 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package dk.netarkivet.harvester.datamodel;
+package dk.netarkivet.harvester.datamodel.extendedfield;
 
 import java.util.List;
 
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldType;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDBDAO;

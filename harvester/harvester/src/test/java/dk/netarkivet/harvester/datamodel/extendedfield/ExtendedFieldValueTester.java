@@ -21,10 +21,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.harvester.datamodel;
+package dk.netarkivet.harvester.datamodel.extendedfield;
 
 import java.util.Date;
 
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;

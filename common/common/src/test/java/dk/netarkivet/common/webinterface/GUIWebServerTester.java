@@ -36,7 +36,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
-import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
