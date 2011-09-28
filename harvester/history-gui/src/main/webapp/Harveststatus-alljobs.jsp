@@ -52,6 +52,70 @@ resubmit - jobID of a job to resubmit.
 
 <fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"/>
 <fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
+<script language="javascript" type="text/javascript">
+    /**
+     * an XMLHttpRequest (or equivalent object for IE) which can be used to send
+     * asynchronous requests.
+     */
+    var request = false;
+    try {
+        request = new XMLHttpRequest();
+    } catch (trymicrosoft) {
+        try {
+            request = new ActiveXObject("Msxml2.XMLHTTP");
+        } catch (othermicrosoft) {
+            try {
+                request = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (failed) {
+                request = false;
+            }
+        }
+    }
+
+    if (!request) {
+        alert("There was an error initializing XMLHttpRequest.");
+    }
+
+    /**
+     * Asynchronously reject a failed job.
+     * @param jobid  the job to reject.
+     */
+    function reject(jobid) {
+        var url = "/History/Harveststatus-alljobs.jsp?<%=Constants.JOB_REJECT_PARAM%>="+jobid;
+        request.open("POST", url, true);
+        request.send(null);
+    }
+
+    /**
+     * Asynchronously unreject a previously-rejected job.
+     * @param jobid the job to unreject.
+     */
+    function unreject(jobid) {
+        var url = "/History/Harveststatus-alljobs.jsp?<%=Constants.JOB_UNREJECT_PARAM%>="+jobid;
+        request.open("POST", url, true);
+        request.send(null);
+    }
+
+    /**
+     * Asynchronously resumbit a failed job.
+     * @param jobid the job to resubmit.
+     */
+    function resubmit(jobid) {
+        var url = "/History/Harveststatus-alljobs.jsp?<%=Constants.JOB_RESUBMIT_PARAM%>="+jobid;
+        request.open("POST", url, true);
+        request.send(null);
+    }
+
+    /**
+     * Collapse (hide) the row in the job table corresponding to a particular job number.
+     * @param jobid the job number whose row is to be hidden.
+     */
+    function collapse_row(jobid) {
+        var row = document.getElementById('row_'+jobid);
+        row.style.visibility='collapse';
+    }
+
+</script>
 <%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -95,7 +159,7 @@ resubmit - jobID of a job to resubmit.
 %>
 
 <jsp:include page="calendar.jsp" flush="true"/>
-</script>
+
 
 <script type="text/javascript">
 
@@ -425,7 +489,7 @@ function resubmitSelectedJobs() {
     	 			+ "Job " + js.getResubmittedAsJob() + "</a>" + ")";
     		}
     %>
-            <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>">
+            <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>" id="row_<%=js.getJobID()%>">
                 <td><a href="<%=detailsLink%>">
                     <%=js.getJobID()%>
                 </a></td>
@@ -445,53 +509,36 @@ function resubmitSelectedJobs() {
                 	<%=jobStatusTdContents%>
                 </td>
                 <td><%=HTMLUtils.escapeHtmlValues(
-                       HTMLUtils.nullToHyphen(js.getHarvestErrors()))%>
+                        HTMLUtils.nullToHyphen(js.getHarvestErrors()))%>
                     <%if (js.getStatus() == JobStatus.FAILED
-                            && js.getHarvestErrors() != null
-                            && js.getHarvestErrors().length() > 0
-                            && SiteSection.isDeployed
-                                  (Constants.DEFINITIONS_SITESECTION_DIRNAME)) {
+                          && js.getHarvestErrors() != null
+                          && js.getHarvestErrors().length() > 0
+                          && SiteSection.isDeployed
+                            (Constants.DEFINITIONS_SITESECTION_DIRNAME)) {
                         //Note: The form is only displayed if Definitions
                         //sitesection is deployed. Thus you cannot change any
                         //state using the history sitesection only.
                     %>
-                    <form class ="inlineform" method="post"
-                                  action="Harveststatus-alljobs.jsp">
-                                <input type="hidden"
-                                       name="<%=Constants.JOB_RESUBMIT_PARAM%>"
-                                       value="<%=js.getJobID()%>"/>
-                                <input type="submit"
-                                       value="<fmt:message key="button;restart"/>"/>
-                            </form>
-                    <form class ="inlineform" method="post"
-                                  action="Harveststatus-alljobs.jsp">
-                                <input type="hidden"
-                                       name="<%=Constants.JOB_REJECT_PARAM%>"
-                                       value="<%=js.getJobID()%>"/>
-                                <input type="submit"
-                                       value="<fmt:message key="button;reject"/>"/>
-                            </form>
+                    <button type="button" onclick="resubmit(<%=js.getJobID()%>);collapse_row(<%=js.getJobID()%>);return false;"><fmt:message key="button;restart"/></button>
+                    <!-- The onlclick method here has to return false because this button appears inside a form
+                         which would otherwise be submitted
+                    -->
+                    <button type="button" onclick="reject(<%=js.getJobID()%>);collapse_row(<%=js.getJobID()%>);return false;"><fmt:message key="button;reject"/></button>
+
                     <%
-                        } else if (js.getStatus() == JobStatus.FAILED_REJECTED) {
-                            %>
-                    <form class ="inlineform" method="post"
-                                  action="Harveststatus-alljobs.jsp">
-                                <input type="hidden"
-                                       name="<%=Constants.JOB_UNREJECT_PARAM%>"
-                                       value="<%=js.getJobID()%>"/>
-                                <input type="submit"
-                                       value="<fmt:message key="button;unreject"/>"/>
-                            </form>
+                    } else if (js.getStatus() == JobStatus.FAILED_REJECTED) {
+                    %>
+                    <button type="button" onclick="unreject(<%=js.getJobID()%>);collapse_row(<%=js.getJobID()%>);return false;"><fmt:message key="button;unreject"/></button>
                     <%
                         }
                     %>
                 </td>
                 <td><%=HTMLUtils.escapeHtmlValues(
-                    HTMLUtils.nullToHyphen(js.getUploadErrors()))%>
+                        HTMLUtils.nullToHyphen(js.getUploadErrors()))%>
                 </td>
                 <td><fmt:formatNumber value="<%=js.getConfigCount()%>"/>
                 </td>
-                
+
                 <% if (generateResubmitForm) { %>
                 <td>
                     <input type="checkbox" name="resubmit_<%=js.getJobID()%>" id="resubmit_<%=js.getJobID()%>" <%= JobStatus.FAILED.equals(js.getStatus()) ? "" : "disabled" %> />                
