@@ -38,6 +38,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList;
@@ -111,8 +112,14 @@ public class TrapCreateOrUpdateAction extends TrapAction {
             trap.setName(name);
             if (fileName != null && !fileName.isEmpty()) {
                 log.debug("Reading global crawler trap list from '"
-                        + fileName + "'");
-                trap.setTrapsFromInputStream(is);
+                          + fileName + "'");
+                try {
+                    trap.setTrapsFromInputStream(is);
+                } catch (ArgumentNotValid argumentNotValid) {
+                    HTMLUtils.forwardWithErrorMessage(context, i18n,
+                                                      "errormsg;crawlertrap.regexp.error", name);
+                    throw new ForwardedToErrorPage(argumentNotValid.getMessage());
+                }
             }
             dao.update(trap);
         } else {  //create new trap list

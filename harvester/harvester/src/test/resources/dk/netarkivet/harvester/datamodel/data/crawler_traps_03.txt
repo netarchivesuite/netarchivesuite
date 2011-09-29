@@ -1,0 +1,6 @@
+[a.z]{0,foobar}
+.*cal\.asp\?date=.*
+.*cal\.asp\?view=monthly&amp;date=.*
+.*cal\.asp\?view=weekly&amp;date=.*
+.*cal\.asp\?view=yearly&amp;date=.*
+.*cal\.asp\?view=yearly&amp;year=.*

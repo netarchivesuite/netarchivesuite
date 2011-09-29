@@ -29,6 +29,8 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -141,16 +143,23 @@ public class GlobalCrawlerTrapList {
      * line-by-line.
      * @param is  The input stream from which to read.
      * @throws IOFailure if the input stream cannot be read.
-     * @throws ArgumentNotValid if the input stream is null
+     * @throws ArgumentNotValid if the input stream is null or if any of the
+     * specified traps are not valid regular expressions.
      */
-    public void setTrapsFromInputStream(InputStream is) {
+    public void setTrapsFromInputStream(InputStream is) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(is, "is");
         traps.clear();
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String line;
         try {
             while ((line = reader.readLine()) != null) {
-                  traps.add(line.trim());
+                final String trap = line.trim();
+                 try {
+                     Pattern.compile(trap);
+                 } catch (PatternSyntaxException e) {
+                     throw new ArgumentNotValid("Cannot parse regular expression '" + trap + "'", e);
+                 }
+                traps.add(trap);
             }
         } catch (IOException e) {
             throw new IOFailure("Could not read crawler traps", e);
