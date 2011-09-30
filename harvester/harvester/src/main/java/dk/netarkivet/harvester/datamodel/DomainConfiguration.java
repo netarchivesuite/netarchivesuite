@@ -533,7 +533,6 @@ public class DomainConfiguration implements Named {
     }
     
     public void setBestHarvestInfo(HarvestInfo newBest) {
-    	ArgumentNotValid.checkNotNull(newBest, "HarvestInfo newBest");
     	this.best = newBest;
     }
 }
