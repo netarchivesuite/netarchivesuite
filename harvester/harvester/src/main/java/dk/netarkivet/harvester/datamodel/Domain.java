@@ -403,8 +403,9 @@ public class Domain implements Named {
                                 + "' not registered in the domain '" + getName()
                                 + "'");
         }
-
-        return domainConfigurations.get(cfgName);
+        DomainConfiguration cfg = domainConfigurations.get(cfgName);
+        cfg.setBestHarvestInfo(this.getBestHarvestInfoExpectation(cfgName));
+        return cfg;
     }
 
     /**

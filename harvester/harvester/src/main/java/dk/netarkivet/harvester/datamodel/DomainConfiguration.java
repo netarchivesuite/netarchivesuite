@@ -531,4 +531,9 @@ public class DomainConfiguration implements Named {
         return "Configuration '" + getName()
                 + "' of domain '" + getDomain().getName() + "'";
     }
+    
+    public void setBestHarvestInfo(HarvestInfo newBest) {
+    	ArgumentNotValid.checkNotNull(newBest, "HarvestInfo newBest");
+    	this.best = newBest;
+    }
 }
