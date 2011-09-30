@@ -63,6 +63,8 @@ public class DomainConfiguration implements Named {
 
     /** The list of seedlists. */
     private List<SeedList> seedlists;
+    
+    private HarvestInfo best;
 
     /** The list of passwords that apply in this configuration. */
     private List<Password> passwords;
@@ -104,6 +106,7 @@ public class DomainConfiguration implements Named {
         this.maxRequestRate = Constants.DEFAULT_MAX_REQUEST_RATE;
         this.maxObjects = Constants.DEFAULT_MAX_OBJECTS;
         this.maxBytes = Constants.DEFAULT_MAX_BYTES;
+        this.best = domain.getBestHarvestInfoExpectation(theConfigName);
     }
 
     /**
@@ -285,43 +288,6 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-    * Gets the harvest info giving best information for expectation
-    * or how many objects a harvest using this configuration will retrieve, we
-     * will prioritise the most recently harvest, where we have a full
-     * harvest.
-    *
-    * @return The Harvest Information for the harvest defining the best
-    * expectation, including the number retrieved and the stop reason.
-    */
-    private HarvestInfo getBestHarvestInfoExpectation() {
-        //Remember best expectation
-        HarvestInfo best = null;
-
-        //loop through all harvest infos for this configuration. The iterator is
-        //sorted by date with most recent first
-        for (Iterator<HarvestInfo> i = domain.getHistory().getHarvestInfo();
-             i.hasNext(); ) {
-            HarvestInfo hi = i.next();
-            if (hi.getDomainConfigurationName().equals(getName())) {
-                //Remember this expectation, if it harvested at least
-                //as many objects as the previously remembered
-                if ((best == null) || (best.getCountObjectRetrieved()
-                                       <= hi.getCountObjectRetrieved())) {
-                    best = hi;
-                }
-                //if this harvest completed, stop search and return best
-                //expectation,
-                if (hi.getStopReason() == StopReason.DOWNLOAD_COMPLETE) {
-                    return best;
-                }
-            }
-        }
-
-        //Return maximum uncompleted harvest, or null if never harvested
-        return best;
-    }
-
-    /**
      * Gets the best expectation for how many objects a harvest using
      * this configuration will retrieve, given a job with a maximum limit pr.
      * domain
@@ -339,7 +305,7 @@ public class DomainConfiguration implements Named {
                 = Settings.getLong(
                 HarvesterSettings.ERRORFACTOR_PERMITTED_PREVRESULT);
 
-        HarvestInfo best = getBestHarvestInfoExpectation();
+        HarvestInfo best = this.best;
 
         log.trace("Using domain info '" + best + "' for configuration '"
                   + toString() + "'");
