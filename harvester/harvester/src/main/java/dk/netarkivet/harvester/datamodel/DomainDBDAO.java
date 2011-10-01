@@ -1228,22 +1228,7 @@ public class DomainDBDAO extends DomainDAO {
         s.setLong(1, d.getID());
         ResultSet res = s.executeQuery();
         while (res.next()) {
-            final long seedlistId = res.getLong(1);
-            final String seedlistName = res.getString(2);
-            String seedlistComments = res.getString(3);
-
-            String seedlistContents = "";
-            if (DBSpecifics.getInstance().supportsClob()) {
-                Clob clob = res.getClob(4);
-                seedlistContents = clob
-                        .getSubString(1, (int) clob.length());
-            } else {
-                seedlistContents = res.getString(4);
-            }
-            final SeedList seedlist = new SeedList(seedlistName,
-                    seedlistContents);
-            seedlist.setComments(seedlistComments);
-            seedlist.setID(seedlistId);
+        	final SeedList seedlist = getSeedListFromResultset(res);
             d.addSeedList(seedlist);
         }
         s.close();
@@ -1255,6 +1240,37 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
+     * Make SeedList based on entry from seedlists 
+     * (id, name, comments, seeds).
+     * @param res a Resultset
+     * @return a SeedList based on ResultSet entry.
+     * @throws SQLException
+     */
+    private SeedList getSeedListFromResultset(ResultSet res) 
+    		throws SQLException {
+    	final long seedlistId = res.getLong(1);
+        final String seedlistName = res.getString(2);
+        String seedlistComments = res.getString(3);
+
+        String seedlistContents = "";
+        seedlistContents = res.getString(4);
+//        if (DBSpecifics.getInstance().supportsClob()) {
+//            Clob clob = res.getClob(4);
+//            seedlistContents = clob
+//                    .getSubString(1, (int) clob.length());
+//        } else {
+//            seedlistContents = res.getString(4);
+//        }
+        final SeedList seedlist = new SeedList(seedlistName,
+                seedlistContents);
+        System.out.println("Seeds: " + seedlistContents);
+        System.out.println("SeedsName: " + seedlistName);
+        seedlist.setComments(seedlistComments);
+        seedlist.setID(seedlistId);
+		return seedlist;
+	}
+
+	/**
      * Return true if a domain with the given name exists.
      *
      * @see DomainDAO#exists(String)
@@ -1379,11 +1395,11 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public boolean mayDelete(DomainConfiguration config) {
         ArgumentNotValid.checkNotNull(config, "config");
-
+        DomainConfiguration defaultConfig = this.read(config.getDomain()).getDefaultConfiguration();
         Connection c = HarvestDBConnection.get();
         try {
         // Never delete default config
-        return config != config.getDomain().getDefaultConfiguration()
+        return !config.getName().equals(defaultConfig.getName())
                 && !DBUtils.selectAny(c,
                         "SELECT config_id" + " FROM harvest_configs"
                                 + " WHERE config_id = ?", config.getID());
@@ -1671,7 +1687,7 @@ public class DomainDBDAO extends DomainDAO {
    }
     
     /**
-     * Adds Defaultvalues for all extended fields of this entity
+     * Adds Defaultvalues for all extended fields of this entity.
      */
     private void addExtendedFieldValues(Domain d)
     		throws SQLException {
@@ -1746,5 +1762,204 @@ public class DomainDBDAO extends DomainDAO {
 		}
 }
     
+ 	@Override
+ 	public DomainConfiguration getDomainConfiguration(String domainName,
+ 			String configName) {
+ 		DomainHistory history = getDomainHistory(domainName);
+ 		List<String> crawlertraps = getCrawlertraps(domainName);
+ 		
+ 		Connection c = HarvestDBConnection.get();
+ 		List<DomainConfiguration> foundConfigs = new ArrayList<DomainConfiguration>();
+ 		try {
+ 			// Read the configurations now that passwords and seedlists exist
+ 			PreparedStatement s = c.prepareStatement("SELECT config_id, "
+ 					+ "configurations.name, " + "comments, "
+ 					+ "ordertemplates.name, " + "maxobjects, " + "maxrate, "
+ 					+ "maxbytes" + " FROM configurations, ordertemplates "
+ 					+ "WHERE domain_id = (SELECT domain_id FROM domains "
+ 					+ "  WHERE name=?)"
+ 					+ "  AND configurations.name = ?"
+ 					+ "  AND configurations.template_id = "
+ 					+ "ordertemplates.template_id");
+ 			s.setString(1, domainName);
+ 			s.setString(2, configName);
+ 			ResultSet res = s.executeQuery();
+ 			while (res.next()) {
+ 				long domainconfigId = res.getLong(1);
+ 				String domainconfigName = res.getString(2);
+ 				String domainConfigComments = res.getString(3);
+ 				final String order = res.getString(4);
+ 				System.out.println("order: " + order);
+ 				long maxobjects = res.getLong(5);
+ 				int maxrate = res.getInt(6);
+ 				long maxbytes = res.getLong(7);
+ 				PreparedStatement s1 = c.prepareStatement(
+ 						"SELECT seedlists.seedlist_id, seedlists.name,  "
+ 								+ " seedlists.comments, seedlists.seeds "
+ 								+ "FROM seedlists, config_seedlists "
+ 								+ "WHERE config_seedlists.config_id = ? "
+ 								+ "AND config_seedlists.seedlist_id = "
+ 								+ "seedlists.seedlist_id");
+ 				s1.setLong(1, domainconfigId);
+ 				ResultSet seedlistResultset = s1.executeQuery();
+ 				List<SeedList> seedlists = new ArrayList<SeedList>();
+ 				while (seedlistResultset.next()) {
+ 					SeedList seedlist = getSeedListFromResultset(seedlistResultset);
+ 					seedlists.add(seedlist);
+ 				}
+ 				s1.close();
+ 				if (seedlists.isEmpty()) {
+ 					String message = "Configuration " + domainconfigName
+ 							+ " of domain '" + domainName + " has no seedlists";
+ 					log.warn(message);
+ 					throw new IOFailure(message);
+ 				}
 
+ 				PreparedStatement s2 = c.prepareStatement("SELECT passwords.password_id, "
+ 						+ "passwords.name, passwords.comments, passwords.url, "
+ 						+ "passwords.realm, passwords.username, "
+ 						+ "passwords.password "
+ 						+ "FROM passwords, config_passwords "
+ 						+ "WHERE config_passwords.config_id = ? "
+ 						+ "AND config_passwords.password_id = "
+ 						+ "passwords.password_id");
+ 				s2.setLong(1, domainconfigId);
+ 				ResultSet passwordResultset = s2.executeQuery();
+ 				List<Password> passwords = new ArrayList<Password>();
+ 				while (passwordResultset.next()) {
+ 					final Password pwd = new Password(passwordResultset.getString(2), 
+ 							passwordResultset.getString(3), 
+ 							passwordResultset.getString(4), 
+ 							passwordResultset.getString(5), 
+ 							passwordResultset.getString(6), 
+ 							passwordResultset.getString(7));
+ 					pwd.setID(passwordResultset.getLong(1)); 
+ 					passwords.add(pwd);
+ 				} 		
+ 				
+ 				DomainConfiguration dc = new DomainConfiguration(
+ 						domainconfigName, domainName, history, crawlertraps, seedlists, passwords);
+ 				dc.setOrderXmlName(order);
+ 				dc.setMaxObjects(maxobjects);
+ 				dc.setMaxRequestRate(maxrate);
+ 				dc.setComments(domainConfigComments);
+ 				dc.setMaxBytes(maxbytes);
+ 				dc.setID(domainconfigId);
+ 				foundConfigs.add(dc);
+ 				s2.close();
+ 			} // While 
+ 		} catch (SQLException e) {
+ 			throw new IOFailure("Error while fetching DomainConfigration: "
+ 					+ ExceptionUtils.getSQLExceptionCause(e), e);
+ 		}finally {
+ 			HarvestDBConnection.release(c);
+ 		}
+ 		return foundConfigs.get(0);
+ 	}
+
+ 	private List<String> getCrawlertraps(String domainName) {
+ 		Connection c = HarvestDBConnection.get();
+ 		String traps = null;
+ 		try {
+ 			PreparedStatement s = c.prepareStatement(
+ 					"SELECT crawlertraps FROM domains WHERE name = ?");
+ 			s.setString(1, domainName);
+ 			ResultSet crawlertrapsResultset = s.executeQuery();
+ 			if (crawlertrapsResultset.next()) {
+ 				traps = crawlertrapsResultset.getString(1);
+ 			} else {
+ 				throw new IOFailure("Unable to find crawlertraps for domain '" 
+ 						+ domainName 
+ 						+ "'. The domain doesn't seem to exist.");
+ 			}
+ 		} catch (SQLException e) {
+ 			throw new IOFailure("Error while fetching crawlertraps  for domain '" 
+					+ domainName + "': "
+					+ ExceptionUtils.getSQLExceptionCause(e), e);
+ 		} finally {
+ 			HarvestDBConnection.release(c);
+ 		}
+		return Arrays.asList(traps.split("\n"));
+	}
+
+	/**
+     * Find all info about results of a harvest definition.
+     *
+     * @param previousHarvestDefinition A harvest definition that has already
+     *                                  been run.
+     * @return An array of information for all domainconfigurations
+     *         which were harvested by the given harvest definition.
+     */
+ 	@Override
+    public Iterator<HarvestInfo> getHarvestInfoBasedOnPreviousHarvestDefinition(
+            final HarvestDefinition previousHarvestDefinition) {
+        ArgumentNotValid.checkNotNull(previousHarvestDefinition,
+        "previousHarvestDefinition");
+        // For each domainConfig, get harvest infos if there is any for the
+        // previous harvest definition
+        return new FilterIterator<DomainConfiguration, HarvestInfo>(
+                previousHarvestDefinition.getDomainConfigurations()) {
+            /**
+             * @see FilterIterator#filter(Object)
+             */
+            protected HarvestInfo filter(DomainConfiguration o){
+                DomainConfiguration config = o;
+                DomainHistory domainHistory = getDomainHistory(config.getDomain());
+                HarvestInfo hi = domainHistory.getSpecifiedHarvestInfo(
+                        previousHarvestDefinition.getOid(),
+                        config.getName());
+                return hi;
+            }
+        }; // Here ends the above return-statement
+    }
+
+	@Override
+	public DomainHistory getDomainHistory(String domainName) {
+		ArgumentNotValid.checkNotNullOrEmpty(domainName, "String domainName");
+		Connection c = HarvestDBConnection.get();
+		DomainHistory history = new DomainHistory();
+		// Read history info
+		try {
+			PreparedStatement s = c.prepareStatement(
+					"SELECT historyinfo_id, stopreason, "
+							+ "objectcount, bytecount, "
+							+ "name, job_id, harvest_id, harvest_time "
+							+ "FROM historyinfo, configurations "
+							+ "WHERE configurations.domain_id = "
+							+ 	"(SELECT domain_id FROM domains WHERE name=?)"
+							+ "  AND historyinfo.config_id "
+							+ " = configurations.config_id");
+			s.setString(1, domainName);
+			ResultSet res = s.executeQuery();
+			while (res.next()) {
+				long hiID = res.getLong(1);
+				int stopreasonNum = res.getInt(2);
+				StopReason stopreason = StopReason.getStopReason(stopreasonNum);
+				long objectCount = res.getLong(3);
+				long byteCount = res.getLong(4);
+				String configName = res.getString(5);
+				Long jobId = res.getLong(6);
+				if (res.wasNull()) {
+					jobId = null;
+				}
+				long harvestId = res.getLong(7);
+				Date harvestTime = new Date(res.getTimestamp(8).getTime());
+				HarvestInfo hi;
+ 
+				hi = new HarvestInfo(harvestId, jobId, domainName, configName,
+                harvestTime, byteCount, objectCount, stopreason);
+				hi.setID(hiID);
+				history.addHarvestInfo(hi);
+			}
+		}catch (SQLException e) {
+ 			throw new IOFailure("Error while fetching DomainHistory for domain '" 
+ 					+ domainName + "': "
+ 					+ ExceptionUtils.getSQLExceptionCause(e), e);
+ 		}finally {
+ 			HarvestDBConnection.release(c);
+ 		}
+    
+		return history;
+	}
+ 	
 }

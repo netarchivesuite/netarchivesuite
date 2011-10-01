@@ -202,15 +202,14 @@ public class TestInfo {
     public static DomainConfiguration createConfig(String domainName, String configName,
                                                     long objectCount) {
         DomainDAO dao = DomainDAO.getInstance();
-
-        DomainConfiguration cfg = dao.read(domainName).getConfiguration(configName);
-        Domain d = cfg.getDomain();
+        Domain d = dao.read(domainName);
+        DomainConfiguration cfg = d.getConfiguration(configName);
         cfg.setMaxObjects(4000);
         cfg.setMaxBytes(-1);
         HarvestInfo hi = new HarvestInfo(new Long(1234), d.getName(),
                 cfg.getName(), new Date(), 1L, objectCount, StopReason.DOWNLOAD_COMPLETE);
 
-        cfg.addHarvestInfo(hi);
+        d.getHistory().addHarvestInfo(hi);
         dao.update(d);
 
         return dao.read(domainName).getConfiguration(configName);

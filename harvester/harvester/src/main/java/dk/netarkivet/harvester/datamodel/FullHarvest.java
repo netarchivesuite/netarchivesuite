@@ -239,9 +239,10 @@ public class FullHarvest extends HarvestDefinition {
                         return config;
                     }
                 }
-
-                if (config.getDomain().getAliasInfo() != null
-                    && !config.getDomain().getAliasInfo().isExpired()) {
+                Domain d = dao.read(config.getDomain());
+                
+                if (d.getAliasInfo() != null
+                    && !d.getAliasInfo().isExpired()) {
                     //Don't include aliases
                     return null;
                 } else {

@@ -227,30 +227,30 @@ public class JobDAOTester extends DataModelTestCase {
         assertTrue(
                 "The DomainConfigurationMap of the retrieved job does not " +
                 "match that of the original job - domain name "
-                        + dc.getDomain().getName()
+                        + dc.getDomain()
                         + " not found", domainConfigurationMap.containsKey(dc
-                        .getDomain().getName()));
+                        .getDomain()));
         assertTrue(
                 "The DomainConfigurationMap of the retrieved job does not " +
                 "match that of the original job - domain name "
-                        + anotherConfiguration.getDomain().getName()
+                        + anotherConfiguration.getDomain()
                         + " not found",
                 domainConfigurationMap.containsKey(anotherConfiguration
-                        .getDomain().getName()));
+                        .getDomain()));
 
         assertEquals(
                 "The DomainConfigurationMap of the retrieved job does not " +
                 "match that of the original job - domainConfiguration name "
                         + dc.getName()
                         + " not found", domainConfigurationMap.get(dc
-                        .getDomain().getName()), dc.getName());
+                        .getDomain()), dc.getName());
 
         assertEquals(
                 "The DomainConfigurationMap of the retrieved job does not " +
                 "match that of the original job - domainConfiguration name "
                         + anotherConfiguration.getName() + " not found",
-                domainConfigurationMap.get(anotherConfiguration.getDomain()
-                        .getName()), anotherConfiguration.getName());
+                domainConfigurationMap.get(anotherConfiguration.getDomain()), 
+                		anotherConfiguration.getName());
     }
 
     /**

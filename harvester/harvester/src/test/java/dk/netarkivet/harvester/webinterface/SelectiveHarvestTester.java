@@ -26,6 +26,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -44,6 +45,7 @@ import java.util.Calendar;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -71,8 +73,8 @@ public class SelectiveHarvestTester extends DataModelTestCase {
     public void testgetDomainConfigurations() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
         // Construct map corresponding to
-        // dr.dk -> Engelsk_netarkiv_et_niveau
-        // statsbiblioteket -> fuld_dybde
+        // netarkivet.dk -> Engelsk_netarkiv_et_niveau
+        // statsbiblioteket.dk -> fuld_dybde
         Map<String , String[]> confs= new HashMap<String , String[]>();
         String[] val = new String[1];
         val[0]="Engelsk_netarkiv_et_niveau";
@@ -171,7 +173,8 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(confRequest);
         SelectiveHarvest.processRequest(
                 pageContext, I18N, unknownDomains, illegalDomains);
-        PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition("web-test1");
+        PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance().
+        		getHarvestDefinition("web-test1");
         assertNotNull("New HD should exist", hdd);
         assertEquals("Check af felter","kommentar",hdd.getComments());
         assertEquals("Check af felter","web-test1",hdd.getName());
@@ -207,7 +210,8 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(confRequest);
         SelectiveHarvest.processRequest(pageContext, I18N,
                 unknownDomains, illegalDomains);
-        PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition("Testhøstning");
+        PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance()
+        		.getHarvestDefinition("Testhøstning");
         assertEquals("Check af felter","kommentar",hdd.getComments());
         assertEquals("Check af felter","Testhøstning",hdd.getName());
         assertEquals("Check af felter","Hver hele time",hdd.getSchedule().getName());
@@ -250,17 +254,21 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         assertEquals("Check af felter","kommentar",hdd.getComments());
         assertEquals("Check af felter","Testhøstning",hdd.getName());
         assertEquals("Check af felter","Hver hele time",hdd.getSchedule().getName());
-        assertEquals("Alle domainer er kendte",0, unknownDomains.size());
+        assertEquals("Alle domainer er kendte", 0, unknownDomains.size());
         assertEquals("Alle domainer er lovlige",0, illegalDomains.size());
         Iterator<DomainConfiguration> itt =  hdd.getDomainConfigurations();
+        List<DomainConfiguration> dcs = IteratorUtils.toList(itt);
         List<String> nameList = new ArrayList<String>();
-        nameList.add(itt.next().getName());
-        nameList.add(itt.next().getName());
-        Collections.sort(nameList);
-
-        assertEquals("Forventet ny configuration", "Engelsk_netarkiv_et_niveau", nameList.get(0));
-        assertEquals("Forventet ny default configuration", "fuld_dybde", nameList.get(1) );
-        assertFalse("Forventet eksakt to konfiguration",  itt.hasNext());
+        
+        for (DomainConfiguration dc : dcs) {
+        	nameList.add(dc.getName());	
+        }
+        Collections.sort(nameList);        
+        assertFalse("Should be precisely two configurations, but there are " 
+        + nameList.size(), nameList.size() == 2);
+        assertEquals("New configuration expected", "Engelsk_netarkiv_et_niveau", nameList.get(0));
+        assertEquals("New default configuration expected", "fuld_dybde", nameList.get(1) );
+       
 
     }
 

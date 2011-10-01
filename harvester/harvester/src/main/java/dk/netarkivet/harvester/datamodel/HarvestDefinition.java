@@ -503,7 +503,7 @@ public abstract class HarvestDefinition implements Named {
             if (cmp != 0) {
                 return cmp;
             }
-
+            
             //Compare expected sizes
             long expectedsize1 = cfg1.getExpectedNumberOfObjects(objectLimit,
                                                                  byteLimit);

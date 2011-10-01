@@ -239,7 +239,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 = ph.getDomainConfigurations(); dcs.hasNext();) {
             DomainConfiguration dc = dcs.next();
             s.setLong(1, id);
-            s.setString(2, dc.getDomain().getName());
+            s.setString(2, dc.getDomain());
             s.setString(3, dc.getName());
             s.executeUpdate();
         }
@@ -380,25 +380,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 // To avoid holding on to the readlock while getting domains,
                 // we grab the strings first, then look up domains and configs.
                 final DomainDAO domainDao = DomainDAO.getInstance();
-                /** Helper class that contain (domainName, configName) pairs.*/
-                class DomainConfigPair {
-                    /** The domain name. */
-                    final String domainName;
-                    /** The config name. */
-                    final String configName;
-
-                    /** Constructor for the DomainConfigPair class.
-                     *
-                     * @param domainName A given domain name
-                     * @param configName A name for a specific configuration
-                     */
-                    public DomainConfigPair(String domainName, String configName) {
-                        this.domainName = domainName;
-                        this.configName = configName;
-                    }
-                }
-                List<DomainConfigPair> configs
-                = new ArrayList<DomainConfigPair>();
+                                List<DomainConfigurationKey> configs
+                = new ArrayList<DomainConfigurationKey>();
                 s = c.prepareStatement("SELECT domains.name, configurations.name "
                         + "FROM domains, configurations, harvest_configs "
                         + "WHERE harvest_id = ?"
@@ -408,15 +391,16 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 s.setLong(1, harvestDefinitionID);
                 res = s.executeQuery();
                 while (res.next()) {
-                    configs.add(new DomainConfigPair(
+                    configs.add(new DomainConfigurationKey(
                             res.getString(1), res.getString(2)));
                 }
                 s.close();
                 List<DomainConfiguration> configurations =
                     new ArrayList<DomainConfiguration>();
-                for (DomainConfigPair domainConfig : configs) {
-                    Domain d = domainDao.read(domainConfig.domainName);
-                    configurations.add(d.getConfiguration(domainConfig.configName));
+                for (DomainConfigurationKey domainConfig : configs) {
+                    configurations.add(domainDao.getDomainConfiguration(
+                    		domainConfig.domainName,
+                    		domainConfig.configName));
                 }
 
                 Schedule schedule =
@@ -529,7 +513,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 rows = s.executeUpdate();
                 log.debug(rows + " partialharvests records updated");
                 s.close();
-                createHarvestConfigsEntries(c, ph, ph.getOid());
+                // The updates to harvest_configs table are done 
+                // in method removeDomainConfiguration(), not here.
+                //createHarvestConfigsEntries(c, ph, ph.getOid());
             } else {
                 String message = "Harvest definition " + hd
                         + " has unknown class " + hd.getClass();

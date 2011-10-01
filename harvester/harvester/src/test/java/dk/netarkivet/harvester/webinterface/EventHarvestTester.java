@@ -95,7 +95,7 @@ public class EventHarvestTester extends HarvesterWebinterfaceTestCase {
         DomainConfiguration dc = dci.next();
         assertEquals("DomainConfiguration should have expected name, ", 
                 expectedDomainConfigurationName, dc.getName());
-        assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomain().getName());
+        assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomain());
         Iterator<SeedList> si = dc.getSeedLists();
         SeedList sl = si.next();
         assertEquals("Should have expected seedlist name", 

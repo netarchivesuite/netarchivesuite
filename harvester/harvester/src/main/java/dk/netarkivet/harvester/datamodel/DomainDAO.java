@@ -141,7 +141,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
     /**
      * Get the total number of domains available.
      *
-     * @return the total number of registered domanis.
+     * @return the total number of registered domains.
      */
     public abstract int getCountDomains();
 
@@ -178,35 +178,10 @@ public abstract class DomainDAO implements Iterable<Domain> {
         instance = null;
     }
 
-    /**
-     * Find all info about results of a harvest definition.
-     *
-     * @param previousHarvestDefinition A harvest definition that has already
-     *                                  been run.
-     * @return An array of information for all domainconfigurations
-     *         which were harvested by the given harvest definition.
-     */
-    public Iterator<HarvestInfo> getHarvestInfoBasedOnPreviousHarvestDefinition(
-            final HarvestDefinition previousHarvestDefinition) {
-        ArgumentNotValid.checkNotNull(previousHarvestDefinition,
-        "previousHarvestDefinition");
-        // For each domainConfig, get harvest infos if there is any for the
-        // previous harvest definition
-        return new FilterIterator<DomainConfiguration, HarvestInfo>(
-                previousHarvestDefinition.getDomainConfigurations()) {
-            /**
-             * @see FilterIterator#filter(Object)
-             */
-            protected HarvestInfo filter(DomainConfiguration o){
-                DomainConfiguration config = o;
-                DomainHistory domainHistory = config.getDomain().getHistory();
-                HarvestInfo hi = domainHistory.getSpecifiedHarvestInfo(
-                        previousHarvestDefinition.getOid(),
-                        config.getName());
-                return hi;
-            }
-        }; // Here ends the above return-statement
-    }
+    public abstract Iterator<HarvestInfo> getHarvestInfoBasedOnPreviousHarvestDefinition(
+            final HarvestDefinition previousHarvestDefinition);
+    
+    
 
     /** Use a glob-like matcher to find a subset of domains.
     *
@@ -302,5 +277,23 @@ public abstract class DomainDAO implements Iterable<Domain> {
     */
     public abstract List<DomainHarvestInfo> getDomainHarvestInfo(
             String domainName, boolean latestFirst);
+
+    /**
+     * Get the DomainConfiguration given a specific domainName and a 
+     * configurationName.
+     * @param domainName The name of a domain
+     * @param configName The name of a configuration for this domain
+     * @return the DomainConfiguration, if the specified configuration exists;
+     * otherwise throws UnknownID 
+     */
+	public abstract DomainConfiguration getDomainConfiguration(String domainName,
+			String configName);
     
+	/** Get the domainHistory for a specific domain. 
+	 * 
+	 * @param domainName A name of a specific domain.
+	 * @return the domainHistory for a specific domain.
+	 */
+	public abstract DomainHistory getDomainHistory(String domainName);
+	
 }

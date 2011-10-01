@@ -39,7 +39,7 @@ public class DomainConfigurationKey {
      * @param dc A DomainConfiguration argument
      */
     public DomainConfigurationKey(DomainConfiguration dc) {
-        this.domainName = dc.getDomain().getName();
+        this.domainName = dc.getDomain();
         this.configName = dc.getName();
     }
     

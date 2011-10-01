@@ -131,4 +131,34 @@ public class DomainHistory {
         ArgumentNotValid.checkNotNull(hi, "hi");
         harvestInfo.add(hi);
     }
+    
+    public static HarvestInfo getBestHarvestInfoExpectation(String configName, DomainHistory history) {
+   	 ArgumentNotValid.checkNotNullOrEmpty(configName, "String configName");
+   	 ArgumentNotValid.checkNotNull(history, "DomainHistory history");
+   	//Remember best expectation
+        HarvestInfo best = null;
+
+        //loop through all harvest infos for this configuration. The iterator is
+        //sorted by date with most recent first
+        for (Iterator<HarvestInfo> i = history.getHarvestInfo();
+             i.hasNext(); ) {
+            HarvestInfo hi = i.next();
+            if (hi.getDomainConfigurationName().equals(configName)) {
+                //Remember this expectation, if it harvested at least
+                //as many objects as the previously remembered
+                if ((best == null) || (best.getCountObjectRetrieved()
+                                       <= hi.getCountObjectRetrieved())) {
+                    best = hi;
+                }
+                //if this harvest completed, stop search and return best
+                //expectation,
+                if (hi.getStopReason() == StopReason.DOWNLOAD_COMPLETE) {
+                    return best;
+                }
+            }
+        }
+
+        //Return maximum uncompleted harvest, or null if never harvested
+        return best;
+    }
 }

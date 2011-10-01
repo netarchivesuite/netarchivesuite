@@ -474,9 +474,9 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         j.setStatus(status);
         jdao.update(j);
 
-        dc.addHarvestInfo(new HarvestInfo(hd.getOid(), j.getJobID(), domain, dc
+        d.getHistory().addHarvestInfo((new HarvestInfo(hd.getOid(), j.getJobID(), domain, dc
                 .getName(), new Date(), bytes, docs,
-                            StopReason.DOWNLOAD_COMPLETE));
+                            StopReason.DOWNLOAD_COMPLETE)));
 
         d.updateConfiguration(dc);
         ddao.update(d);

@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -370,7 +369,7 @@ public class DomainDAOTester extends DataModelTestCase {
         //An older harvest info that should NOT be returned
         Date then = new Date(time);
         HarvestInfo old_hi0 = new HarvestInfo(new Long(42L), domain0.getName(), config0.getName(), then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        config0.addHarvestInfo(old_hi0);
+        domain0.getHistory().addHarvestInfo(old_hi0);
         dao.update(domain0);
 
         //An older harvest info with same harvest definition that should NOT be returned
@@ -382,21 +381,21 @@ public class DomainDAOTester extends DataModelTestCase {
         //Three harvest infos, one for each type
         Date now = new Date(time + 1000);
         HarvestInfo hi0 = new HarvestInfo(hd.getOid(), domain0.getName(), config0.getName(), now, 1L, 1L, StopReason.OBJECT_LIMIT);
-        config0.addHarvestInfo(hi0);
+        domain0.getHistory().addHarvestInfo(hi0);
         dao.update(domain0);
 
         HarvestInfo hi1 = new HarvestInfo(hd.getOid(), domain1.getName(), config1.getName(), now, 1L, 1L, StopReason.OBJECT_LIMIT);
-        config1.addHarvestInfo(hi1);
+        domain1.getHistory().addHarvestInfo(hi1);
         dao.update(domain1);
 
         HarvestInfo hi2 = new HarvestInfo(hd.getOid(), domain2.getName(), config2.getName(), now, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        config2.addHarvestInfo(hi2);
+        domain2.getHistory().addHarvestInfo(hi2);
         dao.update(domain2);
 
         //A newer harvest info that should NOT be returned
         Date later = new Date(time + 2000);
         HarvestInfo new_hi0 = new HarvestInfo(new Long(43L), domain0.getName(), config0.getName(), later, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        config0.addHarvestInfo(new_hi0);
+        domain0.getHistory().addHarvestInfo(new_hi0);
         dao.update(domain0);
 
         HarvestDefinitionDAO.getInstance().update(hd);
@@ -488,7 +487,7 @@ public class DomainDAOTester extends DataModelTestCase {
         DomainConfiguration dc = d.getDefaultConfiguration();
         HarvestInfo hi = new HarvestInfo(42L, 1L, domainName, dc.getName(),
                                          new Date(2L), 10000L, 100L, StopReason.DOWNLOAD_COMPLETE);
-        dc.addHarvestInfo(hi);
+        d.getHistory().addHarvestInfo(hi);
         d.updateConfiguration(dc);
         dao.update(d);
 
@@ -502,9 +501,9 @@ public class DomainDAOTester extends DataModelTestCase {
         // For bug 570, test if having some history info with no job id
         // generates too many entries.
         hi = new HarvestInfo(42L, null, domainName, dc.getName(), new Date(1L), 10L, 2L, StopReason.DOWNLOAD_COMPLETE);
-        dc.addHarvestInfo(hi);
+        d2.getHistory().addHarvestInfo(hi);
         hi = new HarvestInfo(42L, null, domainName, dc.getName(), new Date(3L), 11L, 3L, StopReason.DOWNLOAD_COMPLETE);
-        dc.addHarvestInfo(hi);
+        d2.getHistory().addHarvestInfo(hi);
         d2.updateConfiguration(dc);
         dao.update(d2);
         d2 = dao.read(domainName);
@@ -735,8 +734,8 @@ public class DomainDAOTester extends DataModelTestCase {
             DomainConfiguration cfg2 = next.getDefaultConfiguration();
             assertTrue("Order should be right, comparing " + cfg1
                        + " and " + cfg2
-                       + ":\n("+ cfg1.getOrderXmlName() +  "," + cfg1.getMaxBytes() + "," + cfg1.getDomain().getName() +  ")"
-                       + "\n("+ cfg2.getOrderXmlName() +  "," + cfg2.getMaxBytes() + "," + cfg2.getDomain().getName() +  ")",
+                       + ":\n("+ cfg1.getOrderXmlName() +  "," + cfg1.getMaxBytes() + "," + cfg1.getDomain() +  ")"
+                       + "\n("+ cfg2.getOrderXmlName() +  "," + cfg2.getMaxBytes() + "," + cfg2.getDomain() +  ")",
                        cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName())
                        < 0 || (cfg1.getOrderXmlName().compareTo(
                                cfg2.getOrderXmlName()) == 0)

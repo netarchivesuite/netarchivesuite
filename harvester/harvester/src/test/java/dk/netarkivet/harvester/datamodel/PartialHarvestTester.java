@@ -68,13 +68,13 @@ public class PartialHarvestTester extends DataModelTestCase {
         PartialHarvest updatedHarvest =
                 (PartialHarvest) HarvestDefinitionDAO.getInstance().
                 getHarvestDefinition(harvestName);
-        String expectedName = harvestName +"_" + order1xml + "_" + maxbytes 
-            + "Bytes"+ "_UnlimitedObjects";
+        String expectedName = harvestName + "_" + order1xml + "_" + maxbytes 
+            + "Bytes" + "_UnlimitedObjects";
         
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc = dci.next();
         assertEquals("DomainConfiguration should have expected name, ", expectedName, dc.getName());
-        assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomain().getName());
+        assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomain());
         assertEquals("Should have expected byte limits", maxbytes, dc.getMaxBytes());
         Iterator<SeedList> si = dc.getSeedLists();
         SeedList sl = si.next();
@@ -99,7 +99,7 @@ public class PartialHarvestTester extends DataModelTestCase {
         
         //maxbytes and max objects defined
         String expectedName = harvestName +"_" + order1xml + "_" + maxbytes 
-            + "Bytes"+ "_"+maxobjects+"Objects";
+            + "Bytes" + "_"+maxobjects + "Objects";
         
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc = dci.next();
@@ -165,7 +165,7 @@ public class PartialHarvestTester extends DataModelTestCase {
         assertEquals("DomainConfiguration should have expected name, ", 
                 expectedName, dc.getName());
         assertEquals("Should have expected domain name", "mydomain.dk", 
-                dc.getDomain().getName());
+                dc.getDomain());
         assertEquals("Should have expected byte limits", 
                 maxbytes, dc.getMaxBytes());
         Iterator<SeedList> si = dc.getSeedLists();
@@ -199,7 +199,7 @@ public class PartialHarvestTester extends DataModelTestCase {
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc = dci.next();
         assertEquals("DomainConfiguration should have expected name, ", expectedName, dc.getName());
-        assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomain().getName());
+        assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomain());
         assertEquals("Should have expected byte limits", maxbytes, dc.getMaxBytes());
         Iterator<SeedList> si = dc.getSeedLists();
         SeedList sl = si.next();
@@ -236,8 +236,8 @@ public class PartialHarvestTester extends DataModelTestCase {
         assertEquals("Configuration should have expected name", expectedName, dc2.getName());
         assertEquals("Should have expected byte limits", maxbytes, dc1.getMaxBytes());
         assertEquals("Should have expected byte limits", maxbytes, dc2.getMaxBytes());
-        String name1 = dc1.getDomain().getName();
-        String name2 = dc2.getDomain().getName();
+        String name1 = dc1.getDomain();
+        String name2 = dc2.getDomain();
         boolean order1 = name1.equals("mydomain.dk") && name2.equals("anewdomain.dk");
         boolean order2 = name2.equals("mydomain.dk") && name1.equals("anewdomain.dk");
         assertTrue("The two domains should correspond to the configurations", order1 || order2);
@@ -314,34 +314,34 @@ public class PartialHarvestTester extends DataModelTestCase {
             if (dc.getName().equals(name2)) {
                 assertEquals("Should have right max bytes", maxbytes2, dc.getMaxBytes());
             }
-            if (dc.getName().equals(name1) && dc.getDomain().getName().equals("1.dk")) {
+            if (dc.getName().equals(name1) && dc.getDomain().equals("1.dk")) {
                 countName1++;
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name2) && dc.getDomain().getName().equals("1.dk")) {
+            if (dc.getName().equals(name2) && dc.getDomain().equals("1.dk")) {
                 countName2++;
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name1) && dc.getDomain().getName().equals("2.dk")) {
+            if (dc.getName().equals(name1) && dc.getDomain().equals("2.dk")) {
                 countName1++;
                 assertEquals("Should have two seeds", 2, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name2) && dc.getDomain().getName().equals("2.dk")) {
+            if (dc.getName().equals(name2) && dc.getDomain().equals("2.dk")) {
                 throw new UnknownID("Did not expect configuration with name " + name2 + "for 2.dk");
             }
-            if (dc.getName().equals(name1) && dc.getDomain().getName().equals("3.dk")) {
+            if (dc.getName().equals(name1) && dc.getDomain().equals("3.dk")) {
                 countName1++;
                 assertEquals("Should have two seeds", 2, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name2) && dc.getDomain().getName().equals("3.dk")) {
+            if (dc.getName().equals(name2) && dc.getDomain().equals("3.dk")) {
                 countName2++;
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name1) && dc.getDomain().getName().equals("4.dk")) {
+            if (dc.getName().equals(name1) && dc.getDomain().equals("4.dk")) {
                 countName1++;
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name2) && dc.getDomain().getName().equals("4.dk")) {
+            if (dc.getName().equals(name2) && dc.getDomain().equals("4.dk")) {
                 countName2++;
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
@@ -419,13 +419,13 @@ public class PartialHarvestTester extends DataModelTestCase {
         while (dcs.hasNext()) {
             count++;
             dc = dcs.next();
-            if (dc.getDomain().getName().equals("1.dk")) {
+            if (dc.getDomain().equals("1.dk")) {
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getDomain().getName().equals("2.dk")) {
+            if (dc.getDomain().equals("2.dk")) {
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getDomain().getName().equals("3.dk")) {
+            if (dc.getDomain().equals("3.dk")) {
                 assertEquals("Should have three seeds", 3, dc.getSeedLists().next().getSeeds().size());
             }
             assertEquals("Should have right max bytes", maxbytes, dc.getMaxBytes());
@@ -441,7 +441,7 @@ public class PartialHarvestTester extends DataModelTestCase {
         DomainDAO ddao = DomainDAO.getInstance();
         Domain d = ddao.read("netarkivet.dk");
         DomainConfiguration dc = d.getDefaultConfiguration();
-        DomainConfigurationKey dcKey = new DomainConfigurationKey(dc.getDomain().getName(), 
+        DomainConfigurationKey dcKey = new DomainConfigurationKey(dc.getDomain(), 
                 dc.getName());
         List<DomainConfiguration> dclist = new ArrayList<DomainConfiguration>();
         dclist.add(dc);

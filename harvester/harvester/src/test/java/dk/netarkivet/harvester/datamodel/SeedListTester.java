@@ -64,7 +64,8 @@ public class SeedListTester extends DataModelTestCase {
             List<SeedList> seedlists = new ArrayList<SeedList>();
             seedlists.add(sl);
             
-            DomainConfiguration cfg = new DomainConfiguration("test", d, seedlists, new ArrayList<Password>());
+            DomainConfiguration cfg = new DomainConfiguration("test", d, 
+            		seedlists, new ArrayList<Password>());
             cfg.setOrderXmlName(TestInfo.ORDER_XML_NAME);
             cfg.setMaxObjects(10);
             cfg.setMaxRequestRate(11);

@@ -364,6 +364,8 @@ public class PartialHarvest extends HarvestDefinition {
 
         // Note: Matches any sort of newline (unix/mac/dos), but won't get empty
         // lines, which is fine for this purpose
+        System.out.println("Adding seeds: " + seeds);
+        
         String[] seedArray = seeds.split("[\n\r]+");
         Map<String, Set<String>> acceptedSeeds
                 = new HashMap<String, Set<String>>();

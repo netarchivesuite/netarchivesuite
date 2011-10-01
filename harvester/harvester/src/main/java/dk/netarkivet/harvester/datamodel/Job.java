@@ -468,7 +468,7 @@ public class Job implements Serializable {
         }
 
         //Add configuration in map
-        domainConfigurationMap.put(cfg.getDomain().getName(), cfg.getName());
+        domainConfigurationMap.put(cfg.getDomain(), cfg.getName());
 
         // Add the seeds from the configuration to the Job seeds.
         // Take care of duplicates.
@@ -518,7 +518,7 @@ public class Job implements Serializable {
             }
         }
 
-        editOrderXMLAddPerDomainCrawlerTraps(cfg.getDomain());
+        editOrderXMLAddPerDomainCrawlerTraps(cfg);
 
         //TODO update limits in settings files - see also bug 269
 
@@ -536,7 +536,7 @@ public class Job implements Serializable {
     }
 
     /** Updates this jobs order.xml to include a MatchesListRegExpDecideRule
-     *  for each crawlertrap associated with for the given domain.
+     *  for each crawlertrap associated with for the given DomainConfiguration.
      *
      * The added nodes have the form
      *
@@ -550,14 +550,14 @@ public class Job implements Serializable {
      *       </stringList> 
      *     </newObject>
      *
-     * @param d The domain for which to generate crawler trap deciderules
+     * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
      * @throws IllegalState
      *          If unable to update order.xml due to wrong order.xml format
      */
-    private void editOrderXMLAddPerDomainCrawlerTraps(Domain d) {
+    private void editOrderXMLAddPerDomainCrawlerTraps(DomainConfiguration cfg) {
         //Get the regexps to exclude
-        List<String> crawlerTraps = d.getCrawlerTraps();
-        String elementName = d.getName();
+        List<String> crawlerTraps = cfg.getCrawlertraps();
+        String elementName = cfg.getDomain();
         editOrderXMLAddCrawlerTraps(elementName, crawlerTraps);
     }
 
@@ -627,9 +627,9 @@ public class Job implements Serializable {
 
         // check if domain in DomainConfiguration cfg is not already in this job
         // domainName is used as key in domainConfigurationMap
-        if (domainConfigurationMap.containsKey(cfg.getDomain().getName())) {
+        if (domainConfigurationMap.containsKey(cfg.getDomain())) {
             log.debug("Job already has a configuration for Domain '"
-                    + cfg.getDomain().getName() +"'.");
+                    + cfg.getDomain() +"'.");
             return false;
         }
 

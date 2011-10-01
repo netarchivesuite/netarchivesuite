@@ -604,7 +604,7 @@ public class Domain implements Named {
                 while (configs.hasNext()) {
                     DomainConfiguration dc = configs.next();
                     if (dc.getName().equals(name)
-                        && dc.getDomain().getName().equals(getName())) {
+                        && dc.getDomain().equals(getName())) {
                         usages.add(hd.getName());
                     }
                 }
@@ -1080,32 +1080,7 @@ public class Domain implements Named {
      */
      public HarvestInfo getBestHarvestInfoExpectation(String configName) {
      	ArgumentNotValid.checkNotNullOrEmpty(configName, "String configName");
-         //Remember best expectation
-         HarvestInfo best = null;
-
-         //loop through all harvest infos for this configuration. The iterator is
-         //sorted by date with most recent first
-         for (Iterator<HarvestInfo> i = this.getHistory().getHarvestInfo();
-              i.hasNext(); ) {
-             HarvestInfo hi = i.next();
-             if (hi.getDomainConfigurationName().equals(configName)) {
-                 //Remember this expectation, if it harvested at least
-                 //as many objects as the previously remembered
-                 if ((best == null) || (best.getCountObjectRetrieved()
-                                        <= hi.getCountObjectRetrieved())) {
-                     best = hi;
-                 }
-                 //if this harvest completed, stop search and return best
-                 //expectation,
-                 if (hi.getStopReason() == StopReason.DOWNLOAD_COMPLETE) {
-                     return best;
-                 }
-             }
-         }
-
-         //Return maximum uncompleted harvest, or null if never harvested
-         return best;
+     	return DomainHistory.getBestHarvestInfoExpectation(configName, this.getHistory());
      }
-
     
 }

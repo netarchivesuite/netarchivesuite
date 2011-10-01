@@ -113,7 +113,7 @@ public class JobTester extends DataModelTestCase {
         final SeedList withUrlList = new SeedList("withurl", extraUrls);
         poelse.addSeedList(withUrlList);
         dc = poelse.getDefaultConfiguration();
-        dc.addSeedList(withUrlList);
+        dc.addSeedList(poelse, withUrlList);
         dao.update(poelse);
         job = Job.createJob(12342L, dc, 0);
         seedList = job.getSeedListAsString();
@@ -290,7 +290,7 @@ public class JobTester extends DataModelTestCase {
         DomainConfiguration anotherConfig = TestInfo.getConfigurationNotDefault(
                 TestInfo.getDomainNotDefault());
         assertTrue("Job should accept configuration associated with domain "
-                   + anotherConfig.getDomain().getName(),
+                   + anotherConfig.getDomain(),
                    job.canAccept(anotherConfig));
 
         //Test split according to byte limits
@@ -673,21 +673,24 @@ public class JobTester extends DataModelTestCase {
      */
     public void testAddConfigurationUpdatesOrderXml() {
         //Make a configuration with no crawlertraps
-        DomainConfiguration dc1 = TestInfo.getDefaultDomain().getDefaultConfiguration();
+    	Domain domain = TestInfo.getDefaultDomain();
+        DomainConfiguration dc1 = domain.getDefaultConfiguration();
         boolean strictMode = true;
-        dc1.getDomain().setCrawlerTraps(Collections.<String>emptyList(), strictMode);
-        String domain1name = dc1.getDomain().getName();
+        domain.setCrawlerTraps(Collections.<String>emptyList(), strictMode);
+        String domain1name = dc1.getDomain();
 
         //Make a configuration with two crawlertraps
-        DomainConfiguration dc2 = TestInfo.getDomainNotDefault().getDefaultConfiguration();
+        Domain domain2 = TestInfo.getDomainNotDefault();
+        DomainConfiguration dc2 = domain2.getDefaultConfiguration();
         List<String> traps = new ArrayList<String>();
         
         String crawlerTrap1 = "xyz.*"; 
         String crawlerTrap2 = ".*[a-z]+";
         traps.add(crawlerTrap1);
         traps.add(crawlerTrap2);
-        dc2.getDomain().setCrawlerTraps(traps, strictMode);
-        String domain2name = dc2.getDomain().getName();
+        domain2.setCrawlerTraps(traps, strictMode);
+        dc2.setCrawlertraps(traps);
+        String domain2name = dc2.getDomain();
 
         //Make a job with the two configurations
         Job j = Job.createJob(Long.valueOf(42L), dc1, 0);

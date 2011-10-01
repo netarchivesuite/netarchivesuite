@@ -896,14 +896,14 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         HarvestInfo old_hi0 = new HarvestInfo(
                 Long.valueOf(42L), domain0.getName(), config0.getName(),
                 then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        config0.addHarvestInfo(old_hi0);
+        domain0.getHistory().addHarvestInfo(old_hi0);
         dao.update(domain0);
 
         //An older harvest info from the same hd that should NOT be returned
         HarvestInfo old_hi1 = new HarvestInfo(
                 hdOID, domain1.getName(), config1.getName(),
                 then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        config1.addHarvestInfo(old_hi1);
+        domain1.getHistory().addHarvestInfo(old_hi1);
         dao.update(domain1);
 
         //Four harvest infos, one for each type
@@ -911,25 +911,25 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         HarvestInfo hi0 = new HarvestInfo(hdOID, domain0.getName(),
                                           config0.getName(), now, 1L, 1L,
                                           StopReason.OBJECT_LIMIT);
-        config0.addHarvestInfo(hi0);
+        domain0.getHistory().addHarvestInfo(hi0);
         dao.update(domain0);
 
         HarvestInfo hi1 = new HarvestInfo(hdOID, domain1.getName(),
                                           config1.getName(), now, 1L, 1L,
                                           StopReason.SIZE_LIMIT);
-        config1.addHarvestInfo(hi1);
+        domain1.getHistory().addHarvestInfo(hi1);
         dao.update(domain1);
 
         HarvestInfo hi2 = new HarvestInfo(hdOID, domain2.getName(),
                                           config2.getName(), now, 1L, 1L,
                                           StopReason.DOWNLOAD_COMPLETE);
-        config2.addHarvestInfo(hi2);
+        domain2.getHistory().addHarvestInfo(hi2);
         dao.update(domain2);
 
         HarvestInfo hi3 = new HarvestInfo(hdOID, domain3.getName(),
                                           config3.getName(), now, 1L, 1L,
                                           StopReason.CONFIG_SIZE_LIMIT);
-        config3.addHarvestInfo(hi3);
+        domain3.getHistory().addHarvestInfo(hi3);
         config3.setMaxBytes(1L);
         dao.update(domain3);
 
@@ -938,7 +938,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         HarvestInfo newHi0 = new HarvestInfo(Long.valueOf(43L), domain0.getName(),
                                               config0.getName(), later, 1L, 1L,
                                               StopReason.DOWNLOAD_COMPLETE);
-        config0.addHarvestInfo(newHi0);
+        domain0.getHistory().addHarvestInfo(newHi0);
         dao.update(domain0);
 
 

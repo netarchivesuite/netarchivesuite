@@ -184,9 +184,10 @@ public class DomainTester extends DataModelTestCase {
         }
 
         /* Test invalid configuration parameters */
+        Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg = new DomainConfiguration(
                 "test",
-                TestInfo.getDefaultDomain(),
+                d,
                 Arrays.asList(new SeedList[]{TestInfo.seedlist}),
                 new ArrayList<Password>());
 
@@ -219,7 +220,7 @@ public class DomainTester extends DataModelTestCase {
         }
 
         try {
-            cfg.addSeedList(null);
+            cfg.addSeedList(d, null);
             fail("Null not a valid argument");
         } catch (ArgumentNotValid e) {
             // expected
@@ -236,7 +237,7 @@ public class DomainTester extends DataModelTestCase {
             wd.addSeedList(TestInfo.seedlist);
 
             DomainConfiguration cfg1 = TestInfo.getDefaultConfig(wd);
-            cfg1.addSeedList(new SeedList("Unknown-seedlist", TestInfo.SEEDS1));
+            cfg1.addSeedList(wd, new SeedList("Unknown-seedlist", TestInfo.SEEDS1));
             wd.addConfiguration(cfg1);
             fail("The seedlist is unknown");
         } catch (UnknownID e) {
@@ -819,7 +820,7 @@ public class DomainTester extends DataModelTestCase {
         assertTrue("Password should exist after adding",
                    d.hasPassword(TestInfo.PASSWORD_NAME));
         DomainConfiguration conf = d.getDefaultConfiguration();
-        conf.addPassword(TestInfo.password);
+        conf.addPassword(d, TestInfo.password);
         try {
             d.removePassword(TestInfo.PASSWORD_NAME);
             fail("Should not be allowed to remove password in use");
@@ -1324,7 +1325,8 @@ public class DomainTester extends DataModelTestCase {
         while (passwordIterator.hasNext()) {
             passwordList.add(passwordIterator.next());
         }
-        return new DomainConfiguration(nameOfClone, config.getDomain(), seedListList, passwordList);
+        return new DomainConfiguration(nameOfClone, config.getDomain(), config.getDomainhistory(), 
+        		config.getCrawlertraps(), seedListList, passwordList);
     }
 
     private Password createDefaultPassword(String name) {

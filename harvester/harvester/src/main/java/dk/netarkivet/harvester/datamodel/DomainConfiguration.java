@@ -59,7 +59,7 @@ public class DomainConfiguration implements Named {
     /** Maximum number of bytes to download in a harvest. */
     private long maxBytes;
     /** The domain associated with this configuration. */
-    private Domain domain;
+    private String domainName;
 
     /** The list of seedlists. */
     private List<SeedList> seedlists;
@@ -75,7 +75,14 @@ public class DomainConfiguration implements Named {
     private Long id;
     /** The class logger. */
     private final Log log = LogFactory.getLog(DomainConfiguration.class);
+    
+    /** The domainhistory associated with the domain. */
+	private DomainHistory domainhistory;
+	
+	/** The crawlertraps associated with the domain. */
+	private List<String> crawlertraps;
 
+	
     /** How many objects should be harvested in a harvest to trust that our
      * expected size of objects is less than the default number.
      */
@@ -86,7 +93,7 @@ public class DomainConfiguration implements Named {
     /** Create a new configuration for a domain.
      *
      * @param theConfigName The name of this configuration
-     * @param domain The domain thet this configuration is for
+     * @param domain The domain that this configuration is for
      * @param seedlists Seedlists to use in this configuration.
      * @param passwords Passwords to use in this configuration.
      */
@@ -99,7 +106,9 @@ public class DomainConfiguration implements Named {
         ArgumentNotValid.checkNotNull(passwords, "passwords");
 
         this.configName = theConfigName;
-        this.domain = domain;
+        this.domainName = domain.getName();
+        this.domainhistory = domain.getHistory(); // TODO Filter all history not relevant for this configuration
+        this.crawlertraps = domain.getCrawlerTraps();
         this.seedlists = seedlists;
         this.passwords = passwords;
         this.comments = "";
@@ -109,7 +118,29 @@ public class DomainConfiguration implements Named {
         this.best = domain.getBestHarvestInfoExpectation(theConfigName);
     }
 
-    /**
+    public DomainConfiguration(String theConfigName, String domainName, DomainHistory history,
+			List<String> crawlertraps, List<SeedList> seedlists,
+			List<Password> passwords) {
+    	ArgumentNotValid.checkNotNullOrEmpty(theConfigName, "theConfigName");
+        ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkNotNull(passwords, "passwords");
+        ArgumentNotValid.checkNotNullOrEmpty(seedlists, "seedlists");
+        ArgumentNotValid.checkNotNull(passwords, "passwords");
+        
+        this.configName = theConfigName;
+        this.domainName = domainName;
+        this.domainhistory = history; // TODO Filter all history not relevant for this configuration
+        this.crawlertraps = crawlertraps;
+        this.seedlists = seedlists;
+        this.passwords = passwords;
+        this.comments = "";
+        this.maxRequestRate = Constants.DEFAULT_MAX_REQUEST_RATE;
+        this.maxObjects = Constants.DEFAULT_MAX_OBJECTS;
+        this.maxBytes = Constants.DEFAULT_MAX_BYTES;
+        this.best = DomainHistory.getBestHarvestInfoExpectation(theConfigName, history);
+	}
+
+	/**
      * Specify the name of the order.xml template to use.
      *
      * @param ordername order.xml template name
@@ -218,19 +249,12 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Returns the domain aggregating this configuration.
+     * Returns the name of the domain aggregating this configuration.
      *
-     * @return the Domain aggregating this configuration.
+     * @return the name of the domain aggregating this configuration.
      */
-    public Domain getDomain() {
-        return domain;
-    }
-
-  /** Adds harvest information to the configurations history.
-   *  @param hi HarvestInfo to add to Domain.
-   */
-    public void addHarvestInfo(HarvestInfo hi) {
-      domain.getHistory().addHarvestInfo(hi);
+    public String getDomain() {
+        return domainName;
     }
 
     /** Get an iterator of seedlists used in this configuration.
@@ -249,7 +273,7 @@ public class DomainConfiguration implements Named {
      * @throws PermissionDenied if the seedlist is different from the one
      * on the domain.
      */
-    public void addSeedList(SeedList seedlist) {
+    public void addSeedList(Domain domain, SeedList seedlist) {
         ArgumentNotValid.checkNotNull(seedlist, "seedlist");
         SeedList domainSeedlist = domain.getSeedList(seedlist.getName());
         if (!domainSeedlist.equals(seedlist)) {
@@ -274,7 +298,7 @@ public class DomainConfiguration implements Named {
      * Add password.
      * @param password to add
      */
-    public void addPassword(Password password) {
+    public void addPassword(Domain domain, Password password) {
         ArgumentNotValid.checkNotNull(password, "password");
         Password domainPassword = domain.getPassword(password.getName());
         if (!domainPassword.equals(password)) {
@@ -304,7 +328,6 @@ public class DomainConfiguration implements Named {
         long prevresultfactor
                 = Settings.getLong(
                 HarvesterSettings.ERRORFACTOR_PERMITTED_PREVRESULT);
-
         HarvestInfo best = this.best;
 
         log.trace("Using domain info '" + best + "' for configuration '"
@@ -434,7 +457,8 @@ public class DomainConfiguration implements Named {
             return defaultExpectation;
         }
     }
-
+    
+    
     /** Set the comments field.
      *
      * @param comments User-entered free-form comments.
@@ -480,11 +504,11 @@ public class DomainConfiguration implements Named {
      * @param seedlists The seedlists to use.
      * @throws ArgumentNotValid if the seedslists are null
      */
-    public void setSeedLists(List<SeedList> seedlists) {
+    public void setSeedLists(Domain domain, List<SeedList> seedlists) {
         ArgumentNotValid.checkNotNull(seedlists, "seedlists");
         this.seedlists = new ArrayList<SeedList>(seedlists.size());
         for(SeedList s: seedlists) {
-            addSeedList(s);
+            addSeedList(domain, s);
         }
     }
 
@@ -493,11 +517,11 @@ public class DomainConfiguration implements Named {
      * @param passwords The passwords to use.
      * @throws ArgumentNotValid if the passwords are null
      */
-    public void setPasswords(List<Password> passwords) {
+    public void setPasswords(Domain domain, List<Password> passwords) {
         ArgumentNotValid.checkNotNull(passwords, "passwords");
         this.passwords = new ArrayList<Password>(passwords.size());
         for(Password p: passwords) {
-            addPassword(p);
+            addPassword(domain, p);
         }
     }
 
@@ -529,10 +553,31 @@ public class DomainConfiguration implements Named {
      */
     public String toString() {
         return "Configuration '" + getName()
-                + "' of domain '" + getDomain().getName() + "'";
+                + "' of domain '" + domainName + "'";
+    }
+    
+	public void setCrawlertraps(List<String> crawlertraps) {
+		this.crawlertraps = crawlertraps;
+	}
+    
+    public List<String> getCrawlertraps() {
+    	return this.crawlertraps;
     }
     
     public void setBestHarvestInfo(HarvestInfo newBest) {
     	this.best = newBest;
     }
+    
+    public DomainHistory getDomainhistory() {
+		return domainhistory;
+	}
+
+	public void setDomainhistory(DomainHistory domainhistory) {
+		this.domainhistory = domainhistory;
+	}
+
+
+    
+    
+    
 }

@@ -190,7 +190,7 @@ public class DomainConfigurationDefinition {
         domainConf.setMaxObjects(maxObjects);
         domainConf.setMaxBytes(maxBytes);
         domainConf.setMaxRequestRate(load);
-        domainConf.setSeedLists(seedlistList);
+        domainConf.setSeedLists(domain, seedlistList);
         if (comments != null) {
             domainConf.setComments(comments);
         }
