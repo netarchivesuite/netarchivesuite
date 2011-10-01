@@ -34,7 +34,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.harvesting.distribute.HarvesterStatusMessage;
 
 /**
  * This singleton class is in charge of giving out the correct channels.
