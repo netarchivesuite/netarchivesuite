@@ -38,8 +38,6 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
-import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
  * A class representing an HttpServer. This class loads web applications as
@@ -109,9 +107,6 @@ public class GUIWebServer implements CleanupIF {
         //Add default handler, giving 404 page that lists web contexts, and
         //favicon.ico from Jetty
         server.addHandler(new DefaultHandler());
-
-        // Start the harvest monitor server
-        HarvestMonitor.getInstance();
     }
 
     /**
@@ -205,12 +200,6 @@ public class GUIWebServer implements CleanupIF {
             }
             log.info("HTTP server has been stopped.");
         }
-
-        // Release DB resources
-        HarvestDBConnection.cleanup();
-
-        // Shut down the harvest monitor
-        //HarvestMonitor.getInstance().cleanup();
 
         instance = null;
     }

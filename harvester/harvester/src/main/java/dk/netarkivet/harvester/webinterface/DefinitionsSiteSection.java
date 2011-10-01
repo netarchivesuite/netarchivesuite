@@ -32,10 +32,12 @@ import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
+import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 
 /**
@@ -113,9 +115,12 @@ public class DefinitionsSiteSection extends SiteSection {
         HarvestDefinitionDAO.getInstance();
         JobDAO.getInstance();
         GlobalCrawlerTrapListDAO.getInstance();
+        // Start the harvest monitor sever
+        HarvestMonitor.getInstance();
     }
     
-    /** No cleanup necessary in this site section. */
+    /** Release DB resources. */
     public void close() {
+    	 HarvestDBConnection.cleanup();
     }
 }
