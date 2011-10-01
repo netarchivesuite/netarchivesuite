@@ -1183,6 +1183,13 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         cfg3.setMaxBytes(1000000);
         cfg4.setMaxBytes(1000000);
 
+        cfg1.setDomainhistory(d.getHistory());
+        cfg2.setDomainhistory(d.getHistory());
+        cfg3.setDomainhistory(d.getHistory());
+        cfg4.setDomainhistory(d.getHistory());
+        cfg5.setDomainhistory(d.getHistory());
+        cfg6.setDomainhistory(d.getHistory());
+       
         //resort
         list = Arrays.asList(new DomainConfiguration[] {
                     cfg1,cfg2,cfg3,cfg4,cfg5,cfg6});

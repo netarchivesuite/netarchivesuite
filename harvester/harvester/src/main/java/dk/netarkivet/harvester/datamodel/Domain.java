@@ -404,7 +404,7 @@ public class Domain implements Named {
                                 + "'");
         }
         DomainConfiguration cfg = domainConfigurations.get(cfgName);
-        cfg.setBestHarvestInfo(this.getBestHarvestInfoExpectation(cfgName));
+        cfg.setDomainhistory(this.getHistory());
         return cfg;
     }
 

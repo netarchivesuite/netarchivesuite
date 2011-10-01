@@ -63,8 +63,6 @@ public class DomainConfiguration implements Named {
 
     /** The list of seedlists. */
     private List<SeedList> seedlists;
-    
-    private HarvestInfo best;
 
     /** The list of passwords that apply in this configuration. */
     private List<Password> passwords;
@@ -115,7 +113,6 @@ public class DomainConfiguration implements Named {
         this.maxRequestRate = Constants.DEFAULT_MAX_REQUEST_RATE;
         this.maxObjects = Constants.DEFAULT_MAX_OBJECTS;
         this.maxBytes = Constants.DEFAULT_MAX_BYTES;
-        this.best = domain.getBestHarvestInfoExpectation(theConfigName);
     }
 
     public DomainConfiguration(String theConfigName, String domainName, DomainHistory history,
@@ -137,7 +134,6 @@ public class DomainConfiguration implements Named {
         this.maxRequestRate = Constants.DEFAULT_MAX_REQUEST_RATE;
         this.maxObjects = Constants.DEFAULT_MAX_OBJECTS;
         this.maxBytes = Constants.DEFAULT_MAX_BYTES;
-        this.best = DomainHistory.getBestHarvestInfoExpectation(theConfigName, history);
 	}
 
 	/**
@@ -328,7 +324,8 @@ public class DomainConfiguration implements Named {
         long prevresultfactor
                 = Settings.getLong(
                 HarvesterSettings.ERRORFACTOR_PERMITTED_PREVRESULT);
-        HarvestInfo best = this.best;
+        HarvestInfo best = DomainHistory.getBestHarvestInfoExpectation(
+        		configName, this.domainhistory);
 
         log.trace("Using domain info '" + best + "' for configuration '"
                   + toString() + "'");
@@ -564,20 +561,11 @@ public class DomainConfiguration implements Named {
     	return this.crawlertraps;
     }
     
-    public void setBestHarvestInfo(HarvestInfo newBest) {
-    	this.best = newBest;
-    }
-    
     public DomainHistory getDomainhistory() {
 		return domainhistory;
 	}
 
 	public void setDomainhistory(DomainHistory domainhistory) {
 		this.domainhistory = domainhistory;
-	}
-
-
-    
-    
-    
+	} 
 }
