@@ -39,7 +39,7 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                  java.util.Iterator,
                  java.util.List,
                  java.util.Locale,
-                 java.util.HashMap,                 
+                 java.util.Map,                 
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.utils.StringUtils,

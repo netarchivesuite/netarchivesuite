@@ -130,11 +130,9 @@ public class ExtendedFieldOptions {
      */
     public boolean isKeyValid(String aKey) {
         if (isValid()) {
-            for (String key : options.keySet()) {
-                 if (key.equals(aKey)) {
-                    return true;
-                }
-            }
+        	if (options.keySet().contains(aKey)) {
+        		return true;
+        	}
         }
         return false;
     }

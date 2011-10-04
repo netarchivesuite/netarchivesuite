@@ -45,7 +45,7 @@ public class ExtendedField implements Serializable {
     private String name;
     /** formatting patterns of the extended Field. */
     private String formattingPattern;
-    /** datatype of the extended Field. see datatype list */
+    /** datatype of the extended Field. see datatype list. */
     private int datatype;
     /** is extendedfield mandatory. */
     private boolean mandatory;
