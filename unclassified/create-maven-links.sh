@@ -23,6 +23,9 @@ rm $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/dk/netarkivet/archive
 ln -s $PWD/src/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-archive/src/test/java/dk/netarkivet/archive
 ln -s $PWD/tests/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/test/java/dk/netarkivet
+# Extra is.hi.bok.deduplicator.DigestIndexer
+rm $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/is
+ln -s $PWD/src/is $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/
 
 # Harvester module
 rm $M2_BUILD_HOME/netarchivesuite-harvester/src/main/java/dk/netarkivet/harvester
