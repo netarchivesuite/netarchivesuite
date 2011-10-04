@@ -35,6 +35,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
@@ -57,6 +59,7 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.distribute.IndexReadyMessage;
 
 /**
@@ -71,20 +74,21 @@ import dk.netarkivet.harvester.distribute.IndexReadyMessage;
 public class IndexRequestServer extends ArchiveMessageHandler
         implements CleanupIF {
     /** The class logger. */
-    private Log log = LogFactory.getLog(getClass().getName());
+    private static Log log = LogFactory.getLog(IndexRequestServer.class);
     /** The unique instance. */
     private static IndexRequestServer instance;
     /** The handlers for index request types. */
     private Map<RequestType, FileBasedCache<Set<Long>>> handlers;
     
     /** The connection to the JMSBroker. */
-    private JMSConnection conn;
+    private static JMSConnection conn;
     /** A set with the current indexing jobs in progress. */
-    private Set<IndexRequestMessage> currentJobs;
+    private static Set<IndexRequestMessage> currentJobs;
     /** The max number of concurrent jobs. */
-    private long maxConcurrentJobs;
+    private static long maxConcurrentJobs;
     /** Are we listening, now. */
-    private AtomicBoolean isListening = new AtomicBoolean();
+    private static AtomicBoolean isListening = new AtomicBoolean();    
+   
     /**
      * The directory to store backup copies of the currentJobs.
      * In case of the indexserver crashing. 
@@ -200,6 +204,7 @@ public class IndexRequestServer extends ArchiveMessageHandler
             // Limit the number of concurrently indexing job
             if (currentJobs.size() >= maxConcurrentJobs) {
                 if (isListening.get()) {
+                	System.out.println("Stop listening");
                     conn.removeListener(Channels.getTheIndexServer(), this);
                     isListening.set(false);
                 }
@@ -329,17 +334,16 @@ public class IndexRequestServer extends ArchiveMessageHandler
                     e);
             irMsg.setNotOk(e);
         } finally {
-            // Remove job from currentJobs Set and reenable us as listener
-            // if necessary.
+            // Remove job from currentJobs Set
             currentJobs.remove(irMsg);
             // delete stored message
             deleteStoredMessage(irMsg);
-            if (!isListening.get()) {
-                if (maxConcurrentJobs > currentJobs.size()) {
-                    log.info("Re-enabling listening to the indexserver-queue");
-                    conn.setListener(Channels.getTheIndexServer(), this);
-                }
-            }
+//            if (!isListening.get()) {
+//                if (maxConcurrentJobs > currentJobs.size()) {
+//                    log.info("Re-enabling listening to the indexserver-queue");
+//                    conn.setListener(Channels.getTheIndexServer(), this);
+//                }
+//            }
             String state = "failed";
             if (irMsg.isOk()) {
                 state = "successful";
@@ -424,23 +428,47 @@ public class IndexRequestServer extends ArchiveMessageHandler
      */
     public void start() {
         restoreRequestsfromRequestDir();
+        
         log.info("" + currentJobs.size()
                 + " indexing jobs in progress that was stored in requestdir: " 
                 + requestDir.getAbsolutePath() );
         conn = JMSConnectionFactory.getInstance();
         
-        if (maxConcurrentJobs > currentJobs.size()) {
-            log.info("Enabling listening to the indexserver-queue");
-            conn.setListener(Channels.getTheIndexServer(), this);
-            isListening.set(true);
-            log.info("Index request server is listening for requests on "
-                    + "channel '"
-                    + Channels.getTheIndexServer() + "'");
+        isListening.set(false);
+     
+        // Define and start thread to observe current jobs:
+        // Only job is to look at the isListening atomicBoolean.
+        // If not listening, check if we are ready to listen again.  
+     
+        TimerTask checkIfListening = new ListeningTask(this);
+        
+        Timer t = new Timer();
+        long period = 1000 * 60 * 5; // 5 minutes;
+        t.schedule(checkIfListening, 0L, period);
+    }
+    
+    private static class ListeningTask extends TimerTask {
+    	
+    	IndexRequestServer thisIrs;
+    	
+    	ListeningTask(IndexRequestServer irs){
+    		thisIrs = irs;
+    	}
+    	
+    	@Override
+    	public void run() {
+    		log.debug("Checking if we should be listening again");
+    		if (!isListening.get()) {
+    			if (maxConcurrentJobs > currentJobs.size()){
+    				log.info("Enabling listening to the indexserver-queue");
+    	            conn.setListener(Channels.getTheIndexServer(), thisIrs);
+    	            isListening.set(true);
+    	            log.info("Index request server is listening for requests on "
+    	                    + "channel '"
+    	                    + Channels.getTheIndexServer() + "'");
+    			}
+    		}
+    	}
 
-        } else {
-            log.info("Currently full occupied with indexjobs stored in the " 
-                    + "requestdirectory");
-            isListening.set(false);
-        }
     }
 }

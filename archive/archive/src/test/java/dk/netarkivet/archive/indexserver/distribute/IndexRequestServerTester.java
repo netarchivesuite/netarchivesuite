@@ -79,6 +79,7 @@ public class IndexRequestServerTester extends TestCase {
         if (server != null) {
             server.close();
         }
+        
         mmfbc.tearDown();
         pse.tearDown();
         pss.tearDown();
@@ -260,9 +261,11 @@ public class IndexRequestServerTester extends TestCase {
      */
     public void testIndexServerListener() throws InterruptedException {
         //Start server and set a handler
+    	
         server = IndexRequestServer.getInstance();
         server.setHandler(RequestType.CDX, mmfbc);
         server.start();
+        Thread.sleep(200); // necessary for the unittest to pass 
 
         //Send OK message
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
@@ -360,6 +363,7 @@ public class IndexRequestServerTester extends TestCase {
         server = IndexRequestServer.getInstance();
         server.setHandler(RequestType.CDX, mmfbc);
         server.start();
+        Thread.sleep(200); // necessary for the unittest to pass 
 
         //A message to visit with
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
@@ -398,6 +402,4 @@ public class IndexRequestServerTester extends TestCase {
         assertEquals("Handler should be called with right parameter",
                      JOB_SET, mjic.cacheParameter);
     }
-
-
 }
