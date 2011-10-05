@@ -520,7 +520,7 @@ function resubmitSelectedJobs() {
                         //state using the history sitesection only.
                     %>
                     <button type="button" onclick="resubmit(<%=js.getJobID()%>);collapse_row(<%=js.getJobID()%>);return false;"><fmt:message key="button;restart"/></button>
-                    <!-- The onlclick method here has to return false because this button appears inside a form
+                    <!-- The onclick method here has to return false because this button appears inside a form
                          which would otherwise be submitted
                     -->
                     <button type="button" onclick="reject(<%=js.getJobID()%>);collapse_row(<%=js.getJobID()%>);return false;"><fmt:message key="button;reject"/></button>
