@@ -40,6 +40,7 @@ import dk.netarkivet.archive.indexserver.ArchiveIndexServerTesterSuite;
 import dk.netarkivet.archive.indexserver.distribute.ArchiveIndexserverDistributeTesterSuite;
 import dk.netarkivet.archive.tools.ArchiveToolsTesterSuite;
 import dk.netarkivet.archive.webinterface.ArchiveWebinterfaceTesterSuite;
+import dk.netarkivet.common.CleanupSuite;
 import dk.netarkivet.common.CommonsTesterSuite;
 import dk.netarkivet.common.distribute.CommonDistributeTesterSuite;
 import dk.netarkivet.common.distribute.arcrepository.CommonDistributeArcrepositoryTesterSuite;
@@ -148,6 +149,11 @@ public class UnitTesterSuite {
          * Testersuites for the wayback module 
          */
         WaybackTesterSuite.addToSuite(suite);
+        
+        /*
+         * Dummy testersuite to cleanup after the tests.
+         */
+        CleanupSuite.addToSuite(suite);
     }
 
     public static Test suite() {

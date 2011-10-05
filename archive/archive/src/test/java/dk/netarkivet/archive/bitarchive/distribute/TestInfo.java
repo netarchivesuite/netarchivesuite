@@ -24,14 +24,12 @@ package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.io.File;
 
-/**
- */
 public class TestInfo {
     private static final File BAMON_BASEDIR =
         new File("tests/dk/netarkivet/archive/bitarchive/distribute/data");
     static final File BAMON_ORIGINALS = new File(BAMON_BASEDIR, "originals");
     static final File BAMON_WORKING = new File(BAMON_BASEDIR, "working") ;
-    static final File BAMON_TMP_FILE = new File(BAMON_ORIGINALS,"tmpout.txt");//Nonexsting, to put data in
+    static final File BAMON_TMP_FILE = new File(BAMON_ORIGINALS,"tmpout.txt");//Non-existing, to put data in
 
     static final File MONITOR_TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/monitor");
     static final File DUMMY_FILE = new File(MONITOR_TEST_DIR, "dummyTestRemoteFile.txt");

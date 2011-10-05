@@ -848,6 +848,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      */
     public void testGetChecksumMessage() throws InterruptedException, IOException {
         bam_server = BitarchiveMonitorServer.getInstance();
+        Thread.sleep(200);
         
         // Set up a listener on the reply queue for batch messages
         TestMessageListener listener = new TestMessageListener();
