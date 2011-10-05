@@ -157,7 +157,7 @@ public class GlobalCrawlerTrapList {
                  try {
                      Pattern.compile(trap);
                  } catch (PatternSyntaxException e) {
-                     throw new ArgumentNotValid("Cannot parse regular expression '" + trap + "'", e);
+                     throw new ArgumentNotValid("Cannot parse the string '" + trap + "' as a Java regular expression.", e);
                  }
                 traps.add(trap);
             }

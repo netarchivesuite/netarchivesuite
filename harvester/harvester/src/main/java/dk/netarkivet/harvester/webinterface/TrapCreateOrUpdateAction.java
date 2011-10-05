@@ -117,7 +117,7 @@ public class TrapCreateOrUpdateAction extends TrapAction {
                     trap.setTrapsFromInputStream(is);
                 } catch (ArgumentNotValid argumentNotValid) {
                     HTMLUtils.forwardWithErrorMessage(context, i18n,
-                                                      "errormsg;crawlertrap.regexp.error", name);
+                                                      "errormsg;crawlertrap.regexp.error");
                     throw new ForwardedToErrorPage(argumentNotValid.getMessage());
                 }
             }
