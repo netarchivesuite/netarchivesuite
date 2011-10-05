@@ -39,7 +39,7 @@ import junit.textui.TestRunner;
  * change this template use File | Settings | File Templates.
  */
 public class WaybackTesterSuite {
-            /**
+    /**
      * Create a test suite just for these tests.
      * @return this testsuite
      */
