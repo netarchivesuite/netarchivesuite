@@ -86,7 +86,7 @@ public class PartialHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * Test names of seedlist with max bytes and max object defined
+     * Test names of seedlist with max bytes and max object defined.
      */
     public void testMixedLimitsSeedlistNames() {
         String seedlist = "http://www.mydomain.dk/page1.jsp?aparam=avalue";
@@ -350,7 +350,7 @@ public class PartialHarvestTester extends DataModelTestCase {
         assertEquals("Should be 3 configurations with name " + name2, 3, countName2);
     }
 
-    /** Test that setting domain configurations actually removes dups.
+    /** Test that setting domain configurations actually removes duplicates.
      * @throws Exception
      */
     public void testSetDomainConfigurations() throws Exception {
@@ -452,9 +452,7 @@ public class PartialHarvestTester extends DataModelTestCase {
         harvest.removeDomainConfiguration(dcKey);
         configList =
             IteratorUtils.toList(harvest.getDomainConfigurations());
-        assertTrue("Should have zero configs now", configList.size() == 0);
-        
-        
+        assertTrue("Should have zero configs now", configList.size() == 0);  
     }
     
 }

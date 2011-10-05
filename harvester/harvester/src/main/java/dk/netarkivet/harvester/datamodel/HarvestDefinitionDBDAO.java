@@ -513,9 +513,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 rows = s.executeUpdate();
                 log.debug(rows + " partialharvests records updated");
                 s.close();
-                // The updates to harvest_configs table are done 
-                // in method removeDomainConfiguration(), not here.
-                //createHarvestConfigsEntries(c, ph, ph.getOid());
+                // FIXME The updates to harvest_configs table should be done 
+                // in method removeDomainConfiguration(), and not here.
+                // The following deletes ALL harvest_configs entries for 
+                // this PartialHarvest, and creates the entries for the 
+                // PartialHarvest again!!
+                createHarvestConfigsEntries(c, ph, ph.getOid());
             } else {
                 String message = "Harvest definition " + hd
                         + " has unknown class " + hd.getClass();
@@ -1447,12 +1450,13 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * And maybe update the edition as well (TBD). 
      */
     @Override
-    public void removeDomainConfiguration(PartialHarvest ph,
+    public void removeDomainConfiguration(Long harvestId,
             DomainConfigurationKey key) {
-        ArgumentNotValid.checkNotNull(ph, "PartialHarvest ph");
-        if (ph.getOid() == null) {
+        ArgumentNotValid.checkNotNull(key, "DomainConfigurationKey key");
+        if (harvestId == null) {
             // Don't need to do anything, if PartialHarvest is not
             // yet stored in database
+        	log.warn("No removal of domainConfiguration, as harvestId is null");
             return;
         }
         Connection connection = HarvestDBConnection.get();
@@ -1465,7 +1469,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "WHERE domains.name = ? AND configurations.name = ?"
                     + "  AND domains.domain_id = configurations.domain_id)"
                     );
-            s.setLong(1, ph.getOid());
+            s.setLong(1, harvestId);
             s.setString(2, key.domainName);
             s.setString(3, key.configName);
             s.executeUpdate();
@@ -1474,7 +1478,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + " domainconfiguration: "
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.rollbackIfNeeded(connection, "removing DomainConfiguration from ", ph);
+            DBUtils.rollbackIfNeeded(connection, 
+            		"removing DomainConfiguration from harvest w/id " 
+            				+ harvestId + " failed", harvestId);
             HarvestDBConnection.release(connection);
         }
     }
@@ -1512,4 +1518,48 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             HarvestDBConnection.release(connection);
         }
     }
+
+	@Override
+	public void addDomainConfiguration(PartialHarvest ph,
+			DomainConfigurationKey dcKey) {
+		ArgumentNotValid.checkNotNull(ph, "PartialHarvest ph");
+		ArgumentNotValid.checkNotNull(dcKey, "DomainConfigurationKey dcKey");
+		
+		Connection connection = HarvestDBConnection.get();
+        PreparedStatement s = null;
+		try {
+			s = connection.prepareStatement("INSERT INTO harvest_configs "
+		                    + "( harvest_id, config_id ) "
+		                    + "SELECT ?, config_id FROM configurations, domains "
+		                    + "WHERE domains.name = ? AND configurations.name = ?"
+		                    + "  AND domains.domain_id = configurations.domain_id");
+		                s.setLong(1, ph.getOid());
+		                s.setString(2, dcKey.domainName);
+		                s.setString(3, dcKey.configName);
+		                s.executeUpdate();
+		                s.close();
+		} catch (SQLException e) {
+			log.warn("Exception thrown while adding domainConfiguration: "
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
+		} finally {
+			HarvestDBConnection.release(connection);
+		}
+	}
+
+	@Override
+	public void resetDomainConfigurations(PartialHarvest ph,
+			List<DomainConfiguration> dcList) {
+		ArgumentNotValid.checkNotNull(ph, "PartialHarvest ph");
+		ArgumentNotValid.checkNotNull(dcList, "List<DomainConfiguration> dcList");
+		
+		Connection connection = HarvestDBConnection.get();
+		try {
+			createHarvestConfigsEntries(connection, ph, ph.getOid());
+		} catch (SQLException e) {
+		log.warn("Exception thrown while resetting domainConfigurations: "
+                + ExceptionUtils.getSQLExceptionCause(e), e);
+		} finally {
+			HarvestDBConnection.release(connection);
+		}
+	}
 }

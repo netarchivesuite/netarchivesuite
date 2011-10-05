@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:        $Id: SelectiveHarvest.java 2033 2011-09-20 15:48:19Z svc $
+ * Revision:    $Revision: 2033 $
+ * Author:      $Author: svc $
+ * Date:        $Date: 2011-09-20 17:48:19 +0200 (Tue, 20 Sep 2011) $
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -25,9 +25,13 @@ package dk.netarkivet.harvester.webinterface;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,16 +48,20 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
-import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
 
 /**
  * This class contains the methods for updating data for selective harvests.
+ * New version not yet finished.
  */
-public class SelectiveHarvest {
+public class SelectiveHarvestNew {
+    
+    /** The logger. */
+    private static final Log log = LogFactory.getLog(SelectiveHarvest.class);
+    
     /**
      * Utility class. No instances.
      */
-    private SelectiveHarvest() {
+    private SelectiveHarvestNew() {
     }
 
     /**
@@ -76,34 +84,21 @@ public class SelectiveHarvest {
         if (request.getParameter(Constants.UPDATE_PARAM) == null) {
             return; //nothing to do.
         }
-        
-        String deleteConfig
-        	= request.getParameter(Constants.DELETECONFIG_PARAM);
-        //Case where we are removing a configuration
-        //In this we make the delete, and then return;
-        if (deleteConfig != null) {
-            HTMLUtils.forwardOnEmptyParameter(context,
-                    Constants.DELETECONFIG_PARAM);
-            deleteConfig(context, i18n, deleteConfig);
-            return;
-        }
-        
+        HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
         PartialHarvest hdd = updateHarvestDefinition(context, i18n,
                 unknownDomains, illegalDomains);
 
-        boolean changed = false;
-
         //If the override date is set, parse it and set the override date.
-        Date date = HTMLUtils.parseOptionalDate(
+        Date nextDate = HTMLUtils.parseOptionalDate(
                 context, Constants.NEXTDATE_PARAM,
                 I18n.getString(
                         dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE,
                         context.getResponse().getLocale(),
                         "harvestdefinition.schedule.edit.timeformat"),
                 null);
-        if (date != null) {
-            hdd.setNextDate(date);
-            changed |= true;
+        if (nextDate != null) {
+            //hdd.setNextDate(nextDate);
+            hdDao.updateNextdate(hdd, nextDate);
         }
 
         // Case where we are adding domains that didn't exist before
@@ -112,12 +107,22 @@ public class SelectiveHarvest {
         if (request.getParameter(Constants.ADDDOMAINS_PARAM) != null) {
             HTMLUtils.forwardOnMissingParameter(context,
                     Constants.UNKNOWN_DOMAINS_PARAM);
-            changed |= addDomainsToHarvest(hdd,
+            List<DomainConfiguration> dcList = findNewDomainsToHarvest(hdd,
                     request.getParameter(Constants.UNKNOWN_DOMAINS_PARAM));
+            log.debug("Adding " + dcList.size() + " configurations");
+            for (DomainConfiguration dc: dcList) {
+            	hdDao.addDomainConfiguration(hdd, new DomainConfigurationKey(dc));
+            }
         }
 
-        if (changed) {
-            HarvestDefinitionDAO.getInstance().update(hdd);
+        String deleteConfig
+                = request.getParameter(Constants.DELETECONFIG_PARAM);
+
+        //Case where we are removing a configuration
+        if (deleteConfig != null) {
+            HTMLUtils.forwardOnEmptyParameter(context,
+                    Constants.DELETECONFIG_PARAM);
+            deleteConfig(context, i18n, deleteConfig, hdd);
         }
     }
 
@@ -131,13 +136,13 @@ public class SelectiveHarvest {
      * @return The updated harvest definition.  This object holds an edition
      * that is legal to use for further updates (adding or deleting domains)
      */
-    private static PartialHarvest updateHarvestDefinition
-            (PageContext context, I18n i18n,
+    private static PartialHarvest updateHarvestDefinition(
+    		PageContext context, I18n i18n,
              List<String> unknownDomains, List<String> illegalDomains) {
         ServletRequest request = context.getRequest();
         HTMLUtils.forwardOnEmptyParameter(context,
                 Constants.HARVEST_PARAM, Constants.SCHEDULE_PARAM);
-        String name = request.getParameter(Constants.HARVEST_PARAM);
+        String harvestName = request.getParameter(Constants.HARVEST_PARAM);
 
         HTMLUtils.forwardOnMissingParameter(context,
                 Constants.COMMENTS_PARAM, Constants.DOMAINLIST_PARAM);
@@ -154,23 +159,24 @@ public class SelectiveHarvest {
 
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
 
-        List<DomainConfiguration> dc
+        List<DomainConfiguration> dcList
                 = getDomainConfigurations(request.getParameterMap());
-        addDomainsToConfigurations(dc,
+        
+        addDomainsToConfigurations(dcList,
                 request.getParameter(Constants.DOMAINLIST_PARAM),
                 unknownDomains, illegalDomains);
-
+      
         // If necessary create harvest from scratch
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         if ((request.getParameter(Constants.CREATENEW_PARAM) != null)) {
-            if (hddao.exists(name)) {
+            if (hddao.exists(harvestName)) {
                 HTMLUtils.forwardWithErrorMessage(context, i18n,
                         "errormsg;harvest.definition.0.already.exists",
-                        name);
+                        harvestName);
                 throw new ForwardedToErrorPage("A harvest definition "
-                        + "called '" + name + "' already exists");
+                        + "called '" + harvestName + "' already exists");
             }
-            PartialHarvest hdd = new PartialHarvest(dc, sched, name, comments);
+            PartialHarvest hdd = new PartialHarvest(dcList, sched, harvestName, comments);
             hdd.setActive(false);
             hddao.create(hdd);
             return hdd;
@@ -178,23 +184,25 @@ public class SelectiveHarvest {
             long edition = HTMLUtils.parseOptionalLong(context,
                     Constants.EDITION_PARAM, Constants.NO_EDITION);
 
-            PartialHarvest hdd = (PartialHarvest) hddao.getHarvestDefinition(name);
+            PartialHarvest hdd = (PartialHarvest) hddao.getHarvestDefinition(harvestName);
+            
             if (hdd.getEdition() != edition) {
                 HTMLUtils.forwardWithRawErrorMessage(context, i18n,
                         "errormsg;harvest.definition.changed.0.retry.1",
                         "<br/><a href=\"Definitions-edit-selective-harvest.jsp?"
                                 + Constants.HARVEST_PARAM + "="
-                                + HTMLUtils.encodeAndEscapeHTML(name)
+                                + HTMLUtils.encodeAndEscapeHTML(harvestName)
                                 + "\">",
                         "</a>");
                 throw new ForwardedToErrorPage("Harvest definition '"
-                        + name + "' has changed");
+                        + harvestName + "' has changed in the meantime. Old Edition = "
+                        + edition + ". Current edition = " + hdd.getEdition());
             }
             // update the harvest definition
-            hdd.setDomainConfigurations(dc);
             hdd.setSchedule(sched);
             hdd.setComments(comments);
             hddao.update(hdd);
+            hddao.resetDomainConfigurations(hdd, dcList);
             return hdd;
         }
     }
@@ -205,23 +213,10 @@ public class SelectiveHarvest {
      * @param i18n Translation information for this site section.
      * @param deleteConfig the configuration to delete, in the form of a
      * domain name, a colon, a configuration name.
-     * @return True if the harvest definition was changed.
+     * @param hdd The harvest definition to delete a configuration from
      */
     private static void deleteConfig(PageContext context, I18n i18n,
-                                        String deleteConfig) {
-    	HTMLUtils.forwardOnEmptyParameter(context,
-                Constants.HARVEST_PARAM, Constants.SCHEDULE_PARAM);
-    	ServletRequest request = context.getRequest();
-        String name = request.getParameter(Constants.HARVEST_PARAM);
-        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
-        if (!hddao.exists(name)) {
-        	HTMLUtils.forwardWithErrorMessage(context, i18n,
-                    "errormsg;harvestdefinition.0.does.not.exist", name );
-            throw new ForwardedToErrorPage("Harvestdefinition '"
-                    + name + "' does not exist"); 
-        }
-    	SparsePartialHarvest sph = hddao.getSparsePartialHarvest(name);
-    	
+                                        String deleteConfig, PartialHarvest hdd) {
         String[] domainConfigPair = deleteConfig.split(":", 2);
         if (domainConfigPair.length < 2) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
@@ -231,15 +226,15 @@ public class SelectiveHarvest {
         }
         String domainName = domainConfigPair[0];
         String configName = domainConfigPair[1];
-        DomainConfigurationKey key = new DomainConfigurationKey(
-        		domainName, configName);
-        
-        hddao.removeDomainConfiguration(sph.getOid(), key);
+        DomainConfigurationKey dcKey = new DomainConfigurationKey(
+                domainName, configName);
+        hdd.removeDomainConfiguration(dcKey);
+        HarvestDefinitionDAO.getInstance().removeDomainConfiguration(hdd.getOid(), dcKey);
     }
 
     /**
      * Extract domain configuration list from a map of parameters.
-     * All key that starts with Constants.DOMAIN_IDENTIFIER are treated
+     * All keys that start with Constants.DOMAIN_IDENTIFIER are treated
      * as a concatenation of : DOMAIN_IDENTIFIER + domain name.
      * The corresponding value in the map is treated as the configuration name
      * Entries that do not match this pattern are ignored.
@@ -256,6 +251,8 @@ public class SelectiveHarvest {
                         (Constants.DOMAIN_IDENTIFIER.length());
                 Domain domain = DomainDAO.getInstance().read(domainName);
                 for (String configurationName : param.getValue()) {
+                	System.out.println("configname (for domain '" 
+                			+ domain.getName() + "'): " + configurationName);
                     dcList.add(domain.getConfiguration(configurationName));
                 }
             }
@@ -274,15 +271,17 @@ public class SelectiveHarvest {
      * @param unknownDomains a list to add unknown, legal domains to
      * @param illegalDomains a list to add illegal domains to
      */
-    private static void addDomainsToConfigurations(List<DomainConfiguration> dcList,
-                                                  String extraDomains,
-                                                  List<String> unknownDomains,
-                                                  List<String> illegalDomains) {
+    private static void addDomainsToConfigurations(
+    		List<DomainConfiguration> dcList,
+            String extraDomains,
+            List<String> unknownDomains,
+            List<String> illegalDomains) {
         String[] domains = extraDomains.split("\\s+");
         DomainDAO ddao = DomainDAO.getInstance();
         for (String domain : domains) {
             domain = domain.trim();
             if (domain.length() > 0) {
+            	System.out.println("Handling domain:" + domain);
                 if (ddao.exists(domain)) {
                     Domain d = ddao.read(domain);
                     if (!dcList.contains(d.getDefaultConfiguration())) {
@@ -305,12 +304,11 @@ public class SelectiveHarvest {
      * configuration.
      * @param hdd The harvest definition to change.
      * @param domains a whitespace-separated list of domains to create and
- * add to harvest
-     * @return True if changes were made to hdd.
+     * add to harvest
+     * @return a list of new configurations to add to harvest
      */
-    private static boolean addDomainsToHarvest(PartialHarvest hdd,
-                                               String domains
-    ) {
+    private static List<DomainConfiguration> findNewDomainsToHarvest(PartialHarvest hdd,
+                                               String domains) {
         String[] domainsS = domains.split("\\s");
         List<DomainConfiguration> configurations
                 = new ArrayList<DomainConfiguration>();
@@ -319,19 +317,13 @@ public class SelectiveHarvest {
                 Domain domain = Domain.getDefaultDomain(domainName);
                 DomainDAO.getInstance().create(domain);
                 configurations.add(domain.getDefaultConfiguration());
+            } else {
+                log.debug("Ignoring invalid domainname '"
+                        +  domainName + "'.");
             }
         }
-        if (configurations.size() > 0) {
-            Iterator<DomainConfiguration> existingConfigurations
-                    = hdd.getDomainConfigurations();
-            while (existingConfigurations.hasNext()) {
-                configurations.add(existingConfigurations.next());
-            }
-            hdd.setDomainConfigurations(configurations);
-            return true;
-        } else {
-            return false;
-        }
+        return configurations;
     }
+
 }
 

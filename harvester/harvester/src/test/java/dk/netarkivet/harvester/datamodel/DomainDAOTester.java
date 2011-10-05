@@ -582,9 +582,13 @@ public class DomainDAOTester extends DataModelTestCase {
         List<DomainConfiguration> configs = new ArrayList<DomainConfiguration>();
         final String nonDefaultConfigName = "fuld_dybde";
         configs.add(d.getConfiguration(nonDefaultConfigName));
+        //hddao.addDomainConfiguration(hd, new DomainConfigurationKey(
+        //		d.getConfiguration(nonDefaultConfigName)));
         hd.setDomainConfigurations(configs);
         hddao.update(hd);
-        assertFalse("mayDelete should not allow deletion",
+        
+        assertFalse("mayDelete should not allow deletion of config '" 
+        		+ nonDefaultConfigName + "'",
                     dao.mayDelete(d.getConfiguration(nonDefaultConfigName)));
         try {
             d.removeConfiguration(nonDefaultConfigName);
@@ -606,7 +610,10 @@ public class DomainDAOTester extends DataModelTestCase {
                     dao.mayDelete(d.getConfiguration(nonDefaultConfigName)));
         configs.clear();
         configs.add(d.getDefaultConfiguration());
+        hddao.addDomainConfiguration(hd, new DomainConfigurationKey(
+        		d.getDefaultConfiguration()));
         hd.setDomainConfigurations(configs);
+        
         hddao.update(hd);
         assertTrue("mayDelete should allow deletion of "
                    + nonDefaultConfigName,
@@ -773,6 +780,5 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals(docsdownloaded, dhi.getDocsDownloaded());
         assertEquals(theReason, dhi.getStopReason());
     }
-
 }
 

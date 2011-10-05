@@ -230,9 +230,11 @@ public class SelectiveHarvestTester extends DataModelTestCase {
      */
     public void testUpdateExists() {
 
-        // Til den eksisterende høstning: Testhøstning
-        // tilføjes et nyt domæne, konfigurationen for det eksisterende
-        // domæne ændres og schedule ændres
+        // To an existing partialharvestden named "Testhøstning"
+        // a new konfiguration is added, and the configurationen 
+    	// for the existing domain (netarkivet.dk) is modified, 
+    	// and the schedule changed
+        
         Map<String , String[]> confs= new HashMap<String , String[]>();
         confs.put(Constants.UPDATE_PARAM, new String[]{"1"});
         confs.put(Constants.HARVEST_PARAM, new String[]{"Testhøstning"});
@@ -245,31 +247,33 @@ public class SelectiveHarvestTester extends DataModelTestCase {
 
         List<String> unknownDomains = new ArrayList<String>();
         List<String> illegalDomains = new ArrayList<String>();
-        HarvestDefinitionDAO.getInstance().getHarvestDefinition("Testhøstning").getEdition();
+        
         ServletRequest confRequest = dummyRequest(confs);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(confRequest);
         SelectiveHarvest.processRequest(pageContext, I18N, unknownDomains, illegalDomains);
-        PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition("Testhøstning");
-        assertEquals("Check af felter","kommentar",hdd.getComments());
-        assertEquals("Check af felter","Testhøstning",hdd.getName());
-        assertEquals("Check af felter","Hver hele time",hdd.getSchedule().getName());
-        assertEquals("Alle domainer er kendte", 0, unknownDomains.size());
-        assertEquals("Alle domainer er lovlige",0, illegalDomains.size());
-        Iterator<DomainConfiguration> itt =  hdd.getDomainConfigurations();
-        List<DomainConfiguration> dcs = IteratorUtils.toList(itt);
+        PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance()
+        		.getHarvestDefinition("Testhøstning");
+        assertEquals("Check fields", "kommentar", hdd.getComments());
+        assertEquals("Check fields", "Testhøstning", hdd.getName());
+        assertEquals("Check fields", "Hver hele time", hdd.getSchedule().getName());
+        assertEquals("There should be no unknown domains", 0, unknownDomains.size());
+        assertEquals("There should be no illegal domains",0, illegalDomains.size());
+        
+        Map<String, DomainConfiguration> dcMap = new HashMap<String, DomainConfiguration>();
+        List<DomainConfiguration> dcs = IteratorUtils.toList(
+        		hdd.getDomainConfigurations());
         List<String> nameList = new ArrayList<String>();
         
         for (DomainConfiguration dc : dcs) {
-        	nameList.add(dc.getName());	
+        	nameList.add(dc.getName());
+        	dcMap.put(dc.getName(), dc);
         }
         Collections.sort(nameList);        
-        assertFalse("Should be precisely two configurations, but there are " 
+        assertTrue("Should be precisely 2 configurations, but there are " 
         + nameList.size(), nameList.size() == 2);
         assertEquals("New configuration expected", "Engelsk_netarkiv_et_niveau", nameList.get(0));
-        assertEquals("New default configuration expected", "fuld_dybde", nameList.get(1) );
-       
-
+        assertEquals("New default configuration expected", "fuld_dybde", nameList.get(1));
     }
 
     public void testSetNewDate() {
@@ -305,15 +309,23 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         assertEquals("Check fields", "Testhøstning", hdd.getName());
         assertEquals("Check fields", "Hver hele time",
                      hdd.getSchedule().getName());
-        assertEquals("Alle domains known", 0, unknownDomains.size());
-        assertEquals("Alle domains legal", 0, illegalDomains.size());
-        Iterator<DomainConfiguration> itt = hdd.getDomainConfigurations();
+        assertEquals("All domains should be known", 0, unknownDomains.size());
+        assertEquals("All domains should be legal", 0, illegalDomains.size());
+        
+        Map<String, DomainConfiguration> dcMap = new HashMap<String, DomainConfiguration>();
         List<String> nameList = new ArrayList<String>();
-        nameList.add(itt.next().getName());
+        Iterator<DomainConfiguration> itt = hdd.getDomainConfigurations();
+        while (itt.hasNext()) {
+        	DomainConfiguration dc = itt.next();
+        	nameList.add(dc.getName());
+        	dcMap.put(dc.getName(), dc);
+        }
+        
         Collections.sort(nameList);
+        assertTrue("Expected exactly one configuration, but there was " 
+        		+ nameList.size(), nameList.size() == 1);
         assertEquals("Expected original configuration",
                      "Engelsk_netarkiv_et_niveau", nameList.get(0));
-        assertFalse("Expected exactly one configuration", itt.hasNext());
 
         //This checks next date to be correct
         assertEquals("Should have the new next-date", new GregorianCalendar(

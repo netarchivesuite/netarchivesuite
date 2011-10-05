@@ -26,6 +26,7 @@ import javax.servlet.jsp.PageContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -248,8 +249,12 @@ public class PartialHarvest extends HarvestDefinition {
         return domainConfigurations.values().iterator();
     }
 
+    public Collection<DomainConfiguration> getDomainConfigurationsAsList() {
+    			return domainConfigurations.values();
+    }
+     
     /**
-     * Set the list of configurations that this hd uses.
+     * Set the list of configurations that this PartialHarvest uses.
      *
      * @param configs List<DomainConfiguration> the configurations that this
      *                harvestdefinition will use.
@@ -364,7 +369,6 @@ public class PartialHarvest extends HarvestDefinition {
 
         // Note: Matches any sort of newline (unix/mac/dos), but won't get empty
         // lines, which is fine for this purpose
-        System.out.println("Adding seeds: " + seeds);
         
         String[] seedArray = seeds.split("[\n\r]+");
         Map<String, Set<String>> acceptedSeeds
@@ -413,6 +417,7 @@ public class PartialHarvest extends HarvestDefinition {
             throw new ArgumentNotValid(invalidMessage.toString());
         }
 
+        Set<DomainConfiguration> newDcs = new HashSet<DomainConfiguration>();
         for (Map.Entry<String, Set<String>> entry : acceptedSeeds.entrySet()) {
             String domainName = entry.getKey();
             Domain domain;
@@ -459,18 +464,26 @@ public class PartialHarvest extends HarvestDefinition {
             domain.updateSeedList(new SeedList(name, allSeeds));
 
 
-            //Add the configuration to the harvest config set.
-            addConfiguration(dc);
+            //Add the configuration to the list of new configs for 
+            // this harvest.  
+            newDcs.add(dc);
             DomainDAO.getInstance().update(domain);
         }
 
-        HarvestDefinition thisInDAO =
-                HarvestDefinitionDAO.getInstance().
-                        getHarvestDefinition(this.harvestDefName);
-        if (thisInDAO == null) {
-            HarvestDefinitionDAO.getInstance().create(this);
+        boolean thisInDAO =  HarvestDefinitionDAO.getInstance().exists(
+        		this.harvestDefName);
+        if (thisInDAO) {
+        	HarvestDefinitionDAO hddao =  HarvestDefinitionDAO.getInstance();
+        	for (DomainConfiguration dc: newDcs){
+        		addConfiguration(dc);
+        		hddao.addDomainConfiguration(this, new DomainConfigurationKey(dc));
+        	}
+        	hddao.update(this);
         } else {
-            HarvestDefinitionDAO.getInstance().update(this);
+        	for (DomainConfiguration dc: newDcs){
+        		addConfiguration(dc);
+        	}
+        	HarvestDefinitionDAO.getInstance().create(this);
         }
     }
 

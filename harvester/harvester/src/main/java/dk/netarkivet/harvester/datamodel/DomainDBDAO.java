@@ -1253,18 +1253,15 @@ public class DomainDBDAO extends DomainDAO {
         String seedlistComments = res.getString(3);
 
         String seedlistContents = "";
-        seedlistContents = res.getString(4);
-//        if (DBSpecifics.getInstance().supportsClob()) {
-//            Clob clob = res.getClob(4);
-//            seedlistContents = clob
-//                    .getSubString(1, (int) clob.length());
-//        } else {
-//            seedlistContents = res.getString(4);
-//        }
+        if (DBSpecifics.getInstance().supportsClob()) {
+            Clob clob = res.getClob(4);
+            seedlistContents = clob
+                    .getSubString(1, (int) clob.length());
+        } else {
+            seedlistContents = res.getString(4);
+        }
         final SeedList seedlist = new SeedList(seedlistName,
                 seedlistContents);
-        System.out.println("Seeds: " + seedlistContents);
-        System.out.println("SeedsName: " + seedlistName);
         seedlist.setComments(seedlistComments);
         seedlist.setID(seedlistId);
 		return seedlist;
@@ -1357,15 +1354,10 @@ public class DomainDBDAO extends DomainDAO {
                     + " ORDER BY" + " ordertemplates.name,"
                     + " configurations.maxbytes DESC," + " domains.name");
             return new FilterIterator<String, Domain>(domainNames.iterator()) {
-            public Domain filter(String s) {
-                return read(s);
-            }
-        };
-           /* List<Domain> orderedDomains = new LinkedList<Domain>();
-            for (String domainName : domainNames) {
-                orderedDomains.add(read(c, domainName));
-            }
-            return orderedDomains.iterator();*/
+            	public Domain filter(String s) {
+            		return read(s);
+            	}
+            };
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -1395,11 +1387,11 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public boolean mayDelete(DomainConfiguration config) {
         ArgumentNotValid.checkNotNull(config, "config");
-        DomainConfiguration defaultConfig = this.read(config.getDomain()).getDefaultConfiguration();
+        String defaultConfigName = this.getDefaultDomainConfigurationName(config.getDomain());
         Connection c = HarvestDBConnection.get();
         try {
-        // Never delete default config
-        return !config.getName().equals(defaultConfig.getName())
+        // Never delete default config and don't delete configs being used.
+        return !config.getName().equals(defaultConfigName)
                 && !DBUtils.selectAny(c,
                         "SELECT config_id" + " FROM harvest_configs"
                                 + " WHERE config_id = ?", config.getID());
@@ -1408,7 +1400,19 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
-    /**
+    private String getDefaultDomainConfigurationName(String domain) {
+    	Connection c = HarvestDBConnection.get();
+        try {
+        	return DBUtils.selectStringValue(c, "SELECT configurations.name " 
+        			+ "FROM domains, configurations "
+        			+ "WHERE domains.defaultconfig = configurations.config_id"
+        			+ " AND domains.name = ?", domain);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+	}
+
+	/**
      * Read a Domain from Database, and return the domain information as a
      * SparseDomain object. We only read information relevant for the GUI
      * listing.
@@ -1789,7 +1793,6 @@ public class DomainDBDAO extends DomainDAO {
  				String domainconfigName = res.getString(2);
  				String domainConfigComments = res.getString(3);
  				final String order = res.getString(4);
- 				System.out.println("order: " + order);
  				long maxobjects = res.getLong(5);
  				int maxrate = res.getInt(6);
  				long maxbytes = res.getLong(7);
