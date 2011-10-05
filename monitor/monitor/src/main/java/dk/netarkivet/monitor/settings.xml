@@ -38,5 +38,7 @@
             <historySize>100</historySize>
         </logging>
         <reregisterDelay>1</reregisterDelay>
+        <preferredMaxJMXLogLength>50</preferredMaxJMXLogLength>
+        <absoluteMaxJMXLogLength>60</absoluteMaxJMXLogLength>
     </monitor>
 </settings>

@@ -114,4 +114,41 @@ public class StringUtilsTester extends TestCase {
                     " -1", e.getMessage());
         }
     }
+
+    public void testSplitString() {
+        String input = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam volutpat euismod aliquet. Nullam vestibulum mollis arcu, quis laoreet nibh aliquet et. In at ligula pellentesque magna placerat luctus. Donec mauris nibh, lacinia non feugiat quis, dapibus id orci. Suspendisse sollicitudin suscipit sodales. Mauris interdum consectetur nunc sed interdum. Nulla facilisi. Quisque urna lectus, tempor ut feugiat sit amet, congue eget lectus. Duis eget interdum turpis. Morbi turpis arcu, venenatis ac venenatis nec, pretium ac tellus. Fusce condimentum iaculis sem. Cras eros dui, imperdiet vitae faucibus feugiat, pellentesque eu quam. In dignissim facilisis sollicitudin. Cras tincidunt arcu at lectus tincidunt a porta lorem accumsan. Pellentesque porta, est at viverra sagittis, est elit congue lorem, feugiat lobortis tellus nisl in augue.";
+        String output = StringUtils.splitStringOnWhitespace(input, 50);
+        System.out.println(output);
+        assertTrue("Should have split String into multiple lines", output.split("\n").length > 5);
+    }
+
+    public void testSplitStringAlreadySplit() {
+        String input = "Lorem ipsum dolor\n sit amet, consectetur\n adipiscing elit. Aliquam\n volutpat euismod aliquet.\n Nullam vestibulum mol";
+        String output = StringUtils.splitStringOnWhitespace(input, 50);
+        System.out.println(output);
+        assertEquals("Splitter should not split already split string",
+                     output.split("\n").length, input.split("\n").length);
+    }
+
+    /**
+     * test that code doesn't fail on special cases
+     */
+    public void testSplitStringSpecialCases() {
+        String input = "                                                                                   ";
+        System.out.println(StringUtils.splitStringOnWhitespace(input, 50));
+        input = "";
+        System.out.println(StringUtils.splitStringOnWhitespace(input, 50));
+        input = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+        System.out.println(StringUtils.splitStringOnWhitespace(input, 50));
+        input = " \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n";
+        System.out.println(StringUtils.splitStringOnWhitespace(input, 50));
+        input = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam volutpat euismod aliquet. Nullam vestibulum mollis                           ";
+        System.out.println(StringUtils.splitStringOnWhitespace(input, 50));
+    }
+
+    public void testSplitStringForce(){
+        String input = "abcdefghijkl";
+        assertEquals("abc\ndef\nghi\njkl", StringUtils.splitStringForce(input, 3));
+    }
+
 }

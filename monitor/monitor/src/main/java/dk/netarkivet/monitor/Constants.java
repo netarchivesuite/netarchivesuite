@@ -32,4 +32,5 @@ public class Constants {
     public static final String TRANSLATIONS_BUNDLE =
             "dk.netarkivet.monitor.Translations";
     public static final String REMOVE = "remove";
+
 }

@@ -37,7 +37,10 @@ import java.util.Random;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.monitor.MonitorSettings;
 
 /**
  * Various utility methods and classes for the JMX Monitor page.
@@ -420,11 +423,15 @@ public class JMXSummaryUtils {
         return query.toString();
     }
 
-
     /** Make an HTML fragment that shows a log message preformatted.
      * If the log message is longer than NUMBER_OF_LOG_LINES lines, the rest are
      * hidden and replaced with an internationalized link "More..." that will
-     * show the rest.
+     * show the rest. Long loglines are split to length approximately
+     * monitor.preferredMaxJMXLogLength and then split again to ensure that
+     * no lines are wider than monitor.absoluteMaxJMXLogLength.
+     * However as the wrapping algorithm is not sophisticated it is better to
+     * split the lines in a meaningful way where they are generated.
+     *
      * @param logMessage The log message to present.
      * @param l the current Locale.
      * @return An HTML fragment as defined above.
@@ -439,6 +446,12 @@ public class JMXSummaryUtils {
         // a proper HTML Anchor 
         logMessage = logMessage.replaceAll("(https?://[^ \\t\\n\"]*)",
                 "<a href=\"$1\">$1</a>");
+        logMessage = StringUtils.splitStringOnWhitespace(logMessage,
+                                                         Settings.getInt(
+                                                                 MonitorSettings.JMX_PREFERRED_MAX_LOG_LENGTH));
+        logMessage = StringUtils.splitStringForce(logMessage,
+                                                         Settings.getInt(
+                                                                 MonitorSettings.JMX_ABSOLUTE_MAX_LOG_LENGTH));
         BufferedReader sr = new BufferedReader(new StringReader(logMessage));
         msg.append("<pre>");
         int lineno = 0;

@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * Utilities for working with strings.
@@ -349,6 +350,68 @@ public class StringUtils {
      */
     public static final String formatDate(long millis, String format) {
         return new SimpleDateFormat(format).format(new Date(millis));
+    }
+
+
+    /**
+     * Given an input String, this method splits the String with newlines
+     * into a multiline String with line-lengths approximately lineLength. The
+     * split is made at the first blank space found at more than lineLength characters
+     * after the previous split.
+     * @param input the input String.
+     * @param lineLength the desired line length.
+     * @return the split String.
+     */
+    public static String splitStringOnWhitespace(String input, int lineLength) {
+        input = input.trim();
+        String[] inputLines = input.split("\n");
+        StringBuffer output = new StringBuffer();
+        for (int i = 0; i < inputLines.length; i++) {
+            int foundIndex = 0;
+            String inputLine = inputLines[i];
+            while (foundIndex != -1) {
+                foundIndex = inputLine.indexOf(" ", foundIndex + lineLength);
+                // We split after the found blank space so check that this is meaningful.
+                if (foundIndex != -1 && inputLine.length() > foundIndex + 1) {
+                    inputLine = inputLine.substring(0, foundIndex+1) + "\n" + inputLine.substring(foundIndex+1);
+                }
+            }
+            output.append(inputLine);
+            output.append("\n");
+        }
+        return output.toString();
+    }
+
+    /**
+     * Gievn a multi-line input string, this method splits the string so that
+     * no line has length greater than maxLineLength. Any input lines less than
+     * or equal to this length remain unaffected.
+     * @param input  the input String.
+     * @param maxLineLength the maximum permitted line length.
+     * @return the split multi-line String.
+     */
+    public static String splitStringForce(String input, int maxLineLength) {
+        input = input.trim();
+        String[] inputLines = input.split("\n");
+        StringBuffer output = new StringBuffer();
+        for (String inputLine: inputLines) {
+            int lastSplittingIndex = 0;
+            int currentLineLength = inputLine.length();
+            boolean stillSplitting = true;
+            while (stillSplitting) {
+                int nextSplittingIndex = lastSplittingIndex + maxLineLength;
+                if (nextSplittingIndex < currentLineLength -1) {
+                    output.append(inputLine.substring(lastSplittingIndex, nextSplittingIndex));
+                    output.append("\n");
+                    lastSplittingIndex = nextSplittingIndex;
+                } else {
+                    output.append(inputLine.substring(lastSplittingIndex));
+                    output.append("\n");
+                    stillSplitting = false;
+                }
+            }
+        }
+        return output.toString().trim();
     }
 
 }
