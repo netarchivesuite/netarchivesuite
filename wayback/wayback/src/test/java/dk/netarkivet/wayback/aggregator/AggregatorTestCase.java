@@ -69,7 +69,7 @@ public class AggregatorTestCase extends TestCase {
 
         originalSettings.setUp();
 
-        System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_INPUT_DIR, inputDirName);
+        //System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_INPUT_DIR, inputDirName);
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR, tempDirName);
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_OUTPUT_DIR, outputDirName);
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL, "1000000000"); //Never run the scheduled aggregation
