@@ -42,10 +42,12 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
 import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.CleanupIF;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
@@ -94,38 +96,6 @@ public class HarvestControllerServer
 extends HarvesterMessageHandler
 implements CleanupIF {
 
-    /**
-     * Task that sends the availability status of the 
-     * {@link HarvestControllerServer} to the 
-     * {@link HarvestDispatcher}.
-     */
-    private static class SendStatusTask implements Runnable {
-
-        /**
-         * The owner harvester.
-         */
-        private final HarvestControllerServer hcs;
-
-        /**
-         * Builds a task from its owner harvester.
-         */
-        public SendStatusTask(HarvestControllerServer hcs) {
-            super();
-            this.hcs = hcs;
-        }
-
-        /**
-         * Sends a {@link HarvesterStatusMessage}.
-         */
-        @Override
-        public void run() {
-            hcs.jmsConnection.send(new HarvesterStatusMessage(
-                    hcs.applicationInstanceId,
-                    HarvestControllerServer.JOB_PRIORITY,
-                    ! hcs.running));
-        }
-    }
-
     /** The unique instance of this class. */
     private static HarvestControllerServer instance;
 
@@ -138,6 +108,10 @@ implements CleanupIF {
      */
     private final String applicationInstanceId =
         Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
+    
+    /** The name of the server this <code>HarvestControllerServer</code> is running on.
+     */
+    private final String physicalServerName = DomainUtils.reduceHostname(SystemUtils.getLocalHostName());
 
     /** The message to write to log when starting the server. */
     private static final String STARTING_MESSAGE =
@@ -808,4 +782,39 @@ implements CleanupIF {
         
     }
 
+    private void sendStatus() {
+        jmsConnection.send(new HarvesterStatusMessage(
+                applicationInstanceId + " on " + physicalServerName,
+                HarvestControllerServer.JOB_PRIORITY,
+                ! running));
+    }
+    
+    /**
+     * Task that sends the availability status of the 
+     * {@link HarvestControllerServer} to the 
+     * {@link HarvestDispatcher}.
+     */
+    private static class SendStatusTask implements Runnable {
+
+        /**
+         * The owner harvester.
+         */
+        private final HarvestControllerServer hcs;
+
+        /**
+         * Builds a task from its owner harvester.
+         */
+        public SendStatusTask(HarvestControllerServer hcs) {
+            super();
+            this.hcs = hcs;
+        }
+
+        /**
+         * Sends a {@link HarvesterStatusMessage}.
+         */
+        @Override
+        public void run() {
+            hcs.sendStatus();
+        }
+    }
 }

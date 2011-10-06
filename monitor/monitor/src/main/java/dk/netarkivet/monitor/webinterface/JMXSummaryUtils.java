@@ -127,19 +127,6 @@ public class JMXSummaryUtils {
         return split[split.length - 1];
     }
 
-    /** Reduce a hostname to a more readable form.
-     *
-     * @param hostname A host name, should not be null.
-     * @return The same host name with all domain parts stripped off.
-     * @throws ArgumentNotValid if argument isn't valid.
-     */
-    public static String reduceHostname(String hostname)
-            throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(hostname, "String hostName");
-        String[] split = hostname.split("\\.", 2);
-        return split[0];
-    }
-    
     /**
      * Creates the show links for showing columns again.
      * 

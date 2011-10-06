@@ -39,6 +39,7 @@ will not appear here.
                  java.util.Locale,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
+                 dk.netarkivet.common.utils.DomainUtils,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.monitor.Constants,
                  dk.netarkivet.monitor.webinterface.JMXSummaryUtils,
@@ -215,7 +216,7 @@ will not appear here.
                                             JMXSummaryUtils.JMXMachineNameProperty,
                                             entry.getMachineName(),
                                             HTMLUtils.escapeHtmlValues
-                                                    (JMXSummaryUtils.reduceHostname(
+                                                    (DomainUtils.reduceHostname(
                                                             entry.getMachineName())))%>
         </td>
         <%

@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Utilities for working with domain names.
@@ -123,5 +124,18 @@ public class DomainUtils {
             return result;
         }
         return null;
+    }
+    
+    /** Reduce a hostname to a more readable form.
+     *
+     * @param hostname A host name, should not be null.
+     * @return The same host name with all domain parts stripped off.
+     * @throws ArgumentNotValid if argument isn't valid.
+     */
+    public static String reduceHostname(String hostname)
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(hostname, "String hostName");
+        String[] split = hostname.split("\\.", 2);
+        return split[0];
     }
 }
