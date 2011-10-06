@@ -32,7 +32,7 @@ public class ArchiveSettings {
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/archive/settings.xml";
-
+    
     /*
      * The static initialiser is called when the class is loaded.
      * It will add default values for all settings defined in this class, by
@@ -289,6 +289,11 @@ public class ArchiveSettings {
      */
     public static String INDEXSERVER_INDEXING_TIMEOUT
             = "settings.archive.indexserver.indexingtimeout";
-    
-    
+    /**
+     * <b>settings.archive.indexserver.listeningcheckinterval</b>: <br>
+     * Setting for for interval between each listening check in milliseconds. 
+     * The default is 30000 (5 minutes).
+     */
+    public static String INDEXSERVER_INDEXING_LISTENING_INTERVAL = 
+    		"settings.archive.indexserver.listeningcheckinterval";
 }

@@ -70,7 +70,7 @@ import dk.netarkivet.harvester.distribute.IndexReadyMessage;
  * telling that only a subset is available, and which, or an error message,
  *
  */
-public class IndexRequestServer extends ArchiveMessageHandler
+public final class IndexRequestServer extends ArchiveMessageHandler
         implements CleanupIF {
     /** The class logger. */
     private static Log log = LogFactory.getLog(IndexRequestServer.class);
@@ -86,8 +86,10 @@ public class IndexRequestServer extends ArchiveMessageHandler
     /** The max number of concurrent jobs. */
     private static long maxConcurrentJobs;
     /** Are we listening, now. */
-    private static AtomicBoolean isListening = new AtomicBoolean();    
-   
+    private static AtomicBoolean isListening = new AtomicBoolean();
+    
+    /** Interval in milliseconds between listening checks. */
+    private static long listeningInterval;
     /**
      * The directory to store backup copies of the currentJobs.
      * In case of the indexserver crashing. 
@@ -101,6 +103,9 @@ public class IndexRequestServer extends ArchiveMessageHandler
                 ArchiveSettings.INDEXSERVER_INDEXING_MAXCLIENTS);
         requestDir = Settings.getFile(
                 ArchiveSettings.INDEXSERVER_INDEXING_REQUESTDIR);
+        listeningInterval = Settings.getLong(
+        		ArchiveSettings.INDEXSERVER_INDEXING_LISTENING_INTERVAL);
+        
         currentJobs = new HashSet<IndexRequestMessage>();
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(
                 RequestType.class);
@@ -208,7 +213,6 @@ public class IndexRequestServer extends ArchiveMessageHandler
             // Limit the number of concurrently indexing job
             if (currentJobs.size() >= maxConcurrentJobs) {
                 if (isListening.get()) {
-                	System.out.println("Stop listening");
                     conn.removeListener(Channels.getTheIndexServer(), this);
                     isListening.set(false);
                 }
@@ -421,13 +425,14 @@ public class IndexRequestServer extends ArchiveMessageHandler
     
     /**
      * Look for stored messages to be preprocessed, and start processing those.
-     * And start the separate thread that decides if we should listen for index-requests.
+     * And start the separate thread that decides if we should listen for 
+     * index-requests.
      */
     public void start() {
         restoreRequestsfromRequestDir();    
         log.info("" + currentJobs.size()
                 + " indexing jobs in progress that was stored in requestdir: " 
-                + requestDir.getAbsolutePath() );
+                + requestDir.getAbsolutePath());
 
         // Define and start thread to observe current jobs:
         // Only job is to look at the isListening atomicBoolean.
@@ -436,30 +441,37 @@ public class IndexRequestServer extends ArchiveMessageHandler
         TimerTask checkIfListening = new ListeningTask(this);
         isListening.set(false);
         Timer t = new Timer();
-        long period = 1000 * 60 * 5; // 5 minutes;
-        t.schedule(checkIfListening, 0L, period);
+        t.schedule(checkIfListening, 0L, listeningInterval);
     }
     
+    /**
+     * Defines the task to repeatedly check the listening status.
+     * And begin listening again, if we are ready for more tasks.
+     */
     private static class ListeningTask extends TimerTask {
+    	/** The indexrequestserver this task is associated with. */
+    	private IndexRequestServer thisIrs;
     	
-    	IndexRequestServer thisIrs;
-    	
+    	/**
+    	 * Constructor for the ListeningTask.
+    	 * @param irs The indexrequestserver this task should be associated with
+    	 */
     	ListeningTask(IndexRequestServer irs){
     		thisIrs = irs;
     	}
     	
     	@Override
-    	public void run() {
-    		log.debug("Checking if we should be listening again");
-    		if (!isListening.get()) {
-    			if (maxConcurrentJobs > currentJobs.size()){
-    				log.info("Enabling listening to the indexserver channel '" 
-    						+ Channels.getTheIndexServer() + "'");
-    	            conn.setListener(Channels.getTheIndexServer(), thisIrs);
-    	            isListening.set(true);
-    			}
-    		}
-    	}
+		public void run() {
+			log.debug("Checking if we should be listening again");
+			if (!isListening.get()) {
+				if (maxConcurrentJobs > currentJobs.size()) {
+					log.info("Enabling listening to the indexserver channel '"
+							+ Channels.getTheIndexServer() + "'");
+					conn.setListener(Channels.getTheIndexServer(), thisIrs);
+					isListening.set(true);
+				}
+			}
+		}
 
     }
 }
