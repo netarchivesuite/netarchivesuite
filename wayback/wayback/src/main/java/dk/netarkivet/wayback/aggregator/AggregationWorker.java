@@ -58,7 +58,7 @@ public class AggregationWorker implements CleanupIF {
     /** See WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR. */
     private static File temporaryDir = Settings.getFile(WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR);
     /** See WaybackSettings.WAYBACK_AGGREGATOR_INPUT_DIR). */
-    private static File indexInputDir = Settings.getFile(WaybackSettings.WAYBACK_AGGREGATOR_INPUT_DIR);
+    private static File indexInputDir = Settings.getFile(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
     /** See WaybackSettings.WAYBACK_AGGREGATOR_OUTPUT_DIR. */
     static File indexOutputDir = Settings.getFile(WaybackSettings.WAYBACK_AGGREGATOR_OUTPUT_DIR);
     /**

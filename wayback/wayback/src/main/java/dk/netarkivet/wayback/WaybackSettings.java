@@ -151,9 +151,9 @@ public class WaybackSettings {
             "settings.wayback.indexer.initialFiles";
 
     /**-------------------------Aggregator Settings---------------------------*/
-    /** The directory the Aggregator consumes raw index files from. */
+    /** The directory the Aggregator consumes raw index files from.
     public static String WAYBACK_AGGREGATOR_INPUT_DIR =
-            "settings.wayback.aggregator.indexFileInputDir";
+            "settings.wayback.aggregator.indexFileInputDir"; */
 
     /** The directory the Aggregator places the Aggregated and sorted files into. */
     public static String WAYBACK_AGGREGATOR_OUTPUT_DIR =
