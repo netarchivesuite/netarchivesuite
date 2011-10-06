@@ -59,7 +59,6 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.distribute.IndexReadyMessage;
 
 /**
@@ -104,7 +103,8 @@ public class IndexRequestServer extends ArchiveMessageHandler
                 ArchiveSettings.INDEXSERVER_INDEXING_REQUESTDIR);
         currentJobs = new HashSet<IndexRequestMessage>();
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(
-                RequestType.class);      
+                RequestType.class);
+        conn = JMSConnectionFactory.getInstance();
     }
 
     /**
@@ -113,8 +113,12 @@ public class IndexRequestServer extends ArchiveMessageHandler
     private void restoreRequestsfromRequestDir() {
         if (!requestDir.exists()) {
             log.info("requestdir not found: creating request dir");
-            requestDir.mkdirs();
-            return;
+            if (!requestDir.mkdirs()) {
+            	throw new IOFailure("Unable to create requestdir '"
+            			+ requestDir.getAbsolutePath() + "'");
+            } else {
+            	return;
+            }
         }
         
         File[] requests = requestDir.listFiles();
@@ -338,12 +342,6 @@ public class IndexRequestServer extends ArchiveMessageHandler
             currentJobs.remove(irMsg);
             // delete stored message
             deleteStoredMessage(irMsg);
-//            if (!isListening.get()) {
-//                if (maxConcurrentJobs > currentJobs.size()) {
-//                    log.info("Re-enabling listening to the indexserver-queue");
-//                    conn.setListener(Channels.getTheIndexServer(), this);
-//                }
-//            }
             String state = "failed";
             if (irMsg.isOk()) {
                 state = "successful";
@@ -413,7 +411,6 @@ public class IndexRequestServer extends ArchiveMessageHandler
 
     /** Releases the JMS-connection and resets the singleton. */
     public void cleanup() {
-        conn = JMSConnectionFactory.getInstance();
         conn.removeListener(Channels.getTheIndexServer(), this);
         handlers.clear();
 
@@ -424,24 +421,20 @@ public class IndexRequestServer extends ArchiveMessageHandler
     
     /**
      * Look for stored messages to be preprocessed, and start processing those.
-     * And start listening for index-requests.
+     * And start the separate thread that decides if we should listen for index-requests.
      */
     public void start() {
-        restoreRequestsfromRequestDir();
-        
+        restoreRequestsfromRequestDir();    
         log.info("" + currentJobs.size()
                 + " indexing jobs in progress that was stored in requestdir: " 
                 + requestDir.getAbsolutePath() );
-        conn = JMSConnectionFactory.getInstance();
-        
-        isListening.set(false);
-     
+
         // Define and start thread to observe current jobs:
         // Only job is to look at the isListening atomicBoolean.
-        // If not listening, check if we are ready to listen again.  
-     
-        TimerTask checkIfListening = new ListeningTask(this);
+        // If not listening, check if we are ready to listen again.   
         
+        TimerTask checkIfListening = new ListeningTask(this);
+        isListening.set(false);
         Timer t = new Timer();
         long period = 1000 * 60 * 5; // 5 minutes;
         t.schedule(checkIfListening, 0L, period);
@@ -460,12 +453,10 @@ public class IndexRequestServer extends ArchiveMessageHandler
     		log.debug("Checking if we should be listening again");
     		if (!isListening.get()) {
     			if (maxConcurrentJobs > currentJobs.size()){
-    				log.info("Enabling listening to the indexserver-queue");
+    				log.info("Enabling listening to the indexserver channel '" 
+    						+ Channels.getTheIndexServer() + "'");
     	            conn.setListener(Channels.getTheIndexServer(), thisIrs);
     	            isListening.set(true);
-    	            log.info("Index request server is listening for requests on "
-    	                    + "channel '"
-    	                    + Channels.getTheIndexServer() + "'");
     			}
     		}
     	}
