@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.harvesting.distribute;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -155,7 +156,7 @@ implements CleanupIF {
 
     /** This is true while a doOneCrawl is running. No jobs are accepted while
      * this boolean is true. */
-    private boolean running = false;
+    private AtomicBoolean running = new AtomicBoolean(false);
     /** Jobs are fetched from this queue. */ 
     private final ChannelID jobChannel;
     
@@ -368,7 +369,7 @@ implements CleanupIF {
         // before the listener is removed.  Also, if the job message is
         // malformed or starting the crawl fails, we re-add the listener.
         synchronized (this) {
-            if (running) {
+            if (running.get()) {
                 log.warn("Received crawl request, but sent it back to queue, "
                          + "as another crawl is already running: '" + msg
                          + "'");
@@ -474,7 +475,7 @@ implements CleanupIF {
      * listening altogether, but that requires another thread.
      */
     private synchronized void stopAcceptingJobs() {
-        running = true;
+        running.set(true);
         log.debug("No longer accepting jobs.");
     }
 
@@ -486,7 +487,7 @@ implements CleanupIF {
      */
     private synchronized void startAcceptingJobs() {
         //allow this haco to receive messages
-        running = false;
+        running.set(false);
     }
 
     /** Stop listening for new crawl requests.
@@ -782,11 +783,11 @@ implements CleanupIF {
         
     }
 
-    private void sendStatus() {
+    private synchronized void sendStatus() {
         jmsConnection.send(new HarvesterStatusMessage(
                 applicationInstanceId + " on " + physicalServerName,
                 HarvestControllerServer.JOB_PRIORITY,
-                ! running));
+                ! running.get()));
     }
     
     /**
