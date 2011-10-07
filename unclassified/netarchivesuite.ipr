@@ -1361,7 +1361,6 @@
         <root url="jar://$PROJECT_DIR$/lib/heritrix-dependencies/commons-lang-2.3.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/heritrix-dependencies/je-3.3.82.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/heritrix-dependencies/mg4j-1.0.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/wayback-core-1.4.2.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/lucene-core-2.9.4.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/commons-cli-1.0.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/commons-fileupload-1.2.1.jar!/" />
@@ -1383,6 +1382,7 @@
         <root url="jar://$PROJECT_DIR$/lib/dk.netarkivet.deploy.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/dk.netarkivet.harvester.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/dk.netarkivet.wayback.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/wayback-core-1.6.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

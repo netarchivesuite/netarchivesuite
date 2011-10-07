@@ -112,7 +112,8 @@ public class WaybackSettings {
 
     /**
      * The directory to which batch output is moved after a batch indexing
-     * job is successfully completed.
+     * job is successfully completed, and from which the output is read by
+     * the aggregator.
      */
     public static String WAYBACK_BATCH_OUTPUTDIR =
             "settings.wayback.indexer.finalBatchOutputDir";
@@ -151,9 +152,6 @@ public class WaybackSettings {
             "settings.wayback.indexer.initialFiles";
 
     /**-------------------------Aggregator Settings---------------------------*/
-    /** The directory the Aggregator consumes raw index files from.
-    public static String WAYBACK_AGGREGATOR_INPUT_DIR =
-            "settings.wayback.aggregator.indexFileInputDir"; */
 
     /** The directory the Aggregator places the Aggregated and sorted files into. */
     public static String WAYBACK_AGGREGATOR_OUTPUT_DIR =
