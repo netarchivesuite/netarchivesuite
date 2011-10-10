@@ -161,8 +161,13 @@ public class GUIWebServer implements CleanupIF {
         //Do not have a limit on the form size allowed
         webApplication.setMaxFormContentSize(-1);
         //Use directory in commontempdir for cache
-        webApplication.setTempDirectory(
-                new File(FileUtils.getTempDir(), webbase));
+        File tmpdir = new File(FileUtils.getTempDir(), webbase);
+        if (tmpdir.exists()){
+        	FileUtils.removeRecursively(tmpdir);
+        	log.info("Deleted existing temdir '" + tmpdir.getAbsolutePath()
+        			+ "'");
+        }
+        webApplication.setTempDirectory(tmpdir);
         server.addHandler(webApplication);
         log.info("The web application '" + webapp + "' is now deployed at '"
                  + webbase + "'");
