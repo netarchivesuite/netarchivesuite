@@ -41,11 +41,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class DomainUtils {
     private static final Log log = LogFactory.getLog(DomainUtils.class);
 
-    /** Valid characters in a domain name, according to RFC3490 */
+    /** Valid characters in a domain name, according to RFC3490. */
     public static final String DOMAINNAME_CHAR_REGEX_STRING
             = "[^\\0000-,.-/:-@\\[-`{-\\0177]+";
 
-    /** A string for a regexp recognising a TLD read from settings */
+    /** A string for a regexp recognising a TLD read from settings. */
     public static final String TLD_REGEX_STRING = "\\.(" + StringUtils.conjoin(
             "|", readTlds()) + ")";
 
@@ -73,7 +73,9 @@ public class DomainUtils {
     /** Helper method for reading TLDs from settings.
      * Will read all settings, validate them as legal TLDs and
      * warn and ignore them if any are invalid.
-     * Settings may be with or without prefix "." */
+     * Settings may be with or without prefix "."
+     * @return a List of TLDs as Strings 
+     */
     private static List<String> readTlds() {
         List<String> tlds = new ArrayList<String>();
         for (String tld : Settings.getAll(CommonSettings.TLDS)) {
@@ -90,9 +92,12 @@ public class DomainUtils {
         return tlds;
     }
 
-    /** Method mathcing valid domains. A valid domain is an IP address or a
-     * domainname part followed by a TLD as defined in settings. */
+    /** Method matching valid domains. A valid domain is an IP address or a
+     * domain name part followed by a TLD as defined in settings.
+     * @return true if domain is valid; otherwise it returns false. 
+     */
     public static boolean isValidDomainName(String domainName) {
+    	ArgumentNotValid.checkNotNullOrEmpty(domainName, "String domainName");
         return VALID_DOMAIN_MATCHER.matcher(domainName).matches();
     }
 
