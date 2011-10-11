@@ -71,7 +71,7 @@ public class GUIWebServer implements CleanupIF {
             throw new IOFailure(
                     "Port must be in the range 1025-65535, not " + port);
         }
-        //TODO Replace with just one setting. See feature request 1204
+        //TODO Replace with just one setting. See issue NAS-1687
         String[] webApps = Settings.getAll(
                 CommonSettings.SITESECTION_WEBAPPLICATION);
         String[] classes = Settings.getAll(CommonSettings.SITESECTION_CLASS);
