@@ -248,4 +248,40 @@ public class HarvestStatus {
         log.debug("Getting a jobstatuslist based on the current query. ");
         return JobDAO.getInstance().getStatusInfo(query);
     }
+    
+    /**
+     * Check if next link is active.
+     * @param pageSize the size of the page
+     * @param totalResultsCount the number of results. 
+     * @param endIndex the index of the last result shown on this page 
+     * @return true, if link to next page is active
+     */
+    public static boolean isNextLinkActive(long pageSize, 
+    		long totalResultsCount, long endIndex) {
+    	if (pageSize != 0
+            && totalResultsCount > 0
+            && endIndex < totalResultsCount) {
+    			return true;
+    		} else {
+    			return false;
+    	}
+    }
+    
+    /**
+     * Check if previous link is active.
+     * @param pageSize the size of the page
+     * @param totalResultsCount the number of results. 
+     * @param startIndex the index of the first result shown on this page 
+     * @return true, if link to previous page is active
+     */
+    public static boolean isPreviousLinkActive(long pageSize, 
+    		long totalResultsCount, long startIndex) {
+    	 if (pageSize != 0
+    	            && totalResultsCount > 0
+    	            && startIndex > 1) {
+    		 return true;
+    	 } else {
+    		 return false;
+    	 }
+    }
 }

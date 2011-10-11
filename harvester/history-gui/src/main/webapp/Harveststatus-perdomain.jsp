@@ -35,7 +35,8 @@ displayed, if no domains are found a message is shown.
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
                  dk.netarkivet.harvester.datamodel.DomainHarvestInfo,
-                 dk.netarkivet.harvester.webinterface.Constants"
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.harvester.webinterface.HarvestStatus"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -113,27 +114,19 @@ displayed, if no domains are found a message is shown.
     if (totalResultsCount > 0) {
         startIndex = ((startPageIndex - 1) * actualPageSize);
         endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
+    } else {
+        // Avoid bug NAS-1927. 
+        // Dont's show "Search results: 0, displaying results 1 to 0"
+        // but "Search results: 0, displaying results 0 to 0"
+       	startIndex = -1;    	
     }
 
-    boolean prevLinkActive = false;
-    if (pageSize != 0
-            && totalResultsCount > 0
-            && startIndex > 1) {
-        prevLinkActive = true;
-    }
+    boolean prevLinkActive = HarvestStatus.isPreviousLinkActive(
+    		pageSize, totalResultsCount, startIndex);
 
-    boolean nextLinkActive = false;
-    if (pageSize != 0
-            && totalResultsCount > 0
-            && endIndex < totalResultsCount) {
-        nextLinkActive = true;
-    }
-    // Avoid bug NAS-1927. 
-    // Dont's show "Search results: 0, displaying results 1 to 0"
-    // but "Search results: 0, displaying results 0 to 0"
-    if (totalResultsCount == 0) {
-    	startIndex = -1;
-    }
+    boolean nextLinkActive = HarvestStatus.isNextLinkActive(
+    		pageSize, totalResultsCount, endIndex);
+
 %>
                 <h3 class="page_heading">
                 <fmt:message key="searching.for.0.gave.1.hits">
@@ -230,20 +223,18 @@ hidden fields are set as url parameters by the javascript.
     if (totalResultsCount > 0) {
         startIndex = ((startPageIndex - 1) * actualPageSize);
         endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
+    } else {
+      	// Avoid bug NAS-1927. 
+        // Dont's show "Search results: 0, displaying results 1 to 0"
+        // but "Search results: 0, displaying results 0 to 0"
+        startIndex = -1;
     }
-    boolean prevLinkActive = false;
-    if (pageSize != 0
-            && totalResultsCount > 0
-            && startIndex > 1) {
-        prevLinkActive = true;
-    }
+    
+    boolean prevLinkActive = HarvestStatus.isPreviousLinkActive(
+    		pageSize, totalResultsCount, startIndex);
 
-    boolean nextLinkActive = false;
-    if (pageSize != 0
-            && totalResultsCount > 0
-            && endIndex < totalResultsCount) {
-        nextLinkActive = true;
-    }
+    boolean nextLinkActive = HarvestStatus.isNextLinkActive(
+    		pageSize, totalResultsCount, endIndex);    
 
 %>
             <fmt:message key="status.results.displayed">
