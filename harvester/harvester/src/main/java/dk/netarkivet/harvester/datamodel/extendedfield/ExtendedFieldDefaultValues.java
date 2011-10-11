@@ -27,17 +27,19 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
 /**
- * Class for constructing, validationg, and keeping the default
+ * Class for constructing, validating, and keeping the default
  * value for a single ExtendedField.
  */
 public class ExtendedFieldDefaultValues {
 
-    public final static String[] possibleTrueValues = { "true", "t", "1" };
+    final static String[] possibleTrueValues = { "true", "t", "1" };
 
     final static String[] possibleFalseValues = { "false", "f", "0" };
 
-    boolean valid = false;
+    final boolean valid;
 
     String value;
 
@@ -45,24 +47,22 @@ public class ExtendedFieldDefaultValues {
 
     int datatype;
 
-    String formattedValue = "";
-
     public ExtendedFieldDefaultValues(String aValue, String aFormat,
             int aDatatype) {
         value = aValue;
         format = aFormat;
         datatype = aDatatype;
 
-        validate();
+        valid = validate();
     }
 
-    private void validate() {
+    private boolean validate() {
         switch (datatype) {
         case ExtendedFieldDataTypes.BOOLEAN:
             try {
-                formattedValue = checkBoolean(value);
-            } catch (Exception e) {
-                return;
+            	checkBoolean(value);
+            } catch (ArgumentNotValid e) {
+                return false;
             }
             break;
         case ExtendedFieldDataTypes.NUMBER:
@@ -71,7 +71,7 @@ public class ExtendedFieldDefaultValues {
                 try {
                     decimalFormat.parse(value);
                 } catch (ParseException e) {
-                    return;
+                    return false;
                 }
             }
             break;
@@ -81,7 +81,7 @@ public class ExtendedFieldDefaultValues {
                 try {
                     dateFormat.parse(value);
                 } catch (ParseException e) {
-                    return;
+                    return false;
                 }
             }
             break;
@@ -89,10 +89,10 @@ public class ExtendedFieldDefaultValues {
             break;
         }
 
-        valid = true;
+        return true;
     }
 
-    private String checkBoolean(String aBooleanValue) throws Exception {
+    private String checkBoolean(String aBooleanValue) throws ArgumentNotValid {
         aBooleanValue = value.toLowerCase().trim();
 
         for (String val : possibleTrueValues) {
@@ -107,7 +107,8 @@ public class ExtendedFieldDefaultValues {
             }
         }
 
-        throw new Exception();
+        throw new ArgumentNotValid("The string '" 
+        		+ aBooleanValue + "' is not a valid Boolean value");
     }
 
     public boolean isValid() {
