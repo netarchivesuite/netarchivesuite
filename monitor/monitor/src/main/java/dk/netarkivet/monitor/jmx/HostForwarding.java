@@ -71,7 +71,7 @@ public class HostForwarding<T> {
     private final MBeanServer mBeanServer;
     /** The interface the remote mbeans should implement. */
     private final Class<T> asInterface;
-
+    
     /**
      * The username for JMX read from either a System property, the overriding
      * settings given by the installer, or the default value stored in
@@ -79,6 +79,14 @@ public class HostForwarding<T> {
      */
     private String jmxUsername;
 
+    private String getJmxUsername() {
+    	return jmxUsername;
+    }
+    
+    private synchronized void setJmxUsername(String jmxUsername) {
+    	this.jmxUsername = jmxUsername;
+    }
+    
     /**
      * The password for JMX read from either a System property, the overriding
      * settings given by the installer, or the default value stored in
@@ -86,6 +94,14 @@ public class HostForwarding<T> {
      */
     private String jmxPassword;
 
+    private String getJmxPassword() {
+    	return jmxUsername;
+    }
+    
+    private synchronized void setJmxPassword(String jmxPassword) {
+    	this.jmxPassword = jmxPassword;
+    }
+    
     /**
      * The instances of host forwardings, to ensure mbeans are only forwarded
      * once.
@@ -212,7 +228,7 @@ public class HostForwarding<T> {
      *
      * @return true if the username and/or the password were changed.
      */
-    private boolean updateJmxUsernameAndPassword() {
+    private synchronized boolean updateJmxUsernameAndPassword() {
         boolean changed = false;
         String newJmxUsername = Settings.get(
                 MonitorSettings.JMX_USERNAME_SETTING);
@@ -220,13 +236,14 @@ public class HostForwarding<T> {
         String newJmxPassword = Settings.get(
                 MonitorSettings.JMX_PASSWORD_SETTING);
 
+        
         if (jmxUsername == null || !jmxUsername.equals(newJmxUsername)) {
-            jmxUsername = newJmxUsername;
+            setJmxUsername(newJmxUsername);
             changed = true;
         }
 
         if (jmxPassword == null || !jmxPassword.equals(newJmxPassword)) {
-            jmxPassword = newJmxPassword;
+        	setJmxPassword(newJmxPassword);
             changed = true;
         }
         return changed;
@@ -308,7 +325,7 @@ public class HostForwarding<T> {
                 hostEntry.getName(),
                 hostEntry.getJmxPort(),
                 hostEntry.getRmiPort(),
-                jmxUsername, jmxPassword);
+                getJmxUsername(), getJmxPassword());
 
         remoteObjectNames = connection.query(mBeanQuery);
         for (ObjectName name : remoteObjectNames) {
@@ -464,7 +481,7 @@ public class HostForwarding<T> {
                         hostEntry.getName(),
                         hostEntry.getJmxPort(),
                         hostEntry.getRmiPort(),
-                        jmxUsername, jmxPassword);
+                        getJmxUsername(), getJmxPassword());
             } catch (Exception e) {
                 throw new IOFailure("Could not connect to host '"
                                     + hostEntry.getName() + ":"

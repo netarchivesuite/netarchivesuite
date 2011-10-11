@@ -556,7 +556,7 @@ public class BitarchiveAdmin {
      *
      * @return A BitarchiveAdmin object
      */
-    public static BitarchiveAdmin getInstance() {
+    public synchronized static BitarchiveAdmin getInstance() {
         if (instance == null) {
             instance = new BitarchiveAdmin();
         }

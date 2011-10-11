@@ -47,7 +47,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * executor stops scheduling future executions. We should implement a
  * configurable restart mechanism, possibly with exception filtering.
  */
-public class PeriodicTaskExecutor {
+public final class PeriodicTaskExecutor {
 
     /**
      * Represents a periodic task

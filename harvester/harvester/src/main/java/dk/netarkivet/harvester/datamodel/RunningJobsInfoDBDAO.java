@@ -878,9 +878,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
 
     /**
-     * Returns the list of tyhe available frontier report types.
+     * Returns the list of the available frontier report types.
      * @see FrontierReportFilter#getFilterId()
-     * @return the list of tyhe available frontier report types.
+     * @return the list of the available frontier report types.
      */
     public String[] getFrontierReportFilterTypes() {
         List<String> filterIds = new ArrayList<String>();
@@ -905,7 +905,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             HarvestDBConnection.release(c);
         }
 
-        return (String[]) filterIds.toArray();
+        return filterIds.toArray(new String[filterIds.size()]);
     }
 
     /**

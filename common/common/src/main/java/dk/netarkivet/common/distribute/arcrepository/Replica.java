@@ -75,7 +75,7 @@ public class Replica {
     /** Initialize the list of known replicas from settings.
      * This must be called before using known, but after settings are loaded.
      */
-    private static void initializeKnownReplicasList() {
+    private synchronized static void initializeKnownReplicasList() {
         if (knownReplicas == null) {
             String[] replicaIds 
                 = Settings.getAll(CommonSettings.REPLICA_IDS);

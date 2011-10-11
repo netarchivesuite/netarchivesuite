@@ -28,9 +28,6 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.SettingsFactory;
@@ -45,9 +42,6 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     
     /** The instance of the DBSpecifics class. */
     private static DBSpecifics instance;
-    
-    /** The log of this class.*/
-    protected Log log = LogFactory.getLog(DBSpecifics.class);
 
     /** Get the singleton instance of the DBSpecifics implementation class.
      *

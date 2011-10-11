@@ -202,7 +202,7 @@ public final class HarvestDBConnection {
     /**
      * Closes the underlying data source.
      */
-    public static void cleanup() {
+    public synchronized static void cleanup() {
 
 		if (dataSource == null) {
             return;

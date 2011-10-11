@@ -71,7 +71,7 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
     /** Get the registry client singleton.
      * @return The registry client.
      */
-    public static JMSMonitorRegistryClient getInstance() {
+    public synchronized static JMSMonitorRegistryClient getInstance() {
         if (instance == null) {
             instance = new JMSMonitorRegistryClient();
         }
