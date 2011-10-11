@@ -108,11 +108,12 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
             for (final Long id : readyHarvestDefinitions) {
              // Make every HD run in its own thread, but at most once.
                 if (harvestDefinitionsBeingScheduled.contains(id)) {
-                    // With the small importance of this logmessage,
-                    // we won't spend time looking up the corresponding name for
-                    // the harvestdefinition with this id number.
-                    log.debug("Not creating jobs for harvestdefinition with id #" + id
-                            + " as the previous scheduling is still running");
+                	String harvestName = haDefinitionDAO.getHarvestName(id);
+                    String errMsg = "Not creating jobs for harvestdefinition #" + id 
+                    		+ "(" + harvestName + ")"  
+                            + " as the previous scheduling is still running"; 
+                	log.warn(errMsg);
+                	NotificationsFactory.getInstance().errorEvent(errMsg);
                     continue;
                 }
 
