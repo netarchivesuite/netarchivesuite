@@ -150,16 +150,29 @@ public class PersistentJobData {
     /** Key in harvestinfo file for the file version. */
     private static final String HARVESTVERSION_KEY = "harvestInfo.version";
     /** Value for current version number. */
-    private static final String HARVESTVERSION_NUMBER = "0.2";
+    private static final String HARVESTVERSION_NUMBER = "0.3";
+    
+    /** Also support for version 0.2 of harvestInfo xml. 
+     * In the previous format the field origHarvestDefinitionName
+     * did not exist. However version 0.2 of harvestInfo.xml will contain
+     * this field as well when running 3.16.* of NetarchiveSuite.
+     */
+    private static final String OLD_HARVESTVERSION_NUMBER = "0.2";
 
-    /** String array containing all keys contained in valid xml. */
+    /** String array containing all keys contained in valid version 0.3 xml.  */
     private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
         ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
         HARVEST_NAME_KEY};
-
-
+    
+    /** String array containing all keys contained in old valid version 0.2 xml.  */
+    private static final String[] ALL_KEYS_OLD = {JOBID_KEY, HARVESTNUM_KEY, 
+        MAXBYTESPERDOMAIN_KEY,
+        MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
+        ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY};
+    
+    
     /** The logger to use. */
     private static final Log log
             = LogFactory.getLog(PersistentJobData.class);
