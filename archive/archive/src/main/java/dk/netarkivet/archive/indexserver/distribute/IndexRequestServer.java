@@ -335,7 +335,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                          + "].");
                 
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.warn(
                     "Unable to generate index for jobs ["
                     + StringUtils.conjoin(",", irMsg.getRequestedJobs()) + "]",
@@ -462,7 +462,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
     	
     	@Override
 		public void run() {
-			log.debug("Checking if we should be listening again");
+			log.trace("Checking if we should be listening again");
 			if (!isListening.get()) {
 				if (maxConcurrentJobs > currentJobs.size()) {
 					log.info("Enabling listening to the indexserver channel '"
