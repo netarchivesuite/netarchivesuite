@@ -127,7 +127,7 @@
      <archive><indexserver>
                 <maxclients>4</maxclients>
                 <maxthreads>2</maxthreads>
-                <requestdir>tests/commontempdir/requests</requestdir>
+                <requestdir>./tests/commontempdir/requests</requestdir>
                 <checkinterval>5000</checkinterval>
                 <indexingtimeout>172800</indexingtimeout>
         </indexserver>
