@@ -574,7 +574,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             DBUtils.setComments(s, 2, harvestDefinition, Constants.MAX_COMMENT_SIZE);
             s.setInt(3, harvestDefinition.getNumEvents());
             s.setTimestamp(4, new Timestamp(harvestDefinition.getSubmissionDate().getTime()));
-            s.setBoolean(5, ! harvestDefinition.isActive());
+            s.setBoolean(5, !harvestDefinition.isActive());
             long nextEdition = harvestDefinition.getEdition() + 1;
             s.setLong(6, nextEdition);
             s.setLong(7, harvestDefinition.getOid());
@@ -1506,7 +1506,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s = connection.prepareStatement("UPDATE partialharvests SET "
                 + "nextdate = ? "
                 + "WHERE harvest_id = ?");
-            DBUtils.setDateMaybeNull(s, 1, ph.getNextDate());
+            DBUtils.setDateMaybeNull(s, 1, nextdate);
             s.setLong(2, ph.getOid());
             s.executeUpdate();
         } catch (SQLException e) {

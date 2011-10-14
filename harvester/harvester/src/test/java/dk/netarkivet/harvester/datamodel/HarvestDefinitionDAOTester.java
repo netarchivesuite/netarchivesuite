@@ -753,7 +753,6 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         }
         PartialHarvest ph = (PartialHarvest) hd;
         Date now = new Date();
-        ph.setNextDate(now);
         hddao.updateNextdate(ph, now);
         PartialHarvest ph1 = (PartialHarvest) hddao.read(partialharvestId);
         assertTrue("The date should have been updated in the database", 
