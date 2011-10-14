@@ -1,7 +1,7 @@
-/* File:    $Id: $
- * Revision: $Revision: $
- * Author:   $Author: $
- * Date:     $Date: $
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -23,11 +23,19 @@
 
 package dk.netarkivet.harvester.scheduler;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
 import dk.netarkivet.common.utils.IteratorUtils;
@@ -43,6 +51,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
+import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 import dk.netarkivet.harvester.scheduler.HarvestJobGenerator.JobGeneratorTask;
@@ -63,6 +72,9 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         TemplateDAO.getInstance();
 
+        final String scheduleName = "foo";
+        final String noComments = "";
+        
         final GregorianCalendar cal = new GregorianCalendar();
         // Avoids tedious rounding problems
         cal.set(Calendar.MILLISECOND, 0);
@@ -71,7 +83,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         cal.add(Calendar.YEAR, 2);
         Date now = cal.getTime();
         Schedule s = Schedule.getInstance(now, 2, new WeeklyFrequency(2),
-                "foo", "");
+                scheduleName, noComments);
         ScheduleDAO.getInstance().create(s);
         hd.setSchedule(s);
         hd.reset();
@@ -93,15 +105,13 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         HarvestDefinition hd1 = HarvestDefinition.createPartialHarvest(
                 cfgs,
                 sdao.read("Hver hele time"),
-                "Hele time",
-        "");
+                "Hele time", noComments);
         hd1.setSubmissionDate(new Date());
         hddao.create(hd1);
         HarvestDefinition hd2 = HarvestDefinition.createPartialHarvest(
                 cfgs,
                 sdao.read("Hver nat kl 4.00"),
-                "Kl. 4",
-        "");
+                "Kl. 4", noComments);
         hd2.setSubmissionDate(new Date());
         hddao.create(hd2);
         generateJobs(now);
@@ -138,7 +148,65 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
                 + " when the next hourly job should have been scheduled.",
                 jobs1.size() + 1, jobs2.size());
     }
-
+    
+    /**
+     * test that skipping a scheduling because the previous scheduling is still
+     * running, or at least the system still thinks it is running.
+     * because the id of the harvest is contained in the 
+     * set HarvestJobGenerator#harvestDefinitionsBeingScheduled
+     * @throws Exception
+     */
+    
+    public void testSkippingScheduling() throws Exception {
+        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+        
+        List<DomainConfiguration> cfgs = new ArrayList<DomainConfiguration>();
+        Domain domain = DomainDAO.getInstance().read("netarkivet.dk");
+        cfgs.add(domain.getDefaultConfiguration());
+        final ScheduleDAO sdao = ScheduleDAO.getInstance();
+        Date now = new Date();
+        Date yesterday = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+        HarvestDefinition hd1 = HarvestDefinition.createPartialHarvest(
+                cfgs,
+                sdao.read("Hver hele time"),
+                "Hele time", "");
+        hd1.setSubmissionDate(now);
+        hddao.create(hd1);
+        hddao.updateNextdate((PartialHarvest)hd1, yesterday);
+        Iterable<Long> readyHarvestDefinitions =
+                hddao.getReadyHarvestDefinitions(now);
+        Iterator<Long> iterator = readyHarvestDefinitions.iterator();
+        if (!iterator.hasNext()) {
+            fail("At least one harvestdefinition should be ready for scheduling");
+        }
+       
+        // take the next ready definition, and inject the id of this
+        // into the harvestDefinitionsBeingScheduled datastructure
+        Long readyHarvestId = iterator.next();
+        @SuppressWarnings("rawtypes")
+        Class c = Class.forName(HarvestJobGenerator.class.getName());
+        Field f = c.getDeclaredField("harvestDefinitionsBeingScheduled");
+        Set<Long> harvestDefinitionsBeingScheduled =
+                Collections.synchronizedSet(new HashSet<Long>());
+        harvestDefinitionsBeingScheduled.add(readyHarvestId);
+        f.set(null, harvestDefinitionsBeingScheduled);
+        // redirect Stdout til myOut
+        PrintStream origStdout = System.out;
+        ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(myOut));
+        try {
+            generateJobs(new Date());   
+        } finally {
+            myOut.close();
+            System.setOut(origStdout);
+        } 
+        final String expectedOutput = "[errorNotification] Not creating jobs "
+                + "for harvestdefinition #44 (Hele time) " 
+                + "as the previous scheduling is still running\n";
+        assertTrue("A notification should have been sent", 
+                myOut.toString().equals(expectedOutput));
+    }
+        
     /**
      * Run job generation and wait for the threads created to finish.
      *

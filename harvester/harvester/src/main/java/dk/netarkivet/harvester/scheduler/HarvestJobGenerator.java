@@ -52,15 +52,16 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
      * scheduled in a separate thread.
      * This set is a SynchronizedSet
      */
-    private static Set<Long> harvestDefinitionsBeingScheduled =
+    protected static Set<Long> harvestDefinitionsBeingScheduled =
         Collections.synchronizedSet(new HashSet<Long>());
-
+    /** The class logger. */
     private static final Log log =
         LogFactory.getLog(HarvestJobGenerator.class.getName());
 
     /** The executor used to schedule the generator jobs. */
     private PeriodicTaskExecutor genExec;
-
+    
+    /** The HarvestDefinitionDAO used by the HarvestJobGenerator. */
     private static final HarvestDefinitionDAO haDefinitionDAO =
         HarvestDefinitionDAO.getInstance();
 
@@ -84,7 +85,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     }
 
     /**
-     * Contains the functionality for the individual JobGenerations
+     * Contains the functionality for the individual JobGenerations.
      */
     static class JobGeneratorTask implements Runnable {
 
@@ -104,16 +105,17 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
          */
         static void generateJobs(Date timeToGenerateJobsFor) {
             final Iterable<Long> readyHarvestDefinitions =
-                haDefinitionDAO.getReadyHarvestDefinitions(timeToGenerateJobsFor);
+                haDefinitionDAO.getReadyHarvestDefinitions(
+                        timeToGenerateJobsFor);
             for (final Long id : readyHarvestDefinitions) {
-             // Make every HD run in its own thread, but at most once.
+                // Make every HD run in its own thread, but at most once.
                 if (harvestDefinitionsBeingScheduled.contains(id)) {
-                	String harvestName = haDefinitionDAO.getHarvestName(id);
-                    String errMsg = "Not creating jobs for harvestdefinition #" + id 
-                    		+ "(" + harvestName + ")"  
-                            + " as the previous scheduling is still running"; 
-                	log.warn(errMsg);
-                	NotificationsFactory.getInstance().errorEvent(errMsg);
+                    String harvestName = haDefinitionDAO.getHarvestName(id);
+                    String errMsg = "Not creating jobs for harvestdefinition #"
+                            + id + " (" + harvestName + ")"
+                            + " as the previous scheduling is still running";
+                    log.warn(errMsg);
+                    NotificationsFactory.getInstance().errorEvent(errMsg);
                     continue;
                 }
 
@@ -123,9 +125,9 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 harvestDefinitionsBeingScheduled.add(id);
 
                 if (!harvestDefinition.runNow(timeToGenerateJobsFor)) {
-                    log.trace("The harvestdefinition '" +
-                            harvestDefinition.getName() +
-                    "' should not run now.");
+                    log.trace("The harvestdefinition '"
+                            + harvestDefinition.getName() 
+                            + "' should not run now.");
                     log.trace("numEvents: " + harvestDefinition.getNumEvents());
                     continue;
                 }
@@ -140,22 +142,23 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             haDefinitionDAO.update(harvestDefinition);
                         } catch (Throwable e) {
                             try {
-                                HarvestDefinition hd
-                                = haDefinitionDAO.read(harvestDefinition.getOid());
+                                HarvestDefinition hd = haDefinitionDAO.read(
+                                        harvestDefinition.getOid());
                                 hd.setActive(false);
                                 haDefinitionDAO.update(hd);
                                 String errMsg = "Exception while scheduling"
-                                    + "harvestdefinition '" +
-                                    harvestDefinition.getName() + "'. The " +
-                                    "harvestdefinition has been deactivated!";
+                                    + "harvestdefinition '" 
+                                    + harvestDefinition.getName() + "'. The "
+                                    + "harvestdefinition has been deactivated!";
                                 log.warn(errMsg, e);
                                 NotificationsFactory.getInstance().
                                 errorEvent(errMsg, e);
                             } catch (Exception e1) {
-                                String errMsg = "Exception while scheduling" +
-                                "harvestdefinition '" + harvestDefinition.getName()
-                                + "'. The harvestdefinition couldn't be " +
-                                "deactivated!";
+                                String errMsg = "Exception while scheduling"
+                                    + "harvestdefinition '" 
+                                    + harvestDefinition.getName()
+                                    + "'. The harvestdefinition couldn't be "
+                                    +   "deactivated!";
                                 log.warn(errMsg, e);
                                 log.warn("Unable to deactivate", e1);
                                 NotificationsFactory.getInstance().
