@@ -88,15 +88,19 @@ public class MonitorSettings {
             "settings.monitor.reregisterDelay";
 
     /**
-     * <b>settings.monitor.prefferedMaxJMXLogLength</b>: <br/> The preferred length
-     * at which lines in the JMX log will be wrapped.
+     * <b>settings.monitor.prefferedMaxJMXLogLength</b>: <br/> The preferred
+     * length
+     * at which lines in the JMX log will be wrapped. (default 70)
      */
-    public static String JMX_PREFERRED_MAX_LOG_LENGTH = "settings.monitor.preferredMaxJMXLogLength";
+    public static String JMX_PREFERRED_MAX_LOG_LENGTH =
+            "settings.monitor.preferredMaxJMXLogLength";
 
     /**
-     * The absolute maximum length at which lines in the JMX log will be wrapped, even
-     * if this means breaking the line within a word.
+     * The absolute maximum length at which lines in the JMX log will be
+     * wrapped, even
+     * if this means breaking the line within a word. (default 100)
      */
-    public static String JMX_ABSOLUTE_MAX_LOG_LENGTH = "settings.monitor.absoluteMaxJMXLogLength";
+    public static String JMX_ABSOLUTE_MAX_LOG_LENGTH =
+            "settings.monitor.absoluteMaxJMXLogLength";
 
 }

@@ -77,6 +77,18 @@ public class JMXSummaryUtils {
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_INDEX;
 
 
+    /**
+     * The preferred length of lines in the jmx log.
+     */
+    private static final int PREFERRED_LENGTH = Settings.getInt(
+            MonitorSettings.JMX_PREFERRED_MAX_LOG_LENGTH) ;
+
+    /**
+     * The maximum length of lines in the jmx log.
+     */
+    private static final int MAX_LENGTH = Settings.getInt(
+            MonitorSettings.JMX_ABSOLUTE_MAX_LOG_LENGTH) ;
+
     /** JMX properties, which can set to star. */   
     public static final String[] STARRABLE_PARAMETERS = new String[]{
         JMXRemoveApplication,
@@ -410,6 +422,8 @@ public class JMXSummaryUtils {
         return query.toString();
     }
 
+
+
     /** Make an HTML fragment that shows a log message preformatted.
      * If the log message is longer than NUMBER_OF_LOG_LINES lines, the rest are
      * hidden and replaced with an internationalized link "More..." that will
@@ -434,11 +448,9 @@ public class JMXSummaryUtils {
         logMessage = logMessage.replaceAll("(https?://[^ \\t\\n\"]*)",
                 "<a href=\"$1\">$1</a>");
         logMessage = StringUtils.splitStringOnWhitespace(logMessage,
-                                                         Settings.getInt(
-                                                                 MonitorSettings.JMX_PREFERRED_MAX_LOG_LENGTH));
+                                                        PREFERRED_LENGTH);
         logMessage = StringUtils.splitStringForce(logMessage,
-                                                         Settings.getInt(
-                                                                 MonitorSettings.JMX_ABSOLUTE_MAX_LOG_LENGTH));
+                                                         MAX_LENGTH);
         BufferedReader sr = new BufferedReader(new StringReader(logMessage));
         msg.append("<pre>");
         int lineno = 0;

@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * Utilities for working with strings.
@@ -356,13 +355,18 @@ public class StringUtils {
     /**
      * Given an input String, this method splits the String with newlines
      * into a multiline String with line-lengths approximately lineLength. The
-     * split is made at the first blank space found at more than lineLength characters
+     * split is made at the first blank space found at more than lineLength
+     * characters
      * after the previous split.
      * @param input the input String.
      * @param lineLength the desired line length.
      * @return the split String.
+     * @throws ArgumentNotValid if the input is null or the lineLength is not
+     * positive
      */
     public static String splitStringOnWhitespace(String input, int lineLength) {
+        ArgumentNotValid.checkNotNull(input, "input");
+        ArgumentNotValid.checkPositive(lineLength, "lineLength");
         input = input.trim();
         String[] inputLines = input.split("\n");
         StringBuffer output = new StringBuffer();
@@ -371,9 +375,11 @@ public class StringUtils {
             String inputLine = inputLines[i];
             while (foundIndex != -1) {
                 foundIndex = inputLine.indexOf(" ", foundIndex + lineLength);
-                // We split after the found blank space so check that this is meaningful.
+                // We split after the found blank space so check that this is
+                // meaningful.
                 if (foundIndex != -1 && inputLine.length() > foundIndex + 1) {
-                    inputLine = inputLine.substring(0, foundIndex+1) + "\n" + inputLine.substring(foundIndex+1);
+                    inputLine = inputLine.substring(0, foundIndex+1) + "\n"
+                                + inputLine.substring(foundIndex+1);
                 }
             }
             output.append(inputLine);
@@ -383,14 +389,18 @@ public class StringUtils {
     }
 
     /**
-     * Gievn a multi-line input string, this method splits the string so that
+     * Given a multi-line input string, this method splits the string so that
      * no line has length greater than maxLineLength. Any input lines less than
      * or equal to this length remain unaffected.
      * @param input  the input String.
      * @param maxLineLength the maximum permitted line length.
      * @return the split multi-line String.
+     * @throws ArgumentNotValid if input is null or maxLineLength is
+     * non-positive
      */
     public static String splitStringForce(String input, int maxLineLength) {
+        ArgumentNotValid.checkNotNull(input, "input");
+        ArgumentNotValid.checkPositive(maxLineLength, "maxLineLength");
         input = input.trim();
         String[] inputLines = input.split("\n");
         StringBuffer output = new StringBuffer();
@@ -401,7 +411,8 @@ public class StringUtils {
             while (stillSplitting) {
                 int nextSplittingIndex = lastSplittingIndex + maxLineLength;
                 if (nextSplittingIndex < currentLineLength -1) {
-                    output.append(inputLine.substring(lastSplittingIndex, nextSplittingIndex));
+                    output.append(inputLine.substring(lastSplittingIndex,
+                                                      nextSplittingIndex));
                     output.append("\n");
                     lastSplittingIndex = nextSplittingIndex;
                 } else {
