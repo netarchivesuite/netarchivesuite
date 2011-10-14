@@ -94,17 +94,6 @@ public class HarvestControllerServerTester extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
 
-    /**
-     * Constants used by writeOtherFilesToArc().
-     */
-    final static String RECORD_PREFIX = "www.netarkivet.dk/crawlerdata/job/";
-
-    // TODO: this should be set in the Constants class (and maybe in
-    // settings.xml).
-    final static int maxSize = 524288000; // 500 MB
-
-    final static boolean compress = false;
-
     public HarvestControllerServerTester(String sTestName) {
         super(sTestName);
     }
@@ -236,7 +225,7 @@ public class HarvestControllerServerTester extends TestCase {
         j.setStatus(JobStatus.DONE);
         NetarkivetMessage nMsg = new DoOneCrawlMessage(j, TestInfo.SERVER_ID,
                 new HarvestDefinitionInfo("test", "test", "test"),
-                                                                                                  TestInfo.emptyMetadata);
+                TestInfo.emptyMetadata);
         JMSConnectionMockupMQ.updateMsgID(nMsg, "UNIQUE_ID");
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
@@ -377,7 +366,7 @@ public class HarvestControllerServerTester extends TestCase {
         //The HCS should try to upload all original ARC files + 1 metadata ARC file
         assertEquals("Should have received store messages for all arc files",
                 numberOfStoreMessagesExpected, marc.getMsgCount());
-        /* The test serverDirs always contain excatly one job with one or more ARC files.
+        /* The test serverDirs always contain exactly one job with one or more ARC files.
          * Therefore, starting up the HCS should generate exactly one FAILED status msg. */
         assertEquals("Should have received one crawl status message", 1,
                 sched.messagesReceived.size());
