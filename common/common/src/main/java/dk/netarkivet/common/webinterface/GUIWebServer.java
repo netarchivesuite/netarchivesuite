@@ -57,7 +57,13 @@ public class GUIWebServer implements CleanupIF {
      * Logger for this class.
      */
     private Log log = LogFactory.getLog(getClass().getName());
+    
+    /** The lower limit of acceptable HTTP port-numbers. */
+    private static final int HTTP_PORT_NUMBER_LOWER_LIMIT = 1025;
 
+    /** The upper limit of acceptable HTTP port-numbers. */
+    private static final int HTTP_PORT_NUMBER_UPPER_LIMIT = 65535;
+    
     /**
      * Initialises a GUI Web Server and adds web applications.
      *
@@ -67,9 +73,12 @@ public class GUIWebServer implements CleanupIF {
         //Read and log settings.
         int port = Integer.parseInt(Settings.get(
                 CommonSettings.HTTP_PORT_NUMBER));
-        if (port < 1025 || port > 65535) {
+        if (port < HTTP_PORT_NUMBER_LOWER_LIMIT 
+                || port > HTTP_PORT_NUMBER_UPPER_LIMIT) {
             throw new IOFailure(
-                    "Port must be in the range 1025-65535, not " + port);
+                    "Port must be in the range [" 
+                            + HTTP_PORT_NUMBER_LOWER_LIMIT + ", " 
+                            + HTTP_PORT_NUMBER_UPPER_LIMIT + "], not " + port);
         }
         //TODO Replace with just one setting. See issue NAS-1687
         String[] webApps = Settings.getAll(
@@ -147,8 +156,10 @@ public class GUIWebServer implements CleanupIF {
         // (2) If the webapp is webpages/History.war, the webbase is /History
         String webappFilename = new File(webapp).getName();
         String webbase = "/" + webappFilename;
-        if (webappFilename.toLowerCase().endsWith(".war")) {
-            webbase = "/" + webappFilename.substring(0, webappFilename.length() - 4);
+        final String warSuffix = ".war";
+        if (webappFilename.toLowerCase().endsWith(warSuffix)) {
+            webbase = "/" + webappFilename.substring(0, 
+                    webappFilename.length() - warSuffix.length());
         }
 
         for (SiteSection section : SiteSection.getSections()) {
@@ -162,10 +173,10 @@ public class GUIWebServer implements CleanupIF {
         webApplication.setMaxFormContentSize(-1);
         //Use directory in commontempdir for cache
         File tmpdir = new File(FileUtils.getTempDir(), webbase);
-        if (tmpdir.exists()){
-        	FileUtils.removeRecursively(tmpdir);
-        	log.info("Deleted existing temdir '" + tmpdir.getAbsolutePath()
-        			+ "'");
+        if (tmpdir.exists()) {
+            FileUtils.removeRecursively(tmpdir);
+            log.info("Deleted existing tempdir '" + tmpdir.getAbsolutePath()
+                    + "'");
         }
         webApplication.setTempDirectory(tmpdir);
         server.addHandler(webApplication);
@@ -206,6 +217,11 @@ public class GUIWebServer implements CleanupIF {
             log.info("HTTP server has been stopped.");
         }
 
+        resetInstance();
+    }
+    
+    /** resetClassInstance. */
+    private static synchronized void resetInstance() {
         instance = null;
     }
 }
