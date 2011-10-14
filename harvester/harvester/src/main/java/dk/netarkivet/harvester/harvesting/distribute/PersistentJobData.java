@@ -166,7 +166,8 @@ public class PersistentJobData {
         ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
         HARVEST_NAME_KEY};
     
-    /** String array containing all keys contained in old valid version 0.2 xml.  */
+    /** String array containing all keys contained in old valid version 
+     * 0.2 xml.  */
     private static final String[] ALL_KEYS_OLD = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
@@ -219,7 +220,7 @@ public class PersistentJobData {
      * @throws IOFailure if HarvestInfoFile does not exist
      *                    if HarvestInfoFile is invalid
      */
-    private SimpleXml read() {
+    private synchronized SimpleXml read() {
         if (theXML != null) {
             return theXML;
         }
@@ -309,18 +310,22 @@ public class PersistentJobData {
         if (sx.hasKey(HARVESTVERSION_KEY)) {
             version = sx.getString(HARVESTVERSION_KEY);
         }
-
-        boolean validVersion = version.equals(HARVESTVERSION_NUMBER);
-        if (!validVersion) {
+        final String[] keysToCheck;
+        if (version.equals(HARVESTVERSION_NUMBER)) {
+            keysToCheck = ALL_KEYS;
+        } else if (version.equals(OLD_HARVESTVERSION_NUMBER)) {
+            keysToCheck = ALL_KEYS_OLD;
+        } else {
             log.warn("Invalid version: " + version);
             return false;
         }
 
         /* Check, if all necessary components exist in the SimpleXml */
-
-        for (String key: ALL_KEYS) {
+        
+        for (String key: keysToCheck) {
             if (!sx.hasKey(key)) {
-                log.debug("Could not find key " + key + " in harvestInfoFile ");
+                log.debug("Could not find key " + key 
+                        + " in harvestInfoFile version " + version);
                 return false;
             }
         }
@@ -332,8 +337,6 @@ public class PersistentJobData {
             log.debug("The id in harvestInfoFile must be a long value");
             return false;
         }
-
-
 
         // Verify, that the job priority element is not the empty String
         if (sx.getString(PRIORITY_KEY).isEmpty()) {
