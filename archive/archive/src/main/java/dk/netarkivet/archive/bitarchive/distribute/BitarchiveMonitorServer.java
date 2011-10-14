@@ -338,7 +338,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             UploadMessage um = new UploadMessage(Channels.getAllBa(), 
                     Channels.getTheBamon(), cm.getCorrectFile());
             con.send(um);
-            log.info("Step 2 of handling CorrectMessage. Sending UploadMessage: " 
+            log.info(
+                    "Step 2 of handling CorrectMessage. Sending UploadMessage: "
                     + um);
 
             // Store the CorrectMessage along with the ID of the UploadMessage.
@@ -566,29 +567,13 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                     log.debug("Post processing finished.");
                 } else {
                     log.debug("No post processing. Using concatenated file.");
-                    boolean deleted = postFile.delete();
-                    if (deleted) {
-                        log.debug("Failed to deleted temporary file '"
-                                + postFile.getAbsolutePath() + "'");
-                    } else {
-                        log.debug("Deleted temporary file '"
-                                + postFile.getAbsolutePath()
-                                + "' successfully");
-                    }
+                    tryAndDeleteTemporaryFile(postFile);
                     postFile = bjs.batchResultFile;
                 }
             } catch (Exception e) {
                 log.warn("Exception caught during post processing batchjob. "
                         + "Concatenated file used instead.", e);
-                boolean deleted = postFile.delete();
-                if (deleted) {
-                    log.debug("Failed to deleted temporary file '"
-                            + postFile.getAbsolutePath() + "'");
-                } else {
-                    log.debug("Deleted temporary file '"
-                            + postFile.getAbsolutePath()
-                            + "' successfully");
-                }
+                tryAndDeleteTemporaryFile(postFile);
                 postFile = bjs.batchResultFile;
             }
             
@@ -618,6 +603,21 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                 + "to queue: '" + brMsg.getTo() + "'");
     }
     
+    /** Helper method to delete temporary files.
+     * Logs at level debug, if it couldn't delete the file.
+     * @param tmpFile the tmpFile that needs to be deleted.
+     */
+    private void tryAndDeleteTemporaryFile(File tmpFile) {
+        boolean deleted = tmpFile.delete();
+        if (!deleted) {
+            log.debug("Failed to delete temporary file '"
+                    + tmpFile.getAbsolutePath() + "'");
+        } else {
+            log.trace("Deleted temporary file '" + tmpFile.getAbsolutePath()
+                    + "' successfully");
+        }
+    }
+
     /**
      * Uses the batchjobstatus on the message converted batchjob to reply on 
      * the original message.
