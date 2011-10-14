@@ -48,7 +48,7 @@ public class GUIWebServer implements CleanupIF {
     /**
      * The unique instance of this class.
      */
-    static GUIWebServer instance;
+    private static GUIWebServer instance;
     /**
      * The Jetty server.
      */
