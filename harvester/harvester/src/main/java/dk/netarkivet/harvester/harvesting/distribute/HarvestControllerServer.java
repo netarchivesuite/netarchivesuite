@@ -740,12 +740,28 @@ implements CleanupIF {
                 log.info(ENDCRAWL_MESSAGE + " " + job.getJobID());
                 // process serverdir for files not yet uploaded.
                 processOldJobs();
+                shutdownNowOrContinue(); 
                 startAcceptingJobs();
                 beginListeningIfSpaceAvailable();
             }
         }
+        
+        /**
+         * Does the operator want us to shutdown now.
+         * TODO In a later implementation, the harvestControllerServer could 
+         * be notified over JMX. Now we just look for a "shutdown.txt" file
+         * in the HARVEST_CONTROLLER_SERVERDIR
+         */
+        private void shutdownNowOrContinue() {
+			File shutdownFile =  new File(serverDir, "shutdown.txt");
+			if (shutdownFile.exists()) {
+				log.info("Found shutdown-file in serverdir - shutting down the application");
+				instance.cleanup();
+				System.exit(0);
+			}
+		}
 
-        /** Create the crawl dir, but make sure a message is sent if there
+		/** Create the crawl dir, but make sure a message is sent if there
          * is a problem.
          *
          * @return The directory that the crawl will take place in.
