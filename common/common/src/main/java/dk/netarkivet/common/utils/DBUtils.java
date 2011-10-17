@@ -49,7 +49,12 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
  * Various database related utilities.
  *
  */
-public class DBUtils {
+public final class DBUtils {
+    
+    /** default constructor. Is private to avoid initialization. */
+    private DBUtils() {
+        
+    }
 
     /** The logger. */
     private static final Log log = LogFactory.getLog(DBUtils.class);
@@ -408,8 +413,9 @@ public class DBUtils {
             ResultSet res = s.executeQuery();
             if (!res.next()) {
                 log.warn("As yet unknown tablename '" + tablename 
-                        + "' in table schemaversions. The table probably"
-                        + " just needs to be created in the database");
+                        + "' in table schemaversions. The table"
+                        + " should be automatically created in the database "
+                        + "when it is first needed.");
             } else {
                 version = res.getInt(1);
                 if (res.wasNull()) {
@@ -434,7 +440,7 @@ public class DBUtils {
      * @param fieldNum a index into the above statement
      * @param contents the contents
      * @param maxSize the maximum size of field: fieldName
-     * @param o the Object, which assumedly have a field named fieldName
+     * @param o the Object, which is assumed to have a field named fieldName
      * @param fieldname the name of a given field
      * @throws SQLException if set operation fails
      */
@@ -598,8 +604,8 @@ public class DBUtils {
      * @param fieldNum the field-index, where the contents are inserted
      * @param contents the contents
      * @param maxSize the maxsize for this contents
-     * @param o the Object, which assumedly have a field named fieldName
-     * @param fieldName a given field (Assumedly in Object o)
+     * @param o the Object, which is assumed to have a field named fieldName
+     * @param fieldName a given field (Assumed to present in Object o)
      * @throws SQLException If fieldNum does not correspond to a
      * parameter marker in the PreparedStatement, or a database access error
      * occurs or this method is called on a closed PreparedStatement
