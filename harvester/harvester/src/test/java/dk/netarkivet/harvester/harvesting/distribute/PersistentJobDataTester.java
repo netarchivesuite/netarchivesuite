@@ -37,10 +37,14 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class PersistentJobDataTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
+    private File crawldir;
 
     public void setUp() throws Exception {
         super.setUp();
         mtf.setUp();
+        crawldir = new File(TestInfo.WORKING_DIR, "my-crawldir");
+        assertTrue("Unable to create crawldir '" + crawldir.getAbsolutePath() + "'",
+                crawldir.mkdir());
     }
 
     public void tearDown() throws Exception {
@@ -51,22 +55,22 @@ public class PersistentJobDataTester extends TestCase {
     /**
      * Test constructor for PersistentJobData.
      * 1. Throws ArgumentNotValid, if file argument null or file does not exist.
-     * 2. accepts existingdir as argument
+     * 2. accepts existing directory as argument
      */
-    public void testConstructor(){
+    public void testConstructor() {
         try {
             new PersistentJobData(null);
             fail("PersistentJobData should have thrown an exception when given null-argument");
-        }    catch (ArgumentNotValid e) {
-            //expected
+        } catch (ArgumentNotValid e) {
+            // expected
         }
 
         try {
             new PersistentJobData(new File("nonExistingDir"));
-            fail("PersistentJobData should have thrown an exception when given " +
-                    " non existingdir as argument");
+            fail("PersistentJobData should have thrown an exception when given "
+                    + " non existingdir as argument");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
 
         // Check that an existing dir doesn't throw an exception.
@@ -80,9 +84,6 @@ public class PersistentJobDataTester extends TestCase {
      *                   or unable to access DB
      */
     public void testWrite() throws Exception {
-        TestInfo.WORKING_DIR.mkdirs();
-        File crawldir = new File(TestInfo.WORKING_DIR, "my-crawldir");
-        crawldir.mkdir();
         PersistentJobData pjd = new PersistentJobData(crawldir);
         Job testJob = TestInfo.getJob();
         testJob.setJobID(42L);
@@ -109,5 +110,32 @@ public class PersistentJobDataTester extends TestCase {
         // cleanup after this unit-test.
         FileUtils.removeRecursively(crawldir);
     }
-
+    
+    /**
+     * Test reading the version 0.2 harvestInfo.xml written by NAS up to and including 3.14.X
+     */
+    public void testReadVersion0_2() {
+        File hiVersion02 = new File(TestInfo.DATA_DIR, "harvestInfo-0.2.xml");
+        FileUtils.copyFile(hiVersion02, new File(crawldir, TestInfo.HarvestInfofilename));
+        PersistentJobData pjd = new PersistentJobData(crawldir);
+        pjd.getVersion(); // force validation
+    }
+    
+    /**
+     * Test reading the version 0.2 written by NAS 3.16.1.
+     */
+    public void testReadVersion0_2A() {
+        File hiVersion02A = new File(TestInfo.DATA_DIR, "harvestInfo-0.2a.xml");
+        FileUtils.copyFile(hiVersion02A, new File(crawldir, TestInfo.HarvestInfofilename));
+        PersistentJobData pjd = new PersistentJobData(crawldir);
+        pjd.getVersion();
+    }
+    
+    /** Test reading the most recent version 0.3 harvestInfo.xml. */
+    public void testReadVersion0_3() {
+        File hiVersion03 = new File(TestInfo.DATA_DIR, "harvestInfo-0.3.xml");
+        FileUtils.copyFile(hiVersion03, new File(crawldir, TestInfo.HarvestInfofilename));
+        PersistentJobData pjd = new PersistentJobData(crawldir);
+        pjd.getVersion();
+    }
 }

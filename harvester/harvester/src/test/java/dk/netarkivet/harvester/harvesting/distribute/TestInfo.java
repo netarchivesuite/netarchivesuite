@@ -42,7 +42,6 @@ import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Contains test information about all harvestdefinition test data.
- *
  */
 public class TestInfo {
     public static final File DATA_DIR = new File("tests/dk/netarkivet/harvester/harvesting/distribute/data/");
@@ -55,14 +54,14 @@ public class TestInfo {
     public static final MetadataEntry sampleEntry = new MetadataEntry(
             "metadata://netarkivet.dk",
             "text/plain",
-            "DETTE ER NOGET METADATA");
+            "THIS IS SOME METADATA");
     public static final List<MetadataEntry> emptyMetadata = new ArrayList<MetadataEntry>();
     public static final List<MetadataEntry> oneMetadata = new ArrayList<MetadataEntry>();
     public static final String prefix = "ID";
     public static final String suffix = "X";
 
     /**
-     * The properties-file containg properties for logging in unit-tests.
+     * The properties-file containing properties for logging in unit-tests.
      */
     public static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
     static File WORKING_DIR = new File(TestInfo.DATA_DIR, "working");
@@ -91,9 +90,12 @@ public class TestInfo {
     static final File LEFTOVER_CRAWLDIR_3 = new File(TestInfo.LEFTOVER_JOB_DIR_3,"crawldir");
     static final File TEST_CRAWL_DIR = new File ("tests/dk/netarkivet/harvester/harvesting/data/crawldir");
     static final File CRAWL_DIR_COPY = new File ("tests/dk/netarkivet/harvester/harvesting/data/copyOfCrawldir");
-
+    
+    static final String HarvestInfofilename = "harvestInfo.xml";
+    
+    
     /**
-     * Load resources needed by unit tests
+     * Load resources needed by unit tests.
      */
     public TestInfo() {
     }
