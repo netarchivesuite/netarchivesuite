@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,13 +41,11 @@ import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDe
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
 /**
  * Unit tests for class DoOneCrawlMessage.
  */
 public class DoOneCrawlMessageTester extends TestCase {
 
-    TestInfo info = new TestInfo();
     /**
      We use (arbitrarily) THIS_CLIENT as channel for testing.
      */
@@ -65,9 +62,6 @@ public class DoOneCrawlMessageTester extends TestCase {
     public void setUp() throws SQLException, IllegalAccessException,
             IOException, NoSuchFieldException, ClassNotFoundException {
         rs.setUp();
-        if (!TestInfo.WORKING_DIR.exists()) {
-            TestInfo.WORKING_DIR.mkdir();
-        }
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         ChannelsTester.resetChannels();
