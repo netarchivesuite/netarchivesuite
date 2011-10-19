@@ -35,5 +35,5 @@ public interface SingleLogRecord {
      *
      * @return A String representation of the LogRecord, or null for none.
      */
-    public String getRecordString();
+    String getRecordString();
 }

@@ -29,7 +29,7 @@ But the actual reading is done in auxiliary class
 dk.netarkivet.monitor.jmx.HostForwarding
 
 If the application is down, this can be seen on this page. Furthermore,
-the last 100 significant (log-level INFO and above) logmessages
+the last 100 significant (log-level INFO and above) log-messages
 for each application can be browsed here.
 
 Warning: Any applications added to the system after starting the GUI-application
@@ -43,7 +43,9 @@ will not appear here.
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.monitor.Constants,
                  dk.netarkivet.monitor.webinterface.JMXSummaryUtils,
-                 dk.netarkivet.monitor.webinterface.StatusEntry, java.net.URLEncoder, java.net.URLDecoder"
+                 dk.netarkivet.monitor.webinterface.StatusEntry,
+                 java.net.URLEncoder,
+                 java.net.URLDecoder"
          pageEncoding="UTF-8"
         %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
@@ -61,7 +63,6 @@ will not appear here.
     // remove application if parameter remove is set.
     String remove = request.getParameter(Constants.REMOVE);
     if(remove != null) {
-        System.out.println("remove app");
         JMXSummaryUtils.StarredRequest starredRequest =
                 new JMXSummaryUtils.StarredRequest(request);
         try {
@@ -76,7 +77,9 @@ will not appear here.
              * enable us to return to the previous view after removing an application.
              */
             String oldquery = starredRequest.getParameter("oldquery");
-            if (oldquery != null) builder.append(java.net.URLDecoder.decode(oldquery));
+            if (oldquery != null) {
+                builder.append(java.net.URLDecoder.decode(oldquery));
+            }
             response.sendRedirect(builder.toString());
         } catch (ForwardedToErrorPage e) {
             return;

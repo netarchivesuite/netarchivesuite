@@ -40,6 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.management.SingleMBeanObject;
 import dk.netarkivet.common.utils.ExceptionUtils;
@@ -78,13 +79,21 @@ public class HostForwarding<T> {
      * src/dk/netarkivet/monitor/settings.xml.
      */
     private String jmxUsername;
-
+    /** 
+     * @return the JMX-Username
+     */
     private String getJmxUsername() {
-    	return jmxUsername;
+        return jmxUsername;
     }
-    
-    private synchronized void setJmxUsername(String jmxUsername) {
-    	this.jmxUsername = jmxUsername;
+    /**
+     * Set the JMX-username with a new value. Null or empty username is not 
+     * allowed.
+     * @param newJmxUsername New value for the JMX-username
+     */
+    private synchronized void setJmxUsername(String newJmxUsername) {
+        ArgumentNotValid.checkNotNullOrEmpty(
+                newJmxUsername, "String newJmxUsername");
+        this.jmxUsername = newJmxUsername;
     }
     
     /**
@@ -93,13 +102,22 @@ public class HostForwarding<T> {
      * src/dk/netarkivet/monitor/settings.xml.
      */
     private String jmxPassword;
-
-    private String getJmxPassword() {
-    	return jmxUsername;
-    }
     
-    private synchronized void setJmxPassword(String jmxPassword) {
-    	this.jmxPassword = jmxPassword;
+    /** 
+     * @return the JMX-password
+     */
+    private String getJmxPassword() {
+        return jmxPassword;
+    }
+    /**
+     * Set the JMX-password with a new value. Null or empty password is not 
+     * allowed.
+     * @param newJmxPassword New value for the JMX-password 
+     */
+    private synchronized void setJmxPassword(String newJmxPassword) {
+        ArgumentNotValid.checkNotNullOrEmpty(
+                newJmxPassword, "String newJmxPassword");
+        this.jmxPassword = newJmxPassword;
     }
     
     /**
@@ -176,8 +194,8 @@ public class HostForwarding<T> {
         if (changed) {
             log.info("Settings '"
                      + MonitorSettings.JMX_USERNAME_SETTING
-                     + "' and '" + MonitorSettings.JMX_PASSWORD_SETTING +
-                     "' has been updated with value from a System property "
+                     + "' and '" + MonitorSettings.JMX_PASSWORD_SETTING 
+                     + "' has been updated with value from a System property "
                      + "or one of the files: "
                      + StringUtils.conjoin(",", Settings.getSettingsFiles()));
         }
@@ -230,6 +248,7 @@ public class HostForwarding<T> {
      */
     private synchronized boolean updateJmxUsernameAndPassword() {
         boolean changed = false;
+        
         String newJmxUsername = Settings.get(
                 MonitorSettings.JMX_USERNAME_SETTING);
 
@@ -243,7 +262,7 @@ public class HostForwarding<T> {
         }
 
         if (jmxPassword == null || !jmxPassword.equals(newJmxPassword)) {
-        	setJmxPassword(newJmxPassword);
+            setJmxPassword(newJmxPassword);
             changed = true;
         }
         return changed;
@@ -355,12 +374,12 @@ public class HostForwarding<T> {
      * Returns the domain from a given query. Used for constructing an
      * error-mbean-name on connection trouble.
      *
-     * @param mBeanQuery The query to return the domain from.
+     * @param aMBeanQuery The query to return the domain from.
      *
      * @return the domain from a given query.
      */
-    private String queryToDomain(String mBeanQuery) {
-        return mBeanQuery.replaceAll(":.*$", "");
+    private String queryToDomain(String aMBeanQuery) {
+        return aMBeanQuery.replaceAll(":.*$", "");
     }
 
     /**
