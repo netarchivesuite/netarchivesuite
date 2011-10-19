@@ -239,12 +239,15 @@ public abstract class CrawlLogIndexCache extends
             log.debug("Merging the indices but don't optimize");            
             indexer.getIndex().addIndexesNoOptimize(
                     subindices.toArray(new Directory[0]));
+            long docsInIndex = indexer.getIndex().numDocs();
             indexer.close(false);
             
             // Now the index is made, gzip it up.
             ZipUtils.gzipFiles(new File(indexLocation), resultFile);
             log.info("Completed combining a dataset with " 
-                    + datasetSize + " crawl logs");
+                    + datasetSize + " crawl logs (entries in combined index: "
+                    + docsInIndex + ") - compressed index has size " + FileUtils.getHumanReadableFileSize(resultFile));
+                    
         } catch (IOException e) {
             throw new IOFailure("Error setting up craw.log index framework for "
                     + resultFile.getAbsolutePath(), e);
@@ -255,7 +258,9 @@ public abstract class CrawlLogIndexCache extends
             }
         }
     }
-
+    /**
+     * Helper class to sleep a little between completeness checks.
+     */
     private void sleepAwhile() {
         try {
             Thread.sleep(sleepintervalBetweenCompletenessChecks);

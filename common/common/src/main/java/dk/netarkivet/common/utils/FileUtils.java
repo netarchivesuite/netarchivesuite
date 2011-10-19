@@ -46,6 +46,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sun.mail.iap.Argument;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -1302,6 +1304,26 @@ public class FileUtils {
                     + "into a file. Filepath: '" + filePath + "'";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
+        }
+    }
+    
+    /**
+     * Get a humanly readable representation of the file size.
+     * @param aFile a File object
+     * @return a humanly readable representation of the file size (rounded)
+     */
+    public static String getHumanReadableFileSize(File aFile) {
+        ArgumentNotValid.checkNotNull(aFile, "File aFile");
+        long filesize = aFile.length();
+        if (filesize < 1000){ // represent size in bytes
+            return filesize + " bytes";
+        } else if(filesize >= 1000 && filesize < 1000000) { // represent size in Kbytes
+            return (filesize / 1000L) + " Kbytes";
+        } else if(filesize >= 1000000 && filesize < 1000000000) { // represent size in Mbytes
+            return (filesize / 1000000L) + " Mbytes";
+        } else {
+            // represent in Gbytes
+            return (filesize / 1000000000L) + " Gbytes";
         }
     }
 }

@@ -96,8 +96,10 @@ public class DigestIndexerWorker implements Callable<Boolean> {
             CrawlLogIndexCache.indexFile(jobId, crawlLog, cdxfile, localindexer,
                     indexingOptions);
             localindexer.close(optimizeIndex);
+
             log.info("Completed subindexing task of data from job "
-                    + this.jobId);
+                    + this.jobId + " w/ " + localindexer.getIndex().numDocs() 
+                    + " index-entries)");
         } catch (IOException e) {
             successfull = false;
             log.warn("Indexing for job w/ id " + jobId + " failed.", e);
