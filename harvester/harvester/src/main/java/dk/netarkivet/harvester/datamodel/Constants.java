@@ -33,8 +33,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * Constants used by the datamodel and webinterface packages.
  *
  */
-
-public class Constants {
+public final class Constants {
     /** Pattern not used by anyone, except unittests. */
     private static final Pattern ID_PATTERN =
             Pattern.compile(".*_(\\d+)\\.xml");
@@ -98,13 +97,13 @@ public class Constants {
      * Used to restrict the running time for snapshot harvest jobs.
      */
     public static final long DEFAULT_MAX_JOB_RUNNING_TIME
-    	= Settings.getLong(HarvesterSettings.JOBS_MAX_TIME_TO_COMPLETE);
+        = Settings.getLong(HarvesterSettings.JOBS_MAX_TIME_TO_COMPLETE);
 
     /**
      * The value for alias timeout, in milliseconds.
      */
     public static final long ALIAS_TIMEOUT_IN_MILLISECONDS 
-    	= Settings.getLong(HarvesterSettings.ALIAS_TIMEOUT) * 1000L;
+        = Settings.getLong(HarvesterSettings.ALIAS_TIMEOUT) * 1000L;
     
     /** Settings used in JobDBDao after admin machine break down. **/
     public static final String NEXT_JOB_ID =

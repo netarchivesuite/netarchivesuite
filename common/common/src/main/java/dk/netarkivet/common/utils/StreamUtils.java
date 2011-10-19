@@ -215,7 +215,11 @@ public class StreamUtils {
         ArgumentNotValid.checkNotNegative(dataLength, "dataLength");
         byte[] contents = new byte[dataLength];
         try {
-            data.read(contents, 0, dataLength);
+            int read = data.read(contents, 0, dataLength);
+            if (dataLength != read) {
+                log.debug("Only read " + read + " bytes out of the "
+                        + dataLength + " bytes requested"); 
+            }
         } catch (IOException e) {
             throw new IOFailure("Unable to convert inputstream to byte array",
                                 e);

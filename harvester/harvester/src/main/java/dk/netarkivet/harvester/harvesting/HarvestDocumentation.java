@@ -143,13 +143,13 @@ public class HarvestDocumentation {
             aw = ingestables.getMetadataArcWriter();
 
             // insert the pre-harvest metadata file, if it exists.
-            // TODO: Place preharvestmetadata in IngestableFiles-defined area
+            // TODO Place preharvestmetadata in IngestableFiles-defined area
             File preharvestMetadata = new File(crawlDir,
                     getPreharvestMetadataARCFileName(jobID));
             if (preharvestMetadata.exists()) {
                 ARCUtils.insertARCFile(preharvestMetadata, aw);
             }
-            //TODO: This is a good place to copy deduplicate information from the
+            //TODO This is a good place to copy deduplicate information from the
             //crawl log to the cdx file.
 
             // Insert harvestdetails into metadata arcfile.
@@ -185,7 +185,7 @@ public class HarvestDocumentation {
             if (arcFilesDir.isDirectory()) {
                 moveAwayForeignFiles(arcFilesDir, jobID);
                 //Generate CDX
-                // TODO: Place results in IngestableFiles-defined area
+                // TODO Place results in IngestableFiles-defined area
                 File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
                                                                  "cdx");
                 CDXUtils.generateCDX(arcFilesDir, cdxFilesDir);
@@ -259,7 +259,7 @@ public class HarvestDocumentation {
             String jobID,
             String timeStamp,
             String serialNumber)
-    throws ArgumentNotValid,UnknownID {
+    throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
         ArgumentNotValid.checkNotNull(jobID, "jobID");
         ArgumentNotValid.checkNotNull(timeStamp, "timeStamp");
@@ -454,13 +454,16 @@ public class HarvestDocumentation {
 
         // Check if exists any settings directory (domain-specific settings)
         // if yes, add any settings.xml hiding in this directory.
-        // TODO: Delete any settings-files found in the settings directory */
+        // TODO Delete any settings-files found in the settings directory */
         File settingsDir = new File(crawlDir, "settings");
         if (settingsDir.isDirectory()) {
             Map<File, String> domainSettingsFiles =
                 findDomainSpecificSettings(settingsDir);
-            for (File dsf : domainSettingsFiles.keySet()) {
-                String domain = domainSettingsFiles.get(dsf);
+            for (Map.Entry<File, String> entry : domainSettingsFiles
+                    .entrySet()) {
+
+                File dsf = entry.getKey();
+                String domain = entry.getValue();
                 files.add(
                         new MetadataFile(
                                 dsf,
@@ -523,7 +526,8 @@ public class HarvestDocumentation {
      * @param settingsDir the given settings directory
      * @return the settings file paired with their domain..
      */
-    private static Map<File, String> findDomainSpecificSettings(File settingsDir) {
+    private static Map<File, String> findDomainSpecificSettings(
+            File settingsDir) {
 
         // find any domain specific configurations (settings.xml)
         List<String> reversedDomainsWithSettings =

@@ -34,6 +34,9 @@ import dk.netarkivet.wayback.WaybackSettings;
  */
 public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String>{
 
+    /**
+     * Default constructor.
+     */
     public ArchiveFileDAO() {
         super(ArchiveFile.class);
     }
@@ -57,11 +60,11 @@ public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String>{
      * @return the list of files awaiting indexing.
      */
     public List<ArchiveFile> getFilesAwaitingIndexing() {
-        int maxFailedAttempts = Settings.getInt
-                (WaybackSettings.WAYBACK_INDEXER_MAXFAILEDATTEMPTS);
+        int maxFailedAttempts = Settings.getInt(
+                WaybackSettings.WAYBACK_INDEXER_MAXFAILEDATTEMPTS);
          return getSession().createQuery("FROM ArchiveFile WHERE indexed=false"
-                + " AND indexingFailedAttempts <  " + maxFailedAttempts +
-                " ORDER BY indexingFailedAttempts ASC").list();
+                + " AND indexingFailedAttempts <  " + maxFailedAttempts 
+                + " ORDER BY indexingFailedAttempts ASC").list();
     }
 
 }

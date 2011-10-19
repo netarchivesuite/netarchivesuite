@@ -56,20 +56,24 @@ import dk.netarkivet.common.utils.SystemUtils;
  * Various utilities that do stuff that ARCWriter does not provide.
  * Also includes method for converting an ARCRecord to a byte array.
  *
- * TODO: Turn this into a wrapper around ARCWriter instead.
+ * TODO Turn this into a wrapper around ARCWriter instead.
  *
  */
-
-public class ARCUtils {
+public final class ARCUtils {
+    /** Default constructor to avoid initialization.*/
+    private ARCUtils() {
+    }
     /** The log. */
     private static Log log = LogFactory.getLog(ARCUtils.class.getName());
 
+    
     /** Matches HTTP header lines like
      * HTTP/1.1 404 Page has gone south
      * Groups:  111 2222222222222222222. */
-    private static final Pattern HTTP_HEADER_PATTERN =Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
+    private static final Pattern HTTP_HEADER_PATTERN
+        = Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
 
-    /** Extra ARC Record metadata */
+    /** Extra ARC Record metadata. */
     public static final String RESPONSETEXT = "RESPONSETEXT";  
 
 
@@ -106,13 +110,16 @@ public class ARCUtils {
     /**
      * Writes the given ARCRecord on the given ARCWriter.
      * 
-     * Note that the ARCWriter.write method takes the metadata fields as separate arguments 
-     * instead of accepting an ARCRecordMetaData object.
-     * It uses the ArchiveUtils.getDate method to convert an ARCstyle
-     * datestring to a Date object.
+     * Note that the ARCWriter.write method takes the metadata fields as
+     * separate arguments instead of accepting an ARCRecordMetaData object. It
+     * uses the ArchiveUtils.getDate method to convert an ARCstyle datestring to
+     * a Date object.
+     * 
      * @see ArchiveUtils#getDate(java.lang.String)
-     * @param aw The ARCWriter to output the record on.
-     * @param record The record to output
+     * @param aw
+     *            The ARCWriter to output the record on.
+     * @param record
+     *            The record to output
      */
     private static void copySingleRecord(ARCWriter aw, ARCRecord record) {
         try {
@@ -145,9 +152,11 @@ public class ARCUtils {
             ps = new PrintStream(new FileOutputStream(newFile));
             aw = new ARCWriter(
                     new AtomicInteger(), ps,
-                    newFile, //This name is used for the first (file metadata) record
+                    //This name is used for the first (file metadata) record
+                    newFile, 
                     false, //Don't compress
-                    ArchiveUtils.get14DigitDate(System.currentTimeMillis()), //Use current time
+                    //Use current time
+                    ArchiveUtils.get14DigitDate(System.currentTimeMillis()),
                     null //No particular file metadata to add
             );
         } catch (IOException e) {
@@ -271,7 +280,7 @@ public class ARCUtils {
    }
 
     /**
-     * TODO: write unit test
+     * TODO write unit test.
      * @param in pointing at start of ARC record.
      * @param offset into ARC file.
      * @return pairwise headers.

@@ -161,7 +161,7 @@ public abstract class NetarkivetMessage implements Serializable {
      * the subclass doesn't set replyOfId, this method behaves like getId.
      * @return replyOfId
      */
-    public String getReplyOfId() {
+    public synchronized String getReplyOfId() {
         if (replyOfId != null) {
             return replyOfId;
         } else {

@@ -46,7 +46,7 @@ implements Serializable {
     private final JobPriority jobProprity;
 
     /**
-     * The sender's application instance ID
+     * The sender's application instance ID.
      */
     private final String applicationInstanceId;
 

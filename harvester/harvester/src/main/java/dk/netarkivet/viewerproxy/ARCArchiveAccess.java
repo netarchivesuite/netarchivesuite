@@ -112,6 +112,7 @@ public class ARCArchiveAccess implements URIResolver {
 
     /** Look up a given URI and add its contents to the Response given.
      * @param request The request to look up record for
+     * @param response The response to return to the browser
      * @return The response code for this page if found, or
      * URIResolver.NOT_FOUND otherwise.
      * @see URIResolver#lookup(Request, Response)

@@ -280,7 +280,7 @@ public class ArchiveSettings {
      * Default: 30 seconds (30000 milliseconds).
      */
     public static String INDEXSERVER_INDEXING_CHECKINTERVAL
-    		= "settings.archive.indexserver.checkinterval";
+            = "settings.archive.indexserver.checkinterval";
     
     /**
      * <b>settings.archive.indexserver.indexingtimeout</b>: <br>
@@ -294,6 +294,6 @@ public class ArchiveSettings {
      * Setting for for interval between each listening check in milliseconds. 
      * The default is 30000 (5 minutes).
      */
-    public static String INDEXSERVER_INDEXING_LISTENING_INTERVAL = 
-    		"settings.archive.indexserver.listeningcheckinterval";
+    public static String INDEXSERVER_INDEXING_LISTENING_INTERVAL 
+        = "settings.archive.indexserver.listeningcheckinterval";
 }

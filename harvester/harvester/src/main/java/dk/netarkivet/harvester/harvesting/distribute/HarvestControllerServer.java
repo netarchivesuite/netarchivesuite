@@ -110,9 +110,12 @@ implements CleanupIF {
     private final String applicationInstanceId =
         Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
     
-    /** The name of the server this <code>HarvestControllerServer</code> is running on.
+    /**
+     * The name of the server this <code>HarvestControllerServer</code> is
+     * running on.
      */
-    private final String physicalServerName = DomainUtils.reduceHostname(SystemUtils.getLocalHostName());
+    private final String physicalServerName 
+        = DomainUtils.reduceHostname(SystemUtils.getLocalHostName());
 
     /** The message to write to log when starting the server. */
     private static final String STARTING_MESSAGE =
@@ -240,9 +243,9 @@ implements CleanupIF {
         // If any unprocessed jobs are left on the server, process them now
         processOldJobs();
 
-		// Environment and connections are now ready for processing of messages
-		jobChannel = JobChannelUtil.getChannel(JOB_PRIORITY);
-		// Only listen for harvester jobs if enough available space
+        // Environment and connections are now ready for processing of messages
+        jobChannel = JobChannelUtil.getChannel(JOB_PRIORITY);
+        // Only listen for harvester jobs if enough available space
         beginListeningIfSpaceAvailable();
 
         // Notify the harvest dispatcher that we are ready
@@ -295,11 +298,11 @@ implements CleanupIF {
         }
         if (jmsConnection != null) {
             jmsConnection.removeListener(jobChannel, this);
+            
+            // Send a last status message (status unavailable)
+            jmsConnection.send(new HarvesterStatusMessage(
+                    applicationInstanceId, JOB_PRIORITY, false));
         }
-
-        // Send a last status message (status unavailable)
-        jmsConnection.send(new HarvesterStatusMessage(
-                applicationInstanceId, JOB_PRIORITY, false));
 
         // Stop the sending of status messages
         sendStatus.shutdown();
@@ -630,7 +633,8 @@ implements CleanupIF {
                 log.info("Job with ID " + jobID + " finished with status DONE");
                 csm = new CrawlStatusMessage(jobID, JobStatus.DONE, dhr);
             } else {
-                log.warn("Job with ID " + jobID + " finished with status FAILED");
+                log.warn("Job with ID " + jobID 
+                        + " finished with status FAILED");
                 csm = new CrawlStatusMessage(jobID, JobStatus.FAILED, dhr);
                 setErrorMessages(csm, crawlException, errorMessage.toString(),
                         dhr == null, failedFiles.size());
@@ -674,6 +678,8 @@ implements CleanupIF {
         private final List<MetadataEntry> metadataEntries;
         /** Constructor for the HarvesterThread class.
          * @param job a harvesting job
+         * @param origHarvestInfo Info about the harvestdefinition 
+         *      that scheduled this job
          * @param metadataEntries metadata associated with the given job
          */
         public HarvesterThread(
@@ -753,17 +759,19 @@ implements CleanupIF {
          * in the HARVEST_CONTROLLER_SERVERDIR
          */
         private void shutdownNowOrContinue() {
-			File shutdownFile =  new File(serverDir, "shutdown.txt");
-			if (shutdownFile.exists()) {
-				log.info("Found shutdown-file in serverdir - shutting down the application");
-				instance.cleanup();
-				System.exit(0);
-			}
-		}
+            File shutdownFile = new File(serverDir, "shutdown.txt");
+            if (shutdownFile.exists()) {
+                log.info("Found shutdown-file in serverdir - "
+                        + "shutting down the application");
+                instance.cleanup();
+                System.exit(0);
+            }
+        }
 
-		/** Create the crawl dir, but make sure a message is sent if there
-         * is a problem.
-         *
+        /**
+         * Create the crawl dir, but make sure a message is sent if there is a
+         * problem.
+         * 
          * @return The directory that the crawl will take place in.
          * @throws PermissionDenied if the directory cannot be created.
          */
@@ -798,12 +806,15 @@ implements CleanupIF {
         throw new NotImplementedException("This method is not implemented");
         
     }
-
+    
+    /**
+     * Send a HarvesterStatusMessage to the HarvetJobManager.
+     */
     private synchronized void sendStatus() {
         jmsConnection.send(new HarvesterStatusMessage(
                 applicationInstanceId + " on " + physicalServerName,
                 HarvestControllerServer.JOB_PRIORITY,
-                ! running.get()));
+                !running.get()));
     }
     
     /**
@@ -820,6 +831,7 @@ implements CleanupIF {
 
         /**
          * Builds a task from its owner harvester.
+         * @param hcs The harvestControllerServer associated with this task
          */
         public SendStatusTask(HarvestControllerServer hcs) {
             super();

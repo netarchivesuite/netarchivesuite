@@ -104,7 +104,13 @@ public abstract class ApplicationUtils {
             System.exit(WRONG_ARGUMENTS);
         }
     }
-
+    
+    /**
+     * Should we show the version of NetarchiveSuite.
+     * @param args commandline arguments to NetarchiveSuite
+     * @return true, if we should show the version of NetarchiveSuite; 
+     * otherwise false
+     */
     private static boolean showVersion(String[] args) {
         if(args.length == 1
                 && (args[0].equals("-v") || args[0].equals("--version"))) {
@@ -130,7 +136,7 @@ public abstract class ApplicationUtils {
      * @param args The arguments to the application (should be empty).
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void startApp(Class c, String[] args) {
+    public static void startApp(Class c, String[] args) {
         String appName = c.getName();
         Settings.set(CommonSettings.APPLICATION_NAME, appName);
         logAndPrint("Starting " + appName + "\n"
@@ -191,7 +197,8 @@ public abstract class ApplicationUtils {
      * @param component The component to start.
      */
     public static void startApp(LifeCycleComponent component) {
-        ArgumentNotValid.checkNotNull(component, "LifeCycleComponent component");
+        ArgumentNotValid.checkNotNull(
+                component, "LifeCycleComponent component");
         
         String appName = component.getClass().getName();
         Settings.set(CommonSettings.APPLICATION_NAME, appName);

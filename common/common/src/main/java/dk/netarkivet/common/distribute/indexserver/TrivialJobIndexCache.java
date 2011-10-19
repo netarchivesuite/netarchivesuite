@@ -52,6 +52,7 @@ public class TrivialJobIndexCache implements JobIndexCache {
      *
      * The directory that the files are to be put into will be created by
      * this method.
+     * @param t The type of requests handled
      */
     public TrivialJobIndexCache(RequestType t) {
         ArgumentNotValid.checkNotNull(t, "RequestType t");
@@ -71,11 +72,13 @@ public class TrivialJobIndexCache implements JobIndexCache {
      *         cache of data.
      * @throws IOFailure if there is no cache file for the set.
      */
+    @Override
     public Index<Set<Long>> getIndex(Set<Long> jobIDs) {
         ArgumentNotValid.checkNotNull(jobIDs, "Set<Long> jobIDs");
 
         File cacheFile = new File(dir,
-                FileUtils.generateFileNameFromSet(jobIDs, "-" + requestType + "-cache"));
+                FileUtils.generateFileNameFromSet(jobIDs, "-" + requestType
+                        + "-cache"));
 
         if (!cacheFile.exists()) {
             throw new IOFailure("The cache does not contain '" + cacheFile

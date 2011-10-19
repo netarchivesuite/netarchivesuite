@@ -43,10 +43,15 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Utilities for interfacing with the (fairly low-level) java.util.zip
- * package
- *
+ * package.
  */
-public class ZipUtils {
+public final class ZipUtils {
+    
+    /** Default constructor to avoid initialization.*/
+    private ZipUtils() {
+    }
+    
+    /** The class logger. */
     private static Log log = LogFactory.getLog(ZipUtils.class.getName());
     /** The standard suffix for a gzipped file. */
     public static final String GZIP_SUFFIX = ".gz";
@@ -63,8 +68,8 @@ public class ZipUtils {
         ArgumentNotValid.checkNotNull(into, "File into");
         ArgumentNotValid.checkTrue(dir.isDirectory(),
                 "directory '" + dir + "' to zip is not a directory");
-        ArgumentNotValid.checkTrue
-                (into.getAbsoluteFile().getParentFile().canWrite(),
+        ArgumentNotValid.checkTrue(
+                into.getAbsoluteFile().getParentFile().canWrite(),
                 "cannot write to '" + into + "'");
 
         File[] files = dir.listFiles();
@@ -104,8 +109,8 @@ public class ZipUtils {
     public static void unzip(File zipFile, File toDir) {
         ArgumentNotValid.checkNotNull(zipFile, "File zipFile");
         ArgumentNotValid.checkNotNull(toDir, "File toDir");
-        ArgumentNotValid.checkTrue
-                (toDir.getAbsoluteFile().getParentFile().canWrite(),
+        ArgumentNotValid.checkTrue(
+                toDir.getAbsoluteFile().getParentFile().canWrite(),
                 "can't write to '" + toDir + "'");
         ArgumentNotValid.checkTrue(zipFile.canRead(),
                 "can't read '" + zipFile + "'");
@@ -119,8 +124,8 @@ public class ZipUtils {
                     ZipEntry ze = entries.nextElement();
                     File target = new File(toDir, ze.getName());
                     // Ensure that its dir exists
-                    FileUtils.createDir
-                            (target.getCanonicalFile().getParentFile());
+                    FileUtils.createDir(
+                            target.getCanonicalFile().getParentFile());
                     if (ze.isDirectory()) {
                         target.mkdir();
                     } else {
@@ -150,7 +155,7 @@ public class ZipUtils {
      * @param fromDir An existing directory
      * @param toDir A directory where gzipped files will be placed.  This
      * directory must not previously exist.
-     *   If the operation is not successfull, the directory will not be created.
+     *   If the operation is not successful, the directory will not be created.
      */
     public static void gzipFiles(File fromDir, File toDir) {
         ArgumentNotValid.checkNotNull(fromDir, "File fromDir");

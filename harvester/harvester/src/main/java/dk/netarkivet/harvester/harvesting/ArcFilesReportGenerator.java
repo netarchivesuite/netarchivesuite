@@ -73,10 +73,10 @@ class ArcFilesReportGenerator {
     private static final Log LOG =
         LogFactory.getLog(ArcFilesReportGenerator.class);
 
-    private final static SimpleDateFormat ISO_8601_DATE_FORMAT =
+    private static final SimpleDateFormat ISO_8601_DATE_FORMAT =
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-    private final static SimpleDateFormat SOURCE_DATE_FORMAT =
+    private static final SimpleDateFormat SOURCE_DATE_FORMAT =
         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     /**
@@ -178,13 +178,19 @@ class ArcFilesReportGenerator {
         File arcFilesReport = new File(crawlDir, REPORT_FILE_NAME);
 
         try {
-            arcFilesReport.createNewFile();
-            PrintWriter out = new PrintWriter(arcFilesReport) ;
+            boolean created = arcFilesReport.createNewFile();
+            if (!created) {
+                throw new IOException("Unable to create '" 
+                        + arcFilesReport.getAbsolutePath() + "'."); 
+            }
+            PrintWriter out = new PrintWriter(arcFilesReport);
 
             out.println("[ARCFILE] [Opened] [Closed] [Size]");
 
-            for (String arcFileName : reportContents.keySet()) {
-                ArcFileStatus afs = reportContents.get(arcFileName);
+            for (Map.Entry<String, ArcFilesReportGenerator.ArcFileStatus> entry
+                    : reportContents.entrySet()) {
+                String arcFileName = entry.getKey();
+                ArcFileStatus afs = entry.getValue();
                 out.println(arcFileName + " " + afs.toString());
             }
 
@@ -199,6 +205,7 @@ class ArcFilesReportGenerator {
     /**
      * Parses the heritrix.out file and maps to every found ARC file an
      * {@link ArcFileStatus} instance.
+     * @return the map of found ARC files, and related ArcFileStatus
      */
     protected Map<String, ArcFileStatus> parseHeritrixOut() {
 
@@ -235,8 +242,8 @@ class ArcFilesReportGenerator {
 
                     ArcFileStatus afs = arcFiles.get(arcFileName);
                     if (afs == null) {
-                        throw new ArgumentNotValid("ARC file " + arcFileName +
-                        " has no previous Opened record!");
+                        throw new ArgumentNotValid("ARC file " + arcFileName 
+                                + " has no previous Opened record!");
                     }
 
                     afs.setClosedDate(closedDate);
@@ -247,7 +254,6 @@ class ArcFilesReportGenerator {
                 }
 
             }
-
             heritrixOut.close();
         } catch (IOException e) {
             LOG.error(e);
@@ -256,5 +262,4 @@ class ArcFilesReportGenerator {
 
         return arcFiles;
     }
-
 }

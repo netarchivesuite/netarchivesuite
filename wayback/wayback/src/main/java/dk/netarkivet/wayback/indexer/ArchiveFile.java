@@ -205,7 +205,8 @@ public class ArchiveFile {
                 ArcRepositoryClientFactory.getPreservationInstance();
         String replicaId = Settings.get(
                 WaybackSettings.WAYBACK_REPLICA);
-        log.info("Submitting " + theJob.getClass().getName() + " for " + getFilename() + " to " + replicaId);
+        log.info("Submitting " + theJob.getClass().getName() + " for " 
+                + getFilename() + " to " + replicaId);
         BatchStatus batchStatus = client.batch(theJob, replicaId);
         log.info("Batch job for " + this.getFilename() + " returned");
         // Since we index exactly one file at a time, the batch job
@@ -241,9 +242,11 @@ public class ArchiveFile {
         // Copy the batch output to the temporary directory.
         File batchOutputFile =
                 new File(outDir, outputFilename);
-        log.info("Collecting index for '" + this.getFilename() + "' to '" + batchOutputFile.getAbsolutePath() + "'" );
+        log.info("Collecting index for '" + this.getFilename() 
+                + "' to '" + batchOutputFile.getAbsolutePath() + "'");
         status.copyResults(batchOutputFile);
-        log.info("Finished collecting index for '" + this.getFilename() + "' to '" + batchOutputFile.getAbsolutePath() + "'" );
+        log.info("Finished collecting index for '" + this.getFilename() 
+                + "' to '" + batchOutputFile.getAbsolutePath() + "'");
         // Read the name of the final batch output directory and create it if
         // necessary
         String finalBatchOutputDir =
@@ -260,8 +263,8 @@ public class ArchiveFile {
         // Update the file status in the object store
         originalIndexFileName = outputFilename;
         isIndexed = true;
-        log.info("Indexed '" + this.filename + "' to '" + finalFile.getAbsolutePath()
-                 + "'");
+        log.info("Indexed '" + this.filename + "' to '" 
+                + finalFile.getAbsolutePath() + "'");
         (new ArchiveFileDAO()).update(this);
     }
 

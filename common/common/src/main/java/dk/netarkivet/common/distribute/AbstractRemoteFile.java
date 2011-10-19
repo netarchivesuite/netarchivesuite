@@ -49,7 +49,7 @@ import dk.netarkivet.common.utils.TimeUtils;
  *   work with the factory.
  */
 public abstract class AbstractRemoteFile implements RemoteFile {
-    /** The file this is remote file for */
+    /** The file this is remote file for. */
     protected final File file;
     /** If true, communication is checksummed. */
     protected final boolean useChecksums;
@@ -140,7 +140,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
                             + getNumberOfRetries()
                             + " failed. Will sleep a while before trying to "
                             + "copyTo again.");
-                    TimeUtils.exponentialBackoffSleep(retry, Calendar.MINUTE);                 
+                    TimeUtils.exponentialBackoffSleep(retry, Calendar.MINUTE);
                 }
             } while(!success && retry < getNumberOfRetries());
             
@@ -151,11 +151,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
                         + "' attempts.");
             }
         } catch (Exception e) {
-            try {
-                FileUtils.remove(destFile);
-            } catch(IOFailure e1) {
-                //not fatal
-            }
+            FileUtils.remove(destFile);
             throw new IOFailure("IO trouble transferring file", e);
         }
     }
