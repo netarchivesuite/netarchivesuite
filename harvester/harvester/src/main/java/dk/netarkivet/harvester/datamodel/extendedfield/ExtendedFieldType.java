@@ -25,37 +25,53 @@ package dk.netarkivet.harvester.datamodel.extendedfield;
 
 import java.io.Serializable;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
-
 /**
  * This class represents one Extended Field Type.
  */
 public class ExtendedFieldType implements Serializable {
+    /** The id of this ExtendedFieldType. */
     private Long extendedFieldTypeID;
-
-    public Long getExtendedFieldTypeID() {
-        return extendedFieldTypeID;
-    }
-
-    public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
-        this.extendedFieldTypeID = extendedFieldTypeID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    /** The name of this ExtendedFieldType. */
     private String name;
-
-    ExtendedFieldType(Long aExtendedFieldTypeID, String aName)
-            throws ArgumentNotValid {
+    
+    /** 
+     * Constructor.
+     * TODO Add validation
+     * @param aExtendedFieldTypeID The id of this ExtendedFieldType.
+     * @param aName The name of this ExtendedFieldType.
+     */
+    ExtendedFieldType(Long aExtendedFieldTypeID, String aName) {
         extendedFieldTypeID = aExtendedFieldTypeID;
         name = aName;
     }
 
+    /**
+     * @return id of this ExtendedFieldType.
+     */
+    public Long getExtendedFieldTypeID() {
+        return extendedFieldTypeID;
+    }
+
+    /**
+     * Set the id of this ExtendedFieldType.
+     * @param extendedFieldTypeID the id of this ExtendedFieldType
+     */
+    public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
+        this.extendedFieldTypeID = extendedFieldTypeID;
+    }
+    
+    /**
+     * @return the name of this ExtendedFieldType.
+     */
+    public String getName() {
+        return name;
+    }
+    
+    /**
+     * Set the name of this ExtendedFieldType.
+     * @param name the name of this ExtendedFieldType.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 }

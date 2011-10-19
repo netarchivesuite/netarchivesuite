@@ -24,9 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 --%><%@page import="
 			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
 			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
-			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO,
 			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes,
 			dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition,
+			dk.netarkivet.harvester.webinterface.ExtendedFieldConstants,
 			dk.netarkivet.common.exceptions.ForwardedToErrorPage,
 			dk.netarkivet.common.webinterface.HTMLUtils,
 			dk.netarkivet.archive.Constants,			
@@ -40,18 +40,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 %>
 <%
 	HTMLUtils.setUTF8(request);
-    String action = request.getParameter(ExtendedFieldDefinition.EXTF_ACTION);
+    String action = request.getParameter(ExtendedFieldConstants.EXTF_ACTION);
 
-    ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
+    ExtendedFieldDAO extdao = ExtendedFieldDAO.getInstance();
 
     // extf_type_id must be set if Action read is used
     
-	String extf_type_id = request.getParameter(ExtendedFieldDefinition.EXTF_TYPE_ID);
-	String extf_id = request.getParameter(ExtendedFieldDefinition.EXTF_ID);
+	String extf_type_id = request.getParameter(ExtendedFieldConstants.EXTF_TYPE_ID);
+	String extf_id = request.getParameter(ExtendedFieldConstants.EXTF_ID);
 	
 	ExtendedField extField = null;
 	
-	if (ExtendedFieldDefinition.EXTF_ACTION_READ.equals(action)) {
+	if (ExtendedFieldConstants.EXTF_ACTION_READ.equals(action)) {
 		if (extf_id != null) {
 	        extField = ExtendedFieldDefinition.readExtendedField(extf_id);
 		}
@@ -60,16 +60,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 		}
 	}
 	else {
-        if (ExtendedFieldDefinition.EXTF_ACTION_DELETE.equals(action)) {
+        if (ExtendedFieldConstants.EXTF_ACTION_DELETE.equals(action)) {
         	extdao.delete(Integer.parseInt(extf_id));
             %>    
             <jsp:forward page="Definitions-list-extendedfields.jsp"/>
             <%
         }
-        else if (ExtendedFieldDefinition.EXTF_ACTION_CREATE.equals(action)) {
+        else if (ExtendedFieldConstants.EXTF_ACTION_CREATE.equals(action)) {
             extField = new ExtendedField(extf_type_id);
         }       
-        else if (ExtendedFieldDefinition.EXTF_ACTION_SUBMIT.equals(action)) {
+        else if (ExtendedFieldConstants.EXTF_ACTION_SUBMIT.equals(action)) {
 	        try {
 	        	extField = ExtendedFieldDefinition.processRequest(pageContext, I18N);
 	        } catch (ForwardedToErrorPage e) {
@@ -117,18 +117,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <h3><fmt:message key="pagetitle;edit.extendedfield"/></h3>
     
     <form method="post" action="Definitions-edit-extendedfield.jsp">
-    <input name="<%= ExtendedFieldDefinition.EXTF_ACTION %>" value="<%= ExtendedFieldDefinition.EXTF_ACTION_SUBMIT %>" type="hidden"/>
+    <input name="<%= ExtendedFieldConstants.EXTF_ACTION %>" value="<%= ExtendedFieldConstants.EXTF_ACTION_SUBMIT %>" type="hidden"/>
     <%
     if (extf_id != null) {
         %>    
-        <input name="<%= ExtendedFieldDefinition.EXTF_ID %>" value="<%= extf_id %>" type="hidden"/>
+        <input name="<%= ExtendedFieldConstants.EXTF_ID %>" value="<%= extf_id %>" type="hidden"/>
         <%
     }
     %>    
     <%
     if (extf_type_id != null) {
         %>    
-        <input name="<%= ExtendedFieldDefinition.EXTF_TYPE_ID %>" value="<%= extf_type_id %>" type="hidden"/>
+        <input name="<%= ExtendedFieldConstants.EXTF_TYPE_ID %>" value="<%= extf_type_id %>" type="hidden"/>
         <%
     }
     %>    
@@ -137,14 +137,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 	    <tr>
 	        <td>*<fmt:message key="extendedfields.name"/>:</td>
 	        <td><span id="focusElement">
-	        <input name="<%= ExtendedFieldDefinition.EXTF_NAME %>" size="50" type="text" value="<%=HTMLUtils.escapeHtmlValues(extField.getName())%>"/>
+	        <input name="<%= ExtendedFieldConstants.EXTF_NAME %>" size="50" type="text" value="<%=HTMLUtils.escapeHtmlValues(extField.getName())%>"/>
 	        </span></td>
 	    </tr>
     </table>
     <table>
 		<tr>
 		    <td><fmt:message key="extendedfields.datatype"/>:</td>
-		    <td><select name="<%=ExtendedFieldDefinition.EXTF_DATATYPE%>" id="datatype_select" size="1" onchange="javascript:tooglefields(this.value);">
+		    <td><select name="<%=ExtendedFieldConstants.EXTF_DATATYPE%>" id="datatype_select" size="1" onchange="javascript:tooglefields(this.value);">
 		            <option value="<%= ExtendedFieldDataTypes.STRING %>" <%= (extField.getDatatype() == ExtendedFieldDataTypes.STRING) ? sel : "" %>>
 		            <fmt:message key="extendedfields.datatype.string"/>
 		            </option>
@@ -172,7 +172,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 	        <tr>
 	            <td><fmt:message key="extendedfields.options"/>:</td>
 	            <td><span id="focusElement">
-                <textarea name="<%=ExtendedFieldDefinition.EXTF_OPTIONS %>" rows="5" cols="50"><%=HTMLUtils.escapeHtmlValues(extField.getOptions())%></textarea>
+                <textarea name="<%=ExtendedFieldConstants.EXTF_OPTIONS %>" rows="5" cols="50"><%=HTMLUtils.escapeHtmlValues(extField.getOptions())%></textarea>
 	            </span></td>
 	        </tr>
 	        <tr><td></td><td><small>(<fmt:message key="extendedfields.options.help"/>)</small></td></tr>
@@ -182,7 +182,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
      <tr>
          <td><fmt:message key="extendedfields.defaultvalue"/>:</td>
          <td><span id="focusElement">
-         <input name="<%=ExtendedFieldDefinition.EXTF_DEFAULTVALUE%>" size="50" type="text" maxlength="100" value="<%= HTMLUtils.escapeHtmlValues(extField.getDefaultValue()) %>"/>
+         <input name="<%=ExtendedFieldConstants.EXTF_DEFAULTVALUE%>" size="50" type="text" maxlength="100" value="<%= HTMLUtils.escapeHtmlValues(extField.getDefaultValue()) %>"/>
          </span></td>
      </tr>
     </table>
@@ -191,7 +191,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <tr>
                 <td><fmt:message key="extendedfields.formattingpattern"/>:</td>
                 <td><span id="focusElement">
-                <input name="<%=ExtendedFieldDefinition.EXTF_FORMAT %>" size="50" type="text" value="<%=HTMLUtils.escapeHtmlValues(extField.getFormattingPattern())%>"/>
+                <input name="<%=ExtendedFieldConstants.EXTF_FORMAT %>" size="50" type="text" value="<%=HTMLUtils.escapeHtmlValues(extField.getFormattingPattern())%>"/>
                 </span></td>
             </tr>
         </table>
@@ -200,13 +200,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <tr>
             <td><fmt:message key="extendedfields.mandatory"/>:</td>
             <td><span id="focusElement">
-            <input name="<%=ExtendedFieldDefinition.EXTF_MANDATORY%>" type="checkbox" <%= (extField.isMandatory()) ? checked : "" %>/>
+            <input name="<%=ExtendedFieldConstants.EXTF_MANDATORY%>" type="checkbox" <%= (extField.isMandatory()) ? checked : "" %>/>
             </span></td>
         </tr>
         <tr>
             <td><fmt:message key="extendedfields.sequencenr"/>:</td>
             <td><span id="focusElement">
-            <input name="<%=ExtendedFieldDefinition.EXTF_SEQUENCENR%>" size="10" type="text" value="<%= extField.getSequencenr() %>"/>
+            <input name="<%=ExtendedFieldConstants.EXTF_SEQUENCENR%>" size="10" type="text" value="<%= extField.getSequencenr() %>"/>
             </span></td>
         </tr>
 	</table>

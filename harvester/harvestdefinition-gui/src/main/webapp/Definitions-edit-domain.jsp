@@ -52,15 +52,12 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                  dk.netarkivet.harvester.datamodel.SeedList, 
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.DomainDefinition,
-                 dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition,
 				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
-				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO,
 				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes,
                  dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes,				 
 				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
                  dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue,
 				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO,
-                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO
 				 "
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"

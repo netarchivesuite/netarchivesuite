@@ -38,12 +38,16 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 
+/**
+ * Implementation class for the ExtendedFieldValueDAO interface.
+ */
 public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
-	private final Log log = LogFactory.getLog(getClass());
+    /** The logger. */    
+    private final Log log = LogFactory.getLog(getClass());
 
-	/**
-	 * Constructor for the ExtendedFieldValueDBDAO class.
-	 */
+    /**
+     * Constructor for the ExtendedFieldValueDBDAO class.
+     */
     public ExtendedFieldValueDBDAO() {
 
         Connection connection = HarvestDBConnection.get();
@@ -64,228 +68,261 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
             HarvestDBConnection.release(connection);
         }
     }
-	
-    protected Connection getConnection() {
-    	return HarvestDBConnection.get();
+    
+    /**
+     * Create a ExtendedFieldValue in persistent storage.
+     * @param aConnection an open connection to the HarvestDatabase.
+     * @param aExtendedFieldValue The ExtendedFieldValue to create in 
+     *  persistent storage
+     * @param aCommit Should we commit this or not
+     * @throws SQLException In case of Database access problems.
+     */
+    public void create(Connection aConnection,
+            ExtendedFieldValue aExtendedFieldValue, boolean aCommit)
+            throws SQLException {
+        ArgumentNotValid.checkNotNull(aExtendedFieldValue,
+                "aExtendedFieldValue");
+
+        if (aExtendedFieldValue.getExtendedFieldValueID() != null) {
+            log.warn("The extendedFieldValueID for this extendedField Value "
+                    + "is already set. This should probably never happen.");
+        } else {
+            aExtendedFieldValue
+                    .setExtendedFieldValueID(generateNextID(aConnection));
+        }
+
+        log.debug("Creating " + aExtendedFieldValue.toString());
+
+        PreparedStatement statement = null;
+        aConnection.setAutoCommit(false);
+        statement = aConnection.prepareStatement(""
+                + "INSERT INTO extendedfieldvalue "
+                + "            (extendedfieldvalue_id, "
+                + "             extendedfield_id, " 
+                + "             content, "
+                + "             instance_id) " + "VALUES      (?, "
+                + "             ?, " + "             ?, " + "             ?) ");
+
+        statement.setLong(1, aExtendedFieldValue.getExtendedFieldValueID());
+        statement.setLong(2, aExtendedFieldValue.getExtendedFieldID());
+        statement.setString(3, aExtendedFieldValue.getContent());
+        statement.setLong(4, aExtendedFieldValue.getInstanceID());
+
+        statement.executeUpdate();
+        if (aCommit) {
+            aConnection.commit();
+        }
+    }
+    
+    @Override
+    public void create(ExtendedFieldValue aExtendedFieldValue) {
+        Connection connection = HarvestDBConnection.get();
+
+        try {
+            create(connection, aExtendedFieldValue, true);
+        } catch (SQLException e) {
+            String message = "SQL error creating extendedfield value "
+                    + aExtendedFieldValue + " in database" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        } finally {
+            DBUtils.rollbackIfNeeded(connection, "create extendedfield value",
+                    aExtendedFieldValue);
+            HarvestDBConnection.release(connection);
+        }
     }
 
-	public void create(Connection aConnection, ExtendedFieldValue aExtendedFieldValue, boolean aCommit) throws SQLException {
-		ArgumentNotValid.checkNotNull(aExtendedFieldValue, "aExtendedFieldValue");
+    /**  
+     * @param c an open connection to the HarvestDatabase.
+     * @return the ID for next extendedvFieldValue inserted.
+     */
+    private Long generateNextID(Connection c) {
+        Long maxVal = DBUtils.selectLongValue(c,
+                "SELECT max(extendedfieldvalue_id) FROM extendedfieldvalue");
 
-		if (aExtendedFieldValue.getExtendedFieldValueID() != null) {
-			log
-				.warn("The extendedFieldValueID for this extendedField Value is already set. "
-						+ "This should probably never happen.");
-		} else {
-			aExtendedFieldValue.setExtendedFieldValueID(generateNextID(aConnection));
-		}
+        if (maxVal == null) {
+            maxVal = 0L;
+        }
+        return maxVal + 1L;
+    }
 
-		log.debug("Creating " + aExtendedFieldValue.toString());
+    @Override
+    public void delete(long aExtendedfieldValueID) throws IOFailure {
+        ArgumentNotValid.checkNotNull(aExtendedfieldValueID,
+                "aExtendedfieldValueID");
 
-		PreparedStatement statement = null;
-		aConnection.setAutoCommit(false);
-		statement = aConnection.prepareStatement(""
-		        + "INSERT INTO extendedfieldvalue "
-				+ "            (extendedfieldvalue_id, "
-				+ "             extendedfield_id, "
-				+ "             content, "
-				+ "             instance_id) "
-				+ "VALUES      (?, "
-				+ "             ?, "
-				+ "             ?, "
-				+ "             ?) ");
-
-		statement.setLong(1, aExtendedFieldValue.getExtendedFieldValueID());
-		statement.setLong(2, aExtendedFieldValue.getExtendedFieldID());
-		statement.setString(3, aExtendedFieldValue.getContent());
-		statement.setLong(4, aExtendedFieldValue.getInstanceID());
-
-		statement.executeUpdate();
-		if (aCommit) {
-			aConnection.commit();
-		}
-	}
-    
-	@Override
-	public void create(ExtendedFieldValue aExtendedFieldValue) {
-		Connection connection = getConnection();
-		
-		try {
-			create(connection, aExtendedFieldValue, true);
-		} catch (SQLException e) {
-			String message = "SQL error creating extendedfield value "
-					+ aExtendedFieldValue + " in database" + "\n"
-					+ ExceptionUtils.getSQLExceptionCause(e);
-			log.warn(message, e);
-			throw new IOFailure(message, e);
-		} finally {
-			DBUtils.rollbackIfNeeded(connection, "create extendedfield value",
-					aExtendedFieldValue);
-			HarvestDBConnection.release(connection);
-		}
-	}
-
-	private Long generateNextID(Connection c) {
-		Long maxVal = DBUtils.selectLongValue(c,
-				"SELECT max(extendedfieldvalue_id) FROM extendedfieldvalue");
-		
-		if (maxVal == null) {
-			maxVal = 0L;
-		}
-		return maxVal + 1L;
-	}
-
-	
-	@Override
-	public void delete(long aExtendedfieldValueID) throws IOFailure {
-        ArgumentNotValid.checkNotNull(aExtendedfieldValueID, "aExtendedfieldValueID");
-
-		Connection c = getConnection();
+        Connection c = HarvestDBConnection.get();
         PreparedStatement stm = null;
         try {
             c.setAutoCommit(false);
 
-            stm = c.prepareStatement("DELETE FROM extendedfieldvalue WHERE extendedfieldvalue_id = ?");
+            stm = c.prepareStatement("DELETE FROM extendedfieldvalue "
+                    + "WHERE extendedfieldvalue_id = ?");
             stm.setLong(1, aExtendedfieldValueID);
             stm.executeUpdate();
-            
+
             c.commit();
 
         } catch (SQLException e) {
-            String message =
-                "SQL error deleting extendedfieldvalue for ID " + aExtendedfieldValueID
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error deleting extendedfieldvalue for ID "
+                    + aExtendedfieldValueID + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
         } finally {
-            DBUtils.rollbackIfNeeded(c, "delete extendedfield value", aExtendedfieldValueID);
+            DBUtils.rollbackIfNeeded(c, "delete extendedfield value",
+                    aExtendedfieldValueID);
             HarvestDBConnection.release(c);
         }
-		
-	}
 
-	public boolean exists(Long aExtendedFieldValueID) {
-		ArgumentNotValid.checkNotNull(aExtendedFieldValueID,
-				"Long aExtendedFieldValueID");
-
-		Connection c = getConnection();
-		try {
-			return exists(c, aExtendedFieldValueID);
-		} finally {
-			HarvestDBConnection.release(c);
-		}
-
-	}
-
-	private synchronized boolean exists(Connection c, Long aExtendedFieldValueID) {
-		return 1 == DBUtils
-				.selectLongValue(
-						c,
-						"SELECT COUNT(*) FROM extendedfieldvalue WHERE extendedfieldvalue_id = ?",
-						aExtendedFieldValueID);
-	}
-	
-
-	@Override
-	public synchronized ExtendedFieldValue read(Long aExtendedFieldID, Long aInstanceID) {
-		ArgumentNotValid.checkNotNull(aExtendedFieldID, "aExtendedFieldID");
-		ArgumentNotValid.checkNotNull(aInstanceID, "aInstanceID");
-		Connection connection = getConnection();
-		try {
-			return read(connection, aExtendedFieldID, aInstanceID);
-		} finally {
-			HarvestDBConnection.release(connection);
-		}
-	}
-
-	private synchronized ExtendedFieldValue read(Connection connection, Long aExtendedFieldID, Long aInstanceID) {
-		ExtendedFieldValue extendedFieldValue = null;
-		PreparedStatement statement = null;
-		try {
-			statement = connection.prepareStatement(""
-				+ "SELECT extendedfieldvalue_id, "
-				+ "       extendedfield_id, "
-				+ "       instance_id, "
-				+ "       content "
-				+ "FROM   extendedfieldvalue "
-				+ "WHERE  extendedfield_id = ? and instance_id = ?");
-			
-			statement.setLong(1, aExtendedFieldID);
-			statement.setLong(2, aInstanceID);
-			ResultSet result = statement.executeQuery();
-			if (!result.next()) {
-				return null;
-			}
-			
-			long extendedfieldvalue_id = result.getLong(1);
-			long extendedfield_id = result.getLong(2);
-			long instance_id = result.getLong(3);
-			String content = result.getString(4);
-
-			extendedFieldValue = new ExtendedFieldValue(extendedfieldvalue_id, extendedfield_id, instance_id, content);
-
-			return extendedFieldValue;
-		} catch (SQLException e) {
-			String message = "SQL error reading extended Field " + aExtendedFieldID + " in database"
-					+ "\n" + ExceptionUtils.getSQLExceptionCause(e);
-			log.warn(message, e);
-			throw new IOFailure(message, e);
-		}
-	}
-
-	public void update(Connection aConnection, ExtendedFieldValue aExtendedFieldValue, boolean aCommit) throws SQLException {
-		PreparedStatement statement = null;
-		final Long extendedfieldvalue_id = aExtendedFieldValue.getExtendedFieldID();
-		if (!exists(aConnection, extendedfieldvalue_id)) {
-			throw new UnknownID("Extended Field Value id " + extendedfieldvalue_id
-					+ " is not known in persistent storage");
-		}
-
-		aConnection.setAutoCommit(false);
-		
-		statement = aConnection.prepareStatement(""
-		    + "UPDATE extendedfieldvalue "
-			+ "SET    extendedfield_id = ?, "
-			+ "       instance_id = ?, "
-			+ "       content = ? "
-			+ "WHERE  extendedfieldvalue_id = ? and instance_id = ?");
-		
-		statement.setLong(1, aExtendedFieldValue.getExtendedFieldID());
-		statement.setLong(2, aExtendedFieldValue.getInstanceID());
-		statement.setString(3, aExtendedFieldValue.getContent());
-		statement.setLong(4, aExtendedFieldValue.getExtendedFieldValueID());
-		statement.setLong(5, aExtendedFieldValue.getInstanceID());
-		
-		statement.executeUpdate();
-		
-		if (aCommit) {
-			aConnection.commit();
-		}
-	}
-	
-	@Override
-	public void update(ExtendedFieldValue aExtendedFieldValue) throws IOFailure {
-		Connection connection = getConnection();
-		
-		try {
-			update(connection, aExtendedFieldValue, true);
-		} catch (SQLException e) {
-			String message = "SQL error updating extendedfield Value " + aExtendedFieldValue + " in database"
-					+ "\n" + ExceptionUtils.getSQLExceptionCause(e);
-			log.warn(message, e);
-			throw new IOFailure(message, e);
-		} finally {
-			DBUtils.rollbackIfNeeded(connection, "update extendedfield Value", aExtendedFieldValue);
-			HarvestDBConnection.release(connection);
-		}
-	}
-	
-    public static synchronized ExtendedFieldValueDAO getInstance() {
-        if (instance == null) {
-            instance = new ExtendedFieldValueDBDAO();
-        }
-        return instance;
     }
-	
 
-	
+    @Override
+    public boolean exists(Long aExtendedFieldValueID) {
+        ArgumentNotValid.checkNotNull(aExtendedFieldValueID,
+                "Long aExtendedFieldValueID");
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            return exists(c, aExtendedFieldValueID);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+
+    }
+
+    /**
+     * Find out if there already exists in persistent storage
+     * a ExtendedFieldValue with the given id.
+     * @param c an open connection to the HarvestDatabase.
+     * @param aExtendedFieldValueID An id associated with a ExtendedFieldValue
+     * @return true, if there already exists in persistent storage
+     * a ExtendedFieldValue with the given id.
+     */
+    private synchronized boolean exists(Connection c, 
+            Long aExtendedFieldValueID) {
+        return 1 == DBUtils
+                .selectLongValue(
+                        c,
+                        "SELECT COUNT(*) FROM extendedfieldvalue "
+                        + "WHERE extendedfieldvalue_id = ?",
+                        aExtendedFieldValueID);
+    }
+
+    @Override
+    public synchronized ExtendedFieldValue read(Long aExtendedFieldID,
+            Long aInstanceID) {
+        ArgumentNotValid.checkNotNull(aExtendedFieldID, "aExtendedFieldID");
+        ArgumentNotValid.checkNotNull(aInstanceID, "aInstanceID");
+        Connection connection = HarvestDBConnection.get();
+        try {
+            return read(connection, aExtendedFieldID, aInstanceID);
+        } finally {
+            HarvestDBConnection.release(connection);
+        }
+    }
+
+    /**
+     * Read the ExtendedFieldValue with the given extendedFieldID.
+     * @param connection an open connection to the HarvestDatabase
+     * @param aExtendedFieldID A given ID for a ExtendedFieldValue
+     * @param aInstanceID A given instanceID
+     * @return the ExtendedFieldValue with the given extendedFieldID.
+     */
+    private synchronized ExtendedFieldValue read(Connection connection,
+            Long aExtendedFieldID, Long aInstanceID) {
+        ExtendedFieldValue extendedFieldValue = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(""
+                    + "SELECT extendedfieldvalue_id, "
+                    + "       extendedfield_id, " 
+                    + "       content " 
+                    + "FROM extendedfieldvalue "
+                    + "WHERE  extendedfield_id = ? and instance_id = ?");
+
+            statement.setLong(1, aExtendedFieldID);
+            statement.setLong(2, aInstanceID);
+            ResultSet result = statement.executeQuery();
+            if (!result.next()) {
+                return null;
+            }
+
+            long extendedfieldvalueId = result.getLong(1);
+            long extendedfieldId = result.getLong(2);
+            long instanceId = aInstanceID;
+            String content = result.getString(3);
+
+            extendedFieldValue = new ExtendedFieldValue(extendedfieldvalueId,
+                    extendedfieldId, instanceId, content);
+
+            return extendedFieldValue;
+        } catch (SQLException e) {
+            String message = "SQL error reading extended Field "
+                    + aExtendedFieldID + " in database" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        }
+    }
+    
+    /**
+     * Read a ExtendedFieldValue in persistent storage.
+     * @param aConnection an open connection to the HarvestDatabase
+     * @param aExtendedFieldValue The ExtendedFieldValue to update
+     * @param aCommit Should we commit this or not
+     * @throws SQLException In case of database problems.
+     */
+    public void update(Connection aConnection,
+            ExtendedFieldValue aExtendedFieldValue, boolean aCommit)
+            throws SQLException {
+        PreparedStatement statement = null;
+        final Long extendedfieldvalueId = aExtendedFieldValue
+                .getExtendedFieldID();
+        if (!exists(aConnection, extendedfieldvalueId)) {
+            throw new UnknownID("Extended Field Value id "
+                    + extendedfieldvalueId
+                    + " is not known in persistent storage");
+        }
+
+        aConnection.setAutoCommit(false);
+
+        statement = aConnection.prepareStatement(""
+                + "UPDATE extendedfieldvalue "
+                + "SET    extendedfield_id = ?, " + "       instance_id = ?, "
+                + "       content = ? "
+                + "WHERE  extendedfieldvalue_id = ? and instance_id = ?");
+
+        statement.setLong(1, aExtendedFieldValue.getExtendedFieldID());
+        statement.setLong(2, aExtendedFieldValue.getInstanceID());
+        statement.setString(3, aExtendedFieldValue.getContent());
+        statement.setLong(4, aExtendedFieldValue.getExtendedFieldValueID());
+        statement.setLong(5, aExtendedFieldValue.getInstanceID());
+
+        statement.executeUpdate();
+
+        if (aCommit) {
+            aConnection.commit();
+        }
+    }
+
+    @Override
+    public void update(ExtendedFieldValue aExtendedFieldValue) 
+            throws IOFailure {
+        Connection connection = HarvestDBConnection.get();
+
+        try {
+            update(connection, aExtendedFieldValue, true);
+        } catch (SQLException e) {
+            String message = "SQL error updating extendedfield Value "
+                    + aExtendedFieldValue + " in database" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        } finally {
+            DBUtils.rollbackIfNeeded(connection, "update extendedfield Value",
+                    aExtendedFieldValue);
+            HarvestDBConnection.release(connection);
+        }
+    }
 }

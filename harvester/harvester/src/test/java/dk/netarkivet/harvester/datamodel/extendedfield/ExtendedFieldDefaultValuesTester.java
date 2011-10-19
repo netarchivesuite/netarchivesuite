@@ -24,7 +24,7 @@
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValues;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 import junit.framework.TestCase;
 
 public class ExtendedFieldDefaultValuesTester extends TestCase {
@@ -34,56 +34,56 @@ public class ExtendedFieldDefaultValuesTester extends TestCase {
     }
 
     public void testInValid() {
-    	ExtendedFieldDefaultValues e = null;
+    	ExtendedFieldDefaultValue e = null;
     	
-    	e = new ExtendedFieldDefaultValues("", null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue("", null, ExtendedFieldDataTypes.BOOLEAN);
     	assertFalse(e.isValid());
     	
-    	e = new ExtendedFieldDefaultValues("foo", null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue("foo", null, ExtendedFieldDataTypes.BOOLEAN);
     	assertFalse(e.isValid());
 
-    	e = new ExtendedFieldDefaultValues("bar", null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue("bar", null, ExtendedFieldDataTypes.BOOLEAN);
     	assertFalse(e.isValid());
 
-    	e = new ExtendedFieldDefaultValues(null, null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue(null, null, ExtendedFieldDataTypes.BOOLEAN);
     	assertFalse(e.isValid());
     	
-    	e = new ExtendedFieldDefaultValues("a", "0000", ExtendedFieldDataTypes.NUMBER);
+    	e = new ExtendedFieldDefaultValue("a", "0000", ExtendedFieldDataTypes.NUMBER);
     	assertFalse(e.isValid());
     	
-    	e = new ExtendedFieldDefaultValues("12:08", "hh:mm a", ExtendedFieldDataTypes.TIMESTAMP);
+    	e = new ExtendedFieldDefaultValue("12:08", "hh:mm a", ExtendedFieldDataTypes.TIMESTAMP);
     	assertFalse(e.isValid());
     }
     
     public void testValid() {
-    	ExtendedFieldDefaultValues e = null;
+    	ExtendedFieldDefaultValue e = null;
 
-    	e = new ExtendedFieldDefaultValues("true", null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue("true", null, ExtendedFieldDataTypes.BOOLEAN);
     	assertTrue(e.isValid());
-    	e = new ExtendedFieldDefaultValues("t", null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue("t", null, ExtendedFieldDataTypes.BOOLEAN);
     	assertTrue(e.isValid());
-    	e = new ExtendedFieldDefaultValues("1", null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue("1", null, ExtendedFieldDataTypes.BOOLEAN);
     	assertTrue(e.isValid());
-    	e = new ExtendedFieldDefaultValues("false", null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue("false", null, ExtendedFieldDataTypes.BOOLEAN);
     	assertTrue(e.isValid());
-    	e = new ExtendedFieldDefaultValues("f", null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue("f", null, ExtendedFieldDataTypes.BOOLEAN);
     	assertTrue(e.isValid());
-    	e = new ExtendedFieldDefaultValues("true", null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue("true", null, ExtendedFieldDataTypes.BOOLEAN);
     	assertTrue(e.isValid());
-    	e = new ExtendedFieldDefaultValues("0", null, ExtendedFieldDataTypes.BOOLEAN);
+    	e = new ExtendedFieldDefaultValue("0", null, ExtendedFieldDataTypes.BOOLEAN);
     	assertTrue(e.isValid());
     	
-    	e = new ExtendedFieldDefaultValues("0012", "0000", ExtendedFieldDataTypes.NUMBER);
+    	e = new ExtendedFieldDefaultValue("0012", "0000", ExtendedFieldDataTypes.NUMBER);
     	assertTrue(e.isValid());
 
-    	e = new ExtendedFieldDefaultValues("12:08 PM", "h:mm a", ExtendedFieldDataTypes.TIMESTAMP);
+    	e = new ExtendedFieldDefaultValue("12:08 PM", "h:mm a", ExtendedFieldDataTypes.TIMESTAMP);
     	assertTrue(e.isValid());
     	
-    	e = new ExtendedFieldDefaultValues("12:08", "hh:mm", ExtendedFieldDataTypes.TIMESTAMP);
+    	e = new ExtendedFieldDefaultValue("12:08", "hh:mm", ExtendedFieldDataTypes.TIMESTAMP);
     	assertTrue(e.isValid());
     	
     	// this is also valid, because not the whole string will be used for parsing!
-    	e = new ExtendedFieldDefaultValues("12:08:00", "hh:mm", ExtendedFieldDataTypes.TIMESTAMP);
+    	e = new ExtendedFieldDefaultValue("12:08:00", "hh:mm", ExtendedFieldDataTypes.TIMESTAMP);
     	assertTrue(e.isValid());
     }
 }

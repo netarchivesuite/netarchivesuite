@@ -32,13 +32,12 @@ parameters.
                 dk.netarkivet.harvester.datamodel.Schedule,
                 dk.netarkivet.harvester.datamodel.ScheduleDAO,
                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
-				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO,
 				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
 				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes,
 				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDAO,
-				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDBDAO,
 				dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldType,
-				dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition"			
+				dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition,
+				dk.netarkivet.harvester.webinterface.ExtendedFieldConstants"			
 				pageEncoding="UTF-8" 
 %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -56,14 +55,14 @@ parameters.
 <h3 class="page_heading"><fmt:message key="pagetitle;extendedfields"/></h3>
 
 <%
-ExtendedFieldTypeDAO typedao = ExtendedFieldTypeDBDAO.getInstance();
+ExtendedFieldTypeDAO typedao = ExtendedFieldTypeDAO.getInstance();
 List<ExtendedFieldType> typelist = typedao.getAll();
 if (typelist.size() == 0) { %>
    <fmt:message key="extendedfields.no.extendedfieldtypes"/>
    <p/>
 <% } else {
     for (ExtendedFieldType type : typelist) {
-    	ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
+    	ExtendedFieldDAO extdao = ExtendedFieldDAO.getInstance();
     	List<ExtendedField> extlist = extdao.getAll(type.getExtendedFieldTypeID());
     	String name = type.getName();
    		%>
@@ -83,20 +82,20 @@ if (typelist.size() == 0) { %>
                     <td><%= HTMLUtils.escapeHtmlValues(field.getName()) %></td>
                     <td width="15%">
                         <a href="Definitions-edit-extendedfield.jsp?<%=
-                        ExtendedFieldDefinition.EXTF_ACTION
-                        %>=<%=ExtendedFieldDefinition.EXTF_ACTION_READ%>&<%=
-                        ExtendedFieldDefinition.EXTF_ID
+                       	ExtendedFieldConstants.EXTF_ACTION
+                        %>=<%=ExtendedFieldConstants.EXTF_ACTION_READ%>&<%=
+                        ExtendedFieldConstants.EXTF_ID
                         %>=<%=field.getExtendedFieldID()%>&<%=
-                        ExtendedFieldDefinition.EXTF_TYPE_ID
+                        ExtendedFieldConstants.EXTF_TYPE_ID
                         %>=<%=field.getExtendedFieldTypeID()%>">
                         <fmt:message key="edit"/></a></td>
                     <td width="15%">
                         <a href="Definitions-edit-extendedfield.jsp?<%=
-                        ExtendedFieldDefinition.EXTF_ACTION
-                        %>=<%=ExtendedFieldDefinition.EXTF_ACTION_DELETE%>&<%=
-                        ExtendedFieldDefinition.EXTF_ID
+                        ExtendedFieldConstants.EXTF_ACTION
+                        %>=<%=ExtendedFieldConstants.EXTF_ACTION_DELETE%>&<%=
+                        ExtendedFieldConstants.EXTF_ID
                         %>=<%=field.getExtendedFieldID()%>&<%=
-                            ExtendedFieldDefinition.EXTF_TYPE_ID
+                            ExtendedFieldConstants.EXTF_TYPE_ID
                             %>=<%=field.getExtendedFieldTypeID()%>">
                         <fmt:message key="extendedfields.delete"/></a></td>
                 </tr>
@@ -109,9 +108,9 @@ if (typelist.size() == 0) { %>
     	
     	%>
         <a href="Definitions-edit-extendedfield.jsp?<%=
-            ExtendedFieldDefinition.EXTF_ACTION
-            %>=<%=ExtendedFieldDefinition.EXTF_ACTION_CREATE%>&<%=        	
-        	ExtendedFieldDefinition.EXTF_TYPE_ID
+            ExtendedFieldConstants.EXTF_ACTION
+            %>=<%=ExtendedFieldConstants.EXTF_ACTION_CREATE%>&<%=        	
+        	ExtendedFieldConstants.EXTF_TYPE_ID
         %>=<%=type.getExtendedFieldTypeID()%>">
         <fmt:message key="extendedfields.create.extendedfield"/></a>
         <p/>

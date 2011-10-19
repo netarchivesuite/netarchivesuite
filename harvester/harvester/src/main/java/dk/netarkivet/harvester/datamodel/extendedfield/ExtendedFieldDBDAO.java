@@ -56,10 +56,6 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
         Connection connection = HarvestDBConnection.get();
         try {
             DBSpecifics.getInstance().updateTable(
-                    DBSpecifics.EXTENDEDFIELDTYPE_TABLE,
-                    DBSpecifics.EXTENDEDFIELDTYPE_TABLE_REQUIRED_VERSION);
-
-            DBSpecifics.getInstance().updateTable(
                     DBSpecifics.EXTENDEDFIELD_TABLE,
                     DBSpecifics.EXTENDEDFIELD_TABLE_REQUIRED_VERSION);
 
@@ -71,20 +67,15 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             HarvestDBConnection.release(connection);
         }
     }
-
-
-    protected Connection getConnection() {
-        return HarvestDBConnection.get();
-    }
     
-	public synchronized void create(ExtendedField aExtendedField) {
+    @Override
+    public synchronized void create(ExtendedField aExtendedField) {
         ArgumentNotValid.checkNotNull(aExtendedField, "aExtendedField");
 
-        Connection connection = getConnection();
+        Connection connection = HarvestDBConnection.get();
         if (aExtendedField.getExtendedFieldID() != null) {
-            log.warn(
-                    "The extendedFieldID for this extended Field is already set. "
-                            + "This should probably never happen.");
+            log.warn("The extendedFieldID for this extended Field is "
+                    + "already set. This should probably never happen.");
         } else {
             aExtendedField.setExtendedFieldID(generateNextID(connection));
         }
@@ -161,13 +152,12 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
         ArgumentNotValid.checkNotNull(aExtendedfieldId,
                 "Long aExtendedfieldId");
 
-        Connection c = getConnection();
+        Connection c = HarvestDBConnection.get();
         try {
             return exists(c, aExtendedfieldId);
         } finally {
             HarvestDBConnection.release(c);
         }
-
     }
     
     /**
@@ -178,18 +168,16 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
      * otherwise false
      */
     private synchronized boolean exists(Connection c, Long aExtendedfieldId) {
-        return 1 == DBUtils
-                .selectLongValue(
-                        c,
-                        "SELECT COUNT(*) FROM extendedfield WHERE extendedfield_id = ?",
-                        aExtendedfieldId);
+        return 1 == DBUtils.selectLongValue(c,
+                "SELECT COUNT(*) FROM extendedfield WHERE extendedfield_id = ?",
+                aExtendedfieldId);
     }
 
     @Override
     public synchronized void update(ExtendedField aExtendedField) {
         ArgumentNotValid.checkNotNull(aExtendedField, "aExtendedField");
 
-        Connection connection = getConnection();
+        Connection connection = HarvestDBConnection.get();
 
         PreparedStatement statement = null;
         try {
@@ -238,7 +226,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
     @Override
     public synchronized ExtendedField read(Long aExtendedfieldId) {
         ArgumentNotValid.checkNotNull(aExtendedfieldId, "aExtendedfieldId");
-        Connection connection = getConnection();
+        Connection connection = HarvestDBConnection.get();
         try {
             return read(connection, aExtendedfieldId);
         } finally {
@@ -267,7 +255,8 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
                     + "       format, " + "       defaultvalue, "
                     + "       options, " + "       datatype, "
                     + "       mandatory, " + "       sequencenr "
-                    + "FROM   extendedfield " + "WHERE  extendedfield_id = ? ");
+                    + "FROM   extendedfield " 
+                    + "WHERE  extendedfield_id = ? ");
 
             statement.setLong(1, aExtendedfieldId);
             ResultSet result = statement.executeQuery();
@@ -297,12 +286,14 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
     }
     @Override
     public synchronized List<ExtendedField> getAll(long aExtendedFieldTypeId) {
-        Connection c = getConnection();
+        Connection c = HarvestDBConnection.get();
         try {
             List<Long> idList = DBUtils.selectLongList(c,
-                    "SELECT extendedfield_id FROM extendedfield WHERE extendedfieldtype_id = ? "
+                    "SELECT extendedfield_id FROM extendedfield "
+                            + "WHERE extendedfieldtype_id = ? "
                             + "ORDER BY sequencenr ASC", aExtendedFieldTypeId);
-            List<ExtendedField> extendedFields = new LinkedList<ExtendedField>();
+            List<ExtendedField> extendedFields 
+                = new LinkedList<ExtendedField>();
             for (Long extendedfieldId : idList) {
                 extendedFields.add(read(c, extendedfieldId));
             }
@@ -316,17 +307,18 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
     public void delete(long aExtendedfieldId) throws IOFailure {
         ArgumentNotValid.checkNotNull(aExtendedfieldId, "aExtendedfieldId");
 
-        Connection c = getConnection();
+        Connection c = HarvestDBConnection.get();
         PreparedStatement stm = null;
         try {
             c.setAutoCommit(false);
 
-            stm = c
-                    .prepareStatement("DELETE FROM extendedfieldvalue WHERE extendedfield_id = ?");
+            stm = c.prepareStatement(
+                    "DELETE FROM extendedfieldvalue WHERE extendedfield_id = ?"
+                    );
             stm.setLong(1, aExtendedfieldId);
             stm.executeUpdate();
-            stm = c
-                    .prepareStatement("DELETE FROM extendedfield WHERE extendedfield_id = ?");
+            stm = c.prepareStatement(
+                    "DELETE FROM extendedfield WHERE extendedfield_id = ?");
             stm.setLong(1, aExtendedfieldId);
             stm.executeUpdate();
 
@@ -343,15 +335,5 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             HarvestDBConnection.release(c);
         }
 
-    }
-    
-    /**
-     * @return an instance of this class.
-     */
-    public static synchronized ExtendedFieldDAO getInstance() {
-        if (instance == null) {
-            instance = new ExtendedFieldDBDAO();
-        }
-        return instance;
     }
 }

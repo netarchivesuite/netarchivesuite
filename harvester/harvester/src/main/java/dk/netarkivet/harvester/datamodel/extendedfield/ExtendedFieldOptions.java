@@ -130,9 +130,9 @@ public class ExtendedFieldOptions {
      */
     public boolean isKeyValid(String aKey) {
         if (isValid()) {
-        	if (options.keySet().contains(aKey)) {
-        		return true;
-        	}
+            if (options.keySet().contains(aKey)) {
+                return true;
+            }
         }
         return false;
     }

@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
-import java.sql.Connection;
 import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -48,13 +47,6 @@ public abstract class ExtendedFieldDAO {
     public static void reset() {
         instance = null;
     }
-    
-    /**
-     * Gets the ExtendedFieldDAO singleton.
-     *
-     * @return the ExtendedFieldDAO singleton
-     */
-    protected abstract Connection getConnection();
 
     /**
      * Check if an extendedfield exists for a given ID.
@@ -111,4 +103,14 @@ public abstract class ExtendedFieldDAO {
      * @throws IOFailure If deleting the ExtendedField fails
      */
     public abstract void delete(long aExtendedFieldID) throws IOFailure;
+    
+    /**
+     * @return an instance of this class.
+     */
+    public static synchronized ExtendedFieldDAO getInstance() {
+        if (instance == null) {
+            instance = new ExtendedFieldDBDAO();
+        }
+        return instance;
+    }
 }

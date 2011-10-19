@@ -26,8 +26,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition;
-
+import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 
 /**
  * This class represents one Extended Field.
@@ -57,80 +56,153 @@ public class ExtendedField implements Serializable {
 
     /** key-value pairs for Options. */
     private String options;
-
+  
+    /** 
+     * @return the extendedFieldID
+     */
     public Long getExtendedFieldID() {
         return extendedFieldID;
     }
-
+    
+    /**
+     * Set the ID of the extendedField..
+     * @param extendedFieldID the ID of the extendedField..
+     */
     public void setExtendedFieldID(Long extendedFieldID) {
+        ArgumentNotValid.checkNotNull(extendedFieldID, "Long extendedFieldID");
         this.extendedFieldID = extendedFieldID;
     }
-
+    
+    /** 
+     * @return the extendedFieldTypeID
+     */
     public Long getExtendedFieldTypeID() {
         return extendedFieldTypeID;
     }
 
+    /**
+     * Set the name of the extendedFieldTypeID.
+     * @param extendedFieldTypeID an extendedfieldtypeId
+     */
     public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
+        ArgumentNotValid.checkNotNull(extendedFieldID, "Long extendedFieldID");
         this.extendedFieldTypeID = extendedFieldTypeID;
     }
-
+    
+    /** 
+     * @return the name of the extendedField
+     */
     public String getName() {
         return name;
     }
-
+    
+    /**
+     * Set the name of the extendedField.
+     * @param name the name of the extendedField
+     */
     public void setName(String name) {
+        ArgumentNotValid.checkNotNull(name, "String name");
         this.name = name;
     }
 
+    /** 
+     * @return the formatting pattern of the extendedField
+    */
     public String getFormattingPattern() {
         return formattingPattern;
     }
 
-
+    /**
+     * Set a formatting pattern for this extendefield.
+     * @param aFormattingPattern a formatting pattern for this extendedfield
+     */
     public void setFormattingPattern(String aFormattingPattern) {
+        ArgumentNotValid.checkNotNull(aFormattingPattern, 
+                "String aFormattingPattern");
         this.formattingPattern = aFormattingPattern;
     }
 
+    /** 
+     * @return the datatype of the extendedField
+     */
     public int getDatatype() {
         return datatype;
     }
-
+    
+    /**
+     * Set the datatype of this extendedField.
+     * @param datatype a datatype for this extendedfield
+     */
     public void setDatatype(int datatype) {
         this.datatype = datatype;
     }
-
+    
+    /** 
+     * @return true, if extendedfield is mandatory, otherwise false.
+     */
     public boolean isMandatory() {
         return mandatory;
     }
 
+    /**
+     * Set the mandatory-state of this extendedField.
+     * @param mandatory A mandatory-state of this extendedField
+     */
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
     }
 
+    /** 
+     * @return the sequencenr of the extendedField
+     */
     public int getSequencenr() {
         return sequencenr;
     }
-
+    
+    /**
+     * Set the sequencenr of this extendedField.
+     * @param sequencenr a new sequencenr of this extendedField.
+     */
     public void setSequencenr(int sequencenr) {
         this.sequencenr = sequencenr;
     }
 
+    /**
+     * @return the default value of the extendedField
+     */
     public String getDefaultValue() {
         return defaultValue;
     }
 
+    /**
+     * Set the defaultvalue of this extendedField.
+     * @param defaultValue the defaultvalue of this extendedField.
+     */
     public void setDefaultValue(String defaultValue) {
+        ArgumentNotValid.checkNotNull(defaultValue, "String defaultValue");
         this.defaultValue = defaultValue;
     }
 
+    /**
+     * @return the options of the extendedField
+     */
     public String getOptions() {
         return options;
     }
-
+    
+    /**
+     * Set the options of the extendedField.
+     * @param options the options of the extendedField
+     */
     public void setOptions(String options) {
+        ArgumentNotValid.checkNotNull(options, "String options");
         this.options = options;
     }
-
+    
+    /**
+     * Constructor for the extendedfield with only one value - the id. 
+     * @param aExtendedFieldTypeID the Id of the extendededfieldtype
+     */
     public ExtendedField(String aExtendedFieldTypeID) {
         ArgumentNotValid.checkNotNull(aExtendedFieldTypeID,
                 "aExtendedFieldTypeID");
@@ -143,11 +215,23 @@ public class ExtendedField implements Serializable {
         defaultValue = "";
         options = "";
     }
-
+    
+    /**
+     * Constructor for ExtendedField, that requires all data.
+     * @param aExtendedFieldID The extendedfieldId of the extendedfield
+     * @param aExtendedFieldTypeID The extendedfieldtypeId of the extendedfield
+     * @param aName The name of the extendedfield
+     * @param aFormattingPattern The name of the extendedfield
+     * @param aDatatype The datatype of the extendedfield
+     * @param aMandatory The mandatory state of the extendedfield
+     * @param aSequenceNr The sequencenr of the extendedfield
+     * @param aDefaultValue The default value of the extendedfield
+     * @param aOptions The options of the extendedfield
+     */
     public ExtendedField(Long aExtendedFieldID, Long aExtendedFieldTypeID,
             String aName, String aFormattingPattern, int aDatatype,
             boolean aMandatory, int aSequenceNr, String aDefaultValue,
-            String aOptions) throws ArgumentNotValid {
+            String aOptions) {
         extendedFieldID = aExtendedFieldID;
         extendedFieldTypeID = aExtendedFieldTypeID;
         name = aName;
@@ -158,15 +242,20 @@ public class ExtendedField implements Serializable {
         defaultValue = aDefaultValue;
         options = aOptions;
     }
-
+    
+    /**
+     * @return a map of option values.
+    */
     public Map<String, String> getOptionValues() {
-        ExtendedFieldOptions efo = new ExtendedFieldOptions(getOptions());
-        return efo.getOptions();
+        return new ExtendedFieldOptions(getOptions()).getOptions();
     }
-
+    
+    /**
+    * @return the JSP field name.
+    */
     public String getJspFieldname() {
-        return ExtendedFieldDefinition.EXTF_PREFIX + getExtendedFieldID() 
-            + "_" + getDatatype();
+        return ExtendedFieldConstants.EXTF_PREFIX + getExtendedFieldID() + "_"
+                + getDatatype();
     }
 
 }

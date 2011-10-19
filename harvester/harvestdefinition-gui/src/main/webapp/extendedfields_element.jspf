@@ -22,7 +22,7 @@ Date:        $Date$
  --%>
 
 <%
-    ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
+    ExtendedFieldDAO extdao = ExtendedFieldDAO.getInstance();
     List<ExtendedField> extlist = extdao.getAll(extendedFieldType);
     
     String selectedAttribute = " selected=\"selected\" ";

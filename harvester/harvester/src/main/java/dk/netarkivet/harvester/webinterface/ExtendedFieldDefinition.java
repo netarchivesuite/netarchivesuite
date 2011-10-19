@@ -31,9 +31,6 @@ import java.text.SimpleDateFormat;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
@@ -42,163 +39,171 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValues;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldOptions;
 
 /**
  * Contains utility methods for creating and editing schedule definitions for
  * harvests.
  */
-public class ExtendedFieldDefinition {
-    
-    public static final String EXTF_ACTION = "extf_action";
-    
-    public static final String EXTF_ACTION_CREATE = "create";
-    public static final String EXTF_ACTION_READ = "read";
-    public static final String EXTF_ACTION_DELETE = "delete";
-    public static final String EXTF_ACTION_SUBMIT = "submit";
-    
-    public static final String EXTF_ID = "extf_id";
-    public static final String EXTF_TYPE_ID = "exf_type_id";
-    public static final String EXTF_NAME = "extf_name";
-    public static final String EXTF_FORMAT = "extf_format";
-    public static final String EXTF_DATATYPE = "extf_datatype";
-    public static final String EXTF_MANDATORY = "extf_mandatory";
-    public static final String EXTF_SEQUENCENR = "extf_sequencenr";
-    public static final String EXTF_DEFAULTVALUE = "extf_defaultvalue";
-    public static final String EXTF_OPTIONS = "extf_options";
-    
-    public static final String EXTF_PREFIX = "extf_";
-    public static final String EXTF_ALLFIELDIDS = "extf_allfieldids";
-
-	private final static Log log = LogFactory.getLog(ExtendedFieldDefinition.class);
+public final class ExtendedFieldDefinition {
     
     /**
      * Private constructor. No instances.
      */
     private ExtendedFieldDefinition() {
-
     }
-
+    
+    /**
+     * Process an request from the jsp-pages.
+     * HarvestDefinition/Definitions-edit-extendedfield.jsp
+     * HarvestDefinition/Definitions-list-extendedfields.jsp
+     * HarvestDefinition/Definitions-edit-domain.jsp
+     * @param context the given JSP-context
+     * @param i18n the given I18n object.
+     * @return the extendedfield resulting from the processing.
+     */
     public static ExtendedField processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
 
         ServletRequest request = context.getRequest();
 
-        Long extendedFieldID = HTMLUtils.parseOptionalLong(context, EXTF_ID, null);
-        Long extendedFieldTypeID = HTMLUtils.parseOptionalLong(context, EXTF_TYPE_ID, null);
+        Long extendedFieldID = HTMLUtils.parseOptionalLong(context, 
+                ExtendedFieldConstants.EXTF_ID, null);
+        Long extendedFieldTypeID = HTMLUtils.parseOptionalLong(context,
+                ExtendedFieldConstants.EXTF_TYPE_ID, null);
 
-        HTMLUtils.forwardOnEmptyParameter(context, EXTF_NAME);
-        String name = request.getParameter(EXTF_NAME).trim();
-        int datatype = HTMLUtils.parseAndCheckInteger(context, EXTF_DATATYPE, ExtendedFieldDataTypes.MIN, ExtendedFieldDataTypes.MAX);
+        HTMLUtils.forwardOnEmptyParameter(context, 
+                ExtendedFieldConstants.EXTF_NAME);
+        String name = request.getParameter(
+                ExtendedFieldConstants.EXTF_NAME).trim();
+        int datatype = HTMLUtils.parseAndCheckInteger(context, 
+                ExtendedFieldConstants.EXTF_DATATYPE,
+                ExtendedFieldDataTypes.MIN_DATATYPE_VALUE, 
+                ExtendedFieldDataTypes.MAX_DATATYPE_VALUE
+                );
 
         boolean mandatory = false;
-        
+
         String[] checkboxValues = null;
-        checkboxValues = request.getParameterValues(EXTF_MANDATORY);
+        checkboxValues = request.getParameterValues(
+                ExtendedFieldConstants.EXTF_MANDATORY);
         if (checkboxValues != null) {
-        	mandatory = true;
+            mandatory = true;
         }
-        
-        int sequencenr = HTMLUtils.parseAndCheckInteger(context, EXTF_SEQUENCENR, 1, Integer.MAX_VALUE);
+
+        int sequencenr = HTMLUtils.parseAndCheckInteger(context,
+                ExtendedFieldConstants.EXTF_SEQUENCENR, 1, Integer.MAX_VALUE);
 
         String options = "";
         ExtendedFieldOptions efo = null;
-        
+
         if (datatype == ExtendedFieldDataTypes.SELECT) {
-        	options = request.getParameter(EXTF_OPTIONS);
-        	if (options == null) {
-            	options = "";
-        	}
-            else {
-            	efo = new ExtendedFieldOptions(options);
-            	if (efo.isValid()) {
-            		options = efo.getOptionsString();
-            	}
-            	else {
-                    throw new ForwardedToErrorPage("errormsg;extendedfields.options.invalid");
-            	}
+            options = request.getParameter(ExtendedFieldConstants.EXTF_OPTIONS);
+            if (options == null) {
+                options = "";
+            } else {
+                efo = new ExtendedFieldOptions(options);
+                if (efo.isValid()) {
+                    options = efo.getOptionsString();
+                } else {
+                    throw new ForwardedToErrorPage(
+                            "errormsg;extendedfields.options.invalid");
+                }
             }
         }
 
         String defaultvalue = "";
-    	defaultvalue = request.getParameter(EXTF_DEFAULTVALUE);
-    	if (defaultvalue == null || defaultvalue.length() == 0) {
-    		defaultvalue = "";
-    	}
-    	
-    	if (mandatory && defaultvalue.length() == 0) {
-            throw new ForwardedToErrorPage("errormsg;extendedfields.defaultvalue.empty");
-    	}
+        defaultvalue = request.getParameter(
+                ExtendedFieldConstants.EXTF_DEFAULTVALUE);
+        if (defaultvalue == null || defaultvalue.length() == 0) {
+            defaultvalue = "";
+        }
+
+        if (mandatory && defaultvalue.length() == 0) {
+            throw new ForwardedToErrorPage(
+                    "errormsg;extendedfields.defaultvalue.empty");
+        }
 
         String format = "";
-        if (datatype == ExtendedFieldDataTypes.NUMBER || datatype == ExtendedFieldDataTypes.TIMESTAMP) {
-        	format = request.getParameter(EXTF_FORMAT);
+        if (datatype == ExtendedFieldDataTypes.NUMBER
+                || datatype == ExtendedFieldDataTypes.TIMESTAMP) {
+            format = request.getParameter(ExtendedFieldConstants.EXTF_FORMAT);
             if (format == null || format.length() == 0) {
-            	format = "";
-            }
-            else {
-            	format = format.trim();
-            	
-            	Format aFormat = null;
-            	try {
-	            	if (datatype == ExtendedFieldDataTypes.NUMBER) {
-	            		aFormat = new DecimalFormat(format);
-	            	}
-	            	else {
-	            		aFormat = new SimpleDateFormat(format);
-	            	}
-            	}
-            	catch(IllegalArgumentException e) {
-                    throw new ForwardedToErrorPage("errormsg;extendedfields.pattern.invalid");
-            	}
+                format = "";
+            } else {
+                format = format.trim();
 
-            	try {
-            		aFormat.parseObject(defaultvalue);
-            	}
-            	catch(ParseException e) {
-                    throw new ForwardedToErrorPage("errormsg;extendedfields.value.does.not.match.pattern");
-            	}
+                Format aFormat = null;
+                try {
+                    if (datatype == ExtendedFieldDataTypes.NUMBER) {
+                        aFormat = new DecimalFormat(format);
+                    } else {
+                        aFormat = new SimpleDateFormat(format);
+                    }
+                } catch (IllegalArgumentException e) {
+                    throw new ForwardedToErrorPage(
+                            "errormsg;extendedfields.pattern.invalid");
+                }
+
+                try {
+                    aFormat.parseObject(defaultvalue);
+                } catch (ParseException e) {
+                    throw new ForwardedToErrorPage(
+                            "errormsg;extendedfields.value."
+                            + "does.not.match.pattern");
+                }
             }
         }
-        
+
         if (defaultvalue.length() > 0) {
-        	ExtendedFieldDefaultValues efd = new ExtendedFieldDefaultValues(defaultvalue, format, datatype);
-        	if (!efd.isValid()) {
-                throw new ForwardedToErrorPage("errormsg;extendedfields.defaultvalue.invalid");
-        	}
-        	
-        	if (datatype == ExtendedFieldDataTypes.SELECT && efo != null && !efo.isKeyValid(defaultvalue)) {
-                throw new ForwardedToErrorPage("errormsg;extendedfields.defaultvalue.invalid");
-        	}
+            ExtendedFieldDefaultValue efd = new ExtendedFieldDefaultValue(
+                    defaultvalue, format, datatype);
+            if (!efd.isValid()) {
+                throw new ForwardedToErrorPage(
+                        "errormsg;extendedfields.defaultvalue.invalid");
+            }
+
+            if (datatype == ExtendedFieldDataTypes.SELECT && efo != null
+                    && !efo.isKeyValid(defaultvalue)) {
+                throw new ForwardedToErrorPage(
+                        "errormsg;extendedfields.defaultvalue.invalid");
+            }
         }
-        
-    	
-        ExtendedField extendedField = new ExtendedField(extendedFieldID, extendedFieldTypeID, name, format, datatype, mandatory, sequencenr, defaultvalue, options);
+
+        ExtendedField extendedField = new ExtendedField(extendedFieldID,
+                extendedFieldTypeID, name, format, datatype, mandatory,
+                sequencenr, defaultvalue, options);
         updateExtendedField(extendedField);
-        
+
         return extendedField;
     }
+    
+    /**
+     * Create or update the extendedField in the database. 
+     * @param aExtendedField The given extendedfield
+     */
+    private static void updateExtendedField(ExtendedField aExtendedField) {
+        ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
 
-	private static void updateExtendedField(ExtendedField aExtendedField) {
-    	ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
-    	
         if (aExtendedField.getExtendedFieldID() == null) {
-        	extdao.create(aExtendedField);
+            extdao.create(aExtendedField);
         } else {
-        	extdao.update(aExtendedField);
+            extdao.update(aExtendedField);
         }
     }
-	
-	public static ExtendedField readExtendedField(String aId) {
-    	ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
 
-    	if (aId == null) {
-    		return null;
-    	}
-    	
-    	return extdao.read(Long.parseLong(aId));
+    /**
+     * Read and return the Extendedfield for the given id.
+     * @param aId An Id for a specific ExtendedField
+     * @return the Extendedfield for the given id.
+     */
+    public static ExtendedField readExtendedField(String aId) {
+        ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
+        if (aId == null) {
+            return null;
+        }
+        return extdao.read(Long.parseLong(aId));
     }
-	
 }

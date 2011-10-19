@@ -22,16 +22,11 @@
  */
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
-import java.sql.Connection;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.UnknownID;
-
 /**
  * Interface for creating and accessing extended fields in persistent storage.
  */
 public abstract class ExtendedFieldValueDAO {
+    /** The one and only instance of this DAO. */
     protected static ExtendedFieldValueDAO instance;
 
     /**
@@ -48,20 +43,50 @@ public abstract class ExtendedFieldValueDAO {
     }
     
     /**
-     * Gets the ExtendedFieldValueDAO singleton.
-     *
-     * @return the ExtendedFieldValueDAO singleton
+     * Find out if there exists in persistent storage
+     * a ExtendedFieldValue with the given id.
+     * @param aExtendedFieldValueID An id associated with a ExtendedFieldValue
+     * @return true, if there already exists in persistent storage
+     * a ExtendedFieldValue with the given id.
      */
-    protected abstract Connection getConnection();
-
     public abstract boolean exists(Long aExtendedFieldValueID);
     
+    /**
+     * Create a ExtendedFieldValue in persistent storage.
+     * @param aExtendedFieldValue The ExtendedFieldValue to create in 
+     * persistent storage.
+     */
     public abstract void create(ExtendedFieldValue aExtendedFieldValue);
 
-    public abstract ExtendedFieldValue read(Long aExtendedFieldID, Long aInstanceID)
-            throws ArgumentNotValid, UnknownID, IOFailure;
+    /**
+     * Read the ExtendedFieldValue with the given extendedFieldID.
+     * @param aExtendedFieldID A given ID for a ExtendedFieldValue
+     * @param aInstanceID A given instanceID
+     * @return the ExtendedFieldValue with the given extendedFieldID.
+     */
+    public abstract ExtendedFieldValue read(Long aExtendedFieldID, 
+            Long aInstanceID);
+    
+    /**
+     * Update a ExtendedFieldValue in persistent storage.
+     * @param aExtendedFieldValue The ExtendedFieldValue to update
+     */
+    public abstract void update(ExtendedFieldValue aExtendedFieldValue);
 
-    public abstract void update(ExtendedFieldValue aExtendedFieldValue) throws IOFailure;
+    /**
+     * Delete a ExtendedFieldValue in persistent storage.
+     * @param aExtendedfieldValueID The ID for a extendedFieldValue to delete
+     */
+    public abstract void delete(long aExtendedfieldValueID);
 
-    public abstract void delete(long aExtendedfieldValueID) throws IOFailure;
+    /**
+     * @return the singleton instance of the ExtendedFieldVAlueDAO
+     */
+    public static synchronized ExtendedFieldValueDAO getInstance() {
+        if (instance == null) {
+            instance = new ExtendedFieldValueDBDAO();
+        }
+        return instance;
+    }
 }
+

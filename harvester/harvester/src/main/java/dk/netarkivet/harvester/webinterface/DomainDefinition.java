@@ -24,11 +24,8 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
@@ -45,15 +42,13 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValues;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 
 /**
  * Utility class for handling update of domain from the domain jsp page.
  *
  */
-
 public class DomainDefinition {
     
     /** Private constructor to prevent public construction of this class.*/
@@ -155,56 +150,63 @@ public class DomainDefinition {
         boolean renewAlias = aliasRenew.equals("yes");
         
         ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
-        Iterator<ExtendedField> it = extdao.getAll(ExtendedFieldTypes.DOMAIN).iterator();
+        Iterator<ExtendedField> it 
+            = extdao.getAll(ExtendedFieldTypes.DOMAIN).iterator();
         
-        while(it.hasNext()) {
-		    String value = "";
-        	
-        	ExtendedField ef = it.next();
-        	String parameterName = ef.getJspFieldname();
-        	switch(ef.getDatatype()) {
-	        	case ExtendedFieldDataTypes.BOOLEAN:
-			    	String[] parb = request.getParameterValues(parameterName);
-			    	if (parb != null && parb.length > 0) {
-			    		value = "true";
-			    	}
-			    	else {
-			    		value = "false";
-			    	}
-	        		break;
-	        	case ExtendedFieldDataTypes.SELECT:
-			    	String[] pars = request.getParameterValues(parameterName);
-			    	if (pars != null && pars.length > 0) {
-			    		value = pars[0];
-			    	}
-			    	else {
-			    		value = "";
-			    	}
-			    	
-	        		break;
-	    		default:
-			    	value = request.getParameter(parameterName);
-			    	if (ef.isMandatory()) {
-			    		if (value == null) {
-			    			value = ef.getDefaultValue();
-			    		}
-			    		
-				    	if (value == null || value.length() == 0) {
-			                HTMLUtils.forwardWithErrorMessage(context, i18n,
-			                        "errormsg;extendedfields.field.0.is.empty.but.mandatory", ef.getName());
-			                throw new ForwardedToErrorPage("Mandatory field " + ef.getName() + " is empty.");
-				    	}
-			    	}
-			    	
-			    	ExtendedFieldDefaultValues def = new ExtendedFieldDefaultValues(value, ef.getFormattingPattern(), ef.getDatatype());
-			    	if (!def.isValid()) {
-		                HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;extendedfields.value.invalid");
-		                throw new ForwardedToErrorPage("errormsg;extendedfields.value.invalid");
-			    	}
-	    			break;
-        	}
+        while (it.hasNext()) {
+            String value = "";
 
-	    	domain.updateExtendedFieldValue(ef.getExtendedFieldID(), value);
+            ExtendedField ef = it.next();
+            String parameterName = ef.getJspFieldname();
+            switch (ef.getDatatype()) {
+            case ExtendedFieldDataTypes.BOOLEAN:
+                String[] parb = request.getParameterValues(parameterName);
+                if (parb != null && parb.length > 0) {
+                    value = "true";
+                } else {
+                    value = "false";
+                }
+                break;
+            case ExtendedFieldDataTypes.SELECT:
+                String[] pars = request.getParameterValues(parameterName);
+                if (pars != null && pars.length > 0) {
+                    value = pars[0];
+                } else {
+                    value = "";
+                }
+
+                break;
+            default:
+                value = request.getParameter(parameterName);
+                if (ef.isMandatory()) {
+                    if (value == null) {
+                        value = ef.getDefaultValue();
+                    }
+
+                    if (value == null || value.length() == 0) {
+                        HTMLUtils.forwardWithErrorMessage(
+                                context,
+                                i18n,
+                                "errormsg;extendedfields.field.0.is.empty."
+                                + "but.mandatory",
+                                ef.getName());
+                        throw new ForwardedToErrorPage("Mandatory field "
+                                + ef.getName() + " is empty.");
+                    }
+                }
+
+                ExtendedFieldDefaultValue def = new ExtendedFieldDefaultValue(
+                        value, ef.getFormattingPattern(), ef.getDatatype());
+                if (!def.isValid()) {
+                    HTMLUtils.forwardWithRawErrorMessage(context, i18n,
+                            "errormsg;extendedfields.value.invalid");
+                    throw new ForwardedToErrorPage(
+                            "errormsg;extendedfields.value.invalid");
+                }
+                break;
+            }
+
+            domain.updateExtendedFieldValue(ef.getExtendedFieldID(), value);
         }
         
         updateDomain(domain, defaultConf, crawlertraps, comments, alias,
@@ -283,18 +285,18 @@ public class DomainDefinition {
      * @return true, if we want to update the alias information, false otherwise
      */
     private static boolean needToUpdateAlias(String oldAlias, String newAlias,
-                                             boolean renewAlias) {
+            boolean renewAlias) {
         boolean needToUpdate = false;
-     // If new alias is null: update if old alias is different from null
+        // If new alias is null: update if old alias is different from null
         if (newAlias == null) {
-            if (oldAlias != null){
+            if (oldAlias != null) {
                 needToUpdate = true;
             }
         } else { // newAlias is not null
             if (oldAlias == null) {
                 needToUpdate = true;
             } else {
-                if (oldAlias.equals(newAlias)){
+                if (oldAlias.equals(newAlias)) {
                     if (renewAlias) {
                         needToUpdate = true;
                     }

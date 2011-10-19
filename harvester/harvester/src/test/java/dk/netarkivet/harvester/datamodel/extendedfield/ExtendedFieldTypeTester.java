@@ -47,18 +47,24 @@ public class ExtendedFieldTypeTester extends DataModelTestCase {
     public void testRead() {
         ExtendedFieldTypeDAO extDAO = ExtendedFieldTypeDBDAO.getInstance();
         ExtendedFieldType type = null;
-        
-        type = extDAO.read(new Long(ExtendedFieldTypes.DOMAIN));
-        assertEquals(type.getName(), ExtendedFieldTypes.tableNames[ExtendedFieldTypes.DOMAIN]);
 
-        type = extDAO.read(new Long(ExtendedFieldTypes.HARVESTDEFINITION));
-        assertEquals(type.getName(), ExtendedFieldTypes.tableNames[ExtendedFieldTypes.HARVESTDEFINITION]);
-        
+        type = extDAO.read(Long.valueOf(ExtendedFieldTypes.DOMAIN));
+        assertEquals(type.getName(),
+                ExtendedFieldTypes.tableNames[ExtendedFieldTypes.DOMAIN]);
+
+        type = extDAO.read(Long.valueOf(ExtendedFieldTypes.HARVESTDEFINITION));
+        assertEquals(
+                type.getName(),
+                ExtendedFieldTypes.tableNames[ExtendedFieldTypes.HARVESTDEFINITION]);
+
         ExtendedFieldTypeDAO extDAO2 = ExtendedFieldTypeDBDAO.getInstance();
         List<ExtendedFieldType> list = extDAO2.getAll();
-        
+
         assertEquals(list.size(), 2);
-        assertEquals(list.get(0).getName(), ExtendedFieldTypes.tableNames[ExtendedFieldTypes.DOMAIN]);
-        assertEquals(list.get(1).getName(), ExtendedFieldTypes.tableNames[ExtendedFieldTypes.HARVESTDEFINITION]);
+        assertEquals(list.get(0).getName(),
+                ExtendedFieldTypes.tableNames[ExtendedFieldTypes.DOMAIN]);
+        assertEquals(
+                list.get(1).getName(),
+                ExtendedFieldTypes.tableNames[ExtendedFieldTypes.HARVESTDEFINITION]);
     }
 }

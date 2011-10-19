@@ -86,8 +86,8 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         parameterMap.put(Constants.COMMENTS_PARAM, new String[]{""});
         parameterMap.put(Constants.ALIAS_PARAM, new String[]{""});
         
-        parameterMap.put(ExtendedFieldDefinition.EXTF_PREFIX + "1", new String[]{"test"});
-        parameterMap.put(ExtendedFieldDefinition.EXTF_PREFIX + "2", new String[]{"true"});
+        parameterMap.put(ExtendedFieldConstants.EXTF_PREFIX + "1", new String[]{"test"});
+        parameterMap.put(ExtendedFieldConstants.EXTF_PREFIX + "2", new String[]{"true"});
         
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
