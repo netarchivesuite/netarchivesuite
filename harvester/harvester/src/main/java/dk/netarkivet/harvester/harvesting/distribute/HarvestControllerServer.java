@@ -1,25 +1,25 @@
 /* $Id$
-* $Revision$
-* $Date$
-* $Author$
-*
-* The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
-*
-* This library is free software; you can redistribute it and/or
-* modify it under the terms of the GNU Lesser General Public
-* License as published by the Free Software Foundation; either
-* version 2.1 of the License, or (at your option) any later version.
-*
-* This library is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-* Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public
-* License along with this library; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ * $Revision$
+ * $Date$
+ * $Author$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package dk.netarkivet.harvester.harvesting.distribute;
 
 import java.io.File;
@@ -102,33 +102,33 @@ implements CleanupIF {
 
     /** The logger to use. */
     private static final Log log =
-        LogFactory.getLog(HarvestControllerServer.class);
+            LogFactory.getLog(HarvestControllerServer.class);
 
     /** The configured application instance id.
      * @see CommonSettings#APPLICATION_INSTANCE_ID
      */
     private final String applicationInstanceId =
-        Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
-    
+            Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
+
     /**
      * The name of the server this <code>HarvestControllerServer</code> is
      * running on.
      */
     private final String physicalServerName 
-        = DomainUtils.reduceHostname(SystemUtils.getLocalHostName());
+    = DomainUtils.reduceHostname(SystemUtils.getLocalHostName());
 
     /** The message to write to log when starting the server. */
     private static final String STARTING_MESSAGE =
-                "Starting HarvestControllerServer.";
+            "Starting HarvestControllerServer.";
     /** The message to write to log when server is started. */
     private static final String STARTED_MESSAGE =
-                "HarvestControllerServer started.";    
+            "HarvestControllerServer started.";    
     /** The message to write to log when stopping the server. */
     private static final String CLOSING_MESSAGE =
-                "Closing HarvestControllerServer.";
+            "Closing HarvestControllerServer.";
     /** The message to write to log when server is stopped. */
     private static final String CLOSED_MESSAGE
-            = "Closed down HarvestControllerServer";
+    = "Closed down HarvestControllerServer";
     /** The message to write to log when starting a crawl. */
     private static final String STARTCRAWL_MESSAGE = "Starting crawl of job :";
     /** The message to write to log after ending a crawl. */
@@ -140,14 +140,14 @@ implements CleanupIF {
     private static final String HERITRIX_VERSION_PROPERTY = "heritrix.version";
     /** queue-assignment-policy property. */
     private static final String HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY =
-        "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
+            "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
 
     /**
      * The priority of jobs processed by this instance.
      */
     private static final JobPriority JOB_PRIORITY =
-        JobPriority.valueOf(
-                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
+            JobPriority.valueOf(
+                    Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
 
     /** The JMSConnection to use. */
     private JMSConnection jmsConnection;
@@ -157,28 +157,18 @@ implements CleanupIF {
      */
     private final HarvestController controller;
 
-    /** This is true while a doOneCrawl is running. No jobs are accepted while
-     * this boolean is true. */
-    private AtomicBoolean running = new AtomicBoolean(false);
     /** Jobs are fetched from this queue. */ 
     private final ChannelID jobChannel;
-    
+
     /** Min. space required to start a job. */
     private final long minSpaceRequired;
-    
+
     /** the serverdir, where the harvesting takes place. */
     private final File serverDir;
 
-    /**
-     * The executor used to execute {@link SendStatusTask}s.
-     */
-    private PeriodicTaskExecutor sendStatus;
-
-    /**
-     * Delay in seconds between two status sendings.
-     */
-    private static final int SEND_STATUS_DELAY =
-        Settings.getInt(HarvesterSettings.SEND_STATUS_DELAY);
+    /** This is true while a doOneCrawl is running. No jobs are accepted while
+     * this is running. */
+    private CrawlStatus status;
 
     /**
      * In this constructor, the server creates an instance of the
@@ -225,12 +215,12 @@ implements CleanupIF {
         System.setProperty(
                 HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
                 "org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,"
-                + "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
-                + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy,"
-                + "org.archive.crawler.frontier"
-                    + ".SurtAuthorityQueueAssignmentPolicy,"
-                + "dk.netarkivet.harvester.harvesting"
-                    + ".DomainnameQueueAssignmentPolicy");
+                        + "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
+                        + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy,"
+                        + "org.archive.crawler.frontier"
+                        + ".SurtAuthorityQueueAssignmentPolicy,"
+                        + "dk.netarkivet.harvester.harvesting"
+                        + ".DomainnameQueueAssignmentPolicy");
         // Get JMS-connection
         // Channel THIS_CLIENT is only used for replies to store messages so
         // do not set as listener here. It is registered in the arcrepository
@@ -239,6 +229,8 @@ implements CleanupIF {
         // registered below.
         jmsConnection = JMSConnectionFactory.getInstance();
         log.debug("Obtained JMS connection.");
+
+        status = new CrawlStatus();
 
         // If any unprocessed jobs are left on the server, process them now
         processOldJobs();
@@ -250,6 +242,7 @@ implements CleanupIF {
 
         // Notify the harvest dispatcher that we are ready
         startAcceptingJobs();
+        status.startSending();
     }
 
     /**
@@ -268,13 +261,6 @@ implements CleanupIF {
             throws IOFailure {
         if (instance == null) {
             instance = new HarvestControllerServer();
-
-            // Start periodically sending the harvester's status
-            instance.sendStatus = new PeriodicTaskExecutor(
-                    "HarvesterStatus",
-                    new SendStatusTask(instance),
-                    0,
-                    SEND_STATUS_DELAY);
         }
         return instance;
     }
@@ -298,14 +284,14 @@ implements CleanupIF {
         }
         if (jmsConnection != null) {
             jmsConnection.removeListener(jobChannel, this);
-            
+
             // Send a last status message (status unavailable)
             jmsConnection.send(new HarvesterStatusMessage(
                     applicationInstanceId, JOB_PRIORITY, false));
         }
 
         // Stop the sending of status messages
-        sendStatus.shutdown();
+        status.stopSending();
 
         instance = null;
     }
@@ -324,14 +310,14 @@ implements CleanupIF {
                 // Assume that crawl had not ended at this point so
                 // job must be marked as failed
                 log.warn("Found old unprocessed job data in dir '"
-                             + oldCrawlDir.getAbsolutePath()
-                             + "'. Crawl probably interrupted by "
-                             + "shutdown of HarvestController. "
-                             + "Processing data.");
+                        + oldCrawlDir.getAbsolutePath()
+                        + "'. Crawl probably interrupted by "
+                        + "shutdown of HarvestController. "
+                        + "Processing data.");
                 //TODO Does such an unexpected job warrant an email?
                 processHarvestInfoFile(oldCrawlDir,
                         new IOFailure("Crawl probably interrupted by "
-                                      + "shutdown of HarvestController"));
+                                + "shutdown of HarvestController"));
             }
         }
     }
@@ -372,10 +358,10 @@ implements CleanupIF {
         // before the listener is removed.  Also, if the job message is
         // malformed or starting the crawl fails, we re-add the listener.
         synchronized (this) {
-            if (running.get()) {
+            if (status.isRunning()) {
                 log.warn("Received crawl request, but sent it back to queue, "
-                         + "as another crawl is already running: '" + msg
-                         + "'");
+                        + "as another crawl is already running: '" + msg
+                        + "'");
                 jmsConnection.resend(msg, jobChannel);
                 try {
                     // Wait a second before listening again, so the message has
@@ -407,7 +393,7 @@ implements CleanupIF {
             }
 
             log.info("Received crawlrequest for job "
-                        + jobID + ": '" + msg + "'");
+                    + jobID + ": '" + msg + "'");
 
             // Send message to scheduler that job is started
             CrawlStatusMessage csmStarted = new CrawlStatusMessage(
@@ -421,7 +407,7 @@ implements CleanupIF {
             if (job.getStatus() != JobStatus.SUBMITTED) {
                 String message = "Message '" + msg.toString() + "' arrived with"
                         + " status " + job.getStatus()
-                                     + " for job " + jobID
+                        + " for job " + jobID
                         + ", should have been STATUS_SUBMITTED";
                 log.warn(message);
                 sendErrorMessage(jobID, message, message);
@@ -465,7 +451,7 @@ implements CleanupIF {
      * wrong.
      */
     private void sendErrorMessage(long jobID, String message,
-                                  String detailedMessage) {
+            String detailedMessage) {
         CrawlStatusMessage csm = new CrawlStatusMessage(jobID, JobStatus.FAILED,
                 null);
         csm.setHarvestErrors(message);
@@ -478,7 +464,7 @@ implements CleanupIF {
      * listening altogether, but that requires another thread.
      */
     private synchronized void stopAcceptingJobs() {
-        running.set(true);
+        status.setRunning(true);
         log.debug("No longer accepting jobs.");
     }
 
@@ -490,7 +476,7 @@ implements CleanupIF {
      */
     private synchronized void startAcceptingJobs() {
         //allow this haco to receive messages
-        running.set(false);
+        status.setRunning(false);
     }
 
     /** Stop listening for new crawl requests.
@@ -516,7 +502,7 @@ implements CleanupIF {
             NotificationsFactory.getInstance().errorEvent(PAUSED_MESSAGE);
         }
     }
-    
+
     /** Adds error messages from an exception to the status message errors.
      *
      * @param csm The message we're setting messages on.
@@ -527,10 +513,10 @@ implements CleanupIF {
      * @param failedFiles List of files that failed to upload.
      */
     private void setErrorMessages(CrawlStatusMessage csm,
-                                  Throwable crawlException,
-                                  String errorMessage,
-                                  boolean missingHostsReport,
-                                  int failedFiles) {
+            Throwable crawlException,
+            String errorMessage,
+            boolean missingHostsReport,
+            int failedFiles) {
         if (crawlException != null) {
             csm.setHarvestErrors(crawlException.toString());
             csm.setHarvestErrorDetails(
@@ -589,9 +575,9 @@ implements CleanupIF {
      */
     private void processHarvestInfoFile(File crawlDir,
             Throwable crawlException)
-    throws IOFailure {
+                    throws IOFailure {
         log.debug("Post-processing files in '"
-                     + crawlDir.getAbsolutePath() + "'");
+                + crawlDir.getAbsolutePath() + "'");
         if (!PersistentJobData.existsIn(crawlDir)) {
             throw new IOFailure("No harvestInfo found in directory: "
                     + crawlDir.getAbsolutePath());
@@ -605,10 +591,10 @@ implements CleanupIF {
         List<File> failedFiles = new ArrayList<File>();
 
         HeritrixFiles files =
-            new HeritrixFiles(
-                    crawlDir,
-                    jobID,
-                    harvestInfo.getOrigHarvestDefinitionID());
+                new HeritrixFiles(
+                        crawlDir,
+                        jobID,
+                        harvestInfo.getOrigHarvestDefinitionID());
         try {
             log.info("Store files in directory '" + crawlDir + "' "
                     + "from jobID: " + jobID + ".");
@@ -616,7 +602,7 @@ implements CleanupIF {
                     files, errorMessage, failedFiles);
         } catch (Exception e) {
             String msg = "Trouble during postprocessing of files in '"
-                + crawlDir.getAbsolutePath() + "'"; 
+                    + crawlDir.getAbsolutePath() + "'"; 
             log.warn(msg, e);
             errorMessage.append(e.getMessage()).append("\n");
             // send a mail about this problem
@@ -724,8 +710,8 @@ implements CleanupIF {
                     controller.runHarvest(files);
                 } catch (Throwable e) {
                     String msg = "Error during crawling. "
-                                 + "The crawl may have been only "
-                                 + "partially completed.";
+                            + "The crawl may have been only "
+                            + "partially completed.";
                     log.warn(msg, e);
                     crawlException = e;
                     throw new IOFailure(msg, e);
@@ -751,7 +737,7 @@ implements CleanupIF {
                 beginListeningIfSpaceAvailable();
             }
         }
-        
+
         /**
          * Does the operator want us to shutdown now.
          * TODO In a later implementation, the harvestControllerServer could 
@@ -785,17 +771,17 @@ implements CleanupIF {
                 File baseCrawlDir = new File(Settings.get(
                         HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
                 crawlDir = new File(baseCrawlDir,
-                                    job.getJobID() + "_"
-                                    + System.currentTimeMillis());
+                        job.getJobID() + "_"
+                                + System.currentTimeMillis());
                 FileUtils.createDir(crawlDir);
                 log.info("Created crawl directory: '" + crawlDir + "'");
                 return crawlDir;
             } catch (PermissionDenied e) {
                 String message = "Couldn't create the directory for job "
-                                 + job.getJobID();
+                        + job.getJobID();
                 log.warn(message, e);
                 sendErrorMessage(job.getJobID(), message,
-                                 ExceptionUtils.getStackTrace(e));
+                        ExceptionUtils.getStackTrace(e));
                 throw e;
             }
         }
@@ -804,46 +790,75 @@ implements CleanupIF {
     @Override
     public void visit(IndexReadyMessage msg) {
         throw new NotImplementedException("This method is not implemented");
-        
+
     }
-    
+
     /**
-     * Send a HarvesterStatusMessage to the HarvetJobManager.
+     * Used for maintaining the running status of the crawling, is it running 
+     * or not. Will also take care of notifying the HarvestJobManager of the 
+     * status.
      */
-    private synchronized void sendStatus() {
-        jmsConnection.send(new HarvesterStatusMessage(
-                applicationInstanceId + " on " + physicalServerName,
-                HarvestControllerServer.JOB_PRIORITY,
-                !running.get()));
-    }
-    
-    /**
-     * Task that sends the availability status of the 
-     * {@link HarvestControllerServer} to the 
-     * {@link HarvestDispatcher}.
-     */
-    private static class SendStatusTask implements Runnable {
+    private class CrawlStatus {
+        /** Delay in seconds between two status sendings. */
+        private final int SEND_STATUS_DELAY =
+                Settings.getInt(HarvesterSettings.SEND_STATUS_DELAY);
+
+        /** The status */
+        private boolean running = false;
+
+        /** Handles the periodic sending of status messages */
+        private PeriodicTaskExecutor statusTransmitter;
 
         /**
-         * The owner harvester.
+         * Returns <code>true</code> if the a doOneCrawl is running, else 
+         * <code>false</code>.
          */
-        private final HarvestControllerServer hcs;
-
-        /**
-         * Builds a task from its owner harvester.
-         * @param hcs The harvestControllerServer associated with this task
-         */
-        public SendStatusTask(HarvestControllerServer hcs) {
-            super();
-            this.hcs = hcs;
+        public boolean isRunning() {
+            return running;
         }
 
         /**
-         * Sends a {@link HarvesterStatusMessage}.
+         * Use for changing the running state.
+         * @param running The new status
          */
-        @Override
-        public void run() {
-            hcs.sendStatus();
+        public synchronized void setRunning(boolean running) {
+            this.running = running;
+            sendStatus();
         }
+
+        /**
+         * Starts the sending of status messages.
+         */
+        public void startSending() {
+            statusTransmitter = new PeriodicTaskExecutor(
+                    "HarvesterStatus",
+                    new Runnable() {
+                        public void run() {
+                            sendStatus();
+                        }
+                    },
+                    0,
+                    SEND_STATUS_DELAY);
+        }
+
+        /**
+         * Stops the sending of status messages
+         */
+        public void stopSending() {
+            if (statusTransmitter != null) {
+                statusTransmitter.shutdown();
+                statusTransmitter = null;
+            }
+        }
+
+        /**
+         * Send a HarvesterStatusMessage to the HarvestJobManager.
+         */
+        private synchronized void sendStatus() {
+            jmsConnection.send(new HarvesterStatusMessage(
+                    applicationInstanceId + " on " + physicalServerName,
+                    HarvestControllerServer.JOB_PRIORITY,
+                    !running));
+        }            
     }
 }
