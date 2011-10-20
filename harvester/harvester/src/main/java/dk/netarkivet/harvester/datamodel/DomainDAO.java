@@ -28,7 +28,6 @@ import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.FilterIterator;
 
 /**
  * Persistent storage for Domain objects.
@@ -134,7 +133,8 @@ public abstract class DomainDAO implements Iterable<Domain> {
      *
      * @param domain the domain to update
      * @throws ArgumentNotValid if domain is null
-     * @throws UnknownID        if the Domain domain has not been added previously to persistent storage.
+     * @throws UnknownID        if the Domain domain has not been added 
+     * previously to persistent storage.
      */
     public abstract void update(Domain domain);
 
@@ -178,10 +178,16 @@ public abstract class DomainDAO implements Iterable<Domain> {
         instance = null;
     }
 
+    /**
+     * Find all info about results of a harvest definition.
+     *
+     * @param previousHarvestDefinition A harvest definition that has already
+     *                                  been run.
+     * @return An array of information for all domainconfigurations
+     *         which were harvested by the given harvest definition.
+     */
     public abstract Iterator<HarvestInfo> getHarvestInfoBasedOnPreviousHarvestDefinition(
             final HarvestDefinition previousHarvestDefinition);
-    
-    
 
     /** Use a glob-like matcher to find a subset of domains.
     *
@@ -203,7 +209,8 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * request.  If this method returns false, deletion will however
      * definitely not be allowed.
      * @param config the given configuration
-     * @return true if the he given configuration can be deleted, false otherwise
+     * @return true if the he given configuration can be deleted, 
+     * false otherwise
      */
     public abstract boolean mayDelete(DomainConfiguration config);
 
@@ -263,18 +270,19 @@ public abstract class DomainDAO implements Iterable<Domain> {
     
     
     /** Get a list of info about harvests performed on a given domain.
-    *
-    * Note that harvest info from before the DB DAOs are unreliable, as
-    * harvests cannot be told apart and no dates are available.
-    *
-    *
+     *
+     * Note that harvest info from before the DB DAOs are unreliable, as
+     * harvests cannot be told apart and no dates are available.
+     *
+     *
      * @param domainName Domain to get info for.
      * @param latestFirst true if histories are to be returned sorted with the
      * most recent harvests first, false if they are to be sorted with the
      * oldest harvests first.
-     * @return List of DomainHarvestInfo objects with information on that domain.
-    *
-    */
+     * @return List of DomainHarvestInfo objects with information on that 
+     * domain.
+     *
+     */
     public abstract List<DomainHarvestInfo> getDomainHarvestInfo(
             String domainName, boolean latestFirst);
 
@@ -286,14 +294,16 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * @return the DomainConfiguration, if the specified configuration exists;
      * otherwise throws UnknownID 
      */
-	public abstract DomainConfiguration getDomainConfiguration(String domainName,
-			String configName);
+    public abstract DomainConfiguration getDomainConfiguration(
+            String domainName, String configName);
     
-	/** Get the domainHistory for a specific domain. 
-	 * 
-	 * @param domainName A name of a specific domain.
-	 * @return the domainHistory for a specific domain.
-	 */
-	public abstract DomainHistory getDomainHistory(String domainName);
-	
+    /**
+     * Get the domainHistory for a specific domain.
+     * 
+     * @param domainName
+     *            A name of a specific domain.
+     * @return the domainHistory for a specific domain.
+     */
+    public abstract DomainHistory getDomainHistory(String domainName);
+
 }

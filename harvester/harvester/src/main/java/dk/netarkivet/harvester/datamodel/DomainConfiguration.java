@@ -75,12 +75,11 @@ public class DomainConfiguration implements Named {
     private final Log log = LogFactory.getLog(DomainConfiguration.class);
     
     /** The domainhistory associated with the domain. */
-	private DomainHistory domainhistory;
-	
-	/** The crawlertraps associated with the domain. */
-	private List<String> crawlertraps;
+    private DomainHistory domainhistory;
 
-	
+    /** The crawlertraps associated with the domain. */
+    private List<String> crawlertraps;
+
     /** How many objects should be harvested in a harvest to trust that our
      * expected size of objects is less than the default number.
      */
@@ -98,15 +97,35 @@ public class DomainConfiguration implements Named {
     public DomainConfiguration(String theConfigName, Domain domain,
                                List<SeedList> seedlists,
                                List<Password> passwords) {
+        // We cannot check domain for not null
+        this(theConfigName, domain.getName(), domain.getHistory(), domain.getCrawlerTraps(), 
+                seedlists, passwords);
+    }
+
+    /**
+     * Alternate constructor.
+     * TODO Filter all history not relevant for this configuration
+     * @param theConfigName theConfigName The name of this configuration
+     * @param domainName The name of the domain that this configuration is for
+     * @param history The domainhistory belonging the given domain 
+     * @param crawlertraps The domainhistory belonging the given domain
+     * @param seedlists Seedlists to use in this configuration
+     * @param passwords Passwords to use in this configuration. 
+     */
+    public DomainConfiguration(String theConfigName, String domainName,
+            DomainHistory history, List<String> crawlertraps,
+            List<SeedList> seedlists, List<Password> passwords) {
         ArgumentNotValid.checkNotNullOrEmpty(theConfigName, "theConfigName");
-        ArgumentNotValid.checkNotNull(domain, "domain");
+        ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkNotNull(passwords, "passwords");
         ArgumentNotValid.checkNotNullOrEmpty(seedlists, "seedlists");
         ArgumentNotValid.checkNotNull(passwords, "passwords");
 
         this.configName = theConfigName;
-        this.domainName = domain.getName();
-        this.domainhistory = domain.getHistory(); // TODO Filter all history not relevant for this configuration
-        this.crawlertraps = domain.getCrawlerTraps();
+        this.domainName = domainName;
+        this.domainhistory = history; // TODO Filter all history not relevant
+                                      // for this configuration
+        this.crawlertraps = crawlertraps;
         this.seedlists = seedlists;
         this.passwords = passwords;
         this.comments = "";
@@ -115,28 +134,7 @@ public class DomainConfiguration implements Named {
         this.maxBytes = Constants.DEFAULT_MAX_BYTES;
     }
 
-    public DomainConfiguration(String theConfigName, String domainName, DomainHistory history,
-			List<String> crawlertraps, List<SeedList> seedlists,
-			List<Password> passwords) {
-    	ArgumentNotValid.checkNotNullOrEmpty(theConfigName, "theConfigName");
-        ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
-        ArgumentNotValid.checkNotNull(passwords, "passwords");
-        ArgumentNotValid.checkNotNullOrEmpty(seedlists, "seedlists");
-        ArgumentNotValid.checkNotNull(passwords, "passwords");
-        
-        this.configName = theConfigName;
-        this.domainName = domainName;
-        this.domainhistory = history; // TODO Filter all history not relevant for this configuration
-        this.crawlertraps = crawlertraps;
-        this.seedlists = seedlists;
-        this.passwords = passwords;
-        this.comments = "";
-        this.maxRequestRate = Constants.DEFAULT_MAX_REQUEST_RATE;
-        this.maxObjects = Constants.DEFAULT_MAX_OBJECTS;
-        this.maxBytes = Constants.DEFAULT_MAX_BYTES;
-	}
-
-	/**
+    /**
      * Specify the name of the order.xml template to use.
      *
      * @param ordername order.xml template name
@@ -262,8 +260,10 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Add a new seedlist to the configuration.
+     * Add a new seedlist to the configuration. Must exist in the associated
+     * domain and the equal to that seedlist. 
      * @param seedlist the seedlist to add
+     * @param domain The domain to check if the seedlist exists
      * @throws ArgumentNotValid if the seedlist is null
      * @throws UnknownID if the seedlist is not defined on the domain
      * @throws PermissionDenied if the seedlist is different from the one
@@ -291,8 +291,9 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Add password.
-     * @param password to add
+     * Add password to the configuration.
+     * @param password to add (must exist in the domain)
+     * @param domain the domain where the password should come from.
      */
     public void addPassword(Domain domain, Password password) {
         ArgumentNotValid.checkNotNull(password, "password");
@@ -325,7 +326,7 @@ public class DomainConfiguration implements Named {
                 = Settings.getLong(
                 HarvesterSettings.ERRORFACTOR_PERMITTED_PREVRESULT);
         HarvestInfo best = DomainHistory.getBestHarvestInfoExpectation(
-        		configName, this.domainhistory);
+                configName, this.domainhistory);
 
         log.trace("Using domain info '" + best + "' for configuration '"
                   + toString() + "'");
@@ -498,26 +499,28 @@ public class DomainConfiguration implements Named {
 
     /**
      * Sets the used seedlists to the given list. Note: list is copied.
-     * @param seedlists The seedlists to use.
+     * @param newSeedlists The seedlists to use.
+     * @param domain The domain where the seedlists should come from 
      * @throws ArgumentNotValid if the seedslists are null
      */
-    public void setSeedLists(Domain domain, List<SeedList> seedlists) {
-        ArgumentNotValid.checkNotNull(seedlists, "seedlists");
-        this.seedlists = new ArrayList<SeedList>(seedlists.size());
-        for(SeedList s: seedlists) {
+    public void setSeedLists(Domain domain, List<SeedList> newSeedlists) {
+        ArgumentNotValid.checkNotNull(newSeedlists, "newSeedlists");
+        this.seedlists = new ArrayList<SeedList>(newSeedlists.size());
+        for(SeedList s: newSeedlists) {
             addSeedList(domain, s);
         }
     }
 
     /**
      * Sets the used passwords to the given list. Note: list is copied.
-     * @param passwords The passwords to use.
+     * @param newPasswords The passwords to use.
+     * @param domain The domain where the passwords should come from 
      * @throws ArgumentNotValid if the passwords are null
      */
-    public void setPasswords(Domain domain, List<Password> passwords) {
-        ArgumentNotValid.checkNotNull(passwords, "passwords");
-        this.passwords = new ArrayList<Password>(passwords.size());
-        for(Password p: passwords) {
+    public void setPasswords(Domain domain, List<Password> newPasswords) {
+        ArgumentNotValid.checkNotNull(newPasswords, "newPasswords");
+        this.passwords = new ArrayList<Password>(newPasswords.size());
+        for(Password p: newPasswords) {
             addPassword(domain, p);
         }
     }
@@ -530,10 +533,10 @@ public class DomainConfiguration implements Named {
     }
 
     /** Set the ID of this configuration.  Only for use by DBDAO
-     * @param id use this id for this configuration
+     * @param anId use this id for this configuration
      */
-    void setID(long id) {
-        this.id = id;
+    void setID(long anId) {
+        this.id = anId;
     }
 
     /** Check if this configuration has an ID set yet (doesn't happen until
@@ -553,19 +556,34 @@ public class DomainConfiguration implements Named {
                 + "' of domain '" + domainName + "'";
     }
     
-	public void setCrawlertraps(List<String> crawlertraps) {
-		this.crawlertraps = crawlertraps;
-	}
-    
-    public List<String> getCrawlertraps() {
-    	return this.crawlertraps;
+    /**
+     * Set the crawlerltraps for this configuration.
+     * @param someCrawlertraps a list of crawlertraps
+     */
+    public void setCrawlertraps(List<String> someCrawlertraps) {
+        this.crawlertraps = someCrawlertraps;
     }
     
+    /**
+     * @return the known crawlertraps for this configuration.
+     */
+    public List<String> getCrawlertraps() {
+        return this.crawlertraps;
+    }
+    
+    /** 
+     * @return the domainhistory for this configuration
+     */
     public DomainHistory getDomainhistory() {
-		return domainhistory;
-	}
-
-	public void setDomainhistory(DomainHistory domainhistory) {
-		this.domainhistory = domainhistory;
-	} 
+        return domainhistory;
+    }
+    
+    /**
+     * Set the domainHistory for this configuration.
+     * @param newDomainhistory the new domainHistory for this configuration(
+     * null is accepted for no History)
+     */
+    public void setDomainhistory(DomainHistory newDomainhistory) {
+        this.domainhistory = newDomainhistory;
+    }
 }

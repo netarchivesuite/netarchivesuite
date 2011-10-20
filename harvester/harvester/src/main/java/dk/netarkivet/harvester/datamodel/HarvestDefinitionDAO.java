@@ -145,11 +145,9 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      */
     public abstract Iterator<DomainConfiguration> getSnapShotConfigurations();
 
-
-
     /** Get the IDs of the harvest definitions that are ready to run.
      *
-     * @param now
+     * @param now 
      * @return IDs of the harvest definitions that are currently ready to
      * be scheduled.  Some of these might already be in the process of being
      * scheduled.
@@ -299,10 +297,19 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      * @param nextdate A new date for the next harvest run.
      */
     public abstract void updateNextdate(PartialHarvest ph, Date nextdate);
-
-	public abstract void addDomainConfiguration(PartialHarvest hdd,
-			DomainConfigurationKey dc);
-
-	public abstract void resetDomainConfigurations(PartialHarvest hdd,
-			List<DomainConfiguration> dcList);		
+    
+    /**
+     * Add a domainconfiguration to a PartialHarvest.
+     * @param hdd a given PartialHarvest
+     * @param dc a DomainConfigurationKey for a domainconfiguration
+     */
+    public abstract void addDomainConfiguration(PartialHarvest hdd,
+            DomainConfigurationKey dc);
+    /**
+     * Reset the list of domainconfiguration for a PartialHarvest.
+     * @param hdd a given PartialHarvest
+     * @param dcList the new list of domainconfigurations
+     */
+    public abstract void resetDomainConfigurations(PartialHarvest hdd,
+            List<DomainConfiguration> dcList);
 }

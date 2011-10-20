@@ -38,7 +38,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Utilities for working with domain names.
  */
-public class DomainUtils {
+public final class DomainUtils {
+    /** The class logger. */
     private static final Log log = LogFactory.getLog(DomainUtils.class);
 
     /** Valid characters in a domain name, according to RFC3490. */
@@ -92,12 +93,13 @@ public class DomainUtils {
         return tlds;
     }
 
-    /** Method matching valid domains. A valid domain is an IP address or a
-     * domain name part followed by a TLD as defined in settings.
+    /** Check if a given domainName is valid domain. A valid domain is an IP 
+     * address or a domain name part followed by a TLD as defined in settings.
+     * @param domainName A name of a domain (netarkivet.dk)
      * @return true if domain is valid; otherwise it returns false. 
      */
     public static boolean isValidDomainName(String domainName) {
-    	ArgumentNotValid.checkNotNullOrEmpty(domainName, "String domainName");
+        ArgumentNotValid.checkNotNullOrEmpty(domainName, "String domainName");
         return VALID_DOMAIN_MATCHER.matcher(domainName).matches();
     }
 

@@ -256,15 +256,13 @@ public class HarvestStatus {
      * @param endIndex the index of the last result shown on this page 
      * @return true, if link to next page is active
      */
-    public static boolean isNextLinkActive(long pageSize, 
-    		long totalResultsCount, long endIndex) {
-    	if (pageSize != 0
-            && totalResultsCount > 0
-            && endIndex < totalResultsCount) {
-    			return true;
-    		} else {
-    			return false;
-    	}
+    public static boolean isNextLinkActive(long pageSize,
+            long totalResultsCount, long endIndex) {
+        if (pageSize != 0 && totalResultsCount > 0
+                && endIndex < totalResultsCount) {
+            return true;
+        }
+        return false;
     }
     
     /**
@@ -274,14 +272,11 @@ public class HarvestStatus {
      * @param startIndex the index of the first result shown on this page 
      * @return true, if link to previous page is active
      */
-    public static boolean isPreviousLinkActive(long pageSize, 
-    		long totalResultsCount, long startIndex) {
-    	 if (pageSize != 0
-    	            && totalResultsCount > 0
-    	            && startIndex > 1) {
-    		 return true;
-    	 } else {
-    		 return false;
-    	 }
+    public static boolean isPreviousLinkActive(long pageSize,
+            long totalResultsCount, long startIndex) {
+        if (pageSize != 0 && totalResultsCount > 0 && startIndex > 1) {
+            return true;
+        }
+        return false;
     }
 }

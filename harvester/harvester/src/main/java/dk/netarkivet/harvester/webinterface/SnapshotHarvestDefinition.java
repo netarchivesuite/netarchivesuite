@@ -50,7 +50,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 /**
  * Contains utility methods for supporting GUI for updating snapshot harvests.
  */
-public class SnapshotHarvestDefinition {
+public final class SnapshotHarvestDefinition {
     
     
     /** The logger to use.    */

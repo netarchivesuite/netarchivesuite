@@ -248,9 +248,13 @@ public class PartialHarvest extends HarvestDefinition {
     public Iterator<DomainConfiguration> getDomainConfigurations() {
         return domainConfigurations.values().iterator();
     }
-
+    
+    /**
+     * 
+     * @return 
+     */
     public Collection<DomainConfiguration> getDomainConfigurationsAsList() {
-    			return domainConfigurations.values();
+        return domainConfigurations.values();
     }
      
     /**
@@ -265,13 +269,21 @@ public class PartialHarvest extends HarvestDefinition {
         domainConfigurations.clear();
         addConfigurations(configs);
     }
-
+    
+    /**
+     * 
+     * @param configs
+     */
     private void addConfigurations(List<DomainConfiguration> configs) {
         for (DomainConfiguration dc : configs) {
             addConfiguration(dc);
         }
     }
 
+    /**
+     * 
+     * @param dc
+     */
     private void addConfiguration(DomainConfiguration dc) {
         domainConfigurations.put(new DomainConfigurationKey(dc), dc);
     }
@@ -470,20 +482,21 @@ public class PartialHarvest extends HarvestDefinition {
             DomainDAO.getInstance().update(domain);
         }
 
-        boolean thisInDAO =  HarvestDefinitionDAO.getInstance().exists(
-        		this.harvestDefName);
+        boolean thisInDAO = HarvestDefinitionDAO.getInstance().exists(
+                this.harvestDefName);
         if (thisInDAO) {
-        	HarvestDefinitionDAO hddao =  HarvestDefinitionDAO.getInstance();
-        	for (DomainConfiguration dc: newDcs){
-        		addConfiguration(dc);
-        		hddao.addDomainConfiguration(this, new DomainConfigurationKey(dc));
-        	}
-        	hddao.update(this);
+            HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+            for (DomainConfiguration dc : newDcs) {
+                addConfiguration(dc);
+                hddao.addDomainConfiguration(this, new DomainConfigurationKey(
+                        dc));
+            }
+            hddao.update(this);
         } else {
-        	for (DomainConfiguration dc: newDcs){
-        		addConfiguration(dc);
-        	}
-        	HarvestDefinitionDAO.getInstance().create(this);
+            for (DomainConfiguration dc : newDcs) {
+                addConfiguration(dc);
+            }
+            HarvestDefinitionDAO.getInstance().create(this);
         }
     }
 

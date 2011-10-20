@@ -347,24 +347,22 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
     }
     
-	@Override
+    @Override
     protected void createExtendedFieldTypeTable() {
         String[] statements = new String[3];
         statements[0] = "" + "CREATE TABLE extendedfieldtype " + "  ( "
                 + "     extendedfieldtype_id BIGINT NOT NULL PRIMARY KEY, "
                 + "     name             VARCHAR(50) NOT NULL " + "  )";
 
-        statements[1] =
-                    "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )"
-                    + " VALUES ( 1, 'domains')";
-        statements[2] = 
-                    "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name ) "
-                    + "VALUES ( 2, 'harvestdefinitions')";
+        statements[1] = "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )"
+                + " VALUES ( 1, 'domains')";
+        statements[2] = "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name ) "
+                + "VALUES ( 2, 'harvestdefinitions')";
 
         HarvestDBConnection.updateTable("extendedfieldtype", 1, statements);
     }
     
-	@Override
+    @Override
     protected void createExtendedFieldTable() {
         String createStatement = "" + "CREATE TABLE extendedfield " + "  ( "
                 + "     extendedfield_id BIGINT NOT NULL PRIMARY KEY, "
@@ -380,7 +378,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfield", 1, createStatement);
     }
 
-	@Override
+    @Override
     protected void createExtendedFieldValueTable() {
         String createStatement = "" + "CREATE TABLE extendedfieldvalue "
                 + "  ( "

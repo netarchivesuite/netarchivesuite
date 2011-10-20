@@ -49,7 +49,7 @@ import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
 /**
  * This class contains the methods for updating data for selective harvests.
  */
-public class SelectiveHarvest {
+public final class SelectiveHarvest {
     /**
      * Utility class. No instances.
      */
@@ -77,8 +77,8 @@ public class SelectiveHarvest {
             return; //nothing to do.
         }
         
-        String deleteConfig
-        	= request.getParameter(Constants.DELETECONFIG_PARAM);
+        String deleteConfig = request
+                .getParameter(Constants.DELETECONFIG_PARAM);
         //Case where we are removing a configuration
         //In this we make the delete, and then return;
         if (deleteConfig != null) {
@@ -131,8 +131,8 @@ public class SelectiveHarvest {
      * @return The updated harvest definition.  This object holds an edition
      * that is legal to use for further updates (adding or deleting domains)
      */
-    private static PartialHarvest updateHarvestDefinition
-            (PageContext context, I18n i18n,
+    private static PartialHarvest updateHarvestDefinition(
+            PageContext context, I18n i18n,
              List<String> unknownDomains, List<String> illegalDomains) {
         ServletRequest request = context.getRequest();
         HTMLUtils.forwardOnEmptyParameter(context,
@@ -178,7 +178,8 @@ public class SelectiveHarvest {
             long edition = HTMLUtils.parseOptionalLong(context,
                     Constants.EDITION_PARAM, Constants.NO_EDITION);
 
-            PartialHarvest hdd = (PartialHarvest) hddao.getHarvestDefinition(name);
+            PartialHarvest hdd 
+                = (PartialHarvest) hddao.getHarvestDefinition(name);
             if (hdd.getEdition() != edition) {
                 HTMLUtils.forwardWithRawErrorMessage(context, i18n,
                         "errormsg;harvest.definition.changed.0.retry.1",
@@ -205,23 +206,22 @@ public class SelectiveHarvest {
      * @param i18n Translation information for this site section.
      * @param deleteConfig the configuration to delete, in the form of a
      * domain name, a colon, a configuration name.
-     * @return True if the harvest definition was changed.
      */
     private static void deleteConfig(PageContext context, I18n i18n,
                                         String deleteConfig) {
-    	HTMLUtils.forwardOnEmptyParameter(context,
-                Constants.HARVEST_PARAM, Constants.SCHEDULE_PARAM);
-    	ServletRequest request = context.getRequest();
+        HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM,
+                Constants.SCHEDULE_PARAM);
+        ServletRequest request = context.getRequest();
         String name = request.getParameter(Constants.HARVEST_PARAM);
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         if (!hddao.exists(name)) {
-        	HTMLUtils.forwardWithErrorMessage(context, i18n,
-                    "errormsg;harvestdefinition.0.does.not.exist", name );
-            throw new ForwardedToErrorPage("Harvestdefinition '"
-                    + name + "' does not exist"); 
+            HTMLUtils.forwardWithErrorMessage(context, i18n,
+                    "errormsg;harvestdefinition.0.does.not.exist", name);
+            throw new ForwardedToErrorPage("Harvestdefinition '" + name
+                    + "' does not exist");
         }
-    	SparsePartialHarvest sph = hddao.getSparsePartialHarvest(name);
-    	
+        SparsePartialHarvest sph = hddao.getSparsePartialHarvest(name);
+
         String[] domainConfigPair = deleteConfig.split(":", 2);
         if (domainConfigPair.length < 2) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
@@ -231,8 +231,8 @@ public class SelectiveHarvest {
         }
         String domainName = domainConfigPair[0];
         String configName = domainConfigPair[1];
-        DomainConfigurationKey key = new DomainConfigurationKey(
-        		domainName, configName);
+        DomainConfigurationKey key = new DomainConfigurationKey(domainName,
+                configName);
         
         hddao.removeDomainConfiguration(sph.getOid(), key);
     }
@@ -246,14 +246,14 @@ public class SelectiveHarvest {
      * @param configurations  a mapping (domain to its configurations)
      * @return a list of domain configurations
      */
-    private static List<DomainConfiguration> getDomainConfigurations
-            (Map<String, String[]> configurations) {
+    private static List<DomainConfiguration> getDomainConfigurations(
+            Map<String, String[]> configurations) {
         List<DomainConfiguration> dcList = new ArrayList<DomainConfiguration>();
 
         for (Map.Entry<String, String[]> param : configurations.entrySet()) {
             if (param.getKey().startsWith(Constants.DOMAIN_IDENTIFIER)) {
-                String domainName = param.getKey().substring
-                        (Constants.DOMAIN_IDENTIFIER.length());
+                String domainName = param.getKey().substring(
+                        Constants.DOMAIN_IDENTIFIER.length());
                 Domain domain = DomainDAO.getInstance().read(domainName);
                 for (String configurationName : param.getValue()) {
                     dcList.add(domain.getConfiguration(configurationName));
@@ -274,10 +274,11 @@ public class SelectiveHarvest {
      * @param unknownDomains a list to add unknown, legal domains to
      * @param illegalDomains a list to add illegal domains to
      */
-    private static void addDomainsToConfigurations(List<DomainConfiguration> dcList,
-                                                  String extraDomains,
-                                                  List<String> unknownDomains,
-                                                  List<String> illegalDomains) {
+    private static void addDomainsToConfigurations(
+            List<DomainConfiguration> dcList,
+            String extraDomains,
+            List<String> unknownDomains,
+            List<String> illegalDomains) {
         String[] domains = extraDomains.split("\\s+");
         DomainDAO ddao = DomainDAO.getInstance();
         for (String domain : domains) {
