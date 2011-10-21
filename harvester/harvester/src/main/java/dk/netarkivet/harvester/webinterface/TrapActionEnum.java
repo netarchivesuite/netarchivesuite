@@ -93,7 +93,7 @@ public enum TrapActionEnum {
                 }
             };
         }}
-    ;
+        ;
 
     /**
      * Get the concrete TrapAction which can process this request.

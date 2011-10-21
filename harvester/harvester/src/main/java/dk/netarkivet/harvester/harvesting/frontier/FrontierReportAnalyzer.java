@@ -32,6 +32,7 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
@@ -109,7 +110,8 @@ public class FrontierReportAnalyzer implements Runnable {
         long startTime = System.currentTimeMillis();
         long elapsed = startTime - lastExecTime;
         LOG.info("Will generate full Heritrix frontier report, "
-                + StringUtils.formatDuration(elapsed / 1000)
+                + StringUtils.formatDuration(
+                        elapsed / TimeUtils.SECOND_IN_MILLIS)
                 + " elapsed since last generation started.");
 
         FullFrontierReport ffr = heritrixController.getFullFrontierReport();
@@ -117,8 +119,9 @@ public class FrontierReportAnalyzer implements Runnable {
         long endTime = System.currentTimeMillis();
         elapsed = endTime - startTime;
         LOG.info("Generated full Heritrix frontier report in "
-                + (elapsed < 1000 ? elapsed + " ms" :
-                    StringUtils.formatDuration(elapsed / 1000))
+                + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms" :
+                    StringUtils.formatDuration(
+                            elapsed / TimeUtils.SECOND_IN_MILLIS))
                 + ".");
 
         lastExecTime = endTime;
@@ -130,8 +133,9 @@ public class FrontierReportAnalyzer implements Runnable {
             elapsed = endTime - startTime;
             LOG.info("Applied filter " + filter.getClass().getName()
                     + " to full frontier report, this took "
-                    + (elapsed < 1000 ? elapsed + " ms" :
-                        StringUtils.formatDuration(elapsed / 1000))
+                    + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms" :
+                        StringUtils.formatDuration(
+                                elapsed / TimeUtils.SECOND_IN_MILLIS))
                     + ".");
 
             jmsConnection.send(new FrontierReportMessage(filter, filtered));

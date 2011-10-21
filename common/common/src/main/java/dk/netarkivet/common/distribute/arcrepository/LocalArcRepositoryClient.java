@@ -69,6 +69,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /** Store the file in the directories designated by this setting. */
     private static final String FILE_DIRS
             = "settings.common.arcrepositoryClient.fileDir";
+    /** The credentials used to correct data in the archive. */
     private static final String CREDENTIALS_SETTING
             = "settings.archive.bitarchive.thisCredentials";
 
@@ -430,7 +431,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      */
     @Override
     public File correct(String replicaId, String checksum, File file, 
-	    String credentials) throws ArgumentNotValid, PermissionDenied {
+            String credentials) throws ArgumentNotValid, PermissionDenied {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNull(file, "File file");

@@ -101,7 +101,7 @@ public final class SnapshotHarvestDefinition {
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES);
         long runningtimeLimit = HTMLUtils.parseOptionalLong(context,
                     Constants.JOB_TIMELIMIT_PARAM,
-        		 	dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+                    dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
 
         Long oldHarvestId = HTMLUtils.parseOptionalLong(context,
                 Constants.OLDSNAPSHOT_PARAM, null);

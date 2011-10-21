@@ -65,6 +65,7 @@ public class HarvestController {
      * will null this field.
      */
     private static HarvestController instance;
+    /** The instance logger. */
     private Log log
             = LogFactory.getLog(HarvestController.class);
 
@@ -112,6 +113,9 @@ public class HarvestController {
         resetInstance();
     }
     
+    /**
+     * Reset the singleton instance. 
+     */
     private static void resetInstance() {
         instance = null;
     }
@@ -211,7 +215,7 @@ public class HarvestController {
                         aw.close();
                     }
                 } catch (IOException e) {
-                    //TODO: Is this fatal? What if data isn't flushed?
+                    //TODO Is this fatal? What if data isn't flushed?
                     log.warn("Unable to close ArcWriter '"
                              + aw.getFile().getAbsolutePath() + "'", e);
                 }
@@ -231,8 +235,7 @@ public class HarvestController {
      */
     public void runHarvest(HeritrixFiles files) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
-        HeritrixLauncher hl = 
-        	HeritrixLauncherFactory.getInstance(files);
+        HeritrixLauncher hl = HeritrixLauncherFactory.getInstance(files);
         hl.doCrawl();
     }
 
@@ -373,7 +376,7 @@ public class HarvestController {
      * @param metadataEntries list of metadataEntries top get jobIDs from.
      * @return a directory  containing the index itself.
      * @throws IOFailure on errors retrieving the index from the client.
-     * TODO: Better forgiving handling of no index available
+     * TODO Better forgiving handling of no index available
      */
     private File fetchDeduplicateIndex(List<MetadataEntry> metadataEntries) {
         // Get list of jobs, which should be used for duplicate reduction

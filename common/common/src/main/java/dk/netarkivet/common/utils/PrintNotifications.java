@@ -25,7 +25,7 @@ package dk.netarkivet.common.utils;
 
 /**
  * A notification implementation that prints notifications on
- * System.err
+ * System.err.
  */
 public class PrintNotifications extends Notifications {
     /**

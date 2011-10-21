@@ -90,6 +90,9 @@ public final class IndexRequestServer extends ArchiveMessageHandler
     
     /** Interval in milliseconds between listening checks. */
     private static long listeningInterval;
+    /** The timer that initiates the checkIflisteningTask. */
+    private Timer checkIflisteningTimer = new Timer();
+    
     /**
      * The directory to store backup copies of the currentJobs.
      * In case of the indexserver crashing. 
@@ -104,12 +107,13 @@ public final class IndexRequestServer extends ArchiveMessageHandler
         requestDir = Settings.getFile(
                 ArchiveSettings.INDEXSERVER_INDEXING_REQUESTDIR);
         listeningInterval = Settings.getLong(
-        		ArchiveSettings.INDEXSERVER_INDEXING_LISTENING_INTERVAL);
+                ArchiveSettings.INDEXSERVER_INDEXING_LISTENING_INTERVAL);
         
         currentJobs = new HashSet<IndexRequestMessage>();
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(
                 RequestType.class);
         conn = JMSConnectionFactory.getInstance();
+        checkIflisteningTimer = new Timer();
     }
 
     /**
@@ -119,36 +123,31 @@ public final class IndexRequestServer extends ArchiveMessageHandler
         if (!requestDir.exists()) {
             log.info("requestdir not found: creating request dir");
             if (!requestDir.mkdirs()) {
-            	throw new IOFailure("Unable to create requestdir '"
-            			+ requestDir.getAbsolutePath() + "'");
+                throw new IOFailure("Unable to create requestdir '"
+                        + requestDir.getAbsolutePath() + "'");
             } else {
-            	return;
+                return; // requestdir was just created, so nothing to do
             }
         }
-        
+
         File[] requests = requestDir.listFiles();
-        if (requests != null) {
-            // Fill up the currentJobs 
-            for (File request: requests){
-                if (request.isFile()) {
-                    final IndexRequestMessage msg = restoreMessage(request);
-                    currentJobs.add(msg);
-                    //Start a new thread to handle the actual request.
-                    new Thread(){
-                        public void run() {
-                            doGenerateIndex(msg);
-                        }
-                    }.start();
-                    log.info("Restarting indexjob w/ ID=" + msg.getID());
-                } else {
-                    log.debug("Ignoring directory in requestdir: " 
-                            + request.getAbsolutePath());
-                            
-                }
+        // Fill up the currentJobs
+        for (File request : requests) {
+            if (request.isFile()) {
+                final IndexRequestMessage msg = restoreMessage(request);
+                currentJobs.add(msg);
+                // Start a new thread to handle the actual request.
+                new Thread() {
+                    public void run() {
+                        doGenerateIndex(msg);
+                    }
+                }.start();
+                log.info("Restarting indexjob w/ ID=" + msg.getID());
+            } else {
+                log.debug("Ignoring directory in requestdir: "
+                        + request.getAbsolutePath());
             }
         }
-        
-        
     }
 
     /** Get the unique index request server instance.
@@ -415,8 +414,10 @@ public final class IndexRequestServer extends ArchiveMessageHandler
 
     /** Releases the JMS-connection and resets the singleton. */
     public void cleanup() {
+        // shutdown listening timer.
+        checkIflisteningTimer.cancel();
         conn.removeListener(Channels.getTheIndexServer(), this);
-        handlers.clear();
+        handlers.clear();    
 
         if (instance != null) {
             instance = null;
@@ -437,11 +438,9 @@ public final class IndexRequestServer extends ArchiveMessageHandler
         // Define and start thread to observe current jobs:
         // Only job is to look at the isListening atomicBoolean.
         // If not listening, check if we are ready to listen again.   
-        
         TimerTask checkIfListening = new ListeningTask(this);
         isListening.set(false);
-        Timer t = new Timer();
-        t.schedule(checkIfListening, 0L, listeningInterval);
+        checkIflisteningTimer.schedule(checkIfListening, 0L, listeningInterval);
     }
     
     /**
@@ -449,29 +448,31 @@ public final class IndexRequestServer extends ArchiveMessageHandler
      * And begin listening again, if we are ready for more tasks.
      */
     private static class ListeningTask extends TimerTask {
-    	/** The indexrequestserver this task is associated with. */
-    	private IndexRequestServer thisIrs;
-    	
-    	/**
-    	 * Constructor for the ListeningTask.
-    	 * @param irs The indexrequestserver this task should be associated with
-    	 */
-    	ListeningTask(IndexRequestServer irs){
-    		thisIrs = irs;
-    	}
-    	
-    	@Override
-		public void run() {
-			log.trace("Checking if we should be listening again");
-			if (!isListening.get()) {
-				if (maxConcurrentJobs > currentJobs.size()) {
-					log.info("Enabling listening to the indexserver channel '"
-							+ Channels.getTheIndexServer() + "'");
-					conn.setListener(Channels.getTheIndexServer(), thisIrs);
-					isListening.set(true);
-				}
-			}
-		}
+        /** The indexrequestserver this task is associated with. */
+        private IndexRequestServer thisIrs;
+
+        /**
+         * Constructor for the ListeningTask.
+         * 
+         * @param irs
+         *            The indexrequestserver this task should be associated with
+         */
+        ListeningTask(IndexRequestServer irs) {
+            thisIrs = irs;
+        }
+
+        @Override
+        public void run() {
+            log.trace("Checking if we should be listening again");
+            if (!isListening.get()) {
+                if (maxConcurrentJobs > currentJobs.size()) {
+                    log.info("Enabling listening to the indexserver channel '"
+                            + Channels.getTheIndexServer() + "'");
+                    conn.setListener(Channels.getTheIndexServer(), thisIrs);
+                    isListening.set(true);
+                }
+            }
+        }
 
     }
 }

@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestInfo;
@@ -74,7 +75,7 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
     public LegacyHarvestReport(HeritrixFiles hFiles) {
         super(hFiles);
     }
-
+    /** Default constructor. */
     public LegacyHarvestReport() {
         super();
     }
@@ -99,7 +100,7 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
         // For each domain harvested, check if it corresponds to a
         // domain configuration for this Job and if so add a new HarvestInfo
         // to the DomainHistory of the corresponding Domain object.
-        // TODO:  Information about the domains harvested by the crawler
+        // TODO  Information about the domains harvested by the crawler
         // without a domain configuration for this job is deleted!
         // Should this information be saved in some way (perhaps stored
         // in metadata.arc-files?)
@@ -141,8 +142,8 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
                 long maxObjectsPerDomain = job.getMaxObjectsPerDomain();
                 long configMaxObjects = domain.getConfiguration(
                         configurationMap.get(domainName)).getMaxObjects();
-                if (NumberUtils.compareInf(configMaxObjects, maxObjectsPerDomain)
-                    <= 0) {
+                if (NumberUtils.compareInf(
+                        configMaxObjects, maxObjectsPerDomain) <= 0) {
                     stopReason = StopReason.CONFIG_OBJECT_LIMIT;
                 }
             }
@@ -163,7 +164,8 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
             long time = System.currentTimeMillis() - startTime;
             LOG.info("Finished post-processing of harvest report for job "
                     + job.getJobID() + ", operation took "
-                    + StringUtils.formatDuration(time / 1000));
+                    + StringUtils.formatDuration(
+                            time / TimeUtils.SECOND_IN_MILLIS));
         }
 
     }

@@ -43,14 +43,14 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * task execution, which cannot be done by simply overriding
  * {@link ScheduledThreadPoolExecutor#afterExecute}.
  *
- * TODO: Currently {@link RuntimeException} are only caught and logged, but the
+ * TODO Currently {@link RuntimeException} are only caught and logged, but the
  * executor stops scheduling future executions. We should implement a
  * configurable restart mechanism, possibly with exception filtering.
  */
 public final class PeriodicTaskExecutor {
 
     /**
-     * Represents a periodic task
+     * Represents a periodic task.
      */
     public static class PeriodicTask {
 
@@ -109,7 +109,7 @@ public final class PeriodicTaskExecutor {
     }
 
     /** The class logger. */
-    final static Log log = LogFactory.getLog(PeriodicTaskExecutor.class);
+    static final Log log = LogFactory.getLog(PeriodicTaskExecutor.class);
 
     /**
      * The actual executor. One thread dedicated to each task.

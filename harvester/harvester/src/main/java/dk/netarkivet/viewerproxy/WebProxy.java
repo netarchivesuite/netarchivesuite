@@ -129,7 +129,7 @@ public class WebProxy extends DefaultHandler
             //Generate URI to enforce fail-early of illegal URIs 
             //uri = new URI(request.getRequestURL().toString());
             uriResolver.lookup(netarkivetRequest, netarkivetResponse);
-            ((org.mortbay.jetty.Request)request).setHandled(true);
+            ((org.mortbay.jetty.Request) request).setHandled(true);
         } catch (Exception e) {
             createErrorResponse(netarkivetRequest.getURI(),
                                 netarkivetResponse, e);
@@ -182,6 +182,7 @@ public class WebProxy extends DefaultHandler
     public static class HttpResponse implements Response {
         /** The Jetty http response object. */
         private HttpServletResponse hr;
+        /** The HTTP status code. */
         private int status;
 
         /** Constructs a new HttpResponse based on the given Jetty response.
@@ -279,17 +280,22 @@ public class WebProxy extends DefaultHandler
             try {
                 return new URI(uriString);
             } catch (URISyntaxException e) {
-                throw new IOFailure("Could not construct URI from '" + uriString + "'", e);
+                throw new IOFailure("Could not construct URI from '"
+                        + uriString + "'", e);
             }
         }
 
         /**
-         * We here replace what should be standard API functionality with an apparent kludge.
-         * We do this because the ctor java.net.URI(String s) violates its own documentation. It should
-         * encode all "other" characters in the query part of the URI. These "other" characters include
-         * curly brackets, but actually the escaping is never done. Hence we do it here.
-         * @param s  the String to be encoded
-         * @return   the encoded String
+         * We here replace what should be standard API functionality with an
+         * apparent kludge. We do this because the ctor java.net.URI(String s)
+         * violates its own documentation. It should encode all "other"
+         * characters in the query part of the URI. These "other" characters
+         * include curly brackets, but actually the escaping is never done.
+         * Hence we do it here.
+         * 
+         * @param s
+         *            the String to be encoded
+         * @return the encoded String
          */
         public static String uriEncode(String s) {
             return s.replaceAll("\\{", "%7B").replaceAll("\\}", "%7D");
@@ -300,7 +306,7 @@ public class WebProxy extends DefaultHandler
          *
          * @return The parameters from this request.
          */
-        public Map<String,String[]> getParameterMap() {
+        public Map<String, String[]> getParameterMap() {
             return (Map<String, String[]>) hr.getParameterMap();
         }
     }

@@ -28,7 +28,7 @@ package dk.netarkivet.common.exceptions;
  * thus should stop all processing and just return at the top level JSP.
  */
 public class ForwardedToErrorPage extends NetarkivetException {
-    /** Create a new ForwardedToErrorPage exception
+    /** Create a new ForwardedToErrorPage exception.
      *
      * @param message Explanatory message
      */
@@ -36,7 +36,7 @@ public class ForwardedToErrorPage extends NetarkivetException {
         super(message);
     }
 
-    /** Create a new ForwardedToErrorPage exception based on an old exception
+    /** Create a new ForwardedToErrorPage exception based on an old exception.
      *
      * @param message Explanatory message
      * @param cause The exception that prompted the forwarding.

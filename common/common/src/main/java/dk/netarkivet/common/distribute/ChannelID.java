@@ -95,7 +95,8 @@ public class ChannelID implements Serializable {
     */
     ChannelID(String appPref, String replicaId, boolean useNodeId,
         boolean useAppInstId, boolean isTopic) {
-        this.name = constructName(appPref, replicaId, useNodeId, useAppInstId, isTopic);
+        this.name = constructName(
+                appPref, replicaId, useNodeId, useAppInstId, isTopic);
     }
 
     /**
@@ -109,6 +110,7 @@ public class ChannelID implements Serializable {
     * be included in the channel name.
     * @param useAppInstId Whether application instance id from settings 
     * should be included in the channel name.
+    * @param isTopic If true, the channel is a Topic, else it is a Queue
     * @return The properly concatenated channel name.
     * @throws UnknownID if looking up the local IP number failed.
     */
@@ -129,10 +131,8 @@ public class ChannelID implements Serializable {
             }
         }
         
-        String resultingName = 
-            userId + Channels.CHANNEL_PART_SEPARATOR + 
-            replicaId + Channels.CHANNEL_PART_SEPARATOR 
-            + appPref;
+        String resultingName = userId + Channels.CHANNEL_PART_SEPARATOR
+                + replicaId + Channels.CHANNEL_PART_SEPARATOR + appPref;
         if (!id.isEmpty()) {
             resultingName += Channels.CHANNEL_PART_SEPARATOR + id; 
         }
@@ -154,8 +154,8 @@ public class ChannelID implements Serializable {
     * @return a nice String representation of the ChannelID.
     */
     public String toString() {
-        return Channels.isTopic(name)? ("[Topic '" + name + "']") : ("[Queue '" + name
-        + "']");
+        return Channels.isTopic(name) ? ("[Topic '" + name + "']")
+                : ("[Queue '" + name + "']");
     }
     
     /**

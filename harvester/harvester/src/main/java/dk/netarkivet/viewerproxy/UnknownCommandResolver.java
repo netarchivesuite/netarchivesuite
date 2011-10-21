@@ -42,7 +42,7 @@ public class UnknownCommandResolver extends CommandResolver {
 
     /**
      * Make a new UnknownCommandResolver, which gives an error for any command-
-     * like URL and forwards other URLs to the given URIResolver
+     * like URL and forwards other URLs to the given URIResolver.
      *
      * @param ur The URIResolver to handle all other uris.
      * @throws ArgumentNotValid if either argument is null.

@@ -32,6 +32,6 @@ public interface URIResolverHandler {
      *
      * @param ur The URI resolver to use when looking up URIs.
      */
-    public void setURIResolver(URIResolver ur);
+    void setURIResolver(URIResolver ur);
 
 }

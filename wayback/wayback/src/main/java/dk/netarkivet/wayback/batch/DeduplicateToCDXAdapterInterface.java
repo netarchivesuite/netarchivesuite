@@ -27,15 +27,15 @@ import java.io.OutputStream;
 
 /**
  * Interface describing a class which can be used to convert duplicate records
- * in a crwal log to wayback-compatible cdx records
+ * in a crawl log to wayback-compatible cdx records.
  */
 public interface DeduplicateToCDXAdapterInterface {
 
     /**
      * Takes a deduplicate line from a crawl log and converts it to a line in a
      * cdx file suitable for searching in wayback. The target url in the line is
-     * canonicalized by this method. Thetype of canonicalization is determined by
-     * the default canonicalizer from the wayback settings.xml file.If the
+     * canonicalized by this method. Thetype of canonicalization is determined 
+     * by the default canonicalizer from the wayback settings.xml file.If the
      * input String is not a crawl-log
      * duplicate line, null is returned.
      * @param line a line from a crawl log

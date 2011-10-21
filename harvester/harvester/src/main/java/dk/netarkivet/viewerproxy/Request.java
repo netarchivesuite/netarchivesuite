@@ -40,12 +40,12 @@ public interface Request {
      *
      * @return The URI from this request.
      */
-    public URI getURI();
+    URI getURI();
 
     /** Get all parameters in this request.
      * Note: This may only be accessible while handling the request, and
      * invalidated when the request is handled.
      * @return a map from parameter names to parameter values
      */
-    public Map<String,String[]> getParameterMap();
+    Map<String, String[]> getParameterMap();
 }

@@ -43,5 +43,5 @@ public interface MonitorMessageVisitor {
      *
      * @param msg A received message.
      */
-    public void visit(RegisterHostMessage msg);
+    void visit(RegisterHostMessage msg);
 }

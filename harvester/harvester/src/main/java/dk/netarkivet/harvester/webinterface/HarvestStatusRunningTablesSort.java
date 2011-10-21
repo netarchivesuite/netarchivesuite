@@ -29,7 +29,7 @@ import dk.netarkivet.common.utils.TableSort;
 
 /**
  * class used to manage the sort of tables in the
- *  harvest status running screen
+ *  harvest status running screen.
  **/
 public class HarvestStatusRunningTablesSort {
     /**list of the column id.*/

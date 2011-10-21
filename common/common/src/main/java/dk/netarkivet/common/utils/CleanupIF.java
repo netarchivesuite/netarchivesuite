@@ -33,6 +33,6 @@ public interface CleanupIF {
      * Used to clean up a class from within a shutdown hook. Must
      * not do any logging. Program defensively, please.
      */
-    public void cleanup();
+    void cleanup();
 
 }

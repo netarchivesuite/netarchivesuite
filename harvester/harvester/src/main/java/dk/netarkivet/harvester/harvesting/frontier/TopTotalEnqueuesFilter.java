@@ -36,7 +36,7 @@ public class TopTotalEnqueuesFilter extends MaxSizeFrontierReportExtract {
 
     @Override
     public InMemoryFrontierReport process(FrontierReport initialFrontier) {
-        if (! (initialFrontier instanceof FullFrontierReport)) {
+        if (!(initialFrontier instanceof FullFrontierReport)) {
             throw new ArgumentNotValid(getClass().getSimpleName()
                     + " operates only on "
                     + FullFrontierReport.class.getSimpleName());

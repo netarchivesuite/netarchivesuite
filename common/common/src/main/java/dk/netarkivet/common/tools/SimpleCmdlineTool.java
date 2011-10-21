@@ -38,7 +38,7 @@ public interface SimpleCmdlineTool {
      *            public static void main(String[] args) method.
      * @return True, if parameters are usable. False if not.
      */
-    public abstract boolean checkArgs(String... args);
+    boolean checkArgs(String... args);
 
     /**
      * Create any resource which may requires an explicit teardown. Implement
@@ -48,14 +48,14 @@ public interface SimpleCmdlineTool {
      *            Usually the command line arguments passed directly from a
      *            public static void main(String[] args) method.
      */
-    public abstract void setUp(String... args);
+    void setUp(String... args);
 
     /**
      * Teardown any resource which requires an explicit teardown. Implement
      * creation of these in the setup method. Note that not all objects may be
      * created in case of an exception during setup, so check for null!!!
      */
-    public abstract void tearDown();
+    void tearDown();
 
     /**
      * Run the tool. Any resources that can be managed without reliable teardown
@@ -65,12 +65,12 @@ public interface SimpleCmdlineTool {
      *            Usually the command line arguments passed directly from a
      *            public static void main(String[] args) method.
      */
-    public abstract void run(String... args);
+    void run(String... args);
 
     /**
      * Describes the parameters that this tool accepts.
      *
      * @return The parameter description in a String object.
      */
-    public abstract String listParameters();
+    String listParameters();
 }

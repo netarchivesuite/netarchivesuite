@@ -37,24 +37,28 @@ import org.archive.net.UURI;
 import org.archive.util.TextUtils;
 
 /**
- * This is a link extractor for use with Heritrix. It will find the resumptionToken
- * in an OAI-PMH listMetadata query and construct the link for the next page of
- * the results. This extractor will not extract any other links so if there are
- * additional urls in the OAI metadata then an additional extractor should be used
- * for these. Typically this means that the extractor chain in the order template
- * will end:
- *<newObject name="ExtractorOAI" class="dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI">
- * <boolean name="enabled">true</boolean>
- *  <newObject name="ExtractorOAI#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
- *   <map name="rules"/>
- *  </newObject>
- *</newObject>
- *<newObject name="ExtractorXML" class="org.archive.crawler.extractor.ExtractorXML">
- * <boolean name="enabled">true</boolean>
- *  <newObject name="ExtractorXML#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
- *   <map name="rules"/>
- *  </newObject>
- *</newObject>
+ * This is a link extractor for use with Heritrix. It will find the
+ * resumptionToken in an OAI-PMH listMetadata query and construct the link for
+ * the next page of the results. This extractor will not extract any other links
+ * so if there are additional urls in the OAI metadata then an additional
+ * extractor should be used for these. Typically this means that the extractor
+ * chain in the order template will end: 
+ * <newObject name="ExtractorOAI"
+ *      class="dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI"> 
+ *      <boolean name="enabled">true</boolean> 
+ *      <newObject name="ExtractorOAI#decide-rules"
+ *       class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+ *            <map name="rules"/> 
+ *       </newObject> 
+ *</newObject> 
+ * <newObject name="ExtractorXML"
+ *      class="org.archive.crawler.extractor.ExtractorXML"> 
+ *      <boolean name="enabled">true</boolean> 
+ *      <newObject name="ExtractorXML#decide-rules"
+ *              class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+ *              <map name="rules"/> 
+ *      </newObject> 
+ * </newObject>
  */
 public class ExtractorOAI extends Extractor {
 

@@ -64,9 +64,9 @@ public enum JobStatus {
      */    
     RESUBMITTED,
     /**
-     * Job status for a job which has failed and which has been rejected for resubmission.
-     * A Job in this status can be returned to status FAILED if it has been rejected in
-     * error.
+     * Job status for a job which has failed and which has been rejected for
+     * resubmission. A Job in this status can be returned to status FAILED if it
+     * has been rejected in error.
      */
     FAILED_REJECTED;
 
@@ -92,8 +92,9 @@ public enum JobStatus {
     public static String JOBSTATUS_RESUBMITTED_KEY = "status.job.resubmitted";
     /** Localization key for a unknown JobStatus. */
     public static String JOBSTATUS_UNKNOWN_KEY = "status.job.unknown";
-    /** Localization key for a JobStatus FAILED_REJECTED */
-    public static String JOBSTATUS_FAILED_REJECTED_KEY = "status.job.failed_rejected";
+    /** Localization key for a JobStatus FAILED_REJECTED. */
+    public static String JOBSTATUS_FAILED_REJECTED_KEY 
+        = "status.job.failed_rejected";
     
     
 
@@ -174,6 +175,7 @@ public enum JobStatus {
     public boolean legalChange(JobStatus newStatus) {
         ArgumentNotValid.checkNotNull(newStatus, "JobStatus newStatus");
         return newStatus.ordinal() >= ordinal()
-               || (newStatus.equals(FAILED) && fromOrdinal(ordinal()).equals(FAILED_REJECTED));
+               || (newStatus.equals(FAILED) 
+                       && fromOrdinal(ordinal()).equals(FAILED_REJECTED));
     }
 }

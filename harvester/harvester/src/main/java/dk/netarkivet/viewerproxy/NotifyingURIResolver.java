@@ -31,11 +31,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * A wrapper class for URI resolver, which also notifies an URIObserver about
  * all URIs visited and their response codes.
- *
  */
-
 public class NotifyingURIResolver extends Observable
         implements URIResolver, URIResolverHandler {
+    /** The URIResolver used by this NotifyingURIResolver. */
     private URIResolver ur;
 
     /** Initialise the wrapper. Accepts the class to wrap and the observer to
@@ -53,12 +52,12 @@ public class NotifyingURIResolver extends Observable
     }
 
     /** Sets the current URIResolver wrapped.
-     * @param ur URI resolver to wrap.
+     * @param anUR URI resolver to wrap.
      * @throws ArgumentNotValid if argument is null.
      * */
-    public void setURIResolver(URIResolver ur) {
-        ArgumentNotValid.checkNotNull(ur, "URIResolver ur");
-        this.ur = ur;
+    public void setURIResolver(URIResolver anUR) {
+        ArgumentNotValid.checkNotNull(anUR, "URIResolver anUR");
+        this.ur = anUR;
     }
 
     /** Passes the uri to the current wrapped resolver and notifies the observer

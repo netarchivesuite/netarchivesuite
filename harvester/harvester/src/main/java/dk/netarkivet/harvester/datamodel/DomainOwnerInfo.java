@@ -83,11 +83,11 @@ public class DomainOwnerInfo implements Comparable {
     /**
      * Set the ID of this ownerinfo. Only for use by DBDAO.
      *
-     * @param id
+     * @param newid
      *            use this id for this ownerinfo
      */
-    void setID(long id) {
-        this.id = id;
+    void setID(long newid) {
+        this.id = newid;
     }
 
     /**

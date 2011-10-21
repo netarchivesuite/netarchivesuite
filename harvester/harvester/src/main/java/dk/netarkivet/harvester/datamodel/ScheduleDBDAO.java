@@ -83,7 +83,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
         PreparedStatement s = null;
         try {
             if (exists(c, schedule.getName())) {
-                String msg = "Cannot create already existing schedule " + schedule;
+                String msg = "Cannot create already existing schedule "
+                        + schedule;
                 log.debug(msg);
                 throw new PermissionDenied(msg);
             }
@@ -163,7 +164,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
 
     /**
      * Returns whether a named schedule exists.
-     *
+     * @param c An open connection to the harvestDatabase.
      * @param scheduleName The name of a schedule
      * @return True if the schedule exists.
      */
@@ -261,7 +262,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            if (! exists(c, schedule.getName())) {
+            if (!exists(c, schedule.getName())) {
                 throw new PermissionDenied("No schedule with name "
                         + schedule.getName() + " exists");
             }
@@ -329,10 +330,6 @@ public class ScheduleDBDAO extends ScheduleDAO {
         }
     }
 
-
-    /**
-     * @see ScheduleDAO#getCountSchedules()
-     */
     @Override
     public synchronized int getCountSchedules() {
         Connection c = HarvestDBConnection.get();

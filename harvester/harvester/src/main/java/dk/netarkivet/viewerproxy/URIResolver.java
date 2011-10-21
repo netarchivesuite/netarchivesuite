@@ -41,5 +41,5 @@ public interface URIResolver {
      * same code as the code set in the response object. if NOT_FOUND is
      * returned, the response object should contain a proper error page.
      */
-    public int lookup(Request request, Response response);
+    int lookup(Request request, Response response);
 }

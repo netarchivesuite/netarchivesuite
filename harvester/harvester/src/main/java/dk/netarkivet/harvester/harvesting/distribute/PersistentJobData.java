@@ -35,7 +35,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
-import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.XmlState.OKSTATE;
 
 

@@ -50,7 +50,7 @@ public abstract class SiteSection {
     private final String mainname;
     /** The number of pages that should be visible in the sidebar. */
     private final int visiblePages;
-    /** The map of page names ("path" part of URL) to page titles */
+    /** The map of page names ("path" part of URL) to page titles. */
     private final LinkedHashMap<String, String> pagesAndTitles
             = new LinkedHashMap<String, String>();
     /** The top level directory this section represents. */
@@ -88,7 +88,8 @@ public abstract class SiteSection {
         ArgumentNotValid.checkNotNullOrEmpty(mainname, "mainname");
         ArgumentNotValid.checkNotNullOrEmpty(prefix, "prefix");
         ArgumentNotValid.checkNotNegative(visiblePages, "visiblePages");
-        ArgumentNotValid.checkNotNull(pagesAndTitles, "String[][] pagesAndTitles");
+        ArgumentNotValid.checkNotNull(pagesAndTitles, 
+                "String[][] pagesAndTitles");
         ArgumentNotValid.checkNotNullOrEmpty(dirname, "dirname");
         ArgumentNotValid.checkNotNull(bundle, "String bundle");
         this.dirname = dirname;
@@ -97,11 +98,12 @@ public abstract class SiteSection {
         this.bundle = bundle;
         for (String[] pageAndTitle : pagesAndTitles) {
             if (pageAndTitle.length != 2) {
-                throw new ArgumentNotValid("Must have exactly page and title in "
+                throw new ArgumentNotValid(
+                        "Must have exactly page and title in "
                         + prefix);
             }
-            this.pagesAndTitles.put(prefix + "-" +
-                    pageAndTitle[0] + JSP_EXTENSION, pageAndTitle[1]);
+            this.pagesAndTitles.put(prefix + "-" + pageAndTitle[0]
+                    + JSP_EXTENSION, pageAndTitle[1]);
         }
     }
 
@@ -158,8 +160,8 @@ public abstract class SiteSection {
         }
         if (pagesAndTitles.containsKey(page)) {
             int i = 0;
-            for (Map.Entry<String, String> pageAndTitle :
-                    pagesAndTitles.entrySet()) {
+            for (Map.Entry<String, String> pageAndTitle 
+                    : pagesAndTitles.entrySet()) {
                 if (i == visiblePages) {
                     break;
                 }
@@ -270,8 +272,7 @@ public abstract class SiteSection {
     public static boolean isDeployed(String dirName) {
         ArgumentNotValid.checkNotNullOrEmpty(dirName, "String dirName");
         boolean sectionDeployed = false;
-        List<SiteSection> sections = getSections();
-        for (SiteSection section : sections) {
+        for (SiteSection section : getSections()) {
             if (section.getDirname().equals(dirName)) {
                 sectionDeployed = true;
             }

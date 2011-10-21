@@ -91,7 +91,7 @@
         <module name="MethodName"/>
         <module name="PackageName"/>
         <module name="ParameterName"/>
-        <module name="StaticVariableName"/>
+        <!-- <module name="StaticVariableName"/> -->
         <module name="TypeName"/>
 
 
@@ -184,7 +184,9 @@
         </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <module name="MagicNumber"/>
+        <module name="MagicNumber">
+ 		<property name="ignoreNumbers" value="-1, 0, 1, 2, 3"/>
+	</module>
         <module name="MissingSwitchDefault"/>
 
         <!-- Ignore redundant throws statements. 

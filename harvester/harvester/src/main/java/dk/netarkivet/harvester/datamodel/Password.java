@@ -125,10 +125,10 @@ public final class Password implements Named {
     }
 
     /** Set the ID of this password.  Only for use by DBDAO.
-     * @param id the new ID of this password
+     * @param newid the new ID of this password
      */
-    void setID(long id) {
-        this.id = id;
+    void setID(long newid) {
+        this.id = newid;
     }
 
     /** Check if this password has an ID set yet (doesn't happen until

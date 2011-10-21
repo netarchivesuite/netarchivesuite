@@ -35,6 +35,7 @@ import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -79,6 +80,8 @@ public class FileNameHarvester {
             }
         } catch (IOException e) {
             throw new IOFailure("Error reading remote file", e);
+        } finally {
+            IOUtils.closeQuietly(reader);
         }
     }
 

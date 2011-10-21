@@ -50,9 +50,9 @@ public class DigestIndexer {
 
     // Lucene index field names
     /** The URL. **/
-	public static final String FIELD_URL = "url";
+    public static final String FIELD_URL = "url";
     /** The content digest as String. **/
-	public static final String FIELD_DIGEST = "digest";
+    public static final String FIELD_DIGEST = "digest";
     /** The URLs timestamp (time of fetch). The exact nature of this time
      *  may vary slightly depending on the source (i.e. crawl.log and ARCs 
      *  contain slightly different times but both indicate roughly when the 
@@ -62,7 +62,7 @@ public class DigestIndexer {
     /** The document's etag. **/
     public static final String FIELD_ETAG = "etag";
     /** A stripped (normalized) version of the URL. **/
-	public static final String FIELD_URL_NORMALIZED = "url-normalized";
+    public static final String FIELD_URL_NORMALIZED = "url-normalized";
     /** A field containing meta-data on where the original version of a
      *  document is stored. */
     public static final String FIELD_ORIGIN = "origin";
@@ -77,18 +77,28 @@ public class DigestIndexer {
     public static final String MODE_BOTH = "BOTH";
 
     /** The index being manipulated. **/
-    IndexWriter index;
+    private IndexWriter index;
     
+    /**
+     * @return the IndexWriter
+     */
     public IndexWriter getIndex() {
         return index;
     }
 
     // The options with default settings
-    boolean etag = false;
-    boolean equivalent = false;
-    boolean timestamp = false;
-    boolean indexURL = true;
-    boolean indexDigest = true;
+    /** Should etags be included in the index. */
+    private boolean etag = false;
+    /** Should  a normalized version of the URL be 
+     *  added to the index.
+     */ 
+    private boolean equivalent = false;
+    /** Should a timestamp be included in the index. */
+    private boolean timestamp = false;
+    /** Should we index the url. */
+    private boolean indexURL = true;
+    /** Should we index the digest. */
+    private boolean indexDigest = true;
 
     /**
      * Each instance of this class wraps one Lucene index for writing 
@@ -196,13 +206,13 @@ public class DigestIndexer {
         int skipped = 0;
         while (dataIt.hasNext()) {
             CrawlDataItem item = dataIt.next();
-            if(!(skipDuplicates && item.duplicate) &&
-                    item.mimetype.matches(mimefilter) != blacklist){
+            if(!(skipDuplicates && item.duplicate) 
+                    && item.mimetype.matches(mimefilter) != blacklist){
                 // Ok, we wish to index this URL/Digest
                 count++;
-                if(verbose && count%10000==0){
-                    System.out.println("Indexed " + count + " - Last URL " +
-                    		"from " + item.getTimestamp());
+                if(verbose && count % 10000 == 0){
+                    System.out.println("Indexed " + count + " - Last URL "
+                            + "from " + item.getTimestamp());
                 }
                 Document doc = new Document();
 
@@ -266,8 +276,8 @@ public class DigestIndexer {
             }
         }
         if(verbose){
-            System.out.println("Indexed " + count + " items (skipped " + 
-                skipped + ")");
+            System.out.println("Indexed " + count + " items (skipped "
+                    + skipped + ")");
         }
         return count;
     }
@@ -297,17 +307,17 @@ public class DigestIndexer {
      * @return A normalized URL.
      */
     public static String stripURL(String url){
-        url = url.replaceAll("www[0-9]*\\.","");
-        url = url.replaceAll("\\?.*$","");
-        url = url.replaceAll("/$","");
+        url = url.replaceAll("www[0-9]*\\.", "");
+        url = url.replaceAll("\\?.*$", "");
+        url = url.replaceAll("/$", "");
         return url;
     }
     
 
     @SuppressWarnings("unchecked")
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         CommandLineParser clp = 
-            new CommandLineParser(args,new PrintWriter(System.out));
+            new CommandLineParser(args, new PrintWriter(System.out));
         long start = System.currentTimeMillis();
 
         // Set default values for all settings.
@@ -324,12 +334,12 @@ public class DigestIndexer {
 
         // Process the options
         Option[] opts = clp.getCommandLineOptions();
-        for(int i=0 ; i<opts.length ; i++){
+        for(int i = 0; i < opts.length; i++){
             Option opt = opts[i];
             switch(opt.getId()){
-            case 'w' : blacklist=false; break;
-            case 'a' : addToIndex=true; break;
-            case 'e' : etag=true; break;
+            case 'w' : blacklist = false; break;
+            case 'a' : addToIndex = true; break;
+            case 'e' : etag = true; break;
             case 'h' : clp.usage(0); break;
             case 'i' : iteratorClassName = opt.getValue(); break;
             case 'm' : mimefilter = opt.getValue(); break;
@@ -338,6 +348,8 @@ public class DigestIndexer {
             case 't' : timestamp = true; break;
             case 'r' : origin = opt.getValue(); break;
             case 'd' : skipDuplicates = true; break;
+            default:
+                System.err.println("Unhandled option id: " + opt.getId());
             }
         }
         
@@ -352,42 +364,42 @@ public class DigestIndexer {
         // Get the iterator classname or load default.
         Class cl = Class.forName(iteratorClassName);
         Constructor co =
-            cl.getConstructor(new Class[] { String.class });
+            cl.getConstructor(new Class[] {String.class });
         CrawlDataIterator iterator = (CrawlDataIterator) co.newInstance(
-                new Object[] { (String)cargs.get(0) });
+                new Object[] {(String) cargs.get(0)});
 
         // Print initial stuff
         System.out.println("Indexing: " + cargs.get(0));
         System.out.println(" - Mode: " + indexMode);
-        System.out.println(" - Mime filter: " + mimefilter + 
-                " (" + (blacklist?"blacklist":"whitelist")+")");
-        System.out.println(" - Includes" + 
-                (equivalent?" <equivalent URL>":"") +
-                (timestamp?" <timestamp>":"") +
-                (etag?" <etag>":""));
-        System.out.println(" - Skip duplicates: " + 
-                (skipDuplicates?"yes":"no"));
+        System.out.println(" - Mime filter: " + mimefilter + " ("
+                + (blacklist ? "blacklist" : "whitelist") + ")");
+        System.out.println(" - Includes"
+                + (equivalent ? " <equivalent URL>" : "")
+                + (timestamp ? " <timestamp>" : "") + (etag ? " <etag>" : ""));
+        System.out.println(" - Skip duplicates: "
+                + (skipDuplicates ? "yes" : "no"));
         System.out.println(" - Iterator: " + iteratorClassName);
         System.out.println("   - " + iterator.getSourceType());
         System.out.println("Target: " + cargs.get(1));
         if(addToIndex){
             System.out.println(" - Add to existing index (if any)");
         } else {
-            System.out.println(" - New index (erases any existing index at " +
-                    "that location)");
+            System.out.println(" - New index (erases any existing index at "
+                    + "that location)");
         }
         
-        DigestIndexer di = new DigestIndexer((String)cargs.get(1),indexMode,
-                equivalent, timestamp,etag,addToIndex);
+        DigestIndexer di = new DigestIndexer((String) cargs.get(1), indexMode,
+                equivalent, timestamp, etag, addToIndex);
         
         // Create the index
-        di.writeToIndex(iterator,mimefilter,blacklist,origin,true,skipDuplicates);
+        di.writeToIndex(iterator, mimefilter, blacklist, origin, true, 
+                skipDuplicates);
         
         // Clean-up
         di.close(true);
         
-        System.out.println("Total run time: " + 
-        		ArchiveUtils.formatMillisecondsToConventional(
-                        System.currentTimeMillis()-start));
+        System.out.println("Total run time: "
+                + ArchiveUtils.formatMillisecondsToConventional(System
+                        .currentTimeMillis() - start));
     }
 }

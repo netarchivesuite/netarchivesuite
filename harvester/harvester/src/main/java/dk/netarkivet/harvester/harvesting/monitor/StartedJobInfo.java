@@ -28,6 +28,9 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -43,6 +46,9 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlS
  */
 public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
+    /** The class logger. */
+    static final Log log = LogFactory.getLog(StartedJobInfo.class);
+    
     /**list of the compare criteria.*/
     public enum Criteria { JOBID, HOST, PROGRESS, ELAPSED,
         QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ };
@@ -264,7 +270,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     public long getActiveQueuesCount() {
         return activeQueuesCount;
     }
-
+    /**
+     * @return the number of retired heritrix queues.
+     */
     public long getRetiredQueuesCount() {
         return retiredQueuesCount;
     }
@@ -350,7 +358,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     @Override
     public int compareTo(StartedJobInfo o) throws NullPointerException  {
 
-        if(o == null ) {
+        if(o == null) {
             throw new NullPointerException("StartedJobInfo o can't be null");
         }
         
@@ -385,7 +393,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /**
      * set the criteria used in the compareTo method
-     * that way we can decide how to sort StartedJobInfo
+     * that way we can decide how to sort StartedJobInfo.
      * @param criteria the criteria we want to use
      */
      public void chooseCompareCriteria(StartedJobInfo.Criteria criteria) {
@@ -416,6 +424,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
      *
      * @param msg
      *            the {@link CrawlProgressMessage} to process.
+     * @return jobinfo based on the contents of the message.
      */
     public static StartedJobInfo build(CrawlProgressMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "CrawlProgressMessage msg");
@@ -497,6 +506,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.queuedFilesCount = 0;
             sji.totalQueuesCount = 0;
             break;
+        default: log.debug("Nothing to do for state: " + newStatus); 
+            
         }
         sji.status = newStatus;
 

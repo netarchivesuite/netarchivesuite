@@ -121,6 +121,6 @@ public class DefinitionsSiteSection extends SiteSection {
     
     /** Release DB resources. */
     public void close() {
-    	 HarvestDBConnection.cleanup();
+        HarvestDBConnection.cleanup();
     }
 }

@@ -314,7 +314,7 @@ public abstract class FileBatchJob implements Serializable {
     }
 
     /**
-     * Override predefined timeout period for batchjob
+     * Override predefined timeout period for batchjob.
      *
      * @param batchJobTimeout timout period
      */

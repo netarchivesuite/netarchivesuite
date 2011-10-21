@@ -244,14 +244,14 @@ public class MetadataEntry implements Serializable {
     
     /**
      * Set the url for this object.
-     * @param url a given URL
+     * @param aUrl a given URL
      * @throws ArgumentNotValid if the URL is not valid
      */
-    private void setURL(String url){
-        if (isURLValid(url)) {
-            this.url = url;
+    private void setURL(String aUrl){
+        if (isURLValid(aUrl)) {
+            this.url = aUrl;
         } else {
-            throw new ArgumentNotValid("The given URL is not valid: " + url);
+            throw new ArgumentNotValid("The given URL is not valid: " + aUrl);
         }
     }
 

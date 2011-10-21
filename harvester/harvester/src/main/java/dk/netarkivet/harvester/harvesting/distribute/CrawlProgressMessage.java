@@ -418,9 +418,9 @@ implements Serializable {
             return true;
         }
 
-        String status = getJobStatus().getStatus();
-        if (status != null) {
-            return status.equals(CrawlController.FINISHED);
+        String statusAsString = getJobStatus().getStatus();
+        if (statusAsString != null) {
+            return statusAsString.equals(CrawlController.FINISHED);
         }
         return false;
     }

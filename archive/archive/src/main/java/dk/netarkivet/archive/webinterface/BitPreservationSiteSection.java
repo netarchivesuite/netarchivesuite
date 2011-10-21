@@ -32,14 +32,17 @@ import dk.netarkivet.common.webinterface.SiteSection;
  * Site section that creates the menu for bit preservation.
  */
 public class BitPreservationSiteSection extends SiteSection {
-	private static final int PAGES_VISIBLE_IN_MENU = 2; 
+    /** The number of pages visible in the menu. 
+     *  The visible pages: filestatus, batchoverview 
+     */
+    private static final int PAGES_VISIBLE_IN_MENU = 2; 
     /**
      * Create a new bit preservation SiteSection object.
      */
     public BitPreservationSiteSection() {
-        super("mainname;bitpreservation", "Bitpreservation", 
-        		PAGES_VISIBLE_IN_MENU,
-              new String[][]{
+        super("mainname;bitpreservation", "Bitpreservation",
+                PAGES_VISIBLE_IN_MENU,
+                new String[][]{
                       {"filestatus", "pagetitle;filestatus"},
                       {"batchoverview", "pagetitle;batchjob.overview"},
                       // Pages below is not visible in the menu

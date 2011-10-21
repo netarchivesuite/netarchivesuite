@@ -31,5 +31,5 @@ public interface MonitorRegistryClient {
      * @param jmxPort The port for JMX communication.
      * @param rmiPort The RMI port for JMX communication.
      */
-    public void register(String hostName, int jmxPort, int rmiPort);
+    void register(String hostName, int jmxPort, int rmiPort);
 }

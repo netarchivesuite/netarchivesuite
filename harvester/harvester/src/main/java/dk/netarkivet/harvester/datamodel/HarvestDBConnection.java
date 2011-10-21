@@ -202,9 +202,9 @@ public final class HarvestDBConnection {
     /**
      * Closes the underlying data source.
      */
-    public synchronized static void cleanup() {
+    public static synchronized void cleanup() {
 
-		if (dataSource == null) {
+        if (dataSource == null) {
             return;
         }
 
@@ -244,7 +244,7 @@ public final class HarvestDBConnection {
      * Initializes the connection pool.
      * @param dbSpec the object representing the chosen DB target system.
      * @param jdbcUrl the JDBC URL to connect to.
-     * @throws SQLException
+     * @throws SQLException 
      */
     private static void initDataSource(DBSpecifics dbSpec, String jdbcUrl)
     throws SQLException {
@@ -278,7 +278,7 @@ public final class HarvestDBConnection {
                             CommonSettings.DB_POOL_IDLE_CONN_TEST_ON_CHECKIN));
             String testQuery =
                 Settings.get(CommonSettings.DB_POOL_IDLE_CONN_TEST_QUERY);
-            if (! testQuery.isEmpty()) {
+            if (!testQuery.isEmpty()) {
                 dataSource.setPreferredTestQuery(testQuery);
             }
         }

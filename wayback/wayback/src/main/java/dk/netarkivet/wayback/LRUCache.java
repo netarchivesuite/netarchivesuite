@@ -31,7 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -52,13 +51,15 @@ import dk.netarkivet.common.utils.Settings;
 * Modified slightly to fit the use of a wayback file cache.
 */
 public class LRUCache {
-
+    /** The hashtable loadfactor used here. */
     private static final float hashTableLoadFactor = 0.75f;
-
+    /** The instance of this class. */
     private static LRUCache instance = null;
-
-    private LinkedHashMap<String,File> map;
+    /** The map containing pointers to the cache itself. */
+    private LinkedHashMap<String, File> map;
+    /** The size of the cache. */
     private int cacheSize;
+    /** The cache containing the files. */
     private File cacheDir;
 
     /** Logger. */
@@ -72,7 +73,7 @@ public class LRUCache {
      * in this cache.
      * 
      */
-    public LRUCache(File dir, int cacheSize) throws IOFailure {
+    public LRUCache(File dir, int cacheSize) {
         // Validate args
         ArgumentNotValid.checkPositive(cacheSize, "int cacheSize");
         ArgumentNotValid.checkNotNull(dir, "File dir");
@@ -85,12 +86,13 @@ public class LRUCache {
         
         int hashTableCapacity = (int) Math.ceil(
                 cacheSize / hashTableLoadFactor) + 1;
-        map = new LinkedHashMap<String,File>(hashTableCapacity, 
+        map = new LinkedHashMap<String, File>(hashTableCapacity, 
                 hashTableLoadFactor, true) {
             // (an anonymous inner class)
             private static final long serialVersionUID = 1;
 
-            @Override protected boolean removeEldestEntry (Map.Entry<String,File> eldest) {
+            @Override 
+            protected boolean removeEldestEntry(Map.Entry<String, File> eldest){
                 boolean removeEldest = size() > LRUCache.this.cacheSize;
                 if (removeEldest) {
                     logger.info("Deleting file '"
@@ -109,7 +111,8 @@ public class LRUCache {
             // if the contents in cachedir exceeds the given cachesize,  
             // change the size of the cache
             String[] cachedirFiles = cacheDir.list();
-            logger.info("Initializing the cache with the contents of the cachedir '"
+            logger.info(
+                    "Initializing the cache with the contents of the cachedir '"
                     + cacheDir.getAbsolutePath() + "'");
             if (cachedirFiles.length > this.cacheSize) {
                 logger.warn("Changed the cachesize from " + cacheSize + " to "

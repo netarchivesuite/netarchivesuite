@@ -30,7 +30,6 @@ import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
-import java.net.InetAddress;
 import java.rmi.registry.LocateRegistry;
 import java.text.MessageFormat;
 import java.util.HashMap;

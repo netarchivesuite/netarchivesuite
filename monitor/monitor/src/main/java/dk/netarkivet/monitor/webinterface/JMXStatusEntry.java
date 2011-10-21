@@ -349,9 +349,9 @@ public class JMXStatusEntry implements StatusEntry {
             throws MalformedObjectNameException, InstanceNotFoundException,
                    MBeanRegistrationException {
         ArgumentNotValid.checkNotNull(query, "query");
-        
-        for(ObjectName name:
-                    mBeanServer.queryNames(new ObjectName(query), null)) {
+        Set<ObjectName> namesMatchingQuery = mBeanServer.queryNames(
+                new ObjectName(query), null); 
+        for(ObjectName name : namesMatchingQuery) {
             mBeanServer.unregisterMBean(name);
         }
     }

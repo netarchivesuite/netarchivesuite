@@ -48,6 +48,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
@@ -145,7 +146,8 @@ implements CleanupIF {
      */
     private static final JobPriority JOB_PRIORITY =
             JobPriority.valueOf(
-                    Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
+                    Settings.get(
+                            HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
 
     /** The JMSConnection to use. */
     private JMSConnection jmsConnection;
@@ -364,7 +366,7 @@ implements CleanupIF {
                 try {
                     // Wait a second before listening again, so the message has
                     // a chance of getting snatched by another harvester.
-                    Thread.sleep(1000);
+                    Thread.sleep(TimeUtils.SECOND_IN_MILLIS);
                 } catch (InterruptedException e) {
                     // Since we're not waiting for anything critical, we can
                     // ignore this exception.
@@ -841,7 +843,7 @@ implements CleanupIF {
         }
 
         /**
-         * Stops the sending of status messages
+         * Stops the sending of status messages.
          */
         public void stopSending() {
             if (statusTransmitter != null) {

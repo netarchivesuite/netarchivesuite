@@ -592,7 +592,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         // jobs list.
         if (pendingJobs == null || pendingJobs.size() == 0) {
             throw new IOFailure("Heritrix has not created a job after "
-                    + (Math.pow(2, JMXUtils.getMaxTries()) / 1000)
+                    + (Math.pow(2, JMXUtils.getMaxTries()) 
+                            / TimeUtils.SECOND_IN_MILLIS)
                     + " seconds, giving up.");
         } else if (pendingJobs.size() > 1) {
             throw new IllegalState("More than one pending job: " + pendingJobs);
@@ -622,7 +623,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         long currentTime = System.currentTimeMillis();
         long waitSeconds = Settings
                 .getLong(HarvesterSettings.WAIT_FOR_REPORT_GENERATION_TIMEOUT);
-        long waitDeadline = currentTime + 1000 * waitSeconds;
+        long waitDeadline = currentTime 
+                + TimeUtils.SECOND_IN_MILLIS * waitSeconds;
 
         // While the deadline is not attained, periodically perform the
         // following checks:
@@ -684,7 +686,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
 
             try {
                 // Wait 20 seconds
-                Thread.sleep(20000);
+                Thread.sleep(20 * TimeUtils.SECOND_IN_MILLIS);
             } catch (InterruptedException e) {
 
             }

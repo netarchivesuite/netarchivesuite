@@ -75,7 +75,7 @@ public class DelegatingController implements Controller {
     /**
      * Internationalisation context.
      */
-    private final static I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
+    private static final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
 
     /**
      * Initialise a controller with the relevant instances to control.

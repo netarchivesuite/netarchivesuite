@@ -73,9 +73,13 @@ public abstract class AbstractHarvestReport implements HarvestReport {
          * software due to an inactivity timeout.
          */
         HARVEST_ABORTED("Ended by operator");
-
+        
+        /** The pattern associated with a given enum value. */
         private final String pattern;
-
+        /**
+         * Constructor for this enum class.
+         * @param pattern The pattern associated with a given enum value.
+         */
         ProgressStatisticsConstants(String pattern) {
             this.pattern = pattern;
         }
@@ -107,7 +111,6 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * in the subclasses by filling out the domainStats map with crawl results.
      */
     public AbstractHarvestReport() {
-
     }
 
     /**
@@ -136,7 +139,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         long startTime = System.currentTimeMillis();
 
         File crawlLog = files.getCrawlLog();
-        if (! crawlLog.isFile() || ! crawlLog.canRead()) {
+        if (!crawlLog.isFile() || !crawlLog.canRead()) {
             String errorMsg = "Not a file or not readable: "
                 + crawlLog.getAbsolutePath();
             throw new IOFailure(errorMsg);
@@ -231,6 +234,8 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     /**
      * Attempts to get an already existing {@link DomainStats} object for that
      * domain, and if not found creates one with zero values.
+     * @param domainName the name of the domain to get DomainStats for.
+     * @return a DomainStats object for the given domain-name.
      */
     protected DomainStats getOrCreateDomainStats(String domainName) {
         DomainStats dhi = domainstats.get(domainName);
@@ -321,8 +326,11 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      */
     private void processHarvestLine(String line) throws ArgumentNotValid {
         //A legal crawl log line has at least 11 parts, + optional annotations
-        String[] parts = line.split("\\s+", 12);
-        if (parts.length < 11) {
+        final int MIN_CRAWL_LOG_PARTS = 11;
+        final int MAX_PARTS = 12;
+        final int ANNOTATION_PART_INDEX = 11;
+        String[] parts = line.split("\\s+", MAX_PARTS);
+        if (parts.length < MIN_CRAWL_LOG_PARTS) {
             throw new ArgumentNotValid(
                     "Not enough fields for line in crawl.log: '" + line + "'.");
         }
@@ -355,11 +363,11 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
         //Get the byte count from annotation field "content-size"
         //and the stop reason from annotation field if status code is -5003
-        StopReason defaultStopReason = getDefaultStopReason();
-        StopReason stopReason = defaultStopReason;
+        StopReason stopReason = getDefaultStopReason();
         long byteCounter = 0;
-        if (parts.length > 11) { // test if any annotations exist
-            String[] annotations = parts[11].split(",");
+        if (parts.length > MIN_CRAWL_LOG_PARTS) { 
+            // test if any annotations exist
+            String[] annotations = parts[ANNOTATION_PART_INDEX].split(",");
             for (String annotation : annotations) {
                 if (annotation.trim().startsWith(
                         ContentSizeAnnotationPostProcessor
@@ -371,7 +379,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
                     } catch (NumberFormatException e) {
                         throw new ArgumentNotValid("Unparsable annotation in "
                                             + "field 12 of crawl.log: '"
-                                            + parts[11]
+                                            + parts[ANNOTATION_PART_INDEX]
                                             + "'.", e);
                     }
                 }

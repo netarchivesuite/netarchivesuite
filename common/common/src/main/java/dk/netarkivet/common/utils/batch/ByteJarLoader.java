@@ -92,8 +92,8 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
     }
 
     /**
-     * Lookup and return the Class with the given className. This method overrides the
-     * ClassLoader.findClass method.
+     * Lookup and return the Class with the given className. 
+     * This method overrides the ClassLoader.findClass method.
      * 
      * @param className
      *            The name of the class to lookup
@@ -103,7 +103,7 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
      * 
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public Class findClass(String className) throws ClassNotFoundException {
+    public Class findClass(String className) throws ClassNotFoundException {
         ArgumentNotValid.checkNotNullOrEmpty(className, "String className");
         // replace all dots with '/' in the className before looking it up
         // in the

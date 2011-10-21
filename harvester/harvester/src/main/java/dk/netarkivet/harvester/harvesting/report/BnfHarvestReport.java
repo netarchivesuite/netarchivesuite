@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -59,7 +60,12 @@ public class BnfHarvestReport extends AbstractHarvestReport {
 
     /** The logger for this class. */
     private static final Log LOG = LogFactory.getLog(BnfHarvestReport.class);
-
+    
+    /**
+     *  Constructor for this class.
+     * @param files A HeritrixFiles object.
+     * @throws IOFailure If the processing of the files goes wrong
+     */
     public BnfHarvestReport(HeritrixFiles files) throws IOFailure {
         super(files);
     }
@@ -120,13 +126,13 @@ public class BnfHarvestReport extends AbstractHarvestReport {
                     && (actualByteCount >= harvestByteLimit)) {
                     finalStopReason = StopReason.SIZE_LIMIT;
             } else if (harvestObjectLimit > 0
-                    && (actualObjectCount >= harvestObjectLimit )) {
+                    && (actualObjectCount >= harvestObjectLimit)) {
                 finalStopReason = StopReason.OBJECT_LIMIT;
             } else if (confByteLimit > 0
                     && (actualByteCount >= confByteLimit)) {
                     finalStopReason = StopReason.CONFIG_SIZE_LIMIT;
             } else if (confObjectLimit > 0
-                    && (actualObjectCount >= confObjectLimit )) {
+                    && (actualObjectCount >= confObjectLimit)) {
                 finalStopReason = StopReason.CONFIG_OBJECT_LIMIT;
             }
 
@@ -149,11 +155,9 @@ public class BnfHarvestReport extends AbstractHarvestReport {
             long time = System.currentTimeMillis() - startTime;
             LOG.info("Finished post-processing of harvest report for job "
                     + job.getJobID() + ", operation took "
-                    + StringUtils.formatDuration(time / 1000));
+                    + StringUtils.formatDuration(
+                            time / TimeUtils.SECOND_IN_MILLIS));
         }
 
     }
-
-
-
 }

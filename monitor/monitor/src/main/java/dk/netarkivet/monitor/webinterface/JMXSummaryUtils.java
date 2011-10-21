@@ -66,7 +66,7 @@ public class JMXSummaryUtils {
     /** JMX property for the HTTP port. */
     public static final String JMXHttpportProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_HTTP_PORT;
-    /** JMX property for the harvest priority*/
+    /** JMX property for the harvest priority. */
     public static final String JMXHarvestPriorityProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_PRIORITY;
     /** JMX property for the replica name.*/
@@ -81,13 +81,13 @@ public class JMXSummaryUtils {
      * The preferred length of lines in the jmx log.
      */
     private static final int PREFERRED_LENGTH = Settings.getInt(
-            MonitorSettings.JMX_PREFERRED_MAX_LOG_LENGTH) ;
+            MonitorSettings.JMX_PREFERRED_MAX_LOG_LENGTH);
 
     /**
      * The maximum length of lines in the jmx log.
      */
     private static final int MAX_LENGTH = Settings.getInt(
-            MonitorSettings.JMX_ABSOLUTE_MAX_LOG_LENGTH) ;
+            MonitorSettings.JMX_ABSOLUTE_MAX_LOG_LENGTH);
 
     /** JMX properties, which can set to star. */   
     public static final String[] STARRABLE_PARAMETERS = new String[]{
@@ -375,10 +375,9 @@ public class JMXSummaryUtils {
                         "errormsg;error.in.building.jmxquery");
                 throw new ForwardedToErrorPage("Error building JMX query", e);
             }
-        }
-        // Both InstanceNotFoundException and MBeanRegistrationException are 
-        // treated equal.
-        catch (Exception e) {
+        } catch (Exception e) {
+            // Both InstanceNotFoundException and MBeanRegistrationException
+            // are treated equal.
             HTMLUtils.forwardWithErrorMessage(context, I18N, e,
                     "errormsg;error.when.unregistering.mbean.0", query);
             throw new ForwardedToErrorPage(
@@ -456,8 +455,8 @@ public class JMXSummaryUtils {
         int lineno = 0;
         String line;
         try {
-            while (lineno < NUMBER_OF_LOG_LINES &&
-                    (line = sr.readLine()) != null) {
+            while (lineno < NUMBER_OF_LOG_LINES 
+                    && (line = sr.readLine()) != null) {
                 msg.append(line);
                 msg.append('\n');
                 ++lineno;

@@ -31,7 +31,7 @@ import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer;
 
 /**
- * A factory for returning a UrlCanonicalizer
+ * A factory for returning a UrlCanonicalizer.
  */
 public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
 
@@ -48,7 +48,8 @@ public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
      */
     public static UrlCanonicalizer getDefaultUrlCanonicalizer()  {
         try {
-            return SettingsFactory.getInstance(WaybackSettings.URL_CANONICALIZER_CLASSNAME);
+            return SettingsFactory.getInstance(
+                    WaybackSettings.URL_CANONICALIZER_CLASSNAME);
         } catch (SecurityException e) {
             logger.debug("The requested canoncializer could not be loaded. "
                          + "Falling back to "

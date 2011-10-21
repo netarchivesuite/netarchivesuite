@@ -95,7 +95,7 @@ public class CachingLogHandler extends Handler {
      *         defaultValue otherwise
      */
     @SuppressWarnings("rawtypes")
-	private Filter getFilterProperty(String name, Filter defaultValue) {
+    private Filter getFilterProperty(String name, Filter defaultValue) {
         String val = LogManager.getLogManager().getProperty(name);
         try {
             if (val != null) {
@@ -127,7 +127,7 @@ public class CachingLogHandler extends Handler {
      *         defaultValue otherwise
      */
     @SuppressWarnings("rawtypes")
-	private Formatter getFormatterProperty(String name,
+    private Formatter getFormatterProperty(String name,
                                            Formatter defaultValue) {
         String val = LogManager.getLogManager().getProperty(name);
         try {

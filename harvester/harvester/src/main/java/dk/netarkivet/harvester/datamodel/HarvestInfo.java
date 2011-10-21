@@ -185,10 +185,10 @@ public class HarvestInfo {
     }
 
     /** Set the ID of this harvestinfo.  Only for use by DBDAO
-     * @param id the new ID of this harvestinfo
+     * @param newid the new ID of this harvestinfo
      */
-    void setID(long id) {
-        this.id = id;
+    void setID(long newid) {
+        this.id = newid;
     }
 
     /** Check if this harvestinfo has an ID set yet (doesn't happen until

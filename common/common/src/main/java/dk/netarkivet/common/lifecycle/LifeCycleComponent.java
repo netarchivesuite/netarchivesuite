@@ -39,9 +39,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * <li> Call the <code>super.start()</code> operation to start the children.
  * <li> Call the <code>super.shutdown</code> operation to  
  */
-public class LifeCycleComponent implements ComponentLifeCycle {    
-    private List<ComponentLifeCycle> children = new ArrayList<ComponentLifeCycle>();    
-
+public class LifeCycleComponent implements ComponentLifeCycle { 
+    /** The child-components of this lifecycle. */
+    private List<ComponentLifeCycle> children 
+        = new ArrayList<ComponentLifeCycle>();
+    /** The instance logger. */
     private final Log log = LogFactory.getLog(getClass().getName());
 
     @Override

@@ -44,6 +44,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -90,7 +91,8 @@ implements MessageListener, ComponentLifeCycle {
          */
         private Map<JobPriority, Set<String>> availableHarvesters =
             new HashMap<JobPriority, Set<String>>();
-
+        
+        @Override
         public String toString() {
             String statusLine = "Available harvesters:";
             for (JobPriority p : JobPriority.values()) {
@@ -124,9 +126,11 @@ implements MessageListener, ComponentLifeCycle {
             if ((oldSize != ids.size()) && log.isInfoEnabled()) {
                 StringBuilder message = new StringBuilder();
                 if (oldSize > ids.size()) {
-                    message.append("Harvester '" + harvesterId + "' reported itself as unavailable. ");
+                    message.append("Harvester '" + harvesterId
+                            + "' reported itself as unavailable. ");
                 } else {
-                    message.append("Harvester '" + harvesterId + "' reported itself as available. ");
+                    message.append("Harvester '" + harvesterId
+                            + "' reported itself as available. ");
                 }
                 message.append(toString());
                 log.info(message);
@@ -203,7 +207,8 @@ implements MessageListener, ComponentLifeCycle {
             public void run() {
                 if (log.isInfoEnabled()) {
                     log.info("Scheduling dispatch every "
-                            + (dispatchPeriodInMillis/1000) + " seconds");
+                            + (dispatchPeriodInMillis/TimeUtils.SECOND_IN_MILLIS
+                                    ) + " seconds");
                 }
                 try {
                     while (!dispatcherThread.isInterrupted()) {
@@ -259,14 +264,15 @@ implements MessageListener, ComponentLifeCycle {
             Job job = dao.read(id);
 
             long timeDiff =
-                Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME) * 1000;
+                Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME) 
+                    * TimeUtils.SECOND_IN_MILLIS;
             Date endTime = new Date();
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
             if (new Date().after(endTime)) {
                 final String msg = " Job " + id
                 + " has exceeded its timeout of "
-                + (Settings.getLong(
-                        HarvesterSettings.JOB_TIMEOUT_TIME) / 60)
+                + (Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME) 
+                        / TimeUtils.HOUR_IN_MINUTES)
                         + " minutes." + " Changing status to " + "FAILED.";
                 log.warn(msg);
                 job.setStatus(JobStatus.FAILED);

@@ -44,6 +44,7 @@ import dk.netarkivet.common.Constants;
  * A CDX file contains sorted lines of metadata from the ARC files, with
  * each line followed by the file and offset the record was found at, and
  * optionally a checksum.
+ * The timeout of this job is 7 days.
  * See http://www.archive.org/web/researcher/cdx_file_format.php
  */
 public class ExtractCDXJob extends ARCBatchJob {
@@ -94,6 +95,7 @@ public class ExtractCDXJob extends ARCBatchJob {
      * @return The filter that defines what ARC records are wanted
      * in the output CDX file.
      */
+    @Override
     public ARCBatchFilter getFilter() {
         //Per default we want to index all records except ARC file headers:
         return ARCBatchFilter.EXCLUDE_FILE_HEADERS;
@@ -103,6 +105,7 @@ public class ExtractCDXJob extends ARCBatchJob {
      * Initialize any data needed (none).
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#initialize(OutputStream)
      */
+    @Override
     public void initialize(OutputStream os) {
     }
 
@@ -111,14 +114,16 @@ public class ExtractCDXJob extends ARCBatchJob {
      * ARCRecord, OutputStream)
      * @throws IOFailure on trouble reading arc record data
      */
+    @Override
     public void processRecord(ARCRecord sar, OutputStream os) {
-        log.trace("Processing ARCRecord with offset: " + sar.getMetaData().getOffset());
+        log.trace("Processing ARCRecord with offset: "
+                + sar.getMetaData().getOffset());
         /*
         * Fields are stored in a map so that it's easy
         * to pull them out when looking at the
         * fieldarray.
         */
-        Map<String,String> fieldsread = new HashMap<String,String>();
+        Map<String, String> fieldsread = new HashMap<String,String>();
         fieldsread.put("A", sar.getMetaData().getUrl());
         fieldsread.put("e", sar.getMetaData().getIp());
         fieldsread.put("b", sar.getMetaData().getDate());
@@ -153,6 +158,7 @@ public class ExtractCDXJob extends ARCBatchJob {
     /** End of the batch job.
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#finish(OutputStream)
      */
+    @Override
     public void finish(OutputStream os) {
     }
 
@@ -160,7 +166,7 @@ public class ExtractCDXJob extends ARCBatchJob {
      * character for any null values.
      *
      * @param fieldsread A hashtable of values indexed by field letters
-     * @param outstream
+     * @param outstream The outputstream to write the values to 
      */
     private void printFields(Map fieldsread, OutputStream outstream) {
         StringBuffer sb = new StringBuffer();
@@ -180,10 +186,10 @@ public class ExtractCDXJob extends ARCBatchJob {
     }
     
     /**
-     * Humanly readable description of this instance.
+     * @return Humanly readable description of this instance.
      */
     public String toString() {
-	return getClass().getName() + ", with Filter: " + getFilter()
-	+ ", include checksum = " + includeChecksum;
+        return getClass().getName() + ", with Filter: " + getFilter()
+                + ", include checksum = " + includeChecksum;
     }
 }

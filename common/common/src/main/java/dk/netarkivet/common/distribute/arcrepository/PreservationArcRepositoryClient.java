@@ -63,7 +63,7 @@ public interface PreservationArcRepositoryClient  {
      * deleted.
      *
      * @param file A file to be stored. Must exist.
-     * @throws IOFailure thrown if store is unsuccesful, or failed to clean
+     * @throws IOFailure thrown if store is unsuccessful, or failed to clean
      * up files after the store operation.
      * @throws ArgumentNotValid if file parameter is null or file is not an
      *                          existing file.
@@ -106,7 +106,7 @@ public interface PreservationArcRepositoryClient  {
      */
     void updateAdminChecksum(String filename, String checksum);
 
-    /** Remove a file from one part of the ArcRepository, retrieveing a copy
+    /** Remove a file from one part of the ArcRepository, retrieving a copy
      * for security purposes.  This is typically used when repairing a file
      * that has been corrupted.
      *
@@ -169,10 +169,14 @@ public interface PreservationArcRepositoryClient  {
      * archive. The bitarchive uses 'removeAndGetFile' followed by a 'store'.
      * 
      * @param replicaId The identification of the replica.
+     * @param checksum The checksum of the corrupt entry in the archive. It is 
+     * important to validate that the checksum actually is wrong before 
+     * correcting the entry.
      * @param file The new file to replace the old one.
      * @param credentials The password for allowing to remove a file entry in
-     * the archive. 
+     * the archive.
+     * @return The corrupted file from the archive.
      */
     File correct(String replicaId, String checksum, File file, 
-	    String credentials);
+            String credentials);
 }

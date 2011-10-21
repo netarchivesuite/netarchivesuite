@@ -28,14 +28,16 @@ import org.apache.commons.httpclient.URIException;
 
 /**
  * This class overrides the standard wayback canonicalizer in order to use our
- * version of UURIFactory (see Bug 1719). Everything in this class is cut and pasted
- * from wayback's AggressiveUrlCanonicalizer, with substitution of
+ * version of UURIFactory (see Bug 1719). Everything in this class is cut and 
+ * pasted from wayback's AggressiveUrlCanonicalizer, with substitution of
  * NetarchiveSuiteUURIFactory for UURIFactory.
  * @deprecated use org.archive.wayback.util.url.AggressiveUrlCanonicalizer
  * instead
  */
-public class NetarchiveSuiteAggressiveUrlCanonicalizer extends
-                                                       AggressiveUrlCanonicalizer {
+public class NetarchiveSuiteAggressiveUrlCanonicalizer 
+extends AggressiveUrlCanonicalizer {
+   
+    @Override
     public String urlStringToKey(String urlString) throws URIException {
 
       if(urlString.startsWith("dns:")) {
@@ -55,7 +57,7 @@ public class NetarchiveSuiteAggressiveUrlCanonicalizer extends
         searchUrl = scheme + searchUrl;
     }
 
-    // TODO: These next few lines look crazy -- need to be reworked.. This
+    // TODO These next few lines look crazy -- need to be reworked.. This
     // was the only easy way I could find to get the correct unescaping
     // out of UURIs, possible a bug. Definitely needs some TLC in any case,
     // as building UURIs is *not* a cheap operation.
@@ -68,7 +70,7 @@ public class NetarchiveSuiteAggressiveUrlCanonicalizer extends
     UURI searchURI = NetarchiveSuiteUURIFactory.getInstance(tmpURI.getURI());
 
     // replace ' ' with '+' (this is only to match Alexa's canonicalization)
-    String newPath = searchURI.getEscapedPath().replace("%20","+");
+    String newPath = searchURI.getEscapedPath().replace("%20", "+");
 
     // replace multiple consecutive '/'s in the path.
     while(newPath.contains("//")) {
@@ -85,7 +87,8 @@ public class NetarchiveSuiteAggressiveUrlCanonicalizer extends
     sb.append(searchURI.getHostBasename());
 
     // omit port if scheme default:
-    int defaultSchemePort = NetarchiveSuiteUrlOperations.schemeToDefaultPort(scheme);
+    int defaultSchemePort = NetarchiveSuiteUrlOperations.schemeToDefaultPort(
+            scheme);
     if(searchURI.getPort() != defaultSchemePort
             && searchURI.getPort() != -1) {
 

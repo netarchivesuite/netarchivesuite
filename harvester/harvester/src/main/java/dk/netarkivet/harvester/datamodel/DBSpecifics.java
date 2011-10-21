@@ -257,42 +257,43 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
         if (currentVersion > EXTENDEDFIELDTYPE_TABLE_REQUIRED_VERSION) {
             throw new NotImplementedException(
-                    "No method exists for migrating table '" + EXTENDEDFIELDTYPE_TABLE
-                            + "' from version " + currentVersion
-                            + " to version " + toVersion);
+                    "No method exists for migrating table '"
+                            + EXTENDEDFIELDTYPE_TABLE + "' from version "
+                            + currentVersion + " to version " + toVersion);
         }
-	}
+    }
 
-	private void upgradeExtendedFieldValueTable(int currentVersion,
-			int toVersion) {
+    private void upgradeExtendedFieldValueTable(int currentVersion,
+            int toVersion) {
         if (currentVersion == 0 && toVersion == 1) {
             createExtendedFieldValueTable();
             currentVersion = 1;
         }
         if (currentVersion > EXTENDEDFIELDVALUE_TABLE_REQUIRED_VERSION) {
             throw new NotImplementedException(
-                    "No method exists for migrating table '" + EXTENDEDFIELDVALUE_TABLE
-                            + "' from version " + currentVersion
-                            + " to version " + toVersion);
+                    "No method exists for migrating table '"
+                            + EXTENDEDFIELDVALUE_TABLE + "' from version "
+                            + currentVersion + " to version " + toVersion);
         }
-	}
+    }
 
-	private void upgradeExtendedFieldTable(int currentVersion, int toVersion) {
+    private void upgradeExtendedFieldTable(int currentVersion, int toVersion) {
         if (currentVersion == 0 && toVersion == 1) {
             createExtendedFieldTable();
             currentVersion = 1;
         }
         if (currentVersion > EXTENDEDFIELD_TABLE_REQUIRED_VERSION) {
             throw new NotImplementedException(
-                    "No method exists for migrating table '" + EXTENDEDFIELD_TABLE
-                            + "' from version " + currentVersion
-                            + " to version " + toVersion);
+                    "No method exists for migrating table '"
+                            + EXTENDEDFIELD_TABLE + "' from version "
+                            + currentVersion + " to version " + toVersion);
         }
-	}
+    }
 
-	/** Migrate the frontierreportmonitor table.
+    /** Migrate the frontierreportmonitor table.
      * 
-     * @param currentVersion the current version of the frontierreportmonitor table
+     * @param currentVersion the current version of the frontierreportmonitor 
+     * table
      * @param toVersion the required version of the frontierreportmonitor table
      */
     private void upgradeFrontierreportmonitorTable(int currentVersion,
@@ -371,7 +372,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             currentVersion = 1;
         }
         // insert new migrations here
-        if (currentVersion > GLOBALCRAWLERTRAPEXPRESSIONS_TABLE_REQUIRED_VERSION) {
+        if (currentVersion 
+                > GLOBALCRAWLERTRAPEXPRESSIONS_TABLE_REQUIRED_VERSION) {
             throw new NotImplementedException(
                     "No method exists for migrating table '" 
                     + GLOBALCRAWLERTRAPEXPRESSIONS_TABLE
@@ -648,7 +650,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     /**
      * Create the extendedfieldtype table in the database.
      */
-	protected abstract void createExtendedFieldTypeTable();
+    protected abstract void createExtendedFieldTypeTable();
     
     /**
      * Create the extendedfield table in the database.

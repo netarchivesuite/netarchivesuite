@@ -153,7 +153,8 @@ public class SparseFullHarvest {
      * Get the maximum number of time in seconds that each job in this 
      * fullharvest will take. 0 for no limit.
      *
-     * @return the maximum number of time in seconds for each job in this fullharvest.
+     * @return the maximum number of time in seconds for each job in this 
+     * fullharvest.
      */
     public long getMaxJobRunningTime() {
         return maxJobRunningTime;

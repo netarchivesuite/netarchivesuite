@@ -51,7 +51,7 @@ import dk.netarkivet.common.utils.Settings;
  * This class handles file lookup and encapsulates the actual placement of
  * files.
  */
-public class BitarchiveAdmin {
+public final class BitarchiveAdmin {
     /** The class logger. */
     private final Log log = LogFactory.getLog(getClass().getName());
 
@@ -59,8 +59,8 @@ public class BitarchiveAdmin {
      * Map containing the archive directories and their files. The file must
      * be the CanonicalFile (use getCanonicalFile() before access).
      */
-    private Map<File, List<String>> archivedFiles 
-    		= Collections.synchronizedMap(new LinkedHashMap<File, List<String>>());
+    private Map<File, List<String>> archivedFiles = Collections
+            .synchronizedMap(new LinkedHashMap<File, List<String>>());
     
     /**
      * Map containing the time for the latest update of the filelist for each
@@ -142,7 +142,8 @@ public class BitarchiveAdmin {
                 // Ensure that 'tempdir' exists. If it doesn't, it is created
                 ApplicationUtils.dirMustExist(tempdir);
 
-                File atticdir = new File(basedir, Constants.ATTIC_DIRECTORY_NAME);
+                File atticdir = new File(basedir, 
+                        Constants.ATTIC_DIRECTORY_NAME);
 
                 // Ensure that 'atticdir' exists. If it doesn't, it is created
                 ApplicationUtils.dirMustExist(atticdir);
@@ -556,7 +557,7 @@ public class BitarchiveAdmin {
      *
      * @return A BitarchiveAdmin object
      */
-    public synchronized static BitarchiveAdmin getInstance() {
+    public static synchronized BitarchiveAdmin getInstance() {
         if (instance == null) {
             instance = new BitarchiveAdmin();
         }

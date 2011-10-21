@@ -262,7 +262,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         
     }
     
-	@Override
+    @Override
     protected void createExtendedFieldTypeTable() {
         String[] statements = new String[3];
         statements[0] = "" + "CREATE TABLE extendedfieldtype " + "  ( "
@@ -279,7 +279,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfieldtype", 1, statements);
     }
     
-	@Override
+    @Override
     protected void createExtendedFieldTable() {
         String createStatement = "" + "CREATE TABLE extendedfield " + "  ( "
                 + "     extendedfield_id BIGINT NOT NULL PRIMARY KEY, "
@@ -295,7 +295,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfield", 1, createStatement);
     }
 
-	@Override
+    @Override
     protected void createExtendedFieldValueTable() {
         String createStatement = "" + "CREATE TABLE extendedfieldvalue "
                 + "  ( "

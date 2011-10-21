@@ -34,6 +34,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Named;
@@ -43,7 +45,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * Representation of the list of harvesting seeds.
- * Basically just a list of URL's
+ * Basically just a list of URL's.
  *
  */
 public class SeedList implements Serializable, Named {
@@ -99,7 +101,7 @@ public class SeedList implements Serializable, Named {
     private boolean isAcceptableURL(String url) {
         Pattern validSeedPattern = Pattern.compile(
                 Settings.get(HarvesterSettings.VALID_SEED_REGEX));
-        if (! validSeedPattern.matcher(url).matches()) {
+        if (!validSeedPattern.matcher(url).matches()) {
             return false;
         }
         return true;
@@ -141,9 +143,7 @@ public class SeedList implements Serializable, Named {
         }
         urlwriter.flush();
         String tmp = urls.toString();
-        try {
-            urls.close();
-        } catch (IOException e) { }
+        IOUtils.closeQuietly(urls);
         return tmp;
     }
 
@@ -182,10 +182,10 @@ public class SeedList implements Serializable, Named {
     }
 
     /** Set the ID of this seedlist.  Only for use by DBDAO
-     * @param id the new ID of this seedlist
+     * @param newID the new ID of this seedlist
      */
-    void setID(long id) {
-        this.id = id;
+    void setID(long newID) {
+        this.id = newID;
     }
 
     /** Check if this seedlist has an ID set yet (doesn't happen until

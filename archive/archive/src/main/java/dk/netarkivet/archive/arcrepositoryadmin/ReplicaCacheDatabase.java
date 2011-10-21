@@ -189,10 +189,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @throws IllegalState If a SQLException is caught.
      */
     private void insertReplicaIntoDB(Replica rep) throws IllegalState {
+        PreparedStatement statement = null;
         try {
             Connection connection = getDbConnection();
-            PreparedStatement statement = null;
-
             // Make the SQL statement for putting the replica into the database
             // and insert the variables for the entry to the replica table.
             statement = connection.prepareStatement(
@@ -209,6 +208,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         } catch (SQLException e) {
             throw new IOFailure("Cannot add replica '" + rep
                     + "'to the database.", e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -224,9 +225,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      */
     private long insertFileIntoDB(String filename) throws IllegalState {
         log.debug("Insert file '" + filename + "' into database");
+        PreparedStatement statement = null;
         try {
             Connection connection = getDbConnection();
-            PreparedStatement statement = null;
 
             // Make the SQL statement for putting the replica into the database
             // and insert the variables for the entry to the replica table.
@@ -252,6 +253,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         } catch (SQLException e) {
             throw new IllegalState("Cannot add file '" + filename
                     + "' to the database.", e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -483,14 +486,15 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      *
      * @param filename the filename of the file for which you want a status.
      * @param replicaId The identifier of the replica 
-     * @return The abovementioned filelist_status of the file
+     * @return The above mentioned filelist_status of the file
      */
     private int retrieveFileListStatusFromReplicaFileInfo(
             String filename, String replicaId) {
         // The SQL statement to retrieve the filelist_status for the given
         // entry in the replica fileinfo table.
         String sql = "SELECT filelist_status FROM replicafileinfo, file WHERE "
-                + "file.file_id = replicafileinfo.file_id AND file.filename=? AND replica_id=?";
+                + "file.file_id = replicafileinfo.file_id AND file.filename=? "
+                + "AND replica_id=?";
         return DBUtils.selectIntValue(getDbConnection(), sql,
                 filename, replicaId);
     }
@@ -1562,6 +1566,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         } catch (SQLException e) {
             throw new IllegalState("Cannot update status and checksum of "
                     + "a replicafileinfo in the database.", e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -1586,12 +1592,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNull(replica, "Replica rep");
         ArgumentNotValid.checkNotNull(state, "ReplicaStoreState state");
-
+        
         // retrieve the replicafileinfo_guid for this filename .
         long guid = retrieveGuidForFilenameOnReplica(filename, replica.getId());
+        PreparedStatement statement = null;
         
         try {
-            PreparedStatement statement = null;
             Connection connection = getDbConnection();
 
             statement = connection.prepareStatement("UPDATE replicafileinfo "
@@ -1607,6 +1613,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         } catch (SQLException e) {
             throw new IllegalState("Cannot update status and checksum of "
                     + "a replicafileinfo in the database.", e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -2598,7 +2606,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @return the current database connection.
      */
     private synchronized Connection getDbConnection() throws IOFailure {
-        int secondsToWait = 5;
+        final int secondsToWait = 5;
         try {
             if (dbConnection.isValid(secondsToWait)) {
                 return this.dbConnection;

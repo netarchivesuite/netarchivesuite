@@ -235,8 +235,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 + "SELECT ?, config_id FROM configurations, domains "
                 + "WHERE domains.name = ? AND configurations.name = ?"
                 + "  AND domains.domain_id = configurations.domain_id");
-        for (Iterator<DomainConfiguration> dcs = ph.getDomainConfigurations(); dcs
-                .hasNext();) {
+        Iterator<DomainConfiguration> dcs = ph.getDomainConfigurations();
+        while (dcs.hasNext()) {
             DomainConfiguration dc = dcs.next();
             s.setLong(1, id);
             s.setString(2, dc.getDomain());
@@ -312,7 +312,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         log.debug("Reading harvestdefinition w/ id " + harvestDefinitionID);
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT name, comments, numevents, submitted, "
+            s = c.prepareStatement(
+                    "SELECT name, comments, numevents, submitted, "
                     + "previoushd, maxobjects, maxbytes, "
                     + "maxjobrunningtime, isindexready, isactive, edition "
                     + "FROM harvestdefinitions, fullharvests "
@@ -389,8 +390,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 // To avoid holding on to the readlock while getting domains,
                 // we grab the strings first, then look up domains and configs.
                 final DomainDAO domainDao = DomainDAO.getInstance();
-                List<DomainConfigurationKey> configs = new ArrayList<DomainConfigurationKey>();
-                s = c.prepareStatement("SELECT domains.name, configurations.name "
+                List<DomainConfigurationKey> configs 
+                    = new ArrayList<DomainConfigurationKey>();
+                s = c.prepareStatement(
+                        "SELECT domains.name, configurations.name "
                         + "FROM domains, configurations, harvest_configs "
                         + "WHERE harvest_id = ?"
                         + "  AND configurations.config_id "
@@ -403,7 +406,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                             res.getString(2)));
                 }
                 s.close();
-                List<DomainConfiguration> configurations = new ArrayList<DomainConfiguration>();
+                List<DomainConfiguration> configurations 
+                    = new ArrayList<DomainConfiguration>();
                 for (DomainConfigurationKey domainConfig : configs) {
                     configurations.add(domainDao.getDomainConfiguration(
                             domainConfig.domainName, domainConfig.configName));
@@ -424,7 +428,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 return ph;
             } else {
                 throw new IllegalState("No entries in fullharvests or "
-                        + "partialharvests found for id " + harvestDefinitionID);
+                        + "partialharvests found for id " 
+                        + harvestDefinitionID);
             }
         } catch (SQLException e) {
             throw new IOFailure("SQL Error while reading harvest definition "
@@ -666,8 +671,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         + "harvestdefinitions.");
             }
 
-            List<HarvestDefinition> orderedList = new LinkedList<HarvestDefinition>();
-
+            List<HarvestDefinition> orderedList 
+                = new LinkedList<HarvestDefinition>();
             for (Long id : hds) {
                 orderedList.add(read(c, id));
             }
@@ -775,7 +780,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             ResultSet res = null;
-            Map<Integer, HarvestRunInfo> runInfos = new HashMap<Integer, HarvestRunInfo>();
+            Map<Integer, HarvestRunInfo> runInfos 
+                = new HashMap<Integer, HarvestRunInfo>();
             List<HarvestRunInfo> infoList = new ArrayList<HarvestRunInfo>();
 
             // Synchronize on this to make sure no new jobs are added between
@@ -817,7 +823,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         }
                     }
                     // For finished jobs, check end date
-                    if (status == JobStatus.DONE || status == JobStatus.FAILED) {
+                    if (status == JobStatus.DONE 
+                            || status == JobStatus.FAILED) {
                         Date endDate = DBUtils.getDateMaybeNull(res, 5);
                         if (info.getEndDate() == null
                                 || (endDate != null && endDate.after(info
@@ -917,7 +924,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "      = domains.domain_id");
             s.setLong(1, harvestDefinitionID);
             ResultSet res = s.executeQuery();
-            List<SparseDomainConfiguration> resultList = new ArrayList<SparseDomainConfiguration>();
+            List<SparseDomainConfiguration> resultList 
+                = new ArrayList<SparseDomainConfiguration>();
             while (res.next()) {
                 SparseDomainConfiguration sdc = new SparseDomainConfiguration(
                         res.getString(1), res.getString(2));
@@ -1049,7 +1057,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + " WHERE harvestdefinitions.harvest_id "
                     + "       = fullharvests.harvest_id");
             ResultSet res = s.executeQuery();
-            List<SparseFullHarvest> harvests = new ArrayList<SparseFullHarvest>();
+            List<SparseFullHarvest> harvests 
+                = new ArrayList<SparseFullHarvest>();
             while (res.next()) {
                 SparseFullHarvest sfh = new SparseFullHarvest(res.getLong(1),
                         res.getString(2), res.getString(3), res.getInt(4),
@@ -1089,7 +1098,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT name FROM harvestdefinitions WHERE harvest_id = ?");
+            s = c.prepareStatement(
+                    "SELECT name FROM harvestdefinitions WHERE harvest_id = ?");
             s.setLong(1, harvestDefinitionID);
             ResultSet res = s.executeQuery();
             String name = null;
@@ -1380,8 +1390,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         // Find the last harvest in the chain before
         Long olderHarvest = DBUtils
                 .selectFirstLongValueIfAny(
-                        c,
-                        "SELECT fullharvests.harvest_id"
+                        c, "SELECT fullharvests.harvest_id"
                                 + " FROM fullharvests, harvestdefinitions,"
                                 + "  harvestdefinitions AS currenthd"
                                 + " WHERE currenthd.harvest_id=?"
@@ -1430,10 +1439,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     }
 
-    /**
+    /*
      * Removes the entry in harvest_configs, that binds a certain
-     * domainconfiguration to this PartialHarvest. And maybe update the edition
-     * as well (TBD).
+     * domainconfiguration to this PartialHarvest.
+     * TODO maybe update the edition as well.
      */
     @Override
     public void removeDomainConfiguration(Long harvestId,
@@ -1449,12 +1458,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection connection = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = connection
-                    .prepareStatement("DELETE FROM harvest_configs WHERE "
-                            + "harvest_id = ? and config_id = (SELECT config_id "
-                            + " FROM configurations, domains "
-                            + "WHERE domains.name = ? AND configurations.name = ?"
-                            + "  AND domains.domain_id = configurations.domain_id)");
+            s = connection.prepareStatement(
+                    "DELETE FROM harvest_configs WHERE harvest_id = ? "
+                    + "AND config_id = (SELECT config_id "
+                    + " FROM configurations, domains "
+                    + "WHERE domains.name = ? AND configurations.name = ?"
+                    + "  AND domains.domain_id = configurations.domain_id)");
             s.setLong(1, harvestId);
             s.setString(2, key.domainName);
             s.setString(3, key.configName);
@@ -1472,12 +1481,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
     }
 
-    /**
-     * Update the given PartialHarvest (i.e. Selective Harvest) with a new time
-     * for the next harvestrun.
-     * 
-     * @see HarvestDefinitionDAO#updateNextdate(PartialHarvest, Date)
-     */
     @Override
     public void updateNextdate(PartialHarvest ph, Date nextdate) {
         ArgumentNotValid.checkNotNull(ph, "PartialHarvest ph");

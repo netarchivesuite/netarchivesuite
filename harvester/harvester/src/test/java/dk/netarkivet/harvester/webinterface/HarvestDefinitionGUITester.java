@@ -27,10 +27,7 @@ import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
-import dk.netarkivet.common.webinterface.SiteSection;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 

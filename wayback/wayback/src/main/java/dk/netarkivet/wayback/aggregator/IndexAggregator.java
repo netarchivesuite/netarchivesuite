@@ -61,7 +61,8 @@ public class IndexAggregator {
     /**
      * Takes a list of sorted files and merges them.
      * @param files The files to merge.
-     * @param outputFile The resulting file containing total sorted set of index lines found in all the provided index files                 
+     * @param outputFile The resulting file containing total sorted set of index
+     * lines found in all the provided index files                 
      */
 
     public void mergeFiles(File[] files, File outputFile) {
@@ -86,8 +87,10 @@ public class IndexAggregator {
     private void processFiles(File[] files, File outputFile,
                               List<String> additionalArgs) {
         if (files.length == 0) {
+            // Empty file list will cause sort to wait for further input, 
+            // and the call will therefore never return
             return;
-        } // Empty file list will cause sort to wait for further input, and the call will therefor never return
+        } 
 
         Process p = null;
 
@@ -97,12 +100,16 @@ public class IndexAggregator {
                 if (files[i].exists() && files[i].isFile()) {
                     inputFileList.add(files[i].getCanonicalPath());
                 } else {
-                    log.warn("File "+files[i] +" doesn't exist or isn't a regular file, dropping from list of files to "
-                             + "sort and merge");
+                    log.warn("File "
+                            + files[i]
+                            + " doesn't exist or isn't a regular file, "
+                            + "dropping from list of files to "
+                            + "sort and merge");
                 }
             }
             List<String> cmd = new LinkedList<String>();
-            // Prepare to run the unix sort command, see sort manual page for details
+            // Prepare to run the unix sort command, see sort manual page for 
+            // details
             cmd.add("sort");
             cmd.addAll(inputFileList);
             cmd.add("-o");
@@ -111,8 +118,10 @@ public class IndexAggregator {
             cmd.add(Settings.get(WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR));
             if (additionalArgs != null && !additionalArgs.isEmpty()) {
                 for (String argument:additionalArgs) {
-                    ArgumentNotValid.checkTrue(argument.indexOf(' ') == -1,
-                                               "The argument '"+argument+"' contains spaces, this isn't allowed ");
+                    ArgumentNotValid.checkTrue(
+                            argument.indexOf(' ') == -1,
+                            "The argument '" + argument 
+                                + "' contains spaces, this isn't allowed ");
                 }
                 cmd.addAll(additionalArgs);
             }
@@ -124,8 +133,8 @@ public class IndexAggregator {
             p = pb.start();
             p.waitFor();
             if (p.exitValue() != 0) {
-                log.error(
-                        "Failed to sort index files, sort exited with return code " + p.exitValue());
+                log.error("Failed to sort index files, sort exited with "
+                        + "return code " + p.exitValue());
             }
         } catch (Exception e) {
             log.error("Failed to aggregate indexes ", e);

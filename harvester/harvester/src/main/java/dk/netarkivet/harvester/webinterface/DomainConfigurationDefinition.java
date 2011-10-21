@@ -50,8 +50,8 @@ public class DomainConfigurationDefinition {
     /**
      * Extracts all required parameters from the request, checks for any
      * inconsistencies, and passes the requisite data to the updateDomain method
-     * for processing. The specified domain configuration is then updated and the
-     * result stored in the database.
+     * for processing. The specified domain configuration is then updated and
+     * the result stored in the database.
      *
      * update: This method does nothing if update is not set
      *
@@ -99,7 +99,8 @@ public class DomainConfigurationDefinition {
         if (!DomainDAO.getInstance().exists(name)) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;unknown.domain.0", name);
-            throw new ForwardedToErrorPage("Domain " + name + " does not exist");
+            throw new ForwardedToErrorPage(
+                    "Domain " + name + " does not exist");
         }
 
         Domain domain = DomainDAO.getInstance().read(name);
@@ -112,8 +113,8 @@ public class DomainConfigurationDefinition {
             HTMLUtils.forwardWithRawErrorMessage(context, i18n,
                     "errormsg;domain.definition.changed.0.retry.1",
                     "<br/><a href=\"Definitions-edit-domain.jsp?"
-                            + Constants.DOMAIN_PARAM + "=" +
-                            HTMLUtils.escapeHtmlValues(HTMLUtils.encode(name))
+                            + Constants.DOMAIN_PARAM + "=" 
+                            + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(name))
                             + "\">",
                     "</a>");
             throw new ForwardedToErrorPage("Domain '" + name + "' has changed");

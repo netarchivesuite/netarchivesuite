@@ -313,9 +313,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     private UURI create(String uri, String charset) throws URIException {
         UURI uuri  = new UURI(fixup(uri, null, charset), true, charset){};
         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("URI " + uri +
-                " PRODUCT " + uuri.toString() +
-                " CHARSET " + charset);
+            logger.fine("URI " + uri + " PRODUCT " + uuri.toString()
+                    + " CHARSET " + charset);
         }
         return validityCheck(uuri);
     }

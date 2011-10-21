@@ -27,15 +27,14 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * An abstract superclass for URIResolvers that handle commands given to
- * the server host (http://<<serverhost>>/<<command>>/<<param>>=<<value>>*
- *
+ * the server host (http://<<serverhost>>/<<command>>/<<param>>=<<value>>*).
  */
 
 public abstract class CommandResolver
         implements URIResolverHandler, URIResolver {
     /**
      * The URI resolver which is wrapped, and which handles all non-command
-     * URIs
+     * URIs.
      */
     protected URIResolver ur;
     /** Fake host used as hostname when doing commands. */
@@ -54,12 +53,12 @@ public abstract class CommandResolver
     /**
      * Change the URI resolver which handles URIs that we don't handle here.
      *
-     * @param ur The URI resolver to handle unhandled URIs.
+     * @param anUr The URI resolver to handle unhandled URIs.
      * @throws ArgumentNotValid if either argument is null.
      */
-    public final void setURIResolver(URIResolver ur) {
-        ArgumentNotValid.checkNotNull(ur, "URIResolver ur");
-        this.ur = ur;
+    public final void setURIResolver(URIResolver anUr) {
+        ArgumentNotValid.checkNotNull(anUr, "URIResolver anUr");
+        this.ur = anUr;
     }
 
     /**

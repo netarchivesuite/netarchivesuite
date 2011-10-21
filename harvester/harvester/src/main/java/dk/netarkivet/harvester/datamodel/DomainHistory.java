@@ -44,7 +44,8 @@ public class DomainHistory {
      * Sorts HarvestInfo with newest first. Sorting on HarvestID and
      * DomainConfiguration is only to make comparator consistent with equals.
      */
-    private static final Comparator<HarvestInfo> DATE_COMPARATOR = new Comparator<HarvestInfo>() {
+    private static final Comparator<HarvestInfo> DATE_COMPARATOR 
+        = new Comparator<HarvestInfo>() {
         public int compare(HarvestInfo hi1, HarvestInfo hi2) {
             int i = hi2.getDate().compareTo(hi1.getDate());
             if (i != 0) {
@@ -132,16 +133,25 @@ public class DomainHistory {
         harvestInfo.add(hi);
     }
     
-    public static HarvestInfo getBestHarvestInfoExpectation(String configName, DomainHistory history) {
-   	 ArgumentNotValid.checkNotNullOrEmpty(configName, "String configName");
-   	 ArgumentNotValid.checkNotNull(history, "DomainHistory history");
-   	//Remember best expectation
+   /**
+    * Return the most recent harvestresult for the configuration identified by 
+    * name that was a complete harvest of the domain. 
+    * @param configName The name of the configuration 
+    * @param history The domainHistory for a domain
+    * @return the most recent harvestresult for the configuration identified by 
+    * name that was a complete harvest of the domain. 
+    */
+    public static HarvestInfo getBestHarvestInfoExpectation(String configName,
+            DomainHistory history) {
+        ArgumentNotValid.checkNotNullOrEmpty(configName, "String configName");
+        ArgumentNotValid.checkNotNull(history, "DomainHistory history");
+        // Remember best expectation
         HarvestInfo best = null;
 
         //loop through all harvest infos for this configuration. The iterator is
         //sorted by date with most recent first
-        for (Iterator<HarvestInfo> i = history.getHarvestInfo();
-             i.hasNext(); ) {
+        Iterator<HarvestInfo> i = history.getHarvestInfo();
+        while (i.hasNext()) {
             HarvestInfo hi = i.next();
             if (hi.getDomainConfigurationName().equals(configName)) {
                 //Remember this expectation, if it harvested at least

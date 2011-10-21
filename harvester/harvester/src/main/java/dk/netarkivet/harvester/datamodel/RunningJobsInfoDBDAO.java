@@ -123,7 +123,11 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     private static final long HISTORY_SAMPLE_RATE =
         1000 * Settings.getLong(
                 HarvesterSettings.HARVEST_MONITOR_HISTORY_SAMPLE_RATE);
-
+    /**
+     * The constructor of RunningJobsInfoDBDAO.
+     * Attempts to update/install the necessary database tables, 
+     * if they need to be updated.
+     */
     public RunningJobsInfoDBDAO() {
 
         Connection connection = HarvestDBConnection.get();
@@ -293,7 +297,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             boolean shouldSample = lastHistoryStore == null
                 || time >= lastHistoryStore + HISTORY_SAMPLE_RATE;
 
-            if (! shouldSample) {
+            if (!shouldSample) {
                 return;  // we're done
             }
 
@@ -314,7 +318,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 stm.setString(
                         HM_COLUMN.hostUrl.rank(), startedJobInfo.getHostUrl());
                 stm.setDouble(
-                        HM_COLUMN.progress.rank(), startedJobInfo.getProgress());
+                        HM_COLUMN.progress.rank(), 
+                        startedJobInfo.getProgress());
                 stm.setLong(
                         HM_COLUMN.queuedFilesCount.rank(),
                         startedJobInfo.getQueuedFilesCount());
@@ -994,7 +999,13 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             HarvestDBConnection.release(c);
         }
     }
-
+    
+    /**
+     * Get a frontierReportLine from the resultSet.
+     * @param rs the resultset with data from table frontierReportMonitor
+     * @return a frontierReportLine from the resultSet.
+     * @throws SQLException If unable to get data from resultSet
+     */
     private FrontierReportLine getLine(ResultSet rs) throws SQLException {
         FrontierReportLine line = new FrontierReportLine();
 
@@ -1014,7 +1025,12 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
         return line;
     }
-
+    /**
+     * 
+     * @param rs
+     * @param list
+     * @throws SQLException
+     */
     private void listFromResultSet(ResultSet rs, List<StartedJobInfo> list)
     throws SQLException {
         while (rs.next()) {

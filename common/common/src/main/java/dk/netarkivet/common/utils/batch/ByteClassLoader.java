@@ -31,9 +31,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class ByteClassLoader extends ClassLoader {
     /** Binary class data loaded from file. */
-    byte[] binaryData;
+    private final byte[] binaryData;
 
-    /** Constructor that reads data from a file
+    /** Constructor that reads data from a file.
      *
      * @param binaryFile A file containing a Java class.
      */
@@ -61,7 +61,7 @@ public class ByteClassLoader extends ClassLoader {
      * @return A new Class object for this class.
      */
     @SuppressWarnings("rawtypes")
-	public Class defineClass() {
+    public Class defineClass() {
         return super.defineClass(null, binaryData, 0, binaryData.length);
     }
 }

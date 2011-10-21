@@ -261,6 +261,7 @@ public class JobDBDAO extends JobDAO {
 
     /** Check whether a particular job exists.
     *
+    * @param c an open connection to the harvestDatabase
     * @param jobID Id of the job.
     * @return true if the job exists in any state.
     */
@@ -272,7 +273,7 @@ public class JobDBDAO extends JobDAO {
 
     /**
      * Generates the next id of job.
-     *
+     * @param c an open connection to the harvestDatabase
      * @return id
      */
     private Long generateNextID(Connection c) {
@@ -310,7 +311,7 @@ public class JobDBDAO extends JobDAO {
         PreparedStatement statement = null;
         try {
             final Long jobID = job.getJobID();
-            if (! exists(connection, jobID)) {
+            if (!exists(connection, jobID)) {
                 throw new UnknownID("Job id " + jobID
                                     + " is not known in persistent storage");
             }
@@ -412,12 +413,13 @@ public class JobDBDAO extends JobDAO {
     /** Read a single job from the job database.
      *
      * @param jobID ID of the job.
+     * @param connection an open connection to the harvestDatabase
      * @return A Job object
      * @throws UnknownID if the job id does not exist.
      * @throws IOFailure if there was some problem talking to the database.
      */
     private synchronized Job read(Connection connection, Long jobID) {
-        if (! exists(connection, jobID)) {
+        if (!exists(connection, jobID)) {
             throw new UnknownID("Job id "
                                 + jobID
                                 + " is not known in persistent storage");
@@ -672,7 +674,7 @@ public class JobDBDAO extends JobDAO {
      * for given status and in given order. Is used by getStatusInfo
      * functions in order to share code (and SQL)
      * TODO should also include given harvest run
-     *
+     * @param connection an open connection to the harvestDatabase
      * @param jobStatusCode code for jobstatus, -1 if all
      * @param asc true if it is to be sorted in ascending order,
      *        false if it is to be sorted in descending order
@@ -809,7 +811,7 @@ public class JobDBDAO extends JobDAO {
         List<Long> jobs;
         //Select the previous harvest from the same harvestdefinition
         try {
-            if (! exists(connection, jobID)) {
+            if (!exists(connection, jobID)) {
                 throw new UnknownID("Job ID '" + jobID
                                     + "' does not exist in database");
             }
@@ -842,6 +844,7 @@ public class JobDBDAO extends JobDAO {
     /**
      * Find the harvest definition ids from this chain of snapshot harvests and
      * the previous chain of snapshot harvests.
+     * @param connection an open connection to the harvestDatabase
      * @param jobID The ID of the job
      * @return A (possibly empty) list of harvest definition ids
      */
@@ -919,12 +922,6 @@ public class JobDBDAO extends JobDAO {
         }
     }
 
-  
-
-
-    /**
-     * @see JobDAO#rescheduleJob(long)
-     */
     @Override
     public synchronized long rescheduleJob(long oldJobID) {
         Connection connection = HarvestDBConnection.get();
@@ -1029,11 +1026,16 @@ public class JobDBDAO extends JobDAO {
       * Internal utility class to build a SQL query using a prepared statement.
       */
     private class HarvestStatusQueryBuilder {
+        /** The sql string. */
         private String sqlString;
         // from java.sql.Types
+        /** list of parameter classes. */
         private LinkedList<Class<?>> paramClasses = new LinkedList<Class<?>>();
+        /** list of parameter values. */
         private LinkedList<Object> paramValues = new LinkedList<Object>();
-
+        /**
+         * Constructor.
+         */
         HarvestStatusQueryBuilder() {
             super();
         }
@@ -1044,12 +1046,27 @@ public class JobDBDAO extends JobDAO {
         void setSqlString(String sqlString) {
             this.sqlString = sqlString;
         }
-
+        
+        /**
+         * Add the given class and given value to the list of paramClasses and 
+         * paramValues respectively.
+         * @param clazz a given class.
+         * @param value a given value
+         */
         void addParameter(Class<?> clazz, Object value) {
             paramClasses.addLast(clazz);
             paramValues.addLast(value);
         }
-
+        
+        /**
+         * Prepare a statement for the database that uses
+         * the sqlString, and the paramClasses, and paramValues.
+         * Only Integer, Long, String, and Date values accepted.
+         * @param c an Open connection to the harvestDatabase
+         * @return the prepared statement 
+         * @throws SQLException If unable to prepare the statement
+         * @throws UnknownID If one of the parameter classes is unexpected 
+         */
         PreparedStatement getPopulatedStatement(Connection c)
         throws SQLException {
             PreparedStatement stm = c.prepareStatement(sqlString);
@@ -1063,7 +1080,7 @@ public class JobDBDAO extends JobDAO {
                 Object pVal = pValues.next();
 
                 if (Integer.class.equals(pClass)) {
-                    stm.setInt(pIndex, (Integer)pVal);
+                    stm.setInt(pIndex, (Integer) pVal);
                 } else if (Long.class.equals(pClass)) {
                     stm.setLong(pIndex, (Long) pVal);
                 } else if (String.class.equals(pClass)) {
@@ -1147,8 +1164,8 @@ public class JobDBDAO extends JobDAO {
                     } else {
                         String harvestNamePattern =
                                             harvestName.replaceAll("\\*", "%");
-                        sql.append(" AND UPPER(harvestdefinitions.name) " +
-                       		                                " LIKE ?");
+                        sql.append(" AND UPPER(harvestdefinitions.name) " 
+                                            + " LIKE ?");
                         sq.addParameter(String.class, harvestNamePattern);
                     }
             }

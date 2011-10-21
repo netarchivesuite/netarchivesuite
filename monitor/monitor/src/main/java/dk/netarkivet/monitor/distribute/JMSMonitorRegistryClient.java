@@ -43,7 +43,7 @@ import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
  * The monitor registry client sends messages with JMS to register the host
  * for JMX monitoring.
  */
-public class JMSMonitorRegistryClient implements MonitorRegistryClient,
+public final class JMSMonitorRegistryClient implements MonitorRegistryClient,
                                                  CleanupIF {
     /** The singleton instance of this class. */
     private static JMSMonitorRegistryClient instance;
@@ -71,7 +71,7 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
     /** Get the registry client singleton.
      * @return The registry client.
      */
-    public synchronized static JMSMonitorRegistryClient getInstance() {
+    public static synchronized JMSMonitorRegistryClient getInstance() {
         if (instance == null) {
             instance = new JMSMonitorRegistryClient();
         }

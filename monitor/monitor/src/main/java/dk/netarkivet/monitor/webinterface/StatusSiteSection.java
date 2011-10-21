@@ -31,6 +31,7 @@ import dk.netarkivet.monitor.registry.distribute.MonitorRegistryServer;
  * Site section that creates the menu for system status.
  */
 public class StatusSiteSection extends SiteSection {
+    /** The monitorRegistryServer used by this SiteSection. */
     private MonitorRegistryServer monitorListener;
 
     /**
@@ -51,7 +52,7 @@ public class StatusSiteSection extends SiteSection {
     }
 
     /**
-     * Shut down monitor server when undeploying,
+     * Shut down monitor server when undeploying.
      */
     public void close() {
         if (monitorListener != null) {

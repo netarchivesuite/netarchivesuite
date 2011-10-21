@@ -47,7 +47,7 @@ public interface JMXProxyConnection {
      * @return an object implementing T. This object forwards all method calls
      * to the named MBean.
      */
-    public <T> T createProxy(ObjectName name, Class<T> intf);
+    <T> T createProxy(ObjectName name, Class<T> intf);
     /**
      * Get the set of ObjectNames from the remote MBeanserver, that matches
      * the given query.
@@ -56,12 +56,12 @@ public interface JMXProxyConnection {
      * @throws IOFailure on communication trouble.
      * @throws ArgumentNotValid on null or empty query.
      */
-    public Set<ObjectName> query(String query);
+    Set<ObjectName> query(String query);
 
     /** Returns true if this object still can return usable proxies.
      *
      * @return True if we can return usable proxies.  Otherwise, somebody
      * may have to make a new instance of JMXProxyFactory to get new proxies.
      */
-    public boolean isLive();
+    boolean isLive();
 }

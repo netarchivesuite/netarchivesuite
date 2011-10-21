@@ -89,25 +89,30 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
     }
 
     /** The class logger. */
-    final static Log log = LogFactory.getLog(BnfHeritrixLauncher.class);
+    static final Log log = LogFactory.getLog(BnfHeritrixLauncher.class);
 
     /**
      * Wait time in milliseconds (10s).
      */
-    private final static int SLEEP_TIME_MS = 10 * 60 * 1000;
+    private static final int SLEEP_TIME_MS = 10 * 60 * 1000;
 
     /**
      * Frequency in seconds for generating the full harvest report.
      * Also serves as delay before the first generation occurs.
      */
-    final static long FRONTIER_REPORT_GEN_FREQUENCY =
+    static final long FRONTIER_REPORT_GEN_FREQUENCY =
         Settings.getLong(HarvesterSettings.FRONTIER_REPORT_WAIT_TIME);
 
     /** The CrawlController used. */
     private BnfHeritrixController heritrixController;
-
+    /** Is the heritrix crawl finished. */
     private boolean crawlIsOver = false;
 
+    /**
+     * Private constructor for this class.
+     * @param files the files needed by Heritrix to launch a job.
+     * @throws ArgumentNotValid
+     */
     private BnfHeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
         super(files);
     }
@@ -167,7 +172,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
                         FRONTIER_REPORT_GEN_FREQUENCY,
                         FRONTIER_REPORT_GEN_FREQUENCY));
 
-            while (! crawlIsOver) {
+            while (!crawlIsOver) {
                 // Wait a bit
                 try {
                     synchronized (this) {

@@ -1,7 +1,7 @@
-/* File:    $Id: $
- * Revision: $Revision: $
- * Author:   $Author: $
- * Date:     $Date: $
+/* File:    $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -26,7 +26,7 @@ import dk.netarkivet.common.utils.ApplicationUtils;
 
 /**
  * This wrapper class is used to start the {@link HarvestJobManager}
- * application
+ * application.
  */
 public class HarvestJobManagerApplication {
 
