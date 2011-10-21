@@ -35,6 +35,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,8 +47,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.sun.mail.iap.Argument;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -1309,21 +1309,32 @@ public class FileUtils {
     
     /**
      * Get a humanly readable representation of the file size.
+     * The number is given with 2 decimals.
      * @param aFile a File object
      * @return a humanly readable representation of the file size (rounded)
      */
     public static String getHumanReadableFileSize(File aFile) {
         ArgumentNotValid.checkNotNull(aFile, "File aFile");
-        long filesize = aFile.length();
-        if (filesize < 1000){ // represent size in bytes
+        final long bytesPerOneKilobyte = 1000L;
+        final long bytesPerOneMegabyte = 1000000L;
+        final long bytesPerOneGigabyte = 1000000000L;
+        double filesize = aFile.length();
+        NumberFormat decFormat = new DecimalFormat("##.##");
+        
+        if (filesize < bytesPerOneKilobyte){ 
+            // represent size in bytes
             return filesize + " bytes";
-        } else if(filesize >= 1000 && filesize < 1000000) { // represent size in Kbytes
-            return (filesize / 1000L) + " Kbytes";
-        } else if(filesize >= 1000000 && filesize < 1000000000) { // represent size in Mbytes
-            return (filesize / 1000000L) + " Mbytes";
+        } else if(filesize >= bytesPerOneKilobyte 
+                && filesize < bytesPerOneMegabyte) { 
+            // represent size in Kbytes
+            return decFormat.format(filesize / bytesPerOneKilobyte) + " Kbytes";
+        } else if(filesize >= bytesPerOneMegabyte
+                && filesize < bytesPerOneGigabyte) { 
+            // represent size in Mbytes
+            return decFormat.format(filesize / bytesPerOneMegabyte) + " Mbytes";
         } else {
             // represent in Gbytes
-            return (filesize / 1000000000L) + " Gbytes";
+            return decFormat.format(filesize / bytesPerOneGigabyte) + " Gbytes";
         }
     }
 }
