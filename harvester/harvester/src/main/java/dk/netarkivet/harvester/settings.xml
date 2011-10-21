@@ -81,7 +81,7 @@
             <minSpaceLeft>400000000</minSpaceLeft>
             <oldjobsDir>oldjobs</oldjobsDir>
             <queuePriority></queuePriority>
-            <sendStatusDelay>600</sendStatusDelay>
+            <sendStatusDelay>60</sendStatusDelay>
             <heritrix>
                 <!-- 30 minutes -->
                 <inactivityTimeout>1800</inactivityTimeout>

@@ -25,7 +25,6 @@ package dk.netarkivet.harvester.harvesting.distribute;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,7 +58,6 @@ import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
-import dk.netarkivet.harvester.scheduler.HarvestDispatcher;
 
 /**
  * This class responds to JMS doOneCrawl messages from the HarvestScheduler and
@@ -496,10 +494,10 @@ implements CleanupIF {
             jmsConnection.setListener(jobChannel, this);
             log.info(STARTED_MESSAGE);
         } else {
-            String PAUSED_MESSAGE = "Not enough available diskspace. Only "
+            String pausedMessage = "Not enough available diskspace. Only "
                     + availableSpace + " bytes available. Harvester is paused.";
-            log.warn(PAUSED_MESSAGE);
-            NotificationsFactory.getInstance().errorEvent(PAUSED_MESSAGE);
+            log.warn(pausedMessage);
+            NotificationsFactory.getInstance().errorEvent(pausedMessage);
         }
     }
 
@@ -803,15 +801,16 @@ implements CleanupIF {
         private final int SEND_STATUS_DELAY =
                 Settings.getInt(HarvesterSettings.SEND_STATUS_DELAY);
 
-        /** The status */
+        /** The status. */
         private boolean running = false;
 
-        /** Handles the periodic sending of status messages */
+        /** Handles the periodic sending of status messages. */
         private PeriodicTaskExecutor statusTransmitter;
 
         /**
          * Returns <code>true</code> if the a doOneCrawl is running, else 
          * <code>false</code>.
+         * @return Whether a crawl running.
          */
         public boolean isRunning() {
             return running;
