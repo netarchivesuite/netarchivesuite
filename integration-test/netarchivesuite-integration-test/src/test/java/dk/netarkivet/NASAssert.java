@@ -29,9 +29,8 @@ import org.testng.Assert;
 
 public class NASAssert extends Assert {
 
-  static public void assertEquals(Set<Object> expectedSet, Set<Object> resultSet) {
-    Set<Object> disjunctInExpectedSet = 
-      new HashSet<Object>(expectedSet);
+  public static void assertEquals(Set<Object> expectedSet, Set<Object> resultSet) {
+    Set<Object> disjunctInExpectedSet = new HashSet<Object>(expectedSet);
     disjunctInExpectedSet.removeAll(resultSet);
 
     Set<Object> disjunctInResultSet = 
@@ -39,9 +38,11 @@ public class NASAssert extends Assert {
     disjunctInResultSet.removeAll(expectedSet);
 
     if (!disjunctInExpectedSet.isEmpty() || !disjunctInResultSet.isEmpty()) {
-            fail("Set not equal, Expected set contained the following elements "
+            fail("Set not equal, Expected set contained the following " 
+                    + disjunctInExpectedSet.size() + " elements "
                     + " not found in the result set:\n" + disjunctInExpectedSet
-                    + "\nand the following elements in the result set where not"
+                    + "\nand the following " +  disjunctInResultSet.size 
+                    + " elements in the result set where not"
                     + " found in the expected set\n" + disjunctInResultSet);
         }
   }
