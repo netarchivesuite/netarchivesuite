@@ -52,7 +52,6 @@ import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 
 /**
@@ -83,7 +82,7 @@ public abstract class CrawlLogIndexCache extends
             = LogFactory.getLog(CrawlLogIndexCache.class.getName());
     /** The time to sleep between each check of completeness.*/
     private final long sleepintervalBetweenCompletenessChecks 
-    	= Settings.getLong(ArchiveSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
+        = Settings.getLong(ArchiveSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
     
     /**
      * Constructor for the CrawlLogIndexCache class.
@@ -119,8 +118,8 @@ public abstract class CrawlLogIndexCache extends
             }
         }
         if (!missing.isEmpty()) {
-            log.warn("Data not found for " + missing.size() 
-            		+ " jobs: " +  missing);
+            log.warn("Data not found for " + missing.size() + " jobs: "
+                    + missing);
         }
         for (Long id : missing) {
             returnMap.remove(id);
@@ -246,8 +245,8 @@ public abstract class CrawlLogIndexCache extends
             ZipUtils.gzipFiles(new File(indexLocation), resultFile);
             log.info("Completed combining a dataset with " 
                     + datasetSize + " crawl logs (entries in combined index: "
-                    + docsInIndex + ") - compressed index has size " + FileUtils.getHumanReadableFileSize(resultFile));
-                    
+                    + docsInIndex + ") - compressed index has size " 
+                    + FileUtils.getHumanReadableFileSize(resultFile));
         } catch (IOException e) {
             throw new IOFailure("Error setting up craw.log index framework for "
                     + resultFile.getAbsolutePath(), e);
@@ -374,7 +373,6 @@ public abstract class CrawlLogIndexCache extends
      */
     protected static DigestIndexer createStandardIndexer(String indexLocation) 
     throws IOException {
-        
         // Setup Lucene for indexing our crawllogs
         // MODE_BOTH: Both URL's and Hash are indexed: Alternatives:
         // DigestIndexer.MODE_HASH or DigestIndexer.MODE_URL
