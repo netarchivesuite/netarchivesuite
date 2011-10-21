@@ -46,7 +46,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCUtils;
-import dk.netarkivet.common.utils.warc.WARCUtils;
+import dk.netarkivet.common.utils.WARCUtils;
 
 /**
  * Class to hold the result of a lookup operation in the bitarchive:
