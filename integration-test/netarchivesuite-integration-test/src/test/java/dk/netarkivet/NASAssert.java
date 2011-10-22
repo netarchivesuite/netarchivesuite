@@ -41,7 +41,7 @@ public class NASAssert extends Assert {
             fail("Set not equal, Expected set contained the following " 
                     + disjunctInExpectedSet.size() + " elements "
                     + " not found in the result set:\n" + disjunctInExpectedSet
-                    + "\nand the following " +  disjunctInResultSet.size 
+                    + "\nand the following " +  disjunctInResultSet.size()
                     + " elements in the result set where not"
                     + " found in the expected set\n" + disjunctInResultSet);
         }
