@@ -38,12 +38,12 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainConfigurationKey;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
+import dk.netarkivet.harvester.datamodel.SparseDomainConfiguration;
 import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
 
 /**
@@ -231,7 +231,7 @@ public final class SelectiveHarvest {
         }
         String domainName = domainConfigPair[0];
         String configName = domainConfigPair[1];
-        DomainConfigurationKey key = new DomainConfigurationKey(domainName,
+        SparseDomainConfiguration key = new SparseDomainConfiguration(domainName,
                 configName);
         
         hddao.removeDomainConfiguration(sph.getOid(), key);

@@ -285,11 +285,11 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     /**
      * Remove Domain configuration from a specific PartialHarvest.
      * @param harvestId Id for a specific PartialHarvest
-     * @param key a DomainConfigurationKey uniquely identifying the 
+     * @param key a SparseDomainConfiguration uniquely identifying the 
      * domainconfig.
      */
     public abstract void removeDomainConfiguration(Long harvestId, 
-            DomainConfigurationKey key);
+            SparseDomainConfiguration key);
     /**
      * Update the given PartialHarvest (i.e. Selective Harvest) with a new 
      * time for the next harvestrun.
@@ -301,10 +301,10 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     /**
      * Add a domainconfiguration to a PartialHarvest.
      * @param hdd a given PartialHarvest
-     * @param dc a DomainConfigurationKey for a domainconfiguration
+     * @param sparseDomainConfiguration a reduced domainconfiguration object
      */
     public abstract void addDomainConfiguration(PartialHarvest hdd,
-            DomainConfigurationKey dc);
+            SparseDomainConfiguration sparseDomainConfiguration);
     /**
      * Reset the list of domainconfiguration for a PartialHarvest.
      * @param hdd a given PartialHarvest

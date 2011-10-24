@@ -150,7 +150,7 @@ public class FullHarvestTester extends DataModelTestCase {
         newHarvest = (FullHarvest) hddao.getHarvestDefinition("new");
         Iterator<DomainConfiguration> configs = newHarvest.getDomainConfigurations();
         while (configs.hasNext()) {
-             if (configs.next().getDomain().equals("netarkivet.dk")) {
+             if (configs.next().getDomainName().equals("netarkivet.dk")) {
                  fail("DomainConfiguration for netarkivet.dk found but should "
                       + "be absent because it has status DOWNLOAD_UNFINISHED in"
                       + " the previous harvest");
@@ -227,7 +227,7 @@ public class FullHarvestTester extends DataModelTestCase {
     private void assertDomainConfigurationsForDomain(Iterator<DomainConfiguration> domainConfigurations, 
             String anotherDomainName) {
         while (domainConfigurations.hasNext()) {
-            String domainName = domainConfigurations.next().getDomain();
+            String domainName = domainConfigurations.next().getDomainName();
             if (domainName.equals(anotherDomainName)){
                 return;
             }
@@ -238,7 +238,7 @@ public class FullHarvestTester extends DataModelTestCase {
     private void assertNoDomainConfigurationsForDomain(Iterator<DomainConfiguration> domainConfigurations, 
             String anotherDomainName) {
         while (domainConfigurations.hasNext()) {
-            String domainName = domainConfigurations.next().getDomain();
+            String domainName = domainConfigurations.next().getDomainName();
             if (domainName.equals(anotherDomainName)){
                 fail ("DomainConfiguration for Domain '" + anotherDomainName + "' found");
             }
@@ -248,7 +248,7 @@ public class FullHarvestTester extends DataModelTestCase {
     private void assertNoAliasDomainConfigurations(Map<String, Domain> domains, 
             Iterator<DomainConfiguration> iterator) {
         while (iterator.hasNext()) {
-            Domain d = domains.get(iterator.next().getDomain());
+            Domain d = domains.get(iterator.next().getDomainName());
             if (d.getAliasInfo() != null) {
                 AliasInfo ai = new AliasInfo(d.getName(), d.getAliasInfo().getAliasOf(), 
                         d.getAliasInfo().getLastChange());

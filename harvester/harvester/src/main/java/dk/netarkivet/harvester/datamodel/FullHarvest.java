@@ -239,7 +239,7 @@ public class FullHarvest extends HarvestDefinition {
                         return config;
                     }
                 }
-                Domain d = dao.read(config.getDomain());
+                Domain d = dao.read(config.getDomainName());
                 
                 if (d.getAliasInfo() != null
                     && !d.getAliasInfo().isExpired()) {

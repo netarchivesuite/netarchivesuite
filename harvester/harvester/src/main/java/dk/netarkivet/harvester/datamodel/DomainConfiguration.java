@@ -97,9 +97,9 @@ public class DomainConfiguration implements Named {
     public DomainConfiguration(String theConfigName, Domain domain,
                                List<SeedList> seedlists,
                                List<Password> passwords) {
-        // We cannot check domain for not null
-        this(theConfigName, domain.getName(), domain.getHistory(), domain.getCrawlerTraps(), 
-                seedlists, passwords);
+        //ArgumentNotValid.checkNotNull(domain, "Domain domain");
+        this(theConfigName, domain.getName(), domain.getHistory(), 
+                domain.getCrawlerTraps(), seedlists, passwords);
     }
 
     /**
@@ -247,7 +247,7 @@ public class DomainConfiguration implements Named {
      *
      * @return the name of the domain aggregating this configuration.
      */
-    public String getDomain() {
+    public String getDomainName() {
         return domainName;
     }
 

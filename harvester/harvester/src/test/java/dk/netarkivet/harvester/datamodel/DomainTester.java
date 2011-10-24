@@ -1325,7 +1325,7 @@ public class DomainTester extends DataModelTestCase {
         while (passwordIterator.hasNext()) {
             passwordList.add(passwordIterator.next());
         }
-        return new DomainConfiguration(nameOfClone, config.getDomain(), config.getDomainhistory(), 
+        return new DomainConfiguration(nameOfClone, config.getDomainName(), config.getDomainhistory(), 
         		config.getCrawlertraps(), seedListList, passwordList);
     }
 

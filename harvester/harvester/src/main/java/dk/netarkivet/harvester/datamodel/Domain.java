@@ -611,7 +611,7 @@ public class Domain implements Named {
                 while (configs.hasNext()) {
                     DomainConfiguration dc = configs.next();
                     if (dc.getName().equals(configName)
-                        && dc.getDomain().equals(getName())) {
+                        && dc.getDomainName().equals(getName())) {
                         usages.add(hd.getName());
                     }
                 }

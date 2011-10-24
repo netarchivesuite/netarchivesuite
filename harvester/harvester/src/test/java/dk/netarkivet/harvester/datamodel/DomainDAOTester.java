@@ -610,7 +610,7 @@ public class DomainDAOTester extends DataModelTestCase {
                     dao.mayDelete(d.getConfiguration(nonDefaultConfigName)));
         configs.clear();
         configs.add(d.getDefaultConfiguration());
-        hddao.addDomainConfiguration(hd, new DomainConfigurationKey(
+        hddao.addDomainConfiguration(hd, new SparseDomainConfiguration(
         		d.getDefaultConfiguration()));
         hd.setDomainConfigurations(configs);
         
@@ -741,8 +741,8 @@ public class DomainDAOTester extends DataModelTestCase {
             DomainConfiguration cfg2 = next.getDefaultConfiguration();
             assertTrue("Order should be right, comparing " + cfg1
                        + " and " + cfg2
-                       + ":\n("+ cfg1.getOrderXmlName() +  "," + cfg1.getMaxBytes() + "," + cfg1.getDomain() +  ")"
-                       + "\n("+ cfg2.getOrderXmlName() +  "," + cfg2.getMaxBytes() + "," + cfg2.getDomain() +  ")",
+                       + ":\n("+ cfg1.getOrderXmlName() +  "," + cfg1.getMaxBytes() + "," + cfg1.getDomainName() +  ")"
+                       + "\n("+ cfg2.getOrderXmlName() +  "," + cfg2.getMaxBytes() + "," + cfg2.getDomainName() +  ")",
                        cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName())
                        < 0 || (cfg1.getOrderXmlName().compareTo(
                                cfg2.getOrderXmlName()) == 0)

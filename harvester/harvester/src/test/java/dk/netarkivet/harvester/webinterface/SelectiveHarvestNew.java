@@ -41,12 +41,12 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainConfigurationKey;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
+import dk.netarkivet.harvester.datamodel.SparseDomainConfiguration;
 
 /**
  * This class contains the methods for updating data for selective harvests.
@@ -110,7 +110,7 @@ public class SelectiveHarvestNew {
                     request.getParameter(Constants.UNKNOWN_DOMAINS_PARAM));
             log.debug("Adding " + dcList.size() + " configurations");
             for (DomainConfiguration dc: dcList) {
-            	hdDao.addDomainConfiguration(hdd, new DomainConfigurationKey(dc));
+            	hdDao.addDomainConfiguration(hdd, new SparseDomainConfiguration(dc));
             }
         }
 
@@ -225,7 +225,7 @@ public class SelectiveHarvestNew {
         }
         String domainName = domainConfigPair[0];
         String configName = domainConfigPair[1];
-        DomainConfigurationKey dcKey = new DomainConfigurationKey(
+        SparseDomainConfiguration dcKey = new SparseDomainConfiguration(
                 domainName, configName);
         hdd.removeDomainConfiguration(dcKey);
         HarvestDefinitionDAO.getInstance().removeDomainConfiguration(hdd.getOid(), dcKey);

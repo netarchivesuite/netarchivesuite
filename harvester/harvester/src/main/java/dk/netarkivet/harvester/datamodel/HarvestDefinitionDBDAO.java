@@ -239,7 +239,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         while (dcs.hasNext()) {
             DomainConfiguration dc = dcs.next();
             s.setLong(1, id);
-            s.setString(2, dc.getDomain());
+            s.setString(2, dc.getDomainName());
             s.setString(3, dc.getName());
             s.executeUpdate();
         }
@@ -390,8 +390,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 // To avoid holding on to the readlock while getting domains,
                 // we grab the strings first, then look up domains and configs.
                 final DomainDAO domainDao = DomainDAO.getInstance();
-                List<DomainConfigurationKey> configs 
-                    = new ArrayList<DomainConfigurationKey>();
+                List<SparseDomainConfiguration> configs 
+                    = new ArrayList<SparseDomainConfiguration>();
                 s = c.prepareStatement(
                         "SELECT domains.name, configurations.name "
                         + "FROM domains, configurations, harvest_configs "
@@ -402,15 +402,16 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 s.setLong(1, harvestDefinitionID);
                 res = s.executeQuery();
                 while (res.next()) {
-                    configs.add(new DomainConfigurationKey(res.getString(1),
+                    configs.add(new SparseDomainConfiguration(res.getString(1),
                             res.getString(2)));
                 }
                 s.close();
                 List<DomainConfiguration> configurations 
                     = new ArrayList<DomainConfiguration>();
-                for (DomainConfigurationKey domainConfig : configs) {
+                for (SparseDomainConfiguration domainConfig : configs) {
                     configurations.add(domainDao.getDomainConfiguration(
-                            domainConfig.domainName, domainConfig.configName));
+                            domainConfig.getDomainName(),
+                            domainConfig.getConfigurationName()));
                 }
 
                 Schedule schedule = ScheduleDAO.getInstance()
@@ -1306,16 +1307,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 while (st.hasMoreTokens()) {
                     String seed = st.nextToken();
 
-                    boolean bFound = false;
+                    boolean isDuplicate = false;
                     for (String entry : seeds) {
                         if (entry.equals(seed)) {
-                            bFound = true;
+                            isDuplicate = true;
                             break;
                         }
                     }
-
-                    // duplicates will not be added
-                    if (!bFound) {
+                    if (!isDuplicate) {  // duplicates will not be added
                         seeds.add(seed);
                     }
                 }
@@ -1446,7 +1445,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      */
     @Override
     public void removeDomainConfiguration(Long harvestId,
-            DomainConfigurationKey key) {
+            SparseDomainConfiguration key) {
         ArgumentNotValid.checkNotNull(key, "DomainConfigurationKey key");
         if (harvestId == null) {
             // Don't need to do anything, if PartialHarvest is not
@@ -1465,8 +1464,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "WHERE domains.name = ? AND configurations.name = ?"
                     + "  AND domains.domain_id = configurations.domain_id)");
             s.setLong(1, harvestId);
-            s.setString(2, key.domainName);
-            s.setString(3, key.configName);
+            s.setString(2, key.getDomainName());
+            s.setString(3, key.getConfigurationName());
             s.executeUpdate();
         } catch (SQLException e) {
             log.warn(
@@ -1509,7 +1508,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     @Override
     public void addDomainConfiguration(PartialHarvest ph,
-            DomainConfigurationKey dcKey) {
+            SparseDomainConfiguration dcKey) {
         ArgumentNotValid.checkNotNull(ph, "PartialHarvest ph");
         ArgumentNotValid.checkNotNull(dcKey, "DomainConfigurationKey dcKey");
 
@@ -1522,8 +1521,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "WHERE domains.name = ? AND configurations.name = ?"
                     + "  AND domains.domain_id = configurations.domain_id");
             s.setLong(1, ph.getOid());
-            s.setString(2, dcKey.domainName);
-            s.setString(3, dcKey.configName);
+            s.setString(2, dcKey.getDomainName());
+            s.setString(3, dcKey.getConfigurationName());
             s.executeUpdate();
             s.close();
         } catch (SQLException e) {

@@ -290,7 +290,7 @@ public class JobTester extends DataModelTestCase {
         DomainConfiguration anotherConfig = TestInfo.getConfigurationNotDefault(
                 TestInfo.getDomainNotDefault());
         assertTrue("Job should accept configuration associated with domain "
-                   + anotherConfig.getDomain(),
+                   + anotherConfig.getDomainName(),
                    job.canAccept(anotherConfig));
 
         //Test split according to byte limits
@@ -677,7 +677,7 @@ public class JobTester extends DataModelTestCase {
         DomainConfiguration dc1 = domain.getDefaultConfiguration();
         boolean strictMode = true;
         domain.setCrawlerTraps(Collections.<String>emptyList(), strictMode);
-        String domain1name = dc1.getDomain();
+        String domain1name = dc1.getDomainName();
 
         //Make a configuration with two crawlertraps
         Domain domain2 = TestInfo.getDomainNotDefault();
@@ -690,7 +690,7 @@ public class JobTester extends DataModelTestCase {
         traps.add(crawlerTrap2);
         domain2.setCrawlerTraps(traps, strictMode);
         dc2.setCrawlertraps(traps);
-        String domain2name = dc2.getDomain();
+        String domain2name = dc2.getDomainName();
 
         //Make a job with the two configurations
         Job j = Job.createJob(Long.valueOf(42L), dc1, 0);

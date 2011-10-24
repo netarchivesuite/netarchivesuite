@@ -731,7 +731,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 configList.size() > 0);
         int configsize = configList.size();
         DomainConfiguration dc = configList.get(0);
-        hddao.removeDomainConfiguration(ph.getOid(), new DomainConfigurationKey(dc));
+        hddao.removeDomainConfiguration(ph.getOid(), new SparseDomainConfiguration(dc));
         PartialHarvest ph1 = (PartialHarvest) hddao.read(partialharvestId);
         configList =
             IteratorUtils.toList(ph1.getDomainConfigurations());

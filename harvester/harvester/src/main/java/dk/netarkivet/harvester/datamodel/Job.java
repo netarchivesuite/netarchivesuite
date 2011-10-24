@@ -468,7 +468,7 @@ public class Job implements Serializable {
         }
 
         //Add configuration in map
-        domainConfigurationMap.put(cfg.getDomain(), cfg.getName());
+        domainConfigurationMap.put(cfg.getDomainName(), cfg.getName());
 
         // Add the seeds from the configuration to the Job seeds.
         // Take care of duplicates.
@@ -557,7 +557,7 @@ public class Job implements Serializable {
     private void editOrderXMLAddPerDomainCrawlerTraps(DomainConfiguration cfg) {
         //Get the regexps to exclude
         List<String> crawlerTraps = cfg.getCrawlertraps();
-        String elementName = cfg.getDomain();
+        String elementName = cfg.getDomainName();
         editOrderXMLAddCrawlerTraps(elementName, crawlerTraps);
     }
 
@@ -627,9 +627,9 @@ public class Job implements Serializable {
 
         // check if domain in DomainConfiguration cfg is not already in this job
         // domainName is used as key in domainConfigurationMap
-        if (domainConfigurationMap.containsKey(cfg.getDomain())) {
+        if (domainConfigurationMap.containsKey(cfg.getDomainName())) {
             log.debug("Job already has a configuration for Domain '"
-                    + cfg.getDomain() +"'.");
+                    + cfg.getDomainName() +"'.");
             return false;
         }
 

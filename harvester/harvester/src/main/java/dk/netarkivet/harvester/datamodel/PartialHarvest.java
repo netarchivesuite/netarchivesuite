@@ -58,8 +58,8 @@ public class PartialHarvest extends HarvestDefinition {
     /** Set of domain configurations being harvested by this harvest.
      * Entries in this set are unique on configuration name + domain name.
      */
-    private Map<DomainConfigurationKey, DomainConfiguration> domainConfigurations
-            = new HashMap<DomainConfigurationKey, DomainConfiguration>();
+    private Map<SparseDomainConfiguration, DomainConfiguration> domainConfigurations
+            = new HashMap<SparseDomainConfiguration, DomainConfiguration>();
 
     /** The schedule used by this PartialHarvest. */
     private Schedule schedule;
@@ -212,9 +212,9 @@ public class PartialHarvest extends HarvestDefinition {
 
     /**
      * Remove domainconfiguration from this partialHarvest.
-     * @param dcKey domainCondiguration key
+     * @param dcKey domainConfiguration key
      */
-    public void removeDomainConfiguration(DomainConfigurationKey dcKey) {
+    public void removeDomainConfiguration(SparseDomainConfiguration dcKey) {
         ArgumentNotValid.checkNotNull(dcKey, "DomainConfigurationKey dcKey");
         if (domainConfigurations.remove(dcKey) == null) {
             log.warn("Unable to delete domainConfiguration '" 
@@ -228,7 +228,7 @@ public class PartialHarvest extends HarvestDefinition {
     public void addDomainConfiguration(DomainConfiguration newConfiguration) {
         ArgumentNotValid.checkNotNull(newConfiguration, 
                 "DomainConfiguration newConfiguration");
-        DomainConfigurationKey key = new DomainConfigurationKey(
+        SparseDomainConfiguration key = new SparseDomainConfiguration(
                 newConfiguration);
         if (domainConfigurations.containsKey(key)) {
             log.warn("Unable to add domainConfiguration '" 
@@ -250,8 +250,7 @@ public class PartialHarvest extends HarvestDefinition {
     }
     
     /**
-     * 
-     * @return 
+     * @return the domainconfigurations as a list
      */
     public Collection<DomainConfiguration> getDomainConfigurationsAsList() {
         return domainConfigurations.values();
@@ -271,8 +270,9 @@ public class PartialHarvest extends HarvestDefinition {
     }
     
     /**
-     * 
-     * @param configs
+     * Add the list of configurations to the configuration associated with this
+     * PartialHarvest.
+     * @param configs a List of configurations
      */
     private void addConfigurations(List<DomainConfiguration> configs) {
         for (DomainConfiguration dc : configs) {
@@ -281,11 +281,11 @@ public class PartialHarvest extends HarvestDefinition {
     }
 
     /**
-     * 
-     * @param dc
+     * Add a configuration to this PartialHarvest.
+     * @param dc the given configuration
      */
     private void addConfiguration(DomainConfiguration dc) {
-        domainConfigurations.put(new DomainConfigurationKey(dc), dc);
+        domainConfigurations.put(new SparseDomainConfiguration(dc), dc);
     }
 
     /**
@@ -488,7 +488,7 @@ public class PartialHarvest extends HarvestDefinition {
             HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
             for (DomainConfiguration dc : newDcs) {
                 addConfiguration(dc);
-                hddao.addDomainConfiguration(this, new DomainConfigurationKey(
+                hddao.addDomainConfiguration(this, new SparseDomainConfiguration(
                         dc));
             }
             hddao.update(this);

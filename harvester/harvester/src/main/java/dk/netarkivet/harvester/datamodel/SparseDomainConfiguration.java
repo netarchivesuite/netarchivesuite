@@ -42,7 +42,7 @@ public class SparseDomainConfiguration {
      * @param configurationName Name of configuration.
      * @throws ArgumentNotValid if either argument is null or empty.
      */
-    SparseDomainConfiguration(String domainName,
+    public SparseDomainConfiguration(String domainName,
                               String configurationName){
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         ArgumentNotValid.checkNotNullOrEmpty(configurationName,
@@ -50,6 +50,17 @@ public class SparseDomainConfiguration {
         this.domainName = domainName;
         this.configurationName = configurationName;
     }
+    
+    /** Alternate constructor taking a DomainConfiguration as input.
+     * 
+     * @param dc a DomainConfiguration 
+     */
+    public SparseDomainConfiguration(DomainConfiguration dc) {
+        ArgumentNotValid.checkNotNull(dc, "DomainConfiguration dc");
+        this.domainName = dc.getDomainName();
+        this.configurationName = dc.getName();
+    }
+    
 
     /**
      * Get domain name.

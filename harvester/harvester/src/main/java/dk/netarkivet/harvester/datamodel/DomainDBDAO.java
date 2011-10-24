@@ -1359,7 +1359,7 @@ public class DomainDBDAO extends DomainDAO {
     public boolean mayDelete(DomainConfiguration config) {
         ArgumentNotValid.checkNotNull(config, "config");
         String defaultConfigName 
-           = this.getDefaultDomainConfigurationName(config.getDomain());
+           = this.getDefaultDomainConfigurationName(config.getDomainName());
         Connection c = HarvestDBConnection.get();
         try {
         // Never delete default config and don't delete configs being used.
@@ -1864,7 +1864,7 @@ public class DomainDBDAO extends DomainDAO {
             protected HarvestInfo filter(DomainConfiguration o){
                 DomainConfiguration config = o;
                 DomainHistory domainHistory 
-                    = getDomainHistory(config.getDomain());
+                    = getDomainHistory(config.getDomainName());
                 HarvestInfo hi = domainHistory.getSpecifiedHarvestInfo(
                         previousHarvestDefinition.getOid(),
                         config.getName());
