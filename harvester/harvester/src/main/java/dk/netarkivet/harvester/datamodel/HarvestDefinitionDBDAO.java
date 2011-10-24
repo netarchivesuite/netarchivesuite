@@ -645,7 +645,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @param c
      *            An open connection to the harvestDatabase
      * @param oid
-     *            A potentiel identifier for a harvestdefinition
+     *            A potential identifier for a harvestdefinition
      * @return true If a harvestdefinition exists with the given id.
      * @see HarvestDefinitionDAO#exists(Long)
      */
@@ -784,76 +784,76 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 = new HashMap<Integer, HarvestRunInfo>();
             List<HarvestRunInfo> infoList = new ArrayList<HarvestRunInfo>();
 
-            // Synchronize on this to make sure no new jobs are added between
-            // two selects
-            synchronized (this) {
-                // Select dates and counts for all different statues
-                // for each run
-                s = c.prepareStatement("SELECT name, harvest_num, status, "
-                        + "       MIN(startdate), MAX(enddate), COUNT(job_id)"
-                        + "  FROM jobs, harvestdefinitions"
-                        + " WHERE harvestdefinitions.harvest_id = ?"
-                        + "   AND jobs.harvest_id "
-                        + "= harvestdefinitions.harvest_id"
-                        + " GROUP BY name, harvest_num, status"
-                        + " ORDER BY harvest_num DESC");
-                s.setLong(1, harvestID);
-                res = s.executeQuery();
-                while (res.next()) {
-                    int runNr = res.getInt(2);
-                    HarvestRunInfo info = runInfos.get(runNr);
-                    if (info == null) {
-                        String name = res.getString(1);
-                        info = new HarvestRunInfo(harvestID, name, runNr);
-                        // Put into hash for easy access when updating.
-                        runInfos.put(runNr, info);
-                        // Add to return list in order given by DB
-                        infoList.add(info);
-                    }
-                    JobStatus status = JobStatus.fromOrdinal(res.getInt(3));
-                    // For started stati, check start date
-                    if (status != JobStatus.NEW
-                            && status != JobStatus.SUBMITTED
-                            && status != JobStatus.RESUBMITTED) {
-                        Date startDate = DBUtils.getDateMaybeNull(res, 4);
-                        if (info.getStartDate() == null
-                                || (startDate != null && startDate.before(info
-                                        .getStartDate()))) {
-                            info.setStartDate(startDate);
-                        }
-                    }
-                    // For finished jobs, check end date
-                    if (status == JobStatus.DONE 
-                            || status == JobStatus.FAILED) {
-                        Date endDate = DBUtils.getDateMaybeNull(res, 5);
-                        if (info.getEndDate() == null
-                                || (endDate != null && endDate.after(info
-                                        .getEndDate()))) {
-                            info.setEndDate(endDate);
-                        }
-                    }
-                    int count = res.getInt(6);
-                    info.setStatusCount(status, count);
+       
+            // Select dates and counts for all different statues
+            // for each run
+            s = c.prepareStatement("SELECT name, harvest_num, status, "
+                    + "       MIN(startdate), MAX(enddate), COUNT(job_id)"
+                    + "  FROM jobs, harvestdefinitions"
+                    + " WHERE harvestdefinitions.harvest_id = ?"
+                    + "   AND jobs.harvest_id "
+                    + "= harvestdefinitions.harvest_id"
+                    + " GROUP BY name, harvest_num, status"
+                    + " ORDER BY harvest_num DESC");
+            s.setLong(1, harvestID);
+            res = s.executeQuery();
+            while (res.next()) {
+                int runNr = res.getInt(2);
+                HarvestRunInfo info = runInfos.get(runNr);
+                if (info == null) {
+                    String name = res.getString(1);
+                    info = new HarvestRunInfo(harvestID, name, runNr);
+                    // Put into hash for easy access when updating.
+                    runInfos.put(runNr, info);
+                    // Add to return list in order given by DB
+                    infoList.add(info);
                 }
-
-                s = c.prepareStatement("SELECT jobs.harvest_num,"
-                        + "SUM(historyinfo.bytecount), "
-                        + "SUM(historyinfo.objectcount),"
-                        + "COUNT(jobs.status)" + " FROM jobs, historyinfo "
-                        + " WHERE jobs.harvest_id = ? "
-                        + "   AND historyinfo.job_id = jobs.job_id"
-                        + " GROUP BY jobs.harvest_num"
-                        + " ORDER BY jobs.harvest_num");
-                s.setLong(1, harvestID);
-                res = s.executeQuery();
+                JobStatus status = JobStatus.fromOrdinal(res.getInt(3));
+                // For started states, check start date
+                if (status != JobStatus.NEW && status != JobStatus.SUBMITTED
+                        && status != JobStatus.RESUBMITTED) {
+                    Date startDate = DBUtils.getDateMaybeNull(res, 4);
+                    if (info.getStartDate() == null
+                            || (startDate != null && startDate.before(info
+                                    .getStartDate()))) {
+                        info.setStartDate(startDate);
+                    }
+                }
+                // For finished jobs, check end date
+                if (status == JobStatus.DONE || status == JobStatus.FAILED) {
+                    Date endDate = DBUtils.getDateMaybeNull(res, 5);
+                    if (info.getEndDate() == null
+                            || (endDate != null && endDate.after(info
+                                    .getEndDate()))) {
+                        info.setEndDate(endDate);
+                    }
+                }
+                int count = res.getInt(6);
+                info.setStatusCount(status, count);
             }
+
+            s = c.prepareStatement("SELECT jobs.harvest_num,"
+                    + "SUM(historyinfo.bytecount), "
+                    + "SUM(historyinfo.objectcount)," + "COUNT(jobs.status)"
+                    + " FROM jobs, historyinfo "
+                    + " WHERE jobs.harvest_id = ? "
+                    + "   AND historyinfo.job_id = jobs.job_id"
+                    + " GROUP BY jobs.harvest_num"
+                    + " ORDER BY jobs.harvest_num");
+            s.setLong(1, harvestID);
+            res = s.executeQuery();
 
             while (res.next()) {
                 final int harvestNum = res.getInt(1);
                 HarvestRunInfo info = runInfos.get(harvestNum);
-                // TODO If missing?
-                info.setBytesHarvested(res.getLong(2));
-                info.setDocsHarvested(res.getLong(3));
+                if (info != null) {
+                    info.setBytesHarvested(res.getLong(2));
+                    info.setDocsHarvested(res.getLong(3));
+                } else {
+                    log.debug("Harvestnum " + harvestNum + " for harvestID " 
+                        + harvestID 
+                        + " is skipped. Must have arrived between selects");
+                }
             }
 
             // Make sure that jobs that aren't really done don't have end date.
