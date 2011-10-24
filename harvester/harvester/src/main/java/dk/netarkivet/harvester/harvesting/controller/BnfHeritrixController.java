@@ -181,8 +181,9 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         /** Fetches the frontier report. */
         frontierReport;
     }
+    
     /**
-     * 
+     * Shall we abort, if we lose the connection to Heritrix.
      */
     private static final boolean ABORT_IF_CONN_LOST = Settings
             .getBoolean(HarvesterSettings.ABORT_IF_CONNECTION_LOST);
@@ -224,6 +225,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      * The name of the main Heritrix MBean.
      */
     private String crawlServiceBeanName;
+    /** Have we connected successfully to Heritrix yet. */
+    private boolean hasConnectedSuccessful = false;
 
     /**
      * Create a BnfHeritrixController object.
@@ -907,6 +910,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                 getJmxPort(), Settings
                         .get(HarvesterSettings.HERITRIX_JMX_USERNAME), Settings
                         .get(HarvesterSettings.HERITRIX_JMX_PASSWORD));
+        // state that we have had a successful connection to Heritrix.
+        this.hasConnectedSuccessful = true;
     }
 
     /**
