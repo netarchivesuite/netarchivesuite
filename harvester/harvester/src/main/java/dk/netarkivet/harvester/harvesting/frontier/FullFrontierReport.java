@@ -277,7 +277,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Releases all resources once this report is to be discarded.
-     * NB this method MUST be explicitely called!
+     * NB this method MUST be explicitly called!
      */
     public void dispose() {
 
@@ -356,6 +356,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Returns an iterator on lines having a given currentSize.
+     * @param dupValue 
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnDuplicateCurrentSize(long dupValue) {
@@ -383,6 +384,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Returns an iterator on lines having a given totalSpend.
+     * @param dupValue 
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnDuplicateSpentBudget(long dupValue) {
