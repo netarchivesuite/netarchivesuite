@@ -60,9 +60,12 @@ import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
  */
 public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
+    /** Max length of urls stored in tables. */
+    private static final int MAX_URL_LENGTH = 1000;
 
     /**
-     * Defines the order of columns in SQL queries.
+     * Defines the order of columns in the runningJobsMonitor table.
+     * Used in SQL queries.
      */
     private static enum HM_COLUMN {
         jobId,
@@ -206,7 +209,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 } else {
                     sql.append("INSERT INTO runningJobsMonitor (");
                     sql.append(HM_COLUMN.getColumnsInOrder());
-                    sql.append(") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    sql.append(
+                            ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 }
 
                 stm = c.prepareStatement(sql.toString());
@@ -221,7 +225,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 stm.setString(
                         HM_COLUMN.hostUrl.rank(), startedJobInfo.getHostUrl());
                 stm.setDouble(
-                        HM_COLUMN.progress.rank(), startedJobInfo.getProgress());
+                        HM_COLUMN.progress.rank(),
+                        startedJobInfo.getProgress());
                 stm.setLong(
                         HM_COLUMN.queuedFilesCount.rank(),
                         startedJobInfo.getQueuedFilesCount());
@@ -393,8 +398,6 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      */
     @Override
     public StartedJobInfo[] getFullJobHistory(long jobId) {
-        List<StartedJobInfo> infosForJob = new LinkedList<StartedJobInfo>();
-
         Connection c = HarvestDBConnection.get();
         PreparedStatement stm = null;
         try {
@@ -406,7 +409,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             stm.setLong(1, jobId);
 
             ResultSet rs = stm.executeQuery();
-            listFromResultSet(rs, infosForJob);
+            List<StartedJobInfo> infosForJob = listFromResultSet(rs);
 
             return (StartedJobInfo[]) infosForJob.toArray(
                     new StartedJobInfo[infosForJob.size()]);
@@ -572,9 +575,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         ArgumentNotValid.checkNotNull(jobId, "jobId");
         ArgumentNotValid.checkNotNull(startTime, "startTime");
         ArgumentNotValid.checkNotNull(limit, "limit");
-
-        List<StartedJobInfo> infosForJob = new LinkedList<StartedJobInfo>();
-
+        
         Connection c = HarvestDBConnection.get();
         PreparedStatement stm = null;
         try {
@@ -589,7 +590,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             stm.setLong(2, startTime);
 
             ResultSet rs = stm.executeQuery();
-            listFromResultSet(rs, infosForJob);
+            List<StartedJobInfo> infosForJob = listFromResultSet(rs);
 
             return (StartedJobInfo[]) infosForJob.toArray(
                     new StartedJobInfo[infosForJob.size()]);
@@ -721,7 +722,10 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         return deleteCount;
 
     }
-
+    
+    /** Enum class containing all fields in the frontierReportMonitor
+     * table.
+     */
     private static enum FR_COLUMN {
         jobId,
         filterId,
@@ -739,7 +743,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         errorCount,
         lastPeekUri,
         lastQueuedUri;
-
+        /**
+         * @return the rank of a member of the enum class.
+         */
         int rank() {
             return ordinal() + 1;
         }
@@ -845,12 +851,13 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                     // (see SQL scripts)
                     DBUtils.setStringMaxLength(
                             stm,
-                            FR_COLUMN.lastPeekUri.rank(),
-                            frl.getLastPeekUri(), 1000, frl, "lastPeekUri");
+                            FR_COLUMN.lastPeekUri.rank(), frl.getLastPeekUri(), 
+                            MAX_URL_LENGTH, frl, "lastPeekUri");
                     DBUtils.setStringMaxLength(
                             stm,
-                            FR_COLUMN.lastQueuedUri.rank(),
-                            frl.getLastQueuedUri(), 1000, frl, "lastQueuedUri");
+                            FR_COLUMN.lastQueuedUri.rank(), 
+                            frl.getLastQueuedUri(), MAX_URL_LENGTH, frl, 
+                            "lastQueuedUri");
 
                     stm.addBatch();
                 }
@@ -1025,14 +1032,17 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
         return line;
     }
+    
     /**
-     * 
-     * @param rs
-     * @param list
-     * @throws SQLException
+     * Get a list of StartedJobInfo objects from a resultset of entries 
+     * from runningJobsHistory table.
+     * @param rs a resultset with entries from table runningJobsHistory.
+     * @return a list of StartedJobInfo objects from the resultset
+     * @throws SQLException If any problems reading data from the resultset
      */
-    private void listFromResultSet(ResultSet rs, List<StartedJobInfo> list)
-    throws SQLException {
+    private List<StartedJobInfo> listFromResultSet(ResultSet rs) 
+            throws SQLException {
+        List<StartedJobInfo> list = new LinkedList<StartedJobInfo>();
         while (rs.next()) {
             StartedJobInfo sji = new StartedJobInfo(
                     rs.getString(HM_COLUMN.harvestName.rank()),
@@ -1071,6 +1081,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
             list.add(sji);
         }
+        return list;
     }
 
 }
