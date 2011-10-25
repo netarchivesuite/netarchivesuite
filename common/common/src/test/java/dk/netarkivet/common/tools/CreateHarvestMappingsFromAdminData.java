@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -38,8 +39,7 @@ import dk.netarkivet.common.utils.Settings;
 
 /** This tool produces a jobid-harvestid.txt from a admin.data file.
  *  The file contains <job-id>,<harvest-id> tuples, sorted after job-id.
- *  TODO: Is this necessary?
- *
+ *  @deprecated This tool should no longer be necessary.
  */
 public class CreateHarvestMappingsFromAdminData {
 
@@ -65,11 +65,13 @@ public class CreateHarvestMappingsFromAdminData {
             }
 
             } catch (Exception e) {
-                System.err.println("Dir '" + admindataDir.getAbsolutePath() + "' contains no admin.data, or dir does not exist");
+                System.err.println("Dir '" + admindataDir.getAbsolutePath() 
+                        + "' contains no admin.data, or dir does not exist");
                 System.exit(1);
         }
 
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, admindataDir.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, 
+                admindataDir.getAbsolutePath());
 
         ReadOnlyAdminData ad = AdminData.getReadOnlyInstance();
         Set<String> arcFiles = ad.getAllFileNames();
@@ -82,20 +84,24 @@ public class CreateHarvestMappingsFromAdminData {
                 fp = new FilenameParser(new File(nextName));
                 if (!hm.containsKey(fp.getJobID())) {
 
-                    //System.out.println(String.format("Added (job,harvestid) = (%s,%s).", fp.getJobID(), fp.getHarvestID()));
+                    //System.out.println(String.format("Added (job,harvestid) = (%s,%s).", 
+                    //  fp.getJobID(), fp.getHarvestID()));
                     hm.put(fp.getJobID(),
                             fp.getHarvestID()
                                     );
                 }
             } catch (Exception e) {
                 //TODO: Should we act differently here?
-                //System.out.println("Ignoring filename (probably metadata-arcfile): " + nextName);
+                System.out.println(
+                        "Ignoring filename (probably metadata-arcfile): "
+                                + nextName);
             }
         }
-        System.out.println("Writing job,harvestid tuples to file: " + outputFile.getAbsolutePath());
+        System.out.println("Writing job,harvestid tuples to file: " 
+                + outputFile.getAbsolutePath());
         FileWriter fw = new FileWriter(outputFile);
-        for(String key: hm.keySet()) {
-            fw.write(String.format("%s,%s\n", key, hm.get(key)));
+        for(Entry<String, String> entry: hm.entrySet()) {
+            fw.write(String.format("%s,%s\n", entry.getKey(), entry.getValue()));
         }
         fw.flush();
         fw.close();
