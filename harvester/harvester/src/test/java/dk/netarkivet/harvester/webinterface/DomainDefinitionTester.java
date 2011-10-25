@@ -96,10 +96,10 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         
         Domain domain = ddao.read("netarkivet.dk");
         
-        ExtendedFieldValue efv = domain.getExtendedFieldValue(new Long(1));
+        ExtendedFieldValue efv = domain.getExtendedFieldValue(Long.valueOf(1));
         assertEquals(efv.getContent(), "defaultvalue");
 
-        efv = domain.getExtendedFieldValue(new Long(2));
+        efv = domain.getExtendedFieldValue(Long.valueOf(2));
         assertTrue(efv.getBooleanValue());
     }
     

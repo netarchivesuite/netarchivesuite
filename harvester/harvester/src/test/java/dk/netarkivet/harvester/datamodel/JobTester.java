@@ -972,9 +972,9 @@ public class JobTester extends DataModelTestCase {
         
         // verify that they are placed at consecutive locations:
         Set<Integer> order = new TreeSet<Integer>();
-        order.add(new Integer(list.indexOf("http://www.fyens.dk/fv2007")));
-        order.add(new Integer(list.indexOf("www.fyens.dk/fv2007")));
-        order.add(new Integer(list.indexOf("http://www.fyens.dk/indland")));
+        order.add(Integer.valueOf(list.indexOf("http://www.fyens.dk/fv2007")));
+        order.add(Integer.valueOf(list.indexOf("www.fyens.dk/fv2007")));
+        order.add(Integer.valueOf(list.indexOf("http://www.fyens.dk/indland")));
         int last = -1;
         for (Integer i: order) {
             if (last != -1) {

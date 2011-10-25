@@ -1,7 +1,7 @@
-/* File:        $Id$Id$
- * Revision:    $Revision$Revision$
- * Author:      $Author$Author$
- * Date:        $Date$Date$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -51,9 +51,9 @@ public class ExtendedFieldTester extends DataModelTestCase {
         extDAO.create(extField);
 
         ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
-        extField = extDAO2.read(new Long(1));
+        extField = extDAO2.read(Long.valueOf(1L));
         
-        assertEquals(extField.getExtendedFieldID().longValue(), 1);
+        assertEquals(extField.getExtendedFieldID().longValue(), 1L);
         assertEquals(extField.getExtendedFieldTypeID().longValue(), ExtendedFieldTypes.DOMAIN);
         assertEquals(extField.getName(), "Test");
         assertEquals(extField.getFormattingPattern(), "12345");
@@ -77,9 +77,9 @@ public class ExtendedFieldTester extends DataModelTestCase {
         extDAO3.update(extField);
 
         ExtendedFieldDAO extDAO4 = ExtendedFieldDBDAO.getInstance();
-        extField = extDAO4.read(new Long(1));
+        extField = extDAO4.read(Long.valueOf(1L));
         
-        assertEquals(extField.getExtendedFieldID().longValue(), 1);
+        assertEquals(extField.getExtendedFieldID().longValue(), 1L);
         assertEquals(extField.getExtendedFieldTypeID().longValue(), ExtendedFieldTypes.HARVESTDEFINITION);
         assertEquals(extField.getName(), "Test2");
         assertEquals(extField.getFormattingPattern(), "67890");

@@ -46,12 +46,12 @@ public class UrlSearch extends ARCBatchJob {
         // TODO Auto-generated method stub
 
         try {
-            os.write(new String("\nResults:\n").getBytes());
-            os.write(new String("Urls matched = " + urlCount 
+            os.write("\nResults:\n".getBytes());
+            os.write(("Urls matched = " + urlCount 
                     + "\n").getBytes());
-            os.write(new String("Mimetypes matched = " + mimeCount 
+            os.write(("Mimetypes matched = " + mimeCount 
                     + "\n").getBytes());
-            os.write(new String("Url and Mimetype matches = " + bothCount 
+            os.write(("Url and Mimetype matches = " + bothCount 
                     + "\n").getBytes());
         } catch (IOException e) {
             throw new IOFailure("Unexpected problem when writing to output "
@@ -83,7 +83,7 @@ public class UrlSearch extends ARCBatchJob {
         if(valid) {
             bothCount++;
             try {
-            os.write(new String(record.getMetaData().getUrl() + " : " 
+            os.write((record.getMetaData().getUrl() + " : " 
                     + record.getMetaData().getMimetype() + "\n").getBytes());
             } catch (IOException e) {
                 // unexpected!

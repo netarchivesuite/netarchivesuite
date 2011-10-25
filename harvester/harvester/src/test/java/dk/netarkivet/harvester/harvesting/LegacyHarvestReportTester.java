@@ -197,7 +197,7 @@ public class LegacyHarvestReportTester extends TestCase {
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
         HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
-        Long expectedObjectCount = new Long(2L);
+        Long expectedObjectCount = Long.valueOf(2L);
         Long expectedByteCount = new Long(5500000001L);
         assertEquals("Counts should equal input data", expectedObjectCount,
                      hr.getObjectCount("dom.dk"));

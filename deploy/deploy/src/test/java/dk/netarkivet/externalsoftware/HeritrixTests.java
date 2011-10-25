@@ -48,6 +48,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.io.IOUtils;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
@@ -513,7 +514,9 @@ public class HeritrixTests extends TestCase {
                     TestInfo.SEEDS_FILE, tempDir);
 
         int num_harvested = 0;
-        BufferedReader in = new BufferedReader(new FileReader(
+        BufferedReader in = null;
+        try {
+        in = new BufferedReader(new FileReader(
                 TestInfo.HERITRIX_CRAWL_LOG_FILE));
         while (in.readLine() != null) {
             num_harvested++;
@@ -522,6 +525,9 @@ public class HeritrixTests extends TestCase {
         // we must harvest at max MAX_OBJECTS + 1 (the harvester some times stops at MAX_OBJECTS + 1)
         assertTrue("Number of objects harvested is " + num_harvested
                 + ".  Exceeds " + TestInfo.MAX_OBJECTS, num_harvested < TestInfo.MAX_OBJECTS + 2);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
     }
 
     /**
@@ -543,18 +549,25 @@ public class HeritrixTests extends TestCase {
                 progressStatistics);
 
         int num_harvested = 0;
-        BufferedReader in = new BufferedReader(new FileReader(
-                TestInfo.HERITRIX_CRAWL_LOG_FILE));
-        while (in.readLine() != null) {
-            num_harvested++;
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new FileReader(
+                    TestInfo.HERITRIX_CRAWL_LOG_FILE));
+            while (in.readLine() != null) {
+                num_harvested++;
+            }
+            // we must harvest at max MAX_OBJECTS + 1 
+            // (the harvester sometimes stops at MAX_OBJECTS + 1)
+            assertTrue("Number of objects harvested("
+                                    + num_harvested + ") should be less than "
+                                    + (TestInfo.MAX_OBJECTS + 2),
+                                    num_harvested < TestInfo.MAX_OBJECTS + 2);
+        } finally {
+            IOUtils.closeQuietly(in);
         }
-
-        // we must harvest at max MAX_OBJECTS + 1 (the harvester sometimes stops at MAX_OBJECTS + 1)
-        assertTrue("Number of objects harvested("
-                                + num_harvested + ") should be less than "
-                                + (TestInfo.MAX_OBJECTS + 2),
-                                num_harvested < TestInfo.MAX_OBJECTS + 2);
     }
+
+        
 
     /**
      * Test that Heritrix can handle cookies - setting and changing them.
@@ -965,7 +978,7 @@ public class HeritrixTests extends TestCase {
      * @return The list of URLs.
      */
     private URL[] classPathAsURLS() {
-        URL[] urls = new URL[0];
+        URL[] urls = null;
         try {
             Method method = ReflectUtils
                     .getPrivateMethod(AbstractJMXHeritrixController.class,

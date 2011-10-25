@@ -102,7 +102,7 @@ public class BatchExecuter extends Thread {
         ViewerArcRepositoryClient arcrep 
                 = ArcRepositoryClientFactory.getViewerInstance();
         // get the timestamp in milliseconds
-        String timestamp = new Long(new Date().getTime()).toString();
+        String timestamp = Long.valueOf(new Date().getTime()).toString();
         // get the batchjob name without the classpath.
         String jobName = BatchGUI.getJobName(batchJob.getClass().getName());
 

@@ -42,7 +42,7 @@ implements Comparator<FrontierReportLineOrderKey> {
             FrontierReportLineOrderKey k1, 
             FrontierReportLineOrderKey k2) {
         int sizeComp = 
-            new Long(k1.getQueueSize()).compareTo(k2.getQueueSize());
+            Long.valueOf(k1.getQueueSize()).compareTo(k2.getQueueSize());
         if  (sizeComp == 0) {
             return k1.getQueueId().compareTo(k2.getQueueId());
         }

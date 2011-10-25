@@ -688,6 +688,7 @@ public class DomainTester extends DataModelTestCase {
     //test invalid values with constructor
     public void testSetAndGetInvalidValues() {
         Date date = new Date();
+        final Long defaultHid = Long.valueOf(1L);
 
         try {
             new HarvestInfo(null, "foo", "bar", date, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
@@ -697,42 +698,45 @@ public class DomainTester extends DataModelTestCase {
         }
 
         try {
-            new HarvestInfo(new Long(1L), null, "bar", date, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+            new HarvestInfo(defaultHid, null, "bar", date, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
             fail("parameters should not be null");
         } catch (ArgumentNotValid e) { 
             //expected
         }
 
         try {
-            new HarvestInfo(new Long(1L), "foo", null, date, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+            new HarvestInfo(defaultHid, "foo", null, date, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
             fail("parameters should not be null");
         } catch (ArgumentNotValid e) { 
             //expected
         }
 
         try {
-            new HarvestInfo(new Long(1L), "foo", "bar", null, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+            new HarvestInfo(defaultHid, "foo", "bar", null, 1L, 1L, 
+                    StopReason.DOWNLOAD_COMPLETE);
             fail("parameters should not be null");
         } catch (ArgumentNotValid e) { 
             //expected
         }
 
         try {
-            new HarvestInfo(new Long(1L), "foo", "bar", date, -1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+            new HarvestInfo(defaultHid, "foo", "bar", date, -1L, 1L, 
+                    StopReason.DOWNLOAD_COMPLETE);
             fail("One of the parameters should not be negative");
         } catch (ArgumentNotValid e) { 
             //expected
         }
 
         try {
-            new HarvestInfo(new Long(1L), "foo", "bar", date, 1L, -1L, StopReason.DOWNLOAD_COMPLETE);
+            new HarvestInfo(defaultHid, "foo", "bar", date, 1L, -1L, 
+                    StopReason.DOWNLOAD_COMPLETE);
             fail("One of the parameters should not be negative");
         } catch (ArgumentNotValid e) { 
             //expected
         }
 
         try {
-            new HarvestInfo(new Long(1L), "foo", "bar", date, 1L, 1L, null);
+            new HarvestInfo(Long.valueOf(1L), "foo", "bar", date, 1L, 1L, null);
             fail("parameters should not be null");
         } catch (ArgumentNotValid e) { 
             //expected
@@ -963,13 +967,16 @@ public class DomainTester extends DataModelTestCase {
 
         for (Map.Entry<String,String> entry : hostnameToDomainname.entrySet()) {
             String domainName = DomainUtils.domainNameFromHostname(entry.getKey());
-            assertEquals("Domain name should be correctly calculated for " + entry.getKey(),
-                         entry.getValue(), domainName);
+            assertEquals("Domain name should be correctly calculated for " 
+                    + entry.getKey(), entry.getValue(), domainName);
             if (entry.getValue() != null) {
-                assertTrue("Domain name calculated from " + entry.getKey() + " must be a legal domain name",
-                           DomainUtils.isValidDomainName(domainName));
+                assertTrue("Domain name calculated from " + entry.getKey() 
+                        + " must be a legal domain name",
+                        DomainUtils.isValidDomainName(domainName));
             } else {
-                assertFalse("Should not get null domain name from legal domainname " + entry.getKey(),
+                assertFalse(
+                        "Should not get null domain name from legal domainname "
+                                + entry.getKey(),
                             DomainUtils.isValidDomainName(entry.getKey()));
             }
         }

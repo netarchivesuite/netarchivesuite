@@ -32,13 +32,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.testutils.StringAsserts;
 
-
 /** Test-class for AliasInfo class. */
 public class AliasInfoTester extends TestCase {
 
-    String nullString = null;
+    final String nullString = null;
     String emptyString = "";
-    Date nullDate = null;
+    final Date nullDate = null;
     Date realDate = new Date();
     String aliasDomain = "netarkivet.dk";
     String afatherDomain = "kb.dk";
@@ -155,9 +154,9 @@ public class AliasInfoTester extends TestCase {
         MetadataEntry meta = null;
         // Tests for valid arguments:
         // List<AliasInfo> aliases, Long origHarvestDefinitionID, int harvestNum, Long jobId)
-        Long jobId = new Long(42L);
+        Long jobId = Long.valueOf(42L);
         int harvestNum = 1;
-        Long origHarvestDefinitionID = new Long(2L);
+        Long origHarvestDefinitionID = Long.valueOf(2L);
         try {
             MetadataEntry.makeAliasMetadataEntry(null, null, 0, null);
             fail("Exception expected with null arguments");

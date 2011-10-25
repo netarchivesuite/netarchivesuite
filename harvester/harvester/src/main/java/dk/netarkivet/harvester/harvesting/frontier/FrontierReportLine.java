@@ -33,7 +33,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Wraps a line of the frontier report.
- * As of Heritrix 1.14.14, the format of a frontier report line
+ * As of Heritrix 1.14.4, the format of a frontier report line
  * sequentially lists the following tokens, separated by a whitespace :
  *
  * <ol>
@@ -176,17 +176,17 @@ implements Serializable,
     protected FrontierReportLine(FrontierReportLine original) {
         this.averageCost = original.averageCost;
         this.currentSize = original.currentSize;
-        this.domainName = new String(original.domainName);
+        this.domainName = original.domainName;
         this.errorCount = original.errorCount;
         this.lastCost = original.lastCost;
-        this.lastDequeueTime = new String(original.lastDequeueTime);
-        this.lastPeekUri = new String(original.lastPeekUri);
-        this.lastQueuedUri = new String(original.lastQueuedUri);
+        this.lastDequeueTime = original.lastDequeueTime;
+        this.lastPeekUri = original.lastPeekUri;
+        this.lastQueuedUri = original.lastQueuedUri;
         this.sessionBalance = original.sessionBalance;
         this.totalBudget = original.totalBudget;
         this.totalEnqueues = original.totalEnqueues;
         this.totalSpend = original.totalSpend;
-        this.wakeTime = new String(original.wakeTime);
+        this.wakeTime = original.wakeTime;
     }
 
     /**
@@ -202,12 +202,11 @@ implements Serializable,
                     + lineToken + "' is not a valid frontier report line!");
         }
 
-
         this.domainName = split[0];
-        try  {
-        this.currentSize = parseLong(split[1]);
+        try {
+            this.currentSize = parseLong(split[1]);
         } catch (NumberFormatException e) {
-
+            LOG.warn("Found incorrect formatted currentsize " +  split[1]);
         }
         this.totalEnqueues = parseLong(split[2]);
         this.sessionBalance = parseLong(split[3]);
@@ -218,7 +217,6 @@ implements Serializable,
         this.lastCost = parseDouble(costToken.substring(0, leftParenIdx));
         this.averageCost = parseDouble(
                 costToken.substring(leftParenIdx + 1, costToken.indexOf(")")));
-
         this.lastDequeueTime = split[5];
         this.wakeTime = split[6];
 

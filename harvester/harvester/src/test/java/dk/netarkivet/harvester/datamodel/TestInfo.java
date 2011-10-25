@@ -161,7 +161,7 @@ public class TestInfo {
     public static final int STATUS_DONE = 3;
     public static final int STATUS_FAILED = 4;
     public static final String EXISTINGSCHEDULENAME = "DefaultSchedule";
-    public static final Long EXISTINGHARVESTDEFINITIONOID = new Long(42l);
+    public static final Long EXISTINGHARVESTDEFINITIONOID = Long.valueOf(42l);
     public static final String SHORTDOMAINNAME = "x.dk";
     public static final int MAX_OBJECTS_PER_DOMAIN = 33;
     public static final File NON_EXISTING_FILE = new File("/no/such/file");

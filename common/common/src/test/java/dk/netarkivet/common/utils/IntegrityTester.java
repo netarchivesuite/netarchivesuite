@@ -33,6 +33,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.io.IOUtils;
+
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
@@ -98,18 +100,22 @@ public class IntegrityTester extends TestCase {
         byte[] block = new byte[BLOCKSIZE];
         SUBDIR.mkdirs();
         File largeFile = new File(SUBDIR, LARGE_FILE);
-        OutputStream os
-                = new BufferedOutputStream(new FileOutputStream(largeFile));
-        System.out.println("Creating file - this will take a long time");
-        for (long l = 0; l < LARGE / ((long) BLOCKSIZE) + 1L; l++) {
-            os.write(block);
+        OutputStream os = null;
+        try {
+            os = new BufferedOutputStream(new FileOutputStream(largeFile));
+            System.out.println("Creating file - this will take a long time");
+            for (long l = 0; l < LARGE / ((long) BLOCKSIZE) + 1L; l++) {
+                os.write(block);
+            }
+            System.out.println("Copying file - this will take a long time");
+            FileUtils.copyDirectory(SUBDIR, SUBDIR2);
+            File file1 = new File(SUBDIR, LARGE_FILE);
+            File file2 = new File(SUBDIR2, LARGE_FILE);
+            assertEquals("Should have same file sizes", file1.length(),
+                    file2.length());
+        } finally {
+            IOUtils.closeQuietly(os);
         }
-        System.out.println("Copying file - this will take a long time");
-        FileUtils.copyDirectory(SUBDIR, SUBDIR2);
-        File file1 = new File(SUBDIR, LARGE_FILE);
-        File file2 = new File(SUBDIR2, LARGE_FILE);
-        assertEquals("Should have same file sizes",
-                     file1.length(), file2.length());
     }
 
     /** This tests that we are actually able to write and read more than
@@ -159,19 +165,24 @@ public class IntegrityTester extends TestCase {
         byte[] block = new byte[BLOCKSIZE];
         SUBDIR.mkdirs();
         File largeFile = new File(SUBDIR, LARGE_FILE);
-        OutputStream os = new FileOutputStream(largeFile);
-        System.out.println("Creating file - this will take a long time");
-        for (long l = 0; l < LARGE / ((long) BLOCKSIZE) + 1L; l++) {
-            os.write(block);
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(largeFile);
+            System.out.println("Creating file - this will take a long time");
+            for (long l = 0; l < LARGE / ((long) BLOCKSIZE) + 1L; l++) {
+                os.write(block);
+            }
+            System.out.println("Zipping file - this will take a long time");
+            ZipUtils.gzipFiles(SUBDIR, SUBDIR2);
+            System.out.println("UnZipping file - this will take a long time");
+            ZipUtils.gunzipFiles(SUBDIR2, SUBDIR3);
+            File file1 = new File(SUBDIR, LARGE_FILE);
+            File file2 = new File(SUBDIR3, LARGE_FILE);
+            assertEquals("Should have same file sizes", file1.length(),
+                    file2.length());
+        } finally {
+            IOUtils.closeQuietly(os);
         }
-        System.out.println("Zipping file - this will take a long time");
-        ZipUtils.gzipFiles(SUBDIR, SUBDIR2);
-        System.out.println("UnZipping file - this will take a long time");
-        ZipUtils.gunzipFiles(SUBDIR2, SUBDIR3);
-        File file1 = new File(SUBDIR, LARGE_FILE);
-        File file2 = new File(SUBDIR3, LARGE_FILE);
-        assertEquals("Should have same file sizes",
-                     file1.length(), file2.length());
     }
 
     /** Test reading two large files: One that should unzip OK, one that should

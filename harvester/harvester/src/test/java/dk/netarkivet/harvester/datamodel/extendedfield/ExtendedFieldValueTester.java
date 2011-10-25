@@ -1,7 +1,7 @@
-/* File:        $Id$Id$
- * Revision:    $Revision$Revision$
- * Author:      $Author$Author$
- * Date:        $Date$Date$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -22,8 +22,6 @@
  */
 
 package dk.netarkivet.harvester.datamodel.extendedfield;
-
-import java.util.Date;
 
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
@@ -50,12 +48,15 @@ public class ExtendedFieldValueTester  extends DataModelTestCase {
 
     public void testCreateReadUpdateDelete() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
-        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "a", "b");
+        ExtendedField extField = new ExtendedField(null, 
+                (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, 
+                "a", "b");
         extDAO.create(extField);
 
         ExtendedFieldValueDAO extValDAO = ExtendedFieldValueDBDAO.getInstance();
         
-        ExtendedFieldValue extFieldVal = new ExtendedFieldValue(null, extField.getExtendedFieldID(), new Long(100L), "foo");
+        ExtendedFieldValue extFieldVal = new ExtendedFieldValue(null, 
+                extField.getExtendedFieldID(), Long.valueOf(100L), "foo");
         extValDAO.create(extFieldVal);
 
         ExtendedFieldValueDAO extValDAO2 = ExtendedFieldValueDBDAO.getInstance();
@@ -63,7 +64,7 @@ public class ExtendedFieldValueTester  extends DataModelTestCase {
         
         assertEquals(extFieldVal.getExtendedFieldValueID().longValue(), 1);
         assertEquals(extFieldVal.getExtendedFieldID().longValue(), 1);
-        assertEquals(extFieldVal.getInstanceID(), new Long(100));
+        assertEquals(extFieldVal.getInstanceID(), Long.valueOf(100));
         assertEquals(extFieldVal.getContent(), "foo");
         
         extFieldVal.setContent("bar");
@@ -73,9 +74,7 @@ public class ExtendedFieldValueTester  extends DataModelTestCase {
 
         assertEquals(extFieldVal.getExtendedFieldValueID().longValue(), 1);
         assertEquals(extFieldVal.getExtendedFieldID().longValue(), 1);
-        assertEquals(extFieldVal.getInstanceID(), new Long(100));
+        assertEquals(extFieldVal.getInstanceID(), Long.valueOf(100));
         assertEquals(extFieldVal.getContent(), "bar");
-    }
-    
-    
+    }   
 }

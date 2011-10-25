@@ -37,6 +37,7 @@ import java.util.Vector;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.utils.StringUtils;
 
 /**
  * A ServletRequest used by unit tests.
@@ -122,7 +123,8 @@ class MockupServletRequest implements ServletRequest {
                 return null;
             } else {
                 throw new ArgumentNotValid("Not exactly one parameter value "
-                        + "for parameter '" + string + "': " + values);
+                        + "for parameter '" + string + "': " 
+                        + StringUtils.conjoin(",", values));
             }
         }
     }

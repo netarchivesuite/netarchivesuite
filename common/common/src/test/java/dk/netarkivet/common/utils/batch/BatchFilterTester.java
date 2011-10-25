@@ -60,7 +60,7 @@ public class BatchFilterTester extends TestCase {
     * Test the validity of the given mimetype
     */
     public void testGetMimetype() {
-        String invalidMimetype = new String("test");
+        String invalidMimetype = "test";
         String validMimetype = "text/html";
         ARCBatchFilter cfilter = null;
 

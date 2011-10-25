@@ -77,7 +77,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
             throws ArgumentNotValid {
         long jobID = cmsg.getJobID();
         JobStatus newStatus = cmsg.getStatusCode();
-        Job job = jobDAO.read(new Long(jobID));
+        Job job = jobDAO.read(Long.valueOf(jobID));
         JobStatus oldStatus = job.getStatus();
         // Update the job status
 
@@ -255,11 +255,11 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
         if (dao.isSnapshot(harvestId)) {
             dao.setIndexIsReady(harvestId, true);
-            log.info("Got message from IndexServer, that index is ready for harvest # "
-                    + harvestId);
+            log.info("Got message from IndexServer, that index is ready for "
+                    + " harvest # " + harvestId);
         } else {
-            log.debug("Ignoring IndexreadyMesssage sent on behalf on selective harvest w/id " 
-                    + harvestId);
+            log.debug("Ignoring IndexreadyMesssage sent on behalf on "
+                    + "selective harvest w/id " + harvestId);
         }
     }
 }

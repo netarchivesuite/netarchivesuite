@@ -351,7 +351,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
                                   final StopReason stopReason
     ) {
         d.getHistory().addHarvestInfo
-               (new HarvestInfo(new Long(1L), d.getName(),
+               (new HarvestInfo(Long.valueOf(1L), d.getName(),
                         dc.getName(), d1, sizeDataRetrieved, countObjectRetrieved, stopReason));
     }
 

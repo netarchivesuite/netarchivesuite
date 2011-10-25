@@ -23,6 +23,8 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -50,13 +52,11 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * A test of the behaviour if onMessage() hangs when there is more than one
- * listener to a queue
- *
+ * listener to a queue.
  */
-
 public class HangingListenerTest extends TestCase {
 
-    public static Integer messages_received = 0;
+    public static AtomicInteger messages_received = new AtomicInteger(0);
 
     public void setUp(){
         Settings.set(CommonSettings.JMS_BROKER_CLASS, JMSConnectionSunMQ.class.getName());
@@ -99,7 +99,7 @@ public class HangingListenerTest extends TestCase {
             NetarkivetMessage msg = new BatchMessage(theQueue, new ChecksumJob(), "ONE");
             con.send(msg);
         }
-        while(HangingListenerTest.messages_received < messagesSent) {}
+        while(HangingListenerTest.messages_received.get() < messagesSent) {}
         Thread.sleep(2*blockingTime);
         assertEquals("Blocking listener should only have been called once", 1, blocker.called);
         System.out.println("Repeat:");
@@ -107,7 +107,7 @@ public class HangingListenerTest extends TestCase {
             NetarkivetMessage msg = new BatchMessage(theQueue, new ChecksumJob(), "ONE");
             con.send(msg);
         }
-        while(HangingListenerTest.messages_received < messagesSent) {}
+        while(HangingListenerTest.messages_received.get() < messagesSent) {}
         Thread.sleep(2*blockingTime);
         assertEquals("Blocking listener should now have been called twice", 2, blocker.called);
         con.cleanup();
@@ -163,9 +163,7 @@ public class HangingListenerTest extends TestCase {
 
         public void onMessage(Message message) {
             called++;
-            synchronized(HangingListenerTest.messages_received) {
-                HangingListenerTest.messages_received++;
-            }
+            HangingListenerTest.messages_received.addAndGet(1);
             if (!isBlocking) {
                 System.out.println("Message received by non-blocking listener at " + System.currentTimeMillis());
                 return;

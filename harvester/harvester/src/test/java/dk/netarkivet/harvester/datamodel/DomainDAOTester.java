@@ -302,10 +302,14 @@ public class DomainDAOTester extends DataModelTestCase {
 
         //Testinfo
         HarvestInfo [] his = new HarvestInfo []{
-            new HarvestInfo(new Long(4), domain0.getName(), "fuld_dybde", new Date(400000L), 40, 1, StopReason.DOWNLOAD_COMPLETE),
-            new HarvestInfo(new Long(2), domain0.getName(), "fuld_dybde", new Date(300000L), 30, 2, StopReason.OBJECT_LIMIT),
-            new HarvestInfo(new Long(3), domain0.getName(), "fuld_dybde", new Date(200000L), 20, 3, StopReason.OBJECT_LIMIT),
-            new HarvestInfo(new Long(1), domain0.getName(), "fuld_dybde", new Date(100000L), 10, 4, StopReason.OBJECT_LIMIT)
+            new HarvestInfo(Long.valueOf(4), domain0.getName(), "fuld_dybde", 
+                    new Date(400000L), 40, 1, StopReason.DOWNLOAD_COMPLETE),
+            new HarvestInfo(Long.valueOf(2), domain0.getName(), "fuld_dybde", 
+                    new Date(300000L), 30, 2, StopReason.OBJECT_LIMIT),
+            new HarvestInfo(Long.valueOf(3), domain0.getName(), "fuld_dybde", 
+                    new Date(200000L), 20, 3, StopReason.OBJECT_LIMIT),
+            new HarvestInfo(Long.valueOf(1), domain0.getName(), "fuld_dybde", 
+                    new Date(100000L), 10, 4, StopReason.OBJECT_LIMIT)
         };
 
         //clear history
@@ -351,9 +355,10 @@ public class DomainDAOTester extends DataModelTestCase {
             //expected
         }
 
-        HarvestDefinition hd = HarvestDefinition.createFullHarvest("Full Harvest", "Test of full harvest", null, 2000,
-                                                                   Constants.DEFAULT_MAX_BYTES,
-                                                                   Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+        HarvestDefinition hd = HarvestDefinition.createFullHarvest(
+                "Full Harvest", "Test of full harvest", null, 2000,
+                Constants.DEFAULT_MAX_BYTES,
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hd.setSubmissionDate(new Date());
         HarvestDefinitionDAO.getInstance().create(hd);
 
@@ -368,7 +373,8 @@ public class DomainDAOTester extends DataModelTestCase {
         long time = System.currentTimeMillis()/1000*1000;
         //An older harvest info that should NOT be returned
         Date then = new Date(time);
-        HarvestInfo old_hi0 = new HarvestInfo(new Long(42L), domain0.getName(), config0.getName(), then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        HarvestInfo old_hi0 = new HarvestInfo(Long.valueOf(42L), domain0.getName(), 
+                config0.getName(), then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
         domain0.getHistory().addHarvestInfo(old_hi0);
         dao.update(domain0);
 
@@ -380,21 +386,26 @@ public class DomainDAOTester extends DataModelTestCase {
 
         //Three harvest infos, one for each type
         Date now = new Date(time + 1000);
-        HarvestInfo hi0 = new HarvestInfo(hd.getOid(), domain0.getName(), config0.getName(), now, 1L, 1L, StopReason.OBJECT_LIMIT);
+        HarvestInfo hi0 = new HarvestInfo(hd.getOid(), domain0.getName(), 
+                config0.getName(), now, 1L, 1L, StopReason.OBJECT_LIMIT);
         domain0.getHistory().addHarvestInfo(hi0);
         dao.update(domain0);
 
-        HarvestInfo hi1 = new HarvestInfo(hd.getOid(), domain1.getName(), config1.getName(), now, 1L, 1L, StopReason.OBJECT_LIMIT);
+        HarvestInfo hi1 = new HarvestInfo(hd.getOid(), domain1.getName(), 
+                config1.getName(), now, 1L, 1L, StopReason.OBJECT_LIMIT);
         domain1.getHistory().addHarvestInfo(hi1);
         dao.update(domain1);
 
-        HarvestInfo hi2 = new HarvestInfo(hd.getOid(), domain2.getName(), config2.getName(), now, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        HarvestInfo hi2 = new HarvestInfo(hd.getOid(), domain2.getName(), 
+                config2.getName(), now, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
         domain2.getHistory().addHarvestInfo(hi2);
         dao.update(domain2);
 
         //A newer harvest info that should NOT be returned
         Date later = new Date(time + 2000);
-        HarvestInfo new_hi0 = new HarvestInfo(new Long(43L), domain0.getName(), config0.getName(), later, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        HarvestInfo new_hi0 = new HarvestInfo(Long.valueOf(43L), 
+                domain0.getName(), config0.getName(), later, 1L, 1L, 
+                StopReason.DOWNLOAD_COMPLETE);
         domain0.getHistory().addHarvestInfo(new_hi0);
         dao.update(domain0);
 
@@ -496,13 +507,15 @@ public class DomainDAOTester extends DataModelTestCase {
                      1, IteratorUtils.toList(d2.getHistory().getHarvestInfo()).size());
         dc = d2.getDefaultConfiguration();
         assertEquals("Default config should have harvest info for job 1",
-                     new Long(1), d2.getHistory().getMostRecentHarvestInfo(dc.getName()).getJobID());
+                     Long.valueOf(1), d2.getHistory().getMostRecentHarvestInfo(dc.getName()).getJobID());
 
         // For bug 570, test if having some history info with no job id
         // generates too many entries.
-        hi = new HarvestInfo(42L, null, domainName, dc.getName(), new Date(1L), 10L, 2L, StopReason.DOWNLOAD_COMPLETE);
+        hi = new HarvestInfo(42L, null, domainName, dc.getName(), new Date(1L), 
+                10L, 2L, StopReason.DOWNLOAD_COMPLETE);
         d2.getHistory().addHarvestInfo(hi);
-        hi = new HarvestInfo(42L, null, domainName, dc.getName(), new Date(3L), 11L, 3L, StopReason.DOWNLOAD_COMPLETE);
+        hi = new HarvestInfo(42L, null, domainName, dc.getName(), new Date(3L), 
+                11L, 3L, StopReason.DOWNLOAD_COMPLETE);
         d2.getHistory().addHarvestInfo(hi);
         d2.updateConfiguration(dc);
         dao.update(d2);

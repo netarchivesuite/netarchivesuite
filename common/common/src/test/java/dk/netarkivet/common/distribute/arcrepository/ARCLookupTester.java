@@ -290,8 +290,10 @@ public class ARCLookupTester extends TestCase {
                     ARCConstants.REQUIRED_VERSION_1_HEADER_FIELDS) {
                 metadata.put(header_field, "");
             }
-            metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, new Long(0L)); // Dummy offset
-            byte[] data = ("HTTP/1.1 200 OK\nLocation: " + arcFile + "\n\n" + arcFile + " " + index).getBytes();
+            metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, 
+                    Long.valueOf(0L)); // Dummy offset
+            byte[] data = ("HTTP/1.1 200 OK\nLocation: " 
+                    + arcFile + "\n\n" + arcFile + " " + index).getBytes();
             // TODO replace this by something else, or remove ? (ARCConstants.LENGTH_HEADER_FIELD_KEY)
             // does not exist in Heritrix 1.10+
             //metadata.put(ARCConstants.LENGTH_HEADER_FIELD_KEY,

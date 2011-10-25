@@ -47,7 +47,7 @@ public class EvilPostProcessingJob extends FileBatchJob {
     @Override
     public boolean processFile(File file, OutputStream os) {
         try {
-            os.write(new String(file.getName() + "\n").getBytes());
+            os.write((file.getName() + "\n").getBytes());
         } catch (Exception e) {
             return false;
         }

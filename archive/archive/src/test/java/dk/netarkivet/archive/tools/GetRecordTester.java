@@ -136,7 +136,7 @@ public class GetRecordTester extends TestCase {
                     map.put((String) o, Integer.toString(CONTENT.length()));
                 }
                 //insert dummy offset
-                map.put(ARCConstants.ABSOLUTE_OFFSET_KEY, new Long(0L));
+                map.put(ARCConstants.ABSOLUTE_OFFSET_KEY, Long.valueOf(0L));
                 ARCRecordMetaData meta = new ARCRecordMetaData("foo", map);
                 InputStream is = new ByteArrayInputStream(CONTENT.getBytes());
                 myRec = new ARCRecord(is, meta, 0, false, false, false);

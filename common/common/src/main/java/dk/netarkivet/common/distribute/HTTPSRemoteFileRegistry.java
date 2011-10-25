@@ -36,6 +36,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 
+import org.apache.commons.io.IOUtils;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.security.SslSocketConnector;
 
@@ -81,11 +82,12 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     //This all initialises the ssl context to use the key in the keystore
     //above.
     {
+        FileInputStream keyStoreInputStream = null;    
         try {
+            keyStoreInputStream = new FileInputStream(KEYSTORE_PATH); 
             KeyStore store = KeyStore.getInstance(
                     SUN_JCEKS_KEYSTORE_TYPE);
-            store.load(
-                    new FileInputStream(KEYSTORE_PATH),
+            store.load(keyStoreInputStream, 
                     KEYSTORE_PASSWORD.toCharArray());
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(
                     SUN_X509_CERTIFICATE_ALGORITHM);
@@ -105,6 +107,8 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
         } catch (IOException e) {
             throw new IOFailure("Unable to create secure environment for"
                                 + " keystore '" + KEYSTORE_PATH + "'", e);
+        } finally {
+            IOUtils.closeQuietly(keyStoreInputStream);
         }
     }
 

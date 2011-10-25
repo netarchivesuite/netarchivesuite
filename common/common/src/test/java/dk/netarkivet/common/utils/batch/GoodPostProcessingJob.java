@@ -27,7 +27,7 @@ public class GoodPostProcessingJob extends FileBatchJob {
     @Override
     public boolean processFile(File file, OutputStream os) {
         try {
-            os.write(new String(file.getName() + "\n").getBytes());
+            os.write((file.getName() + "\n").getBytes());
         } catch (Exception e) {
             return false;
         }
@@ -55,7 +55,7 @@ public class GoodPostProcessingJob extends FileBatchJob {
             Collections.sort(filenames);
             for(String file : filenames) {
                 output.write(file.getBytes());
-                output.write(new String("\n").getBytes());
+                output.write("\n".getBytes());
             }
             
             return true;

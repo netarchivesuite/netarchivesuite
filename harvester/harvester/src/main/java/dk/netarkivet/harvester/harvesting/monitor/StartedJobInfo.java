@@ -369,26 +369,26 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             return new Double(progress).compareTo(new Double(o.progress));
         }
         if (compareCriteria == StartedJobInfo.Criteria.ELAPSED) {
-            return new Long(elapsedSeconds).
-            compareTo(new Long(o.elapsedSeconds));
+            return Long.valueOf(elapsedSeconds).
+            compareTo(Long.valueOf(o.elapsedSeconds));
         }
         if (compareCriteria == StartedJobInfo.Criteria.QFILES) {
-            return new Long(queuedFilesCount).
-            compareTo(new Long(o.queuedFilesCount));
+            return Long.valueOf(queuedFilesCount).
+            compareTo(Long.valueOf(o.queuedFilesCount));
         }
         if (compareCriteria == StartedJobInfo.Criteria.TOTALQ) {
-            return new Long(totalQueuesCount).
-            compareTo(new Long(o.totalQueuesCount));
+            return Long.valueOf(totalQueuesCount).
+            compareTo(Long.valueOf(o.totalQueuesCount));
         }
         if (compareCriteria == StartedJobInfo.Criteria.ACTIVEQ) {
-            return new Long(activeQueuesCount).
-            compareTo(new Long(o.activeQueuesCount));
+            return Long.valueOf(activeQueuesCount).
+            compareTo(Long.valueOf(o.activeQueuesCount));
         }
         if (compareCriteria == StartedJobInfo.Criteria.EXHAUSTEDQ) {
-            return new Long(exhaustedQueuesCount).
-            compareTo(new Long(o.exhaustedQueuesCount));
+            return Long.valueOf(exhaustedQueuesCount).
+            compareTo(Long.valueOf(o.exhaustedQueuesCount));
         }
-        return new Long(jobId).compareTo(new Long(o.jobId));
+        return Long.valueOf(jobId).compareTo(Long.valueOf(o.jobId));
     }
 
     /**

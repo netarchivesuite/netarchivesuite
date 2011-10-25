@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -111,8 +113,9 @@ public class Reporting {
                 cdxJob, Settings.get(CommonSettings.USE_REPLICA_ID));
         status.getResultFile().copyTo(f);
         List<CDXRecord> records;
+        BufferedReader reader = null;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(f));
+            reader = new BufferedReader(new FileReader(f));
             records = new ArrayList<CDXRecord>();
             for (String line = reader.readLine();
                  line != null; line = reader.readLine()) {
@@ -124,6 +127,7 @@ public class Reporting {
             throw new IOFailure("Unable to read results from file '" + f
                                 + "'", e);
         } finally {
+            IOUtils.closeQuietly(reader);
             FileUtils.remove(f);
         }
         return records;

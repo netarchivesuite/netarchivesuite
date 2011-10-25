@@ -322,7 +322,7 @@ public class ARCArchiveAccessTester extends TestCase {
             // instead of LENGTH_HEADER_FIELD_KEY
             metadata.put(ARCConstants.LENGTH_FIELD_KEY,
                          Integer.toString(data.length));
-            Long dummyOffset = new Long(
+            Long dummyOffset = Long.valueOf(
                     0L); //Note: offset is not stored as a String, but as a Long
             metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, dummyOffset);
 

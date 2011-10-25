@@ -38,6 +38,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -141,6 +142,8 @@ public class WaybackIndexer implements CleanupIF {
             }
         } catch (IOException e) {
             throw new IOFailure("Error reading file", e);
+        } finally {
+            IOUtils.closeQuietly(br);
         }
     }
 

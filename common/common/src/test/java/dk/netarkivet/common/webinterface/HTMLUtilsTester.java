@@ -143,7 +143,6 @@ public class HTMLUtilsTester extends TestCase {
         }
 
         //Test locale
-        int i = 0;
         StringTree<String> webinterfaceSettings = Settings.getTree(
                 CommonSettings.WEBINTERFACE_SETTINGS);
 
@@ -258,20 +257,19 @@ public class HTMLUtilsTester extends TestCase {
                 request);
 
         assertEquals("Should be able to parse simple long",
-                     new Long(10L),
+                     Long.valueOf(10L),
                      HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
         parameterMap.put("aLong", new String[]{" -11  "});
 
         assertEquals("Should be able to parse spaced negative long",
-                     new Long(-11L),
+                     Long.valueOf(-11L),
                      HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
         assertEquals("Should get default if not set",
-                     new Long(-1L), HTMLUtils.parseOptionalLong(pageContext,
+                     Long.valueOf(-1L), HTMLUtils.parseOptionalLong(pageContext,
                                                                 "anotherLong",
                                                                 -1L));
-
         parameterMap.put("aLong", new String[]{
                 Long.toString(((long) Integer.MAX_VALUE) * 5)});
         assertEquals("Should be able to parse large long",
@@ -280,12 +278,12 @@ public class HTMLUtilsTester extends TestCase {
 
         parameterMap.put("aLong", new String[]{""});
         assertEquals("Should get default from empty param",
-                     new Long(-2),
+                     Long.valueOf(-2L),
                      HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
 
         parameterMap.put("aLong", new String[]{"   "});
         assertEquals("Should get default from space-only param",
-                     new Long(-2),
+                     Long.valueOf(-2L),
                      HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
 
         parameterMap.put("aLong", new String[]{"   "});

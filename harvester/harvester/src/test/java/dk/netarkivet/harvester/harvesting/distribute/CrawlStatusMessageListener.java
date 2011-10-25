@@ -44,7 +44,7 @@ public class CrawlStatusMessageListener implements MessageListener {
         if (naMsg instanceof CrawlStatusMessage) {
             CrawlStatusMessage csm = (CrawlStatusMessage) naMsg;
             status_codes.add(csm.getStatusCode());
-            jobids.add(new Long(csm.getJobID()));
+            jobids.add(Long.valueOf(csm.getJobID()));
             messages.add(csm);
             synchronized(this) {
                 notifyAll();

@@ -58,7 +58,6 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
 /**
  * Test bitarchive client and server
  * As a number of tests only succeed if both the client and server
@@ -491,34 +490,6 @@ public class IntegrityTests extends TestCase {
         /** test, if original ARC file still exists, and has the same size as before */
         assertEquals("Test-file has been modified!!", fileSize,
                 testARCFile.length());
-    }
-
-    /**
-     * Verify that a message has the correct id,destination and origin values
-     *
-     * @param id   Expected id or "" to ignore
-     * @param dest Expected destination or "" to ignore
-     * @param org  Expected origin or "" to ignore
-     * @param msg  Message to check
-     * @return true if all checks succeeds else false
-     */
-    public boolean checkIdDestOrigin(String id, String dest, String org,
-                                     NetarkivetMessage msg) {
-        boolean res = true;
-
-        if ((id.length() > 0) && (!id.equals(msg.getID()))) {
-            res = false;
-        }
-
-        if ((dest.length() > 0) && (!dest.equals(msg.getTo()))) {
-            res = false;
-        }
-
-        if ((org.length() > 0) && (!dest.equals(msg.getReplyTo()))) {
-            res = false;
-        }
-
-        return res;
     }
 
     /* Receive and check messages */

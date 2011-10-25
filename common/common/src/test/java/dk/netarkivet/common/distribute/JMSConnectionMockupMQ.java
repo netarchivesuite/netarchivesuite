@@ -103,7 +103,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
      *
      * @return A JMSConnection
      */
-    public static JMSConnection getInstance() {
+    public static synchronized JMSConnection getInstance() {
         if (instance == null) {
             instance = new JMSConnectionMockupMQ();
             instance.initConnection();

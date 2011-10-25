@@ -75,7 +75,7 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
      */
     public void testGetSparsePartialHarvest() {
         if (harvest.oid == null) {
-            harvest.setOid(new Long(1L));
+            harvest.setOid(Long.valueOf(1L));
         }
         SparsePartialHarvest sph = HarvestDefinitionDBDAO.getInstance()
         .getSparsePartialHarvest(harvestName);

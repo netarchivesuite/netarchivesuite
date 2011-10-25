@@ -89,7 +89,7 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
         ReflectUtils.getPrivateField(CrawlLogIndexCache.class,
                                      "cdxcache").set(cache,
                                                      new CDXDataCache() {
-                                                         public Long cache(long ID) {
+                                                         public Long cache(Long ID) {
                                                              if (ID % 3 == 0) {
                                                                  return null;
                                                              } else {

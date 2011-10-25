@@ -59,8 +59,6 @@ import dk.netarkivet.testutils.TestFileUtils;
  *  Add one selective harvestdefinition (isActive=true)
  */
 public class SchedulerDatabaseBuilder {
-
-    TestInfo info = new TestInfo();
     
     public static void main(String[] args) throws Exception {
         SchedulerDatabaseBuilder sdb = new SchedulerDatabaseBuilder();

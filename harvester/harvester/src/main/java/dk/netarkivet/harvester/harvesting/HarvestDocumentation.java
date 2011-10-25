@@ -621,7 +621,10 @@ public class HarvestDocumentation {
         return writeHarvestDetails(jobID, harvestID, crawlDir, aw,
                                    getHeritrixVersion(hf.getOrderXmlFile()));
     }
-
+    /**
+     * @param orderXml the file containing the heritrix order.xml 
+     * @return the Heritrix version in the order.xml. 
+     * */
     private static String getHeritrixVersion(File orderXml) {
         Document doc = XmlUtils.getXmlDoc(orderXml);
         Node userAgentNode = doc.selectSingleNode(
@@ -669,7 +672,7 @@ public class HarvestDocumentation {
      */
     private static String reverseDomainString(String reversedDomain) {
         String domain = "";
-        String remaining = new String(reversedDomain);
+        String remaining = reversedDomain;
         int lastDotIndex = remaining.lastIndexOf(".");
         while (lastDotIndex != -1) {
             domain += remaining.substring(lastDotIndex + 1) + ".";

@@ -66,7 +66,6 @@ public class TestInfo {
                 + "/harvester/data/originals/order_templates/");
     
     public TestInfo() {
-
     }
 
     /**

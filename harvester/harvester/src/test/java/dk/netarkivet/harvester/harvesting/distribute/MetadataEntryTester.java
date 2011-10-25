@@ -44,15 +44,15 @@ import dk.netarkivet.harvester.datamodel.Constants;
 public class MetadataEntryTester extends TestCase {
     private String aRealURL;
     private String anEmptyURL;
-    private String aNullURL = null;
+    final private String aNullURL = null;
 
     private String aRealMimetype;
     private String anEmptyMimetype;
-    private String aNullMimetype = null;
+    final private String aNullMimetype = null;
 
     private String realData;
     private String emptyData;
-    private String nullData = null;
+    final private String nullData = null;
     
     private String anInvalidUrl;
     private String anInvalidMimetype;
@@ -70,8 +70,8 @@ public class MetadataEntryTester extends TestCase {
         anInvalidMimetype = "textplain";
     }
 
-    /*
-     * Test method for 'dk.netarkivet.distribute.scheduler.MetadataEntry.MetadataEntry(String, String, String)'
+    /**
+     * Monkey Tests method for MetadataEntry constructor.
      */
     public void testMetadataEntry() {
 
@@ -145,8 +145,8 @@ public class MetadataEntryTester extends TestCase {
         
     }
 
-    /*
-     * Test method for getMethods
+    /**
+     * Test method for getMethods.
      */
     public void testGetterAndSetters() {
        MetadataEntry md = new MetadataEntry(aRealURL, aRealMimetype, realData);
@@ -156,10 +156,11 @@ public class MetadataEntryTester extends TestCase {
     }
 
     /**
-     * Test isDuplicateReductionMetadataEntry
+     * Test isDuplicateReductionMetadataEntry.
      */
      public void testIsDuplicateReductionMetadataEntry() {
-         MetadataEntry md = new MetadataEntry("metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s", aRealMimetype, realData);
+         MetadataEntry md = new MetadataEntry(
+                 "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s", aRealMimetype, realData);
          MetadataEntry md1 = new MetadataEntry("metadata://netarkivet.dk/crawl/setup/aliases?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s", aRealMimetype, realData);
          assertFalse("md1 should not be recognized as a duplicatereduction metadataEntry", md1.isDuplicateReductionMetadataEntry());
          assertTrue("md should be recognized as a duplicatereduction metadataEntry", md.isDuplicateReductionMetadataEntry());
@@ -174,7 +175,7 @@ public class MetadataEntryTester extends TestCase {
      }
      
      /** Test makeAliasMetadataEntry() returns null 
-      * if the aliases in the list of aliases are expired
+      * if the aliases in the list of aliases are expired.
       */
      public void testMakeAliasMetadataEntryReturnsNullWithOnlyExpiredAliases() {
          Long origHarvestdefinitionId = 1L;
@@ -192,11 +193,8 @@ public class MetadataEntryTester extends TestCase {
          assertTrue("The returned MetadataEntry should be null", md == null);
      }
      
-     
-     
-     
-    /*
-     * Test serializability
+    /**
+     * Test serializability.
      */
     public void testSerializability() throws IOException, ClassNotFoundException {
         //Take an object:
@@ -214,11 +212,12 @@ public class MetadataEntryTester extends TestCase {
         fooCopy = (MetadataEntry) ois.readObject();
         //Finally, compare their visible states:
         assertEquals("After serialization the states differed:\n" +
-                relevantState(fooOriginal) + "\n" + relevantState(fooCopy),relevantState(fooOriginal),relevantState(fooCopy));
+                relevantState(fooOriginal) + "\n" + relevantState(fooCopy),
+                relevantState(fooOriginal),relevantState(fooCopy));
     }
 
     private String relevantState(MetadataEntry fooOriginal) {
-        return new String(fooOriginal.getURL() + fooOriginal.getMimeType()
-                + new String(fooOriginal.getData()));
+        return fooOriginal.getURL() + fooOriginal.getMimeType()
+                + new String(fooOriginal.getData());
     }
 }

@@ -54,7 +54,7 @@ public class DomainHistoryTester extends TestCase {
                 h.getMostRecentHarvestInfo("bar"));
         h = setupHarvestInfos();
         assertEquals("Most recent harvest info for bar must be #2",
-                new Long(2), h.getMostRecentHarvestInfo("bar").getHarvestID());
+                Long.valueOf(2), h.getMostRecentHarvestInfo("bar").getHarvestID());
         HarvestInfo hi = h.getMostRecentHarvestInfo("baz");
         assertNull("Must not get non-existing harvest info", hi);
     }
@@ -84,10 +84,14 @@ public class DomainHistoryTester extends TestCase {
      */
     public void testMultipleHarvestInfoOnSameDate() throws Exception {
         DomainHistory h = new DomainHistory();
-        h.addHarvestInfo(new HarvestInfo(new Long(1L), "foo", "bar", new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
-        h.addHarvestInfo(new HarvestInfo(new Long(2L), "foo", "bar", new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
-        h.addHarvestInfo(new HarvestInfo(new Long(2L), "foo", "foo", new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
-        h.addHarvestInfo(new HarvestInfo(new Long(3L), "foo", "baz", new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
+        h.addHarvestInfo(new HarvestInfo(Long.valueOf(1L), "foo", "bar", 
+                new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
+        h.addHarvestInfo(new HarvestInfo(Long.valueOf(2L), "foo", "bar", 
+                new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
+        h.addHarvestInfo(new HarvestInfo(Long.valueOf(2L), "foo", "foo", 
+                new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
+        h.addHarvestInfo(new HarvestInfo(Long.valueOf(3L), "foo", "baz", 
+                new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
         List<HarvestInfo> readhislist = new ArrayList<HarvestInfo>();
 
         for(Iterator<HarvestInfo> i = h.getHarvestInfo(); i.hasNext(); ) {
@@ -102,36 +106,40 @@ public class DomainHistoryTester extends TestCase {
         for (int i=0; i<his.length; i++) {
             Integer oidcount = (Integer) hdOids.get(his[i].getHarvestID());
             if (oidcount == null) {
-                oidcount = new Integer(1);
+                oidcount = Integer.valueOf(1);
             } else {
-                oidcount = new Integer(oidcount.intValue() + 1);
+                oidcount = Integer.valueOf(oidcount.intValue() + 1);
             }
             hdOids.put(his[i].getHarvestID(), oidcount);
             Integer configcount = (Integer) configNames.get(his[i].getDomainConfigurationName());
             if (configcount == null) {
-                configcount = new Integer(1);
+                configcount = Integer.valueOf(1);
             } else {
-                configcount = new Integer(configcount.intValue() + 1);
+                configcount = Integer.valueOf(configcount.intValue() + 1);
             }
             configNames.put(his[i].getDomainConfigurationName(), configcount);
         }
         assertEquals("Three harvestdefs", 3, hdOids.keySet().size());
-        assertEquals("One with hd1", new Integer(1), hdOids.get(new Long(1L)));
-        assertEquals("Two with hd2", new Integer(2), hdOids.get(new Long(2L)));
-        assertEquals("One with hd3", new Integer(1), hdOids.get(new Long(3L)));
+        assertEquals("One with hd1", Integer.valueOf(1), hdOids.get(Long.valueOf(1L)));
+        assertEquals("Two with hd2", Integer.valueOf(2), hdOids.get(Long.valueOf(2L)));
+        assertEquals("One with hd3", Integer.valueOf(1), hdOids.get(Long.valueOf(3L)));
         assertEquals("Three configurations", 3, configNames.keySet().size());
-        assertEquals("Two with bar", new Integer(2), configNames.get("bar"));
-        assertEquals("One with foo", new Integer(1), configNames.get("foo"));
-        assertEquals("One with baz", new Integer(1), configNames.get("baz"));
+        assertEquals("Two with bar", Integer.valueOf(2), configNames.get("bar"));
+        assertEquals("One with foo", Integer.valueOf(1), configNames.get("foo"));
+        assertEquals("One with baz", Integer.valueOf(1), configNames.get("baz"));
     }
 
 
     private DomainHistory setupHarvestInfos() {
         DomainHistory h = new DomainHistory();
-        h.addHarvestInfo(new HarvestInfo(new Long(1), "foo", "bar", new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
-        h.addHarvestInfo(new HarvestInfo(new Long(2), "foo", "bar", new Date(3L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
-        h.addHarvestInfo(new HarvestInfo(new Long(3), "foo", "bar", new Date(2L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
-        h.addHarvestInfo(new HarvestInfo(new Long(4), "foo", "foo", new Date(4L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
+        h.addHarvestInfo(new HarvestInfo(Long.valueOf(1), "foo", "bar", 
+                new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
+        h.addHarvestInfo(new HarvestInfo(Long.valueOf(2), "foo", "bar", 
+                new Date(3L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
+        h.addHarvestInfo(new HarvestInfo(Long.valueOf(3), "foo", "bar", 
+                new Date(2L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
+        h.addHarvestInfo(new HarvestInfo(Long.valueOf(4), "foo", "foo", 
+                new Date(4L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
         return h;
     }
 
