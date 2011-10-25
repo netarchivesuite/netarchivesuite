@@ -967,7 +967,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "       = partialharvests.schedule_id "
                     + "ORDER BY harvestdefinitions.name");
             ResultSet res = s.executeQuery();
-            List<SparsePartialHarvest> harvests = new ArrayList<SparsePartialHarvest>();
+            List<SparsePartialHarvest> harvests 
+                = new ArrayList<SparsePartialHarvest>();
             while (res.next()) {
                 SparsePartialHarvest sph = new SparsePartialHarvest(
                         res.getLong(1), res.getString(2), res.getString(3),
@@ -1288,7 +1289,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "= seedlists.seedlist_id"
                     + " AND configurations.config_id "
                     + "= config_seedlists.config_id"
-                    + " AND configurations.config_id = harvest_configs.config_id"
+                    + " AND configurations.config_id "
+                        + "= harvest_configs.config_id"
                     + " AND harvest_configs.harvest_id "
                     + "= harvestdefinitions.harvest_id"
                     + " AND configurations.domain_id = domains.domain_id"
@@ -1368,7 +1370,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     private List<Long> getPreviousFullHarvests(Long thisHarvest) {
         List<Long> results = new ArrayList<Long>();
         Connection c = HarvestDBConnection.get();
-        // Follow the chain of orginating IDs back
+        // Follow the chain of originating IDs back
         for (Long originatingHarvest = thisHarvest; originatingHarvest != null;
         // Compute next originatingHarvest
         originatingHarvest = DBUtils.selectFirstLongValueIfAny(c,
@@ -1393,8 +1395,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                                 + " FROM fullharvests, harvestdefinitions,"
                                 + "  harvestdefinitions AS currenthd"
                                 + " WHERE currenthd.harvest_id=?"
-                                + " AND fullharvests.harvest_id=harvestdefinitions.harvest_id"
-                                + " AND harvestdefinitions.submitted<currenthd.submitted"
+                                + " AND fullharvests.harvest_id "
+                                    + "= harvestdefinitions.harvest_id"
+                                + " AND harvestdefinitions.submitted "
+                                    + "< currenthd.submitted"
                                 + " ORDER BY harvestdefinitions.submitted "
                                 + HarvestStatusQuery.SORT_ORDER.DESC.name(),
                         firstHarvest);

@@ -54,9 +54,9 @@ import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
 
 /**
@@ -137,11 +137,6 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
-    /**
-     * Create a new domain in the DB.
-     *
-     * @see DomainDAO#create(Connection,Domain)
-     */
     @Override
     protected void create(Connection connection, Domain d) {
         ArgumentNotValid.checkNotNull(d, "d");
@@ -255,11 +250,7 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
-    /**
-     * Change an existing domain in the DB.
-     *
-     * @see DomainDAO#update(Domain)
-     */
+    @Override
     public synchronized void update(Domain d) {
         ArgumentNotValid.checkNotNull(d, "domain");
 
@@ -914,6 +905,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Delete all entries from the config_seedlists table that refer to the
      * given configuration and insert the current ones.
+     * @param c An open connection to the harvestDatabase. 
      *
      * @param d
      *            A domain to operate on
@@ -1022,7 +1014,7 @@ public class DomainDBDAO extends DomainDAO {
             d.setDefaultConfiguration(defaultconfig);
             readOwnerInfo(c, d);
             readHistoryInfo(c, d);
-            readExtendedFieldValues(c, d);
+            readExtendedFieldValues(d);
 
             result = d;
         } catch (SQLException e) {
@@ -1648,7 +1640,7 @@ public class DomainDBDAO extends DomainDAO {
      * @param d the domain to which to add the values
      */
     private void addExtendedFieldValues(Domain d) {
-        ExtendedFieldDAO extendedFieldDAO = ExtendedFieldDBDAO.getInstance();
+        ExtendedFieldDAO extendedFieldDAO = ExtendedFieldDAO.getInstance();
         List<ExtendedField> list = extendedFieldDAO
                 .getAll(ExtendedFieldTypes.DOMAIN);
 
@@ -1665,7 +1657,7 @@ public class DomainDBDAO extends DomainDAO {
     }
     
     /**
-     * saves all extended Field values for a Domain in the Database.
+     * Saves all extended Field values for a Domain in the Database.
      * @param c Connection to Database
      * @param d Domain where loaded extended Field Values will be set
      * 
@@ -1679,7 +1671,8 @@ public class DomainDBDAO extends DomainDAO {
             ExtendedFieldValue efv = list.get(i);
             efv.setInstanceID(d.getID());
 
-            ExtendedFieldValueDBDAO dao = new ExtendedFieldValueDBDAO();
+            ExtendedFieldValueDBDAO dao 
+                = (ExtendedFieldValueDBDAO) ExtendedFieldValueDAO.getInstance();
             if (efv.getExtendedFieldValueID() != null) {
                 dao.update(c, efv, false);
             } else {
@@ -1690,23 +1683,21 @@ public class DomainDBDAO extends DomainDAO {
 
     
     /**
-     * reads all extended Field values from the database for a domain.
-     * @param c Connection to Database
+     * Reads all extended Field values from the database for a domain.
      * @param d Domain where loaded extended Field Values will be set
      * 
      * @throws SQLException
      *             If database errors occur.
      * 
      */
-    private void readExtendedFieldValues(Connection c, Domain d)
-            throws SQLException {
-        ExtendedFieldDBDAO dao = new ExtendedFieldDBDAO();
+    private void readExtendedFieldValues(Domain d) throws SQLException {
+        ExtendedFieldDAO dao = ExtendedFieldDAO.getInstance();
         List<ExtendedField> list = dao.getAll(ExtendedFieldTypes.DOMAIN);
 
         for (int i = 0; i < list.size(); i++) {
             ExtendedField ef = list.get(i);
 
-            ExtendedFieldValueDBDAO dao2 = new ExtendedFieldValueDBDAO();
+            ExtendedFieldValueDAO dao2 = ExtendedFieldValueDAO.getInstance();
             ExtendedFieldValue efv = dao2.read(ef.getExtendedFieldID(),
                     d.getID());
             if (efv == null) {

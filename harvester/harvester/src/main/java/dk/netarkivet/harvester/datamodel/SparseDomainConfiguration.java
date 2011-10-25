@@ -61,7 +61,6 @@ public class SparseDomainConfiguration {
         this.configurationName = dc.getName();
     }
     
-
     /**
      * Get domain name.
      * @return The domain name.
@@ -77,4 +76,25 @@ public class SparseDomainConfiguration {
     public String getConfigurationName(){
         return this.configurationName;
     }
+    
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SparseDomainConfiguration)) return false;
+
+        final SparseDomainConfiguration configKey = (SparseDomainConfiguration) o;
+
+        if (!configurationName.equals(configKey.getConfigurationName())) return false;
+        if (!domainName.equals(configKey.getDomainName())) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+        result = domainName.hashCode();
+        result = 29 * result + configurationName.hashCode();
+        return result;
+    }
+    
+    
 }
