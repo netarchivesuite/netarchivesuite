@@ -38,7 +38,7 @@ public class NASAssert extends Assert {
     disjunctInResultSet.removeAll(expectedSet);
 
     if (!disjunctInExpectedSet.isEmpty() || !disjunctInResultSet.isEmpty()) {
-            fail("Set not equal, Expected set contained the following " 
+            fail("Sets not equal, Expected sets contained the following " 
                     + disjunctInExpectedSet.size() + " elements "
                     + " not found in the result set:\n" + disjunctInExpectedSet
                     + "\nand the following " +  disjunctInResultSet.size()
