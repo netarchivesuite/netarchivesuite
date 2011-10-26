@@ -407,7 +407,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             // No need to go further, CrawlService.Job bean does not exist
             return cpm;
         }
-
+        
         // Fetch CrawlService.Job attributes
 
         String progressStats = (String) executeMBeanOperation(
@@ -563,7 +563,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         TabularData pendingJobs = null;
         TabularData doneJobs;
         int retries = 0;
-        while (retries++ < JMXUtils.getMaxTries()) {
+        final int maxJmxRetries = JMXUtils.getMaxTries(); 
+        while (retries++ < maxJmxRetries) {
             // If the job turns up in Heritrix' pending jobs list, it's ready
             pendingJobs = (TabularData) executeMBeanOperation(
                     CrawlServiceOperation.pendingJobs);
@@ -588,7 +589,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                             + job.get(CrawlServiceJobAttribute.Status.name()));
                 }
             }
-            if (retries < JMXUtils.getMaxTries()) {
+            if (retries < maxJmxRetries) {
                 TimeUtils.exponentialBackoffSleep(retries);
             }
         }
@@ -596,7 +597,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         // jobs list.
         if (pendingJobs == null || pendingJobs.size() == 0) {
             throw new IOFailure("Heritrix has not created a job after "
-                    + (Math.pow(2, JMXUtils.getMaxTries()) 
+                    + (Math.pow(2, maxJmxRetries) 
                             / TimeUtils.SECOND_IN_MILLIS)
                     + " seconds, giving up.");
         } else if (pendingJobs.size() > 1) {
@@ -676,7 +677,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                 log.warn(e);
                 continue;
             } catch (IndexOutOfBoundsException e) {
-                // sometimes the array is empty TODO find why
+                // sometimes the array is empty TODO find out why
                 log.warn(e);
                 continue;
             }
@@ -692,7 +693,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                 // Wait 20 seconds
                 Thread.sleep(20 * TimeUtils.SECOND_IN_MILLIS);
             } catch (InterruptedException e) {
-
+                log.trace("Received InterruptedException" , e);
             }
         }
         log.info("Waited " + StringUtils.formatDuration(waitSeconds)
@@ -905,7 +906,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      * Initializes the JMX connection.
      */
     private void initJMXConnection() {
-
+        
         // Initialize the connection to Heritrix' MBeanServer
         this.jmxConnector = JMXUtils.getJMXConnector(SystemUtils.LOCALHOST,
                 getJmxPort(), Settings

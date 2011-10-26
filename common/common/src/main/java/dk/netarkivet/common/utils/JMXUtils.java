@@ -53,10 +53,13 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Various JMX-related utility functions that have nowhere better to live.
- *
+ * Various JMX-related utility functions.
  */
 public final class JMXUtils {
+    
+    /** Private constructor to prevent instantiation. */
+    private JMXUtils() {
+    }
     
     /** The logger. */
     public static final Log log = LogFactory.getLog(JMXUtils.class.getName());
@@ -69,21 +72,28 @@ public final class JMXUtils {
     /** seconds per milliseconds as a double figure. */
     private static final double DOUBLE_SECONDS_IN_MILLIS 
         = TimeUtils.SECOND_IN_MILLIS * 1.0;
-    
+    /** The JMX timeout in seconds. */
+    private static final long timeoutInseconds = Settings.getLong(
+            CommonSettings.JMX_TIMEOUT);
+   
     /** The maximum number of times we back off on getting an mbean or a job.
      * The cumulative time trying is 2^(MAX_TRIES) milliseconds,
      * thus the constant is defined as log_2(TIMEOUT), as set in settings.
      * @return The number of tries
      */
     public static int getMaxTries() {
-        long timeoutInseconds = Settings.getLong(CommonSettings.JMX_TIMEOUT);
-        log.info("JMX TIMEOUT: " + TimeUtils.readableTimeInterval(
-                timeoutInseconds * TimeUtils.SECOND_IN_MILLIS));
         return (int) Math.ceil(
                 Math.log((double) timeoutInseconds * DOUBLE_SECONDS_IN_MILLIS) 
                     / Math.log(2.0));
     }
-
+    
+    /**
+     * @return the JMX timeout in milliseconds.
+     */
+    public static long getJmxTimeout() {
+        return TimeUtils.SECOND_IN_MILLIS * timeoutInseconds;
+    }
+    
     /**
      * If no initial JNDI context has been configured,
      * configures the system to use Sun's standard one.
@@ -239,6 +249,7 @@ public final class JMXUtils {
 
         log.debug("Preparing to execute " + command + " with args " 
                 + Arrays.toString(arguments) + " on " + beanName);
+        final int maxJmxRetries = getMaxTries();
         try {
             final String[] signature = new String[arguments.length];
             Arrays.fill(signature, String.class.getName());
@@ -257,7 +268,7 @@ public final class JMXUtils {
                     return ret;
                 } catch (InstanceNotFoundException e) {
                     lastException = e;
-                    if (tries < getMaxTries()) {
+                    if (tries < maxJmxRetries) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
@@ -265,11 +276,11 @@ public final class JMXUtils {
                              + " with args " + Arrays.toString(arguments) 
                              + " on " + beanName, e);
                     lastException = e;
-                    if (tries < getMaxTries()) {
+                    if (tries < maxJmxRetries) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 }
-            } while (tries < getMaxTries());
+            } while (tries < maxJmxRetries);
             throw new IOFailure("Failed to find MBean " + beanName
                                 + " for executing " + command
                                 + " after " + tries + " attempts",
@@ -297,6 +308,7 @@ public final class JMXUtils {
         
         log.debug("Preparing to get attribute " + attribute
                  + " on " + beanName);
+        final int maxJmxRetries = getMaxTries();
         try {
             // The first time we attempt to connect to an mbean, we might have
             // to wait a bit for it to appear
@@ -314,18 +326,18 @@ public final class JMXUtils {
                     log.trace("Error while getting attribute " + attribute
                              + " on " + beanName, e);
                     lastException = e;
-                    if (tries < getMaxTries()) {
+                    if (tries < maxJmxRetries) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
                     log.trace("Error while getting attribute " + attribute
                              + " on " + beanName, e);
                     lastException = e;
-                    if (tries < getMaxTries()) {
+                    if (tries < maxJmxRetries) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 }
-            } while (tries < getMaxTries());
+            } while (tries < maxJmxRetries);
             throw new IOFailure("Failed to find MBean " + beanName
                                 + " for getting attribute " + attribute
                                 + " after " + tries + " attempts",
@@ -377,12 +389,13 @@ public final class JMXUtils {
         Map<String, ?> environment = packageCredentials(login, password);
         Throwable lastException;
         int retries = 0;
+        final int maxJmxRetries = getMaxTries();
         do {
             try {
                 return JMXConnectorFactory.connect(rmiurl, environment);
             } catch (IOException e) {
                 lastException = e;
-                if (retries < getMaxTries() && e.getCause() != null
+                if (retries < maxJmxRetries && e.getCause() != null
                     && (e.getCause() instanceof ServiceUnavailableException 
                           || e.getCause() instanceof SocketTimeoutException)) {
                     // Sleep a bit before trying again
@@ -395,9 +408,9 @@ public final class JMXUtils {
                 }
                 break;
             }
-        } while (retries++ < getMaxTries());
+        } while (retries++ < maxJmxRetries);
         throw new IOFailure("Failed to connect to URL " + rmiurl + " after "
-                            + retries + " of " + getMaxTries()
+                            + retries + " of " + maxJmxRetries
                             + " attempts.\nException type: "
                             + lastException.getCause().getClass().getName(),
                             lastException);

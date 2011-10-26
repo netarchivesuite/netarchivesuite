@@ -102,6 +102,7 @@ test any project code
 
 
     public void testGetAttribute() throws Exception {
+        final int maxJmxRetries = JMXUtils.getMaxTries();
         TestMBeanServerConnection connection = new TestMBeanServerConnection(0);
         Object ret = connection.getAttribute(JMXUtils.getBeanName("a:aBean=1"), "anAttribute");
         assertEquals("Should have composed bean/attribute name",
@@ -112,7 +113,7 @@ test any project code
                      "a:aBean=1:anAttribute", o);
 
         Date then = new Date();
-        connection.failCount = JMXUtils.getMaxTries() + 1;
+        connection.failCount = maxJmxRetries + 1;
         try {
             o = JMXUtils.getAttribute("a:aBean=1", "anAttribute", connection);
             fail("Should time out");
@@ -121,11 +122,11 @@ test any project code
         }
         Date now = new Date();
         long time = now.getTime()-then.getTime();
-        assertTrue("Should take at least 2^" + JMXUtils.getMaxTries()
+        assertTrue("Should take at least 2^" + maxJmxRetries
                    + " milliseconds, but was " + time + ", should be "
-                   + Math.pow(2, JMXUtils.getMaxTries()),
-                   time >= Math.pow(2, JMXUtils.getMaxTries()));
-        assertEquals("Should have been called " + JMXUtils.getMaxTries() + " times.",
+                   + Math.pow(2, maxJmxRetries),
+                   time >= Math.pow(2, maxJmxRetries));
+        assertEquals("Should have been called " + maxJmxRetries + " times.",
                     1,
                     connection.failCount);
     }

@@ -224,6 +224,9 @@ implements HeritrixController {
             String[] args = allOpts.toArray(new String[allOpts.size()]);
             log.info("Starting Heritrix process with args"
                     + Arrays.toString(args));
+            log.debug("The JMX timeout is set to " 
+                    + TimeUtils.readableTimeInterval(JMXUtils.getJmxTimeout()));
+
             ProcessBuilder builder = new ProcessBuilder(args);
 
             updateEnvironment(builder.environment());
@@ -242,11 +245,16 @@ implements HeritrixController {
             throw new IOFailure("Error starting Heritrix process", e);
         }
     }
-
+    /**
+     * @return the JMX port for communicating with Heritrix.
+     */
     protected int getJmxPort() {
         return jmxPort;
     }
-
+    
+    /**
+     * @return the HTTP port used by the Heritrix GUI.
+     */
     protected int getGuiPort() {
         return guiPort;
     }
@@ -449,6 +457,7 @@ implements HeritrixController {
      */
     protected void waitForHeritrixProcessExit() {
         final long maxWait = Settings.getLong(CommonSettings.PROCESS_TIMEOUT);
+        final int maxJmxRetries = JMXUtils.getMaxTries();
         Integer exitValue = ProcessUtils.waitFor(heritrixProcess, maxWait);
         if (exitValue != null) {
             log.info("Heritrix process of " + this + " exited with exit code "
@@ -492,7 +501,7 @@ implements HeritrixController {
                 break;
             }
             TimeUtils.exponentialBackoffSleep(attempt);
-        } while (attempt++ < JMXUtils.getMaxTries());
+        } while (attempt++ < maxJmxRetries);
     }
 
     /**

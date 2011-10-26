@@ -279,7 +279,7 @@ class StartedJobHistoryChartGen {
     private static final int[] CHART_RESOLUTION = new int[] {600, 450};
     /** The dimension of the chart axis. */
     private static final double CHART_AXIS_DIMENSION = 10.0;
-    /** The relativt path of the output. */
+    /** The relative path of the output. */
     private static final String OUTPUT_REL_PATH  =
         "History" + File.separator + "webapp";
 
@@ -493,7 +493,7 @@ class StartedJobHistoryChartGen {
      * @param values the values
      * @return a DefaultXYDataset.
      */
-    private final XYDataset createXYDataSet(
+    private XYDataset createXYDataSet(
             String name,
             double[] timeValues,
             double[] values) {
@@ -510,7 +510,7 @@ class StartedJobHistoryChartGen {
      * @param values an array of doubles
      * @return the maximum of the values given
      */
-    private final double getMaxValue(double[] values) {
+    private double getMaxValue(double[] values) {
         double max = Double.MIN_VALUE;
         for (double v : values) {
             max = Math.max(v, max);
