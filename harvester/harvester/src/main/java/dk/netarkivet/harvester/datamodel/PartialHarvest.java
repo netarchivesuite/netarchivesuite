@@ -43,7 +43,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.webinterface.EventHarvest;
+import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 
 
 /**
@@ -347,7 +347,7 @@ public class PartialHarvest extends HarvestDefinition {
      *  (if maxbytes is negative)<br>
      *  harvestdefinitionname + "_" + templateName + "_" + maxBytes + "Bytes"
      *  (if maxbytes is zero or postive).
-     * @see EventHarvest#addConfigurations(PageContext, I18n, String)
+     * @see EventHarvestUtil#addConfigurations(PageContext, I18n, String)
      * for details
      * @param seeds a newline-separated list of the seeds to be added
      * @param templateName the name of the template to be used

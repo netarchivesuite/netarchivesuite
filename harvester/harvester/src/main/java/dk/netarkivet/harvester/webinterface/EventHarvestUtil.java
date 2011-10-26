@@ -43,14 +43,14 @@ import dk.netarkivet.harvester.datamodel.TemplateDAO;
  * Contains utility methods for supporting event harvest GUI.
  *
  */
-public final class EventHarvest {
+public final class EventHarvestUtil {
     
-    static final Log log = LogFactory.getLog(EventHarvest.class.getName());
+    static final Log log = LogFactory.getLog(EventHarvestUtil.class.getName());
     
     /**
      * Private Constructor. Instances are not meaningful.
      */
-    private EventHarvest() {
+    private EventHarvestUtil() {
     }
 
     /**

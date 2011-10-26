@@ -83,16 +83,12 @@ DomainConfigurations are posted as pairs
                  dk.netarkivet.harvester.datamodel.SparseDomain,
                  dk.netarkivet.harvester.datamodel.SparseDomainConfiguration,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
-                 dk.netarkivet.harvester.webinterface.Constants,
-                 dk.netarkivet.harvester.webinterface.SelectiveHarvest"
+                 dk.netarkivet.harvester.webinterface.Constants,dk.netarkivet.harvester.webinterface.SelectiveHarvestUtil"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
-    private static final I18n I18N
-            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-%><%
-    HTMLUtils.setUTF8(request);
+/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!private static final I18n I18N
+            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%><%HTMLUtils.setUTF8(request);
 
     HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
     // Update all relevant HD data from request, some results are saved in
@@ -100,7 +96,7 @@ DomainConfigurations are posted as pairs
     List<String> unknownDomains = new ArrayList<String>();
     List<String> illegalDomains = new ArrayList<String>();
     try {
-        SelectiveHarvest.processRequest(pageContext, I18N,
+        SelectiveHarvestUtil.processRequest(pageContext, I18N,
                 unknownDomains, illegalDomains);
     } catch (ForwardedToErrorPage e) {
         return;
@@ -138,8 +134,7 @@ DomainConfigurations are posted as pairs
             pageContext,
             "./jscalendar/calendar.js",
             "./jscalendar/lang/calendar-" + lang + ".js",
-            "./jscalendar/calendar-setup.js");
-%>
+            "./jscalendar/calendar-setup.js");%>
 
 <jsp:include page="calendar-scripts.jsp"/>
 

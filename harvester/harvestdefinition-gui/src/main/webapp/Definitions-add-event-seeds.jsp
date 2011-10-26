@@ -56,16 +56,12 @@ harvest.
                  org.apache.commons.fileupload.FileItemFactory,
                  org.apache.commons.fileupload.disk.DiskFileItemFactory,
                  org.apache.commons.fileupload.servlet.ServletFileUpload,
-                 org.apache.commons.fileupload.FileItem,
-                 dk.netarkivet.harvester.webinterface.EventHarvest"
+                 org.apache.commons.fileupload.FileItem,dk.netarkivet.harvester.webinterface.EventHarvestUtil"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
-    private static final I18n I18N
-            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-%><%
-    HTMLUtils.setUTF8(request);
+/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!private static final I18n I18N
+            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%><%HTMLUtils.setUTF8(request);
     
     boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
     String harvestName = null;
@@ -144,12 +140,12 @@ harvest.
     if (update != null && update.length() > 0) {
         try {
             if (!isMultiPart) {
-			  	EventHarvest.addConfigurations(pageContext, I18N, harvestName);
+			  	EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName);
 			} else {
 				if (!seedsFileName.isEmpty()) { // File exists
 					String seeds = FileUtils.readFile(seedsFile);			
 					if (!seeds.isEmpty()) {
-						EventHarvest.addConfigurationsFromSeedsFile(
+						EventHarvestUtil.addConfigurationsFromSeedsFile(
 							pageContext, I18N, harvestName, seeds, maxbytesString, 
 							maxobjectsString, maxrateString, orderTemplateString);
 					}
@@ -169,8 +165,7 @@ harvest.
                 + HTMLUtils.encode(harvestName));
         return;
     }
-    HTMLUtils.generateHeader(pageContext);
-%>
+    HTMLUtils.generateHeader(pageContext);%>
 
 <h2><fmt:message key="prompt;event.harvest"/>
     <%=HTMLUtils.escapeHtmlValues(harvestName)%>

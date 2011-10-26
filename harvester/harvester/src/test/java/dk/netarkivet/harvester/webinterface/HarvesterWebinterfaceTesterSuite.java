@@ -44,7 +44,7 @@ public class HarvesterWebinterfaceTesterSuite {
         //suite.addTestSuite(HarveststatusPerdomainTester.class);
         suite.addTestSuite(HistorySiteSectionTester.class);
         suite.addTestSuite(ScheduleDefinitionTester.class);
-        suite.addTestSuite(SelectiveHarvestTester.class);
+        suite.addTestSuite(SelectiveHarvestUtilTester.class);
         suite.addTestSuite(SnapshotHarvestDefinitionTester.class);
         suite.addTestSuite(HarvestStatusTester.class);
     }

@@ -68,14 +68,27 @@ public class HarvestStatusQuery {
     
     /** The String code to select all harvests. */
     public static final String HARVEST_NAME_ALL = "ALL";
-    
+    /** String to check, if there is a wildcard in the harvestname. */
     public static final String HARVEST_NAME_WILDCARD = "*";
+    /** Value used to define page size undefined. */
     public static final long PAGE_SIZE_NONE = 0;
-    public static final long DATE_NONE = -1;
+    /** Value used to define date undefined. */
+    public static final long DATE_NONE = -1L;
     
+    /**
+     * Enum class defining the different sort-orders.
+     */
     public static enum SORT_ORDER {
-        ASC, DESC;
-
+        /** Ascending mode. From lowest to highest. */
+        ASC,
+        /** Descending mode. From highest to lowest. */
+        DESC;
+        
+        /**
+         * Parse the given argument and return a sorting order.
+         * @param order a given sorting order as string
+         * @return a sorting order representing the given string.
+         */
         public static SORT_ORDER parse(String order) {
             for (SORT_ORDER o : values()) {
                 if (o.name().equals(order)) {
@@ -90,23 +103,51 @@ public class HarvestStatusQuery {
      * Defines the UI fields and their default values.
      */
     public static enum UI_FIELD {
-        JOB_STATUS(JobStatus.STARTED.name()), JOB_ID_ORDER("ASC"), HARVEST_NAME(
-                HARVEST_NAME_ALL), HARVEST_ID(""), HARVEST_RUN(""), START_DATE(
-                ""), END_DATE(""), PAGE_SIZE(Settings.get(
-                        CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE)), 
-                        START_PAGE_INDEX(
-                "1"), RESUBMIT_JOB_IDS("");
+        /** jobstatus with default status STARTED. */
+        JOB_STATUS(JobStatus.STARTED.name()),
+        /** JOB ID order. default is ascending. */
+        JOB_ID_ORDER("ASC"), 
+        /** harvest name. default is ALL (i.e all harvests). */
+        HARVEST_NAME(HARVEST_NAME_ALL), 
+        /** The harvest ID. No default. */
+        HARVEST_ID(""), 
+        /** The harvest Run number. No default. */
+        HARVEST_RUN(""), 
+        /** The harvest start date. No default. */
+        START_DATE(""), 
+        /** The harvest end date. No default. */
+        END_DATE(""),
+        /** The number of results on each page. The default is read from
+         * the setting {@link CommonSettings#HARVEST_STATUS_DFT_PAGE_SIZE}.
+         */
+        PAGE_SIZE(Settings.get(
+                        CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE)),
+        /** The starting page. Default is 1. */
+        START_PAGE_INDEX("1"), 
+        /** The number of Jobs to resubmit identified by ID. No default. */
+        RESUBMIT_JOB_IDS("");
 
-        private String defaultValue;
-
+        /** The default value for this UI-field. */
+        private final String defaultValue;
+        /** Constructor for the UI_FIELD enum class.
+         * @param defaultValue the default value of the field.
+         */
         UI_FIELD(String defaultValue) {
             this.defaultValue = defaultValue;
         }
-
+        
+        /**
+         * Get the values stored in the request for this UI_FIELD.
+         * @param req the servlet request
+         * @return the values stored in the request for this UI_FIELD
+         * as a string array.
+         */
         public String[] getValues(ServletRequest req) {
             String[] values = req.getParameterValues(name());
             if (values == null || values.length == 0) {
-                return new String[] { this.defaultValue };
+                return new String[] {
+                        this.defaultValue 
+                        };
             }
             return values;
         }
@@ -125,39 +166,36 @@ public class HarvestStatusQuery {
             }
             return value;
         }
-
-        public Object getDefaultValue() {
-            return defaultValue;
-        }
-
     }
 
-    // The calendar widget uses a date format that differs from the patterns
-    // used by SimpleDateFormat, hence we need two preperties
+    /** The date format used by the calendar widget. It is actually the same 
+     * format as the one represented by the DATE_FORMAT.  */
     public static final String CALENDAR_UI_DATE_FORMAT = "%Y/%m/%d";
-
+    
+    /** The date format used when returning dates as strings. */
     private static final SimpleDateFormat DATE_FORMAT =
         new SimpleDateFormat("yyyy/MM/dd");
-
-    private Set<JobStatus> jobStatuses = new HashSet<JobStatus>();
-
-    private Long harvestId;
-
-    private Long harvestRunNumber;
-
-    private String harvestName;
-
-    private Date startDate;
-
-    private Date endDate;
-
-    private SORT_ORDER sort;
-
-    private long pageSize;
-
-    private long startPageIndex;
     
-    private boolean caseSensitiveHarvestName=true;
+    /** The job states selected in this query. */
+    private Set<JobStatus> jobStatuses = new HashSet<JobStatus>();
+    /** The harvestID. */
+    private Long harvestId;
+    /** The harvest run number. */
+    private Long harvestRunNumber;
+    /** The harvest name. */
+    private String harvestName;
+    /** The start date. */
+    private Date startDate;
+    /** The end date. */
+    private Date endDate;
+    /** The sort order. */
+    private SORT_ORDER sortingOrder;
+    /** The page-size. */
+    private long pageSize;
+    /** The start page. */
+    private long startPageIndex;
+    /** Is the harvest name case sensitive.  The default is yes. */
+    private boolean caseSensitiveHarvestName = true;
 
     /**
      * Builds a default query that will select all jobs.
@@ -184,7 +222,7 @@ public class HarvestStatusQuery {
      */
     public HarvestStatusQuery(ServletRequest req) {
 
-        String[] statuses = (String[]) UI_FIELD.JOB_STATUS.getValues(req);
+        String[] statuses = UI_FIELD.JOB_STATUS.getValues(req);
         for (String s : statuses) {
             if (JOBSTATUS_ALL.equals(s)) {
                 this.jobStatuses.clear();
@@ -193,26 +231,26 @@ public class HarvestStatusQuery {
             this.jobStatuses.add(JobStatus.parse(s));
         }
 
-        this.harvestName = (String) UI_FIELD.HARVEST_NAME.getValue(req);
+        this.harvestName = UI_FIELD.HARVEST_NAME.getValue(req);
         if (HARVEST_NAME_ALL.equalsIgnoreCase(this.harvestName)) {
             this.harvestName = "";
         }
 
-        String harvestIdStr = (String) UI_FIELD.HARVEST_ID.getValue(req);
+        String harvestIdStr = UI_FIELD.HARVEST_ID.getValue(req);
         try {
             this.harvestId = Long.parseLong(harvestIdStr);
         } catch (NumberFormatException e) {
             this.harvestId = null;
         }
 
-        String harvestRunStr = (String) UI_FIELD.HARVEST_RUN.getValue(req);
+        String harvestRunStr = UI_FIELD.HARVEST_RUN.getValue(req);
         try {
             this.harvestRunNumber = Long.parseLong(harvestRunStr);
         } catch (NumberFormatException e) {
             this.harvestRunNumber = null;
         }
 
-        String startDateStr = (String) UI_FIELD.START_DATE.getValue(req);
+        String startDateStr = UI_FIELD.START_DATE.getValue(req);
         if (!startDateStr.isEmpty()) {
             try {
                 this.startDate = DATE_FORMAT.parse(startDateStr);
@@ -222,7 +260,7 @@ public class HarvestStatusQuery {
             }
         }
 
-        String endDateStr = (String) UI_FIELD.END_DATE.getValue(req);
+        String endDateStr = UI_FIELD.END_DATE.getValue(req);
         if (!endDateStr.isEmpty()) {
             try {
                 this.endDate = DATE_FORMAT.parse(endDateStr);
@@ -238,9 +276,9 @@ public class HarvestStatusQuery {
             }
         }
 
-        String orderStr = (String) UI_FIELD.JOB_ID_ORDER.getValue(req);
-        this.sort = SORT_ORDER.parse(orderStr);
-        if (this.sort == null) {
+        String orderStr = UI_FIELD.JOB_ID_ORDER.getValue(req);
+        this.sortingOrder = SORT_ORDER.parse(orderStr);
+        if (this.sortingOrder == null) {
             // Will not happen as value comes from a select
             throw new ArgumentNotValid("Invalid sort order!");
         }
@@ -260,16 +298,25 @@ public class HarvestStatusQuery {
         }
 
     }
-
+    
+    /** 
+     * @return the selected job states as an array.
+     */
     public JobStatus[] getSelectedJobStatuses() {
-        return (JobStatus[]) jobStatuses.toArray(new JobStatus[jobStatuses
+        return jobStatuses.toArray(new JobStatus[jobStatuses
                 .size()]);
     }
-
+    
+    /** 
+     * @return the selected job states as a set..
+     */
     public Set<JobStatus> getSelectedJobStatusesAsSet() {
         return jobStatuses;
     }
-
+    
+    /**
+     * @return the harvest name.
+     */
     public String getHarvestName() {
         if (harvestName == null) {
             return "";
@@ -277,25 +324,50 @@ public class HarvestStatusQuery {
         return harvestName;
     }
     
-    public void setHarvestName( String harvestName) {
+    /**
+     * Set the harvest name.
+     * @param harvestName The harvest name
+     */
+    public void setHarvestName(String harvestName) {
         this.harvestName = harvestName;
     }
+    
+    /**
+     * @return the harvest ID.
+     */
     public Long getHarvestId() {
         return harvestId;
     }
 
+    /**
+     * @return the harvest run number.
+     */
     public Long getHarvestRunNumber() {
         return harvestRunNumber;
     }
 
+    /**
+     * @return the start date as milliseconds since Epoch 
+     * or {@link HarvestStatusQuery#DATE_NONE} if 
+     * start date is undefined
+     */
     public long getStartDate() {
-        return (startDate == null ? -1 : startDate.getTime());
+        return (startDate == null ? DATE_NONE : startDate.getTime());
     }
 
+    /**
+     * @return the end date as milliseconds since Epoch, 
+     * or {@link HarvestStatusQuery#DATE_NONE} if 
+     * end date is undefined
+     */
     public long getEndDate() {
-        return (endDate == null ? -1 : endDate.getTime());
+        return (endDate == null ? DATE_NONE : endDate.getTime());
     }
-
+    
+    /**
+     * @return the start date as a string, or an empty string if 
+     * start date is undefined
+     */
     public String getStartDateAsString() {
         if (startDate == null) {
             return "";
@@ -303,17 +375,27 @@ public class HarvestStatusQuery {
         return DATE_FORMAT.format(startDate);
     }
 
+    /**
+     * @return the end date as a string, or an empty string if 
+     * end date is undefined
+     */
     public String getEndDateAsString() {
         if (endDate == null) {
             return "";
         }
         return DATE_FORMAT.format(endDate);
     }
-
+    
+    /**
+     * @return true, if the sorting order is Ascending, otherwise false.
+     */
     public boolean isSortAscending() {
-        return SORT_ORDER.ASC.equals(sort);
+        return SORT_ORDER.ASC.equals(sortingOrder);
     }
-
+    
+    /**
+     * @return the page size, i.e. the number of results on each page.
+     */
     public long getPageSize() {
         return pageSize;
     }
@@ -326,19 +408,33 @@ public class HarvestStatusQuery {
         ArgumentNotValid.checkNotNegative(pageSize, "pageSize");
         this.pageSize = pageSize;
     }
-
+    /**
+     * @return the start page
+     */
     public long getStartPageIndex() {
         return startPageIndex;
     }
     
-    public void setCaseSensitiveHarvestName(boolean caseSensitiveHarvestName) {
-        this.caseSensitiveHarvestName = caseSensitiveHarvestName;
+    /**
+     * Define whether or not the harvest name is case sensitive.
+     * @param isHarvestNameCaseSensitive If true, harvestname is case sensitive,
+     * otherwise not. 
+     */
+    public void setCaseSensitiveHarvestName(
+            boolean isHarvestNameCaseSensitive) {
+        this.caseSensitiveHarvestName = isHarvestNameCaseSensitive;
     }
-
+    /**
+     * @return true, if the harvest name is case sensitive, otherwise false
+     */
     public boolean getCaseSensitiveHarvestName() {
         return caseSensitiveHarvestName;
     }
     
+    /**
+     * Set the selected states in the query.
+     * @param chosenStates the set of selected states.
+     */
     public void setJobStatus(Set<JobStatus> chosenStates) {
        this.jobStatuses = chosenStates;
     }

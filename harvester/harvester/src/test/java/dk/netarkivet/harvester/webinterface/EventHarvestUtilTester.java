@@ -42,13 +42,13 @@ import dk.netarkivet.harvester.datamodel.SeedList;
  * Unit-tests for the webinterface class
  * dk.netarkivet.harvester.webinterface.EventHarvest.
  */
-public class EventHarvestTester extends HarvesterWebinterfaceTestCase {
+public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
 
     private PartialHarvest harvest;
     private static final String harvestName = "Test Event Harvest";
     private static final String order1 = "default_orderxml";
 
-    public EventHarvestTester(String s) {
+    public EventHarvestUtilTester(String s) {
         super(s);
     }
 
@@ -86,7 +86,7 @@ public class EventHarvestTester extends HarvesterWebinterfaceTestCase {
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
-        EventHarvest.addConfigurations(pageContext, I18N, harvest.getName());
+        EventHarvestUtil.addConfigurations(pageContext, I18N, harvest.getName());
         String expectedDomainConfigurationName = harvestName 
             + "_" + order1 + "_1000000000Bytes" + "_4Objects";
         // Check that the domain and configuration have been created

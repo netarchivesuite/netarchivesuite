@@ -53,8 +53,8 @@ import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 
-public class SelectiveHarvestTester extends DataModelTestCase {
-    public SelectiveHarvestTester(String s) {
+public class SelectiveHarvestUtilTester extends DataModelTestCase {
+    public SelectiveHarvestUtilTester(String s) {
         super(s);
     }
 
@@ -86,7 +86,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
 
         // verify correct configurations are created
         Method getDomainConfigurations = ReflectUtils.getPrivateMethod(
-                SelectiveHarvest.class, "getDomainConfigurations", Map.class);
+                SelectiveHarvestUtil.class, "getDomainConfigurations", Map.class);
         List<DomainConfiguration> dc = (List<DomainConfiguration>)
                 getDomainConfigurations.invoke(null, confs);
         assertEquals("2 configurations expected", 2, dc.size() );
@@ -113,7 +113,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         List<String> unknowns = new ArrayList<String>();
         List<String> illegals = new ArrayList<String>();
         Method addDomainsToConfigurations = ReflectUtils.getPrivateMethod(
-                SelectiveHarvest.class, "addDomainsToConfigurations",
+                SelectiveHarvestUtil.class, "addDomainsToConfigurations",
                 List.class, String.class, List.class, List.class);
         addDomainsToConfigurations.invoke(null, dc,
                 "netarkivet.dk\nstatsbiblioteket.dk", unknowns, illegals);
@@ -141,7 +141,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         List<String> unknowns = new ArrayList<String>();
         List<String> illegals = new ArrayList<String>();
         Method addDomainsToConfigurations = ReflectUtils.getPrivateMethod(
-                SelectiveHarvest.class, "addDomainsToConfigurations",
+                SelectiveHarvestUtil.class, "addDomainsToConfigurations",
                 List.class, String.class, List.class, List.class);
         addDomainsToConfigurations.invoke(null, dc,
                  "netarkivet.dk\nunknowun1.dk\nstatsbiblioteket.dk\nunknown2.dj\nklaf-foo",
@@ -171,7 +171,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         ServletRequest confRequest = dummyRequest(confs);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(confRequest);
-        SelectiveHarvest.processRequest(
+        SelectiveHarvestUtil.processRequest(
                 pageContext, I18N, unknownDomains, illegalDomains);
         PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance().
         		getHarvestDefinition("web-test1");
@@ -208,7 +208,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         ServletRequest confRequest = dummyRequest(confs);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(confRequest);
-        SelectiveHarvest.processRequest(pageContext, I18N,
+        SelectiveHarvestUtil.processRequest(pageContext, I18N,
                 unknownDomains, illegalDomains);
         PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance()
         		.getHarvestDefinition("Testhøstning");
@@ -251,7 +251,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         ServletRequest confRequest = dummyRequest(confs);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(confRequest);
-        SelectiveHarvest.processRequest(pageContext, I18N, unknownDomains, illegalDomains);
+        SelectiveHarvestUtil.processRequest(pageContext, I18N, unknownDomains, illegalDomains);
         PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance()
         		.getHarvestDefinition("Testhøstning");
         assertEquals("Check fields", "kommentar", hdd.getComments());
@@ -299,7 +299,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
                 dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(
                 confRequest);
-        SelectiveHarvest.processRequest(pageContext, I18N, unknownDomains,
+        SelectiveHarvestUtil.processRequest(pageContext, I18N, unknownDomains,
                                         illegalDomains);
 
         //Check result
