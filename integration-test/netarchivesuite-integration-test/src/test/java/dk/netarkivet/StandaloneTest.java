@@ -183,7 +183,6 @@ public abstract class StandaloneTest extends SystemTest {
                         && zipPrefixPos > testXValueStart) {
                     revisionValue = fileName.substring(testXValueStart,
                             zipPrefixPos);
-                    break;
                 }
             }
         }

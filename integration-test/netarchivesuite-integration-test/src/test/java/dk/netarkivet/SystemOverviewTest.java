@@ -58,7 +58,7 @@ public class SystemOverviewTest extends StandaloneTest {
         Set<Application> displayedApplicationSet = new HashSet<Application>();
 
         for (int rowCounter = 1; rowCounter < numberOfRows; rowCounter++) {
-            System.out.println("Checking row "
+            log.debug("Checking row "
                     + rowCounter
                     + ", value is: "
                     + selenium.getTable("system_state_table." + rowCounter
@@ -75,6 +75,7 @@ public class SystemOverviewTest extends StandaloneTest {
                                     + (".4"))));
         }
 
-        NASAssert.assertEquals(displayedApplicationSet, expectedApplicationSet);
+        NASAssert.assertEquals(displayedApplicationSet, expectedApplicationSet, 
+                "The list of application in the System Overview page differs from the expected");
     }
 }
