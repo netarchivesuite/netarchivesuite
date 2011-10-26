@@ -31,6 +31,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
     /** The connection to the JMSBroker. */
     private static JMSConnection conn;
     /** A set with the current indexing jobs in progress. */
-    private static Set<IndexRequestMessage> currentJobs;
+    private static Map<String, IndexRequestMessage> currentJobs;
     /** The max number of concurrent jobs. */
     private static long maxConcurrentJobs;
     /** Are we listening, now. */
@@ -109,7 +110,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
         listeningInterval = Settings.getLong(
                 ArchiveSettings.INDEXSERVER_INDEXING_LISTENING_INTERVAL);
         
-        currentJobs = new HashSet<IndexRequestMessage>();
+        currentJobs = new HashMap<String, IndexRequestMessage>();
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(
                 RequestType.class);
         conn = JMSConnectionFactory.getInstance();
@@ -135,7 +136,16 @@ public final class IndexRequestServer extends ArchiveMessageHandler
         for (File request : requests) {
             if (request.isFile()) {
                 final IndexRequestMessage msg = restoreMessage(request);
-                currentJobs.add(msg);
+                synchronized(currentJobs) {
+                    if (!currentJobs.containsKey(msg.getID())) {
+                        currentJobs.put(msg.getID(), msg);
+                    } else {
+                        log.debug("Skipped message w/id='" + msg.getID() 
+                                + "'. Already among current jobs");
+                        continue;
+                    }
+                    
+                }
                 // Start a new thread to handle the actual request.
                 new Thread() {
                     public void run() {
@@ -207,8 +217,22 @@ public final class IndexRequestServer extends ArchiveMessageHandler
         // save new msg to requestDir
         try {
             saveMsg(irMsg);
-            currentJobs.add(irMsg);
-
+            synchronized (currentJobs) {
+                if (!currentJobs.containsKey(irMsg.getID())) {
+                    currentJobs.put(irMsg.getID(), irMsg);
+                } else {
+                    final String errMsg 
+                        = "Should not happen. Skipping msg w/ id= '" 
+                                + irMsg.getID() 
+                                + "' because already among current jobs. "
+                                + "Unable to initiate indexing. "
+                                + "Sending failed message back to sender";
+                        log.warn(errMsg);
+                        irMsg.setNotOk(errMsg);
+                        JMSConnectionFactory.getInstance().reply(irMsg);
+                        return;
+                }
+            }
             // Limit the number of concurrently indexing job
             if (currentJobs.size() >= maxConcurrentJobs) {
                 if (isListening.get()) {
@@ -342,7 +366,9 @@ public final class IndexRequestServer extends ArchiveMessageHandler
             irMsg.setNotOk(e);
         } finally {
             // Remove job from currentJobs Set
-            currentJobs.remove(irMsg);
+            synchronized (currentJobs) {
+                currentJobs.remove(irMsg.getID());
+            }
             // delete stored message
             deleteStoredMessage(irMsg);
             String state = "failed";
