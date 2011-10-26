@@ -225,6 +225,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      * The name of the main Heritrix MBean.
      */
     private String crawlServiceBeanName;
+    
     /** Have we connected successfully to Heritrix yet. */
     private boolean hasConnectedSuccessful = false;
 
@@ -960,6 +961,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         if (connection == null) {
             RuntimeException rte;
             if (ABORT_IF_CONN_LOST) {
+                log.debug("Trying to abort ...");
                 // HeritrixLauncher#doCrawlLoop catches IOFailures,
                 // so we throw a RuntimeException
                 rte = new RuntimeException("Failed to connect to MBeanServer",
