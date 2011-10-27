@@ -30,7 +30,7 @@ package dk.netarkivet.harvester.webinterface;
 public class Constants {
 
     /**
-     * The contructor for this class. Making the constructor private prevents
+     * The constructor for this class. Making the constructor private prevents
      * the class from being instantiated.
      */
     private Constants() {
@@ -235,4 +235,7 @@ public class Constants {
     /** The width of the harvest template name. */
     public static final int TEMPLATE_NAME_WIDTH = 30;
 
-}
+    /** Optional argument for which page of the searchresult to show. */
+    public static final String START_PAGE_PARAMETER = "START_PAGE_INDEX";
+    
+}     
