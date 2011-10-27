@@ -231,8 +231,8 @@ public final class SelectiveHarvestUtil {
         }
         String domainName = domainConfigPair[0];
         String configName = domainConfigPair[1];
-        SparseDomainConfiguration key = new SparseDomainConfiguration(domainName,
-                configName);
+        SparseDomainConfiguration key 
+            = new SparseDomainConfiguration(domainName, configName);
         
         hddao.removeDomainConfiguration(sph.getOid(), key);
     }
@@ -306,7 +306,7 @@ public final class SelectiveHarvestUtil {
      * configuration.
      * @param hdd The harvest definition to change.
      * @param domains a whitespace-separated list of domains to create and
- * add to harvest
+     * add to harvest
      * @return True if changes were made to hdd.
      */
     private static boolean addDomainsToHarvest(PartialHarvest hdd,
@@ -316,11 +316,13 @@ public final class SelectiveHarvestUtil {
         List<DomainConfiguration> configurations
                 = new ArrayList<DomainConfiguration>();
         for (String domainName : domainsS) {
-            if (DomainUtils.isValidDomainName(domainName)) {
-                Domain domain = Domain.getDefaultDomain(domainName);
-                DomainDAO.getInstance().create(domain);
-                configurations.add(domain.getDefaultConfiguration());
-            }
+            if (domainName != null && !domainName.isEmpty()) {
+                if (DomainUtils.isValidDomainName(domainName)) {
+                    Domain domain = Domain.getDefaultDomain(domainName);
+                    DomainDAO.getInstance().create(domain);
+                    configurations.add(domain.getDefaultConfiguration());
+                }
+            } 
         }
         if (configurations.size() > 0) {
             Iterator<DomainConfiguration> existingConfigurations
