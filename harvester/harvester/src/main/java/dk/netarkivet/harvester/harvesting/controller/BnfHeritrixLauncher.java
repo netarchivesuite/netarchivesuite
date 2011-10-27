@@ -58,15 +58,19 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
         @Override
         public void run() {
-            CrawlProgressMessage cpm;
             if (crawlIsOver) { // Don't check again; we are already done
                 return;
             }
+            CrawlProgressMessage cpm = null;
             try {
                 cpm = heritrixController.getCrawlProgress();
             } catch (IOFailure iof) {
                 // Log a warning and retry
                 log.warn("IOFailure while getting crawl progress", iof);
+                return;
+            } catch (Exception e) {
+                log.warn("Unable to retrieve crawl-progress due to exception",
+                        e);
                 return;
             }
 

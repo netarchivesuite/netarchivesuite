@@ -35,8 +35,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Utilities for working with strings.
  */
-public class StringUtils {
-    /** Utillity class, do not initialise. */
+public final class StringUtils {
+    /** Utility class, do not initialise. */
     private StringUtils() {}
 
     /**
@@ -48,7 +48,7 @@ public class StringUtils {
      * @return the resulting string, where all occurrences of oldString are
      *  replaced with newString.
      */
-    public static final String replace(String sentence, String oldString,
+    public static String replace(String sentence, String oldString,
                                        String newString) {
         StringBuffer newStr = new StringBuffer();
         int found = 0;
@@ -77,9 +77,10 @@ public class StringUtils {
      *
      * @param sep A string to separate the list items.
      * @param objects A collection of object to concatenate as a string.
+     * @param <T> The type of objects to conjoin.
      * @return The concatenated string, or null if the list was null.
      */
-    public static final <T> String conjoin(String sep, Collection<T> objects
+    public static <T> String conjoin(String sep, Collection<T> objects
     ) {
         if (objects == null) {
             return null;
@@ -113,7 +114,7 @@ public class StringUtils {
      * amount of entries in the collection.
      * @throws ArgumentNotValid If the separator or the objects are null.
      */
-    public static final <T> String conjoin(String separator, Collection<T>
+    public static <T> String conjoin(String separator, Collection<T>
             objects, int max) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(separator, "String separator");
         ArgumentNotValid.checkNotNull(objects, "Collection<T> objects");
@@ -144,7 +145,7 @@ public class StringUtils {
      * @param strings An array of strings to concatenate.
      * @return The concatenated string, or null if the list was null.
      */
-    public static final String conjoin(String sep, String... strings) {
+    public static String conjoin(String sep, String... strings) {
         if (strings == null) {
             return null;
         }
@@ -167,7 +168,7 @@ public class StringUtils {
      * @param post A string that will be put after each string in the list.
      * @return The joined string, or null if strings is null.
      */
-    public static final String surjoin(List<String> strings,
+    public static String surjoin(List<String> strings,
                                        String pre, String post) {
         if (strings == null) {
             return null;
@@ -188,7 +189,7 @@ public class StringUtils {
      * @return A repeated string.
      * @throws ArgumentNotValid if a negative amount is specified.
      */
-    public static final String repeat(String s, int n) {
+    public static String repeat(String s, int n) {
         ArgumentNotValid.checkNotNegative(n, "int n");
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < n; i++) {
@@ -299,7 +300,7 @@ public class StringUtils {
      * @param percentage the numeric percentage to format.
      * @return a formatted percentage string.
      */
-    public static final String formatPercentage(double percentage) {
+    public static String formatPercentage(double percentage) {
         return formatNumber(percentage) + "%";
     }
 
@@ -308,7 +309,7 @@ public class StringUtils {
      * @param percentage the numeric percentage to format.
      * @return a formatted percentage string.
      */
-    public static final String formatPercentage(long percentage) {
+    public static String formatPercentage(long percentage) {
         return formatNumber(percentage) + "%";
     }
 
@@ -317,7 +318,7 @@ public class StringUtils {
      * @param number the number to format.
      * @return a formatted number string.
      */
-    public static final String formatNumber(double number) {
+    public static String formatNumber(double number) {
         return DECIMAL.format(number);
     }
 
@@ -326,7 +327,7 @@ public class StringUtils {
      * @param number the number to format.
      * @return a formatted number string.
      */
-    public static final String formatNumber(long number) {
+    public static String formatNumber(long number) {
         return DECIMAL.format(number);
     }
 
@@ -336,7 +337,7 @@ public class StringUtils {
      * @param millis the date
      * @return a formatted date string
      */
-    public static final String formatDate(long millis) {
+    public static String formatDate(long millis) {
         return DEFAULT_DATE.format(new Date(millis));
     }
 
@@ -347,7 +348,7 @@ public class StringUtils {
      * @param format the format pattern {@link SimpleDateFormat}
      * @return a formatted date string
      */
-    public static final String formatDate(long millis, String format) {
+    public static String formatDate(long millis, String format) {
         return new SimpleDateFormat(format).format(new Date(millis));
     }
 

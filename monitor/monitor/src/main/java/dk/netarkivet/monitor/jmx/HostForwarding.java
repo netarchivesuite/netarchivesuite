@@ -54,7 +54,7 @@ import dk.netarkivet.monitor.registry.MonitorRegistry;
  * query and interface to a given mbean server. The interface should be of type
  * T.
  *
- * @param <T>
+ * @param <T> The type of object exposed through the MBeans.
  */
 public class HostForwarding<T> {
 
@@ -67,7 +67,7 @@ public class HostForwarding<T> {
             new HashMap<String, Set<HostEntry>>();
 
     /** The query to the MBeanserver to get the MBeans. */
-    public final String mBeanQuery;
+    private final String mBeanQuery;
     /** The MBean server we register the forwarded mbeans in. */
     private final MBeanServer mBeanServer;
     /** The interface the remote mbeans should implement. */

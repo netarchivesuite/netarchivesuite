@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * This class wraps a {@link ScheduledThreadPoolExecutor}, allowing to
@@ -101,7 +102,12 @@ public final class PeriodicTaskExecutor {
             this.secondsBeforeFirstExec = secondsBeforeFirstExec;
             this.secondsBetweenExec = secondsBetweenExec;
         }
-
+        
+        /**
+         * Set the designated ScheduledFuture object to the one given 
+         * as argument.
+         * @param future a given ScheduledFuture 
+         */
         void setFuture(ScheduledFuture<?> future) {
             this.future = future;
         }
@@ -181,7 +187,7 @@ public final class PeriodicTaskExecutor {
                 while (alive) {
                     checkExecution();
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(TimeUtils.SECOND_IN_MILLIS);
                     } catch (InterruptedException e) {
                         if (log.isTraceEnabled()) {
                             log.trace("checkerThread interrupted.");

@@ -113,14 +113,20 @@ public class FrontierReportAnalyzer implements Runnable {
                 + StringUtils.formatDuration(
                         elapsed / TimeUtils.SECOND_IN_MILLIS)
                 + " elapsed since last generation started.");
-
-        FullFrontierReport ffr = heritrixController.getFullFrontierReport();
+        FullFrontierReport ffr = null;
+        try {
+            ffr = heritrixController.getFullFrontierReport();
+        } catch (Exception e) {
+            LOG.debug("Unable to retrieve full frontier-reports from Heritrix", 
+                    e);
+            return;
+        }
 
         long endTime = System.currentTimeMillis();
         elapsed = endTime - startTime;
         LOG.info("Generated full Heritrix frontier report in "
-                + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms" :
-                    StringUtils.formatDuration(
+                + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms"
+                        : StringUtils.formatDuration(
                             elapsed / TimeUtils.SECOND_IN_MILLIS))
                 + ".");
 
@@ -133,8 +139,8 @@ public class FrontierReportAnalyzer implements Runnable {
             elapsed = endTime - startTime;
             LOG.info("Applied filter " + filter.getClass().getName()
                     + " to full frontier report, this took "
-                    + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms" :
-                        StringUtils.formatDuration(
+                    + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms"
+                            : StringUtils.formatDuration(
                                 elapsed / TimeUtils.SECOND_IN_MILLIS))
                     + ".");
 
