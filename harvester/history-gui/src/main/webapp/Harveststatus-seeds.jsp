@@ -29,6 +29,7 @@ Parameters:
 
 harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
    displayed.
+   
 
 --%><%@ page import="java.util.Date, java.util.Collection,
                  java.util.List, java.util.Map, java.util.Set,
@@ -57,29 +58,37 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                 Constants.HARVEST_PARAM);
         return;
     }
+    HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+    // Check that harvestName exists.
+    // If not show an errormessage for the user.
+    if (!hddao.exists(harvestName)) {
+        HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+                "unknown.harvest.0",
+                Constants.HARVEST_PARAM);
+        return;
+    }
+    final String scriptName = "HarvestStatus-seeds.jsp";
     // Include navigate.js
     HTMLUtils.generateHeader(pageContext, "navigate.js");
-%>
-<%
-long domainCount = 0;
-long seedCount = 0;
 
-HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
-List<String> domainList = hddao.getListOfDomainsOfHarvestDefinition(harvestName);
+	long domainCount = 0;
+	long seedCount = 0;
 
-domainCount = domainList.size();
-Map<String, List<String>> seedsMap = new HashMap<String, List<String>>();
+	List<String> domainList = hddao.getListOfDomainsOfHarvestDefinition(
+	        harvestName);
+
+	domainCount = domainList.size();
+	Map<String, List<String>> seedsMap = new HashMap<String, List<String>>();
 
 
-for (String domainname : domainList) {
-    List<String> seeds = hddao.getListOfSeedsOfDomainOfHarvestDefinition(
-        harvestName, domainname);
-    seedsMap.put(domainname, seeds);    
-    seedCount += seeds.size();
-}
-%>
-<%
-    String startPage=request.getParameter("START_PAGE_INDEX");
+	for (String domainname : domainList) {
+    	List<String> seeds = hddao.getListOfSeedsOfDomainOfHarvestDefinition(
+        	harvestName, domainname);
+    	seedsMap.put(domainname, seeds);    
+    	seedCount += seeds.size();
+	}
+	
+    String startPage=request.getParameter(Constants.START_PAGE_PARAMETER);
 
     if(startPage == null){
         startPage="1";
@@ -100,6 +109,7 @@ for (String domainname : domainList) {
         endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
     }
     boolean prevLinkActive = false;
+    String prevLink = "";
     if (pageSize != 0
             && totalResultsCount > 0
             && startIndex > 1) {
@@ -123,18 +133,9 @@ for (String domainname : domainList) {
 <fmt:param><%=startIndex+1%></fmt:param>
 <fmt:param><%=endIndex%></fmt:param>
 </fmt:message>
-
-
 <%
-String startPagePost=request.getParameter("START_PAGE_INDEX");
 
-if(startPagePost == null){
-    startPagePost="1";
-}
-
-String searchParam=request.getParameter(Constants.HARVEST_PARAM);
-String searchParamHidden = searchParam.replace(" ","+");
-searchParamHidden = HTMLUtils.encode(searchParamHidden);
+String searchParam = request.getParameter(Constants.HARVEST_PARAM);
 %>
 
 <p style="text-align: right">
@@ -142,8 +143,15 @@ searchParamHidden = HTMLUtils.encode(searchParamHidden);
     <fmt:param>
         <%
             if (prevLinkActive) {
+                String link =
+                        scriptName + "?"
+                    	+ Constants.START_PAGE_PARAMETER 
+                        + "=" + (startPageIndex - 1)
+                        + "&" + Constants.HARVEST_PARAM + "="
+                        + HTMLUtils.encode(searchParam);
         %>
-        <a href="javascript:previousPage('<%=Constants.HARVEST_PARAM%>','<%=searchParamHidden%>');">
+        
+        <a href="<%= link %>">
             <fmt:message key="status.results.displayed.prevPage"/>
         </a>
         <%
@@ -157,8 +165,14 @@ searchParamHidden = HTMLUtils.encode(searchParamHidden);
     <fmt:param>
         <%
             if (nextLinkActive) {
+                String link =
+                        "Harveststatus-perhd.jsp?"
+                        + Constants.START_PAGE_PARAMETER 
+                        + "=" + (startPageIndex + 1)
+                        + "&" + Constants.HARVEST_PARAM + "="
+                        + HTMLUtils.encode(searchParam);
         %>
-        <a href="javascript:nextPage('<%=Constants.HARVEST_PARAM%>','<%=searchParamHidden%>');">
+        <a href="<%= link %>">
             <fmt:message key="status.results.displayed.nextPage"/>
         </a>
         <%
@@ -173,13 +187,11 @@ searchParamHidden = HTMLUtils.encode(searchParamHidden);
 </fmt:message>
 </p>
 
-
 <form method="post" name="filtersForm" action="Harveststatus-seeds.jsp">
 <input type="hidden"
-       name="START_PAGE_INDEX"
-       value="<%=startPagePost%>"/>
+       name="<%=Constants.START_PAGE_PARAMETER%>"
+       value="<%=startPage%>"/>
 </form>
-
 
 <table class="selection_table" cols="6">
 
@@ -206,7 +218,6 @@ for (String domainname : matchingDomainsSubList) {
 	</tr>
 	<%
 	}
-
 }
 %>
 </table>
@@ -216,7 +227,6 @@ for (String domainname : matchingDomainsSubList) {
 	<fmt:message key="harveststatus.seeds.domains"/> / <%=seedCount%>
 	<fmt:message key="harveststatus.seeds.seeds"/>
 </td></tr></table>
-
 
 <%
 

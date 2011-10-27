@@ -109,7 +109,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     List<HarvestRunInfo> hrList = hddao.getHarvestRunInfo(hdoid);
     HTMLUtils.generateHeader(pageContext);
 
-    String startPage=request.getParameter("START_PAGE_INDEX");
+    String startPage=request.getParameter(Constants.START_PAGE_PARAMETER);
 
     if(startPage == null){
         startPage="1";
@@ -117,7 +117,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     long pageSize = Long.parseLong(Settings.get(
             CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
 
-    String startPagePost=request.getParameter("START_PAGE_INDEX");
+    String startPagePost=request.getParameter(Constants.START_PAGE_PARAMETER);
 
     if(startPagePost == null){
         startPagePost="1";
@@ -128,7 +128,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
 
 <form method="post" name="filtersForm" action="Harveststatus-perhd.jsp">
 <input type="hidden"
-       name="START_PAGE_INDEX"
+       name="<%=Constants.START_PAGE_PARAMETER%>"
        value="<%=startPagePost%>"/>
 </form>
 
@@ -151,8 +151,6 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
             && totalResultsCount > 0
             && startIndex > 1) {
         prevLinkActive = true;
-
-
     }
 
     boolean nextLinkActive = false;
@@ -176,17 +174,15 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                     <fmt:param><%=endIndex%></fmt:param>
                 </fmt:message>
 
-
-
-
                 <p style="text-align: right">
                     <fmt:message key="status.results.displayed.pagination">
                         <fmt:param>
                         <%
                         if (prevLinkActive) {
                             String link =
-                                "Harveststatus-perhd.jsp?START_PAGE_INDEX="
-                                + (startPageIndex - 1)
+                                "Harveststatus-perhd.jsp?"
+                            	+ Constants.START_PAGE_PARAMETER 
+                                + "=" + (startPageIndex - 1)
                                 + "&" + Constants.HARVEST_PARAM + "="
                                 + HTMLUtils.encode(searchParam);
                         %>
@@ -205,8 +201,9 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                         <%
                         if (nextLinkActive) {
                             String link =
-                                "Harveststatus-perhd.jsp?START_PAGE_INDEX="
-                                + (startPageIndex + 1)
+                                "Harveststatus-perhd.jsp?"
+                                + Constants.START_PAGE_PARAMETER 
+                                + "=" + (startPageIndex + 1)
                                 + "&" + Constants.HARVEST_PARAM + "="
                                 + HTMLUtils.encode(searchParam);
                         %>
