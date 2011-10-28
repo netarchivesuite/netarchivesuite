@@ -109,7 +109,6 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
         endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
     }
     boolean prevLinkActive = false;
-    String prevLink = "";
     if (pageSize != 0
             && totalResultsCount > 0
             && startIndex > 1) {

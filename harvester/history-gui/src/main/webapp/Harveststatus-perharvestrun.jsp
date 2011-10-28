@@ -64,8 +64,8 @@ This page displays harvest details for one harvest definition run
         String jobsStatusCodes = "&";
         for (JobStatus st : JobStatus.values()) {
             if (selectedStatuses.contains(st)) {
-                jobsStatusCodes = jobsStatusCodes.concat(Constants.JOBSTATUS_PARAM + "=" +
-                st.name() + "&");
+                jobsStatusCodes = jobsStatusCodes.concat(
+                        Constants.JOBSTATUS_PARAM + "=" + st.name() + "&");
             }
         }
         response.sendRedirect("Harveststatus-perharvestrun.jsp?"
@@ -217,8 +217,7 @@ function resetPagination() {
     </fmt:message>
 </h2>
 
-<%
-    
+<%  
     long pageSize = query.getPageSize();    
     long actualPageSize = (pageSize == HarvestStatusQuery.PAGE_SIZE_NONE ?
         totalResultsCount : pageSize);

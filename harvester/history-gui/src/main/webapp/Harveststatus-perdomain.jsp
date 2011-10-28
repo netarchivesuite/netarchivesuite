@@ -44,7 +44,7 @@ displayed, if no domains are found a message is shown.
 />
 
 <%
-    String startPage=request.getParameter("START_PAGE_INDEX");
+    String startPage=request.getParameter(Constants.START_PAGE_PARAMETER);
 
     if(startPage == null){
         startPage = "1";
@@ -52,7 +52,7 @@ displayed, if no domains are found a message is shown.
     long pageSize = Long.parseLong(Settings.get(
             CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
 
-    String startPagePost=request.getParameter("START_PAGE_INDEX");
+    String startPagePost=request.getParameter(Constants.START_PAGE_PARAMETER);
 
     if(startPagePost == null){
         startPagePost = "1";
@@ -96,10 +96,10 @@ displayed, if no domains are found a message is shown.
 <form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
 
 <input type="hidden"
-       name="START_PAGE_INDEX"
+       name="<%= Constants.START_PAGE_PARAMETER%>"
        value="<%=startPagePost%>"/>
-<input type="hidden" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=newestFirst ? Constants.TRUE : Constants.FALSE%>" />
-
+<input type="hidden" name="<%=Constants.IS_NEWEST_FIRST%>" 
+	value="<%=newestFirst ? Constants.TRUE : Constants.FALSE%>" />
 </form>
 
 <%
@@ -204,7 +204,7 @@ hidden fields are set as url parameters by the javascript.
 <form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
 
 <input type="hidden"
-       name="START_PAGE_INDEX"
+       name="<%= Constants.START_PAGE_PARAMETER%>"
        value="<%=startPagePost%>"/>
     <input type="hidden" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=newestFirst ? Constants.TRUE : Constants.FALSE%>"/>
 </form>
