@@ -225,9 +225,6 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      * The name of the main Heritrix MBean.
      */
     private String crawlServiceBeanName;
-    
-    /** Have we connected successfully to Heritrix yet. */
-    private boolean hasConnectedSuccessful = false;
 
     /**
      * Create a BnfHeritrixController object.
@@ -298,7 +295,6 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                 + JmxUtils.JMX_PORT + "=" + getJmxPort() + ","
                 + JmxUtils.MOTHER + "=Heritrix," + JmxUtils.HOST + "="
                 + getHostName();
-
     }
 
     @Override
@@ -918,8 +914,6 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                 getJmxPort(), Settings
                         .get(HarvesterSettings.HERITRIX_JMX_USERNAME), Settings
                         .get(HarvesterSettings.HERITRIX_JMX_PASSWORD));
-        // state that we have had a successful connection to Heritrix.
-        this.hasConnectedSuccessful = true;
     }
 
     /**
@@ -944,31 +938,39 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         while (tries < jmxMaxTries && connection == null) {
             tries++;
             try {
-                log.debug("Attempt " + tries + " out of " 
-                        + jmxMaxTries 
+                log.debug("Attempt " + tries + " out of " + jmxMaxTries
                         + " attempts to get a MBeanserverconnection");
                 connection = jmxConnector.getMBeanServerConnection();
             } catch (IOException e) {
                 ioe = e;
                 log.info("IOException while getting MBeanServerConnection"
-                        + ", will renew JMX connection");
+                        + ", will try to renew JMX connection");
                 // When an IOException is raised in RMIConnector, a terminated
                 // flag is set to true, even if the underlying connection is
                 // not closed. This seems to be part of a mechanism to prevent
                 // deadlocks, but can cause trouble for us.
                 // So if this happens, we close and reinitialize
                 // the JMX connector itself.
+
                 closeJMXConnection();
-                initJMXConnection();
+                try {
+                    initJMXConnection();
+                } catch (IOFailure e1) {
+                    log.debug(
+                            "Renewal of JMXConnection failed at retry #" 
+                                    + tries + " with exception: ", e1);
+                    }
+                    continue;
+                }
                 log.info("Successfully renewed JMX connection");
                 TimeUtils.exponentialBackoffSleep(tries);
-            }
         }
 
         if (connection == null) {
             RuntimeException rte;
             if (ABORT_IF_CONN_LOST) {
-                log.debug("Trying to abort ...");
+                log.debug("Connection to Heritrix seems to lost. "
+                        + "Trying to abort ...");
                 // HeritrixLauncher#doCrawlLoop catches IOFailures,
                 // so we throw a RuntimeException
                 rte = new RuntimeException("Failed to connect to MBeanServer",
