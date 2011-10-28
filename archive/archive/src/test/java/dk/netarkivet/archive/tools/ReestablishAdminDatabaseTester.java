@@ -24,6 +24,7 @@ package dk.netarkivet.archive.tools;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.DBConnect;
+import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabaseConnector;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
@@ -39,6 +40,7 @@ public class ReestablishAdminDatabaseTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 
     public void setUp() {
+        ReplicaCacheDatabaseConnector.reset();
         DBConnect.cleanup();
         rs.setUp();
         mtf.setUp();
