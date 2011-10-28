@@ -45,10 +45,14 @@ public class StringUtilsTester extends TestCase {
 
     public final void testReplace() {
         String testString = "This is a test $ string \\ , it is nice!";
-        assertEquals("This is a test new word string \\ , it is nice!", StringUtils.replace(testString, "$", "new word"));
-        assertEquals("This is a test $ string new word , it is nice!", StringUtils.replace(testString, "\\", "new word"));
-        assertEquals("This is a test and it works", StringUtils.replace(testString, "$ string \\ , it is nice!", "and it works"));
-        assertEquals("This is a test $ string \\ , it is nice!", StringUtils.replace(testString, "cat", "shouldnt work"));
+        assertEquals("This is a test new word string \\ , it is nice!", 
+                StringUtils.replace(testString, "$", "new word"));
+        assertEquals("This is a test $ string new word , it is nice!", 
+                StringUtils.replace(testString, "\\", "new word"));
+        assertEquals("This is a test and it works", 
+                StringUtils.replace(testString, "$ string \\ , it is nice!", "and it works"));
+        assertEquals("This is a test $ string \\ , it is nice!", 
+                StringUtils.replace(testString, "cat", "shouldnt work"));
     }
 
     public void testConjoinStrings() throws Exception {
@@ -118,14 +122,14 @@ public class StringUtilsTester extends TestCase {
     public void testSplitString() {
         String input = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam volutpat euismod aliquet. Nullam vestibulum mollis arcu, quis laoreet nibh aliquet et. In at ligula pellentesque magna placerat luctus. Donec mauris nibh, lacinia non feugiat quis, dapibus id orci. Suspendisse sollicitudin suscipit sodales. Mauris interdum consectetur nunc sed interdum. Nulla facilisi. Quisque urna lectus, tempor ut feugiat sit amet, congue eget lectus. Duis eget interdum turpis. Morbi turpis arcu, venenatis ac venenatis nec, pretium ac tellus. Fusce condimentum iaculis sem. Cras eros dui, imperdiet vitae faucibus feugiat, pellentesque eu quam. In dignissim facilisis sollicitudin. Cras tincidunt arcu at lectus tincidunt a porta lorem accumsan. Pellentesque porta, est at viverra sagittis, est elit congue lorem, feugiat lobortis tellus nisl in augue.";
         String output = StringUtils.splitStringOnWhitespace(input, 50);
-        System.out.println(output);
+        //System.out.println(output);
         assertTrue("Should have split String into multiple lines", output.split("\n").length > 5);
     }
 
     public void testSplitStringAlreadySplit() {
         String input = "Lorem ipsum dolor\n sit amet, consectetur\n adipiscing elit. Aliquam\n volutpat euismod aliquet.\n Nullam vestibulum mol";
         String output = StringUtils.splitStringOnWhitespace(input, 50);
-        System.out.println(output);
+        //System.out.println(output);
         assertEquals("Splitter should not split already split string",
                      output.split("\n").length, input.split("\n").length);
     }
@@ -135,15 +139,29 @@ public class StringUtilsTester extends TestCase {
      */
     public void testSplitStringSpecialCases() {
         String input = "                                                                                   ";
-        System.out.println(StringUtils.splitStringOnWhitespace(input, 50));
+        String output = StringUtils.splitStringOnWhitespace(input, 50);
+        assertNotNull(output);
+        //System.out.printl(output);
         input = "";
-        System.out.println(StringUtils.splitStringOnWhitespace(input, 50));
+        output = StringUtils.splitStringOnWhitespace(input, 50);
+        assertNotNull(output);
+        //System.out.printl(output);
+        output = StringUtils.splitStringOnWhitespace(input, 50);
+        //System.out.printl(output);
+        assertNotNull(output);
         input = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-        System.out.println(StringUtils.splitStringOnWhitespace(input, 50));
+        output = StringUtils.splitStringOnWhitespace(input, 50);
+        //System.out.printl(output);
+        assertNotNull(output);
         input = " \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n";
-        System.out.println(StringUtils.splitStringOnWhitespace(input, 50));
+        output = StringUtils.splitStringOnWhitespace(input, 50);
+        //System.out.printl(output);
+        assertNotNull(output);
         input = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam volutpat euismod aliquet. Nullam vestibulum mollis                           ";
-        System.out.println(StringUtils.splitStringOnWhitespace(input, 50));
+        output = StringUtils.splitStringOnWhitespace(input, 50);
+        //System.out.printl(output);
+        assertNotNull(output);
+
     }
 
     public void testSplitStringForce(){
