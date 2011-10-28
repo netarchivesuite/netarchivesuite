@@ -305,13 +305,15 @@ public class HarvestController {
      */
     private void uploadFiles(List<File> files, StringBuilder errorMessage,
                              List<File> failedFiles) {
-        // Upload all arcfiles
+        // Upload all archive files
         if (files != null) {
             for (File f : files) {
                 try {
                     log.info("Uploading file '" + f.getName()
                              + "' to arcrepository.");
                     arcRepController.store(f);
+                    log.info("File '" + f.getName()
+                            + "' uploaded successfully to arcrepository.");
                 } catch (Exception e) {
                     File oldJobsDir
                             = new File(Settings.get(

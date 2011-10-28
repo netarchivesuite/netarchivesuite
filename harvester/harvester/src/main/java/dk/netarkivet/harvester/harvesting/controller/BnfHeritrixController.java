@@ -50,7 +50,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
+//import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
@@ -254,7 +254,13 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             log.warn(errMsg);
             throw new IOFailure(errMsg);
         }
-
+        final String abortText = "Abort, if we lose the connection "
+                + "to Heritrix, is ";
+        if (ABORT_IF_CONN_LOST) {
+            log.info(abortText + "enabled!");
+        } else {
+            log.info(abortText + "disabled!");
+        }
         initJMXConnection();
 
         crawlServiceBeanName = "org.archive.crawler:" + JmxUtils.NAME
