@@ -28,7 +28,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
@@ -50,12 +49,9 @@ public class FrontierReportAnalyzer implements Runnable {
     /** The logger to use.    */
     static final Log LOG = LogFactory.getLog(
             FrontierReportAnalyzer.class);
-
+    /** The controller used to communicate with the Heritrix instance. */
     private final BnfHeritrixController heritrixController;
-
-    private final JMSConnection jmsConnection =
-        JMSConnectionFactory.getInstance();
-
+    /** The last time this Analyzer was executed. */
     private long lastExecTime = System.currentTimeMillis();
 
     /**
@@ -113,15 +109,7 @@ public class FrontierReportAnalyzer implements Runnable {
                 + StringUtils.formatDuration(
                         elapsed / TimeUtils.SECOND_IN_MILLIS)
                 + " elapsed since last generation started.");
-        FullFrontierReport ffr = null;
-        try {
-            ffr = heritrixController.getFullFrontierReport();
-        } catch (Exception e) {
-            LOG.debug("Unable to retrieve full frontier-reports from Heritrix", 
-                    e);
-            return;
-        }
-
+        FullFrontierReport ffr = heritrixController.getFullFrontierReport();
         long endTime = System.currentTimeMillis();
         elapsed = endTime - startTime;
         LOG.info("Generated full Heritrix frontier report in "
@@ -144,7 +132,8 @@ public class FrontierReportAnalyzer implements Runnable {
                                 elapsed / TimeUtils.SECOND_IN_MILLIS))
                     + ".");
 
-            jmsConnection.send(new FrontierReportMessage(filter, filtered));
+            JMSConnectionFactory.getInstance().send(
+                    new FrontierReportMessage(filter, filtered));
         }
 
         ffr.dispose();

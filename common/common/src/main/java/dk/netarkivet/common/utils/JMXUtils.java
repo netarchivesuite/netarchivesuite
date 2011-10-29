@@ -174,13 +174,17 @@ public final class JMXUtils {
         ArgumentNotValid.checkNotNegative(rmiPort, "int rmiPort");
         ArgumentNotValid.checkNotNullOrEmpty(userName, "String userName");
         ArgumentNotValid.checkNotNullOrEmpty(password, "String password");
-        log.debug("Getting a connection to server '" + server 
-                + "' on jmxport/rmiport=" + jmxPort + "/" + rmiPort
-                + " using username=" + userName);
+        String logMsgSuffix = "a connection to server '" + server 
+        + "' on jmxport/rmiport=" + jmxPort + "/" + rmiPort
+        + " using username=" + userName;
+        log.debug("Establishing " + logMsgSuffix);
         JMXServiceURL jmxServiceUrl = getUrl(server, jmxPort, rmiPort);
         Map<String, String[]> credentials =
             packageCredentials(userName, password);
-        return getMBeanServerConnection(jmxServiceUrl, credentials);
+        MBeanServerConnection connection = getMBeanServerConnection(
+                jmxServiceUrl, credentials);
+        log.debug("Established successfully " + logMsgSuffix);
+        return connection;
     }
 
     /**

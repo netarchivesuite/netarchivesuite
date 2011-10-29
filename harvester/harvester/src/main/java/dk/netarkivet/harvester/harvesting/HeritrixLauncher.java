@@ -29,15 +29,12 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 
 /**
  * A HeritrixLauncher object wraps around an instance of the web crawler
@@ -78,12 +75,6 @@ public abstract class HeritrixLauncher {
     /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
     
-    /**
-     * The JMS connection used to send {@link CrawlProgressMessage}s.
-     */
-    private final JMSConnection jmsConnection = 
-        JMSConnectionFactory.getInstance();
-
     /** Xpath for the 'disk-path' in the order.xml . */
     private static final String DISK_PATH_XPATH =
             "//crawl-order/controller"
@@ -219,13 +210,6 @@ public abstract class HeritrixLauncher {
      */
     protected Object[] getControllerArguments() {
         return args;
-    }
-
-    /**
-     * @return the JMS connection used to send messages.
-     */
-    public JMSConnection getJMSConnection() {
-        return jmsConnection;
     }
 
 }

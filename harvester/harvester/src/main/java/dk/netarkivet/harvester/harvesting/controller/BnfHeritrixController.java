@@ -259,6 +259,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             log.info(abortText + "disabled!");
         }
         initJMXConnection();
+        
+        log.info("JMX connection initialized successfully");
 
         crawlServiceBeanName = "org.archive.crawler:" + JmxUtils.NAME
                 + "=Heritrix," + JmxUtils.TYPE + "=CrawlService,"
@@ -364,7 +366,26 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         cpm.setHostUrl(getHeritrixConsoleURL());
 
         // First, get CrawlService attributes
-
+        getCrawlServiceAttributes(cpm);
+        
+        if (cpm.crawlIsFinished()) {
+            cpm.setStatus(CrawlStatus.CRAWLING_FINISHED);
+            // No need to go further, CrawlService.Job bean does not exist
+            return cpm;
+        }  
+        
+        // Fetch CrawlService.Job attributes
+        fetchCrawlServiceJobAttributes(cpm);
+        
+        return cpm;
+    }
+    
+    /**
+     * Retrieve the values of the crawl service attributes and
+     * add them to the CrawlProgressMessage being put together.
+     * @param cpm the crawlProgress message being prepared
+     */
+    private void getCrawlServiceAttributes(CrawlProgressMessage cpm) {
         List<Attribute> heritrixAtts = getMBeanAttributes(
                 new CrawlServiceAttribute[] {
                 CrawlServiceAttribute.AlertCount,
@@ -401,17 +422,15 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             default:
                 log.debug("Unhandled attribute: " + crawlServiceAttribute);
             }  
-        }
+        }        
+    }
 
-        boolean crawlIsFinished = cpm.crawlIsFinished();
-        if (crawlIsFinished) {
-            cpm.setStatus(CrawlStatus.CRAWLING_FINISHED);
-            // No need to go further, CrawlService.Job bean does not exist
-            return cpm;
-        }
-        
-        // Fetch CrawlService.Job attributes
-
+    /**
+     * Retrieve the values of the crawl service job attributes and
+     * add them to the CrawlProgressMessage being put together.
+     * @param cpm the crawlProgress message being prepared
+     */
+    private void fetchCrawlServiceJobAttributes(CrawlProgressMessage cpm) {
         String progressStats = (String) executeMBeanOperation(
                 CrawlServiceJobOperation.progressStatistics);
         CrawlServiceJobInfo jStatus = cpm.getJobStatus();
@@ -425,13 +444,12 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             progressStatisticsLegend = (String) executeMBeanOperation(
                     CrawlServiceJobOperation.progressStatisticsLegend);
         }
-
+        
         List<Attribute> jobAtts = getMBeanAttributes(CrawlServiceJobAttribute
                 .values());
         
         for (Attribute att : jobAtts) {
             Object value = att.getValue();
-            //String attributeAsString = 
             CrawlServiceJobAttribute aCrawlServiceJobAttribute 
                 = CrawlServiceJobAttribute.fromString(att.getName());
             switch (aCrawlServiceJobAttribute) {
@@ -525,8 +543,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                 log.debug("Unhandled attribute: " + aCrawlServiceJobAttribute);
             }
         }
-
-        return cpm;
+        
     }
 
     /**
@@ -938,38 +955,36 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         while (tries < jmxMaxTries && connection == null) {
             tries++;
             try {
-                log.debug("Attempt " + tries + " out of " + jmxMaxTries
-                        + " attempts to get a MBeanserverconnection");
                 connection = jmxConnector.getMBeanServerConnection();
+                log.debug("Got a MBeanserverconnection at attempt #" + tries);
             } catch (IOException e) {
                 ioe = e;
-                log.info("IOException while getting MBeanServerConnection"
-                        + ", will try to renew JMX connection");
+                log.info("IOException while getting MBeanServerConnection."
+                        + " Attempt " + tries + " out of " + jmxMaxTries
+                        + ". Will try to renew the JMX connection to Heritrix");
                 // When an IOException is raised in RMIConnector, a terminated
                 // flag is set to true, even if the underlying connection is
                 // not closed. This seems to be part of a mechanism to prevent
                 // deadlocks, but can cause trouble for us.
                 // So if this happens, we close and reinitialize
                 // the JMX connector itself.
-
                 closeJMXConnection();
                 try {
                     initJMXConnection();
+                    log.info("Successfully renewed JMX connection");
                 } catch (IOFailure e1) {
                     log.debug(
                             "Renewal of JMXConnection failed at retry #" 
                                     + tries + " with exception: ", e1);
                     }
-                    continue;
                 }
-                log.info("Successfully renewed JMX connection");
                 TimeUtils.exponentialBackoffSleep(tries);
         }
 
         if (connection == null) {
             RuntimeException rte;
             if (ABORT_IF_CONN_LOST) {
-                log.debug("Connection to Heritrix seems to lost. "
+                log.debug("Connection to Heritrix seems to be lost. "
                         + "Trying to abort ...");
                 // HeritrixLauncher#doCrawlLoop catches IOFailures,
                 // so we throw a RuntimeException

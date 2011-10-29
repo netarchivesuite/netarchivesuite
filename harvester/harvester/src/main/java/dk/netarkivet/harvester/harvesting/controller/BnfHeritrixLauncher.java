@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.harvesting.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
@@ -68,13 +69,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
                 // Log a warning and retry
                 log.warn("IOFailure while getting crawl progress", iof);
                 return;
-            } catch (Exception e) {
-                log.warn("Unable to retrieve crawl-progress due to exception",
-                        e);
-                return;
             }
 
-            getJMSConnection().send(cpm);
+            JMSConnectionFactory.getInstance().send(cpm);
 
             HeritrixFiles files = getHeritrixFiles();
             if (cpm.crawlIsFinished()) {
