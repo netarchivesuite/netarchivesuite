@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * This class is never instantiated, so thread security is not an issue.
  *
  */
-public class Constants {
+public final class Constants {
     /** The pattern for an IP-address key. */
     public static final String IP_REGEX_STRING
             = "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}";
@@ -62,7 +62,14 @@ public class Constants {
 
     /** Possible states of code. */
     private static enum CodeStatus {
-        RELEASE, CODEFREEZE, UNSTABLE
+        /** Released code. */
+        RELEASE,
+        /** Code is under codefreeze. The code is a release candidate. */
+        CODEFREEZE, 
+        /** The code is not production ready. Although it usually compiles,
+         * all code has not necessarily been tested. 
+         */
+        UNSTABLE
     }
 
     /** Extension of XML file names. */
@@ -132,7 +139,7 @@ public class Constants {
             String implementationVersion = Constants.class.getPackage()
                     .getImplementationVersion();
             if (implementationVersion != null) {
-                version += " (" + implementationVersion + ")";
+                version += " (r" + implementationVersion + ")";
             } 
             return version;
         }       
