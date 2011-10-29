@@ -122,10 +122,23 @@ public class Constants {
      * @return A string telling current version and status of code.
      */
     public static String getVersionString() {
-        return "Version: " + MAJORVERSION + "." + MINORVERSION + "."
-               + PATCHVERSION + " status " + BUILDSTATUS;
-    }
+        if (BUILDSTATUS.equals(CodeStatus.RELEASE)) {
+            return "Version: " + MAJORVERSION + "." + MINORVERSION + "."
+                    + PATCHVERSION + " status " + BUILDSTATUS;
+        } else {
+            String version = "Version: " + MAJORVERSION + "." 
+                    + MINORVERSION + "."
+                    + PATCHVERSION + " status " + BUILDSTATUS;
+            String implementationVersion = Constants.class.getPackage()
+                    .getImplementationVersion();
+            if (implementationVersion != null) {
+                version += " (" + implementationVersion + ")";
+            } 
+            return version;
+        }       
+    }     
 
+    
     /**
      * Get the Heritrix version presently in use.
      *

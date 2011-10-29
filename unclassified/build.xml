@@ -30,6 +30,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <property name="builder" value="NetarchiveSuite development group"/>
     <property name="releasetestdir" value="${user.home}/tmp_releasetest"/>
     <property name="depcheckdir" value="${user.home}/tmp_dependencycheck"/>
+	<!-- Create the subversion version string -->
+	<exec executable="svnversion" failifexecutionfails="no" outputproperty="svn.version">
+	  <arg value="."/> 
+  	<arg value="-n"/>
+	</exec>
+	<!-- Create the time stamp -->
+	<tstamp>
+  <format property="time.date" pattern="HH:mm d-MMMM-yyyy"/>
+	</tstamp>
+
     <property name="jarclasspath" value="
     db/derby-10.5.3.0.jar
     db/derbyclient-10.5.3.0.jar
@@ -385,6 +395,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="is/hi/bok/deduplicator/*.class"/>
             <manifest>
                 <attribute name="Builder" value="${builder}"/>
+            	<attribute name="Built-By" value="${user.name} on ${time.date}" />
+            	<attribute name="Implementation-Version"  value="${svn.version}" />
+            	<attribute name="Implementation-Java"     value="${java.vendor} ${java.version}" />
+            	<attribute name="Implementation-Build-OS" value="${os.name} ${os.arch} ${os.version}" />
+            	<attribute name="JVM-Version"             value="${common.sourcelevel}+" /> 
                 <attribute name="Class-Path" value="${jarclasspath}"/>
             </manifest>
         </jar>
