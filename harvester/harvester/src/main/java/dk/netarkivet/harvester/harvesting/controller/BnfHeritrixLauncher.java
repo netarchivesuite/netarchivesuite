@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.HarvestingAbort;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
 import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor.PeriodicTask;
@@ -68,6 +69,11 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             } catch (IOFailure iof) {
                 // Log a warning and retry
                 log.warn("IOFailure while getting crawl progress", iof);
+                return;
+            } catch (HarvestingAbort e) {
+                log.warn("Got HarvestingAbort exception while getting crawl "
+                        + "progress. Means crawl is over", e);
+                crawlIsOver = true;
                 return;
             }
 

@@ -41,6 +41,7 @@ import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.framework.CrawlController;
 import org.archive.util.JmxUtils;
 
+import dk.netarkivet.common.exceptions.HarvestingAbort;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -251,13 +252,9 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             log.warn(errMsg);
             throw new IOFailure(errMsg);
         }
-        final String abortText = "Abort, if we lose the connection "
-                + "to Heritrix, is ";
-        if (ABORT_IF_CONN_LOST) {
-            log.info(abortText + "enabled!");
-        } else {
-            log.info(abortText + "disabled!");
-        }
+        
+        log.info("Abort, if we lose the connection "
+                + "to Heritrix, is " + ABORT_IF_CONN_LOST);  
         initJMXConnection();
         
         log.info("JMX connection initialized successfully");
@@ -365,7 +362,6 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
 
         cpm.setHostUrl(getHeritrixConsoleURL());
 
-        // First, get CrawlService attributes
         getCrawlServiceAttributes(cpm);
         
         if (cpm.crawlIsFinished()) {
@@ -374,7 +370,6 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             return cpm;
         }  
         
-        // Fetch CrawlService.Job attributes
         fetchCrawlServiceJobAttributes(cpm);
         
         return cpm;
@@ -542,8 +537,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             default:
                 log.debug("Unhandled attribute: " + aCrawlServiceJobAttribute);
             }
-        }
-        
+        }   
     }
 
     /**
@@ -986,9 +980,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             if (ABORT_IF_CONN_LOST) {
                 log.debug("Connection to Heritrix seems to be lost. "
                         + "Trying to abort ...");
-                // HeritrixLauncher#doCrawlLoop catches IOFailures,
-                // so we throw a RuntimeException
-                rte = new RuntimeException("Failed to connect to MBeanServer",
+                rte = new HarvestingAbort("Failed to connect to MBeanServer",
                         ioe);
             } else {
                 rte = new IOFailure("Failed to connect to MBeanServer", ioe);
