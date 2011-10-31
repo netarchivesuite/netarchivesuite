@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.sbforge</groupId>
     <artifactId>sbforge-parent</artifactId>
-    <version>8</version>
+    <version>9</version>
   </parent>
 
   <modules>
@@ -61,6 +61,19 @@
       <organizationUrl>http://statsbiblioteket.dk</organizationUrl>
     </developer>
   </developers>
+
+  <repositories>
+    <repository>
+      <id>sbforge-nexus</id>
+      <url>https://sbforge.org/nexus/content/groups/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <dependencies>
     <dependency>
