@@ -80,11 +80,11 @@ public final class Constants {
     /** Major version number. */
     public static final int MAJORVERSION = 3;
     /** Minor version number. */
-    public static final int MINORVERSION = 17;
+    public static final int MINORVERSION = 18;
     /** Patch version number. */
-    public static final int PATCHVERSION = 1;
+    public static final int PATCHVERSION = 0;
     /** Current status of code. */
-    private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
+    private static final CodeStatus BUILDSTATUS = CodeStatus.CODEFREEZE;
 
     /** Current version of Heritrix used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.4";
@@ -172,8 +172,8 @@ public final class Constants {
     public static final long ONE_DAY_IN_MILLIES = 24 * 60 * ONE_MIN_IN_MILLIES;
 
     /** Pattern that matches our our CDX mimetype. */
-    public static String CDX_MIME_PATTERN = "application/x-cdx";
+    public static final String CDX_MIME_PATTERN = "application/x-cdx";
 
     /** Pattern that matches everything. */
-    public static String ALL_PATTERN = ".*";
+    public static final String ALL_PATTERN = ".*";
 }
