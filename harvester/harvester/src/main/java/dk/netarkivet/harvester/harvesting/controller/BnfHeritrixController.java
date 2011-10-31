@@ -870,9 +870,6 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         do {
             tries++;
             try {
-                log.debug("Attempt " + tries + " out of " 
-                        + maxTries 
-                        + " attempts to make this jmxCall");
                 if (isOperation) {
                     final String[] signature = new String[args.length];
                     Arrays.fill(signature, String.class.getName());
@@ -891,7 +888,9 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             } catch (MBeanException e) {
                 lastException = e;
             }
-
+            log.debug("Attempt " + tries + " out of " 
+                    + maxTries 
+                    + " attempts to make this jmxCall failed ");
             if (tries < maxTries) {
                 TimeUtils.exponentialBackoffSleep(tries);
             }
