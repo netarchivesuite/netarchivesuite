@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.exceptions.HarvestingAbort;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.TimeUtils;
@@ -109,7 +110,14 @@ public class FrontierReportAnalyzer implements Runnable {
                 + StringUtils.formatDuration(
                         elapsed / TimeUtils.SECOND_IN_MILLIS)
                 + " elapsed since last generation started.");
-        FullFrontierReport ffr = heritrixController.getFullFrontierReport();
+        FullFrontierReport ffr = null;
+        try {
+            ffr = heritrixController.getFullFrontierReport();
+        } catch (HarvestingAbort e) {
+            LOG.debug("Unable to retrieve full frontier-reports from Heritrix", 
+                    e);
+            return;
+        }
         long endTime = System.currentTimeMillis();
         elapsed = endTime - startTime;
         LOG.info("Generated full Heritrix frontier report in "

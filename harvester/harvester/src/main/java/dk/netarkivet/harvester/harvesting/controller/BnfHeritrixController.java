@@ -951,6 +951,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             try {
                 connection = jmxConnector.getMBeanServerConnection();
                 log.debug("Got a MBeanserverconnection at attempt #" + tries);
+                return connection;
             } catch (IOException e) {
                 ioe = e;
                 log.info("IOException while getting MBeanServerConnection."
@@ -972,22 +973,18 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                                     + tries + " with exception: ", e1);
                     }
                 }
+            if (tries < jmxMaxTries) {
                 TimeUtils.exponentialBackoffSleep(tries);
+            }
         }
 
-        if (connection == null) {
-            RuntimeException rte;
-            if (ABORT_IF_CONN_LOST) {
-                log.debug("Connection to Heritrix seems to be lost. "
-                        + "Trying to abort ...");
-                rte = new HarvestingAbort("Failed to connect to MBeanServer",
-                        ioe);
-            } else {
-                rte = new IOFailure("Failed to connect to MBeanServer", ioe);
-            }
-            throw rte;
+        if (ABORT_IF_CONN_LOST) {
+            log.debug("Connection to Heritrix seems to be lost. "
+                    + "Trying to abort ...");
+            throw new HarvestingAbort("Failed to connect to MBeanServer", ioe);
+        } else {
+            throw new IOFailure("Failed to connect to MBeanServer", ioe);
         }
-        return connection;
     }
 
     @Override
