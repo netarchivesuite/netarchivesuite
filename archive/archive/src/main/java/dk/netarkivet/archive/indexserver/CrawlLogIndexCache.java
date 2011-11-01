@@ -190,8 +190,7 @@ public abstract class CrawlLogIndexCache extends
             
             // wait for all the outstanding subtasks to complete.
             Set<Directory> subindices = new HashSet<Directory>();
-            // Wait some time before first completeness-check
-            sleepAwhile();
+            
             // Deadline for the combine-task
             long combineTimeout = Settings.getLong(
                     ArchiveSettings.INDEXSERVER_INDEXING_TIMEOUT);
