@@ -25,7 +25,6 @@ package dk.netarkivet.harvester.scheduler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,7 +70,6 @@ import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
-import dk.netarkivet.harvester.scheduler.HarvestJobGenerator.JobGeneratorTask;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -88,7 +86,7 @@ public class HarvestDispatcherTester extends TestCase {
 
     /** The harvestDispatcher used for testing. */
     HarvestDispatcher harvestDispatcher;
-    JobGeneratorTask jobGeneratorTask = new JobGeneratorTask();
+    //JobGeneratorTask jobGeneratorTask = new JobGeneratorTask();
 
     ReloadSettings reloadSettings = new ReloadSettings();
     MockupJMS jmsConnection = new MockupJMS();
@@ -115,15 +113,11 @@ public class HarvestDispatcherTester extends TestCase {
         DatabaseTestUtils.getHDDB(new File(TestInfo.BASEDIR, "fullhddb.jar"),
                 "fullhddb", TestInfo.WORKING_DIR);
 
-        //TestUtils.resetDAOs();
-
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
 
         HarvestDefinitionDAO.getInstance();
         harvestDispatcher = new HarvestDispatcher();
-
-        //HarvestJobGeneratorTest.generateJobs(new Date());
     }
 
     /**
@@ -137,7 +131,6 @@ public class HarvestDispatcherTester extends TestCase {
         TestUtils.resetDAOs();
         jmsConnection.tearDown();
         reloadSettings.tearDown();
-        //HarvestJobGenerator.clearGeneratingJobs();
     }
 
     /**
@@ -481,7 +474,7 @@ public class HarvestDispatcherTester extends TestCase {
 //
 //        Job secondJob = createJob(JobStatus.NEW);
 //        submitNewJobs();
-//        assertEquals("New job should not have been submittet to non-empty " +
+//        assertEquals("New job should not have been submitted to non-empty " +
 //        		"message queue",
 //                1, countQueueMessages(JobPriority.HIGHPRIORITY));
 //        assertEquals("Second job should still have status new",

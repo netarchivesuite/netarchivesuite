@@ -24,7 +24,6 @@
 package dk.netarkivet.harvester.scheduler;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -51,7 +50,6 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
-import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 import dk.netarkivet.harvester.scheduler.HarvestJobGenerator.JobGeneratorTask;

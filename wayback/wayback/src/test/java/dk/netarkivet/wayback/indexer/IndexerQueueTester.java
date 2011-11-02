@@ -26,8 +26,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import dk.netarkivet.testutils.ReflectUtils;
 
-import org.hibernate.criterion.Restrictions;
-
 public class IndexerQueueTester extends IndexerTestCase {
 
     @Override
@@ -54,8 +52,12 @@ public class IndexerQueueTester extends IndexerTestCase {
         IndexerQueue.getInstance().populate();
         assertEquals("Queue should still have four objects in it", 4, queue.size());
     }
-
-   /* public void testConsume()
+    
+    /**
+     * testConsume has been removed from unittestersuite, as it fails.
+     */
+    /*  
+    public void testConsume()
             throws NoSuchFieldException, IllegalAccessException,
                    InterruptedException {
         FileNameHarvester.harvest();
@@ -76,6 +78,6 @@ public class IndexerQueueTester extends IndexerTestCase {
                 Restrictions.eq("indexed", true)).size());
         assertTrue("Queue should be empty now", queue.isEmpty());
         assertEquals("Should have four files", 4, tempdir.listFiles().length);
-    }*/
+    } */
 
 }

@@ -65,11 +65,6 @@ import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
  * Tests various aspects of launching Heritrix and Heritrix' capabilities.
  * Note that some of these tests require much heap space, so JVM parameter
  * -Xmx512M may be required.
- * Created by IntelliJ IDEA.
- * User: larsrc
- * Date: Dec 2, 2004
- * Time: 11:55:51 AM
- * To change this template use File | Settings | File Templates.
  */
 public class HeritrixLauncherTester extends TestCase {
 
@@ -293,7 +288,8 @@ public class HeritrixLauncherTester extends TestCase {
      * Test that the HostnameQueueAssignmentPolicy returns correct queue-names
      * for different URLs.
      * The HostnameQueueAssignmentPolicy is the default in heritrix
-     * - our own DomainnameQueueAssignmentPolicy extends this one and expects that it returns the ritht values
+     * - our own DomainnameQueueAssignmentPolicy extends this one and expects 
+     * that it returns the right values
      */
     public void testHostnameQueueAssignmentPolicy() {
         HostnameQueueAssignmentPolicy hqap = new HostnameQueueAssignmentPolicy();
@@ -317,7 +313,8 @@ public class HeritrixLauncherTester extends TestCase {
                          hqap.getClassKey(new CrawlController(),cauri),"foo.www.netarkivet.dk");
 
             /**
-             * Third test tests that a https-URL goes into a queuename called www.domainname#443 (default syntax)
+             * Third test tests that a https-URL goes into a queuename called 
+             * www.domainname#443 (default syntax)
              */
             uri = UURIFactory.getInstance("https://www.netarkivet.dk/foo/bar.php");
             cauri = new CandidateURI(uri);
