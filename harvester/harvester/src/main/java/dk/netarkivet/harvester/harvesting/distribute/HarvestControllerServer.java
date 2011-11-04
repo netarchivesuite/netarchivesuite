@@ -284,10 +284,6 @@ implements CleanupIF {
         }
         if (jmsConnection != null) {
             jmsConnection.removeListener(jobChannel, this);
-
-            // Send a last status message (status unavailable)
-            jmsConnection.send(new HarvesterStatusMessage(
-                    applicationInstanceId, JOB_PRIORITY, false));
         }
 
         // Stop the sending of status messages
@@ -799,10 +795,6 @@ implements CleanupIF {
      * status.
      */
     private class CrawlStatus {
-        /** Delay in seconds between two status sendings. */
-        private final int SEND_STATUS_DELAY =
-                Settings.getInt(HarvesterSettings.SEND_STATUS_DELAY);
-
         /** The status. */
         private boolean running = false;
 
@@ -824,7 +816,6 @@ implements CleanupIF {
          */
         public synchronized void setRunning(boolean running) {
             this.running = running;
-            sendStatus();
         }
 
         /**
@@ -839,7 +830,7 @@ implements CleanupIF {
                         }
                     },
                     0,
-                    SEND_STATUS_DELAY);
+                    Settings.getInt(HarvesterSettings.SEND_READY_INTERVAL));
         }
 
         /**
@@ -856,10 +847,17 @@ implements CleanupIF {
          * Send a HarvesterStatusMessage to the HarvestJobManager.
          */
         private synchronized void sendStatus() {
-            jmsConnection.send(new HarvesterStatusMessage(
+            try {
+                Thread.sleep(
+                        Settings.getInt(HarvesterSettings.SEND_READY_DELAY));
+            } catch (Exception e) {
+                log.error("Unable to sleep", e);
+            } 
+            if (!running) {
+            jmsConnection.send(new HarvesterReadyMessage(
                     applicationInstanceId + " on " + physicalServerName,
-                    HarvestControllerServer.JOB_PRIORITY,
-                    !running));
+                    HarvestControllerServer.JOB_PRIORITY));
+            }
         }            
     }
 }

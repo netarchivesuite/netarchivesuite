@@ -163,7 +163,7 @@ public class ChannelsTester extends TestCase {
 
         ChannelID[]topics = new ChannelID[]{
                 Channels.getAllBa(),
-                Channels.getHarvestDispatcherChannel()                
+                Channels.getHarvesterStatusChannel()                
         };
         
         for (ChannelID topic : topics) {

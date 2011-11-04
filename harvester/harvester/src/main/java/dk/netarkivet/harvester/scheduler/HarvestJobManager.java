@@ -23,6 +23,8 @@
 
 package dk.netarkivet.harvester.scheduler;
 
+import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 
@@ -31,14 +33,20 @@ import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
  * the harvests defined in the database. <p>
  */
 public class HarvestJobManager extends LifeCycleComponent {
+    private final JMSConnection jmsConnection;
 
     /**
      * Creates the components handling the harvest job management and hooks them
      * up to the <code>HarvestJobManager</code>s lifecycle.
      */
     public HarvestJobManager() {
-        addChild(new HarvestDispatcher());
+        jmsConnection = JMSConnectionFactory.getInstance();       
+        JobDispatcher jobDispather = new JobDispatcher(jmsConnection);
+        
+        addChild(new HarvesterStatusReceiver(jobDispather, jmsConnection));
+        
         addChild(new HarvestJobGenerator());
+        
         addChild(new HarvestSchedulerMonitorServer());
     }
 
@@ -49,6 +57,4 @@ public class HarvestJobManager extends LifeCycleComponent {
         // Release DB resources
         HarvestDBConnection.cleanup();
     }
-
-
 }

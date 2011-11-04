@@ -58,7 +58,7 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
-import dk.netarkivet.harvester.scheduler.HarvestDispatcher;
+import dk.netarkivet.harvester.scheduler.JobDispatcher;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -78,7 +78,7 @@ public class IntegrityTests extends DataModelTestCase {
     TestInfo info = new TestInfo();
 
     /* The client and server used for testing */
-    HarvestDispatcher harvestScheduler;
+    JobDispatcher jobDispatcher;
     HarvestControllerServer hs;
     private JMSConnection con;
     private boolean done = false;
@@ -125,7 +125,7 @@ public class IntegrityTests extends DataModelTestCase {
                 RememberNotifications.class.getName());
         
         hs = HarvestControllerServer.getInstance();
-        harvestScheduler = new HarvestDispatcher();
+        jobDispatcher = new JobDispatcher(con);
 
         // Ensure that System.exit() is caught.
         sm = System.getSecurityManager();
@@ -227,7 +227,7 @@ public class IntegrityTests extends DataModelTestCase {
         // to be uploaded.
         synchronized(listenerDummy) {
             //Send the job
-            harvestScheduler.doOneCrawl(j, "test", "test", "test",
+            jobDispatcher.doOneCrawl(j, "test", "test", "test",
                     new ArrayList<MetadataEntry>());
 
             //wait until we know files are uploaded
@@ -341,7 +341,7 @@ public class IntegrityTests extends DataModelTestCase {
         //Submit the job
         //TODO ensure, that we have some alias-metadata to produce here
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
-        harvestScheduler.doOneCrawl(j, "test", "test", "test", metadata);
+        jobDispatcher.doOneCrawl(j, "test", "test", "test", metadata);
         //Note: Since this returns, we need to wait for replymessage
         synchronized(listener) {
             while (listener.messages.size() < 2) {

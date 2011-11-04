@@ -37,8 +37,8 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
-import dk.netarkivet.harvester.harvesting.distribute.HarvesterStatusMessage;
 
 /**
  * This default message handler shields of all unimplemented methods from the
@@ -164,7 +164,7 @@ public abstract class HarvesterMessageHandler
      * @throws PermissionDenied when invoked
      */
     @Override
-    public void visit(HarvesterStatusMessage msg) {
+    public void visit(HarvesterReadyMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }

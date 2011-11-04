@@ -27,10 +27,9 @@ import java.util.regex.Pattern;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
-import dk.netarkivet.harvester.harvesting.distribute.HarvesterStatusMessage;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
-import dk.netarkivet.harvester.scheduler.HarvestDispatcher;
 
 /** Settings specific to the harvester module of NetarchiveSuite. */
 public class HarvesterSettings {
@@ -217,18 +216,6 @@ public class HarvesterSettings {
     public static String JOB_TIMEOUT_TIME =
             "settings.harvester.scheduler.jobtimeouttime";
 
-    /** The period between checking if new jobs should be dispatched to the
-     * harvest servers. New jobs are dispatched if the relevant harvest job
-     * queue is empty and new jobs exist for this queue.
-     * Note that this should adjusted in regard of
-     * {@link #SEND_STATUS_DELAY}, and be significantly higher.
-     * This is set by default to 30 seconds (an estimate of the harvest servers
-     * ability to consume messages being 5 seconds).
-     *
-     */
-    public static String DISPATCH_JOBS_PERIOD =
-    	"settings.harvester.scheduler.dispatchperiode";
-
     /**
 	 * <b>settings.harvester.scheduler.jobgenerationperiode</b>: <br>
      * The period between checking if new jobs should be generated, in seconds.
@@ -333,16 +320,31 @@ public class HarvesterSettings {
         "settings.harvester.harvesting.heritrix.crawlLoopWaitTime";
 
     /**
-     * <b>settings.harvester.harvesting.sendStatusDelay</b>:<br>
+     * <b>settings.harvester.harvesting.sendReadyInterval</b>:<br>
      * Time interval in seconds to wait before transmitting a
-     * {@link HarvesterStatusMessage} to the {@link HarvestDispatcher}.
-     * Note that this should adjusted in regard of
-     * {@link #DISPATCH_JOBS_PERIOD}, and be significantly smaller.
-     * Default value is 1 second.
+     * {@link HarvesterReadyMessage} to the {@link HarvestDispatcher}.<p>
+     * 
+     * Lower values will make the HarvestDispatcher detect ready harvester
+     * faster, but will make it more likely that the harvester may send two 
+     * ready messages before a job is received, causing the JobDispatcher to 
+     * dispatch two jobs.
+     * 
+     * Default value is 30 second.
      */
-    public static String SEND_STATUS_DELAY =
-        "settings.harvester.harvesting.sendStatusDelay";
+    public static String SEND_READY_INTERVAL =
+        "settings.harvester.harvesting.sendReadyInterval";
 
+    /**
+     * <b>settings.harvester.harvesting.sendReadyDelay</b>:<br>
+     * Time in milliseconds to wait from starting to listen on the job queue to 
+     * a potential ready message is sent to the HarvestJobManager. This small 
+     * delay is used to retrieve any left over jobs on the queue before sending 
+     * the ready message to the harvester.
+     * Default value is 1000 millisecond.
+     */
+    public static String SEND_READY_DELAY =
+        "settings.harvester.harvesting.sendReadyDelay";
+    
     /**
      * <b>settings.harvester.harvesting.frontier.frontierReportWaitTime</b>:<br>
      * Time interval in seconds to wait between two requests to generate a full

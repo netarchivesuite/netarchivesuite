@@ -48,7 +48,7 @@ import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.scheduler.HarvestDispatcher;
+import dk.netarkivet.harvester.scheduler.JobDispatcher;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -135,7 +135,7 @@ public class IntegrityTestsHCSJMSException extends TestCase{
                 j.getOrigHarvestDefinitionID());
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
-        HarvestDispatcher hDisp = new HarvestDispatcher();
+        JobDispatcher hDisp = new JobDispatcher(con);
         hDisp.doOneCrawl(j, "test", "test", "test",
                 new ArrayList<MetadataEntry>());
         //Trigger the exception handler - should not try to exit

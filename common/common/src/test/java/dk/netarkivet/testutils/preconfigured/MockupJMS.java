@@ -23,6 +23,7 @@
 package dk.netarkivet.testutils.preconfigured;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.utils.Settings;
@@ -47,4 +48,7 @@ public class MockupJMS implements TestConfigurationIF {
         Settings.set(CommonSettings.JMS_BROKER_CLASS, originalClass);
     }
 
+    public JMSConnection getJMSConnection() {
+        return JMSConnectionFactory.getInstance();
+    }
 }

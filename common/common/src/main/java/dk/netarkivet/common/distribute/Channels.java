@@ -70,7 +70,8 @@ public class Channels {
     /**
      * Prefix for the channel used to send {@link HarvesterStatusMessage}s.
      */
-    private static final String HARVEST_DISPATCHER_CHANNEL_PREFIX = "HARVESTDISP";
+    private static final String 
+    HARVESTER_STATUS_CHANNEL_PREFIX = "HARVESTER_STATUS";
 
     private static final String THECR_CHANNEL_PREFIX = "THE_CR";
 
@@ -598,12 +599,12 @@ public class Channels {
    *
    * @return the <code>ChannelID</code> object for the queue.
    */
-  public static ChannelID getHarvestDispatcherChannel() {
-      return getInstance().HARVEST_DISPATCHER;
+  public static ChannelID getHarvesterStatusChannel() {
+      return getInstance().HARVESTER_STATUS;
   }
 
-  private final ChannelID HARVEST_DISPATCHER = new ChannelID(
-          HARVEST_DISPATCHER_CHANNEL_PREFIX,
+  private final ChannelID HARVESTER_STATUS = new ChannelID(
+          HARVESTER_STATUS_CHANNEL_PREFIX,
           ChannelID.COMMON,
           ChannelID.NO_IP,
           ChannelID.NO_APPLINST_ID,

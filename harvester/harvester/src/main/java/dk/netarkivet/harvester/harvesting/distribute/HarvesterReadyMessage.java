@@ -29,14 +29,13 @@ import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.HarvestController;
-import dk.netarkivet.harvester.scheduler.HarvestDispatcher;
 
 /**
  * The {@link HarvestController} periodically sends 
  * {@link HarvesterStatusMessage}s to the {@link HarvestDispatcher} to notify
  * it whether it is available for processing a job or already processing one.
  */
-public class HarvesterStatusMessage
+public class HarvesterReadyMessage
 extends HarvesterMessage
 implements Serializable {
 
@@ -50,10 +49,6 @@ implements Serializable {
      */
     private final String applicationInstanceId;
 
-    /**
-     * Whether or not the sender is processing a crawl request.
-     */
-    private final boolean isAvailable;
 
     /**
      * Builds a new message.
@@ -62,14 +57,12 @@ implements Serializable {
      * @param isAvailable whether or not the sender is 
      * processing a crawl request.
      */
-    public HarvesterStatusMessage(
+    public HarvesterReadyMessage(
             String applicationInstanceId,
-            JobPriority jobPriority,
-            boolean isAvailable) {
-        super(Channels.getHarvestDispatcherChannel(), Channels.getError());
+            JobPriority jobPriority) {
+        super(Channels.getHarvesterStatusChannel(), Channels.getError());
         this.applicationInstanceId = applicationInstanceId;
         this.jobProprity = jobPriority;
-        this.isAvailable = isAvailable;
     }
 
     @Override
@@ -90,12 +83,4 @@ implements Serializable {
     public String getApplicationInstanceId() {
         return applicationInstanceId;
     }
-
-    /**
-     * @return the availability.
-     */
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
 }
