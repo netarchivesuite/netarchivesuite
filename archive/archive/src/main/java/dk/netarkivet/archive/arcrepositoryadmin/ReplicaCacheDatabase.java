@@ -53,6 +53,7 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.StringUtils;
 
 /**
  * Method for storing the bitpreservation cache in a database.
@@ -81,9 +82,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * Constructor.
      */
     private ReplicaCacheDatabase() {
-        // Initialise the database based on settings
+        // Get a connection to the archive database
         dbcon = ReplicaCacheDatabaseConnector.getInstance();
-        // initialise the database.
         initialiseDB();
     }
 
@@ -111,7 +111,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // Retrieve the replica IDs from the database.
         List<String> repIds 
             = ReplicaCacheHelpers.retrieveIdsFromReplicaTable(con);
-
+        log.debug("IDs for replicas already in the database: " 
+            + StringUtils.conjoin(",", repIds));
         for (Replica rep : replicas) {
             // try removing the id from the temporary list of IDs within the DB.
             // If the remove is not successful, then the replica is already
@@ -124,7 +125,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 ReplicaCacheHelpers.insertReplicaIntoDB(rep, con);
             } else {
                 // Otherwise it already exists in the DB.
-                log.info("Replica '" + rep.toString()
+                log.debug("Replica '" + rep.toString()
                         + "' already inserted in database.");
             }
         }

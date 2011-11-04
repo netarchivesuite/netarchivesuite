@@ -103,6 +103,15 @@ public final class ReplicaCacheHelpers {
      */
     protected static void insertReplicaIntoDB(Replica rep, 
             Connection con) throws IllegalState {
+        // Try to see, if the replica hasn't been added already by
+        // some other process.
+        List<String> repIds 
+        = ReplicaCacheHelpers.retrieveIdsFromReplicaTable(con);
+        if (repIds.contains(rep.getId())) {
+            log.warn("replica w/ ID '" + rep.getId() 
+                    + "' has already been added.");
+            return;
+        }
         PreparedStatement statement = null;
         try {
             // Make the SQL statement for putting the replica into the database
