@@ -54,6 +54,7 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Method for storing the bitpreservation cache in a database.
@@ -77,14 +78,29 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     /** The number of entries between logging in either file list or checksum
      * list. */
     private final int LOGGING_ENTRY_INTERVAL = 1000;
-
+    
+    /** Waiting time in seconds before attempting to initialise the 
+     * database again. 
+     */
+    private final int WAIT_BEFORE_INIT_RETRY = 10;
     /**
      * Constructor.
      */
     private ReplicaCacheDatabase() {
         // Get a connection to the archive database
         dbcon = ReplicaCacheDatabaseConnector.getInstance();
-        initialiseDB();
+        try {
+            initialiseDB();
+        } catch (IOFailure e) {
+            // Wait 10 seconds, and then try again.
+            try {
+                Thread.sleep(WAIT_BEFORE_INIT_RETRY 
+                        * TimeUtils.SECOND_IN_MILLIS);
+            } catch (InterruptedException e1) {
+                // Ignored
+            }
+            initialiseDB();
+        }
     }
 
     /**

@@ -99,19 +99,10 @@ public final class ReplicaCacheHelpers {
      *
      * @param rep The Replica to insert into the replica table.
      * @param con An open connection to the archive database
-     * @throws IllegalState If a SQLException is caught.
+     * @throws IOFailure If a SQLException is caught.
      */
     protected static void insertReplicaIntoDB(Replica rep, 
-            Connection con) throws IllegalState {
-        // Try to see, if the replica hasn't been added already by
-        // some other process.
-        List<String> repIds 
-        = ReplicaCacheHelpers.retrieveIdsFromReplicaTable(con);
-        if (repIds.contains(rep.getId())) {
-            log.warn("replica w/ ID '" + rep.getId() 
-                    + "' has already been added.");
-            return;
-        }
+            Connection con) throws IOFailure {
         PreparedStatement statement = null;
         try {
             // Make the SQL statement for putting the replica into the database
