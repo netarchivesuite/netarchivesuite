@@ -322,9 +322,9 @@ public class HarvesterSettings {
     /**
      * <b>settings.harvester.harvesting.sendReadyInterval</b>:<br>
      * Time interval in seconds to wait before transmitting a
-     * {@link HarvesterReadyMessage} to the {@link HarvestDispatcher}.<p>
+     * {@link HarvesterReadyMessage} to the {@link JobDispatcher}.<p>
      * 
-     * Lower values will make the HarvestDispatcher detect ready harvester
+     * Lower values will make the JobDispatcher detect ready harvester
      * faster, but will make it more likely that the harvester may send two 
      * ready messages before a job is received, causing the JobDispatcher to 
      * dispatch two jobs.

@@ -76,10 +76,10 @@ import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Test HarvestDispatcher class.
+ * Test JobDispatcher class.
  */
 public class JobDispatcherTester extends TestCase {
-    /** The harvestDispatcher used for testing. */
+    /** The JobDispatcher used for testing. */
     JobDispatcher jobDispatcher;
 
     ReloadSettings reloadSettings = new ReloadSettings();

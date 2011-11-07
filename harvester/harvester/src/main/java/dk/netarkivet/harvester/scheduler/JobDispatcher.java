@@ -60,7 +60,7 @@ public class JobDispatcher {
      * @param jmsConnection The JMS connection to use.
      */
     public JobDispatcher(JMSConnection jmsConnection) {
-        log.info("Creating HarvestDispatcher");
+        log.info("Creating JobDispatcher");
         ArgumentNotValid.checkNotNull(jmsConnection, "jmsConnection");
         this.jmsConnection = jmsConnection;
     }

@@ -847,7 +847,7 @@ implements CleanupIF {
         }
 
         /**
-         * Send a HarvesterStatusMessage to the HarvestJobManager.
+         * Send a HarvesterReadyMessage to the HarvestJobManager.
          */
         private synchronized void sendStatus() {
             try {

@@ -160,7 +160,7 @@ public abstract class HarvesterMessageHandler
     /**
      * This method should be overridden and implemented by a sub class if
      * message handling is wanted.
-     * @param msg a {@link HarvesterStatusMessage}
+     * @param msg a {@link HarvesterReadyMessage}
      * @throws PermissionDenied when invoked
      */
     @Override
