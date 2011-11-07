@@ -82,7 +82,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     /** Waiting time in seconds before attempting to initialise the 
      * database again. 
      */
-    private final int WAIT_BEFORE_INIT_RETRY = 10;
+    private final int WAIT_BEFORE_INIT_RETRY = 30;
     /**
      * Constructor.
      */
@@ -92,7 +92,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         try {
             initialiseDB();
         } catch (IOFailure e) {
-            // Wait 10 seconds, and then try again.
+            log.warn("Failed Initialization. Will wait " 
+                    + WAIT_BEFORE_INIT_RETRY 
+                    + " seconds before attempting again.");
+            // Wait WAIT_BEFORE_INIT_RETRY seconds, and then try again.
             try {
                 Thread.sleep(WAIT_BEFORE_INIT_RETRY 
                         * TimeUtils.SECOND_IN_MILLIS);
