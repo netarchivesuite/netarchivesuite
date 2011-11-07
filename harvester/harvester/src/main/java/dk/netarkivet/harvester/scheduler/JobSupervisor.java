@@ -38,6 +38,9 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 
+/**
+ * Responsible for cleaning obsolete jobs, see {@link #start()} for details.
+ */
 public class JobSupervisor implements ComponentLifeCycle {
     /** The logger to use.    */
     private final Log log = LogFactory.getLog(getClass()); 
@@ -46,8 +49,9 @@ public class JobSupervisor implements ComponentLifeCycle {
 
     /**
      * <ol>
-     * <li> Starts the rescheduling of left over jobs (in a separat thread).
-     * <li> Starts the timer for cleaning old jobs.
+     * <li> Starts the rescheduling of left over jobs (in a separate thread).
+     * <li> Starts the timer for cleaning old jobs. eg. jobs that have been run 
+     * longer than {@link HarvesterSettings#JOB_TIMEOUT_TIME}.
      * </ol>
      */
     @Override
@@ -97,7 +101,7 @@ public class JobSupervisor implements ComponentLifeCycle {
 
     /**
      * Stops any job that has been in status STARTED a very long time defined
-     * by the HarvesterSettings.JOB_TIMEOUT_TIME setting.
+     * by the {@link HarvesterSettings#JOB_TIMEOUT_TIME} setting.
      * 
      * Package protected to allow unit testing.
      */

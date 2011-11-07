@@ -800,6 +800,9 @@ implements CleanupIF {
 
         /** Handles the periodic sending of status messages. */
         private PeriodicTaskExecutor statusTransmitter;
+        
+        private final int SEND_READY_DELAY = 
+                Settings.getInt(HarvesterSettings.SEND_READY_DELAY);
 
         /**
          * Returns <code>true</code> if the a doOneCrawl is running, else 
@@ -848,8 +851,7 @@ implements CleanupIF {
          */
         private synchronized void sendStatus() {
             try {
-                Thread.sleep(
-                        Settings.getInt(HarvesterSettings.SEND_READY_DELAY));
+                Thread.sleep(SEND_READY_DELAY);
             } catch (Exception e) {
                 log.error("Unable to sleep", e);
             } 

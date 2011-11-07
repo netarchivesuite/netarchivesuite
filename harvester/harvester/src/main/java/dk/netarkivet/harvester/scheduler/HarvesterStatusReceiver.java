@@ -32,6 +32,11 @@ import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 
+/**
+ * Handles the reception of status messages from the harvesters. Will call the 
+ * {@link #visit(HarvesterReadyMessage)} method when a Ready message is 
+ * received.
+ */
 public class HarvesterStatusReceiver extends HarvesterMessageHandler
 implements ComponentLifeCycle {  
     /** @see #HarvesterStatusReceiver. */
@@ -48,7 +53,8 @@ implements ComponentLifeCycle {
     public HarvesterStatusReceiver(
             JobDispatcher jobDispatcher,
             JMSConnection jmsConnection) {
-        super();
+        ArgumentNotValid.checkNotNull(jobDispatcher, "jobDispatcher");
+        ArgumentNotValid.checkNotNull(jmsConnection, "jmsConnection");
         this.jobDispatcher = jobDispatcher;
         this.jmsConnection = jmsConnection;
     }

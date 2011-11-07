@@ -28,11 +28,11 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
-import dk.netarkivet.harvester.harvesting.HarvestController;
+import dk.netarkivet.harvester.scheduler.JobDispatcher;
 
 /**
- * The {@link HarvestController} periodically sends 
- * {@link HarvesterStatusMessage}s to the {@link HarvestDispatcher} to notify
+ * The {@link HarvestControllerServer} periodically sends 
+ * {@link HarvesterReadyMessage}s to the {@link JobDispatcher} to notify
  * it whether it is available for processing a job or already processing one.
  */
 public class HarvesterReadyMessage
@@ -54,8 +54,6 @@ implements Serializable {
      * Builds a new message.
      * @param jobPriority the priority of jobs crawled by the sender.
      * @param applicationInstanceId the sender's application instance ID.
-     * @param isAvailable whether or not the sender is 
-     * processing a crawl request.
      */
     public HarvesterReadyMessage(
             String applicationInstanceId,

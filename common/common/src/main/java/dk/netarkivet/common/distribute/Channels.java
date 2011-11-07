@@ -34,6 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 
 /**
  * This singleton class is in charge of giving out the correct channels.
@@ -68,7 +69,7 @@ public class Channels {
     private static final String HARVEST_MONITOR_CHANNEL_PREFIX = "HARVESTMON";
 
     /**
-     * Prefix for the channel used to send {@link HarvesterStatusMessage}s.
+     * Prefix for the channel used to send {@link HarvesterReadyMessage}s.
      */
     private static final String 
     HARVESTER_STATUS_CHANNEL_PREFIX = "HARVESTER_STATUS";
@@ -595,9 +596,9 @@ public class Channels {
           ChannelID.NO_APPLINST_ID,
           ChannelID.QUEUE);
 
-  /** Return the queue for the harvest dispatcher.
-   *
-   * @return the <code>ChannelID</code> object for the queue.
+  /** 
+   * @return the <code>ChannelID</code> object for the topic used by the 
+   * harvesters to call in ready for new jobs.
    */
   public static ChannelID getHarvesterStatusChannel() {
       return getInstance().HARVESTER_STATUS;
