@@ -61,6 +61,7 @@ public class JobDispatcher {
      */
     public JobDispatcher(JMSConnection jmsConnection) {
         log.info("Creating HarvestDispatcher");
+        ArgumentNotValid.checkNotNull(jmsConnection, "jmsConnection");
         this.jmsConnection = jmsConnection;
     }
 

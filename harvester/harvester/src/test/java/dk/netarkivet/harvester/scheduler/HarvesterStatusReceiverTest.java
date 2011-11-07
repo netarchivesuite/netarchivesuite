@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.scheduler;
 
 import junit.framework.TestCase;
+import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
@@ -38,16 +39,17 @@ public class HarvesterStatusReceiverTest extends TestCase  {
     
     public void setUp() throws Exception {
         reloadSettings.setUp();
+        jms.setUp();
         JobDispatcher = new MockJobDispatcher();
         receiver = new HarvesterStatusReceiver(
-                JobDispatcher, null);
+                JobDispatcher, jms.getJMSConnection());
     }
     
     protected class MockJobDispatcher extends JobDispatcher {
         private JobPriority receivedPriority;
         
         public MockJobDispatcher() {
-            super(null);
+            super(jms.getJMSConnection());
         }
 
         @Override
@@ -55,6 +57,8 @@ public class HarvesterStatusReceiverTest extends TestCase  {
             receivedPriority = priority;
         }
     }
+    
+    
     
     public void testStatusReception() {
         HarvesterReadyMessage statusmessage = 
