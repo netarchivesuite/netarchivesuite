@@ -30,6 +30,7 @@ import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.scheduler.JobDispatcher;
 
 /** Settings specific to the harvester module of NetarchiveSuite. */
 public class HarvesterSettings {
