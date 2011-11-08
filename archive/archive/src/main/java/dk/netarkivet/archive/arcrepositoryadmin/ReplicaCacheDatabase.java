@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -61,8 +62,6 @@ import dk.netarkivet.common.utils.TimeUtils;
  *
  * This method uses the 'admin.data' file for retrieving the upload status.
  *
- * TODO this file is extremely large (more than 2000 lines) and should be
- * shortened.
  */
 public final class ReplicaCacheDatabase implements BitPreservationDAO {
     /** The log.*/
@@ -83,26 +82,44 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * database again. 
      */
     private final int WAIT_BEFORE_INIT_RETRY = 30;
+    
+    /** Number of DB INIT retries. */
+    private final int INIT_DB_RETRIES = 3;
+    
     /**
      * Constructor.
+     * throws IllegalState if unable to initialize the database.
      */
     private ReplicaCacheDatabase() {
         // Get a connection to the archive database
         dbcon = ReplicaCacheDatabaseConnector.getInstance();
-        try {
-            initialiseDB();
-        } catch (IOFailure e) {
-            log.warn("Failed Initialization. Will wait " 
-                    + WAIT_BEFORE_INIT_RETRY 
-                    + " seconds before attempting again.");
-            // Wait WAIT_BEFORE_INIT_RETRY seconds, and then try again.
-            try {
-                Thread.sleep(WAIT_BEFORE_INIT_RETRY 
-                        * TimeUtils.SECOND_IN_MILLIS);
-            } catch (InterruptedException e1) {
-                // Ignored
+        int retries = 0;
+        boolean initialized = false;
+        Random rand = new Random();
+        while (retries < INIT_DB_RETRIES && !initialized) {
+            retries++;
+            try {        
+                initialiseDB();
+                initialized = true;
+            } catch (IOFailure e) {
+                log.warn("Initialization failed. Probably because another " 
+                        + "application is calling the same method now. ", e);
+                if (retries < INIT_DB_RETRIES) {
+                        log.info("Retrying after a minimum of " 
+                                + WAIT_BEFORE_INIT_RETRY + " seconds");
+                        try {
+                            Thread.sleep(WAIT_BEFORE_INIT_RETRY  
+                                    * TimeUtils.SECOND_IN_MILLIS 
+                                    + rand.nextInt(
+                                            WAIT_BEFORE_INIT_RETRY));
+                        } catch (InterruptedException e1) {
+                            // Ignored
+                        }
+                } else {
+                    throw new IllegalState(
+                            "Unable to initialize the database.");
+                }
             }
-            initialiseDB();
         }
     }
 
@@ -127,7 +144,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // retrieve the list of replicas.
         Collection<Replica> replicas = Replica.getKnown();
         Connection con = dbcon.getDbConnection();
-        // Retrieve the replica IDs from the database.
+        // Retrieve the replica IDs currently in the database.
         List<String> repIds 
             = ReplicaCacheHelpers.retrieveIdsFromReplicaTable(con);
         log.debug("IDs for replicas already in the database: " 
@@ -152,7 +169,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // If unknown replica ids are found, then throw exception.
         if (repIds.size() > 0) {
             throw new IllegalState("The database contain identifiers for the "
-                    + "following replicas, which has not defined in the "
+                    + "following replicas, which are not defined in the "
                     + "settings: " + repIds);
         }
     }
@@ -1115,7 +1132,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @throws ArgumentNotValid If the replica is null.
      */
     @Override
-    public long getNumberOfFiles(Replica replica) throws ArgumentNotValid {
+    public long getNumberOfFiles(Replica replica) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
         // The SQL statement to retrieve the amount of entries in the
