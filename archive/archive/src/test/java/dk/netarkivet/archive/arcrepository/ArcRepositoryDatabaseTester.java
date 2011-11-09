@@ -151,7 +151,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
     private static final String[] STORABLE_FILES = new String[]{
             "NetarchiveSuite-store1.arc", "NetarchiveSuite-store2.arc"};
 
-
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         rf.setUp();
@@ -170,7 +170,6 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
                 PrintNotifications.class.getName());
         
-        
         Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, 
                 "jdbc:derby:" + TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
@@ -179,7 +178,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
                 "");
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE,
                 "");
-
+        /** Use the class DatabaseAdmin as admin class. */
         Settings.set(ArchiveSettings.ADMIN_CLASS, 
                 dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin.class.getName());
         
@@ -200,9 +199,9 @@ public class ArcRepositoryDatabaseTester extends TestCase {
 
         testFiles = new File(BITARCHIVE_DIR, "filedir").listFiles(
                 FileUtils.ARCS_FILTER);
-
     }
     
+    @Override
     public void tearDown() throws Exception {
         // BATCH
         arcRepos.close(); //Close down ArcRepository controller

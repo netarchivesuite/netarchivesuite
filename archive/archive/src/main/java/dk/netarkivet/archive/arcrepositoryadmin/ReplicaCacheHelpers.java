@@ -233,7 +233,7 @@ public final class ReplicaCacheHelpers {
     protected static List<String> retrieveIdsFromReplicaTable(Connection con) {
         // Make SQL statement for retrieving the replica_ids in the
         // replica table.
-        String sql = "SELECT replica_id FROM replica";
+        final String sql = "SELECT replica_id FROM replica";
 
         // execute the SQL statement and return the results.
         return DBUtils.selectStringList(con, sql);
@@ -247,7 +247,7 @@ public final class ReplicaCacheHelpers {
     protected static List<String> retrieveIdsFromFileTable(Connection con) {
         // Make SQL statement for retrieving the file_ids in the
         // file table.
-        String sql = "SELECT file_id FROM file";
+        final String sql = "SELECT file_id FROM file";
 
         // execute the SQL statement and return the results.
         return DBUtils.selectStringList(con, sql);
@@ -263,7 +263,7 @@ public final class ReplicaCacheHelpers {
             Connection con) {
         // Make SQL statement for retrieving the replicafileinfo_guids in the
         // replicafileinfo table.
-        String sql = "SELECT replicafileinfo_guid FROM replicafileinfo";
+        final String sql = "SELECT replicafileinfo_guid FROM replicafileinfo";
 
         // execute the SQL statement and return the results.
         return DBUtils.selectStringList(con, sql);
@@ -285,7 +285,7 @@ public final class ReplicaCacheHelpers {
     protected static long retrieveIdForFile(String filename, Connection con) {
         // retrieve the file_id of the entry in the file table with the
         // filename filename.
-        String sql = "SELECT file_id FROM file WHERE filename = ?";
+        final String sql = "SELECT file_id FROM file WHERE filename = ?";
         List<Long> files = DBUtils.selectLongList(
                 con, sql, filename);
 
@@ -318,7 +318,7 @@ public final class ReplicaCacheHelpers {
     protected static long retrieveReplicaFileInfoGuid(
             long fileId, String replicaId, Connection con) {
         // sql for retrieving the replicafileinfo_guid.
-        String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
+        final String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
                 + "file_id = ? AND replica_id = ?";
         List<Long> result = DBUtils.selectLongList(con, sql,
                 fileId, replicaId);
@@ -348,7 +348,7 @@ public final class ReplicaCacheHelpers {
     protected static List<Long> retrieveReplicaFileInfoGuidsForReplica(
             String replicaId, Connection con) {
         // sql for retrieving the replicafileinfo_guids for the replica.
-        String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
+        final String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
                 + "replica_id = ?";
         return DBUtils.selectLongList(con, sql, replicaId);
     }
@@ -364,7 +364,7 @@ public final class ReplicaCacheHelpers {
             String replicaId, Connection con) {
         // The SQL statement for retrieving the replica_type of a replica with
         // the given replica id.
-        String sql = "SELECT replica_type FROM replica WHERE replica_id = ?";
+        final String sql = "SELECT replica_type FROM replica WHERE replica_id = ?";
         return ReplicaType.fromOrdinal(
                 DBUtils.selectIntValue(con, sql, replicaId));
     }
@@ -382,7 +382,7 @@ public final class ReplicaCacheHelpers {
             String filename, Connection con) {
         // The SQL statement to retrieve the replica_id for the entries in the
         // replicafileinfo table for the given fileId and checksum_status = OK
-        String sql = "SELECT replica_id FROM replicafileinfo, file WHERE "
+        final String sql = "SELECT replica_id FROM replicafileinfo, file WHERE "
                 + "replicafileinfo.file_id = file.file_id AND "
                 + "file.filename = ? AND checksum_status = ?";
         return DBUtils.selectStringList(con, sql, filename, 
@@ -401,7 +401,7 @@ public final class ReplicaCacheHelpers {
     protected static String retrieveFilenameForFileId(
             long fileId, Connection con) {
         // The SQL statement to retrieve the filename for a given file_id
-        String sql = "SELECT filename FROM file WHERE file_id = ?";
+        final String sql = "SELECT filename FROM file WHERE file_id = ?";
         return DBUtils.selectStringValue(con, sql, fileId);
     }
 
@@ -419,7 +419,7 @@ public final class ReplicaCacheHelpers {
             String filename, String replicaId, Connection con) {
         // The SQL statement to retrieve the filelist_status for the given
         // entry in the replica fileinfo table.
-        String sql = "SELECT filelist_status FROM replicafileinfo, file WHERE "
+        final String sql = "SELECT filelist_status FROM replicafileinfo, file WHERE "
                 + "file.file_id = replicafileinfo.file_id AND file.filename=? "
                 + "AND replica_id=?";
         return DBUtils.selectIntValue(con, sql, filename, replicaId);
@@ -444,7 +444,7 @@ public final class ReplicaCacheHelpers {
             String checksum, Connection con) {
         try {
             // The SQL statement
-            String sql = "UPDATE replicafileinfo SET checksum = ?, "
+            final String sql = "UPDATE replicafileinfo SET checksum = ?, "
                 + "upload_status = ?, filelist_status = ?, checksum_status "
                 + "= ?, checksum_checkdatetime = ?, filelist_checkdatetime = ?"
                 + " WHERE replicafileinfo_guid = ?";
@@ -482,7 +482,7 @@ public final class ReplicaCacheHelpers {
             Connection con) {
         try {
             // The SQL statement
-            String sql = "UPDATE replicafileinfo SET filelist_status = ?, "
+            final String sql = "UPDATE replicafileinfo SET filelist_status = ?, "
                     + "filelist_checkdatetime = ? "
                     + "WHERE replicafileinfo_guid = ?";
 
@@ -519,7 +519,7 @@ public final class ReplicaCacheHelpers {
             long replicafileinfoId, Connection con) {
         try {
             // The SQL statement
-            String sql = "UPDATE replicafileinfo SET filelist_status = ?, "
+            final String sql = "UPDATE replicafileinfo SET filelist_status = ?, "
                     + "filelist_checkdatetime = ?, upload_status = ? "
                     + "WHERE replicafileinfo_guid = ?";
 
@@ -558,7 +558,7 @@ public final class ReplicaCacheHelpers {
             long replicafileinfoId, Connection con) {
         try {
             // The SQL statement
-            String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
+            final String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
                     + "checksum_checkdatetime = ?, upload_status = ? "
                     + "WHERE replicafileinfo_guid = ?";
 
@@ -593,7 +593,7 @@ public final class ReplicaCacheHelpers {
     protected static long retrieveGuidForFilenameOnReplica(
             String filename, String replicaId, Connection con) {
         // sql for retrieving the replicafileinfo_guid.
-        String sql = "SELECT replicafileinfo_guid "
+        final String sql = "SELECT replicafileinfo_guid "
                 + "FROM replicafileinfo, file WHERE "
                 + "replicafileinfo.file_id = file.file_id "
                 + "AND file.filename = ? AND replica_id = ?";
@@ -617,7 +617,7 @@ public final class ReplicaCacheHelpers {
             Connection con) {
         try {
             // The SQL statement
-            String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
+            final String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
                     + "checksum_checkdatetime = ? "
                     + "WHERE replicafileinfo_guid = ?";
 
@@ -655,7 +655,7 @@ public final class ReplicaCacheHelpers {
             long replicafileinfoId, Connection con) {
         try {
             // The SQL statement
-            String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
+            final String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
                     + "checksum_checkdatetime = ?, upload_status = ? "
                     + "WHERE replicafileinfo_guid = ?";
 
@@ -694,7 +694,7 @@ public final class ReplicaCacheHelpers {
         try {
             PreparedStatement statement = null;
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
-            String sql = "UPDATE replica SET checksum_updated = ? WHERE "
+            final String sql = "UPDATE replica SET checksum_updated = ? WHERE "
                     + "replica_id = ?";
             statement = DBUtils.prepareStatement(con, sql, now, rep
                     .getId());
@@ -724,7 +724,7 @@ public final class ReplicaCacheHelpers {
         try {
             PreparedStatement statement = null;
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
-            String sql = "UPDATE replica SET filelist_updated = ? WHERE "
+            final String sql = "UPDATE replica SET filelist_updated = ? WHERE "
                     + "replica_id = ?";
             statement = DBUtils.prepareStatement(connection, sql, now, rep
                     .getId());
@@ -754,7 +754,7 @@ public final class ReplicaCacheHelpers {
             Connection con) {
         try {
             PreparedStatement statement = null;
-            String sql = "UPDATE replica SET filelist_updated = ? WHERE "
+            final String sql = "UPDATE replica SET filelist_updated = ? WHERE "
                     + "replica_id = ?";
             statement = DBUtils.prepareStatement(con, sql, date, rep
                     .getId());
@@ -785,7 +785,7 @@ public final class ReplicaCacheHelpers {
         try {
             PreparedStatement statement = null;
             
-            String sql = "UPDATE replica SET checksum_updated = ? WHERE "
+            final String sql = "UPDATE replica SET checksum_updated = ? WHERE "
                     + "replica_id = ?";
             statement = DBUtils.prepareStatement(con, sql, date, rep
                     .getId());
@@ -808,7 +808,7 @@ public final class ReplicaCacheHelpers {
      */
     protected static boolean existsReplicaInDB(Replica rep, Connection con) {
         // retrieve the amount of times this replica is within the database.
-        String sql = "SELECT COUNT(*) FROM replica WHERE replica_id = ?";
+        final String sql = "SELECT COUNT(*) FROM replica WHERE replica_id = ?";
         int count = DBUtils.selectIntValue(con, sql, rep.getId());
 
         // Handle the different cases for count.
@@ -833,7 +833,7 @@ public final class ReplicaCacheHelpers {
     protected static ReplicaFileInfo getReplicaFileInfo(long replicaFileInfoGuid,
             Connection con) {
         // retrieve all
-        String sql = "SELECT replicafileinfo_guid, replica_id, file_id, "
+        final String sql = "SELECT replicafileinfo_guid, replica_id, file_id, "
             + "segment_id, checksum, upload_status, filelist_status, "
             + "checksum_status, filelist_checkdatetime, checksum_checkdatetime "
             + "FROM replicafileinfo WHERE replicafileinfo_guid = ?";
@@ -896,7 +896,7 @@ public final class ReplicaCacheHelpers {
             String checksum, ReplicaStoreState state, 
             Connection con) throws IOFailure {
         try {
-            String sql = "UPDATE replicafileinfo SET checksum = ?, "
+            final String sql = "UPDATE replicafileinfo SET checksum = ?, "
                 + "upload_status = ?, filelist_status = ?, "
                 + "checksum_status = ? WHERE replicafileinfo_guid = ?";
 
@@ -946,7 +946,7 @@ public final class ReplicaCacheHelpers {
             String checksum, Date date, ReplicaStoreState state, 
             Connection con) throws IOFailure {
         try {
-            String sql = "UPDATE replicafileinfo SET checksum = ?, "
+            final String sql = "UPDATE replicafileinfo SET checksum = ?, "
                 + "upload_status = ?, filelist_status = ?, "
                 + "checksum_status = ?, checksum_checkdatetime = ?, "
                 + "filelist_checkdatetime = ? WHERE replicafileinfo_guid = ?";
@@ -993,7 +993,7 @@ public final class ReplicaCacheHelpers {
     protected static ReplicaStoreState retrieveUploadStatus(long fileGuid,
             String repId, Connection con) {
         // sql query for retrieval of upload status for a specific entry.
-        String sql = "SELECT upload_status FROM replicafileinfo WHERE "
+        final String sql = "SELECT upload_status FROM replicafileinfo WHERE "
             + "file_id = ? AND replica_id = ?";
         int us = DBUtils.selectIntValue(con, sql, fileGuid,
                 repId);
@@ -1012,7 +1012,7 @@ public final class ReplicaCacheHelpers {
     protected static String retrieveChecksumForReplicaFileInfoEntry(long fileGuid,
             String repId, Connection con) {
         // sql query for retrieval of checksum value for an specific entry.
-        String sql = "SELECT checksum FROM replicafileinfo WHERE file_id = ? "
+        final String sql = "SELECT checksum FROM replicafileinfo WHERE file_id = ? "
             + "AND replica_id = ?";
         return DBUtils.selectStringValue(con, sql, fileGuid,
                 repId);
@@ -1112,14 +1112,14 @@ public final class ReplicaCacheHelpers {
         // only the ones which have a valid checksum.
         // Check the checksums against each other if they differ,
         // then set to CORRUPT.
-        String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
+        final String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
             + "file_id = ?";
         List<Long> rfiGuids = DBUtils.selectLongList(
                 con, sql, fileId);
 
         List<ReplicaFileInfo> rfis = retrieveReplicaFileInfosWithChecksum(
                 rfiGuids, con);
-
+        
         // handle the case, when no replicas has a checksum of the file.
         if (rfis.size() == 0) {
             // issue a warning.

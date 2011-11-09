@@ -64,7 +64,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         rs.setUp();
         mtf.setUp();
         ChannelsTester.resetChannels();
-        DBConnect.cleanup();
+        ArchiveDBConnection.cleanup();
         
         LogManager.getLogManager().readConfiguration();
         LogUtils.flushLogs(ReplicaCacheDatabase.class.getName());
@@ -291,7 +291,8 @@ public class ReplicaCacheDatabaseTester extends TestCase {
             fail("It should not be allowed to reupload a file when it has been completed.");
         } catch (IllegalState e) {
             // expected
-            assertTrue("It should say, the it has already been completely uploaded,, but said: " + e.getMessage(), 
+            assertTrue("It should say, that it has already been completely uploaded, but said: " 
+                    + e.getMessage(), 
                     e.getMessage().contains("The file has already been "
                             + "completely uploaded to the replica: "));
         }
@@ -301,7 +302,8 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         cache.changeStateOfReplicafileinfo("TEST5", "fdsafdas0123", Replica.getReplicaFromId("TWO"), 
                 ReplicaStoreState.UPLOAD_COMPLETED);
 
-        assertEquals("The checksum for file 'TEST5' should be fdsafdas0123", "fdsafdas0123", cache.getChecksum("TEST5"));
+        assertEquals("The checksum for file 'TEST5' should be fdsafdas0123", 
+                "fdsafdas0123", cache.getChecksum("TEST5"));
 
         // check content 
         String content = cache.retrieveAsText();
@@ -317,7 +319,8 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         }
 
         // check for duplicates
-        cache.addFileListInformation(FileUtils.readListFromFile(makeTemporaryDuplicateFilelistFile()), 
+        cache.addFileListInformation(FileUtils.readListFromFile(
+                makeTemporaryDuplicateFilelistFile()), 
                 Replica.getReplicaFromId("ONE"));
         
         LogUtils.flushLogs(ReplicaCacheDatabase.class.getName());

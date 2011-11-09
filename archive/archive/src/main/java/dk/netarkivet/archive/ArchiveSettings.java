@@ -23,6 +23,7 @@
  */
 package dk.netarkivet.archive;
 
+
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -217,6 +218,95 @@ public class ArchiveSettings {
      */
     public static String RECONNECT_DELAY_ADMIN_DATABASE
             = "settings.archive.admin.database.reconnectRetryDelay";
+    
+    /**
+     * <b>settings.archive.admin.database.validityCheckTimeout</b>: <br>
+     * Timeout in seconds to check for the validity of a JDBC connection on
+     * the server. This is the time in seconds to wait for the database
+     * operation used to validate the connection to complete.
+     * If the timeout period expires before the operation completes, this
+     * method returns false. A value of 0 indicates a timeout is not
+     * applied to the database operation.
+     *
+     * {@link java.sql.Connection#isValid(int)}
+     */
+    public static String DB_CONN_VALID_CHECK_TIMEOUT
+            = "settings.archive.admin.database.validityCheckTimeout";
+
+    /**
+     * <b>settings.archive.admin.database.pool.minSize</b>: <br>
+     * Configure the minimum size of the DB connection pool.
+     * Default value is 5.
+     */
+    public static String DB_POOL_MIN_SIZE =
+        "settings.archive.admin.database.pool.minSize";
+
+    /**
+     * <b>settings.archive.admin.database.pool.maxSize</b>: <br>
+     * Configure the maximum size of the DB connection pool.
+     * Default value is 10.
+     */
+    public static String DB_POOL_MAX_SIZE =
+        "settings.archive.admin.database.pool.maxSize";
+
+    /**
+     * <b>settings.archive.admin.database.pool.acquireInc</b>: <br>
+     * Configure the increment size DB connection pool.
+     * Default value is 5 (half the max size).
+     */
+    public static String DB_POOL_ACQ_INC =
+        "settings.archive.admin.database.pool.acquireInc";
+
+    /**
+     * <b>settings.archive.admin.database.pool.maxStm</b>: <br>
+     * Configure statement pooling, by setting the global maximum number
+     * of pooled prepared statements for a data source.
+     * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
+     * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
+     * fully deactivated.
+     * @see c3p0 documentation.
+     */
+    public static String DB_POOL_MAX_STM =
+        "settings.archive.admin.database.pool.maxStm";
+
+    /**
+     * <b>settings.archive.admin.database.pool.maxStmPerConn</b>: <br>
+     * Configure statement pooling, by setting the global maximum number
+     * of pooled prepared statements for a data source.
+     * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
+     * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
+     * fully deactivated.
+     * @see c3p0 documentation.
+     */
+    public static String DB_POOL_MAX_STM_PER_CONN =
+        "settings.archive.admin.database.pool.maxStmPerConn";
+
+    /**
+     * <b>settings.archive.admin.database.pool.idleConnTestPeriod</b>: <br>
+     * Configure idle connection testing period in seconds.
+     * Default is 0, which means no idle connection testing
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#idleConnectionTestPeriod"/>
+     */
+    public static String DB_POOL_IDLE_CONN_TEST_PERIOD =
+        "settings.archive.admin.database.pool.idleConnTestPeriod";
+
+    /**
+     * <b>settings.archive.admin.database.pool.idleConnTestOnCheckin</b>: <br>
+     * Configure if a connection validity should be checked when returned to 
+     * the pool. Default is false.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#testConnectionOnCheckin"/>
+     */
+    public static String DB_POOL_IDLE_CONN_TEST_ON_CHECKIN =
+        "settings.archive.admin.database.pool.idleConnTestOnCheckin";
+
+    /**
+     * <b>settings.archive.admin.database.pool.idleConnTestQuery</b>: <br>
+     * The SQL query to be used when testing an idle connection.
+     * Default is empty, which means using c3p0 defaults.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#preferredTestQuery"/>
+     */
+    public static String DB_POOL_IDLE_CONN_TEST_QUERY =
+        "settings.archive.admin.database.pool.idleConnTestQuery";
     
     /**
      * <b>settings.archive.bitpreservation.class</b>: <br>

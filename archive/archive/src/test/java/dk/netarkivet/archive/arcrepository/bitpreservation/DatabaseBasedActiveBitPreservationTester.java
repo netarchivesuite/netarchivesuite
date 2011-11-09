@@ -43,7 +43,7 @@ import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
-import dk.netarkivet.archive.arcrepositoryadmin.DBConnect;
+import dk.netarkivet.archive.arcrepositoryadmin.ArchiveDBConnection;
 import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.CommonSettings;
@@ -116,8 +116,12 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         
         if(first) {
             first = false;
-            clearDatabase(DBConnect.getDBConnection(Settings.get(
-                    ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE)));
+            Connection con = ArchiveDBConnection.get();
+            try {
+                clearDatabase(con);
+            } finally {
+                ArchiveDBConnection.release(con);
+            }
         }
     }
     
@@ -129,6 +133,15 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         if (dbabp != null) {
             dbabp.close();
         }
+        
+        Connection con = ArchiveDBConnection.get();
+        try {
+            clearDatabase(con);
+        } finally {
+            ArchiveDBConnection.release(con);
+        }
+        ArchiveDBConnection.cleanup();
+        ReplicaCacheDatabase.getInstance().cleanup();
         
         rf.tearDown();
         mtf.tearDown();
@@ -200,6 +213,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 
 	dbabp = DatabaseBasedActiveBitPreservation.getInstance();
 	Date date = dbabp.getDateForMissingFiles(THREE);
+	assertNotNull("The returned date should not be null", date);
 	assertTrue("The date for last missing files check should be less than 30 min, but was: " 
 	        + (Calendar.getInstance().getTimeInMillis() - date.getTime()), 
 	        Calendar.getInstance().getTimeInMillis() - date.getTime() < 1000*60*30);
@@ -301,10 +315,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
      * Check whether it finds missing files from checksum jobs.
      */
     public void testMissingDuringChecksum() throws Exception {
-        ReplicaCacheDatabase.getInstance().cleanup();
-        clearDatabase(DBConnect.getDBConnection(Settings.get(
-                ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE)));
-
+        
         ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
         dbabp = DatabaseBasedActiveBitPreservation.getInstance();
         
