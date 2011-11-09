@@ -992,12 +992,12 @@ public class FileUtils {
             log.warn(errMsg);
             throw new IOFailure(errMsg);
         }
-        int error = ProcessUtils.runProcess(new String[]{"LANG=C"},
-                // -k 4b means fourth field (from 1) ignoring leading blanks
-                // -o means output to (file)
-                "sort", "-k", "4b",
-                file.getAbsolutePath(),
-                "-o", toFile.getAbsolutePath());
+
+        File sortTempDir = null;
+        if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
+            sortTempDir = FileUtils.getTempDir();
+        }
+        int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir);
         if (error != 0) {
             final String errMsg = "Error code " + error + " sorting crawl log '"
                 + file + "'";
@@ -1022,9 +1022,12 @@ public class FileUtils {
             log.warn(errMsg);
             throw new IOFailure(errMsg);
         }
-        int error = ProcessUtils.runProcess(new String[] {"LANG=C"},
-                "sort", file.getAbsolutePath(),
-                "-o", toFile.getAbsolutePath());
+
+        File sortTempDir = null;
+        if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
+            sortTempDir = FileUtils.getTempDir();
+        }
+        int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir);
         if (error != 0) {
             final String errMsg = "Error code " + error + " sorting cdx file '"
             + file.getAbsolutePath() + "'";
