@@ -365,7 +365,7 @@ public abstract class Machine {
                     prop = prop.replace(
                             Constants.LOG_PROPERTY_APPLICATION_ID_TAG, 
                             app.getIdentification());
-
+                   prop = modifyLogProperties(prop);
                     // write to file.
                     logPrinter.write(prop);
                 } finally {
@@ -377,6 +377,17 @@ public abstract class Machine {
                 throw new IOFailure(errMsg, e);
             }
         }
+    }
+
+    /**
+     * Make any OS-specific modifications to logging properties. The default
+     * makes no modifications, but this can be overridden in subclasses.
+     * @param logProperties the contents of the logging properties file.
+     * @return the contents of the logging properties file with any desired
+     * modifications.
+     */
+    protected String modifyLogProperties(String logProperties) {
+        return logProperties;
     }
 
     /**

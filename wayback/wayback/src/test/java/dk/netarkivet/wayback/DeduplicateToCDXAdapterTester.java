@@ -93,4 +93,5 @@ public class DeduplicateToCDXAdapterTester extends TestCase {
         }
         assertTrue("expect at least 3 lines of output, got " + lines.length, lines.length > 2);
     }
+
 }

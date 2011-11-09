@@ -72,6 +72,24 @@ public class WindowsMachine extends Machine {
     }
 
     /**
+     * On windows machines console output can cause problesms so
+     * any uses of java.util.logging.ConsoleHandler are removed.
+     * @param logProperties the original contents of the logging properties file.
+     * @return logging properties with the ConsoleHandler removed
+     */
+    @Override
+    protected String modifyLogProperties(String logProperties) {
+        String output;
+        //First delete any instances followed by a comma - ie
+        //not as last handler
+        output = logProperties.replaceAll("java.util.logging.ConsoleHandler\\s*,", "");
+        //Now delete any instances where ConsoleHandler is declared
+        //last
+        output = output.replaceAll(",\\s*java.util.logging.ConsoleHandler", "");
+        return output;
+    }
+
+    /**
      * Creates the operation system specific installation script for 
      * this machine.
      * 
