@@ -115,6 +115,8 @@ public final class DBUtils {
             throw new IOFailure("SQL error preparing statement "
                     + query + " args " + Arrays.toString(args) + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            closeStatementIfOpen(s);
         }
     }
 
@@ -176,6 +178,8 @@ public final class DBUtils {
             throw new IOFailure("Error preparing SQL statement "
                     + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            closeStatementIfOpen(s);
         }
     }
 
@@ -212,6 +216,8 @@ public final class DBUtils {
                 + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
+        } finally {
+            closeStatementIfOpen(s);
         }
     }
 
@@ -294,6 +300,8 @@ public final class DBUtils {
             throw new IOFailure("Error preparing SQL statement "
                     + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            closeStatementIfOpen(s);
         }
     }
 
@@ -369,6 +377,8 @@ public final class DBUtils {
             throw new IOFailure("Error preparing SQL statement "
                     + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            closeStatementIfOpen(s);
         }
     }
 
@@ -429,6 +439,8 @@ public final class DBUtils {
                 + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(msg, e);
             throw new IOFailure(msg, e);
+        } finally {
+            closeStatementIfOpen(s);
         }
     }
 

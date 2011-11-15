@@ -192,12 +192,11 @@ public final class ReplicaCacheHelpers {
      */
     protected static void createReplicaFileInfoEntriesInDB(
             long fileId, Connection con) throws IllegalState {
+        PreparedStatement statement = null;
         try {
             // init variables
             List<String> repIds 
                 = ReplicaCacheHelpers.retrieveIdsFromReplicaTable(con);
-
-            PreparedStatement statement = null;
 
             // Make a entry for each replica.
             for (String repId : repIds) {
@@ -222,6 +221,8 @@ public final class ReplicaCacheHelpers {
         } catch (SQLException e) {
             throw new IllegalState("Cannot add replicafileinfo to the "
                     + "database.", e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -442,6 +443,7 @@ public final class ReplicaCacheHelpers {
      */
     protected static void updateReplicaFileInfoChecksum(long replicafileinfoId,
             String checksum, Connection con) {
+        PreparedStatement statement = null;
         try {
             // The SQL statement
             final String sql = "UPDATE replicafileinfo SET checksum = ?, "
@@ -449,8 +451,6 @@ public final class ReplicaCacheHelpers {
                 + "= ?, checksum_checkdatetime = ?, filelist_checkdatetime = ?"
                 + " WHERE replicafileinfo_guid = ?";
 
-            // init.
-            PreparedStatement statement = null;
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
@@ -466,6 +466,8 @@ public final class ReplicaCacheHelpers {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
             throw new IOFailure(msg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -480,14 +482,13 @@ public final class ReplicaCacheHelpers {
      */
     protected static void updateReplicaFileInfoFilelist(long replicafileinfoId, 
             Connection con) {
+        PreparedStatement statement = null;
         try {
             // The SQL statement
             final String sql = "UPDATE replicafileinfo SET filelist_status = ?, "
                     + "filelist_checkdatetime = ? "
                     + "WHERE replicafileinfo_guid = ?";
-
-            // init.
-            PreparedStatement statement = null;
+            
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
@@ -501,6 +502,8 @@ public final class ReplicaCacheHelpers {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
             throw new IOFailure(msg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -517,14 +520,13 @@ public final class ReplicaCacheHelpers {
      */
      protected static void updateReplicaFileInfoMissingFromFilelist(
             long replicafileinfoId, Connection con) {
+        PreparedStatement statement = null;
         try {
             // The SQL statement
             final String sql = "UPDATE replicafileinfo SET filelist_status = ?, "
                     + "filelist_checkdatetime = ?, upload_status = ? "
                     + "WHERE replicafileinfo_guid = ?";
-
-            // init.
-            PreparedStatement statement = null;
+            
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
@@ -540,6 +542,8 @@ public final class ReplicaCacheHelpers {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
             throw new IOFailure(msg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -556,14 +560,13 @@ public final class ReplicaCacheHelpers {
      */
     protected static void updateReplicaFileInfoChecksumCorrupt(
             long replicafileinfoId, Connection con) {
+        PreparedStatement statement = null;
         try {
             // The SQL statement
             final String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
                     + "checksum_checkdatetime = ?, upload_status = ? "
                     + "WHERE replicafileinfo_guid = ?";
-
-            // init.
-            PreparedStatement statement = null;
+           
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
@@ -579,6 +582,8 @@ public final class ReplicaCacheHelpers {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
             throw new IOFailure(msg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -615,14 +620,13 @@ public final class ReplicaCacheHelpers {
      */
     protected static void updateReplicaFileInfoChecksumUnknown(long replicafileinfoId, 
             Connection con) {
+        PreparedStatement statement = null;
         try {
             // The SQL statement
             final String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
                     + "checksum_checkdatetime = ? "
                     + "WHERE replicafileinfo_guid = ?";
-
-            // init.
-            PreparedStatement statement = null;
+            
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
@@ -636,6 +640,8 @@ public final class ReplicaCacheHelpers {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
             throw new IOFailure(msg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -653,14 +659,12 @@ public final class ReplicaCacheHelpers {
      */
     protected static void updateReplicaFileInfoChecksumOk(
             long replicafileinfoId, Connection con) {
+        PreparedStatement statement = null;
         try {
             // The SQL statement
             final String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
                     + "checksum_checkdatetime = ?, upload_status = ? "
-                    + "WHERE replicafileinfo_guid = ?";
-
-            // init.
-            PreparedStatement statement = null;
+                    + "WHERE replicafileinfo_guid = ?";            
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
@@ -676,6 +680,8 @@ public final class ReplicaCacheHelpers {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
             throw new IOFailure(msg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -691,8 +697,8 @@ public final class ReplicaCacheHelpers {
      * @param con An open connection to the archive database
      */
     protected static void updateChecksumDateForReplica(Replica rep, Connection con) {
-        try {
-            PreparedStatement statement = null;
+        PreparedStatement statement = null;
+        try {     
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
             final String sql = "UPDATE replica SET checksum_updated = ? WHERE "
                     + "replica_id = ?";
@@ -705,6 +711,8 @@ public final class ReplicaCacheHelpers {
                     + rep + "'.";
             log.warn(msg);
             throw new IOFailure(msg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -721,8 +729,8 @@ public final class ReplicaCacheHelpers {
      */
     protected static void updateFilelistDateForReplica(Replica rep, 
             Connection connection) {
+        PreparedStatement statement = null;
         try {
-            PreparedStatement statement = null;
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
             final String sql = "UPDATE replica SET filelist_updated = ? WHERE "
                     + "replica_id = ?";
@@ -735,6 +743,8 @@ public final class ReplicaCacheHelpers {
                     + rep + "'.";
             log.warn(msg);
             throw new IOFailure(msg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -752,8 +762,8 @@ public final class ReplicaCacheHelpers {
      */
     protected static void setFilelistDateForReplica(Replica rep, Date date, 
             Connection con) {
+        PreparedStatement statement = null;
         try {
-            PreparedStatement statement = null;
             final String sql = "UPDATE replica SET filelist_updated = ? WHERE "
                     + "replica_id = ?";
             statement = DBUtils.prepareStatement(con, sql, date, rep
@@ -765,6 +775,8 @@ public final class ReplicaCacheHelpers {
                     + rep + "'.";
             log.warn(msg);
             throw new IOFailure(msg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -782,9 +794,8 @@ public final class ReplicaCacheHelpers {
      */
     protected static void setChecksumlistDateForReplica(Replica rep, Date date, 
             Connection con) {
+        PreparedStatement statement = null;
         try {
-            PreparedStatement statement = null;
-            
             final String sql = "UPDATE replica SET checksum_updated = ? WHERE "
                     + "replica_id = ?";
             statement = DBUtils.prepareStatement(con, sql, date, rep
@@ -796,6 +807,8 @@ public final class ReplicaCacheHelpers {
                     + rep + "'.";
             log.warn(msg);
             throw new IOFailure(msg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -852,6 +865,8 @@ public final class ReplicaCacheHelpers {
                     + "by executing statement '" + sql + "'.";
             log.warn(message, e);
             throw new IOFailure(message, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -895,13 +910,11 @@ public final class ReplicaCacheHelpers {
     protected static void updateReplicaFileInfo(long replicafileinfoGuid,
             String checksum, ReplicaStoreState state, 
             Connection con) throws IOFailure {
+        PreparedStatement statement = null;
         try {
             final String sql = "UPDATE replicafileinfo SET checksum = ?, "
                 + "upload_status = ?, filelist_status = ?, "
                 + "checksum_status = ? WHERE replicafileinfo_guid = ?";
-
-            // init.
-            PreparedStatement statement = null;
 
             FileListStatus fls;
             ChecksumStatus cs;
@@ -927,6 +940,8 @@ public final class ReplicaCacheHelpers {
             String errMsg = "Problems with updating a ReplicaFileInfo";
             log.warn(errMsg);
             throw new IOFailure(errMsg, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -945,15 +960,14 @@ public final class ReplicaCacheHelpers {
     protected static void updateReplicaFileInfo(long replicafileinfoGuid,
             String checksum, Date date, ReplicaStoreState state, 
             Connection con) throws IOFailure {
+        PreparedStatement statement = null;
         try {
             final String sql = "UPDATE replicafileinfo SET checksum = ?, "
                 + "upload_status = ?, filelist_status = ?, "
                 + "checksum_status = ?, checksum_checkdatetime = ?, "
                 + "filelist_checkdatetime = ? WHERE replicafileinfo_guid = ?";
 
-            // init.
-            PreparedStatement statement = null;
-
+           
             FileListStatus fls;
             ChecksumStatus cs;
 
@@ -978,6 +992,8 @@ public final class ReplicaCacheHelpers {
             String errMsg = "Problems with updating a ReplicaFileInfo";
             log.warn(errMsg);
             throw new IOFailure(errMsg);
+        } finally {
+            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
