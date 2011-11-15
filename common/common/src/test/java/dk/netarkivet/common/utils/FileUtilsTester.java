@@ -65,14 +65,19 @@ public class FileUtilsTester extends TestCase{
     private static final File NO_SUCH_FILE = new File(WORKING, "no_file");
     private static final File SUBDIR = new File(WORKING, "subdir");
     private static final File EMPTY = new File(WORKING, "emptyfile.txt");
-
+    private static final File SMALL_FILE = new File(WORKING, "smallfile.txt");
+    private static final File RATHER_BIG_FILE = new File(WORKING, "rather_bigfile.txt");
+    private static final File SMALL_COMPRESSED_INDEX_DIR = new File(WORKING, "smallindex");
+    
+    @Override
     public void setUp() {
         rs.setUp();
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         rf.setUp();
     }
-
+    
+    @Override
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
         rf.tearDown();
@@ -434,4 +439,54 @@ public class FileUtilsTester extends TestCase{
         }
     }
     
+    /**
+     * Unittest that tests the method {@link FileUtils#formatFilename(String)}.
+     */
+    public void testFormatFilename() {
+        // Check that spaces, the '+' and ':' character is replaced by 
+        // underscores, and other strings are left untouched
+        
+        final String previousFilenameOne = "royal library:+.txt";
+        final String resultingFilenameOne = "royal_library__.txt";
+        assertEquals("Illegal characters should have replaced by underscores",
+                resultingFilenameOne, FileUtils.formatFilename(previousFilenameOne)
+                );
+        
+        final String previousFilenameTwo = "RoyalLibrary.txt";
+        final String resultingFilenameTwo = "RoyalLibrary.txt";
+        assertEquals("Strings with no illegal characters should have been left untouched",
+                resultingFilenameTwo, FileUtils.formatFilename(previousFilenameTwo)
+                );
+    }
+    
+    /**
+     *  Unittest that tests the method 
+     *  {@link FileUtils#getHumanReadableFileSize(File)}.
+     */
+    public void testGetHumanReadableFileSize() {
+        // test on a directory with multiple files
+        String outputOne = FileUtils.getHumanReadableFileSize(
+                SMALL_COMPRESSED_INDEX_DIR);
+//        long indexdirtotalsize = 0;
+//        for (File f : SMALL_COMPRESSED_INDEX_DIR.listFiles()) {
+//            if (f.isFile()) {
+//                indexdirtotalsize = indexdirtotalsize + f.length();
+//            }
+//        }
+//        System.out.println("indextotalsize: " + indexdirtotalsize);
+        
+        assertTrue("Wrong output, was " +  outputOne, 
+                outputOne.equals("5.88 Kbytes"));
+        
+        // test on a single files < 1 Kbyte and > 1 Kbyte
+        String outputTwo = FileUtils.getHumanReadableFileSize(
+                SMALL_FILE);
+        assertTrue("Wrong output, was " +  outputTwo, 
+                outputTwo.equals(SMALL_FILE.length() + " bytes"));
+        
+        String outputThree = FileUtils.getHumanReadableFileSize(
+                RATHER_BIG_FILE);
+        assertTrue("Wrong output, was " +  outputThree, 
+                outputThree.equals("5.6 Kbytes"));
+    }
 }

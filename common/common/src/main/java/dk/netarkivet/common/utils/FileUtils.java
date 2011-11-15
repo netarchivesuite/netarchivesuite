@@ -1324,18 +1324,18 @@ public class FileUtils {
         if (aFile.isDirectory()) {
             for (File f:  aFile.listFiles()) {
                 if (f.isFile()) {
-                    filesize =+ f.length();
+                    filesize = filesize + f.length();
                 }
             }
             
         } else {
             filesize = aFile.length(); // normal file.
         }
-        NumberFormat decFormat = new DecimalFormat("##.##");
         
+        NumberFormat decFormat = new DecimalFormat("##.##");
         if (filesize < bytesPerOneKilobyte){ 
-            // represent size in bytes
-            return filesize + " bytes";
+            // represent size in bytes without the ".0"
+            return (long) filesize + " bytes";
         } else if(filesize >= bytesPerOneKilobyte 
                 && filesize < bytesPerOneMegabyte) { 
             // represent size in Kbytes
