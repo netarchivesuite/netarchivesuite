@@ -137,9 +137,9 @@ public abstract class CrawlLogIndexCache extends
         long datasetSize = rawfiles.values().size();
         log.info("Starting to combine a dataset with " 
                 +  datasetSize + " crawl logs");
-        File resultFile = getCacheFile(rawfiles.keySet());
+        File resultDir = getCacheFile(rawfiles.keySet());
         Set<File> tmpfiles = new HashSet<File>();
-        String indexLocation = resultFile.getAbsolutePath() + ".luceneDir";
+        String indexLocation = resultDir.getAbsolutePath() + ".luceneDir";
         try {
             DigestIndexer indexer = createStandardIndexer(indexLocation);
             final boolean verboseIndexing = false;
@@ -241,14 +241,14 @@ public abstract class CrawlLogIndexCache extends
             indexer.close(false);
             
             // Now the index is made, gzip it up.
-            ZipUtils.gzipFiles(new File(indexLocation), resultFile);
+            ZipUtils.gzipFiles(new File(indexLocation), resultDir);
             log.info("Completed combining a dataset with " 
                     + datasetSize + " crawl logs (entries in combined index: "
                     + docsInIndex + ") - compressed index has size " 
-                    + FileUtils.getHumanReadableFileSize(resultFile));
+                    + FileUtils.getHumanReadableFileSize(resultDir));
         } catch (IOException e) {
             throw new IOFailure("Error setting up craw.log index framework for "
-                    + resultFile.getAbsolutePath(), e);
+                    + resultDir.getAbsolutePath(), e);
         } finally {
             FileUtils.removeRecursively(new File(indexLocation));
             for (File temporaryFile : tmpfiles) {

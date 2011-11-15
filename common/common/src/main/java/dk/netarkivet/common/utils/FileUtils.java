@@ -1309,6 +1309,8 @@ public class FileUtils {
     
     /**
      * Get a humanly readable representation of the file size.
+     * If the file is a directory, the size is the aggregate of the files
+     * in the directory except that subdirectories are ignored.
      * The number is given with 2 decimals.
      * @param aFile a File object
      * @return a humanly readable representation of the file size (rounded)
@@ -1318,7 +1320,17 @@ public class FileUtils {
         final long bytesPerOneKilobyte = 1000L;
         final long bytesPerOneMegabyte = 1000000L;
         final long bytesPerOneGigabyte = 1000000000L;
-        double filesize = aFile.length();
+        double filesize = 0L;
+        if (aFile.isDirectory()) {
+            for (File f:  aFile.listFiles()) {
+                if (f.isFile()) {
+                    filesize =+ f.length();
+                }
+            }
+            
+        } else {
+            filesize = aFile.length(); // normal file.
+        }
         NumberFormat decFormat = new DecimalFormat("##.##");
         
         if (filesize < bytesPerOneKilobyte){ 
