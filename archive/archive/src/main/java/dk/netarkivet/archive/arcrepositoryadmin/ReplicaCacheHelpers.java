@@ -216,6 +216,7 @@ public final class ReplicaCacheHelpers {
                     // execute the SQL statement
                     statement.executeUpdate();
                     con.commit();
+                    statement.close(); // Important to cleanup!
                 }
             }
         } catch (SQLException e) {

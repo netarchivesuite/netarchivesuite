@@ -323,23 +323,28 @@ public final class DBUtils {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
-        PreparedStatement s = prepareStatement(connection, query, args);
-        ResultSet result = s.executeQuery();
-        Map<String, Long> results = new HashMap<String, Long>();
-        while (result.next()) {
-            String resultString = result.getString(1);
-            long resultLong = result.getLong(2);
-            if ((resultString == null)
-                    || (resultLong == 0L && result.wasNull())) {
-                String warning = "NULL pointers found in entry ("
-                    + resultString + "," + resultLong
-                    + ") in resultset from query: " + query;
-                log.warn(warning);
-                //throw new IOFailure(warning);
+        PreparedStatement s = null;
+        try {
+            s = prepareStatement(connection, query, args);
+            ResultSet result = s.executeQuery();
+            Map<String, Long> results = new HashMap<String, Long>();
+            while (result.next()) {
+                String resultString = result.getString(1);
+                long resultLong = result.getLong(2);
+                if ((resultString == null)
+                        || (resultLong == 0L && result.wasNull())) {
+                    String warning = "NULL pointers found in entry ("
+                            + resultString + "," + resultLong
+                            + ") in resultset from query: " + query;
+                    log.warn(warning);
+                }
+                results.put(resultString, resultLong);
             }
-            results.put(resultString, resultLong);
+            return results;
+        } finally {
+            closeStatementIfOpen(s);
         }
-        return results;
+
     }
 
     /**
@@ -368,7 +373,6 @@ public final class DBUtils {
                     String warning = "NULL value encountered in query: "
                                      + query;
                     log.warn(warning);
-                    //throw new IOFailure(warning);
                 }
                 results.add(result.getLong(1));
             }
@@ -759,6 +763,8 @@ public final class DBUtils {
                                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
+        } finally {
+            closeStatementIfOpen(s);
         }
     }
 
@@ -874,6 +880,8 @@ public final class DBUtils {
             throw new IOFailure("Error preparing SQL statement " + query
                     + " args " + Arrays.toString(args) + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            closeStatementIfOpen(s);
         }
     }
 
