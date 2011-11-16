@@ -49,8 +49,7 @@ public class ArchiveToolsTesterSuite {
         suite.addTestSuite(CreateIndexTester.class);
         suite.addTestSuite(GetFileTester.class);
         suite.addTestSuite(GetRecordTester.class);
-        //FIXME This unitest break after trying to fix NAS-1994
-        //suite.addTestSuite(ReestablishAdminDatabaseTester.class);
+        suite.addTestSuite(ReestablishAdminDatabaseTester.class);
         suite.addTestSuite(RunBatchTester.class);
         suite.addTestSuite(UploadTester.class);
     }

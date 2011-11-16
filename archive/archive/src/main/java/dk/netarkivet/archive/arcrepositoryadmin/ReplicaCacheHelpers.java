@@ -1224,4 +1224,102 @@ public final class ReplicaCacheHelpers {
             }
         }
     }
+    
+    /**
+     * Add information about one file in a given replica.
+     * @param file The name of a file
+     * @param replica A replica
+     * @param con An open connection to the ArchiveDatabase
+     * @param missingReplicaRFIs
+     */
+    protected static void addFileInformation(String file, Replica replica, 
+            Connection con, List<Long> missingReplicaRFIs) {
+        // retrieve the file_id for the file.
+        long fileId = ReplicaCacheHelpers.retrieveIdForFile(file, con);
+        // If not found, log and create the file in the database.
+        if (fileId < 0) {
+            log.info("The file '" + file + "' was not found in the "
+                    + "database. Thus creating entry for the file.");
+            // insert the file and retrieve its file_id.
+            fileId = ReplicaCacheHelpers.insertFileIntoDB(file, con);
+        }
+
+        // retrieve the replicafileinfo_guid for this entry.
+        long rfiId = ReplicaCacheHelpers.retrieveReplicaFileInfoGuid(
+                fileId, replica.getId(), con);
+        // if not found log and create the replicafileinfo in the database.
+        if (rfiId < 0) {
+            log.warn("Cannot find the file '" + file + "' for "
+                    + "replica '" + replica.getId() + "'. Thus creating "
+                    + "missing entry before updating.");
+            ReplicaCacheHelpers.createReplicaFileInfoEntriesInDB(fileId, con);
+        }
+
+        // remove from replicaRFIs, since it has been found
+        missingReplicaRFIs.remove(rfiId);
+
+        // update the replicafileinfo of this file:
+        // filelist_checkdate, filelist_status, upload_status
+        ReplicaCacheHelpers.updateReplicaFileInfoFilelist(rfiId, con);
+    }
+
+    /**
+     * Process checksum information about one file in a given replica.
+     * and update the database accordingly.
+     * @param filename The name of a file
+     * @param checksum The checksum of that file.
+     * @param replica A replica
+     * @param con An open connection to the ArchiveDatabase
+     * @param missingReplicaRFIs
+     */
+    public static void processChecksumline(String filename, String checksum,
+            Replica replica, Connection con, List<Long> missingReplicaRFIs) {
+        
+            // The ID for the file.
+            long fileid = -1;
+
+            // If the file is not within DB, then insert it.
+            int count = DBUtils.selectIntValue(con, 
+                        "SELECT COUNT(*) FROM file WHERE filename = ?", 
+                        filename);
+
+            if (count == 0) {
+                log.info("Inserting the file '" + filename + "' into the "
+                        + "database.");
+                fileid = ReplicaCacheHelpers.insertFileIntoDB(filename, con);
+            } else {
+                fileid = ReplicaCacheHelpers.retrieveIdForFile(filename, con);
+            }
+
+            // If the file does not already exists in the database, create it
+            // and retrieve the new ID.
+            if (fileid < 0) {
+                log.warn("Inserting the file '" + filename + "' into the "
+                        + "database, again: This should never happen!!!");
+                fileid = ReplicaCacheHelpers.insertFileIntoDB(filename, con);
+            }
+
+            // Retrieve the replicafileinfo for the file at the replica.
+            long rfiId = ReplicaCacheHelpers.retrieveReplicaFileInfoGuid(
+                    fileid, replica.getId(), con);
+
+            // Check if there already is an entry in the replicafileinfo table.
+            // rfiId is negative if no entry was found.
+            if (rfiId < 0) {
+                // insert the file into the table.
+                ReplicaCacheHelpers.createReplicaFileInfoEntriesInDB(
+                        fileid, con);
+                log.info("Inserted file '" + filename + "' for replica '"
+                        + replica.toString() + "' into replicafileinfo.");
+            }
+
+            // Update this table
+            ReplicaCacheHelpers.updateReplicaFileInfoChecksum(
+                    rfiId, checksum, con);
+            log.trace("Updated file '" + filename + "' for replica '"
+                    + replica.toString() + "' into replicafileinfo.");
+
+            // remove the replicafileinfo guid from the missing entries.
+            missingReplicaRFIs.remove(rfiId); 
+    }
 }

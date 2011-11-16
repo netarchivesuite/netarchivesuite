@@ -98,6 +98,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 try {        
                     initialiseDB(con);
                     initialized = true;
+                    log.info("Initialization of database successful");
                     return;
                 } catch (IOFailure e) {
                     log.warn("Initialization failed. Probably because another " 
@@ -761,113 +762,80 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         ArgumentNotValid.checkNotNull(checksumOutput,
                 "List<ChecksumEntry> checksumOutput");
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
-
-        Connection con = ArchiveDBConnection.get();
         
-        // Make sure, that the replica exists in the database.
-        if (!ReplicaCacheHelpers.existsReplicaInDB(replica, con)) {
-            String msg = "Cannot add checksum information, since the replica '"
-                    + replica.toString()
-                    + "' does not exist within the database.";
-            log.warn(msg);
-            throw new IOFailure(msg);
-        }
-
-        log.info("Starting processing of " + checksumOutput.size()
-                + " checksum entries for replica " + replica.getId());
-
-        // Sort for finding duplicates.
-        Collections.sort(checksumOutput);
-
-        // retrieve the list of files already known by this cache.
-        List<Long> missingReplicaRFIs = ReplicaCacheHelpers.retrieveReplicaFileInfoGuidsForReplica(
-                replica.getId(), con);
-
-        String lastFilename = "";
-        String lastChecksum = "";
-
-        int i = 0;
-        for (String line : checksumOutput) {
-            // log that it is in progress every so often.
-            if((i % LOGGING_ENTRY_INTERVAL) == 0) {
-                log.info("Processed checksum list entry number " + i
-                        + " for replica " + replica);
+        List<Long> missingReplicaRFIs = null;
+        Connection con = ArchiveDBConnection.get();
+        try {
+            // Make sure, that the replica exists in the database.
+            if (!ReplicaCacheHelpers.existsReplicaInDB(replica, con)) {
+                String msg = "Cannot add checksum information, since the replica '"
+                        + replica.toString()
+                        + "' does not exist within the database.";
+                log.warn(msg);
+                throw new IOFailure(msg);
             }
-            i++;
 
-            // parse the input.
-            KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
-            String filename = entry.getKey();
-            String checksum = entry.getValue();
+            log.info("Starting processing of " + checksumOutput.size()
+                    + " checksum entries for replica " + replica.getId());
 
-            // check for duplicates
-            if(filename.equals(lastFilename)) {
-                // if different checksums, then
-                if(!checksum.equals(lastChecksum)) {
-                    // log and send notification
-                    String errMsg = "Unidentical duplicates of file '"
-                        + filename + "' with the checksums '" + lastChecksum
-                        + "' and '" + checksum + "'. First instance used.";
-                    log.error(errMsg);
-                    NotificationsFactory.getInstance().errorEvent(errMsg);
-                } else {
-                    // log about duplicate identical
-                    log.debug("Duplicates of the file '" + filename + "' found "
-                            + "with the same checksum '" + checksum + "'.");
+            // retrieve the list of files already known by this cache.
+            missingReplicaRFIs = ReplicaCacheHelpers.retrieveReplicaFileInfoGuidsForReplica(
+                    replica.getId(), con);
+
+
+            // Sort for finding duplicates.
+            Collections.sort(checksumOutput);
+
+            String lastFilename = "";
+            String lastChecksum = "";
+
+            int i = 0;
+            for (String line : checksumOutput) {
+                // log that it is in progress every so often.
+                if((i % LOGGING_ENTRY_INTERVAL) == 0) {
+                    log.info("Processed checksum list entry number " + i
+                            + " for replica " + replica);
+                }
+                i++;
+
+                // parse the input.
+                KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
+                String filename = entry.getKey();
+                String checksum = entry.getValue();
+
+                // check for duplicates
+                if(filename.equals(lastFilename)) {
+                    // if different checksums, then
+                    if(!checksum.equals(lastChecksum)) {
+                        // log and send notification
+                        String errMsg = "Unidentical duplicates of file '"
+                                + filename + "' with the checksums '" + lastChecksum
+                                + "' and '" + checksum + "'. First instance used.";
+                        log.error(errMsg);
+                        NotificationsFactory.getInstance().errorEvent(errMsg);
+                    } else {
+                        // log about duplicate identical
+                        log.debug("Duplicates of the file '" + filename + "' found "
+                                + "with the same checksum '" + checksum + "'.");
+                    }
+
+                    // avoid overhead of inserting duplicates twice.
+                    continue;
                 }
 
-                // avoid overhead of inserting duplicates twice.
-                continue;
+                // set these value to be the old values in next iteration.
+                lastFilename = filename;
+                lastChecksum = checksum;
+
+                ReplicaCacheHelpers.processChecksumline(filename, checksum, 
+                        replica, con, missingReplicaRFIs);
             }
-
-            // set these value to be the old values in next iteration.
-            lastFilename = filename;
-            lastChecksum = checksum;
-
-            // The ID for the file.
-            long fileid = -1;
-
-            // If the file is not within DB, then insert it.
-            if (!existsFileInDB(filename)) {
-                log.info("Inserting the file '" + filename + "' into the "
-                        + "database.");
-                fileid = ReplicaCacheHelpers.insertFileIntoDB(filename, con);
-            } else {
-                fileid = ReplicaCacheHelpers.retrieveIdForFile(filename, con);
-            }
-
-            // If the file does not already exists in the database, create it
-            // and retrieve the new ID.
-            if (fileid < 0) {
-                log.warn("Inserting the file '" + filename + "' into the "
-                        + "database, again: This should never happen!!!");
-                fileid = ReplicaCacheHelpers.insertFileIntoDB(filename, con);
-            }
-
-            // Retrieve the replicafileinfo for the file at the replica.
-            long rfiId = ReplicaCacheHelpers.retrieveReplicaFileInfoGuid(
-                    fileid, replica.getId(), con);
-
-            // Check if there already is an entry in the replicafileinfo table.
-            // rfiId is negative if no entry was found.
-            if (rfiId < 0) {
-                // insert the file into the table.
-                ReplicaCacheHelpers.createReplicaFileInfoEntriesInDB(
-                        fileid, con);
-                log.info("Inserted file '" + filename + "' for replica '"
-                        + replica.toString() + "' into replicafileinfo.");
-            }
-
-            // Update this table
-            ReplicaCacheHelpers.updateReplicaFileInfoChecksum(
-                    rfiId, checksum, con);
-            log.trace("Updated file '" + filename + "' for replica '"
-                    + replica.toString() + "' into replicafileinfo.");
-
-            // remove the replicafileinfo guid from the missing entries.
-            missingReplicaRFIs.remove(rfiId);
+        } finally {
+            ArchiveDBConnection.release(con);
         }
-
+        
+        con = ArchiveDBConnection.get();
+        try {
         // go through the not found replicafileinfo for this replica to change
         // their filelist_status to missing.
         if(missingReplicaRFIs.size() > 0) {
@@ -886,6 +854,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         log.info("Finished processing of " + checksumOutput.size()
                 + " checksum entries for replica " + replica.getId());
+        } finally {
+            ArchiveDBConnection.release(con);
+        }
     }
 
     /**
@@ -917,6 +888,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
         Connection con = ArchiveDBConnection.get();
+        List<Long> missingReplicaRFIs = null;
         try {
             // Make sure, that the replica exists in the database.
             if (!ReplicaCacheHelpers.existsReplicaInDB(replica, con)) {
@@ -931,13 +903,15 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     + " filelist entries for replica " + replica.getId());
 
             // retrieve the list of files already known by this cache.
-            List<Long> missingReplicaRFIs = ReplicaCacheHelpers.retrieveReplicaFileInfoGuidsForReplica(
+            missingReplicaRFIs = ReplicaCacheHelpers.retrieveReplicaFileInfoGuidsForReplica(
                     replica.getId(), con);
+
 
             Collections.sort(filelist);
 
             String lastFileName = "";
             int i = 0;
+
             for (String file : filelist) {
                 // log that it is in progress every so often.
                 if((i % LOGGING_ENTRY_INTERVAL) == 0) {
@@ -952,37 +926,17 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                             + file + "'");
                     continue;
                 }
+                
                 lastFileName = file;
-
-                // retrieve the file_id for the file.
-                long fileId = ReplicaCacheHelpers.retrieveIdForFile(file, con);
-                // If not found, log and create the file in the database.
-                if (fileId < 0) {
-                    log.info("The file '" + file + "' was not found in the "
-                            + "database. Thus creating entry for the file.");
-                    // insert the file and retrieve its file_id.
-                    fileId = ReplicaCacheHelpers.insertFileIntoDB(file, con);
-                }
-
-                // retrieve the replicafileinfo_guid for this entry.
-                long rfiId = ReplicaCacheHelpers.retrieveReplicaFileInfoGuid(
-                        fileId, replica.getId(), con);
-                // if not found log and create the replicafileinfo in the database.
-                if (rfiId < 0) {
-                    log.warn("Cannot find the file '" + file + "' for "
-                            + "replica '" + replica.getId() + "'. Thus creating "
-                            + "missing entry before updating.");
-                    ReplicaCacheHelpers.createReplicaFileInfoEntriesInDB(fileId, con);
-                }
-
-                // remove from replicaRFIs, since it has been found
-                missingReplicaRFIs.remove(rfiId);
-
-                // update the replicafileinfo of this file:
-                // filelist_checkdate, filelist_status, upload_status
-                ReplicaCacheHelpers.updateReplicaFileInfoFilelist(rfiId, con);
+                // Add information for one file.
+                ReplicaCacheHelpers.addFileInformation(file, replica, con, missingReplicaRFIs);
             }
-
+        } finally {
+            ArchiveDBConnection.release(con);
+        }
+        
+        con = ArchiveDBConnection.get();
+        try {
             // go through the not found replicafileinfo for this replica to change
             // their filelist_status to missing.
             if(missingReplicaRFIs.size() > 0) {
@@ -993,19 +947,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     ReplicaCacheHelpers.updateReplicaFileInfoMissingFromFilelist(rfi, con);
                 }
             }
-
+            // Update the date for filelist update for this replica.
+            ReplicaCacheHelpers.updateFilelistDateForReplica(replica, con);
         } finally {
             ArchiveDBConnection.release(con);
-        }
-        
-        Connection anotherCon = ArchiveDBConnection.get();
-        try {
-            // Update the date for filelist update for this replica.
-            ReplicaCacheHelpers.updateFilelistDateForReplica(replica, anotherCon);
-        } finally {
-            if (anotherCon != null) {
-                ArchiveDBConnection.release(anotherCon);
-            }
         }
     }
 

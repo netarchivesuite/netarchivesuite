@@ -815,6 +815,8 @@ public final class DBUtils {
             throw new IOFailure("Error preparing SQL statement " + query
                     + " args " + Arrays.toString(args) + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            closeStatementIfOpen(s);
         }
     }
 

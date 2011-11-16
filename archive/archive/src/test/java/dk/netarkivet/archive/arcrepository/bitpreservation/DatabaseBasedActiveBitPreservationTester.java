@@ -134,12 +134,6 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
             dbabp.close();
         }
         
-        Connection con = ArchiveDBConnection.get();
-        try {
-            clearDatabase(con);
-        } finally {
-            ArchiveDBConnection.release(con);
-        }
         ArchiveDBConnection.cleanup();
         ReplicaCacheDatabase.getInstance().cleanup();
         
@@ -212,6 +206,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 	ReplicaCacheDatabase.getInstance();
 
 	dbabp = DatabaseBasedActiveBitPreservation.getInstance();
+	//dbabp.findMissingFiles(THREE);
 	Date date = dbabp.getDateForMissingFiles(THREE);
 	assertNotNull("The returned date should not be null", date);
 	assertTrue("The date for last missing files check should be less than 30 min, but was: " 
@@ -315,6 +310,12 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
      * Check whether it finds missing files from checksum jobs.
      */
     public void testMissingDuringChecksum() throws Exception {
+        Connection con = ArchiveDBConnection.get();
+        try {
+            clearDatabase(con);
+        } finally {
+            ArchiveDBConnection.release(con);
+        }   
         
         ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
         dbabp = DatabaseBasedActiveBitPreservation.getInstance();
@@ -328,8 +329,10 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 
         // verify that all replicas has both files, and no 'wrong' entries.
         assertEquals("Unexpected number of files for " + TWO, 2, cache.getNumberOfFiles(TWO));
-        assertEquals("Unexpected number of missing files for " + TWO, 0, cache.getNumberOfMissingFilesInLastUpdate(TWO));
-        assertEquals("Unexpected number of wrong files for " + TWO, 0, cache.getNumberOfWrongFilesInLastUpdate(TWO));
+        assertEquals("Unexpected number of missing files for " + TWO, 0, 
+                cache.getNumberOfMissingFilesInLastUpdate(TWO));
+        assertEquals("Unexpected number of wrong files for " + TWO, 0, 
+                cache.getNumberOfWrongFilesInLastUpdate(TWO));
         
         checksumlist.clear();
         checksumlist.add("1.arc##1234");
