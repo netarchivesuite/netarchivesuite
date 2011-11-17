@@ -392,13 +392,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         ArgumentNotValid.checkNotNull(state, "ReplicaStoreState state");
 
         Connection con = ArchiveDBConnection.get();
-
+        PreparedStatement statement = null;
         try {
             // retrieve the guid for the file.
             long fileId = ReplicaCacheHelpers.retrieveIdForFile(filename, con);
-            
-            // init statement.
-            PreparedStatement statement = null;
 
             // Make query for updating the upload status
             if(state == ReplicaStoreState.UPLOAD_COMPLETED) {
@@ -426,6 +423,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             log.warn(errMsg, e);
             throw new IOFailure(errMsg, e);
         } finally {
+            DBUtils.closeStatementIfOpen(statement);
             ArchiveDBConnection.release(con);
         }
     }
@@ -1350,6 +1348,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         } catch (Exception e) {
             throw new IOFailure("Could not update single checksum entry.", e);
         } finally {
+            DBUtils.closeStatementIfOpen(statement);
             if (connection != null) {
                 ArchiveDBConnection.release(connection);
             }
