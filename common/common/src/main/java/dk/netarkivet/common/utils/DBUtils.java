@@ -28,6 +28,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -592,7 +593,7 @@ public final class DBUtils {
      * no DB updates after the last commit.
      * Thus exceptions while closing are ignored, but logged as warnings.
      *
-     * NB: the provided connection si not closed.
+     * NB: the provided connection is not closed.
      *
      * @param c the db-connection
      * @param action The action going on, before calling this method
@@ -944,7 +945,7 @@ public final class DBUtils {
      * Exceptions are logged as warnings, though.
      * @param s a statement
      */
-    public static void closeStatementIfOpen(PreparedStatement s) {
+    public static void closeStatementIfOpen(Statement s) {
         if (s != null) {
             try {
                 s.close();

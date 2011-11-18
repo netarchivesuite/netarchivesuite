@@ -113,6 +113,7 @@ public class TemplateDBDAO extends TemplateDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }

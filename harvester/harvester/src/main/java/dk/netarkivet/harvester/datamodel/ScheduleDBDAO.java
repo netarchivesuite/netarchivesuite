@@ -243,6 +243,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             throw new IOFailure("SQL error reading schedule " + scheduleName
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }

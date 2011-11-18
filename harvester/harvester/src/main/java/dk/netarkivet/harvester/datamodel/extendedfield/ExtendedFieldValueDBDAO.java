@@ -170,6 +170,7 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
                     + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(stm);
             DBUtils.rollbackIfNeeded(c, "delete extendedfield value",
                     aExtendedfieldValueID);
             HarvestDBConnection.release(c);

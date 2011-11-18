@@ -947,7 +947,9 @@ public class JobDBDAO extends JobDAO {
             // Now do the actual copying.
             // Note that startdate, and enddate is not copied.
             // They must be null in JobStatus NEW.
+            statement.close();
             connection.setAutoCommit(false);
+            
             statement = connection.prepareStatement("INSERT INTO jobs "
                                    + " (job_id, harvest_id, priority, status,"
                                    + "  forcemaxcount, forcemaxbytes, orderxml,"
@@ -964,6 +966,7 @@ public class JobDBDAO extends JobDAO {
             statement.setLong(3, initialEdition);
             statement.setLong(4, oldJobID);
             statement.executeUpdate();
+            statement.close();
             statement = connection.prepareStatement("INSERT INTO job_configs "
                                    + "( job_id, config_id ) "
                                    + "SELECT ?, config_id "
@@ -972,6 +975,7 @@ public class JobDBDAO extends JobDAO {
             statement.setLong(1, newJobID);
             statement.setLong(2, oldJobID);
             statement.executeUpdate();
+            statement.close();
             statement = connection.prepareStatement(
                     "UPDATE jobs SET status = ?, resubmitted_as_job = ? "
                   + " WHERE job_id = ?");
@@ -986,6 +990,7 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(statement);
             DBUtils.rollbackIfNeeded(connection, "resubmit job", oldJobID);
             HarvestDBConnection.release(connection);
         }

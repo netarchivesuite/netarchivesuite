@@ -338,6 +338,7 @@ public class DomainDBDAO extends DomainDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             DBUtils.rollbackIfNeeded(connection, "updating", d);
             HarvestDBConnection.release(connection);
         }
@@ -1435,6 +1436,7 @@ public class DomainDBDAO extends DomainDAO {
             throw new IOFailure("Failure getting alias-information" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1467,6 +1469,7 @@ public class DomainDBDAO extends DomainDAO {
             throw new IOFailure("Failure getting alias-information" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1519,6 +1522,7 @@ public class DomainDBDAO extends DomainDAO {
             throw new IOFailure("Failure getting TLD-information" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1568,6 +1572,7 @@ public class DomainDBDAO extends DomainDAO {
             throw new IOFailure("Failure getting DomainJobInfo" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(connection);
         }
     }
@@ -1631,6 +1636,7 @@ public class DomainDBDAO extends DomainDAO {
            log.warn(message, e);
            throw new IOFailure(message, e);
        } finally {
+           DBUtils.closeStatementIfOpen(s);
            HarvestDBConnection.release(c);
        }
    }
@@ -1720,9 +1726,10 @@ public class DomainDBDAO extends DomainDAO {
         Connection c = HarvestDBConnection.get();
         List<DomainConfiguration> foundConfigs 
             = new ArrayList<DomainConfiguration>();
+        PreparedStatement s = null;
         try {
             // Read the configurations now that passwords and seedlists exist
-            PreparedStatement s = c.prepareStatement("SELECT config_id, "
+            s = c.prepareStatement("SELECT config_id, "
                     + "configurations.name, " + "comments, "
                     + "ordertemplates.name, " + "maxobjects, " + "maxrate, "
                     + "maxbytes" + " FROM configurations, ordertemplates "
@@ -1804,6 +1811,7 @@ public class DomainDBDAO extends DomainDAO {
             throw new IOFailure("Error while fetching DomainConfigration: "
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
         return foundConfigs.get(0);
@@ -1818,8 +1826,9 @@ public class DomainDBDAO extends DomainDAO {
     private List<String> getCrawlertraps(String domainName) {
         Connection c = HarvestDBConnection.get();
         String traps = null;
+        PreparedStatement s = null;
         try {
-            PreparedStatement s = c.prepareStatement(
+            s = c.prepareStatement(
                     "SELECT crawlertraps FROM domains WHERE name = ?");
             s.setString(1, domainName);
             ResultSet crawlertrapsResultset = s.executeQuery();
@@ -1835,6 +1844,7 @@ public class DomainDBDAO extends DomainDAO {
                             + domainName + "': "
                             + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
         return Arrays.asList(traps.split("\n"));
@@ -1908,6 +1918,7 @@ public class DomainDBDAO extends DomainDAO {
                             + domainName + "': "
                             + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
 

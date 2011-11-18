@@ -101,6 +101,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new UnknownID(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(stmt);
             HarvestDBConnection.release(conn);
         }
     }
@@ -139,6 +140,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(stmt);
             HarvestDBConnection.release(conn);
         }
     }
@@ -196,6 +198,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+           DBUtils.closeStatementIfOpen(stmt);
            DBUtils.rollbackIfNeeded(conn, "create trap list", trapList);
            HarvestDBConnection.release(conn);
         }
@@ -226,6 +229,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             stmt = conn.prepareStatement(DELETE_TRAPLIST_STMT);
             stmt.setInt(1, id);
             stmt.executeUpdate();
+            stmt.close();
             // Then delete all its expressions.
             stmt = conn.prepareStatement(DELETE_EXPR_STMT);
             stmt.setInt(1, id);
@@ -237,6 +241,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new UnknownID(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(stmt);
             DBUtils.rollbackIfNeeded(conn, "delete trap list", id);
             HarvestDBConnection.release(conn);
         }
@@ -269,16 +274,20 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             stmt.setBoolean(3, trapList.isActive());
             stmt.setInt(4, trapList.getId());
             stmt.executeUpdate();
+            stmt.close();
+            
             //Delete all the trap expressions.
             stmt = conn.prepareStatement(DELETE_EXPR_STMT);
             stmt.setInt(1, trapList.getId());
             stmt.executeUpdate();
+            stmt.close();
             // Add the new trap expressions one by one.
             for (String expr: trapList.getTraps()) {
                 stmt = conn.prepareStatement(INSERT_TRAP_EXPR_STMT);
                 stmt.setInt(1, trapList.getId());
                 stmt.setString(2, expr);
                 stmt.executeUpdate();
+                stmt.close();
             }
             conn.commit();
         } catch (SQLException e) {
@@ -287,6 +296,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new UnknownID(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(stmt);
             DBUtils.rollbackIfNeeded(conn, "update trap list", trapList);
             HarvestDBConnection.release(conn);
         }
@@ -322,6 +332,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             String name = rs.getString("name");
             String description = rs.getString("description");
             boolean isActive = rs.getBoolean("isActive");
+            stmt.close();
             stmt = conn.prepareStatement(SELECT_TRAP_EXPRESSIONS_STMT);
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
@@ -337,6 +348,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(stmt);
             HarvestDBConnection.release(conn);
         }
     }
@@ -375,6 +387,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(stmt);
             HarvestDBConnection.release(conn);
         }
     }

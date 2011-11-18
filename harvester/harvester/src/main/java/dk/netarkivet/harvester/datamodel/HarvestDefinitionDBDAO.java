@@ -205,6 +205,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             DBUtils.rollbackIfNeeded(connection, "creating", harvestDefinition);
             HarvestDBConnection.release(connection);
         }
@@ -536,6 +537,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error while updating harvest definition "
                     + hd + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             DBUtils.rollbackIfNeeded(c, "updating", hd);
             HarvestDBConnection.release(c);
         }
@@ -771,6 +773,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error while getting HD by name" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -832,7 +835,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 int count = res.getInt(6);
                 info.setStatusCount(status, count);
             }
-
+            s.close();
             s = c.prepareStatement("SELECT jobs.harvest_num,"
                     + "SUM(historyinfo.bytecount), "
                     + "SUM(historyinfo.objectcount)," + "COUNT(jobs.status)"
@@ -873,6 +876,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1074,6 +1078,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error getting sparse harvests" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1123,6 +1128,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "harvest definition " + harvestDefinitionID + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1257,6 +1263,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "harvest definition" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1329,6 +1336,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL error getting seeds of a domain" + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
     }
@@ -1477,6 +1485,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                             + " domainconfiguration: "
                             + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             DBUtils.rollbackIfNeeded(connection,
                     "removing DomainConfiguration from harvest w/id "
                             + harvestId + " failed", harvestId);
@@ -1505,6 +1514,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             log.warn("Exception thrown while updating " + " nextdate: "
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
+            DBUtils.closeStatementIfOpen(s);
             DBUtils.rollbackIfNeeded(connection, "Updating nextdate from", ph);
             HarvestDBConnection.release(connection);
         }

@@ -117,6 +117,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(statement);
             DBUtils.rollbackIfNeeded(connection, "create extended field",
                     aExtendedField);
             HarvestDBConnection.release(connection);
@@ -217,6 +218,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(statement);
             DBUtils.rollbackIfNeeded(connection, "update extendedfield",
                     aExtendedField);
             HarvestDBConnection.release(connection);
@@ -317,6 +319,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
                     );
             stm.setLong(1, aExtendedfieldId);
             stm.executeUpdate();
+            stm.close();
             stm = c.prepareStatement(
                     "DELETE FROM extendedfield WHERE extendedfield_id = ?");
             stm.setLong(1, aExtendedfieldId);
@@ -330,6 +333,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
                     + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
         } finally {
+            DBUtils.closeStatementIfOpen(stm);
             DBUtils.rollbackIfNeeded(c, "delete extended field",
                     aExtendedfieldId);
             HarvestDBConnection.release(c);
