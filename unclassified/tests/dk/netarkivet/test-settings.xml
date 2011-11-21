@@ -6,7 +6,7 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,8 @@
             <class>dk.netarkivet.common.utils.PrintNotifications</class>
         </notifications>
 	    <jmx>
-    		<!-- to reduce running time of our unittests -->
+    		<!-- timeout is 2 seconds to reduce running time of our unittests 
+    		-->
 			<timeout>2</timeout>
 			<passwordFile>tests/dk/netarkivet/jmxremote.password</passwordFile>
 			<accessFile>tests/dk/netarkivet/jmxremote.access</accessFile>
@@ -68,7 +69,7 @@
 	        </pool>
         </database>
         <replicas>
-            <!-- All bitarcive replicas in the environment,
+            <!-- All bitarchive replicas in the environment,
                  e.g., (ONE, "replicaOne", bitarchive) and
                  (TWO, "replicaTwo", bitarchive).
                  NOTE: settings for checksum replicas are not use yet -->

@@ -4,7 +4,7 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,8 @@ public class TestInfo {
 
     static final File CHECKSUM_DIR = new File(WORKING_DIR, "cs");
     
-    static final String TEST1_CHECKSUM = "8a25cd763176ff41cd042b1d2c2e7061";
+    static final String TEST1_CHECKSUM = "822f34dcf1b3b56b257d7ad21b946682";
+            
     static final String TEST2_CHECKSUM = "d87cc8068fa49f3a4926ce4d1cdf14e1"; 
 
 }

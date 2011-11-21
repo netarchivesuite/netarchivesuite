@@ -4,7 +4,7 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -127,12 +127,12 @@ public class FileChecksumArchiveTester extends TestCase {
         assertEquals("The stored value and the checksum calculated through the method.",
                 fca.getChecksum("TEST1.arc"), fca.calculateChecksum(TestInfo.UPLOAD_FILE_1));
         assertEquals("The value stored in the checksum archive and a precalculated value of the file",
-                fca.getChecksum("TEST1.arc"), TestInfo.TEST1_CHECKSUM);
+                TestInfo.TEST1_CHECKSUM, fca.getChecksum("TEST1.arc"));
 
         assertEquals("The stored value and the checksum calculated through the method.",
                 fca.getChecksum("TEST2.arc"), fca.calculateChecksum(TestInfo.UPLOAD_FILE_2));
         assertEquals("The value stored in the checksum archive and a precalculated value of the file",
-                fca.getChecksum("TEST2.arc"), TestInfo.TEST2_CHECKSUM);
+                TestInfo.TEST2_CHECKSUM, fca.getChecksum("TEST2.arc"));
 
         // ---------------------------------------------------------------
         // Check whether the archive file is identical to the retrieved archive
