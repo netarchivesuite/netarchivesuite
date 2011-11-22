@@ -51,6 +51,8 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
+	final String scriptName = "Harveststatus-seeds.jsp";
+	
     String harvestName = request.getParameter(Constants.HARVEST_PARAM);
     if (harvestName == null) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
@@ -67,7 +69,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                 Constants.HARVEST_PARAM);
         return;
     }
-    final String scriptName = "HarvestStatus-seeds.jsp";
+    
     // Include navigate.js
     HTMLUtils.generateHeader(pageContext, "navigate.js");
 
@@ -165,7 +167,7 @@ String searchParam = request.getParameter(Constants.HARVEST_PARAM);
         <%
             if (nextLinkActive) {
                 String link =
-                        "Harveststatus-perhd.jsp?"
+                        scriptName + "?"
                         + Constants.START_PAGE_PARAMETER 
                         + "=" + (startPageIndex + 1)
                         + "&" + Constants.HARVEST_PARAM + "="
@@ -186,7 +188,7 @@ String searchParam = request.getParameter(Constants.HARVEST_PARAM);
 </fmt:message>
 </p>
 
-<form method="post" name="filtersForm" action="Harveststatus-seeds.jsp">
+<form method="post" name="filtersForm" action="<%=scriptName%>">
 <input type="hidden"
        name="<%=Constants.START_PAGE_PARAMETER%>"
        value="<%=startPage%>"/>
