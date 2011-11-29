@@ -48,6 +48,8 @@ public class HarvestJobManager extends LifeCycleComponent {
         addChild(new HarvestJobGenerator());
         
         addChild(new HarvestSchedulerMonitorServer());
+        
+        addChild(new JobSupervisor());
     }
 
     @Override
