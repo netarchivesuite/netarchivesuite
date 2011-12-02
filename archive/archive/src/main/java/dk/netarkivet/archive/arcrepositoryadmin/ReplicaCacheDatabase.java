@@ -783,7 +783,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // Sort for finding duplicates.
             Collections.sort(checksumOutput);
-
+            
             String lastFilename = "";
             String lastChecksum = "";
 
@@ -793,13 +793,17 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 if((i % LOGGING_ENTRY_INTERVAL) == 0) {
                     log.info("Processed checksum list entry number " + i
                             + " for replica " + replica);
+                    // Close connection, and open another one
+                    // to avoid memory-leak (NAS-2003)
+                    ArchiveDBConnection.release(con);
+                    con = ArchiveDBConnection.get();
                 }
                 i++;
 
                 // parse the input.
-                KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
-                String filename = entry.getKey();
-                String checksum = entry.getValue();
+                final KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
+                final String filename = entry.getKey();
+                final String checksum = entry.getValue();
 
                 // check for duplicates
                 if(filename.equals(lastFilename)) {
@@ -915,6 +919,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 if((i % LOGGING_ENTRY_INTERVAL) == 0) {
                     log.info("Processed file list entry number " + i
                             + " for replica " + replica);
+                    // Close connection, and open another one
+                    // to avoid memory-leak (NAS-2003)
+                    ArchiveDBConnection.release(con);
+                    con = ArchiveDBConnection.get();
                 }
                 i++;
 

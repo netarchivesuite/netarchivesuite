@@ -50,7 +50,7 @@ implements ComponentLifeCycle {
      * @param jobDispatcher The <code>JobDispatcher</code> to delegate the 
      * dispatching of new jobs to, when a 'Ready for job' event is received.
      * @param jmsConnection The JMS connection by which 
-     * {@LINK HarvesterReadyMessage} is received.
+     * {@link HarvesterReadyMessage} is received.
      */
     public HarvesterStatusReceiver(
             JobDispatcher jobDispatcher,
