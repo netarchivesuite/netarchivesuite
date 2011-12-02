@@ -72,7 +72,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     private static ReplicaCacheDatabase instance;
     
     /** The number of entries between logging in either file list or checksum
-     * list. */
+     * list. This also controls how often the database connection is renewed 
+     * in methods {@link #addChecksumInformation(List, Replica)} and 
+     * {@link #addFileListInformation(List, Replica)},
+     * where the operations can take hours, and seems to leak memory.
+     */
     private final int LOGGING_ENTRY_INTERVAL = 1000;
     
     /** Waiting time in seconds before attempting to initialise the 
@@ -797,6 +801,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     // to avoid memory-leak (NAS-2003)
                     ArchiveDBConnection.release(con);
                     con = ArchiveDBConnection.get();
+                    log.debug("Databaseconnection has now been renewed");
                 }
                 i++;
 
@@ -923,6 +928,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     // to avoid memory-leak (NAS-2003)
                     ArchiveDBConnection.release(con);
                     con = ArchiveDBConnection.get();
+                    log.debug("Databaseconnection has now been renewed");
                 }
                 i++;
 
