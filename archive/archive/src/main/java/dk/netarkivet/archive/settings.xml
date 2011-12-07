@@ -81,9 +81,9 @@
 	            	<acquireInc>5</acquireInc>
 	            	<maxStm>0</maxStm>
                 	<maxStmPerConn>0</maxStmPerConn>
-                	<idleConnTestPeriod>0</idleConnTestPeriod>
+                	<idleConnTestPeriod>30</idleConnTestPeriod>
                 	<idleConnTestQuery></idleConnTestQuery>
-                	<idleConnTestOnCheckin>false</idleConnTestOnCheckin>
+                	<idleConnTestOnCheckin>true</idleConnTestOnCheckin>
 	        	</pool>
             </database>
         </admin>
