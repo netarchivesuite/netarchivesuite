@@ -35,6 +35,7 @@ import java.net.URISyntaxException;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
+import dk.netarkivet.common.distribute.arcrepository.ResultStream;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -132,13 +133,13 @@ public class GetRecord extends ToolRunnerBase {
                 String uri = args[1];
                 ARCLookup lookup = new ARCLookup(arcrep);
                 lookup.setIndex(new File(indexPath));
-                InputStream is = lookup.lookup(new URI(uri)).getInputStream();
-                if (is == null) {
+                ResultStream rs = lookup.lookup(new URI(uri));
+                if (rs == null) {
                     throw new IOFailure(
                             "Resource missing in index or repository for '"
                             + uri + "' in '" + indexPath + "'");
                 }
-                processRecord(is);
+                processRecord(rs.getInputStream());
             } catch (NetarkivetException e) {
                 throw new IOFailure(
                         "NetarkivetException while performing "
