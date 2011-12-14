@@ -608,8 +608,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
     /**
      * The method for uploading a file to the archive.
      * 
-     * TODO use file instead of remoteFile. Now the remoteFile is not 
-     * automatically cleaned up afterwards.
+     * TODO use file instead of remoteFile.
      * 
      * @param file The remote file containing the file to be uploaded.
      * @param filename The name of the arcFile.

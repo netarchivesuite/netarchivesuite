@@ -184,9 +184,10 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
         ArgumentNotValid.checkNotNull(msg, "UploadMessage msg");
         log.debug("Receiving upload message: " + msg.toString());
         try {
+            RemoteFile uploadFile = null;
             try {
                 // retrieve the data file.
-                RemoteFile uploadFile = msg.getRemoteFile();
+                uploadFile = msg.getRemoteFile();
                 
                 // upload the file to the checksum instance.
                 cs.upload(uploadFile, msg.getArcfileName());
@@ -194,6 +195,9 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
                 log.warn("Cannot process upload message '" + msg + "'", e);
                 msg.setNotOk(e);
             } finally { // check if enough space
+                if (uploadFile != null) { // delete remotefile
+                    uploadFile.cleanup();
+                }
                 if (!cs.hasEnoughSpace()) {
                     log.warn("Not enough space any more.");
                     jmsCon.removeListener(theCR, this);
