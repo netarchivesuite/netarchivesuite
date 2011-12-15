@@ -75,6 +75,7 @@ public class LargeFileGZIPInputStreamTester extends TestCase {
             while ((bytesRead = largeFileGZIPInputStream.read(buffer)) > 0) {
                 //just carry on.
             }
+            assertFalse(bytesRead > 0);
             largeFileGZIPInputStream.close();
             fail("Should throw exception on wrong CRC");
         } catch (IOException e) {
@@ -91,6 +92,7 @@ public class LargeFileGZIPInputStreamTester extends TestCase {
             while ((bytesRead = largeFileGZIPInputStream.read(buffer)) > 0) {
                 //just carry on.
             }
+            assertFalse(bytesRead > 0);
             largeFileGZIPInputStream.close();
             fail("Should throw exception on wrong Length");
         } catch (IOException e) {
@@ -107,6 +109,7 @@ public class LargeFileGZIPInputStreamTester extends TestCase {
             while ((bytesRead = largeFileGZIPInputStream.read(buffer)) > 0) {
                 //just carry on.
             }
+            assertFalse(bytesRead > 0);
             largeFileGZIPInputStream.close();
             fail("Should throw exception on missing Length");
         } catch (IOException e) {

@@ -41,14 +41,17 @@ public class CommonUtilsTesterSuite {
 
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ApplicationUtilsTester.class);
+        suite.addTestSuite(DiscardingOutputStreamTester.class);
         suite.addTestSuite(ExceptionUtilsTester.class);
+        suite.addTestSuite(FileArrayIteratorTester.class);
         suite.addTestSuite(FileUtilsTester.class);
         suite.addTestSuite(FilterIteratorTester.class);
         suite.addTestSuite(JMXUtilsTester.class);
         suite.addTestSuite(KeyValuePairTester.class);
         suite.addTestSuite(LargeFileGZIPInputStreamTester.class);
         suite.addTestSuite(MD5Tester.class);
-// suite.addTestSuite(ProcessUtilsTester.class);
+        // Disabled, as it is platform specific
+        // suite.addTestSuite(ProcessUtilsTester.class);
         suite.addTestSuite(SettingsTester.class);
         suite.addTestSuite(SettingsFactoryTester.class);
         suite.addTestSuite(SimpleXmlTester.class);

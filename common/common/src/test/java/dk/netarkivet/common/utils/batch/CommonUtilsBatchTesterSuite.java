@@ -50,6 +50,7 @@ public class CommonUtilsBatchTesterSuite {
         suite.addTestSuite(BatchFilterTester.class);
         suite.addTestSuite(BatchLocalFilesTester.class);
         suite.addTestSuite(ByteClassLoaderTester.class);
+        suite.addTestSuite(FileRemoverTester.class);
         suite.addTestSuite(FileBatchJobTester.class);
         suite.addTestSuite(LoadableFileBatchJobTester.class);
         suite.addTestSuite(LoadableJarBatchJobTester.class);
