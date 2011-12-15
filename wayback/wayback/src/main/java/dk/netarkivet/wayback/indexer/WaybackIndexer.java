@@ -81,7 +81,7 @@ public class WaybackIndexer implements CleanupIF {
     }
 
     /**
-     * Private contructor.
+     * Private constructor.
      */
     private WaybackIndexer() {
         File temporaryBatchDir = Settings.getFile(
@@ -187,8 +187,10 @@ public class WaybackIndexer implements CleanupIF {
             @Override
             public void run() {
                 log.info("Starting producer thread");
+                IndexerQueue iq = IndexerQueue.getInstance();
+                iq.populate();
                 FileNameHarvester.harvest();
-                IndexerQueue.getInstance().populate();
+                iq.populate();
             }
         };
         Timer producerThreadTimer = new Timer("ProducerThread");
