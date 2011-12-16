@@ -300,7 +300,7 @@ public class ProcessUtils {
      * @return the process exit code.
      */
     public static int runUnixSort(File inputFile, File outputFile) {
-        return runUnixSort(inputFile, outputFile, null);
+        return runUnixSort(inputFile, outputFile, null, false);
     }
 
     /**
@@ -308,11 +308,12 @@ public class ProcessUtils {
      * @param inputFile the input file.
      * @param outputFile the output file.
      * @param tempDir the directory where to store temporary files (null for default system temp).
+     * @param sortCrawllogStyle Should we sort crawllogstyle (i.e. "-k 4b") or not
      * @return the process exit code.
      */
-    public static int runUnixSort(File inputFile, File outputFile, File tempDir) {
+    public static int runUnixSort(File inputFile, File outputFile, File tempDir, boolean sortCrawllogStyle) {
+        String[] environment = new String[] {"LANG=C"};
         LinkedList<String> cmdAndParams = new LinkedList<String>();
-        cmdAndParams.add("LANG=C");
         cmdAndParams.add("sort");
         cmdAndParams.add(inputFile.getAbsolutePath());
         // -k 4b means fourth field (from 1) ignoring leading blanks
@@ -328,7 +329,7 @@ public class ProcessUtils {
             cmdAndParams.add(tempDir.getAbsolutePath());
         }
 
-        return ProcessUtils.runProcess(
+        return ProcessUtils.runProcess(environment,
                 (String[]) cmdAndParams.toArray(new String[cmdAndParams.size()]));
     }
 

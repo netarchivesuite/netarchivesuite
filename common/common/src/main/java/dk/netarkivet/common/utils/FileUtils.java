@@ -992,12 +992,12 @@ public class FileUtils {
             log.warn(errMsg);
             throw new IOFailure(errMsg);
         }
-
+        boolean sortcrawlLogStyle = true;
         File sortTempDir = null;
         if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
             sortTempDir = FileUtils.getTempDir();
         }
-        int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir);
+        int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir, sortcrawlLogStyle);
         if (error != 0) {
             final String errMsg = "Error code " + error + " sorting crawl log '"
                 + file + "'";
@@ -1022,12 +1022,12 @@ public class FileUtils {
             log.warn(errMsg);
             throw new IOFailure(errMsg);
         }
-
+        boolean sortcrawlLogStyle = false;
         File sortTempDir = null;
         if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
             sortTempDir = FileUtils.getTempDir();
         }
-        int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir);
+        int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir, sortcrawlLogStyle);
         if (error != 0) {
             final String errMsg = "Error code " + error + " sorting cdx file '"
             + file.getAbsolutePath() + "'";
