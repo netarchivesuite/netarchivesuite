@@ -64,6 +64,9 @@ public class ProcessUtils {
     public static int runProcess(String[] environment,
             String... programAndArgs) {
         try {
+            log.debug("Running external program: " + StringUtils.conjoin(" ", 
+                    programAndArgs) + " with environment " 
+                    + StringUtils.conjoin(" ", environment));
             Process p = Runtime.getRuntime().exec(programAndArgs, environment);
             discardProcessOutput(p.getInputStream());
             discardProcessOutput(p.getErrorStream());
