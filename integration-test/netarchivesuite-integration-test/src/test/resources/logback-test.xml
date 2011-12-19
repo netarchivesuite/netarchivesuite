@@ -24,12 +24,16 @@
   -->
 <configuration>
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <layout class="ch.qos.logback.classic.PatternLayout">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
-    </layout>
+    </encoder>
   </appender>
 
-  <root level="info">
+  <root level="warn">
     <appender-ref ref="STDOUT" />
   </root>
+  
+  <logger name="dk.netarkivet" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
 </configuration>

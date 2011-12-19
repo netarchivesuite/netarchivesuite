@@ -29,21 +29,21 @@ import org.testng.Assert;
 
 public class NASAssert extends Assert {
 
-  public static void assertEquals(Set<Object> expectedSet, Set<Object> resultSet) {
-    Set<Object> disjunctInExpectedSet = new HashSet<Object>(expectedSet);
-    disjunctInExpectedSet.removeAll(resultSet);
-
-    Set<Object> disjunctInResultSet = 
-      new HashSet<Object>(resultSet);
-    disjunctInResultSet.removeAll(expectedSet);
-
-    if (!disjunctInExpectedSet.isEmpty() || !disjunctInResultSet.isEmpty()) {
-            fail("Sets not equal, Expected sets contained the following " 
-                    + disjunctInExpectedSet.size() + " elements "
-                    + " not found in the result set:\n" + disjunctInExpectedSet
-                    + "\nand the following " +  disjunctInResultSet.size()
-                    + " elements in the result set where not"
-                    + " found in the expected set\n" + disjunctInResultSet);
-        }
-  }
+//  public static void assertEquals(Set<Object> expectedSet, Set<Object> resultSet) {
+//    Set<Object> disjunctInExpectedSet = new HashSet<Object>(expectedSet);
+//    disjunctInExpectedSet.removeAll(resultSet);
+//
+//    Set<Object> disjunctInResultSet = 
+//      new HashSet<Object>(resultSet);
+//    disjunctInResultSet.removeAll(expectedSet);
+//
+//    if (!disjunctInExpectedSet.isEmpty() || !disjunctInResultSet.isEmpty()) {
+//            fail("Sets not equal, Expected sets contained the following " 
+//                    + disjunctInExpectedSet.size() + " elements "
+//                    + " not found in the result set:\n" + disjunctInExpectedSet
+//                    + "\nand the following " +  disjunctInResultSet.size()
+//                    + " elements in the result set where not"
+//                    + " found in the expected set\n" + disjunctInResultSet);
+//        }
+//  }
 }

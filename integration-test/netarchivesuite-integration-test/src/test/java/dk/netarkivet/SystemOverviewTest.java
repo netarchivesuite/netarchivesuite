@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.openqa.selenium.By;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -75,6 +76,6 @@ public class SystemOverviewTest extends StandaloneTest {
                                     + (".4"))));
         }
 
-        NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);
+        Assert.assertEquals(expectedApplicationSet, displayedApplicationSet);
     }
 }

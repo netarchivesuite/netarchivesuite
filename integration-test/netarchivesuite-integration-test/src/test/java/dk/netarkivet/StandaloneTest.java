@@ -47,9 +47,9 @@ import com.jcraft.jsch.Session;
  */
 public abstract class StandaloneTest extends SystemTest {
 
-    @BeforeTest
+    @BeforeTest (alwaysRun = true) 
     public void startTestSystem() throws Exception {
-        if (System.getProperty("systemtest.redeploy", "true").equals("true")) {
+        if (System.getProperty("systemtest.redeploy", "false").equals("true")) {
             runCommandWithEnvironment(getStartupScript());
         }
     }
@@ -173,8 +173,7 @@ public abstract class StandaloneTest extends SystemTest {
         if (System.getProperty("systemtest.version") != null) {
             revisionValue = System.getProperty("systemtest.version");
         } else { 
-            File dir = new File("target/deploy");
-
+            File dir = new File("deploy");
             String[] children = dir.list();
             int testXValueStart = "NetarchiveSuite-".length();
             for (String fileName : children) {

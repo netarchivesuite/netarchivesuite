@@ -22,15 +22,37 @@
  */
 package dk.netarkivet;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This Logger should be used by all the test code to enable separation of test
  * logs from the applications logs.
  */
-public class TestLogger extends Logger {
+public class TestLogger {   
+    private Logger log;
 
-    protected TestLogger(String name) {
-        super("test" + name);
+    public TestLogger(Class<?> logHandle) {
+        log = LoggerFactory.getLogger(logHandle);
+    }
+
+    public void error(String msg) {
+        log.error(msg);
+    }
+
+    public void debug(String string) {
+        log.debug(string);
+    }
+
+    public void warn(String msg) {
+        log.warn(msg);
+    }
+
+    public void info(String msg) {
+        log.info(msg);
+    }
+
+    public void debug(StringBuffer sb) {
+        log.debug(sb + "");
     }
 }

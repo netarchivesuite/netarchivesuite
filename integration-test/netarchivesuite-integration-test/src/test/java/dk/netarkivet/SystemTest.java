@@ -22,7 +22,6 @@
  */
 package dk.netarkivet;
 
-import org.apache.log4j.Logger;
 import org.jaccept.structure.ExtendedTestCase;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -32,15 +31,16 @@ import org.testng.annotations.BeforeTest;
 import com.thoughtworks.selenium.Selenium;
 
 public class SystemTest extends ExtendedTestCase {
-    protected final Logger log = TestLogger.getLogger(getClass());
-    protected FirefoxDriver driver;
-    protected Selenium selenium;
-    protected final String baseUrl = "http://kb-test-adm-001.kb.dk:" + getPort();
+    protected final TestLogger log = new TestLogger(getClass());
+    protected static FirefoxDriver driver;
+    protected static Selenium selenium;
+    protected static String baseUrl = "http://kb-test-adm-001.kb.dk:" + getPort();
     
     @BeforeTest (alwaysRun=true)
     public void setupSelenium() {
         driver = new FirefoxDriver();
         selenium = new WebDriverBackedSelenium(driver, baseUrl);
+        System.out.println("Initialized driver to : " + driver);
     }
     
     @AfterTest (alwaysRun=true)
@@ -48,7 +48,7 @@ public class SystemTest extends ExtendedTestCase {
         selenium.stop();
     }
     
-    public String getPort() {
+    public static String getPort() {
         return System.getProperty("systemtest.port", "8071");
     }
 }
