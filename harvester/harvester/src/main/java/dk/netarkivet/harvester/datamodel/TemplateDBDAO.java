@@ -64,8 +64,8 @@ public class TemplateDBDAO extends TemplateDAO {
         Connection c = HarvestDBConnection.get();
         try {
             DBSpecifics.getInstance().updateTable(
-                    DBSpecifics.ORDERTEMPLATES_TABLE, 
-                    DBSpecifics.ORDERTEMPLATES_TABLE_REQUIRED_VERSION);
+                    HarvesterDatabaseTables.ORDERTEMPLATES_TABLE, 
+                    HarvesterDatabaseTables.ORDERTEMPLATES_TABLE_REQUIRED_VERSION);
         } finally {
             HarvestDBConnection.release(c);
         }

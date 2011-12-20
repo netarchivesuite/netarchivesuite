@@ -143,14 +143,14 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
              * 'runningJobsMonitor' and 'frontierReportMonitor'.
              */
             DBSpecifics.getInstance().updateTable(
-                    DBSpecifics.RUNNINGJOBSHISTORY_TABLE,
-                    DBSpecifics.RUNNINGJOBSHISTORY_TABLE_REQUIRED_VERSION);
+                    HarvesterDatabaseTables.RUNNINGJOBSHISTORY_TABLE,
+                    HarvesterDatabaseTables.RUNNINGJOBSHISTORY_TABLE_REQUIRED_VERSION);
             DBSpecifics.getInstance().updateTable(
-                    DBSpecifics.RUNNINGJOBSMONITOR_TABLE,
-                    DBSpecifics.RUNNINGJOBSMONITOR_TABLE_REQUIRED_VERSION);
+                    HarvesterDatabaseTables.RUNNINGJOBSMONITOR_TABLE,
+                    HarvesterDatabaseTables.RUNNINGJOBSMONITOR_TABLE_REQUIRED_VERSION);
             DBSpecifics.getInstance().updateTable(
-                    DBSpecifics.FRONTIERREPORTMONITOR_TABLE,
-                    DBSpecifics.FRONTIERREPORTMONITOR_TABLE_REQUIRED_VERSION);
+                    HarvesterDatabaseTables.FRONTIERREPORTMONITOR_TABLE,
+                    HarvesterDatabaseTables.FRONTIERREPORTMONITOR_TABLE_REQUIRED_VERSION);
 
         } finally {
             HarvestDBConnection.release(connection);

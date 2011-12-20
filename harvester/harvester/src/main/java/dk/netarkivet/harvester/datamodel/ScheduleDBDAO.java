@@ -62,8 +62,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
         Connection c = HarvestDBConnection.get();
         try {
             DBSpecifics.getInstance().updateTable(
-                    DBSpecifics.SCHEDULES_TABLE,
-                    DBSpecifics.SCHEDULES_TABLE_REQUIRED_VERSION);
+                    HarvesterDatabaseTables.SCHEDULES_TABLE,
+                    HarvesterDatabaseTables.SCHEDULES_TABLE_REQUIRED_VERSION);
         } finally {
             HarvestDBConnection.release(c);
         }

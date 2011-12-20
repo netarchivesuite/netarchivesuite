@@ -60,11 +60,11 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
         Connection connection = HarvestDBConnection.get();
         try {
             DBSpecifics.getInstance().updateTable(
-                    DBSpecifics.GLOBALCRAWLERTRAPEXPRESSIONS_TABLE,
-                    DBSpecifics.GLOBALCRAWLERTRAPEXPRESSIONS_TABLE_REQUIRED_VERSION);
+                    HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS_TABLE,
+                    HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS_TABLE_REQUIRED_VERSION);
             DBSpecifics.getInstance().updateTable(
-                    DBSpecifics.GLOBALCRAWLERTRAPLISTS_TABLE,
-                    DBSpecifics.GLOBALCRAWLERTRAPLISTS_TABLE_REQUIRED_VERSION);
+                    HarvesterDatabaseTables.GLOBALCRAWLERTRAPLISTS_TABLE,
+                    HarvesterDatabaseTables.GLOBALCRAWLERTRAPLISTS_TABLE_REQUIRED_VERSION);
         } finally {
             HarvestDBConnection.release(connection);
         }

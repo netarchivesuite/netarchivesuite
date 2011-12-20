@@ -40,6 +40,7 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
+import dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables;
 
 /**
  * A database-based implementation of the ExtendedFieldDBDAO class.
@@ -56,12 +57,12 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
         Connection connection = HarvestDBConnection.get();
         try {
             DBSpecifics.getInstance().updateTable(
-                    DBSpecifics.EXTENDEDFIELD_TABLE,
-                    DBSpecifics.EXTENDEDFIELD_TABLE_REQUIRED_VERSION);
+                    HarvesterDatabaseTables.EXTENDEDFIELD_TABLE,
+                    HarvesterDatabaseTables.EXTENDEDFIELD_TABLE_REQUIRED_VERSION);
 
             DBSpecifics.getInstance().updateTable(
-                    DBSpecifics.EXTENDEDFIELDVALUE_TABLE,
-                    DBSpecifics.EXTENDEDFIELDVALUE_TABLE_REQUIRED_VERSION);
+                    HarvesterDatabaseTables.EXTENDEDFIELDVALUE_TABLE,
+                    HarvesterDatabaseTables.EXTENDEDFIELDVALUE_TABLE_REQUIRED_VERSION);
             
         } finally {
             HarvestDBConnection.release(connection);
