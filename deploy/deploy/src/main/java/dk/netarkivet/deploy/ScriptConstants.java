@@ -119,6 +119,8 @@ public final class ScriptConstants {
     static final String ETC_PROFILE = "/etc/profile";
     /** The linux command for sleeping. sleep.*/
     static final String SLEEP = "sleep";
+    /** sleep 2.*/
+    static final String SLEEP_2 = SLEEP + " 2";
     /** sleep 5.*/
     static final String SLEEP_5 = SLEEP + " 5";
     /** *.log.*/
@@ -135,6 +137,8 @@ public final class ScriptConstants {
     static final String SCP = "scp";
     /** $PIDS.*/
     static final String PIDS = "$PIDS";
+    /** "    kill $PIDS".*/
+    static final String KILL_PIDS = "    kill $PIDS";
     /** "    kill -9 $PIDS".*/
     static final String KILL_9_PIDS = "    kill -9 $PIDS";
     /** "    export CLASSPATH=".*/

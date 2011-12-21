@@ -440,6 +440,12 @@ public class LinuxMachine extends Machine {
                             + app.getIdentification());
                     // #!/bin/bash
                     appPrint.println(ScriptConstants.BIN_BASH_COMMENT);
+                    
+                    // First try an ordinary kill, wait 2 seconds. Then test, 
+                    // if process is still around. If it is make a hard kill 
+                    // (-9)
+                  
+                    
                     // PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
                     // path\settings_app.xml | awk "{print \\$2}")
                     appPrint.println(ScriptConstants.getLinuxPIDS(
@@ -450,11 +456,32 @@ public class LinuxMachine extends Machine {
                             + Constants.SPACE + Constants.QUOTE_MARK
                             + ScriptConstants.PIDS + Constants.QUOTE_MARK
                             + Constants.SPACE + ScriptConstants.LINUX_N_THEN);
+                    
+                    appPrint.println(ScriptConstants.KILL_PIDS 
+                            + Constants.SEMICOLON);
+                    // fi
+                    appPrint.println(ScriptConstants.FI);
+                    appPrint.println(); 
+                    appPrint.println(ScriptConstants.SLEEP_2); 
+                            
+                    appPrint.println();
+                    // Set PIDS
+                    appPrint.println(ScriptConstants.getLinuxPIDS(
+                            app.getTotalName(), getConfDirPath(), 
+                            app.getIdentification()));
+                    // IF
+                    appPrint.println(ScriptConstants.LINUX_IF_N_EXIST 
+                            + Constants.SPACE + Constants.QUOTE_MARK
+                            + ScriptConstants.PIDS + Constants.QUOTE_MARK
+                            + Constants.SPACE + ScriptConstants.LINUX_N_THEN);
+                    
                     //     kill -9 $PIDS;
                     appPrint.println(ScriptConstants.KILL_9_PIDS 
                             + Constants.SEMICOLON);
                     // fi
                     appPrint.println(ScriptConstants.FI);
+                    
+                    
                     
                     // If the application contains a heritrix instance,
                     // then make script for killing the heritrix process.
@@ -467,7 +494,7 @@ public class LinuxMachine extends Machine {
                                     + " number of jmx-ports for a heritrix "
                                     + "harvester.");
                         }
-
+                        appPrint.println();
                         // - PIDS = $(ps -wwfe | grep heritrix | grep -v grep 
                         // | grep path\settings_app.xml | awk "{print \\$2}")
                         appPrint.println(ScriptConstants.getLinuxPIDS(
@@ -479,8 +506,28 @@ public class LinuxMachine extends Machine {
                                 + ScriptConstants.PIDS + Constants.QUOTE_MARK
                                 + Constants.SPACE 
                                 + ScriptConstants.LINUX_N_THEN);
+                        // first make a ordinary kill, wait 2 seconds, then make a 
+                        // hard kill -9 
+                        appPrint.println(ScriptConstants.KILL_PIDS + Constants.SEMICOLON);
+                        // - fi
+                        appPrint.println(ScriptConstants.FI);
+                        appPrint.println();
+                        // wait 2 seconds
+                        appPrint.println(ScriptConstants.SLEEP_2);
+                        appPrint.println();
+                        // See if Process is still around
+                        appPrint.println(ScriptConstants.getLinuxPIDS(
+                                Heritrix.class.getName(), getConfDirPath(), 
+                                app.getIdentification()));
+                        //if still around
+                        appPrint.println(ScriptConstants.LINUX_IF_N_EXIST
+                                + Constants.SPACE + Constants.QUOTE_MARK 
+                                + ScriptConstants.PIDS + Constants.QUOTE_MARK
+                                + Constants.SPACE 
+                                + ScriptConstants.LINUX_N_THEN);
                         // -     kill -9 $PIDS;
-                        appPrint.println(ScriptConstants.KILL_9_PIDS);
+                        appPrint.println(ScriptConstants.KILL_9_PIDS
+                                + Constants.SEMICOLON);
                         // - fi
                         appPrint.println(ScriptConstants.FI);
                     }
