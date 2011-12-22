@@ -53,7 +53,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
 import dk.netarkivet.testutils.LogUtils;

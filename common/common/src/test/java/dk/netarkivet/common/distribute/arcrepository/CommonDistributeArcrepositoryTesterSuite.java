@@ -55,6 +55,7 @@ public class CommonDistributeArcrepositoryTesterSuite {
         suite.addTestSuite(BitarchiveRecordTester.class);
         suite.addTestSuite(LocalArcRepositoryClientTester.class);
         suite.addTestSuite(ReplicaTester.class);
+        suite.addTestSuite(ReplicaTypeTester.class);
         suite.addTestSuite(TrivialArcRepositoryClientTester.class);    
     }
 

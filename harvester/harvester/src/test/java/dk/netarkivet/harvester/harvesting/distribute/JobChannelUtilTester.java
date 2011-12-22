@@ -30,7 +30,7 @@ import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** 
- * Validates the <code>JobChannelUtil</code> class funtionality. 
+ * Validates the <code>JobChannelUtil</code> class functionality. 
  */
 public class JobChannelUtilTester extends ChannelsTester {
 

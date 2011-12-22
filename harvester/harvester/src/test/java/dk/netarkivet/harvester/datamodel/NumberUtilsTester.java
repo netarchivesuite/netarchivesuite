@@ -22,6 +22,9 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 /**
@@ -79,4 +82,34 @@ public class NumberUtilsTester extends TestCase {
         assertEquals("On non-infinite, compare",
                      0, NumberUtils.compareInf(42L, 42L));
     }
+    
+    public void testToPrimitiveArray() {
+        List<Double> emptyList = new ArrayList<Double>();
+        double[] doubles = NumberUtils.toPrimitiveArray(emptyList);
+        assertTrue(doubles.length == 0);
+        List<Double> notEmptyList = new ArrayList<Double>();
+        double the42double = 42L;
+        double the22double = 22L;
+        notEmptyList.add(Double.valueOf(the42double));
+        notEmptyList.add(Double.valueOf(the22double));
+        doubles = NumberUtils.toPrimitiveArray(notEmptyList);
+        assertTrue(doubles.length == 2);
+        boolean found42Value = false;
+        boolean found22Value = false;
+        double firstDouble = doubles[0]; 
+        double secondDouble = doubles[1];
+        if (firstDouble == the42double || secondDouble == the42double) {
+            found42Value = true;
+        }
+        if (firstDouble == the22double || secondDouble == the22double) {
+            found22Value = true;
+        }
+        
+        assertTrue(found22Value);
+        assertTrue(found42Value);
+        
+    }
+    
+    
+    
 }

@@ -23,34 +23,21 @@
 
 package dk.netarkivet.common.webinterface;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.jsp.JspApplicationContext;
-import javax.servlet.jsp.JspEngineInfo;
-import javax.servlet.jsp.JspFactory;
-import javax.servlet.jsp.PageContext;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mockobjects.servlet.MockHttpServletRequest;
-import com.mockobjects.servlet.MockHttpServletResponse;
-import com.mockobjects.servlet.MockJspWriter;
-import com.mockobjects.servlet.MockPageContext;
+import javax.servlet.ServletException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import junit.framework.TestCase;
+
 import org.apache.jasper.JasperException;
-import org.apache.jasper.JspC;
 import org.apache.jasper.runtime.HttpJspBase;
 import org.apache.tools.ant.filters.StringInputStream;
 import org.xml.sax.EntityResolver;
@@ -59,9 +46,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.mockobjects.servlet.MockHttpServletRequest;
+import com.mockobjects.servlet.MockHttpServletResponse;
+
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.utils.ApplicationUtils;
+import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * An attempt at making a subclass of TestCase suitable for testing JSP pages.
@@ -124,22 +113,18 @@ public class JspTestCase extends TestCase {
             }
 //
 //            public int getRemotePort() {
-//                //TODO: implement method
 //                throw new NotImplementedException("Not implemented");
 //            }
 //
 //            public String getLocalName() {
-//                //TODO: implement methods
 //                throw new NotImplementedException("Not implemented");
 //            }
 //
 //            public String getLocalAddr() {
-//                //TODO: implement method
 //                throw new NotImplementedException("Not implemented");
 //            }
 
 //            public int getLocalPort() {
-//                //TODO: implement method
 //                throw new NotImplementedException("Not implemented");
 //            }
         };
@@ -151,7 +136,7 @@ public class JspTestCase extends TestCase {
     }
 
     protected void tearDown() {
-        //FileUtils.removeRecursively(WORKING_DIR);
+        FileUtils.removeRecursively(WORKING_DIR);
     }
 
     private HttpJspBase getCompiledPage(final String webpage)
@@ -172,7 +157,6 @@ public class JspTestCase extends TestCase {
                 final MockPageContext mockPageContext = new MockPageContext() {
 //                    public void include(String s, boolean b) throws ServletException,
 //                            IOException {
-//                        //TODO: implement method
 //                        throw new NotImplementedException("Not implemented");
 //                    }
 
@@ -181,17 +165,14 @@ public class JspTestCase extends TestCase {
                     }
 
 //                    public ExpressionEvaluator getExpressionEvaluator() {
-//                        //TODO: implement method
 //                        throw new NotImplementedException("Not implemented");
 //                    }
 //
 //                    public VariableResolver getVariableResolver() {
-//                        //TODO: implement method
 //                        throw new NotImplementedException("Not implemented");
 //                    }
 //
 //                    public ELContext getELContext() {
-//                        //TODO: implement method
 //                        throw new NotImplementedException("Not implemented");
 //                    }
                 };
@@ -215,7 +196,6 @@ public class JspTestCase extends TestCase {
 
             public JspApplicationContext getJspApplicationContext(
                     ServletContext servletContext) {
-                //TODO: implement method
                 throw new NotImplementedException("Not implemented");
             }
 

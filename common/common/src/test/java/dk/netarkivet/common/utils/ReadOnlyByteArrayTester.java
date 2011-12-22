@@ -20,38 +20,38 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+package dk.netarkivet.common.utils;
 
-/**
- * Class testing the NullRemoteFile class.
- */
-
-package dk.netarkivet.common.distribute;
-
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import junit.framework.TestCase;
 
-public class NullRemoteFileTester extends TestCase {
+/**
+ * 
+ * Unit tests for the {@link ReadOnlyByteArray} class.   
+ *
+ */
+public class ReadOnlyByteArrayTester extends TestCase{
 
-    public void testNewInstance() {
-        RemoteFile nrf1 = NullRemoteFile.getInstance(null, false, false, false);
-        assertTrue(nrf1 instanceof NullRemoteFile);
-        assertEquals(nrf1.getSize(), 0);
-        assertEquals(nrf1.getInputStream(), null);
-        assertEquals(nrf1.getName(), null);
+    public void testClassFunctionality() {
         try {
-        	nrf1.getChecksum();
-        	fail("Should have thrown NotImplementedException");
-        } catch (NotImplementedException e){
-        	// Expected
+            new ReadOnlyByteArray(null);
+        } catch(Exception e) {
+            fail("new ReadOnlyByteArray(null) should not thrown exception: " + e);
         }
-        OutputStream os = new ByteArrayOutputStream();
-        nrf1.appendTo(os);
+        byte[] emptyArray = new byte[]{};
+        ReadOnlyByteArray roba = new ReadOnlyByteArray(emptyArray);
+        assertTrue(roba.length() == 0);
         try {
-            nrf1.appendTo(null);
+            roba.get(0);
+            fail("roba.get(0) should not be accepted");
         } catch (Exception e) {
-            fail("Exception not expected with appendTo and null arg ");
+            // Expected
         }
+        
+        byte[] notEmptyArray = new byte[]{22,42};
+        roba = new ReadOnlyByteArray(notEmptyArray);
+        assertTrue(roba.length() == 2);
+        assertTrue(22 == roba.get(0));
+        assertTrue(42 == roba.get(1));
     }
+    
 }

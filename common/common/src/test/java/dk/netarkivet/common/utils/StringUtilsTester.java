@@ -22,8 +22,10 @@
 */
 package dk.netarkivet.common.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -69,6 +71,8 @@ public class StringUtilsTester extends TestCase {
                 (String [])null));
         assertEquals("Should be able to use different modifier",
                 "d%e", conjoinList("%", 'd', 'e'));
+        String[] strings = null;
+        assertEquals(null, StringUtils.conjoin(" ", strings));
     }
 
     /** Helper method that allows varargs. */
@@ -168,5 +172,90 @@ public class StringUtilsTester extends TestCase {
         String input = "abcdefghijkl";
         assertEquals("abc\ndef\nghi\njkl", StringUtils.splitStringForce(input, 3));
     }
+    
+    
+    /** test of method {@link StringUtils.parseIntList} */
+    public void testParseIntlist() {
+        try {
+            StringUtils.parseIntList(null);
+            fail("parseIntList should not work with null arg");
+        } catch (Exception e ) {
+            // Exception
+        }
+        
+        String[] stringInts = new String[] {"2", "53", "55" };
+        
+        List<Integer> targetList = new ArrayList<Integer>();
+        targetList.add(Integer.valueOf(2));
+        targetList.add(Integer.valueOf(53));
+        targetList.add(Integer.valueOf(55));        
+        
+        targetList.removeAll(StringUtils.parseIntList(stringInts));
+        assertTrue(targetList.isEmpty());
+        
+        String[] stringIntsWithUnparseableInt = new String[] {"2", "53", "55", "4#" };
+        
+        try {
+            StringUtils.parseIntList(stringIntsWithUnparseableInt);
+            fail("Should throw ArgumentNotValid with argument containing string unparseable as int");
+        } catch (ArgumentNotValid e) {
+            // Expected
+        }
+    }
+    
+    public void testMakeEllipsis() {
+        // if length of input is less than maxSize, then output equals input
+        // if not, output equals the first maxSize characters plus " .."
+        String input = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+        String output =  StringUtils.makeEllipsis(input, input.length());
+        assertEquals(input, output);
+        
+        String expectedOutput = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.".substring(
+                0, input.length() - 6)
+         + " ..";
+        output = StringUtils.makeEllipsis(input, input.length() - 5);
+        assertEquals(expectedOutput, output);
+    }
+    
+    public void testFormatDate() {
+        String expectedOutput = "1970/01/01 01:00:00";
+        assertEquals(expectedOutput, StringUtils.formatDate(0));
+        long aDateInMillis = 1324577151594L;
+        expectedOutput = "2011/12/22 19:05:51";
+        assertEquals(expectedOutput, StringUtils.formatDate(aDateInMillis));
+        
+        
+        String defaultFormat = "yyyy/MM/dd HH:mm:ss";
+        expectedOutput = "1970/01/01 01:00:00";
+        assertEquals(expectedOutput, StringUtils.formatDate(0, defaultFormat));
+        expectedOutput = "2011/12/22 19:05:51";
+        assertEquals(expectedOutput, StringUtils.formatDate(aDateInMillis, defaultFormat));
+    }
 
+    /** test the methods to format a double or a long percentage. */
+    public void testFormatPercentage() {
+        long aLong = 10;
+        double aDouble = 2.14;
+        double asecondDouble = 2.145;
+        assertEquals("10%", StringUtils.formatPercentage(aLong));
+        assertEquals("2.14%", StringUtils.formatPercentage(aDouble));
+        // Rounding occurs
+        assertEquals("2.14%", StringUtils.formatPercentage(asecondDouble));
+    }
+    
+    /** Test boundary conditions for StringUtils.formatDuration method. */
+    public void testFormatDuration() {
+        assertEquals("0d 00:00:00", StringUtils.formatDuration(0L));
+        assertEquals("-1", StringUtils.formatDuration(-12L));
+    }
+    /** test the methods to format a double or a long. */
+    public void testFormatNumber() {
+        long aLong = 10;
+        double aDouble = 2.14;
+        double asecondDouble = 2.145;
+        assertEquals("10", StringUtils.formatNumber(aLong));
+        assertEquals("2.14", StringUtils.formatNumber(aDouble));
+        // Rounding occurs
+        assertEquals("2.14", StringUtils.formatNumber(asecondDouble));
+    }      
 }
