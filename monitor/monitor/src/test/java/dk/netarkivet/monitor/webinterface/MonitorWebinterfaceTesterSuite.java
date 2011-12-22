@@ -48,6 +48,7 @@ public class MonitorWebinterfaceTesterSuite {
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(JMXStatusEntryTester.class);
+        suite.addTestSuite(JMXSummaryUtilsTester.class);
     }
 
     public static void main(String args[]) {
