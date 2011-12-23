@@ -57,6 +57,7 @@ import dk.netarkivet.common.webinterface.CommonWebinterfaceTesterSuite;
 import dk.netarkivet.deploy.DeployTesterSuite;
 import dk.netarkivet.harvester.HarvesterTesterSuite;
 import dk.netarkivet.harvester.datamodel.HarvesterDataModelTesterSuite;
+import dk.netarkivet.harvester.datamodel.extendedfield.HarvesterDataModelExtendedfieldTesterSuite;
 import dk.netarkivet.harvester.distribute.HarvesterDistributeTesterSuite;
 import dk.netarkivet.harvester.harvesting.HarvestingTesterSuite;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestingDistributeTesterSuite;
@@ -126,6 +127,7 @@ public class UnitTesterSuite {
         HarvesterTesterSuite.addToSuite(suite);
         HarvestingTesterSuite.addToSuite(suite);
         HarvesterDataModelTesterSuite.addToSuite(suite);
+        HarvesterDataModelExtendedfieldTesterSuite.addToSuite(suite);
         HarvesterDistributeTesterSuite.addToSuite(suite);
         HarvesterHarvestingFrontierTesterSuite.addToSuite(suite);
         HarvestingDistributeTesterSuite.addToSuite(suite);

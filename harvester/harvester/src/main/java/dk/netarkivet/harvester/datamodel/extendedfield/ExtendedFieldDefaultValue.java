@@ -83,7 +83,9 @@ public class ExtendedFieldDefaultValue {
             isValid = true; // Any kind of string currently accepted.
             break;
         case ExtendedFieldDataTypes.BOOLEAN:
-            isValid = checkBoolean(value);
+            if (value != null) { // null is never a valid boolean!
+                isValid = checkBoolean(value);
+            }
             break;
         case ExtendedFieldDataTypes.NUMBER:
             if (format != null && format.length() > 0) {
