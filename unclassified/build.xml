@@ -548,7 +548,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
     <target name="unittest.with.clover" depends="with.clover, compiletestsclean"
             description="Run all unit tests with clover reporting">
-        <junit haltonerror="no" haltonfailure="no" fork="on" maxmemory="512m"
+        <junit haltonerror="no" haltonfailure="no" fork="on" maxmemory="768m"
             printsummary="withOutAndErr">
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
