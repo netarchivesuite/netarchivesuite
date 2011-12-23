@@ -1,7 +1,7 @@
-/* File:    $Id$
- * Version: $Revision$
- * Date:    $Date$
- * Author:  $Author$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -20,41 +20,29 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.archive.arcrepositoryadmin;
+
+package dk.netarkivet.common.lifecycle;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-/**
- *  Testsuite for the classes in the dk.netarkivet.archive.arcrepositoryadmin
- *  package.
- */
-public class ArchiveArcRepositoryAdminTesterSuite
-{
-    public static Test suite()
-    {
+public class CommonLifecycleTesterSuite {
+    public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(ArchiveArcRepositoryAdminTesterSuite.class.getName());
-
-        addToSuite(suite);
-
+        suite = new TestSuite(CommonLifecycleTesterSuite.class.getName());
+        CommonLifecycleTesterSuite.addToSuite(suite);
         return suite;
     }
 
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(AdminDataTester.class);
-        suite.addTestSuite(ChecksumStatusTester.class);
-        suite.addTestSuite(DatabaseAdminTester.class);
-        suite.addTestSuite(DBTester.class);
-        suite.addTestSuite(FileListStatusTester.class);
-        suite.addTestSuite(ReadOnlyAdminDataTester.class);
-        suite.addTestSuite(ReplicaCacheDatabaseTester.class);
+        suite.addTestSuite(LifeCycleComponentTester.class);
     }
 
-    public static void main(String args[])
-    {
-        String args2[] = {"-noloading", ArchiveArcRepositoryAdminTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", CommonLifecycleTesterSuite.class.getName()};
+
         TestRunner.main(args2);
     }
+
 }

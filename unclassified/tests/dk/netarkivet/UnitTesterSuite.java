@@ -46,6 +46,7 @@ import dk.netarkivet.common.distribute.CommonDistributeTesterSuite;
 import dk.netarkivet.common.distribute.arcrepository.CommonDistributeArcrepositoryTesterSuite;
 import dk.netarkivet.common.distribute.indexserver.CommonDistributeIndexserverTesterSuite;
 import dk.netarkivet.common.exceptions.CommonExceptionsTesterSuite;
+import dk.netarkivet.common.lifecycle.CommonLifecycleTesterSuite;
 import dk.netarkivet.common.management.CommonManagementTesterSuite;
 import dk.netarkivet.common.tools.CommonToolsTesterSuite;
 import dk.netarkivet.common.utils.CommonUtilsTesterSuite;
@@ -103,6 +104,7 @@ public class UnitTesterSuite {
         CommonUtilsBatchTesterSuite.addToSuite(suite);
         CommonUtilsCdxTesterSuite.addToSuite(suite);
         CommonsTesterSuite.addToSuite(suite);
+        CommonLifecycleTesterSuite.addToSuite(suite);
         CommonUtilsTesterSuite.addToSuite(suite);
         CommonDistributeArcrepositoryTesterSuite.addToSuite(suite);
         CommonDistributeIndexserverTesterSuite.addToSuite(suite);
