@@ -43,7 +43,7 @@ public class ExceptionsTester extends TestCase {
     public void setUp() {
         nullString = null;
         emptyString = "";
-        meaningfullString = "This is a meaningfull exception";
+        meaningfullString = "This is a meaningful exception";
     }
 
     public void tearDown() {
@@ -277,6 +277,65 @@ public class ExceptionsTester extends TestCase {
             assertEquals("rethrown exception", exception.getMessage());
         }
     }
-
-
+    /**
+     * test {@link BatchTermination} constructors.
+     * Note that null arguments are currently allowed!
+     */
+    public void testBatchTermination() {
+        final String errMsg = "Batch terminated";
+        try {
+            new BatchTermination(nullString);
+        } catch (Exception e) {
+            fail("Null message should not throw an exception");
+        }
+        
+        try {
+            new BatchTermination(emptyString);
+        } catch (Exception e) {
+            fail("Empty message should not throw an exception");
+        }
+        BatchTermination bt = new BatchTermination(errMsg);
+        assertEquals(errMsg, bt.getMessage());
+   
+        bt = new BatchTermination(nullString, null);
+        assertEquals(null, bt.getMessage());
+        assertEquals(null, bt.getCause());
+        
+        IOFailure iof = new IOFailure("Some IO error occurred");
+        
+        bt = new BatchTermination(errMsg, iof);
+        assertEquals(errMsg, bt.getMessage());
+        assertEquals(iof, bt.getCause());
+    }
+    
+    /**
+     * test {@link HarvestingAbort} constructors.
+     * Note that null arguments are currently allowed!
+     */
+    public void testHarvestingAbort() {
+        final String errMsg = "Harvest aborted";
+        try {
+            new HarvestingAbort(nullString);
+        } catch (Exception e) {
+            fail("Null message should not throw an exception");
+        }
+        
+        try {
+            new HarvestingAbort(emptyString);
+        } catch (Exception e) {
+            fail("Empty message should not throw an exception");
+        }
+        HarvestingAbort bt = new HarvestingAbort(errMsg);
+        assertEquals(errMsg, bt.getMessage());
+   
+        bt = new HarvestingAbort(nullString, null);
+        assertEquals(null, bt.getMessage());
+        assertEquals(null, bt.getCause());
+        
+        IOFailure iof = new IOFailure("Some IO error occurred");
+        
+        bt = new HarvestingAbort(errMsg, iof);
+        assertEquals(errMsg, bt.getMessage());
+        assertEquals(iof, bt.getCause());
+    }
 }
