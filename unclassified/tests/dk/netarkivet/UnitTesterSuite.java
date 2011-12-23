@@ -60,6 +60,7 @@ import dk.netarkivet.harvester.datamodel.HarvesterDataModelTesterSuite;
 import dk.netarkivet.harvester.distribute.HarvesterDistributeTesterSuite;
 import dk.netarkivet.harvester.harvesting.HarvestingTesterSuite;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestingDistributeTesterSuite;
+import dk.netarkivet.harvester.harvesting.frontier.HarvesterHarvestingFrontierTesterSuite;
 import dk.netarkivet.harvester.scheduler.HarvesterSchedulerTesterSuite;
 import dk.netarkivet.harvester.tools.HarvesterToolsTesterSuite;
 import dk.netarkivet.harvester.webinterface.HarvesterWebinterfaceTesterSuite;
@@ -126,6 +127,7 @@ public class UnitTesterSuite {
         HarvestingTesterSuite.addToSuite(suite);
         HarvesterDataModelTesterSuite.addToSuite(suite);
         HarvesterDistributeTesterSuite.addToSuite(suite);
+        HarvesterHarvestingFrontierTesterSuite.addToSuite(suite);
         HarvestingDistributeTesterSuite.addToSuite(suite);
         HarvesterSchedulerTesterSuite.addToSuite(suite);
         HarvesterToolsTesterSuite.addToSuite(suite);
