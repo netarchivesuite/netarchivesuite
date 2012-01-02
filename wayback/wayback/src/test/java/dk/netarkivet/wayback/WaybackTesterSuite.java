@@ -69,6 +69,7 @@ public class WaybackTesterSuite {
         suite.addTestSuite(WaybackIndexerTester.class);
         suite.addTestSuite(IndexAggregatorTest.class);
         suite.addTestSuite(AggregationWorkerTest.class);
+        suite.addTestSuite(LRUCacheTester.class);
     }
 
     public static void main(String args[]) {

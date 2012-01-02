@@ -60,6 +60,7 @@ public class CommonUtilsTesterSuite {
         suite.addTestSuite(StreamUtilsTester.class);
         suite.addTestSuite(StringUtilsTester.class);
         suite.addTestSuite(SystemUtilsTester.class);
+        suite.addTestSuite(TablesortTester.class);
         suite.addTestSuite(TimeUtilsTester.class);
         suite.addTestSuite(XmlTreeTester.class);
         suite.addTestSuite(XmlUtilsTester.class);

@@ -115,6 +115,15 @@ public class StreamUtilsTester extends TestCase {
         assertEquals(testfileAsString, buf.toString());
     }
     
+    public void testGetInputStreamAsString() throws IOException {
+        String testfileAsString = FileUtils.readFile(TESTFILE);
+        
+        assertEquals(testfileAsString, StreamUtils.getInputStreamAsString(new FileInputStream(TESTFILE)));
+    }
+    
+    
+    
+    
     private class MyMockJspWriter extends MockJspWriter {
         private StringBuffer buf;
         

@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobPriority;
@@ -67,5 +68,15 @@ public class JobChannelUtilTester extends ChannelsTester {
         assertEquals("Channel should be high priority",
                      env + "_COMMON_ANY_HIGHPRIORITY_HACO",
                      JobChannelUtil.getChannel(priority).getName());
+        
+        // NULL argument should probably result in ArgumentNotValid, and not
+        // a NPE
+        try {
+            JobChannelUtil.getChannel(null);
+            fail("NULL priority should result in NPE, but didn't");
+        } catch (NullPointerException e) { 
+            //expected
+        }
+        
     }
 }
