@@ -87,6 +87,7 @@ public class HarvesterDataModelTesterSuite {
         suite.addTestSuite(TemplateDAOTester.class);
         suite.addTestSuite(TemplateDAOTesterAlternate.class);
         suite.addTestSuite(TimedScheduleTester.class);
+        suite.addTestSuite(TimeUnitTester.class);
         suite.addTestSuite(TLDInfoTester.class);
         suite.addTestSuite(WeeklyFrequencyTester.class);
         suite.addTestSuite(SeedListTester.class);

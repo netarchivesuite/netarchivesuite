@@ -40,6 +40,7 @@ public class HarvestingDistributeTesterSuite {
     }
 
     public static void addToSuite(TestSuite suite) {
+        suite.addTestSuite(CrawlProgressMessageTester.class);
         suite.addTestSuite(CrawlStatusMessageTester.class);
         suite.addTestSuite(DomainStatsTester.class);
         suite.addTestSuite(DoOneCrawlMessageTester.class);

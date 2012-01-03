@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * Tests the StopReason class.
- */
-
 import java.util.Locale;
 
 import junit.framework.TestCase;
@@ -33,6 +29,9 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
 
+/**
+ * Tests the StopReason class.
+ */
 public class StopReasonTester extends TestCase {
     
     private static final I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -100,23 +99,33 @@ public class StopReasonTester extends TestCase {
    public void testGetLocalizedString() {
        Locale l = new Locale("en");
        assertEquals("StopReason.DOWNLOAD_UNFINISHED.getLocalizedString(l) " +
-            "should return correct String for english Locale", StopReason.DOWNLOAD_UNFINISHED.getLocalizedString(l), 
+            "should return correct String for english Locale", 
+            StopReason.DOWNLOAD_UNFINISHED.getLocalizedString(l), 
             I18N.getString(l,"stopreason.download.unfinished"));
        
        assertEquals("StopReason.DOWNLOAD_COMPLETE.getLocalizedString(l) " +
-               "should return correct String for english Locale", StopReason.DOWNLOAD_COMPLETE.getLocalizedString(l), 
+               "should return correct String for english Locale", 
+               StopReason.DOWNLOAD_COMPLETE.getLocalizedString(l), 
                I18N.getString(l,"stopreason.complete"));
        
+       assertEquals("StopReason.CONFIG_OBJECT_LIMIT.getLocalizedString(l) " +
+               "should return correct String for english Locale", 
+               StopReason.CONFIG_OBJECT_LIMIT.getLocalizedString(l), 
+               I18N.getString(l,"stopreason.max.domainobjects.limit.reached"));
+       
        assertEquals("StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l) " +
-               "should return correct String for english Locale", StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l), 
+               "should return correct String for english Locale", 
+               StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l), 
                I18N.getString(l,"stopreason.max.domainconfig.limit.reached"));
        
        assertEquals("StopReason.OBJECT_LIMIT.getLocalizedString(l) " +
-               "should return correct String for english Locale", StopReason.OBJECT_LIMIT.getLocalizedString(l), 
+               "should return correct String for english Locale", 
+               StopReason.OBJECT_LIMIT.getLocalizedString(l), 
                I18N.getString(l,"stopreason.max.objects.limit.reached"));
        
        assertEquals("StopReason.SIZE_LIMIT.getLocalizedString(l) " +
-               "should return correct String for english Locale", StopReason.SIZE_LIMIT.getLocalizedString(l), 
+               "should return correct String for english Locale", 
+               StopReason.SIZE_LIMIT.getLocalizedString(l), 
                I18N.getString(l,"stopreason.max.bytes.limit.reached"));
        
        // Verify that the unknown case does not break I18n
