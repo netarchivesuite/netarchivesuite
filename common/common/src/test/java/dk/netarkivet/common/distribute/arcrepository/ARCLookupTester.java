@@ -157,6 +157,10 @@ public class ARCLookupTester extends TestCase {
             StringAsserts.assertStringContains("Should mention non-directory",
                     TestInfo.LOG_FILE.getName(), e.getMessage());
         }
+        
+        lookup.setIndex(TestInfo.INDEX_DIR_2_3);
+        // This forces us to close the previous index before setting the new index
+        lookup.setIndex(TestInfo.INDEX_DIR_2_3);
     }
 
     /**
