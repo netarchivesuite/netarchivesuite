@@ -239,6 +239,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <chmod file="${testdir}/dk/netarkivet/jmxremote.password" perm="400"/>
         <junit fork="true" forkmode="once" printsummary="true" timeout="3000000">
             <jvmarg value="-Xmx512m"/>
+            <jvmarg value="-XX:MaxPermSize=256"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
             <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
