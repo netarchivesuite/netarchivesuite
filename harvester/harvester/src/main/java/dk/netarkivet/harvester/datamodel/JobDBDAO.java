@@ -434,7 +434,7 @@ public class JobDBDAO extends JobDAO {
                                    + "harvest_errors, harvest_error_details, "
                                    + "upload_errors, upload_error_details, "
                                    + "startdate, enddate, submitteddate, "
-                                   + "edition, resubmitted_as_job "
+                                   + "edition, resubmitted_as_job, continuationof "
                                    + "FROM jobs WHERE job_id = ?");
             statement.setLong(1, jobID);
             ResultSet result = statement.executeQuery();
@@ -474,7 +474,7 @@ public class JobDBDAO extends JobDAO {
             Date submittedDate = DBUtils.getDateMaybeNull(result, 17);
             Long edition = result.getLong(18);
             Long resubmittedAsJob = DBUtils.getLongMaybeNull(result, 19);
-
+            Long continuationOfJob = DBUtils.getLongMaybeNull(result, 20);
             statement.close();
             // IDs should match up in a natural join
             // The following if-block is an attempt to fix Bug 1856, an
@@ -505,7 +505,7 @@ public class JobDBDAO extends JobDAO {
             final Job job = new Job(harvestID, configurationMap,
                     pri, forceMaxCount, forceMaxBytes, forceMaxRunningTime,
                     status, orderxml,
-                    orderXMLdoc, seedlist, harvestNum);
+                    orderXMLdoc, seedlist, harvestNum, continuationOfJob);
             job.appendHarvestErrors(harvestErrors);
             job.appendHarvestErrorDetails(harvestErrorDetails);
             job.appendUploadErrors(uploadErrors);
@@ -943,6 +943,7 @@ public class JobDBDAO extends JobDAO {
                         throw new IllegalState("Job " + oldJobID
                         + " is not ready to be copied.");
             }
+            
 
             // Now do the actual copying.
             // Note that startdate, and enddate is not copied.
@@ -954,17 +955,25 @@ public class JobDBDAO extends JobDAO {
                                    + " (job_id, harvest_id, priority, status,"
                                    + "  forcemaxcount, forcemaxbytes, orderxml,"
                                    + "  orderxmldoc, seedlist, harvest_num,"
-                                   + "  num_configs, edition) "
+                                   + "  num_configs, edition, continuationof) "
                                    + " SELECT ?, harvest_id, priority, ?,"
                                    + "  forcemaxcount, forcemaxbytes, orderxml,"
                                    + "  orderxmldoc, seedlist, harvest_num,"
-                                   + " num_configs, ?"
+                                   + " num_configs, ?, ?"
                                    + " FROM jobs WHERE job_id = ?");
             statement.setLong(1, newJobID);
             statement.setLong(2, JobStatus.NEW.ordinal());
             long initialEdition = 1;
             statement.setLong(3, initialEdition);
-            statement.setLong(4, oldJobID);
+            Long continuationOf = null;
+            // In case we want to try to continue using the Heritrix recover log
+            if (currentJobStatus == JobStatus.FAILED) {
+                continuationOf = oldJobID;
+            } 
+            DBUtils.setLongMaybeNull(statement, 4, continuationOf);
+
+            statement.setLong(5, oldJobID);
+
             statement.executeUpdate();
             statement.close();
             statement = connection.prepareStatement("INSERT INTO job_configs "
@@ -1096,8 +1105,6 @@ public class JobDBDAO extends JobDAO {
                     throw new UnknownID("Unexpected parameter class " + pClass);
                 }
             }
-
-
             return stm;
         }
 

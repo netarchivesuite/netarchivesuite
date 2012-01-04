@@ -152,6 +152,11 @@ public class Job implements Serializable {
     private Long resubmittedAsJobWithID;
     
     /**
+     * Continuation of this job.
+     */
+    private Long continuationOF;
+    
+    /**
      * A map (domainName, domainConfigurationName), must be accessible in order
      * to update job information (see Ass. 2.4.3)
      */
@@ -347,7 +352,8 @@ public class Job implements Serializable {
             long forceMaxJobRunningTime,
             JobStatus status,
             String orderXMLname,
-            Document orderXMLdoc, String seedlist, int harvestNum) {
+            Document orderXMLdoc, String seedlist, int harvestNum, 
+            Long continuationOf) {
         origHarvestDefinitionID = harvestID;
         domainConfigurationMap = configurations;
         this.priority = priority;
@@ -360,7 +366,7 @@ public class Job implements Serializable {
         this.orderXMLdoc = orderXMLdoc;
         this.setSeedList(seedlist);
         this.harvestNum = harvestNum;
-
+        this.continuationOF = continuationOf;
         underConstruction = false;
     }
 
@@ -1475,7 +1481,15 @@ public class Job implements Serializable {
      * @param resubmittedAsJob An Id for a new job.
      */
     public void setResubmittedAsJob(Long resubmittedAsJob) {
-        this.resubmittedAsJobWithID = resubmittedAsJob;
-        
+        this.resubmittedAsJobWithID = resubmittedAsJob;   
     }
+    
+    /**
+     * @return id of the job that this job is supposed to continue 
+     * using Heritrix recover-log or null if it starts from scratch.
+     */
+    public Long getContinuationOf() {
+        return this.continuationOF;
+    }
+    
 }

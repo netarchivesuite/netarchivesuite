@@ -49,11 +49,11 @@ public class TestInfo {
         Constructor<Job> c = ReflectUtils.getPrivateConstructor(
                 Job.class, Long.class, Map.class, JobPriority.class, Long.TYPE,
                 Long.TYPE, Long.TYPE, JobStatus.class, String.class, Document.class,
-                String.class, Integer.TYPE);
+                String.class, Integer.TYPE, Long.class);
         return c.newInstance(42L, Collections.<String, String>emptyMap(),
                              JobPriority.LOWPRIORITY, -1L, -1L, 0L,
                              JobStatus.STARTED, "default_template",
                              DocumentFactory.getInstance().createDocument(),
-                             "http://sbforge.org", 1);
+                             "http://sbforge.org", 1, null);
     }
 }

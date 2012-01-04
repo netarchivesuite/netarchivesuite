@@ -70,7 +70,7 @@ public class HarvesterDatabaseTables {
     public static final int ORDERTEMPLATES_TABLE_REQUIRED_VERSION = 1;
 
     public static final String JOBS_TABLE = "jobs";
-    public static final int JOBS_TABLE_REQUIRED_VERSION = 6;
+    public static final int JOBS_TABLE_REQUIRED_VERSION = 7;
 
     public static final String JOBCONFIGS_TABLE = "job_configs";
     public static final int JOBCONFIGS_TABLE_REQUIRED_VERSION = 1;

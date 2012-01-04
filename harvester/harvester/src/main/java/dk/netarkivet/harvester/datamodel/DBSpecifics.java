@@ -51,10 +51,6 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     Log log = LogFactory.getLog(DBSpecifics.class);
 
-    
-
-    
-
     /**
      * Get the singleton instance of the DBSpecifics implementation class.
      *
@@ -357,6 +353,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             migrateJobsv5tov6();
             currentVersion = 6;
         }
+        if (currentVersion == 6 && toVersion >= 7) {
+            migrateJobsv6tov7();
+            currentVersion = 7;
+        }
         // future updates of the jobs table are inserted here
         if (currentVersion == HarvesterDatabaseTables.JOBS_TABLE_REQUIRED_VERSION 
                 && toVersion >= HarvesterDatabaseTables.JOBS_TABLE_REQUIRED_VERSION + 1) {
@@ -588,4 +588,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * Create the extendedfieldvalue table in the database.
      */
     protected abstract void createExtendedFieldValueTable();
+    
+    /**
+     * Migrates the 'jobs' table from version 6 to version 7 consisting of adding
+     * the bigint fieldcontinuationof with null as default
+     */
+    protected abstract void migrateJobsv6tov7();
 }

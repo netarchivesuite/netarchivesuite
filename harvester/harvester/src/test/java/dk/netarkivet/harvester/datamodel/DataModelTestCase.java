@@ -236,7 +236,7 @@ public class DataModelTestCase extends TestCase {
                 Constants.DEFAULT_MAX_BYTES,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME,
                 JobStatus.NEW, "default_orderxml",
-                defaultOrderXmlDocument, "netarkivet.dk", harvestNum);
+                defaultOrderXmlDocument, "netarkivet.dk", harvestNum, null);
     }
 
 
