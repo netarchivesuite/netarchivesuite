@@ -1526,6 +1526,9 @@ public class LinuxMachine extends Machine {
         String appScript = Constants.DOT + Constants.SLASH
                 + Constants.SCRIPT_NAME_HARVEST_DB_START + scriptExtension;
         
+        String app2Script = Constants.DOT + Constants.SLASH
+                + Constants.SCRIPT_NAME_HARVEST_DB_UPDATE + scriptExtension;;
+        
         StringBuilder res = new StringBuilder();
         // echo Starting external harvest database
         res.append(ScriptConstants.ECHO_START_EXTERNAL_HARVEST_DATABASE);
@@ -1539,7 +1542,18 @@ public class LinuxMachine extends Machine {
         res.append(ScriptConstants.LINUX_RUN_BACKGROUND + Constants.NEWLINE);
         //    sleep 5
         res.append(ScriptConstants.MULTI_SPACE_6 + ScriptConstants.SLEEP_5);
+        // fi
+        res.append(ScriptConstants.FI + Constants.NEWLINE); 
         res.append(Constants.NEWLINE);
+        // echo Updating external harvest database
+        res.append(ScriptConstants.ECHO_UPDATE_EXTERNAL_HARVEST_DATABASE);
+        res.append(Constants.NEWLINE);
+        // if [ -e ./start_external_harvest_database.sh ]; then
+        res.append(ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
+        res.append(app2Script + Constants.SPACE + ScriptConstants.LINUX_THEN);
+        res.append(Constants.NEWLINE);
+        res.append(ScriptConstants.MULTI_SPACE_6 + app2Script);
+	res.append(Constants.NEWLINE);
         // fi
         res.append(ScriptConstants.FI + Constants.NEWLINE);        
 
@@ -1688,4 +1702,77 @@ public class LinuxMachine extends Machine {
         res.append(Constants.SPACE);
         return res.toString();
     }
+
+    @Override
+    protected void createHarvestDatabaseUpdateScript(File dir) {
+        // Ignore if no harvest database directory has been defined.
+        // Only update database on machine, where harvestdatabase is running
+        String dbDir = machineParameters.getHarvestDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
+        }
+        
+        try {
+            // initialise the script file.
+            File updateHarvestDBScript = new File(dir, 
+                    Constants.SCRIPT_NAME_HARVEST_DB_UPDATE + scriptExtension);
+            
+            File updateHarvestDBSettingsFile = new File(dir, 
+                    Constants.SETTINGS_PREFIX + Constants.SCRIPT_NAME_HARVEST_DB_UPDATE +
+                    Constants.EXTENSION_XML_FILES);
+            PrintWriter updateDBSettings = new PrintWriter(updateHarvestDBSettingsFile);
+            updateDBSettings.println(settings.getXML());
+            updateDBSettings.close();
+            
+            // make print writer for writing to file
+            PrintWriter updateDBPrint = new PrintWriter(updateHarvestDBScript);
+            try {
+                // - #!/bin/bash
+                updateDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
+
+                // - cd InstallDir
+                updateDBPrint.print(ScriptConstants.CD + Constants.SPACE);
+                updateDBPrint.println(getInstallDirPath());
+                
+                // - java -cp  
+                // org.apache.derby.drda.NetworkServerControl shutdown  
+                // < /dev/null >> start_external_harvest_database.log 2>&1 &
+                
+                updateDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
+                updateDBPrint.print(getDefaultMachineClasspath() + ScriptConstants.NEWLINE);
+                
+                updateDBPrint.print(ScriptConstants.JAVA + Constants.SPACE + "-" 
+                        +  ScriptConstants.OPTION_SETTINGS 
+                        +  getConfDirPath() + updateHarvestDBSettingsFile.getName()
+                        + Constants.SPACE);
+                updateDBPrint.print(ScriptConstants.HARVEST_DATABASE_UPDATE_APP);
+                
+                updateDBPrint.print(Constants.SPACE);
+                updateDBPrint.print(ScriptConstants.LINUX_DEV_NULL);
+                updateDBPrint.print(Constants.GREATER_THAN);
+                updateDBPrint.print(Constants.SPACE);
+                updateDBPrint.print(Constants.SCRIPT_NAME_HARVEST_DB_UPDATE);
+                updateDBPrint.print(Constants.EXTENSION_LOG_FILES);
+                updateDBPrint.print(Constants.SPACE);
+                updateDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
+            } finally {
+                // close file
+                updateDBPrint.close();
+            }
+        } catch (IOException e) {
+            // Log the error and throw an IOFailure.
+            log.trace(Constants.MSG_ERROR_DB_KILL_FILE, e);
+            throw new IOFailure(Constants.MSG_ERROR_DB_KILL_FILE, e);
+        }
+    }
+    private String getDefaultMachineClasspath() { 
+        StringBuilder res = new StringBuilder();
+        // get all the classpaths 
+        for(Element cp : machineParameters.getClassPaths()) {
+            res.append(getInstallDirPath() + Constants.SLASH + cp.getText() 
+                + Constants.COLON);
+        }
+        return res.toString();
+    }
+    
 }

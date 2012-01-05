@@ -98,8 +98,16 @@ public final class HarvestDBConnection {
         try {
             if (dataSource == null) {
                 initDataSource(dbSpec, jdbcUrl);
+                // this is only done for embedded database!
+                // For external databases, use the HarvestdatabaseUpdateApplication tool
+                if (dbSpec instanceof DerbyEmbeddedSpecifics) {
+                    dbSpec.updateTables();
+                } else {
+                    System.out.println("not updated, as this is not a embedded db:" 
+                            + dbSpec.getDriverClassName());
+                }
             }
-
+            
             return dataSource.getConnection();
         } catch (SQLException e) {
             final String message = "Can't connect to database with DBurl: '"

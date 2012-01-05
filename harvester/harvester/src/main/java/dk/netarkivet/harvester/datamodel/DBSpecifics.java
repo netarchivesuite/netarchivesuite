@@ -143,27 +143,27 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                     + "(current version is greater than requested version).");
         }
 
-        if (tableName.equals(HarvesterDatabaseTables.JOBS_TABLE)) {
+        if (tableName.equals(HarvesterDatabaseTables.JOBS.getTablename())) {
             upgradeJobsTable(currentVersion, toVersion);
-        } else if (tableName.equals(HarvesterDatabaseTables.FULLHARVESTS_TABLE)) {
+        } else if (tableName.equals(HarvesterDatabaseTables.FULLHARVESTS.getTablename())) {
             upgradeFullharvestsTable(currentVersion, toVersion);
-        } else if (tableName.equals(HarvesterDatabaseTables.CONFIGURATIONS_TABLE)) {
+        } else if (tableName.equals(HarvesterDatabaseTables.CONFIGURATIONS.getTablename())) {
             upgradeConfigurationsTable(currentVersion, toVersion);
-        } else if (tableName.equals(HarvesterDatabaseTables.GLOBALCRAWLERTRAPLISTS_TABLE)) {
+        } else if (tableName.equals(HarvesterDatabaseTables.GLOBALCRAWLERTRAPLISTS.getTablename())) {
             upgradeGlobalcrawlertraplistsTable(currentVersion, toVersion);
-        } else if (tableName.equals(HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS_TABLE)) {
+        } else if (tableName.equals(HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS.getTablename())) {
             upgradeGlobalcrawlertrapexpressionsTable(currentVersion, toVersion);
-        } else if (tableName.equals(HarvesterDatabaseTables.RUNNINGJOBSHISTORY_TABLE)) {
+        } else if (tableName.equals(HarvesterDatabaseTables.RUNNINGJOBSHISTORY.getTablename())) {
             upgradeRunningjobshistoryTable(currentVersion, toVersion);
-        } else if (tableName.equals(HarvesterDatabaseTables.RUNNINGJOBSMONITOR_TABLE)) {
+        } else if (tableName.equals(HarvesterDatabaseTables.RUNNINGJOBSMONITOR.getTablename())) {
             upgradeRunningjobsmonitor(currentVersion, toVersion);
-        } else if (tableName.equals(HarvesterDatabaseTables.FRONTIERREPORTMONITOR_TABLE)) {
+        } else if (tableName.equals(HarvesterDatabaseTables.FRONTIERREPORTMONITOR.getTablename())) {
             upgradeFrontierreportmonitorTable(currentVersion, toVersion);
-        } else if (tableName.equals(HarvesterDatabaseTables.EXTENDEDFIELD_TABLE)) {
+        } else if (tableName.equals(HarvesterDatabaseTables.EXTENDEDFIELD.getTablename())) {
             upgradeExtendedFieldTable(currentVersion, toVersion);
-        } else if (tableName.equals(HarvesterDatabaseTables.EXTENDEDFIELDVALUE_TABLE)) {
+        } else if (tableName.equals(HarvesterDatabaseTables.EXTENDEDFIELDVALUE.getTablename())) {
             upgradeExtendedFieldValueTable(currentVersion, toVersion);
-        } else if (tableName.equals(HarvesterDatabaseTables.EXTENDEDFIELDTYPE_TABLE)) {
+        } else if (tableName.equals(HarvesterDatabaseTables.EXTENDEDFIELDTYPE.getTablename())) {
             upgradeExtendedFieldTypeTable(currentVersion, toVersion);
             // Add new if else when other tables need to be upgraded
         } else {
@@ -178,11 +178,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             createExtendedFieldTypeTable();
             currentVersion = 1;
         }
-        if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELDTYPE_TABLE_REQUIRED_VERSION) {
+        if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELDTYPE.getRequiredVersion()) {
             throw new NotImplementedException(
                     "No method exists for migrating table '"
-                            + HarvesterDatabaseTables.EXTENDEDFIELDTYPE_TABLE + "' from version "
-                            + currentVersion + " to version " + toVersion);
+                            + HarvesterDatabaseTables.EXTENDEDFIELDTYPE.getTablename() 
+                            + "' from version " + currentVersion 
+                            + " to version " + toVersion);
         }
     }
 
@@ -192,11 +193,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             createExtendedFieldValueTable();
             currentVersion = 1;
         }
-        if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELDVALUE_TABLE_REQUIRED_VERSION) {
+        if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELDVALUE.getRequiredVersion()) {
             throw new NotImplementedException(
                     "No method exists for migrating table '"
-                            + HarvesterDatabaseTables.EXTENDEDFIELDVALUE_TABLE + "' from version "
-                            + currentVersion + " to version " + toVersion);
+                            + HarvesterDatabaseTables.EXTENDEDFIELDVALUE.getTablename() 
+                            + "' from version " + currentVersion 
+                            + " to version " + toVersion);
         }
     }
 
@@ -205,11 +207,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             createExtendedFieldTable();
             currentVersion = 1;
         }
-        if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELD_TABLE_REQUIRED_VERSION) {
+        if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELD.getRequiredVersion()) {
             throw new NotImplementedException(
                     "No method exists for migrating table '"
-                            + HarvesterDatabaseTables.EXTENDEDFIELD_TABLE + "' from version "
-                            + currentVersion + " to version " + toVersion);
+                            + HarvesterDatabaseTables.EXTENDEDFIELD.getTablename() 
+                            + "' from version " + currentVersion 
+                            + " to version " + toVersion);
         }
     }
 
@@ -226,10 +229,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             currentVersion = 1;
         }
         // insert new migrations here
-        if (currentVersion > HarvesterDatabaseTables.FRONTIERREPORTMONITOR_TABLE_REQUIRED_VERSION) {
+        if (currentVersion > HarvesterDatabaseTables.FRONTIERREPORTMONITOR.getRequiredVersion()) {
             throw new NotImplementedException(
                     "No method exists for migrating table '"
-                    + HarvesterDatabaseTables.FRONTIERREPORTMONITOR_TABLE
+                    + HarvesterDatabaseTables.FRONTIERREPORTMONITOR.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
         }    
@@ -249,10 +252,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             migrateRunningJobsMonitorTableV1ToV2();
             currentVersion = 2;
         }
-        if (currentVersion > HarvesterDatabaseTables.RUNNINGJOBSMONITOR_TABLE_REQUIRED_VERSION) {
+        if (currentVersion > HarvesterDatabaseTables.RUNNINGJOBSMONITOR.getRequiredVersion()) {
             throw new NotImplementedException(
                     "No method exists for migrating table '" 
-                    + HarvesterDatabaseTables.RUNNINGJOBSMONITOR_TABLE
+                    + HarvesterDatabaseTables.RUNNINGJOBSMONITOR.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
         }
@@ -274,10 +277,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             currentVersion = 2;
         }
         // insert new migrations here
-        if (currentVersion > HarvesterDatabaseTables.RUNNINGJOBSHISTORY_TABLE_REQUIRED_VERSION) {
+        if (currentVersion > HarvesterDatabaseTables.RUNNINGJOBSHISTORY.getRequiredVersion()) {
             throw new NotImplementedException(
                     "No method exists for migrating table '" 
-                    + HarvesterDatabaseTables.RUNNINGJOBSHISTORY_TABLE
+                    + HarvesterDatabaseTables.RUNNINGJOBSHISTORY.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
         }
@@ -296,10 +299,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
         // insert new migrations here
         if (currentVersion 
-                > HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS_TABLE_REQUIRED_VERSION) {
+                > HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS.getRequiredVersion()) {
             throw new NotImplementedException(
                     "No method exists for migrating table '" 
-                    + HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS_TABLE
+                    + HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
         }
@@ -319,10 +322,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             currentVersion = 1;
         }
         // insert new migrations here
-        if (currentVersion > HarvesterDatabaseTables.GLOBALCRAWLERTRAPLISTS_TABLE_REQUIRED_VERSION) {
+        if (currentVersion > HarvesterDatabaseTables.GLOBALCRAWLERTRAPLISTS.getRequiredVersion()) {
             throw new NotImplementedException(
                     "No method exists for migrating table '" 
-                    + HarvesterDatabaseTables.GLOBALCRAWLERTRAPLISTS_TABLE
+                    + HarvesterDatabaseTables.GLOBALCRAWLERTRAPLISTS.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
         }
@@ -338,7 +341,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         if (currentVersion < 3) {
             throw new IllegalState("Database is in an illegalState: "
                     + "The current version " + currentVersion
-                    + " of table '" + HarvesterDatabaseTables.JOBS_TABLE + "' is not acceptable. "
+                    + " of table '" + HarvesterDatabaseTables.JOBS.getTablename() + "' is not acceptable. "
                     + "(current version is less than open source version).");
         }
         if (currentVersion == 3 && toVersion >= 4) {
@@ -358,18 +361,19 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             currentVersion = 7;
         }
         // future updates of the jobs table are inserted here
-        if (currentVersion == HarvesterDatabaseTables.JOBS_TABLE_REQUIRED_VERSION 
-                && toVersion >= HarvesterDatabaseTables.JOBS_TABLE_REQUIRED_VERSION + 1) {
+        if (currentVersion == HarvesterDatabaseTables.JOBS.getRequiredVersion() 
+                && toVersion >= HarvesterDatabaseTables.JOBS.getRequiredVersion() + 1) {
             throw new NotImplementedException(
-                    "No method exists for migrating table '" + HarvesterDatabaseTables.JOBS_TABLE
+                    "No method exists for migrating table '" 
+                            + HarvesterDatabaseTables.JOBS.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
         }
 
-        if (currentVersion > HarvesterDatabaseTables.JOBS_TABLE_REQUIRED_VERSION) {
+        if (currentVersion > HarvesterDatabaseTables.JOBS.getRequiredVersion()) {
             throw new IllegalState("Database is in an illegalState: "
                     + "The current version (" + currentVersion
-                    + ") of table '" + HarvesterDatabaseTables.JOBS_TABLE
+                    + ") of table '" + HarvesterDatabaseTables.JOBS.getTablename()
                     + "' is not an acceptable/known version. ");
         }
 
@@ -384,7 +388,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         if (currentVersion < 3) {
             throw new IllegalState("Database is in an illegalState: "
                     + "The current version " + currentVersion
-                    + " of table '" + HarvesterDatabaseTables.CONFIGURATIONS_TABLE 
+                    + " of table '" + HarvesterDatabaseTables.CONFIGURATIONS.getTablename() 
                     + "' is not acceptable. "
                     + "(current version is less than open source version).");
         }
@@ -398,19 +402,19 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             currentVersion = 5;
         }
         // insert future migrations here
-        if (currentVersion == HarvesterDatabaseTables.CONFIGURATIONS_TABLE_REQUIRED_VERSION 
-                && toVersion >= HarvesterDatabaseTables.CONFIGURATIONS_TABLE_REQUIRED_VERSION + 1) {
+        if (currentVersion == HarvesterDatabaseTables.CONFIGURATIONS.getRequiredVersion()
+                && toVersion >= HarvesterDatabaseTables.CONFIGURATIONS.getRequiredVersion()+ 1) {
             throw new NotImplementedException(
                     "No method exists for migrating table '" 
-                    + HarvesterDatabaseTables.CONFIGURATIONS_TABLE
+                    + HarvesterDatabaseTables.CONFIGURATIONS.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
         }
 
-        if (currentVersion > HarvesterDatabaseTables.CONFIGURATIONS_TABLE_REQUIRED_VERSION) {
+        if (currentVersion > HarvesterDatabaseTables.CONFIGURATIONS.getRequiredVersion()) {
             throw new IllegalState("Database is in an illegalState: "
                     + "The current version (" + currentVersion
-                    + ") of table '" + HarvesterDatabaseTables.CONFIGURATIONS_TABLE
+                    + ") of table '" + HarvesterDatabaseTables.CONFIGURATIONS.getTablename()
                     + "' is not an acceptable/known version. ");
         }
     }   
@@ -424,7 +428,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         if (currentVersion < 2) {
             throw new IllegalState("Database is in an illegalState: "
                     + "The current version " + currentVersion
-                    + " of table '" + HarvesterDatabaseTables.FULLHARVESTS_TABLE 
+                    + " of table '" + HarvesterDatabaseTables.FULLHARVESTS.getTablename()
                     + "' is not acceptable. "
                     + "(current version is less than open source version).");
         }
@@ -444,11 +448,11 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
         
         // insert future migrations here
-        if (currentVersion == HarvesterDatabaseTables.FULLHARVESTS_TABLE_REQUIRED_VERSION 
-                && toVersion >= HarvesterDatabaseTables.FULLHARVESTS_TABLE_REQUIRED_VERSION + 1) {
+        if (currentVersion == HarvesterDatabaseTables.FULLHARVESTS.getRequiredVersion()
+                && toVersion >= HarvesterDatabaseTables.FULLHARVESTS.getRequiredVersion() + 1) {
             throw new NotImplementedException(
                     "No method exists for migrating table '" 
-                    + HarvesterDatabaseTables.FULLHARVESTS_TABLE
+                    + HarvesterDatabaseTables.FULLHARVESTS.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
         }
@@ -594,4 +598,14 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * the bigint fieldcontinuationof with null as default
      */
     protected abstract void migrateJobsv6tov7();
+    
+    /**
+     * Update all tables in the enum class {@link HarvesterDatabaseTables} to the required
+     * version. There is no attempt to undo the update.
+     */
+    public void updateTables() {
+        for (HarvesterDatabaseTables table: HarvesterDatabaseTables.values()) {
+            updateTable(table.getTablename(), table.getRequiredVersion());
+        }
+    }
 }

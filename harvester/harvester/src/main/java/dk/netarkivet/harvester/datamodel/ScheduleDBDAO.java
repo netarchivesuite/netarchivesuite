@@ -56,16 +56,14 @@ public class ScheduleDBDAO extends ScheduleDAO {
     private final Log log = LogFactory.getLog(getClass());
 
     /** Constructor for this class, that only checks that the
-     * schedules table has the expected version (1).
+     * schedules table has the expected version.
      */
     protected ScheduleDBDAO() {
-        Connection c = HarvestDBConnection.get();
+        Connection connection = HarvestDBConnection.get();
         try {
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.SCHEDULES_TABLE,
-                    HarvesterDatabaseTables.SCHEDULES_TABLE_REQUIRED_VERSION);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.SCHEDULES);
         } finally {
-            HarvestDBConnection.release(c);
+            HarvestDBConnection.release(connection);
         }
     }
 

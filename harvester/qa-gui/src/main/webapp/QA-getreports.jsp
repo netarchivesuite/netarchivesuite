@@ -46,19 +46,17 @@ jobid - The id of the job to show reports for.
 
     private static final I18n I18N = new I18n(
             dk.netarkivet.viewerproxy.Constants.TRANSLATIONS_BUNDLE);
-%><%
-    HTMLUtils.setUTF8(request);
+%><%HTMLUtils.setUTF8(request);
     int jobid;
     List<CDXRecord> records;
     try {
         jobid = HTMLUtils.parseAndCheckInteger(pageContext, Constants.JOBID_PARAM,
                                                1, Integer.MAX_VALUE);
-        records = Reporting.getMetdataCDXRecordsForJob(jobid);
+        records = Reporting.getMetadataCDXRecordsForJob(jobid);
     } catch (ForwardedToErrorPage e) {
         return;
     }
-    HTMLUtils.generateHeader(pageContext);
-%>
+    HTMLUtils.generateHeader(pageContext);%>
     <h3><fmt:message key="pagetitle;reports.for.job.1">
         <fmt:param value="<%=jobid%>"/>
     </fmt:message></h3>

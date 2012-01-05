@@ -88,51 +88,18 @@ public class DomainDBDAO extends DomainDAO {
 
         Connection connection = HarvestDBConnection.get();
         try {
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.CONFIGURATIONS_TABLE,
-                    HarvesterDatabaseTables.CONFIGURATIONS_TABLE_REQUIRED_VERSION);
-
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.DOMAINS_TABLE,
-                    HarvesterDatabaseTables.DOMAINS_TABLE_REQUIRED_VERSION);
-            
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.CONFIGPASSWORDS_TABLE,
-                    HarvesterDatabaseTables.CONFIGPASSWORDS_TABLE_REQUIRED_VERSION);
-            
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.CONFIGSEEDLISTS_TABLE,
-                    HarvesterDatabaseTables.CONFIGSEEDLISTS_TABLE_REQUIRED_VERSION);
-          
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.SEEDLISTS_TABLE,
-                    HarvesterDatabaseTables.SEEDLISTS_TABLE_REQUIRED_VERSION);
-          
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.PASSWORDS_TABLE,
-                    HarvesterDatabaseTables.PASSWORDS_TABLE_REQUIRED_VERSION);
-            
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.OWNERINFO_TABLE,
-                    HarvesterDatabaseTables.OWNERINFO_TABLE_REQUIRED_VERSION);
-            
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.HISTORYINFO_TABLE,
-                    HarvesterDatabaseTables.HISTORYINFO_TABLE_REQUIRED_VERSION);
-            
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.EXTENDEDFIELDTYPE_TABLE,
-                    HarvesterDatabaseTables.EXTENDEDFIELDTYPE_TABLE_REQUIRED_VERSION);
-
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.EXTENDEDFIELD_TABLE,
-                    HarvesterDatabaseTables.EXTENDEDFIELD_TABLE_REQUIRED_VERSION);
-
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.EXTENDEDFIELDVALUE_TABLE,
-                    HarvesterDatabaseTables.EXTENDEDFIELDVALUE_TABLE_REQUIRED_VERSION);
-            
-        } finally {
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.CONFIGURATIONS);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.DOMAINS);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.CONFIGPASSWORDS);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.CONFIGSEEDLISTS);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.SEEDLISTS);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.PASSWORDS);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.OWNERINFO);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.HISTORYINFO);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDTYPE);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELD);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDVALUE);
+         } finally {
             HarvestDBConnection.release(connection);
         }
     }

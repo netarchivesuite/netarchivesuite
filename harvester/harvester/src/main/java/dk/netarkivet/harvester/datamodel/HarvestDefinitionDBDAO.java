@@ -100,18 +100,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
         Connection connection = HarvestDBConnection.get();
         try {
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.FULLHARVESTS_TABLE,
-                    HarvesterDatabaseTables.FULLHARVESTS_TABLE_REQUIRED_VERSION);
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.HARVESTDEFINITIONS_TABLE,
-                    HarvesterDatabaseTables.HARVESTDEFINITIONS_TABLE_REQUIRED_VERSION);
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.PARTIALHARVESTS_TABLE,
-                    HarvesterDatabaseTables.PARTIALHARVESTS_TABLE_REQUIRED_VERSION);
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.HARVESTCONFIGS_TABLE,
-                    HarvesterDatabaseTables.HARVESTCONFIGS_TABLE_REQUIRED_VERSION);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.FULLHARVESTS);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.HARVESTDEFINITIONS);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.PARTIALHARVESTS);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.HARVESTCONFIGS);
         } finally {
             HarvestDBConnection.release(connection);
         }

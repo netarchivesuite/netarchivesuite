@@ -97,7 +97,7 @@ public class Reporting {
      * @throws ArgumentNotValid If jobid is 0 or negative.
      * @throws IOFailure On trouble generating the cdx
      */
-    public static List<CDXRecord> getMetdataCDXRecordsForJob(int jobid) {
+    public static List<CDXRecord> getMetadataCDXRecordsForJob(int jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob cdxJob = new ExtractCDXJob(false);
         cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+\\.arc(\\.gz)?");

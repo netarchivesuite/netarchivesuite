@@ -61,13 +61,11 @@ public class TemplateDBDAO extends TemplateDAO {
      * Only used by TemplateDAO,getInstance().
      */
     TemplateDBDAO() {
-        Connection c = HarvestDBConnection.get();
+        Connection connection = HarvestDBConnection.get();
         try {
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.ORDERTEMPLATES_TABLE, 
-                    HarvesterDatabaseTables.ORDERTEMPLATES_TABLE_REQUIRED_VERSION);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.ORDERTEMPLATES);
         } finally {
-            HarvestDBConnection.release(c);
+            HarvestDBConnection.release(connection);
         }
     }
 

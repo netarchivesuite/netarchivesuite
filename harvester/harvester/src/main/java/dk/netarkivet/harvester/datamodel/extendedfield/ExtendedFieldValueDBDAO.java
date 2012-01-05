@@ -53,18 +53,9 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
 
         Connection connection = HarvestDBConnection.get();
         try {
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.EXTENDEDFIELDTYPE_TABLE,
-                    HarvesterDatabaseTables.EXTENDEDFIELDTYPE_TABLE_REQUIRED_VERSION);
-
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.EXTENDEDFIELD_TABLE,
-                    HarvesterDatabaseTables.EXTENDEDFIELD_TABLE_REQUIRED_VERSION);
-
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.EXTENDEDFIELDVALUE_TABLE,
-                    HarvesterDatabaseTables.EXTENDEDFIELDVALUE_TABLE_REQUIRED_VERSION);
-            
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELD);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDTYPE);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDVALUE);
         } finally {
             HarvestDBConnection.release(connection);
         }

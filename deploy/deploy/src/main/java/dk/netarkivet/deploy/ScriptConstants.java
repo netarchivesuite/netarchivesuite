@@ -313,6 +313,14 @@ public final class ScriptConstants {
     static final String ECHO_KILL_EXTERNAL_HARVEST_DATABASE = 
         "echo Killing external harvest database.";
     
+    /** echo Updating external harvest database.*/
+    static final String ECHO_UPDATE_EXTERNAL_HARVEST_DATABASE = 
+        "echo Updating external harvest database.";
+    
+    /** Name of the app called in the harvest database update script. */
+    static final String HARVEST_DATABASE_UPDATE_APP =
+            "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication";
+    
     // VB script
     /** Set WshShell= CreateObject(\"WScript.Shell\").*/
     static final String VB_CREATE_SHELL_OBJ = 

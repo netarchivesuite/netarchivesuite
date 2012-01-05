@@ -23,81 +23,378 @@
 package dk.netarkivet.harvester.datamodel;
 
 /**
- * Constants definining the tables of the Harvester database and the 
+ *  Enum class defining the tables of the Harvester database and the 
  * required versions of the individual tables.  
  */
-public class HarvesterDatabaseTables {
-
-    public static final String DOMAINS_TABLE = "domains";
-    public static final int DOMAINS_TABLE_REQUIRED_VERSION = 2;
-    public static final String CONFIGURATIONS_TABLE = "configurations";
-    public static final int CONFIGURATIONS_TABLE_REQUIRED_VERSION = 5;
-
-    public static final String SEEDLISTS_TABLE = "seedlists";
-    public static final int SEEDLISTS_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String PASSWORDS_TABLE = "passwords";
-    public static final int PASSWORDS_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String OWNERINFO_TABLE = "ownerinfo";
-    public static final int OWNERINFO_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String HISTORYINFO_TABLE = "historyinfo";
-    public static final int HISTORYINFO_TABLE_REQUIRED_VERSION = 2;
-
-    public static final String CONFIGPASSWORDS_TABLE = "config_passwords";
-    public static final int CONFIGPASSWORDS_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String CONFIGSEEDLISTS_TABLE = "config_seedlists";
-    public static final int CONFIGSEEDLISTS_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String HARVESTDEFINITIONS_TABLE = "harvestdefinitions";
-    public static final int HARVESTDEFINITIONS_TABLE_REQUIRED_VERSION = 2;
-
-    public static final String PARTIALHARVESTS_TABLE = "partialharvests";
-    public static final int PARTIALHARVESTS_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String FULLHARVESTS_TABLE = "fullharvests";
-    public static final int FULLHARVESTS_TABLE_REQUIRED_VERSION = 5;
-
-    public static final String HARVESTCONFIGS_TABLE = "harvest_configs";
-    public static final int HARVESTCONFIGS_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String SCHEDULES_TABLE = "schedules";
-    public static final int SCHEDULES_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String ORDERTEMPLATES_TABLE = "ordertemplates"; 
-    public static final int ORDERTEMPLATES_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String JOBS_TABLE = "jobs";
-    public static final int JOBS_TABLE_REQUIRED_VERSION = 7;
-
-    public static final String JOBCONFIGS_TABLE = "job_configs";
-    public static final int JOBCONFIGS_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String GLOBALCRAWLERTRAPLISTS_TABLE = "global_crawler_trap_lists";
-    public static final int GLOBALCRAWLERTRAPLISTS_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String GLOBALCRAWLERTRAPEXPRESSIONS_TABLE 
-    = "global_crawler_trap_expressions";
-    public static final int GLOBALCRAWLERTRAPEXPRESSIONS_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String RUNNINGJOBSHISTORY_TABLE = "runningjobshistory";
-    public static final int RUNNINGJOBSHISTORY_TABLE_REQUIRED_VERSION = 2;
-
-    public static final String RUNNINGJOBSMONITOR_TABLE = "runningjobsmonitor";
-    public static final int RUNNINGJOBSMONITOR_TABLE_REQUIRED_VERSION = 2;
-
-    public static final String FRONTIERREPORTMONITOR_TABLE = "frontierreportmonitor"; 
-    public static final int FRONTIERREPORTMONITOR_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String EXTENDEDFIELD_TABLE = "extendedfield"; 
-    public static final int EXTENDEDFIELD_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String EXTENDEDFIELDVALUE_TABLE = "extendedfieldvalue"; 
-    public static final int EXTENDEDFIELDVALUE_TABLE_REQUIRED_VERSION = 1;
-
-    public static final String EXTENDEDFIELDTYPE_TABLE = "extendedfieldtype"; 
-    public static final int EXTENDEDFIELDTYPE_TABLE_REQUIRED_VERSION = 1;
+public enum HarvesterDatabaseTables {
     
+    /** The table containing information about domains. */
+    DOMAINS {        
+        static final String NAME = "domains";
+        static final int REQUIRED_VERSION = 2;
+        
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about domain-configurations. */
+    CONFIGURATIONS {
+        static final String NAME = "configurations";
+        static final int REQUIRED_VERSION = 5;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about seedlists. */
+    SEEDLISTS {
+        static final String NAME = "seedlists";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about passwords.
+     * Currently not used.  */
+    PASSWORDS {
+        static final String NAME = "passwords";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about ownerinfo.
+     * Currently not used. */
+    OWNERINFO {
+        static final String NAME = "ownerinfo";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about history info. */
+    HISTORYINFO {
+        static final String NAME = "historyinfo";
+        static final int REQUIRED_VERSION = 2;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about config passwords.
+        * Currently not used.
+        */
+    CONFIGPASSWORDS {
+        static final String NAME = "config_passwords";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about config seedlists. */
+    CONFIGSEEDLISTS {
+        static final String NAME = "config_seedlists";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about harvestdefinitions. */
+    HARVESTDEFINITIONS {
+        static final String NAME = "harvestdefinitions";
+        static final int REQUIRED_VERSION = 2;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about partial harvests. */
+    PARTIALHARVESTS {
+        static final String NAME = "partialharvests";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about full harvests. */
+    FULLHARVESTS {
+        static final String NAME = "fullharvests";
+        static final int REQUIRED_VERSION = 5;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about harvest configs */
+    HARVESTCONFIGS {
+        static final String NAME = "harvest_configs";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about harvest schedules. */
+    SCHEDULES {
+        static final String NAME = "schedules";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about Heritrix templates. */
+    ORDERTEMPLATES {
+        static final String NAME = "ordertemplates";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about jobs. */
+    JOBS {
+        static final String NAME = "jobs";
+        static final int REQUIRED_VERSION = 7;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about jobconfigs. */
+    JOBCONFIGS {
+        static final String NAME = "job_configs";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about list of global crawlertraps. */
+    GLOBALCRAWLERTRAPLISTS {        
+        static final String NAME = "global_crawler_trap_lists";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about global crawlertrap expressions. */
+    GLOBALCRAWLERTRAPEXPRESSIONS {
+        static final String NAME = "global_crawler_trap_expressions";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about running jobs history. */
+    RUNNINGJOBSHISTORY {
+        static final String NAME = "runningjobshistory";
+        static final int REQUIRED_VERSION = 2;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about running jobs monitor. */
+    RUNNINGJOBSMONITOR {
+        static final String NAME = "runningjobsmonitor";
+        static final int REQUIRED_VERSION = 2;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about frontier report monitor. */
+    FRONTIERREPORTMONITOR {
+        static final String NAME = "frontierreportmonitor";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about extended fields. */
+    EXTENDEDFIELD {
+        static final String NAME = "extendedfield";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about extended field values. */
+    EXTENDEDFIELDVALUE {
+        static final String NAME = "extendedfieldvalue";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** The table containing information about extended field types. */
+    EXTENDEDFIELDTYPE {
+        static final String NAME = "extendedfieldtype";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    };
+    
+    /** @return required version of table. */
+    public abstract int getRequiredVersion();
+    /** @return name of database table. */
+    public abstract String getTablename();
 }

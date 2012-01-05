@@ -362,12 +362,15 @@ public final class Constants {
     /** The name of the admin database kill script.*/
     static final String SCRIPT_NAME_ADMIN_DB_KILL 
             = "kill_external_admin_database";
-    /** The name of the admin database start script.*/
+    /** The name of the harvest database start script.*/
     static final String SCRIPT_NAME_HARVEST_DB_START 
             = "start_external_harvest_database";
-    /** The name of the admin database kill script.*/
+    /** The name of the harvest database kill script.*/
     static final String SCRIPT_NAME_HARVEST_DB_KILL 
             = "kill_external_harvest_database";
+    /** The name of the harvest database update script.*/
+    static final String SCRIPT_NAME_HARVEST_DB_UPDATE 
+            = "update_external_harvest_database";;
     /** The name of the wait script for windows. 'wait'.*/
     static final String SCRIPT_NAME_WAIT = "wait";
     /** Prefix for the application kill script. 'kill_' .*/

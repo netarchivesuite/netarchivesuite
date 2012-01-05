@@ -77,13 +77,8 @@ public class JobDBDAO extends JobDAO {
     protected JobDBDAO() {
         Connection connection = HarvestDBConnection.get();
         try {
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.JOBS_TABLE,
-                    HarvesterDatabaseTables.JOBS_TABLE_REQUIRED_VERSION);
-            
-            DBSpecifics.getInstance().updateTable(
-                    HarvesterDatabaseTables.JOBCONFIGS_TABLE,
-                    HarvesterDatabaseTables.JOBCONFIGS_TABLE_REQUIRED_VERSION);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.JOBS);
+            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.JOBCONFIGS);
         } finally {
             HarvestDBConnection.release(connection);
         }

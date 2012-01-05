@@ -223,7 +223,6 @@ public class ArcRepositoryDatabaseTester extends TestCase {
     /** Test that ArcRepository is a singleton. */
     public void testIsSingleton() {
         ClassAsserts.assertSingleton(ArcRepository.class);
-        ArcRepository.getInstance().close();
     }
 
 

@@ -401,7 +401,7 @@ public class MySQLSpecifics extends DBSpecifics {
            String[] sqlStatements = {
                    "ALTER TABLE jobs ADD COLUMN continuationof BIGINT DEFAULT NULL"
                };
-           HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
+           HarvestDBConnection.updateTable("jobs", 7, sqlStatements);
        }
     
 }

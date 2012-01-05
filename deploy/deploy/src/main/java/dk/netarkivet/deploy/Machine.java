@@ -61,7 +61,7 @@ public abstract class Machine {
     protected String name;
     /** The operating system on this machine: 'windows' or 'linux'.*/
     protected String operatingSystem;
-    /** The extension on the scipt files (specified by operating system).*/
+    /** The extension on the script files (specified by operating system).*/
     protected String scriptExtension;
     /** The name of the NetarchiveSuite.zip file.*/
     protected String netarchiveSuiteFileName;
@@ -200,6 +200,7 @@ public abstract class Machine {
         createOSLocalStartAllScript(machineDirectory);
         createHarvestDatabaseStartScript(machineDirectory);
         createArchiveDatabaseStartScript(machineDirectory);
+        createHarvestDatabaseUpdateScript(machineDirectory);
         // create restart script
         createRestartScript(machineDirectory);
         // copy the security policy file
@@ -941,4 +942,7 @@ public abstract class Machine {
      * @return The formatted path.
      */
     protected abstract String changeFileDirPathForSecurity(String path);
+    
+    protected abstract void createHarvestDatabaseUpdateScript(File machineDirectory);
+    
 }

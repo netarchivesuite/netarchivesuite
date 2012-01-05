@@ -22,16 +22,7 @@
 */
 package dk.netarkivet.harvester.tools;
 
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.JobDBDAO;
-import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
-import dk.netarkivet.harvester.datamodel.ScheduleDAO;
-import dk.netarkivet.harvester.datamodel.TemplateDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDBDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
+import dk.netarkivet.harvester.datamodel.DBSpecifics;
 
 /**
  * Utility for updating the harvestdatabase. This makes sure that all tables
@@ -41,20 +32,15 @@ public class HarvestdatabaseUpdateApplication {
 
     /**
      * The main method of the HarvestdatabaseUpdateApplication.
+     * Updates all tables in the enum class 
+     * {@link dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables} 
+     * to the required version. There is no attempt to undo the update.
+     *
      * @param args no Arg
      */
     public static void main(final String[] args) {
         System.out.println("Beginning database upgrade");
-        ExtendedFieldDBDAO.getInstance();
-        ExtendedFieldTypeDBDAO.getInstance();
-        ExtendedFieldValueDBDAO.getInstance();
-        TemplateDAO.getInstance();
-        RunningJobsInfoDAO.getInstance();
-        JobDBDAO.getInstance();
-        DomainDAO.getInstance();
-        ScheduleDAO.getInstance();
-        HarvestDefinitionDAO.getInstance();
-        GlobalCrawlerTrapListDAO.getInstance();
+        DBSpecifics.getInstance().updateTables();
         System.out.println("Database upgrade finished");
+        }
     }   
- }

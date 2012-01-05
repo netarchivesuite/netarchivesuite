@@ -45,6 +45,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables;
 
 /**
  * Various database related utilities.
@@ -769,23 +770,22 @@ public final class DBUtils {
         }
     }
 
-    /** Check that a database table is of the expected version.
+    /** Check that a database table has the required version version.
      *
      * NB: the provided connection is not closed.
      * @param connection connection to the database.
-     * @param tablename The table to check.
-     * @param desiredVersion The version it should be.
-     * @throws IllegalState if the version isn't as expected.
+     * @param table The table to check up against required version
+     * @throws IllegalState if the version isn't as required.
      */
     public static void checkTableVersion(Connection connection,
-                                         String tablename, int desiredVersion) {
+                                         HarvesterDatabaseTables table) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
-        ArgumentNotValid.checkNotNullOrEmpty(tablename, "String tablename");
-        ArgumentNotValid.checkPositive(desiredVersion, "int desiredVersion");
-        int actualVersion = getTableVersion(connection, tablename);
-        if (actualVersion != desiredVersion) {
-            String message = "Wrong table version for '" + tablename
-                    + "': Should be " + desiredVersion
+        ArgumentNotValid.checkNotNull(table, "HarvesterDatabaseTables table");
+        
+        int actualVersion = getTableVersion(connection, table.getTablename());
+        if (actualVersion != table.getRequiredVersion()) {
+            String message = "Wrong table version for '" + table.getTablename()
+                    + "': Should be " + table.getRequiredVersion()
                     + ", but is " + actualVersion;
             log.warn(message);
             throw new IllegalState(message);
