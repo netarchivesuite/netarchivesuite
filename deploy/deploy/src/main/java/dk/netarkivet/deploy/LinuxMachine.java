@@ -1543,7 +1543,7 @@ public class LinuxMachine extends Machine {
         //    sleep 5
         res.append(ScriptConstants.MULTI_SPACE_6 + ScriptConstants.SLEEP_5);
         // fi
-        res.append(ScriptConstants.FI + Constants.NEWLINE); 
+        res.append(Constants.NEWLINE + ScriptConstants.FI); 
         res.append(Constants.NEWLINE);
         // echo Updating external harvest database
         res.append(ScriptConstants.ECHO_UPDATE_EXTERNAL_HARVEST_DATABASE);

@@ -32,7 +32,6 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class DeployTester extends TestCase {
 
-    String oldSettingsFileName;
     ReloadSettings rs = new ReloadSettings();
 
     private PreserveStdStreams pss = new PreserveStdStreams(true);

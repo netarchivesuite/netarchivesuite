@@ -5,6 +5,10 @@ if [ -e ./start_external_harvest_database.sh ]; then
       ./start_external_harvest_database.sh &
       sleep 5
 fi
+echo Updating external harvest database.
+if [ -e ./update_external_harvest_database.sh ]; then
+      ./update_external_harvest_database.sh
+fi
 echo Starting external admin database.
 if [ -e ./start_external_admin_database.sh ]; then
       ./start_external_admin_database.sh &

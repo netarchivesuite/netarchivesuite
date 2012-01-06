@@ -33,7 +33,7 @@ public class TestInfo {
     public static final File ORIGINALS_DIR = new File(DATA_DIR, "originals");
     public static final File WORKING_DIR = new File(DATA_DIR, "working");
     public static final File TMPDIR = new File(WORKING_DIR, "tmpdir");
-    public static final File TARGETDIR = new File(WORKING_DIR,"target");
+    public static final File TARGETDIR = new File(WORKING_DIR, "target");
     public static final File SINGLE_TARGET_DIR = new File(
 	    WORKING_DIR, "single_target");
     public static final File DATABASE_TARGET_DIR = new File(

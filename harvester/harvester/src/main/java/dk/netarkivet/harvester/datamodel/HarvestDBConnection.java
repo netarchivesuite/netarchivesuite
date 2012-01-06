@@ -102,9 +102,6 @@ public final class HarvestDBConnection {
                 // For external databases, use the HarvestdatabaseUpdateApplication tool
                 if (dbSpec instanceof DerbyEmbeddedSpecifics) {
                     dbSpec.updateTables();
-                } else {
-                    System.out.println("not updated, as this is not a embedded db:" 
-                            + dbSpec.getDriverClassName());
                 }
             }
             
@@ -298,8 +295,8 @@ public final class HarvestDBConnection {
                 Settings.getInt(CommonSettings.DB_POOL_MAX_STM_PER_CONN));
 
         if (log.isInfoEnabled()) {
-            String msg = new String(
-                    "Connection pool initialized with the following values:");
+            String msg = 
+                    "Connection pool initialized with the following values:";
             msg += "\n- minPoolSize=" + dataSource.getMinPoolSize();
             msg += "\n- maxPoolSize=" + dataSource.getMaxPoolSize();
             msg += "\n- acquireIncrement=" + dataSource.getAcquireIncrement();
