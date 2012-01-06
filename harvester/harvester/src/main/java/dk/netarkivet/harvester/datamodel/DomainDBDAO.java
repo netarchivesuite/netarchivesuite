@@ -88,17 +88,17 @@ public class DomainDBDAO extends DomainDAO {
 
         Connection connection = HarvestDBConnection.get();
         try {
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.CONFIGURATIONS);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.DOMAINS);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.CONFIGPASSWORDS);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.CONFIGSEEDLISTS);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.SEEDLISTS);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.PASSWORDS);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.OWNERINFO);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.HISTORYINFO);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDTYPE);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELD);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDVALUE);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.CONFIGURATIONS);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.DOMAINS);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.CONFIGPASSWORDS);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.CONFIGSEEDLISTS);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.SEEDLISTS);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.PASSWORDS);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.OWNERINFO);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.HISTORYINFO);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDTYPE);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELD);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDVALUE);
          } finally {
             HarvestDBConnection.release(connection);
         }

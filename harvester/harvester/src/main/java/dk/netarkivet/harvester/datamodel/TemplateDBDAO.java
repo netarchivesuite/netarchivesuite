@@ -63,7 +63,7 @@ public class TemplateDBDAO extends TemplateDAO {
     TemplateDBDAO() {
         Connection connection = HarvestDBConnection.get();
         try {
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.ORDERTEMPLATES);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.ORDERTEMPLATES);
         } finally {
             HarvestDBConnection.release(connection);
         }

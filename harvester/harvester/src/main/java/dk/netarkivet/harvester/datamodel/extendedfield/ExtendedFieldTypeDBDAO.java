@@ -58,9 +58,9 @@ public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
 
         Connection connection = HarvestDBConnection.get();
         try {
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDTYPE);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELD);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDVALUE);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDTYPE);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELD);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDVALUE);
         } finally {
             HarvestDBConnection.release(connection);
         }

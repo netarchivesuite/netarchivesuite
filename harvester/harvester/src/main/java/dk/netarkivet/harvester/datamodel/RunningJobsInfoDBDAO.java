@@ -142,9 +142,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
              * 'runningJobsHistory',
              * 'runningJobsMonitor' and 'frontierReportMonitor'.
              */
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.RUNNINGJOBSHISTORY);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.RUNNINGJOBSMONITOR);
-            DBUtils.checkTableVersion(connection, HarvesterDatabaseTables.FRONTIERREPORTMONITOR);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.RUNNINGJOBSHISTORY);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.RUNNINGJOBSMONITOR);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.FRONTIERREPORTMONITOR);
         } finally {
             HarvestDBConnection.release(connection);
         }

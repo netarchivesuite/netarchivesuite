@@ -43,9 +43,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables;
 
 /**
  * Various database related utilities.
@@ -767,28 +765,6 @@ public final class DBUtils {
             throw new IOFailure(message, e);
         } finally {
             closeStatementIfOpen(s);
-        }
-    }
-
-    /** Check that a database table has the required version version.
-     *
-     * NB: the provided connection is not closed.
-     * @param connection connection to the database.
-     * @param table The table to check up against required version
-     * @throws IllegalState if the version isn't as required.
-     */
-    public static void checkTableVersion(Connection connection,
-                                         HarvesterDatabaseTables table) {
-        ArgumentNotValid.checkNotNull(connection, "Connection connection");
-        ArgumentNotValid.checkNotNull(table, "HarvesterDatabaseTables table");
-        
-        int actualVersion = getTableVersion(connection, table.getTablename());
-        if (actualVersion != table.getRequiredVersion()) {
-            String message = "Wrong table version for '" + table.getTablename()
-                    + "': Should be " + table.getRequiredVersion()
-                    + ", but is " + actualVersion;
-            log.warn(message);
-            throw new IllegalState(message);
         }
     }
 
