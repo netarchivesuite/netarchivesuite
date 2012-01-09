@@ -79,6 +79,12 @@ public class MetadataFile implements Comparable<MetadataFile> {
         "metadata://[^/]*/crawl/logs/crawl\\.log.*";
 
     /**
+     * A pattern identifying the recover.gz log metadata entry.
+     */
+    public static final String RECOVER_LOG_PATTERN =
+            "metadata://[^/]*/crawl/logs/recover\\.gz.*";
+    
+    /**
      * The pattern controlling which files in the crawl directory root should be
      * stored in the metadata ARC.
      */

@@ -399,7 +399,7 @@ implements CleanupIF {
             // Jobs should arrive with status "submitted". If this is not the
             // case, log the error and send a job-failed message back.
             // HarvestScheduler likes getting a STARTED message before
-            // SUBMITTED, so we oblige it here.
+            // FAILED, so we oblige it here.
             if (job.getStatus() != JobStatus.SUBMITTED) {
                 String message = "Message '" + msg.toString() + "' arrived with"
                         + " status " + job.getStatus()
@@ -691,7 +691,7 @@ implements CleanupIF {
                 removeListener();
 
                 File crawlDir = createCrawlDir();
-
+                
                 final HeritrixFiles files =
                         controller.writeHarvestFiles(
                                 crawlDir,
@@ -781,12 +781,6 @@ implements CleanupIF {
                 throw e;
             }
         }
-    }
-
-    @Override
-    public void visit(IndexReadyMessage msg) {
-        throw new NotImplementedException("This method is not implemented");
-
     }
 
     /**

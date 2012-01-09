@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCWriter;
 
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.HarvesterArcRepositoryClient;
 import dk.netarkivet.common.distribute.indexserver.Index;
 import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
@@ -46,6 +47,7 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
+import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
@@ -53,6 +55,7 @@ import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
+import dk.netarkivet.viewerproxy.webinterface.Reporting;
 
 /**
  * This class handles all the things in a single harvest that are not related
@@ -146,11 +149,61 @@ public class HarvestController {
                               job.getJobID(),
                               job.getOrigHarvestDefinitionID());
 
+        
+        // Check, if this job is a job that tries to continue a previous job
+        // using the Heritrix recover.gz log.
+        if (job.getContinuationOf() != null) {
+            Long previousJob = job.getContinuationOf();
+            List<CDXRecord> metaCDXes = null;
+            try {
+                metaCDXes 
+                = Reporting.getMetadataCDXRecordsForJob(previousJob);
+            } catch (IOFailure e) {
+                log.debug("Failed to retrive CDX of metatadata records. Maybe the metadata arcfile for job " 
+                        + previousJob + " does not exist in repository", e);
+            }
+            
+            CDXRecord recoverlogCDX = null;
+            if (metaCDXes != null) {
+                for (CDXRecord cdx : metaCDXes) {
+                    if (cdx.getURL().matches(MetadataFile.RECOVER_LOG_PATTERN)) {
+                        recoverlogCDX = cdx;
+                    }
+                }
+                if (recoverlogCDX == null) {
+                    log.debug("No recover.gz log found in metadata-arcfile");
+                } else {
+                    log.debug("recover.gz log found in metadata-arcfile");
+                }
+            }
+            
+            BitarchiveRecord br = null;
+            if (recoverlogCDX != null) { // Retrieve recover.gz from metadata.arc file
+                br = ArcRepositoryClientFactory.getViewerInstance().get(
+                        recoverlogCDX.getArcfile(), recoverlogCDX.getOffset());
+                if (br != null) {
+                    log.debug("recover.gz log retrieved from metadata-arcfile");
+                
+                } else {
+                    log.debug("recover.gz log not retrieved from metadata-arcfile");
+                }
+            }
+            
+            if (br != null) {
+                files.writeRecoverBackupfile(br.getData());
+            }
+            
+            //TODO modify order.xml, so Heritrix recover-path points
+            // to files.getRecoverBackupGzFile()
+            
+        }
+        
+        
         // Create harvestInfo file in crawldir
         // & create preharvest-metadata-1.arc
         log.debug("Writing persistent job data for job " + job.getJobID());
         // Check that harvestInfo does not yet exist
-
+        
         // Write job data to persistent storage (harvestinfo file)
         new PersistentJobData(files.getCrawlDir()).write(job, hdi);
         // Create jobId-preharvest-metadata-1.arc for this job
