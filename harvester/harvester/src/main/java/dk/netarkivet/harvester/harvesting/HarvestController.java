@@ -23,19 +23,24 @@
 
 package dk.netarkivet.harvester.harvesting;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCWriter;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
+import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.HarvesterArcRepositoryClient;
 import dk.netarkivet.common.distribute.indexserver.Index;
@@ -43,11 +48,14 @@ import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
+import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
@@ -55,7 +63,7 @@ import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
-import dk.netarkivet.viewerproxy.webinterface.Reporting;
+//import dk.netarkivet.viewerproxy.webinterface.Reporting;
 
 /**
  * This class handles all the things in a single harvest that are not related
@@ -157,7 +165,7 @@ public class HarvestController {
             List<CDXRecord> metaCDXes = null;
             try {
                 metaCDXes 
-                = Reporting.getMetadataCDXRecordsForJob(previousJob);
+                = getMetadataCDXRecordsForJob(previousJob);
             } catch (IOFailure e) {
                 log.debug("Failed to retrive CDX of metatadata records. Maybe the metadata arcfile for job " 
                         + previousJob + " does not exist in repository", e);
@@ -448,6 +456,50 @@ public class HarvestController {
         Index<Set<Long>> jobIndex = jobIndexCache.getIndex(
                 jobIDsForDuplicateReduction);
         return jobIndex.getIndexFile();
+    }
+    
+    /**
+     * Submit a batch job to generate cdx for all metadata files for a job, and
+     * report result in a list.
+     * @param jobid The job to get cdx for.
+     * @return A list of cdx records.
+     * @throws ArgumentNotValid If jobid is 0 or negative.
+     * @throws IOFailure On trouble generating the cdx
+     */
+    public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
+        ArgumentNotValid.checkPositive(jobid, "jobid");
+        FileBatchJob cdxJob = new ExtractCDXJob(false);
+        cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+\\.arc(\\.gz)?");
+        File f;
+        try {
+            f = File.createTempFile(jobid + "-reports", ".cdx",
+                                    FileUtils.getTempDir());
+        } catch (IOException e) {
+            throw new IOFailure("Could not create temporary file", e);
+        }
+        BatchStatus status
+                = ArcRepositoryClientFactory.getViewerInstance().batch(
+                cdxJob, Settings.get(CommonSettings.USE_REPLICA_ID));
+        status.getResultFile().copyTo(f);
+        List<CDXRecord> records;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(f));
+            records = new ArrayList<CDXRecord>();
+            for (String line = reader.readLine();
+                 line != null; line = reader.readLine()) {
+                String[] parts = line.split("\\s+");
+                CDXRecord record = new CDXRecord(parts);
+                records.add(record);
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Unable to read results from file '" + f
+                                + "'", e);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            FileUtils.remove(f);
+        }
+        return records;
     }
 
 }
