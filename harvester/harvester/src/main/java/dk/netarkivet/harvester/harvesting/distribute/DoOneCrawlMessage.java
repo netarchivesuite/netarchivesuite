@@ -36,7 +36,6 @@ import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 
-
 /**
  * Container for doOneCrawl request.
  * Contains the crawler job definition.
@@ -60,7 +59,7 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
      * @param submittedJob    the Job to crawl
      * @param to      the ChannelID for the Server
      * @param metadata A list of job-metadata
-     * @throws ArgumentNotValid when sJob is null
+     * @throws ArgumentNotValid when submittedJob is null
      */
     public DoOneCrawlMessage(
             Job submittedJob, ChannelID to,
@@ -68,7 +67,7 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
             List<MetadataEntry> metadata)
     throws ArgumentNotValid {
         super(to, Channels.getError());
-        ArgumentNotValid.checkNotNull(submittedJob, "sJob");
+        ArgumentNotValid.checkNotNull(submittedJob, "submittedJob");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
         this.submittedJob = submittedJob;
         this.origHarvestInfo = harvestInfo;

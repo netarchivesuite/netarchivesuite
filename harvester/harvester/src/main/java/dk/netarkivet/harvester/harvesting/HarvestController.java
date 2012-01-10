@@ -37,6 +37,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCWriter;
+import org.dom4j.Document;
+import org.dom4j.Node;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -57,6 +59,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
@@ -191,21 +194,15 @@ public class HarvestController {
                         recoverlogCDX.getArcfile(), recoverlogCDX.getOffset());
                 if (br != null) {
                     log.debug("recover.gz log retrieved from metadata-arcfile");
-                
+                    files.writeRecoverBackupfile(br.getData());
+                    // modify order.xml, so Heritrix recover-path points
+                    // to the retrieved recoverlog
+                    insertHeritrixRecoverPathInOrderXML(job, files);
                 } else {
                     log.debug("recover.gz log not retrieved from metadata-arcfile");
                 }
-            }
-            
-            if (br != null) {
-                files.writeRecoverBackupfile(br.getData());
-            }
-            
-            //TODO modify order.xml, so Heritrix recover-path points
-            // to files.getRecoverBackupGzFile()
-            
+            } 
         }
-        
         
         // Create harvestInfo file in crawldir
         // & create preharvest-metadata-1.arc
@@ -218,6 +215,7 @@ public class HarvestController {
         writePreharvestMetadata(job, metadataEntries, crawldir);
 
         files.writeSeedsTxt(job.getSeedListAsString());
+       
         files.writeOrderXml(job.getOrderXMLdoc());
         // Only retrieve index if deduplication is not disabled in the template.
         if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
@@ -235,6 +233,30 @@ public class HarvestController {
             log.warn("Unable to create arcsdir: " + files.getArcsDir());
         }
         return files;
+    }
+
+    /**
+     * Insert the correct recoverpath in the order.xml for the given harvestjob.
+     * @param job A harvestjob
+     * @param files Heritrix files related to this harvestjob.
+     */
+    private void insertHeritrixRecoverPathInOrderXML(Job job, HeritrixFiles files) {
+        Document order = job.getOrderXMLdoc();
+        final String RECOVERLOG_PATH_XPATH =
+                "/crawl-order/controller/string[@name='recover-path']";
+        Node orderXmlNode = order.selectSingleNode(RECOVERLOG_PATH_XPATH);
+        if (orderXmlNode != null) {
+            orderXmlNode.setText(files.getRecoverBackupGzFile().getAbsolutePath());
+            log.debug("The Heritrix recover path now refers to '" 
+                    + files.getRecoverBackupGzFile().getAbsolutePath()
+                    + "'.");
+            job.setOrderXMLDoc(order);
+        } else {
+            throw new IOFailure(
+                    "Unable to locate the '" + RECOVERLOG_PATH_XPATH 
+                    + "' element in order.xml: "
+                    + order.asXML());
+        }
     }
 
     /**
