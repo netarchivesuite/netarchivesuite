@@ -737,7 +737,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"),
                         gmlOneBaMon);
-        GenericMessageListener gmlTwoBaMon = new GenericMessageListener();
+        //GenericMessageListener gmlTwoBaMon = new GenericMessageListener();
         con.setListener(Channels.retrieveReplicaChannelFromReplicaId("TWO"),
                         gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();

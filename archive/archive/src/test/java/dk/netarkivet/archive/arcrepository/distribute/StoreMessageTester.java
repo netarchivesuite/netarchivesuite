@@ -27,6 +27,7 @@ import java.io.File;
 import junit.framework.TestCase;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
+import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -36,8 +37,6 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
  * Basic unit tests for the StoreMessage.
- * TODO do test methods for the getters.
- * 
  */
 public class StoreMessageTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
@@ -60,14 +59,14 @@ public class StoreMessageTester extends TestCase {
     public void testInvalidArguments() {
 
         try {
-            new StoreMessage(null, new File(""));
+            new StoreMessage( (ChannelID) null, new File(""));
             fail("Should throw ArgumentNotValid on null Channel");
         } catch (ArgumentNotValid e) {
             // expected case
         }
 
         try {
-            new StoreMessage(Channels.getTheRepos(), null);
+            new StoreMessage(Channels.getTheRepos(), (File) null);
             fail("Should throw ArgumentNotValid on null file");
         } catch (ArgumentNotValid e) {
             // expected case
@@ -92,6 +91,9 @@ public class StoreMessageTester extends TestCase {
         };
         
         msg.accept(amv);
+        // test getters
+        assertEquals(Channels.getError(), msg.getReplyTo());
+        assertEquals(TestInfo.ARCFILE.getName(), msg.getArcfileName());
     }
 
 }

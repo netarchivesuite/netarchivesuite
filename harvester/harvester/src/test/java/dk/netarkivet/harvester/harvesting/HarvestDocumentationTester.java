@@ -199,7 +199,7 @@ public class HarvestDocumentationTester extends TestCase {
     public void testGetMetadataARCFileName() {
         String job = "7";
         try {
-            HarvestDocumentation.getMetadataARCFileName(null);
+            HarvestDocumentation.getMetadataARCFileName((String)null);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
             //Expected
@@ -539,7 +539,7 @@ public class HarvestDocumentationTester extends TestCase {
         // Go through all the records, and check if all relevant data is being stored
         // Replace TestInfo.WORKING_DIR by TestInfo.CRAWLDIR_ORIGINALS_DIR, because the testing will not work after
         // we now remove the files.
-        File ORIGINAL_CRAWLDIR = TestInfo.CRAWLDIR_ORIGINALS_DIR;
+        //File ORIGINAL_CRAWLDIR = TestInfo.CRAWLDIR_ORIGINALS_DIR;
         File metadataArcFile = iF.getMetadataArcFiles().get(0);
         String URL =
                 "metadata://netarkivet.dk/crawl/setup/order.xml?heritrixVersion="

@@ -121,7 +121,7 @@ public class HarvestControllerTester extends TestCase {
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES,
                      "Not a number");
         try {
-            hc = HarvestController.getInstance();
+            HarvestController.getInstance();
             fail("The ArcRepositoryClient should have thrown an exception");
         } catch (ArgumentNotValid e) {
             //expected

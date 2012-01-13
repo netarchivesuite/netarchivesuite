@@ -45,7 +45,6 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
-import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
 import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
@@ -317,8 +316,8 @@ public class HTMLUtilsTester extends TestCase {
         WebinterfaceTestCase.TestServletRequest request
                 = new WebinterfaceTestCase.TestServletRequest();
         request.setParameterMap(parameterMap);
-        I18n I18N = new I18n(
-                dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
+        //I18n I18N = new I18n(
+        //        dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
                 request);
 

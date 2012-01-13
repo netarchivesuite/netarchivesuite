@@ -34,11 +34,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: lc
- * Date: Nov 4, 2004
- * Time: 11:26:36 AM
- * To change this template use File | Settings | File Templates.
+ * A simple test of the ARCREADER that is bundled with Heritrix 1.14.4. 
  */
 public class ARCReaderTester extends TestCase {
     public static final String ARCHIVE_DIR =

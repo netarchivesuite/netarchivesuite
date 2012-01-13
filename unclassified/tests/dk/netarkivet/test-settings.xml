@@ -42,7 +42,7 @@
 			<accessFile>tests/dk/netarkivet/jmxremote.access</accessFile>
 		</jmx>
 		<http>
-    		<port>7076</port>
+    		<port>8076</port>
 	    </http>
     	<remoteFile>
 	       	<class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
@@ -132,5 +132,9 @@
                 <checkinterval>5000</checkinterval>
                 <indexingtimeout>172800</indexingtimeout>
         </indexserver>
-    </archive>    
+    </archive>
+    <wayback><resourcestore>
+    	<cachedir>./tests/commontempdir/cachedir</cachedir>
+    </resourcestore>
+    </wayback>
 </settings>
