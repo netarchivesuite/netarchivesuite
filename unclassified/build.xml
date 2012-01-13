@@ -79,7 +79,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     httpunit-1.6.jar
     jaxen-1.1.jar
     jetty-6.1.26.jar
-    jetty-dependencies/ant-1.6.5.jar
     jetty-dependencies/core-3.1.1.jar
     jetty-dependencies/jetty-util-6.1.26.jar
     jetty-dependencies/jsp-2.1-jetty-6.1.26.jar
@@ -126,7 +125,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="junit-3.8.2.jar"/>
                 <include name="jaxen-1.1.jar"/>
                 <include name="jetty-6.1.26.jar"/>
-                <include name="jetty-dependencies/ant-1.6.5.jar"/>
                 <include name="jetty-dependencies/core-3.1.1.jar"/>
                 <include name="jetty-dependencies/jetty-util-6.1.26.jar"/>
                 <include name="jetty-dependencies/jsp-2.1-jetty-6.1.26.jar"/>
@@ -239,7 +237,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <chmod file="${testdir}/dk/netarkivet/jmxremote.password" perm="400"/>
         <junit fork="true" forkmode="once" printsummary="true" timeout="3000000">
             <jvmarg value="-Xmx768m"/>
-            <jvmarg value="-XX:MaxPermSize=256"/>
+            <jvmarg value="-XX:MaxPermSize=265m"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
             <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
