@@ -68,7 +68,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'jobs', 6);
+    values ( 'jobs', 7);
 insert into schemaversions ( tablename, version )
     values ( 'job_configs', 1);
 insert into schemaversions (tablename, version )
@@ -311,7 +311,8 @@ create table jobs (
     submitteddate datetime,
     resubmitted_as_job bigint,
     num_configs int not null default 0,
-    edition bigint not null
+    edition bigint not null,
+    continuationof bigint
 );
 
 create index jobstatus on jobs(status);

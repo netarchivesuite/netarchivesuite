@@ -74,7 +74,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'ordertemplates', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'jobs', 6);
+    VALUES ( 'jobs', 7);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'job_configs', 1);
 INSERT INTO schemaversions (tablename, version )
@@ -358,7 +358,8 @@ CREATE TABLE jobs (
     submitteddate timestamp,
     resubmitted_as_job bigint,
     num_configs int NOT NULL default 0,
-    edition bigint NOT NULL
+    edition bigint NOT NULL,
+    continuationof bigint
 );
 
 CREATE INDEX jobstatus on jobs(status) TABLESPACE tsindex;

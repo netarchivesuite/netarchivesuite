@@ -82,7 +82,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'jobs', 6);
+    values ( 'jobs', 7);
 insert into schemaversions ( tablename, version )
     values ( 'job_configs', 1);
 insert into schemaversions (tablename, version )
@@ -445,7 +445,9 @@ create table jobs (
     num_configs int not null default 0,  -- Number of configurations in the
                                          --  job, autocreated for optimization
                                          --  purposes
-    edition bigint not null   -- Marker for optimistic locking by web interface
+    edition bigint not null,   -- Marker for optimistic locking by web interface
+    continuationof bigint      -- if not null this job tries to continue where this job left of
+    						   -- using the Heritrix recoverlog 										
 );
 
 create index jobstatus on jobs(status);
