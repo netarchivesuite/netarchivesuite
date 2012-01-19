@@ -463,13 +463,6 @@ public class CommonSettings {
             = REPLICAS_SETTINGS + "." + REPLICA_TAG + "." + REPLICAID_TAG;
 
     /**
-     * <b>settings.common.replicas.replica.replicaType</b>: <br>
-     * The types for all replicas in the environment.
-     */
-    public static String REPLICA_TYPES = REPLICAS_SETTINGS + "." + REPLICA_TAG
-            + "." + REPLICATYPE_TAG;
-
-    /**
      * <b>settings.common.useReplicaId</b>: <br>
      * Default bitarchive to use for e.g. batch jobs (if none is specified). */
     public static String USE_REPLICA_ID
