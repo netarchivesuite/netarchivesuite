@@ -190,14 +190,12 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
                 uploadFile = msg.getRemoteFile();
                 
                 // upload the file to the checksum instance.
+                // Here the remoteFile is also deleted, if it is no longer needed.
                 cs.upload(uploadFile, msg.getArcfileName());
             } catch (Throwable e) {
                 log.warn("Cannot process upload message '" + msg + "'", e);
                 msg.setNotOk(e);
             } finally { // check if enough space
-                if (uploadFile != null) { // delete remotefile
-                    uploadFile.cleanup();
-                }
                 if (!cs.hasEnoughSpace()) {
                     log.warn("Not enough space any more.");
                     jmsCon.removeListener(theCR, this);

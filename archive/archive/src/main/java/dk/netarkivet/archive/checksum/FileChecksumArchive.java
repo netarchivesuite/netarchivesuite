@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -608,8 +609,6 @@ public final class FileChecksumArchive extends ChecksumArchive {
     /**
      * The method for uploading a file to the archive.
      * 
-     * TODO use file instead of remoteFile.
-     * 
      * @param file The remote file containing the file to be uploaded.
      * @param filename The name of the arcFile.
      * @throws ArgumentNotValid If the RemoteFile is null or if the filename
@@ -623,35 +622,46 @@ public final class FileChecksumArchive extends ChecksumArchive {
         ArgumentNotValid.checkNotNull(file, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
-        // synchronize the memory.
-        synchronizeWithFile();
+        InputStream input = null;
+        
+        try {
+            input = file.getInputStream();
+            
+            // synchronize the memory.
+            synchronizeWithFile();
 
-        // calculate the checksum
-        String checksum = calculateChecksum(file.getInputStream());
-        
-        // check if file already exist in archive.
-        if(checksumArchive.containsKey(filename)) {
-            // handle whether the checksum are the same.
-            if(checksumArchive.get(filename).equals(checksum)) {
-                log.warn("Cannot upload arcfile '" + filename + "', "
-                        + "it is already archived with the same checksum: '"
-                        + checksum);
-            } else {
-                // This is not allowed!
-                throw new IllegalState("Cannot upload arcfile '" + filename 
-                        + "', it is already archived with different checksum."
-                        + " Archive checksum: '" + checksumArchive.get(filename)
-                        + "' and the uploaded file has: '" + checksum + "'.");
+            // calculate the checksum
+            String checksum = calculateChecksum(file.getInputStream());
+
+            // check if file already exist in archive.
+            if(checksumArchive.containsKey(filename)) {
+                // handle whether the checksum are the same.
+                if(checksumArchive.get(filename).equals(checksum)) {
+                    log.warn("Cannot upload arcfile '" + filename + "', "
+                            + "it is already archived with the same checksum: '"
+                            + checksum);
+                } else {
+                    // This is not allowed!
+                    throw new IllegalState("Cannot upload arcfile '" + filename 
+                            + "', it is already archived with different checksum."
+                            + " Archive checksum: '" + checksumArchive.get(filename)
+                            + "' and the uploaded file has: '" + checksum + "'.");
+                }
+
+                // It is a success that it already is within the archive, thus do
+                // not throw an exception. 
+                return;
             }
-                
-            // It is a success that it already is within the archive, thus do
-            // not throw an exception. 
-            return;
-        }
+
+            // otherwise put the file into memory and file. 
+            appendEntryToFile(filename, checksum);
+            checksumArchive.put(filename, checksum);
+        } finally {
+            if (input != null) {
+                IOUtils.closeQuietly(input);
+            }
+    }
         
-        // otherwise put the file into memory and file. 
-        appendEntryToFile(filename, checksum);
-        checksumArchive.put(filename, checksum);
     }
     
     /**
