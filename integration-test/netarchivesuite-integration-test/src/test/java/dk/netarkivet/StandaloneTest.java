@@ -49,9 +49,26 @@ public abstract class StandaloneTest extends SystemTest {
 
     @BeforeTest (alwaysRun = true) 
     public void startTestSystem() throws Exception {
-        if (System.getProperty("systemtest.redeploy", "false").equals("true")) {
+        if (System.getProperty("systemtest.deploy", "false").equals("true")) {
             runCommandWithEnvironment(getStartupScript());
         }
+        int numberOfSecondsToWaiting = 0;
+        int maxNumberOfSecondsToWait = 60;
+        System.out.print("Waiting for GUI to start");
+        while (numberOfSecondsToWaiting++ < maxNumberOfSecondsToWait) {
+            driver.get(baseUrl + "/HarvestDefinition/");
+            if (selenium.isTextPresent("Definitions")) {
+                System.out.println();
+                return;
+            } else {
+                System.out.print(".");
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ie) {
+            }
+        } 
+        throw new RuntimeException("Failed to load GUI");
     }
 
     /**
@@ -86,14 +103,15 @@ public abstract class StandaloneTest extends SystemTest {
      * @param remoteCommand The command to run on the test server
      * @throws Exception It apparently didn't work.
      */
-    private void runCommandWithEnvironment(String remoteCommand)
+    protected void runCommandWithEnvironment(String remoteCommand)
     throws Exception {
         BufferedReader inReader = null;
         BufferedReader errReader = null;
         JSch jsch = new JSch();
 
         Session session = jsch.getSession("test", "kb-prod-udv-001.kb.dk");
-        session.setPassword("test123");
+        // session.setPassword("test123");
+        session.setTimeout(1000);
 
         java.util.Properties config = new java.util.Properties();
         config.put("StrictHostKeyChecking", "no");
@@ -123,9 +141,14 @@ public abstract class StandaloneTest extends SystemTest {
 
         InputStream in = channel.getInputStream();
         InputStream err = ((ChannelExec) channel).getErrStream();
-
+        
         channel.connect(1000);
+        log.debug("Channel connected");
 
+        inReader = new BufferedReader(new InputStreamReader(in));
+        
+        int numberOfSecondsWaiting = 0;
+        int maxNumberOfSecondsToWait = 60*10;
         while (true) {
             if (channel.isClosed()) {
                 log.info("Command finished in "
@@ -133,14 +156,23 @@ public abstract class StandaloneTest extends SystemTest {
                         + " seconds. " + "Exit code was "
                         + channel.getExitStatus());
                 break;
+            } else if ( numberOfSecondsWaiting > maxNumberOfSecondsToWait) {
+                log.info("Command not finished after " + maxNumberOfSecondsToWait + " seconds. " +
+                		"Forcing disconnect.");
+                channel.disconnect();
+                break;
             }
             try {
                 Thread.sleep(1000);
+
+                String s;
+                while ((s = inReader.readLine()) != null) {
+                    System.out.println("ssh: " + s);
+                }
             } catch (InterruptedException ie) {
             }
         }
 
-        inReader = new BufferedReader(new InputStreamReader(in));
         errReader = new BufferedReader(new InputStreamReader(err));
 
         String s;
@@ -149,15 +181,13 @@ public abstract class StandaloneTest extends SystemTest {
             sb.append(s).append("\n");
         }
         log.debug(sb);
-        while ((s = inReader.readLine()) != null) {
-            sb.append(s).append("\n");
-        }
-        String result = sb.toString();
-        log.error(result);
-        if (result.contains("ERROR") || result.contains("Exception")) {
+        
+        String errors = sb.toString();
+        log.info("Finished command");
+        if (errors.contains("ERROR") || errors.contains("Exception")) {
             throw new RuntimeException(
                     "Console output from deployment of NetarchiveSuite to the test system "
-                    + "indicated a error");
+                    + "indicated a error: " + errors);
         }
     }
 
@@ -189,13 +219,22 @@ public abstract class StandaloneTest extends SystemTest {
     }
 
     @AfterMethod
+    /**
+     * Takes care of failure situations. This includes: <ol>
+     * <li> Generate a a screen dump of the page failing the test.
+     * <ol>
+     * 
+     * This method is called by TestNG.
+     * 
+     * @param result The result which TestNG will inject
+     */
     public void onFailure(ITestResult result) { 
         if (!result.isSuccess()) { 
             log.info("Test failure, dumping screenshot as " + "target/failurescreendumps/" + 
                     result.getMethod() + ".png");
             File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
             try {
-                FileUtils.copyFile(scrFile, new File("target/failurescreendumps/" + result.getMethod() + ".png"));
+                FileUtils.copyFile(scrFile, new File("failurescreendumps/" + result.getMethod() + ".png"));
             } catch (IOException e) {
                 log.error("Failed to save screendump on error");
             }

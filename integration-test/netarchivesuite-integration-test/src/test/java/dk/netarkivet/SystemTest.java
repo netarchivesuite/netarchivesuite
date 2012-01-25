@@ -40,7 +40,6 @@ public class SystemTest extends ExtendedTestCase {
     public void setupSelenium() {
         driver = new FirefoxDriver();
         selenium = new WebDriverBackedSelenium(driver, baseUrl);
-        System.out.println("Initialized driver to : " + driver);
     }
     
     @AfterTest (alwaysRun=true)
