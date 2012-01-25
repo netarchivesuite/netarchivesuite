@@ -99,6 +99,8 @@ public class ReplicaCacheDatabaseTester extends TestCase {
     }
     
     @SuppressWarnings("unchecked")
+    // Irrgggh 300 line god test method. Way too long method implementing an ill-defined test scope 
+    // with an increasingly difficult-to-follow test state. 
     public void testAll() throws Exception {
         Date beforeTest = new Date(Calendar.getInstance().getTimeInMillis());
 

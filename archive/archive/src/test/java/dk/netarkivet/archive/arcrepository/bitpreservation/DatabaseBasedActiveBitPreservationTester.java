@@ -202,7 +202,11 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
      * @throws Exception if error.
      */
     public void testChangedFiles() throws Exception {
-	// initialise the database. Clean database and put new entries.
+	// Initialise the database. Clean database and put new entries.
+        
+    // Comment (Mikis): This test appears to depend on MissingFiles test being run prior to this test. 
+    // So the comment stated stated at the top isn't strictly try. It would also be a serious side-effect of the
+    // 'getInstance() methods that the database would be cleaned (or is the comment just obsolete??).
 	ReplicaCacheDatabase.getInstance();
 
 	dbabp = DatabaseBasedActiveBitPreservation.getInstance();
