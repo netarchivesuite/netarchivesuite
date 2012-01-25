@@ -278,7 +278,7 @@ public class ArcRepository implements CleanupIF {
     private synchronized void startUpload(RemoteFile rf,
             ReplicaClient replicaClient, Replica replica) {
         final String filename = rf.getName();
-        log.debug("Upload started of file '" + filename + "' at '"
+        log.debug("Upload started of file '" + filename + "' to Replica '"
                 + replica.getId() + "'");
 
         String replicaChannelId = replica.getIdentificationChannel().getName();
@@ -312,6 +312,8 @@ public class ArcRepository implements CleanupIF {
                 sendChecksumRequestForFile(filename, replicaClient);
                 break;
             case UPLOAD_COMPLETED:
+                log.warn("Trying to upload file '" + filename 
+                        + "' that already has state UPLOAD_COMPLETED for this replica");
                 break;
             default:
                 throw new UnknownID("Unknown state: '" + storeState + "'");
@@ -869,7 +871,8 @@ public class ArcRepository implements CleanupIF {
             // Find out if and how to make general reply on store()
             // remove file from outstandingRemoteFiles if a reply is given
             considerReplyingOnStore(arcFileName);
-            
+            log.debug("Checksum processing for file '" + arcFileName 
+                    + "'... completed.");
             return;
         } 
 
@@ -891,8 +894,10 @@ public class ArcRepository implements CleanupIF {
                                 replicaChannelName);
                         connectedReplicas.get(rep).sendUploadMessage(rf);
                         incRetry(replicaChannelName, arcFileName);
+                        log.debug("Checksum processing for file '" + arcFileName 
+                                + "'... completed.");
                         return;
-                    } //else logning was done allready above
+                    } //else logging was done already above
                 } else { //cannot retry
                     log.warn("Cannot do more retry upload of "
                         + "remote file: '" + arcFileName + "' to '"
@@ -926,6 +931,8 @@ public class ArcRepository implements CleanupIF {
         ad.setState(arcFileName, replicaChannelName,
                     ReplicaStoreState.UPLOAD_FAILED);
         considerReplyingOnStore(arcFileName);
+        log.debug("Checksum processing for file '" + arcFileName 
+                + "'... completed.");
     }
 
     /**

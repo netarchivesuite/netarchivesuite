@@ -182,18 +182,24 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      */
     public void visit(UploadMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "UploadMessage msg");
-        log.debug("Receiving upload message: " + msg.toString());
+        log.debug("Receiving UploadMessage: " + msg.toString());
         try {
+            RemoteFile uploadFile = null;
             try {
                 // retrieve the data file.
-                RemoteFile uploadFile = msg.getRemoteFile();
+               uploadFile = msg.getRemoteFile();
                 
                 // upload the file to the checksum instance.
                 cs.upload(uploadFile, msg.getArcfileName());
+                //uploadFile.cleanup();
             } catch (Throwable e) {
                 log.warn("Cannot process upload message '" + msg + "'", e);
                 msg.setNotOk(e);
-            } finally { // check if enough space
+            } finally { 
+                //if (uploadFile != null) { // delete remotefile
+                //    uploadFile.cleanup();
+                //}
+                // check if enough space
                 if (!cs.hasEnoughSpace()) {
                     log.warn("Not enough space any more.");
                     jmsCon.removeListener(theCR, this);
@@ -302,7 +308,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     public void visit(GetChecksumMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
         
-        log.debug("Receiving get checksum message: " + msg.toString());
+        log.debug("Receiving GetChecksumMessage: " + msg.toString());
         try {
             // get the name of the arc file
             String filename = msg.getArcfileName();
@@ -340,7 +346,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      */
     public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
-        log.debug("Receiving get all filenames message: " + msg.toString());
+        log.debug("Receiving GetAllFilenamesMessage: " + msg.toString());
 
         try {
             // get all the file names
@@ -365,7 +371,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      */
     public void visit(GetAllChecksumsMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
-        log.debug("Receiving get all checksum message: " + msg.toString());
+        log.debug("Receiving GetAllChecksumsMessage: " + msg.toString());
 
         try {
             msg.setFile(cs.getArchiveAsFile());
