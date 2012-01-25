@@ -364,7 +364,7 @@ public class CommonSettings {
      * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
      * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
      * fully deactivated.
-     * @see c3p0 documentation.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html">c3p0 documentation</a>
      */
     public static String DB_POOL_MAX_STM =
         "settings.common.database.pool.maxStm";
@@ -376,7 +376,7 @@ public class CommonSettings {
      * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
      * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
      * fully deactivated.
-     * @see c3p0 documentation.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html">c3p0 documentation</a>
      */
     public static String DB_POOL_MAX_STM_PER_CONN =
         "settings.common.database.pool.maxStmPerConn";

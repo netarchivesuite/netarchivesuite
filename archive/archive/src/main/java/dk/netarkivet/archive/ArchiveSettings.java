@@ -100,7 +100,7 @@ public class ArchiveSettings {
             = "settings.archive.bitarchive.baseFileDir";
     
     /**
-     * <b>settings.archive.bitarchive.heartbeatFrequency:* <br>
+     * <b>settings.archive.bitarchive.heartbeatFrequency</b>: <br>
      * The frequency in milliseconds of heartbeats that are sent by each
      * BitarchiveServer to the BitarchiveMonitor.
      */
@@ -108,7 +108,7 @@ public class ArchiveSettings {
             = "settings.archive.bitarchive.heartbeatFrequency";
    
     /**
-     * <b>settings.archive.bitarchive.acceptableHeartbeatDelay:* <br>
+     * <b>settings.archive.bitarchive.acceptableHeartbeatDelay</b>: <br>
      * If we haven't heard from a bit archive within this many milliseconds,
      * we don't expect it to be online and won't wait for them to reply on a
      * batch job.  This number should be significantly greater than
@@ -143,7 +143,7 @@ public class ArchiveSettings {
             = "settings.archive.bitpreservation.baseDir";
     
     /**
-     * <b>settings.archive.admin.class</b>
+     * <b>settings.archive.admin.class</b>: <br>
      * The path to the settings for the adminstration instance class.
      */
     public static String ADMIN_CLASS = "settings.archive.admin.class";
@@ -264,7 +264,8 @@ public class ArchiveSettings {
      * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
      * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
      * fully deactivated.
-     * @see c3p0 documentation.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#maxStatements">
+     * c3p0 maxStatements documentation</a>
      */
     public static String DB_POOL_MAX_STM =
         "settings.archive.admin.database.pool.maxStm";
@@ -276,7 +277,8 @@ public class ArchiveSettings {
      * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
      * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
      * fully deactivated.
-     * @see c3p0 documentation.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#maxStatementsPerConnection">
+     * c3p0 maxStatementsPerConnection documentation</a>
      */
     public static String DB_POOL_MAX_STM_PER_CONN =
         "settings.archive.admin.database.pool.maxStmPerConn";
@@ -285,7 +287,8 @@ public class ArchiveSettings {
      * <b>settings.archive.admin.database.pool.idleConnTestPeriod</b>: <br>
      * Configure idle connection testing period in seconds.
      * Default is 0, which means no idle connection testing
-     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#idleConnectionTestPeriod"/>
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#idleConnectionTestPeriod">
+     * c3p0 idleConnectionTestPeriod documentation</a>
      */
     public static String DB_POOL_IDLE_CONN_TEST_PERIOD =
         "settings.archive.admin.database.pool.idleConnTestPeriod";
@@ -294,7 +297,8 @@ public class ArchiveSettings {
      * <b>settings.archive.admin.database.pool.idleConnTestOnCheckin</b>: <br>
      * Configure if a connection validity should be checked when returned to 
      * the pool. Default is false.
-     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#testConnectionOnCheckin"/>
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#testConnectionOnCheckin">
+     * c3p0 testConnectionOnCheckin documentation</a>
      */
     public static String DB_POOL_IDLE_CONN_TEST_ON_CHECKIN =
         "settings.archive.admin.database.pool.idleConnTestOnCheckin";
@@ -303,7 +307,8 @@ public class ArchiveSettings {
      * <b>settings.archive.admin.database.pool.idleConnTestQuery</b>: <br>
      * The SQL query to be used when testing an idle connection.
      * Default is empty, which means using c3p0 defaults.
-     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#preferredTestQuery"/>
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#preferredTestQuery">
+     * c3p0 preferredTestQuery documentation</a>
      */
     public static String DB_POOL_IDLE_CONN_TEST_QUERY =
         "settings.archive.admin.database.pool.idleConnTestQuery";
