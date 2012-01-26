@@ -24,11 +24,13 @@ package dk.netarkivet;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.testng.ITestResult;
@@ -108,14 +110,11 @@ public abstract class StandaloneTest extends SystemTest {
         BufferedReader inReader = null;
         BufferedReader errReader = null;
         JSch jsch = new JSch();
-
+        
         Session session = jsch.getSession("test", "kb-prod-udv-001.kb.dk");
-        // session.setPassword("test123");
+        setupJSchIdentity(jsch);
         session.setTimeout(1000);
-
-        java.util.Properties config = new java.util.Properties();
-        config.put("StrictHostKeyChecking", "no");
-        session.setConfig(config);
+        session.setConfig("StrictHostKeyChecking", "no");
 
         session.connect();
 
@@ -180,7 +179,6 @@ public abstract class StandaloneTest extends SystemTest {
         while ((s = errReader.readLine()) != null) {
             sb.append(s).append("\n");
         }
-        log.debug(sb);
         
         String errors = sb.toString();
         log.info("Finished command");
@@ -217,6 +215,23 @@ public abstract class StandaloneTest extends SystemTest {
         }
         return revisionValue;
     }
+    
+    /**
+     * Setup public/private key authentication for JSch. The folowing attributes are used: <ul>
+     * 
+     * @param jsch
+     * @throws Exception
+     */
+    private void setupJSchIdentity(JSch jsch) throws Exception {
+        String userHome =  System.getProperty("user.home");
+        String privateKeyPath = System.getProperty("privateKeyPath", userHome + "/.ssh/id_rsa");
+        String publicKeyPath = System.getProperty("publicKeyPath", userHome + "/.ssh/id_rsa.pub");
+        String privateKeyPassword = "";
+           byte [] privateKey = IOUtils.toByteArray(new FileInputStream(privateKeyPath));
+           byte [] publicKey = IOUtils.toByteArray(new FileInputStream(publicKeyPath));
+           byte [] passphrase = privateKeyPassword.getBytes(); 
+           jsch.addIdentity("test", privateKey, publicKey, passphrase);
+        }
 
     @AfterMethod
     /**
