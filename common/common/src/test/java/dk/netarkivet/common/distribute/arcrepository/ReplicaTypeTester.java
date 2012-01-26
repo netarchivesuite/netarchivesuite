@@ -29,14 +29,9 @@ import junit.framework.TestCase;
 public class ReplicaTypeTester extends TestCase {
 
     public void testFromOrdinal() {
+        assertEquals(ReplicaType.NO_REPLICA_TYPE, ReplicaType.fromOrdinal(0));
         assertEquals(ReplicaType.BITARCHIVE, ReplicaType.fromOrdinal(1));
         assertEquals(ReplicaType.CHECKSUM, ReplicaType.fromOrdinal(2));
-        try {
-            ReplicaType.fromOrdinal(2);
-            fail("Should throw ArgumentNotValid. The old NO_REPLICA_TYPE which used this value has been removed");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
         try {
             ReplicaType.fromOrdinal(3);
             fail("Should throw ArgumentNotValid. Has ReplicaType been changed");
@@ -56,19 +51,10 @@ public class ReplicaTypeTester extends TestCase {
                 ReplicaType.fromSetting(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING));
         assertEquals(ReplicaType.CHECKSUM, 
                 ReplicaType.fromSetting(ReplicaType.CHECKSUM_REPLICATYPE_AS_STRING));
-        try {
-            ReplicaType.fromSetting("");
-
-            fail("Should throw ArgumentNotValid. This is not a valid replica type");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }try {
-            ReplicaType.fromSetting(null);
-
-            fail("Should throw ArgumentNotValid. This is not a valid replica type");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
+        assertEquals(ReplicaType.NO_REPLICA_TYPE, 
+                ReplicaType.fromSetting(""));
+        assertEquals(ReplicaType.NO_REPLICA_TYPE, 
+                ReplicaType.fromSetting("not yet introduced type"));
         
     }
 }
