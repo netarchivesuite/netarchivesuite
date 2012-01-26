@@ -34,6 +34,7 @@
         <indexClient>
             <!-- Default amounts to 1 hour -->
             <indexRequestTimeout>3600000</indexRequestTimeout>
+            <useLocalFtpServer>false</useLocalFtpServer>
         </indexClient>
     </common>
 </settings>

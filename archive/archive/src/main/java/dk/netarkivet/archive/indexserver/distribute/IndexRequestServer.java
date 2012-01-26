@@ -51,6 +51,7 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
+import dk.netarkivet.common.distribute.RemoteFileSettings;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -319,6 +320,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
             checkMessage(irMsg);
             RequestType type = irMsg.getRequestType();
             Set<Long> jobIDs = irMsg.getRequestedJobs();
+            
             log.info("Generating an index of type '" + type
                      + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
                      + "]");
@@ -331,6 +333,12 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                          + "]");
                 File cacheFile = handler.getCacheFile(jobIDs);
                 if (mustReturnIndex) { // return index now! (default behaviour)
+                    RemoteFileSettings connectionParams = irMsg.getRemoteFileSettings();
+                    boolean useMessageSuppliedConnectionParams = connectionParams != null;
+                    if (useMessageSuppliedConnectionParams) {
+                        log.debug("Trying to use client supplied RemoteFileServer: "
+                                + connectionParams.getServerName());                    
+                    }
                     if (cacheFile.isDirectory()) {
                         // This cache uses multiple files stored in a directory,
                         // so transfer them all.
@@ -339,13 +347,14 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                             = new ArrayList<RemoteFile>(cacheFiles.length);
                         for (File f : cacheFiles) {
                             resultFiles.add(
-                                    RemoteFileFactory.getCopyfileInstance(f));
+                                    RemoteFileFactory.getCopyfileInstance(f, irMsg.getRemoteFileSettings()));
+                            
                         }
                         irMsg.setResultFiles(resultFiles);
                     } else {
                         irMsg.setResultFile(
                                 RemoteFileFactory.getCopyfileInstance(
-                                cacheFile));
+                                cacheFile, irMsg.getRemoteFileSettings()));
                     }
                 }
             } else {

@@ -47,12 +47,25 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
      */
     public static RemoteFile getInstance(File file, boolean useChecksums,
                                          boolean fileDeletable,
-                                         boolean multipleDownloads) {
+                                         boolean multipleDownloads,
+                                         RemoteFileSettings connectionParams) {
+        ArgumentNotValid.checkNotNull(file, "File file");
+        return SettingsFactory.getInstance(
+                CommonSettings.REMOTE_FILE_CLASS, file, useChecksums, 
+                fileDeletable, multipleDownloads, connectionParams);
+    }
+   
+    
+    /* Same as the above method, but without the required RemoteFileSettings. */
+    public static RemoteFile getInstance(File file, boolean useChecksums,
+            boolean fileDeletable,
+            boolean multipleDownloads) {
         ArgumentNotValid.checkNotNull(file, "File file");
         return SettingsFactory.getInstance(
                 CommonSettings.REMOTE_FILE_CLASS, file, useChecksums, 
                 fileDeletable, multipleDownloads);
     }
+    
 
     /** Same as getInstance(file, false, true, false).
      * @param file The file to move to another computer.
@@ -61,13 +74,25 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
         return getInstance(file, false, true, false);   
     }
 
-    /** Same as getInstance(file, false, false, false).
+    /** Same as getInstance(file, false, false, false, null).
      * @param file The file to copy to another computer.
      */
     public static RemoteFile getCopyfileInstance(File file) {
         return getInstance(file, false, false, false);
     }
 
+    /** Same as getInstance(file, false, false, false, connectionParams).
+     * @param file The file to copy to another computer.
+     */
+    public static RemoteFile getCopyfileInstance(File file, RemoteFileSettings connectionParams) {
+        if (connectionParams != null) {
+            return getInstance(file, false, false, false, connectionParams);
+        } else {
+            return getInstance(file, false, false, false);
+        }
+    }
+    
+    
     /** Same as getInstance(file, false, false, false).
      * @param file The file to copy to another computer.
      */

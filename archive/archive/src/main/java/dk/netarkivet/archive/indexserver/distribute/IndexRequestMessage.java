@@ -38,6 +38,7 @@ import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.RemoteFileSettings;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -91,6 +92,12 @@ public class IndexRequestMessage extends ArchiveMessage {
      * The harvestId needing this index for its jobs.
      */
     private Long harvestId;
+    
+    /** Optionally, the client can decide which connection settings
+     * to use for the RemoteFile. Only applicable when using FTPRemoteFile.
+     */
+    private RemoteFileSettings optionalConnectionSettings;
+    
 
     /**
      * Generate an index request message. Receiver is always the index server
@@ -119,10 +126,12 @@ public class IndexRequestMessage extends ArchiveMessage {
      * @param replyTo The channel to send the reply to.
      * @param returnIndex If true, include the index in the reply.
      * @param harvestId The harvestId needing this index for its jobs
+     * @param connectionParameters connection parameters to be used (if null, 
+     * we use the local settings). 
      */
     public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, 
             ChannelID replyTo,
-            boolean returnIndex, Long harvestId) {
+            boolean returnIndex, Long harvestId, RemoteFileSettings ftpconnectionInfo) {
        super(Channels.getTheIndexServer(), replyTo);
        ArgumentNotValid.checkNotNull(requestType, "RequestType requestType");
        ArgumentNotValid.checkNotNull(jobSet, "Set<Long> jobSet");
@@ -131,7 +140,13 @@ public class IndexRequestMessage extends ArchiveMessage {
        this.requestType = requestType;
        this.shouldReturnIndex = returnIndex;
        this.harvestId = harvestId;
+       this.optionalConnectionSettings = ftpconnectionInfo;
     }
+
+    public RemoteFileSettings getRemoteFileSettings() {
+        return this.optionalConnectionSettings;
+    }
+    
     
     /**
      * 

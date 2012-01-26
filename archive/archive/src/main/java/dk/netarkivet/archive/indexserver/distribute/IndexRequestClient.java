@@ -35,10 +35,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.indexserver.MultiFileBasedCache;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.FTPRemoteFile;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.RemoteFileFactory;
+import dk.netarkivet.common.distribute.RemoteFileSettings;
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
@@ -104,6 +108,15 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
     public static final String INDEXREQUEST_TIMEOUT
             = "settings.common.indexClient.indexRequestTimeout";
 
+    /**
+     * <b>settings.common.indexClient.useLocalFtpServer</b>: <br>
+     * Setting for using the ftpserver assigned to the client instead of the 
+     * one assigned to the indexserver.
+     * Set to false by default.
+     */
+    public static final String INDEXREQUEST_USE_LOCAL_FTPSERVER
+            = "settings.common.indexClient.useLocalFtpServer";
+    
     /**
      * Initialise this client, handling requests of a given type. Start
      * listening to channel if not done yet.
@@ -285,7 +298,28 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         //NOTE: It might be a good idea to make this dependant on "type"
         return Settings.getLong(INDEXREQUEST_TIMEOUT);
     }
-
+    
+    /** 
+     * Check if we should use local ftpserver or not, provided you are using 
+     * FTPRemoteFile as the {@link CommonSettings#REMOTE_FILE_CLASS}.
+     * This always returns false, when {@link CommonSettings#REMOTE_FILE_CLASS}
+     * is not {@link FTPRemoteFile}. 
+     * @return true, if we should use the local ftpserver when retrieving
+     * data from the indexserver, false, if the indexserver should decide for us.
+     */
+    protected boolean useLocalFtpserver() {
+        // check first that RemoteFileClass is FTPRemoteFile
+        String remotefileClassname = Settings.get(CommonSettings.REMOTE_FILE_CLASS);
+        if (!remotefileClassname.equalsIgnoreCase(FTPRemoteFile.class.getName())) {
+            log.debug("Not using localftpserver as transport, because "
+                    + "this application uses " +  remotefileClassname 
+                    + " as file transport class");
+            return false;
+        } else {
+            return Settings.getBoolean(INDEXREQUEST_USE_LOCAL_FTPSERVER);
+        }
+    }
+    
     /**
      * Check the reply message is valid.
      * @param jobSet The requested set of jobs
@@ -369,9 +403,18 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                 + "]");
         //Send request to server but ask for it not to be returned
         // Ask that message sent to the scheduler.
-        IndexRequestMessage irMsg = new IndexRequestMessage(
+        IndexRequestMessage irMsg = null;
+        
+        if (useLocalFtpserver()) {
+            RemoteFileSettings settings = FTPRemoteFile.getRemoteFileSettings();
+            irMsg = new IndexRequestMessage(
                 requestType, jobSet, Channels.getTheSched(),
-                false, harvestId);
+                false, harvestId, settings);
+        } else {
+            irMsg = new IndexRequestMessage(
+                    requestType, jobSet, Channels.getTheSched(),
+                    false, harvestId, null);
+        }
         JMSConnectionFactory.getInstance().send(irMsg);
     }
 }

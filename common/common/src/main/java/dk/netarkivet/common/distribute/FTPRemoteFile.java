@@ -84,13 +84,13 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     private String ftpServerName = Settings.get(FTP_SERVER_NAME);
 
     /** The ftp-server port. */
-    private final int ftpServerPort = Settings.getInt(
+    private int ftpServerPort = Settings.getInt(
             FTP_SERVER_PORT);
     /** The username used to connect to the ftp-server. */
-    private final String ftpUserName = Settings.get(
+    private String ftpUserName = Settings.get(
             FTP_USER_NAME);
     /** The password used to connect to the ftp-server. */
-    private final String ftpUserPassword = Settings.get(
+    private String ftpUserPassword = Settings.get(
             FTP_USER_PASSWORD);
 
     /**
@@ -176,10 +176,17 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * @throws ArgumentNotValid if the local file cannot be read.
      */
     private FTPRemoteFile(File localFile, boolean useChecksums,
-                          boolean fileDeletable, boolean multipleDownloads)
+                          boolean fileDeletable, boolean multipleDownloads, 
+                          RemoteFileSettings connectionParams)
             throws IOFailure {
         super(localFile, useChecksums, fileDeletable, multipleDownloads);
-
+        if (connectionParams != null) {
+            // Override the default connectionParameters
+            this.ftpServerName = connectionParams.getServerName();
+            this.ftpServerPort = connectionParams.getServerPort();
+            this.ftpUserName = connectionParams.getUserName();
+            this.ftpUserPassword = connectionParams.getUserPassword();
+        }
         if (filesize == 0) {
             try {
                 if (useChecksums) {
@@ -327,9 +334,21 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             throws IOFailure {
         ArgumentNotValid.checkNotNull(localFile, "File remoteFile");
         return new FTPRemoteFile(localFile, useChecksums,
-                                 fileDeletable, multipleDownloads);
+                                 fileDeletable, multipleDownloads, null);
     }
 
+    public static RemoteFile getInstance(File localFile,
+            Boolean useChecksums,
+            Boolean fileDeletable,
+            Boolean multipleDownloads,
+            RemoteFileSettings connectionParams)
+                    throws IOFailure {
+        ArgumentNotValid.checkNotNull(localFile, "File remoteFile");
+        return new FTPRemoteFile(localFile, useChecksums,
+                fileDeletable, multipleDownloads, connectionParams);
+    }
+    
+    
     /**
      * An implementation of the getInputStream operation that works with FTP.
      * Notice that most of the special work (logging out and checking MD5)
@@ -611,6 +630,14 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     @Override
     public int getNumberOfRetries() {
         return FTP_RETRIES;
+    }
+    
+    public static RemoteFileSettings getRemoteFileSettings() {
+        return new RemoteFileSettings(
+                Settings.get(FTP_SERVER_NAME),
+                Settings.getInt(FTP_SERVER_PORT),
+                Settings.get(FTP_USER_NAME), 
+                Settings.get(FTP_USER_PASSWORD));
     }
 }
 
