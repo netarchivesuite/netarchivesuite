@@ -191,14 +191,10 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
                 
                 // upload the file to the checksum instance.
                 cs.upload(uploadFile, msg.getArcfileName());
-                //uploadFile.cleanup();
             } catch (Throwable e) {
                 log.warn("Cannot process upload message '" + msg + "'", e);
                 msg.setNotOk(e);
             } finally { 
-                //if (uploadFile != null) { // delete remotefile
-                //    uploadFile.cleanup();
-                //}
                 // check if enough space
                 if (!cs.hasEnoughSpace()) {
                     log.warn("Not enough space any more.");
