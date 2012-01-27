@@ -235,8 +235,10 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
      */
     @Override
     public void shutdown() {
-        JMSConnectionFactory.getInstance().removeListener(
-                Channels.getTheSched(), this);
+        // FIXME This command fail when shutting down properly. (kill $PID)
+        // instead of kill -9 $PID. See NAS-1976
+        //JMSConnectionFactory.getInstance().removeListener(
+        //        Channels.getTheSched(), this);
     }
 
     @Override

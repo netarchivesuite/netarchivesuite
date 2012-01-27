@@ -74,7 +74,9 @@ public class MonitorRegistryServer extends MonitorMessageHandler
 
     /** Remove listener on shutdown. */
     public void cleanup() {
-        JMSConnectionFactory.getInstance().removeListener(
-                Channels.getTheMonitorServer(), this);
+        // FIXME These commands fail when shutting down properly. (kill $PID)
+        // instead of kill -9 $PID. See NAS-1976
+        //JMSConnectionFactory.getInstance().removeListener(
+        //        Channels.getTheMonitorServer(), this);
     }
 }
