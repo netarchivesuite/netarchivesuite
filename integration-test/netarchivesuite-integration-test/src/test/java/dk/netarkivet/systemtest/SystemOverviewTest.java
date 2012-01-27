@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet;
+package dk.netarkivet.systemtest;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 /**
  * Test specification: http://netarchive.dk/suite/TEST1 .
  */
-public class SystemOverviewTest extends StandaloneTest {
+public class SystemOverviewTest extends SeleniumTest {
 
     /**
      * Test specification: http://netarchive.dk/suite/It23JMXMailCheck .

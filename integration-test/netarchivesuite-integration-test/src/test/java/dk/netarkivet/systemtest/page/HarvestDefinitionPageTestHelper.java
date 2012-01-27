@@ -1,4 +1,4 @@
-package dk.netarkivet.page;
+package dk.netarkivet.systemtest.page;
 
 public class HarvestDefinitionPageTestHelper {
 

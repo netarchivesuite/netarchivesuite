@@ -20,39 +20,36 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet;
+package dk.netarkivet.systemtest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jaccept.structure.ExtendedTestCase;
+import org.testng.annotations.BeforeTest;
 
-/**
- * This Logger should be used by all the test code to enable separation of test
- * logs from the applications logs.
- */
-public class TestLogger {   
-    private Logger log;
-
-    public TestLogger(Class<?> logHandle) {
-        log = LoggerFactory.getLogger(logHandle);
+public class SystemTest extends ExtendedTestCase {
+    protected TestEnvironmentManager environmentManager;
+    
+    @BeforeTest (alwaysRun=true)
+    public void setupTest() {
+        startTestSystem();
+    }
+    
+    private void startTestSystem() {
+        if (System.getProperty("systemtest.deploy", "false").equals("true")) {
+            try {
+                environmentManager.runCommandWithEnvironment(getStartupScript());
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to start test system");
+            }
+        }
     }
 
-    public void error(String msg) {
-        log.error(msg);
+    /**
+     * Defines the default test system startup script to run. May be overridden by 
+     * subclasses classes.
+     * @return The startup script to run.
+     */
+    protected String getStartupScript() {
+        return "all_test_db.sh";
     }
 
-    public void debug(String string) {
-        log.debug(string);
-    }
-
-    public void warn(String msg) {
-        log.warn(msg);
-    }
-
-    public void info(String msg) {
-        log.info(msg);
-    }
-
-    public void debug(StringBuffer sb) {
-        log.debug(sb + "");
-    }
 }

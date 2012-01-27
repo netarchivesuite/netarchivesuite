@@ -20,34 +20,27 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet;
+package dk.netarkivet.systemtest;
 
-import org.jaccept.structure.ExtendedTestCase;
-import org.openqa.selenium.WebDriverBackedSelenium;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.Assert;
 
-import com.thoughtworks.selenium.Selenium;
+public class NASAssert extends Assert {
 
-public class SystemTest extends ExtendedTestCase {
-    protected final TestLogger log = new TestLogger(getClass());
-    protected static FirefoxDriver driver;
-    protected static Selenium selenium;
-    protected static String baseUrl = "http://kb-test-adm-001.kb.dk:" + getPort();
-    
-    @BeforeTest (alwaysRun=true)
-    public void setupSelenium() {
-        driver = new FirefoxDriver();
-        selenium = new WebDriverBackedSelenium(driver, baseUrl);
-    }
-    
-    @AfterTest (alwaysRun=true)
-    public void stopSelenium() {
-        selenium.stop();
-    }
-    
-    public static String getPort() {
-        return System.getProperty("systemtest.port", "8071");
-    }
+//  public static void assertEquals(Set<Object> expectedSet, Set<Object> resultSet) {
+//    Set<Object> disjunctInExpectedSet = new HashSet<Object>(expectedSet);
+//    disjunctInExpectedSet.removeAll(resultSet);
+//
+//    Set<Object> disjunctInResultSet = 
+//      new HashSet<Object>(resultSet);
+//    disjunctInResultSet.removeAll(expectedSet);
+//
+//    if (!disjunctInExpectedSet.isEmpty() || !disjunctInResultSet.isEmpty()) {
+//            fail("Sets not equal, Expected sets contained the following " 
+//                    + disjunctInExpectedSet.size() + " elements "
+//                    + " not found in the result set:\n" + disjunctInExpectedSet
+//                    + "\nand the following " +  disjunctInResultSet.size()
+//                    + " elements in the result set where not"
+//                    + " found in the expected set\n" + disjunctInResultSet);
+//        }
+//  }
 }

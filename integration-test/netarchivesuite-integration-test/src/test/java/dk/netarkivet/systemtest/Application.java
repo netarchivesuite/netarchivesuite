@@ -20,10 +20,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet;
+package dk.netarkivet.systemtest;
 
 /**
- * Encapsulates the attributes found for an application in the systemoverview page.
+ * Encapsulates the attributes found for an application dk.netarkivet.systemtestoverview page.
  */
 public class Application {
     private final String machine;

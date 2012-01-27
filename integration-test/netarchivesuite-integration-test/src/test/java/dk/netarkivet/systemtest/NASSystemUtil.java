@@ -20,12 +20,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet;
+package dk.netarkivet.systemtest;
 
 public class NASSystemUtil {
     public void startSystem() {
     }
-
     /**
      * Defines the standard application setup in the DK test system.
      */

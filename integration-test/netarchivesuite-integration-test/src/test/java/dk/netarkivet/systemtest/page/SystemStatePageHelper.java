@@ -21,15 +21,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.page;
+package dk.netarkivet.systemtest.page;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import com.thoughtworks.selenium.Selenium;
 
-import dk.netarkivet.Application;
-import dk.netarkivet.NASAssert;
+import dk.netarkivet.systemtest.Application;
+import dk.netarkivet.systemtest.NASAssert;
 
 /**
  * Provides utilities for accessing, manipulation and testing the 
