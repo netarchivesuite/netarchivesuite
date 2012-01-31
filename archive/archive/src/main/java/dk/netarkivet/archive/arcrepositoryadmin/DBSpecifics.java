@@ -56,7 +56,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     }
 
     /**
-     * Shutdown the database system, if running embeddedly.  Otherwise, this
+     * Shutdown the database system, if running in embedded mode.  Otherwise, this
      * is ignored.
      *
      * Will log a warning on errors, but otherwise ignore them.

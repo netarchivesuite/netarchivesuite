@@ -50,7 +50,7 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
     }
 
     /**
-     * Shutdown the database system, if running embeddedly.  Otherwise, this
+     * Shutdown the database system, if running in embedded mode.  Otherwise, this
      * is ignored.
      * <p/>
      * Will log a warning on errors, but otherwise ignore them.
