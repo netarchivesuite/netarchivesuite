@@ -38,7 +38,7 @@ public class SystemOverviewTest extends SeleniumTest {
     /**
      * Test specification: http://netarchive.dk/suite/It23JMXMailCheck .
      */
-    @Test
+    @Test (groups = {"guitest","functest"})
     public void generalTest() throws Exception {
         addDescription("Test specification: http://netarchive.dk/suite/It23JMXMailCheck");
         addStep("Goto the HarvestDefinition page", "");

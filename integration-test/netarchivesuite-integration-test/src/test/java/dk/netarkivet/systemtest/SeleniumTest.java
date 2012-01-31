@@ -24,8 +24,6 @@ package dk.netarkivet.systemtest;
 import java.io.File;
 import java.io.IOException;
 
-import javax.management.RuntimeErrorException;
-
 import org.apache.commons.io.FileUtils;
 import org.jaccept.structure.ExtendedTestCase;
 import org.openqa.selenium.OutputType;
@@ -42,7 +40,8 @@ import com.thoughtworks.selenium.Selenium;
 /**
  * The super class for all Selenium based system tests.
  */
-public abstract class SeleniumTest extends SystemTest {
+public abstract class SeleniumTest extends ExtendedTestCase {
+    protected TestEnvironmentManager environmentManager;
     protected final TestLogger log = new TestLogger(getClass());
     protected static FirefoxDriver driver;
     protected static Selenium selenium;
@@ -50,7 +49,31 @@ public abstract class SeleniumTest extends SystemTest {
 
     @BeforeTest (alwaysRun=true)
     public void setupTest() {
+        environmentManager = new TestEnvironmentManager(getTestX(), 8071);
+        startTestSystem();
         initialiseSelenium();
+    }
+    
+    /**
+     * Start the full test system. May be used to start 
+     */
+    private void startTestSystem() {
+        if (System.getProperty("systemtest.deploy", "false").equals("true")) {
+            try {
+                environmentManager.runCommand(getStartupScript());
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to start test system");
+            }
+        }
+    }
+
+    /**
+     * Defines the default test system startup script to run. May be overridden by 
+     * subclasses classes.
+     * @return The startup script to run.
+     */
+    protected String getStartupScript() {
+        return "all_test_db.sh";
     }
     
     private void initialiseSelenium() {

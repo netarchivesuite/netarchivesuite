@@ -19,7 +19,6 @@ public class TestEnvironmentManager {
     private final String PORT;
     private final String TIMESTAMP;
     private final String MAILRECEIVERS;
-    private final String DEPLOYMENT_SERVER = "kb-prod-udv-001.kb.dk";
 
     /**
      * The following environment definitions are used <ul>
@@ -31,9 +30,9 @@ public class TestEnvironmentManager {
      * </ul>
      * @param testX Defines the test name this test should be run under in the test system.
      */
-    public TestEnvironmentManager(String testX) {
+    public TestEnvironmentManager(String testX, int port) {
         TESTX = testX;
-        PORT = System.getProperty("systemtest.port", "8071");
+        PORT = System.getProperty("systemtest.port", Integer.toString(port));
         TIMESTAMP = lookupRevisionValue();
         MAILRECEIVERS = System.getProperty("systemtest.mailrecievers");
     }
@@ -46,46 +45,60 @@ public class TestEnvironmentManager {
     }
     
     /**
-     * Uses ssh to run the indicated command on the DEPLOYMENT_SERVER. The system test 
-     * environment variables:
-     * are set prior to running the command.
+     * Runs the a command on the DEPLOYMENT_SERVER with a command timeout of 1000 seconds. Delegates to the 
+     * ${link runCommand(String,int).
      * @param remoteCommand The command to run on the test server
-     * @throws Exception It apparently didn't work.
      */
-    public void runCommandWithEnvironment(String remoteCommand) throws Exception {
-        runCommandWithEnvironment(remoteCommand, 1000);
+    public void runCommand(String remoteCommand) throws Exception {
+        runCommand(remoteCommand, 1000);
+    }
+    
+    /**
+     * Runs the a command on the DEPLOYMENT_SERVER. Delegates to the 
+     * ${link runCommand(String,String,String,int).
+     * @param remoteCommand The server to run the command on.
+     * @param remoteCommand The command to run on the test server.
+     */
+    public void runCommand(String server, String remoteCommand) throws Exception {
+        runCommand(server, remoteCommand, 1000);
+    }
+    
+    /**
+     * Runs the a command with a command timeout of 1000 seconds. Delegates to the 
+     * ${link runCommand(String,String,int).
+     * @param remoteCommand The command to run on the test server.
+     * @param commandTimeout The timeout for the command.
+     */
+    public void runCommand(String remoteCommand, int commandTimeout) throws Exception {
+        runCommand(null, remoteCommand, 1000);
     }
 
     /**
-     * Extends the {@link runCommandWithEnvironment(String)} with the possibility of overriding the default
+     * Runs a remote command in the test environment via ssh. The system test environment variables:
+     * are set prior to running the command.
+     * Extends the {@link runCommand(String)} with the possibility of overriding the default
      * timeout of 1000 seconds. This may be useful in case of prolong operations.
-     * @param remoteCommand
+     * @param remoteCommand The server to run the command on. If this is null the command is
+     *  run on the DEPLOYMENT_SERVER. Commands run other server the will command will be executed by 
+     *  ssh to the DEPLOYMENT_SERVER and from here ssh to the actual test server. 
+     * @param remoteCommand The command to run on the test server.
+     * @param commandTimeout The timeout for the command.
      */
-    public void runCommandWithEnvironment(String remoteCommand, int commandTimeout)
+    public void runCommand(String server, String remoteCommand, int commandTimeout)
             throws Exception {
+        
+        String command = buildCommandForEnvironment(server, remoteCommand);
+        log.info("Running JSch command: " + command);
+        
         BufferedReader inReader = null;
         BufferedReader errReader = null;
         JSch jsch = new JSch();
-
-        Session session = jsch.getSession("test", DEPLOYMENT_SERVER);
+        Session session = jsch.getSession("test", TestEnvironment.DEPLOYMENT_SERVER);
         setupJSchIdentity(jsch);
         session.setConfig("StrictHostKeyChecking", "no");
-
-        session.connect();
-
-        String setTimeStampCommand = "export TIMESTAMP=" + TIMESTAMP;
-        String setPortCommand = "export PORT=" + PORT;
-        String setMailReceiversCommand = "export MAILRECEIVERS="+ MAILRECEIVERS;
-        String setTestCommand = "export TESTX=" + TESTX;
-        String setPathCommand = "source /etc/bashrc ; source /etc/profile; source ~/.bash_profile";
-
-        String command = setPathCommand + ";" + setTimeStampCommand + ";"
-                + setPortCommand + ";" + setMailReceiversCommand + ";"
-                + setTestCommand + ";" + remoteCommand;
-
+        
         long startTime = System.currentTimeMillis();
-        log.info("Running JSch command: " + command);
-
+        session.connect();
         Channel channel = session.openChannel("exec");
         ((ChannelExec) channel).setCommand(command);
         channel.setInputStream(null);
@@ -117,7 +130,6 @@ public class TestEnvironmentManager {
                     }
                     throw new RuntimeException("Failed to run command, exit code " + channel.getExitStatus() + 
                             "\n Problem was: " + sb);
-
                 }
                 break;
             } else if ( numberOfSecondsWaiting > maxNumberOfSecondsToWait) {
@@ -136,10 +148,30 @@ public class TestEnvironmentManager {
             } catch (InterruptedException ie) {
             }
         }
-
-        log.info("Finished command");
     }
 
+    /**
+     * Builds a ssh command to run in the configured environment.
+     */
+    private String buildCommandForEnvironment(String server, String remoteCommand) {
+
+        String sshTunnelPrefix = "";
+        if (server != null) {
+            sshTunnelPrefix = "ssh " + server + " ";
+        }
+        String setTimestampCommand = "export TIMESTAMP=" + TIMESTAMP;
+        String setPortCommand = "export PORT=" + PORT;
+        String setMailReceiversCommand = "export MAILRECEIVERS="+ MAILRECEIVERS;
+        String setTestCommand = "export TESTX=" + TESTX;
+        String setPathCommand = "source /etc/bashrc ; source /etc/profile; source ~/.bash_profile";
+
+        return sshTunnelPrefix
+                + setPathCommand + ";" + setTimestampCommand + ";"
+                + setPortCommand + ";" + setMailReceiversCommand + ";"
+                + setTestCommand + ";" + remoteCommand;
+
+    }
+    
     /**
      * The deployment script on the test server expects the 'TIMESTAMP' variable
      * to be set to the value between the 'NetarchiveSuite-' and '.zip' part of

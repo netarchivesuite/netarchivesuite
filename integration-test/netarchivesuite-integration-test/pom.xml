@@ -105,6 +105,7 @@
             </goals>
             <configuration>
               <skip>false</skip>
+              <groups>functest</groups>
             </configuration>
           </execution>
         </executions>
