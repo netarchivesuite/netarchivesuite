@@ -10,6 +10,8 @@
 -- mysql < createfullhddb.mysql
 -- mysql < it048_update.mysql
 
+connect fullhddb;
+
 create table extendedfieldtype (
     extendedfieldtype_id bigint not null primary key,
     name VARCHAR(50) not null
