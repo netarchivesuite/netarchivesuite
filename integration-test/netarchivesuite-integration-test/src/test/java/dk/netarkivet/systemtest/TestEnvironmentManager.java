@@ -45,6 +45,13 @@ public class TestEnvironmentManager {
     }
     
     /**
+     * @return The test name.
+     */
+    public String getTESTX() {
+        return TESTX;
+    }
+    
+    /**
      * Runs the a command on the DEPLOYMENT_SERVER with a command timeout of 1000 seconds. Delegates to the 
      * ${link runCommand(String,int).
      * @param remoteCommand The command to run on the test server
@@ -72,6 +79,17 @@ public class TestEnvironmentManager {
     public void runCommand(String remoteCommand, int commandTimeout) throws Exception {
         runCommand(null, remoteCommand, 1000);
     }
+    
+    /**
+     * Run the command the in the TESTX dir. This is the normal way of separating diffrent test run in parallel. 
+     * @param server
+     * @param remoteCommand
+     * @param commandTimeout
+     */
+    public void runTestXCommand(String server, String remoteCommand) throws Exception {
+        String testXRemoteCommand = "cd " + getTESTX() + ";" + remoteCommand;
+        runCommand(server, testXRemoteCommand, 1000);
+    }
 
     /**
      * Runs a remote command in the test environment via ssh. The system test environment variables:
@@ -84,11 +102,36 @@ public class TestEnvironmentManager {
      * @param remoteCommand The command to run on the test server.
      * @param commandTimeout The timeout for the command.
      */
-    public void runCommand(String server, String remoteCommand, int commandTimeout)
+    public void runCommand(String server, String command, int commandTimeout) 
             throws Exception {
+        runCommand(server, command, commandTimeout, "\"");
+    }
+    
+    public void runCommandWithoutQuotes(String command) throws Exception {
+        runCommand(null, command, 1000, "");
+    }
+    
+    public void runCommandWithoutQuotes(String command, int[] positiveExitCodes) throws Exception {
+        runCommand(null, command, 1000, "", positiveExitCodes);
+    }
+
+    /**
+     * @param quotes the quotes ", ', none or other to use to box the command.
+     */
+    public void runCommand(String server, String command, int commandTimeout, String quotes) 
+            throws Exception {
+        runCommand(server, command, commandTimeout, quotes, new int[]{0});
+    }
+    
+    /**
+     * @param positiveExitCodes The exit codes to consider the command a success. This will normally be only 0, but in case of
+     * f.ex. 'diff' 1 is also ok.
+     */
+    public void runCommand(String server, String command, int commandTimeout, String quotes, int[] positiveExitCodes) 
+            throws Exception {
+        RemoteCommand remoteCommand = new RemoteCommand(server, command, quotes);
+        log.info("Running JSch command: " + remoteCommand);
         
-        String command = buildCommandForEnvironment(server, remoteCommand);
-        log.info("Running JSch command: " + command);
         
         BufferedReader inReader = null;
         BufferedReader errReader = null;
@@ -100,7 +143,7 @@ public class TestEnvironmentManager {
         long startTime = System.currentTimeMillis();
         session.connect();
         Channel channel = session.openChannel("exec");
-        ((ChannelExec) channel).setCommand(command);
+        ((ChannelExec) channel).setCommand(remoteCommand.commandAsString());
         channel.setInputStream(null);
         ((ChannelExec) channel).setErrStream(null);
 
@@ -108,9 +151,10 @@ public class TestEnvironmentManager {
         InputStream err = ((ChannelExec) channel).getErrStream();
 
         channel.connect(1000);
-        log.debug("Channel connected");
+        log.debug("Channel connected, command: " + remoteCommand.commandAsString());
 
         inReader = new BufferedReader(new InputStreamReader(in));
+        errReader = new BufferedReader(new InputStreamReader(err));
 
         int numberOfSecondsWaiting = 0;
         int maxNumberOfSecondsToWait = 60*10;
@@ -120,16 +164,15 @@ public class TestEnvironmentManager {
                         + (System.currentTimeMillis() - startTime) / 1000
                         + " seconds. " + "Exit code was "
                         + channel.getExitStatus());
-                if (channel.getExitStatus() != 0 ) { 
-                    errReader = new BufferedReader(new InputStreamReader(err));
-
-                    String s;
-                    StringBuffer sb = new StringBuffer();
-                    while ((s = errReader.readLine()) != null) {
-                        sb.append(s).append("\n");
+                boolean errorOccured = true;
+                for (int positiveExit:positiveExitCodes) {
+                    if (positiveExit == channel.getExitStatus()) {
+                        errorOccured = false;
+                        break;
                     }
-                    throw new RuntimeException("Failed to run command, exit code " + channel.getExitStatus() + 
-                            "\n Problem was: " + sb);
+                }
+                if (errorOccured || err.available() > 0) { 
+                    throw new RuntimeException("Failed to run command, exit code " + channel.getExitStatus());
                 }
                 break;
             } else if ( numberOfSecondsWaiting > maxNumberOfSecondsToWait) {
@@ -143,33 +186,64 @@ public class TestEnvironmentManager {
 
                 String s;
                 while ((s = inReader.readLine()) != null) {
-                    System.out.println("ssh: " + s);
+                    log.debug("ssh: " + s);
+                }
+                while ((s = errReader.readLine()) != null) {
+                    log.warn("ssh error: " + s);
                 }
             } catch (InterruptedException ie) {
             }
         }
     }
 
-    /**
-     * Builds a ssh command to run in the configured environment.
-     */
-    private String buildCommandForEnvironment(String server, String remoteCommand) {
+    private class RemoteCommand {
+        final String sshTunneling;
+        final String environmentSetup;
+        final String command;
+        final String quotes;
+        
+        public RemoteCommand(String server, String command, String quotes) {       
+            if (server != null) {
+                sshTunneling = "ssh " + server + " ";
+            }  else {
+                sshTunneling = "";
+            }
+            
+            String setTimestampCommand = "export TIMESTAMP=" + TIMESTAMP;
+            String setPortCommand = "export PORT=" + PORT;
+            String setMailReceiversCommand = "export MAILRECEIVERS="+ MAILRECEIVERS;
+            String setTestCommand = "export TESTX=" + TESTX;
+            String setPathCommand = "source /etc/bashrc;source /etc/profile;source ~/.bash_profile";
+            
+            environmentSetup =
+                    setPathCommand + ";" + setTimestampCommand + ";"
+                    + setPortCommand + ";" + setMailReceiversCommand + ";"
+                    + setTestCommand + ";";
 
-        String sshTunnelPrefix = "";
-        if (server != null) {
-            sshTunnelPrefix = "ssh " + server + " ";
+            this.command = command;
+            this.quotes = quotes;
         }
-        String setTimestampCommand = "export TIMESTAMP=" + TIMESTAMP;
-        String setPortCommand = "export PORT=" + PORT;
-        String setMailReceiversCommand = "export MAILRECEIVERS="+ MAILRECEIVERS;
-        String setTestCommand = "export TESTX=" + TESTX;
-        String setPathCommand = "source /etc/bashrc ; source /etc/profile; source ~/.bash_profile";
 
-        return sshTunnelPrefix
-                + setPathCommand + ";" + setTimestampCommand + ";"
-                + setPortCommand + ";" + setMailReceiversCommand + ";"
-                + setTestCommand + ";" + remoteCommand;
+        /**
+         * Return the remote command as a bash command string.
+         * @return
+         */
+        public String commandAsString() {
+            return sshTunneling + quotes + environmentSetup + command + quotes;
+        }
 
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("RemoteCommand ");
+            if (sshTunneling != null && !sshTunneling.equals("")) {
+                sb.append("sshTunneling=" + sshTunneling);
+            }
+            sb.append("\n\t" + environmentSetup
+                    + "\n\t" + command);
+            return sb.toString();
+        }
+        
+        
     }
     
     /**

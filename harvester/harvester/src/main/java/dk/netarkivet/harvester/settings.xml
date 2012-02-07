@@ -81,7 +81,7 @@
             <minSpaceLeft>400000000</minSpaceLeft>
             <oldjobsDir>oldjobs</oldjobsDir>
             <queuePriority></queuePriority>
-            <sendReadyInterval>30</sendReadyInterval>
+            <sendReadyInterval>300</sendReadyInterval>
             <sendReadyDelay>1000</sendReadyDelay>
             <heritrix>
                 <!-- 30 minutes -->
