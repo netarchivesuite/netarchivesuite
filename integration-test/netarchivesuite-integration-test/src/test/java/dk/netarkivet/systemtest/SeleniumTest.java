@@ -60,7 +60,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     private void startTestSystem() {
         if (System.getProperty("systemtest.deploy", "false").equals("true")) {
             try {
-                environmentManager.runCommand(getStartupScript());
+                environmentManager.runCommandWithoutQuotes(getStartupScript());
             } catch (Exception e) {
                 throw new RuntimeException("Failed to start test system");
             }
