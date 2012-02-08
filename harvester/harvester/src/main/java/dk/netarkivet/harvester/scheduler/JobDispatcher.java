@@ -57,11 +57,13 @@ public class JobDispatcher {
     private final Log log = LogFactory.getLog(getClass());
     /** Connection to JMS provider. */
     private JMSConnection jmsConnection;
+    /** For jobDB access. */
+    private JobDAO jobDao;
     
     /**
      * @param jmsConnection The JMS connection to use.
      */
-    public JobDispatcher(JMSConnection jmsConnection) {
+    public JobDispatcher(JMSConnection jmsConnection, JobDAO dao) {
         log.info("Creating JobDispatcher");
         ArgumentNotValid.checkNotNull(jmsConnection, "jmsConnection");
         this.jmsConnection = jmsConnection;
@@ -75,8 +77,8 @@ public class JobDispatcher {
      */
     protected void submitNextNewJob(JobPriority priority) {
         final JobDAO dao = JobDAO.getInstance();
-        Iterator<Long> jobsToSubmit = dao.getAllJobIds(JobStatus.NEW, priority);
-        if (!jobsToSubmit.hasNext()) {
+        Job jobToSubmit = prepareNextJobForSubmission(priority);
+        if (jobToSubmit == null) {
             if (log.isTraceEnabled()) {
                 log.trace("No " + priority + " jobs to be run at this time");
             }
@@ -84,15 +86,7 @@ public class JobDispatcher {
             if (log.isDebugEnabled()) {
                 log.debug("Submitting new " + priority + " job");
             }
-            final long jobID = jobsToSubmit.next();
-            Job jobToSubmit = null;
             try {
-                jobToSubmit = dao.read(jobID);
-
-                jobToSubmit.setStatus(JobStatus.SUBMITTED);
-                jobToSubmit.setSubmittedDate(new Date());
-                dao.update(jobToSubmit);
-                
                 List<MetadataEntry> metadata = createMetadata(jobToSubmit);
                 
                 // Extract documentary information about the harvest
@@ -117,7 +111,7 @@ public class JobDispatcher {
                     }
 
                     // The schedule name can only be documented for
-                    // focused crawls.
+                    // selective crawls.
                     schedule = ph.getScheduleName();
 
                     hdComments = ph.getComments();
@@ -128,7 +122,8 @@ public class JobDispatcher {
                 log.info("Submitting job: " + jobToSubmit);
 
             } catch (Throwable e) {
-                String message = "Error while dispatching job " + jobID
+                String message = "Error while dispatching job " + 
+                        jobToSubmit.getJobID()
                         + ". Job status changed to FAILED";
                 log.warn(message, e);
                 if (jobToSubmit != null) {
@@ -139,6 +134,35 @@ public class JobDispatcher {
                     dao.update(jobToSubmit);
                 }
             }
+        }
+    }
+    
+    /**
+     * Will read the next job ready to run from the db and set the job to 
+     * submitted. If no job are ready, null will be returned.
+     * 
+     * Note the operation is synchronized, so only one thread may start the 
+     * submission of a job.
+     * @param priority the job priority.
+     * @return The job prepared for submission.
+     */
+    private synchronized Job prepareNextJobForSubmission(JobPriority priority) {
+        final JobDAO dao = JobDAO.getInstance();
+        Iterator<Long> jobsToSubmit = dao.getAllJobIds(JobStatus.NEW, priority);
+        if (!jobsToSubmit.hasNext()) {
+            return null;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Submitting new " + priority + " job");
+            }
+            final long jobID = jobsToSubmit.next();
+            Job jobToSubmit = null;
+            jobToSubmit = dao.read(jobID);
+
+            jobToSubmit.setStatus(JobStatus.SUBMITTED);
+            jobToSubmit.setSubmittedDate(new Date());
+            dao.update(jobToSubmit);
+            return jobToSubmit;
         }
     }
     
