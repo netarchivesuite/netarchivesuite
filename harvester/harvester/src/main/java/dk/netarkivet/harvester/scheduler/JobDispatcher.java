@@ -56,17 +56,18 @@ public class JobDispatcher {
     /** The logger to use.    */
     private final Log log = LogFactory.getLog(getClass());
     /** Connection to JMS provider. */
-    private JMSConnection jmsConnection;
+    private final JMSConnection jmsConnection;
     /** For jobDB access. */
-    private JobDAO jobDao;
+    private final JobDAO jobDao;
     
     /**
      * @param jmsConnection The JMS connection to use.
      */
-    public JobDispatcher(JMSConnection jmsConnection, JobDAO dao) {
+    public JobDispatcher(JMSConnection jmsConnection, JobDAO jobDao) {
         log.info("Creating JobDispatcher");
         ArgumentNotValid.checkNotNull(jmsConnection, "jmsConnection");
         this.jmsConnection = jmsConnection;
+        this.jobDao = jobDao;
     }
 
     /**
@@ -76,7 +77,6 @@ public class JobDispatcher {
      * @param priority the job priority
      */
     protected void submitNextNewJob(JobPriority priority) {
-        final JobDAO dao = JobDAO.getInstance();
         Job jobToSubmit = prepareNextJobForSubmission(priority);
         if (jobToSubmit == null) {
             if (log.isTraceEnabled()) {
@@ -131,7 +131,7 @@ public class JobDispatcher {
                     jobToSubmit.appendHarvestErrors(message);
                     jobToSubmit.appendHarvestErrorDetails(
                             ExceptionUtils.getStackTrace(e));
-                    dao.update(jobToSubmit);
+                    jobDao.update(jobToSubmit);
                 }
             }
         }
@@ -147,8 +147,8 @@ public class JobDispatcher {
      * @return The job prepared for submission.
      */
     private synchronized Job prepareNextJobForSubmission(JobPriority priority) {
-        final JobDAO dao = JobDAO.getInstance();
-        Iterator<Long> jobsToSubmit = dao.getAllJobIds(JobStatus.NEW, priority);
+        Iterator<Long> jobsToSubmit = 
+                jobDao.getAllJobIds(JobStatus.NEW, priority);
         if (!jobsToSubmit.hasNext()) {
             return null;
         } else {
@@ -157,11 +157,11 @@ public class JobDispatcher {
             }
             final long jobID = jobsToSubmit.next();
             Job jobToSubmit = null;
-            jobToSubmit = dao.read(jobID);
+            jobToSubmit = jobDao.read(jobID);
 
             jobToSubmit.setStatus(JobStatus.SUBMITTED);
             jobToSubmit.setSubmittedDate(new Date());
-            dao.update(jobToSubmit);
+            jobDao.update(jobToSubmit);
             return jobToSubmit;
         }
     }

@@ -27,6 +27,7 @@ package dk.netarkivet.harvester.scheduler;
 import junit.framework.TestCase;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
@@ -51,7 +52,7 @@ public class HarvesterStatusReceiverTest extends TestCase  {
         private JobPriority receivedPriority;
         
         public MockJobDispatcher() {
-            super(jms.getJMSConnection());
+            super(jms.getJMSConnection(), JobDAO.getInstance());
         }
 
         @Override

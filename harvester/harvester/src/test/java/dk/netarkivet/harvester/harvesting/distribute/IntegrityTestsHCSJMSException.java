@@ -137,7 +137,7 @@ public class IntegrityTestsHCSJMSException extends TestCase{
                 j.getOrigHarvestDefinitionID());
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
-        JobDispatcher hDisp = new JobDispatcher(con);
+        JobDispatcher hDisp = new JobDispatcher(con, JobDAO.getInstance());
         hDisp.doOneCrawl(j, "test", "test", "test",
                 new ArrayList<MetadataEntry>());
         //Trigger the exception handler - should not try to exit

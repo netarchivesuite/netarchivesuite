@@ -127,7 +127,7 @@ public class IntegrityTests extends DataModelTestCase {
                 RememberNotifications.class.getName());
         
         hs = HarvestControllerServer.getInstance();
-        jobDispatcher = new JobDispatcher(con);
+        jobDispatcher = new JobDispatcher(con, JobDAO.getInstance());
 
         // Ensure that System.exit() is caught.
         sm = System.getSecurityManager();
