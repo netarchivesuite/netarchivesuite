@@ -57,17 +57,14 @@ public class JobDispatcher {
     private final Log log = LogFactory.getLog(getClass());
     /** Connection to JMS provider. */
     private final JMSConnection jmsConnection;
-    /** For jobDB access. */
-    private final JobDAO jobDao;
     
     /**
      * @param jmsConnection The JMS connection to use.
      */
-    public JobDispatcher(JMSConnection jmsConnection, JobDAO jobDao) {
+    public JobDispatcher(JMSConnection jmsConnection) {
         log.info("Creating JobDispatcher");
         ArgumentNotValid.checkNotNull(jmsConnection, "jmsConnection");
         this.jmsConnection = jmsConnection;
-        this.jobDao = jobDao;
     }
 
     /**
@@ -131,7 +128,7 @@ public class JobDispatcher {
                     jobToSubmit.appendHarvestErrors(message);
                     jobToSubmit.appendHarvestErrorDetails(
                             ExceptionUtils.getStackTrace(e));
-                    jobDao.update(jobToSubmit);
+                    JobDAO.getInstance().update(jobToSubmit);
                 }
             }
         }
@@ -147,6 +144,7 @@ public class JobDispatcher {
      * @return The job prepared for submission.
      */
     private synchronized Job prepareNextJobForSubmission(JobPriority priority) {
+        JobDAO jobDao = JobDAO.getInstance();
         Iterator<Long> jobsToSubmit = 
                 jobDao.getAllJobIds(JobStatus.NEW, priority);
         if (!jobsToSubmit.hasNext()) {

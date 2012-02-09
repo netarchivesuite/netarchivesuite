@@ -29,7 +29,6 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
-import dk.netarkivet.harvester.datamodel.JobDAO;
 
 /**
  * Handles the dispatching of scheduled harvest to the harvest servers based on
@@ -44,8 +43,7 @@ public class HarvestJobManager extends LifeCycleComponent {
      */
     public HarvestJobManager() {
         jmsConnection = JMSConnectionFactory.getInstance();       
-        JobDispatcher jobDispather = 
-                new JobDispatcher(jmsConnection, JobDAO.getInstance());
+        JobDispatcher jobDispather = new JobDispatcher(jmsConnection);
         
         addChild(new HarvesterStatusReceiver(jobDispather, jmsConnection));
         
