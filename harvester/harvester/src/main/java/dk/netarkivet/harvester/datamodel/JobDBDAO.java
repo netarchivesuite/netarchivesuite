@@ -262,7 +262,7 @@ public class JobDBDAO extends JobDAO {
     * @param jobID Id of the job.
     * @return true if the job exists in any state.
     */
-   private synchronized boolean exists(Connection c, Long jobID) {
+   private boolean exists(Connection c, Long jobID) {
        return 1 == DBUtils.selectLongValue(
                c,
                "SELECT COUNT(*) FROM jobs WHERE job_id = ?", jobID);
@@ -397,7 +397,7 @@ public class JobDBDAO extends JobDAO {
     * @throws IOFailure if there was some problem talking to the database.
     */
    @Override
-   public synchronized Job read(Long jobID) {
+   public Job read(Long jobID) {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
        Connection connection = HarvestDBConnection.get();
        try {
@@ -596,7 +596,7 @@ public class JobDBDAO extends JobDAO {
      *                          five valid statuses specified in Job.
      */
     @Override
-    public synchronized Iterator<Long> getAllJobIds(JobStatus status) {
+    public Iterator<Long> getAllJobIds(JobStatus status) {
         ArgumentNotValid.checkNotNull(status, "JobStatus status");
 
         Connection c = HarvestDBConnection.get();
@@ -612,7 +612,7 @@ public class JobDBDAO extends JobDAO {
     }
 
    @Override
-   public synchronized Iterator<Long> getAllJobIds(
+   public Iterator<Long> getAllJobIds(
            JobStatus status,
            JobPriority priority) {
        ArgumentNotValid.checkNotNull(status, "JobStatus status");
@@ -655,7 +655,7 @@ public class JobDBDAO extends JobDAO {
      * Return a list of all job_ids .
      * @return A list of all job_ids
      */
-    public synchronized Iterator<Long> getAllJobIds(){
+    public Iterator<Long> getAllJobIds(){
         Connection c = HarvestDBConnection.get();
         try {
             List<Long> idList = DBUtils.selectLongList(
@@ -910,7 +910,7 @@ public class JobDBDAO extends JobDAO {
      * @return Number of jobs in 'jobs' table
      */
     @Override
-    public synchronized int getCountJobs() {
+    public int getCountJobs() {
         Connection c = HarvestDBConnection.get();
         try {
             return DBUtils.selectIntValue(c, "SELECT COUNT(*) FROM jobs");
