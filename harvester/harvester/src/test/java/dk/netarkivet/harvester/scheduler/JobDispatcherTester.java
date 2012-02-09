@@ -111,8 +111,7 @@ public class JobDispatcherTester extends TestCase {
                 RememberNotifications.class.getName());
 
         HarvestDefinitionDAO.getInstance();
-        jobDispatcher = 
-                new JobDispatcher(jms.getJMSConnection(), JobDAO.getInstance());
+        jobDispatcher = new JobDispatcher(jms.getJMSConnection());
 
     }
 
