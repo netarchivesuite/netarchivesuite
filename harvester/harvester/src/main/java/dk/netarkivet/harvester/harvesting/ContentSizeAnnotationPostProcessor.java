@@ -33,13 +33,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * A post processor that adds an annotation
  *   content-size:<bytes>
- * for each succesfully harvested URI.
+ * for each successfully harvested URI.
  *
  */
-
 public class ContentSizeAnnotationPostProcessor extends Processor {
 
-    /** Prefix asssociated with annotations made by this processor.*/
+    /** Prefix associated with annotations made by this processor.*/
     public static final String CONTENT_SIZE_ANNOTATION_PREFIX = "content-size:";
 
     /**
@@ -53,9 +52,9 @@ public class ContentSizeAnnotationPostProcessor extends Processor {
                     + " URI.");
     }
 
-    /** For each URI with a succesful status code (status code > 0),
+    /** For each URI with a successful status code (status code > 0),
      *  add annotation with content size.
-     * @param crawlURI URI to add annotation for if succesful.
+     * @param crawlURI URI to add annotation for if successful.
      * @throws ArgumentNotValid if crawlURI is null.
      * @throws InterruptedException never.
      * @see Processor#innerProcess(org.archive.crawler.datamodel.CrawlURI)
