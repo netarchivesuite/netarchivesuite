@@ -116,7 +116,7 @@ public class JobDispatcher {
 
                 doOneCrawl(jobToSubmit, hName, hdComments, schedule, metadata);
 
-                log.info("Submitting job: " + jobToSubmit);
+                log.info("Job #" + jobToSubmit.getJobID() + " submitted");
 
             } catch (Throwable e) {
                 String message = "Error while dispatching job " + 
@@ -136,12 +136,12 @@ public class JobDispatcher {
     
     /**
      * Will read the next job ready to run from the db and set the job to 
-     * submitted. If no job are ready, null will be returned.
+     * submitted. If no jobs are ready, null will be returned.
      * 
      * Note the operation is synchronized, so only one thread may start the 
      * submission of a job.
      * @param priority the job priority.
-     * @return The job prepared for submission.
+     * @return A job ready to be submitted.
      */
     private synchronized Job prepareNextJobForSubmission(JobPriority priority) {
         JobDAO jobDao = JobDAO.getInstance();
