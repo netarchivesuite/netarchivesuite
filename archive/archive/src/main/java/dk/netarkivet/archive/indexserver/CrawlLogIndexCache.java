@@ -140,6 +140,7 @@ public abstract class CrawlLogIndexCache extends
         File resultDir = getCacheFile(rawfiles.keySet());
         Set<File> tmpfiles = new HashSet<File>();
         String indexLocation = resultDir.getAbsolutePath() + ".luceneDir";
+        ThreadPoolExecutor executor = null;
         try {
             DigestIndexer indexer = createStandardIndexer(indexLocation);
             final boolean verboseIndexing = false;
@@ -149,13 +150,12 @@ public abstract class CrawlLogIndexCache extends
             Set<IndexingState> outstandingJobs = new HashSet<IndexingState>();
             final int maxThreads = Settings.getInt(
                     ArchiveSettings.INDEXSERVER_INDEXING_MAXTHREADS);
-            ThreadPoolExecutor executor
-            = new ThreadPoolExecutor(maxThreads, maxThreads,
+            executor = new ThreadPoolExecutor(maxThreads, maxThreads,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>());
             
             executor.setRejectedExecutionHandler(
-            new ThreadPoolExecutor.CallerRunsPolicy());
+                    new ThreadPoolExecutor.CallerRunsPolicy());
 
             for (Map.Entry<Long, File> entry : rawfiles.entrySet()) {
                 Long jobId = entry.getKey();
@@ -250,12 +250,28 @@ public abstract class CrawlLogIndexCache extends
             throw new IOFailure("Error setting up craw.log index framework for "
                     + resultDir.getAbsolutePath(), e);
         } finally {
+            // close down Threadpool-executor
+            closeDownThreadpoolQuietly(executor);
             FileUtils.removeRecursively(new File(indexLocation));
             for (File temporaryFile : tmpfiles) {
                 FileUtils.removeRecursively(temporaryFile);
             }
         }
     }
+        
+    /**
+     * Try to release all resources connected to the given ThreadPoolExecutor.
+     * @param executor a ThreadPoolExecutor
+     */
+    private void closeDownThreadpoolQuietly(ThreadPoolExecutor executor) {
+        if (executor == null) {
+            return;
+        }
+        if (!executor.isShutdown()) {
+            executor.shutdownNow();
+        }
+    }
+
     /**
      * Helper class to sleep a little between completeness checks.
      */

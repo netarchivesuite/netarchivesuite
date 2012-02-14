@@ -278,7 +278,7 @@ public class ArcRepository implements CleanupIF {
     private synchronized void startUpload(RemoteFile rf,
             ReplicaClient replicaClient, Replica replica) {
         final String filename = rf.getName();
-        log.debug("Upload started of file '" + filename + "' to Replica '"
+        log.debug("Upload started of file '" + filename + "' to replica '"
                 + replica.getId() + "'");
 
         String replicaChannelId = replica.getIdentificationChannel().getName();
@@ -897,7 +897,7 @@ public class ArcRepository implements CleanupIF {
                         log.debug("Checksum processing for file '" + arcFileName 
                                 + "'... completed.");
                         return;
-                    } //else logging was done already above
+                    } //else logging was already done above
                 } else { //cannot retry
                     log.warn("Cannot do more retry upload of "
                         + "remote file: '" + arcFileName + "' to '"
