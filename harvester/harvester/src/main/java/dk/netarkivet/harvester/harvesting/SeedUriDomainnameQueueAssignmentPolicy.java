@@ -26,17 +26,19 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.util.NoSuchElementException;
 
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.datamodel.CoreAttributeConstants;
 import org.archive.crawler.framework.CrawlController;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;
+import org.archive.net.UURIFactory;
 
 import dk.netarkivet.common.utils.DomainUtils;
 
 /**
- * This is modified version of the {@link DomainnameQueueAssignmentPolicy}
+ * This is a modified version of the {@link DomainnameQueueAssignmentPolicy}
  * where domainname returned is the domainname of the candidateURI
  * except where the domainname of the SeedURI is a different one. 
  * 
@@ -49,7 +51,7 @@ import dk.netarkivet.common.utils.DomainUtils;
  * nn.nn.nn.nn -> nn.nn.nn.nn
  * 
  */
-public class AlternateDomainnameQueueAssignmentPolicy
+public class SeedUriDomainnameQueueAssignmentPolicy
         extends HostnameQueueAssignmentPolicy {
     
     /** A key used for the cases when we can't figure out the URI.
@@ -74,6 +76,15 @@ public class AlternateDomainnameQueueAssignmentPolicy
      */
      public String getClassKey(CrawlController controller, CandidateURI cauri) {
         String candidate;
+        boolean ignoreSourceSeed = false;
+        String cauriAsString  = "";
+        if (cauri != null) {
+            cauriAsString = cauri.getCandidateURIString();
+            if (cauriAsString.startsWith("dns")) {
+                ignoreSourceSeed = true;
+            }
+        }
+        
         try {
             // Since getClassKey has no contract, we must encapsulate it from
             // errors.
@@ -83,21 +94,22 @@ public class AlternateDomainnameQueueAssignmentPolicy
                       + cauri);
             candidate = DEFAULT_CLASS_KEY;
         }
+        String sourceSeedCandidate = null;
+        if (!ignoreSourceSeed) {
+            sourceSeedCandidate = getCandidateFromSource(cauri);
+        }
         
-        String sourceCandidate = null;  
-        try {
-            sourceCandidate = cauri.getString(CoreAttributeConstants.A_SOURCE_TAG);
-        } catch (NoSuchElementException e) {
-            log.warn("source-tag-seeds not set in Heritrix template!");
+        if (sourceSeedCandidate != null) {
+            return sourceSeedCandidate;
         }
-        if (sourceCandidate != null) {
-            log.info("sourceCandidate: " + sourceCandidate);
-        }
+        
+        // If sourceSeedCandidates are disabled, use the old method:
         
         String[] hostnameandportnr = candidate.split("#");
         if (hostnameandportnr.length == 0 || hostnameandportnr.length > 2) {
             return candidate;
         }
+        
         String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
         if (domainName == null) { // Not valid according to our rules
             log.debug("Illegal class key candidate '" + candidate
@@ -105,5 +117,30 @@ public class AlternateDomainnameQueueAssignmentPolicy
             return candidate;
         }
         return domainName;
+    }
+
+     /**
+      * Find a candidate from the source.
+      * @param cauri A potential URI
+      * @return a candidate from the source or null if none found
+      */
+    private String getCandidateFromSource(CandidateURI cauri) {
+        String sourceCandidate = null;  
+        try {
+            sourceCandidate = cauri.getString(CoreAttributeConstants.A_SOURCE_TAG);
+        } catch (NoSuchElementException e) {
+            log.warn("source-tag-seeds not set in Heritrix template!");
+            return null;
+        }
+         
+        String hostname = null;
+        try {
+             hostname = UURIFactory.getInstance(sourceCandidate).getHost();
+        } catch (URIException e) {
+            log.warn("Hostname could not be extracted from sourceCandidate: " 
+                    + sourceCandidate);
+            return null;
+        }
+        return DomainUtils.domainNameFromHostname(hostname);
     }
 }
