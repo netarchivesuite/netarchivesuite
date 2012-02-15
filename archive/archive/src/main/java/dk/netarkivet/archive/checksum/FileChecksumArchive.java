@@ -619,39 +619,32 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * different checksum.
      */
     public void upload(RemoteFile file, String filename) throws  
-            ArgumentNotValid, IllegalState {
+    ArgumentNotValid, IllegalState {
         // Validate arguments.
         ArgumentNotValid.checkNotNull(file, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
         InputStream input = null;
-        
+
         try {
             input = file.getInputStream();
-            
-            // synchronize the memory.
-            synchronizeWithFile();
+            synchronizeMemoryWithFile();
+            String checksum = calculateChecksum(input);
 
-            // calculate the checksum
-            String checksum = calculateChecksum(file.getInputStream());
-
-            // check if file already exist in archive.
             if(checksumArchive.containsKey(filename)) {
-                // handle whether the checksum are the same.
                 if(checksumArchive.get(filename).equals(checksum)) {
                     log.warn("Cannot upload arcfile '" + filename + "', "
                             + "it is already archived with the same checksum: '"
                             + checksum);
                 } else {
-                    // This is not allowed!
                     throw new IllegalState("Cannot upload arcfile '" + filename 
                             + "', it is already archived with different checksum."
                             + " Archive checksum: '" + checksumArchive.get(filename)
                             + "' and the uploaded file has: '" + checksum + "'.");
                 }
 
-                // It is a success that it already is within the archive, thus do
-                // not throw an exception. 
+                // It is considered a success that it already is within the archive, 
+                // thus do not throw an exception. 
                 return;
             }
 
@@ -662,8 +655,8 @@ public final class FileChecksumArchive extends ChecksumArchive {
             if (input != null) {
                 IOUtils.closeQuietly(input);
             }
-    }
-        
+        }
+
     }
     
     /**
@@ -677,8 +670,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // validate the argument
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         
-        // Synchronize memory with file.
-        synchronizeWithFile();
+        synchronizeMemoryWithFile();
         
         // Return the checksum of the record.
         return checksumArchive.get(filename);
@@ -755,7 +747,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         ArgumentNotValid.checkNotNull(correctFile, "File correctFile");
         
         // synchronize the memory.
-        synchronizeWithFile();
+        synchronizeMemoryWithFile();
 
         // If no file entry exists, then IllegalState
         if(!checksumArchive.containsKey(filename)) {
@@ -820,9 +812,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * @return A temporary checksum file, which is a copy of the archive file.
      * @throws IOFailure If problems occurs during the creation of the file.
      */
+    @Override
     public File getArchiveAsFile() throws IOFailure {
-        // synchronize the memory.
-        synchronizeWithFile();
+        synchronizeMemoryWithFile();
         
         try {
             // create new temporary file of the archive.
@@ -849,9 +841,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * This file has one filename per line.
      * @throws IOFailure If problems occurs during the creation of the file.
      */
+    @Override
     public File getAllFilenames() throws IOFailure {
-        // synchronize the memory.
-        synchronizeWithFile();
+        synchronizeMemoryWithFile();
         
         try {
             File tempFile = File.createTempFile("tmp", "tmp", 
@@ -886,7 +878,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * be checked whether it corresponds the 'last modified' date of the file.
      * If they are different, then the memory archive is reloaded from the file.
      */
-    public synchronized void synchronizeWithFile() {
+    private synchronized void synchronizeMemoryWithFile() {
         log.debug("Synchronizing memory archive with file archive.");
         
         // Check if the checksum file has changed since last access.
@@ -905,6 +897,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * The method for cleaning up when done.
      * It sets the checksum file and the instance to null. 
      */
+    @Override
     public void cleanup() {
         checksumFile = null;
         instance = null;
