@@ -43,7 +43,6 @@ import dk.netarkivet.common.distribute.FTPRemoteFile;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
-import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.RemoteFileSettings;
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
@@ -297,7 +296,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * @return Index timeout value in milliseconds.
      */
     protected long getIndexTimeout() {
-        //NOTE: It might be a good idea to make this dependant on "type"
+        //TODO It might be a good idea to make this dependant on "type"
         return Settings.getLong(INDEXREQUEST_TIMEOUT);
     }
     
@@ -403,20 +402,20 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         log.info("Requesting an index of type '" + this.requestType
                 + "' for the jobs [" + StringUtils.conjoin(",", jobSet)
                 + "]");
-        //Send request to server but ask for it not to be returned
-        // Ask that message sent to the scheduler.
-        IndexRequestMessage irMsg = null;
+        RemoteFileSettings settings = null;
         
         if (useLocalFtpserver()) {
-            RemoteFileSettings settings = FTPRemoteFile.getRemoteFileSettings();
-            irMsg = new IndexRequestMessage(
+            settings = FTPRemoteFile.getRemoteFileSettings();
+        }
+     
+        // Send request to server but ask for it not to be returned
+        // Ask that a message is sent to the scheduling queue when 
+        // index is finished
+        
+        IndexRequestMessage irMsg = new IndexRequestMessage(
                 requestType, jobSet, Channels.getTheSched(),
                 false, harvestId, settings);
-        } else {
-            irMsg = new IndexRequestMessage(
-                    requestType, jobSet, Channels.getTheSched(),
-                    false, harvestId, null);
-        }
+        
         JMSConnectionFactory.getInstance().send(irMsg);
     }
 }
