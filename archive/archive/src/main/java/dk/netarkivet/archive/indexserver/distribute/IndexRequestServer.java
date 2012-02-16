@@ -336,8 +336,8 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                 File cacheFile = handler.getCacheFile(jobIDs);
                 if (mustReturnIndex) { // return index now! (default behaviour)
                     RemoteFileSettings connectionParams = irMsg.getRemoteFileSettings();
-                    boolean useMessageSuppliedConnectionParams = connectionParams != null;
-                    if (useMessageSuppliedConnectionParams) {
+                    
+                    if (connectionParams != null) {
                         log.debug("Trying to use client supplied RemoteFileServer: "
                                 + connectionParams.getServerName());                    
                     }
@@ -349,7 +349,8 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                             = new ArrayList<RemoteFile>(cacheFiles.length);
                         for (File f : cacheFiles) {
                             resultFiles.add(
-                                    RemoteFileFactory.getCopyfileInstance(f, irMsg.getRemoteFileSettings()));
+                                    RemoteFileFactory.getCopyfileInstance(f, 
+                                            irMsg.getRemoteFileSettings()));
                             
                         }
                         irMsg.setResultFiles(resultFiles);

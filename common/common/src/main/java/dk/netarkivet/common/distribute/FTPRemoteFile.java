@@ -79,21 +79,17 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             LogFactory.getLog(FTPRemoteFile.class.getName());
 
     /**
-     * Ftp-connection information. Read ftp-related settings from settings.xml.
-     * Notice that these settings get transferred to the receiver, which is
-     * necessary to allow the receiver to get data from different servers.
+     * Ftp-connection information. FTP-related settings are by default read from
+     * settings, unless connectionParameters are given in the constructor.
      */
-    private String ftpServerName = Settings.get(FTP_SERVER_NAME);
+    private String ftpServerName;
 
     /** The ftp-server port. */
-    private int ftpServerPort = Settings.getInt(
-            FTP_SERVER_PORT);
+    private final int ftpServerPort;  
     /** The username used to connect to the ftp-server. */
-    private String ftpUserName = Settings.get(
-            FTP_USER_NAME);
+    private final String ftpUserName;
     /** The password used to connect to the ftp-server. */
-    private String ftpUserPassword = Settings.get(
-            FTP_USER_PASSWORD);
+    private final String ftpUserPassword;
 
     /**
      * The FTP client object for the current connection.
@@ -174,6 +170,8 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      *                          to FTP.
      * @param multipleDownloads If true, the file will not be removed from FTP
      *                          server automatically after first download.
+     * @param connectionParams  If not null, contains connection parameters 
+     *  to the FTP-server desired by the user 
      * @throws IOFailure        if MD5 checksum fails, or ftp fails
      * @throws ArgumentNotValid if the local file cannot be read.
      */
@@ -183,11 +181,17 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             throws IOFailure {
         super(localFile, useChecksums, fileDeletable, multipleDownloads);
         if (connectionParams != null) {
-            // Override the default connectionParameters
+            // use the connection parameters desired by the user.
             this.ftpServerName = connectionParams.getServerName();
             this.ftpServerPort = connectionParams.getServerPort();
             this.ftpUserName = connectionParams.getUserName();
             this.ftpUserPassword = connectionParams.getUserPassword();
+        } else {
+            // use the connection parameters specified by the settings.
+            this.ftpServerName = Settings.get(FTP_SERVER_NAME);
+            this.ftpServerPort = Settings.getInt(FTP_SERVER_PORT);
+            this.ftpUserName = Settings.get(FTP_USER_NAME);
+            this.ftpUserPassword = Settings.get(FTP_USER_PASSWORD);    
         }
         if (filesize == 0) {
             try {
