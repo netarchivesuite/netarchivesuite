@@ -326,7 +326,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      *
      * @param line the line to process.
      */
-    private void processHarvestLine(String line) throws ArgumentNotValid {
+    private void processHarvestLine(final String line) throws ArgumentNotValid {
         //A legal crawl log line has at least 11 parts, + optional annotations
         final int MIN_CRAWL_LOG_PARTS = 11;
         final int MAX_PARTS = 12;
@@ -334,26 +334,59 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         String[] parts = line.split("\\s+", MAX_PARTS);
         if (parts.length < MIN_CRAWL_LOG_PARTS) {
             throw new ArgumentNotValid(
-                    "Not enough fields for line in crawl.log: '" + line + "'.");
+                    "Not enough fields for line in crawl.log: '" + line + "'. Was only " 
+                    + parts.length + " fields. Should have been at least " 
+                            +  MIN_CRAWL_LOG_PARTS);
         }
-
-        //Get the domain name from the URL in the fourth field
-        String hostName;
-        // This errormessage is shared by the two exceptions thrown below.
-        String errorMsg =
-            "Unparsable URI in field 4 of crawl.log: '" + parts[3] + "'.";
+        
+        // Check the seed url (part 11 of the crawl-log-line). 
+        // If equal to "-", the seed url is not written to the log, 
+        // and this information is disregarded
+        // TODO Shall we have this as a setting also
+        
+        final String seedURL = parts[10];
+        boolean sourceTagEnabled = true;
+        if (seedURL.equals("-")) {
+            sourceTagEnabled = false;
+        }
+        String seedDomain = null;
+        
+        if (sourceTagEnabled) {
+            try {
+                seedDomain = getDomainNameFromURIString(seedURL);
+            } catch (URIException e) {
+                LOG.debug("Unable to extract a domain from the seedURL found in field 11 of crawl.log: '"
+                        + seedURL + "'.", e);
+            }
+        }
+        
+        //Get the object domain name from the URL in the fourth field
+        String objectDomain = null;
+        String objectUrl = parts[3];
+        
         try {
-            UURI uuri = new FixedUURI(parts[3], false);
-            hostName = uuri.getReferencedHost();
+            objectDomain = getDomainNameFromURIString(objectUrl);
         } catch (URIException e) {
-            throw new ArgumentNotValid(errorMsg, e);
+            LOG.debug("Unable to extract a domain from the object URL found in field 4 of crawl.log: '"
+                    + objectUrl + "'.", e);
         }
-        if (hostName == null) {
-            throw new ArgumentNotValid(errorMsg);
+        
+        if (objectDomain == null && seedDomain == null){
+            throw new ArgumentNotValid("Unable to find a domainName in the line: '"
+                    + line + "'.");
         }
-        String domainName;
-        domainName = DomainUtils.domainNameFromHostname(hostName);
-
+        
+        String domainName = null;
+        
+        if (sourceTagEnabled && seedDomain != null) {
+            domainName = seedDomain;
+        } else if (objectDomain != null) {
+            domainName = objectDomain;
+        } else {
+            throw new ArgumentNotValid("Unable to find valid domainname");
+        }
+         
+       
         //Get the response code for the URL in the second field
         long response;
         try {
@@ -410,6 +443,22 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         if (dhi.getStopReason() == defaultStopReason) {
             dhi.setStopReason(stopReason);
         }
+    }
+
+    /**
+     * Extract DomainName from URI string. 
+     * @param uriAsString a given URI as string.
+     * @return the domainName if possible or null, if not possible
+     * @throws URIException If unable to create valid URI from the given string
+     */
+    private String getDomainNameFromURIString(String uriAsString) throws URIException {
+            UURI uuri = new FixedUURI(uriAsString, false);
+            String hostName = uuri.getReferencedHost();
+            if (hostName == null){
+                LOG.debug("Not possible to extract domainname from URL:" + uriAsString);
+                return null;
+            }
+            return DomainUtils.domainNameFromHostname(hostName);
     }
 
 }
