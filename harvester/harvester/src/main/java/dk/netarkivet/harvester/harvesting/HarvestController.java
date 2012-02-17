@@ -61,14 +61,12 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
-//import dk.netarkivet.viewerproxy.webinterface.Reporting;
 
 /**
  * This class handles all the things in a single harvest that are not related
@@ -162,48 +160,11 @@ public class HarvestController {
                               job.getJobID(),
                               job.getOrigHarvestDefinitionID());
 
-        
-        // Check, if this job is a job that tries to continue a previous job
+        // if this job is a job that tries to continue a previous job
         // using the Heritrix recover.gz log.
+        // Try to fetch the recover.log from the metadata-arc-file.
         if (job.getContinuationOf() != null) {
-            Long previousJob = job.getContinuationOf();
-            List<CDXRecord> metaCDXes = null;
-            try {
-                metaCDXes 
-                = getMetadataCDXRecordsForJob(previousJob);
-            } catch (IOFailure e) {
-                log.debug("Failed to retrive CDX of metatadata records. Maybe the metadata arcfile for job " 
-                        + previousJob + " does not exist in repository", e);
-            }
-            
-            CDXRecord recoverlogCDX = null;
-            if (metaCDXes != null) {
-                for (CDXRecord cdx : metaCDXes) {
-                    if (cdx.getURL().matches(MetadataFile.RECOVER_LOG_PATTERN)) {
-                        recoverlogCDX = cdx;
-                    }
-                }
-                if (recoverlogCDX == null) {
-                    log.debug("No recover.gz log found in metadata-arcfile");
-                } else {
-                    log.debug("recover.gz log found in metadata-arcfile");
-                }
-            }
-            
-            BitarchiveRecord br = null;
-            if (recoverlogCDX != null) { // Retrieve recover.gz from metadata.arc file
-                br = ArcRepositoryClientFactory.getViewerInstance().get(
-                        recoverlogCDX.getArcfile(), recoverlogCDX.getOffset());
-                if (br != null) {
-                    log.debug("recover.gz log retrieved from metadata-arcfile");
-                    files.writeRecoverBackupfile(br.getData());
-                    // modify order.xml, so Heritrix recover-path points
-                    // to the retrieved recoverlog
-                    insertHeritrixRecoverPathInOrderXML(job, files);
-                } else {
-                    log.debug("recover.gz log not retrieved from metadata-arcfile");
-                }
-            } 
+            tryToRetrieveRecoverLog(job, files);    
         }
         
         // Create harvestInfo file in crawldir
@@ -235,6 +196,50 @@ public class HarvestController {
             log.warn("Unable to create arcsdir: " + files.getArcsDir());
         }
         return files;
+    }
+
+    private void tryToRetrieveRecoverLog(Job job, HeritrixFiles files) {
+        Long previousJob = job.getContinuationOf();
+        List<CDXRecord> metaCDXes = null;
+        try {
+            metaCDXes 
+            = getMetadataCDXRecordsForJob(previousJob);
+        } catch (IOFailure e) {
+            log.debug("Failed to retrive CDX of metatadata records. Maybe the metadata arcfile for job " 
+                    + previousJob + " does not exist in repository", e);
+        }
+        
+        CDXRecord recoverlogCDX = null;
+        if (metaCDXes != null) {
+            for (CDXRecord cdx : metaCDXes) {
+                if (cdx.getURL().matches(MetadataFile.RECOVER_LOG_PATTERN)) {
+                    recoverlogCDX = cdx;
+                }
+            }
+            if (recoverlogCDX == null) {
+                log.debug("A recover.gz log file was not found in metadata-arcfile");
+            } else {
+                log.debug("recover.gz log found in metadata-arcfile");
+            }
+        }
+        
+        BitarchiveRecord br = null;
+        if (recoverlogCDX != null) { // Retrieve recover.gz from metadata.arc file
+            br = ArcRepositoryClientFactory.getViewerInstance().get(
+                    recoverlogCDX.getArcfile(), recoverlogCDX.getOffset());
+            if (br != null) {
+                log.debug("recover.gz log retrieved from metadata-arcfile");
+                if (files.writeRecoverBackupfile(br.getData())) {
+                    // modify order.xml, so Heritrix recover-path points
+                    // to the retrieved recoverlog
+                    insertHeritrixRecoverPathInOrderXML(job, files);
+                } else {
+                    log.warn("Failed to retrieve and write recoverlog to disk.");
+                }
+            } else {
+                log.debug("recover.gz log not retrieved from metadata-arcfile");
+            }
+        } 
     }
 
     /**

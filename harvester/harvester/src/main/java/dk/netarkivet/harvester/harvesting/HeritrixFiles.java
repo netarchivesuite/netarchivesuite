@@ -173,17 +173,23 @@ public class HeritrixFiles {
        return new File(crawlDir, RECOVERBACKUP_GZ_FILENAME);
    }
 
-   public void writeRecoverBackupfile(InputStream recoverlog) {
+   /**
+    * Try to write the recover-backup file.
+    * @param recoverlog The recoverlog in the form of an InputStream
+    * @return true, if operation succeeds, otherwise false
+    */
+   public boolean writeRecoverBackupfile(InputStream recoverlog) {
        OutputStream os = null;
        try {
            os = new FileOutputStream(getRecoverBackupGzFile());
            StreamUtils.copyInputStreamToOutputStream(recoverlog, os);
        } catch (IOException e) {
-           log.debug("IOException thrown: " + e);
-           // TODO Throw IOFailure or don't catch IOException here
+           log.debug("The writing of the recoverlog failed: ", e);
+           return false;
        } finally {
            IOUtils.closeQuietly(os);
        }
+       return true;
    }
    
    
