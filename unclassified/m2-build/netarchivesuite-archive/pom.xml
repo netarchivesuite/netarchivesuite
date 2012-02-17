@@ -20,12 +20,12 @@
         <dependency>
             <groupId>dk.netarchivesuite</groupId>
             <artifactId>netarchivesuite-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>dk.netarchivesuite</groupId>
             <artifactId>netarchivesuite-harvester</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>                                                                                                              
