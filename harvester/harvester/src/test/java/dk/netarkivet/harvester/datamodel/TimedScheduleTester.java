@@ -28,13 +28,12 @@ package dk.netarkivet.harvester.datamodel;
  * Tests a timed schedule
  */
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import junit.framework.TestCase;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import junit.framework.TestCase;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 
 public class TimedScheduleTester extends TestCase {

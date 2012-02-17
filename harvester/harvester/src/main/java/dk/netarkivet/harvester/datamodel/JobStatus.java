@@ -25,10 +25,10 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.util.Locale;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
+
+import java.util.Locale;
 
 /**
  * Enumeration of the possible states (alt.: status) a Job can be in.

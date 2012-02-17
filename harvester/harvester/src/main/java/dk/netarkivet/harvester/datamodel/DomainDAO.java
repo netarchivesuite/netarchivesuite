@@ -24,12 +24,12 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.UnknownID;
+
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
  * Persistent storage for Domain objects.

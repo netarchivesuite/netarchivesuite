@@ -25,14 +25,6 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import java.util.Locale;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
@@ -40,6 +32,12 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
+import java.util.Locale;
 
 /**
  * Contains utility methods for supporting event harvest GUI.

@@ -24,9 +24,8 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import junit.framework.TestCase;
 
 /**
  * Tests of the abstract Frequency class.

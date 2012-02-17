@@ -24,13 +24,13 @@
 */
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.jsp.PageContext;
-
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.testutils.StringAsserts;
+
+import javax.servlet.jsp.PageContext;
 
 /** Unit-test for the SnapshotHarvestDefinition class. */
 public class SnapshotHarvestDefinitionTester extends HarvesterWebinterfaceTestCase {

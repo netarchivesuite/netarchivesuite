@@ -24,17 +24,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.sql.SQLException;
-import java.util.regex.Pattern;
-
-import junit.framework.TestCase;
-import org.dom4j.Document;
-
 import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
@@ -44,6 +33,12 @@ import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+import org.dom4j.Document;
+
+import java.io.*;
+import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 /**
  * Unit tests for the HarvestTemplateApplication tool.

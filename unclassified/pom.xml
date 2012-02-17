@@ -23,11 +23,6 @@
     <module>m2-build/netarchivesuite-wayback</module>
   </modules>
 
-  <organization>
-    <name>Netarchive</name>
-    <url>http://netarchive.dk/netarchive</url>
-  </organization>
-
   <name>NetarchiveSuite</name>
   <description>NetarchiveSuite can plan, schedule and run web harvests of parts of the Internet.
         The NetarchiveSuite is built around the Heritrix web crawler, which it uses to harvest the web.
@@ -45,20 +40,52 @@
 
   <scm>
     <connection>scm:svn:https://sbforge.org/svn/netarchivesuite</connection>
-    <developerConnection>scm:svn:https://[username[:password]@]sbforge.org/svn/netarchivesuite
-        </developerConnection>
-    <url>http://kb-prod-udv-001.kb.dk:8060/browse/netarchiveSuite/trunk</url>
+    <developerConnection>scm:svn:https://sbforge.org/svn/netarchivesuite</developerConnection>
+    <url>https://sbforge.org/fisheye/browse/NetarchiveSuite</url>
   </scm>
+
+  <organization>
+    <name>The Royal Danish Library, the Danish State and University Library, the National Library
+     of France and the Austrian National Library.</name>
+    <url>https://sbforge.org/display/NAS/NetarchiveSuite</url>
+  </organization>
 
   <developers>
     <developer>
       <name>Mikis Seth Sørensen</name>
       <roles>
-        <role>developer</role>
+        <role>Project manager</role>
       </roles>
       <email>mss@statsbiblioteket.dk</email>
       <organization>Statsbiblioteket</organization>
       <organizationUrl>http://statsbiblioteket.dk</organizationUrl>
+    </developer>
+    <developer>
+      <name>Søren Vejrup Carlsen </name>
+      <roles>
+        <role>Lead developer</role>
+      </roles>
+      <email>svc@kb.dk</email>
+      <organization>The Royal Danish Library</organization>
+      <organizationUrl>http://kb.dk</organizationUrl>
+    </developer>
+    <developer>
+      <name>Colin Rosenthal</name>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <email>csr@statsbiblioteket.dk</email>
+      <organization>Statsbiblioteket</organization>
+      <organizationUrl>http://statsbiblioteket.dk</organizationUrl>
+    </developer>
+    <developer>
+      <name>Jonas Lindberg Frellesen</name>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <email>jolf@kb.dk</email>
+      <organization>The Royal Danish Library</organization>
+      <organizationUrl>http://kb.dk</organizationUrl>
     </developer>
   </developers>
 
@@ -75,130 +102,119 @@
     </repository>
   </repositories>
 
-  <dependencies>
-    <dependency>
-      <groupId>c3p0</groupId>
-      <artifactId>c3p0</artifactId>
-      <version>0.9.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty</artifactId>
-      <version>6.1.26</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>dom4j</groupId>
-      <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>stax</groupId>
-          <artifactId>stax-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.archive</groupId>
-      <artifactId>heritrix</artifactId>
-      <version>1.14.4</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>3.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.jms</groupId>
-      <artifactId>jms</artifactId>
-      <version>4.1</version>
-      <classifier>b22g</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-core</artifactId>
-      <version>2.9.4</version>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.messaging.mq</groupId>
-      <artifactId>imq</artifactId>
-      <version>4.2</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.archive</groupId>
-      <artifactId>deduplicator</artifactId>
-      <version>0.4.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jsp-2.1-glassfish</artifactId>
-      <version>2.1.v20100127</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-net</groupId>
-      <artifactId>commons-net</artifactId>
-      <version>3.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>jfree</groupId>
-      <artifactId>jfreechart</artifactId>
-      <version>1.0.13</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-cli</groupId>
-      <artifactId>commons-cli</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-j1.4-j2ee1.3</artifactId>
-      <version>0.08dev-20030318</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>httpunit</groupId>
-      <artifactId>httpunit</artifactId>
-      <version>1.6</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
         </configuration>
       </plugin>
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.3.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.8.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.2.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.3.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.11</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>2.0</version>
+      </extension>
+    </extensions>
+
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.8</version>
+        <!--configuration> <configLocation> https://sbforge.org/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=SBForge%2520way 
+          </configLocation> </configuration -->
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.11</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <linkJavadoc>true</linkJavadoc>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <author>false</author>
+          <links>
+            <link>http://commons.apache.org/fileupload/apidocs/</link>
+          </links>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <linkXref>true</linkXref>
+          <targetJdk>1.6</targetJdk>
+          <!--rulesets> <ruleset> https://sbforge.org/sonar/profiles/export?format=pmd&amp;language=java&amp;name=SBForge%2520way 
+            </ruleset> </rulesets -->
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>2</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <xmlOutput>true</xmlOutput>
+          <effort>Max</effort>
+          <!--includeFilterFile> https://sbforge.org/sonar/profiles/export?format=findbugs&amp;language=java&amp;name=SBForge%2520way 
+            </includeFilterFile -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
 </project>                                                                                                              

@@ -27,36 +27,21 @@ package dk.netarkivet.harvester.tools;
  * Tests of the tool to create metadata files.
  */
 
-import javax.jms.Message;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import junit.framework.TestCase;
-
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
-import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
-import dk.netarkivet.common.distribute.RemoteFile;
-import dk.netarkivet.common.distribute.TestRemoteFile;
+import dk.netarkivet.common.distribute.*;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestMessageListener;
-import dk.netarkivet.testutils.preconfigured.MockupJMS;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
-import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
-import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import dk.netarkivet.testutils.preconfigured.*;
+import junit.framework.TestCase;
+
+import javax.jms.Message;
+import java.io.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
 
 
 public class CreateCDXMetadataFileTester extends TestCase {

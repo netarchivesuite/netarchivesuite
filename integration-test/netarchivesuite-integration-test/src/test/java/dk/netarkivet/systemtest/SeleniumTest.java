@@ -64,7 +64,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
             try {
                 environmentManager.runCommandWithoutQuotes(getStartupScript());
             } catch (Exception e) {
-                throw new RuntimeException("Failed to start test system");
+                throw new RuntimeException("Failed to start test system", e);
             }
         }
     }

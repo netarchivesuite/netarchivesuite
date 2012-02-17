@@ -24,24 +24,23 @@
  */
 package dk.netarkivet.harvester.tools;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 
 /**
  * Create a metadata arcfile for the logs and other archive-worthy
  * job-information found in a given jobsdir.
  * A jobsdir is only valid, if it contains a harvestInfo.xml
- * Requires a jobid-harvestid.txt file created by
- * CreateHarvestMappingsFromAdminData.
+ * Requires a jobid-harvestid.txt file created by CreateHarvestMappingsFromAdminData.
  * The metadata arcfile are named: <jobid>-metadata-2.arc file
  * (note: <jobid>-metadata-1.arc is already used)
  *

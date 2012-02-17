@@ -24,9 +24,10 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.util.Date;
-import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import junit.framework.TestCase;
+
+import java.util.Date;
 
 /**
  * 

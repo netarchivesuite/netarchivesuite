@@ -24,13 +24,12 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
+import junit.framework.TestCase;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
-import junit.framework.TestCase;
-import dk.netarkivet.harvester.harvesting.frontier.TestInfo;
 
 public class FrontierReportLineTest extends TestCase {
     

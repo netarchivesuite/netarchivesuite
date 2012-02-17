@@ -24,8 +24,6 @@
  */
 package dk.netarkivet.harvester;
 
-import java.util.regex.Pattern;
-
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
@@ -33,6 +31,8 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
+
+import java.util.regex.Pattern;
 
 /** Settings specific to the harvester module of NetarchiveSuite. */
 public class HarvesterSettings {

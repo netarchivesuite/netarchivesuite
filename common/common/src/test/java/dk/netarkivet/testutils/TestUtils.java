@@ -23,19 +23,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet;
-
-import java.util.logging.Logger;
+package dk.netarkivet.testutils;
 
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.DomainDAOTester;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
-import dk.netarkivet.harvester.datamodel.JobDAOTester;
-import dk.netarkivet.harvester.datamodel.ScheduleDAOTester;
-import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+
+import java.util.logging.Logger;
 
 /**
  * This class allows checking who's running the tests.
@@ -72,15 +65,5 @@ public class TestUtils {
         }
         log.info("User " + user + " excluded " + caller + "()");
         return false;
-    }
-
-    public static void resetDAOs() {
-        ExtendedFieldDBDAO.reset();
-        DomainDAOTester.resetDomainDAO();
-        TemplateDAOTester.resetTemplateDAO();
-        HarvestDefinitionDAOTester.resetDAO();
-        ScheduleDAOTester.resetDAO();
-        JobDAOTester.resetDAO();
-        GlobalCrawlerTrapListDBDAO.reset();
     }
 }

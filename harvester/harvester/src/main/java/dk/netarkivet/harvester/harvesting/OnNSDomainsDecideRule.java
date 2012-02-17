@@ -24,9 +24,7 @@
 */
 package dk.netarkivet.harvester.harvesting;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.deciderules.SurtPrefixedDecideRule;
@@ -34,7 +32,8 @@ import org.archive.net.UURIFactory;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.SurtPrefixSet;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class that re-creates the SurtPrefixSet to include only domain names

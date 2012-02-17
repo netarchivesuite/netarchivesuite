@@ -24,27 +24,12 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Pattern;
-
+import dk.netarkivet.common.exceptions.*;
+import dk.netarkivet.common.utils.DomainUtils;
+import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import gnu.inet.encoding.IDNA;
 import gnu.inet.encoding.IDNAException;
 import org.apache.commons.logging.Log;
@@ -54,16 +39,11 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.DomainUtils;
-import dk.netarkivet.common.utils.NotificationsFactory;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Pattern;
 
 
 /**

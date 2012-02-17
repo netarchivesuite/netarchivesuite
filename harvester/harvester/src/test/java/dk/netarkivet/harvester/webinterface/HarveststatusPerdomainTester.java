@@ -25,16 +25,15 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import dk.netarkivet.common.webinterface.JspTestCase;
+import dk.netarkivet.testutils.StringAsserts;
+import org.apache.jasper.JasperException;
+import org.xml.sax.SAXException;
+
 import javax.servlet.ServletException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-
-import org.apache.jasper.JasperException;
-import org.xml.sax.SAXException;
-
-import dk.netarkivet.common.webinterface.JspTestCase;
-import dk.netarkivet.testutils.StringAsserts;
 
 
 /**

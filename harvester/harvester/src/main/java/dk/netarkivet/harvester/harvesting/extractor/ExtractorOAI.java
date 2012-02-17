@@ -23,11 +23,6 @@
  */
 package dk.netarkivet.harvester.harvesting.extractor;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.regex.Matcher;
-
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +32,11 @@ import org.archive.crawler.extractor.Link;
 import org.archive.io.ReplayCharSequence;
 import org.archive.net.UURI;
 import org.archive.util.TextUtils;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.regex.Matcher;
 
 /**
  * This is a link extractor for use with Heritrix. It will find the

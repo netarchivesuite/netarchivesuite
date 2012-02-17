@@ -43,7 +43,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
-import dk.netarkivet.testutils.preconfigured.MockupMultiFileBasedCache;
+import dk.netarkivet.archive.indexserver.MockupMultiFileBasedCache;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;

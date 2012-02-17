@@ -24,12 +24,6 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.HarvestingAbort;
 import dk.netarkivet.common.utils.Settings;
@@ -39,6 +33,11 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Implements the analysis of a full frontier report obtained from Heritrix,

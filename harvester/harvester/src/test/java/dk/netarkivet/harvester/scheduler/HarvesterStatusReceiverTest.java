@@ -24,14 +24,13 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import junit.framework.TestCase;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
 
 public class HarvesterStatusReceiverTest extends TestCase  {
     private ReloadSettings reloadSettings = new ReloadSettings();

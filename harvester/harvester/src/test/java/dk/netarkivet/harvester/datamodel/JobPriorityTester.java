@@ -24,12 +24,11 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.util.Locale;
-
-import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
+import junit.framework.TestCase;
+
+import java.util.Locale;
 
 /**
  * Tests the JobPriority class.

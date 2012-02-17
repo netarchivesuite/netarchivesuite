@@ -24,9 +24,9 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import java.io.Serializable;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
+import java.io.Serializable;
 
 /**
  * Base abstract implementation of an Heritrix frontier report wrapper.

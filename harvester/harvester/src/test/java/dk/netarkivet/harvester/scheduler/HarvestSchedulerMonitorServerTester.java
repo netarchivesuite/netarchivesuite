@@ -25,16 +25,6 @@
 
 package dk.netarkivet.harvester.scheduler;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.logging.LogManager;
-
-import javax.jms.JMSException;
-
-import junit.framework.TestCase;
 import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
@@ -44,23 +34,7 @@ import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.Constants;
-import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
-import dk.netarkivet.harvester.datamodel.Domain;
-import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.DomainDAOTester;
-import dk.netarkivet.harvester.datamodel.FullHarvest;
-import dk.netarkivet.harvester.datamodel.HarvestDefinition;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
-import dk.netarkivet.harvester.datamodel.HarvestInfo;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.ScheduleDAOTester;
-import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
+import dk.netarkivet.harvester.datamodel.*;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
@@ -69,6 +43,15 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
+import javax.jms.JMSException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.logging.LogManager;
 
 /**
  * Tests of the class HarvestSchedulerMonitorServer.

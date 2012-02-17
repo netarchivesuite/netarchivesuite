@@ -24,8 +24,6 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
-import java.io.Serializable;
-
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -33,6 +31,8 @@ import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 import dk.netarkivet.harvester.scheduler.HarvestSchedulerMonitorServer;
+
+import java.io.Serializable;
 
 /**
  * This message is sent by the {@link HarvestSchedulerMonitorServer} to the

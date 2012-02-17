@@ -24,14 +24,13 @@
  */
 package dk.netarkivet.common.utils.cdx;
 
-import java.io.FileNotFoundException;
-
-import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.arc.ARCKey;
+import junit.framework.TestCase;
+
+import java.io.FileNotFoundException;
 
 
 /**

@@ -23,9 +23,8 @@
  */
 package dk.netarkivet.common.utils.cdx;
 
-import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import junit.framework.TestCase;
 
 /**
  * Unit-tests for class CDXRecord.

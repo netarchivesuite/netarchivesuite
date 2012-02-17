@@ -25,12 +25,7 @@
 
 package dk.netarkivet.harvester.distribute;
 
-import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
-import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
-import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
-import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
-import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
+import dk.netarkivet.harvester.harvesting.distribute.*;
 
 /**
  * Interface for all classes which handles harvester-related messages received

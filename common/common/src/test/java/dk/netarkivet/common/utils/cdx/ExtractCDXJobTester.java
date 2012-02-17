@@ -24,25 +24,13 @@
 */
 package dk.netarkivet.common.utils.cdx;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.util.Arrays;
-
-import junit.framework.TestCase;
-
-import org.archive.io.arc.ARCRecord;
-
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import junit.framework.TestCase;
+import org.archive.io.arc.ARCRecord;
+
+import java.io.*;
+import java.util.Arrays;
 
 public class ExtractCDXJobTester extends TestCase {
     

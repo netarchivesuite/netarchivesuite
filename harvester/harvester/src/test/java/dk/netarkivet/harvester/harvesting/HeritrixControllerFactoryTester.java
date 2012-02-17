@@ -24,21 +24,19 @@
 
 package dk.netarkivet.harvester.harvesting;
 
-import java.io.File;
-import java.io.IOException;
-
-import junit.framework.TestCase;
-
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import dk.netarkivet.testutils.LuceneUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixControllerFactory;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import junit.framework.TestCase;
+
+import java.io.File;
+import java.io.IOException;
 
 
 /**

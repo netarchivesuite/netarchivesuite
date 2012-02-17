@@ -23,12 +23,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.harvester.harvesting;
-import java.io.File;
-
-import junit.framework.TestCase;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -37,6 +31,11 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
+import junit.framework.TestCase;
+import org.dom4j.Document;
+import org.dom4j.DocumentFactory;
+
+import java.io.File;
 
 /**
  * Unittests for the class HeritrixFiles.

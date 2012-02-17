@@ -24,6 +24,17 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
+import dk.netarkivet.TestUtils;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.SQLException;
@@ -31,25 +42,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.LogManager;
-
-import junit.framework.TestCase;
-import dk.netarkivet.TestUtils;
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.RememberNotifications;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
-import dk.netarkivet.harvester.datamodel.Domain;
-import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.JobStatusInfo;
-import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class JobSupervisorTest extends TestCase  {
     private ReloadSettings reloadSettings = new ReloadSettings();

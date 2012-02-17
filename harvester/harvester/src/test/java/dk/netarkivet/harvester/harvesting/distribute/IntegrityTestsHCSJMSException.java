@@ -25,18 +25,6 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.QueueConnection;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.security.Permission;
-import java.util.ArrayList;
-import java.util.logging.LogManager;
-
-import junit.framework.TestCase;
-
 import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
@@ -53,6 +41,17 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
+import javax.jms.QueueConnection;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.security.Permission;
+import java.util.ArrayList;
+import java.util.logging.LogManager;
 
 /**
  * An integrity test that tests for how the HarvestControllerClient reacts

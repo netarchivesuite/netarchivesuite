@@ -24,13 +24,6 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
@@ -39,6 +32,12 @@ import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 import dk.netarkivet.harvester.harvesting.frontier.FrontierReportCsvExport;
 import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.PageContext;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * UI query to export the frontier report extract as a CSV file.

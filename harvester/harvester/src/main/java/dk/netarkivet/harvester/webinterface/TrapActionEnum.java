@@ -22,9 +22,9 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.jsp.PageContext;
-
 import dk.netarkivet.common.utils.I18n;
+
+import javax.servlet.jsp.PageContext;
 
 /**
  * Represents the various actions which can be carried out to modify

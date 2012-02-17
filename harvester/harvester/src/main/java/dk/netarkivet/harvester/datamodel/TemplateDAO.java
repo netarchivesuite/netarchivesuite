@@ -24,9 +24,9 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.util.Iterator;
-
 import dk.netarkivet.common.utils.FilterIterator;
+
+import java.util.Iterator;
 
 /**
  * DAO methods for reading templates only.

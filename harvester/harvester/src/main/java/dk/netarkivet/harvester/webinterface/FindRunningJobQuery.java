@@ -24,18 +24,13 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
+import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.harvester.datamodel.*;
+
+import javax.servlet.ServletRequest;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.servlet.ServletRequest;
-
-import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 
 /**
  * Represents a query for job IDs that would be set to harvest a given domain.

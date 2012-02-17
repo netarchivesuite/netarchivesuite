@@ -22,7 +22,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.testutils.preconfigured;
+package dk.netarkivet.archive.indexserver;
 
 import dk.netarkivet.archive.indexserver.MultiFileBasedCache;
 import dk.netarkivet.common.exceptions.IOFailure;

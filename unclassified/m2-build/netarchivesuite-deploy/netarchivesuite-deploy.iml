@@ -12,6 +12,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="netarchivesuite-common" />
+    <orderEntry type="library" name="Maven: c3p0:c3p0:0.9.1" level="project" />
     <orderEntry type="library" name="Maven: org.mortbay.jetty:jetty:6.1.26" level="project" />
     <orderEntry type="library" name="Maven: org.mortbay.jetty:jetty-util:6.1.26" level="project" />
     <orderEntry type="library" name="Maven: org.mortbay.jetty:servlet-api:2.5-20081211" level="project" />
@@ -22,7 +23,7 @@
     <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.archive:heritrix:1.14.4" level="project" />
     <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:3.0.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.2" level="project" />
+    <orderEntry type="library" name="Maven: junit:junit:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.2" level="project" />
     <orderEntry type="library" name="Maven: javax.jms:jms:b22g:4.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:2.9.4" level="project" />
@@ -33,7 +34,8 @@
     <orderEntry type="library" name="Maven: org.eclipse.jdt.core.compiler:ecj:3.5.1" level="project" />
     <orderEntry type="library" name="Maven: org.mortbay.jetty:jsp-api-2.1-glassfish:2.1.v20100127" level="project" />
     <orderEntry type="library" name="Maven: ant:ant:1.6.5" level="project" />
-    <orderEntry type="library" name="Maven: commons-net:commons-net:2.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-net:commons-net:3.0.1" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: jfree:jfreechart:1.0.13" level="project" />
     <orderEntry type="library" name="Maven: jfree:jcommon:1.0.15" level="project" />
     <orderEntry type="library" name="Maven: commons-cli:commons-cli:1.0" level="project" />
@@ -44,14 +46,6 @@
     <orderEntry type="library" name="Maven: berkeleydb:je:3.3.82" level="project" />
     <orderEntry type="module" module-name="netarchivesuite-viewerproxy" />
     <orderEntry type="module" module-name="netarchivesuite-monitor" />
-    <orderEntry type="library" scope="TEST" name="Maven: mockobjects:mockobjects-j1.4-j2ee1.3:0.08dev-20030318" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: httpunit:httpunit:1.6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: xerces:xmlParserAPIs:2.2.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: xerces:xercesImpl:2.6.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: nekohtml:nekohtml:0.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: rhino:js:1.5R4.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: javax.servlet:servlet-api:2.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: jtidy:jtidy:4aug2000r7-dev" level="project" />
   </component>
 </module>
 

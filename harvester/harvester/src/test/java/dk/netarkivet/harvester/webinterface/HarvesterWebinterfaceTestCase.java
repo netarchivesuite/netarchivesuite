@@ -25,16 +25,16 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import java.io.File;
-
-import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
+import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+
+import java.io.File;
 
 /**
  * A TestCase subclass specifically tailored to test webinterface classes,
@@ -57,7 +57,14 @@ public class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
         rs.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
-        TestUtils.resetDAOs();
+        ExtendedFieldDBDAO.reset();
+        DomainDAOTester.resetDomainDAO();
+        TemplateDAOTester.resetTemplateDAO();
+        HarvestDefinitionDAOTester.resetDAO();
+        ScheduleDAOTester.resetDAO();
+        JobDAOTester.resetDAO();
+        GlobalCrawlerTrapListDBDAO.reset();
+
         Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                                             + HARVEST_DEFINITION_BASEDIR.getCanonicalPath()
                                             + "/fullhddb");
@@ -67,7 +74,13 @@ public class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
 
     public void tearDown() throws Exception {
         DatabaseTestUtils.dropHDDB();
-        TestUtils.resetDAOs();
+      ExtendedFieldDBDAO.reset();
+      DomainDAOTester.resetDomainDAO();
+      TemplateDAOTester.resetTemplateDAO();
+      HarvestDefinitionDAOTester.resetDAO();
+      ScheduleDAOTester.resetDAO();
+      JobDAOTester.resetDAO();
+      GlobalCrawlerTrapListDBDAO.reset();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
         super.tearDown();

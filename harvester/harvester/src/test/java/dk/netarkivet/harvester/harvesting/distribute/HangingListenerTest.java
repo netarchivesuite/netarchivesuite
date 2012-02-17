@@ -25,32 +25,17 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueReceiver;
-import javax.jms.QueueSession;
-import javax.jms.Session;
-
 import com.sun.messaging.QueueConnectionFactory;
-import junit.framework.TestCase;
-
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
+import dk.netarkivet.common.distribute.*;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
+import junit.framework.TestCase;
+
+import javax.jms.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A test of the behaviour if onMessage() hangs when there is more than one

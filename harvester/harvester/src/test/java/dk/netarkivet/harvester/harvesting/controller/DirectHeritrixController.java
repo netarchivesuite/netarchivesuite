@@ -25,10 +25,9 @@
 
 package dk.netarkivet.harvester.harvesting.controller;
 
-import javax.management.InvalidAttributeValueException;
-import java.io.File;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.event.CrawlStatusListener;
@@ -37,9 +36,9 @@ import org.archive.crawler.framework.StatisticsTracking;
 import org.archive.crawler.framework.exceptions.InitializationException;
 import org.archive.crawler.settings.XMLSettingsHandler;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+import javax.management.InvalidAttributeValueException;
+import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /** This class encapsulates one full run of Heritrix by grabbing hold of a
  * CrawlController class. It implements the CrawlController interface.

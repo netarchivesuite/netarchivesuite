@@ -22,11 +22,11 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * csr forgot to comment this!

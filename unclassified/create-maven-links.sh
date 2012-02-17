@@ -14,47 +14,49 @@ M2_BUILD_HOME=./m2-build
 
 # Common module
 rm $M2_BUILD_HOME/netarchivesuite-common/src/main/java/dk/netarkivet/common
-ln -s $PWD/src/dk/netarkivet/common $M2_BUILD_HOME/netarchivesuite-common/src/main/java/dk/netarkivet
+ln -s $WORKING_DIR/src/dk/netarkivet/common $M2_BUILD_HOME/netarchivesuite-common/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-common/src/test/java/dk/netarkivet/common
-ln -s $PWD/tests/dk/netarkivet/common $M2_BUILD_HOME/netarchivesuite-common/src/test/java/dk/netarkivet
+ln -s $WORKING_DIR/tests/dk/netarkivet/common $M2_BUILD_HOME/netarchivesuite-common/src/test/java/dk/netarkivet
+rm $M2_BUILD_HOME/netarchivesuite-common/src/test/java/dk/netarkivet/testutils
+ln -s $WORKING_DIR/tests/dk/netarkivet/testutils $M2_BUILD_HOME/netarchivesuite-common/src/test/java/dk/netarkivet
 
 # Archive module
 rm $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/dk/netarkivet/archive
-ln -s $PWD/src/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/dk/netarkivet
+ln -s $WORKING_DIR/src/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-archive/src/test/java/dk/netarkivet/archive
-ln -s $PWD/tests/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/test/java/dk/netarkivet
+ln -s $WORKING_DIR/tests/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/test/java/dk/netarkivet
 # Extra is.hi.bok.deduplicator.DigestIndexer
 rm $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/is
-ln -s $PWD/src/is $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/
+ln -s $WORKING_DIR/src/is $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/
 
 # Harvester module
 rm $M2_BUILD_HOME/netarchivesuite-harvester/src/main/java/dk/netarkivet/harvester
-ln -s $PWD/src/dk/netarkivet/harvester $M2_BUILD_HOME/netarchivesuite-harvester/src/main/java/dk/netarkivet
+ln -s $WORKING_DIR/src/dk/netarkivet/harvester $M2_BUILD_HOME/netarchivesuite-harvester/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-harvester/src/test/java/dk/netarkivet/harvester
-ln -s $PWD/tests/dk/netarkivet/harvester $M2_BUILD_HOME/netarchivesuite-harvester/src/test/java/dk/netarkivet
+ln -s $WORKING_DIR/tests/dk/netarkivet/harvester $M2_BUILD_HOME/netarchivesuite-harvester/src/test/java/dk/netarkivet
 
 # Monitor module
 rm $M2_BUILD_HOME/netarchivesuite-monitor/src/main/java/dk/netarkivet/monitor
-ln -s $PWD/src/dk/netarkivet/monitor $M2_BUILD_HOME/netarchivesuite-monitor/src/main/java/dk/netarkivet
+ln -s $WORKING_DIR/src/dk/netarkivet/monitor $M2_BUILD_HOME/netarchivesuite-monitor/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-monitor/src/test/java/dk/netarkivet/monitor
-ln -s $PWD/tests/dk/netarkivet/monitor $M2_BUILD_HOME/netarchivesuite-monitor/src/test/java/dk/netarkivet
+ln -s $WORKING_DIR/tests/dk/netarkivet/monitor $M2_BUILD_HOME/netarchivesuite-monitor/src/test/java/dk/netarkivet
 
 # Deploy module
 rm $M2_BUILD_HOME/netarchivesuite-deploy/src/main/java/dk/netarkivet/deploy
-ln -s $PWD/src/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-deploy/src/main/java/dk/netarkivet
+ln -s $WORKING_DIR/src/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-deploy/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet/deploy
-ln -s $PWD/tests/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet
+ln -s $WORKING_DIR/tests/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet
 
 # Viewerproxy module
 rm $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet/viewerproxy
-ln -s $PWD/src/dk/netarkivet/viewerproxy $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet
+ln -s $WORKING_DIR/src/dk/netarkivet/viewerproxy $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/test/java/dk/netarkivet/viewerproxy
-ln -s $PWD/tests/dk/netarkivet/viewerproxy $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/test/java/dk/netarkivet
+ln -s $WORKING_DIR/tests/dk/netarkivet/viewerproxy $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/test/java/dk/netarkivet
 
 # Wayback module
 rm $M2_BUILD_HOME/netarchivesuite-wayback/src/main/java/dk/netarkivet/wayback
-ln -s $PWD/src/dk/netarkivet/wayback $M2_BUILD_HOME/netarchivesuite-wayback/src/main/java/dk/netarkivet
+ln -s $WORKING_DIR/src/dk/netarkivet/wayback $M2_BUILD_HOME/netarchivesuite-wayback/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-wayback/src/test/java/dk/netarkivet/wayback
-ln -s $PWD/tests/dk/netarkivet/wayback $M2_BUILD_HOME/netarchivesuite-wayback/src/test/java/dk/netarkivet
+ln -s $WORKING_DIR/tests/dk/netarkivet/wayback $M2_BUILD_HOME/netarchivesuite-wayback/src/test/java/dk/netarkivet
 
 cd $WORKING_DIR

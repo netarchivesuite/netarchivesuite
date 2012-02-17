@@ -24,8 +24,8 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import junit.framework.TestCase;
 
 /**
  * Unit-test for the HistorySiteSection class.
