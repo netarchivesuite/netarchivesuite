@@ -107,11 +107,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     log.info("Initialization of database successful");
                     return;
                 } catch (IOFailure e) {
-                    log.warn("Initialization failed. Probably because another " 
-                            + "application is calling the same method now.", e);
                     if (retries < INIT_DB_RETRIES) {
-                            log.info("Retrying after a minimum of " 
-                                    + WAIT_BEFORE_INIT_RETRY + " seconds");
+                            log.info("Initialization failed. Probably because another " 
+                            + "application is calling the same method now. Retrying after a minimum of " 
+                                    + WAIT_BEFORE_INIT_RETRY + " seconds: ", e);
                             waitSome();
                     } else {
                         throw new IllegalState(
