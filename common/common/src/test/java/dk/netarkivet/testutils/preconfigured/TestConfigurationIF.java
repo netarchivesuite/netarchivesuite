@@ -30,7 +30,7 @@ package dk.netarkivet.testutils.preconfigured;
  * that encapsulate one particular aspect to be handled
  * by setUp() and tearDown() in many unit tests.
  */
-interface TestConfigurationIF {
+public interface TestConfigurationIF {
     /**
      * Set up the test environment to handle the particular
      * aspect that we handle.

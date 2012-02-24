@@ -25,11 +25,6 @@
 
 package dk.netarkivet.harvester.scheduler;
 
-import javax.jms.MessageListener;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -44,6 +39,10 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.jms.MessageListener;
 
 /**
  * Submitted harvesting jobs are registered with this singleton. The class

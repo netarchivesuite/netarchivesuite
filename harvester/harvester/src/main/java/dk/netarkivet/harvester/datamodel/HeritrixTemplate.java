@@ -24,15 +24,15 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import org.archive.crawler.deciderules.DecidingScope;
 import org.dom4j.Document;
 import org.dom4j.Node;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.Map;
-import java.util.HashMap;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class encapsulating the Heritrix order.xml.

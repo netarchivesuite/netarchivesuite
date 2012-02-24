@@ -25,32 +25,17 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueReceiver;
-import javax.jms.QueueSession;
-import javax.jms.Session;
-
 import com.sun.messaging.QueueConnectionFactory;
-import junit.framework.TestCase;
-
-import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.batch.ChecksumJob;
+import junit.framework.TestCase;
+
+import javax.jms.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A test of the behaviour if onMessage() hangs when there is more than one
@@ -80,41 +65,42 @@ public class HangingListenerTest extends TestCase {
      * @throws InterruptedException
      * @throws JMSException
      */
-    public void testNotListeningWhileProcessingSunMQ() throws InterruptedException, JMSException {
-        if (!Settings.get(CommonSettings.JMS_BROKER_CLASS).equals(JMSConnectionSunMQ.class.getName())) {
-            fail("Wrong message queue for test");
-        }
-        JMSConnectionFactory.getInstance().cleanup();
-        JMSConnectionFactory.getInstance();
-        long blockingTime = 1000l;
-        int messagesSent = 10;
-        BlockingListener nonBlocker = new BlockingListener();
-        BlockingListener blocker = new BlockingListener(true, blockingTime);
-        ChannelID theQueue = Channels.getTheBamon();
-        JMSConnection con = JMSConnectionFactory.getInstance();
-        MiniConnectionSunMQ con2 = new MiniConnectionSunMQ();
-        // Set the production JMS connection to listen with the blocking
-        // listener
-        con.setListener(theQueue, blocker);
-        con2.setListener(theQueue, nonBlocker);
-        for (int i = 0; i < messagesSent; i++) {
-            NetarkivetMessage msg = new BatchMessage(theQueue, new ChecksumJob(), "ONE");
-            con.send(msg);
-        }
-        while(HangingListenerTest.messages_received.get() < messagesSent) {}
-        Thread.sleep(2*blockingTime);
-        assertEquals("Blocking listener should only have been called once", 1, blocker.called);
-        System.out.println("Repeat:");
-        for (int i = 0; i < messagesSent; i++) {
-            NetarkivetMessage msg = new BatchMessage(theQueue, new ChecksumJob(), "ONE");
-            con.send(msg);
-        }
-        while(HangingListenerTest.messages_received.get() < messagesSent) {}
-        Thread.sleep(2*blockingTime);
-        assertEquals("Blocking listener should now have been called twice", 2, blocker.called);
-        con.cleanup();
-        con2.cleanup();
-    }
+// Out commented to avoid reference to archive module from harvester module.
+//    public void testNotListeningWhileProcessingSunMQ() throws InterruptedException, JMSException {
+//        if (!Settings.get(CommonSettings.JMS_BROKER_CLASS).equals(JMSConnectionSunMQ.class.getName())) {
+//            fail("Wrong message queue for test");
+//        }
+//        JMSConnectionFactory.getInstance().cleanup();
+//        JMSConnectionFactory.getInstance();
+//        long blockingTime = 1000l;
+//        int messagesSent = 10;
+//        BlockingListener nonBlocker = new BlockingListener();
+//        BlockingListener blocker = new BlockingListener(true, blockingTime);
+//        ChannelID theQueue = Channels.getTheBamon();
+//        JMSConnection con = JMSConnectionFactory.getInstance();
+//        MiniConnectionSunMQ con2 = new MiniConnectionSunMQ();
+//        // Set the production JMS connection to listen with the blocking
+//        // listener
+//        con.setListener(theQueue, blocker);
+//        con2.setListener(theQueue, nonBlocker);
+//        for (int i = 0; i < messagesSent; i++) {
+//            NetarkivetMessage msg = new BatchMessage(theQueue, new ChecksumJob(), "ONE");
+//            con.send(msg);
+//        }
+//        while(HangingListenerTest.messages_received.get() < messagesSent) {}
+//        Thread.sleep(2*blockingTime);
+//        assertEquals("Blocking listener should only have been called once", 1, blocker.called);
+//        System.out.println("Repeat:");
+//        for (int i = 0; i < messagesSent; i++) {
+//            NetarkivetMessage msg = new BatchMessage(theQueue, new ChecksumJob(), "ONE");
+//            con.send(msg);
+//        }
+//        while(HangingListenerTest.messages_received.get() < messagesSent) {}
+//        Thread.sleep(2*blockingTime);
+//        assertEquals("Blocking listener should now have been called twice", 2, blocker.called);
+//        con.cleanup();
+//        con2.cleanup();
+//    }
 
 
     public static class MiniConnectionSunMQ {

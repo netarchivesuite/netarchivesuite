@@ -24,10 +24,10 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import java.io.File;
-
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+
+import java.io.File;
 
 /**
  * Wraps information for an Heritrix file that should be stored in the metadata

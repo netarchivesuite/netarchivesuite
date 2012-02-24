@@ -22,11 +22,12 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package dk.netarkivet.common.distribute.arcrepository;
+package dk.netarkivet.archive.arcrepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import dk.netarkivet.common.distribute.arcrepository.*;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
@@ -43,8 +44,8 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * TrivialArcRepositoryClient
  */
 public class TrivialArcRepositoryClientTester extends TestCase {
-    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-            TestInfo.WORKING_DIR);
+    MoveTestFiles mtf = new MoveTestFiles(dk.netarkivet.common.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
+            dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR);
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
@@ -56,7 +57,7 @@ public class TrivialArcRepositoryClientTester extends TestCase {
         rs.setUp();
         utrf.setUp();
 
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
         mtf.setUp();
     }
 
@@ -73,22 +74,22 @@ public class TrivialArcRepositoryClientTester extends TestCase {
         assertEquals("Should have no files processed at outset",
                 0, status.getNoOfFilesProcessed());
 
-        FileUtils.copyFile(TestInfo.SAMPLE_FILE, TestInfo.SAMPLE_FILE_COPY);
-        arcrep.store(TestInfo.SAMPLE_FILE);
+        FileUtils.copyFile(dk.netarkivet.common.distribute.arcrepository.TestInfo.SAMPLE_FILE, dk.netarkivet.common.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
+        arcrep.store(dk.netarkivet.common.distribute.arcrepository.TestInfo.SAMPLE_FILE);
         assertFalse("Should ahve deleted file after upload",
-                TestInfo.SAMPLE_FILE.exists());
+                dk.netarkivet.common.distribute.arcrepository.TestInfo.SAMPLE_FILE.exists());
         status = arcrep.batch(new FileListJob(), "BA");
         assertEquals("Should have 1 files processed after store",
                 1, status.getNoOfFilesProcessed());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         status.getResultFile().appendTo(out);
         assertEquals("Should list the one file",
-                TestInfo.SAMPLE_FILE.getName() + "\n",
+                dk.netarkivet.common.distribute.arcrepository.TestInfo.SAMPLE_FILE.getName() + "\n",
                 out.toString());
         File f = File.createTempFile("foo", "bar", FileUtils.getTempDir());
-        arcrep.getFile(TestInfo.SAMPLE_FILE.getName(), Replica.getReplicaFromId("TWO"), f);
+        arcrep.getFile(dk.netarkivet.common.distribute.arcrepository.TestInfo.SAMPLE_FILE.getName(), Replica.getReplicaFromId("TWO"), f);
         assertEquals("Should have expected contents back",
-                MD5.generateMD5onFile(TestInfo.SAMPLE_FILE_COPY),
+                MD5.generateMD5onFile(dk.netarkivet.common.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY),
                 MD5.generateMD5onFile(f));
     }
 }

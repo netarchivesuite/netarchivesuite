@@ -24,11 +24,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.lang.reflect.Field;
-import java.sql.Connection;
-
-import junit.framework.TestCase;
-import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
@@ -37,6 +32,10 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
+import java.lang.reflect.Field;
+import java.sql.Connection;
 
 /**
  * Alternate unit test class for the TemplateDAO.
@@ -58,7 +57,7 @@ public class TemplateDAOTesterAlternate extends TestCase {
                 + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
 
         Connection c = DatabaseTestUtils.getHDDB(TestInfo.EMPTYDBFILE,
                 "emptyhddb", TestInfo.TEMPDIR);
@@ -80,7 +79,7 @@ public class TemplateDAOTesterAlternate extends TestCase {
         Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
         f.set(null, null);
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         rs.tearDown();
     }
 

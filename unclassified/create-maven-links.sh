@@ -41,12 +41,6 @@ ln -s $WORKING_DIR/src/dk/netarkivet/monitor $M2_BUILD_HOME/netarchivesuite-moni
 rm $M2_BUILD_HOME/netarchivesuite-monitor/src/test/java/dk/netarkivet/monitor
 ln -s $WORKING_DIR/tests/dk/netarkivet/monitor $M2_BUILD_HOME/netarchivesuite-monitor/src/test/java/dk/netarkivet
 
-# Deploy module
-rm $M2_BUILD_HOME/netarchivesuite-deploy/src/main/java/dk/netarkivet/deploy
-ln -s $WORKING_DIR/src/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-deploy/src/main/java/dk/netarkivet
-rm $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet/deploy
-ln -s $WORKING_DIR/tests/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet
-
 # Viewerproxy module
 rm $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet/viewerproxy
 ln -s $WORKING_DIR/src/dk/netarkivet/viewerproxy $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet
@@ -58,5 +52,13 @@ rm $M2_BUILD_HOME/netarchivesuite-wayback/src/main/java/dk/netarkivet/wayback
 ln -s $WORKING_DIR/src/dk/netarkivet/wayback $M2_BUILD_HOME/netarchivesuite-wayback/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-wayback/src/test/java/dk/netarkivet/wayback
 ln -s $WORKING_DIR/tests/dk/netarkivet/wayback $M2_BUILD_HOME/netarchivesuite-wayback/src/test/java/dk/netarkivet
+
+# Deploy module
+rm $M2_BUILD_HOME/netarchivesuite-deploy/src/main/java/dk/netarkivet/deploy
+ln -s $WORKING_DIR/src/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-deploy/src/main/java/dk/netarkivet
+rm $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet/deploy
+ln -s $WORKING_DIR/tests/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet
+rm $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet/externalsoftware
+ln -s $WORKING_DIR/tests/dk/netarkivet/externalsoftware $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet
 
 cd $WORKING_DIR

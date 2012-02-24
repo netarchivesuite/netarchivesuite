@@ -24,14 +24,12 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import java.io.Serializable;
-
+import com.sleepycat.persist.model.Persistent;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.sleepycat.persist.model.Persistent;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import java.io.Serializable;
 
 /**
  * Wraps a line of the frontier report.

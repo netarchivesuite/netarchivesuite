@@ -24,12 +24,12 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 
 /**

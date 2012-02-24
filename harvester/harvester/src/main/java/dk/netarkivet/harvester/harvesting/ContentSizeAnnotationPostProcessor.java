@@ -25,10 +25,9 @@
 
 package dk.netarkivet.harvester.harvesting;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.framework.Processor;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * A post processor that adds an annotation

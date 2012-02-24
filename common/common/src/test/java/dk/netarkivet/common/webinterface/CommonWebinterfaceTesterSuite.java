@@ -40,7 +40,6 @@ public class CommonWebinterfaceTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(HTMLUtilsTester.class);
         suite.addTestSuite(SiteSectionTester.class);
-        suite.addTestSuite(GUIWebServerTester.class);
     }
 
     public static void main(String args[]) {

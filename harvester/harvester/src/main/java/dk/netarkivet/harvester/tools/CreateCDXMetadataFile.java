@@ -25,16 +25,6 @@
 
 package dk.netarkivet.harvester.tools;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.archive.io.arc.ARCWriter;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -54,6 +44,10 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
+import org.archive.io.arc.ARCWriter;
+
+import java.io.*;
+import java.util.Arrays;
 
 /**
  * This tool creates a CDX metadata file for a given jobID by running a

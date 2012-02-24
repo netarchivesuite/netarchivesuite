@@ -24,61 +24,22 @@
 */
 package dk.netarkivet.archive.arcrepository;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.jms.Message;
-import javax.jms.MessageListener;
-
-import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminFactory;
 import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
-import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
-import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
-import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
-import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
-import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
+import dk.netarkivet.archive.bitarchive.distribute.*;
 import dk.netarkivet.archive.checksum.distribute.ChecksumClient;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.distribute.TestRemoteFile;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.Replica;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
+import dk.netarkivet.common.distribute.*;
+import dk.netarkivet.common.distribute.arcrepository.*;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
-import dk.netarkivet.common.utils.PrintNotifications;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StreamUtils;
+import dk.netarkivet.common.utils.*;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.testutils.ClassAsserts;
@@ -87,6 +48,16 @@ import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import junit.framework.TestCase;
+
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ArcRepositoryDatabaseTester extends TestCase {
     /** A repeatedly used reflected method, used across method calls. */
@@ -163,7 +134,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // Database admin test.
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE, 
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE,
                 TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);

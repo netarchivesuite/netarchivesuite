@@ -24,12 +24,11 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import dk.netarkivet.harvester.webinterface.GUIWebServerTester;
+import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-
-import dk.netarkivet.common.webinterface.GUIWebServerTester;
-import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
 
 /**
  * 

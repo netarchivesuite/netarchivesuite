@@ -24,7 +24,15 @@
  */
 package dk.netarkivet.harvester.harvesting.monitor;
 
-import java.awt.Color;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.NumberUtils;
+import dk.netarkivet.harvester.harvesting.monitor.StartedJobHistoryChartGen.TimeAxisResolution;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -32,14 +40,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
-
-import junit.framework.TestCase;
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.NumberUtils;
-import dk.netarkivet.harvester.harvesting.monitor.StartedJobHistoryChartGen.TimeAxisResolution;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class StartedJobHistoryChartGenTest extends TestCase {
 

@@ -24,13 +24,12 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
+import dk.netarkivet.common.utils.DomainUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.framework.CrawlController;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;
-
-import dk.netarkivet.common.utils.DomainUtils;
 
 /**
  * Using the domain as the queue-name.

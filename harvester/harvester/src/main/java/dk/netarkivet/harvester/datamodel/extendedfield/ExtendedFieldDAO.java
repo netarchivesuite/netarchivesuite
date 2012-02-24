@@ -24,11 +24,11 @@
  */
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
-import java.util.List;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
+
+import java.util.List;
 
 /**
  * Interface for creating and accessing extended fields in persistent storage.

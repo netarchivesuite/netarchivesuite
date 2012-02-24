@@ -24,14 +24,6 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
@@ -39,6 +31,13 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Responsible for cleaning obsolete jobs, see {@link #start()} for details.

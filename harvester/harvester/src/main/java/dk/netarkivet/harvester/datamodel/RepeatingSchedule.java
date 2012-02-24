@@ -25,9 +25,9 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.util.Date;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
+import java.util.Date;
 
 /**
  * This class implements a schedule that should run a certain number of times.

@@ -25,22 +25,16 @@
 
 package dk.netarkivet.harvester.distribute;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
-import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
-import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
-import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
-import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
+import dk.netarkivet.harvester.harvesting.distribute.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.jms.Message;
+import javax.jms.MessageListener;
 
 /**
  * This default message handler shields of all unimplemented methods from the

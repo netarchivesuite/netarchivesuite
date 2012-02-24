@@ -24,13 +24,13 @@
  */
 package dk.netarkivet.harvester.harvesting.monitor;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.LinkedList;
-import java.util.Locale;
-
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
+import dk.netarkivet.common.utils.*;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.NumberUtils;
+import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.ChartUtilities;
@@ -48,17 +48,12 @@ import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.I18n;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.TimeUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.NumberUtils;
-import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.LinkedList;
+import java.util.Locale;
 
 /**
  * This class implements a generator for an history chart of a running job.

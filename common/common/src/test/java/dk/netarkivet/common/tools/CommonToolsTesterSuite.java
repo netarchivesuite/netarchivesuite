@@ -41,7 +41,6 @@ public class CommonToolsTesterSuite {
         suite.addTestSuite(ArcWrapTester.class);
         suite.addTestSuite(ExtractCDXTester.class);
         suite.addTestSuite(ToolRunnerTester.class);
-        suite.addTestSuite(CreateharvestMappingsFromAdminDataTester.class);
     }
 
     public static void main(String args[]) {

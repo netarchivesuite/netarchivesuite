@@ -67,7 +67,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.Settings;
@@ -224,14 +223,6 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         TestDestination destination = destinations.get(channelID.getName());
         for (TestObjectMessage sentMessage : destination.sent) {
             NetarkivetMessage message = unpack(sentMessage);
-            if (message instanceof BatchMessage) {
-                FileBatchJob batchJob = ((BatchMessage) message).getJob();
-                if (batchJob instanceof TestJob) {
-                    if (((TestJob) batchJob).getTestId().equals(job.getTestId())) {
-                        return true;
-                    }
-                }
-            }
         }
         return false;
     }

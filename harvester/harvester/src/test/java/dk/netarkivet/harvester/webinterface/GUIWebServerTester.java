@@ -22,24 +22,25 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.common.webinterface;
+package dk.netarkivet.harvester.webinterface;
+
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.webinterface.GUIWebServer;
+import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
+import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import junit.framework.TestCase;
-import dk.netarkivet.TestUtils;
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests running a web server, represented by the GUIWebServer() class.
@@ -63,21 +64,21 @@ public class GUIWebServerTester extends TestCase {
     public void setUp() throws Exception {
         rs.setUp();
         Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, 
-                TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
+                dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
         Settings.set(CommonSettings.SITESECTION_CLASS, 
-                TestInfo.GUI_WEB_SERVER_SITESECTION_CLASS);
+                dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_SITESECTION_CLASS);
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, 
-                Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
+                Integer.toString(dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_PORT));
 
-        FileUtils.removeRecursively(TestInfo.TEMPDIR);
-        TestInfo.TEMPDIR.mkdirs();
+        FileUtils.removeRecursively(dk.netarkivet.common.webinterface.TestInfo.TEMPDIR);
+        dk.netarkivet.common.webinterface.TestInfo.TEMPDIR.mkdirs();
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, 
-                TestInfo.TEMPDIR.getAbsolutePath()); 
+                dk.netarkivet.common.webinterface.TestInfo.TEMPDIR.getAbsolutePath());
         // Use mockup JMS
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         
         // Configure test DB
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
         "dk.netarkivet.common.distribute.TestRemoteFile");
         FileUtils.removeRecursively(WORKING);
@@ -95,8 +96,8 @@ public class GUIWebServerTester extends TestCase {
         }
         JMSConnectionMockupMQ.clearTestQueues();
         DatabaseTestUtils.dropHDDB();
-        FileUtils.removeRecursively(TestInfo.TEMPDIR);
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+        FileUtils.removeRecursively(dk.netarkivet.common.webinterface.TestInfo.TEMPDIR);
+        FileUtils.removeRecursively(dk.netarkivet.common.webinterface.TestInfo.WORKING_DIR);
         rs.tearDown();
     }
 
@@ -105,7 +106,7 @@ public class GUIWebServerTester extends TestCase {
         server.startServer();
         try {
             new Socket(InetAddress.getLocalHost(),
-                    TestInfo.GUI_WEB_SERVER_PORT);
+                    dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_PORT);
         } catch (IOException e) {
             fail("Port not in use after starting server due to error: " + e);
         }
@@ -141,7 +142,7 @@ public class GUIWebServerTester extends TestCase {
         }
 
         //Port already in use
-        ServerSocket socket = new ServerSocket(TestInfo.GUI_WEB_SERVER_PORT);
+        ServerSocket socket = new ServerSocket(dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_PORT);
 
         try {
             server = new GUIWebServer();
@@ -173,14 +174,14 @@ public class GUIWebServerTester extends TestCase {
         server.startServer();
         try {
             new Socket(InetAddress.getLocalHost(),
-                    TestInfo.GUI_WEB_SERVER_PORT);
+                    dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_PORT);
         } catch (IOException e) {
             fail("Port not in use after starting server due to error: " + e);
         }
         server.cleanup();
         try {
             new Socket(InetAddress.getLocalHost(),
-                    TestInfo.GUI_WEB_SERVER_PORT);
+                    dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_PORT);
             fail("Port still in use after stopping server!");
         } catch (IOException e) {
             //Expected

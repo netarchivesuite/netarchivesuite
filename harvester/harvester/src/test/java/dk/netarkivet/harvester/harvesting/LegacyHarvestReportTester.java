@@ -24,31 +24,25 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.LogManager;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.TestFileUtils;
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.LogManager;
 
 /**
  * unit tests for the abstract class AbstractHarvestReport and its concrete

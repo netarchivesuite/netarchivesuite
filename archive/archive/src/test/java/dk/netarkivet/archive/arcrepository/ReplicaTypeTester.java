@@ -22,16 +22,18 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package dk.netarkivet.common.distribute.arcrepository;
+package dk.netarkivet.archive.arcrepository;
 
+import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /** Tests of the ReplicaType enum class. */
 public class ReplicaTypeTester extends TestCase {
 
     public void testFromOrdinal() {
-        assertEquals(ReplicaType.NO_REPLICA_TYPE, ReplicaType.fromOrdinal(0));
+        Assert.assertEquals(ReplicaType.NO_REPLICA_TYPE, ReplicaType.fromOrdinal(0));
         assertEquals(ReplicaType.BITARCHIVE, ReplicaType.fromOrdinal(1));
         assertEquals(ReplicaType.CHECKSUM, ReplicaType.fromOrdinal(2));
         try {

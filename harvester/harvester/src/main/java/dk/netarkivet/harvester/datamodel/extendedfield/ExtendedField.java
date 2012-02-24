@@ -24,11 +24,11 @@
  */
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * This class represents one Extended Field.

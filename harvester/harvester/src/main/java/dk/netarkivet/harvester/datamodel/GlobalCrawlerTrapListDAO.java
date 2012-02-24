@@ -22,10 +22,10 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.util.List;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
+
+import java.util.List;
 
 /**
  * A Data Access Object for managing persistent collections of global crawler

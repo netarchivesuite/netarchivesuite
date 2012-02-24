@@ -25,14 +25,9 @@
 */
 package dk.netarkivet.viewerproxy.webinterface;
 
-import java.io.File;
-import java.util.List;
-
-import junit.framework.TestCase;
-
+import dk.netarkivet.archive.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -43,6 +38,10 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import junit.framework.TestCase;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Unit tests for Reporting class.

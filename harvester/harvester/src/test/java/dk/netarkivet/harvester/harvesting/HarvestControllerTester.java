@@ -24,24 +24,6 @@
 */
 package dk.netarkivet.harvester.harvesting;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import junit.framework.TestCase;
-
-import org.archive.io.ArchiveRecord;
-import org.archive.io.arc.ARCReader;
-import org.archive.io.arc.ARCReaderFactory;
-import org.archive.io.arc.ARCRecord;
-import org.archive.io.arc.ARCRecordMetaData;
-
-import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -58,14 +40,22 @@ import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDe
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
-import dk.netarkivet.testutils.ARCTestUtils;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.StringAsserts;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
+import dk.netarkivet.testutils.*;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import junit.framework.TestCase;
+import org.archive.io.ArchiveRecord;
+import org.archive.io.arc.ARCReader;
+import org.archive.io.arc.ARCReaderFactory;
+import org.archive.io.arc.ARCRecord;
+import org.archive.io.arc.ARCRecordMetaData;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Tests for the HarvestController class (which was extracted from
@@ -78,8 +68,8 @@ public class HarvestControllerTester extends TestCase {
         super(s);
     }
 
-    MockupIndexServer mis = new MockupIndexServer(
-            new File(TestInfo.ORIGINALS_DIR, "dedupcache"));
+    // Out commented to avoid reference to archive module from harvester module.
+    //MockupIndexServer mis = new MockupIndexServer(new File(TestInfo.ORIGINALS_DIR, "dedupcache"));
     UseTestRemoteFile rf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
 
@@ -92,16 +82,20 @@ public class HarvestControllerTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.CRAWLDIR_ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
         rf.setUp();
-        Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES, "1");
+        // Out commented to avoid reference to archive module from harvester module.
+        // Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES, "1");
         Settings.set(CommonSettings.CACHE_DIR, new File(
                 TestInfo.WORKING_DIR, "cacheDir").getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(TestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
-        mis.setUp();
+
+        // Out commented to avoid reference to archive module from harvester module.
+        // mis.setUp();
    }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        mis.tearDown();
+        // Uncommented to avoid reference to archive module from harvester module.
+        // mis.tearDown();
         JMSConnectionMockupMQ.clearTestQueues();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rf.tearDown();
@@ -115,20 +109,22 @@ public class HarvestControllerTester extends TestCase {
     /** Test that if the arcrepository client cannot start we
      * get an exception.
      */
-    public void testFailingArcRepositoryClient() {
-        // If the harvestController is already instantiated,
-        // make sure that isn't any longer.
-        HarvestController hc = HarvestController.getInstance();
-        hc.cleanup();
-        Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES,
-                     "Not a number");
-        try {
-            HarvestController.getInstance();
-            fail("The ArcRepositoryClient should have thrown an exception");
-        } catch (ArgumentNotValid e) {
-            //expected
-        }
-    }
+// Out commented to avoid reference to archive module from harvester module.
+//    public void testFailingArcRepositoryClient() {
+//        // If the harvestController is already instantiated,
+//        // make sure that isn't any longer.
+//        HarvestController hc = HarvestController.getInstance();
+//        hc.cleanup();
+//        // Out commented to avoid reference to archive module from harvester module.
+//        Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES,
+//                     "Not a number");
+//        try {
+//            HarvestController.getInstance();
+//            fail("The ArcRepositoryClient should have thrown an exception");
+//        } catch (ArgumentNotValid e) {
+//            //expected
+//        }
+//    }
 
     /** Tests the writeHarvestFiles method.
      * FIXME fails when run as part of the UnitTesterSuite.java. See bug 1912.
@@ -341,71 +337,72 @@ public class HarvestControllerTester extends TestCase {
         assertNull("Generated harvestReport should be null", dhr);
     }
 
-    public void testUploadFiles() throws Exception {
-        hc = HarvestController.getInstance();
-        Field arcrepField = ReflectUtils.getPrivateField(hc.getClass(), "arcRepController");
-        final List<File> stored = new ArrayList<File>();
-        arcrepField.set(hc, new JMSArcRepositoryClient() {
-            public void store(File f) {
-                if (f.exists()) {
-                    stored.add(f);
-                } else {
-                    throw new ArgumentNotValid("Missing file " + f);
-                }
-            }
-        });
-
-        // Tests that all files in the list are uploaded, and that error
-        // messages are correctly handled.
-        Method uploadFiles = ReflectUtils.getPrivateMethod(hc.getClass(),
-                                                           "uploadFiles", List.class, StringBuilder.class, List.class);
-        StringBuilder errs = new StringBuilder();
-        List<File> failed = new ArrayList<File>();
-
-        uploadFiles.invoke(hc, list(TestInfo.CDX_FILE, TestInfo.ARC_FILE2),
-                           errs, failed);
-
-        assertEquals("Should have exactly two files uploaded",
-                     2, stored.size());
-        assertEquals("Should have CDX file first",
-                     TestInfo.CDX_FILE, stored.get(0));
-        assertEquals("Should have ARC file next",
-                     TestInfo.ARC_FILE2, stored.get(1));
-        assertEquals("Should have no error messages", 0, errs.length());
-        assertEquals("Should have no failed files", 0, failed.size());
-
-        stored.clear();
-
-        uploadFiles.invoke(hc, list(TestInfo.CDX_FILE, new File(TestInfo.WORKING_DIR, "bogus")),
-                           errs, failed);
-
-        assertEquals("Should have exactly one file successfully uploaded",
-                     1, stored.size());
-        assertEquals("Should have CDX file first",
-                     TestInfo.CDX_FILE, stored.get(0));
-        StringAsserts.assertStringMatches("Should have no error messages",
-                                          "Error uploading .*/bogus' Will be moved.*Missing file",
-                                          errs.toString());
-        assertEquals("Should have one failed file", 1, failed.size());
-        assertEquals("Should have bogus file in failed list",
-                     new File(TestInfo.WORKING_DIR, "bogus"), failed.get(0));
-
-        stored.clear();
-        errs = new StringBuilder();
-        failed.clear();
-
-        uploadFiles.invoke(hc, null, errs, failed);
-
-        assertEquals("Should have no files uploaded", 0, stored.size());
-        assertEquals("Should have no error messages", 0, errs.length());
-        assertEquals("Should have no failed files", 0, failed.size());
-
-        uploadFiles.invoke(hc, list(), errs, failed);
-
-        assertEquals("Should have no files uploaded", 0, stored.size());
-        assertEquals("Should have no error messages", 0, errs.length());
-        assertEquals("Should have no failed files", 0, failed.size());
-    }
+// Uncommented to avoid reference to archive module from harvester module.
+//    public void testUploadFiles() throws Exception {
+//        hc = HarvestController.getInstance();
+//        Field arcrepField = ReflectUtils.getPrivateField(hc.getClass(), "arcRepController");
+//        final List<File> stored = new ArrayList<File>();
+//        arcrepField.set(hc, new JMSArcRepositoryClient() {
+//            public void store(File f) {
+//                if (f.exists()) {
+//                    stored.add(f);
+//                } else {
+//                    throw new ArgumentNotValid("Missing file " + f);
+//                }
+//            }
+//        });
+//
+//        // Tests that all files in the list are uploaded, and that error
+//        // messages are correctly handled.
+//        Method uploadFiles = ReflectUtils.getPrivateMethod(hc.getClass(),
+//                                                           "uploadFiles", List.class, StringBuilder.class, List.class);
+//        StringBuilder errs = new StringBuilder();
+//        List<File> failed = new ArrayList<File>();
+//
+//        uploadFiles.invoke(hc, list(TestInfo.CDX_FILE, TestInfo.ARC_FILE2),
+//                           errs, failed);
+//
+//        assertEquals("Should have exactly two files uploaded",
+//                     2, stored.size());
+//        assertEquals("Should have CDX file first",
+//                     TestInfo.CDX_FILE, stored.get(0));
+//        assertEquals("Should have ARC file next",
+//                     TestInfo.ARC_FILE2, stored.get(1));
+//        assertEquals("Should have no error messages", 0, errs.length());
+//        assertEquals("Should have no failed files", 0, failed.size());
+//
+//        stored.clear();
+//
+//        uploadFiles.invoke(hc, list(TestInfo.CDX_FILE, new File(TestInfo.WORKING_DIR, "bogus")),
+//                           errs, failed);
+//
+//        assertEquals("Should have exactly one file successfully uploaded",
+//                     1, stored.size());
+//        assertEquals("Should have CDX file first",
+//                     TestInfo.CDX_FILE, stored.get(0));
+//        StringAsserts.assertStringMatches("Should have no error messages",
+//                                          "Error uploading .*/bogus' Will be moved.*Missing file",
+//                                          errs.toString());
+//        assertEquals("Should have one failed file", 1, failed.size());
+//        assertEquals("Should have bogus file in failed list",
+//                     new File(TestInfo.WORKING_DIR, "bogus"), failed.get(0));
+//
+//        stored.clear();
+//        errs = new StringBuilder();
+//        failed.clear();
+//
+//        uploadFiles.invoke(hc, null, errs, failed);
+//
+//        assertEquals("Should have no files uploaded", 0, stored.size());
+//        assertEquals("Should have no error messages", 0, errs.length());
+//        assertEquals("Should have no failed files", 0, failed.size());
+//
+//        uploadFiles.invoke(hc, list(), errs, failed);
+//
+//        assertEquals("Should have no files uploaded", 0, stored.size());
+//        assertEquals("Should have no error messages", 0, errs.length());
+//        assertEquals("Should have no failed files", 0, failed.size());
+//    }
 
     public static <T> List<T> list(T... objects) {
         return Arrays.asList(objects);

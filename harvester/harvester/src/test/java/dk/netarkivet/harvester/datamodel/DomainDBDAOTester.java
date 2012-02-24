@@ -24,33 +24,17 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import junit.framework.TestCase;
-
-import org.dom4j.Document;
-import org.dom4j.Node;
-
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.*;
+import junit.framework.TestCase;
+import org.dom4j.Document;
+import org.dom4j.Node;
+
+import java.sql.*;
+import java.util.*;
+import java.util.Date;
 
 /**
  * Unit tests for the class dk.netarkivet.harvester.datamodel.DomainDBDAO.

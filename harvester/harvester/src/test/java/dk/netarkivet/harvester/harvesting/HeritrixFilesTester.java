@@ -23,20 +23,18 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.harvester.harvesting;
-import java.io.File;
-
-import junit.framework.TestCase;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
+import junit.framework.TestCase;
+import org.dom4j.Document;
+import org.dom4j.DocumentFactory;
+
+import java.io.File;
 
 /**
  * Unittests for the class HeritrixFiles.
@@ -45,7 +43,6 @@ public class HeritrixFilesTester extends TestCase {
 
     private MockupJMS mjms = new MockupJMS();
     private File resultFile = new File(TestInfo.HERITRIX_TEMP_DIR, "result");
-    private MockupIndexServer mis = new MockupIndexServer(resultFile);
     
     private File defaultJmxPasswordFile = new File("/path/to/jmxpasswordfile");
     private File defaultJmxAccessFile = new File("/path/to/jmxaccessfile");
@@ -57,11 +54,9 @@ public class HeritrixFilesTester extends TestCase {
     public void setUp() {
        TestInfo.WORKING_DIR.mkdirs();
        mjms.setUp();
-       mis.setUp();
     }
 
     public void tearDown() {
-        mis.tearDown();
         mjms.tearDown();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }

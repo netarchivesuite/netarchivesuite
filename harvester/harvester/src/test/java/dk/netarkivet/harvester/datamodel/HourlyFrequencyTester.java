@@ -24,13 +24,12 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import junit.framework.TestCase;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import junit.framework.TestCase;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Tests an hourly frequency.

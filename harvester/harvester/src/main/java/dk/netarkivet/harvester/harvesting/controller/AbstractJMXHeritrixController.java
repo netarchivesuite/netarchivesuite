@@ -24,39 +24,18 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.*;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.Heritrix;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.JMXUtils;
-import dk.netarkivet.common.utils.NotificationsFactory;
-import dk.netarkivet.common.utils.ProcessUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.TimeUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+import java.io.*;
+import java.util.*;
 
 /**
  * Abstract base class for JMX-based Heritrix controllers.

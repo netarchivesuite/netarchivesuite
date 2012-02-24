@@ -35,21 +35,21 @@ import dk.netarkivet.common.utils.arc.ARCKey;
  */
 public class TestInfo {
     private static final File BASE_DIR = new File("tests/dk/netarkivet/common/distribute/arcrepository/data");
-    static final File WORKING_DIR = new File(BASE_DIR, "working");
-    static final File ORIGINALS_DIR = new File(BASE_DIR, "originals");
-    static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
+    public static final File WORKING_DIR = new File(BASE_DIR, "working");
+    public static final File ORIGINALS_DIR = new File(BASE_DIR, "originals");
+    public static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
     /**
      * An archive directory to work on.
      */
-    static final File ARCHIVE_DIR = new File(WORKING_DIR, "bitarchive1");
+    public static final File ARCHIVE_DIR = new File(WORKING_DIR, "bitarchive1");
     public static final File INDEX_DIR_2_3
             = new File(TestInfo.WORKING_DIR, "2-3-cache");
     public static final File INDEX_DIR_2_4_3_5
             = new File(TestInfo.WORKING_DIR, "2-4-3-5-cache");
-    static URI GIF_URL;
-    static final File LOG_PATH = new File(WORKING_DIR, "tmp");
+    public static URI GIF_URL;
+    public static final File LOG_PATH = new File(WORKING_DIR, "tmp");
     /**The key listed for GIF_URL. */
-    static final ARCKey GIF_URL_KEY =
+    public static final ARCKey GIF_URL_KEY =
             new ARCKey("2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc",
                     73269);
     public static final File SAMPLE_FILE = new File(WORKING_DIR, "testFile.txt");

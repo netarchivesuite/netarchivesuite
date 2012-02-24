@@ -23,37 +23,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet;
+package dk.netarkivet.deploy;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.archive.indexserver.CDXOriginCrawlLogIteratorTester;
-import dk.netarkivet.common.distribute.arcrepository.ARCLookupTester;
-
 /**
- * This class runs all tests of Deduplicator functionality.  Must be run as part
- * of deduplicator upgrades.
- *
+ * This class runs all tests of Heritrix functionality.  Must be run as part
+ * of heritrix upgrades.
  */
-
-public class DeduplicatorTesterSuite {
+public class HeritrixTesterSuite {
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(CDXOriginCrawlLogIteratorTester.class);
-        suite.addTestSuite(ARCLookupTester.class);
+        suite.addTestSuite(dk.netarkivet.externalsoftware.HeritrixTests.class);
     }
 
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite("DeduplicatorTesterSuite");
+        suite = new TestSuite(HeritrixTesterSuite.class.getName());
 
         addToSuite(suite);
 
         return suite;
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", "dk.netarkivet.DeduplicatorTesterSuite"};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", HeritrixTesterSuite.class.getName()};
         TestRunner.main(args2);
     }}

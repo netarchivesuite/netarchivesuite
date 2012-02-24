@@ -24,11 +24,10 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.util.Locale;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 import junit.framework.TestCase;
+
+import java.util.Locale;
 
 /**
  * Tests of the JobStatus class.

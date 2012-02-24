@@ -22,7 +22,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.testutils.preconfigured;
+package dk.netarkivet.archive.indexserver;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -39,6 +39,7 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.testutils.preconfigured.TestConfigurationIF;
 
 /** A fake IndexServer that gives one or more files back as specified in
  * its constructor.

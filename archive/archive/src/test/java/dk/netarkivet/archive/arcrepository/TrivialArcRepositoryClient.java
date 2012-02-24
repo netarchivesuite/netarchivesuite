@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.common.distribute.arcrepository;
+package dk.netarkivet.archive.arcrepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.common.distribute.arcrepository.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveReader;
@@ -160,7 +161,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
      */
-    public BatchStatus batch(final FileBatchJob job, String replicaId, 
+    public BatchStatus batch(final FileBatchJob job, String replicaId,
             String... args) {
         ArgumentNotValid.checkNotNull(job, "job");
         OutputStream os = null;

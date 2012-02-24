@@ -25,6 +25,21 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.scheduler.JobDispatcher;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.QueueConnection;
@@ -34,25 +49,6 @@ import java.lang.reflect.Field;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.logging.LogManager;
-
-import junit.framework.TestCase;
-
-import dk.netarkivet.TestUtils;
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.scheduler.JobDispatcher;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * An integrity test that tests for how the HarvestControllerClient reacts
@@ -89,7 +85,7 @@ public class IntegrityTestsHCSJMSException extends TestCase{
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
                      "dk.netarkivet.common.distribute.JMSConnectionSunMQ");
         ChannelsTester.resetChannels();
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
         hs = HarvestControllerServer.getInstance();
         originalSM = System.getSecurityManager();
@@ -113,7 +109,7 @@ public class IntegrityTestsHCSJMSException extends TestCase{
         }
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         ChannelsTester.resetChannels();
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         System.setSecurityManager(originalSM);
         rs.tearDown();
     }

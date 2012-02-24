@@ -24,27 +24,18 @@
 */
 package dk.netarkivet.common.utils.cdx;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 import junit.framework.TestCase;
-
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
 
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.batch.BatchLocalFiles;
-import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Test class used for investigating CDX generation from WARC-files 

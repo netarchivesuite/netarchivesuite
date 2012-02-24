@@ -24,9 +24,9 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import java.util.Set;
-
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
+
+import java.util.Set;
 
 public class RunningJobsInfoDAOTester extends DataModelTestCase {
     public RunningJobsInfoDAOTester(String sTestName) {

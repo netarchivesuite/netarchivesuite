@@ -24,11 +24,10 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
 
 public class MySQLSpecificsTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();

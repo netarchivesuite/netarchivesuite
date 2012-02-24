@@ -23,10 +23,10 @@
 */
 package dk.netarkivet.harvester;
 
+import junit.framework.TestCase;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
-import junit.framework.TestCase;
 
 /** Unittestersuite for the HarvesterSettings class. */
 public class HarvesterSettingsTester extends TestCase {

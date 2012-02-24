@@ -24,20 +24,19 @@
 */
 package dk.netarkivet.harvester.tools;
 
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
+import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import org.dom4j.Document;
+import org.dom4j.io.XMLWriter;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.dom4j.Document;
-import org.dom4j.io.XMLWriter;
-
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
-import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
 /**
  * Utility for maintaining harvest-templates from the commandline.

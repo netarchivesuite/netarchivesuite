@@ -24,30 +24,23 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ExceptionUtils;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobPriority;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.SparseFullHarvest;
-import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
+import dk.netarkivet.harvester.datamodel.*;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class handles dispatching of Harvest jobs to the Harvesters.

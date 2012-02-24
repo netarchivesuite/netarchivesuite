@@ -25,8 +25,6 @@
 
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 import junit.framework.TestCase;
 
 public class ExtendedFieldDefaultValuesTester extends TestCase {

@@ -22,12 +22,12 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
-
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
 
 /**
  * Action class for deleting a global crawler trap list.

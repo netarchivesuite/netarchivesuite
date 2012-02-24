@@ -60,7 +60,7 @@ public class IntegrityTests extends TestCase {
 
     private static final ChannelID sendTopic = Channels.getAllBa();
 
-    private static final int WAIT_MS = 9000;
+    private static final int WAIT_MS = 3000;
 
     /**
      * Used in methods testNListenersToTopic and

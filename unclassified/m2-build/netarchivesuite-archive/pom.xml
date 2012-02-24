@@ -3,29 +3,84 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>netarchivesuite-archive</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>netarchivesuite-archive</artifactId>
 
-    <parent>
-        <groupId>dk.netarchivesuite</groupId>
-        <artifactId>netarchivesuite</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
-    </parent>
+  <parent>
+    <groupId>dk.netarchivesuite</groupId>
+    <artifactId>netarchivesuite</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
 
-    <name>NetarchiveSuite archive module</name>
-    <description>Contains the NetarchiveSuite archive functionality</description>
+  <name>NetarchiveSuite archive module</name>
+  <description>Contains the NetarchiveSuite archive functionality</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>dk.netarchivesuite</groupId>
-            <artifactId>netarchivesuite-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>dk.netarchivesuite</groupId>
-            <artifactId>netarchivesuite-harvester</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>dk.netarchivesuite</groupId>
+      <artifactId>netarchivesuite-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>dk.netarchivesuite</groupId>
+      <artifactId>netarchivesuite-harvester</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>dk.netarchivesuite</groupId>
+      <artifactId>netarchivesuite-common</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>dk.netarchivesuite</groupId>
+      <artifactId>netarchivesuite-harvester</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-j1.4-j2ee1.3</artifactId>
+      <version>0.09</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-core</artifactId>
+      <version>0.09</version>
+    </dependency>
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-jdk1.4</artifactId>
+      <version>0.09</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
+      <version>10.8.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.8.2.2</version>
+    </dependency>
+    <dependency>
+    <groupId>org.apache.derby</groupId>
+    <artifactId>derbytools</artifactId>
+    <version>10.8.2.2</version>
+  </dependency>
+
+  </dependencies>
 </project>                                                                                                              

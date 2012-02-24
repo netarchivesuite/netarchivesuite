@@ -28,15 +28,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-
 import junit.framework.TestCase;
 import org.archive.io.arc.ARCWriter;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Date;
 
 public class IngestableFilesTester extends TestCase {

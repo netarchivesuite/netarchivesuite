@@ -25,11 +25,11 @@
 
 package dk.netarkivet.harvester.distribute;
 
-import java.io.Serializable;
-
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
+import java.io.Serializable;
 
 /**
  * Common base class for messages exchanged between a harvester server and

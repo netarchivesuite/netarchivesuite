@@ -23,13 +23,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
+package dk.netarkivet.deploy;
 
 import dk.netarkivet.archive.arcrepository.ArchiveArcRepositoryTesterSuite;
+import dk.netarkivet.archive.arcrepository.CommonDistributeArcrepositoryTesterSuite;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ArchiveArcrepositoryBitPreservationTesterSuite;
 import dk.netarkivet.archive.arcrepository.distribute.ArchiveArcrepositoryDistributeTesterSuite;
 import dk.netarkivet.archive.arcrepositoryadmin.ArchiveArcRepositoryAdminTesterSuite;
@@ -45,7 +42,6 @@ import dk.netarkivet.archive.webinterface.ArchiveWebinterfaceTesterSuite;
 import dk.netarkivet.common.CleanupSuite;
 import dk.netarkivet.common.CommonsTesterSuite;
 import dk.netarkivet.common.distribute.CommonDistributeTesterSuite;
-import dk.netarkivet.common.distribute.arcrepository.CommonDistributeArcrepositoryTesterSuite;
 import dk.netarkivet.common.distribute.indexserver.CommonDistributeIndexserverTesterSuite;
 import dk.netarkivet.common.exceptions.CommonExceptionsTesterSuite;
 import dk.netarkivet.common.lifecycle.CommonLifecycleTesterSuite;
@@ -76,6 +72,9 @@ import dk.netarkivet.viewerproxy.ViewerProxyTesterSuite;
 import dk.netarkivet.viewerproxy.distribute.ViewerproxyDistributeTesterSuite;
 import dk.netarkivet.viewerproxy.webinterface.ViewerproxyWebinterfaceTesterSuite;
 import dk.netarkivet.wayback.WaybackTesterSuite;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 /**
  * This class runs all the unit tests.

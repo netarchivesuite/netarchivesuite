@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet;
+package dk.netarkivet.deploy;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

@@ -26,6 +26,7 @@ package dk.netarkivet.archive.tools;
 
 import java.io.File;
 
+import dk.netarkivet.archive.arcrepository.MockupArcRepositoryClient;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
@@ -34,7 +35,6 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.preconfigured.MockupArcRepositoryClient;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;

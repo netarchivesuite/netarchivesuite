@@ -26,11 +26,11 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.util.Locale;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
+
+import java.util.Locale;
 
 /**
  * Class for containing a reason for stopping the harvesting of a domain.

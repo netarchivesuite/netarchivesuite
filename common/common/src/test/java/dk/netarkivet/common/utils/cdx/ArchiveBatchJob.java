@@ -24,21 +24,20 @@
  */
 package dk.netarkivet.common.utils.cdx;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.List;
-
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.NetarkivetException;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.NetarkivetException;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
