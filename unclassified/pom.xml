@@ -115,6 +115,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
            <test>UnitTesterSuite</test>
+          <failIfNoTests>false</failIfNoTests>
         </configuration>
       </plugin>
     </plugins>
