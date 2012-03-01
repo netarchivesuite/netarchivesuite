@@ -24,6 +24,15 @@
  */
 package dk.netarkivet.harvester.harvesting.monitor;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.util.Date;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -31,14 +40,6 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.util.Date;
 
 /**
  * This class is a simple bean storing information about a started job.

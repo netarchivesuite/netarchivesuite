@@ -25,18 +25,24 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
-import dk.netarkivet.common.utils.I18n;
-import dk.netarkivet.common.webinterface.HTMLUtils;
-import dk.netarkivet.harvester.datamodel.extendedfield.*;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldOptions;
 
 /**
  * Contains utility methods for creating and editing schedule definitions for

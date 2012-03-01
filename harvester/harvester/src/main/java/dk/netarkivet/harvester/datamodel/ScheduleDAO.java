@@ -24,12 +24,12 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import java.util.Iterator;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
-
-import java.util.Iterator;
 
 
 /**

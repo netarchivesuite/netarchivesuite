@@ -25,17 +25,21 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.utils.StringUtils;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.utils.StringUtils;
 
 /**
  * A ServletRequest used by unit tests.

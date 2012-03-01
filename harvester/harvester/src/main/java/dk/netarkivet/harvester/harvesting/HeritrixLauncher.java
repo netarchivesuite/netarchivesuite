@@ -25,6 +25,11 @@
 
 package dk.netarkivet.harvester.harvesting;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
+import org.dom4j.Node;
+
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -32,10 +37,6 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.dom4j.Document;
-import org.dom4j.Node;
 
 /**
  * A HeritrixLauncher object wraps around an instance of the web crawler

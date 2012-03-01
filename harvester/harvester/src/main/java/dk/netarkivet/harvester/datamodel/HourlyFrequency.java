@@ -25,11 +25,11 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * This class implements a frequency of a number of hours.

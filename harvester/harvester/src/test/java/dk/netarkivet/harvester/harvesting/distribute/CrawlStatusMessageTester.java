@@ -25,12 +25,13 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.io.IOException;
+
+import junit.framework.TestCase;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.testutils.Serial;
-import junit.framework.TestCase;
-
-import java.io.IOException;
 
 /**
  * Unit tests for CrawlStatusMessage.

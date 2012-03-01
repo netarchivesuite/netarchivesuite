@@ -24,13 +24,13 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.harvester.harvesting.frontier.FrontierReportFilter;
-import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
-import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import dk.netarkivet.harvester.harvesting.frontier.FrontierReportFilter;
+import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
+import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
 /**
  * Abstract class for handling the persistence of running job infos.

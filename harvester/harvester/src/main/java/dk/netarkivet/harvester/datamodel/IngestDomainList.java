@@ -24,18 +24,24 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import javax.servlet.jsp.JspWriter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Date;
+import java.util.Locale;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.Constants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.servlet.jsp.JspWriter;
-import java.io.*;
-import java.util.Date;
-import java.util.Locale;
 
 /**
  * Utility class for ingesting new domains into the database.

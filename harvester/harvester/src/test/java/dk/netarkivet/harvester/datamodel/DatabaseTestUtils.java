@@ -25,13 +25,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.ZipUtils;
-import dk.netarkivet.testutils.ReflectUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -39,6 +32,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Logger;
+
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.ZipUtils;
+import dk.netarkivet.harvester.datamodel.DBSpecifics;
+import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Utilities to allow testing databases.

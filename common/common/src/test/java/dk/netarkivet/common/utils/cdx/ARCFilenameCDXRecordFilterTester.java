@@ -24,8 +24,9 @@
  */
 package dk.netarkivet.common.utils.cdx;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import junit.framework.TestCase;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Performs unit tests of the ARCFilenameCDXRecordFilter. Implicitly tests both

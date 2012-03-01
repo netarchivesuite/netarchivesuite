@@ -24,6 +24,27 @@
  */
 package dk.netarkivet.viewerproxy;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.LogManager;
+
+import junit.framework.TestCase;
+import org.archive.io.arc.ARCConstants;
+import org.archive.io.arc.ARCRecord;
+import org.archive.io.arc.ARCRecordMetaData;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
@@ -43,16 +64,6 @@ import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
-import org.archive.io.arc.ARCConstants;
-import org.archive.io.arc.ARCRecord;
-import org.archive.io.arc.ARCRecordMetaData;
-
-import java.io.*;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.*;
-import java.util.logging.LogManager;
 
 /**
  * Unit tests for ARCArchiveAccess.  This only tests that we connect the CDX

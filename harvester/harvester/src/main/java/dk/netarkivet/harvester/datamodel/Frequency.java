@@ -25,12 +25,13 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.NotImplementedException;
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.Date;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * This class defines various frequencies at which things can happen, such

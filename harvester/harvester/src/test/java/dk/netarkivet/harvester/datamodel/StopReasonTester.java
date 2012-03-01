@@ -24,11 +24,12 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.I18n;
+import java.util.Locale;
+
 import junit.framework.TestCase;
 
-import java.util.Locale;
+import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.I18n;
 
 /**
  * Tests the StopReason class.

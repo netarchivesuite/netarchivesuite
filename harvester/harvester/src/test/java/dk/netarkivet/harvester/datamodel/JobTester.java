@@ -24,6 +24,38 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.LogManager;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.archive.crawler.deciderules.DecideRuleSequence;
+import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.Node;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -33,20 +65,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import org.archive.crawler.deciderules.DecideRuleSequence;
-import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.Node;
-
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.logging.LogManager;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Test class for the Job class.

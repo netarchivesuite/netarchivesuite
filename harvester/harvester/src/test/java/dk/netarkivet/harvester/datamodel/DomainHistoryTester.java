@@ -24,9 +24,14 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import junit.framework.TestCase;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
+import junit.framework.TestCase;
 
 /**
  * Unit tests for the DomainHistory class.

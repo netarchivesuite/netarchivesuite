@@ -25,21 +25,30 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
-import dk.netarkivet.harvester.datamodel.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import dk.netarkivet.harvester.datamodel.Domain;
+import dk.netarkivet.harvester.datamodel.DomainConfiguration;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.PartialHarvest;
+import dk.netarkivet.harvester.datamodel.Schedule;
+import dk.netarkivet.harvester.datamodel.ScheduleDAO;
+import dk.netarkivet.harvester.datamodel.SparseDomainConfiguration;
 
 /**
  * This class contains the methods for updating data for selective harvests.

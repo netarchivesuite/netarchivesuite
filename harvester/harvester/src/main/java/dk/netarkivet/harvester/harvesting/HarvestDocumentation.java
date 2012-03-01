@@ -25,32 +25,38 @@
 
 package dk.netarkivet.harvester.harvesting;
 
-import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.FileUtils.FilenameParser;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.common.utils.arc.ARCUtils;
-import dk.netarkivet.common.utils.cdx.CDXUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
+import java.io.File;
+import java.io.FileFilter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCWriter;
 import org.dom4j.Document;
 import org.dom4j.Node;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.common.utils.FileUtils.FilenameParser;
+import dk.netarkivet.common.utils.arc.ARCUtils;
+import dk.netarkivet.common.utils.cdx.CDXUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
 /**
  * This class contains code for documenting a harvest.

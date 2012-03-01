@@ -24,14 +24,15 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
-import dk.netarkivet.testutils.StringAsserts;
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import junit.framework.TestCase;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.testutils.StringAsserts;
 
 /** Test-class for AliasInfo class. */
 public class AliasInfoTester extends TestCase {

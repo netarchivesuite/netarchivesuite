@@ -24,11 +24,16 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
-
-import java.util.*;
 
 /**
  * Test cases specific to the PartialHarvest class.

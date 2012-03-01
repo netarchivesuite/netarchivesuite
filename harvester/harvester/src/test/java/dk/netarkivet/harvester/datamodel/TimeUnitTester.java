@@ -24,8 +24,9 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import junit.framework.TestCase;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /** 
  * Unit tests for the {@link TimeUnit} class. 

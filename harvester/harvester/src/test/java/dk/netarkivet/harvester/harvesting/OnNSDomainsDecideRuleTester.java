@@ -26,6 +26,7 @@ package dk.netarkivet.harvester.harvesting;
 
 import junit.framework.TestCase;
 import org.archive.util.SurtPrefixSet;
+import dk.netarkivet.harvester.harvesting.OnNSDomainsDecideRule;
 
 /**
  * JUNIT test for the class OnNSDomainsDecideRule.

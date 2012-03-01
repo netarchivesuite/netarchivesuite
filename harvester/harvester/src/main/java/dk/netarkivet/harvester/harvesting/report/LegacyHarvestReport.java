@@ -24,17 +24,23 @@
  */
 package dk.netarkivet.harvester.harvesting.report;
 
-import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.TimeUtils;
-import dk.netarkivet.harvester.datamodel.*;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.harvester.datamodel.Domain;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.HarvestInfo;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.NumberUtils;
+import dk.netarkivet.harvester.datamodel.StopReason;
+import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
  * Class responsible for generating a domain harvest report from

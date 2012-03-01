@@ -24,9 +24,9 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import junit.framework.TestCase;
-
 import java.util.regex.Matcher;
+
+import junit.framework.TestCase;
 
 /**
  * Unit-tests for the Constants class.

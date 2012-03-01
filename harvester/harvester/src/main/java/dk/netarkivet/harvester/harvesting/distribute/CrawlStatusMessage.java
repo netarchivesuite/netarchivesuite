@@ -25,14 +25,14 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.io.Serializable;
+
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
-
-import java.io.Serializable;
 
 /**
  * Instances of this class are sent by a HarvestControllerServer to the

@@ -24,17 +24,24 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.Named;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Node;
 
-import java.util.*;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Named;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 
 /**
  * This abstract class models the general properties of a harvest definition,

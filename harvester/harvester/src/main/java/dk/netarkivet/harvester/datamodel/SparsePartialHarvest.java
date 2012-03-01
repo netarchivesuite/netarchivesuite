@@ -24,10 +24,10 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import java.util.Date;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Named;
-
-import java.util.Date;
 
 /**
  * Sparse version of PartialHarvest to be used for GUI purposes only.

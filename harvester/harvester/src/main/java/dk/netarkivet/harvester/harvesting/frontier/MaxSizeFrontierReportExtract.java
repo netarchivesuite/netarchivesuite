@@ -24,9 +24,10 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 abstract class MaxSizeFrontierReportExtract
 extends AbstractFrontierReportFilter {

@@ -25,16 +25,37 @@
 
 package dk.netarkivet.harvester.scheduler;
 
-import dk.netarkivet.common.utils.IteratorUtils;
-import dk.netarkivet.harvester.datamodel.*;
-import dk.netarkivet.harvester.scheduler.HarvestJobGenerator.JobGeneratorTask;
-import dk.netarkivet.testutils.ThreadUtils;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeoutException;
+
+import dk.netarkivet.common.utils.IteratorUtils;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
+import dk.netarkivet.harvester.datamodel.Domain;
+import dk.netarkivet.harvester.datamodel.DomainConfiguration;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.HarvestDefinition;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.PartialHarvest;
+import dk.netarkivet.harvester.datamodel.Schedule;
+import dk.netarkivet.harvester.datamodel.ScheduleDAO;
+import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
+import dk.netarkivet.harvester.scheduler.HarvestJobGenerator.JobGeneratorTask;
+import dk.netarkivet.testutils.ThreadUtils;
 
 public class HarvestJobGeneratorTest extends DataModelTestCase {
 

@@ -24,15 +24,21 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 
-import java.io.File;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
 
 /**
  * Contains test information about all harvest definition test data.

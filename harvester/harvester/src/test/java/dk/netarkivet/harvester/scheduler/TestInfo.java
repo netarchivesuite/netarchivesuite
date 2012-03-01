@@ -24,17 +24,22 @@
 */
 package dk.netarkivet.harvester.scheduler;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.harvester.datamodel.*;
-import dk.netarkivet.testutils.ReflectUtils;
-import org.dom4j.Document;
-
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
+
+import org.dom4j.Document;
+
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobPriority;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Contains test information about all scheduler test data.

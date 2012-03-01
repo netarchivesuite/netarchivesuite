@@ -24,6 +24,13 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -31,8 +38,6 @@ import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
-
-import java.util.*;
 
 /**
  * Unit tests for the class HarvestDefinitionDAO class.

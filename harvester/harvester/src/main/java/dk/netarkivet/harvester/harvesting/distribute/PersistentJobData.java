@@ -24,6 +24,13 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -31,12 +38,6 @@ import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.XmlState.OKSTATE;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
 
 
 /**

@@ -25,17 +25,18 @@
 
 package dk.netarkivet.harvester.distribute;
 
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobPriority;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.testutils.ReflectUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentFactory;
+
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobPriority;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Constants for this package's tests.

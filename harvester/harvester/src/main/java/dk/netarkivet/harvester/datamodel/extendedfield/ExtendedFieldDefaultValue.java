@@ -25,13 +25,14 @@
 
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Class for constructing, validating, and keeping the default

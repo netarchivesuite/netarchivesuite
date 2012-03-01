@@ -24,11 +24,11 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Utility class implementing the export of a frontier report object

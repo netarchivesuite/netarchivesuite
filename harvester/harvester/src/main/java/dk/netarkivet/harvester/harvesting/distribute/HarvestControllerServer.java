@@ -24,6 +24,13 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -34,7 +41,15 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
-import dk.netarkivet.common.utils.*;
+import dk.netarkivet.common.utils.ApplicationUtils;
+import dk.netarkivet.common.utils.CleanupIF;
+import dk.netarkivet.common.utils.DomainUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
@@ -44,12 +59,6 @@ import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class responds to JMS doOneCrawl messages from the HarvestScheduler and

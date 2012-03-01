@@ -25,6 +25,13 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.util.List;
+
+import javax.servlet.jsp.PageContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -36,11 +43,6 @@ import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.UI_FIELD;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.servlet.jsp.PageContext;
-import java.util.List;
 
 /**
  * This page provides support for the HarvestStatus pages of the web interface.

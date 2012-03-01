@@ -24,10 +24,10 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
+import java.util.HashMap;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.TableSort;
-
-import java.util.HashMap;
 
 /**
  * class used to manage the sort of tables in the

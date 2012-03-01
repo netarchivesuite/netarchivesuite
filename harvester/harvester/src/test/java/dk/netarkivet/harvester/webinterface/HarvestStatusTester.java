@@ -25,13 +25,25 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
-import dk.netarkivet.harvester.datamodel.*;
-
-import java.sql.SQLException;
-import java.util.*;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobDAOTester;
+import dk.netarkivet.harvester.datamodel.JobDBDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 
 /**
  * Test of Harvest Status utility method for resubmitting jobs.

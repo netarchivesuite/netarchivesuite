@@ -27,20 +27,36 @@ package dk.netarkivet.harvester.tools;
  * Tests of the tool to create metadata files.
  */
 
+import javax.jms.Message;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import junit.framework.TestCase;
+
+import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
+import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
+import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestMessageListener;
-import dk.netarkivet.testutils.preconfigured.*;
-import junit.framework.TestCase;
-
-import javax.jms.Message;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintStream;
+import dk.netarkivet.testutils.preconfigured.MockupJMS;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
+import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
+import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
 public class CreateCDXMetadataFileTester extends TestCase {
@@ -210,7 +226,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
         );
     }
 
-    public void mvnTestRunFailingJob() {
+    public void testRunFailingJob() {
         // Test with failure
         File outputFile = new File(TestInfo.WORKING_DIR, "tmpout");
         outputFile.delete();
@@ -234,40 +250,39 @@ public class CreateCDXMetadataFileTester extends TestCase {
         public void onMessage(Message o) {
             super.onMessage(o);
             NetarkivetMessage nmsg = received.get(received.size() - 1);
-// Uncommented to avoid reference to archive module from harvester module.
-//            if (nmsg instanceof BatchMessage) {
-//                BatchMessage m = (BatchMessage) nmsg;
-//                int count = 0;
-//                List<File> emptyList = Collections.emptyList();
-//                RemoteFile rf;
-//                try {
-//                    File output = new File(TestInfo.WORKING_DIR, "tmpout");
-//                    BufferedReader reader = new BufferedReader(new FileReader(
-//                            new File(TestInfo.DATA_DIR, "jobs-2-4-70.cdx")));
-//                    FileWriter writer = new FileWriter(output);
-//                    String line;
-//                    Pattern p = Pattern.compile("^(\\S+\\s+){5}"
-//                            + m.getJob().getFilenamePattern().pattern()
-//                            + "(\\s+\\S+){2}$");
-//                    while ((line = reader.readLine()) != null) {
-//                        if (p.matcher(line).matches()) {
-//                            writer.write(line + "\n");
-//                            count++;
-//                        }
-//                    }
-//                    reader.close();
-//                    writer.close();
-//                    rf = new TestRemoteFile(output, false, false, false);
-//                } catch (IOException e) {
-//                    System.out.println(e);
-//                    e.printStackTrace();
-//                    rf = null;
-//                }
-//                JMSConnectionFactory.getInstance().send(
-//                        new BatchReplyMessage(m.getReplyTo(),
-//                                Channels.getError(), m.getID(), count,
-//                                emptyList, rf));
-//            }
+            if (nmsg instanceof BatchMessage) {
+                BatchMessage m = (BatchMessage) nmsg;
+                int count = 0;
+                List<File> emptyList = Collections.emptyList();
+                RemoteFile rf;
+                try {
+                    File output = new File(TestInfo.WORKING_DIR, "tmpout");
+                    BufferedReader reader = new BufferedReader(new FileReader(
+                            new File(TestInfo.DATA_DIR, "jobs-2-4-70.cdx")));
+                    FileWriter writer = new FileWriter(output);
+                    String line;
+                    Pattern p = Pattern.compile("^(\\S+\\s+){5}"
+                            + m.getJob().getFilenamePattern().pattern()
+                            + "(\\s+\\S+){2}$");
+                    while ((line = reader.readLine()) != null) {
+                        if (p.matcher(line).matches()) {
+                            writer.write(line + "\n");
+                            count++;
+                        }
+                    }
+                    reader.close();
+                    writer.close();
+                    rf = new TestRemoteFile(output, false, false, false);
+                } catch (IOException e) {
+                    System.out.println(e);
+                    e.printStackTrace();
+                    rf = null;
+                }
+                JMSConnectionFactory.getInstance().send(
+                        new BatchReplyMessage(m.getReplyTo(),
+                                Channels.getError(), m.getID(), count,
+                                emptyList, rf));
+            }
         }
     };
 }

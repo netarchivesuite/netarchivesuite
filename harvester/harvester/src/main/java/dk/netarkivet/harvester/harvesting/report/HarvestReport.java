@@ -24,13 +24,13 @@
  */
 package dk.netarkivet.harvester.harvesting.report;
 
+import java.io.Serializable;
+import java.util.Set;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
-
-import java.io.Serializable;
-import java.util.Set;
 
 /**
  * Base interface for a post-crawl harvest report.

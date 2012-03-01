@@ -23,8 +23,9 @@
 */
 package dk.netarkivet.common.utils.cdx;
 
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import org.archive.io.ArchiveRecord;
+
+import dk.netarkivet.common.exceptions.NotImplementedException;
 
 import java.awt.datatransfer.MimeTypeParseException;
 import java.io.Serializable;

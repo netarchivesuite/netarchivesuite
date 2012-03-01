@@ -24,6 +24,26 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -36,12 +56,6 @@ import dk.netarkivet.harvester.harvesting.frontier.FrontierReportFilter;
 import dk.netarkivet.harvester.harvesting.frontier.FrontierReportLine;
 import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
 
 /**
  * Class implementing the persistence of running job infos.

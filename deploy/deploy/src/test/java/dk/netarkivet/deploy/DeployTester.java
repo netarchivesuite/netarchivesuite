@@ -24,13 +24,13 @@
 */
 package dk.netarkivet.deploy;
 
+import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
 
 public class DeployTester extends TestCase {
 

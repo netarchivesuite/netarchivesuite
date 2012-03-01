@@ -24,9 +24,9 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 import java.util.Date;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Class encapsulating domain alias information.

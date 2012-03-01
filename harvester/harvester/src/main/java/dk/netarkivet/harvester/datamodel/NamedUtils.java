@@ -25,13 +25,13 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.utils.Named;
-
 import java.text.Collator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+
+import dk.netarkivet.common.utils.Named;
 
 /**
  * Utilities for handling named objects. Named objects are objects in our

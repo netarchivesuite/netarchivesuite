@@ -24,14 +24,14 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.io.File;
+
+import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import junit.framework.TestCase;
-
-import java.io.File;
 
 /**
  * Test class PersistentJobData.

@@ -24,17 +24,18 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-
-import javax.servlet.ServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.servlet.ServletRequest;
+
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.JobStatus;
 
 /**
  * Represents a query for a set of jobs. Filtering can be performed on:

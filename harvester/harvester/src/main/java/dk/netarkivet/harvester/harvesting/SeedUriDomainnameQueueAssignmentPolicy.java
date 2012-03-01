@@ -24,7 +24,8 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import dk.netarkivet.common.utils.DomainUtils;
+import java.util.NoSuchElementException;
+
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,7 +35,7 @@ import org.archive.crawler.framework.CrawlController;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;
 import org.archive.net.UURIFactory;
 
-import java.util.NoSuchElementException;
+import dk.netarkivet.common.utils.DomainUtils;
 
 /**
  * This is a modified version of the {@link DomainnameQueueAssignmentPolicy}

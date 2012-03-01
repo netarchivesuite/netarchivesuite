@@ -24,6 +24,18 @@
  */
 package dk.netarkivet.harvester.harvesting.monitor;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.jms.MessageListener;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -42,12 +54,6 @@ import dk.netarkivet.harvester.harvesting.frontier.ExhaustedQueuesFilter;
 import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
 import dk.netarkivet.harvester.harvesting.frontier.RetiredQueuesFilter;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.jms.MessageListener;
-import java.io.File;
-import java.util.*;
 
 /**
  * Listens for {@link CrawlProgressMessage}s on the proper JMS channel, and

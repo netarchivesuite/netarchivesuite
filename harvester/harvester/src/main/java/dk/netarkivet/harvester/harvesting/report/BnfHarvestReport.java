@@ -24,21 +24,30 @@
  */
 package dk.netarkivet.harvester.harvesting.report;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.datamodel.Domain;
+import dk.netarkivet.harvester.datamodel.DomainConfiguration;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.HarvestInfo;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobPriority;
+import dk.netarkivet.harvester.datamodel.SparseFullHarvest;
+import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This implementation of the harvest report has the same pre-processing as

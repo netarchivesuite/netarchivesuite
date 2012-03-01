@@ -24,20 +24,22 @@
  */
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Implementation class for the ExtendedFieldValueDAO interface.

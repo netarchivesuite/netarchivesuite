@@ -24,9 +24,9 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.PermissionDenied;
-
 import java.util.Date;
+
+import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
  * Unit-tests for the ScheduleDBDAO class.

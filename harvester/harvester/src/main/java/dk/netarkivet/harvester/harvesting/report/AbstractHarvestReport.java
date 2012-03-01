@@ -24,6 +24,21 @@
 */
 package dk.netarkivet.harvester.harvesting.report;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.archive.crawler.datamodel.CrawlURI;
+import org.archive.net.UURI;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
@@ -35,20 +50,6 @@ import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.archive.crawler.datamodel.CrawlURI;
-import org.archive.net.UURI;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Base implementation for a harvest report.

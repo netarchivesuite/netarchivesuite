@@ -24,13 +24,13 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.io.Serializable;
+
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
-
-import java.io.Serializable;
 
 /**
  * The {@link HarvestControllerServer} periodically sends 

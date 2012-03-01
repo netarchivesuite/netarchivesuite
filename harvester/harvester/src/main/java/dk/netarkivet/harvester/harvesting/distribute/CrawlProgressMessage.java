@@ -24,14 +24,15 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.io.Serializable;
+
+import org.archive.crawler.framework.CrawlController;
+
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
-import org.archive.crawler.framework.CrawlController;
-
-import java.io.Serializable;
 
 /**
  *

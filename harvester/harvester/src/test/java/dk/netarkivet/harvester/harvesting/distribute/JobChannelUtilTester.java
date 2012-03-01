@@ -26,6 +26,7 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobPriority;

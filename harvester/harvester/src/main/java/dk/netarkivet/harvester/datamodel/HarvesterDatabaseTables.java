@@ -24,11 +24,11 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import java.sql.Connection;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.DBUtils;
-
-import java.sql.Connection;
 
 /**
  *  Enum class defining the tables of the Harvester database and the 

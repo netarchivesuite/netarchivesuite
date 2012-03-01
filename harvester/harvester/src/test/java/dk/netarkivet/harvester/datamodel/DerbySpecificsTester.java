@@ -24,11 +24,11 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.utils.DBUtils;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import dk.netarkivet.common.utils.DBUtils;
 
 /**
  *

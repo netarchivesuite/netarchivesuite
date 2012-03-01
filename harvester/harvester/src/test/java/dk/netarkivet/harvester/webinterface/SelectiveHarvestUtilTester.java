@@ -24,6 +24,27 @@
 */
 package dk.netarkivet.harvester.webinterface;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.GregorianCalendar;
+import java.util.Calendar;
+
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.IteratorUtils;
@@ -33,17 +54,6 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
 
 public class SelectiveHarvestUtilTester extends DataModelTestCase {
     public SelectiveHarvestUtilTester(String s) {

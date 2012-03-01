@@ -24,10 +24,6 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.harvester.datamodel.AliasInfo;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -35,6 +31,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.datamodel.AliasInfo;
 
 /**
  * Class used to carry metadata in DoOneCrawl messages, including the URL

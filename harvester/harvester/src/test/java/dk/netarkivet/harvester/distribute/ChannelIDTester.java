@@ -23,6 +23,7 @@
  */
 package dk.netarkivet.harvester.distribute;
 
+import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -31,7 +32,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
 
 /**
  * Tests the part of ChannelID class that relates to the harvesting module.

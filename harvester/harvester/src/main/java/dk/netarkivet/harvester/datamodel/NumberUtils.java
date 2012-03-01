@@ -25,9 +25,9 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 import java.util.List;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Number related utilities.

@@ -25,6 +25,13 @@
 
 package dk.netarkivet.harvester.distribute;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.logging.LogManager;
+
+import junit.framework.TestCase;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -39,13 +46,6 @@ import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDe
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.logging.LogManager;
 
 public class HarvesterMessageHandlerTester extends TestCase {
 

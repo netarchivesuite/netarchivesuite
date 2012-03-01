@@ -24,8 +24,25 @@
 */
 package dk.netarkivet.archive.webinterface;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+
+import junit.framework.TestCase;
+
 import com.mockobjects.servlet.MockHttpServletRequest;
 import com.mockobjects.servlet.MockJspWriter;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.PreservationState;
@@ -41,14 +58,6 @@ import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.sql.Date;
-import java.util.*;
 
 /** Unittest for the class dk.netarkivet.archive.webinterface.BitpreserveFileState. */
 public class BitpreserveFileStatusTester extends TestCase {

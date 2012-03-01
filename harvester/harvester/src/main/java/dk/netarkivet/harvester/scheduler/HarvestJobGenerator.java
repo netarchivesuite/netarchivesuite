@@ -25,6 +25,14 @@
 
 package dk.netarkivet.harvester.scheduler;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
 import dk.netarkivet.common.utils.NotificationsFactory;
@@ -32,13 +40,6 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Handles the generation of new jobs based on the harvest definitions in
@@ -113,10 +114,17 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 if (harvestDefinitionsBeingScheduled.contains(id)) {
                     String harvestName = haDefinitionDAO.getHarvestName(id);
                     String errMsg = "Not creating jobs for harvestdefinition #"
-                            + id + " (" + harvestName + ")"
-                            + " as the previous scheduling is still running";
-                    log.warn(errMsg);
-                    NotificationsFactory.getInstance().errorEvent(errMsg);
+                        + id + " (" + harvestName + ")"
+                        + " as the previous scheduling is still running";
+                    if (haDefinitionDAO.isSnapshot(id)) {
+                        // Log only at level debug if the ID represents 
+                        // is a snapshot harvestdefinition, which are only run 
+                        // once anyway
+                        log.debug(errMsg);
+                    } else { // Log at level WARN, and send a notification, otherwise
+                        log.warn(errMsg);
+                        NotificationsFactory.getInstance().errorEvent(errMsg);
+                    }
                     continue;
                 }
 

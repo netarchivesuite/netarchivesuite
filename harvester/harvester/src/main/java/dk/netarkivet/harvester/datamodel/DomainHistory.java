@@ -24,12 +24,12 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 
 /**

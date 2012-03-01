@@ -25,6 +25,13 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -33,13 +40,12 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.*;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 
 /**
  * Utility class for handling update of domain from the domain jsp page.

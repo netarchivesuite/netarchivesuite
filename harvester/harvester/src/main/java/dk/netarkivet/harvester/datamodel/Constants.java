@@ -25,11 +25,11 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * Constants used by the datamodel and webinterface packages.

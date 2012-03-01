@@ -25,21 +25,40 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.exceptions.*;
-import dk.netarkivet.common.utils.*;
-import dk.netarkivet.harvester.webinterface.HarvestStatus;
-import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
-import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.SORT_ORDER;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.webinterface.HarvestStatus;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.SORT_ORDER;
 
 /**
  * A database-based implementation of the JobDAO class.

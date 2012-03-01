@@ -24,14 +24,17 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.cdx.CDXUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.testutils.*;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import junit.framework.TestCase;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
@@ -39,12 +42,18 @@ import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.util.*;
+import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.cdx.CDXUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.testutils.ARCTestUtils;
+import dk.netarkivet.testutils.FileAsserts;
+import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class HarvestDocumentationTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();

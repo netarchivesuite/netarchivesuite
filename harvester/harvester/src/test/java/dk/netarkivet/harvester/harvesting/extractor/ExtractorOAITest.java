@@ -23,6 +23,10 @@
  */
 package dk.netarkivet.harvester.harvesting.extractor;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CrawlURI;
@@ -31,10 +35,6 @@ import org.archive.crawler.extractor.Link;
 import org.archive.io.ReplayCharSequence;
 import org.archive.net.UURIFactory;
 import org.archive.util.HttpRecorder;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
 
 public class ExtractorOAITest extends TestCase {
 

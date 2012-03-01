@@ -25,6 +25,15 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -34,14 +43,11 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
-import java.util.HashSet;
-import java.util.Set;
+import dk.netarkivet.harvester.datamodel.FullHarvest;
+import dk.netarkivet.harvester.datamodel.HarvestDefinition;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
 
 /**
  * Contains utility methods for supporting GUI for updating snapshot harvests.

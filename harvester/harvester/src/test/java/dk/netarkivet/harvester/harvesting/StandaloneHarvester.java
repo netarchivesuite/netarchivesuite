@@ -24,9 +24,9 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import dk.netarkivet.common.utils.FileUtils;
-
 import java.io.File;
+
+import dk.netarkivet.common.utils.FileUtils;
 
 /** This testing tool runs a single harvest similar to what would happen
  * when a Job arrives.

@@ -24,9 +24,9 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 import java.util.List;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Reduced version of the Domain class for presentation purposes. Immutable.

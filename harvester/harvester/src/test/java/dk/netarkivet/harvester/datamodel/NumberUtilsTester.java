@@ -24,10 +24,10 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 /**
  * Unit test for the utility class NumberUtils.

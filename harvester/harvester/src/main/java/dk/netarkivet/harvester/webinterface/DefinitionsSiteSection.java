@@ -25,15 +25,22 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
+import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.ScheduleDAO;
+import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Site section that creates the menu for data definitions.

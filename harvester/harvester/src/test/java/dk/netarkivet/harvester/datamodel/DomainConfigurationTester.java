@@ -25,13 +25,17 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
-import java.util.*;
 
 
 /**

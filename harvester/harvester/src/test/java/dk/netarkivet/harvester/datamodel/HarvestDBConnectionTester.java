@@ -24,15 +24,19 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.LogManager;
+
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.sql.*;
-import java.util.logging.LogManager;
 
 /**
  * Test class for the Database utilities in HarvestDBConnection,

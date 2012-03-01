@@ -25,9 +25,11 @@
 
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
-import junit.framework.TestCase;
-
 import java.util.Map;
+
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldOptions;
+
+import junit.framework.TestCase;
 
 public class ExtendedFieldOptionsTester extends TestCase {
 

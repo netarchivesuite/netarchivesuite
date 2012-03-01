@@ -24,14 +24,15 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.harvester.datamodel.IngestDomainList;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import javax.servlet.jsp.JspWriter;
 import java.io.File;
 import java.util.Locale;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.harvester.datamodel.IngestDomainList;
 
 /**
  * This class manages a thread of ingesting domains.
