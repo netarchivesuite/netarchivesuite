@@ -253,8 +253,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </junit>
     </target>
 
-    <target name="unittest" description="Run unit tests on a clean compile">
-        <property name="suite" value="UnitTesterSuite"/>
+    <target name="unittest" description="Run all module unit tests on a clean compile">
+        <property name="suite" value="FullUnitTesterSuite"/>
         <antcall target="test"/>
     </target>
 

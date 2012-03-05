@@ -103,6 +103,32 @@
   </repositories>
 
   <build>
+
+    <!-- Hacking resources to allow for ant based convention of
+    keeping resource files together with .java files -->
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/java</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/src/test/java</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

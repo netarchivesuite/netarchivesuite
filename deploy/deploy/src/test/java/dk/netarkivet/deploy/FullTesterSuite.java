@@ -30,14 +30,11 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * The FullTesterSuite comprises all our three test-suites.
- * - The UnitTesterSuite
- * - The IntegrityTesterSuite
- * - HeritrixTesterSuite
+ * The FullTesterSuite comprises all our test-suites.
  */
 public class FullTesterSuite {
     public static void addToSuite(TestSuite suite) {
-        UnitTesterSuite.addToSuite(suite);
+        FullUnitTesterSuite.addToSuite(suite);
         IntegrityTesterSuite.addToSuite(suite);
         HeritrixTesterSuite.addToSuite(suite);
     }

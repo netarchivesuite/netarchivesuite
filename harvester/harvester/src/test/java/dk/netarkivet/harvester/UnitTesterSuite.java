@@ -23,18 +23,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.deploy;
+package dk.netarkivet.harvester;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+import dk.netarkivet.harvester.datamodel.HarvesterDataModelTesterSuite;
+import dk.netarkivet.harvester.datamodel.extendedfield.HarvesterDataModelExtendedfieldTesterSuite;
+import dk.netarkivet.harvester.distribute.HarvesterDistributeTesterSuite;
+import dk.netarkivet.harvester.harvesting.HarvestingTesterSuite;
+import dk.netarkivet.harvester.harvesting.distribute.HarvestingDistributeTesterSuite;
+import dk.netarkivet.harvester.harvesting.frontier.HarvesterHarvestingFrontierTesterSuite;
+import dk.netarkivet.harvester.scheduler.HarvesterSchedulerTesterSuite;
+import dk.netarkivet.harvester.tools.HarvesterToolsTesterSuite;
+import dk.netarkivet.harvester.webinterface.HarvesterWebinterfaceTesterSuite;
+
 /**
- * This class runs all the deploy module unit tests.
+ * This class runs all the harvester module unit tests.
  */
 public class UnitTesterSuite {
     public static void addToSuite(TestSuite suite) {
-        DeployTesterSuite.addToSuite(suite);
+        HarvesterTesterSuite.addToSuite(suite);
+        HarvestingTesterSuite.addToSuite(suite);
+        HarvesterDataModelTesterSuite.addToSuite(suite);
+        HarvesterDataModelExtendedfieldTesterSuite.addToSuite(suite);
+        HarvesterDistributeTesterSuite.addToSuite(suite);
+        HarvesterHarvestingFrontierTesterSuite.addToSuite(suite);
+        HarvestingDistributeTesterSuite.addToSuite(suite);
+        HarvesterSchedulerTesterSuite.addToSuite(suite);
+        HarvesterToolsTesterSuite.addToSuite(suite);
+        HarvesterWebinterfaceTesterSuite.addToSuite(suite);
     }
 
     public static Test suite() {

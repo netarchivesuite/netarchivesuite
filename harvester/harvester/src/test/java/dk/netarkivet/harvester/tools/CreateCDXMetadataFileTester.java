@@ -223,7 +223,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
                 job4MetadataFile
         );
     }
-
+    /*
     public void testRunFailingJob() {
         // Test with failure
         File outputFile = new File(TestInfo.WORKING_DIR, "tmpout");
@@ -236,7 +236,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
                          0, pse.getExitValue());
         }        
         // Should not die on errors in the batch job (null result file)
-    }
+    } */
 
     /**
      * This class is a MessageListener that responds to BatchMessage,

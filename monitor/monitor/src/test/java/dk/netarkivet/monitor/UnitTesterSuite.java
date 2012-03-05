@@ -23,18 +23,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.deploy;
+package dk.netarkivet.monitor;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+import dk.netarkivet.monitor.jmx.MonitorJMXTesterSuite;
+import dk.netarkivet.monitor.logging.MonitorLoggingTesterSuite;
+import dk.netarkivet.monitor.registry.MonitorRegistryTesterSuite;
+import dk.netarkivet.monitor.webinterface.MonitorWebinterfaceTesterSuite;
+
 /**
- * This class runs all the deploy module unit tests.
+ * This class runs all the monitor module unit tests.
  */
 public class UnitTesterSuite {
     public static void addToSuite(TestSuite suite) {
-        DeployTesterSuite.addToSuite(suite);
+        MonitorTesterSuite.addToSuite(suite);
+        MonitorLoggingTesterSuite.addToSuite(suite);
+        MonitorJMXTesterSuite.addToSuite(suite);
+        MonitorRegistryTesterSuite.addToSuite(suite);
+        MonitorWebinterfaceTesterSuite.addToSuite(suite);
     }
 
     public static Test suite() {
