@@ -32,6 +32,7 @@ import java.net.URISyntaxException;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.arcrepository.TestArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -39,7 +40,6 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.StringAsserts;
-import dk.netarkivet.testutils.TestArcRepositoryClient;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;

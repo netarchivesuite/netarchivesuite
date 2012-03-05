@@ -28,7 +28,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.common.webinterface.GUIWebServerTester;
 import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
 
 /**
@@ -63,8 +62,6 @@ public class HarvesterDataModelTesterSuite {
         suite.addTestSuite(FullHarvestTester.class);
         suite.addTestSuite(GlobalCrawlerTrapListTester.class);
         suite.addTestSuite(GlobalCrawlerTrapListDBDAOTester.class  );
-        // TODO  move elsewhere
-        suite.addTestSuite(GUIWebServerTester.class);
         suite.addTestSuite(HarvestDefinitionDAOTester.class);
         suite.addTestSuite(HarvestDefinitionGUITester.class);
         suite.addTestSuite(HarvestDefinitionTester.class);

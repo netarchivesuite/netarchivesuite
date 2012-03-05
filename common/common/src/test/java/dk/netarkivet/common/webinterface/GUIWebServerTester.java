@@ -22,7 +22,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.harvester.webinterface;
+package dk.netarkivet.common.webinterface;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -30,8 +30,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
-import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
-import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import junit.framework.TestCase;
@@ -78,15 +76,12 @@ public class GUIWebServerTester extends TestCase {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         
         // Configure test DB
-        HarvestDAOUtils.resetDAOs();
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
-        "dk.netarkivet.common.distribute.TestRemoteFile");
+                "dk.netarkivet.common.distribute.TestRemoteFile");
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                 + WORKING.getCanonicalPath() + "/fullhddb");
-        DatabaseTestUtils.getHDDB(new File(BASEDIR, "fullhddb.jar"),
-                "fullhddb", WORKING);
 
     }
 
@@ -95,7 +90,6 @@ public class GUIWebServerTester extends TestCase {
             server.cleanup();
         }
         JMSConnectionMockupMQ.clearTestQueues();
-        DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(dk.netarkivet.common.webinterface.TestInfo.TEMPDIR);
         FileUtils.removeRecursively(dk.netarkivet.common.webinterface.TestInfo.WORKING_DIR);
         rs.tearDown();
