@@ -36,6 +36,16 @@
       <artifactId>jcommon</artifactId>
       <version>1.0.15</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
+      <version>10.8.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.8.2.2</version>
+    </dependency>
 
     <!-- Test dependencies -->
     <dependency>
@@ -43,19 +53,6 @@
       <artifactId>netarchivesuite-common</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbyclient</artifactId>
-      <version>10.8.2.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.8.2.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

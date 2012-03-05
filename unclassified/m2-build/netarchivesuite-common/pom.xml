@@ -15,8 +15,7 @@
   </parent>
 
   <name>NetarchiveSuite commons module</name>
-  <description>Contains the functionality common to all NetarchiveSuite modules
-    </description>
+  <description>Contains the functionality common to all NetarchiveSuite modules</description>
 
   <dependencies>
     <dependency>
