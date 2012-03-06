@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
@@ -178,10 +179,10 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
      * @throws Exception If error!
      */
     public void testMissingFiles() throws Exception {
-        // initialise the database. Clean database and put new intries.
+        // initialise the database. Clean database and put new entries.
         ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
         File csFile1 = makeTemporaryChecksumFile1();
-        cache.addChecksumInformation(FileUtils.readListFromFile(csFile1), THREE);
+        cache.addChecksumInformation(csFile1, THREE);
 
         dbabp = DatabaseBasedActiveBitPreservation.getInstance();
         assertEquals("Replica '" + THREE + "' should not be missing any files.",
@@ -279,7 +280,11 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         List<String> filelist = new ArrayList<String>();
         filelist.add("integrity1.ARC");
         filelist.add("integrity7.ARC");
-        ReplicaCacheDatabase.getInstance().addFileListInformation(filelist, THREE);
+        File tmpFile = File.createTempFile("file", "txt");
+        FileUtils.writeCollectionToFile(tmpFile, filelist);
+        
+        ReplicaCacheDatabase.getInstance().addFileListInformation(tmpFile, THREE);
+        FileUtils.remove(tmpFile);
         
         String misFiles = dbabp.getMissingFiles(THREE).toString();
         assertTrue("integrity2.ARC should be missing", 
@@ -331,8 +336,13 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         checksumlist.add("1.arc##1234");
         checksumlist.add("2.arc##2345");
         
-        cache.addChecksumInformation(checksumlist, TWO);
+        File checksumFile = File.createTempFile("file", "txt");
+        FileUtils.writeCollectionToFile(checksumFile, checksumlist);
+        
+        cache.addChecksumInformation(checksumFile, TWO);
 
+        FileUtils.remove(checksumFile);
+        
         // verify that all replicas has both files, and no 'wrong' entries.
         assertEquals("Unexpected number of files for " + TWO, 2, cache.getNumberOfFiles(TWO));
         assertEquals("Unexpected number of missing files for " + TWO, 0, 
@@ -342,8 +352,10 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         
         checksumlist.clear();
         checksumlist.add("1.arc##1234");
-
-        cache.addChecksumInformation(checksumlist, TWO);        
+        checksumFile = File.createTempFile("file", "txt");
+        FileUtils.writeCollectionToFile(checksumFile, checksumlist);
+        cache.addChecksumInformation(checksumFile, TWO);
+        FileUtils.remove(checksumFile);
 
         // verify that replica TWO is missing a file, but has no wrong files.
         assertEquals("Unexpected number of files for " + TWO, 1, cache.getNumberOfFiles(TWO));

@@ -553,7 +553,7 @@ public class FileUtils {
     }
 
     /**
-     * Read a all lines from a file into a list of strings.
+     * Read all lines from a file into a list of strings.
      * @param file The file to read from.
      * @return The list of lines.
      * @throws IOFailure on trouble reading the file,
@@ -1039,6 +1039,15 @@ public class FileUtils {
            log.warn(errMsg);
            throw new IOFailure(errMsg);
        }
+   }
+   
+   /**
+    * Sort a file using UNIX sort.
+    * @param file the file that you want to sort.
+    * @param toFile The destination file.
+    */
+   public static void sortFile(File file, File toFile) {
+       sortCDX(file, toFile);
    }
     
 

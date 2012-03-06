@@ -1059,7 +1059,7 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for finding the checksum which are present most times in the
+     * Method for finding the checksum which is present most times in the
      * list.
      *
      * @param checksums The list of checksum to vote about.

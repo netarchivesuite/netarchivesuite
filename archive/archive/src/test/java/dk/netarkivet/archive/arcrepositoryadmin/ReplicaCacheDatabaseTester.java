@@ -110,12 +110,12 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         
         // try handling output from ChecksumJob.
         File csFile = makeTemporaryChecksumFile1();
-        cache.addChecksumInformation(FileUtils.readListFromFile(csFile), 
+        cache.addChecksumInformation(csFile, 
                 Replica.getReplicaFromId("ONE"));
 
         // try handling output from FilelistJob.
         File flFile = makeTemporaryFilelistFile();
-        cache.addFileListInformation(FileUtils.readListFromFile(flFile), 
+        cache.addFileListInformation(flFile, 
                 Replica.getReplicaFromId("TWO"));
 
         Date dbDate = cache.getDateOfLastMissingFilesUpdate(
@@ -156,7 +156,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
 
         // retrieve empty file and set all files in replica 'THREE' to missing
         File fl2File = makeTemporaryEmptyFilelistFile();
-        cache.addFileListInformation(FileUtils.readListFromFile(fl2File), 
+        cache.addFileListInformation(fl2File, 
                 Replica.getReplicaFromId("THREE"));
 
         // check that all files are unknown for the uninitialised replica.
@@ -182,7 +182,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
                 + misFiles + " == " + allFilenames, misFiles, allFilenames);
 
         // adding the checksum for the other replicas.
-        cache.addChecksumInformation(FileUtils.readListFromFile(csFile), 
+        cache.addChecksumInformation(csFile, 
                 Replica.getReplicaFromId("TWO"));
 
         // check that when a replica is given wrong checksums it will be 
@@ -195,7 +195,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
                 0, cache.getNumberOfFiles(Replica.getReplicaFromId("THREE")));
 
         File csFile2 = makeTemporaryChecksumFile2();
-        cache.addChecksumInformation(FileUtils.readListFromFile(csFile2), 
+        cache.addChecksumInformation(csFile2, 
                 Replica.getReplicaFromId("THREE"));
         assertEquals("All the files in Replica 'THREE' has been assigned "
                 + "checksums, but not checksum update has been run yet. "
@@ -227,7 +227,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
 
 
         // check that a file can become missing, after it was ok, but still be ok!
-        cache.addFileListInformation(FileUtils.readListFromFile(flFile), 
+        cache.addFileListInformation(flFile, 
                 Replica.getReplicaFromId("ONE"));
         assertEquals("Replica 'ONE' had the files '" + allFilenames 
                 + "' before updating the filelist with '" 
@@ -241,12 +241,12 @@ public class ReplicaCacheDatabaseTester extends TestCase {
 
         // set replica THREE to having the same checksum as the other two,
         // and update.
-        cache.addChecksumInformation(FileUtils.readListFromFile(csFile),
+        cache.addChecksumInformation(csFile,
                 Replica.getReplicaFromId("THREE"));
         cache.updateChecksumStatus();
         // reset the checksums of replica ONE, thus setting the 
         // 'checksum_status' to UNKNOWN.
-        cache.addChecksumInformation(FileUtils.readListFromFile(csFile), 
+        cache.addChecksumInformation(csFile, 
                 Replica.getReplicaFromId("ONE"));
 
         // Check that replica 'TWO' is found with good file.
@@ -325,8 +325,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         }
 
         // check for duplicates
-        cache.addFileListInformation(FileUtils.readListFromFile(
-                makeTemporaryDuplicateFilelistFile()), 
+        cache.addFileListInformation(makeTemporaryDuplicateFilelistFile(), 
                 Replica.getReplicaFromId("ONE"));
         
         boolean stop = true;

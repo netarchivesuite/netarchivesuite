@@ -26,6 +26,7 @@
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,10 +119,10 @@ public final class DatabaseBasedActiveBitPreservation implements
      * A GetAllFilenamesMessage is sent to the specific replica.
      * 
      * @param replica The replica to retrieve the filelist from.
-     * @return The names of the files in a list.
+     * @return The names of the files in a File.
      * @throws ArgumentNotValid If the replica is 'null'.
      */
-    private List<String> getFilenamesList(Replica replica) throws 
+    private File getFilenamesAsFile(Replica replica) throws 
             ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
@@ -130,11 +131,10 @@ public final class DatabaseBasedActiveBitPreservation implements
         log.info("Retrieving filelist from replica '" + replica + "'.");
 
         // Retrieve a file containing the list of filenames of the replica.
-        File outputFile = ArcRepositoryClientFactory.getPreservationInstance()
+        File result = ArcRepositoryClientFactory.getPreservationInstance()
                 .getAllFilenames(replica.getId());
-        
-        // Return the content of the file in list form.
-        return FileUtils.readListFromFile(outputFile);
+        log.info("Retrieved filelist from replica '" + replica + "'.");
+        return result;
     }
     
     /**
@@ -142,23 +142,24 @@ public final class DatabaseBasedActiveBitPreservation implements
      * A GetAllChecksumsMessage is sent to the specific replica.
      * 
      * @param replica The replica to retrieve the checksums from.
-     * @return A list of checksumjob results, i.e. a filename##checksum.
+     * @return A file containing the checksumjob results, i.e. a filename##checksum.
      * @throws ArgumentNotValid If the replica is null.
      */
-    private List<String> getChecksumList(Replica replica)
+    private File getChecksumListAsFile(Replica replica)
             throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
-        // send request
         log.info("Retrieving checksum from replica '" + replica + "'.");
 
-        // Retrieve a file containing the checksums of the replica.
+        // Request and retrieve a file containing the checksums of the replica,
+        // and return this
         File outputFile = ArcRepositoryClientFactory.getPreservationInstance()
                 .getAllChecksums(replica.getId());
         
-        // Return the content of the file in a list.
-        return FileUtils.readListFromFile(outputFile);
+        log.info("Retrieved checksum from replica '" + replica + "'.");
+        
+        return outputFile;
     }
     
     /**
@@ -250,18 +251,22 @@ public final class DatabaseBasedActiveBitPreservation implements
     }
     
     /**
-     * The method for retrieving the checksums for all the files witin a
+     * The method for retrieving the checksums for all the files within a
      * replica.
      * This method sends the checksum job to the replica archive.
      * 
      * @param replica The replica to retrieve the checksums from.
      */
     private void runChecksum(Replica replica) {
-        // Run checksum job upon replica
-        List<String> checksumEntries = getChecksumList(replica);
-
-        // update database with new checksums
-        cache.addChecksumInformation(checksumEntries, replica);
+        File checksumlistFile = null;
+        try {
+            checksumlistFile = getChecksumListAsFile(replica);
+            cache.addChecksumInformation(checksumlistFile, replica);
+        } finally {
+            if (checksumlistFile != null) {
+                FileUtils.remove(checksumlistFile);
+            }
+        }
     }
     
     /**
@@ -490,17 +495,19 @@ public final class DatabaseBasedActiveBitPreservation implements
         }
         log.info("Initiating findMissingFiles for replica '" +  replica + "'.");
         updateFilelistReplicas.add(replica);
- 
+        File filenamesFile = null;
         try {
-            // retrieve the filelist from the replica.
-            List<String> filenames = getFilenamesList(replica);
-
+            // retrieve the filelist from the replica
+            filenamesFile = getFilenamesAsFile(replica);
             // put them into the database.
-            cache.addFileListInformation(filenames, replica);
+            cache.addFileListInformation(filenamesFile, replica);
             log.info("Completed findMissingFiles for replica '" +  replica 
                     + "'.");
         } finally {
             updateFilelistReplicas.remove(replica);
+            if (filenamesFile != null) {
+                FileUtils.remove(filenamesFile);
+            }
         }
     }
 
