@@ -1,7 +1,7 @@
-/*$Id: BitpreserveFileStatusTester.java 1499 2010-07-14 16:59:04Z svc $
-* $Revision: 1499 $
-* $Date: 2010-07-14 18:59:04 +0200 (Wed, 14 Jul 2010) $
-* $Author: svc $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2012 The Royal Danish Library, the Danish State and

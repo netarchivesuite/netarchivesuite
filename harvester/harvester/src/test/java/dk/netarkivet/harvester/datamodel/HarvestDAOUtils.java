@@ -1,7 +1,7 @@
-/* File:    $Id: TestUtils.java 2251 2012-02-08 13:03:03Z mss $
- * Version: $Revision: 2251 $
- * Date:    $Date: 2012-02-08 14:03:03 +0100 (Wed, 08 Feb 2012) $
- * Author:  $Author: mss $
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and
@@ -29,7 +29,7 @@ import dk.netarkivet.harvester.datamodel.*;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 
 /**
- * This class allows checking who's running the tests.
+ * Allows resetting of the HarvestDB DAO's between tests..
  */
 public class HarvestDAOUtils {
 

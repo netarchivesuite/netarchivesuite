@@ -1,7 +1,7 @@
-/* File:    $Id: ArchiveChecksumTesterSuite.java 1291 2010-02-24 14:37:20Z jolf $
- * Version: $Revision: 1291 $
- * Date:    $Date: 2010-02-24 15:37:20 +0100 (Wed, 24 Feb 2010) $
- * Author:  $Author: jolf $
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and

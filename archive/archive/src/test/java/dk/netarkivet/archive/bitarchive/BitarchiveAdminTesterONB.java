@@ -1,7 +1,7 @@
-/*$Id: BitarchiveAdminTesterONB.java 1700 2011-07-20 14:00:00Z aponb $
-* $Revision: 1700 $
-* $Date: 2011-07-20 14:00:00 +0100 $
-* $Author: aponb $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2012 The Royal Danish Library, the Danish State and

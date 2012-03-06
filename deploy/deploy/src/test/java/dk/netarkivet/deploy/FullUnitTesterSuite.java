@@ -1,7 +1,7 @@
-/* File:    $Id: UnitTesterSuite.java 2273 2012-02-24 12:40:49Z mss $
- * Version: $Revision: 2273 $
- * Date:    $Date: 2012-02-24 13:40:49 +0100 (Fre, 24 Feb 2012) $
- * Author:  $Author: mss $
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and
@@ -42,7 +42,7 @@ public class FullUnitTesterSuite {
         dk.netarkivet.harvester.UnitTesterSuite.addToSuite(suite);
         dk.netarkivet.archive.UnitTesterSuite.addToSuite(suite);
         dk.netarkivet.viewerproxy.UnitTesterSuite.addToSuite(suite);
-        dk.netarkivet.viewerproxy.UnitTesterSuite.addToSuite(suite);
+        dk.netarkivet.monitor.UnitTesterSuite.addToSuite(suite);
         dk.netarkivet.wayback.UnitTesterSuite.addToSuite(suite);
         dk.netarkivet.deploy.UnitTesterSuite.addToSuite(suite);
         /*

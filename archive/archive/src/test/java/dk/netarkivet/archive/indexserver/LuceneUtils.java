@@ -1,7 +1,7 @@
-/*$Id: LuceneUtils.java 2251 2012-02-08 13:03:03Z mss $
-* $Revision: 2251 $
-* $Date: 2012-02-08 14:03:03 +0100 (Ons, 08 Feb 2012) $
-* $Author: mss $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2012 The Royal Danish Library, the Danish State and

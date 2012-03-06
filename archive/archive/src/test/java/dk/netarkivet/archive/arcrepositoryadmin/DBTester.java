@@ -1,7 +1,7 @@
-/* File:        $Id: DatabaseBasedActiveBitPreservationTester.java 1651 2010-10-08 18:17:26Z svc $
- * Revision:    $Revision: 1651 $
- * Author:      $Author: svc $
- * Date:        $Date: 2010-10-08 20:17:26 +0200 (Fri, 08 Oct 2010) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and

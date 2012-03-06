@@ -1,7 +1,7 @@
-/* File:        $Id: SelectiveHarvest.java 2033 2011-09-20 15:48:19Z svc $
- * Revision:    $Revision: 2033 $
- * Author:      $Author: svc $
- * Date:        $Date: 2011-09-20 17:48:19 +0200 (Tue, 20 Sep 2011) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and

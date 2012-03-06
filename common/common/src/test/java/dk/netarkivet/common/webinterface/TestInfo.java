@@ -1,7 +1,7 @@
-/*$Id: TestInfo.java 1338 2010-03-17 15:27:53Z svc $
-* $Revision: 1338 $
-* $Date: 2010-03-17 16:27:53 +0100 (Wed, 17 Mar 2010) $
-* $Author: svc $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2012 The Royal Danish Library, the Danish State and
