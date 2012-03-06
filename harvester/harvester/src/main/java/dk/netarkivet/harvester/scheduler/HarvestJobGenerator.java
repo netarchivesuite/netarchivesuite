@@ -114,11 +114,18 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                     String errMsg = "Not creating jobs for harvestdefinition #"
                             + id + " (" + harvestName + ")"
                             + " as the previous scheduling is still running";
-                    log.warn(errMsg);
-                    NotificationsFactory.getInstance().errorEvent(errMsg);
+                    if (haDefinitionDAO.isSnapshot(id)) {
+                        // Log only at level debug if the ID represents 
+                        // is a snapshot harvestdefinition, which are only run 
+                        // once anyway
+                        log.debug(errMsg);
+                    } else {
+                        log.warn(errMsg);
+                        NotificationsFactory.getInstance().errorEvent(errMsg);
+                    }
                     continue;
                 }
-
+  
                 final HarvestDefinition harvestDefinition =
                     haDefinitionDAO.read(id);
 
