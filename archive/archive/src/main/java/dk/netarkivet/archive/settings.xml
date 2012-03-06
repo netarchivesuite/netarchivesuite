@@ -96,6 +96,7 @@ National Library.
         	<requestdir>requests</requestdir>
         	<checkinterval>30000</checkinterval>
         	<indexingtimeout>172800000</indexingtimeout>
+        	<satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
         </indexserver>
     </archive>
 </settings>

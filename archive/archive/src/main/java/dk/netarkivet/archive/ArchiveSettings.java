@@ -388,9 +388,16 @@ public class ArchiveSettings {
             = "settings.archive.indexserver.indexingtimeout";
     /**
      * <b>settings.archive.indexserver.listeningcheckinterval</b>: <br>
-     * Setting for for interval between each listening check in milliseconds. 
+     * Setting for the interval between each listening check in milliseconds. 
      * The default is 30000 (5 minutes).
      */
     public static String INDEXSERVER_INDEXING_LISTENING_INTERVAL 
         = "settings.archive.indexserver.listeningcheckinterval";
+    /**
+     * <b>settings.archive.indexserver.satisfactorythresholdpercentage</b>: <br>
+     * Setting for the satisfactory threshold of the indexing result as a percentage.
+     * The default is 70 percent
+     */
+    public static String INDEXSERVER_INDEXING_SATISFACTORYTHRESHOLD_PERCENTAGE
+        = "settings.archive.indexserver.satisfactorythresholdpercentage";
 }

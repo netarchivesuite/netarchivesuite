@@ -63,7 +63,7 @@ public abstract class FileBasedCache<I> {
      * main cache directory holding cached files.
      *
      * @param cacheName Name of this cache (enabling sharing among processes).
-     *                  The directoriy creating in the cachedir will have this
+     *                  The directory created in the cachedir will have this
      *                  name.
      */
     public FileBasedCache(String cacheName) {

@@ -97,6 +97,8 @@ public final class IndexRequestServer extends ArchiveMessageHandler
     /** The timer that initiates the checkIflisteningTask. */
     private Timer checkIflisteningTimer = new Timer();
     
+    /** satisfactoryThreshold percentage as an integer. */
+    private int satisfactoryThresholdPercentage;
     /**
      * The directory to store backup copies of the currentJobs.
      * In case of the indexserver crashing. 
@@ -112,6 +114,8 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                 ArchiveSettings.INDEXSERVER_INDEXING_REQUESTDIR);
         listeningInterval = Settings.getLong(
                 ArchiveSettings.INDEXSERVER_INDEXING_LISTENING_INTERVAL);
+        satisfactoryThresholdPercentage = Settings.getInt(
+                ArchiveSettings.INDEXSERVER_INDEXING_SATISFACTORYTHRESHOLD_PERCENTAGE);
         
         currentJobs = new HashMap<String, IndexRequestMessage>();
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(
@@ -328,37 +332,36 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                      + "]");
             FileBasedCache<Set<Long>> handler = handlers.get(type);
             Set<Long> foundIDs = handler.cache(jobIDs);
-            irMsg.setFoundJobs(foundIDs);
+            irMsg.setFoundJobs(foundIDs); //TODO find out where this is used?
             if (foundIDs.equals(jobIDs)) {
                 log.info("Successfully generated index of type '" + type
                          + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
                          + "]");
                 File cacheFile = handler.getCacheFile(jobIDs);
-                if (mustReturnIndex) { // return index now! (default behaviour)
-                    RemoteFileSettings connectionParams = irMsg.getRemoteFileSettings();
-                    
-                    if (connectionParams != null) {
-                        log.debug("Trying to use client supplied RemoteFileServer: "
-                                + connectionParams.getServerName());                    
-                    }
-                    if (cacheFile.isDirectory()) {
-                        // This cache uses multiple files stored in a directory,
-                        // so transfer them all.
-                        File[] cacheFiles = cacheFile.listFiles();
-                        List<RemoteFile> resultFiles 
-                            = new ArrayList<RemoteFile>(cacheFiles.length);
-                        for (File f : cacheFiles) {
-                            resultFiles.add(
-                                    RemoteFileFactory.getCopyfileInstance(f, 
-                                            irMsg.getRemoteFileSettings()));
-                            
-                        }
-                        irMsg.setResultFiles(resultFiles);
-                    } else {
-                        irMsg.setResultFile(
-                                RemoteFileFactory.getCopyfileInstance(
-                                cacheFile, irMsg.getRemoteFileSettings()));
-                    }
+                if (mustReturnIndex) { // return index now! 
+                    packageResultFiles(irMsg, cacheFile);
+                }
+            } else if (satisfactoryTresholdReached(foundIDs, jobIDs)) {
+                // Make a copy of the indexcreated, and give it the name of
+                // the index cache file wanted.
+                File cacheFileWanted = handler.getCacheFile(jobIDs);
+                File cacheFileCreated = handler.getCacheFile(foundIDs);
+                
+                log.info("Satisfactory threshold reached - copying index '" 
+                        + cacheFileCreated.getAbsolutePath()
+                        + "' to full index: " + cacheFileWanted.getAbsolutePath());
+                if (cacheFileCreated.isDirectory()) {
+                    // create destination-dir, and copy all files in cacheFileCreated
+                    // to cacheFileWanted.
+                    cacheFileWanted.mkdirs();
+                    FileUtils.copyDirectory(cacheFileCreated, cacheFileWanted);
+                } else {
+                    FileUtils.copyFile(cacheFileCreated, cacheFileWanted);
+                }
+                // Information needed by recipient to store index in local cache
+                irMsg.setFoundJobs(jobIDs); 
+                if (mustReturnIndex) { // return index now.
+                    packageResultFiles(irMsg, cacheFileWanted);
                 }
             } else {
                 Set<Long> missingJobIds = new HashSet<Long>(jobIDs);
@@ -368,7 +371,6 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                          + "]. Missing data for jobs ["
                          + StringUtils.conjoin(",", missingJobIds)
                          + "].");
-                
             }
         } catch (Throwable e) {
             log.warn(
@@ -401,6 +403,58 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                        Channels.getTheIndexServer());
                JMSConnectionFactory.getInstance().send(irm);
             }
+        }
+    }
+    
+    /**
+     * Package resultfiles w/ the answer to message.
+     * @param irMsg the message being answered
+     * @param cacheFile The location of the result on disk.
+     */
+    private void packageResultFiles(IndexRequestMessage irMsg, File cacheFile) {
+        RemoteFileSettings connectionParams = irMsg.getRemoteFileSettings();
+        
+        if (connectionParams != null) {
+            log.debug("Trying to use client supplied RemoteFileServer: "
+                    + connectionParams.getServerName());                    
+        }
+        if (cacheFile.isDirectory()) {
+            // This cache uses multiple files stored in a directory,
+            // so transfer them all.
+            File[] cacheFiles = cacheFile.listFiles();
+            List<RemoteFile> resultFiles 
+                = new ArrayList<RemoteFile>(cacheFiles.length);
+            for (File f : cacheFiles) {
+                resultFiles.add(
+                        RemoteFileFactory.getCopyfileInstance(f, 
+                                irMsg.getRemoteFileSettings()));
+                
+            }
+            irMsg.setResultFiles(resultFiles);
+        } else {
+            irMsg.setResultFile(
+                    RemoteFileFactory.getCopyfileInstance(
+                    cacheFile, irMsg.getRemoteFileSettings()));
+        }
+        
+    }
+
+    /**
+     * Threshold for when the created index contains enough data to be 
+     * considered a satisfactory index. 
+     * @param foundIDs The list of IDs contained in the index
+     * @param jobIDs The list of IDs requested in the index.
+     * @return true, if 
+     */
+    private boolean satisfactoryTresholdReached(Set<Long> foundIDs,
+            Set<Long> jobIDs) {
+        int jobsRequested = jobIDs.size(); 
+        int jobsFound = foundIDs.size();
+        int percentage = (jobsFound * 100) / jobsRequested;
+        if (percentage > satisfactoryThresholdPercentage) {
+            return true;
+        } else {
+            return false;
         }
     }
 
