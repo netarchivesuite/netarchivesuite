@@ -37,7 +37,8 @@ import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
 public class MonitorRegistryServerTester extends TestCase {
 
     public void setUp() {
-        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+      // Out commented to avoid reference to harvester module from monitor module.
+      // JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
     
     public void testGetInstance() {

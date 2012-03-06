@@ -24,35 +24,8 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.management.Attribute;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServerConnection;
-import javax.management.ReflectionException;
-import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.TabularData;
-import javax.management.remote.JMXConnector;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.archive.crawler.framework.CrawlController;
-import org.archive.util.JmxUtils;
-
-import dk.netarkivet.common.exceptions.HarvestingAbort;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.JMXUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.common.exceptions.*;
+import dk.netarkivet.common.utils.*;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
@@ -60,6 +33,19 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlS
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.archive.crawler.framework.CrawlController;
+import org.archive.util.JmxUtils;
+
+import javax.management.*;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.TabularData;
+import javax.management.remote.JMXConnector;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This implementation of the HeritrixController interface starts Heritrix as a

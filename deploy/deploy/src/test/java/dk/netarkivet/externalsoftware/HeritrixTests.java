@@ -24,31 +24,23 @@
 */
 package dk.netarkivet.externalsoftware;
 
+import dk.netarkivet.archive.indexserver.LuceneUtils;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.*;
+import dk.netarkivet.common.utils.cdx.CDXUtils;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
+import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
+import dk.netarkivet.harvester.harvesting.HeritrixLauncherFactory;
+import dk.netarkivet.harvester.harvesting.controller.AbstractJMXHeritrixController;
+import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
+import dk.netarkivet.testutils.*;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import is.hi.bok.deduplicator.DeDuplicator;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import junit.framework.TestCase;
-
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.IOUtils;
 import org.archive.io.ArchiveReader;
@@ -65,30 +57,13 @@ import org.dom4j.io.XMLWriter;
 import org.dom4j.util.XMLErrorHandler;
 import org.xml.sax.SAXException;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.DomainUtils;
-import dk.netarkivet.common.utils.ExceptionUtils;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.FixedUURI;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.common.utils.cdx.CDXUtils;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
-import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
-import dk.netarkivet.harvester.harvesting.HeritrixLauncherFactory;
-import dk.netarkivet.harvester.harvesting.controller.AbstractJMXHeritrixController;
-import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
-import dk.netarkivet.harvester.harvesting.report.HarvestReport;
-import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LuceneUtils;
-import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.StringAsserts;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
 
 
 /**

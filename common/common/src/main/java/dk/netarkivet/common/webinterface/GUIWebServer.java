@@ -71,7 +71,7 @@ public class GUIWebServer implements CleanupIF {
      *
      * @throws IOFailure on trouble starting server.
      */
-    protected GUIWebServer() {
+    public GUIWebServer() {
         //Read and log settings.
         int port = Integer.parseInt(Settings.get(
                 CommonSettings.HTTP_PORT_NUMBER));

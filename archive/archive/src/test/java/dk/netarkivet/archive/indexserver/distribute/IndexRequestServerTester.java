@@ -33,6 +33,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.indexserver.MockupMultiFileBasedCache;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -42,13 +43,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
-import dk.netarkivet.testutils.preconfigured.MockupJMS;
-import dk.netarkivet.testutils.preconfigured.MockupMultiFileBasedCache;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
-import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import dk.netarkivet.testutils.preconfigured.*;
 
 public class IndexRequestServerTester extends TestCase {
     private static final Set<Long> JOB_SET = new HashSet<Long>(Arrays.asList(

@@ -24,9 +24,6 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.HarvestingAbort;
@@ -40,6 +37,8 @@ import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.frontier.FrontierReportAnalyzer;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * BnF specific Heritrix launcher, that forces the use of

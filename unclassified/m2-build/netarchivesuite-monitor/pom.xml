@@ -20,5 +20,15 @@
       <artifactId>netarchivesuite-common</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>dk.netarchivesuite</groupId>
+      <artifactId>netarchivesuite-common</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 </project>                                                                                                              

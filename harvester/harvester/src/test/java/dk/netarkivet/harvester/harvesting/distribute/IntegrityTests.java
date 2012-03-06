@@ -25,48 +25,33 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.*;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.scheduler.JobDispatcher;
+import dk.netarkivet.testutils.FileAsserts;
+import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+
+import javax.jms.Message;
+import javax.jms.MessageListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.security.Permission;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.LogManager;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
-
-import dk.netarkivet.TestUtils;
-import dk.netarkivet.archive.indexserver.distribute.IndexRequestClient;
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
-import dk.netarkivet.common.distribute.indexserver.RequestType;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.RememberNotifications;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.harvesting.report.HarvestReport;
-import dk.netarkivet.harvester.scheduler.JobDispatcher;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
-import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.harvester.harvesting.distribute.TestInfo;
 
 /**
  * Integrity tests for the dk.harvester.harvesting.distribute 
@@ -84,8 +69,9 @@ public class IntegrityTests extends DataModelTestCase {
     HarvestControllerServer hs;
     private JMSConnection con;
     private boolean done = false;
-    MockupIndexServer mis = new MockupIndexServer(
-            new File(TestInfo.ORIGINALS_DIR, "2-3-cache.zip"));
+
+    // Out commented to avoid reference to archive module from harvester module.
+    // MockupIndexServer mis = new MockupIndexServer(new File(TestInfo.ORIGINALS_DIR, "2-3-cache.zip"));
     ReloadSettings rs = new ReloadSettings();
 
     SecurityManager sm;
@@ -117,7 +103,7 @@ public class IntegrityTests extends DataModelTestCase {
         } catch (IOException e) {
             fail("Could not load the testlog.prop file");
         }
-//        TestUtils.resetDAOs();
+//        HarvestDAOUtils.resetDAOs();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
                      TestInfo.WORKING_DIR.getPath()
                          + "/harvestControllerServerDir");
@@ -143,10 +129,13 @@ public class IntegrityTests extends DataModelTestCase {
 //        File databaseJarFile = new File(TestInfo.DATA_DIR, "fullhddb.jar");
 //        DatabaseTestUtils.getHDDB(databaseJarFile, "fullhddb",
 //                TestInfo.WORKING_DIR);
-//        TestUtils.resetDAOs();
-        mis.setUp();
-        FileUtils.createDir(IndexRequestClient.getInstance(
-                RequestType.DEDUP_CRAWL_LOG).getCacheDir());
+//        HarvestDAOUtils.resetDAOs();
+
+      // Out commented to avoid reference to archive module from harvester module.
+//        mis.setUp();
+
+      // Out commented to avoid reference to archive module from harvester module.
+       // FileUtils.createDir(IndexRequestClient.getInstance(RequestType.DEDUP_CRAWL_LOG).getCacheDir());
      }
 
     /**
@@ -156,17 +145,18 @@ public class IntegrityTests extends DataModelTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
         //Reset index request client listener
-        Field field = ReflectUtils.getPrivateField(IndexRequestClient.class,
-                                                   "synchronizer");
-        field.set(null, null);
-        mis.tearDown();
+      // Out commented to avoid reference to archive module from harvester module.
+//        Field field = ReflectUtils.getPrivateField(IndexRequestClient.class,
+//                                                   "synchronizer");
+//        field.set(null, null);
+//        mis.tearDown();
         if (hs != null) {
             hs.close();
         }
         DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         ChannelsTester.resetChannels();
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         System.setSecurityManager(sm);
         rs.tearDown();
    }

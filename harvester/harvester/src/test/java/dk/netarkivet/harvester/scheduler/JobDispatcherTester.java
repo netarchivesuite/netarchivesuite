@@ -24,6 +24,25 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.*;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ.TestObjectMessage;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
+import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.harvester.webinterface.DomainDefinition;
+import dk.netarkivet.testutils.StringAsserts;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.MockupJMS;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
+import javax.jms.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,46 +55,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogManager;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.Queue;
-import javax.jms.QueueBrowser;
-import javax.jms.QueueReceiver;
-import javax.jms.QueueSession;
-
-import junit.framework.TestCase;
-import dk.netarkivet.TestUtils;
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ.TestObjectMessage;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.RememberNotifications;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
-import dk.netarkivet.harvester.datamodel.Domain;
-import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobPriority;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
-import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
-import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
-import dk.netarkivet.harvester.webinterface.DomainDefinition;
-import dk.netarkivet.testutils.StringAsserts;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.MockupJMS;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Test JobDispatcher class.
@@ -122,7 +101,7 @@ public class JobDispatcherTester extends TestCase {
             NoSuchFieldException {
         DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         jms.tearDown();
         reloadSettings.tearDown();
     }
@@ -394,7 +373,6 @@ public class JobDispatcherTester extends TestCase {
     
     /**
      * Creates a new high priority job in to database.
-     * @param status The Job status to assign the job
      */
     private Job createJob() {
         return createJob(JobStatus.NEW);

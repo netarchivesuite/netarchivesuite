@@ -24,33 +24,19 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
-import dk.netarkivet.harvester.datamodel.Domain;
-import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.Frequency;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
-import dk.netarkivet.harvester.datamodel.PartialHarvest;
-import dk.netarkivet.harvester.datamodel.Password;
-import dk.netarkivet.harvester.datamodel.Schedule;
-import dk.netarkivet.harvester.datamodel.ScheduleDAO;
-import dk.netarkivet.harvester.datamodel.SeedList;
-import dk.netarkivet.harvester.datamodel.TemplateDAO;
-import dk.netarkivet.harvester.datamodel.TimeUnit;
+import dk.netarkivet.harvester.datamodel.*;
 import dk.netarkivet.testutils.TestFileUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *  This will add the components to an empty NetarchiveSuite database
@@ -81,7 +67,7 @@ public class SchedulerDatabaseBuilder {
         DatabaseTestUtils.getHDDB(new File(TestInfo.BASEDIR, "emptyhddb.jar"),
                 "fullhddb",
                 TestInfo.WORKING_DIR);
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
     }

@@ -24,18 +24,16 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
-import java.util.List;
-
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.XmlUtils;
 import junit.framework.TestCase;
-
 import org.archive.crawler.deciderules.DecidingScope;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Node;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.XmlUtils;
+import java.io.File;
+import java.util.List;
 //import dk.netarkivet.testutils.TestFileUtils;
 
 /** Testclass for class HeritrixTemplate. */

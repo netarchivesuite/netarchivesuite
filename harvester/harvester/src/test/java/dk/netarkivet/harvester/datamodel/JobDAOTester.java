@@ -24,22 +24,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.dom4j.Document;
-import org.dom4j.Node;
-
-import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -50,6 +34,13 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.harvester.webinterface.HarvestStatusTester;
+import org.dom4j.Document;
+import org.dom4j.Node;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Unit tests for the JobDAO class.
@@ -65,12 +56,12 @@ public class JobDAOTester extends DataModelTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
     }
 
     public void testGetCountJobs() throws Exception {

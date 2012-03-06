@@ -32,9 +32,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestUtils;
 
 /**
  * Unit test for the BinSearch class.

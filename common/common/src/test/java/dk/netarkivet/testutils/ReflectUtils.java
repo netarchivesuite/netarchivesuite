@@ -24,13 +24,11 @@
  */
 package dk.netarkivet.testutils;
 
+import junit.framework.Assert;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import dk.netarkivet.deploy.BuildCompleteSettings;
-
-import junit.framework.Assert;
 
 
 /**
@@ -91,7 +89,7 @@ public class ReflectUtils {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void testUtilityConstructor(Class c) {
-        Constructor<BuildCompleteSettings>[] constructors = c.getConstructors();
+        Constructor[] constructors = c.getConstructors();
         
         Assert.assertEquals("There should be no public constructors.", 
                 0, constructors.length);
@@ -99,7 +97,7 @@ public class ReflectUtils {
         constructors = c.getDeclaredConstructors();
         Assert.assertEquals("There should be one constructor.", 1, constructors.length);
         
-        for(Constructor<BuildCompleteSettings> con : constructors) {
+        for(Constructor con : constructors) {
             Assert.assertFalse("The constructor should not be accessible.", 
                     con.isAccessible());
             

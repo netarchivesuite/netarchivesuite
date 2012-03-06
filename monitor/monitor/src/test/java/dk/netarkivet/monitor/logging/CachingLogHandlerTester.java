@@ -24,28 +24,20 @@
 */
 package dk.netarkivet.monitor.logging;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.JMException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-
-import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.management.Constants;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.testutils.StringAsserts;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
+import javax.management.*;
+import java.lang.management.ManagementFactory;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 /**
  * Test behavior of the CachingLogHandler, and its exposure of log records using
@@ -57,14 +49,18 @@ public class CachingLogHandlerTester extends TestCase {
     private static final int LOG_HISTORY_SIZE = 42;
     private static final String METHOD_NAME = "myMethod";
     private static final String LOG_MESSAGE = "Log message ";
-    ReloadSettings rs = new ReloadSettings();
+
+    // Out commented to avoid reference to harvester module from monitor module.
+    // ReloadSettings rs = new ReloadSettings();
 
     public CachingLogHandlerTester(String s) {
         super(s);
     }
 
     public void setUp() {
-        rs.setUp();
+
+      // Out commented to avoid reference to harvester module from monitor module.
+      // rs.setUp();
         //Get the MBean server
         mBeanServer = ManagementFactory.getPlatformMBeanServer();
         //Set Settings to what we expect
@@ -72,7 +68,9 @@ public class CachingLogHandlerTester extends TestCase {
         Settings.set(CommonSettings.APPLICATION_NAME, "TestApp1");
         Settings.set(MonitorSettings.LOGGING_HISTORY_SIZE, Integer.toString(LOG_HISTORY_SIZE));
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "8076");
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "HIGHPRIORITY");
+
+      // Out commented to avoid reference to harvester module from monitor module.
+      // Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "HIGHPRIORITY");
         Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
     }
 
@@ -80,7 +78,9 @@ public class CachingLogHandlerTester extends TestCase {
         if (cachingLogHandler != null) {
             cachingLogHandler.close();
         }
-        rs.tearDown();
+
+      // Out commented to avoid reference to harvester module from monitor module.
+      // rs.tearDown();
     }
 
     /**
