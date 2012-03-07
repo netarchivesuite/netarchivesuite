@@ -332,7 +332,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                      + "]");
             FileBasedCache<Set<Long>> handler = handlers.get(type);
             Set<Long> foundIDs = handler.cache(jobIDs);
-            irMsg.setFoundJobs(foundIDs); //TODO find out where this is used?
+            irMsg.setFoundJobs(foundIDs);
             if (foundIDs.equals(jobIDs)) {
                 log.info("Successfully generated index of type '" + type
                          + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
@@ -342,7 +342,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                     packageResultFiles(irMsg, cacheFile);
                 }
             } else if (satisfactoryTresholdReached(foundIDs, jobIDs)) {
-                // Make a copy of the indexcreated, and give it the name of
+                // Make a copy of the index created, and give it the name of
                 // the index cache file wanted.
                 File cacheFileWanted = handler.getCacheFile(jobIDs);
                 File cacheFileCreated = handler.getCacheFile(foundIDs);
@@ -351,8 +351,8 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                         + cacheFileCreated.getAbsolutePath()
                         + "' to full index: " + cacheFileWanted.getAbsolutePath());
                 if (cacheFileCreated.isDirectory()) {
-                    // create destination-dir, and copy all files in cacheFileCreated
-                    // to cacheFileWanted.
+                    // create destination cacheFileWanted, and 
+                    // copy all files in cacheFileCreated to cacheFileWanted.
                     cacheFileWanted.mkdirs();
                     FileUtils.copyDirectory(cacheFileCreated, cacheFileWanted);
                 } else {
@@ -407,7 +407,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
     }
     
     /**
-     * Package resultfiles w/ the answer to message.
+     * Package the result files with the message reply.
      * @param irMsg the message being answered
      * @param cacheFile The location of the result on disk.
      */
@@ -427,8 +427,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
             for (File f : cacheFiles) {
                 resultFiles.add(
                         RemoteFileFactory.getCopyfileInstance(f, 
-                                irMsg.getRemoteFileSettings()));
-                
+                                irMsg.getRemoteFileSettings()));   
             }
             irMsg.setResultFiles(resultFiles);
         } else {
@@ -436,19 +435,20 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                     RemoteFileFactory.getCopyfileInstance(
                     cacheFile, irMsg.getRemoteFileSettings()));
         }
-        
     }
 
     /**
      * Threshold for when the created index contains enough data to be 
-     * considered a satisfactory index. 
+     * considered a satisfactory index.
+     * Uses the {@link IndexRequestServer#satisfactoryThresholdPercentage}.
      * @param foundIDs The list of IDs contained in the index
-     * @param jobIDs The list of IDs requested in the index.
-     * @return true, if 
+     * @param requestedIDs The list of IDs requested in the index.
+     * @return true, if the ratio foundIDs/requestedIDs is above the
+     * {@link IndexRequestServer#satisfactoryThresholdPercentage}.    
      */
     private boolean satisfactoryTresholdReached(Set<Long> foundIDs,
-            Set<Long> jobIDs) {
-        int jobsRequested = jobIDs.size(); 
+            Set<Long> requestedIDs) {
+        int jobsRequested = requestedIDs.size(); 
         int jobsFound = foundIDs.size();
         int percentage = (jobsFound * 100) / jobsRequested;
         if (percentage > satisfactoryThresholdPercentage) {

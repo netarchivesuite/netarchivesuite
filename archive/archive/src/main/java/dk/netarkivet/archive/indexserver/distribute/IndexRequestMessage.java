@@ -128,7 +128,7 @@ public class IndexRequestMessage extends ArchiveMessage {
      * @param replyTo The channel to send the reply to.
      * @param returnIndex If true, include the index in the reply.
      * @param harvestId The harvestId needing this index for its jobs
-     * @param connectionParameters connection parameters to be used (if null, 
+     * @param ftpconnectionInfo FTP connection parameters to be used (if null, 
      * we use the local settings). 
      */
     public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, 
