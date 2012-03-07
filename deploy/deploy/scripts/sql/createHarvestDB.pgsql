@@ -251,7 +251,7 @@ CREATE TABLE fullharvests (
      maxobjects bigint NOT NULL default -1,
      previoushd bigint,
      maxbytes bigint NOT NULL default -1,
-     maxjobrunningtime bigint NOT NULL default 0
+     maxjobrunningtime bigint NOT NULL default 0,
      isindexready bool NOT NULL
 );
 
@@ -495,5 +495,42 @@ CREATE TABLE frontierReportMonitor (
      lastQueuedUri varchar(1000) NOT NULL,
      CONSTRAINT pkFrontierReportLines UNIQUE (jobId, filterId, domainName)
 );
+
+create table extendedfieldtype (
+    extendedfieldtype_id bigint not null primary key,
+    name VARCHAR(50) not null
+);
+
+create table extendedfield (
+    extendedfield_id bigint not null primary key,
+    extendedfieldtype_id bigint NOT NULL,
+    name VARCHAR(50) not null,
+    format VARCHAR(50),
+    defaultvalue VARCHAR(50),
+    options VARCHAR(1000),
+    datatype int not null,
+    mandatory int NOT NULL,
+    sequencenr int
+);
+
+create table extendedfieldvalue (
+    extendedfieldvalue_id bigint not null primary key,
+    extendedfield_id bigint NOT NULL,
+    instance_id bigint NOT NULL,
+    content VARCHAR(100) not null
+);
+
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldtype', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfield', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldvalue', 1);
+
+INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
+    VALUES ( 1, 'domains');
+INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
+    VALUES ( 2, 'harvestdefinitions');
+
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE frontierReportMonitor TO netarchivesuite;

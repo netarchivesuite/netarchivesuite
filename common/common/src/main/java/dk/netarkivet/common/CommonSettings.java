@@ -411,6 +411,16 @@ public class CommonSettings {
         "settings.common.database.pool.idleConnTestQuery";
 
     /**
+     * The username for login to the harvest database.
+     */
+    public static String DB_USERNAME = "settings.common.database.username";
+
+    /**
+     * The password for login to the harvest database.
+     */
+    public static String DB_PASSWORD = "settings.common.database.password";
+
+    /**
      * <b>settings.common.repository.limitForRecordDatatransferInFile</b>: <br>
      * When the length record exceeds this number, the contents of the record
      * will be transferred using a RemoteFile.

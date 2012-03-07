@@ -36,6 +36,11 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 
 public class PostgreSQLSpecifics extends DBSpecifics {
 
+
+    public static DBSpecifics getInstance() {
+        return new PostgreSQLSpecifics();
+    }
+
     /** The log. */
     Log log = LogFactory.getLog(PostgreSQLSpecifics.class);
     

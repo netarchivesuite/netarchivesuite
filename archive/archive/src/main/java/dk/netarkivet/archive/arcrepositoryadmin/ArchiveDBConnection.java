@@ -196,7 +196,7 @@ public final class ArchiveDBConnection {
             res.append(tmp);
         }
         
-        // append the machine part of the url, if it exists.
+        // append the port part of the url, if it exists.
         tmp = Settings.get(
                 ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE);
         if(!tmp.isEmpty()) {
@@ -224,6 +224,8 @@ public final class ArchiveDBConnection {
     throws SQLException {
 
         dataSource = new ComboPooledDataSource();
+        dataSource.setUser(Settings.get(ArchiveSettings.DB_USERNAME));
+        dataSource.setPassword(Settings.get(ArchiveSettings.DB_PASSWORD));
         try {
             dataSource.setDriverClass(dbSpec.getDriverClassName());
         } catch (PropertyVetoException e) {

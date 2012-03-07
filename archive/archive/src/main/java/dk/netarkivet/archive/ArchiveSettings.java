@@ -314,7 +314,18 @@ public class ArchiveSettings {
      */
     public static String DB_POOL_IDLE_CONN_TEST_QUERY =
         "settings.archive.admin.database.pool.idleConnTestQuery";
-    
+
+    /**
+     * The user name for login to the admin database.
+     */
+    public static String DB_USERNAME = "settings.archive.admin.database.username";
+
+    /**
+     * The password name for login to the admin database.
+     */
+    public static String DB_PASSWORD = "settings.archive.admin.database.password";
+
+
     /**
      * <b>settings.archive.bitpreservation.class</b>: <br>
      * Setting for which instance of ActiveBitPreservation that should be used
