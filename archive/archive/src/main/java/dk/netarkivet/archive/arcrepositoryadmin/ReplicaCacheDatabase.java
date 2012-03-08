@@ -25,10 +25,8 @@
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongSet;
-
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
@@ -44,6 +42,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.io.LineIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -61,7 +60,6 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.NotificationsFactory;
-import dk.netarkivet.common.utils.StringIterator;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 
@@ -778,9 +776,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         FileUtils.sortFile(checksumOutputFile, sortedResult);
         final long datasize = FileUtils.countLines(sortedResult);
                
-        List<Long> missingReplicaRFIs = null;
+        Set<Long> missingReplicaRFIs = null;
         Connection con = ArchiveDBConnection.get();
-        StringIterator lineIterator = null;
+        LineIterator lineIterator = null;
         try {
             // Make sure, that the replica exists in the database.
             if (!ReplicaCacheHelpers.existsReplicaInDB(replica, con)) {
@@ -802,7 +800,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     replica.getId(), con);
 
             // Initialize the String iterator
-            lineIterator = new StringIterator(sortedResult);
+            lineIterator = new LineIterator(new FileReader(sortedResult));
             
             String lastFilename = "";
             String lastChecksum = "";
@@ -851,16 +849,17 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 lastFilename = filename;
                 lastChecksum = checksum;
 
-                ReplicaCacheHelpers.processChecksumline(filename, checksum, 
-                        replica, con, missingReplicaRFIs);
+                // Process the current (filename + checksum) combo for this replica
+                // Remove the returned replicafileinfo guid from the missing entries.
+                missingReplicaRFIs.remove( 
+                        ReplicaCacheHelpers.processChecksumline(filename, checksum, 
+                        replica, con));
             } 
         } catch (IOException e) {
             throw new IOFailure("Unable to read checksum entries from file", e);
         } finally {
             ArchiveDBConnection.release(con);
-            if (lineIterator != null) {
-                lineIterator.close();
-            }
+            LineIterator.closeQuietly(lineIterator);
         }
         
         con = ArchiveDBConnection.get();
@@ -923,8 +922,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         final long datasize = FileUtils.countLines(sortedResult);
         
         Connection con = ArchiveDBConnection.get();
-        List<Long> missingReplicaRFIs = null;
-        StringIterator lineIterator = null;
+        Set<Long> missingReplicaRFIs = null;
+        LineIterator lineIterator = null;
         try {
             // Make sure, that the replica exists in the database.
             if (!ReplicaCacheHelpers.existsReplicaInDB(replica, con)) {
@@ -945,7 +944,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     replica.getId(), con);
 
             // Initialize String iterator
-            lineIterator = new StringIterator(sortedResult);            
+            lineIterator = new LineIterator(new FileReader(sortedResult));            
             
             String lastFileName = "";
             int i = 0;
@@ -971,16 +970,17 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 }
                 
                 lastFileName = file;
-                // Add information for one file.
-                ReplicaCacheHelpers.addFileInformation(file, replica, con, missingReplicaRFIs);
+                // Add information for one file, and remove the ReplicaRFI from the
+                // set of missing ones.
+                missingReplicaRFIs.remove(
+                        ReplicaCacheHelpers.addFileInformation(file, replica, con)
+                        );
             }
         } catch (IOException e) {
             throw new IOFailure("Unable to read the filenames from file", e);
         } finally {
             ArchiveDBConnection.release(con);
-            if (lineIterator != null) {
-                lineIterator.close();
-            }
+            LineIterator.closeQuietly(lineIterator);
         }
         
         con = ArchiveDBConnection.get();

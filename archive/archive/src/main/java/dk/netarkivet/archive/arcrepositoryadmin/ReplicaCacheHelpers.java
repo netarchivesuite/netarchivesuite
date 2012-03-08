@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -349,12 +350,12 @@ public final class ReplicaCacheHelpers {
      * @param con An open connection to the archiveDatabase.
      * @return The list of all the replicafileinfo_guid.
      */
-    protected static List<Long> retrieveReplicaFileInfoGuidsForReplica(
+    protected static Set<Long> retrieveReplicaFileInfoGuidsForReplica(
             String replicaId, Connection con) {
         // sql for retrieving the replicafileinfo_guids for the replica.
         final String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
-                + "replica_id = ?";
-        return DBUtils.selectLongList(con, sql, replicaId);
+                + "replica_id = ? ORDER BY replicafileinfo_guid";
+        return DBUtils.selectLongSet(con, sql, replicaId);
     }
 
     /**
@@ -1203,7 +1204,7 @@ public final class ReplicaCacheHelpers {
             // change checksum_status to CORRUPT for the replicafileinfo
             // which
             // does not have the chosen checksum.
-            // Set the others replciafileinfo entries to OK.
+            // Set the others replicafileinfo entries to OK.
             for (ReplicaFileInfo rfi : rfis) {
                 if (!rfi.getChecksum().equals(uniqueChecksum)) {
                     updateReplicaFileInfoChecksumCorrupt(rfi.getGuid(), con);
@@ -1233,10 +1234,11 @@ public final class ReplicaCacheHelpers {
      * @param file The name of a file
      * @param replica A replica
      * @param con An open connection to the ArchiveDatabase
-     * @param missingReplicaRFIs
+     * @return the ReplicaFileInfo ID for the given filename and replica 
+     * in the database
      */
-    protected static void addFileInformation(String file, Replica replica, 
-            Connection con, List<Long> missingReplicaRFIs) {
+    protected static long addFileInformation(String file, Replica replica, 
+            Connection con) {
         // retrieve the file_id for the file.
         long fileId = ReplicaCacheHelpers.retrieveIdForFile(file, con);
         // If not found, log and create the file in the database.
@@ -1258,12 +1260,11 @@ public final class ReplicaCacheHelpers {
             ReplicaCacheHelpers.createReplicaFileInfoEntriesInDB(fileId, con);
         }
 
-        // remove from replicaRFIs, since it has been found
-        missingReplicaRFIs.remove(rfiId);
-
         // update the replicafileinfo of this file:
         // filelist_checkdate, filelist_status, upload_status
         ReplicaCacheHelpers.updateReplicaFileInfoFilelist(rfiId, con);
+        
+        return rfiId;
     }
 
     /**
@@ -1273,10 +1274,11 @@ public final class ReplicaCacheHelpers {
      * @param checksum The checksum of that file.
      * @param replica A replica
      * @param con An open connection to the ArchiveDatabase
-     * @param missingReplicaRFIs
+     * @return the ReplicaFileInfo ID for the given filename and replica 
+     * in the database
      */
-    public static void processChecksumline(String filename, String checksum,
-            Replica replica, Connection con, List<Long> missingReplicaRFIs) {
+    public static long processChecksumline(String filename, String checksum,
+            Replica replica, Connection con) {
         
             // The ID for the file.
             long fileid = -1;
@@ -1322,7 +1324,6 @@ public final class ReplicaCacheHelpers {
             log.trace("Updated file '" + filename + "' for replica '"
                     + replica.toString() + "' into replicafileinfo.");
 
-            // remove the replicafileinfo guid from the missing entries.
-            missingReplicaRFIs.remove(rfiId); 
+            return rfiId;
     }
 }

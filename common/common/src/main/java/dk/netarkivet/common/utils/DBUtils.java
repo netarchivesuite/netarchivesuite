@@ -39,6 +39,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -226,7 +228,7 @@ public final class DBUtils {
     /**
      * Prepare a statement given a query string and some args.
      *
-     * NB: the provided connection si not closed.
+     * NB: the provided connection is not closed.
      *
      * @param c a Database connection
      * @param query a query string  (must not be null or empty)
@@ -310,7 +312,7 @@ public final class DBUtils {
     /** Execute an SQL statement and return the list of strings -> id mappings
      * in its result set.
      *
-     * NB: the provided connection si not closed.
+     * NB: the provided connection is not closed.
      *
      * @param connection connection to the database.
      * @param query the given sql-query (must not be null or empty string)
@@ -370,6 +372,45 @@ public final class DBUtils {
             s = prepareStatement(connection, query, args);
             ResultSet result = s.executeQuery();
             List<Long> results = new ArrayList<Long>();
+            while (result.next()) {
+                if (result.getLong(1) == 0L && result.wasNull()){
+                    String warning = "NULL value encountered in query: "
+                                     + query;
+                    log.warn(warning);
+                }
+                results.add(result.getLong(1));
+            }
+            return results;
+        } catch (SQLException e) {
+            throw new IOFailure("Error preparing SQL statement "
+                    + query + " args " + Arrays.toString(args)
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            closeStatementIfOpen(s);
+        }
+    }
+    
+    /**
+     * Execute an SQL statement and return the set of Long-objects
+     * in its result set.
+     *
+     * NB: the provided connection is not closed.
+     *
+     * @param connection connection to the database.
+     * @param query the given sql-query (must not be null or empty string)
+     * @param args The arguments to insert into this query
+     * @return the set of Long-objects in its result set
+     */
+    public static Set<Long> selectLongSet(Connection connection, String query,
+            Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
+        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
+        ArgumentNotValid.checkNotNull(args, "Object... args");
+        PreparedStatement s = null;
+        try {
+            s = prepareStatement(connection, query, args);
+            ResultSet result = s.executeQuery();
+            Set<Long> results = new TreeSet<Long>();
             while (result.next()) {
                 if (result.getLong(1) == 0L && result.wasNull()){
                     String warning = "NULL value encountered in query: "
