@@ -73,6 +73,8 @@ National Library.
                 <machine>localhost</machine>
                 <port>1527</port>
                 <dir>admindb</dir>
+                <username></username>
+                <password></password>
                 <!-- Reconnect to database default: 5 tries with 5 min between-->
                 <reconnectMaxRetries>5</reconnectMaxRetries>
                 <reconnectRetryDelay>300000</reconnectRetryDelay>

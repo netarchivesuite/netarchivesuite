@@ -39,7 +39,6 @@ public class HarvesterSettings {
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/harvester/settings.xml";
-
     /*
      * The static initialiser is called when the class is loaded.
      * It will add default values for all settings defined in this class, by
@@ -481,7 +480,16 @@ public class HarvesterSettings {
      */
     public static String HARVEST_REPORT_CLASS =
             "settings.harvester.harvesting.harvestReport.class";
-
+    
+    /**
+     * <b>settings.harvester.harvesting.harvestReport.disregardSeedsURLInfo</b>:<br/> 
+     * Should we disregard seedURL-information and thus assign the harvested bytes to 
+     * the domain of the harvested URL instead of the seed url domain?
+     * The default is false;
+     */
+    public static String DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG =
+            "settings.harvester.harvesting.harvestReport.disregardSeedURLInfo";
+    
     /**
      * <b>settings.harvester.harvesting.deduplication.enabled</b>:<br/> This
      * setting tells the system whether or not to use deduplication. This

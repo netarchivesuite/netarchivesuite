@@ -441,6 +441,8 @@ National Library.
             <machine>localhost</machine>
             <port>1527</port>
             <dir>harvestdefinitionbasedir/fullhddb</dir>
+            <username></username>
+            <password></password>
             <backupInitHour>3</backupInitHour>
             <validityCheckTimeout>0</validityCheckTimeout>
             <pool>

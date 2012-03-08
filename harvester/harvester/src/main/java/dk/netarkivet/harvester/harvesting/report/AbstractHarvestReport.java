@@ -44,7 +44,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FixedUURI;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor;
@@ -282,10 +284,14 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * and domain-name/stopreason maps
      * for a crawl.log.
      *
-     * @param file the local file to pe processed
+     * @param file the local file to be processed
      * @throws IOFailure if there is problem reading the file
      */
     private void parseCrawlLog(File file) throws IOFailure {
+        // read whether or not to disregard the SeedURL information
+        // in the crawl.log
+        boolean disregardSeedUrls = Settings.getBoolean(
+                HarvesterSettings.DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG);
         BufferedReader in = null;
 
         try {
@@ -295,7 +301,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
             while ((line = in.readLine()) != null) {
                 ++lineCnt;
                 try {
-                    processHarvestLine(line);
+                    processHarvestLine(line, disregardSeedUrls);
                 } catch (ArgumentNotValid e) {
                     final String message = "Invalid line in '"
                                            + file.getAbsolutePath()
@@ -325,8 +331,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * Processes a harvest-line, updating the object and byte maps.
      *
      * @param line the line to process.
+     * @param disregardSeedUrlInfo Boolean saying whether or not to disregard 
+     * SeedURL Information
      */
-    private void processHarvestLine(final String line) throws ArgumentNotValid {
+    private void processHarvestLine(final String line, boolean disregardSeedUrlInfo) throws ArgumentNotValid {
         //A legal crawl log line has at least 11 parts, + optional annotations
         final int MIN_CRAWL_LOG_PARTS = 11;
         final int MAX_PARTS = 12;
@@ -342,11 +350,12 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         // Check the seed url (part 11 of the crawl-log-line). 
         // If equal to "-", the seed url is not written to the log, 
         // and this information is disregarded
-        // TODO Shall we have this as a setting also
+        // Note This information is disregarded if setting disregard_seed_url_information
+        // is enabled.
         
         final String seedURL = parts[10];
         boolean sourceTagEnabled = true;
-        if (seedURL.equals("-")) {
+        if (seedURL.equals("-") || disregardSeedUrlInfo) {
             sourceTagEnabled = false;
         }
         String seedDomain = null;

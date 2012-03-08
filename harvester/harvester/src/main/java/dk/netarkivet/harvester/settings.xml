@@ -120,6 +120,7 @@ National Library.
             </heritrixController>
             <harvestReport>
                 <class>dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport</class>
+                <disregardSeedURLInfo>false</disregardSeedURLInfo>
             </harvestReport>
             <deduplication>
                 <enabled>true</enabled>
