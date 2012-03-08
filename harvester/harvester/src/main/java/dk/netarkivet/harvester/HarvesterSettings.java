@@ -544,6 +544,14 @@ public class HarvesterSettings {
      * The default value is one year, i.e 31536000 seconds.
      */
     public static String ALIAS_TIMEOUT = "settings.harvester.aliases.timeout";
-
+    
+    /**
+     * <b>settings.harvester.harvesting.continuationFromHeritrixRecoverlogEnabled</b>:</br> 
+     * Setting for whether or not a restarted job should try fetching the recoverlog 
+     * of the previous failed job, and ask Heritrix to continue from this log. 
+     * The default is false.
+     */
+    public static String RECOVERlOG_CONTINUATION_ENABLED 
+        = "settings.harvester.harvesting.continuationFromHeritrixRecoverlogEnabled";
 }
 

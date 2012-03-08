@@ -123,7 +123,7 @@ public class HarvestController {
         if (arcRepController != null) {
             arcRepController.close();
         }
-        //instance = null;
+        
         resetInstance();
     }
     
@@ -134,7 +134,6 @@ public class HarvestController {
         instance = null;
     }
     
-
     /**
      * Writes the files involved with a harvests.
      * Creates the Heritrix arcs directory to ensure that this
@@ -160,10 +159,11 @@ public class HarvestController {
                               job.getJobID(),
                               job.getOrigHarvestDefinitionID());
 
-        // if this job is a job that tries to continue a previous job
-        // using the Heritrix recover.gz log.
-        // Try to fetch the recover.log from the metadata-arc-file.
-        if (job.getContinuationOf() != null) {
+        // If this job is a job that tries to continue a previous job
+        // using the Heritrix recover.gz log, and this feature is enabled,
+        // then try to fetch the recover.log from the metadata-arc-file.
+        if (job.getContinuationOf() != null 
+                && Settings.getBoolean(HarvesterSettings.RECOVERlOG_CONTINUATION_ENABLED)) {
             tryToRetrieveRecoverLog(job, files);    
         }
         

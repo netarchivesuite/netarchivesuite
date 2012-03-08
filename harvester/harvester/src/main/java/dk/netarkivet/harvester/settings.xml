@@ -85,6 +85,7 @@ National Library.
             <queuePriority></queuePriority>
             <sendReadyInterval>300</sendReadyInterval>
             <sendReadyDelay>1000</sendReadyDelay>
+            <continuationFromHeritrixRecoverlogEnabled>false</continuationFromHeritrixRecoverlogEnabled>
             <heritrix>
                 <!-- 30 minutes -->
                 <inactivityTimeout>1800</inactivityTimeout>
