@@ -80,28 +80,28 @@ public class ARCLookupTester extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         rs.setUp();
-        dk.netarkivet.common.distribute.arcrepository.TestInfo.GIF_URL = new URI("http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
+        dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL = new URI("http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTester.resetChannels();
 
         //Although we also need some real data
-        FileUtils.removeRecursively(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR);
-        TestFileUtils.copyDirectoryNonCVS(dk.netarkivet.common.distribute.arcrepository.TestInfo.ORIGINALS_DIR, dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR);
-        FileUtils.createDir(new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "viewerproxy"));
+        FileUtils.removeRecursively(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR, dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
+        FileUtils.createDir(new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "viewerproxy"));
 
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, dk.netarkivet.common.distribute.arcrepository.TestInfo.LOG_PATH.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_PATH.getAbsolutePath());
         Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "admin-data").getAbsolutePath());
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, dk.netarkivet.common.distribute.arcrepository.TestInfo.LOG_PATH.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "admin-data").getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_PATH.getAbsolutePath());
 
         // This is "real" in the sense that it returns records from a bitarchive-
         // like file system instaed of making them up.
         realArcRepos = new LocalArcRepositoryClient(
-                new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.ARCHIVE_DIR, "filedir"));
+                new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ARCHIVE_DIR, "filedir"));
 
         lookup = new ARCLookup(realArcRepos);
-        lookup.setIndex(dk.netarkivet.common.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
+        lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
 
         FileInputStream fis
                 = new FileInputStream("tests/dk/netarkivet/testlog.prop");
@@ -116,7 +116,7 @@ public class ARCLookupTester extends TestCase {
         if (arcReader != null) {
             arcReader.close();
         }
-        FileUtils.removeRecursively(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR);
+        FileUtils.removeRecursively(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
         JMSConnectionMockupMQ.clearTestQueues();
         rs.tearDown();
         super.tearDown();
@@ -134,35 +134,35 @@ public class ARCLookupTester extends TestCase {
         }
 
         try {
-            lookup.setIndex(dk.netarkivet.common.distribute.arcrepository.TestInfo.LOG_FILE);
+            lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
             fail("Should die on non-dir index");
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Should mention non-directory",
-                                               dk.netarkivet.common.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
+                                               dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
         }
 
         // Test that we don't close the Lucene index twice.
         // Try with a file that fails.
         try {
-            lookup.setIndex(dk.netarkivet.common.distribute.arcrepository.TestInfo.LOG_FILE);
+            lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
             fail("Should die on non-dir index");
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Should mention non-directory",
-                    dk.netarkivet.common.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
+                    dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
         }
 
         // No getting a "can't close" error here.
         try {
-            lookup.setIndex(dk.netarkivet.common.distribute.arcrepository.TestInfo.LOG_FILE);
+            lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
             fail("Should die on non-dir index");
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Should mention non-directory",
-                    dk.netarkivet.common.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
+                    dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
         }
         
-        lookup.setIndex(dk.netarkivet.common.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
+        lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
         // This forces us to close the previous index before setting the new index
-        lookup.setIndex(dk.netarkivet.common.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
+        lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
     }
 
     /**
@@ -171,18 +171,18 @@ public class ARCLookupTester extends TestCase {
      * really an integrity test. Move and clean up!
      */
     public void testLookup() throws Exception {
-        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dk.netarkivet.common.distribute.arcrepository.TestInfo.ARCHIVE_DIR.getAbsolutePath());
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "serverdir").getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dk.netarkivet.archive.distribute.arcrepository.TestInfo.ARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "serverdir").getAbsolutePath());
 
         // Get the data from the bitarchive
-        InputStream is = lookup.lookup(dk.netarkivet.common.distribute.arcrepository.TestInfo.GIF_URL).getInputStream();
+        InputStream is = lookup.lookup(dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL).getInputStream();
         assertNotNull("Should be able to find image", is);
         byte[] got = readFully(is);
         is.close();
         //Read the expected result from the "local" copy
-        String filename = dk.netarkivet.common.distribute.arcrepository.TestInfo.GIF_URL_KEY.getFile().getName();
-        File in = new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, filename);
-        arcReader = ARCReaderFactory.get(in, dk.netarkivet.common.distribute.arcrepository.TestInfo.GIF_URL_KEY.getOffset());
+        String filename = dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getFile().getName();
+        File in = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, filename);
+        arcReader = ARCReaderFactory.get(in, dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getOffset());
         ARCRecord arc = (ARCRecord) arcReader.get();
         BitarchiveRecord result
                 = new BitarchiveRecord(arc, filename);
@@ -198,8 +198,8 @@ public class ARCLookupTester extends TestCase {
      * @throws Exception
      */
     public void testLookupWithCurlyBrackets() throws Exception {
-        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dk.netarkivet.common.distribute.arcrepository.TestInfo.ARCHIVE_DIR.getAbsolutePath());
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "serverdir").getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dk.netarkivet.archive.distribute.arcrepository.TestInfo.ARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "serverdir").getAbsolutePath());
         Field searcher_field = ARCLookup.class.getDeclaredField("luceneSearcher");
         searcher_field.setAccessible(true);
         //Set the searcher to null. lookup will then throw a message with the actual URI
@@ -238,8 +238,8 @@ public class ARCLookupTester extends TestCase {
     public void testLookupInputStream() throws Exception {
         realArcRepos.close();
         lookup = new ARCLookup(new TestArcRepositoryClient());
-        lookup.setIndex(dk.netarkivet.common.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
-        InputStream is = lookup.lookup(dk.netarkivet.common.distribute.arcrepository.TestInfo.GIF_URL).getInputStream();
+        lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
+        InputStream is = lookup.lookup(dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL).getInputStream();
         //Read a header line
         String line1 = readLine(is);
         //Read blank line
@@ -254,13 +254,13 @@ public class ARCLookupTester extends TestCase {
         assertEquals("Result should start with status code",
                 "HTTP/1.1 200 OK", line1);
         Assert.assertEquals("Location should be set to the ARC file",
-                "Location: " + dk.netarkivet.common.distribute.arcrepository.TestInfo.GIF_URL_KEY.getFile(), line2);
+                "Location: " + dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getFile(), line2);
         assertEquals("There should be an empty line after the headers",
                 "", line3);
         Assert.assertEquals("Should get right file for gif",
-                dk.netarkivet.common.distribute.arcrepository.TestInfo.GIF_URL_KEY.getFile(), retKey.getFile());
+                dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getFile(), retKey.getFile());
         Assert.assertEquals("Should get right offset for gif",
-                dk.netarkivet.common.distribute.arcrepository.TestInfo.GIF_URL_KEY.getOffset(), retKey.getOffset());
+                dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getOffset(), retKey.getOffset());
     }
 
     private class LocalArcRepositoryClient extends JMSArcRepositoryClient {

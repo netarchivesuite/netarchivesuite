@@ -52,7 +52,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 public class BitarchiveRecordTester extends TestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
-    private File testFile = new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
+    private File testFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
         "3-3-20070119143010-00000-sb-test-har-001.statsbiblioteket.dk.arc");
     /**
      * The following warcfile consists of multiple record-types.
@@ -64,7 +64,7 @@ public class BitarchiveRecordTester extends TestCase {
      * (Record type, offset, ContentBegin, Length): response, 955, 345, 621
      * 
      */
-    private File warcTestFile = new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
+    private File warcTestFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
         "NAS-20100909163324-00000-mette.kb.dk.warc");
     /* private long warcOffset = 955;
     private int warcContentBegin = 345;
@@ -93,14 +93,14 @@ public class BitarchiveRecordTester extends TestCase {
         utrf.setUp();
         Settings.set(CommonSettings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE,
                      "10000");
-        dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR.mkdir();
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
+        dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.mkdir();
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
         super.setUp();
     }
     protected void tearDown() throws Exception {
         super.tearDown();
         utrf.tearDown();
-        FileUtils.removeRecursively(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR);
+        FileUtils.removeRecursively(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
         rs.tearDown();
     }
 
@@ -118,7 +118,7 @@ public class BitarchiveRecordTester extends TestCase {
         record = (ARCRecord) ar.get(2001); // record representing record of size 9471 bytes
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
-        f = new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
+        f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
         OutputStream os = new FileOutputStream(f);
         br.getData(os);
         assertEquals("Output file should have same length as record length", f.length(), br.getLength());
@@ -143,7 +143,7 @@ public class BitarchiveRecordTester extends TestCase {
         record = (WARCRecord) ar.get(smallWarcRecordOffset); 
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
-        f = new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
+        f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
         OutputStream os = new FileOutputStream(f);
         br.getData(os);
         //assertFalse("Failed: " + FileUtils.readFile(f), true);
@@ -170,7 +170,7 @@ public class BitarchiveRecordTester extends TestCase {
         record = (ARCRecord) ar.get(11563); // record representing record of size 395390 bytes
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
-        f = new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
+        f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
         OutputStream os = new FileOutputStream(f);
         br.getData(os);
         assertEquals("Output file should have same length as record length",
@@ -197,7 +197,7 @@ public class BitarchiveRecordTester extends TestCase {
         record = (WARCRecord) ar.get(bigWarcRecordOffset); 
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
-        f = new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
+        f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
         OutputStream os = new FileOutputStream(f);
         br.getData(os);
         assertEquals("Output file should have same length as record length",
@@ -225,7 +225,7 @@ public class BitarchiveRecordTester extends TestCase {
                 new ByteArrayInputStream(baos.toByteArray()));
         BitarchiveRecord brCopy = (BitarchiveRecord) ois.readObject();
 
-        f = new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
+        f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
         OutputStream os = new FileOutputStream(f);
         brCopy.getData(os);
         assertEquals("Output file should have same length as record length",

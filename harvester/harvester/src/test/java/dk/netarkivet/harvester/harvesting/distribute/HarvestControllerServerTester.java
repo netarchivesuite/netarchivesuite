@@ -348,8 +348,8 @@ public class HarvestControllerServerTester extends TestCase {
         assertEquals("Should not have received any messages yet", 0,
                 sched.messagesReceived.size());
         //Start and close HCS, thus attempting to upload all ARC files found in arcsDir
-        File dir1 = new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
-        File dir2 = new File(dk.netarkivet.common.distribute.arcrepository.TestInfo.WORKING_DIR, "dir2");
+        File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
+        File dir2 = new File(TestInfo.WORKING_DIR, "dir2");
         Settings.set("settings.common.arcrepositoryClient.fileDir",
                 new File(TestInfo.ARCHIVE_DIR, "TestArchive").getAbsolutePath(),
                 new File(TestInfo.ARCHIVE_DIR, "TestArchive").getAbsolutePath());
