@@ -76,15 +76,10 @@ public class SeedUriDomainnameQueueAssignmentPolicy
      */
      public String getClassKey(CrawlController controller, CandidateURI cauri) {
         String candidate;
-        boolean ignoreSourceSeed = false;
-        String cauriAsString  = "";
-        if (cauri != null) {
-            cauriAsString = cauri.getCandidateURIString();
-            if (cauriAsString.startsWith("dns")) {
-                ignoreSourceSeed = true;
-            }
-        }
         
+        boolean ignoreSourceSeed =
+                cauri != null &&
+                cauri.getCandidateURIString().startsWith("dns");
         try {
             // Since getClassKey has no contract, we must encapsulate it from
             // errors.
@@ -94,6 +89,7 @@ public class SeedUriDomainnameQueueAssignmentPolicy
                       + cauri);
             candidate = DEFAULT_CLASS_KEY;
         }
+        
         String sourceSeedCandidate = null;
         if (!ignoreSourceSeed) {
             sourceSeedCandidate = getCandidateFromSource(cauri);
@@ -101,22 +97,22 @@ public class SeedUriDomainnameQueueAssignmentPolicy
         
         if (sourceSeedCandidate != null) {
             return sourceSeedCandidate;
-        }
+        } else {
+            // If sourceSeedCandidates are disabled, use the old method:
         
-        // If sourceSeedCandidates are disabled, use the old method:
+            String[] hostnameandportnr = candidate.split("#");
+            if (hostnameandportnr.length == 0 || hostnameandportnr.length > 2) {
+                return candidate;
+            }
         
-        String[] hostnameandportnr = candidate.split("#");
-        if (hostnameandportnr.length == 0 || hostnameandportnr.length > 2) {
-            return candidate;
-        }
-        
-        String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
-        if (domainName == null) { // Not valid according to our rules
-            log.debug("Illegal class key candidate '" + candidate
+            String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
+            if (domainName == null) { // Not valid according to our rules
+                log.debug("Illegal class key candidate '" + candidate
                       + "' for '" + cauri + "'");
-            return candidate;
+                return candidate;
+            }
+            return domainName;
         }
-        return domainName;
     }
 
      /**
