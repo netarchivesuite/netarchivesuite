@@ -50,7 +50,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Tests JMSConnection, the class that handles all JMS operations for Netarkivet.
  */
-public class IntegrityTests extends TestCase {
+public class IntegrityTestSuite extends TestCase {
     /**
      * We need two arbitrary (but different) queues for testing send and reply.
      */
@@ -517,10 +517,10 @@ public class IntegrityTests extends TestCase {
         }
 
         public void onMessage(Message msg) {
-            synchronized (IntegrityTests.this) {
+            synchronized (IntegrityTestSuite.this) {
                 NetarkivetMessage nMsg = JMSConnection.unpack(msg);
                 ok = nMsg.equals(expected);
-                IntegrityTests.this.notifyAll();
+                IntegrityTestSuite.this.notifyAll();
             }
         }
     }

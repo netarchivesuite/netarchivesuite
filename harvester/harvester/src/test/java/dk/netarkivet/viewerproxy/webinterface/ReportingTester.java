@@ -30,7 +30,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.archive.arcrepository.TrivialArcRepositoryClient;
+import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;

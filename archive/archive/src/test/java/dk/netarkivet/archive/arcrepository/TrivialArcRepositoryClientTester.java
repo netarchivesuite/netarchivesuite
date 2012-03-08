@@ -27,6 +27,7 @@ package dk.netarkivet.archive.arcrepository;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.*;
 import junit.framework.TestCase;
 
@@ -76,7 +77,7 @@ public class TrivialArcRepositoryClientTester extends TestCase {
 
         FileUtils.copyFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE, dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
         arcrep.store(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
-        assertFalse("Should ahve deleted file after upload",
+        assertFalse("Should have deleted file after upload",
                 dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE.exists());
         status = arcrep.batch(new FileListJob(), "BA");
         assertEquals("Should have 1 files processed after store",

@@ -35,7 +35,7 @@ import junit.textui.TestRunner;
  */
 public class IntegrityTesterSuite {
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(dk.netarkivet.common.distribute.IntegrityTests.class);
+        suite.addTestSuite(dk.netarkivet.common.distribute.IntegrityTestSuite.class);
         suite.addTestSuite(dk.netarkivet.common.distribute.IntegrityTestsFTP.class);
         suite.addTestSuite(dk.netarkivet.common.distribute.IntegrityTestsFTPRemoteFile.class);
         suite.addTestSuite(dk.netarkivet.harvester.harvesting.distribute.IntegrityTests.class);
