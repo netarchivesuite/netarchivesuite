@@ -1491,11 +1491,11 @@
     </library>
     <library name="nas_prod_2">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/db/derbyrun-10.8.2.2.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/db/derby-10.8.2.2.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/db/derbynet-10.8.2.2.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/db/derbytools-10.8.2.2.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/db/derbyclient-10.8.2.2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/db/derbyrun-10.5.3.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/db/derby-10.5.3.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/db/derbynet-10.5.3.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/db/derbytools-10.5.3.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/db/derbyclient-10.5.3.0.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/db/postgresql-8.4-701.jdbc4.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/heritrix/lib/heritrix-1.14.4.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/heritrix/lib/commons-cli-1.0.jar!/" />
