@@ -92,7 +92,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     sunjms-lib/jms-4.4u1.jar
     mail-dependencies/mail-1.4.jar
     libidn-0.5.9.jar
-    lucene-core-2.9.4.jar
+    lucene-core-2.0.0.jar
     deduplicator-0.4.0.jar
     wayback-core-1.6.0.jar
     "/>
@@ -139,7 +139,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="sunjms-lib/jms-4.4u1.jar"/>
                 <include name="mail-dependencies/mail-1.4.jar"/>
                 <include name="libidn-0.5.9.jar"/>
-                <include name="lucene-core-2.9.4.jar"/>
+                <include name="lucene-core-2.0.0.jar"/>
                 <include name="deduplicator-0.4.0.jar"/>
                 <include name="wayback-core-1.6.0.jar"/>
                 <include name="hibernate/antlr-2.7.6.jar"/>

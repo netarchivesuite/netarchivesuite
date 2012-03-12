@@ -98,7 +98,7 @@ public class DigestIndexerWorker implements Callable<Boolean> {
             localindexer.close(optimizeIndex);
 
             log.info("Completed subindexing task of data from job "
-                    + this.jobId + " w/ " + localindexer.getIndex().numDocs() 
+                    + this.jobId + " w/ " + localindexer.getIndex().docCount()
                     + " index-entries)");
         } catch (IOException e) {
             successfull = false;
