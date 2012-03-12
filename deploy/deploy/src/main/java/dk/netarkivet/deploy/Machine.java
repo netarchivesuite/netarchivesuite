@@ -945,6 +945,10 @@ public abstract class Machine {
      */
     protected abstract String changeFileDirPathForSecurity(String path);
     
+    /**
+     * create a harvestDatabaseUpdatescript in the given machineDirectory.
+     * @param machineDirectory a given MachineDirectory.
+     */
     protected abstract void createHarvestDatabaseUpdateScript(File machineDirectory);
     
 }

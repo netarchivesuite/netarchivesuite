@@ -1554,7 +1554,12 @@ public class WindowsMachine extends Machine {
 
     @Override
     protected void createHarvestDatabaseUpdateScript(File machineDirectory) {
-     // TODO NOT SUPPORTED!
+        // Ignore if no harvest database directory has been defined.
+        String dbDir = machineParameters.getHarvestDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
+        }
+        
         System.err.println("An Harvest Database is not supported on a windows "
                 + "machine. Please fix your deploy configuration.");
     }

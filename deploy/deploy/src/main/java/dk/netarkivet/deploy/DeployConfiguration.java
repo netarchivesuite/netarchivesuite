@@ -116,7 +116,7 @@ public class DeployConfiguration {
         String environmentName = config.getSubChildValue(
                 Constants.COMPLETE_ENVIRONMENT_NAME_LEAF);
 
-        // vaildate the environment name.
+        // validate the environment name.
         if(!Constants.validEnvironmentName(environmentName)) {
             System.err.print(Constants.MSG_ERROR_INVALID_ENVIRONMENT_NAME
                     + environmentName);
