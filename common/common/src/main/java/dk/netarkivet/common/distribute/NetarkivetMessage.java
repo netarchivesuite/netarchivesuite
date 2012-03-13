@@ -114,7 +114,8 @@ public abstract class NetarkivetMessage implements Serializable {
      * @param e An exception thrown during processing.
      */
     public void setNotOk(Throwable e) {
-        setNotOk(e.toString()+"\n"+ExceptionUtils.getStackTrace(e));
+        setNotOk(e.toString() + "\n" 
+                + ExceptionUtils.getStackTrace(e));
     }
 
     /**

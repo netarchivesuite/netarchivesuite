@@ -42,6 +42,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.logging.Log;
@@ -617,7 +618,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 getProducer(to.getName()).send(message);
                 // Note: Id is only updated if the message does not already have
                 // an id. This ensures that resent messages keep the same ID
-                msg.updateId(message.getJMSMessageID());
+                // TODO Is it always OK for resent messages to keep the same ID
+                String randomID = UUID.randomUUID().toString();
+                //msg.updateId(message.getJMSMessageID());
+                msg.updateId(randomID);
             }
         } finally {
             connectionLock.readLock().unlock();
@@ -734,7 +738,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * publishers.
      *
      * @throws JMSException If unable to reconnect to JMSBroker and/or
-     *                      reestablish sesssions
+     *                      reestablish sessions
      */
     private void doReconnect()
             throws JMSException {
