@@ -114,7 +114,7 @@ CREATE TABLE configurations (
     template_id bigint NOT NULL,
     maxobjects bigint NOT NULL DEFAULT -1,
     maxrate int,
-    overridelimits int,
+    overridelimits bigint,
     maxbytes bigint NOT NULL DEFAULT -1
 );
 
