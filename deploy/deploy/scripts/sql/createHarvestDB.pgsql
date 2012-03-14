@@ -348,7 +348,7 @@ CREATE TABLE jobs (
     edition bigint NOT NULL,
     submitteddate timestamp,
     resubmitted_as_job bigint,
-    forcemaxrunningtime bigint NOT NULL DEFAULT 0,
+    forcemaxrunningtime bigint NOT NULL DEFAULT 0
 );
 --continuationof bigint
 
