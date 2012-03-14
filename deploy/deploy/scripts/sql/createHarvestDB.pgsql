@@ -64,7 +64,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'ordertemplates', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'jobs', 7);
+    VALUES ( 'jobs', 6);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'job_configs', 1);
 INSERT INTO schemaversions (tablename, version )
@@ -334,7 +334,6 @@ CREATE TABLE jobs (
     priority int NOT NULL,
     forcemaxbytes bigint NOT NULL default -1,
     forcemaxcount bigint,
-    forcemaxrunningtime bigint NOT NULL DEFAULT 0,
     orderxml varchar(300) NOT NULL,
     orderxmldoc text NOT NULL,
     seedlist text NOT NULL,
@@ -345,12 +344,14 @@ CREATE TABLE jobs (
     upload_error_details varchar(10000),
     startdate timestamp,
     enddate timestamp,
-    submitteddate timestamp,
-    resubmitted_as_job bigint,
     num_configs int NOT NULL default 0,
     edition bigint NOT NULL,
-    continuationof bigint
+    submitteddate timestamp,
+    resubmitted_as_job bigint,
+    forcemaxrunningtime bigint NOT NULL DEFAULT 0,
 );
+--continuationof bigint
+
 
 CREATE INDEX jobstatus on jobs(status) TABLESPACE tsindex;
 CREATE INDEX jobharvestid on jobs(harvest_id) TABLESPACE tsindex;
