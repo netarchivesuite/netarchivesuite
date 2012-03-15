@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * modifiers).
  *
  * If your constant is used in a single class only, put it in that class, and
- * make sure it is private
+ * make sure it is private.
  *
  * Remember everything placed here MUST be constants.
  *
@@ -86,7 +86,7 @@ public final class Constants {
     /** Patch version number. */
     public static final int PATCHVERSION = 0;
     /** Current status of code. */
-    private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
+    private static final CodeStatus BUILDSTATUS = CodeStatus.CODEFREEZE;
 
     /** Current version of Heritrix used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.4";
