@@ -316,12 +316,14 @@ public class ArchiveSettings {
         "settings.archive.admin.database.pool.idleConnTestQuery";
 
     /**
-     * The user name for login to the admin database.
+     * The user name for login to the admin database. Default value is empty (no
+     * username passed to database connection).
      */
     public static String DB_USERNAME = "settings.archive.admin.database.username";
 
     /**
-     * The password name for login to the admin database.
+     * The password name for login to the admin database.Default values is empty
+     * (no password passed to database connection).
      */
     public static String DB_PASSWORD = "settings.archive.admin.database.password";
 
