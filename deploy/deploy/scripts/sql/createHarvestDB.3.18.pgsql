@@ -64,7 +64,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'ordertemplates', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'jobs', 7);
+    VALUES ( 'jobs', 6);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'job_configs', 1);
 INSERT INTO schemaversions (tablename, version )
@@ -348,7 +348,6 @@ CREATE TABLE jobs (
     edition bigint NOT NULL,
     submitteddate timestamp,
     resubmitted_as_job bigint,
-     continuationof bigint,
     forcemaxrunningtime bigint NOT NULL DEFAULT 0
 );
 
