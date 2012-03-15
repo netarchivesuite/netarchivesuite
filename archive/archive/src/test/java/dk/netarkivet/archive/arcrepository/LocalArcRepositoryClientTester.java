@@ -29,7 +29,11 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.arcrepository.*;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
@@ -40,6 +44,8 @@ import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+
+import dk.netarkivet.archive.distribute.arcrepository.TestInfo;
 
 
 /**
@@ -61,7 +67,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
         utrf.setUp();
 
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
-                TestInfo.WORKING_DIR.getAbsolutePath());
+                dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
         mtf.setUp();
     }
 
@@ -72,8 +78,8 @@ public class LocalArcRepositoryClientTester extends TestCase {
     }
 
     public void testStore() throws Exception {
-        File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
-        File dir2 = new File(TestInfo.WORKING_DIR, "dir2");
+        File dir1 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
+        File dir2 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir2");
         Settings.set("settings.common.arcrepositoryClient.fileDir", dir1.getAbsolutePath(),
                      dir2.getAbsolutePath());
         ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
@@ -142,7 +148,8 @@ public class LocalArcRepositoryClientTester extends TestCase {
         Settings.set("settings.common.arcrepositoryClient.fileDir", dir1.getAbsolutePath(),
                      dir2.getAbsolutePath());
         ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
-
+        FileUtils.getTempDir().mkdir();
+        assertTrue("tmpDir is wrong", FileUtils.getTempDir().isDirectory());
         BatchStatus status = arcrep.batch(new FileListJob(), "BA");
         assertEquals("Should have no files processed at outset",
                      0, status.getNoOfFilesProcessed());

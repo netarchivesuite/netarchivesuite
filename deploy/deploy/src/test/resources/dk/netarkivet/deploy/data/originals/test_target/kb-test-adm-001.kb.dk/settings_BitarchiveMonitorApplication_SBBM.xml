@@ -54,7 +54,7 @@
                         <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
                         <baseUrl>jdbc:derby</baseUrl>
                         <machine>localhost</machine>
-                        <port>8158</port>
+                        <port>8118</port>
                         <dir>harvestDatabase/fullhddb</dir>
                     </database><applicationName>dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication</applicationName></common>
 
@@ -75,7 +75,7 @@
                         <database>
                             <baseUrl>jdbc:derby</baseUrl>
                             <machine>localhost</machine>
-                            <port>8050</port>
+                            <port>8010</port>
                             <dir>adminDB</dir>
                         </database>
                     </admin></archive>
