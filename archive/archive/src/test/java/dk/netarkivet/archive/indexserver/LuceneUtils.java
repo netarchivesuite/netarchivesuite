@@ -24,12 +24,17 @@
 */
 package dk.netarkivet.archive.indexserver;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
 import is.hi.bok.deduplicator.CrawlLogIterator;
 import is.hi.bok.deduplicator.DigestIndexer;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Some Lucene Utilities used in some of our tests.

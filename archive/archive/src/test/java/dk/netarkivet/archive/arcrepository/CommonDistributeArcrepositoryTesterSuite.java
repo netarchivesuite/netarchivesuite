@@ -58,7 +58,6 @@ public class CommonDistributeArcrepositoryTesterSuite {
         suite.addTestSuite(LocalArcRepositoryClientTester.class);
         suite.addTestSuite(ReplicaTester.class);
         suite.addTestSuite(ReplicaTypeTester.class);
-        suite.addTestSuite(TrivialArcRepositoryClientTester.class);    
     }
 
     public static void main(String[] args) {
