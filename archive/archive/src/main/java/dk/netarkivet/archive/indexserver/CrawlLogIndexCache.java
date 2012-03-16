@@ -102,6 +102,7 @@ public abstract class CrawlLogIndexCache extends
         log.info("Starting to generate " + getCacheDir().getName()
                  + " for the " + ids.size() + " jobs: " + ids);
         Map<Long, File> returnMap = super.prepareCombine(ids);
+        log.info("Retrieved data to combine. Now checking for missing data");
         Set<Long> missing = new HashSet<Long>();
         for (Long id : returnMap.keySet()) {
             Long cached = cdxcache.cache(id);

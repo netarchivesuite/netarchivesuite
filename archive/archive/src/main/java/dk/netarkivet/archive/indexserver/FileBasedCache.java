@@ -61,7 +61,7 @@ public abstract class FileBasedCache<I> {
      * main cache directory holding cached files.
      *
      * @param cacheName Name of this cache (enabling sharing among processes).
-     *                  The directoriy creating in the cachedir will have this
+     *                  The directory creating in the cachedir will have this
      *                  name.
      */
     public FileBasedCache(String cacheName) {
@@ -146,6 +146,8 @@ public abstract class FileBasedCache<I> {
                     fileBehindLockFile);
             FileLock lock = null;
             // Make sure no other thread tries to create this
+            log.debug("Waiting to enter synchronization on " 
+                    + fileBehindLockFile.getAbsolutePath().intern()); 
             synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
                 try {
                     // Make sure no other process tries to create this.
