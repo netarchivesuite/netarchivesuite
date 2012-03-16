@@ -394,7 +394,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             netMsg = (NetarkivetMessage) objMsg.getObject();
             // Note: Id is only updated if the message does not already have an
             // id. On unpack, this means the first time the message is received.
-            netMsg.updateId(msg.getJMSMessageID());
+            String randomID = UUID.randomUUID().toString();
+            netMsg.updateId(randomID);
+            //netMsg.updateId(msg.getJMSMessageID());
         } catch (ClassCastException e) {
             log.warn("Invalid message type: " + classname, e);
             throw new ArgumentNotValid("Invalid message type: " + classname, e);
