@@ -42,7 +42,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.logging.Log;
@@ -394,9 +393,12 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             netMsg = (NetarkivetMessage) objMsg.getObject();
             // Note: Id is only updated if the message does not already have an
             // id. On unpack, this means the first time the message is received.
-            String randomID = UUID.randomUUID().toString();
-            netMsg.updateId(randomID);
-            //netMsg.updateId(msg.getJMSMessageID());
+            
+            // FIXME Fix for NAS-2043 doesn't seem to work
+            //String randomID = UUID.randomUUID().toString();
+            //netMsg.updateId(randomID);
+            
+            netMsg.updateId(msg.getJMSMessageID());
         } catch (ClassCastException e) {
             log.warn("Invalid message type: " + classname, e);
             throw new ArgumentNotValid("Invalid message type: " + classname, e);
@@ -621,9 +623,12 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 // Note: Id is only updated if the message does not already have
                 // an id. This ensures that resent messages keep the same ID
                 // TODO Is it always OK for resent messages to keep the same ID
-                String randomID = UUID.randomUUID().toString();
-                //msg.updateId(message.getJMSMessageID());
-                msg.updateId(randomID);
+                
+                // FIXME Solution for NAS-2043 doesn't work; rolled back
+                //String randomID = UUID.randomUUID().toString();
+                //msg.updateId(randomID);
+                msg.updateId(message.getJMSMessageID());
+                
             }
         } finally {
             connectionLock.readLock().unlock();
