@@ -224,8 +224,14 @@ public final class ArchiveDBConnection {
     throws SQLException {
 
         dataSource = new ComboPooledDataSource();
-        dataSource.setUser(Settings.get(ArchiveSettings.DB_USERNAME));
-        dataSource.setPassword(Settings.get(ArchiveSettings.DB_PASSWORD));
+        String username = Settings.get(ArchiveSettings.DB_USERNAME);
+        if (!username.isEmpty()) {
+            dataSource.setUser(username);
+        }
+        String password = Settings.get(ArchiveSettings.DB_PASSWORD);
+        if (!password.isEmpty()) {
+            dataSource.setPassword(password);
+        }
         try {
             dataSource.setDriverClass(dbSpec.getDriverClassName());
         } catch (PropertyVetoException e) {

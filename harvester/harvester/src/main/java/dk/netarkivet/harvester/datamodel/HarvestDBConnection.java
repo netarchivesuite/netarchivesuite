@@ -266,9 +266,14 @@ public final class HarvestDBConnection {
             throw new IOFailure(message, e);
         }
         dataSource.setJdbcUrl(jdbcUrl);
-        dataSource.setUser(Settings.get(CommonSettings.DB_USERNAME));
-        dataSource.setPassword(Settings.get(CommonSettings.DB_PASSWORD));
-        
+        String username = Settings.get(CommonSettings.DB_USERNAME);
+        if (!username.isEmpty()) {
+            dataSource.setUser(username);
+        }
+        String password = Settings.get(CommonSettings.DB_PASSWORD);
+        if (!password.isEmpty()) {
+            dataSource.setPassword(password);
+        }
         // Configure pool size
         dataSource.setMinPoolSize(
                 Settings.getInt(CommonSettings.DB_POOL_MIN_SIZE));
