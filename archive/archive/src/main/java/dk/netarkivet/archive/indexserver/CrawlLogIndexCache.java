@@ -126,7 +126,7 @@ public abstract class CrawlLogIndexCache extends
      * @param rawfiles The map from job ID into crawl.log contents. No
      * null values are allowed in this map.
      */
-    protected synchronized void combine(Map<Long, File> rawfiles) {
+    protected void combine(Map<Long, File> rawfiles) {
         long datasetSize = rawfiles.values().size();
         log.info("Starting to combine a dataset with " 
                 +  datasetSize + " crawl logs");
