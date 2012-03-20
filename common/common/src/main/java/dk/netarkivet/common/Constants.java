@@ -82,9 +82,9 @@ public final class Constants {
     /** Minor version number. */
     public static final int MINORVERSION = 18;
     /** Patch version number. */
-    public static final int PATCHVERSION = 2;
+    public static final int PATCHVERSION = 3;
     /** Current status of code. */
-    private static final CodeStatus BUILDSTATUS = CodeStatus.RELEASE;
+    private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
 
     /** Current version of Heritrix used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.4";
