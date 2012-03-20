@@ -129,7 +129,8 @@ public abstract class CrawlLogIndexCache extends
     protected void combine(Map<Long, File> rawfiles) {
         long datasetSize = rawfiles.values().size();
         log.info("Starting to combine a dataset with " 
-                +  datasetSize + " crawl logs");
+                + datasetSize + " crawl logs (thread = "
+                + Thread.currentThread().getName() + ")");
         File resultDir = getCacheFile(rawfiles.keySet());
         String indexLocation = resultDir.getAbsolutePath() + ".luceneDir";
         try {
