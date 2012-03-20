@@ -135,10 +135,11 @@ public abstract class CrawlLogIndexCache extends
      * @param rawfiles The map from job ID into crawl.log contents. No
      * null values are allowed in this map.
      */
-    protected synchronized void combine(Map<Long, File> rawfiles) {
+    protected void combine(Map<Long, File> rawfiles) {
         long datasetSize = rawfiles.values().size();
         log.info("Starting to combine a dataset with " 
-                +  datasetSize + " crawl logs");
+                +  datasetSize + " crawl logs (thread = "
+                + Thread.currentThread().getName() + ")");
         File resultDir = getCacheFile(rawfiles.keySet());
         Set<File> tmpfiles = new HashSet<File>();
         String indexLocation = resultDir.getAbsolutePath() + ".luceneDir";
