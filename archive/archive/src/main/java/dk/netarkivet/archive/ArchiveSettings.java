@@ -392,7 +392,7 @@ public class ArchiveSettings {
      * {@link dk.netarkivet.archive.indexserver.distribute.IndexRequestServer}
      */
     public static String INDEXREQUEST_SERVER_CLASS
-        = "settings.archive.indexserver.indexrequest.class";
+        = "settings.archive.indexserver.indexrequestserver.class";
     
     /**
      * b>settings.archive.indexserver.lookfordataInAllBitarchiveReplicas</b>: <br>

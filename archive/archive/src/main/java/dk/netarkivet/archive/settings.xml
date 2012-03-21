@@ -96,9 +96,10 @@
         	<indexingtimeout>172800000</indexingtimeout>
         	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
         	<indexrequestserver>
-        		<class>dk.netarkivet.archive.indexserver.distribute.IndexRequestServer</class>
+        		<class.org>dk.netarkivet.archive.indexserver.distribute.IndexRequestServer</class.org>
+        		<class>dk.netarkivet.archive.indexserver.distribute.TestIndexRequestServer</class>
         	</indexrequestserver>	
-        	<fileContainingJobsForTestindex></fileContainingJobsForTestindex>
+        	<fileContainingJobsForTestindex>defaultJobIds.txt</fileContainingJobsForTestindex>
         	<optimizePartialIndex>false</optimizePartialIndex>
         	<optimizeIndex>true</optimizeIndex>
         </indexserver>

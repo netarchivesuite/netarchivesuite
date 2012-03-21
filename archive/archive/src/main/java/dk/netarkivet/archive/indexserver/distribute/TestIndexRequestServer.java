@@ -124,8 +124,11 @@ public final class TestIndexRequestServer extends ArchiveMessageHandler
         jobsForDefaultIndex = Settings.getFile(ArchiveSettings.JOBS_FOR_TESTINDEX);
         
         if (!jobsForDefaultIndex.exists()) {
-            log.fatal("The file '" + jobsForDefaultIndex.getAbsolutePath() 
+            final String msg = "The file '" + jobsForDefaultIndex.getAbsolutePath() 
+                    + "' does not exist";
+            log.fatal("The file containing job identifiers for default index '" + jobsForDefaultIndex.getAbsolutePath() 
                     + "' does not exist");
+            System.err.println(msg + ". Exiting program");
             System.exit(1);
         }
         defaultIDs = readLongsFromFile(jobsForDefaultIndex);
