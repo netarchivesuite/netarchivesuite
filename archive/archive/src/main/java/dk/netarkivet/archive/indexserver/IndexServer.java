@@ -23,7 +23,6 @@
  */
 package dk.netarkivet.archive.indexserver;
 
-import dk.netarkivet.archive.indexserver.distribute.IndexRequestServer;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.utils.CleanupIF;
 
@@ -44,7 +43,7 @@ import java.util.Set;
  * */
 public class IndexServer implements CleanupIF{
     /** The remote server that hands us indexes. */
-    private IndexRequestServer remoteServer;
+    private IndexRequestServerInterface remoteServer;
     /** The singleton instance of this class. */
     private static IndexServer instance;
 
@@ -60,8 +59,10 @@ public class IndexServer implements CleanupIF{
         cdxCache.getIndex(emptySet);
         dedupCrawlLogCache.getIndex(emptySet);
         fullCrawlLogCache.getIndex(emptySet);
+        // Read the indexRequestServer class from settings
         
-        remoteServer = IndexRequestServer.getInstance();
+        remoteServer = IndexRequestServerFactory.getInstance();
+        
         remoteServer.setHandler(RequestType.CDX, cdxCache);
         remoteServer.setHandler(RequestType.DEDUP_CRAWL_LOG,
                 dedupCrawlLogCache);

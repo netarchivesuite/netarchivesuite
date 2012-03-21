@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -148,38 +149,44 @@ public class RawMetadataCache extends FileBasedCache<Long>
                     + "' for '" + prefix + "'");
             return id;
         } else {
-            log.info("No data found for job '" + id + "' for '" + prefix 
+            // Look for data in other bitarchive replicas, if this option is enabled
+            if (!Settings.getBoolean(
+                    ArchiveSettings.INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS)) {
+                log.info("No data found for job '" + id + "' for '" + prefix 
+                        + "' in local bitarchive '" + replicaUsed + "'. ");
+                return null;
+            } else {
+                log.info("No data found for job '" + id + "' for '" + prefix 
                     + "' in local bitarchive '" + replicaUsed + "'. "
                     + "Trying other replicas.");
-            // Try other replicas
-            for(Replica rep : Replica.getKnown()) {
-                // Only use different bitarchive replicas than replicaUsed
-                if(rep.getType().equals(ReplicaType.BITARCHIVE) 
+                for(Replica rep : Replica.getKnown()) {
+                    // Only use different bitarchive replicas than replicaUsed
+                    if(rep.getType().equals(ReplicaType.BITARCHIVE) 
                         && !rep.getId().equals(replicaUsed)) {
-                    log.debug("Trying to retrieve index data for job '"
+                        log.debug("Trying to retrieve index data for job '"
                             + id + "' from '" + rep.getId() + "'.");
-                    b = arcrep.batch(job, rep.getId());
+                        b = arcrep.batch(job, rep.getId());
                     
-                    // Perform same check as for the batchresults from
-                    // the default replica.
-                    if (b.hasResultFile() && (b.getNoOfFilesProcessed() 
+                        // Perform same check as for the batchresults from
+                        // the default replica.
+                        if (b.hasResultFile() && (b.getNoOfFilesProcessed() 
                             > b.getFilesFailed().size())) {
-                        File cacheFileName = getCacheFile(id);
-                        b.copyResults(cacheFileName);
-                        log.info("Cached data for job '" + id
+                            File cacheFileName = getCacheFile(id);
+                            b.copyResults(cacheFileName);
+                            log.info("Cached data for job '" + id
                                 + "' for '" + prefix + "' from '" + rep 
                                 + " instead of " + replicaUsed);
-                        return id;
-                    } else {
-                        log.trace("No data found for job '" + id + "' for '" 
+                            return id;
+                        } else {
+                            log.trace("No data found for job '" + id + "' for '" 
                                 + prefix + "' in bitarchive '" + rep + "'. ");
+                        }
                     }
                 }
+                log.info("No data found for job '" + id + "' for '" + prefix 
+                        + "' in all bitarchive replicas");
+                return null;
             }
-            
-            log.warn("No data found for job '" + id + "' for '" + prefix 
-                    + "' in any replica.");
-            return null;
         }
     }
 

@@ -26,6 +26,7 @@ package dk.netarkivet.archive.indexserver.distribute;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -40,6 +41,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.io.LineIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -70,14 +72,14 @@ import dk.netarkivet.harvester.distribute.IndexReadyMessage;
  *
  * It will ALWAYS reply to such messages, either with the index, a message
  * telling that only a subset is available, and which, or an error message,
- *
+ * 
  */
-public final class IndexRequestServer extends ArchiveMessageHandler
+public final class TestIndexRequestServer extends ArchiveMessageHandler
         implements CleanupIF, IndexRequestServerInterface {
     /** The class logger. */
-    private static Log log = LogFactory.getLog(IndexRequestServer.class);
+    private static Log log = LogFactory.getLog(TestIndexRequestServer.class);
     /** The unique instance. */
-    private static IndexRequestServer instance;
+    private static TestIndexRequestServer instance;
     /** The handlers for index request types. */
     private Map<RequestType, FileBasedCache<Set<Long>>> handlers;
     
@@ -95,6 +97,14 @@ public final class IndexRequestServer extends ArchiveMessageHandler
     /** The timer that initiates the checkIflisteningTask. */
     private Timer checkIflisteningTimer = new Timer();
     
+    /** The File containing the list of jobids, that the default index 
+     * consists of.
+     */
+    private File jobsForDefaultIndex; 
+    
+    /** The set of Jobs ids used for the default index. */
+    private Set<Long> defaultIDs;
+    
     /**
      * The directory to store backup copies of the currentJobs.
      * In case of the indexserver crashing. 
@@ -103,7 +113,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
     /** Initialise index request server with no handlers, listening to the
      * index JMS channel.
      */
-    private IndexRequestServer() {
+    private TestIndexRequestServer() {
         maxConcurrentJobs = Settings.getLong(
                 ArchiveSettings.INDEXSERVER_INDEXING_MAXCLIENTS);
         requestDir = Settings.getFile(
@@ -111,11 +121,36 @@ public final class IndexRequestServer extends ArchiveMessageHandler
         listeningInterval = Settings.getLong(
                 ArchiveSettings.INDEXSERVER_INDEXING_LISTENING_INTERVAL);
         
+        jobsForDefaultIndex = Settings.getFile(ArchiveSettings.JOBS_FOR_TESTINDEX);
+        
+        if (!jobsForDefaultIndex.exists()) {
+            log.fatal("The file '" + jobsForDefaultIndex.getAbsolutePath() 
+                    + "' does not exist");
+            System.exit(1);
+        }
+        defaultIDs = readLongsFromFile(jobsForDefaultIndex);
         currentJobs = new HashMap<String, IndexRequestMessage>();
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(
                 RequestType.class);
         conn = JMSConnectionFactory.getInstance();
         checkIflisteningTimer = new Timer();
+    }
+
+    private Set<Long> readLongsFromFile(File fileWithLongs) {
+        Set<Long> resultSet = new HashSet<Long>();
+        try {
+            LineIterator lineIterator = new LineIterator(new FileReader(fileWithLongs));
+            while (lineIterator.hasNext()) {
+                String line = lineIterator.next();
+                resultSet.add(Long.parseLong(line));
+            }
+        } catch (IOException e) {
+            log.fatal("Unable to read from file '" 
+                    + fileWithLongs.getAbsolutePath() 
+                    + "'. Returns set of size " + resultSet.size());
+        }
+        
+        return resultSet;
     }
 
     /**
@@ -165,9 +200,9 @@ public final class IndexRequestServer extends ArchiveMessageHandler
      *
      * @return The index request server.
      */
-    public static synchronized IndexRequestServer getInstance() {
+    public static synchronized TestIndexRequestServer getInstance() {
         if (instance == null) {
-            instance = new IndexRequestServer();
+            instance = new TestIndexRequestServer();
         }
 
         return instance;
@@ -319,19 +354,24 @@ public final class IndexRequestServer extends ArchiveMessageHandler
         try {
             checkMessage(irMsg);
             RequestType type = irMsg.getRequestType();
-            Set<Long> jobIDs = irMsg.getRequestedJobs();
+            Set<Long> requestedJobIDs = irMsg.getRequestedJobs(); 
+            
             log.info("Generating an index of type '" + type
-                     + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
+                     + "' for the jobs [" + StringUtils.conjoin(",", defaultIDs)
                      + "]");
+            
             FileBasedCache<Set<Long>> handler = handlers.get(type);
-            Set<Long> foundIDs = handler.cache(jobIDs);
-            irMsg.setFoundJobs(foundIDs);
-            if (foundIDs.equals(jobIDs)) {
-                log.info("Successfully generated index of type '" + type
-                         + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
-                         + "]");
-                File cacheFile = handler.getCacheFile(jobIDs);
-                if (mustReturnIndex) { // return index now! (default behaviour)
+            Set<Long> foundIDs = handler.cache(defaultIDs);
+            if (!foundIDs.containsAll(defaultIDs)) {
+                defaultIDs = foundIDs;
+            }
+            irMsg.setFoundJobs(requestedJobIDs); // Say that everything was found
+            
+            log.info("Returning default index");
+            
+            File cacheFile = handler.getCacheFile(defaultIDs);
+            
+            if (mustReturnIndex) { // return index now! (default behaviour)
                     if (cacheFile.isDirectory()) {
                         // This cache uses multiple files stored in a directory,
                         // so transfer them all.
@@ -348,17 +388,8 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                                 RemoteFileFactory.getCopyfileInstance(
                                 cacheFile));
                     }
-                }
-            } else {
-                Set<Long> missingJobIds = new HashSet<Long>(jobIDs);
-                missingJobIds.removeAll(foundIDs);
-                log.warn("Failed generating index of type '" + type
-                         + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
-                         + "]. Missing data for jobs ["
-                         + StringUtils.conjoin(",", missingJobIds)
-                         + "].");
-                
             }
+            
         } catch (Throwable e) {
             log.warn(
                     "Unable to generate index for jobs ["
@@ -476,7 +507,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
      */
     private static class ListeningTask extends TimerTask {
         /** The indexrequestserver this task is associated with. */
-        private IndexRequestServer thisIrs;
+        private TestIndexRequestServer thisIrs;
 
         /**
          * Constructor for the ListeningTask.
@@ -484,7 +515,7 @@ public final class IndexRequestServer extends ArchiveMessageHandler
          * @param irs
          *            The indexrequestserver this task should be associated with
          */
-        ListeningTask(IndexRequestServer irs) {
+        ListeningTask(TestIndexRequestServer irs) {
             thisIrs = irs;
         }
 

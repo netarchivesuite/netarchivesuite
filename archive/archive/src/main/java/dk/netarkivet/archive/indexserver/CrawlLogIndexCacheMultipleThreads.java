@@ -45,6 +45,7 @@ import is.hi.bok.deduplicator.DigestIndexer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.SimpleFSDirectory;
 //import org.apache.lucene.store.SimpleFSDirectory;
 
 import dk.netarkivet.archive.ArchiveSettings;
@@ -83,6 +84,14 @@ public abstract class CrawlLogIndexCacheMultipleThreads extends
     /** The time to sleep between each check of completeness.*/
     private final long sleepintervalBetweenCompletenessChecks 
         = Settings.getLong(ArchiveSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
+    /**
+     * Should we optimizing each partial index before closing it.
+     */
+    private final boolean optimizePartialIndex = Settings.getBoolean(ArchiveSettings.INDEXING_OPTIMIZE_PARTIALINDEX);
+    /**
+     * Should we optimizing the final index before closing it.
+     */
+    private final boolean optimizeIndex = Settings.getBoolean(ArchiveSettings.INDEXING_OPTIMIZE_INDEX);
     
     /**
      * Constructor for the CrawlLogIndexCache class.
@@ -133,10 +142,11 @@ public abstract class CrawlLogIndexCacheMultipleThreads extends
      * @param rawfiles The map from job ID into crawl.log contents. No
      * null values are allowed in this map.
      */
-    protected synchronized void combine(Map<Long, File> rawfiles) {
+    protected void combine(Map<Long, File> rawfiles) {
         long datasetSize = rawfiles.values().size();
         log.info("Starting to combine a dataset with " 
-                +  datasetSize + " crawl logs");
+                + datasetSize + " crawl logs (thread = "
+                + Thread.currentThread().getName() + ")");
         File resultDir = getCacheFile(rawfiles.keySet());
         Set<File> tmpfiles = new HashSet<File>();
         String indexLocation = resultDir.getAbsolutePath() + ".luceneDir";
@@ -145,7 +155,8 @@ public abstract class CrawlLogIndexCacheMultipleThreads extends
             DigestIndexer indexer = createStandardIndexer(indexLocation);
             final boolean verboseIndexing = false;
             DigestOptions indexingOptions = new DigestOptions(
-                    this.useBlacklist, verboseIndexing, this.mimeFilter);
+                    this.useBlacklist, verboseIndexing, this.mimeFilter, 
+                    this.optimizePartialIndex);
             long count = 0;
             Set<IndexingState> outstandingJobs = new HashSet<IndexingState>();
             final int maxThreads = Settings.getInt(
@@ -205,41 +216,42 @@ public abstract class CrawlLogIndexCacheMultipleThreads extends
                            + " jobs");
                    break; 
                 }
-//                while (iterator.hasNext()) {
-//                    Future<Boolean> nextResult;
-//                    IndexingState next = iterator.next();
-//                    if (next.getResultObject().isDone()) {
-//                        nextResult = next.getResultObject();
-//                        try {
-//                            // check, if the indexing failed
-//                            if (nextResult.get()) { 
-//                                subindices.add(
-//                                        new SimpleFSDirectory(
-//                                               new File(next.getIndex())));
-//                            } else {
-//                                log.warn("Indexing of job " 
-//                                        + next.getJobIdentifier() + " failed.");
-//                            }
-//                        } catch (InterruptedException e) {
-//                            log.warn("Unable to get Result back from "
-//                                    + "indexing thread", e);
-//                        } catch (ExecutionException e) {
-//                            log.warn("Unable to get Result back from "
-//                                    + "indexing thread", e);
-//                        }
-//                        //remove the done object from the set
-//                        iterator.remove();
-//                    }   
-//                }
+                while (iterator.hasNext()) {
+                    Future<Boolean> nextResult;
+                    IndexingState next = iterator.next();
+                    if (next.getResultObject().isDone()) {
+                        nextResult = next.getResultObject();
+                        try {
+                            // check, if the indexing failed
+                            if (nextResult.get()) { 
+                                subindices.add(
+                                        new SimpleFSDirectory(
+                                               new File(next.getIndex())));
+                            } else {
+                                log.warn("Indexing of job " 
+                                        + next.getJobIdentifier() + " failed.");
+                            }
+                        } catch (InterruptedException e) {
+                            log.warn("Unable to get Result back from "
+                                    + "indexing thread", e);
+                        } catch (ExecutionException e) {
+                            log.warn("Unable to get Result back from "
+                                    + "indexing thread", e);
+                        }
+                        //remove the done object from the set
+                        iterator.remove();
+                    }   
+                }
                 sleepAwhile();
             }
             
             log.debug("Merging the indices but don't optimize");           
-//            indexer.getIndex().addIndexesNoOptimize(
-//                    subindices.toArray(new Directory[0]));
+            indexer.getIndex().addIndexesNoOptimize(
+                    subindices.toArray(new Directory[0]));
             
-            long docsInIndex = indexer.getIndex().docCount();
-            indexer.close(false);
+            long docsInIndex = indexer.getIndex().numDocs();
+            log.debug("closing index, (optimize = " + this.optimizeIndex + ")");
+            indexer.close(this.optimizeIndex);
             
             // Now the index is made, gzip it up.
             ZipUtils.gzipFiles(new File(indexLocation), resultDir);

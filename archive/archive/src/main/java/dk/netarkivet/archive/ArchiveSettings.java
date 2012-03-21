@@ -33,7 +33,6 @@ public class ArchiveSettings {
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/archive/settings.xml";
-    
     /*
      * The static initialiser is called when the class is loaded.
      * It will add default values for all settings defined in this class, by
@@ -381,9 +380,41 @@ public class ArchiveSettings {
             = "settings.archive.indexserver.indexingtimeout";
     /**
      * <b>settings.archive.indexserver.listeningcheckinterval</b>: <br>
-     * Setting for for interval between each listening check in milliseconds. 
+     * Setting for interval between each listening check in milliseconds. 
      * The default is 30000 (5 minutes).
      */
     public static String INDEXSERVER_INDEXING_LISTENING_INTERVAL 
         = "settings.archive.indexserver.listeningcheckinterval";
+    /**
+     * <b>settings.archive.indexserver.indexrequestserver.class</b>: <br>
+     * Setting for which type of indexrequestserver to use.
+     * The default is: 
+     * {@link dk.netarkivet.archive.indexserver.distribute.IndexRequestServer}
+     */
+    public static String INDEXREQUEST_SERVER_CLASS
+        = "settings.archive.indexserver.indexrequest.class";
+    
+    /**
+     * b>settings.archive.indexserver.lookfordataInAllBitarchiveReplicas</b>: <br>
+     * Setting for whether or not data not found in the default bitarchive replica
+     * shall be looked for in other bitarchive replicas.
+     * The default is false.
+     */
+    public static String INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS
+        = "settings.archive.indexserver.lookfordataInAllBitarchiveReplicas";
+    
+    /** settings.archive.indexserver.fileContainingJobsForTestindex. */
+    public static String JOBS_FOR_TESTINDEX 
+        = "settings.archive.indexserver.fileContainingJobsForTestindex";
+    
+    /** settings.archive.indexserver.optimizePartialIndex.
+     * default is false. 
+     */
+    public static String INDEXING_OPTIMIZE_PARTIALINDEX 
+        = "settings.archive.indexserver.optimizePartialIndex";
+
+    /** settings.archive.indexserver.optimizeIndex. 
+     * default is true. */
+    public static String INDEXING_OPTIMIZE_INDEX 
+        = "settings.archive.indexserver.optimizeIndex";
 }

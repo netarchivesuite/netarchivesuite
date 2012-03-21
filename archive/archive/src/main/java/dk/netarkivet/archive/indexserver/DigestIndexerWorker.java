@@ -54,10 +54,8 @@ public class DigestIndexerWorker implements Callable<Boolean> {
     private File cdxfile;
     /** The options for the indexing process. */
     private DigestOptions indexingOptions;
-    /** Was this process successfull. */
-    private boolean successfull = true;
-    /** Optimization when closing index. */
-    private boolean optimizeIndex = true;
+    /** Was this process successful. */
+    private boolean successful = true;
         
     /**
      * Constructor for the DigestIndexerWorker.
@@ -95,19 +93,19 @@ public class DigestIndexerWorker implements Callable<Boolean> {
                 = CrawlLogIndexCache.createStandardIndexer(indexlocation);
             CrawlLogIndexCache.indexFile(jobId, crawlLog, cdxfile, localindexer,
                     indexingOptions);
-            localindexer.close(optimizeIndex);
+            localindexer.close(indexingOptions.getOptimizeIndex());
 
             log.info("Completed subindexing task of data from job "
-                    + this.jobId + " w/ " + localindexer.getIndex().docCount()
+                    + this.jobId + " w/ " + localindexer.getIndex().numDocs()
                     + " index-entries)");
         } catch (IOException e) {
-            successfull = false;
+            successful = false;
             log.warn("Indexing for job w/ id " + jobId + " failed.", e);
         } catch (IOFailure e) {
-            successfull = false;
+            successful = false;
             log.warn("Indexing for job w/ id " + jobId + " failed.", e); 
         } 
-        return successfull;
+        return successful;
  
     }
 }

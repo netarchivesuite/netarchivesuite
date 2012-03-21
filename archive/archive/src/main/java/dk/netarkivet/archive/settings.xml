@@ -94,6 +94,13 @@
         	<requestdir>requests</requestdir>
         	<checkinterval>30000</checkinterval>
         	<indexingtimeout>172800000</indexingtimeout>
+        	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
+        	<indexrequestserver>
+        		<class>dk.netarkivet.archive.indexserver.distribute.IndexRequestServer</class>
+        	</indexrequestserver>	
+        	<fileContainingJobsForTestindex></fileContainingJobsForTestindex>
+        	<optimizePartialIndex>false</optimizePartialIndex>
+        	<optimizeIndex>true</optimizeIndex>
         </indexserver>
     </archive>
 </settings>
