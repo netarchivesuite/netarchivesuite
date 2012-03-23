@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -63,6 +64,10 @@ public class ProcessUtils {
     public static int runProcess(String[] environment,
             String... programAndArgs) {
         try {
+            log.debug("Running external program: " + StringUtils.conjoin(" ", 
+                    programAndArgs) + " with environment " 
+                    + StringUtils.conjoin(" ", environment));
+
             Process p = Runtime.getRuntime().exec(programAndArgs, environment);
             discardProcessOutput(p.getInputStream());
             discardProcessOutput(p.getErrorStream());
@@ -291,4 +296,48 @@ public class ProcessUtils {
             return null;
         }
     }
+    
+    /**
+     * Runs a system process (Unix sort) to sort a file.
+     * @param inputFile the input file.
+     * @param outputFile the output file.
+     * @return the process exit code.
+     */
+    public static int runUnixSort(File inputFile, File outputFile) {
+        return runUnixSort(inputFile, outputFile, null, false);
+    }
+
+    /**
+     * Runs a system process (Unix sort) to sort a file.
+     * @param inputFile the input file.
+     * @param outputFile the output file.
+     * @param tempDir the directory where to store temporary files (null for default system temp).
+     * @param crawllogSorting Should we sort crawllog style ("-k 4b") or not
+     * @return the process exit code.
+     */
+    public static int runUnixSort(File inputFile, File outputFile, File tempDir, boolean crawllogSorting) {
+        String[] environment = new String[] {"LANG=C"};
+        LinkedList<String> cmdAndParams = new LinkedList<String>();
+        cmdAndParams.add("sort");
+        cmdAndParams.add(inputFile.getAbsolutePath());
+        if (crawllogSorting) {
+            // -k 4b means fourth field (from 1) ignoring leading blanks
+            cmdAndParams.add("-k");
+            cmdAndParams.add("4b");
+        }
+        // -o means output to (file)
+        cmdAndParams.add("-o");
+        cmdAndParams.add(outputFile.getAbsolutePath());
+
+        if (tempDir != null) {
+            // -T configures where to store temporary files
+            cmdAndParams.add("-T");
+            cmdAndParams.add(tempDir.getAbsolutePath());
+        }
+
+        return ProcessUtils.runProcess(environment,
+                (String[]) cmdAndParams.toArray(new String[cmdAndParams.size()]));
+    }
+
 }
+

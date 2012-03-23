@@ -53,6 +53,9 @@
         <indexClient>
             <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
         </indexClient>
+        <unixSort>
+            <useCommonTempDir>false</useCommonTempDir>
+        </unixSort>
         <cacheDir>cache</cacheDir>
         <processTimeout>5000</processTimeout>
         <notifications>
