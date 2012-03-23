@@ -522,4 +522,16 @@ public class CommonSettings {
      * batchjob through the GUI interface.
      */
     public static String BATCHJOBS_BASEDIR = "settings.common.batch.baseDir";
+    
+    /**
+     * <b>settings.common.unixSort.useCommonTempDir</b>: <br>
+     * When using the Unix sort command, by default it stores temporary files
+     * in the system temp dir, but if this setting is set to true, then it will be configured to
+     * use the common temp dir defined by common.settings.tempDir.
+     * By default the value is false (use system temp), which is the legacy behavior.
+     * This setting is part of the fix for Jira issue NAS-1995.
+     * @see #DIR_COMMONTEMPDIR
+     */
+    public static String UNIX_SORT_USE_COMMON_TEMP_DIR
+            = "settings.common.unixSort.useCommonTempDir";  
 }

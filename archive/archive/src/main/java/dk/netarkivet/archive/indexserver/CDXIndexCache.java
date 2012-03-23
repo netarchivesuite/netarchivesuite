@@ -124,9 +124,7 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
         File workFile = new File(file.getAbsolutePath() + WORK_SUFFIX);
         workFile.deleteOnExit();
         try {
-            ProcessUtils.runProcess(new String[] {"LANG=C"} ,
-                    "sort", file.getAbsolutePath(),
-                    "-o", workFile.getAbsolutePath());
+            ProcessUtils.runUnixSort(file, workFile);
             workFile.renameTo(file);
         } finally {
             FileUtils.remove(workFile);
