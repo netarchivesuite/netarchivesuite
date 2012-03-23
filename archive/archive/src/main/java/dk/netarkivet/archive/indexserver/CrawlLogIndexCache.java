@@ -189,11 +189,12 @@ public abstract class CrawlLogIndexCache extends
                 // handles the sorting of the logfiles and the generation
                 // of a lucene index for this crawllog and cdxfile.
                 count++;
+                String taskID = count + " out of " + datasetSize;
                 log.debug("Making subthread for indexing job " + jobId 
-                        + " - task " + count + " out of " + datasetSize);
+                        + " - task " + taskID);
                 Callable<Boolean> task = new DigestIndexerWorker(
                         localindexLocation, jobId, crawlLog,
-                        cachedCDXFile, indexingOptions);
+                        cachedCDXFile, indexingOptions, taskID);
                 Future<Boolean> result = executor.submit(task);
                 outstandingJobs.add(
                         new IndexingState(jobId, localindexLocation, result));
