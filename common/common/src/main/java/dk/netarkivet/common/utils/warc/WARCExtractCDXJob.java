@@ -1,7 +1,6 @@
 package dk.netarkivet.common.utils.warc;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +9,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCRecord;
+import org.jwat.common.ByteCountingPushBackInputStream;
+import org.jwat.common.ContentType;
+import org.jwat.common.HttpResponse;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -25,7 +27,12 @@ import dk.netarkivet.common.utils.MD5;
 */
 public class WARCExtractCDXJob extends WARCBatchJob {
 
-    /** An encoding for the standard included metadata fields without
+    /**
+	 * UID.
+	 */
+	private static final long serialVersionUID = 4559297377025672571L;
+
+	/** An encoding for the standard included metadata fields without
      * checksum.*/
     private static final String[] STD_FIELDS_EXCL_CHECKSUM = {
             "A", "e", "b", "m", "n", "g", "v"
@@ -104,8 +111,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         fieldsread.put("A", header.getUrl());
         fieldsread.put("e", header.getIp());
         fieldsread.put("b", header.getDate());
-        fieldsread.put("m", header.getMimetype());
-        fieldsread.put("n", Long.toString(sar.getHeader().getLength()));
+        fieldsread.put("n", Long.toString(header.getLength()));
 
         /* Note about offset:
         * The original dk.netarkivet.ArcUtils.ExtractCDX
@@ -119,14 +125,55 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         fieldsread.put("v", Long.toString(sar.getHeader().getOffset())); 
         fieldsread.put("g", sar.getHeader().getReaderIdentifier());
 
+        String mimeType = header.getMimetype();
+        String msgType;
+        ContentType contentType = ContentType.parseContentType(mimeType);
+        boolean bResponse = false;
+        if (contentType != null) {
+        	if ("application".equals(contentType.contentType)
+        			&& "http".equals(contentType.mediaType)) {
+        		msgType = contentType.getParameter("msgtype");
+        		if ("response".equals(msgType)) {
+        			bResponse = true;
+        		} else if ("request".equals(msgType)) {
+        		}
+        	}
+        	mimeType = contentType.toStringShort();
+        }
+        ByteCountingPushBackInputStream pbin = new ByteCountingPushBackInputStream(sar, 8192);
+        HttpResponse httpResponse = null;
+        if (bResponse) {
+            try {
+    			httpResponse = HttpResponse.processPayload(pbin, header.getLength(), null);
+    			if (httpResponse != null && httpResponse.contentType != null) {
+    				contentType = ContentType.parseContentType(httpResponse.contentType);
+    		        if (contentType != null) {
+    		        	mimeType = contentType.toStringShort();
+    		        }
+    			}
+    		} catch (IOException e) {
+                throw new IOFailure("Error reading WARC httpresponse header", e);
+    		}
+        }
+        fieldsread.put("m", mimeType);
+
         /* Only include checksum if necessary: */
         if (includeChecksum) {
             // To avoid taking all of the record into an array, we
             // slurp it directly from the ARCRecord.  This leaves the
             // sar in an inconsistent state, so it must not be used
             // afterwards.
-            InputStream instream = sar; //Note: ARCRecord extends InputStream
-            fieldsread.put("c", MD5.generateMD5(instream));
+            //InputStream instream = sar; //Note: ARCRecord extends InputStream
+            //fieldsread.put("c", MD5.generateMD5(instream));
+            fieldsread.put("c", MD5.generateMD5(pbin));
+        }
+
+        if (httpResponse != null) {
+        	try {
+				httpResponse.close();
+			} catch (IOException e) {
+                throw new IOFailure("Error closing WARC httpresponse header", e);
+			}
         }
 
         printFields(fieldsread, os);
@@ -145,7 +192,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
      * @param fieldsread A hashtable of values indexed by field letters
      * @param outstream The outputstream to write the values to 
      */
-    private void printFields(Map fieldsread, OutputStream outstream) {
+    private void printFields(Map<String, String> fieldsread, OutputStream outstream) {
         StringBuffer sb = new StringBuffer();
 
         for (int i = 0; i < fields.length; i++) {
@@ -161,7 +208,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
                     + sb + "' to batch outstream", e);
         }
     }
-    
+
     /**
      * @return Humanly readable description of this instance.
      */

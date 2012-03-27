@@ -35,11 +35,13 @@ import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 /**
  *
  *
- * Command line tool for extracting CDX information from given ARC files.
+ * Command line tool for extracting CDX information from given ARC/WARC files.
  *
  * Usage:
- * java dk.netarkivet.common.tools.ExtractCDX file1.arc [file2.arc ...]
+ * java dk.netarkivet.common.tools.ExtractCDX file1.ext [file2.ext ...]
  *      > myindex.cdx
+ *
+ * "ext" can be arc, arc.gz, warc or warc.gz
  *
  * Note: Does not depend on logging - communicates failures on stderr.
  */
@@ -52,7 +54,7 @@ public class ExtractCDX {
     public static void main(String[] argv) {
         if (argv.length == 0) {
             System.err.println("Missing parameter: "
-                    + "Must supply an ARC file to be indexed");
+                    + "Must supply one or more ARC/WARC file(s) to be indexed");
             dieWithUsage();
         }
         List<File> arcFiles = new ArrayList<File>();
@@ -67,17 +69,17 @@ public class ExtractCDX {
 
     /**
      * Verifies that the filename (absolute path) points to
-     * an existing file and that it is an arc file.
+     * an existing file and that it is an arc or warc file.
      * @param filename The filename to verify.
-     * @return The arc file, as a File.
+     * @return The arc or warc file, as a File.
      */
     private static File toArcFile(String filename) {
         File f;
         try {
             f = FileUtils.makeValidFileFromExisting(filename).getAbsoluteFile();
-            if (!FileUtils.ARCS_FILTER.accept(f.getParentFile(), f.getName())) {
+            if (!FileUtils.WARCS_ARCS_FILTER.accept(f.getParentFile(), f.getName())) {
                 dieWithError("Could not accept " + filename
-                        + ": was not an arc file");
+                        + ": was not an arc or warc file");
             }
             return f;
         } catch (IOFailure e) {

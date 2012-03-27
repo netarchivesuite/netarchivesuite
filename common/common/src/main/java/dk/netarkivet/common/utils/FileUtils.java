@@ -68,6 +68,9 @@ public class FileUtils {
     /** Extension used for gzipped ARC files, including separator . */
     public static final String ARC_GZIPPED_EXTENSION = ".arc.gz";
     
+    /** Extension used for WARC files, including separator . */
+    public static final String WARC_EXTENSION = ".warc";
+    
     /** Extension used for gzipped WARC files, including separator . */
     public static final String WARC_GZIPPED_EXTENSION = ".warc.gz";
     
@@ -92,6 +95,20 @@ public class FileUtils {
      * file.WARC.open */
     public static final String WARC_PATTERN = "(?i)\\.warc(\\.gz)?$";
     
+    /** Pattern matching open WARC files, including separator .
+     * Note: (?i) means case insensitive, (\\.gz)? means .gz is optionally
+     * matched, and $ means matches end-of-line. Thus this pattern will match
+     * file.warc.gz.open, file.WARC.open, file.warc.GZ.OpEn, but not
+     * file.wARC.open.txt */
+    public static final String OPEN_WARC_PATTERN = "(?i)\\.warc(\\.gz)?\\.open$";
+
+    /** Pattern matching WARC and ARC files, including separator.
+     * Note: (?i) means case insensitive, (\\.gz)? means .gz is optionally
+     * matched, and $ means matches end-of-line. Thus this pattern will match
+     * file.warc.gz, file.WARC, file.WaRc.GZ, file.arc.gz, file.ARC, 
+     * file.aRc.GZ but not file.WARC.open or file.ARC.open */
+    public static final String WARC_ARC_PATTERN = "(?i)\\.(w)?arc(\\.gz)?$";
+
     /** The logger for this class. */
     public static final Log log =
             LogFactory.getLog(FileUtils.class.getName());
@@ -107,7 +124,7 @@ public class FileUtils {
                 }
             };
 
-    /** A filter that matches files left open by a crashed Heritrix process.
+    /** A filter that matches arcfiles left open by a crashed Heritrix process.
      * Don't work on these files while Heritrix is still working on them.
      */
     public static final FilenameFilter OPEN_ARCS_FILTER =
@@ -116,6 +133,16 @@ public class FileUtils {
                     return name.matches(".*" + OPEN_ARC_PATTERN);
                 }
             };
+
+    /** A filter that matches warcfiles left open by a crashed Heritrix process.
+     * Don't work on these files while Heritrix is still working on them.
+     */
+    public static final FilenameFilter OPEN_WARCS_FILTER =
+    		new FilenameFilter() {
+    			public boolean accept(File dir, String name) {
+    				return name.matches(".*" + OPEN_WARC_PATTERN);
+    			}
+    };
 
     /**
      * A filter that matches arc files, that is any file that ends on .arc or
@@ -135,7 +162,17 @@ public class FileUtils {
         public boolean accept(File directory, String filename) {
             return filename.toLowerCase().matches(".*" + WARC_PATTERN);
         }
-    };      
+    };
+            
+    /**
+     * A filter that matches warc and arc files, that is any file that ends 
+     * on .warc, .warc.gz, .arc or .arc.gz in any case.
+     */
+    public static final FilenameFilter WARCS_ARCS_FILTER = new FilenameFilter() {
+        public boolean accept(File directory, String filename) {
+            return filename.toLowerCase().matches(".*" + WARC_ARC_PATTERN);
+        }
+    };
             
     /** How many times we will retry making a unique directory name. */
     private static final int MAX_RETRIES = 10;

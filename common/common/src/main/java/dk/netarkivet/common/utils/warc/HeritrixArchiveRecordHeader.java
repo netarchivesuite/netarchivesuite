@@ -17,10 +17,11 @@ public class HeritrixArchiveRecordHeader {
 
 	private Map<String, Object> headerFields = new HashMap<String, Object>();
 
+	@SuppressWarnings("unchecked")
 	public HeritrixArchiveRecordHeader(ArchiveRecord record) {
 		this.record = record;
 		header = record.getHeader();
-        Map<String, Object> heritrixHeaderFields = header.getHeaderFields();
+        Map<String, Object> heritrixHeaderFields = (Map<String, Object>)header.getHeaderFields();
         Iterator<Map.Entry<String, Object>> iter = heritrixHeaderFields.entrySet().iterator();
         Map.Entry<String, Object> entry;
         while (iter.hasNext()) {

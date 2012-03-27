@@ -621,6 +621,7 @@ public class HarvestDocumentation {
         return writeHarvestDetails(jobID, harvestID, crawlDir, aw,
                                    getHeritrixVersion(hf.getOrderXmlFile()));
     }
+
     /**
      * @param orderXml the file containing the heritrix order.xml 
      * @return the Heritrix version in the order.xml. 

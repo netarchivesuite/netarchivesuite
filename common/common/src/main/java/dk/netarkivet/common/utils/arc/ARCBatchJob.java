@@ -54,7 +54,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
     protected int noOfRecordsProcessed = 0;
 
     /**
-     * Initialize the job before runnning.
+     * Initialize the job before running.
      * This is called before the processRecord() calls start coming.
      * @param os The OutputStream to which output data is written
      */
@@ -75,7 +75,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
     public abstract void finish(OutputStream os);
 
     /**
-     * returns a BatchFilter object which restricts the set of arcrecords in the
+     * returns a BatchFilter object which restricts the set of arc records in the
      * archive on which this batch-job is performed. The default value is
      * a neutral filter which allows all records.
      *

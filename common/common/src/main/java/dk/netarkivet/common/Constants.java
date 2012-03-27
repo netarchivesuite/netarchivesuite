@@ -98,6 +98,8 @@ public final class Constants {
     public static final long IO_CHUNK_SIZE = 65536L;
     /** The directory name of the heritrix directory with arcfiles. */
     public static final String ARCDIRECTORY_NAME = "arcs";
+    /** The directory name of the heritrix directory with warcfiles. */
+    public static final String WARCDIRECTORY_NAME = "warcs";
     /**
      * How big a buffer we use for read()/write() operations on InputStream/
      * OutputStream.

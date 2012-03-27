@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -231,8 +232,6 @@ public class IngestableFiles {
                     getMetadataARCFileName(Long.toString(jobId)));
     }
 
-
-
     /** Get a list of all ARC files that should get ingested.  Any open files
      * should be closed with closeOpenFiles first.
      *
@@ -246,9 +245,22 @@ public class IngestableFiles {
         return Arrays.asList(arcsdir.listFiles(FileUtils.ARCS_FILTER));
     }
 
-    /** Close any ".open" files left by a crashed Heritrix.  ARC files ending
-     * in .open indicate that Heritrix is still writing to them. If Heritrix
-     * has died, we can just rename them before we upload.
+    /** Get a list of all WARC files that should get ingested.  Any open files
+     * should be closed with closeOpenFiles first.
+     *
+     * @return The WARC files that are ready to get ingested.
+     */
+    public List<File> getWarcFiles() {
+        File warcsdir = new File(crawlDir, Constants.WARCDIRECTORY_NAME);
+        if (!warcsdir.isDirectory()) {
+            throw new IOFailure(warcsdir.getPath() + " is not a directory");
+        }
+        return Arrays.asList(warcsdir.listFiles(FileUtils.WARCS_FILTER));
+    }
+
+    /** Close any ".open" files left by a crashed Heritrix.  ARC and/or WARC
+     * files ending in .open indicate that Heritrix is still writing to them.
+     * If Heritrix has died, we can just rename them before we upload.
      * This must not be done while harvesting is still in progress.
      *
      * @param waitSeconds How many seconds to wait before closing files.  This
@@ -263,8 +275,21 @@ public class IngestableFiles {
             log.debug("Thread woken prematurely from sleep.", e);
         }
 
-        File arcsdir = new File(crawlDir, Constants.ARCDIRECTORY_NAME);
-        File[] files = arcsdir.listFiles(FileUtils.OPEN_ARCS_FILTER);
+        closeOpenFiles(Constants.ARCDIRECTORY_NAME, FileUtils.OPEN_ARCS_FILTER);
+        closeOpenFiles(Constants.WARCDIRECTORY_NAME, FileUtils.OPEN_WARCS_FILTER);
+    }
+
+    /**
+     * Given an archive sub-directory name and a filter to match against this
+     * method tries to rename the matched files. Files that can not be renamed
+     * generate a log message. The filter should always match files that end
+     * with ".open" as a minimum.
+     * @param archiveDirName archive directory name, currently "arc" or "warc"
+     * @param filter filename filter used to select ".open" files to rename
+     */
+    protected void closeOpenFiles(String archiveDirName, FilenameFilter filter) {
+        File arcsdir = new File(crawlDir, archiveDirName);
+        File[] files = arcsdir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
                 final String fname = file.getAbsolutePath();

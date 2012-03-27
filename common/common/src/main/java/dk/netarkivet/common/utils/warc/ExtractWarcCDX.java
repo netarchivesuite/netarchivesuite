@@ -39,9 +39,11 @@ public class ExtractWarcCDX {
            File f = toArcFile(arg);
             arcFiles.add(f);
         }
+        long startCtm = System.currentTimeMillis();
         File[] arcFileArray = arcFiles.toArray(new File[]{});
         BatchLocalFiles batchRunner = new BatchLocalFiles(arcFileArray);
         batchRunner.run(new WARCExtractCDXJob(), System.out);
+        System.out.println(System.currentTimeMillis() - startCtm);
     }
 
     /**
