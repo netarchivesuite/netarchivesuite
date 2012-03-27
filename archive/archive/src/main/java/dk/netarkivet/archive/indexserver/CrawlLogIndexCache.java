@@ -100,7 +100,8 @@ public abstract class CrawlLogIndexCache extends
      */
     protected Map<Long, File> prepareCombine(Set<Long> ids) {
         log.info("Starting to generate " + getCacheDir().getName()
-                 + " for the " + ids.size() + " jobs: " + ids);
+                 + " for the " + ids.size() + " jobs: " + ids + "(thread = "
+                + Thread.currentThread().getName() + ")");
         Map<Long, File> returnMap = super.prepareCombine(ids);
         log.info("Retrieved data to combine. Now checking for missing data");
         Set<Long> missing = new HashSet<Long>();

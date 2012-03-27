@@ -386,4 +386,14 @@ public class ArchiveSettings {
      */
     public static String INDEXSERVER_INDEXING_LISTENING_INTERVAL 
         = "settings.archive.indexserver.listeningcheckinterval";
+    
+    /**
+     * <b>settings.archive.indexserver.lookfordataInAllBitarchiveReplicas</b>: <br>
+     * Setting for whether or not data not found in the default bitarchive replica
+     * shall be looked for in other bitarchive replicas.
+     * The default is false.
+     */
+    public static String INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS
+        = "settings.archive.indexserver.lookfordataInAllBitarchiveReplicas";
+    
 }
