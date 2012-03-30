@@ -24,10 +24,12 @@
  */
 package dk.netarkivet.common.distribute;
 
+import java.io.Serializable;
+
 /** Container for the RemoteFile settings used by one app, 
  * so they can be used by another app. 
  */
-public class RemoteFileSettings {
+public class RemoteFileSettings implements Serializable {
 
     /** server host name. */
     private String serverName;

@@ -242,15 +242,16 @@ public class IndexRequestMessageTester extends TestCase {
         }
     }
 
-    /** Test serializability
+    /** Test serializability.
      *
      * @throws IOException
      * @throws ClassNotFoundException
      */
     public void testSerializability()
             throws IOException, ClassNotFoundException {
+        RemoteFileSettings ftpSettings = new RemoteFileSettings("localhost", 25, "test", "test123");
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, ftpSettings);
         IndexRequestMessage irMsg2 = Serial.serial(irMsg);
         assertEquals("Must deserialize to same state",
                      relevantState(irMsg), relevantState(irMsg2));
@@ -266,7 +267,7 @@ public class IndexRequestMessageTester extends TestCase {
                      relevantState(irMsg), relevantState(irMsg2));
         //Try with non-serializable sets
         irMsg = new IndexRequestMessage(RequestType.CDX,
-                                        new HashMap<Long,Long>().keySet(), null);
+                                        new HashMap<Long,Long>().keySet(), ftpSettings);
         irMsg.setFoundJobs(new HashMap<Long,Long>().keySet());
         irMsg2 = Serial.serial(irMsg);
         assertEquals("Must deserialize to same state",
