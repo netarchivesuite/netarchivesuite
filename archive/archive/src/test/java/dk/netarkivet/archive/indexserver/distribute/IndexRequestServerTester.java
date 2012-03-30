@@ -114,7 +114,7 @@ public class IndexRequestServerTester extends TestCase {
         }
 
         IndexRequestMessage irMsg = new IndexRequestMessage(
-                RequestType.CDX, JOB_SET);
+                RequestType.CDX, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irMsg, "irMsg1");
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnectionMockupMQ conn
@@ -138,7 +138,7 @@ public class IndexRequestServerTester extends TestCase {
                      irMsg.getID(), msg.getID());
         assertFalse("Should not be OK", msg.isOk());
 
-        irMsg = new IndexRequestMessage(RequestType.DEDUP_CRAWL_LOG, JOB_SET);
+        irMsg = new IndexRequestMessage(RequestType.DEDUP_CRAWL_LOG, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irMsg, "irMsg2");
 
         server.visit(irMsg);
@@ -157,7 +157,7 @@ public class IndexRequestServerTester extends TestCase {
                      irMsg.getID(), msg.getID());
         assertFalse("Should not be OK", msg.isOk());
 
-        irMsg = new IndexRequestMessage(RequestType.DEDUP_CRAWL_LOG, JOB_SET);
+        irMsg = new IndexRequestMessage(RequestType.DEDUP_CRAWL_LOG, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irMsg, "irMsg3");
 
     }
@@ -184,7 +184,7 @@ public class IndexRequestServerTester extends TestCase {
         server.start();
 
         //A message to visit with
-        IndexRequestMessage irm = new IndexRequestMessage(t, JOB_SET);
+        IndexRequestMessage irm = new IndexRequestMessage(t, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irm, "irm-1");
 
         //Listen for replies
@@ -266,7 +266,7 @@ public class IndexRequestServerTester extends TestCase {
 
         //Send OK message
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
-                                                          JOB_SET);
+                                                          JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irm, "ID-0");
         JMSConnectionMockupMQ conn
                 = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
@@ -279,7 +279,7 @@ public class IndexRequestServerTester extends TestCase {
         assertHandlerCalledWithParameter(mmfbc);
 
         //Send not-OK message
-        irm = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+        irm = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irm, "ID-1");
         irm.setNotOk("Not OK");
         conn.send(irm);
@@ -320,7 +320,7 @@ public class IndexRequestServerTester extends TestCase {
 
         //A message to visit with
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
-                                                          JOB_SET);
+                                                          JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irm, "dummyID");
         //Execute visit
         server.visit(irm);
@@ -339,7 +339,7 @@ public class IndexRequestServerTester extends TestCase {
         server.setHandler(RequestType.CDX, mjic2);
 
         //Execute new visit
-        irm = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+        irm = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irm, "dummyID");
         server.visit(irm);
         conn.waitForConcurrentTasksToFinish();
@@ -364,10 +364,10 @@ public class IndexRequestServerTester extends TestCase {
 
         //A message to visit with
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
-                                                          JOB_SET);
+                                                          JOB_SET, null);
         //Another message to visit with
         IndexRequestMessage irm2 = new IndexRequestMessage(RequestType.CDX,
-                                                           JOB_SET2);
+                                                           JOB_SET2, null);
 
         //Listen for replies
         GenericMessageListener listener = new GenericMessageListener();

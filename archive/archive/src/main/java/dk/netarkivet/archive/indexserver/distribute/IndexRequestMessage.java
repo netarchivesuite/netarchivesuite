@@ -107,9 +107,13 @@ public class IndexRequestMessage extends ArchiveMessage {
      *
      * @param requestType Type of index requested.
      * @param jobSet Type of index requested.
+     * @param ftpconnectionInfo FTP connection parameters to be used (if null, 
+     * we use the local settings)
+     * 
      * @throws ArgumentNotValid if any argument is null.
      */
-    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet) 
+    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, 
+            RemoteFileSettings ftpconnectionInfo) 
             throws ArgumentNotValid {
         super(Channels.getTheIndexServer(), Channels.getThisIndexClient());
         ArgumentNotValid.checkNotNull(requestType, "RequestType requestType");
@@ -128,12 +132,10 @@ public class IndexRequestMessage extends ArchiveMessage {
      * @param replyTo The channel to send the reply to.
      * @param returnIndex If true, include the index in the reply.
      * @param harvestId The harvestId needing this index for its jobs
-     * @param ftpconnectionInfo FTP connection parameters to be used (if null, 
-     * we use the local settings). 
      */
     public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, 
             ChannelID replyTo,
-            boolean returnIndex, Long harvestId, RemoteFileSettings ftpconnectionInfo) {
+            boolean returnIndex, Long harvestId)  {
        super(Channels.getTheIndexServer(), replyTo);
        ArgumentNotValid.checkNotNull(requestType, "RequestType requestType");
        ArgumentNotValid.checkNotNull(jobSet, "Set<Long> jobSet");
@@ -142,9 +144,11 @@ public class IndexRequestMessage extends ArchiveMessage {
        this.requestType = requestType;
        this.shouldReturnIndex = returnIndex;
        this.harvestId = harvestId;
-       this.optionalConnectionSettings = ftpconnectionInfo;
     }
 
+    /**
+     * @return the remoteFilesettings  
+     */
     public RemoteFileSettings getRemoteFileSettings() {
         return this.optionalConnectionSettings;
     }

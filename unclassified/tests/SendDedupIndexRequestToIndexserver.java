@@ -73,7 +73,7 @@ public class SendDedupIndexRequestToIndexserver {
 
         public static void sendDedupRequestIndexMessage(Set<Long> jobSet) {
             IndexRequestMessage irm = new IndexRequestMessage(
-                    RequestType.DEDUP_CRAWL_LOG, jobSet);
+                    RequestType.DEDUP_CRAWL_LOG, jobSet, null);
             JMSConnection con = JMSConnectionFactory.getInstance();
             con.send(irm);
             con.cleanup();

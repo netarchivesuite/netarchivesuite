@@ -185,9 +185,17 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         log.info("Requesting an index of type '" + this.requestType
                  + "' for the jobs [" + StringUtils.conjoin(",", jobSet)
                  + "]");
+        // use locally defined ftp-server, if required
+        RemoteFileSettings ftpSettings = null;
+        
+        if (useLocalFtpserver()) {
+            log.debug("Requesting the use of the FTPserver defined locally.");
+            ftpSettings = FTPRemoteFile.getRemoteFileSettings();
+        }
+        
         //Send request to server
         IndexRequestMessage irMsg = new IndexRequestMessage(requestType,
-                                                            jobSet);
+                                                            jobSet, ftpSettings);
         log.debug("Waiting " + TimeUtils.readableTimeInterval(
                 getIndexTimeout()) + " for the index");
         NetarkivetMessage msg = getSynchronizer().sendAndWaitForOneReply(
@@ -402,19 +410,25 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         log.info("Requesting an index of type '" + this.requestType
                 + "' for the jobs [" + StringUtils.conjoin(",", jobSet)
                 + "]");
+        // As we don't want the index to be returned to us now,
+        // we don't need to check whether or we want to use the localftpserver
         RemoteFileSettings settings = null;
         
         if (useLocalFtpserver()) {
+            log.debug("Requesting the use of the FTPserver defined locally.");
             settings = FTPRemoteFile.getRemoteFileSettings();
+            if (settings == null) {
+                log.warn("The remoteFileSettings should not be null now");
+            }
         }
-     
+        
         // Send request to server but ask for it not to be returned
         // Ask that a message is sent to the scheduling queue when 
         // index is finished
         
         IndexRequestMessage irMsg = new IndexRequestMessage(
                 requestType, jobSet, Channels.getTheSched(),
-                false, harvestId, settings);
+                false, harvestId);
         
         JMSConnectionFactory.getInstance().send(irMsg);
     }

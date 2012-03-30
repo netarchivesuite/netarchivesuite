@@ -226,7 +226,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
      */
     public final void testVisitIndexRequestMessage() {
         try {
-            tmh.visit(new IndexRequestMessage(RequestType.CDX, new HashSet<Long>()));
+            tmh.visit(new IndexRequestMessage(RequestType.CDX, new HashSet<Long>(), null));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected

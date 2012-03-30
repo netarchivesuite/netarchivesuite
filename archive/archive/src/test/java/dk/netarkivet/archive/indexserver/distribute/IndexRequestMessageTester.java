@@ -77,21 +77,21 @@ public class IndexRequestMessageTester extends TestCase {
      */
     public void testIndexRequestMessage() throws Exception {
         try {
-            new IndexRequestMessage(null, JOB_SET);
+            new IndexRequestMessage(null, JOB_SET, null);
             fail("Should throw argument not valid");
         } catch (ArgumentNotValid e) {
             assertTrue("Should be right exception",
                        e.getMessage().contains("requestType"));
         }
         try {
-            new IndexRequestMessage(RequestType.CDX, null);
+            new IndexRequestMessage(RequestType.CDX, null, null);
             fail("Should throw argument not valid");
         } catch (ArgumentNotValid e) {
             assertTrue("Should be right exception",
                        e.getMessage().contains("jobSet"));
         }
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         assertEquals("Should preserve jobs", JOB_SET,
                      irMsg.getRequestedJobs());
         assertEquals("Should preserve type", RequestType.CDX,
@@ -111,7 +111,7 @@ public class IndexRequestMessageTester extends TestCase {
      */
     public void testAccept() throws Exception {
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
 
         IndexRequestMessageHandler v
                 = new IndexRequestMessageHandler();
@@ -124,7 +124,7 @@ public class IndexRequestMessageTester extends TestCase {
      */
     public void testSetFoundJobs() throws Exception {
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         try {
             irMsg.setFoundJobs(null);
             fail("Should throw ArgumentNotValid");
@@ -142,7 +142,7 @@ public class IndexRequestMessageTester extends TestCase {
      */
     public void testSetResultFiles() throws Exception {
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         try {
             irMsg.setResultFiles(null);
             fail("Should throw ArgumentNotValid");
@@ -182,7 +182,7 @@ public class IndexRequestMessageTester extends TestCase {
 
     public void testSetResultFile() throws IOException {
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         try {
             irMsg.setResultFile(null);
             fail("Should throw ArgumentNotValid");
@@ -231,7 +231,7 @@ public class IndexRequestMessageTester extends TestCase {
     public void testSerializability()
             throws IOException, ClassNotFoundException {
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         IndexRequestMessage irMsg2 = Serial.serial(irMsg);
         assertEquals("Must deserialize to same state",
                      relevantState(irMsg), relevantState(irMsg2));
@@ -247,7 +247,7 @@ public class IndexRequestMessageTester extends TestCase {
                      relevantState(irMsg), relevantState(irMsg2));
         //Try with non-serializable sets
         irMsg = new IndexRequestMessage(RequestType.CDX,
-                                        new HashMap<Long,Long>().keySet());
+                                        new HashMap<Long,Long>().keySet(), null);
         irMsg.setFoundJobs(new HashMap<Long,Long>().keySet());
         irMsg2 = Serial.serial(irMsg);
         assertEquals("Must deserialize to same state",
