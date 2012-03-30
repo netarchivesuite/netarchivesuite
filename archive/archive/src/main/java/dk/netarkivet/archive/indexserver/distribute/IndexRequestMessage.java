@@ -122,6 +122,7 @@ public class IndexRequestMessage extends ArchiveMessage {
         this.requestedJobs = new HashSet<Long>(jobSet);
         this.requestType = requestType;
         this.shouldReturnIndex = true;
+        this.optionalConnectionSettings = ftpconnectionInfo;
     }
     
     /**

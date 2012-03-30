@@ -37,6 +37,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.RemoteFileSettings;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
@@ -211,6 +212,24 @@ public class IndexRequestMessageTester extends TestCase {
             StringAsserts.assertStringContains("Should mention already set",
                     "already has result files", e.getMessage());
         }
+    }
+    
+    /** 
+     * Test NAS-2017.
+     * Test that included FTPServer information can be retrieved again.
+     */
+    public void testMessageWithNonNullRemoteFileSettings() {
+        
+        RemoteFileSettings ftpSettings = new RemoteFileSettings("localhost", 25, "test", "test123");
+        
+        IndexRequestMessage irMsg
+            = new IndexRequestMessage(RequestType.CDX, JOB_SET, ftpSettings);
+        RemoteFileSettings ftpSettingsCopy = irMsg.getRemoteFileSettings();
+        
+        assertTrue(ftpSettings.getServerName().equals(ftpSettingsCopy.getServerName()));
+        assertTrue(ftpSettings.getServerPort() == ftpSettingsCopy.getServerPort());
+        assertTrue(ftpSettings.getUserName().equals(ftpSettingsCopy.getUserName()));
+        assertTrue(ftpSettings.getUserPassword().equals(ftpSettingsCopy.getUserPassword()));
     }
 
     private static class IndexRequestMessageHandler

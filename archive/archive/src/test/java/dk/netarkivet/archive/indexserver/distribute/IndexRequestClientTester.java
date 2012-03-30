@@ -102,7 +102,7 @@ public class IndexRequestClientTester extends TestCase {
                 IndexRequestClient.getInstance(t));
         }
         try {
-            IndexRequestClient.getInstance(null);
+            IndexRequestClient.getInstance(( RequestType) null);
             fail("Factory method should not accept null input");
         } catch (ArgumentNotValid e) {
             //Expected
