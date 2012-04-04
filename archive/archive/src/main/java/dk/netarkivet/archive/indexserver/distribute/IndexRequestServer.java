@@ -342,6 +342,10 @@ public final class IndexRequestServer extends ArchiveMessageHandler
                     packageResultFiles(irMsg, cacheFile);
                 }
             } else if (satisfactoryTresholdReached(foundIDs, jobIDs)) {
+                
+                // Make sure that the index of the data available is generated
+                Set<Long> theFoundIDs = handler.cache(foundIDs);
+             
                 // Make a copy of the index created, and give it the name of
                 // the index cache file wanted.
                 File cacheFileWanted = handler.getCacheFile(jobIDs);
