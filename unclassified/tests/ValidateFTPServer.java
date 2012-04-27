@@ -49,10 +49,10 @@ public class ValidateFTPServer {
         ftpPasswd = passwd;
         ftpPort = port;
         
-        Settings.set(FTPRemoteFile.FTP_SERVER_NAME, ftpHost);
-        Settings.set(FTPRemoteFile.FTP_SERVER_PORT, port + "");
-        Settings.set(FTPRemoteFile.FTP_USER_NAME, ftpUser);
-        Settings.set(FTPRemoteFile.FTP_USER_PASSWORD, ftpPasswd);
+        Settings.set(CommonSettings.FTP_SERVER_NAME, ftpHost);
+        Settings.set(CommonSettings.FTP_SERVER_PORT, port + "");
+        Settings.set(CommonSettings.FTP_USER_NAME, ftpUser);
+        Settings.set(CommonSettings.FTP_USER_PASSWORD, ftpPasswd);
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
         if (tmpDir.exists()) {
             FileUtils.removeRecursively(tmpDir);
@@ -384,10 +384,10 @@ public class ValidateFTPServer {
         //upload error to ftp server
         File temp = File.createTempFile("foo", "bar", tmpDir);
         FTPClient client = new FTPClient();
-        client.connect(Settings.get(FTPRemoteFile.FTP_SERVER_NAME), Integer.parseInt(
-                Settings.get(FTPRemoteFile.FTP_SERVER_PORT)));
-        client.login(Settings.get(FTPRemoteFile.FTP_USER_NAME),
-                     Settings.get(FTPRemoteFile.FTP_USER_PASSWORD));
+        client.connect(Settings.get(CommonSettings.FTP_SERVER_NAME), Integer.parseInt(
+                Settings.get(CommonSettings.FTP_SERVER_PORT)));
+        client.login(Settings.get(CommonSettings.FTP_USER_NAME),
+                     Settings.get(CommonSettings.FTP_USER_PASSWORD));
         Field field = FTPRemoteFile.class.getDeclaredField("ftpFileName");
         field.setAccessible(true);
         String filename = (String)field.get(rf);

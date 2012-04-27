@@ -35,6 +35,7 @@ National Library.
 <settings>
     <viewerproxy>
         <baseDir>viewerproxy</baseDir>
-	<tryLookupUriAsFtp>false</tryLookupUriAsFtp>
+        <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
+        <maxSizeInBrowser>100000000</maxSizeInBrowser>
     </viewerproxy>
 </settings>

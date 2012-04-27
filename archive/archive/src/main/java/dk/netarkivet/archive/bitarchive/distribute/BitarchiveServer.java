@@ -520,6 +520,9 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
             File foundFile = ba.getFile(msg.getArcfileName());
             // Only send an reply if the file was found
             if (foundFile != null) {
+                //Be Warned!! The following call does not do what you think it
+                //does. This actually creates the RemoteFile object, uploading
+                //the file to the ftp server as it does so.
                 msg.setFile(foundFile);
                 log.info("Sending reply: " + msg.toString());
                 con.reply(msg);

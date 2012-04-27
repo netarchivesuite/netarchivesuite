@@ -29,12 +29,24 @@ import java.io.File;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SettingsFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.archive.io.ArchiveRecord;
 
 /**
  * Factory for creating remote files.
  */
 public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
+    /**
+        * A named logger for this class.
+        */
+       private static final transient Log log =
+               LogFactory.getLog(RemoteFileFactory.class.getName());
+
+
     /**
      * Create a remote file that handles the transport of the remote file data.
      * This method is used by the sender to prepare the transport over JMS.
@@ -67,7 +79,40 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
                 CommonSettings.REMOTE_FILE_CLASS, file, useChecksums, 
                 fileDeletable, multipleDownloads);
     }
-    
+
+    /**
+     * Get an instance connected to an ArchiveRecord. Records are not deletable
+     * so theree is no concept of a "movefile" instance.
+     * @param record
+     * @return  the file to ne copied.
+     */
+    public static RemoteFile getExtendedInstance(ArchiveRecord record) {
+        return  SettingsFactory.getInstance(
+                CommonSettings.REMOTE_FILE_CLASS, record);
+    }
+
+    /**
+     * Returns true iff the defined RemoteFile class has a factory method with
+     * signature public static RemoteFile getInstance(ArchiveRecord record)
+     * @return true if using an extended remote file.
+     */
+    public static boolean isExtendedRemoteFile() {
+        String remoteFileClass = Settings.get(CommonSettings.REMOTE_FILE_CLASS);
+        try {
+            Class theClass = Class.forName(remoteFileClass);
+            try {
+                theClass.getMethod("getInstance", ArchiveRecord.class);
+                return true;
+            } catch (NoSuchMethodException e) {
+                return false;
+            }
+        } catch (ClassNotFoundException e) {
+            log.error("Unknown RemoteFile class :" + remoteFileClass);
+            throw new ArgumentNotValid("Unknown RemoteFile class :" +
+                                       remoteFileClass);
+        }
+    }
+
 
     /** Same as getInstance(file, false, true, false).
      * @param file The file to move to another computer.

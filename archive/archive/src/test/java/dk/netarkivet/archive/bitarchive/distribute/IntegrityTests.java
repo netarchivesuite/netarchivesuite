@@ -143,12 +143,12 @@ public class IntegrityTests extends TestCase {
 
         /** Read ftp-related settings from settings.xml. */
         final String ftpServerName = Settings.get(
-                FTPRemoteFile.FTP_SERVER_NAME);
+                CommonSettings.FTP_SERVER_NAME);
         final int ftpServerPort = Integer.parseInt(Settings.get(
-                FTPRemoteFile.FTP_SERVER_PORT));
-        final String ftpUserName = Settings.get(FTPRemoteFile.FTP_USER_NAME);
+                CommonSettings.FTP_SERVER_PORT));
+        final String ftpUserName = Settings.get(CommonSettings.FTP_USER_NAME);
         final String ftpUserPassword = Settings.get(
-                FTPRemoteFile.FTP_USER_PASSWORD);
+                CommonSettings.FTP_USER_PASSWORD);
 
         /** Connect to test ftp-server. */
         theFTPClient = new FTPClient();

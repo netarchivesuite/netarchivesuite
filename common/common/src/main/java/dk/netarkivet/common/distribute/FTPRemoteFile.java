@@ -43,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.io.CopyStreamException;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -109,56 +110,6 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** 
-     * <b>settings.common.remoteFile.serverName</b>: <br>
-     * The setting for the FTP-server used. */
-    public static String FTP_SERVER_NAME
-            = "settings.common.remoteFile.serverName";
-    
-    /** 
-     * <b>settings.common.remoteFile.serverPort</b>: <br>
-     * The setting for the FTP-server port used. */
-    public static String FTP_SERVER_PORT
-            = "settings.common.remoteFile.serverPort";
-
-    /** 
-     * <b>settings.common.remoteFile.userName</b>: <br>
-     * The setting for the FTP username. */
-    public static String FTP_USER_NAME
-            = "settings.common.remoteFile.userName";
-
-    /** 
-     * <b>settings.common.remoteFile.userPassword</b>: <br>
-     * The setting for the FTP password. * */
-    public static String FTP_USER_PASSWORD
-            = "settings.common.remoteFile.userPassword";
-    
-    /**
-     * <b>settings.common.remoteFile.retries</b>: <br>
-     * The setting for the number of times FTPRemoteFile should try before
-     * giving up a copyTo operation or logOn operation. */
-    public static String FTP_RETRIES_SETTINGS
-            = "settings.common.remoteFile.retries";
-
-    /** 
-     * <b>settings.common.remoteFile.datatimeout</b>: <br>
-     * The setting for the FTP data timeout in seconds.
-     * The default value is 600 (10 minutes). */
-    public static String FTP_DATATIMEOUT_SETTINGS
-            = "settings.common.remoteFile.datatimeout";
-    
-    /**
-     * How many times we will retry upload, download, and logon.
-     */
-    private static final transient int FTP_RETRIES
-            = Settings.getInt(FTP_RETRIES_SETTINGS);
-    
-    /**
-     * How large a data timeout on our FTP connections.
-     */
-    private static final transient int FTP_DATATIMEOUT
-            = Settings.getInt(FTP_DATATIMEOUT_SETTINGS);
-    
     /**
      * Private constructor used by getInstance() static-method Tries to generate
      * unique name on ftp-server.
@@ -188,10 +139,10 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             this.ftpUserPassword = connectionParams.getUserPassword();
         } else {
             // use the connection parameters specified by the settings.
-            this.ftpServerName = Settings.get(FTP_SERVER_NAME);
-            this.ftpServerPort = Settings.getInt(FTP_SERVER_PORT);
-            this.ftpUserName = Settings.get(FTP_USER_NAME);
-            this.ftpUserPassword = Settings.get(FTP_USER_PASSWORD);    
+            this.ftpServerName = Settings.get(CommonSettings.FTP_SERVER_NAME);
+            this.ftpServerPort = Settings.getInt(CommonSettings.FTP_SERVER_PORT);
+            this.ftpUserName = Settings.get(CommonSettings.FTP_USER_NAME);
+            this.ftpUserPassword = Settings.get(CommonSettings.FTP_USER_PASSWORD);
         }
         if (filesize == 0) {
             try {
@@ -254,20 +205,20 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 }
                 boolean success = false;
                 int tried = 0;
-                while (!success && tried < FTP_RETRIES) {
+                while (!success && tried < CommonSettings.FTP_RETRIES) {
                     tried++;
                     try {
                         success = currentFTPClient.storeFile(ftpFileName, in);
                         if (!success) {
                             log.debug("FTP store failed attempt '" + tried
-                                      + "' of " + FTP_RETRIES
+                                      + "' of " + CommonSettings.FTP_RETRIES
                                       + ": " + getFtpErrorMessage());
                         }
                     } catch (IOException e) {
                         String message = "Write operation to '"
                                                + ftpFileName
                                                + "' failed on attempt " + tried
-                                               + " of " + FTP_RETRIES;
+                                               + " of " + CommonSettings.FTP_RETRIES;
                         if (e instanceof CopyStreamException) {
                             CopyStreamException realException 
                                 = (CopyStreamException) e;
@@ -318,6 +269,8 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             }
         }
     }
+
+
 
     /**
      * Create a remote file that handles the transport of the remote file data.
@@ -523,11 +476,11 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
 
         int tries = 0;
         boolean logOnSuccessful = false;
-        while (!logOnSuccessful && tries < FTP_RETRIES) {
+        while (!logOnSuccessful && tries < CommonSettings.FTP_RETRIES) {
             tries++;
             try {
                 currentFTPClient.connect(ftpServerName, ftpServerPort);
-                currentFTPClient.setDataTimeout(FTP_DATATIMEOUT);
+                currentFTPClient.setDataTimeout(CommonSettings.FTP_DATATIMEOUT);
                 if (!currentFTPClient.login(ftpUserName, ftpUserPassword)) {
                     final String message = "Could not log in [from host: "
                         + SystemUtils.getLocalHostName()
@@ -562,9 +515,9 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 final String msg = "Connect to " + ftpServerName
                 + " from host: "
                 + SystemUtils.getLocalHostName() + " failed";
-                if (tries < FTP_RETRIES) {
+                if (tries < CommonSettings.FTP_RETRIES) {
                     log.debug(msg + ". Attempt #" + tries + " of max "
-                            + FTP_RETRIES
+                            + CommonSettings.FTP_RETRIES
                             + ". Will sleep a while before trying to "
                             + "connect again. Exception: ", e);
                     TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE); 
@@ -635,15 +588,15 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      */
     @Override
     public int getNumberOfRetries() {
-        return FTP_RETRIES;
+        return CommonSettings.FTP_RETRIES;
     }
     
     public static RemoteFileSettings getRemoteFileSettings() {
         return new RemoteFileSettings(
-                Settings.get(FTP_SERVER_NAME),
-                Settings.getInt(FTP_SERVER_PORT),
-                Settings.get(FTP_USER_NAME), 
-                Settings.get(FTP_USER_PASSWORD));
+                Settings.get(CommonSettings.FTP_SERVER_NAME),
+                Settings.getInt(CommonSettings.FTP_SERVER_PORT),
+                Settings.get(CommonSettings.FTP_USER_NAME),
+                Settings.get(CommonSettings.FTP_USER_PASSWORD));
     }
 }
 

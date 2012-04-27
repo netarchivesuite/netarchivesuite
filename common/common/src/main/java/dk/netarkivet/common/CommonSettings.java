@@ -539,4 +539,46 @@ public class CommonSettings {
      * batchjob through the GUI interface.
      */
     public static String BATCHJOBS_BASEDIR = "settings.common.batch.baseDir";
+    /**
+     * <b>settings.common.remoteFile.serverName</b>: <br>
+     * The setting for the FTP-server used. */
+    public static String FTP_SERVER_NAME
+            = "settings.common.remoteFile.serverName";
+    /**
+     * <b>settings.common.remoteFile.serverPort</b>: <br>
+     * The setting for the FTP-server port used. */
+    public static String FTP_SERVER_PORT
+            = "settings.common.remoteFile.serverPort";
+    /**
+     * <b>settings.common.remoteFile.userName</b>: <br>
+     * The setting for the FTP username. */
+    public static String FTP_USER_NAME
+            = "settings.common.remoteFile.userName";
+    /**
+     * <b>settings.common.remoteFile.userPassword</b>: <br>
+     * The setting for the FTP password. * */
+    public static String FTP_USER_PASSWORD
+            = "settings.common.remoteFile.userPassword";
+    /**
+     * <b>settings.common.remoteFile.retries</b>: <br>
+     * The setting for the number of times FTPRemoteFile should try before
+     * giving up a copyTo operation or logOn operation. */
+    public static String FTP_RETRIES_SETTINGS
+            = "settings.common.remoteFile.retries";
+    /**
+     * <b>settings.common.remoteFile.datatimeout</b>: <br>
+     * The setting for the FTP data timeout in seconds.
+     * The default value is 600 (10 minutes). */
+    public static String FTP_DATATIMEOUT_SETTINGS
+            = "settings.common.remoteFile.datatimeout";
+    /**
+     * How many times we will retry upload, download, and logon.
+     */
+    public static final transient int FTP_RETRIES
+            = Settings.getInt(FTP_RETRIES_SETTINGS);
+    /**
+     * How large a data timeout on our FTP connections.
+     */
+    public static final transient int FTP_DATATIMEOUT
+            = Settings.getInt(FTP_DATATIMEOUT_SETTINGS);
 }

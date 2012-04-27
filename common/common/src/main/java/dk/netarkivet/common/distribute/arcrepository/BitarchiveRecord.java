@@ -114,7 +114,7 @@ public class BitarchiveRecord implements Serializable {
             length = record.getHeader().getLength();
         } else if (record instanceof WARCRecord) {
             // The length of the payload of the warc-record is not getLength(),
-            // but getLength minus getContentBegin(), which is the number of 
+            // but getLength minus getContentBegin(), which is the number of
             // bytes used for the record-header!
             length = record.getHeader().getLength() - record.getHeader().getContentBegin();
         } else {
@@ -123,21 +123,26 @@ public class BitarchiveRecord implements Serializable {
         if (length > LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER) {
             // copy arc-data to local file and create a RemoteFile based on this
             log.info("Record exceeds limit of "
-                    + LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER
-                    + " bytes. Length is " + length
-                    + " bytes, Storing as instance of "
-                    + Settings.get(CommonSettings.REMOTE_FILE_CLASS));
-            File localTmpFile = null;
-            try {
-                localTmpFile = File.createTempFile("BitarchiveRecord-"
-                        + fileName, ".tmp", FileUtils.getTempDir());
-                record.dump(new FileOutputStream(localTmpFile));
-                objectAsRemoteFile = RemoteFileFactory.getMovefileInstance(
-                        localTmpFile);
+                     + LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER
+                     + " bytes. Length is " + length
+                     + " bytes, Storing as instance of "
+                     + Settings.get(CommonSettings.REMOTE_FILE_CLASS));
+            if (RemoteFileFactory.isExtendedRemoteFile()) {
+                objectAsRemoteFile = RemoteFileFactory.getExtendedInstance(record);
                 isStoredAsRemoteFile = true;
-            } catch (IOException e) {
-                throw new IOFailure("Unable to store record(" + fileName
-                        + "," + offset + ") as remotefile", e);
+            }  else {
+                File localTmpFile = null;
+                try {
+                    localTmpFile = File.createTempFile("BitarchiveRecord-"
+                                                       + fileName, ".tmp", FileUtils.getTempDir());
+                    record.dump(new FileOutputStream(localTmpFile));
+                    objectAsRemoteFile = RemoteFileFactory.getMovefileInstance(
+                            localTmpFile);
+                    isStoredAsRemoteFile = true;
+                } catch (IOException e) {
+                    throw new IOFailure("Unable to store record(" + fileName
+                                        + "," + offset + ") as remotefile", e);
+                }
             }
         } else { // Store data in objectbuffer
             try {

@@ -47,7 +47,7 @@ National Library.
     		<port>8076</port>
 	    </http>
     	<remoteFile>
-	       	<class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
+	       	<class>dk.netarkivet.common.distribute.ExtendedFTPRemoteFile</class>
     	    <userName>jms</userName>
 	        <userPassword>jms*ftp</userPassword>
     	</remoteFile>

@@ -117,12 +117,12 @@ public class IntegrityTestsFTP extends TestCase {
 
         /* Read ftp-related settings from settings.xml. */
         final String ftpServerName = Settings.get(
-                FTPRemoteFile.FTP_SERVER_NAME);
+                CommonSettings.FTP_SERVER_NAME);
         final int ftpServerPort = Integer.parseInt(Settings.get(
-                FTPRemoteFile.FTP_SERVER_PORT));
-        final String ftpUserName = Settings.get(FTPRemoteFile.FTP_USER_NAME);
+                CommonSettings.FTP_SERVER_PORT));
+        final String ftpUserName = Settings.get(CommonSettings.FTP_USER_NAME);
         final String ftpUserPassword = Settings.get(
-                FTPRemoteFile.FTP_USER_PASSWORD);
+                CommonSettings.FTP_USER_PASSWORD);
 
         /* Connect to test ftp-server. */
         theFTPClient = new FTPClient();
@@ -449,10 +449,10 @@ public class IntegrityTestsFTP extends TestCase {
         //upload error to ftp server
         File temp = File.createTempFile("foo", "bar");
         FTPClient client = new FTPClient();
-        client.connect(Settings.get(FTPRemoteFile.FTP_SERVER_NAME), Integer.parseInt(
-                Settings.get(FTPRemoteFile.FTP_SERVER_PORT)));
-        client.login(Settings.get(FTPRemoteFile.FTP_USER_NAME),
-                     Settings.get(FTPRemoteFile.FTP_USER_PASSWORD));
+        client.connect(Settings.get(CommonSettings.FTP_SERVER_NAME), Integer.parseInt(
+                Settings.get(CommonSettings.FTP_SERVER_PORT)));
+        client.login(Settings.get(CommonSettings.FTP_USER_NAME),
+                     Settings.get(CommonSettings.FTP_USER_PASSWORD));
         Field field = FTPRemoteFile.class.getDeclaredField("ftpFileName");
         field.setAccessible(true);
         String filename = (String)field.get(rf);

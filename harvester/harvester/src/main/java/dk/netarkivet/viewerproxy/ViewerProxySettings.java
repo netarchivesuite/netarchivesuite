@@ -63,5 +63,13 @@ public class ViewerProxySettings {
      *  
      */
     public static String TRY_LOOKUP_URI_AS_FTP = "settings.viewerproxy.tryLookupUriAsFtp";
-    
+
+    /**
+     * <b>settings.viewerproxy.maxSizeInBrowser</b>
+     * The size (in bytes) of the largest object to returned for viewing in
+     * the browser window. Larger objects will be returned with the
+     * appropriate http header for saving them to a file.
+     */
+    public static String MAXIMUM_OBJECT_IN_BROWSER = "settings.viewerproxy.maxSizeInBrowser";
+
 }

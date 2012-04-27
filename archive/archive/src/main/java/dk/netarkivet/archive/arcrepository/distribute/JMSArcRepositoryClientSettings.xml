@@ -37,7 +37,7 @@ National Library.
         <arcrepositoryClient>
             <!-- Set to 1 minute to make it possible to retrieve large records
                  using FTP -->
-            <getTimeout>60000</getTimeout>
+            <getTimeout>300000</getTimeout>
             <storeRetries>3</storeRetries>
             <storeTimeout>3600000</storeTimeout>
         </arcrepositoryClient>
