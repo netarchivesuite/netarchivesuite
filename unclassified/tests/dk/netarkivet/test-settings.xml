@@ -50,6 +50,8 @@ National Library.
 	       	<class>dk.netarkivet.common.distribute.ExtendedFTPRemoteFile</class>
     	    <userName>jms</userName>
 	        <userPassword>jms*ftp</userPassword>
+	        <retries>5</retries>
+	        <datatimeout>0</datatimeout>
     	</remoteFile>
         <tempDir>./tests/commontempdir</tempDir>
         <database>
