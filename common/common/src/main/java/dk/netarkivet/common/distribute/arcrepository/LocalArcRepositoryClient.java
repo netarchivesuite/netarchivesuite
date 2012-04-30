@@ -41,7 +41,7 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
-import dk.netarkivet.common.distribute.RemoteFileFactory;
+import dk.netarkivet.common.distribute.FileRemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -55,8 +55,8 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * A simple implementation of ArcRepositoryClient that just has a number of
- * local directories that it keeps its files in.  It doesn't implement
- * credentials checks or checksum storing.
+ * local directories where it stores its files.  It doesn't implement
+ * credentials checking or checksum storing.
  */
 public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /** The logger for this class. */
@@ -91,7 +91,9 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         }
     }
 
-    /** Call on shutdown to release external resources. */
+    /** Call on shutdown to release external resources. 
+     * This implementation does nothing. 
+     */
     public void close() {
     }
 
@@ -177,6 +179,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      *
      * @param arcfilename Name of the arcfile to retrieve. 
      * @param replica The bitarchive to retrieve the data from.
+     *  (Note argument is ignored)
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile
      * is null
@@ -255,8 +258,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         }
         return new BatchStatus(replicaId, job.getFilesFailed(),
                 job.getNoOfFilesProcessed(),
-                RemoteFileFactory.getMovefileInstance(resultFile),
-                //new ArrayList<FileBatchJob.ExceptionOccurrence>(0))
+                new FileRemoteFile(resultFile),
                 job.getExceptions());
     }
 
@@ -454,7 +456,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @param replicaId Inherited dummy variable.
      * @param filename The name of the file to calculate the checksum.
      * @return The checksum of the file, or the empty string if the file was 
-     * not found or an error occured.
+     * not found or an error occurred.
      * @throws ArgumentNotValid If the replicaId or the filename is either
      * null or the empty string.
      */
