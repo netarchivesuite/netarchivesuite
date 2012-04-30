@@ -985,6 +985,16 @@ public class JobTester extends DataModelTestCase {
             }
             last = i;
         }
+        
+        // Verify that getSortedList doesn't throw ArgumentNotValid
+        // (Cf. NAS-2062)  
+        String alternateSeeds = "#google.netarkivet.dk\n" 
+                + "home.netarkivet.dk\n"
+                + "#home.netarkivet.dk\n"
+                + "www.netarkivet.dk";
+        j.setSeedList(alternateSeeds);
+        List<String> sortedSeeds = j.getSortedSeedList();
+        assertTrue("The two uncommented seeds should have ignored", sortedSeeds.size() == 2);
     }
     
     /**

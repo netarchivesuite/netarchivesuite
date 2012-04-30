@@ -47,6 +47,8 @@ import java.util.regex.Pattern;
 
 import gnu.inet.encoding.IDNA;
 import gnu.inet.encoding.IDNAException;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
@@ -901,6 +903,10 @@ public class Job implements Serializable {
                 url = seed;
             }
             String domain = getDomain(url);
+            if (domain == null) {
+                // stop processing this url, and continue to the next seed
+                continue; 
+            }
             Set<String> set;
             if (urlMap.containsKey(domain)) {
                 set = urlMap.get(domain);
@@ -920,7 +926,8 @@ public class Job implements Serializable {
     /**
      * Get the domain, that the given URL belongs to.
      * @param url an URL
-     * @return the domain, that the given URL belongs to.
+     * @return the domain, that the given URL belongs to, or 
+     * null if unable to do so.
      */
     private String getDomain(String url) {
         try {
@@ -933,9 +940,9 @@ public class Job implements Serializable {
     }
 
     /**
-     * Set the seedlist from a seedlist,
-     * where the individual seeds are separated by
-     * a '\n' character. Duplicate seeds are removed.
+     * Set the seedlist of the job from the seedList argument.
+     * Individual seeds are separated by a '\n' character. 
+     * Duplicate seeds are removed.
      * @param seedList List of seeds as one String
      */
     public void setSeedList(String seedList) {
@@ -950,7 +957,10 @@ public class Job implements Serializable {
         } catch (IOException e) {
             // This never happens, as we're reading from a string!
             throw new IOFailure("IOException reading from seed string", e);
+        } finally {
+            IOUtils.closeQuietly(reader);
         }
+        
         if (log.isTraceEnabled()) {
             log.trace("Now " + seedListSet.size() + " seeds in the list");
         }
@@ -964,7 +974,6 @@ public class Job implements Serializable {
     public String getSeedListAsString() {
         return StringUtils.conjoin("\n", seedListSet);
     }
-
 
     /**
      * Get the current status of this Job.

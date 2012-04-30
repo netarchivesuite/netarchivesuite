@@ -70,7 +70,7 @@ public final class DomainUtils {
             "^(|.*?\\.)(" + DOMAINNAME_CHAR_REGEX_STRING + "+"
             + TLD_REGEX_STRING + ")");
 
-    /** Utillity class, do not initialise. */
+    /** Utility class, do not initialise. */
     private DomainUtils() {}
 
     /** Helper method for reading TLDs from settings.
@@ -101,7 +101,7 @@ public final class DomainUtils {
      * @return true if domain is valid; otherwise it returns false. 
      */
     public static boolean isValidDomainName(String domainName) {
-        ArgumentNotValid.checkNotNullOrEmpty(domainName, "String domainName");
+        ArgumentNotValid.checkNotNull(domainName, "String domainName");
         return VALID_DOMAIN_MATCHER.matcher(domainName).matches();
     }
 
@@ -113,13 +113,14 @@ public final class DomainUtils {
      * E.g. if '.dk' and 'co.uk' are valid TLDs, www.netarchive.dk will be
      * become netarchive.dk and news.bbc.co.uk will be come bbc.co.uk
      *
-     * @param hostname A hostname or IP address.
+     * @param hostname A hostname or IP address. Null hostname is not allowed
      * @return A domain name (foo.bar) or IP address, or null if no valid
-     * hostname could be obtained from the given hostname.  If non-null,
-     * the return value is guaranteed to be a valid hostname as determined
+     * domain could be obtained from the given hostname.  If non-null,
+     * the return value is guaranteed to be a valid domain as determined
      * by isValidDomainName().
      */
     public static String domainNameFromHostname(String hostname) {
+        ArgumentNotValid.checkNotNull(hostname, "String hostname");
         String result = hostname;
         // IP addresses are kept as-is, others are trimmed down.
         if (!Constants.IP_KEY_REGEXP.matcher(hostname)
