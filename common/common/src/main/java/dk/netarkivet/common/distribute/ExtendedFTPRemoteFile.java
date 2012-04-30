@@ -10,6 +10,7 @@ import java.security.DigestInputStream;
 import java.util.Calendar;
 import java.util.UUID;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -36,6 +37,8 @@ import org.archive.io.warc.WARCRecord;
  * effectively delegated to that class when required.
  */
 public class ExtendedFTPRemoteFile implements RemoteFile {
+
+
 
     /**
      * A named logger for this class.

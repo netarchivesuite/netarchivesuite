@@ -571,14 +571,5 @@ public class CommonSettings {
      * The default value is 600 (10 minutes). */
     public static String FTP_DATATIMEOUT_SETTINGS
             = "settings.common.remoteFile.datatimeout";
-    /**
-     * How many times we will retry upload, download, and logon.
-     */
-    public static final transient int FTP_RETRIES
-            = Settings.getInt(FTP_RETRIES_SETTINGS);
-    /**
-     * How large a data timeout on our FTP connections.
-     */
-    public static final transient int FTP_DATATIMEOUT
-            = Settings.getInt(FTP_DATATIMEOUT_SETTINGS);
+
 }

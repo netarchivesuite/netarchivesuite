@@ -58,6 +58,18 @@ import dk.netarkivet.common.utils.TimeUtils;
  * Transfers are done using binary type and passive mode, if available.
  */
 public final class FTPRemoteFile extends AbstractRemoteFile {
+
+    /**
+     * How many times we will retry upload, download, and logon.
+     */
+    public static int FTP_RETRIES
+            = Settings.getInt(CommonSettings.FTP_RETRIES_SETTINGS);
+    /**
+     * How large a data timeout on our FTP connections.
+     */
+    public static int FTP_DATATIMEOUT
+            = Settings.getInt(CommonSettings.FTP_DATATIMEOUT_SETTINGS);
+
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml";
@@ -205,20 +217,20 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 }
                 boolean success = false;
                 int tried = 0;
-                while (!success && tried < CommonSettings.FTP_RETRIES) {
+                while (!success && tried < FTP_RETRIES) {
                     tried++;
                     try {
                         success = currentFTPClient.storeFile(ftpFileName, in);
                         if (!success) {
                             log.debug("FTP store failed attempt '" + tried
-                                      + "' of " + CommonSettings.FTP_RETRIES
+                                      + "' of " + FTP_RETRIES
                                       + ": " + getFtpErrorMessage());
                         }
                     } catch (IOException e) {
                         String message = "Write operation to '"
                                                + ftpFileName
                                                + "' failed on attempt " + tried
-                                               + " of " + CommonSettings.FTP_RETRIES;
+                                               + " of " + FTP_RETRIES;
                         if (e instanceof CopyStreamException) {
                             CopyStreamException realException 
                                 = (CopyStreamException) e;
@@ -476,11 +488,11 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
 
         int tries = 0;
         boolean logOnSuccessful = false;
-        while (!logOnSuccessful && tries < CommonSettings.FTP_RETRIES) {
+        while (!logOnSuccessful && tries < FTP_RETRIES) {
             tries++;
             try {
                 currentFTPClient.connect(ftpServerName, ftpServerPort);
-                currentFTPClient.setDataTimeout(CommonSettings.FTP_DATATIMEOUT);
+                currentFTPClient.setDataTimeout(FTP_DATATIMEOUT);
                 if (!currentFTPClient.login(ftpUserName, ftpUserPassword)) {
                     final String message = "Could not log in [from host: "
                         + SystemUtils.getLocalHostName()
@@ -515,9 +527,9 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 final String msg = "Connect to " + ftpServerName
                 + " from host: "
                 + SystemUtils.getLocalHostName() + " failed";
-                if (tries < CommonSettings.FTP_RETRIES) {
+                if (tries < FTP_RETRIES) {
                     log.debug(msg + ". Attempt #" + tries + " of max "
-                            + CommonSettings.FTP_RETRIES
+                            + FTP_RETRIES
                             + ". Will sleep a while before trying to "
                             + "connect again. Exception: ", e);
                     TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE); 
@@ -588,7 +600,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      */
     @Override
     public int getNumberOfRetries() {
-        return CommonSettings.FTP_RETRIES;
+        return FTP_RETRIES;
     }
     
     public static RemoteFileSettings getRemoteFileSettings() {
