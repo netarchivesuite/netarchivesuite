@@ -25,7 +25,10 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.io.File;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
@@ -96,7 +99,15 @@ public final class EventHarvestUtil {
         if (seeds == null || seeds.trim().length() == 0) {
             return;
         }
-
+        // split the seeds up into individual seeds
+        // Note: Matches any sort of newline (unix/mac/dos), but won't get empty
+        // lines, which is fine for this purpose
+        
+        Set<String> seedSet = new HashSet<String>();
+        for (String seed : seeds.split("[\n\r]+")) {
+            seedSet.add(seed);
+        }
+        
         HTMLUtils.forwardOnEmptyParameter(context,
                 Constants.ORDER_TEMPLATE_PARAM);
         String orderTemplate
@@ -123,7 +134,7 @@ public final class EventHarvestUtil {
         try {
             PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance()
             .getHarvestDefinition(eventHarvestName); 
-            eventHarvest.addSeeds(seeds, orderTemplate, maxBytes, maxObjects);
+            eventHarvest.addSeeds(seedSet, orderTemplate, maxBytes, maxObjects);
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;error.adding.seeds.to.0", eventHarvestName,
@@ -131,23 +142,21 @@ public final class EventHarvestUtil {
             throw new ForwardedToErrorPage("Error while adding seeds", e);
         }
     }
-    
-    
-    
+      
     /**
      * Add configurations to an existing selective harvest.
      * @param context The current JSP context
      * @param i18n The translation information to use in this context
      * @param eventHarvestName The name of the partial harvest to which these
      * seeds are to be added
-     * @param seeds The seeds as a String
+     * @param seeds The seeds as a file (each seed on a separate line)
      * @param maxbytesString The given maxbytes as a string
      * @param maxobjectsString The given maxobjects as a string 
      * @param maxrateString The given maxrate as a string (currently not used)
      * @param ordertemplate The name of the ordertemplate to use
      */
     public static void addConfigurationsFromSeedsFile(PageContext context, 
-            I18n i18n, String eventHarvestName, String seeds, 
+            I18n i18n, String eventHarvestName, File seeds, 
             String maxbytesString, String maxobjectsString, 
             String maxrateString, String ordertemplate) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -201,8 +210,8 @@ public final class EventHarvestUtil {
         // All parameters are valid, so call method
         try {
             PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance()
-                .getHarvestDefinition(eventHarvestName); 
-            eventHarvest.addSeeds(seeds, ordertemplate, maxBytes, maxObjects);
+                .getHarvestDefinition(eventHarvestName);
+            eventHarvest.addSeedsFromFile(seeds, ordertemplate, maxBytes, maxObjects);
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;error.adding.seeds.to.0", e, eventHarvestName,

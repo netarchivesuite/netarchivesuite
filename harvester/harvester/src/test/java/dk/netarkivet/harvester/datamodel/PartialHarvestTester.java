@@ -63,7 +63,9 @@ public class PartialHarvestTester extends DataModelTestCase {
      * appropriate objects.
      */
     public void testAddSeedsSimpleCase() {
-        String seedlist = "http://www.mydomain.dk/page1.jsp?aparam=avalue";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("http://www.mydomain.dk/page1.jsp?aparam=avalue");
+        
         final long maxbytes = 20000L;
         final int maxobjects = -1;
         harvest.addSeeds(seedlist, order1xml, maxbytes,maxobjects);
@@ -81,7 +83,7 @@ public class PartialHarvestTester extends DataModelTestCase {
         Iterator<SeedList> si = dc.getSeedLists();
         SeedList sl = si.next();
         assertEquals("Should have expected seedlist name", expectedName, sl.getName());
-        assertEquals("Seedlist should contain specified URL", seedlist, sl.getSeedsAsString().trim());
+        assertTrue("Seedlist should contain specified URL", seedlist.contains(sl.getSeedsAsString().trim()));
         //Should be no more domainconfigurations or seedlists
         assertFalse("Should only be one configuration in the harvest", dci.hasNext());
         assertFalse("Should only be one seedlist in the configuration", si.hasNext());
@@ -91,7 +93,8 @@ public class PartialHarvestTester extends DataModelTestCase {
      * Test names of seedlist with max bytes and max object defined.
      */
     public void testMixedLimitsSeedlistNames() {
-        String seedlist = "http://www.mydomain.dk/page1.jsp?aparam=avalue";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("http://www.mydomain.dk/page1.jsp?aparam=avalue");
         final long maxbytes = 1024L;
         final int maxobjects = 250;
         harvest.addSeeds(seedlist, order1xml, maxbytes,maxobjects);
@@ -113,19 +116,19 @@ public class PartialHarvestTester extends DataModelTestCase {
                 dc.getMaxObjects());
     }
 
-
-    
     /**
      * Test that adding a single seed results in creation of all the
      * appropriate objects.
      */
     public void testAddSeedsInvalid() {
-        String seedlist = "http://www.x.dk/page1.jsp?aparam=avalue\n"
-                          + "http:// /\n"
-                          + "www\n"
-                          + "www x\n"
-                          + "http://a.b//\n"
-                          + "http://x.y/ /";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("http://www.x.dk/page1.jsp?aparam=avalue");
+        seedlist.add("http:// /");
+        seedlist.add("www");
+        seedlist.add("www x");
+        seedlist.add("http://a.b//");
+        seedlist.add("http://x.y/ /");
+        
         final long maxbytes = 30000L;
         final int maxobjects = -1;
         
@@ -152,7 +155,8 @@ public class PartialHarvestTester extends DataModelTestCase {
      * b) That omitting "http://" is not a problem
      */
     public void testAddSeedsNonDefaultValues() {
-        String seedlist = "www.mydomain.dk/page1.jsp?aparam=avalue";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("www.mydomain.dk/page1.jsp?aparam=avalue");
         final long maxbytes = -1L; // unlimited
         final int maxobjects = -1;
         
@@ -174,8 +178,11 @@ public class PartialHarvestTester extends DataModelTestCase {
         SeedList sl = si.next();
         assertEquals("Should have expected seedlist name", 
                 expectedName, sl.getName());
+        assertTrue("Should only contain one seed, but has " + seedlist.size(), 
+                seedlist.size() == 1);
+        Object[] seedsAsArray = seedlist.toArray();
         assertEquals("Seedlist should contain specified URL", 
-                "http://" + seedlist, sl.getSeedsAsString().trim());
+                "http://" + seedsAsArray[0], sl.getSeedsAsString().trim());
         //Should be no more domainconfigurations or seedlists
         assertFalse("Should only be one configuration in the harvest", dci.hasNext());
         assertFalse("Should only be one seedlist in the configuration", si.hasNext());
@@ -187,7 +194,8 @@ public class PartialHarvestTester extends DataModelTestCase {
      * b) https is supported
      */
     public void testAddSeedsWithSubdomain() {
-        String seedlist = "https://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("https://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue");
         final long maxbytes = 50000L;
         final int maxobjects = -1;
         
@@ -206,7 +214,7 @@ public class PartialHarvestTester extends DataModelTestCase {
         Iterator<SeedList> si = dc.getSeedLists();
         SeedList sl = si.next();
         assertEquals("Should have expected seedlist name", expectedName, sl.getName());
-        assertEquals("Seedlist should contain specified URL", seedlist, sl.getSeedsAsString().trim());
+        assertTrue("Seedlist should contain specified URL", seedlist.contains(sl.getSeedsAsString().trim()));
         //Should be no more domainconfigurations or seedlists
         assertFalse("Should only be one configuration in the harvest", dci.hasNext());
         assertFalse("Should only be one seedlist in the configuration", si.hasNext());
@@ -216,10 +224,11 @@ public class PartialHarvestTester extends DataModelTestCase {
      * Test that we can correctly process a seedlist with multiple entries.
      */
     public void testAddComplexSeedlist() {
-        String seedlist =
-                "\thttps://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue\n"+
-                "www.anewdomain.dk/index.html  \n" +
-                "www.mydomain.dk/page2.jsp ";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("\thttps://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue");
+        seedlist.add("www.anewdomain.dk/index.html  ");
+        seedlist.add("www.mydomain.dk/page2.jsp ");
+        
         final long maxbytes = 60000L;
         final int maxobjects = -1;
         
@@ -276,9 +285,22 @@ public class PartialHarvestTester extends DataModelTestCase {
      * configurations and add new ones
      */
     public void testAddSeedsMultipleAdds() {
-        String list1 = "www.1.dk\nwww.2.dk/index.jsp\nwww.3.dk";
-        String list2 = "http://www.1.dk/private\nwww.4.dk\nwww.3.dk/private";
-        String list3 = "www.2.dk/images\n www.4.dk/images\nwww.3.dk/images";
+        Set<String> list1 = new HashSet<String>();
+        list1.add("www.1.dk\n");
+        list1.add("www.2.dk/index.jsp\n");
+        list1.add("www.1.dk\n");
+        list1.add("www.3.dk");
+        
+        Set<String> list2 = new HashSet<String>();
+        list2.add("http://www.1.dk/private\n");
+        list2.add("www.4.dk\n");
+        list2.add("www.3.dk/private");
+        
+        Set<String> list3 = new HashSet<String>();
+        list3.add("www.2.dk/images\n");
+        list3.add(" www.4.dk/images\n");
+        list3.add("www.3.dk/images");
+        
         final long maxbytes1 = 70000L;
         final long maxbytes2 = 80000L;
         final int maxobjects = -1;
@@ -401,8 +423,13 @@ public class PartialHarvestTester extends DataModelTestCase {
      * configurations and add new ones
      */
     public void testAddSeedsMiscNewlines() {
-        String list1 = "www.1.dk\n\rwww.2.dk/index.jsp\n\nwww.3.dk\r\n3.dk/test\r"
-                       + "3.dk/tyst";
+        Set<String> list1 = new HashSet<String>();
+        list1.add("www.1.dk\n\r");
+        list1.add("www.2.dk/index.jsp\n\n");
+        list1.add("www.3.dk\r\n");
+        list1.add("3.dk/test\r");
+        list1.add("3.dk/tyst");
+        
         final long maxbytes = 90000L;
         final int maxobjects = -1;
         

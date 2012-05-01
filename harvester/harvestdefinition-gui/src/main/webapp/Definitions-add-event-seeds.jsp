@@ -144,11 +144,10 @@ harvest.
             if (!isMultiPart) {
 			  	EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName);
 			} else {
-				if (!seedsFileName.isEmpty()) { // File exists
-					String seeds = FileUtils.readFile(seedsFile);			
-					if (!seeds.isEmpty()) {
+				if (!seedsFileName.isEmpty()) { // File exist 		
+					if (seedsFile.length() > 0) { // and has size > 0
 						EventHarvestUtil.addConfigurationsFromSeedsFile(
-							pageContext, I18N, harvestName, seeds, maxbytesString, 
+							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
 							maxobjectsString, maxrateString, orderTemplateString);
 					}
 				} else {
