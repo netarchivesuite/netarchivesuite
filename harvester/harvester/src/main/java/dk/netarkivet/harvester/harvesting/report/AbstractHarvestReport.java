@@ -24,6 +24,8 @@
 */
 package dk.netarkivet.harvester.harvesting.report;
 
+import gnu.inet.encoding.IDNA;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -352,8 +354,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         // and this information is disregarded
         // Note This information is disregarded if setting disregard_seed_url_information
         // is enabled.
+        // But first the seedURL is IDNA decoded to transform 
+        // any IDNA encoded seedURL into Unicode.
         
-        final String seedURL = parts[10];
+        final String seedURL = IDNA.toUnicode(parts[10]);
         boolean sourceTagEnabled = true;
         if (seedURL.equals("-") || disregardSeedUrlInfo) {
             sourceTagEnabled = false;
@@ -370,8 +374,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         }
         
         //Get the object domain name from the URL in the fourth field
+        // But first the string is IDNA decoded to transform 
+        // any IDNA encoded URI into Unicode.
         String objectDomain = null;
-        String objectUrl = parts[3];
+        String objectUrl = IDNA.toUnicode(parts[3]);
         
         try {
             objectDomain = getDomainNameFromURIString(objectUrl);
