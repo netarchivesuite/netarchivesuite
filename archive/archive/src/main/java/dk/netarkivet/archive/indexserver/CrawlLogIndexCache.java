@@ -87,6 +87,18 @@ public abstract class CrawlLogIndexCache extends
         = Settings.getLong(ArchiveSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
     
     /**
+     * Should we optimizing each partial index before closing it.
+     */
+    private final boolean optimizePartialIndex = Settings.getBoolean(
+            ArchiveSettings.INDEXING_OPTIMIZE_PARTIALINDEX);
+    
+    /**
+      * Should we optimizing the final index before closing it.
+      */
+    private final boolean optimizeIndex = Settings.getBoolean(
+            ArchiveSettings.INDEXING_OPTIMIZE_INDEX);
+    
+    /**
      * Constructor for the CrawlLogIndexCache class.
      * @param name The name of the CrawlLogIndexCache
      * @param blacklist Shall the mimefilter be considered a blacklist 
@@ -138,7 +150,7 @@ public abstract class CrawlLogIndexCache extends
     protected void combine(Map<Long, File> rawfiles) {
         long datasetSize = rawfiles.values().size();
         log.info("Starting to combine a dataset with " 
-                +  datasetSize + " crawl logs (thread = "
+                + datasetSize + " crawl logs (thread = "
                 + Thread.currentThread().getName() + ")");
         File resultDir = getCacheFile(rawfiles.keySet());
         Set<File> tmpfiles = new HashSet<File>();
@@ -148,7 +160,8 @@ public abstract class CrawlLogIndexCache extends
             DigestIndexer indexer = createStandardIndexer(indexLocation);
             final boolean verboseIndexing = false;
             DigestOptions indexingOptions = new DigestOptions(
-                    this.useBlacklist, verboseIndexing, this.mimeFilter);
+                    this.useBlacklist, verboseIndexing, this.mimeFilter,
+                    this.optimizePartialIndex);
             long count = 0;
             Set<IndexingState> outstandingJobs = new HashSet<IndexingState>();
             final int maxThreads = Settings.getInt(
@@ -181,11 +194,12 @@ public abstract class CrawlLogIndexCache extends
                 // handles the sorting of the logfiles and the generation
                 // of a lucene index for this crawllog and cdxfile.
                 count++;
+                String taskID = count + " out of " + datasetSize;
                 log.debug("Making subthread for indexing job " + jobId 
-                        + " - task " + count + " out of " + datasetSize);
+                        + " - task " + taskID);
                 Callable<Boolean> task = new DigestIndexerWorker(
                         localindexLocation, jobId, crawlLog,
-                        cachedCDXFile, indexingOptions);
+                        cachedCDXFile, indexingOptions, taskID);
                 Future<Boolean> result = executor.submit(task);
                 outstandingJobs.add(
                         new IndexingState(jobId, localindexLocation, result));
@@ -241,7 +255,8 @@ public abstract class CrawlLogIndexCache extends
             indexer.getIndex().addIndexesNoOptimize(
                     subindices.toArray(new Directory[0]));
             long docsInIndex = indexer.getIndex().numDocs();
-            indexer.close(false);
+            log.debug("closing index, (optimize = " + this.optimizeIndex + ")");
+            indexer.close(this.optimizeIndex);
             
             // Now the index is made, gzip it up.
             ZipUtils.gzipFiles(new File(indexLocation), resultDir);
@@ -275,7 +290,6 @@ public abstract class CrawlLogIndexCache extends
         }
     }
     
-
     /**
      * Helper class to sleep a little between completeness checks.
      */

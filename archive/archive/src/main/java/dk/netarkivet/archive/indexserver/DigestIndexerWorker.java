@@ -56,10 +56,10 @@ public class DigestIndexerWorker implements Callable<Boolean> {
     private File cdxfile;
     /** The options for the indexing process. */
     private DigestOptions indexingOptions;
-    /** Was this process successfull. */
-    private boolean successfull = true;
-    /** Optimization when closing index. */
-    private boolean optimizeIndex = true;
+    /** Was this process successful. */
+    private boolean successful = true;
+    /** String defining this task among other tasks. */
+    private String taskID;
         
     /**
      * Constructor for the DigestIndexerWorker.
@@ -68,19 +68,22 @@ public class DigestIndexerWorker implements Callable<Boolean> {
      * @param crawllogfile The crawllog from the job 
      * @param cdxFile The cdxfile from the job
      * @param indexingOptions The options for the indexing process.
+     * @param taskID string defining this task
      */
     public DigestIndexerWorker(String indexpath, Long jobId, File crawllogfile, 
-            File cdxFile, DigestOptions indexingOptions) {
+            File cdxFile, DigestOptions indexingOptions, String taskID) {
         ArgumentNotValid.checkNotNullOrEmpty(indexpath, "String indexpath");
         ArgumentNotValid.checkNotNull(crawllogfile, "File crawllogfile");
         ArgumentNotValid.checkNotNull(cdxFile, "File cdxFile");
         ArgumentNotValid.checkNotNull(indexingOptions, 
                 "DigestOptions indexingOptions");
+        ArgumentNotValid.checkNotNullOrEmpty(taskID, "String taskID");
         this.indexlocation = indexpath;
         this.jobId = jobId;
         this.crawlLog = crawllogfile;
         this.cdxfile = cdxFile;
-        this.indexingOptions = indexingOptions;  
+        this.indexingOptions = indexingOptions;
+        this.taskID = taskID;
     }
     
     /**
@@ -91,25 +94,24 @@ public class DigestIndexerWorker implements Callable<Boolean> {
     @Override
     public Boolean call() {
         try {
-            log.info("Starting subindexing task of data from job "
+            log.info("Starting subindexing task (" + taskID + ") of data from job "
                     + this.jobId);
             DigestIndexer localindexer
                 = CrawlLogIndexCache.createStandardIndexer(indexlocation);
             CrawlLogIndexCache.indexFile(jobId, crawlLog, cdxfile, localindexer,
                     indexingOptions);
-            localindexer.close(optimizeIndex);
-
-            log.info("Completed subindexing task of data from job "
-                    + this.jobId + " w/ " + localindexer.getIndex().numDocs() 
+            localindexer.close(indexingOptions.getOptimizeIndex());
+            log.info("Completed subindexing task (" + taskID + ") of data from job "
+                    + this.jobId + " w/ " + localindexer.getIndex().numDocs()        
                     + " index-entries)");
         } catch (IOException e) {
-            successfull = false;
+            successful = false;
             log.warn("Indexing for job w/ id " + jobId + " failed.", e);
         } catch (IOFailure e) {
-            successfull = false;
+            successful = false;
             log.warn("Indexing for job w/ id " + jobId + " failed.", e); 
         } 
-        return successfull;
+        return successful;
  
     }
 }

@@ -148,6 +148,9 @@ public abstract class FileBasedCache<I> {
                     fileBehindLockFile);
             FileLock lock = null;
             // Make sure no other thread tries to create this
+            log.debug("Waiting to enter synchronization on " 
+                    + fileBehindLockFile.getAbsolutePath().intern());
+            
             synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
                 try {
                     // Make sure no other process tries to create this.

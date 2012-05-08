@@ -360,7 +360,6 @@ public class ArchiveSettings {
     public static String SINGLE_CHECKSUM_TIMEOUT
             = "settings.archive.bitarchive.singleChecksumTimeout";
     
- 
     /**
      * <b>settings.archive.indexserver.requestdir</b>: <br>
      * Setting for where the requests of the indexserver are stored.
@@ -413,4 +412,33 @@ public class ArchiveSettings {
      */
     public static String INDEXSERVER_INDEXING_SATISFACTORYTHRESHOLD_PERCENTAGE
         = "settings.archive.indexserver.satisfactorythresholdpercentage";
+    
+    /**
+     * <b>settings.archive.indexserver.indexrequestserver.class</b>: <br>
+     * Setting for which type of indexrequestserver to use.
+     * The default is: 
+     * {@link dk.netarkivet.archive.indexserver.distribute.IndexRequestServer}
+     */
+    public static String INDEXREQUEST_SERVER_CLASS
+        = "settings.archive.indexserver.indexrequestserver.class";
+    
+    /** settings.archive.indexserver.optimizePartialIndex.
+     * default is false. 
+     */
+    public static String INDEXING_OPTIMIZE_PARTIALINDEX 
+        = "settings.archive.indexserver.optimizePartialIndex";
+
+    /** settings.archive.indexserver.optimizeIndex. 
+     * default is true. */
+    public static String INDEXING_OPTIMIZE_INDEX 
+        = "settings.archive.indexserver.optimizeIndex";
+    
+    /**
+     * b>settings.archive.indexserver.lookfordataInAllBitarchiveReplicas</b>: <br>
+     * Setting for whether or not data not found in the default bitarchive replica
+     * shall be looked for in other bitarchive replicas.
+     * The default is false.
+     */
+    public static String INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS
+        = "settings.archive.indexserver.lookfordataInAllBitarchiveReplicas";
 }

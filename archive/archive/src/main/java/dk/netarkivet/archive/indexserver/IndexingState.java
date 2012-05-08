@@ -79,5 +79,4 @@ public class IndexingState {
     public Future<Boolean> getResultObject() {
         return resultObject;
     }
-
 }

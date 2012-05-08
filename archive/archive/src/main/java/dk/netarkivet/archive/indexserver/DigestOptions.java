@@ -46,20 +46,26 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
      /** Avoid logging to STDOUT when indexing. */
      private final boolean verbose;
  
+     /** Should we optimize the (partial) index when we close it.*/
+     private final boolean optimizeIndex;
+     
      /**
       * Set the needed options used by the DigestIndexer.
       * @param useMimefilterAsBlacklist Are we using the mimeFilter as a black
       * or a whitelist.
       * @param verboseIndexing print logging to stdout while indexing, or not.
       * @param theMimeFilter The given black or whitelist according to mimetype.
+      * @param optimizeIndex Should we optimize the (partial) index 
+      * when we close it.
       */
      public DigestOptions(boolean useMimefilterAsBlacklist, 
-             boolean verboseIndexing, String theMimeFilter) {
+             boolean verboseIndexing, String theMimeFilter, boolean optimizeIndex) {
          ArgumentNotValid.checkNotNullOrEmpty(
                  theMimeFilter, "String theMimeFilter");
          this.useBlacklist = useMimefilterAsBlacklist;
          this.mimeFilter = theMimeFilter;
          this.verbose = verboseIndexing;
+         this.optimizeIndex = optimizeIndex;   
      }
      
      /**
@@ -84,5 +90,13 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
       */
      public String getMimeFilter() {
          return this.mimeFilter;
+     }
+     
+     /** 
+      * @return true If we should do optimization 
+      * when we close the (partial) index. 
+      */
+     public boolean getOptimizeIndex() {
+         return this.optimizeIndex;
      }
 }
