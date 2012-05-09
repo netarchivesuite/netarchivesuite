@@ -70,8 +70,8 @@ import dk.netarkivet.harvester.distribute.IndexReadyMessage;
  *
  * This class contains a singleton that handles requesting an index over JMS.
  *
- * It will ALWAYS reply to such messages, either with the index, a message
- * telling that only a subset is available, and which, or an error message,
+ * This class will always return the same lucene index based on the list of job identifiers 
+ * in the file regardless of what kind of index the client is requesting.
  * 
  */
 public final class TestIndexRequestServer extends ArchiveMessageHandler
@@ -98,7 +98,7 @@ public final class TestIndexRequestServer extends ArchiveMessageHandler
      * data. The default name of the file is "jobids.txt"
      */
     public static String JOBS_FOR_TESTINDEX 
-        = "settings.archive.indexserver.fileContainingJobsForTestindex";
+        = "settings.archive.indexserver.indexrequestserver.fileContainingJobsForTestindex";
     
     /** The class logger. */
     private static Log log = LogFactory.getLog(TestIndexRequestServer.class);
@@ -150,7 +150,8 @@ public final class TestIndexRequestServer extends ArchiveMessageHandler
         if (!jobsForDefaultIndex.exists()) {
             final String msg = "The file '" + jobsForDefaultIndex.getAbsolutePath() 
                     + "' does not exist";
-            log.fatal("The file containing job identifiers for default index '" + jobsForDefaultIndex.getAbsolutePath() 
+            log.fatal("The file containing job identifiers for default index '" 
+                    + jobsForDefaultIndex.getAbsolutePath() 
                     + "' does not exist");
             System.err.println(msg + ". Exiting program");
             System.exit(1);

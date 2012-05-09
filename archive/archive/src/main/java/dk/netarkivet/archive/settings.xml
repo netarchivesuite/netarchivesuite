@@ -102,6 +102,9 @@ National Library.
         	<optimizePartialIndex>false</optimizePartialIndex>
         	<optimizeIndex>true</optimizeIndex>
         	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
+        	<indexrequestserver>
+        		<class>dk.netarkivet.archive.indexserver.distribute.IndexRequestServer</class>
+        	</indexrequestserver>	
         </indexserver>
     </archive>
 </settings>
