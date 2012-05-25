@@ -1,4 +1,4 @@
-package dk.netarkivet.common.utils.warc;
+package dk.netarkivet.common.utils.cdx;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,6 +16,9 @@ import org.jwat.common.HttpResponse;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.batch.WARCBatchFilter;
+import dk.netarkivet.common.utils.warc.HeritrixArchiveRecordHeader;
+import dk.netarkivet.common.utils.warc.WARCBatchJob;
 
 /** Batch job that extracts information to create a CDX file.
 *

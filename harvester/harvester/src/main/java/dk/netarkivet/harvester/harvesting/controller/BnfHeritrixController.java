@@ -284,7 +284,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         // already contains the harvest id and job id.
         HeritrixFiles files = getHeritrixFiles();
         executeMBeanOperation(CrawlServiceOperation.addJob, files
-                .getOrderXmlFile().getAbsolutePath(), files.getArcFilePrefix(),
+                .getOrderXmlFile().getAbsolutePath(), files.getArchiveFilePrefix(),
                 getJobDescription(), files.getSeedsTxtFile().getAbsolutePath());
 
         jobName = getJobName();

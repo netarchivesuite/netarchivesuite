@@ -1,13 +1,13 @@
-package dk.netarkivet.common.utils.warc;
+package dk.netarkivet.common.tools;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.tools.ExtractCDX;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.common.utils.cdx.WARCExtractCDXJob;
 
 /**
 *
@@ -22,7 +22,7 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 *
 * Note: Does not depend on logging - communicates failures on stderr.
 */
-public class ExtractWarcCDX {
+public class WarcExtractCDX {
     /**
      * Main method. Extracts CDX from all given files and outputs the index
      * on stdout.
@@ -39,11 +39,9 @@ public class ExtractWarcCDX {
            File f = toArcFile(arg);
             arcFiles.add(f);
         }
-        long startCtm = System.currentTimeMillis();
         File[] arcFileArray = arcFiles.toArray(new File[]{});
         BatchLocalFiles batchRunner = new BatchLocalFiles(arcFileArray);
         batchRunner.run(new WARCExtractCDXJob(), System.out);
-        System.out.println(System.currentTimeMillis() - startCtm);
     }
 
     /**

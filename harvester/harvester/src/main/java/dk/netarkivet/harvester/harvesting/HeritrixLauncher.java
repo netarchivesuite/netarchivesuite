@@ -80,7 +80,7 @@ public abstract class HeritrixLauncher {
             "//crawl-order/controller"
             + "/string[@name='disk-path']";
     /** Xpath for the arcfile 'prefix' in the order.xml . */
-    private static final String ARCFILE_PREFIX_XPATH =
+    private static final String ARCHIVEFILE_PREFIX_XPATH =
             "//crawl-order/controller"
             + "/map[@name='write-processors']"
             + "/newObject/string[@name='prefix']";
@@ -88,12 +88,26 @@ public abstract class HeritrixLauncher {
     private static final String ARCSDIR_XPATH =
             "//crawl-order/controller"
             + "/map[@name='write-processors']"
-            + "/newObject/stringList[@name='path']/string";
+            + "/newObject[@name='Archiver']/stringList[@name='path']/string";
+    /** Xpath for the WARCs dir in the order.xml. */
+    private static final String WARCSDIR_XPATH =
+            "//crawl-order/controller"
+            + "/map[@name='write-processors']"
+            + "/newObject[@name='WARCArchiver']/stringList[@name='path']/string";
     /** Xpath for the 'seedsfile' in the order.xml. */
     private static final String SEEDS_FILE_XPATH =
             "//crawl-order/controller"
             + "/newObject[@name='scope']"
             + "/string[@name='seedsfile']";
+    private static final String ARCS_ENABLED_XPATH =
+            "//crawl-order/controller"
+            + "/map[@name='write-processors']"
+            + "/newObject[@name='Archiver']/boolean[@name='enabled']";
+    /** Xpath for the WARCs dir in the order.xml. */
+    private static final String WARCS_ENABLED_XPATH =
+            "//crawl-order/controller"
+            + "/map[@name='write-processors']"
+            + "/newObject[@name='WARCArchiver']/boolean[@name='enabled']";
 
     /**
      * Private HeritrixLaucher constructor. Sets up the HeritrixLauncher from
@@ -168,12 +182,18 @@ public abstract class HeritrixLauncher {
         XmlUtils.setNode(doc, DISK_PATH_XPATH,
                          files.getCrawlDir().getAbsolutePath());
 
-        XmlUtils.setNode(doc, ARCFILE_PREFIX_XPATH, files.getArcFilePrefix());
+        XmlUtils.setNodes(doc, ARCHIVEFILE_PREFIX_XPATH, files.getArchiveFilePrefix());
 
         XmlUtils.setNode(doc, SEEDS_FILE_XPATH,
                          files.getSeedsTxtFile().getAbsolutePath());
-        XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
 
+        XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
+        XmlUtils.setNode(doc, WARCSDIR_XPATH, Constants.WARCDIRECTORY_NAME);
+
+        XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, "false");
+        XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, "false");
+
+        //WARCDIRECTORY_NAME
         if (isDeduplicationEnabledInTemplate(doc)) {
             XmlUtils.setNode(doc, DEDUPLICATOR_INDEX_LOCATION_XPATH,
                              files.getIndexDir().getAbsolutePath());

@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -239,10 +240,14 @@ public class IngestableFiles {
      */
     public List<File> getArcFiles() {
         File arcsdir = new File(crawlDir, Constants.ARCDIRECTORY_NAME);
-        if (!arcsdir.isDirectory()) {
-            throw new IOFailure(arcsdir.getPath() + " is not a directory");
+        if (arcsdir.exists()) {
+            if (!arcsdir.isDirectory()) {
+                throw new IOFailure(arcsdir.getPath() + " is not a directory");
+            }
+            return Arrays.asList(arcsdir.listFiles(FileUtils.ARCS_FILTER));
+        } else {
+        	return new LinkedList<File>();
         }
-        return Arrays.asList(arcsdir.listFiles(FileUtils.ARCS_FILTER));
     }
 
     /** Get a list of all WARC files that should get ingested.  Any open files
@@ -252,10 +257,14 @@ public class IngestableFiles {
      */
     public List<File> getWarcFiles() {
         File warcsdir = new File(crawlDir, Constants.WARCDIRECTORY_NAME);
-        if (!warcsdir.isDirectory()) {
-            throw new IOFailure(warcsdir.getPath() + " is not a directory");
+        if (warcsdir.exists()) {
+            if (!warcsdir.isDirectory()) {
+                throw new IOFailure(warcsdir.getPath() + " is not a directory");
+            }
+            return Arrays.asList(warcsdir.listFiles(FileUtils.WARCS_FILTER));
+        } else {
+        	return new LinkedList<File>();
         }
-        return Arrays.asList(warcsdir.listFiles(FileUtils.WARCS_FILTER));
     }
 
     /** Close any ".open" files left by a crashed Heritrix.  ARC and/or WARC

@@ -131,7 +131,7 @@ public class HeritrixFiles {
      *
      * @return The ARC file prefix, currently jobID-harvestID.
      */
-    public String getArcFilePrefix() {
+    public String getArchiveFilePrefix() {
         return arcFilePrefix;
     }
 

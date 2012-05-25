@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,46 +14,28 @@ import org.archive.io.warc.WARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NetarkivetException;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.WARCBatchFilter;
+import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 
 /**
- * Abstract class defining a batch job to run on a set of WARC files.
+ * Abstract class defining a batch job to run on a set of ARC/WARC files.
  * Each implementation is required to define initialize() , processRecord() and
  * finish() methods. The bitarchive application then ensures that the batch
  * job run initialize(), runs processRecord() on each record in each file in
  * the archive, and then runs finish().
  */
-public abstract class WARCBatchJob extends FileBatchJob {
+public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
 
-    /**
+	/**
 	 * UID.
 	 */
-	private static final long serialVersionUID = -571097126180970412L;
-
-	/** The total number of records processed. */
-    protected int noOfRecordsProcessed = 0;
-
-    /**
-     * Initialize the job before running.
-     * This is called before the processRecord() calls start coming.
-     * @param os The OutputStream to which output data is written
-     */
-    public abstract void initialize(OutputStream os);
+	private static final long serialVersionUID = -6776271561735259429L;
 
     /**
      * Exceptions should be handled with the handleException() method.
      * @param os The OutputStream to which output data is written
      * @param record the object to be processed.
      */
-    public abstract void processRecord(WARCRecord record, OutputStream os);
-
-    /**
-     * Finish up the job.
-     * This is called after the last processRecord() call.
-     * @param os The OutputStream to which output data is written
-     */
-    public abstract void finish(OutputStream os);
+    public abstract void processRecord(ArchiveRecordBase record, OutputStream os);
 
     /**
      * returns a BatchFilter object which restricts the set of warc records
@@ -64,8 +45,8 @@ public abstract class WARCBatchJob extends FileBatchJob {
      * @return A filter telling which records should be given to
      * processRecord().
      */
-    public WARCBatchFilter getFilter() {
-        return WARCBatchFilter.NO_FILTER;
+    public ArchiveBatchFilter getFilter() {
+        return ArchiveBatchFilter.NO_FILTER;
     }
 
     /**
@@ -73,28 +54,28 @@ public abstract class WARCBatchJob extends FileBatchJob {
      * processRecord() on every record that is allowed by getFilter().
      * Does nothing on a non-arc file.
      *
-     * @param warcFile The WARC or WARCGZ file to be processed.
+     * @param archiveFile The WARC or WARCGZ file to be processed.
      * @param os the OutputStream to which output is to be written
      * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
      */
-    public final boolean processFile(File warcFile, OutputStream os) throws
+    public final boolean processFile(File archiveFile, OutputStream os) throws
             ArgumentNotValid{
-        ArgumentNotValid.checkNotNull(warcFile, "warcFile");
+        ArgumentNotValid.checkNotNull(archiveFile, "archiveFile");
         ArgumentNotValid.checkNotNull(os, "os");
         Log log = LogFactory.getLog(getClass().getName());
         long arcFileIndex = 0;
         boolean success = true;
-        log.info("Processing WARCfile: " + warcFile.getName());
+        log.info("Processing WARCfile: " + archiveFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
             //Create an WARCReader and retrieve its Iterator:
             WARCReader warcReader = null;
 
             try {
-                warcReader = WARCReaderFactory.get(warcFile);
+                warcReader = WARCReaderFactory.get(archiveFile);
             } catch (IOException e) { //Some IOException
-                handleException(e, warcFile, arcFileIndex);
+                handleException(e, archiveFile, arcFileIndex);
 
                 return false; // Can't process file after exception
             }
@@ -103,10 +84,10 @@ public abstract class WARCBatchJob extends FileBatchJob {
                 Iterator<? extends ArchiveRecord> it = warcReader.iterator();
                 /* Process all records from this Iterator: */
                 log.debug("Starting processing records in WARCfile '"
-                        + warcFile.getName() + "'.");
+                        + archiveFile.getName() + "'.");
                 if (!it.hasNext()) {
                     log.debug("No WARCRecords found in WARCfile '"
-                            + warcFile.getName() + "'.");
+                            + archiveFile.getName() + "'.");
                 }
                 WARCRecord record = null;
                 while (it.hasNext()) {
@@ -115,13 +96,17 @@ public abstract class WARCBatchJob extends FileBatchJob {
                     record = (WARCRecord) it.next();
                     // Process with the job
                     try {
+                    	// NICL do
+                    	/*
                         if (!getFilter().accept(record)) {
                             continue;
                         }
+                        */
                         log.debug(
                                 "Processing WARCRecord #" + noOfRecordsProcessed
-                                + " in WARCfile '" + warcFile.getName()  + "'.");
-                        processRecord(record, os);
+                                + " in WARCfile '" + archiveFile.getName()  + "'.");
+                        // NICL do
+                        //processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
                         // Our exceptions don't stop us
@@ -130,11 +115,11 @@ public abstract class WARCBatchJob extends FileBatchJob {
                         // With our exceptions, we assume that just the
                         // processing of this record got stopped, and we can
                         // easily find the next
-                        handleOurException(e, warcFile, arcFileIndex);
+                        handleOurException(e, archiveFile, arcFileIndex);
                     } catch (Exception e) {
                         success = false; // Strange exceptions do stop us
 
-                        handleException(e, warcFile, arcFileIndex);
+                        handleException(e, archiveFile, arcFileIndex);
                         // With strange exceptions, we don't know
                         // if we've skipped records
                         break;
@@ -150,7 +135,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
                     } catch (IOException ioe) { // Couldn't close an WARCRecord
                         success = false;
 
-                        handleException(ioe, warcFile, arcFileIndex);
+                        handleException(ioe, archiveFile, arcFileIndex);
                         // If close fails, we don't know if we've skipped
                         // records
                         break;
@@ -163,74 +148,14 @@ public abstract class WARCBatchJob extends FileBatchJob {
                 } catch (IOException e) { //Some IOException
                     // TODO Discuss whether exceptions on close cause
                     // filesFailed addition
-                    handleException(e, warcFile, arcFileIndex);
+                    handleException(e, archiveFile, arcFileIndex);
                 }
             }
         } catch (Exception unexpectedException) {
-            handleException(unexpectedException, warcFile, arcFileIndex);
+            handleException(unexpectedException, archiveFile, arcFileIndex);
             return false;
         }
         return success;
     }
     
-    /**
-     * Private method that handles our exception.
-     * @param e the given exception
-     * @param arcFile The ARCFile where the exception occurred.
-     * @param index The offset in the ARCFile where the exception occurred.
-     */
-    private void handleOurException(
-            NetarkivetException e, File arcFile, long index) {
-        handleException(e, arcFile, index);
-    }
-
-    /**
-     * When the org.archive.io.arc classes throw IOExceptions while reading,
-     * this is where they go. Subclasses are welcome to override the default
-     * functionality which simply logs and records them in a list.
-     * TODO Actually use the arcfile/index entries in the exception list
-     *
-     * @param e An Exception thrown by the org.archive.io.arc classes.
-     * @param warcfile The arcFile that was processed while the Exception
-     * was thrown
-     * @param index The index (in the ARC file) at which the Exception
-     * was thrown
-     * @throws ArgumentNotValid if e is null
-     */
-    public void handleException(Exception e, File warcfile, long index)
-      throws ArgumentNotValid{
-        ArgumentNotValid.checkNotNull(e, "e");
-        
-        Log log = LogFactory.getLog(getClass().getName());
-        log.debug("Caught exception while running batch job " + "on file "
-                + warcfile + ", position " + index + ":\n" + e.getMessage(), e);
-        addException(warcfile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
-    }
-
-    /**
-     * Returns a representation of the list of Exceptions recorded for this
-     * ARC batch job.
-     * If called by a subclass, a method overriding handleException()
-     * should always call super.handleException().
-     *
-     * @return All Exceptions passed to handleException so far.
-     */
-    public Exception[] getExceptionArray() {
-        List<ExceptionOccurrence> exceptions = getExceptions();
-        Exception[] exceptionList = new Exception[exceptions.size()];
-        int i = 0;
-        for (ExceptionOccurrence e : exceptions) {
-            exceptionList[i++] = e.getException();
-        }
-        return exceptionList;
-    }
-    
-    /**
-     * 
-     * @return the number of records processed.
-     */
-    public int noOfRecordsProcessed() {
-        return noOfRecordsProcessed;
-    }
-
 }

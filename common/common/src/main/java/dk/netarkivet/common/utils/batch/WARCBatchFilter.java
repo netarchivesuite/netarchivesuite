@@ -1,4 +1,4 @@
-package dk.netarkivet.common.utils.warc;
+package dk.netarkivet.common.utils.batch;
 
 import java.awt.datatransfer.MimeTypeParseException;
 import java.io.Serializable;
@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import org.archive.io.warc.WARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.warc.HeritrixArchiveRecordHeader;
 
 public abstract class WARCBatchFilter implements Serializable {
 
