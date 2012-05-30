@@ -116,9 +116,19 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
 
             // Retrieve crawl data from log and add it to HarvestInfo
             StopReason stopReason = getStopReason(domainName);
-            long countObjectRetrieved = getObjectCount(domainName);
-            long bytesReceived = getByteCount(domainName);
-
+            if (stopReason == null) {
+                LOG.warn("No stopreason found for domain '" + domainName + "'");
+            }
+            Long countObjectRetrieved = getObjectCount(domainName);
+            if (countObjectRetrieved == null) {
+                LOG.warn("No count for objects retrieved found for domain '" + domainName + "'");
+                countObjectRetrieved = -1L;
+            }
+            Long bytesReceived = getByteCount(domainName);
+            if (bytesReceived == null) {
+                LOG.warn("No count for bytes received found for domain '" + domainName + "'");
+                bytesReceived = -1L;
+            }
             //If StopReason is SIZE_LIMIT, we check if it's the harvests' size
             //limit, or rather a configuration size limit.
 

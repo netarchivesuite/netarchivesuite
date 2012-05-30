@@ -42,6 +42,13 @@ import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.DomainConfiguration;
+import dk.netarkivet.harvester.datamodel.DomainHistory;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.Password;
+import dk.netarkivet.harvester.datamodel.SeedList;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
@@ -232,7 +239,7 @@ public class LegacyHarvestReportTester extends TestCase {
                 testFile,
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
         HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
-
+        
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         assertEquals("kb.dk is unfinished",
                      StopReason.DOWNLOAD_UNFINISHED,
@@ -247,7 +254,38 @@ public class LegacyHarvestReportTester extends TestCase {
                      null,
                      hr.getStopReason("bibliotek.dk"));
     }
-
+    
+    public void testIDNA() {
+        File testFile = TestInfo.IDNA_CRAW_LOG;
+        FileUtils.copyFile(
+                testFile,
+                new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
+        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
+        AbstractHarvestReport hr = new LegacyHarvestReport(hf);
+//        List<SeedList> seedLists = new ArrayList<SeedList>();
+//        SeedList s = new SeedList("default", "www.ølejr.dk");
+//        seedLists.add(s);
+//        List<String> traps = new ArrayList<String>();
+//        List<Password> pws = new ArrayList<Password>();
+//        DomainConfiguration dc = new DomainConfiguration("theconfig", "ølejr.dk", 
+//                new DomainHistory(), traps, seedLists, pws);
+//        DomainConfiguration dc1 = new DomainConfiguration("theconfig", "ølejr.dk", 
+//                new DomainHistory(), traps, seedLists, pws);
+//        //Job idnaJob = Job.createJob(42L, dc, 0);
+//        //idnaJob.addConfiguration(dc1);
+        boolean disregardSeedUrl = Settings.getBoolean(
+                HarvesterSettings.DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG); 
+        if (disregardSeedUrl) { 
+            assertTrue(hr.getByteCount("oelejr.dk") != null);
+            assertTrue(hr.getByteCount("østerbrogades-dyrlæger.dk") != null);
+            assertTrue(hr.getDomainNames().size() > 2);
+        } else {
+            assertTrue(hr.getByteCount("ølejr.dk") != null);
+            assertTrue(hr.getByteCount("østerbrogades-dyrlæger.dk") != null);
+            assertTrue(hr.getDomainNames().size() == 2);
+        }
+    }
+    
     /**
      * Tests object can be serialized and deserialized preserving state.
      *

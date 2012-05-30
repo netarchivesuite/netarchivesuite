@@ -203,9 +203,11 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * Get the number of bytes downloaded for the given domain.
      *
      * @param domainName A domain name (as given by getDomainNames())
-     * @return How many bytes were collected for that domain
+     * @return How many bytes were collected for that domain or
+     * null if information available for this domain.
      * @throws ArgumentNotValid if null or empty domainName
      */
+    @Override
     public final Long getByteCount(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         final DomainStats domainStats = domainstats.get(domainName);
@@ -218,9 +220,11 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     /**
      * Get the StopReason for the given domain.
      * @param domainName A domain name (as given by getDomainNames())
-     * @return the StopReason for the given domain.
+     * @return the StopReason for the given domain or null, if no stopreason 
+     * found for this domain
      * @throws ArgumentNotValid if null or empty domainName
      */
+    @Override
     public final StopReason getStopReason(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         final DomainStats domainStats = domainstats.get(domainName);
@@ -338,6 +342,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      */
     private void processHarvestLine(final String line, boolean disregardSeedUrlInfo) throws ArgumentNotValid {
         //A legal crawl log line has at least 11 parts, + optional annotations
+        
         final int MIN_CRAWL_LOG_PARTS = 11;
         final int MAX_PARTS = 12;
         final int ANNOTATION_PART_INDEX = 11;
@@ -354,10 +359,9 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         // and this information is disregarded
         // Note This information is disregarded if setting disregard_seed_url_information
         // is enabled.
-        // But first the seedURL is IDNA decoded to transform 
-        // any IDNA encoded seedURL into Unicode.
         
-        final String seedURL = IDNA.toUnicode(parts[10]);
+        String seedURL = parts[10];
+    
         boolean sourceTagEnabled = true;
         if (seedURL.equals("-") || disregardSeedUrlInfo) {
             sourceTagEnabled = false;
@@ -367,6 +371,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         if (sourceTagEnabled) {
             try {
                 seedDomain = getDomainNameFromURIString(seedURL);
+                if (seedDomain != null) {
+                    // Transform any IDNA encoded seedDomain back to Unicode
+                    seedDomain = IDNA.toUnicode(seedDomain);
+                }
             } catch (URIException e) {
                 LOG.debug("Unable to extract a domain from the seedURL found in field 11 of crawl.log: '"
                         + seedURL + "'.", e);
@@ -374,13 +382,15 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         }
         
         //Get the object domain name from the URL in the fourth field
-        // But first the string is IDNA decoded to transform 
-        // any IDNA encoded URI into Unicode.
         String objectDomain = null;
-        String objectUrl = IDNA.toUnicode(parts[3]);
+        String objectUrl = parts[3];
         
         try {
             objectDomain = getDomainNameFromURIString(objectUrl);
+            if (objectDomain != null) {
+                // Transform the any IDNA encoded domain back to Unicode
+                objectDomain = IDNA.toUnicode(objectDomain);
+            }
         } catch (URIException e) {
             LOG.debug("Unable to extract a domain from the object URL found in field 4 of crawl.log: '"
                     + objectUrl + "'.", e);
@@ -399,8 +409,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
             domainName = objectDomain;
         } else {
             throw new ArgumentNotValid("Unable to find valid domainname");
-        }
-         
+        }     
        
         //Get the response code for the URL in the second field
         long response;
@@ -461,7 +470,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * Extract DomainName from URI string. 
+     * Extract DomainName from URI string. Does not handle Danish characters in URI.
      * @param uriAsString a given URI as string.
      * @return the domainName if possible or null, if not possible
      * @throws URIException If unable to create valid URI from the given string

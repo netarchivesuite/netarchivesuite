@@ -169,6 +169,8 @@ public class TestInfo {
     static final int NO_OF_OBJECTS_TEST = 37;
     static final int NO_OF_BYTES_TEST = 1162154;
 
+    public static final File IDNA_CRAW_LOG = new File(BASEDIR, "idna/idna-crawllog.txt");
+
     /** Get a simple job with high priority.
      *  @return a simple job with high priority
      */
