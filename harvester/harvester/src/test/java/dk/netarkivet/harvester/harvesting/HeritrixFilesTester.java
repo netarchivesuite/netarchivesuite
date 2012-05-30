@@ -87,7 +87,7 @@ public class HeritrixFilesTester extends TestCase {
 
         // check, that arcFilePrefix is correctly set
         assertEquals("arcFilePrefix should contain job id and harvest id",
-                     "42-42", hf.getArcFilePrefix());
+                     "42-42", hf.getArchiveFilePrefix());
         assertEquals("jmxPasswordFile should be" 
                 + defaultJmxPasswordFile.getAbsolutePath(), 
                 defaultJmxPasswordFile, hf.getJmxPasswordFile());
@@ -110,7 +110,7 @@ public class HeritrixFilesTester extends TestCase {
 
         // check, that arcFilePrefix is correctly set
         assertEquals("arcFilePrefix should contain job id and harvest id",
-                     "42-42", hf.getArcFilePrefix());
+                     "42-42", hf.getArchiveFilePrefix());
         
         // check, that in the alternate constructor the JMX files to
         // be used by Heritrix is read from settings.

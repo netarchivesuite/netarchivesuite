@@ -191,7 +191,7 @@ public abstract class HeritrixLauncher {
         XmlUtils.setNode(doc, WARCSDIR_XPATH, Constants.WARCDIRECTORY_NAME);
 
         XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, "false");
-        XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, "false");
+        XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, "true");
 
         //WARCDIRECTORY_NAME
         if (isDeduplicationEnabledInTemplate(doc)) {

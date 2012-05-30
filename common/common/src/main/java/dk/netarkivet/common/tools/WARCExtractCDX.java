@@ -10,20 +10,21 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.cdx.WARCExtractCDXJob;
 
 /**
-*
-*
-* Command line tool for extracting CDX information from given WARC files.
-*
-* Usage:
-* java dk.netarkivet.common.tools.ExtractCDX file1.ext [file2.ext ...]
-*      > myindex.cdx
-*
-* "ext" can be warc or warc.gz
-*
-* Note: Does not depend on logging - communicates failures on stderr.
-*/
-public class WarcExtractCDX {
-    /**
+ *
+ *
+ * Command line tool for extracting CDX information from given WARC files.
+ *
+ * Usage:
+ * java dk.netarkivet.common.tools.ExtractCDX file1.ext [file2.ext ...]
+ *      > myindex.cdx
+ *
+ * "ext" can be warc or warc.gz
+ *
+ * Note: Does not depend on logging - communicates failures on stderr.
+ */
+public class WARCExtractCDX {
+
+	/**
      * Main method. Extracts CDX from all given files and outputs the index
      * on stdout.
      * @param argv A list of (absolute paths to) files to index.
@@ -84,4 +85,5 @@ public class WarcExtractCDX {
                 + " file1.warc [file2.warc ...]");
         System.exit(1);
     }
+
 }
