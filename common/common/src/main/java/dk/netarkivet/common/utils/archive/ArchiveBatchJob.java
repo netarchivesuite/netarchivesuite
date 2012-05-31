@@ -1,4 +1,4 @@
-package dk.netarkivet.common.utils.warc;
+package dk.netarkivet.common.utils.archive;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,10 +7,9 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
-import org.archive.io.warc.WARCReader;
-import org.archive.io.warc.WARCReaderFactory;
-import org.archive.io.warc.WARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NetarkivetException;
@@ -38,12 +37,11 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
     public abstract void processRecord(ArchiveRecordBase record, OutputStream os);
 
     /**
-     * returns a BatchFilter object which restricts the set of warc records
-     * in the archive on which this batch-job is performed. The default value
-     * is a neutral filter which allows all records.
+     * returns a BatchFilter object which restricts the set of arcrecords in the
+     * archive on which this batch-job is performed. The default value is
+     * a neutral filter which allows all records.
      *
-     * @return A filter telling which records should be given to
-     * processRecord().
+     * @return A filter telling which records should be given to processRecord().
      */
     public ArchiveBatchFilter getFilter() {
         return ArchiveBatchFilter.NO_FILTER;
@@ -70,10 +68,10 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
 
         try { // This outer try-catch block catches all unexpected exceptions
             //Create an WARCReader and retrieve its Iterator:
-            WARCReader warcReader = null;
+            ArchiveReader archiveReader = null;
 
             try {
-                warcReader = WARCReaderFactory.get(archiveFile);
+                archiveReader = ArchiveReaderFactory.get(archiveFile);
             } catch (IOException e) { //Some IOException
                 handleException(e, archiveFile, arcFileIndex);
 
@@ -81,7 +79,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
             }
             
             try {
-                Iterator<? extends ArchiveRecord> it = warcReader.iterator();
+                Iterator<? extends ArchiveRecord> it = archiveReader.iterator();
                 /* Process all records from this Iterator: */
                 log.debug("Starting processing records in WARCfile '"
                         + archiveFile.getName() + "'.");
@@ -89,24 +87,22 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                     log.debug("No WARCRecords found in WARCfile '"
                             + archiveFile.getName() + "'.");
                 }
-                WARCRecord record = null;
+                ArchiveRecord archiveRecord = null;
+                ArchiveRecordBase record;
                 while (it.hasNext()) {
                     log.trace("At begin of processing-loop");
                     // Get a record from the file
-                    record = (WARCRecord) it.next();
+                    archiveRecord = (ArchiveRecord) it.next();
+                    record = ArchiveRecordBase.wrapArchiveRecord(archiveRecord);
                     // Process with the job
                     try {
-                    	// NICL do
-                    	/*
                         if (!getFilter().accept(record)) {
                             continue;
                         }
-                        */
                         log.debug(
                                 "Processing WARCRecord #" + noOfRecordsProcessed
                                 + " in WARCfile '" + archiveFile.getName()  + "'.");
-                        // NICL do
-                        //processRecord(record, os);
+                        processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
                         // Our exceptions don't stop us
@@ -126,11 +122,18 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                     }
                     // Close the record
                     try {
+                    	/*
+                        // FIXME: Don't know  how to compute this for warc-files
+                        // computation for arc-files: long arcRecordOffset =
+                        //        record.getBodyOffset() + record.getMetaData().getLength();
+                        // computation for warc-files (experimental)
+                        long arcRecordOffset = record.getHeader().getOffset();
+                        */
                     	// TODO maybe this works, maybe not...
                         long arcRecordOffset =
-                                record.getHeader().getContentBegin() 
-                                + record.getHeader().getLength();
-                        record.close();
+                                archiveRecord.getHeader().getContentBegin() 
+                                + archiveRecord.getHeader().getLength();
+                        archiveRecord.close();
                         arcFileIndex = arcRecordOffset;
                     } catch (IOException ioe) { // Couldn't close an WARCRecord
                         success = false;
@@ -144,7 +147,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                 } 
             } finally {
                 try {
-                    warcReader.close();
+                    archiveReader.close();
                 } catch (IOException e) { //Some IOException
                     // TODO Discuss whether exceptions on close cause
                     // filesFailed addition

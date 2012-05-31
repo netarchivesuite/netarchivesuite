@@ -170,6 +170,8 @@ public class BatchLocalFiles {
             // job.addException(currentFile, currentOffset, outputOffset, e)
             log.warn("Exception while processing file " + file
                      + " with job " + job, e);
+
+            e.printStackTrace();
         }
         job.noOfFilesProcessed++;
         if (!success) {

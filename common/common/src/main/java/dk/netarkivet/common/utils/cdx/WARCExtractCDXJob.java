@@ -16,8 +16,10 @@ import org.jwat.common.HttpResponse;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
+import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
+import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
 import dk.netarkivet.common.utils.batch.WARCBatchFilter;
-import dk.netarkivet.common.utils.warc.HeritrixArchiveRecordHeader;
 import dk.netarkivet.common.utils.warc.WARCBatchJob;
 
 /** Batch job that extracts information to create a CDX file.
@@ -109,7 +111,8 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         * to pull them out when looking at the
         * fieldarray.
         */
-        HeritrixArchiveRecordHeader header = new HeritrixArchiveRecordHeader(sar);
+        ArchiveRecordBase record = new HeritrixArchiveRecordWrapper(sar);
+        ArchiveHeaderBase header = record.getHeader();
         Map<String, String> fieldsread = new HashMap<String,String>();
         fieldsread.put("A", header.getUrl());
         fieldsread.put("e", header.getIp());

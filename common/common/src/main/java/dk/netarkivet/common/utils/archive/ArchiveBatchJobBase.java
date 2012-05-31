@@ -1,4 +1,4 @@
-package dk.netarkivet.common.utils.warc;
+package dk.netarkivet.common.utils.archive;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -50,13 +50,11 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
      * When the org.archive.io.arc classes throw IOExceptions while reading,
      * this is where they go. Subclasses are welcome to override the default
      * functionality which simply logs and records them in a list.
-     * TODO Actually use the arcfile/index entries in the exception list
+     * TODO: Actually use the arcfile/index entries in the exception list
      *
      * @param e An Exception thrown by the org.archive.io.arc classes.
-     * @param archiveFile The arcFile that was processed while the Exception
-     * was thrown
-     * @param index The index (in the ARC file) at which the Exception
-     * was thrown
+     * @param arcfile The arcFile that was processed while the Exception was thrown
+     * @param index The index (in the ARC file) at which the Exception was thrown
      * @throws ArgumentNotValid if e is null
      */
     public void handleException(Exception e, File archiveFile, long index)
@@ -95,4 +93,5 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
         return noOfRecordsProcessed;
     }
 
+    
 }

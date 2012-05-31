@@ -1,13 +1,12 @@
 package dk.netarkivet.common.utils.batch;
 
-import java.awt.datatransfer.MimeTypeParseException;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 
 import org.archive.io.warc.WARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.warc.HeritrixArchiveRecordHeader;
+import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
 
 public abstract class WARCBatchFilter implements Serializable {
 
@@ -41,8 +40,8 @@ public abstract class WARCBatchFilter implements Serializable {
     public static final WARCBatchFilter EXCLUDE_FILE_HEADERS = new WARCBatchFilter(
             EXCLUDE_FILE_HEADERS_FILTER_NAME) {
             public boolean accept(WARCRecord record) {
-                HeritrixArchiveRecordHeader header = new HeritrixArchiveRecordHeader(record);
-                String warcType = header.getHeaderStringValue("WARC-Type");
+                HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
+                String warcType = recordWrapper.getHeader().getHeaderStringValue("WARC-Type");
             	return "response".equalsIgnoreCase(warcType);
             }
         };

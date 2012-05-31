@@ -7,7 +7,7 @@ import java.util.List;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
-import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
+import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 
 /**
  *
@@ -42,7 +42,7 @@ public class ArchiveExtractCDX {
         }
         File[] arcFileArray = arcFiles.toArray(new File[]{});
         BatchLocalFiles batchRunner = new BatchLocalFiles(arcFileArray);
-        batchRunner.run(new ExtractCDXJob(), System.out);
+        batchRunner.run(new ArchiveExtractCDXJob(), System.out);
     }
 
     /**
