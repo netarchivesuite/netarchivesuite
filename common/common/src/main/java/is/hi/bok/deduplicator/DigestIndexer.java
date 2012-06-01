@@ -22,6 +22,7 @@
  */
 package is.hi.bok.deduplicator;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
@@ -32,6 +33,10 @@ import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.store.SimpleFSDirectory;
+import org.apache.lucene.util.Version;
 import org.archive.util.ArchiveUtils;
 
 /**
@@ -136,8 +141,17 @@ public class DigestIndexer {
         }
 
         // Set up the index writer
-        index = new IndexWriter(indexLocation,
-                new WhitespaceAnalyzer(), !addToExistingIndex);
+        //index = new IndexWriter(indexLocation,
+        //        new WhitespaceAnalyzer(), !addToExistingIndex);
+        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, 
+                new WhitespaceAnalyzer(Version.LUCENE_36));
+        if (!addToExistingIndex) {
+            config.setOpenMode(OpenMode.CREATE);
+        } else {
+            config.setOpenMode(OpenMode.CREATE_OR_APPEND);
+        }
+        index = new IndexWriter(new SimpleFSDirectory(new File(indexLocation)),
+                config);
     }
 
     /**
@@ -201,7 +215,6 @@ public class DigestIndexer {
             boolean verbose,
             boolean skipDuplicates) 
             throws IOException {
-
         int count = 0;
         int skipped = 0;
         while (dataIt.hasNext()) {
@@ -221,7 +234,7 @@ public class DigestIndexer {
                         FIELD_URL,
                         item.getURL(),
                         Field.Store.YES,
-                        (indexURL ? Field.Index.UN_TOKENIZED : Field.Index.NO)
+                        (indexURL ? Field.Index.NOT_ANALYZED : Field.Index.NO)
                         ));
                 if(equivalent){
                     doc.add(new Field(
@@ -229,7 +242,7 @@ public class DigestIndexer {
                             stripURL(item.getURL()),
                             Field.Store.YES,
                             (indexURL ? 
-                                    Field.Index.UN_TOKENIZED : Field.Index.NO)
+                                    Field.Index.NOT_ANALYZED : Field.Index.NO)
                     ));
                 }
 
@@ -239,7 +252,7 @@ public class DigestIndexer {
                         item.getContentDigest(),
                         Field.Store.YES,
                         (indexDigest ? 
-                                Field.Index.UN_TOKENIZED : Field.Index.NO)
+                                Field.Index.NOT_ANALYZED : Field.Index.NO)
                         ));
                     
                 if(timestamp){
@@ -250,7 +263,7 @@ public class DigestIndexer {
                             Field.Index.NO
                             ));
                 }
-                if(etag && item.getEtag()!=null){
+                if(etag && item.getEtag()!= null){
                     doc.add(new Field(
                             FIELD_ETAG,
                             item.getEtag(),
@@ -258,9 +271,9 @@ public class DigestIndexer {
                             Field.Index.NO
                             ));
                 }
-                if(defaultOrigin!=null){
+                if(defaultOrigin != null){
                     String tmp = item.getOrigin();
-                    if(tmp==null){
+                    if(tmp == null){
                         tmp = defaultOrigin;
                     }
                     doc.add(new Field(
@@ -271,6 +284,8 @@ public class DigestIndexer {
                             ));
                 }
                 index.addDocument(doc);
+                // needed with new IndexWriter (see line 144)
+                index.commit();
             } else {
                 skipped++;
             }
@@ -290,9 +305,10 @@ public class DigestIndexer {
      */
     public void close(boolean optimize) throws IOException{
         if(optimize){
+            // optimize method is deprecated in Lucene 3.6 and missing from Lucene 4.0 dev
             index.optimize();
         }
-        index.close();
+        index.close(true);
     }
 
     /**

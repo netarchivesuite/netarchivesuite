@@ -34,7 +34,8 @@ import dk.netarkivet.archive.indexserver.CDXOriginCrawlLogIteratorTester;
 
 /**
  * This class runs all tests of Deduplicator functionality.  Must be run as part
- * of deduplicator upgrades.
+ * of deduplicator upgrades. 
+ * FIXME This doesn't test the Heritrix modules.
  *
  */
 

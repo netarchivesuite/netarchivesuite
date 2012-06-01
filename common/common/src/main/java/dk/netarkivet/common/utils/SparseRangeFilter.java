@@ -45,13 +45,17 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TermEnum;
-import org.apache.lucene.search.RangeFilter;
+//import org.apache.lucene.search.RangeFilter;
+import org.apache.lucene.search.TermRangeFilter;
 
 /**
  * Identical subclass of {@link RangeFilter} from Lucene 2.0.0, except the
  * bitset returned by {@link #bits(IndexReader)} is sparse.
+ * 
+ * FIXME: Now extends TermRangeFilter, as RangeFilter no longer exists
+ * in Lucene 3.6.0
  */
-public class SparseRangeFilter extends RangeFilter {
+public class SparseRangeFilter extends TermRangeFilter {
     private String fieldName;
     private String lowerTerm;
     private String upperTerm;

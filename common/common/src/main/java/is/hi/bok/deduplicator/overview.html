@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>DeDuplicator</title>
+		<meta name="author" content="Kristinn Sigurdsson" >
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" >
+		<meta http-equiv="Content-Script-Type" content="text/javascript" >
+		<meta http-equiv="Content-Style-Type" content="text/css" >
+	</head>
+	<body>
+		<h1>DeDuplicator Overview.</h1>
+		<h2>Getting started</h2>
+		<h3>Building an index</h3>
+		<ol>
+		<li>A functional installation of Heritrix is required for this 
+		software to work. While Heritrix can be deployed on non-Linux
+		operating systems that requires some degree of work as the bundled 
+		scripts are written for Linux. The same applies to this software and 
+		the following instructions assume that Heritrix is installed on a 
+		Linux machine under $HERITRIX_HOME.</li> 
+		<li>Install the DeDuplicator software. The jar files should be 
+		included in $HERITRIX_HOME/lib/ while the dedupdigest script
+		should be added to $HERITRIX_HOME/bin/. If you've downloaded a .tar.gz
+		bundle, explode it into $HERITRIX_HOME and all the files will be 
+		correctly deployed. <em>NOTE:</em> Heritrix can not be running 
+		at the same time as the DeDuplicator software is run.</li>
+		<li>Make the dedupdigest script executable with <code>chmod u+x 
+		$HERITRIX_HOME/bin/dedupdigest</code></li>
+		<li>Run <code>$HERITRIX_HOME/bin/dedupdigest --help</code> This will
+		display the usage information for the indexing.<br>
+		The program takes two arguments, the source data (crawl.log usually) 
+		and the target directory where the index will be written (will be 
+		created if not present). Several options are provided to custom
+		tailor the type of index.</li>
+		<li>Create an index. A typical index can be built with<br>
+		<code>$HERITRIX_HOME/bin/dedupdigest -o URL -s -t &lt;location of 
+		crawl.log&gt; &lt;index output directory&gt;</code><br>
+		This will create an index that is indexed by URL only (not by the 
+		content digest) and includes equivalent URLs and timestamps.</li>
+		</ol>
+		<h3>Using the index</h3>
+		<ol>
+		<li>Having built an appropriate index, launch Heritrix. Make sure that 
+		the installation of Heritrix that you launched has the two JARs that
+		come with the DeDuplicator (deduplicator-[version].jar and 
+		lucene-[version].jar) if it is not the same one used for creating the
+		index.</li>
+		<li>Configure a crawl job as normal except add the DeDuplicator
+		processor to the processing chain at some point <em>after</em> the
+		HTTPFetcher processor and prior to any processor which should be 
+		skipped if a duplicate is detected.
+		When the DeDuplicator finds a duplicate the processing moves 
+		straight to the PostProcessing chain. So if you insert it at the top
+		of the Extractor chain you can skip both link extraction and writing
+		to disk. If you do not wish to skip link extraction you can insert the
+		processor at the end of the link extraction chain etc.</li>		
+		<li>The DeDuplicator processor has several configurable parameters.
+		<ol>
+			<li><em>enabled</em> Standard Heritrix property for processors. 
+			Should be true. Setting it to false will disable the processor.</li>		
+			<li><em>index-location</em> The most important setting. A full path
+			to the directory that contains the index (output directory of the 
+			indexing.)</li>		
+			<li><em>matching-method</em> Whether to lookup URLs or content
+			digests first when looking for matches. This setting depends on
+			how the index was built (indexing mode). If it was set to BOTH then
+			either setting will work. Otherwise it must be set according to the
+			indexing mode.</li>		
+			<li><em>try-equivalent</em> Should equivalent URLs be tried if an
+			exact URL and content digest match is not found. Using equivalent
+			matches means that duplicate documents whose URLs differ only in the
+			parameter list or because of www[0-9]* prefixes are detected.</li>		
+			<li><em>mime-filter</em> Which documents to process</li>		
+			<li><em>filter-mode</em></li>		
+			<li><em>analysis-mode</em> Enables analysis of the usefulness and
+			accuracy of header information in predicting change and non-change
+			in documents. For statistical gathering purposes only.</li>		
+			<li><em>log-level</em> Enables more logging.</li>		
+			<li><em>stats-per-host</em> Maintains statistics per host in 
+			addition to the crawl wide stats.</li>		
+		</ol>
+		</li>
+		<li>Once the processor has been configured the crawl can be started
+		and run normally. Information about the processor is available via
+		the Processor report in the Heritrix GUI (this is saved to 
+		processors-report.txt at the end of a crawl).<br>
+		Duplicate URLs will still show up in the crawl log but with a note 
+		'duplicate' in the annotation field at the end of the log line.</li>
+		</ol>
+	</body>
+</html>

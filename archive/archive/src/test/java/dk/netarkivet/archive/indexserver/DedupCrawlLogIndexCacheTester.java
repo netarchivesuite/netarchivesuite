@@ -36,10 +36,15 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.util.Version;
 
 import dk.netarkivet.common.utils.FileUtils;
 
@@ -56,7 +61,7 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
     }
 
     public void tearDown() throws Exception {
-        super.tearDown();
+        //super.tearDown();
     }
 
     public void testCombine() throws Exception {
@@ -115,18 +120,28 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
                 in.close();
             }
         }
-        String indexName = unzipDir.getAbsolutePath();
-
-        IndexSearcher index = new IndexSearcher(indexName);
-        QueryParser queryParser = new QueryParser("url", new WhitespaceAnalyzer());
+        
+        Directory luceneDirectory = new MMapDirectory(unzipDir);
+        
+        IndexReader reader = IndexReader.open(luceneDirectory);
+        IndexSearcher index = new IndexSearcher(reader);
+        //QueryParser queryParser = new QueryParser("url", new WhitespaceAnalyzer());
+        QueryParser queryParser = new QueryParser(Version.LUCENE_36, "url", 
+                new WhitespaceAnalyzer(Version.LUCENE_36));
         Query q = queryParser.parse("http\\://www.kb.dk*");
-
-        Hits hits = index.search(q);
+        
+        TopDocs topdocs = index.search(q, Integer.MAX_VALUE);
+        ScoreDoc[] hits = topdocs.scoreDocs;
+        
         // Crawl log 1 has five entries for www.kb.dk, but two are robots
         // and /, which the indexer ignores, leaving 3
         // Crawl log 4 has five entries for www.kb.dk
-        for (int i = 0; i < hits.length(); i++) {
-            Document doc = hits.doc(i);
+        
+        //System.out.println("Found hits: " + hits.length);
+        for (int i = 0; i < hits.length; i++) {
+            int docID = hits[i].doc;
+            Document doc = index.doc(docID);
+            
             String url = doc.get("url");
             String origin = doc.get("origin");
 
@@ -135,8 +150,8 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
             // Ensure that each occurs only once.
             origins.remove(url);
         }
-        assertTrue("Should have hit all origins, but have " + origins,
-                origins.isEmpty());
+        assertTrue("Should have found all origins, but have still " + origins.size() + " left: " 
+                + origins, origins.isEmpty());
     }
 
     public void testGetSortedCDX() throws Exception {

@@ -33,10 +33,13 @@ import is.hi.bok.deduplicator.DigestIndexer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.SimpleFSDirectory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -56,7 +59,9 @@ public class ARCLookup {
 
     /** The currently active lucene search engine. */
     private IndexSearcher luceneSearcher;
-
+    /** The Indexreader used by the index-searcher. */
+    private IndexReader luceneReader;
+    
     /** Logger for this class. */
     private final Log log = LogFactory.getLog(getClass().getName());
 
@@ -100,7 +105,8 @@ public class ARCLookup {
         if (luceneSearcher != null) {
             try {
                 // Existing lucene indices must be shut down
-                luceneSearcher.close();
+                //luceneSearcher.close();
+                luceneReader.close();
             } catch (IOException e) {
                 throw new IOFailure("Unable to close index " + luceneSearcher,
                         e);
@@ -110,7 +116,9 @@ public class ARCLookup {
             }
         }
         try {
-            luceneSearcher = new IndexSearcher(indexDir.getAbsolutePath());
+            //luceneSearcher = new IndexSearcher(indexDir.getAbsolutePath());
+            luceneReader = IndexReader.open(new SimpleFSDirectory(indexDir));
+            luceneSearcher = new IndexSearcher(luceneReader);
         } catch (IOException e) {
             throw new IOFailure("Unable to find/open index " + indexDir, e);
         }
@@ -198,23 +206,79 @@ public class ARCLookup {
             throw new IOFailure("No index set while searching for '"
                     + uri + "'");
         }
+        //return luceneLookUpWithOldAPI(uri);
+        return luceneLookUpWithNewAPI(uri);
+    }
+
+//    /**
+//     * Lucene Lookup using the old Lucene API used in release 2.0.0
+//     * @param uri A URI to look for.
+//     * @return The file and offset where that URI can be found, or null if it
+//     * doesn't exist.
+//     */
+//    private ARCKey luceneLookUpWithOldAPI(String uri) {
+//        // SparseRangeFilter + ConstantScoreQuery means we ignore norms,
+//        // bitsets, and other memory-eating things we don't need that TermQuery
+//        // or RangeFilter would imply.
+//        Query query = new ConstantScoreQuery(new SparseRangeFilter(
+//                DigestIndexer.FIELD_URL, uri, uri, true, true));
+//        try {
+//            org.apache.lucene.search.Hits hits = luceneSearcher.search(query);
+//            Document doc = null;
+//            if (hits != null) {
+//                log.debug("Found " + hits.length() + " hits for uri: " +  uri);
+//                for (int i = 0; i < hits.length(); i++) {
+//                    doc = hits.doc(i);
+//                    String origin = doc.get(DigestIndexer.FIELD_ORIGIN);
+//                    // Here is where we will handle multiple hits in the future
+//                    if (origin == null) {
+//                        log.debug("No origin for URL '" + uri
+//                                + "' hit " + i);
+//                        continue;
+//                    }
+//                    String[] originParts = origin.split(",");
+//                    if (originParts.length != 2) {
+//                        throw new IllegalState("Bad origin for URL '"
+//                                + uri + "': '" + origin + "'");
+//                    }
+//                    log.debug("Found document with origin: " + origin);
+//                    return new ARCKey(originParts[0],
+//                            Long.parseLong(originParts[1]));
+//                }
+//            }
+//        } catch (IOException e) {
+//            throw new IOFailure("Fatal error looking up '" + uri + "'", e);
+//        }
+//        return null;
+//    }
+    
+    /**
+     * Lucene Lookup using the new Lucene API used in release 2.9.4+
+     * @param uri A URI to look for.
+     * @return The file and offset where that URI can be found, or null if it
+     * doesn't exist.
+     */
+    private ARCKey luceneLookUpWithNewAPI(String uri) {
         // SparseRangeFilter + ConstantScoreQuery means we ignore norms,
         // bitsets, and other memory-eating things we don't need that TermQuery
         // or RangeFilter would imply.
         Query query = new ConstantScoreQuery(new SparseRangeFilter(
                 DigestIndexer.FIELD_URL, uri, uri, true, true));
         try {
-            Hits hits = luceneSearcher.search(query);
+            
+            TopDocs topDocs = luceneSearcher.search(query, Integer.MAX_VALUE);
             Document doc = null;
+            ScoreDoc[] hits = topDocs.scoreDocs;
             if (hits != null) {
-                log.debug("Found " + hits.length() + " hits for uri: " +  uri);
-                for (int i = 0; i < hits.length(); i++) {
-                    doc = hits.doc(i);
+                log.debug("Found " + hits.length + " hits for uri: " +  uri);
+                for (int i = 0; i < hits.length; i++) {
+                    int docId = hits[i].doc;
+                    doc = luceneSearcher.doc(docId);
                     String origin = doc.get(DigestIndexer.FIELD_ORIGIN);
                     // Here is where we will handle multiple hits in the future
                     if (origin == null) {
                         log.debug("No origin for URL '" + uri
-                                  + "' hit " + i);
+                                + "' hit " + i);
                         continue;
                     }
                     String[] originParts = origin.split(",");

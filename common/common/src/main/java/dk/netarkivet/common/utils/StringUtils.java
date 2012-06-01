@@ -339,7 +339,7 @@ public final class StringUtils {
      * @param millis the date
      * @return a formatted date string
      */
-    public static String formatDate(long millis) {
+    public synchronized static String formatDate(long millis) {
         return DEFAULT_DATE.format(new Date(millis));
     }
 

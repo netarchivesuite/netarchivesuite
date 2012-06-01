@@ -152,6 +152,7 @@ public abstract class CrawlLogIndexCache extends
         log.info("Starting to combine a dataset with " 
                 + datasetSize + " crawl logs (thread = "
                 + Thread.currentThread().getName() + ")");
+        
         File resultDir = getCacheFile(rawfiles.keySet());
         Set<File> tmpfiles = new HashSet<File>();
         String indexLocation = resultDir.getAbsolutePath() + ".luceneDir";
@@ -251,8 +252,8 @@ public abstract class CrawlLogIndexCache extends
                 sleepAwhile();
             }
             
-            log.debug("Merging the indices but don't optimize");            
-            indexer.getIndex().addIndexesNoOptimize(
+            log.debug("Merging the " + subindices.size() + " subindices but don't optimize");
+            indexer.getIndex().addIndexes(
                     subindices.toArray(new Directory[0]));
             long docsInIndex = indexer.getIndex().numDocs();
             log.debug("closing index, (optimize = " + this.optimizeIndex + ")");

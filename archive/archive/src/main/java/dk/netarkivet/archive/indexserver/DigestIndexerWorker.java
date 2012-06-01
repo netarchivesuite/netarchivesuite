@@ -45,7 +45,7 @@ public class DigestIndexerWorker implements Callable<Boolean> {
 
     /** The log. */
     private static Log log
-            = LogFactory.getLog(DigestIndexer.class.getName());
+            = LogFactory.getLog(DigestIndexerWorker.class.getName());
     /** The full path to the index. */
     private String indexlocation;
     /** The ID of the job which logfiles are being indexed. */
@@ -100,10 +100,13 @@ public class DigestIndexerWorker implements Callable<Boolean> {
                 = CrawlLogIndexCache.createStandardIndexer(indexlocation);
             CrawlLogIndexCache.indexFile(jobId, crawlLog, cdxfile, localindexer,
                     indexingOptions);
-            localindexer.close(indexingOptions.getOptimizeIndex());
+            
             log.info("Completed subindexing task (" + taskID + ") of data from job "
                     + this.jobId + " w/ " + localindexer.getIndex().numDocs()        
                     + " index-entries)");
+            
+            localindexer.close(indexingOptions.getOptimizeIndex());
+            
         } catch (IOException e) {
             successful = false;
             log.warn("Indexing for job w/ id " + jobId + " failed.", e);

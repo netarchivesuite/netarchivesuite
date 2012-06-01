@@ -79,7 +79,7 @@ public class SystemUtilsTester extends TestCase {
                 "commons-fileupload.*\\.jar$",
                 "commons-httpclient.*\\.jar$",
                 "commons-logging.*\\.jar$",
-                "deduplicator-.*\\.jar$",
+                //"deduplicator-.*\\.jar$",
                 "dom4j-.*\\.jar$",
                 "jaxen-.*\\.jar$",
                 "jetty-.*\\.jar$",

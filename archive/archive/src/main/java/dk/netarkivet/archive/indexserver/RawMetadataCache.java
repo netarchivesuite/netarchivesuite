@@ -114,6 +114,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
      * @param id The job to find data for.
      * @return The file where cache data for the job can be stored.
      */
+    @Override
     public File getCacheFile(Long id) {
         ArgumentNotValid.checkNotNull(id, "job ID");
         ArgumentNotValid.checkNotNegative(id, "job ID");
@@ -210,7 +211,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
             this.urlMatcher = urlMatcher;
             this.mimeMatcher = mimeMatcher;
             /**
-            * one week in miliseconds.
+            * one week in milliseconds.
             */
             batchJobTimeout = Constants.ONE_DAY_IN_MILLIES;
         }
@@ -221,6 +222,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * 
          * @param os The output stream to print any pre-processing data.
          */
+        @Override
         public void initialize(OutputStream os) { }
 
         /**
@@ -231,6 +233,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * @throws IOFailure In an IOException is caught during handling of 
          * the arc record.
          */
+        @Override
         public void processRecord(ARCRecord sar, OutputStream os) 
                 throws IOFailure {
             if (urlMatcher.matcher(sar.getMetaData().getUrl()).matches()
@@ -258,6 +261,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * @param os The output stream to write the results of the 
          * post-processing data.
          */
+        @Override
         public void finish(OutputStream os) { }
         
         /**
@@ -265,6 +269,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * 
          * @return The human readable description of this instance.
          */
+        @Override
         public String toString() {
             return getClass().getName() + ", with arguments: URLMatcher = " 
             + urlMatcher + ", mimeMatcher = " + mimeMatcher;
