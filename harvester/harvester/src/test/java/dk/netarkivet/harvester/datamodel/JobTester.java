@@ -849,7 +849,7 @@ public class JobTester extends DataModelTestCase {
         // analogous with what is done in testForceMaxObjectsPerDomain()
         // Should be able to find the value maxBytes2 (333 * 1024 * 1024)
         // in the group-max-success-kb node.
-        // xpath-expression that selects the appropiate node in order.xml:
+        // xpath-expression that selects the appropriate node in order.xml:
         DomainDAO ddao = DomainDAO.getInstance();
         Domain d = ddao.read(TestInfo.EXISTINGDOMAINNAME);
         DomainConfiguration cfg = d.getDefaultConfiguration();

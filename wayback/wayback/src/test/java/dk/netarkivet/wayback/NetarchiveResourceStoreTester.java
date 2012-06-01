@@ -244,9 +244,9 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
 
     /**
-     * DummyGetMessageReplyServer, which acts as an intemediate JMS Server.
+     * DummyGetMessageReplyServer, which acts as an intermediate JMS Server.
      * Functionality:
-     *  - If ARC file exists read the approiate data into an ARC record, and create metadata information
+     *  - If ARC file exists read the appropriate data into an ARC record, and create metadata information
      *  - If ARC file doesn't exists, make dummy ARC record, with no data and dummy metadata information
      */
     private static class DummyGetMessageReplyServer implements MessageListener {
@@ -257,7 +257,7 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
         public DummyGetMessageReplyServer() {
             conn.setListener(Channels.getTheRepos(), this);
         }
-
+        
         public void close() {
             conn.removeListener(Channels.getTheRepos(), this);
         }
@@ -337,16 +337,16 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
               // IO error
             }
         }
-      public void setBitarchiveRecord(BitarchiveRecord bar) {
+        public void setBitarchiveRecord(BitarchiveRecord bar) {
              this.bar = bar;
-     }
+        }
 
-     private byte[] encode(String arcFile, long index) {
-        String s = arcFile + " " + index;
-        return s.getBytes();
-     }
+        private byte[] encode(String arcFile, long index) {
+            String s = arcFile + " " + index;
+            return s.getBytes();
+        }
 
-     }
+    }
 
 
 }
