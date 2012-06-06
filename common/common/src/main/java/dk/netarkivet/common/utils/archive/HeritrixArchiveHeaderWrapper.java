@@ -1,6 +1,9 @@
 package dk.netarkivet.common.utils.archive;
 
+import java.io.File;
+import java.text.DateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -11,12 +14,15 @@ import org.archive.io.ArchiveRecordHeader;
 
 public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 
+	protected HeritrixArchiveRecordWrapper recordWrapper;
+
 	protected ArchiveRecordHeader header;
 
 	protected Map<String, Object> headerFields = new HashMap<String, Object>();
 
-	public static HeritrixArchiveHeaderWrapper wrapArchiveHeader(ArchiveRecord record) {
+	public static HeritrixArchiveHeaderWrapper wrapArchiveHeader(HeritrixArchiveRecordWrapper recordWrapper, ArchiveRecord record) {
 		HeritrixArchiveHeaderWrapper headerWrapper = new HeritrixArchiveHeaderWrapper();
+		headerWrapper.recordWrapper = recordWrapper;
 		headerWrapper.header = record.getHeader();
         Map<String, Object> heritrixHeaderFields = (Map<String, Object>)headerWrapper.header.getHeaderFields();
         Iterator<Map.Entry<String, Object>> iter = heritrixHeaderFields.entrySet().iterator();
@@ -51,12 +57,20 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 		return Collections.unmodifiableMap(headerFields);
 	}
 
-	public String getDate() {
-		return header.getDate();
-	} 
+	/*
+	 * The following fields do not need converting.
+	 */
 
-	public long getLength() {
-		return header.getLength();
+	public String getVersion() {
+		return header.getVersion();
+	}
+
+	public String getReaderIdentifier() {
+		return header.getReaderIdentifier();
+	}
+
+	public String getRecordIdentifier() {
+		return header.getRecordIdentifier();
 	}
 
 	public String getUrl() {
@@ -74,24 +88,42 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 		return ip;
 	}
 
-	public String getMimetype() {
-		return header.getMimetype();
-	}
-
-	public String getVersion() {
-		return header.getVersion();
-	}
-
 	public long getOffset() {
 		return header.getOffset();
 	}
 
-	public String getReaderIdentifier() {
-		return header.getReaderIdentifier();
+	public long getLength() {
+		return header.getLength();
 	}
 
-	public String getRecordIdentifier() {
-		return header.getRecordIdentifier();
+	/*
+	 * Conversion required.
+	 */
+
+	public String getDate() {
+		if (recordWrapper.bIsArc) {
+			return header.getDate();
+		} else if (recordWrapper.bIsWarc) {
+			try {
+				String dateStr = header.getDate();
+				DateFormat warcDateFormat = ArchiveDateConverter.getWarcDateFormat();
+				Date warcDate = warcDateFormat.parse(dateStr);
+				DateFormat arcDateFormat = ArchiveDateConverter.getArcDateFormat();
+				dateStr = arcDateFormat.format(warcDate);
+				return dateStr;
+			} catch (Exception e) {
+				return null;
+			}
+		}
+		return null;
+	} 
+
+	public String getMimetype() {
+		return header.getMimetype();
+	}
+
+	public File getArchiveFile() {
+		return new File(header.getReaderIdentifier());
 	}
 
 }

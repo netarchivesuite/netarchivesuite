@@ -117,18 +117,8 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         fieldsread.put("e", header.getIp());
         fieldsread.put("b", header.getDate());
         fieldsread.put("n", Long.toString(header.getLength()));
-
-        /* Note about offset:
-        * The original dk.netarkivet.ArcUtils.ExtractCDX
-        * yields offsets that are consistently 1 lower
-        * than this version, which pulls the offset value
-        * from the org.archive.io.arc-classes.
-        * This difference is that the former classes
-        * count the preceeding newline as part of the
-        * ARC header.
-        */
+        fieldsread.put("g", record.getHeader().getArchiveFile().getName());
         fieldsread.put("v", Long.toString(record.getHeader().getOffset())); 
-        fieldsread.put("g", record.getHeader().getReaderIdentifier());
 
         String mimeType = header.getMimetype();
         String msgType;

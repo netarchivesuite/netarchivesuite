@@ -1,5 +1,6 @@
 package dk.netarkivet.common.utils.archive;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,5 +31,9 @@ public abstract class ArchiveHeaderBase {
 	public abstract String getReaderIdentifier();
 
 	public abstract String getRecordIdentifier();
+
+
+
+	public abstract File getArchiveFile();
 
 }

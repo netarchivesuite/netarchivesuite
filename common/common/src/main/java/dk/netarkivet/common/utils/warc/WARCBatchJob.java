@@ -98,7 +98,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
 
                 return false; // Can't process file after exception
             }
-            
+
             try {
                 Iterator<? extends ArchiveRecord> it = warcReader.iterator();
                 /* Process all records from this Iterator: */

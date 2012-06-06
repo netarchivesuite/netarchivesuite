@@ -6,6 +6,10 @@ import org.archive.io.ArchiveRecord;
 
 public abstract class ArchiveRecordBase {
 
+	public boolean bIsArc;
+
+	public boolean bIsWarc;
+
 	public abstract ArchiveHeaderBase getHeader();
 
 	public abstract InputStream getInputStream();

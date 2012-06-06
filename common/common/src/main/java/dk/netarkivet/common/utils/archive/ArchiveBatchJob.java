@@ -77,7 +77,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
 
                 return false; // Can't process file after exception
             }
-            
+
             try {
                 Iterator<? extends ArchiveRecord> it = archiveReader.iterator();
                 /* Process all records from this Iterator: */
