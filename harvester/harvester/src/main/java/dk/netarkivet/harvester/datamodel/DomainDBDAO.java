@@ -110,7 +110,7 @@ public class DomainDBDAO extends DomainDAO {
     protected void create(Connection connection, Domain d) {
         ArgumentNotValid.checkNotNull(d, "d");
         ArgumentNotValid.checkNotNullOrEmpty(d.getName(), "d.getName()");
-
+        
         if (exists(connection, d.getName())) {
             String msg = "Cannot create already existing domain " + d;
             log.debug(msg);
@@ -1894,4 +1894,20 @@ public class DomainDBDAO extends DomainDAO {
         return history;
     }
 
+    @Override
+    public List<String> getDomains(String glob, String searchField) {
+        ArgumentNotValid.checkNotNullOrEmpty(glob, "glob");
+        ArgumentNotValid.checkNotNullOrEmpty(searchField, "searchField");
+        // SQL uses % and _ instead of * and ?
+        String sqlGlob = DBUtils.makeSQLGlob(glob);
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            return DBUtils.selectStringList(
+                    c, "SELECT name FROM domains WHERE " 
+                            + searchField + " LIKE ?", sqlGlob);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
 }

@@ -308,4 +308,15 @@ public abstract class DomainDAO implements Iterable<Domain> {
      */
     public abstract DomainHistory getDomainHistory(String domainName);
 
+    /** Use a glob-like matcher to find a subset of domains.
+    *
+    * In this simple matcher, * stands for any number of arbitrary characters,
+    * and ? stands for one arbitrary character.  Including these, the
+    * given string must match the entire domain name.
+    *
+    * @param glob A domain name with * and ? wildcards
+    * @param searchField The field in the Domain table to search  
+    * @return List of domain names matching the glob, sorted by name.
+    */
+   public abstract List<String> getDomains(String glob, String searchField);
 }

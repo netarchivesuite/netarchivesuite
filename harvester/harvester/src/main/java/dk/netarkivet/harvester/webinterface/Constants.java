@@ -45,6 +45,8 @@ public class Constants {
     public static final String JOBIDORDER_PARAM = "jobidorder";
 
     public static final String DOMAIN_SEARCH_PARAM = "domainName";
+    
+    //public static final String DOMAIN
 
     public static final String HARVEST_ID_PARAM
         = HarvestStatusQuery.UI_FIELD.HARVEST_ID.name();
@@ -240,4 +242,28 @@ public class Constants {
     /** Optional argument for which page of the searchresult to show. */
     public static final String START_PAGE_PARAMETER = "START_PAGE_INDEX";
     
+    /** Domain query type parameter. Used in the jsp-page
+     * Definitions-find-domains.jsp.
+     */
+    public static final String DOMAIN_QUERY_TYPE_PARAM = "DOMAIN_QUERY_TYPE";
+    
+    /** Domain search key parameter. Used in the jsp-page
+     * Definitions-find-domains.jsp.
+     */
+    public static final String DOMAIN_QUERY_STRING_PARAM =  "DOMAIN_QUERY_STRING";
+    
+    //public static final String SEEDS_DOMAIN_SEARCH = "seedsS";;;
+    
+    public static final String TRAPS_DOMAIN_SEARCH = "crawlertraps";
+    
+    public static final String NAME_DOMAIN_SEARCH = "name";
+    
+    public static final String COMMENTS_DOMAIN_SEARCH = "comments";;
+    
+    //public static final String CONFIGS_DOMAIN_SEARCH = "configSearch";
+    
+    /**
+     * The default domain search type is name.
+     */
+    public static final String DEFAULT_DOMAIN_SEARCH_TYPE = NAME_DOMAIN_SEARCH;
 }     

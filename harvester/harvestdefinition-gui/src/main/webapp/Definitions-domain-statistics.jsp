@@ -69,9 +69,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             } else {
                 domain = HTMLUtils.escapeHtmlValues(tld.getName());
                 count = "<a href=\"/HarvestDefinition/Definitions-find-domains.jsp?"
-                        + dk.netarkivet.harvester.webinterface.Constants.DOMAIN_PARAM
-                        + "=*."
+                        + dk.netarkivet.harvester.webinterface.Constants.DOMAIN_QUERY_STRING_PARAM
+                        + "=*." 
                         + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(tld.getName()))
+                        + "&" + dk.netarkivet.harvester.webinterface.Constants.DOMAIN_QUERY_TYPE_PARAM
+                        + "=" + dk.netarkivet.harvester.webinterface.Constants.NAME_DOMAIN_SEARCH
                         + "\">" + HTMLUtils.localiseLong(tld.getCount(), pageContext)
                         + "</a>";
             }

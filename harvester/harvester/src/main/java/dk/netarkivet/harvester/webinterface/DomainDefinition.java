@@ -26,11 +26,16 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -52,6 +57,9 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
  *
  */
 public class DomainDefinition {
+    
+    
+    private static Log log = LogFactory.getLog(DomainDefinition.class.getName());
     
     /** Private constructor to prevent public construction of this class.*/
     private DomainDefinition() {    
@@ -350,5 +358,46 @@ public class DomainDefinition {
         return "<a href=\"" + url + "\">"
                 + HTMLUtils.escapeHtmlValues(domain)
                 + "</a>";
+    }
+    
+    /**
+     * Search for domains matching the following criteria.
+     * Should we allow more than one criteria?
+     * @param context the context of the JSP page calling
+     * @param i18n The translation properties file used
+     * @param searchQuery The given searchQuery for searching for among the domains.
+     * @param searchType The given searchCriteria (TODO use Enum instead)
+     * @return the set of domain-names matching the given criteria.
+     */
+    public static List<String> getDomains(PageContext context, I18n i18n,
+            String searchQuery, String searchType) {
+        List<String> resultSet = new ArrayList<String>();
+        ArgumentNotValid.checkNotNullOrEmpty(searchQuery, "String searchQuery");
+        ArgumentNotValid.checkNotNullOrEmpty(searchType, "String searchType");
+        
+        if (!getSearchTypes().contains(searchType)) {
+            HTMLUtils.forwardWithErrorMessage(context, i18n,
+                    "errormsg;invalid.domain.search.criteria.0", searchType);
+            throw new ForwardedToErrorPage("Unknown domain search criteria '" 
+                    + searchType + "'");
+        }
+        log.info("SearchQuery '" + searchQuery + "', searchType: " +  searchType);
+        resultSet = DomainDAO.getInstance().getDomains(searchQuery, searchType);
+        return resultSet;
+    }
+    
+    /**
+     * The list of available domain search types. Seeds and configuration search
+     * are not implemented currently, so they are exempted from the list 
+     * @return the list of available domain search types.
+     */
+    public static Set<String> getSearchTypes() {
+        Set<String> types = new HashSet<String>();
+        //types.add(Constants.SEEDS_DOMAIN_SEARCH);
+        //types.add(Constants.CONFIGS_DOMAIN_SEARCH);
+        types.add(Constants.TRAPS_DOMAIN_SEARCH);
+        types.add(Constants.NAME_DOMAIN_SEARCH);
+        types.add(Constants.COMMENTS_DOMAIN_SEARCH);
+        return types;
     }
 }

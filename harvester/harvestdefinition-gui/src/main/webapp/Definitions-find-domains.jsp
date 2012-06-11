@@ -29,8 +29,9 @@ With parameter name, it performs a search.  Name can be a glob pattern
 (using ? and * only) or a single domain.  If domains are found, they are
 displayed, if no domains are found for a non-glob search, the user is
 asked if they should be created.
---%><%@ page import="javax.servlet.RequestDispatcher,
-                 java.util.List,
+--%><%@page import="dk.netarkivet.harvester.webinterface.DomainDefinition"%>
+<%@ page import="javax.servlet.RequestDispatcher,
+                 java.util.List, java.util.Set,
                  dk.netarkivet.common.CommonSettings,
                  dk.netarkivet.common.utils.Settings,
                  dk.netarkivet.common.utils.DomainUtils,
@@ -47,32 +48,49 @@ asked if they should be created.
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
-    String domainName = request.getParameter(Constants.DOMAIN_PARAM);
-    if (domainName != null && domainName.length() > 0) {
-        domainName = domainName.trim();
-        if (domainName.contains("?") || domainName.contains("*")) {
-            List<String> matchingDomains = DomainDAO.getInstance().getDomains(
-                    domainName);
-            if (matchingDomains.isEmpty()) {//No matching domains
+
+	// The search-system needs to be able to search in different fields of the domain:
+	// name (the only search-option before), 
+	// comments, 
+	// crawlertraps
+	// alias (?), // Postponed
+	// seeds (?), // Postponed
+	// domainconfigurations (?) //TODO
+	
+	String searchType = request.getParameter(Constants.DOMAIN_QUERY_TYPE_PARAM);
+	String searchQuery =  request.getParameter(Constants.DOMAIN_QUERY_STRING_PARAM);
+    
+	if (searchType == null) {
+	    searchType = Constants.NAME_DOMAIN_SEARCH;
+	}
+	
+    if (searchQuery != null && searchQuery.trim().length() > 0) {
+        // search field is not empty
+        searchQuery = searchQuery.trim();
+        List<String> matchingDomains = DomainDefinition.getDomains(
+                pageContext, I18N, searchQuery, searchType);
+
+            if (matchingDomains.isEmpty()) { // No matching domains
                 HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                        "errormsg;no.matching.domains.for.0", domainName);
+                        "errormsg;no.matching.domains.for.query.0.when.searching.by.1", 
+                        searchQuery, searchType);
                 return;
             } else {
-                // Include navigate.js
-                HTMLUtils.generateHeader(pageContext, "navigate.js");
+                // Include navigate.js 
+                HTMLUtils.generateHeader(pageContext, "navigateWithTwoParams.js");
                 %><h3 class="page_heading">
                 <fmt:message key="searching.for.0.gave.1.hits">
-                    <fmt:param value="<%=domainName%>"/>
+                    <fmt:param value="<%=searchQuery%>"/>
                     <fmt:param value="<%=matchingDomains.size()%>"/>
                 </fmt:message>
                 </h3>
 
                 <%
-                 String startPage=request.getParameter("START_PAGE_INDEX");
+                 String startPage=request.getParameter(Constants.START_PAGE_PARAMETER);
 
                  if(startPage == null){
                      startPage="1";
-                 }
+                 }	                
 
                  long totalResultsCount = matchingDomains.size();
                  long pageSize = Long.parseLong(Settings.get(
@@ -107,14 +125,14 @@ asked if they should be created.
                 <fmt:param><%=endIndex%></fmt:param>
                 </fmt:message>
                 <%
-                String startPagePost=request.getParameter("START_PAGE_INDEX");
+                String startPagePost=request.getParameter(Constants.START_PAGE_PARAMETER);
 
                 if(startPagePost == null){
                     startPagePost="1";
                 }
 
-                String searchParam=request.getParameter(Constants.DOMAIN_PARAM);
-                searchParam = HTMLUtils.encode(searchParam);
+                String searchqueryParam=request.getParameter(Constants.DOMAIN_QUERY_STRING_PARAM);
+                searchqueryParam = HTMLUtils.encode(searchqueryParam);
                 %>
 
                 <p style="text-align: right">
@@ -123,7 +141,7 @@ asked if they should be created.
                         <%
                         if (prevLinkActive) {
                         %>
-                            <a href="javascript:previousPage('<%=Constants.DOMAIN_PARAM%>','<%=searchParam%>');">
+                            <a href="javascript:previousPage('<%=Constants.DOMAIN_QUERY_STRING_PARAM%>','<%=searchqueryParam%>','<%=Constants.DOMAIN_QUERY_TYPE_PARAM%>','<%=searchType%>');">
                                 <fmt:message
                                 key="status.results.displayed.prevPage"/>
                             </a>
@@ -140,7 +158,7 @@ asked if they should be created.
                         <%
                         if (nextLinkActive) {
                         %>
-                            <a href="javascript:nextPage('<%=Constants.DOMAIN_PARAM%>','<%=searchParam%>');">
+                            <a href="javascript:nextPage('<%=Constants.DOMAIN_QUERY_STRING_PARAM%>','<%=searchqueryParam%>', '<%=Constants.DOMAIN_QUERY_TYPE_PARAM%>','<%=searchType%>');">
                                 <fmt:message
                                 key="status.results.displayed.nextPage"/>
                             </a>
@@ -156,14 +174,12 @@ asked if they should be created.
                     </fmt:message>
                 </p>
 
-                <form method="post" name="filtersForm"
-                action="Definitions-find-domains.jsp">
-                    <input type="hidden" name="START_PAGE_INDEX"
-                    value="<%=startPagePost%>"/>
-                 </form>
+                <form method="post" name="filtersForm" action="Definitions-find-domains.jsp">
+                    <input type="hidden" name="START_PAGE_INDEX" value="<%=startPagePost%>"/>
+                </form>
 
 <%
-                List<String> matchingDomainsSubList=matchingDomains.
+                List<String> matchingDomainsSubList = matchingDomains.
                                       subList((int)startIndex,(int)endIndex);
                 for (String domainS : matchingDomainsSubList) {
                     String encodedDomain = HTMLUtils.encode(domainS);
@@ -178,53 +194,46 @@ asked if they should be created.
                 HTMLUtils.generateFooter(out);
                 return;
             }
-        } else if (DomainDAO.getInstance().exists(domainName)) {
-            RequestDispatcher rd
-                    = pageContext.getServletContext().getRequestDispatcher(
-                    "/Definitions-edit-domain.jsp");
-            rd.forward(request, response);
-        } else {
-            //Is it a legal domain name
-            boolean isLegal = DomainUtils.isValidDomainName(domainName);
-            String message;
-            if (isLegal) {
-                String createUrl = "Definitions-create-domain.jsp?"
-                        + Constants.DOMAINLIST_PARAM + "="
-                        + HTMLUtils.encode(domainName);
-                message = I18N.getString(response.getLocale(),
-                        "domain.0.not.found.create", domainName);
-                message += " <a href=\"" + createUrl + "\">";
-                message += I18N.getString(response.getLocale(), "yes");
-                message += "</a>";
-            } else {
-                message = I18N.getString(response.getLocale(),
-                        "0.is.illegal.domain.name", domainName);
-            }
-            request.setAttribute("message", message);
-            RequestDispatcher rd = pageContext.getServletContext()
-                    .getRequestDispatcher("/message.jsp");
-            rd.forward(request, response);
-            return;
-        }
+                 
     }
-
+      
+  
     //Note: This point is only reached if no name was sent to the JSP-page
-    HTMLUtils.generateHeader(
-            pageContext);
+    HTMLUtils.generateHeader(pageContext);
 %>
 <h3 class="page_heading"><fmt:message key="pagetitle;find.domains"/></h3>
 
 
-<form method="post"   onclick="resetPagination();"
+<form method="post" onclick="resetPagination();"
                                       action="Definitions-find-domains.jsp">
     <table>
         <tr>
             <td><fmt:message key="prompt;enter.name.of.domain.to.find"/></td>
             <td><span id="focusElement">
-                <input name="<%=Constants.DOMAIN_PARAM%>"
+                <input name="<%=Constants.DOMAIN_QUERY_STRING_PARAM%>"
                 	size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>" value=""/>
                 </span>
             </td>
+            <!--  add selector for what kind of search to make -->
+            
+            <td><select name="<%=Constants.DOMAIN_QUERY_TYPE_PARAM%>">
+                    <%
+                        Set<String> searchTypes = DomainDefinition.getSearchTypes();
+                    	for(String aSearchType: searchTypes) {
+                            String selected = "";
+                            
+                            if (aSearchType.equals(Constants.DEFAULT_DOMAIN_SEARCH_TYPE)) {
+                                selected = "selected = \"selected\"";
+                            }
+                            out.println("<option value=\"" +
+                                        HTMLUtils.escapeHtmlValues(aSearchType)
+                                        + "\"" + selected + ">" +
+                                        HTMLUtils.escapeHtmlValues(aSearchType)
+                                        + "</option>");
+                    	}
+                    %>
+                </select>
+                </td>
             <td><input type="submit" value="<fmt:message key="search"/>"/></td>
         </tr>
         <tr>
