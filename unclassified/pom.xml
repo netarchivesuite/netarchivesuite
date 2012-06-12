@@ -89,10 +89,11 @@
       <organizationUrl>http://kb.dk</organizationUrl>
     </developer>
     <developer>
-      <name>Predikaka Andreas</name>
+      <name>Andreas P.</name>
       <roles>
         <role>Developer</role>
       </roles>
+      <email>aponb@gmx.at</email>
       <organization>Österreichische Nationalbibliothek</organization>
       <organizationUrl>http://www.onb.ac.at</organizationUrl>
     </developer>
