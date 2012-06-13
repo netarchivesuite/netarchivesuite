@@ -11,6 +11,10 @@ import java.util.Set;
 
 import org.archive.io.ArchiveRecord;
 import org.archive.io.ArchiveRecordHeader;
+import org.archive.io.arc.ARCRecord;
+import org.archive.io.warc.WARCRecord;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 
@@ -31,6 +35,15 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
         	entry = iter.next();
         	headerWrapper.headerFields.put(entry.getKey().toLowerCase(), entry.getValue());
         }
+		if (record instanceof ARCRecord) {
+			headerWrapper.bIsArc = true;
+		} else if (record instanceof WARCRecord) {
+			headerWrapper.bIsWarc = true;
+		} else {
+	        throw new ArgumentNotValid(
+	                "Unsupported ArchiveRecord type: "
+	                + record.getClass().getName());
+		}
         return headerWrapper;
 	}
 
@@ -101,9 +114,9 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 	 */
 
 	public String getDate() {
-		if (recordWrapper.bIsArc) {
+		if (bIsArc) {
 			return header.getDate();
-		} else if (recordWrapper.bIsWarc) {
+		} else if (bIsWarc) {
 			try {
 				String dateStr = header.getDate();
 				DateFormat warcDateFormat = ArchiveDateConverter.getWarcDateFormat();

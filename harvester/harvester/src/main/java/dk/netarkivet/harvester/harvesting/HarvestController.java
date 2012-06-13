@@ -33,7 +33,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCWriter;
 
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.HarvesterArcRepositoryClient;
@@ -45,7 +44,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
@@ -173,6 +171,12 @@ public class HarvestController {
         if (!created) {
             log.warn("Unable to create arcsdir: " + files.getArcsDir());
         }
+        // Create Heritrix warcs directory before starting Heritrix to ensure
+        // the warcs directory exists in advance.
+        created = files.getWarcsDir().mkdir();
+        if (!created) {
+            log.warn("Unable to create warcsdir: " + files.getWarcsDir());
+        }
         return files;
     }
 
@@ -195,33 +199,33 @@ public class HarvestController {
         }
         File arcFile =
             new File(crawlDir,
-                        HarvestDocumentation.getPreharvestMetadataARCFileName(
+                        MetadataFileWriter.getPreharvestMetadataARCFileName(
                                         harvestJob.getJobID()));
         try {
-            ARCWriter aw = null;
+            MetadataFileWriter mdfw = null;
             try {
-                aw = ARCUtils.createARCWriter(arcFile);
+                mdfw = MetadataFileWriter.createWriter(arcFile);
                 for (MetadataEntry m : metadata) {
                     ByteArrayInputStream bais = new ByteArrayInputStream(
                             m.getData());
-                    aw.write(m.getURL(), m.getMimeType(),
+                    mdfw.write(m.getURL(), m.getMimeType(),
                              SystemUtils.getLocalIP(),
                              System.currentTimeMillis(), m.getData().length,
                              bais);
                 }
             } finally {
                 try {
-                    if (aw != null) {
-                        aw.close();
+                    if (mdfw != null) {
+                        mdfw.close();
                     }
                 } catch (IOException e) {
                     //TODO Is this fatal? What if data isn't flushed?
-                    log.warn("Unable to close ArcWriter '"
-                             + aw.getFile().getAbsolutePath() + "'", e);
+                    log.warn("Unable to close MeatadataFileWriter '"
+                             + mdfw.getFile().getAbsolutePath() + "'", e);
                 }
             }
         } catch (IOException e) {
-            throw new IOFailure("Error writing to arcfile for job "
+            throw new IOFailure("Error writing to metadatfile for job "
                                 + harvestJob.getJobID() + ".\n", e);
         }
     }
@@ -302,9 +306,9 @@ public class HarvestController {
     }
 
     /**
-     * Upload given files to the arc repository.
+     * Upload given files to the archive repository.
      *
-     * @param files        List of (ARC) files to upload.
+     * @param files        List of (ARC/WARC) files to upload.
      * @param errorMessage Accumulator for error messages.
      * @param failedFiles  Accumulator for failed files.
      */

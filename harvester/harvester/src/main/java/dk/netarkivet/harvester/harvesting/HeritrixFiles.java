@@ -317,6 +317,14 @@ public class HeritrixFiles {
     }
     
     /**
+     * Return the directory, where Heritrix writes its warcfiles.
+     * @return the directory, where Heritrix writes its warcfiles.
+     */
+    public File getWarcsDir() {
+        return new File(crawlDir, Constants.WARCDIRECTORY_NAME);
+    }
+    
+    /**
      * Method for retrieving the jmxremote.password file.
      * 
      * @return the jmxPasswordFile.

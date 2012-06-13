@@ -25,11 +25,13 @@ package dk.netarkivet.common.utils.warc;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Iterator;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.mail.MethodNotSupportedException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,10 +43,13 @@ import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCRecord;
 import org.archive.io.warc.WARCWriter;
 import org.archive.util.ArchiveUtils;
+import org.archive.util.anvl.ANVLRecord;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.archive.HeritrixArchiveHeaderWrapper;
 
 /**
 * Various utilities on WARC-records.
@@ -90,27 +95,24 @@ public class WARCUtils {
     /** Insert the contents of an ARC file (skipping an optional initial
      *  filedesc: header) in another ARCfile.
      *
-     * @param arcFile An ARC file to read.
+     * @param warcFile An ARC file to read.
      * @param writer A place to write the arc records
      * @throws IOFailure if there are problems reading the file.
      */
-    public static void insertWARCFile(File arcFile, WARCWriter writer) {
+    public static void insertWARCFile(File warcFile, WARCWriter writer) {
         ArgumentNotValid.checkNotNull(writer, "WARCWriter aw");
-        ArgumentNotValid.checkNotNull(arcFile, "File warcFile");
+        ArgumentNotValid.checkNotNull(warcFile, "File warcFile");
         WARCReader r;
 
         try {
-            r = WARCReaderFactory.get(arcFile);
+            r = WARCReaderFactory.get(warcFile);
         } catch (IOException e) {
-            String message = "Error while copying ARC records from " + arcFile;
+            String message = "Error while copying ARC records from " + warcFile;
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
         Iterator<ArchiveRecord> it = r.iterator();
         WARCRecord record;
-        //it.next(); //Skip ARC file header
-        // WARCReaderFactory guarantees the first record exists and is a
-        // filedesc, or it would throw exception
         while (it.hasNext()) {
             record = (WARCRecord) it.next();
             copySingleRecord(writer, record);
@@ -132,25 +134,48 @@ public class WARCUtils {
      *            The record to output
      */
     private static void copySingleRecord(WARCWriter aw, WARCRecord record) {
-    	/*
         try {
-            //Prepare metadata...
-            ARCRecordMetaData meta = record.getMetaData();
-            String uri = meta.getUrl();
-            String mime = meta.getMimetype();
-            String ip = meta.getIp();
-            // Note the ArchiveUtils.getDate() converts an ARC-style datestring 
-            // to a Date object
-            long timeStamp = ArchiveUtils.getDate(meta.getDate()).getTime();
-            //...and write the given files content into the writer
-            // Note ARCRecord extends InputStream            
-            aw.write(uri, mime, ip, timeStamp, meta.getLength(), record);
+        	//Prepare metadata...
+        	HeritrixArchiveHeaderWrapper header = HeritrixArchiveHeaderWrapper.wrapArchiveHeader(null, record);
+        	String warcType = header.getHeaderStringValue("WARC-Type");
+
+            String url = header.getUrl();
+            String create14DigitDate = header.getDate();
+            String mimetype = header.getMimetype();
+            URI recordId;
+    		try {
+    			recordId = new URI(UUID.randomUUID().toString());
+    		} catch (URISyntaxException e) {
+    			throw new IllegalState("Epic fail creating URI from UUID!");
+    		}
+            String ip = header.getIp();
+
+    		ANVLRecord  namedFields = new ANVLRecord();
+
+    		InputStream in = record;
+    		// getContentBegin only works for WARC and in H1.44.x!
+    		Long payloadLength = header.getLength() - record.getHeader().getContentBegin();
+
+    		// Worst API EVER!
+    		if ("metadata".equals(warcType)) {
+    			aw.writeMetadataRecord(url, create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+    		} else if ("request".equals(warcType)) {
+                aw.writeRequestRecord(url, create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+        	} else if ("resource".equals(warcType)) {
+                aw.writeResourceRecord(url, create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+    		} else if ("response".equals(warcType)) {
+                aw.writeResponseRecord(url, create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+			} else if ("revisit".equals(warcType)) {
+	            aw.writeRevisitRecord(url, create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+			} else if ("warcinfo".equals(warcType)) {
+	            aw.writeWarcinfoRecord(create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+			} else {
+				throw new IOFailure("Unknown WARC-Type!");
+			}
         } catch (Exception e) {
-            throw new IOFailure("Error occurred while writing an ARC record"
+            throw new IOFailure("Error occurred while writing an WARC record"
                     + record, e);
         }
-        */
-    	throw new UnsupportedOperationException();
     }
 
     /**

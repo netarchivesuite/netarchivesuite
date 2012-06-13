@@ -1,13 +1,23 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Date;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.warc.WARCWriter;
+import org.archive.util.anvl.ANVLRecord;
 
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.common.utils.warc.WARCUtils;
 
 public class MetadataFileWriterWarc extends MetadataFileWriter {
@@ -25,6 +35,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     	return mtfw;
     }
 
+    @Override
 	public void close() throws IOException {
     	if (writer != null) {
     		writer.close();
@@ -32,30 +43,59 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     	}
     }
 
+    @Override
+	public File getFile() {
+		return writer.getFile();
+	}
+
 	@Override
 	public void insertMetadataFile(File metadataFile) {
-		// TODO Auto-generated method stub
-		
+		WARCUtils.insertWARCFile(metadataFile, writer);
 	}
 
 	@Override
 	public void writeFileTo(File file, String uri, String mime) {
-		// TODO Auto-generated method stub
-		
+		writeTo(file, uri, mime);
 	}
 
 	@Override
 	public boolean writeTo(File fileToArchive, String URL, String mimetype) {
-		// TODO Auto-generated method stub
-		return false;
+		log.info(fileToArchive + " " + fileToArchive.length());
+
+		String create14DigitDate = ArchiveDateConverter.getWarcDateFormat().format(new Date());
+		URI recordId;
+		try {
+			recordId = new URI(UUID.randomUUID().toString());
+		} catch (URISyntaxException e) {
+			throw new IllegalState("Epic fail creating URI from UUID!");
+		}
+		InputStream in = null;
+		try {
+			in = new FileInputStream(fileToArchive);
+			ANVLRecord  namedFields = new ANVLRecord();
+			namedFields.addLabelValue("X-Metadata-Version", "1");
+	    	writer.writeMetadataRecord(URL, create14DigitDate, "x-nas/metadata", recordId, namedFields, in, fileToArchive.length());
+		} catch (FileNotFoundException e) {
+			throw new IOFailure("Unable to open file: " + fileToArchive.getPath(), e);
+		} catch (IOException e) {
+			throw new IOFailure("Epic IO fail while writing to WARC file: " + fileToArchive.getPath(), e);
+		}
+		return true;
 	}
 
-    /* Copied from the ARCWriter. */
     @Override
     public void write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, long recordLength, InputStream in)
             									throws java.io.IOException {
-    	throw new UnsupportedOperationException();
+    	// hostIP?
+    	String create14DigitDate = ArchiveDateConverter.getWarcDateFormat().format(new Date(fetchBeginTimeStamp));
+		URI recordId;
+		try {
+			recordId = new URI(UUID.randomUUID().toString());
+		} catch (URISyntaxException e) {
+			throw new IllegalState("Epic fail creating URI from UUID!");
+		}
+    	writer.writeMetadataRecord(uri, create14DigitDate, contentType, recordId, null, in, recordLength);
     }
 
 }

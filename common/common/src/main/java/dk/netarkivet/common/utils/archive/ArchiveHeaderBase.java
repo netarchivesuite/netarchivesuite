@@ -6,6 +6,10 @@ import java.util.Set;
 
 public abstract class ArchiveHeaderBase {
 
+	public boolean bIsArc;
+
+	public boolean bIsWarc;
+
 	public abstract Object getHeaderValue(String key);
 
 	public abstract String getHeaderStringValue(String key);

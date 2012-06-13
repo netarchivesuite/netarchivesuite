@@ -31,14 +31,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCWriter;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.ARCUtils;
 
 
 /**
@@ -64,7 +62,7 @@ public class IngestableFiles {
     /** Writer to this jobs metadatafile.
      * This is closed when the metadata is marked as ready.
      */
-    private ARCWriter writer = null;
+    private MetadataFileWriter writer = null;
 
     /** Whether we've had an error in metadata generation. */
     private boolean error = false;
@@ -160,6 +158,7 @@ public class IngestableFiles {
      * @throws PermissionDenied if metadata generation is already
      * finished.
      */
+    /*
     public ARCWriter getMetadataArcWriter() {
         if (isMetadataReady()) {
             throw new PermissionDenied(
@@ -173,6 +172,33 @@ public class IngestableFiles {
         }
         if (writer == null) {
             writer = ARCUtils.createARCWriter(getTmpMetadataFile());
+        }
+        return writer;
+    }
+    */
+
+    /**
+     * Get a ARCWriter for the temporary metadata arc-file.
+     * Successive calls to this method on the same object will return the
+     * same writer.  Once the metadata have been finalized, calling
+     * this method will fail.
+     * @return a ARCWriter for the temporary metadata arc-file.
+     * @throws PermissionDenied if metadata generation is already
+     * finished.
+     */
+    public MetadataFileWriter getMetadataWriter() {
+        if (isMetadataReady()) {
+            throw new PermissionDenied(
+                    "Metadata file " + getMetadataFile().getAbsolutePath()
+                    + " already exists");
+        }
+        if (isMetadataFailed()) {
+            throw new PermissionDenied("Metadata generation of file "
+                    + getMetadataFile().getAbsolutePath()
+                    + " has already failed.");
+        }
+        if (writer == null) {
+            writer = MetadataFileWriter.createWriter(getTmpMetadataFile());
         }
         return writer;
     }
@@ -209,8 +235,7 @@ public class IngestableFiles {
     private File getMetadataFile(){
         return
             new File(getMetadataDir(),
-                    HarvestDocumentation.
-                    getMetadataARCFileName(Long.toString(jobId)));
+                    MetadataFileWriter.getMetadataARCFileName(Long.toString(jobId)));
     }
 
     /**
@@ -229,8 +254,7 @@ public class IngestableFiles {
     private File getTmpMetadataFile(){
         return
             new File(getTmpMetadataDir(),
-                    HarvestDocumentation.
-                    getMetadataARCFileName(Long.toString(jobId)));
+                    MetadataFileWriter.getMetadataARCFileName(Long.toString(jobId)));
     }
 
     /** Get a list of all ARC files that should get ingested.  Any open files

@@ -535,5 +535,11 @@ public class HarvesterSettings {
      */
     public static String ALIAS_TIMEOUT = "settings.harvester.aliases.timeout";
 
+    public static String METADATA_FORMAT =
+            "settings.harvester.harvesting.metadata.metadataFormat";
+
+    public static String METADATA_ARCHIVE_FORMAT =
+            "settings.harvester.harvesting.metadata.archiveFormat";
+
 }
 

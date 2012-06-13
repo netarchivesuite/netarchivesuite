@@ -127,6 +127,8 @@
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
                 <generateArcFilesReport>true</generateArcFilesReport>
+                <metadataFormat>warc</metadataFormat>
+                <archiveFormat>warc</archiveFormat>
             </metadata>
         </harvesting>
     </harvester>

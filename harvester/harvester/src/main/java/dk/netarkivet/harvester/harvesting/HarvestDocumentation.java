@@ -48,9 +48,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -139,15 +139,15 @@ public class HarvestDocumentation {
         }
 
         try {
-            ARCWriter aw = null;
-            aw = ingestables.getMetadataArcWriter();
+            MetadataFileWriter mdfw = null;
+            mdfw = ingestables.getMetadataWriter();
 
             // insert the pre-harvest metadata file, if it exists.
             // TODO Place preharvestmetadata in IngestableFiles-defined area
             File preharvestMetadata = new File(crawlDir,
-                    getPreharvestMetadataARCFileName(jobID));
+                    MetadataFileWriter.getPreharvestMetadataARCFileName(jobID));
             if (preharvestMetadata.exists()) {
-                ARCUtils.insertARCFile(preharvestMetadata, aw);
+            	mdfw.insertMetadataFile(preharvestMetadata);
             }
             //TODO This is a good place to copy deduplicate information from the
             //crawl log to the cdx file.
@@ -155,7 +155,7 @@ public class HarvestDocumentation {
             // Insert harvestdetails into metadata arcfile.
             List<File> filesAdded =
                writeHarvestDetails(jobID, harvestID,
-                       crawlDir, aw, Constants.getHeritrixVersionString());
+                       crawlDir, mdfw, Constants.getHeritrixVersionString());
             // Note: we assume, that the ARCwriter is flushed after each write.
             // We can't do it specifically.
 
@@ -195,7 +195,7 @@ public class HarvestDocumentation {
                         = cdxFilesDir.listFiles(FileUtils.CDX_FILE_FILTER);
                 for (File cdxFile : cdxFiles) {
                     //...write its content to the ARCWriter
-                    ARCUtils.writeFileToARC(aw, cdxFile,
+                	mdfw.writeFileTo(cdxFile,
                             getURIforFileName(cdxFile).toASCIIString(),
                             Constants.CDX_MIME_TYPE);
                     //...and delete it afterwards
@@ -310,20 +310,6 @@ public class HarvestDocumentation {
     }
 
     /**
-     * Generates a name for an ARC file containing "preharvest" metadata
-     * regarding a given job (e.g. excluded alises).
-     *
-     * @param jobID the number of the harvester job
-     * @return The file name to use for the preharvest metadata, as a String.
-     * @throws ArgumentNotValid If jobId is negative
-     */
-    public static String getPreharvestMetadataARCFileName(long jobID)
-        throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNegative(jobID, "jobID");
-        return jobID + "-preharvest-metadata-" + 1 + ".arc";
-    }
-
-    /**
      * Iterates over the ARC files in the given dir and moves away files
      * that do not belong to the given job.  Files whose jobid we can parse
      * will be moved to a directory under oldjobs named with that jobid,
@@ -401,7 +387,7 @@ public class HarvestDocumentation {
      * @return a list of files added to the arc-file.
      */
     private static List<File> writeHarvestDetails(long jobID,
-            long harvestID, File crawlDir, ARCWriter writer,
+            long harvestID, File crawlDir, MetadataFileWriter mdfw,
             String heritrixVersion) {
         List<File> filesAdded = new ArrayList<File>();
        
@@ -483,42 +469,12 @@ public class HarvestDocumentation {
             String mimeType =
                 (heritrixFileName.endsWith(".xml") ? "text/xml" : "text/plain");
 
-            if (writeToArc(writer, heritrixFile, mdf.getUrl(), mimeType)) {
+            if (mdfw.writeTo(heritrixFile, mdf.getUrl(), mimeType)) {
                 filesAdded.add(heritrixFile);
             }
         }
 
         return filesAdded;
-    }
-
-    /** Writes a File to an ARCWriter, if available,
-     * otherwise logs the failure to the class-logger.
-     * @param writer the given ARCWriter
-     * @param fileToArchive the File to archive
-     * @param URL the URL with which it is stored in the arcfile
-     * @param mimetype The mimetype of the File-contents
-     * @return true, if file exists, and is written to the arcfile.
-     */
-    private static boolean writeToArc(ARCWriter writer,
-            File fileToArchive, String URL, String mimetype) {
-        if (fileToArchive.isFile()) {
-            try {
-                ARCUtils.writeFileToARC(writer, fileToArchive,
-                        URL, mimetype);
-            } catch (IOFailure e) {
-                log.warn("Error writing file '"
-                        + fileToArchive.getAbsolutePath()
-                        + "' to metadata ARC: ", e);
-                return false;
-            }
-            log.debug("Wrote '" + fileToArchive.getAbsolutePath() + "' to '"
-                      + writer.getFile().getAbsolutePath() + "'.");
-            return true;
-        } else {
-            log.debug("No '" + fileToArchive.getName()
-                      + "' found in dir: " + fileToArchive.getParent());
-            return false;
-        }
     }
 
     /** Finds domain-specific configurations in the settings subdirectory of the
@@ -604,23 +560,23 @@ public class HarvestDocumentation {
      * @param harvestID the given harvest-identifier
      * @return a list of files added to the arcfile
      */
-    public static List<File> documentOldJob(File crawlDir, long jobID,
-            long harvestID) {
-        String jobIdString = Long.toString(jobID);
-        ARCWriter aw = null;
-        String metadataFilename =
-           getMetadataARCFileName(jobIdString)
-               .replaceAll("-1\\.arc$", "-2.arc");
+   public static List<File> documentOldJob(File crawlDir, long jobID,
+           long harvestID) {
+       String jobIdString = Long.toString(jobID);
+       MetadataFileWriter mdfw = null;
+       String metadataFilename =
+          MetadataFileWriter.getMetadataARCFileName(jobIdString)
+              .replaceAll("-1\\.arc$", "-2.arc");
 
-        File metadataFile = new File(metadataFilename);
-        aw = ARCUtils.createARCWriter(metadataFile);
+       File metadataFile = new File(metadataFilename);
+       mdfw = MetadataFileWriter.createWriter(metadataFile);
 
-        HeritrixFiles hf = new HeritrixFiles(crawlDir, jobID, harvestID);
+       HeritrixFiles hf = new HeritrixFiles(crawlDir, jobID, harvestID);
 
-        // Insert harvestdetails into metadata arcfile.
-        return writeHarvestDetails(jobID, harvestID, crawlDir, aw,
-                                   getHeritrixVersion(hf.getOrderXmlFile()));
-    }
+       // Insert harvestdetails into metadata arcfile.
+       return writeHarvestDetails(jobID, harvestID, crawlDir, mdfw,
+                                  getHeritrixVersion(hf.getOrderXmlFile()));
+   }
 
     /**
      * @param orderXml the file containing the heritrix order.xml 
@@ -647,23 +603,6 @@ public class HarvestDocumentation {
             return "null";
         }
 
-    }
-
-    /**
-     * Generates a name for an ARC file containing metadata regarding
-     * a given job.
-     *
-     * @param jobID The number of the job that generated the ARC file.
-     * @return A "flat" file name (i.e. no path) containing the jobID parameter
-     * and ending on "-metadata-N.arc", where N is the serial number of the
-     * metadata files for this job, e.g. "42-metadata-1.arc".  Currently,
-     * only one file is ever made.
-     * @throws ArgumentNotValid if any parameter was null.
-     */
-    public static String getMetadataARCFileName(String jobID)
-        throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(jobID, "jobID");
-        return jobID + "-metadata-" + 1 + ".arc";
     }
 
     /**

@@ -52,6 +52,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
+import dk.netarkivet.harvester.harvesting.MetadataFileWriter;
 
 /**
  * This tool creates a CDX metadata file for a given jobID by running a
@@ -192,7 +193,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                     = new BufferedReader(new FileReader(resultFile));
             try {
                 ARCWriter writer = ARCUtils.createARCWriter(
-                        new File(HarvestDocumentation.getMetadataARCFileName(
+                        new File(MetadataFileWriter.getMetadataARCFileName(
                                         Long.toString(jobID))));
                 try {
                     String line;

@@ -6,6 +6,8 @@ import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCRecord;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
 public class HeritrixArchiveRecordWrapper extends ArchiveRecordBase {
 
 	protected ArchiveRecord record;
@@ -19,6 +21,10 @@ public class HeritrixArchiveRecordWrapper extends ArchiveRecordBase {
 			this.bIsArc = true;
 		} else if (record instanceof WARCRecord) {
 			this.bIsWarc = true;
+		} else {
+	        throw new ArgumentNotValid(
+	                "Unsupported ArchiveRecord type: "
+	                + record.getClass().getName());
 		}
 	}
 

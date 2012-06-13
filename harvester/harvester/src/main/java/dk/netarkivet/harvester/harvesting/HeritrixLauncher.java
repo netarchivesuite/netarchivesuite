@@ -190,8 +190,16 @@ public abstract class HeritrixLauncher {
         XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
         XmlUtils.setNode(doc, WARCSDIR_XPATH, Constants.WARCDIRECTORY_NAME);
 
-        XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, "false");
-        XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, "true");
+        String archiveFormat = Settings.get(HarvesterSettings.METADATA_ARCHIVE_FORMAT);
+
+        String useArc = ("arc".equalsIgnoreCase(archiveFormat)) ? "true" : "false";
+        String useWarc = ("warc".equalsIgnoreCase(archiveFormat)) ? "true" : "false";
+
+        // TODO
+    	//throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_ARCHIVE_FORMAT + "' is invalid!");
+
+        XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, useArc);
+        XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, useWarc);
 
         //WARCDIRECTORY_NAME
         if (isDeduplicationEnabledInTemplate(doc)) {

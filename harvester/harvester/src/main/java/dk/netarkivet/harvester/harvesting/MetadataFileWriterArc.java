@@ -26,6 +26,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     	return mtfw;
     }
 
+    @Override
 	public void close() throws IOException {
     	if (writer != null) {
     		writer.close();
@@ -33,10 +34,17 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     	}
     }
 
+    @Override
+	public File getFile() {
+		return writer.getFile();
+	}
+
+    @Override
 	public void insertMetadataFile(File metadataFile) {
 	    ARCUtils.insertARCFile(metadataFile, writer);
 	}
 
+    @Override
     public void writeFileTo(File file, String uri, String mime) {
     	ARCUtils.writeFileToARC(writer, file, uri, mime);
 	}
@@ -51,6 +59,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
      *
      * TODO I wonder if this is a clone of the ARCUtils method. (nicl)
      */
+    @Override
     public boolean writeTo(File fileToArchive, String URL, String mimetype) {
         if (fileToArchive.isFile()) {
             try {
