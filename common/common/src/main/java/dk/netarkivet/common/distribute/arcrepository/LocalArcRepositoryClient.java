@@ -55,8 +55,8 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * A simple implementation of ArcRepositoryClient that just has a number of
- * local directories where it stores its files.  It doesn't implement
- * credentials checking or checksum storing.
+ * local directories where it stores its files.  This class doesn't implement
+ * credentials checking or checksum storing!
  */
 public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /** The logger for this class. */
@@ -91,9 +91,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         }
     }
 
-    /** Call on shutdown to release external resources. 
-     * This implementation does nothing. 
-     */
+    @Override
     public void close() {
     }
 
@@ -108,6 +106,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws ArgumentNotValid if file parameter is null or file is not an
      *                          existing file.
      */
+    @Override
     public void store(File file) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkTrue(file.exists(), "File '" + file
@@ -137,6 +136,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * negative.
      * @throws IOFailure If the get operation failed.
      */
+    @Override
     public BitarchiveRecord get(String arcfile, long index)
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "String arcfile");
@@ -186,6 +186,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure if there are problems reading or writing file, or 
      * the file with the given arcfilename could not be found.
      */
+    @Override
     public void getFile(String arcfilename, Replica replica, File toFile) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "String arcfilename");
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
@@ -214,6 +215,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * null or the empty string.
      * @throws IOFailure If a problem occurs during processing the batchjob.
      */
+    @Override
     public BatchStatus batch(final FileBatchJob job, String replicaId, 
             String... args) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
@@ -263,13 +265,14 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     }
 
     /** Updates the administrative data in the ArcRepository for a given
-     * file and replica.
+     * file and replica. This implementation does nothing.
      *
      * @param fileName The name of a file stored in the ArcRepository.
      * @param bitarchiveId The id of the replica that the administrative
      * data for fileName is wrong for.
      * @param newval What the administrative data will be updated to.
      */
+    @Override
     public void updateAdminData(String fileName, String bitarchiveId,
                                 ReplicaStoreState newval) {
     }
@@ -277,10 +280,12 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /** Updates the checksum kept in the ArcRepository for a given
      * file.  It is the responsibility of the ArcRepository implementation to
      * ensure that this checksum matches that of the underlying files.
+     * This implementation does nothing.
      *
      * @param filename The name of a file stored in the ArcRepository.
      * @param checksum The new checksum.
      */
+    @Override
     public void updateAdminChecksum(String filename, String checksum) {
     }
 
@@ -300,6 +305,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure On IO trouble.
      * @throws PermissionDenied On wrong MD5 sum or wrong credentials.
      */
+    @Override
     public File removeAndGetFile(String fileName, String bitarchiveId,
                                  String checksum, String credentials) {
         // Ignores bitarchiveName, checksum, and credentials for now

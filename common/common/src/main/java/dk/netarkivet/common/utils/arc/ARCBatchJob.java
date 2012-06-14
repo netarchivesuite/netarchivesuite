@@ -56,10 +56,11 @@ public abstract class ARCBatchJob extends FileBatchJob {
     protected int noOfRecordsProcessed = 0;
 
     /**
-     * Initialize the job before runnning.
+     * Initialize the job before running.
      * This is called before the processRecord() calls start coming.
      * @param os The OutputStream to which output data is written
      */
+    @Override
     public abstract void initialize(OutputStream os);
 
     /**
@@ -74,6 +75,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
      * This is called after the last processRecord() call.
      * @param os The OutputStream to which output data is written
      */
+    @Override
     public abstract void finish(OutputStream os);
 
     /**
@@ -98,6 +100,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
      * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
      */
+    @Override
     public final boolean processFile(File arcFile, OutputStream os) throws
             ArgumentNotValid{
         ArgumentNotValid.checkNotNull(arcFile, "arcFile");
