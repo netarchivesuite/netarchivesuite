@@ -200,130 +200,130 @@ implements AdaptiveRevisitAttributeConstants{
     public final static String ATTR_USE_SPARSE_RANGE_FILTER = "use-sparse-range-filter";
     public final static Boolean DEFAULT_USE_SPARSE_RANGE_FILTER = new Boolean(false);
     
-	public DeDuplicator(String name) {
-		super(name, "Aborts the processing of URIs (skips to post processing " +
+    public DeDuplicator(String name) {
+        super(name, "Aborts the processing of URIs (skips to post processing " +
                 "chain) if a duplicate is found in the specified index. " +
                 "Note that any changes made to this processors configuration " +
                 "at run time will be ignored unless otherwise stated.");
-		Type t = new SimpleType(
-				ATTR_INDEX_LOCATION,
-				"Location of index (full path). Can not be changed at run " +
-				"time.",
-				DEFAULT_INDEX_LOCATION);
-		t.setOverrideable(false);
-		addElementToDefinition(t);
-		t = new SimpleType(
-				ATTR_MATCHING_METHOD,
-				"Select if we should lookup by URL " +
-				"or by content digest (counts mirror matches).",
-				DEFAULT_MATCHING_METHOD,AVAILABLE_MATCHING_METHODS);
-		t.setOverrideable(false);
-		addElementToDefinition(t);
+        Type t = new SimpleType(
+                ATTR_INDEX_LOCATION,
+                "Location of index (full path). Can not be changed at run " +
+                        "time.",
+                        DEFAULT_INDEX_LOCATION);
+        t.setOverrideable(false);
+        addElementToDefinition(t);
+        t = new SimpleType(
+                ATTR_MATCHING_METHOD,
+                "Select if we should lookup by URL " +
+                        "or by content digest (counts mirror matches).",
+                        DEFAULT_MATCHING_METHOD,AVAILABLE_MATCHING_METHODS);
+        t.setOverrideable(false);
+        addElementToDefinition(t);
         t = new SimpleType(
                 ATTR_EQUIVALENT,
                 "If an exact match of URI and content digest is not found " +
-                "then an equivalent URI (i.e. one with any www[0-9]*, " +
-                "trailing slashes and parameters removed) can be checked. " +
-                "If an equivalent URI has an identical content digest then " +
-                "enabling this feature will cause the processor to consider " +
-                "this a duplicate. Equivalent matches are noted in the " +
-                "crawl log and their number is tracked seperately.",
-                DEFAULT_EQUIVALENT);
+                        "then an equivalent URI (i.e. one with any www[0-9]*, " +
+                        "trailing slashes and parameters removed) can be checked. " +
+                        "If an equivalent URI has an identical content digest then " +
+                        "enabling this feature will cause the processor to consider " +
+                        "this a duplicate. Equivalent matches are noted in the " +
+                        "crawl log and their number is tracked seperately.",
+                        DEFAULT_EQUIVALENT);
         t.setOverrideable(false);
         addElementToDefinition(t);
         t = new SimpleType(
                 ATTR_MIME_FILTER,
-		"A regular expression that the mimetype of all documents " +
-                "will be compared against. \nIf the attribute filter-mode is " +
-                "set to 'Blacklist' then all the documents whose mimetype " +
-                "matches will be ignored by this processor. If the filter-" +
-                "mode is set to 'Whitelist' only those documents whose " +
-                "mimetype matches will be processed.",
-				DEFAULT_MIME_FILTER);
-		t.setOverrideable(false);
+                "A regular expression that the mimetype of all documents " +
+                        "will be compared against. \nIf the attribute filter-mode is " +
+                        "set to 'Blacklist' then all the documents whose mimetype " +
+                        "matches will be ignored by this processor. If the filter-" +
+                        "mode is set to 'Whitelist' only those documents whose " +
+                        "mimetype matches will be processed.",
+                        DEFAULT_MIME_FILTER);
+        t.setOverrideable(false);
         t.setExpertSetting(true);
-		addElementToDefinition(t);
+        addElementToDefinition(t);
         t = new SimpleType(
                 ATTR_FILTER_MODE,
                 "Determines if the mime-filter acts as a blacklist (declares " +
-                "what should be ignored) or whitelist (declares what should " +
-                "be processed).",
-                DEFAULT_FILTER_MODE,AVAILABLE_FILTER_MODES);
+                        "what should be ignored) or whitelist (declares what should " +
+                        "be processed).",
+                        DEFAULT_FILTER_MODE,AVAILABLE_FILTER_MODES);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
         t = new SimpleType(
                 ATTR_ANALYSIS_MODE,
                 "If enabled, the processor can analyse the timestamp (last-" +
-                "modified) and ETag info of the HTTP headers and compare " +
-                "their predictions as to whether or not the document had " +
-                "changed against the result of the index lookup. This is " +
-                "ONLY for the purpose of gathering statistics about the " +
-                "usefulness and accuracy of the HTTP header information in " +
-                "question and has no effect on the processing of documents. " +
-                "Analysis is only possible if " +
-                "the relevant data was included in the index.",
-                DEFAULT_ANALYSIS_MODE,AVAILABLE_ANALYSIS_MODES);
+                        "modified) and ETag info of the HTTP headers and compare " +
+                        "their predictions as to whether or not the document had " +
+                        "changed against the result of the index lookup. This is " +
+                        "ONLY for the purpose of gathering statistics about the " +
+                        "usefulness and accuracy of the HTTP header information in " +
+                        "question and has no effect on the processing of documents. " +
+                        "Analysis is only possible if " +
+                        "the relevant data was included in the index.",
+                        DEFAULT_ANALYSIS_MODE,AVAILABLE_ANALYSIS_MODES);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
-        
+
         t = new SimpleType(
                 ATTR_LOG_LEVEL,
                 "Adjust the verbosity of the processor. By default, it only " +
-                "reports serious (Java runtime) errors. " +
-                "By setting the log level " +
-                "higher, various additional data can be logged. " +
-                "* Serious - Default logging level, only serious errors. " +
-                "Note that it is possible that a more permissive default " +
-                "logging level has been set via the heritrix.properties " +
-                "file. This setting (severe) will not affect that.\n" +
-                "* Info - Records some anomalies. Such as the information " +
-                "on URIs that the HTTP header info falsely predicts " +
-                "no-change on.\n" +
-                "* Finest - Full logging of all URIs processed. For " +
-                "debugging purposes only!",
-                DEFAULT_LOG_LEVEL,AVAILABLE_LOG_LEVELS);
+                        "reports serious (Java runtime) errors. " +
+                        "By setting the log level " +
+                        "higher, various additional data can be logged. " +
+                        "* Serious - Default logging level, only serious errors. " +
+                        "Note that it is possible that a more permissive default " +
+                        "logging level has been set via the heritrix.properties " +
+                        "file. This setting (severe) will not affect that.\n" +
+                        "* Info - Records some anomalies. Such as the information " +
+                        "on URIs that the HTTP header info falsely predicts " +
+                        "no-change on.\n" +
+                        "* Finest - Full logging of all URIs processed. For " +
+                        "debugging purposes only!",
+                        DEFAULT_LOG_LEVEL,AVAILABLE_LOG_LEVELS);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
         t = new SimpleType(
                 ATTR_STATS_PER_HOST,
                 "If enabled the processor will keep track of the number of " +
-                "processed uris, duplicates found etc. per host. The listing " +
-                "will be added to the processor report (not the host-report).",
-                DEFAULT_STATS_PER_HOST);
+                        "processed uris, duplicates found etc. per host. The listing " +
+                        "will be added to the processor report (not the host-report).",
+                        DEFAULT_STATS_PER_HOST);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
         t = new SimpleType(
                 ATTR_CHANGE_CONTENT_SIZE,
                 "If set to true then the processor will set the content size " +
-                "of the CrawlURI to zero when a duplicate is discovered. ",
-                DEFAULT_CHANGE_CONTENT_SIZE);
+                        "of the CrawlURI to zero when a duplicate is discovered. ",
+                        DEFAULT_CHANGE_CONTENT_SIZE);
         t.setOverrideable(false);
         addElementToDefinition(t);
-        
+
         t = new SimpleType(
                 ATTR_ORIGIN_HANDLING,
                 "The origin of duplicate URLs can be handled a few different " +
-                "ways. It is important to note that the 'origin' information " +
-                "is malleable and may be anything from a ARC name and offset " +
-                "to a simple ID of a particular crawl. It is entirely at the " +
-                "operators discretion.\n " +
-                ORIGIN_HANDLING_NONE + " - No origin information is " +
-                "associated with the URLs.\n " +
-                ORIGIN_HANDLING_PROCESSOR + " - Duplicate URLs are all given " +
-                "the same origin, specified by the 'origin' setting of this " +
-                "processor.\n " +
-                ORIGIN_HANDLING_INDEX + " - The origin of each duplicate URL " +
-                "is read from the index. If the index does not contain any " +
-                "origin information for an URL, the processor setting is " +
-                "used as a fallback!",
-                DEFAULT_ORIGIN_HANDLING,AVAILABLE_ORIGIN_HANDLING);
+                        "ways. It is important to note that the 'origin' information " +
+                        "is malleable and may be anything from a ARC name and offset " +
+                        "to a simple ID of a particular crawl. It is entirely at the " +
+                        "operators discretion.\n " +
+                        ORIGIN_HANDLING_NONE + " - No origin information is " +
+                        "associated with the URLs.\n " +
+                        ORIGIN_HANDLING_PROCESSOR + " - Duplicate URLs are all given " +
+                        "the same origin, specified by the 'origin' setting of this " +
+                        "processor.\n " +
+                        ORIGIN_HANDLING_INDEX + " - The origin of each duplicate URL " +
+                        "is read from the index. If the index does not contain any " +
+                        "origin information for an URL, the processor setting is " +
+                        "used as a fallback!",
+                        DEFAULT_ORIGIN_HANDLING,AVAILABLE_ORIGIN_HANDLING);
         t.setOverrideable(false);
         addElementToDefinition(t);
-        
+
         t = new SimpleType(
                 ATTR_ORIGIN,
                 "The origin of duplicate URLs.",
@@ -333,23 +333,23 @@ implements AdaptiveRevisitAttributeConstants{
         t = new SimpleType(
                 ATTR_SKIP_WRITE,
                 "If set to true, then processing of duplicate URIs will be " +
-                "skipped directly to the post processing chain. If false, " +
-                "processing of duplicates will skip directly to the writer " +
-                "chain that precedes the post processing chain.",
-                DEFAULT_SKIP_WRITE);
+                        "skipped directly to the post processing chain. If false, " +
+                        "processing of duplicates will skip directly to the writer " +
+                        "chain that precedes the post processing chain.",
+                        DEFAULT_SKIP_WRITE);
         t.setOverrideable(true);
         addElementToDefinition(t);
 
         t = new SimpleType(
                 ATTR_USE_SPARSE_RANGE_FILTER,
                 "If set to true, then Lucene queries use a custom 'sparse' " +
-                "range filter. This uses less memory at the cost of some " +
-                "lost performance. Suitable for very large indexes.",
-                DEFAULT_USE_SPARSE_RANGE_FILTER);
+                        "range filter. This uses less memory at the cost of some " +
+                        "lost performance. Suitable for very large indexes.",
+                        DEFAULT_USE_SPARSE_RANGE_FILTER);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
-}
+    }
 	
     /*
      *  (non-Javadoc)
@@ -562,7 +562,7 @@ implements AdaptiveRevisitAttributeConstants{
                 } else {
                     String tmp = (String)getUncheckedAttribute(curi,ATTR_ORIGIN);
                     // Check if an origin value is actually available
-                    if(tmp != null || tmp.trim().length() > 0){
+                    if(tmp != null && tmp.trim().length() > 0) {
                         // It is available, add it to the log line.
                         annotation += ":\"" + tmp + "\""; 
                     }
