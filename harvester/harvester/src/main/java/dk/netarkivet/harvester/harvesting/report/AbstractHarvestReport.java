@@ -73,6 +73,11 @@ public abstract class AbstractHarvestReport implements HarvestReport {
          */
         ORDERLY_FINISH("CRAWL ENDED"),
 
+        /** This is written when Heritrix terminates the job due to
+         *  its timelimit (max-time-sec) being reached.
+         */
+        TIMELIMIT_EXCEEDED("Timelimit hit"),
+        
         /**
          * String which shows that the harvest was deliberately aborted from
          * the Heritrix GUI or forcibly stopped by the Netarchive Suite
@@ -274,8 +279,12 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         String lastLine = FileUtils.readLastLine(logFile);
         if (lastLine.contains(
                 ProgressStatisticsConstants.ORDERLY_FINISH.pattern)) {
-            if (lastLine.contains(
-                    ProgressStatisticsConstants.HARVEST_ABORTED.pattern)) {
+            if (lastLine.contains(ProgressStatisticsConstants
+                        .HARVEST_ABORTED.pattern)
+                        || 
+                lastLine.contains(ProgressStatisticsConstants
+                        .TIMELIMIT_EXCEEDED.pattern)) 
+            {
                return StopReason.DOWNLOAD_UNFINISHED;
             } else {
                return StopReason.DOWNLOAD_COMPLETE;
