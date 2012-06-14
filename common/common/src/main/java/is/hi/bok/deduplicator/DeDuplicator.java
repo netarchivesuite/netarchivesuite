@@ -44,7 +44,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.store.FSDirectory;
 import org.archive.crawler.datamodel.CoreAttributeConstants;
 import org.archive.crawler.datamodel.CrawlOrder;
 import org.archive.crawler.datamodel.CrawlURI;
@@ -232,8 +232,8 @@ implements AdaptiveRevisitAttributeConstants{
         t.setOverrideable(false);
         addElementToDefinition(t);
         t = new SimpleType(
-				ATTR_MIME_FILTER,
-				"A regular expression that the mimetype of all documents " +
+                ATTR_MIME_FILTER,
+		"A regular expression that the mimetype of all documents " +
                 "will be compared against. \nIf the attribute filter-mode is " +
                 "set to 'Blacklist' then all the documents whose mimetype " +
                 "matches will be ignored by this processor. If the filter-" +
@@ -361,7 +361,7 @@ implements AdaptiveRevisitAttributeConstants{
         // Index location
         String indexLocation = (String)readAttribute(ATTR_INDEX_LOCATION,"");
         try {
-            Directory indexDir = new MMapDirectory(new File(indexLocation));
+            Directory indexDir = FSDirectory.open(new File(indexLocation));
             IndexReader reader = IndexReader.open(indexDir);
             index = new IndexSearcher(reader);
         } catch (Exception e) {
@@ -1008,13 +1008,13 @@ implements AdaptiveRevisitAttributeConstants{
 
 	
     protected void finalTasks() {
-        try {
-            if (index != null) {
-                index.close();
-            }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE,"Error closing index",e);
-        }
+//        try {
+//            if (index != null) {
+//                index.close();
+//            }
+//        } catch (IOException e) {
+//            logger.log(Level.SEVERE,"Error closing index",e);
+//        }
     }
 
 }

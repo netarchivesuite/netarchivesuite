@@ -38,13 +38,13 @@ import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.QueryParser;
+//import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
-import org.apache.lucene.util.Version;
 
 import dk.netarkivet.common.utils.FileUtils;
 
@@ -61,7 +61,7 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
     }
 
     public void tearDown() throws Exception {
-        //super.tearDown();
+        super.tearDown();
     }
 
     public void testCombine() throws Exception {
@@ -123,11 +123,14 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         
         Directory luceneDirectory = new MMapDirectory(unzipDir);
         
+        
         IndexReader reader = IndexReader.open(luceneDirectory);
+        System.out.println("doc-count: " + reader.maxDoc());
         IndexSearcher index = new IndexSearcher(reader);
-        //QueryParser queryParser = new QueryParser("url", new WhitespaceAnalyzer());
-        QueryParser queryParser = new QueryParser(Version.LUCENE_36, "url", 
-                new WhitespaceAnalyzer(Version.LUCENE_36));
+        //QueryParser queryParser = new QueryParser("url", 
+        //        new WhitespaceAnalyzer(dk.netarkivet.common.constants.LUCENE_VERSION));
+        QueryParser queryParser = new QueryParser(dk.netarkivet.common.Constants.LUCENE_VERSION, "url", 
+                new WhitespaceAnalyzer(dk.netarkivet.common.Constants.LUCENE_VERSION));
         Query q = queryParser.parse("http\\://www.kb.dk*");
         
         TopDocs topdocs = index.search(q, Integer.MAX_VALUE);
@@ -137,7 +140,7 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         // and /, which the indexer ignores, leaving 3
         // Crawl log 4 has five entries for www.kb.dk
         
-        //System.out.println("Found hits: " + hits.length);
+        System.out.println("Found hits: " + hits.length);
         for (int i = 0; i < hits.length; i++) {
             int docID = hits[i].doc;
             Document doc = index.doc(docID);

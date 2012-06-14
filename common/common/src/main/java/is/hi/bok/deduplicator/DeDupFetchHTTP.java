@@ -34,14 +34,12 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.FieldCacheTermsFilter;
-import org.apache.lucene.search.FieldValueFilter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-//import org.apache.lucene.search.RangeFilter;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.store.FSDirectory;
 import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.fetcher.FetchHTTP;
 import org.archive.crawler.frontier.AdaptiveRevisitAttributeConstants;
@@ -50,10 +48,8 @@ import org.archive.crawler.settings.Type;
 import org.archive.httpclient.HttpRecorderMethod;
 import org.archive.util.ArchiveUtils;
 
-import dk.netarkivet.common.utils.SparseRangeFilter;
-
 /**
- * An extentsion of Heritrix's {@link org.archive.crawler.fetcher.FetchHTTP}
+ * An extension of Heritrix's {@link org.archive.crawler.fetcher.FetchHTTP}
  * processor for downloading HTTP documents. This extension adds a check after
  * the content header has been downloaded that compares the 'last-modified' and
  * or 'last-etag' values from the header against information stored in an 
@@ -382,11 +378,11 @@ implements AdaptiveRevisitAttributeConstants {
 
     public void finalTasks() {
         super.finalTasks();
-        try {
-            index.close();
-        } catch (IOException e) {
-            logger.log(Level.SEVERE,"Error closing index",e);
-        }
+//        try {
+//            index.close();
+//        } catch (IOException e) {
+//            logger.log(Level.SEVERE,"Error closing index",e);
+//        }
     }
 
     public void initialTasks() {
@@ -394,7 +390,8 @@ implements AdaptiveRevisitAttributeConstants {
         // Index location
         try {
             String indexLocation = (String)getAttribute(ATTR_INDEX_LOCATION);
-            Directory indexDir = new MMapDirectory(new File(indexLocation));
+            Directory indexDir = FSDirectory.open(new File(indexLocation));
+            //IndexReader reader = DirectoryReader.open(indexDir);
             IndexReader reader = IndexReader.open(indexDir);
             index = new IndexSearcher(reader);
         } catch (Exception e) {

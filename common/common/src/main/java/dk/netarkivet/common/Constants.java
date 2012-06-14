@@ -27,6 +27,8 @@ package dk.netarkivet.common;
 import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
 
+import org.apache.lucene.util.Version;
+
 /**
  * This class is used for global constants only.
  *
@@ -178,4 +180,8 @@ public final class Constants {
 
     /** Pattern that matches everything. */
     public static final String ALL_PATTERN = ".*";
+    
+    /** Lucene version used by this release of NetarchiveSuite. */
+    public static final Version LUCENE_VERSION = Version.LUCENE_36;
+    
 }

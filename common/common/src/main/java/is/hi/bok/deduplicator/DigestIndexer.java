@@ -29,15 +29,18 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 
 import org.apache.commons.cli.Option;
+
+
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.util.Version;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 import org.archive.util.ArchiveUtils;
+import dk.netarkivet.common.Constants;
 
 /**
  * A class for building a de-duplication index.
@@ -80,7 +83,11 @@ public class DigestIndexer {
     public static final String MODE_HASH = "HASH";
     /** Both URL and hash are indexed. **/
     public static final String MODE_BOTH = "BOTH";
-
+    
+    /** Lucene Storage used by the indexwriter. */
+    private Directory luceneDirectory;
+    
+    
     /** The index being manipulated. **/
     private IndexWriter index;
     
@@ -141,17 +148,21 @@ public class DigestIndexer {
         }
 
         // Set up the index writer
-        //index = new IndexWriter(indexLocation,
-        //        new WhitespaceAnalyzer(), !addToExistingIndex);
-        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, 
-                new WhitespaceAnalyzer(Version.LUCENE_36));
+        
+        // indexwriter in 4.0
+        // IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, 
+        // new org.apache.lucene.analysis.core.WhitespaceAnalyzer(Version.LUCENE_40));
+        
+        IndexWriterConfig config = new IndexWriterConfig(Constants.LUCENE_VERSION, 
+                new WhitespaceAnalyzer(Constants.LUCENE_VERSION));
+        
         if (!addToExistingIndex) {
             config.setOpenMode(OpenMode.CREATE);
         } else {
             config.setOpenMode(OpenMode.CREATE_OR_APPEND);
         }
-        index = new IndexWriter(new SimpleFSDirectory(new File(indexLocation)),
-                config);
+        luceneDirectory = FSDirectory.open(new File(indexLocation));
+        index = new IndexWriter(luceneDirectory, config);
     }
 
     /**
@@ -306,9 +317,11 @@ public class DigestIndexer {
     public void close(boolean optimize) throws IOException{
         if(optimize){
             // optimize method is deprecated in Lucene 3.6 and missing from Lucene 4.0 dev
-            index.optimize();
+            //index.optimize();
         }
+        //luceneDirectory.close();
         index.close(true);
+        luceneDirectory.close();
     }
 
     /**
