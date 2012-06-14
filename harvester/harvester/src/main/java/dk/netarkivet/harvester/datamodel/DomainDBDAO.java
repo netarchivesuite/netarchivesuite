@@ -1905,7 +1905,7 @@ public class DomainDBDAO extends DomainDAO {
         try {
             return DBUtils.selectStringList(
                     c, "SELECT name FROM domains WHERE " 
-                            + searchField + " LIKE ?", sqlGlob);
+                            + searchField.toLowerCase() + " LIKE ?", sqlGlob);
         } finally {
             HarvestDBConnection.release(c);
         }

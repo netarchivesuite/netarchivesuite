@@ -55,8 +55,10 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
+import dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+import dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
@@ -219,8 +221,10 @@ implements CleanupIF {
                         + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy,"
                         + "org.archive.crawler.frontier"
                         + ".SurtAuthorityQueueAssignmentPolicy,"
-                        + "dk.netarkivet.harvester.harvesting"
-                        + ".DomainnameQueueAssignmentPolicy");
+                        + DomainnameQueueAssignmentPolicy.class.getName() 
+                        + ","
+                        + SeedUriDomainnameQueueAssignmentPolicy.class.getName());
+                        
         // Get JMS-connection
         // Channel THIS_CLIENT is only used for replies to store messages so
         // do not set as listener here. It is registered in the arcrepository

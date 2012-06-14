@@ -375,7 +375,7 @@ public class DomainDefinition {
         ArgumentNotValid.checkNotNullOrEmpty(searchQuery, "String searchQuery");
         ArgumentNotValid.checkNotNullOrEmpty(searchType, "String searchType");
         
-        if (!getSearchTypes().contains(searchType)) {
+        if (!getSearchTypes().contains(DomainSearchType.parse(searchType))) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;invalid.domain.search.criteria.0", searchType);
             throw new ForwardedToErrorPage("Unknown domain search criteria '" 
@@ -391,13 +391,13 @@ public class DomainDefinition {
      * are not implemented currently, so they are exempted from the list 
      * @return the list of available domain search types.
      */
-    public static Set<String> getSearchTypes() {
-        Set<String> types = new HashSet<String>();
+    public static Set<DomainSearchType> getSearchTypes() {
+        Set<DomainSearchType> types = new HashSet<DomainSearchType>();
         //types.add(Constants.SEEDS_DOMAIN_SEARCH);
         //types.add(Constants.CONFIGS_DOMAIN_SEARCH);
-        types.add(Constants.TRAPS_DOMAIN_SEARCH);
-        types.add(Constants.NAME_DOMAIN_SEARCH);
-        types.add(Constants.COMMENTS_DOMAIN_SEARCH);
+        types.add(DomainSearchType.CRAWLERTRAPS);
+        types.add(DomainSearchType.NAME);
+        types.add(DomainSearchType.COMMENTS);
         return types;
     }
 }

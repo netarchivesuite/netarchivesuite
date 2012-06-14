@@ -29,7 +29,8 @@ With parameter name, it performs a search.  Name can be a glob pattern
 (using ? and * only) or a single domain.  If domains are found, they are
 displayed, if no domains are found for a non-glob search, the user is
 asked if they should be created.
---%><%@page import="dk.netarkivet.harvester.webinterface.DomainDefinition"%>
+--%><%@page import="dk.netarkivet.harvester.webinterface.DomainSearchType"%>
+<%@page import="dk.netarkivet.harvester.webinterface.DomainDefinition"%>
 <%@ page import="javax.servlet.RequestDispatcher,
                  java.util.List, java.util.Set,
                  dk.netarkivet.common.CommonSettings,
@@ -56,6 +57,11 @@ asked if they should be created.
 	// alias (?), // Postponed
 	// seeds (?), // Postponed
 	// domainconfigurations (?) //TODO
+	// new language-keys: 
+	//    errormsg;no.matching.domains.for.query.0.when.searching.by.
+	//    search.domains.by
+	// obsoleted languages keys: 
+	//    prompt;enter.name.of.domain.to.find
 	
 	String searchType = request.getParameter(Constants.DOMAIN_QUERY_TYPE_PARAM);
 	String searchQuery =  request.getParameter(Constants.DOMAIN_QUERY_STRING_PARAM);
@@ -208,32 +214,35 @@ asked if they should be created.
                                       action="Definitions-find-domains.jsp">
     <table>
         <tr>
-            <td><fmt:message key="prompt;enter.name.of.domain.to.find"/></td>
+            <td><fmt:message key="prompt;enter.domain.query"/></td>
             <td><span id="focusElement">
                 <input name="<%=Constants.DOMAIN_QUERY_STRING_PARAM%>"
                 	size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>" value=""/>
                 </span>
             </td>
+        </tr>
+        <tr>    
             <!--  add selector for what kind of search to make -->
-            
+            <td><fmt:message key="search.domains.by"/></td>
             <td><select name="<%=Constants.DOMAIN_QUERY_TYPE_PARAM%>">
                     <%
-                        Set<String> searchTypes = DomainDefinition.getSearchTypes();
-                    	for(String aSearchType: searchTypes) {
+                        Set<DomainSearchType> searchTypes = DomainDefinition.getSearchTypes();
+                    	for(DomainSearchType aSearchType: searchTypes) {
                             String selected = "";
                             
-                            if (aSearchType.equals(Constants.DEFAULT_DOMAIN_SEARCH_TYPE)) {
+                            if (aSearchType.equals(DomainSearchType.NAME)) {
                                 selected = "selected = \"selected\"";
                             }
-                            out.println("<option value=\"" +
-                                        HTMLUtils.escapeHtmlValues(aSearchType)
-                                        + "\"" + selected + ">" +
-                                        HTMLUtils.escapeHtmlValues(aSearchType)
-                                        + "</option>");
+                            %> <option value="<%=HTMLUtils.escapeHtmlValues(aSearchType.name())%>"<%=selected%>>
+                                <fmt:message key="<%=HTMLUtils.escapeHtmlValues(aSearchType.getLocalizedKey())%>"/>
+                               </option>
+                            <%             
                     	}
                     %>
                 </select>
                 </td>
+        </tr>
+        <tr>        
             <td><input type="submit" value="<fmt:message key="search"/>"/></td>
         </tr>
         <tr>
