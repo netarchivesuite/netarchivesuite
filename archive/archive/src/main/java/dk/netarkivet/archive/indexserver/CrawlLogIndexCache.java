@@ -246,16 +246,19 @@ public abstract class CrawlLogIndexCache extends
                     subindices.toArray(new Directory[0]));
             
             // Close all lucene subindices (Is this necessary?)
-            log.debug("closing all subindices");
+            log.info("Closing all subindices");
             for (Directory luceneDir: subindices) {
                 luceneDir.close();
             }
             long docsInIndex = indexer.getIndex().numDocs();
-            log.debug("closing index");
+            log.info("closing index");
             indexer.close();
-            
+            log.info("Closed index");
+            File totalIndexDir = new File(indexLocation);
+            log.info("Gzip-compressing the individual " +  totalIndexDir.list().length 
+                    + " index files");
             // Now the index is made, gzip it up.
-            ZipUtils.gzipFiles(new File(indexLocation), resultDir);
+            ZipUtils.gzipFiles(totalIndexDir, resultDir);
             log.info("Completed combining a dataset with " 
                     + datasetSize + " crawl logs (entries in combined index: "
                     + docsInIndex + ") - compressed index has size " 
