@@ -54,6 +54,7 @@ import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 
 /**
@@ -85,18 +86,6 @@ public abstract class CrawlLogIndexCache extends
     /** The time to sleep between each check of completeness.*/
     private final long sleepintervalBetweenCompletenessChecks 
         = Settings.getLong(ArchiveSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
-    
-    /**
-     * Should we optimizing each partial index before closing it.
-     */
-    private final boolean optimizePartialIndex = Settings.getBoolean(
-            ArchiveSettings.INDEXING_OPTIMIZE_PARTIALINDEX);
-    
-    /**
-      * Should we optimizing the final index before closing it.
-      */
-    private final boolean optimizeIndex = Settings.getBoolean(
-            ArchiveSettings.INDEXING_OPTIMIZE_INDEX);
     
     /**
      * Constructor for the CrawlLogIndexCache class.
@@ -161,8 +150,7 @@ public abstract class CrawlLogIndexCache extends
             DigestIndexer indexer = createStandardIndexer(indexLocation);
             final boolean verboseIndexing = false;
             DigestOptions indexingOptions = new DigestOptions(
-                    this.useBlacklist, verboseIndexing, this.mimeFilter,
-                    this.optimizePartialIndex);
+                    this.useBlacklist, verboseIndexing, this.mimeFilter);
             long count = 0;
             Set<IndexingState> outstandingJobs = new HashSet<IndexingState>();
             final int maxThreads = Settings.getInt(
@@ -217,9 +205,10 @@ public abstract class CrawlLogIndexCache extends
             while (outstandingJobs.size() > 0) {
                 Iterator<IndexingState> iterator = outstandingJobs.iterator();
                 if (timeOutTime < System.currentTimeMillis()) {
-                   log.warn("Max indexing time exceeded (" + combineTimeout 
-                           + " milliseconds). Indexing stops here, although"
-                           + " missing subindices for " + outstandingJobs 
+                   log.warn("Max indexing time exceeded for one index (" 
+                           + TimeUtils.readableTimeInterval(combineTimeout) 
+                           + "). Indexing stops here, although"
+                           + " missing subindices for " + outstandingJobs.size() 
                            + " jobs");
                    break; 
                 }
@@ -252,12 +241,16 @@ public abstract class CrawlLogIndexCache extends
                 sleepAwhile();
             }
             
-            log.debug("Merging the " + subindices.size() + " subindices but don't optimize");
+            log.debug("Merging the " + subindices.size() + " subindices");
             indexer.getIndex().addIndexes(
                     subindices.toArray(new Directory[0]));
+            // Close all lucene subindices (Is this necessary?)
+            for (Directory luceneDir: subindices) {
+                luceneDir.close();
+            }
             long docsInIndex = indexer.getIndex().numDocs();
-            log.debug("closing index, (optimize = " + this.optimizeIndex + ")");
-            indexer.close(this.optimizeIndex);
+            log.debug("closing index");
+            indexer.close();
             
             // Now the index is made, gzip it up.
             ZipUtils.gzipFiles(new File(indexLocation), resultDir);

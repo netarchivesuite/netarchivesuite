@@ -78,7 +78,6 @@ public class LuceneUtils {
         
         try {
             // Setup Lucene for indexing our crawllogs
-            final boolean optimizeIndex = true;
             String indexLocation = indexDir.getAbsolutePath();
             // MODE_BOTH: Both URL's and Hash are indexed: Alternatives:
             // DigestIndexer.MODE_HASH or DigestIndexer.MODE_URL
@@ -110,7 +109,7 @@ public class LuceneUtils {
                         reader.close();
                     }
                 }
-            indexer.close(optimizeIndex);
+            indexer.close();
         } catch (IOException e) {
             throw new IOFailure("Error setting up craw.log index framework for "
                     + indexDir, e);

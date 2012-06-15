@@ -394,7 +394,7 @@ public class ArchiveSettings {
     /**
      * <b>settings.archive.indexserver.indexingtimeout</b>: <br>
      * Setting for the indexing timeout in milliseconds. The default is
-     * 172800000 (2 days).
+     * 259200000 (3 days).
      */
     public static String INDEXSERVER_INDEXING_TIMEOUT
             = "settings.archive.indexserver.indexingtimeout";
@@ -421,17 +421,6 @@ public class ArchiveSettings {
      */
     public static String INDEXREQUEST_SERVER_CLASS
         = "settings.archive.indexserver.indexrequestserver.class";
-    
-    /** settings.archive.indexserver.optimizePartialIndex.
-     * default is false. 
-     */
-    public static String INDEXING_OPTIMIZE_PARTIALINDEX 
-        = "settings.archive.indexserver.optimizePartialIndex";
-
-    /** settings.archive.indexserver.optimizeIndex. 
-     * default is true. */
-    public static String INDEXING_OPTIMIZE_INDEX 
-        = "settings.archive.indexserver.optimizeIndex";
     
     /**
      * b>settings.archive.indexserver.lookfordataInAllBitarchiveReplicas</b>: <br>

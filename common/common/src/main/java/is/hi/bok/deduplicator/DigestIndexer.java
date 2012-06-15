@@ -296,11 +296,12 @@ public class DigestIndexer {
                 }
                 index.addDocument(doc);
                 // needed with new IndexWriter (see line 144)
-                index.commit();
+                //index.commit();
             } else {
                 skipped++;
             }
         }
+        index.commit();        
         if(verbose){
             System.out.println("Indexed " + count + " items (skipped "
                     + skipped + ")");
@@ -310,16 +311,9 @@ public class DigestIndexer {
     
     /**
      * Close the index.
-     * @param optimize If true then the index will be optimized before it is
-     *                 closed.
-     * @throws IOException If an error occurs optimizing or closing the index.
+     * @throws IOException If an error occurs while closing the index.
      */
-    public void close(boolean optimize) throws IOException{
-        if(optimize){
-            // optimize method is deprecated in Lucene 3.6 and missing from Lucene 4.0 dev
-            //index.optimize();
-        }
-        //luceneDirectory.close();
+    public void close() throws IOException{
         index.close(true);
         luceneDirectory.close();
     }
@@ -425,7 +419,7 @@ public class DigestIndexer {
                 skipDuplicates);
         
         // Clean-up
-        di.close(true);
+        di.close();
         
         System.out.println("Total run time: "
                 + ArchiveUtils.formatMillisecondsToConventional(System

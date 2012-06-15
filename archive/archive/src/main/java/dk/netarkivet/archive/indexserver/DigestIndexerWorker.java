@@ -105,7 +105,7 @@ public class DigestIndexerWorker implements Callable<Boolean> {
                     + this.jobId + " w/ " + localindexer.getIndex().numDocs()        
                     + " index-entries)");
             
-            localindexer.close(indexingOptions.getOptimizeIndex());
+            localindexer.close();
             
         } catch (IOException e) {
             successful = false;

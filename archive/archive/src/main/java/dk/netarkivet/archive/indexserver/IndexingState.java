@@ -79,4 +79,10 @@ public class IndexingState {
     public Future<Boolean> getResultObject() {
         return resultObject;
     }
+    
+    public String toString() {
+        return "IndexingState for JobID #" + jobIdentifier 
+                + "- IndexingDone = " 
+                + resultObject.isDone();
+    }
 }
