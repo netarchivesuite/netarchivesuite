@@ -241,10 +241,12 @@ public abstract class CrawlLogIndexCache extends
                 sleepAwhile();
             }
             
-            log.debug("Merging the " + subindices.size() + " subindices");
+            log.info("Merging the " + subindices.size() + " subindices");
             indexer.getIndex().addIndexes(
                     subindices.toArray(new Directory[0]));
+            
             // Close all lucene subindices (Is this necessary?)
+            log.debug("closing all subindices");
             for (Directory luceneDir: subindices) {
                 luceneDir.close();
             }
