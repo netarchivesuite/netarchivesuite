@@ -44,7 +44,7 @@ National Library.
 			<accessFile>tests/dk/netarkivet/jmxremote.access</accessFile>
 		</jmx>
 		<http>
-    		<port>8076</port>
+    		<port>7076</port>
 	    </http>
     	<remoteFile>
 	       	<class>dk.netarkivet.common.distribute.ExtendedFTPRemoteFile</class>

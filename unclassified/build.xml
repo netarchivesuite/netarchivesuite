@@ -335,7 +335,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <zip basedir="." destfile="NetarchiveSuite-src.zip">
             <include name="conf/**"/>
             <include name="examples/**"/>
-            <include name="harvestdefinitionbasedir/**"/>
+        	<include name="archivedatabasedir/**"/>
+        	<include name="harvestdefinitionbasedir/**"/>
             <include name="lib/**"/>
             <exclude name="lib/dk.netarkivet.*.jar"/>
             <include name="log"/>
@@ -372,7 +373,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="docs/apidocs/**"/>
             <include name="conf/**"/>
             <include name="examples/**"/>
-            <include name="harvestdefinitionbasedir/**"/>
+     		<include name="archivedatabasedir/**"/>
+     	    <include name="harvestdefinitionbasedir/**"/>     	
             <include name="lib/**"/>
             <include name="log"/>
             <include name="modules/**"/>

@@ -695,7 +695,7 @@ public class LinuxMachine extends Machine {
             res.append(Constants.COLON);
             res.append(getInstallDirPath());
             res.append(Constants.SLASH);
-            res.append(Constants.DATABASE_BASE_PATH);
+            res.append(Constants.HARVEST_DATABASE_BASE_PATH);
             res.append(Constants.NEWLINE);
         }
         // unzip database.
@@ -721,7 +721,7 @@ public class LinuxMachine extends Machine {
         res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.ELSE
                 + Constants.SPACE + ScriptConstants.LINUX_UNZIP_COMMAND
                 + Constants.SPACE);
-        res.append(Constants.DATABASE_BASE_PATH);
+        res.append(Constants.HARVEST_DATABASE_BASE_PATH);
         res.append(Constants.SPACE + ScriptConstants.SCRIPT_DIR 
                 + Constants.SPACE);
         res.append(databaseDir);
@@ -788,6 +788,7 @@ public class LinuxMachine extends Machine {
             res.append(Constants.COLON);
             res.append(getInstallDirPath());
             res.append(Constants.SLASH);
+            // Now the two databases are in different directories
             res.append(Constants.ARCHIVE_DATABASE_BASE_PATH);
             res.append(Constants.NEWLINE);
         }
@@ -1227,10 +1228,17 @@ public class LinuxMachine extends Machine {
                 // - cd InstallDir
                 startDBPrint.print(ScriptConstants.CD + Constants.SPACE);
                 startDBPrint.println(getInstallDirPath());
-                // - java -cp 'DB-CLASSPATH' 
+                // - java -Dderby.system.home=$INSTALLDIR/archivedatabasedir 
+                //  -cp 'DB-CLASSPATH' 
                 // org.apache.derby.drda.NetworkServerControl start  
                 // < /dev/null > start_external_database.log 2>&1 &
                 startDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
+                
+                startDBPrint.print("-Dderby.system.home="
+                        + getInstallDirPath() + Constants.SLASH
+                        + Constants.ARCHIVE_DATABASE_BASE_DIR
+                        + Constants.SPACE);
+                
                 startDBPrint.print(machineParameters.writeJavaOptions());
                 startDBPrint.print(Constants.SPACE);
                 startDBPrint.print(ScriptConstants.JAVA_CLASSPATH);
@@ -1472,6 +1480,12 @@ public class LinuxMachine extends Machine {
                 // org.apache.derby.drda.NetworkServerControl start  
                 // < /dev/null > start_external_harvest_database.log 2>&1 &
                 startDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
+                
+                startDBPrint.print("-Dderby.system.home="
+                        + getInstallDirPath() + Constants.SLASH
+                        + Constants.HARVEST_DATABASE_BASE_DIR
+                        + Constants.SPACE);
+
                 startDBPrint.print(machineParameters.writeJavaOptions());
                 startDBPrint.print(Constants.SPACE);
                 startDBPrint.print(ScriptConstants.JAVA_CLASSPATH);

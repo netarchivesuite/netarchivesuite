@@ -319,31 +319,36 @@ public final class Constants {
     static final String LOG_PROP_APPLICATION_PREFIX = "log_";
     /** The suffix for the log property file for the application.*/
     static final String LOG_PROP_APPLICATION_SUFFIX = ".prop";
-    /** The directory for the database in the unpacked NetarchiveSuite.
+    
+    /** The directory for the harvest database in the unpacked NetarchiveSuite.
      *  The default directory for the database file.
      */
-    static final String DATABASE_BASE_DIR = "harvestdefinitionbasedir/";
-    /** The name of the database in the directory above.
+    static final String HARVEST_DATABASE_BASE_DIR = "harvestdefinitionbasedir";
+    /** The name of the harvest database in the directory above.
      *  The default name for the database file.
      */
-    static final String DATABASE_BASE_FILE = "fullhddb.jar";
-    /** The path to the base database (the two above combined).
+    static final String HARVEST_DATABASE_BASE_FILE = "fullhddb.jar";
+    
+    /** The path to the base harvestdatabase (the two above combined).
      *  This is the default location for the database. 
      */
-    static final String DATABASE_BASE_PATH = 
-        DATABASE_BASE_DIR + DATABASE_BASE_FILE;
+    static final String HARVEST_DATABASE_BASE_PATH = 
+        HARVEST_DATABASE_BASE_DIR + SLASH + HARVEST_DATABASE_BASE_FILE;
     /**
      * The name of the archive database in the database base dir above.
      * This is the default name of the archive database.
      */
     static final String ARCHIVE_DATABASE_BASE_FILE = "archivedb.jar";
+    
+    public static final String ARCHIVE_DATABASE_BASE_DIR = "archivedatabasedir";        
+    
     /** 
      * The path to the base archive database (the one above combined 
      * with the base database dir).
      * This is the default location for the archive database. 
      */
     static final String ARCHIVE_DATABASE_BASE_PATH =
-        DATABASE_BASE_DIR + ARCHIVE_DATABASE_BASE_FILE;
+        ARCHIVE_DATABASE_BASE_DIR + SLASH + ARCHIVE_DATABASE_BASE_FILE;
     /** The name of the new modified configuration file for tests.*/
     static final String TEST_CONFIG_FILE_REPLACE_ENDING = "_test.xml";
     /** The script extension for Linux/Unix.*/
@@ -597,6 +602,7 @@ public final class Constants {
     public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = 
         "Warning: A NetarchiveSuite file already exists. "
         + "It will be overriden. ";
+
     
     // functions
     /**
