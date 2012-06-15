@@ -398,6 +398,15 @@ public class ArchiveSettings {
      */
     public static String INDEXSERVER_INDEXING_TIMEOUT
             = "settings.archive.indexserver.indexingtimeout";
+    
+    /**
+     * <b>settings.archive.indexserver.maxsegments</b>: <br>
+     * Setting for how many segments we will accept in our lucene indices.
+     * The default is 15.
+     */
+    public static String INDEXSERVER_INDEXING_MAX_SEGMENTS
+            = "settings.archive.indexserver.maxsegments";
+    
     /**
      * <b>settings.archive.indexserver.listeningcheckinterval</b>: <br>
      * Setting for the interval between each listening check in milliseconds. 

@@ -98,6 +98,7 @@ National Library.
         	<requestdir>requests</requestdir>
         	<checkinterval>30000</checkinterval>
         	<indexingtimeout>259200000</indexingtimeout>
+        	<maxsegments>15</maxsegments>
         	<satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
         	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
         	<indexrequestserver>

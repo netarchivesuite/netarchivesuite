@@ -46,6 +46,7 @@ import is.hi.bok.deduplicator.CrawlDataIterator;
 import is.hi.bok.deduplicator.DigestIndexer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
@@ -240,17 +241,25 @@ public abstract class CrawlLogIndexCache extends
                 }
                 sleepAwhile();
             }
-            
-            log.info("Merging the " + subindices.size() + " subindices");
-            indexer.getIndex().addIndexes(
+            int maxSegments = Settings.getInt(
+                    ArchiveSettings.INDEXSERVER_INDEXING_MAX_SEGMENTS);
+            log.info("Merging the " + subindices.size() 
+                    + " subindices and force index to contain max. "
+                    + maxSegments + " files");
+            IndexWriter totalIndex = indexer.getIndex(); 
+            totalIndex.addIndexes(
                     subindices.toArray(new Directory[0]));
+            totalIndex.forceMerge(maxSegments);
+            totalIndex.commit();
             
             // Close all lucene subindices (Is this necessary?)
             log.info("Closing all subindices");
             for (Directory luceneDir: subindices) {
                 luceneDir.close();
             }
-            long docsInIndex = indexer.getIndex().numDocs();
+            
+            long docsInIndex = totalIndex.numDocs();
+            
             log.info("closing index");
             indexer.close();
             log.info("Closed index");
