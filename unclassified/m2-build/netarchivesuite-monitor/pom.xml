@@ -29,6 +29,12 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>dk.netarchivesuite</groupId>
+      <artifactId>netarchivesuite-harvester</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 </project>                                                                                                              

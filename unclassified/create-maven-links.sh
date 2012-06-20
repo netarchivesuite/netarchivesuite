@@ -66,11 +66,11 @@ rm $M2_BUILD_HOME/netarchivesuite-common/tests
 ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-common/tests
 rm $M2_BUILD_HOME/netarchivesuite-archive/tests
 ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-archive/tests
-rm $M2_BUILD_HOME/netarchivesuite-deploy/harvester
+rm $M2_BUILD_HOME/netarchivesuite-harvester/tests
 ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-harvester/tests
-rm $M2_BUILD_HOME/netarchivesuite-deploy/monitor
+rm $M2_BUILD_HOME/netarchivesuite-monitor/tests
 ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-monitor/tests
-rm $M2_BUILD_HOME/netarchivesuite-deploy/viewerproxy
+rm $M2_BUILD_HOME/netarchivesuite-viewerproxy/tests
 ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-viewerproxy/tests
 rm $M2_BUILD_HOME/netarchivesuite-wayback/tests
 ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-wayback/tests

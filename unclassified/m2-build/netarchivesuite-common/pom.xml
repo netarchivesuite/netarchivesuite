@@ -150,6 +150,12 @@
       <version>1.6</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.gnu.inet</groupId>
+      <artifactId>libidn</artifactId>
+      <version>0.6.5</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>                                                                                                              
