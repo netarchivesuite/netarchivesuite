@@ -55,18 +55,18 @@ import dk.netarkivet.common.utils.InputStreamUtils;
  */
 public class NetarchiveResourceStore implements ResourceStore {
 
-    /* JMS ArcRepositoryClient. */
+    /** JMS ArcRepositoryClient. */
     private ViewerArcRepositoryClient client;
 
-    /* Pattern for matching http version header. */
+    /** Pattern for matching http version header. */
     private static final Pattern HTTP_HEADER_PATTERN =
         Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
 
-    /* Logger. */
+    /** Logger. */
     private Log logger = LogFactory.getLog(getClass().getName());
 
     /**
-     *  Constuctor.
+     *  Constructor.
      */
     public NetarchiveResourceStore() {
         client = ArcRepositoryClientFactory.getViewerInstance();
@@ -217,7 +217,7 @@ public class NetarchiveResourceStore implements ResourceStore {
 
     /**
      * Shuts down this resource store, closing the arcrepository client.
-     * @throws IOException if an exception ocurred while closing the client.
+     * @throws IOException if an exception occurred while closing the client.
      */
     public void shutdown() throws IOException {
         // Close JMS connection.
