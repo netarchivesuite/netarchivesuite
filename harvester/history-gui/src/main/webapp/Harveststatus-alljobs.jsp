@@ -145,9 +145,8 @@ resubmit - jobID of a job to resubmit.
     //for this query the harvest name filter is not case sensitive
     query.setCaseSensitiveHarvestName(false);
     String backHavestName = query.getHarvestName();
-    if(!backHavestName.equals(""))
-    {
-        query.setHarvestName("*"+backHavestName+"*");
+    if(!backHavestName.isEmpty()) {
+        query.setHarvestName("*" + backHavestName + "*");
     }
     //list of information to be shown
     HarvestStatus results = HarvestStatus.getjobStatusList(query);

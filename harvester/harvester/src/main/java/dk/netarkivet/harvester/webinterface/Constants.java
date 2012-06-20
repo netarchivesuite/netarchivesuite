@@ -140,11 +140,10 @@ public class Constants {
 
     public static final String UPLOAD_FILE_PARAM = "upload_file";
 
-    public static final String IS_NEWEST_FIRST = "is_newest_first";
+    public static final String DESCENDING = "DESC";
 
-    public static final String TRUE = "true";
-
-    public static final String FALSE = "false";
+    public static final String ASCENDING = "ASC";
+    
 
     /**
      * Names of some parameters used in management of global crawler traps.
@@ -252,18 +251,16 @@ public class Constants {
      */
     public static final String DOMAIN_QUERY_STRING_PARAM =  "DOMAIN_QUERY_STRING";
     
-    //public static final String SEEDS_DOMAIN_SEARCH = "seedsS";;;
-    
     public static final String TRAPS_DOMAIN_SEARCH = "crawlertraps";
     
     public static final String NAME_DOMAIN_SEARCH = "name";
     
-    public static final String COMMENTS_DOMAIN_SEARCH = "comments";;
-    
-    //public static final String CONFIGS_DOMAIN_SEARCH = "configSearch";
+    public static final String COMMENTS_DOMAIN_SEARCH = "comments";
     
     /**
      * The default domain search type is name.
      */
     public static final String DEFAULT_DOMAIN_SEARCH_TYPE = NAME_DOMAIN_SEARCH;
+    
+    public static final String JOB_ORDERING_BY_STARTDATE_PARAM = "ORDERING_BY_STARTDATE";
 }     
