@@ -40,8 +40,8 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:https://sbforge.org/svn/netarchivesuite</connection>
-    <developerConnection>scm:svn:https://sbforge.org/svn/netarchivesuite</developerConnection>
+    <connection>scm:svn:https://sbforge.org/svn/netarchivesuite/trunk</connection>
+    <developerConnection>scm:svn:https://sbforge.org/svn/netarchivesuite/trunk</developerConnection>
     <url>https://sbforge.org/fisheye/browse/NetarchiveSuite</url>
   </scm>
 
