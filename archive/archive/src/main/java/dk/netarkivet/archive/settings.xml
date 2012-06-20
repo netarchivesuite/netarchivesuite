@@ -94,11 +94,11 @@ National Library.
         <indexserver>
         	<listeningcheckinterval>30000</listeningcheckinterval>
         	<maxclients>20</maxclients>
-        	<maxthreads>15</maxthreads>
+        	<maxthreads>10</maxthreads>
         	<requestdir>requests</requestdir>
         	<checkinterval>30000</checkinterval>
         	<indexingtimeout>259200000</indexingtimeout>
-        	<maxsegments>15</maxsegments>
+        	<maxsegments>42</maxsegments>
         	<satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
         	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
         	<indexrequestserver>

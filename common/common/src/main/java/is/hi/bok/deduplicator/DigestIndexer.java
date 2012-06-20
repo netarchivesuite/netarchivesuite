@@ -30,7 +30,6 @@ import java.util.List;
 
 import org.apache.commons.cli.Option;
 
-
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -40,6 +39,7 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.archive.util.ArchiveUtils;
+
 import dk.netarkivet.common.Constants;
 
 /**
@@ -155,7 +155,7 @@ public class DigestIndexer {
         
         IndexWriterConfig config = new IndexWriterConfig(Constants.LUCENE_VERSION, 
                 new WhitespaceAnalyzer(Constants.LUCENE_VERSION));
-        
+
         if (!addToExistingIndex) {
             config.setOpenMode(OpenMode.CREATE);
         } else {

@@ -87,6 +87,8 @@ public abstract class CrawlLogIndexCache extends
     /** The time to sleep between each check of completeness.*/
     private final long sleepintervalBetweenCompletenessChecks 
         = Settings.getLong(ArchiveSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
+    /** Number to separate logs the different combine tasks. */
+    private int indexingJobCount = 0;
     
     /**
      * Constructor for the CrawlLogIndexCache class.
@@ -138,8 +140,10 @@ public abstract class CrawlLogIndexCache extends
      * null values are allowed in this map.
      */
     protected void combine(Map<Long, File> rawfiles) {
+        indexingJobCount++;
         long datasetSize = rawfiles.values().size();
-        log.info("Starting to combine a dataset with " 
+        log.info("Starting combine task #" + indexingJobCount 
+                + ". This combines a dataset with " 
                 + datasetSize + " crawl logs (thread = "
                 + Thread.currentThread().getName() + ")");
         
@@ -203,7 +207,18 @@ public abstract class CrawlLogIndexCache extends
                     ArchiveSettings.INDEXSERVER_INDEXING_TIMEOUT);
             long timeOutTime = System.currentTimeMillis() + combineTimeout;
             
+            // The indexwriter for the totalindex.
+            IndexWriter totalIndex = indexer.getIndex();
+            int subindicesInTotalIndex = 0;
+            // Max number of segments in totalindex.
+            int maxSegments = Settings.getInt(
+                    ArchiveSettings.INDEXSERVER_INDEXING_MAX_SEGMENTS);
+            
+            final int ACCUMULATED_SUBINDICES_BEFORE_MERGING = 200;
+            
             while (outstandingJobs.size() > 0) {
+                log.info("Outstanding jobs in combine task #" + indexingJobCount 
+                        + " is now " + outstandingJobs.size());
                 Iterator<IndexingState> iterator = outstandingJobs.iterator();
                 if (timeOutTime < System.currentTimeMillis()) {
                    log.warn("Max indexing time exceeded for one index (" 
@@ -213,7 +228,8 @@ public abstract class CrawlLogIndexCache extends
                            + " jobs");
                    break; 
                 }
-                while (iterator.hasNext()) {
+                while (iterator.hasNext() 
+                        && subindices.size() < ACCUMULATED_SUBINDICES_BEFORE_MERGING) {
                     Future<Boolean> nextResult;
                     IndexingState next = iterator.next();
                     if (next.getResultObject().isDone()) {
@@ -228,6 +244,7 @@ public abstract class CrawlLogIndexCache extends
                                 log.warn("Indexing of job " 
                                         + next.getJobIdentifier() + " failed.");
                             }
+                            
                         } catch (InterruptedException e) {
                             log.warn("Unable to get Result back from "
                                     + "indexing thread", e);
@@ -239,36 +256,57 @@ public abstract class CrawlLogIndexCache extends
                         iterator.remove();
                     }   
                 }
-                sleepAwhile();
+                
+                if (subindices.size() >= ACCUMULATED_SUBINDICES_BEFORE_MERGING){
+                    
+                    log.info("Adding " + subindices.size() 
+                            + " subindices to main index. Forcing index to contain max " 
+                            + maxSegments + " files");
+                    totalIndex.addIndexes(
+                            subindices.toArray(new Directory[0]));
+                    totalIndex.forceMerge(maxSegments);
+                    totalIndex.commit();
+                    for (Directory luceneDir: subindices) {
+                        luceneDir.close();
+                    }
+                    subindicesInTotalIndex += subindices.size();
+                    log.info("Completed adding " + subindices.size() 
+                            + " subindices to main index, now containing " 
+                            +  subindicesInTotalIndex + " subindices");
+                    subindices.clear();
+                } else {
+                    sleepAwhile();
+                }
             }
-            int maxSegments = Settings.getInt(
-                    ArchiveSettings.INDEXSERVER_INDEXING_MAX_SEGMENTS);
-            log.info("Merging the " + subindices.size() 
-                    + " subindices and force index to contain max. "
-                    + maxSegments + " files");
-            IndexWriter totalIndex = indexer.getIndex(); 
+            
+            log.info("Adding the final " + subindices.size() 
+                    + " subindices to main index. Forcing index to contain max " 
+                    + maxSegments + " files");           
+            
             totalIndex.addIndexes(
                     subindices.toArray(new Directory[0]));
             totalIndex.forceMerge(maxSegments);
             totalIndex.commit();
-            
-            // Close all lucene subindices (Is this necessary?)
-            log.info("Closing all subindices");
             for (Directory luceneDir: subindices) {
                 luceneDir.close();
             }
-            
+            subindices.clear();
+
+            log.info("Adding operation completed!");
             long docsInIndex = totalIndex.numDocs();
             
             log.info("closing index");
             indexer.close();
             log.info("Closed index");
+            
+            
+            // Now the index is made, gzip it up.
             File totalIndexDir = new File(indexLocation);
             log.info("Gzip-compressing the individual " +  totalIndexDir.list().length 
                     + " index files");
-            // Now the index is made, gzip it up.
             ZipUtils.gzipFiles(totalIndexDir, resultDir);
-            log.info("Completed combining a dataset with " 
+            log.info("Completed combine task # " + indexingJobCount 
+                    + " that combined a dataset with " 
                     + datasetSize + " crawl logs (entries in combined index: "
                     + docsInIndex + ") - compressed index has size " 
                     + FileUtils.getHumanReadableFileSize(resultDir));
