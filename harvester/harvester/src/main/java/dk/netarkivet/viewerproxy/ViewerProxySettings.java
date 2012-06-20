@@ -66,7 +66,7 @@ public class ViewerProxySettings {
 
     /**
      * <b>settings.viewerproxy.maxSizeInBrowser</b>
-     * The size (in bytes) of the largest object to returned for viewing in
+     * The size (in bytes) of the largest object to be returned for viewing in
      * the browser window. Larger objects will be returned with the
      * appropriate http header for saving them to a file.
      */

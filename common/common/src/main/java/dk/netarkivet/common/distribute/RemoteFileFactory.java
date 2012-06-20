@@ -82,9 +82,9 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
 
     /**
      * Get an instance connected to an ArchiveRecord. Records are not deletable
-     * so theree is no concept of a "movefile" instance.
+     * so there is no concept of a "movefile" instance.
      * @param record
-     * @return  the file to ne copied.
+     * @return  the file to be copied.
      */
     public static RemoteFile getExtendedInstance(ArchiveRecord record) {
         return  SettingsFactory.getInstance(

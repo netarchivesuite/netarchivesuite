@@ -1,7 +1,7 @@
-/* File:        $Id: ShutdownHook.java 1533 2010-08-19 13:52:59Z mikis $
- * Revision:    $Revision: 1533 $
- * Author:      $Author: mikis $
- * Date:        $Date: 2010-08-19 15:52:59 +0200 (Thu, 19 Aug 2010) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and

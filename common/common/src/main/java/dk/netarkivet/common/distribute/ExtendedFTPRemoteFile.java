@@ -1,3 +1,29 @@
+/* File:   $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *  USA
+ */
+
 package dk.netarkivet.common.distribute;
 
 import java.io.File;
@@ -6,17 +32,13 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.DigestInputStream;
 import java.util.Calendar;
 import java.util.UUID;
 
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import static dk.netarkivet.common.CommonSettings.*;
@@ -38,8 +60,6 @@ import org.archive.io.warc.WARCRecord;
  */
 public class ExtendedFTPRemoteFile implements RemoteFile {
 
-
-
     /**
      * A named logger for this class.
      */
@@ -59,7 +79,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     private String name;
 
     /**
-     * Ftp-connection information. F
+     * Ftp-connection information.
      */
     private String ftpServerName;
     /** The ftp-server port. */
@@ -68,9 +88,6 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     private final String ftpUserName;
     /** The password used to connect to the ftp-server. */
     private final String ftpUserPassword;
-
-
-
 
      /**
      * How many times we will retry upload, download, and logon.
@@ -265,9 +282,10 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     }
 
     /**
-     * Checksums are not avauilable in this implementation. Returns null.
+     * Checksums are not available in this implementation. Returns null.
      * @return null
      */
+    @Override
     public String getChecksum() {
         return null;
     }
@@ -276,6 +294,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
      * The cleanup to be effected is deletion of the intermediate file from the
      * ftp server.
      */
+    @Override
     public void cleanup() {
         log.debug("Deleting file '" + ftpFileName + "' from ftp server");
         try {
@@ -324,7 +343,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
      */
     private ExtendedFTPRemoteFile(ArchiveRecord record) {
         this.record = record;
-        this.name= UUID.randomUUID().toString();
+        this.name = UUID.randomUUID().toString();
         this.ftpFileName = this.name;
         log.debug("Created " + this.getClass().getName() + " with name " +
                   toString());
