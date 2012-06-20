@@ -84,7 +84,6 @@ public class TestEnvironmentManager {
      * Run the command the in the TESTX dir. This is the normal way of separating diffrent test run in parallel. 
      * @param server
      * @param remoteCommand
-     * @param commandTimeout
      */
     public void runTestXCommand(String server, String remoteCommand) throws Exception {
         String testXRemoteCommand = "cd " + getTESTX() + ";" + remoteCommand;
@@ -94,12 +93,12 @@ public class TestEnvironmentManager {
     /**
      * Runs a remote command in the test environment via ssh. The system test environment variables:
      * are set prior to running the command.
-     * Extends the {@link runCommand(String)} with the possibility of overriding the default
+     * Extends the {@link #runCommand(String)} with the possibility of overriding the default
      * timeout of 1000 seconds. This may be useful in case of prolong operations.
-     * @param remoteCommand The server to run the command on. If this is null the command is
+     * @param server The server to run the command on. If this is null the command is
      *  run on the DEPLOYMENT_SERVER. Commands run other server the will command will be executed by 
      *  ssh to the DEPLOYMENT_SERVER and from here ssh to the actual test server. 
-     * @param remoteCommand The command to run on the test server.
+     * @param command The command to run on the test server.
      * @param commandTimeout The timeout for the command.
      */
     public void runCommand(String server, String command, int commandTimeout) 

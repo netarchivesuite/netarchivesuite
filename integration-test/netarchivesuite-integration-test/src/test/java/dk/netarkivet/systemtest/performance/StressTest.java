@@ -67,7 +67,7 @@ public class StressTest extends ExtendedTestCase {
 
     private void shutdownPreviousTest()  throws Exception{
         addStep("Shutting down any previously running test.", "");
-        // We call install_test.sh prior to this to ensure all the Stress dirs exist on all servers.
+        // We call install_test.sh prior to this to ensure all the stresstest dirs exist on all servers.
         environmentManager.runCommand("install_test.sh");
         environmentManager.runCommand("stop_test.sh");
     }
@@ -82,7 +82,7 @@ public class StressTest extends ExtendedTestCase {
         environmentManager.runCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf /tmp/CS");
         environmentManager.runCommand("scp -r /home/test/prod-backup/adminDB test@kb-test-adm-001.kb.dk:/tmp");
         environmentManager.runCommand("scp -r /home/test/prod-backup/fullhddb test@kb-test-adm-001.kb.dk:/tmp", 3000);
-        environmentManager.runCommand("scp -r   /home/test/prod-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
+        environmentManager.runCommand("scp -r /home/test/prod-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
     }
 
     private void deployComponents() throws Exception {

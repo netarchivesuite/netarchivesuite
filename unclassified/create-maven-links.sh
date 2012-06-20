@@ -61,4 +61,20 @@ ln -s $WORKING_DIR/tests/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-dep
 rm $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet/externalsoftware
 ln -s $WORKING_DIR/tests/dk/netarkivet/externalsoftware $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet
 
+## Create test resource links
+rm $M2_BUILD_HOME/netarchivesuite-common/tests
+ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-common/tests
+rm $M2_BUILD_HOME/netarchivesuite-archive/tests
+ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-archive/tests
+rm $M2_BUILD_HOME/netarchivesuite-deploy/harvester
+ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-harvester/tests
+rm $M2_BUILD_HOME/netarchivesuite-deploy/monitor
+ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-monitor/tests
+rm $M2_BUILD_HOME/netarchivesuite-deploy/viewerproxy
+ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-viewerproxy/tests
+rm $M2_BUILD_HOME/netarchivesuite-wayback/tests
+ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-wayback/tests
+rm $M2_BUILD_HOME/netarchivesuite-deploy/tests
+ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-deploy/tests
+
 cd $WORKING_DIR

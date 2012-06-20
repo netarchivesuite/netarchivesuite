@@ -27,9 +27,7 @@ package dk.netarkivet.systemtest;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.openqa.selenium.By;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -49,8 +47,7 @@ public class SystemOverviewTest extends SeleniumTest {
         driver.findElement(By.linkText("Systemstate")).click();
         // We need to click the 'Instance id' link to differentiate between
         // instances of the same application running on the same machine
-        addStep(
-                "Click the 'Instance id' link (We need to do this to differentiate between "
+        addStep("Click the 'Instance id' link (We need to do this to differentiate between "
                         + "instances of the same application running on the same machine)",
                 "Verify that the the expected applications are running as they should.");
         driver.findElement(By.linkText("Instance id")).click();
@@ -78,6 +75,6 @@ public class SystemOverviewTest extends SeleniumTest {
                                     + (".4"))));
         }
 
-        Assert.assertEquals(expectedApplicationSet, displayedApplicationSet);
+        NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);
     }
 }
