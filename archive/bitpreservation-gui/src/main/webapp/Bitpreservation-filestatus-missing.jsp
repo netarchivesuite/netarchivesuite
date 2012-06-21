@@ -122,7 +122,7 @@ dk.netarkivet.common.webinterface.HTMLUtils"
 	    <%
 	    for (String filename : missingFiles) {
 	        //Print a row for the file with info
-	        BitpreserveFileState.printFileName(out, filename, rowCount, response.getLocale());
+	        BitpreserveFileState.printFileName(out, filename, rowCount, response.getLocale());    //This prints the  |filename| Get info| line
 	        // If info for file exists, output it
 	        if (fileInfo.containsKey(filename)) {
 	            %>
@@ -141,11 +141,11 @@ dk.netarkivet.common.webinterface.HTMLUtils"
 	                // If the file is indeed missing
 	                if (fs.getReplicaChecksum(bitarchive).isEmpty()) {
 	                    // Give opportunity to reupload the file.
-	                    %></td><td><%
+	                    %></td><td><fmt:message key="add.to.replica"/>&nbsp;<%=bitarchive.getName()%><%
 	                    out.println(BitpreserveFileState.makeCheckbox(
 	                            Constants.ADD_COMMAND,
 	                            bitarchive.getName(), filename));
-	                    %><fmt:message key="add.to.replica"/><%
+	                    %><%
 	                    uploadableFiles++;
 	                } // if (fs.getBitarchiveChecksum(bitarchive).isEmpty())
 	            } // if (fs != null)
