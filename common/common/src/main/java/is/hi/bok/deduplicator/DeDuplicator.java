@@ -26,9 +26,11 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,14 +38,14 @@ import java.util.logging.Logger;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.FieldCacheTermsFilter;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.TermRangeFilter;
 
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.archive.crawler.datamodel.CoreAttributeConstants;
 import org.archive.crawler.datamodel.CrawlOrder;
@@ -355,13 +357,18 @@ implements AdaptiveRevisitAttributeConstants{
      *  (non-Javadoc)
      * @see org.archive.crawler.framework.Processor#initialTasks()
      */
+    @Override
     protected void initialTasks() {
         // Read settings and set appropriate class variables.
         
         // Index location
         String indexLocation = (String)readAttribute(ATTR_INDEX_LOCATION,"");
         try {
-            Directory indexDir = FSDirectory.open(new File(indexLocation));
+            FSDirectory indexDir = FSDirectory.open(new File(indexLocation));
+            //https://issues.apache.org/jira/browse/LUCENE-1566
+            // Reduce chunksize to avoid OOM to half the size of the default (=100 MB)
+            int chunksize = indexDir.getReadChunkSize();
+            indexDir.setReadChunkSize(chunksize / 2);
             IndexReader reader = IndexReader.open(indexDir);
             index = new IndexSearcher(reader);
         } catch (Exception e) {
@@ -601,17 +608,21 @@ implements AdaptiveRevisitAttributeConstants{
         try {
             Query query = queryField(DigestIndexer.FIELD_URL,
                 curi.toString());
-            TopDocs topdocs = index.search(query, Integer.MAX_VALUE);
-            ScoreDoc[] hits = topdocs.scoreDocs;
+            //TopDocs topdocs = index.search(query, Integer.MAX_VALUE);
+            AllDocCollector collectAllCollector = new AllDocCollector();
+            index.search(query, collectAllCollector);
+            
+            List<ScoreDoc> hits = collectAllCollector.getHits();
             Document doc = null;
             String currentDigest = getDigestAsString(curi);
-            if(hits != null && hits.length > 0){
+            if(hits != null && hits.size() > 0){
                 // Typically there should only be one it, but we'll allow for
                 // multiple hits.
-                for(int i=0 ; i < hits.length ; i++){
+                for (ScoreDoc hit : hits) {
+                //for(int i=0 ; i < hits.size() ; i++){
                     // Multiple hits on same exact URL should be rare
                     // See if any have matching content digests
-                    int docId = hits[i].doc;
+                    int docId = hit.doc;
                     doc = index.doc(docId);
                     String oldDigest = doc.get(DigestIndexer.FIELD_DIGEST);
 
@@ -634,10 +645,14 @@ implements AdaptiveRevisitAttributeConstants{
                 String normalizedURL = DigestIndexer.stripURL(curi.toString());
                 query = queryField(DigestIndexer.FIELD_URL_NORMALIZED,
                                 normalizedURL);
-                topdocs = index.search(query, Integer.MAX_VALUE);
-                hits = topdocs.scoreDocs;
-                for(int i=0 ; i < hits.length ; i++){
-                    int docId = hits[i].doc;
+                collectAllCollector.reset(); // reset collector
+                index.search(query, collectAllCollector);
+                hits = collectAllCollector.getHits();
+                
+                for(ScoreDoc hit: hits) {
+                    //int i=0 ; i < hits.length ; i++){
+                
+                    int docId = hit.doc;
                     Document doc1 = index.doc(docId);
                     String indexDigest = doc1.get(DigestIndexer.FIELD_DIGEST);
                     if(indexDigest.equals(currentDigest)){
@@ -685,18 +700,22 @@ implements AdaptiveRevisitAttributeConstants{
         }
         Query query = queryField(DigestIndexer.FIELD_DIGEST, currentDigest);
         try {
-            TopDocs topdocs = index.search(query, Integer.MAX_VALUE);
-            ScoreDoc[] hits = topdocs.scoreDocs;
+            AllDocCollector collectAllCollector = new AllDocCollector();
+            index.search(query, collectAllCollector);
+            
+            List<ScoreDoc> hits = collectAllCollector.getHits();
             
             StringBuffer mirrors = new StringBuffer();
             mirrors.append("mirrors: ");
-            if(hits != null && hits.length > 0){
+            if(hits != null && hits.size() > 0){
                 // Can definitely be more then one
                 // Note: We may find an equivalent match before we find an
                 //       (existing) exact match. 
                 // TODO: Ensure that an exact match is recorded if it exists.
-                for(int i=0 ; i < hits.length && duplicate==null ; i++){
-                    int docId = hits[i].doc;
+                Iterator<ScoreDoc> hitsIterator = hits.iterator();
+                while (hitsIterator.hasNext() && duplicate == null) {
+                    ScoreDoc hit = hitsIterator.next();
+                    int docId = hit.doc;
                     Document doc = index.doc(docId);
                     String indexURL = doc.get(DigestIndexer.FIELD_URL);
                     // See if the current hit is an exact match.
@@ -872,15 +891,18 @@ implements AdaptiveRevisitAttributeConstants{
 	    try{
 	        Query query = queryField(DigestIndexer.FIELD_URL,
 	                curi.toString());
-	        TopDocs topdocs = index.search(query, Integer.MAX_VALUE);
-	        ScoreDoc[] hits = topdocs.scoreDocs;
+	        AllDocCollector collectAllCollector = new AllDocCollector();
+	        index.search(query, collectAllCollector);    
+	        List<ScoreDoc> hits = collectAllCollector.getHits();
+	      
 	        Document doc = null;
-	        if(hits != null && hits.length > 0){
+	        if(hits != null && hits.size() > 0){
 	            // If there are multiple hits, use the one with the most
 	            // recent date.
 	            Document docToEval = null;
-	            for(int i=0 ; i < hits.length ; i++){
-	                int docId = hits[i].doc;
+	            
+	            for(ScoreDoc hit: hits) {
+	                int docId = hit.doc;
 	                doc = index.doc(docId);
 	                // The format of the timestamp ("yyyyMMddHHmmssSSS") allows
 	                // us to do a greater then (later) or lesser than (earlier)
@@ -994,6 +1016,8 @@ implements AdaptiveRevisitAttributeConstants{
      */
     protected Query queryField(String fieldName, String value) {
         Query query = null;
+// TODO: Find out if a Sparse version is relevant for TermRangeFilter 
+// The below code was obsoleted by the move from Lucene 2.0 to Lucene 3.6        
 //        if(useSparseRangeFilter){
 //        	query = new ConstantScoreQuery(
 //                new SparseRangeFilter(fieldName, value, value, true, true));
@@ -1001,22 +1025,19 @@ implements AdaptiveRevisitAttributeConstants{
 //        	query = new ConstantScoreQuery(
 //                new RangeFilter(fieldName, value, value, true, true);//);
 //        }
-        query = new ConstantScoreQuery(new FieldCacheTermsFilter(fieldName,
-                value));
+        
+        /** alternate solution. */
+        query = new ConstantScoreQuery(
+              new TermRangeFilter(fieldName, value, value, true, true));
+        /** The most clean solution, but it seems also memory demanding */
+        //query = new ConstantScoreQuery(new FieldCacheTermsFilter(fieldName,
+        //        value));
         return query;
     }
 
-	
+    @Override
     protected void finalTasks() {
-//        try {
-//            if (index != null) {
-//                index.close();
-//            }
-//        } catch (IOException e) {
-//            logger.log(Level.SEVERE,"Error closing index",e);
-//        }
     }
-
 }
 
 class Statistics{
@@ -1071,4 +1092,35 @@ class Statistics{
     long ETagNoChangeFalse = 0;
     long ETagMissingIndex = 0;
     long ETagMissingCURI = 0;
+}
+
+class AllDocCollector extends Collector { 
+    List<ScoreDoc> docs = new ArrayList<ScoreDoc>(); 
+    private Scorer scorer; 
+    private int docBase;
+    @Override
+    public boolean acceptsDocsOutOfOrder() {
+        return true; 
+    } 
+    @Override
+    public void setScorer(Scorer scorer) { 
+        this.scorer = scorer; 
+    } 
+    @Override
+    public void setNextReader(IndexReader reader, int docBase) { 
+        this.docBase = docBase; 
+    }
+    @Override
+    public void collect(int doc) throws IOException { 
+        docs.add(
+                new ScoreDoc(doc + docBase, scorer.score()));
+    }
+    
+    public void reset() { 
+        docs.clear(); 
+    } 
+
+    public List<ScoreDoc> getHits() { 
+        return docs; 
+    } 
 }

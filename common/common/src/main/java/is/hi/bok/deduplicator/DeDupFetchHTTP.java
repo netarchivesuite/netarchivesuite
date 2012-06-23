@@ -25,6 +25,7 @@ package is.hi.bok.deduplicator;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,12 +34,10 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.FieldCacheTermsFilter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.Directory;
+import org.apache.lucene.search.TermRangeFilter;
 import org.apache.lucene.store.FSDirectory;
 import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.fetcher.FetchHTTP;
@@ -331,6 +330,8 @@ implements AdaptiveRevisitAttributeConstants {
     protected Document lookup(CrawlURI curi) {
         try{
             Query query = null;
+//TODO: Find out if a Sparse version is relevant for TermRangeFilter            
+// The below code was obsoleted by the move from Lucene 2.0 to Lucene 3.6   
 //            if(useSparseRangeFilter){
 //            	query = new ConstantScoreQuery(new SparseRangeFilter(
 //                    DigestIndexer.FIELD_URL,curi.toString(),curi.toString(),
@@ -340,18 +341,26 @@ implements AdaptiveRevisitAttributeConstants {
 //                        DigestIndexer.FIELD_URL,curi.toString(),curi.toString(),
 //                        true,true));
 //            }
-            query = new ConstantScoreQuery(new FieldCacheTermsFilter(DigestIndexer.FIELD_URL,
-                    curi.toString()));
             
-            TopDocs topdocs = index.search(query, Integer.MAX_VALUE);
-            ScoreDoc[] hits = topdocs.scoreDocs;
+            /** The least memory demanding query. */
+            query = new ConstantScoreQuery(
+                  new TermRangeFilter(DigestIndexer.FIELD_URL, curi.toString(), curi.toString(), true, true));
+            
+            /** The preferred solution, but it seems also more memory demanding */
+            //query = new ConstantScoreQuery(new FieldCacheTermsFilter(fieldName,
+            //        value));
+            
+            AllDocCollector collectAllCollector = new AllDocCollector();
+            index.search(query, collectAllCollector);
+            
+            List<ScoreDoc> hits = collectAllCollector.getHits();
             Document doc = null;
-            if(hits != null && hits.length > 0){
+            if(hits != null && hits.size() > 0){
                 // If there are multiple hits, use the one with the most
                 // recent date.
                 Document docToEval = null;
-                for(int i=0 ; i < hits.length ; i++){
-                    int docId = hits[i].doc;
+                for (ScoreDoc hit: hits) {
+                    int docId = hit.doc;
                     doc = index.doc(docId);
                     // The format of the timestamp ("yyyyMMddHHmmssSSS") allows
                     // us to do a greater then (later) or lesser than (earlier)
@@ -375,14 +384,9 @@ implements AdaptiveRevisitAttributeConstants {
         }
         return null;
     }
-
+    @Override
     public void finalTasks() {
         super.finalTasks();
-//        try {
-//            index.close();
-//        } catch (IOException e) {
-//            logger.log(Level.SEVERE,"Error closing index",e);
-//        }
     }
 
     public void initialTasks() {
@@ -390,8 +394,12 @@ implements AdaptiveRevisitAttributeConstants {
         // Index location
         try {
             String indexLocation = (String)getAttribute(ATTR_INDEX_LOCATION);
-            Directory indexDir = FSDirectory.open(new File(indexLocation));
-            //IndexReader reader = DirectoryReader.open(indexDir);
+            FSDirectory indexDir = FSDirectory.open(new File(indexLocation));
+            //https://issues.apache.org/jira/browse/LUCENE-1566
+            // Reduce chunksize to avoid OOM to half the size of the default (=100 MB)
+            int chunksize = indexDir.getReadChunkSize();
+            indexDir.setReadChunkSize(chunksize / 2);
+            //IndexReader reader = DirectoryReader.open(indexDir); // Lucene 4.0 operation
             IndexReader reader = IndexReader.open(indexDir);
             index = new IndexSearcher(reader);
         } catch (Exception e) {
