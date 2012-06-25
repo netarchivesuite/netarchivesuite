@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.archive.wayback.accesscontrol.ExclusionFilterFactory;
 import org.archive.wayback.resourceindex.filters.ExclusionFilter;
 import org.archive.wayback.util.CloseableIterator;
@@ -54,6 +56,11 @@ import org.archive.wayback.util.flatfile.FlatFile;
  * to an access-point definition in wayback.xml.
  */
 public class RegExpExclusionFilterFactory implements ExclusionFilterFactory {
+
+    /**
+     * Use apache commons logging for easy integration with wayback.
+     */
+    private static final Log log = LogFactory.getLog(RegExpExclusionFilterFactory.class);
 
     /**
      * Spring bean property specifying a flat file from which the regular
@@ -85,17 +92,21 @@ public class RegExpExclusionFilterFactory implements ExclusionFilterFactory {
      */
     private void loadFile() throws IOException, PatternSyntaxException {
         Collection<Pattern> regexps = new ArrayList<Pattern>();
-        FlatFile ff = new FlatFile(file.getAbsolutePath());
+        final String absolutePath = file.getAbsolutePath();
+        log.info("Loading exclusions from " + absolutePath);
+        FlatFile ff = new FlatFile(absolutePath);
         CloseableIterator<String> itr = ff.getSequentialIterator();
         while(itr.hasNext()) {
             String line = (String) itr.next();
             line = line.trim();
-            if(line.length() == 0) {
+            if(line.length() == 0 || line.startsWith("##")) {
                 continue;
             }
+            log.info("Adding exclusion regular expression: '" + line + "'");
             regexps.add(Pattern.compile(line));
         }
         this.patterns = regexps;
+        log.info("Finished adding exclusion regular expressions.");
     }
 
 
