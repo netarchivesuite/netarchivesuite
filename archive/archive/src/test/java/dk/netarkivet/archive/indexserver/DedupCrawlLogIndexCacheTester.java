@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -38,14 +39,13 @@ import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.QueryParser;
-//import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 
+import dk.netarkivet.common.utils.AllDocsCollector;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
@@ -133,16 +133,17 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
                 new WhitespaceAnalyzer(dk.netarkivet.common.Constants.LUCENE_VERSION));
         Query q = queryParser.parse("http\\://www.kb.dk*");
         
-        TopDocs topdocs = index.search(q, Integer.MAX_VALUE);
-        ScoreDoc[] hits = topdocs.scoreDocs;
+        AllDocsCollector collector = new AllDocsCollector();
+        index.search(q, collector);
+        List<ScoreDoc> hits = collector.getHits();
         
         // Crawl log 1 has five entries for www.kb.dk, but two are robots
         // and /, which the indexer ignores, leaving 3
         // Crawl log 4 has five entries for www.kb.dk
         
-        System.out.println("Found hits: " + hits.length);
-        for (int i = 0; i < hits.length; i++) {
-            int docID = hits[i].doc;
+        //System.out.println("Found hits: " + hits.size());
+        for (ScoreDoc hit : hits) {
+            int docID = hit.doc;
             Document doc = index.doc(docID);
             
             String url = doc.get("url");

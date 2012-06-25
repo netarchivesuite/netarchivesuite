@@ -80,7 +80,8 @@ public class ARCLookupTester extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         rs.setUp();
-        dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL = new URI("http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
+        dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL 
+            = new URI("http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTester.resetChannels();
@@ -198,8 +199,11 @@ public class ARCLookupTester extends TestCase {
      * @throws Exception
      */
     public void testLookupWithCurlyBrackets() throws Exception {
-        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dk.netarkivet.archive.distribute.arcrepository.TestInfo.ARCHIVE_DIR.getAbsolutePath());
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "serverdir").getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, 
+               dk.netarkivet.archive.distribute.arcrepository.TestInfo.ARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, 
+                new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, 
+                        "serverdir").getAbsolutePath());
         Field searcher_field = ARCLookup.class.getDeclaredField("luceneSearcher");
         searcher_field.setAccessible(true);
         //Set the searcher to null. lookup will then throw a message with the actual URI
@@ -208,7 +212,8 @@ public class ARCLookupTester extends TestCase {
             lookup.lookup(new URI("http://www.adomain.dk/?key=%7B12345%7D"));
             fail("Should get IOFailure when lucene lookup is null");
         } catch (IOFailure e) {
-            assertTrue("Expect error message to contain decoded uri but was '" + e.getMessage() + "'", e.getMessage().contains("http://www.adomain.dk/?key={12345}")) ;
+            assertTrue("Expect error message to contain decoded uri but was '" 
+                    + e.getMessage() + "'", e.getMessage().contains("http://www.adomain.dk/?key={12345}")) ;
         }
     }
 

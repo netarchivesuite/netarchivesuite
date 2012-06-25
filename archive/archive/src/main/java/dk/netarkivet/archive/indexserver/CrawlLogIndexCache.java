@@ -261,7 +261,8 @@ public abstract class CrawlLogIndexCache extends
                     
                     log.info("Adding " + subindices.size() 
                             + " subindices to main index. Forcing index to contain max " 
-                            + maxSegments + " files");
+                            + maxSegments + " files (related to combine task # "
+                            + indexingJobCount + ")");
                     totalIndex.addIndexes(
                             subindices.toArray(new Directory[0]));
                     totalIndex.forceMerge(maxSegments);
@@ -272,7 +273,8 @@ public abstract class CrawlLogIndexCache extends
                     subindicesInTotalIndex += subindices.size();
                     log.info("Completed adding " + subindices.size() 
                             + " subindices to main index, now containing " 
-                            +  subindicesInTotalIndex + " subindices");
+                            +  subindicesInTotalIndex + " subindices"
+                            + "(related to combine task # " + indexingJobCount + ")");
                     subindices.clear();
                 } else {
                     sleepAwhile();
@@ -281,7 +283,8 @@ public abstract class CrawlLogIndexCache extends
             
             log.info("Adding the final " + subindices.size() 
                     + " subindices to main index. Forcing index to contain max " 
-                    + maxSegments + " files");           
+                    + maxSegments + " files "
+                    + "(related to combine task # " + indexingJobCount + ")");
             
             totalIndex.addIndexes(
                     subindices.toArray(new Directory[0]));
@@ -292,18 +295,18 @@ public abstract class CrawlLogIndexCache extends
             }
             subindices.clear();
 
-            log.info("Adding operation completed!");
+            log.info("Adding operation completed (combine task # " 
+                    + indexingJobCount + ")!");
             long docsInIndex = totalIndex.numDocs();
             
-            log.info("closing index");
             indexer.close();
-            log.info("Closed index");
+            log.info("Closed index (related to combine task # " + indexingJobCount);
             
             
             // Now the index is made, gzip it up.
             File totalIndexDir = new File(indexLocation);
             log.info("Gzip-compressing the individual " +  totalIndexDir.list().length 
-                    + " index files");
+                    + " index files of combine task # " + indexingJobCount);
             ZipUtils.gzipFiles(totalIndexDir, resultDir);
             log.info("Completed combine task # " + indexingJobCount 
                     + " that combined a dataset with " 

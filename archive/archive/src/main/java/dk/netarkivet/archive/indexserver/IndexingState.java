@@ -82,7 +82,7 @@ public class IndexingState {
     
     public String toString() {
         return "IndexingState for JobID #" + jobIdentifier 
-                + "- IndexingDone = " 
-                + resultObject.isDone();
+                + ": (index = " + index + ", IndexingDone = " 
+                + resultObject.isDone() + ")";
     }
 }

@@ -61,8 +61,7 @@ public class IndexServer implements CleanupIF{
         cdxCache.getIndex(emptySet);
         dedupCrawlLogCache.getIndex(emptySet);
         fullCrawlLogCache.getIndex(emptySet);
-    
-        // Read the indexRequestServer class from settings.               
+                 
         remoteServer = IndexRequestServerFactory.getInstance();
 
         remoteServer.setHandler(RequestType.CDX, cdxCache);

@@ -28,14 +28,12 @@ package dk.netarkivet.archive.indexserver;
 import is.hi.bok.deduplicator.DigestIndexer;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
 
 /** 
  * This worker class handles the indexing of one single crawl-log 
@@ -107,13 +105,10 @@ public class DigestIndexerWorker implements Callable<Boolean> {
             
             localindexer.close();
             
-        } catch (IOException e) {
+        } catch (Throwable e) {
             successful = false;
             log.warn("Indexing for job w/ id " + jobId + " failed.", e);
-        } catch (IOFailure e) {
-            successful = false;
-            log.warn("Indexing for job w/ id " + jobId + " failed.", e); 
-        } 
+        }
         return successful;
  
     }

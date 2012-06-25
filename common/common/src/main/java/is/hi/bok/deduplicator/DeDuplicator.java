@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,10 +37,8 @@ import java.util.logging.Logger;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.TermRangeFilter;
 
 import org.apache.lucene.search.IndexSearcher;
@@ -57,6 +54,8 @@ import org.archive.crawler.settings.Type;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.Base32;
 
+import dk.netarkivet.common.utils.AllDocsCollector;
+
 /**
  * Heritrix compatible processor.
  * <p>
@@ -67,6 +66,7 @@ import org.archive.util.Base32;
  * have run.
  * 
  * @author Kristinn Sigur&eth;sson
+ * @author Søren Vejrup Carlsen
  */
 public class DeDuplicator extends Processor 
 implements AdaptiveRevisitAttributeConstants{
@@ -609,7 +609,7 @@ implements AdaptiveRevisitAttributeConstants{
             Query query = queryField(DigestIndexer.FIELD_URL,
                 curi.toString());
             //TopDocs topdocs = index.search(query, Integer.MAX_VALUE);
-            AllDocCollector collectAllCollector = new AllDocCollector();
+            AllDocsCollector collectAllCollector = new AllDocsCollector();
             index.search(query, collectAllCollector);
             
             List<ScoreDoc> hits = collectAllCollector.getHits();
@@ -700,7 +700,7 @@ implements AdaptiveRevisitAttributeConstants{
         }
         Query query = queryField(DigestIndexer.FIELD_DIGEST, currentDigest);
         try {
-            AllDocCollector collectAllCollector = new AllDocCollector();
+            AllDocsCollector collectAllCollector = new AllDocsCollector();
             index.search(query, collectAllCollector);
             
             List<ScoreDoc> hits = collectAllCollector.getHits();
@@ -891,7 +891,7 @@ implements AdaptiveRevisitAttributeConstants{
 	    try{
 	        Query query = queryField(DigestIndexer.FIELD_URL,
 	                curi.toString());
-	        AllDocCollector collectAllCollector = new AllDocCollector();
+	        AllDocsCollector collectAllCollector = new AllDocsCollector();
 	        index.search(query, collectAllCollector);    
 	        List<ScoreDoc> hits = collectAllCollector.getHits();
 	      
@@ -1092,35 +1092,4 @@ class Statistics{
     long ETagNoChangeFalse = 0;
     long ETagMissingIndex = 0;
     long ETagMissingCURI = 0;
-}
-
-class AllDocCollector extends Collector { 
-    List<ScoreDoc> docs = new ArrayList<ScoreDoc>(); 
-    private Scorer scorer; 
-    private int docBase;
-    @Override
-    public boolean acceptsDocsOutOfOrder() {
-        return true; 
-    } 
-    @Override
-    public void setScorer(Scorer scorer) { 
-        this.scorer = scorer; 
-    } 
-    @Override
-    public void setNextReader(IndexReader reader, int docBase) { 
-        this.docBase = docBase; 
-    }
-    @Override
-    public void collect(int doc) throws IOException { 
-        docs.add(
-                new ScoreDoc(doc + docBase, scorer.score()));
-    }
-    
-    public void reset() { 
-        docs.clear(); 
-    } 
-
-    public List<ScoreDoc> getHits() { 
-        return docs; 
-    } 
 }

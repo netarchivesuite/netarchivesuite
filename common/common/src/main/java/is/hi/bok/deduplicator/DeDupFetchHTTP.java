@@ -47,6 +47,8 @@ import org.archive.crawler.settings.Type;
 import org.archive.httpclient.HttpRecorderMethod;
 import org.archive.util.ArchiveUtils;
 
+import dk.netarkivet.common.utils.AllDocsCollector;
+
 /**
  * An extension of Heritrix's {@link org.archive.crawler.fetcher.FetchHTTP}
  * processor for downloading HTTP documents. This extension adds a check after
@@ -55,6 +57,7 @@ import org.archive.util.ArchiveUtils;
  * appropriate index.
  * 
  * @author Kristinn Sigur&eth;sson
+ * @author Søren Vejrup Carlsen
  * @see is.hi.bok.deduplicator.DigestIndexer
  * @see org.archive.crawler.fetcher.FetchHTTP
  */
@@ -350,7 +353,7 @@ implements AdaptiveRevisitAttributeConstants {
             //query = new ConstantScoreQuery(new FieldCacheTermsFilter(fieldName,
             //        value));
             
-            AllDocCollector collectAllCollector = new AllDocCollector();
+            AllDocsCollector collectAllCollector = new AllDocsCollector();
             index.search(query, collectAllCollector);
             
             List<ScoreDoc> hits = collectAllCollector.getHits();
@@ -388,7 +391,8 @@ implements AdaptiveRevisitAttributeConstants {
     public void finalTasks() {
         super.finalTasks();
     }
-
+    
+    @Override
     public void initialTasks() {
         super.initialTasks();
         // Index location
@@ -438,7 +442,8 @@ implements AdaptiveRevisitAttributeConstants {
             useSparseRangeFilter = DEFAULT_USE_SPARSE_RANGE_FILTER;
         }
     }
-
+    
+    @Override
     public String report() {
         StringBuffer ret = new StringBuffer();
         ret.append("Processor: is.hi.bok.deduplicator.DeDupFetchHTTP\n");

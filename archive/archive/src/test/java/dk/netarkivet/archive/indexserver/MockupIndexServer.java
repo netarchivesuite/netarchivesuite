@@ -48,7 +48,6 @@ public class MockupIndexServer implements TestConfigurationIF, MessageListener {
     private File resultFile;
     private boolean responseOK = true;
     private List<IndexRequestMessage> msgs = new ArrayList<IndexRequestMessage>();
-    private boolean multiFile = false;
     private String origDir;
 
     /** Create a new MockupIndexServer that serves back the given file or

@@ -28,23 +28,27 @@ package dk.netarkivet.common.distribute.arcrepository;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import is.hi.bok.deduplicator.DigestIndexer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.FieldCacheTermsFilter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.TermRangeFilter;
 import org.apache.lucene.store.FSDirectory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.AllDocsCollector;
 import dk.netarkivet.common.utils.arc.ARCKey;
 
 /**
@@ -206,41 +210,45 @@ public class ARCLookup {
             throw new IOFailure("No index set while searching for '"
                     + uri + "'");
         }
-        //return luceneLookUpWithOldAPI(uri);
-        return luceneLookUpWithNewAPI(uri);
+        return luceneLookUp(uri);
     }
     
     /**
-     * Lucene Lookup using the new Lucene API used in release 2.9.4+
+     * Lucene Lookup.
+     * It now uses the new Lucene API used in release 3.6
      * @param uri A URI to look for.
      * @return The file and offset where that URI can be found, or null if it
      * doesn't exist.
+     * TODO Does TermRangeFilter needs to be modified to memory efficient enough. 
+     * The the optimizations in the previous used SparseRangeFilter may or may not
+     * relevant for Lucene 3.6+ 
      */
-    private ARCKey luceneLookUpWithNewAPI(String uri) {
+    private ARCKey luceneLookUp(String uri) {
         // SparseRangeFilter + ConstantScoreQuery means we ignore norms,
         // bitsets, and other memory-eating things we don't need that TermQuery
         // or RangeFilter would imply.
         //Query query = new ConstantScoreQuery(new SparseRangeFilter(
         //        DigestIndexer.FIELD_URL, uri, uri, true, true));
         
-        Query query = new ConstantScoreQuery(new FieldCacheTermsFilter(
-                DigestIndexer.FIELD_URL, uri));
+        Query query = new ConstantScoreQuery(new TermRangeFilter(
+                DigestIndexer.FIELD_URL, uri, uri, true, true));
         
         try {
-            
-            TopDocs topDocs = luceneSearcher.search(query, Integer.MAX_VALUE);
+            AllDocsCollector allResultsCollector = new AllDocsCollector();
+            luceneSearcher.search(query, allResultsCollector);
             Document doc = null;
-            ScoreDoc[] hits = topDocs.scoreDocs;
+            List<ScoreDoc> hits = allResultsCollector.getHits();
             if (hits != null) {
-                log.debug("Found " + hits.length + " hits for uri: " +  uri);
-                for (int i = 0; i < hits.length; i++) {
-                    int docId = hits[i].doc;
+                log.debug("Found " + hits.size() + " hits for uri: " +  uri);
+                int i = 0;
+                for (ScoreDoc hit: hits) {
+                    int docId = hit.doc;
                     doc = luceneSearcher.doc(docId);
                     String origin = doc.get(DigestIndexer.FIELD_ORIGIN);
                     // Here is where we will handle multiple hits in the future
                     if (origin == null) {
                         log.debug("No origin for URL '" + uri
-                                + "' hit " + i);
+                                + "' hit " + i++);
                         continue;
                     }
                     String[] originParts = origin.split(",");
@@ -259,3 +267,5 @@ public class ARCLookup {
         return null;
     }
 }
+
+
