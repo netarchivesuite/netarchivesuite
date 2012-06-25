@@ -26,10 +26,8 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
@@ -375,29 +373,17 @@ public class DomainDefinition {
         ArgumentNotValid.checkNotNullOrEmpty(searchQuery, "String searchQuery");
         ArgumentNotValid.checkNotNullOrEmpty(searchType, "String searchType");
         
-        if (!getSearchTypes().contains(DomainSearchType.parse(searchType))) {
+        try {
+            DomainSearchType.parse(searchType);
+        } catch (ArgumentNotValid e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;invalid.domain.search.criteria.0", searchType);
             throw new ForwardedToErrorPage("Unknown domain search criteria '" 
                     + searchType + "'");
         }
-        log.info("SearchQuery '" + searchQuery + "', searchType: " +  searchType);
+        
+        log.debug("SearchQuery '" + searchQuery + "', searchType: " +  searchType);
         resultSet = DomainDAO.getInstance().getDomains(searchQuery, searchType);
         return resultSet;
-    }
-    
-    /**
-     * The list of available domain search types. Seeds and configuration search
-     * are not implemented currently, so they are exempted from the list 
-     * @return the list of available domain search types.
-     */
-    public static Set<DomainSearchType> getSearchTypes() {
-        Set<DomainSearchType> types = new HashSet<DomainSearchType>();
-        //types.add(Constants.SEEDS_DOMAIN_SEARCH);
-        //types.add(Constants.CONFIGS_DOMAIN_SEARCH);
-        types.add(DomainSearchType.CRAWLERTRAPS);
-        types.add(DomainSearchType.NAME);
-        types.add(DomainSearchType.COMMENTS);
-        return types;
     }
 }

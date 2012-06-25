@@ -25,13 +25,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%-- This page handles searching for domains.  With no parameters, it
 gives an input box for searching that feeds back into itself.
-With parameter name, it performs a search.  Name can be a glob pattern
+With parameter DOMAIN_QUERY_TYPE and DOMAIN_QUERY_STRING set, it performs a
+search.  
+The DOMAIN_QUERY_STRING can be a glob pattern
 (using ? and * only) or a single domain.  If domains are found, they are
-displayed, if no domains are found for a non-glob search, the user is
-asked if they should be created.
---%><%@page import="dk.netarkivet.harvester.webinterface.DomainSearchType"%>
-<%@page import="dk.netarkivet.harvester.webinterface.DomainDefinition"%>
-<%@ page import="javax.servlet.RequestDispatcher,
+displayed, otherwise the message is given that there are no domains matching the query.
+
+The search-system are now able to search in different fields of the 'domain' table
+ - name (the only search-option before), 
+ - comments, 
+ - crawlertraps
+ On the todo list are aliases, seeds. domainconfigurations, 
+
+--%><%@page import="dk.netarkivet.harvester.webinterface.DomainSearchType,
+				dk.netarkivet.harvester.webinterface.DomainDefinition,
+				javax.servlet.RequestDispatcher,
                  java.util.List, java.util.Set,
                  dk.netarkivet.common.CommonSettings,
                  dk.netarkivet.common.utils.Settings,
@@ -49,24 +57,11 @@ asked if they should be created.
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
-
-	// The search-system needs to be able to search in different fields of the domain:
-	// name (the only search-option before), 
-	// comments, 
-	// crawlertraps
-	// alias (?), // Postponed
-	// seeds (?), // Postponed
-	// domainconfigurations (?) //TODO
-	// new language-keys: 
-	//    errormsg;no.matching.domains.for.query.0.when.searching.by.
-	//    search.domains.by
-	// obsoleted languages keys: 
-	//    prompt;enter.name.of.domain.to.find
 	
 	String searchType = request.getParameter(Constants.DOMAIN_QUERY_TYPE_PARAM);
 	String searchQuery =  request.getParameter(Constants.DOMAIN_QUERY_STRING_PARAM);
     
-	if (searchType == null) {
+	if (searchType == null) { // The default is NAME searchS
 	    searchType = Constants.NAME_DOMAIN_SEARCH;
 	}
 	
@@ -226,8 +221,7 @@ asked if they should be created.
             <td><fmt:message key="search.domains.by"/></td>
             <td><select name="<%=Constants.DOMAIN_QUERY_TYPE_PARAM%>">
                     <%
-                        Set<DomainSearchType> searchTypes = DomainDefinition.getSearchTypes();
-                    	for(DomainSearchType aSearchType: searchTypes) {
+                    	for(DomainSearchType aSearchType: DomainSearchType.values()) {
                             String selected = "";
                             
                             if (aSearchType.equals(DomainSearchType.NAME)) {
