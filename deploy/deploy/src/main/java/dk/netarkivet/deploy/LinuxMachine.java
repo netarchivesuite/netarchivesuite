@@ -1236,7 +1236,7 @@ public class LinuxMachine extends Machine {
                 
                 startDBPrint.print("-Dderby.system.home="
                         + getInstallDirPath() + Constants.SLASH
-                        + Constants.ARCHIVE_DATABASE_BASE_DIR
+                        + dbDir
                         + Constants.SPACE);
                 
                 startDBPrint.print(machineParameters.writeJavaOptions());
@@ -1483,7 +1483,7 @@ public class LinuxMachine extends Machine {
                 
                 startDBPrint.print("-Dderby.system.home="
                         + getInstallDirPath() + Constants.SLASH
-                        + Constants.HARVEST_DATABASE_BASE_DIR
+                        + dbDir
                         + Constants.SPACE);
 
                 startDBPrint.print(machineParameters.writeJavaOptions());
