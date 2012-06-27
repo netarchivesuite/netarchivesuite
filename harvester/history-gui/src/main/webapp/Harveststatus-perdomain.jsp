@@ -61,15 +61,13 @@ displayed, if no domains are found a message is shown.
     }
 
     String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
-    if (searchParam == null) {
-        searchParam = "";
-    }
+    if (searchParam == null ) searchParam = "";
     searchParam = HTMLUtils.encode(searchParam);
 
-    String orderParam = request.getParameter(Constants.JOB_ORDERING_BY_STARTDATE_PARAM);
-    boolean showJobsInDescendingOrder = true;
-    if ((Constants.ASCENDING).equals(orderParam)) {
-        showJobsInDescendingOrder = false;
+    String orderParam = request.getParameter(Constants.IS_NEWEST_FIRST);
+    boolean newestFirst = true;
+    if ((Constants.FALSE).equals(orderParam)) {
+        newestFirst = false;
     }
 %>
 <%!
@@ -102,7 +100,8 @@ displayed, if no domains are found a message is shown.
 <input type="hidden"
        name="<%= Constants.START_PAGE_PARAMETER%>"
        value="<%=startPagePost%>"/>
-<input type="hidden" name="<%=Constants.JOB_ORDERING_BY_STARTDATE_PARAM%>" value="<%=showJobsInDescendingOrder ? Constants.DESCENDING : Constants.ASCENDING%>" />
+<input type="hidden" name="<%=Constants.IS_NEWEST_FIRST%>" 
+	value="<%=newestFirst ? Constants.TRUE : Constants.FALSE%>" />
 </form>
 
 <%
@@ -209,13 +208,12 @@ hidden fields are set as url parameters by the javascript.
 <input type="hidden"
        name="<%= Constants.START_PAGE_PARAMETER%>"
        value="<%=startPagePost%>"/>
-    <input type="hidden" name="<%=Constants.JOB_ORDERING_BY_STARTDATE_PARAM%>" 
-    	value="<%=showJobsInDescendingOrder ? Constants.DESCENDING : Constants.ASCENDING%>"/>
+    <input type="hidden" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=newestFirst ? Constants.TRUE : Constants.FALSE%>"/>
 </form>
 
 <%
     List<DomainHarvestInfo> hiList =
-        DomainDAO.getInstance().getDomainHarvestInfo(domainName, showJobsInDescendingOrder);
+        DomainDAO.getInstance().getDomainHarvestInfo(domainName, newestFirst);
     long totalResultsCount = hiList.size();
     long actualPageSize = (pageSize == 0 ?
         totalResultsCount : pageSize);
@@ -290,7 +288,7 @@ hidden fields are set as url parameters by the javascript.
             </h3>
             <% hiList
                     = DomainDAO.getInstance().getDomainHarvestInfo(domainName,
-                                                                   showJobsInDescendingOrder);
+                                                                   newestFirst);
             if (hiList == null || hiList.size() == 0) {// No history
             %><p><fmt:message key="domain.0.was.never.harvested">
                   <fmt:param value="<%=domainName%>"/>
@@ -400,19 +398,10 @@ hidden fields are set as url parameters by the javascript.
                     "<fmt:message key="search"/>"/></td>
         </tr>
         <tr>
-            <td><fmt:message key="prompt;job.sorting.order.by.startdate"/>&nbsp;
-            	<select name="<%=Constants.JOB_ORDERING_BY_STARTDATE_PARAM%>" size="1">
-            	<% String selected = showJobsInDescendingOrder ? "selected=\"selected\"" : "";
-            	 %>
-            	  <option <%=selected%> value="<%=Constants.DESCENDING%>">
-             		<fmt:message key="sort.order.desc"/>
-        		  </option>
-            	 <% selected = showJobsInDescendingOrder ? "": "selected=\"selected\"";
-            	 %>
-            	  <option <%=selected%> value="<%=Constants.ASCENDING%>">
-             		<fmt:message key="sort.order.asc"/>
-        		  </option>
-                </select>
+            <td><fmt:message key="prompt;newest.first"/>&nbsp;
+                <input type="radio" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=Constants.TRUE%>" checked="checked"/>
+                <fmt:message key="prompt;oldest.first"/>&nbsp;
+                <input type="radio" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=Constants.FALSE%>"/>
             </td>
         </tr>
         <tr>
