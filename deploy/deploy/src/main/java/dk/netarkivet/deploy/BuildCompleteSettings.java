@@ -45,10 +45,11 @@ import dk.netarkivet.common.utils.FileUtils;
  * export NAS_SRC=$HOME/workspace/netarchivesuite
  * cd $NAS_SRC
  * ant jarfiles
- * export CLASSPATH=$NAS_SRC/lib/dk.netarkivet.harvester.jar:$NAS_SRC/lib/dk.netarchive.archive.jar:\
- *      $NAS_SRC/lib/dk.netarchive.wayback.jar:$NAS_SRC/lib/dk.netarchive.deploy.jar:\
- *      $NAS_SRC/lib/dk.netarchive.monitor.jar:$NAS_SRC/lib/dk.netarchive.viewerproxy.jar
- * java dk.netarkivet.deploy.BuildCompleteSettings      
+ * export CLASSPATH=$NAS_SRC/lib/dk.netarkivet.harvester.jar:$NAS_SRC/lib/dk.netarkivet.archive.jar:\
+$NAS_SRC/lib/dk.netarkivet.wayback.jar:$NAS_SRC/lib/dk.netarkivet.deploy.jar:\
+$NAS_SRC/lib/dk.netarkivet.monitor.jar:$NAS_SRC/lib/dk.netarkivet.viewerproxy.jar
+   cd src
+   java dk.netarkivet.deploy.BuildCompleteSettings   
  * 
  */
 public final class BuildCompleteSettings {

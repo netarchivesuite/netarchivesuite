@@ -30,7 +30,6 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 import dk.netarkivet.common.CleanupSuite;
-import dk.netarkivet.wayback.WaybackTesterSuite;
 
 /**
  * This class runs all the module unit tests.

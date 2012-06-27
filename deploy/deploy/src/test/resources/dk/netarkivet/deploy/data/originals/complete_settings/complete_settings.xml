@@ -40,18 +40,45 @@
                 <machine>localhost</machine>
                 <port>1527</port>
                 <dir>admindb</dir>
+                <username/>
+                <password/>
                 <!-- Reconnect to database default: 5 tries with 5 min between-->
                 <reconnectMaxRetries>5</reconnectMaxRetries>
                 <reconnectRetryDelay>300000</reconnectRetryDelay>
+            	<validityCheckTimeout>0</validityCheckTimeout>
+            	<pool>
+                	<minSize>5</minSize>
+	            	<maxSize>10</maxSize>
+	            	<acquireInc>5</acquireInc>
+	            	<maxStm>0</maxStm>
+                	<maxStmPerConn>0</maxStmPerConn>
+                	<idleConnTestPeriod>30</idleConnTestPeriod>
+                	<idleConnTestQuery/>
+                	<idleConnTestOnCheckin>true</idleConnTestOnCheckin>
+	        	</pool>
             </database>
         </admin>
+        <indexserver>
+        	<listeningcheckinterval>30000</listeningcheckinterval>
+        	<maxclients>20</maxclients>
+        	<maxthreads>10</maxthreads>
+        	<requestdir>requests</requestdir>
+        	<checkinterval>30000</checkinterval>
+        	<indexingtimeout>259200000</indexingtimeout>
+        	<maxsegments>42</maxsegments>
+        	<satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
+        	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
+        	<indexrequestserver>
+        		<class>dk.netarkivet.archive.indexserver.distribute.IndexRequestServer</class>
+        	</indexrequestserver>	
+        </indexserver>
     </archive>
 <common>
         <environmentName>DEV</environmentName>
         <tempDir>./tests/commontempdir</tempDir>
         <remoteFile>
             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-        <serverName>localhost</serverName><serverPort>21</serverPort><userName>anonymous</userName><userPassword>anonymous</userPassword><retries>3</retries><port>8100</port><certificateKeyStore>conf/keystore</certificateKeyStore><certificateKeyStorePassword>1234</certificateKeyStorePassword><certificatePassword>1234</certificatePassword></remoteFile>
+        <serverName>localhost</serverName><serverPort>21</serverPort><userName>anonymous</userName><userPassword>anonymous</userPassword><retries>3</retries><datatimeout>600</datatimeout><port>8100</port><certificateKeyStore>conf/keystore</certificateKeyStore><certificateKeyStorePassword>1234</certificateKeyStorePassword><certificatePassword>1234</certificatePassword></remoteFile>
         <jms> <!-- Connection data for JMS-->
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
             <retries>3</retries>
@@ -61,14 +88,17 @@
         </http>
         <arcrepositoryClient>
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
-        <getTimeout>60000</getTimeout><storeRetries>3</storeRetries><storeTimeout>3600000</storeTimeout></arcrepositoryClient>
+        <getTimeout>300000</getTimeout><storeRetries>3</storeRetries><storeTimeout>3600000</storeTimeout></arcrepositoryClient>
         <monitorregistryClient>
             <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
             <reregisterdelay>1</reregisterdelay>
         </monitorregistryClient>
         <indexClient>
             <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
-        <indexRequestTimeout>3600000</indexRequestTimeout></indexClient>
+        <indexRequestTimeout>3600000</indexRequestTimeout><useLocalFtpServer>false</useLocalFtpServer></indexClient> 
+        <unixSort>
+            <useCommonTempDir>false</useCommonTempDir>
+        </unixSort>
         <cacheDir>cache</cacheDir>
         <processTimeout>5000</processTimeout>
         <notifications>
@@ -452,18 +482,20 @@
             <machine>localhost</machine>
             <port>1527</port>
             <dir>harvestdefinitionbasedir/fullhddb</dir>
+            <username/>
+            <password/>
             <backupInitHour>3</backupInitHour>
             <validityCheckTimeout>0</validityCheckTimeout>
             <pool>
                 <minSize>5</minSize>
-                <maxSize>10</maxSize>
-                <acquireInc>1</acquireInc>
-                <maxStm>0</maxStm>
+	            <maxSize>10</maxSize>
+	            <acquireInc>5</acquireInc>
+	            <maxStm>0</maxStm>
                 <maxStmPerConn>0</maxStmPerConn>
                 <idleConnTestPeriod>0</idleConnTestPeriod>
-                <idleConnTestQuery></idleConnTestQuery>
+                <idleConnTestQuery/>
                 <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
-            </pool>
+	        </pool>
         </database>
         <repository>
             <!-- Currently set to 10 MB -->
@@ -509,7 +541,7 @@
         <applicationName>NA</applicationName>
         <applicationInstanceId/>
     </common><harvester>
-        <aliases>
+    	<aliases>
     		<timeout>31536000</timeout>
     	</aliases>
         <datamodel>
@@ -558,8 +590,10 @@
             <!-- Default is 400000000 bytes (~400 Mbytes). -->
             <minSpaceLeft>400000000</minSpaceLeft>
             <oldjobsDir>oldjobs</oldjobsDir>
-            <queuePriority>HIGHPRIORITY</queuePriority>
-            <sendStatusDelay>1</sendStatusDelay>
+            <queuePriority/>
+            <sendReadyInterval>300</sendReadyInterval>
+            <sendReadyDelay>1000</sendReadyDelay>
+            <continuationFromHeritrixRecoverlogEnabled>false</continuationFromHeritrixRecoverlogEnabled>
             <heritrix>
                 <!-- 30 minutes -->
                 <inactivityTimeout>1800</inactivityTimeout>
@@ -595,6 +629,7 @@
             </heritrixController>
             <harvestReport>
                 <class>dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport</class>
+                <disregardSeedURLInfo>false</disregardSeedURLInfo>
             </harvestReport>
             <deduplication>
                 <enabled>true</enabled>
@@ -614,8 +649,12 @@
             <historySize>100</historySize>
         </logging>
         <reregisterDelay>1</reregisterDelay>
+        <preferredMaxJMXLogLength>70</preferredMaxJMXLogLength>
+        <absoluteMaxJMXLogLength>100</absoluteMaxJMXLogLength>
     </monitor><viewerproxy>
         <baseDir>viewerproxy</baseDir>
+        <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
+        <maxSizeInBrowser>100000000</maxSizeInBrowser>
     </viewerproxy><wayback>
          <urlcanonicalizer>
              <classname>
@@ -653,7 +692,6 @@
             <initialFiles/>
         </indexer>
         <aggregator>
-            <indexFileInputDir>batchOutputDir</indexFileInputDir>
             <indexFileOutputDir>indexDir</indexFileOutputDir>
             <tempAggregatorDir>aggregator_tempdir</tempAggregatorDir>
             <!-- 600000 milliseconds = 10 minutes -->
@@ -663,4 +701,8 @@
             <!-- 104857600 KB = 100 GB -->
             <maxMainIndexFileSize>104857600</maxMainIndexFileSize>
         </aggregator>
+        <resourcestore>
+        	<cachedir>filecache</cachedir>
+            <maxfiles>100</maxfiles>
+        </resourcestore>
     </wayback></settings>

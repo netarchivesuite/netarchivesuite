@@ -1233,11 +1233,11 @@ public class LinuxMachine extends Machine {
                 // org.apache.derby.drda.NetworkServerControl start  
                 // < /dev/null > start_external_database.log 2>&1 &
                 startDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
-                
-                startDBPrint.print("-Dderby.system.home="
-                        + getInstallDirPath() + Constants.SLASH
-                        + dbDir
-                        + Constants.SPACE);
+                // FIXME: Incomplete implementation of NAS-2030
+                //startDBPrint.print("-Dderby.system.home="
+                //        + getInstallDirPath() + Constants.SLASH
+                //        + dbDir
+                //        + Constants.SPACE);
                 
                 startDBPrint.print(machineParameters.writeJavaOptions());
                 startDBPrint.print(Constants.SPACE);
@@ -1480,11 +1480,11 @@ public class LinuxMachine extends Machine {
                 // org.apache.derby.drda.NetworkServerControl start  
                 // < /dev/null > start_external_harvest_database.log 2>&1 &
                 startDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
-                
-                startDBPrint.print("-Dderby.system.home="
-                        + getInstallDirPath() + Constants.SLASH
-                        + dbDir
-                        + Constants.SPACE);
+ // FIXME: Incomplete implementation of NAS-2030               
+ //               startDBPrint.print("-Dderby.system.home="
+ //                       + getInstallDirPath() + Constants.SLASH
+ //                       + dbDir
+ //                       + Constants.SPACE);
 
                 startDBPrint.print(machineParameters.writeJavaOptions());
                 startDBPrint.print(Constants.SPACE);
