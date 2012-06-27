@@ -150,7 +150,7 @@ public abstract class FileBasedCache<I> {
             // Make sure no other thread tries to create this
             log.debug("Waiting to enter synchronization on " 
                     + fileBehindLockFile.getAbsolutePath().intern());
-            
+            // FIXME Potential memory leak. intern() remembers all strings until JVM exits.
             synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
                 try {
                     // Make sure no other process tries to create this.
