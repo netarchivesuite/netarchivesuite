@@ -139,12 +139,15 @@ public class Constants {
     public static final String RENEW_ALIAS_PARAM = "renewAlias";
 
     public static final String UPLOAD_FILE_PARAM = "upload_file";
-
+    
+    public static final String IS_NEWEST_FIRST = "is_newest_first";
+    
     public static final String DESCENDING = "DESC";
-
     public static final String ASCENDING = "ASC";
     
-
+    public static final String FALSE = "false";
+    public static final String TRUE = "true";
+    
     /**
      * Names of some parameters used in management of global crawler traps.
      */
