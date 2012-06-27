@@ -378,37 +378,10 @@ public class PartialHarvest extends HarvestDefinition {
         //validate:
         
         for (String seed : seeds) {
-            seed = seed.trim();
-            if (seed.length() != 0) {
-                if (!(seed.startsWith("http://")
-                      || seed.startsWith("https://"))) {
-                    seed = "http://" + seed;
-                }
-                URL url = null;
-                try {
-                    url = new URL(seed);
-                } catch (MalformedURLException e) {
-                    valid = false;
-                    invalidMessage.append(seed);
-                    invalidMessage.append('\n');
-                    continue;
-                }
-                String host = url.getHost();
-                String domainName = DomainUtils.domainNameFromHostname(host);
-                if (domainName == null) {
-                    valid = false;
-                    invalidMessage.append(seed);
-                    invalidMessage.append('\n');
-                    continue;
-                }
-
-                Set<String> seedsForDomain = acceptedSeeds.get(domainName);
-                if (seedsForDomain == null) {
-                    seedsForDomain = new HashSet<String>();
-                }
-                seedsForDomain.add(seed);
-                acceptedSeeds.put(domainName, seedsForDomain);
-            }
+            boolean seedValid = processSeed(seed, invalidMessage, acceptedSeeds);
+            if (!seedValid) {
+                valid = false;
+            }   
         }
 
         if (!valid) {
@@ -421,9 +394,9 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * This method is a duplicate of the addSeeds method but for seedsFile parameter
      * @param seedsFile a newline-separated File containing the seeds to be added
-     * @param templateName 
-     * @param maxBytes
-     * @param maxObjects
+     * @param templateName the name of the template to be used
+     * @param maxBytes Maximum number of bytes to harvest per domain
+     * @param maxObjects Maximum number of objects to harvest per domain
      */
     public void addSeedsFromFile(File seedsFile, String templateName, long maxBytes,
             int maxObjects) {
@@ -449,36 +422,9 @@ public class PartialHarvest extends HarvestDefinition {
             seedIterator = new LineIterator(new FileReader(seedsFile));       
             while (seedIterator.hasNext()) {
                 String seed = seedIterator.next();
-                seed = seed.trim();
-                if (seed.length() != 0) {
-                    if (!(seed.startsWith("http://")
-                            || seed.startsWith("https://"))) {
-                        seed = "http://" + seed;
-                    }
-                    URL url = null;
-                    try {
-                        url = new URL(seed);
-                    } catch (MalformedURLException e) {
-                        valid = false;
-                        invalidMessage.append(seed);
-                        invalidMessage.append('\n');
-                        continue;
-                    }
-                    String host = url.getHost();
-                    String domainName = DomainUtils.domainNameFromHostname(host);
-                    if (domainName == null) {
-                        valid = false;
-                        invalidMessage.append(seed);
-                        invalidMessage.append('\n');
-                        continue;
-                    }
-
-                    Set<String> seedsForDomain = acceptedSeeds.get(domainName);
-                    if (seedsForDomain == null) {
-                        seedsForDomain = new HashSet<String>();
-                    }
-                    seedsForDomain.add(seed);
-                    acceptedSeeds.put(domainName, seedsForDomain);
+                boolean seedValid = processSeed(seed, invalidMessage, acceptedSeeds);
+                if (!seedValid) {
+                    valid = false;
                 }
             }
         } catch (IOException e) {
@@ -494,7 +440,54 @@ public class PartialHarvest extends HarvestDefinition {
         addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds);
     }
     
-    
+    /** 
+     * Process each seed.
+     * @param seed The given seed.
+     * @param invalidMessage The message builder where the invalid seeds are added.
+     * @param acceptedSeeds The set of accepted seeds
+     * @return true, if the processed seed is valid or empty.
+     */
+    private boolean processSeed(String seed, StringBuilder invalidMessage,
+            Map<String, Set<String>> acceptedSeeds) {
+        seed = seed.trim();
+        if (seed.length() != 0) {
+            if (!(seed.startsWith("http://")
+                    || seed.startsWith("https://"))) {
+                seed = "http://" + seed;
+            }
+            URL url = null;
+            try {
+                url = new URL(seed);
+            } catch (MalformedURLException e) {
+                invalidMessage.append(seed);
+                invalidMessage.append('\n');
+                return false;
+            }
+            String host = url.getHost();
+            String domainName = DomainUtils.domainNameFromHostname(host);
+            if (domainName == null) {
+                invalidMessage.append(seed);
+                invalidMessage.append('\n');
+                return false;
+            }
+
+            Set<String> seedsForDomain = acceptedSeeds.get(domainName);
+            if (seedsForDomain == null) {
+                seedsForDomain = new HashSet<String>();
+                acceptedSeeds.put(domainName, seedsForDomain);
+            }
+            seedsForDomain.add(seed);
+        }
+        return true;
+    }
+
+    /**
+     * Generate domain configurations for the accepted seeds. 
+     * @param templateName The Heritrix template to be used.
+     * @param maxBytes The number of max bytes allowed
+     * @param maxObjects The number of max objected allowed
+     * @param acceptedSeeds The set of accepted seeds
+     */
     private void addSeedsToDomain(String templateName,  long maxBytes,
             int maxObjects, Map<String, Set<String>> acceptedSeeds) {      
         // Generate components for the name for the configuration and seedlist
@@ -586,7 +579,4 @@ public class PartialHarvest extends HarvestDefinition {
         }
 
     }
-    
-    
-
 }
