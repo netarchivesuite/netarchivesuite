@@ -676,14 +676,19 @@ public final class DBUtils {
         if (contents != null) {
             if (contents.length() > maxSize) {
                 log.warn(
-                        fieldName + " of " + o
+                        "The field '" + fieldName + "' "
                         + " is longer than the allowed " + maxSize
                         + " characters. The contents is now truncated to "
-                        + "length " + maxSize
-                        + ". The untruncated contents was: " + contents);
+                        + "length " + maxSize);
+                // This caused OOM if both the 'contents' and o.toString() was large
+                // (See NAS-2015).
+                // It is therefore omitted from this log-entry.
+                
                 // truncate to length maxSize (if maxSize <= Integer.MAX_VALUE)
                 // else truncate to length Integer.MAX_VALUE
                 if (maxSize > Integer.MAX_VALUE) {
+                    log.warn("The maxSize is larger than maxint (" +  Integer.MAX_VALUE
+                            + "), which is not allowed. MaxSize changed to maxint");
                     maxSize = Integer.MAX_VALUE;
                 }
                 contents = contents.substring(0, (int) maxSize);
