@@ -267,7 +267,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
 
             LogUtils.flushLogs(HarvestDBConnection.class.getName());
             FileAsserts.assertFileContains("Log should have given warning",
-                    "setClobMaxLength\nWARNING: fieldname", logfile);
+                    "setClobMaxLength\nWARNING: The field 'fieldname'", logfile);
             s.execute();
             storedContents = retrieveStoredClob(id);
             assertEquals("storedContents differs from original", contents.substring(0,(int) maxSize), storedContents);
