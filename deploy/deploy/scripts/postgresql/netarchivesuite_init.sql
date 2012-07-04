@@ -87,6 +87,14 @@ INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'runningjobsmonitor', 2);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'frontierreportmonitor', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldtype', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfield', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldvalue', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldhistoryvalue', 1);
 
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE schemaversions TO netarchivesuite;
@@ -261,7 +269,7 @@ CREATE TABLE fullharvests (
      maxobjects bigint NOT NULL default -1,
      previoushd bigint,
      maxbytes bigint NOT NULL default -1,
-     maxjobrunningtime bigint NOT NULL default 0
+     maxjobrunningtime bigint NOT NULL default 0,
      isindexready bool NOT NULL
 );
 
@@ -385,8 +393,8 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE job_configs TO netarchivesuite;
 -- -----------------------------------------------------------------------------
 CREATE TABLE global_crawler_trap_lists(
     global_crawler_trap_list_id bigint NOT NULL PRIMARY KEY,
-    name VARCHAR(300) NOT NULL UNIQUE,
-    description VARCHAR(20000),
+    name varchar(300) NOT NULL UNIQUE,
+    description varchar(20000),
     isActive bool NOT NULL);
 
 CREATE SEQUENCE global_crawler_trap_list_id_seq
@@ -402,9 +410,9 @@ GRANT USAGE ON SEQUENCE global_crawler_trap_list_id_seq TO netarchivesuite;
 
 -- -----------------------------------------------------------------------------
 CREATE TABLE global_crawler_trap_expressions(
-    id bigint not null PRIMARY KEY,
+    id bigint NOT NULL PRIMARY KEY,
     crawler_trap_list_id bigint NOT NULL,
-    trap_expression VARCHAR(1000));
+    trap_expression varchar(1000));
 
 CREATE SEQUENCE global_crawler_trap_expressions_id_seq
 OWNED BY global_crawler_trap_expressions.id;
@@ -507,3 +515,61 @@ CREATE TABLE frontierReportMonitor (
 );
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE frontierReportMonitor TO netarchivesuite;
+
+-- *****************************************************************************
+-- Area: Extended fields definitions
+-- *****************************************************************************
+
+CREATE TABLE extendedfieldtype (
+    extendedfieldtype_id bigint NOT NULL PRIMARY KEY,
+    name varchar(50) NOT NULL
+);
+
+CREATE SEQUENCE extendedfieldtype_id_seq
+OWNED BY extendedfieldtype.extendedfieldtype_id;
+
+ALTER TABLE extendedfieldtype ALTER COLUMN extendedfieldtype_id
+SET DEFAULT NEXTVAL('extendedfieldtype_id_seq');
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE extendedfieldtype TO netarchivesuite;
+
+CREATE TABLE extendedfield (
+    extendedfield_id bigint NOT NULL PRIMARY KEY,
+    extendedfieldtype_id bigint NOT NULL,
+    name varchar(50) NOT NULL,
+    format varchar(50),
+    defaultvalue varchar(50),
+    options varchar(1000),
+    datatype int NOT NULL,
+    mandatory int NOT NULL,
+    historize int,
+    sequencenr int
+);
+
+CREATE SEQUENCE extendedfield_id_seq
+OWNED BY extendedfield.extendedfield_id;
+
+ALTER TABLE extendedfield ALTER COLUMN extendedfield_id
+SET DEFAULT NEXTVAL('extendedfield_id_seq');
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE extendedfield TO netarchivesuite;
+
+CREATE TABLE extendedfieldvalue (
+    extendedfieldvalue_id bigint NOT NULL PRIMARY KEY,
+    content varchar(50) NOT NULL,
+    extendedfield_id bigint NOT NULL,
+    instance_id bigint NOT NULL
+);
+
+CREATE SEQUENCE extendedfieldvalue_id_seq
+OWNED BY extendedfieldvalue.extendedfieldvalue_id;
+
+ALTER TABLE extendedfieldvalue ALTER COLUMN extendedfieldvalue_id
+SET DEFAULT NEXTVAL('extendedfieldvalue_id_seq');
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE extendedfieldvalue TO netarchivesuite;
+
+INSERT INTO extendedfieldtype (extendedfieldtype_id, name)
+    VALUES (1, 'domains');
+INSERT INTO extendedfieldtype (extendedfieldtype_id, name)
+    VALUES (2, 'harvestdefinitions');
