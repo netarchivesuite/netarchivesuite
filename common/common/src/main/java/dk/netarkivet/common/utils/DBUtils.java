@@ -676,9 +676,10 @@ public final class DBUtils {
         if (contents != null) {
             if (contents.length() > maxSize) {
                 log.warn(
-                        "The field '" + fieldName + "' "
-                        + " is longer than the allowed " + maxSize
-                        + " characters. The contents is now truncated to "
+                        "The field '" + fieldName + "' is " + contents.length() 
+                        + " characters long, which is "
+                                +  (contents.length() - maxSize) + " longer than the allowed " 
+                        + maxSize + " characters. The contents is now truncated to "
                         + "length " + maxSize);
                 // This caused OOM if both the 'contents' and o.toString() was large
                 // (See NAS-2015).
