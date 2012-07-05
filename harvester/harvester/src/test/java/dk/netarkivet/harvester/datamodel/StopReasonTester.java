@@ -85,9 +85,22 @@ public class StopReasonTester extends TestCase {
                      StopReason.CONFIG_OBJECT_LIMIT,
                      StopReason.getStopReason(5));
 
-        // Test that stopreasonNum less than 0 and greater than 5 results in IOFailure
+       //Test that stopreasonNum=6 returns StopReason.TIME_LIMIT
+        assertEquals("getStopReason(6) should return StopReason.TIME_LIMIT",
+                     StopReason.TIME_LIMIT,
+                     StopReason.getStopReason(6));
+
+        
+        
+        // Test that stopreasonNum less than 0 and greater than 6 results in IOFailure
         try {
-            StopReason.getStopReason(6);
+            StopReason.getStopReason(-1);
+            fail ("UnknownID expected");
+        } catch (UnknownID e){
+            // UnknownID expected
+        }
+        try {
+            StopReason.getStopReason(7);
             fail ("UnknownID expected");
         } catch (UnknownID e){
             // UnknownID expected

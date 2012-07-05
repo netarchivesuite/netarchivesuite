@@ -280,12 +280,11 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         if (lastLine.contains(
                 ProgressStatisticsConstants.ORDERLY_FINISH.pattern)) {
             if (lastLine.contains(ProgressStatisticsConstants
-                        .HARVEST_ABORTED.pattern)
-                        || 
-                lastLine.contains(ProgressStatisticsConstants
-                        .TIMELIMIT_EXCEEDED.pattern)) 
-            {
-               return StopReason.DOWNLOAD_UNFINISHED;
+                        .HARVEST_ABORTED.pattern)) {
+                return StopReason.DOWNLOAD_UNFINISHED;
+            } else if (lastLine.contains(ProgressStatisticsConstants
+                        .TIMELIMIT_EXCEEDED.pattern)) {
+               return StopReason.TIME_LIMIT;
             } else {
                return StopReason.DOWNLOAD_COMPLETE;
             }
