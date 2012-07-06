@@ -991,7 +991,8 @@ public class JobDBDAO extends JobDAO {
             statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            String message = "SQL error rescheduling job in database"
+            String message = "SQL error rescheduling job #" +  oldJobID 
+                    + " in database"
                 + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
@@ -1000,6 +1001,7 @@ public class JobDBDAO extends JobDAO {
             DBUtils.rollbackIfNeeded(connection, "resubmit job", oldJobID);
             HarvestDBConnection.release(connection);
         }
+        log.info("Job # " + oldJobID + " successfully as job # " + newJobID);
         return newJobID;
     }
 
