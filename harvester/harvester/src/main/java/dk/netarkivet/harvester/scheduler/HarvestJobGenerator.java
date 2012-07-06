@@ -27,7 +27,9 @@ package dk.netarkivet.harvester.scheduler;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -56,6 +58,12 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
      */
     protected static Set<Long> harvestDefinitionsBeingScheduled =
         Collections.synchronizedSet(new HashSet<Long>());
+    /** Used the store the currenttimeMillis when the scheduling of
+     *  a particular harvestdefinition # started. 
+     */
+    protected static Map<Long, Long> schedulingStartedMap =
+            Collections.synchronizedMap(new HashMap<Long, Long>());
+    
     /** The class logger. */
     private static final Log log =
         LogFactory.getLog(HarvestJobGenerator.class.getName());
@@ -111,7 +119,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                         timeToGenerateJobsFor);
             for (final Long id : readyHarvestDefinitions) {
                 // Make every HD run in its own thread, but at most once.
-                if (harvestDefinitionsBeingScheduled.contains(id)) {
+                if (harvestDefinitionsBeingScheduled.contains(id) && takesSuspicouslyLongToSchedule(id)) {
                     String harvestName = haDefinitionDAO.getHarvestName(id);
                     String errMsg = "Not creating jobs for harvestdefinition #"
                         + id + " (" + harvestName + ")"
@@ -127,11 +135,12 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                     }
                     continue;
                 }
-
+                
                 final HarvestDefinition harvestDefinition =
                     haDefinitionDAO.read(id);
 
                 harvestDefinitionsBeingScheduled.add(id);
+                schedulingStartedMap.put(id, System.currentTimeMillis());
 
                 if (!harvestDefinition.runNow(timeToGenerateJobsFor)) {
                     log.trace("The harvestdefinition '"
@@ -176,6 +185,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                         } finally {
                             harvestDefinitionsBeingScheduled.
                             remove(id);
+                            schedulingStartedMap.remove(id);
                             log.debug("Removed '" + harvestDefinition.getName()
                                     + "' from list of harvestdefinitions to be "
                                     + "scheduled. Harvestdefinitions still to "
@@ -184,6 +194,31 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                         }
                     }
                 }.start();
+            }
+        }
+
+        /**
+         * Find out if a scheduling takes more than is acceptable
+         * currently 5 minutes.
+         * @param harvestId A given harvestId
+         * @return true, if a scheduling of the given harvestId has taken more
+         * than 5 minutes, or false, if not or no scheduling for this harvestId 
+         * is underway
+         */
+        private static boolean takesSuspicouslyLongToSchedule(Long harvestId) {
+            // acceptable delay before issuing warning is currently hard-wired to
+            // 5 minutes (5 * 60 * 1000 milliseconds)
+            final long acceptableDelay = 5 * 60 * 1000;
+            Long timewhenscheduled = schedulingStartedMap.get(harvestId);
+            if (timewhenscheduled == null) {
+                return false;
+            } else {
+                long now = System.currentTimeMillis();
+                if (timewhenscheduled + acceptableDelay <  now) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
     }

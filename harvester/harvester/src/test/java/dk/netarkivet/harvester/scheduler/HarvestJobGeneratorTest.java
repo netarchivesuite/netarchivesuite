@@ -33,9 +33,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
@@ -181,14 +183,22 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         }
        
         // take the next ready definition, and inject the id of this
-        // into the harvestDefinitionsBeingScheduled datastructure
+        // into the harvestDefinitionsBeingScheduled datastructure and 
         Long readyHarvestId = iterator.next();
         @SuppressWarnings("rawtypes")
         Class c = Class.forName(HarvestJobGenerator.class.getName());
         Field f = c.getDeclaredField("harvestDefinitionsBeingScheduled");
+        Field f1 = c.getDeclaredField("schedulingStartedMap");
         Set<Long> harvestDefinitionsBeingScheduled =
                 Collections.synchronizedSet(new HashSet<Long>());
         harvestDefinitionsBeingScheduled.add(readyHarvestId);
+        
+        Map<Long, Long> schedulingStartedMap =
+                Collections.synchronizedMap(new HashMap<Long, Long>());
+        Long acceptabledelay = 5L * 60 * 1000;
+        Long scheduledTime = System.currentTimeMillis() - acceptabledelay - 1000L;
+        schedulingStartedMap.put(readyHarvestId, scheduledTime);
+        f1.set(null, schedulingStartedMap);
         f.set(null, harvestDefinitionsBeingScheduled);
         // redirect Stdout til myOut
         PrintStream origStdout = System.out;
