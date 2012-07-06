@@ -37,7 +37,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Similar to a FilterIterator, but takes a java.sql.ResultSet (which is neither
  * Iterable, Iterator nor Enumeration).
  * @param <T> The type returned by the ResultSetIterator
- * //TODO this class is apparently not used in any code. Consider deleting.
  */
 
 public abstract class ResultSetIterator<T> implements Iterator<T> {

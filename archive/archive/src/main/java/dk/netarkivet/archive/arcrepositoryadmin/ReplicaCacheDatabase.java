@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -709,20 +710,21 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * current file is set to 'UNKNOWN'. <br/>
      */
     public void updateChecksumStatus() {
+        log.info("UpdateChecksumStatus operation commencing");
         Connection con = ArchiveDBConnection.get();
         try {
             // Get all the fileids
-            List<Long> fileIds = DBUtils.selectLongList(con,
+            Iterator<Long> fileIdsIterator = DBUtils.selectLongIterator(con,
                     "SELECT file_id FROM file");
-
             // For each fileid
-            for (long fileId : fileIds) {
+            while (fileIdsIterator.hasNext()) {
+                long fileId = fileIdsIterator.next();
                 ReplicaCacheHelpers.fileChecksumVote(fileId, con);
             }
         } finally {
             ArchiveDBConnection.release(con);
         }
-       
+        log.info("UpdateChecksumStatus operation completed!");
     }
 
     /**

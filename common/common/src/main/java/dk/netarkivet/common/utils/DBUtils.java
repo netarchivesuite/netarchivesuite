@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -388,6 +389,42 @@ public final class DBUtils {
         } finally {
             closeStatementIfOpen(s);
         }
+    }
+    
+    /**
+     * Return an iterator to a list of Longs.
+     * @param connection an open connection to the database
+     * @param query The given sql-query (must not be null or empty string)
+     * @param args The arguments to insert into this query
+     * @return an iterator to a list of Longs.
+     */
+    public static Iterator<Long> selectLongIterator(Connection connection, String query,
+            Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
+        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
+        ArgumentNotValid.checkNotNull(args, "Object... args");
+        PreparedStatement s = null;
+        try {
+            s = prepareStatement(connection, query, args);
+            ResultSet result = s.executeQuery();
+            Iterator<Long> results = new ResultSetIterator<Long>(result) {
+                @Override
+                public Long filter(ResultSet result) {
+                    try {
+                    return result.getLong(1);
+                    } catch (SQLException e) {
+                        
+                       return 0L;
+                    }
+                }
+            };
+            return results;
+        } catch (SQLException e) {
+            closeStatementIfOpen(s);
+            throw new IOFailure("Error preparing SQL statement "
+                    + query + " args " + Arrays.toString(args)
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+        } 
     }
     
     /**
