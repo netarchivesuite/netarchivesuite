@@ -413,7 +413,8 @@ public final class DBUtils {
                     try {
                     return result.getLong(1);
                     } catch (SQLException e) {
-                        
+                        log.warn("Error retrieving long from resultset\n" 
+                                + ExceptionUtils.getSQLExceptionCause(e), e);
                        return 0L;
                     }
                 }
