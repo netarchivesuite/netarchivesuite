@@ -59,7 +59,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     protected static Set<Long> harvestDefinitionsBeingScheduled =
         Collections.synchronizedSet(new HashSet<Long>());
     /** Used the store the currenttimeMillis when the scheduling of
-     *  a particular harvestdefinition # started. 
+     *  a particular harvestdefinition # started or when last
+     *  a warning was issued.
      */
     protected static Map<Long, Long> schedulingStartedMap =
             Collections.synchronizedMap(new HashMap<Long, Long>());
@@ -119,7 +120,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                         timeToGenerateJobsFor);
             for (final Long id : readyHarvestDefinitions) {
                 // Make every HD run in its own thread, but at most once.
-                if (harvestDefinitionsBeingScheduled.contains(id) && takesSuspicouslyLongToSchedule(id)) {
+                if (harvestDefinitionsBeingScheduled.contains(id) && takesSuspiciouslyLongToSchedule(id)) {
                     String harvestName = haDefinitionDAO.getHarvestName(id);
                     String errMsg = "Not creating jobs for harvestdefinition #"
                         + id + " (" + harvestName + ")"
@@ -205,7 +206,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
          * than 5 minutes, or false, if not or no scheduling for this harvestId 
          * is underway
          */
-        private static boolean takesSuspicouslyLongToSchedule(Long harvestId) {
+        private static boolean takesSuspiciouslyLongToSchedule(Long harvestId) {
             // acceptable delay before issuing warning is currently hard-wired to
             // 5 minutes (5 * 60 * 1000 milliseconds)
             final long acceptableDelay = 5 * 60 * 1000;
@@ -215,6 +216,9 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
             } else {
                 long now = System.currentTimeMillis();
                 if (timewhenscheduled + acceptableDelay <  now) {
+                    // updates the schedulingStartedMap with currenttime for
+                    //the given harvestID when returning true
+                    schedulingStartedMap.put(harvestId, now);
                     return true;
                 } else {
                     return false;
