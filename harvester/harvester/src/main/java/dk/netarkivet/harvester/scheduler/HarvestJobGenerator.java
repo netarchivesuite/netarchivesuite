@@ -120,19 +120,21 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                         timeToGenerateJobsFor);
             for (final Long id : readyHarvestDefinitions) {
                 // Make every HD run in its own thread, but at most once.
-                if (harvestDefinitionsBeingScheduled.contains(id) && takesSuspiciouslyLongToSchedule(id)) {
-                    String harvestName = haDefinitionDAO.getHarvestName(id);
-                    String errMsg = "Not creating jobs for harvestdefinition #"
-                        + id + " (" + harvestName + ")"
-                        + " as the previous scheduling is still running";
-                    if (haDefinitionDAO.isSnapshot(id)) {
+                if (harvestDefinitionsBeingScheduled.contains(id)) {
+                    if (takesSuspiciouslyLongToSchedule(id)) {
+                        String harvestName = haDefinitionDAO.getHarvestName(id);
+                        String errMsg = "Not creating jobs for harvestdefinition #"
+                                + id + " (" + harvestName + ")"
+                                + " as the previous scheduling is still running";
+                        if (haDefinitionDAO.isSnapshot(id)) {
                         // Log only at level debug if the ID represents 
                         // is a snapshot harvestdefinition, which are only run 
                         // once anyway
                         log.debug(errMsg);
-                    } else { // Log at level WARN, and send a notification, otherwise
-                        log.warn(errMsg);
-                        NotificationsFactory.getInstance().errorEvent(errMsg);
+                        } else { // Log at level WARN, and send a notification, if it is time
+                            log.warn(errMsg);
+                            NotificationsFactory.getInstance().errorEvent(errMsg);
+                        }
                     }
                     continue;
                 }
