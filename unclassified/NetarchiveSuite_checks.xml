@@ -64,7 +64,11 @@
     <!-- Checks that property files contain the same keys.         -->
     <!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
     <module name="Translation"/>
-
+    
+	<!-- This module is new to Checkstyle 5 -->
+    <module name="FileTabCharacter">
+    	<property name="eachLine" value="true"/>
+    </module>
 
     <module name="TreeWalker">
 
@@ -87,7 +91,7 @@
         <module name="MethodName"/>
         <module name="PackageName"/>
         <module name="ParameterName"/>
-        <module name="StaticVariableName"/>
+        <!-- <module name="StaticVariableName"/> -->
         <module name="TypeName"/>
 
 
@@ -119,7 +123,10 @@
 
         <!-- Checks for Size Violations.                    -->
         <!-- See http://checkstyle.sf.net/config_sizes.html -->
-        <module name="FileLength"/>
+        
+        <!-- This module has in Checkstyle 5.* been moved to the Checker module: 
+        	<module name="FileLength"/> 
+        -->
         <module name="LineLength">
           <property name="ignorePattern" value="^import .*$"/>
         </module>
@@ -140,7 +147,10 @@
         <module name="OperatorWrap"/>
         <module name="ParenPad"/>
         <module name="TypecastParenPad"/>
-        <module name="TabCharacter"/>
+        <!-- this module is in checkstyle 5 replaced by
+            the FileTabCharacter module above:
+        	<module name="TabCharacter"/>
+        -->
         <module name="WhitespaceAfter"/>
         
         <module name="WhitespaceAround">
@@ -174,7 +184,9 @@
         </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <module name="MagicNumber"/>
+        <module name="MagicNumber">
+ 		<property name="ignoreNumbers" value="-1, 0, 1, 2, 3"/>
+	</module>
         <module name="MissingSwitchDefault"/>
 
         <!-- Ignore redundant throws statements. 

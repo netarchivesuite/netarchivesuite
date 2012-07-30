@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -22,20 +24,18 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.lang.reflect.Field;
-import java.sql.Connection;
-
-import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
+import java.lang.reflect.Field;
+import java.sql.Connection;
 
 /**
  * Alternate unit test class for the TemplateDAO.
@@ -53,11 +53,11 @@ public class TemplateDAOTesterAlternate extends TestCase {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-        Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
+        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                 + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
 
         Connection c = DatabaseTestUtils.getHDDB(TestInfo.EMPTYDBFILE,
                 "emptyhddb", TestInfo.TEMPDIR);
@@ -68,7 +68,7 @@ public class TemplateDAOTesterAlternate extends TestCase {
         }
 
         assertEquals("DBUrl wrong",
-                Settings.get(CommonSettings.DB_URL), "jdbc:derby:" 
+                Settings.get(CommonSettings.DB_BASE_URL), "jdbc:derby:" 
                 + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
         TemplateDAO.getInstance();
     }
@@ -79,7 +79,7 @@ public class TemplateDAOTesterAlternate extends TestCase {
         Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
         f.set(null, null);
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         rs.tearDown();
     }
 

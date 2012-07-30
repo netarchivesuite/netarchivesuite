@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -244,14 +246,14 @@ public class MetadataEntry implements Serializable {
     
     /**
      * Set the url for this object.
-     * @param url a given URL
+     * @param aUrl a given URL
      * @throws ArgumentNotValid if the URL is not valid
      */
-    private void setURL(String url){
-        if (isURLValid(url)) {
-            this.url = url;
+    private void setURL(String aUrl){
+        if (isURLValid(aUrl)) {
+            this.url = aUrl;
         } else {
-            throw new ArgumentNotValid("The given URL is not valid: " + url);
+            throw new ArgumentNotValid("The given URL is not valid: " + aUrl);
         }
     }
 

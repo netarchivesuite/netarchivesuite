@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -64,7 +66,8 @@ public class SeedListTester extends DataModelTestCase {
             List<SeedList> seedlists = new ArrayList<SeedList>();
             seedlists.add(sl);
             
-            DomainConfiguration cfg = new DomainConfiguration("test", d, seedlists, new ArrayList<Password>());
+            DomainConfiguration cfg = new DomainConfiguration("test", d, 
+            		seedlists, new ArrayList<Password>());
             cfg.setOrderXmlName(TestInfo.ORDER_XML_NAME);
             cfg.setMaxObjects(10);
             cfg.setMaxRequestRate(11);

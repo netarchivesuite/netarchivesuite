@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,7 +30,7 @@ package dk.netarkivet.testutils.preconfigured;
  * that encapsulate one particular aspect to be handled
  * by setUp() and tearDown() in many unit tests.
  */
-interface TestConfigurationIF {
+public interface TestConfigurationIF {
     /**
      * Set up the test environment to handle the particular
      * aspect that we handle.

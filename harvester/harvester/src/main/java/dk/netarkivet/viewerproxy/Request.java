@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,12 +42,12 @@ public interface Request {
      *
      * @return The URI from this request.
      */
-    public URI getURI();
+    URI getURI();
 
     /** Get all parameters in this request.
      * Note: This may only be accessible while handling the request, and
      * invalidated when the request is handled.
      * @return a map from parameter names to parameter values
      */
-    public Map<String,String[]> getParameterMap();
+    Map<String, String[]> getParameterMap();
 }

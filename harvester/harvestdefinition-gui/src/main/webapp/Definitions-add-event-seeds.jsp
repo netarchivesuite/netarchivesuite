@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -56,16 +58,12 @@ harvest.
                  org.apache.commons.fileupload.FileItemFactory,
                  org.apache.commons.fileupload.disk.DiskFileItemFactory,
                  org.apache.commons.fileupload.servlet.ServletFileUpload,
-                 org.apache.commons.fileupload.FileItem,
-                 dk.netarkivet.harvester.webinterface.EventHarvest"
+                 org.apache.commons.fileupload.FileItem,dk.netarkivet.harvester.webinterface.EventHarvestUtil"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
-    private static final I18n I18N
-            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-%><%
-    HTMLUtils.setUTF8(request);
+/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!private static final I18n I18N
+            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%><%HTMLUtils.setUTF8(request);
     
     boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
     String harvestName = null;
@@ -130,25 +128,26 @@ harvest.
     	}
     }
     
-    PartialHarvest harvest = (PartialHarvest)
-            HarvestDefinitionDAO.getInstance().
-                    getHarvestDefinition(harvestName);
-    if (harvest == null) {
+    HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance(); 
+    if (!hddao.exists(harvestName)) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                 "errormsg;harvest.0.does.not.exist",
                 harvestName);
         return;
     }
+    // Should we test, that this is in fact a PartialHarvest
+    String harvestComments = hddao.getSparsePartialHarvest(
+    	harvestName).getComments();
+    
     if (update != null && update.length() > 0) {
         try {
             if (!isMultiPart) {
-			  	EventHarvest.addConfigurations(pageContext, I18N, harvest);
+			  	EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName);
 			} else {
-				if (!seedsFileName.isEmpty()) { // File exists
-					String seeds = FileUtils.readFile(seedsFile);			
-					if (!seeds.isEmpty()) {
-						EventHarvest.addConfigurationsFromSeedsFile(
-							pageContext, I18N, harvest, seeds, maxbytesString, 
+				if (!seedsFileName.isEmpty()) { // File exist 		
+					if (seedsFile.length() > 0) { // and has size > 0
+						EventHarvestUtil.addConfigurationsFromSeedsFile(
+							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
 							maxobjectsString, maxrateString, orderTemplateString);
 					}
 				} else {
@@ -167,8 +166,7 @@ harvest.
                 + HTMLUtils.encode(harvestName));
         return;
     }
-    HTMLUtils.generateHeader(pageContext);
-%>
+    HTMLUtils.generateHeader(pageContext);%>
 
 <h2><fmt:message key="prompt;event.harvest"/>
     <%=HTMLUtils.escapeHtmlValues(harvestName)%>
@@ -179,7 +177,7 @@ Here we print the comments field from the harvest definition as a service to
 the user
 --%>
 <div class="show_comments">
-    <%=HTMLUtils.escapeHtmlValues(harvest.getComments())%>
+    <%=HTMLUtils.escapeHtmlValues(harvestComments)%>
 </div>
 
 <form action="Definitions-add-event-seeds.jsp" 
@@ -192,7 +190,6 @@ the user
     <%--Setting of these variables is not currently supported in the system so we
      just use default values as placeholders for a future upgrade --%>
     <input type="hidden" name="<%= Constants.MAX_RATE_PARAM %>" value="-1"/>
-    <input type="hidden" name="<%= Constants.MAX_OBJECTS_PARAM %>" value="-1"/>
     <table class="selection_table">
         <tr>
             <th colspan="2">
@@ -216,6 +213,13 @@ the user
                        value="<%= HTMLUtils.localiseLong(dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES, pageContext) %>"/>
             </td>
         </tr>
+        <tr>
+            <td><fmt:message key="prompt;max.objects.per.domain"/></td>
+            <td><input type="text" name="<%= Constants.MAX_OBJECTS_PARAM %>"
+                       value="<%= HTMLUtils.localiseLong(dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS, pageContext) %>"/>
+            </td>
+        </tr>
+        
         <tr>
             <td><fmt:message key="prompt;harvest.template"/></td>
             <td>

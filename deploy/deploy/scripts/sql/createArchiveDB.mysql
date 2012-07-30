@@ -1,0 +1,113 @@
+-- File:        $Id: createArchiveDB.sql 1359 2010-04-15 13:04:12Z svc $
+-- Revision:    $Revision: 1359 $
+-- Author:      $Author: svc $
+-- Date:        $Date: 2010-04-15 15:04:12 +0200 (Thu, 15 Apr 2010) $
+--
+-- The Netarchive Suite - Software to harvest and preserve websites
+-- Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+--
+-- This library is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU Lesser General Public
+-- License as published by the Free Software Foundation; either
+-- version 2.1 of the License, or (at your option) any later version.
+--
+-- This library is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- Lesser General Public License for more details.
+--
+-- You should have received a copy of the GNU Lesser General Public
+-- License along with this library; if not, write to the Free Software
+-- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+ 
+--
+-- create script for use with MySQL that creates the adminDB.
+-- this is a draft!!!!!
+--
+
+create table schemaversions (
+    tablename varchar(100) not null, -- Name of table
+    version int not null             -- Version of table 
+);
+
+INSERT INTO schemaversions ( tablename, version ) 
+    VALUES ( 'replica', 1);
+INSERT INTO schemaversions ( tablename, version ) 
+    VALUES ( 'replicafileinfo', 1);
+INSERT INTO schemaversions ( tablename, version ) 
+    VALUES ( 'file', 1);
+INSERT INTO schemaversions ( tablename, version ) 
+    VALUES ( 'segment', 1);
+ 
+    
+--***************************************************************************--
+-- Area: replica
+-- 
+--***************************************************************************--
+
+
+create table replica (
+    replica_guid bigint not null AUTO_INCREMENT PRIMARY KEY,
+                                               -- Unique id for the table
+    replica_id  varchar(300) not null unique,  -- the unique string identifier for this replica
+    replica_name varchar(300) not null unique, -- Name of the replica
+    replica_type varchar(50) not null,         -- Type of the replica (CHECKSUM, BITARCHIVE, NO_REPLICA_TYPE)
+    filelist_updated datetime,                -- Last time the replica performed a filelist job.
+    checksum_updated datetime                 -- Last time the replica performed a checksum job.
+);
+
+--***************************************************************************--
+-- Area: replicafileinfo
+-- 
+--***************************************************************************--
+
+create table replicafileinfo (
+     replicafileinfo_guid bigint not null AUTO_INCREMENT PRIMARY KEY,
+                                       -- The unique identifier for this table.
+     replica_id varchar(300) not null, -- The identifier for the replica.
+     file_id bigint,                   -- The identification of the file.
+     segment_id bigint,                -- The identification for the segment.
+     checksum varchar(300),            -- The checksum for the file.
+     upload_status int,                -- Either a string or integer representation of a ENUM (UNKNOWN, STARTED, 
+                                       -- UPLOADED, FAILED, COMPLETED).
+     checksum_status int,              -- Either a string or integer representation of a ENUM (UNKNOWN, CORRUPT,
+                                       -- CORRUPT).
+     filelist_status int,              -- Either a string or integer representation of a ENUM (NO_STATUS, 
+                                       -- MISSING, OK)
+     filelist_checkdatetime datetime, -- Last time the filelist status for the file was checked 
+     checksum_checkdatetime datetime  -- Last time the checksum status for the file was checked 
+     );
+     
+create index fileandreplica on replicafileinfo (file_id, replica_id);
+create index replicaandfileliststatus on replicafileinfo (replica_id, filelist_status);
+create index replicaandchecksumstatus on replicafileinfo (replica_id, checksum_status);
+
+     
+--***************************************************************************--
+-- Area: file
+-- 
+--***************************************************************************--
+
+create table file (
+     file_id bigint not null AUTO_INCREMENT PRIMARY KEY,
+                            -- the id of the file and unique id for the table.
+     filename varchar(300)  -- the name of the file.
+); 
+
+create index fileindex on file (filename);
+
+--***************************************************************************--
+-- Area: segment
+-- 
+--***************************************************************************--
+
+create table segment (
+     segment_guid bigint not null AUTO_INCREMENT PRIMARY KEY,
+                                       -- The unique id for the table.
+     replica_id bigint,                -- the id of the replica
+     segment_id bigint,                -- the id of the segment 
+     segment_address varchar(300),     -- the logical address of the segment
+     filelist_checkdatetime datetime, -- Last time the filelist status for the replica was checked 
+     checksum_checkdatetime datetime  -- Last time the checksum status for the replica was checked 
+); 

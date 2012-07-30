@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,7 +30,7 @@ package dk.netarkivet.common.exceptions;
  * thus should stop all processing and just return at the top level JSP.
  */
 public class ForwardedToErrorPage extends NetarkivetException {
-    /** Create a new ForwardedToErrorPage exception
+    /** Create a new ForwardedToErrorPage exception.
      *
      * @param message Explanatory message
      */
@@ -36,7 +38,7 @@ public class ForwardedToErrorPage extends NetarkivetException {
         super(message);
     }
 
-    /** Create a new ForwardedToErrorPage exception based on an old exception
+    /** Create a new ForwardedToErrorPage exception based on an old exception.
      *
      * @param message Explanatory message
      * @param cause The exception that prompted the forwarding.

@@ -4,7 +4,9 @@
  * Date:             $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -123,6 +125,7 @@ public abstract class HarvestDefinition implements Named {
      * When a previous harvest definition is supplied, only domains not
      * completely harvested by the previous harvestdefinition are included
      * in this harvestdefinition.
+     * indexready set to false.
      *
      * @param harvestDefName  the name of the harvest definition
      * @param comments        description of the harvestdefinition
@@ -132,16 +135,20 @@ public abstract class HarvestDefinition implements Named {
      *                        any domain
      * @param maxBytes        the maximum number of bytes harvested from
      *                        any domain  
+     * @param maxJobRunningTime The maximum running time for each job
      * @return a snapshot harvestdefinition
      */
     public static FullHarvest createFullHarvest(String harvestDefName,
                                                 String comments,
                                                 Long prevHarvestOid,
                                                 long maxCountObjects,
-                                                long maxBytes) {
+                                                long maxBytes,
+                                                long maxJobRunningTime) {
 
         return new FullHarvest(harvestDefName, comments,
-                               prevHarvestOid, maxCountObjects, maxBytes);
+                               prevHarvestOid, maxCountObjects, 
+                               maxBytes, maxJobRunningTime,
+                               false);
     }
 
 
@@ -241,7 +248,7 @@ public abstract class HarvestDefinition implements Named {
      *
      * @return That number
      */
-    int getNumEvents() {
+    public int getNumEvents() {
         return numEvents;
     }
 
@@ -299,7 +306,7 @@ public abstract class HarvestDefinition implements Named {
      *
      * @return The number of jobs created
      */
-    int createJobs() {
+    public int createJobs() {
         int jobsMade = 0;
         final Iterator<DomainConfiguration> domainConfigurations
                 = getDomainConfigurations();
@@ -498,7 +505,7 @@ public abstract class HarvestDefinition implements Named {
             if (cmp != 0) {
                 return cmp;
             }
-
+            
             //Compare expected sizes
             long expectedsize1 = cfg1.getExpectedNumberOfObjects(objectLimit,
                                                                  byteLimit);

@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +33,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.testutils.StringAsserts;
 
 /** Unit-test for the SnapshotHarvestDefinition class. */
-public class SnapshotHarvestDefinitionTester extends WebinterfaceTestCase {
+public class SnapshotHarvestDefinitionTester extends HarvesterWebinterfaceTestCase {
     public SnapshotHarvestDefinitionTester(String s) {
         super(s);
     }
@@ -58,7 +60,7 @@ public class SnapshotHarvestDefinitionTester extends WebinterfaceTestCase {
                    dao.getHarvestDefinition(newHDname));
         I18n I18N = new I18n(
                 dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
-        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
+        PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(
                 request);
         SnapshotHarvestDefinition.processRequest(pageContext, I18N);
 
@@ -97,7 +99,7 @@ public class SnapshotHarvestDefinitionTester extends WebinterfaceTestCase {
             I18n I18N = new I18n(
                     dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
             request.removeParameter(toFind);
-            PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
+            PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(
                     request);
             SnapshotHarvestDefinition.processRequest(pageContext, I18N);
             fail("Should complain about missing " + toFind);
@@ -118,7 +120,7 @@ public class SnapshotHarvestDefinitionTester extends WebinterfaceTestCase {
         try {
             I18n I18N = new I18n(
                     dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
-            PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
+            PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(
                     request);
             SnapshotHarvestDefinition.processRequest(pageContext, I18N);
             fail("Should complain about missing " + toFind);

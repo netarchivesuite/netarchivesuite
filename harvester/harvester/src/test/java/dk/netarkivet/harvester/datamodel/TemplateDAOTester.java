@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -22,17 +24,14 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
-import java.util.Iterator;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.testutils.StringAsserts;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+
+import java.io.File;
+import java.util.Iterator;
 
 
 /**
@@ -102,7 +101,7 @@ public class TemplateDAOTester extends DataModelTestCase {
                 dao.exists(defaultOrderXmlName));
 
         Document doc = dao.read(defaultOrderXmlName).getTemplate();
-        
+
         assertNull("Template should have no foo element",
                 doc.getRootElement().attribute("foo"));
 
@@ -113,32 +112,6 @@ public class TemplateDAOTester extends DataModelTestCase {
                 doc2.getRootElement().attribute("foo"));
         assertEquals("Foo element should be bar",
                 "bar", doc2.getRootElement().attribute("foo").getStringValue());
-    }
-
-    public void testDelete() {
-        TemplateDAO dao = TemplateDAO.getInstance();
-        String defaultOrderXmlName = Settings.get(
-                HarvesterSettings.DOMAIN_DEFAULT_ORDERXML);
-        assertTrue("The default orderxml should exist",
-                dao.exists(defaultOrderXmlName));
-        dao.delete(defaultOrderXmlName);
-        assertFalse("The default orderxml should not exist anymore",
-                dao.exists(defaultOrderXmlName));
-
-        // Test that you cannot delete a template in use.
-        try {
-            dao.delete("FullSite-order");
-            fail("Should not be allowed to delete template in use");
-        } catch (PermissionDenied e) {
-            // Expected
-            for (String domainName : new String[] {
-                "dr.dk", "kb.dk", "netarkivet.dk", "statsbiblioteket.dk"
-            }) {
-                StringAsserts.assertStringContains("Should mention that "
-                        + domainName + " uses the template",
-                        domainName, e.getMessage());
-            }
-        }
     }
 
     /**

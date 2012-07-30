@@ -4,7 +4,9 @@
  * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +26,9 @@
 package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 
 import org.apache.commons.logging.Log;
@@ -108,6 +113,11 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * Channel to send BatchEnded messages to when replying.
      */
     private ChannelID baMon;
+    
+    /**
+     * Map between running batchjob processes and their message id.
+     */
+    public Map<String, Thread> batchProcesses;
 
     /**
      * Returns the unique instance of this class
@@ -174,6 +184,10 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
             log.warn("Not enough space to guarantee store -- not listening "
                     + "to " + anyBa.getName());
         }
+        
+        // create map for batchjobs
+        batchProcesses = Collections.synchronizedMap(new HashMap<String, 
+                Thread>());
 
         // Create and start the heartbeat sender
         Timer timer = new Timer(true);
@@ -197,7 +211,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
 
     /**
      * Ends the heartbeat sender before next loop and removes the
-     * server as listener on allBa and anyBa. Clsoes bitarchive.
+     * server as listener on allBa and anyBa. Closes the bitarchive.
+     * Calls cleanup.
      */
     public synchronized void close() {
         log.info("BitarchiveServer " + getBitarchiveAppId() + " closing down");
@@ -389,7 +404,6 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
         }
     }
 
-
     /**
      * Process a batch job and send the result back to the client.
      *
@@ -405,7 +419,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                 try {
                     // TODO Possibly tell batch something that will let
                     //  it create more comprehensible file names.
-                    //Run the batch job on all files on this machine
+                    // Run the batch job on all files on this machine
                     BatchStatus batchStatus = ba.batch(bitarchiveAppId,
                                                        msg.getJob());
 
@@ -414,7 +428,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                             = new BatchEndedMessage(baMon, msg.getID(),
                                                     batchStatus);
 
-                    //Update informational fields in reply message
+                    // Update informational fields in reply message
                     if (batchStatus.getFilesFailed().size() > 0) {
                         resultMessage.setNotOk(
                                 "Batch job failed on "
@@ -422,10 +436,9 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                                 + " files.");
                     }
 
-
-                    //Send the reply
+                    // Send the reply
                     con.send(resultMessage);
-                    log.debug("Submitted result message for batch job:"
+                    log.debug("Submitted result message for batch job: "
                              + msg.getID());
                 } catch (Throwable e) {
                     log.warn("Batch processing failed for message '"
@@ -435,13 +448,62 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                                     baMon, bitarchiveAppId,
                                     msg.getID(), new NullRemoteFile());
                     failMessage.setNotOk(e);
+                    
                     con.send(failMessage);
-                    log.debug("Submitted failure message for batch job:"
+                    log.debug("Submitted failure message for batch job: "
                              + msg.getID());
+                } finally {
+                    // remove from map
+                    batchProcesses.remove(msg.getBatchID());
                 }
             }
         };
+        batchProcesses.put(msg.getBatchID(), batchThread);
         batchThread.start();
+    }
+    
+    public void visit(BatchTerminationMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "BatchTerminationMessage msg");
+        log.info("Received BatchTerminationMessage: " + msg);
+
+        try {
+            Thread t = batchProcesses.get(msg.getTerminateID());
+
+            // check whether the batchjob is still running.
+            if(t == null) {
+                log.info("The batchjob with ID '" + msg.getTerminateID() 
+                        + "' cannot be found, and must have terminated "
+                        + "by it self.");
+                return;
+            }
+            
+            // try to interrupt.
+            if(t.isAlive()) {
+                t.interrupt();
+            }
+            
+            // wait one second, before verifying whether it is dead.
+            synchronized(this) {
+                try {
+                    this.wait(1000);
+                } catch (InterruptedException e) {
+                    log.trace("Unimportant InterruptedException caught.", e);
+                }
+            }
+            
+            // Verify that is dead, or log that it might have a problem. 
+            if(t.isAlive()) {
+                log.error("The thread '" + t + "' should have been terminated,"
+                        + " but it is apparently still alive.");
+            } else {
+                log.info("The batchjob with ID '" + msg.getTerminateID()
+                        + "' has successfully been terminated!");
+            }
+        } catch (Throwable e) {
+            // log problem and set to NotOK!
+            log.error("An error occured while trying to terminate " 
+                    + msg.getTerminateID(), e);
+        }
     }
 
     /**
@@ -458,6 +520,9 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
             File foundFile = ba.getFile(msg.getArcfileName());
             // Only send an reply if the file was found
             if (foundFile != null) {
+                //Be Warned!! The following call does not do what you think it
+                //does. This actually creates the RemoteFile object, uploading
+                //the file to the ftp server as it does so.
                 msg.setFile(foundFile);
                 log.info("Sending reply: " + msg.toString());
                 con.reply(msg);

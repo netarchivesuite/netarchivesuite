@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -163,7 +165,9 @@ public class RmiProxyConnectionFactory implements
             }.start();
         }
 
-        /** Sleep until the timeout has occured, or connection is succesful. */
+        /** 
+         * Sleep until the timeout has occurred, or connection is successful. 
+         */
         private void waitForConnection() {
             long timeouttime = System.currentTimeMillis() + JMX_TIMEOUT;
             while (connecting.get()
@@ -241,9 +245,11 @@ public class RmiProxyConnectionFactory implements
          * Uses Java's built-in facilities for creating proxies to remote
          * MBeans. Does not support notifications.
          *
-         * @param name The name of an MBean on the registered MBeanServerConnection
+         * @param name The name of an MBean on the registered 
+         * MBeanServerConnection
          * @param intf The interface that the returned proxy should implement.
-         *
+         * @param <T> the type of class the argument intf is, and the return 
+         * type. 
          * @return an object implementing T. This object forwards all method
          *         calls to the MBean registered under the given name on the
          *         MBeanServerConnection that we use.

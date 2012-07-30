@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +46,7 @@ import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 /**
  * Unit-test for class ScheduleDefinition.
  */
-public class ScheduleDefinitionTester extends WebinterfaceTestCase {
+public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
 
     private static final String DATE_FORMAT = "dd/M yyyy HH:mm";
     private static ScheduleDAO sdao = null;

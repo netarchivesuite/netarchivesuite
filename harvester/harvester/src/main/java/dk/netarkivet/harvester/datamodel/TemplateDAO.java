@@ -3,7 +3,9 @@
  * Author:      $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -100,20 +102,6 @@ public abstract class TemplateDAO {
      * this new orderxml-template
      */
     public abstract void create(String orderXmlName, HeritrixTemplate orderXml);
-
-    /**
-     * Describe where a given order template is being used.
-     *
-     * @param orderXmlName a given order template
-     * @return A string describing where the given order template is being used.
-     */
-    public abstract String describeUsages(String orderXmlName);
-
-    /**
-     * Delete a orderxml-template with a given name.
-     * @param orderXmlName a given name
-     */
-    public abstract void delete(String orderXmlName);
 
     /**
      * Update a specific orderxml-template to contain the contents

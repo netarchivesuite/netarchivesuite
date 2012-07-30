@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,6 +38,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 
+import org.apache.commons.io.IOUtils;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.security.SslSocketConnector;
 
@@ -81,11 +84,12 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     //This all initialises the ssl context to use the key in the keystore
     //above.
     {
+        FileInputStream keyStoreInputStream = null;    
         try {
+            keyStoreInputStream = new FileInputStream(KEYSTORE_PATH); 
             KeyStore store = KeyStore.getInstance(
                     SUN_JCEKS_KEYSTORE_TYPE);
-            store.load(
-                    new FileInputStream(KEYSTORE_PATH),
+            store.load(keyStoreInputStream, 
                     KEYSTORE_PASSWORD.toCharArray());
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(
                     SUN_X509_CERTIFICATE_ALGORITHM);
@@ -105,6 +109,8 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
         } catch (IOException e) {
             throw new IOFailure("Unable to create secure environment for"
                                 + " keystore '" + KEYSTORE_PATH + "'", e);
+        } finally {
+            IOUtils.closeQuietly(keyStoreInputStream);
         }
     }
 
@@ -114,7 +120,7 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      *
      * @return The unique instance.
      */
-    public synchronized static HTTPRemoteFileRegistry getInstance() {
+    public static synchronized HTTPRemoteFileRegistry getInstance() {
         synchronized (HTTPRemoteFile.class) {
             if (instance == null) {
                 instance = new HTTPSRemoteFileRegistry();
@@ -162,6 +168,9 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      * using the certificate above.
      *
      * @param url The URL to open connection to.
+     * @return an open connection to the given url
+     * @throws IOException If unable to open connection to the URL
+     * @throws IOFailure If the connection is not a secure connection
      */
     protected URLConnection openConnection(URL url) throws IOException {
         URLConnection connection = url.openConnection();

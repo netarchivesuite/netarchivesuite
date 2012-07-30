@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,9 +33,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class ByteClassLoader extends ClassLoader {
     /** Binary class data loaded from file. */
-    byte[] binaryData;
+    private final byte[] binaryData;
 
-    /** Constructor that reads data from a file
+    /** Constructor that reads data from a file.
      *
      * @param binaryFile A file containing a Java class.
      */
@@ -60,6 +62,7 @@ public class ByteClassLoader extends ClassLoader {
      *
      * @return A new Class object for this class.
      */
+    @SuppressWarnings("rawtypes")
     public Class defineClass() {
         return super.defineClass(null, binaryData, 0, binaryData.length);
     }

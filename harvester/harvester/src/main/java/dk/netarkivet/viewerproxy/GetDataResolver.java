@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -173,7 +175,9 @@ public class GetDataResolver extends CommandResolver {
         }
     }
 
-    /** Get a record from an ARC file, and write it to response.
+    /** Get a record from an ARC file, and write it to response. If the record
+     * has size greater than settings.viewerproxy.maxSizeInBrowser then a header
+     * is added to turn the response into a file-download.
      * @param request A get metadata request; parameters arcFile and arcOffset
      * are expected to be set.
      * @param response Metadata will be written to this response.
@@ -194,6 +198,12 @@ public class GetDataResolver extends CommandResolver {
                             "Null record returned by "
                             + "ViewerArcRepositoryClient.get("
                                 + fileName + "," + offset + "),");
+                }
+                long maxSize = Settings.getLong(ViewerProxySettings.MAXIMUM_OBJECT_IN_BROWSER);
+                //TODO: what happens if the record already has these headers defined?
+                if (record.getLength() > maxSize) {
+                    response.addHeaderField("Content-Disposition","Attachment; filename=record.txt");
+                    response.addHeaderField("Content-Type", "application/octet-stream");
                 }
                 record.getData(response.getOutputStream());
                 response.setStatus(OK_RESPONSE_CODE);

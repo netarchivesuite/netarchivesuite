@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -54,10 +56,11 @@ public abstract class ARCBatchJob extends FileBatchJob {
     protected int noOfRecordsProcessed = 0;
 
     /**
-     * Initialize the job before runnning.
+     * Initialize the job before running.
      * This is called before the processRecord() calls start coming.
      * @param os The OutputStream to which output data is written
      */
+    @Override
     public abstract void initialize(OutputStream os);
 
     /**
@@ -72,6 +75,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
      * This is called after the last processRecord() call.
      * @param os The OutputStream to which output data is written
      */
+    @Override
     public abstract void finish(OutputStream os);
 
     /**
@@ -96,6 +100,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
      * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
      */
+    @Override
     public final boolean processFile(File arcFile, OutputStream os) throws
             ArgumentNotValid{
         ArgumentNotValid.checkNotNull(arcFile, "arcFile");
@@ -128,7 +133,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
                 }
                 ARCRecord record = null;
                 while (it.hasNext()) {
-                    log.debug("At begin of processing-loop");
+                    log.trace("At begin of processing-loop");
                     // Get a record from the file
                     record = (ARCRecord) it.next();
                     // Process with the job
@@ -172,7 +177,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
                         // records
                         break;
                     }
-                    log.debug("At end of processing-loop");
+                    log.trace("At end of processing-loop");
                 } 
             } finally {
                 try {

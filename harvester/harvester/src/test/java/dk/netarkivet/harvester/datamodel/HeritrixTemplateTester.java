@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -22,18 +24,16 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
-import java.util.List;
-
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.XmlUtils;
 import junit.framework.TestCase;
-
 import org.archive.crawler.deciderules.DecidingScope;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Node;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.XmlUtils;
+import java.io.File;
+import java.util.List;
 //import dk.netarkivet.testutils.TestFileUtils;
 
 /** Testclass for class HeritrixTemplate. */

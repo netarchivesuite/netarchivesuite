@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -22,27 +24,20 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.sql.SQLException;
-import java.util.regex.Pattern;
-
-import junit.framework.TestCase;
-import org.dom4j.Document;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
-import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+import org.dom4j.Document;
+
+import java.io.*;
+import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 /**
  * Unit tests for the HarvestTemplateApplication tool.
@@ -69,8 +64,8 @@ public class HarvestTemplateApplicationTester extends TestCase {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-        TestUtils.resetDAOs();
-        Settings.set(CommonSettings.DB_URL,
+        HarvestDAOUtils.resetDAOs();
+        Settings.set(CommonSettings.DB_BASE_URL,
                 "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
         DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
                 TestInfo.TEMPDIR);
@@ -98,7 +93,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
 
         DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         rs.tearDown();
     }
 

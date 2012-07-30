@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,24 +48,39 @@ import dk.netarkivet.viewerproxy.distribute.HTTPControllerServer;
  *   urls and pass on non-command urls to the NotifyingURLResolver
  * - A GetDataResolver, which handles certain command urls for getting raw data
  *   and pass on the rest to the UnknownCommandResolver,
- * - A HTTPControllerServer, which delegates certain command urls to a controller
- *   and pass on the rest to the GetDataResolver,
+ * - A HTTPControllerServer, which delegates certain command urls to a
+ *   controller and pass on the rest to the GetDataResolver,
  * - A WebProxy, which listens for http requests, and sends them to the
  *   HTTPControllerServer
- *
  */
-
 public class ViewerProxy implements CleanupIF {
+    /** The singleton instance of this class. */
     private static ViewerProxy instance;
+    /** this setups the Jetty server behind our proxy. */
     private WebProxy webProxy;
+    /** The HTTPControllerServer. */
     private HTTPControllerServer controllerServer;
+    /** The unknown Command resolver. */
     private UnknownCommandResolver unknownCommandResolver;
+    /** The data resolver handling the different operations available here,
+     * {@link GetDataResolver#GET_FILE_COMMAND},
+     * {@link GetDataResolver#GET_METADATA_COMMAND},
+     * {@link GetDataResolver#GET_RECORD_COMMAND}.
+     */
     private GetDataResolver getDataResolver;
+    /** The NotifyingURIResolver. */
     private NotifyingURIResolver notifyingURIResolver;
+    /** The indexcache used. Trying to retrieve an index forces this index to 
+     * be generated, if it doesn't exist. */
     private JobIndexCache luceneIndexCache;
+    /** The object responsible for retrieving ARC data.  */
     private ARCArchiveAccess arcArchiveAccess;
+    /** The Control object for the viewerProxy. See {@link Controller}. */
     private Controller controller;
+    /** This enables us to record missing URL when accessing data through 
+     * this proxy. */
     private MissingURIRecorder missingURIRecorder;
+    /** This provides read-only access to the data in the archive. */
     private ViewerArcRepositoryClient arcRepositoryClient;
 
     /** Initiates the viewer proxy as described in class comment. */
@@ -73,11 +90,12 @@ public class ViewerProxy implements CleanupIF {
         luceneIndexCache = IndexClientFactory.getFullCrawllogInstance();
         arcArchiveAccess = new ARCArchiveAccess(arcRepositoryClient);
         missingURIRecorder = new MissingURIRecorder();
-        controller = new DelegatingController(missingURIRecorder, luceneIndexCache,
-                                    arcArchiveAccess);
+        controller = new DelegatingController(missingURIRecorder,
+                luceneIndexCache, arcArchiveAccess);
         notifyingURIResolver = new NotifyingURIResolver(arcArchiveAccess,
                                                         missingURIRecorder);
-        unknownCommandResolver = new UnknownCommandResolver(notifyingURIResolver);
+        unknownCommandResolver = new UnknownCommandResolver(
+                notifyingURIResolver);
         getDataResolver = new GetDataResolver(unknownCommandResolver,
                 arcRepositoryClient);
         controllerServer = new HTTPControllerServer(controller,

@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +36,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** This class tests the class dk.netarkivet.common.management.SingleMBeanObject. */
@@ -42,7 +43,6 @@ public class SingleMBeanObjectTester extends TestCase {
     private ObjectName name;
     private MBeanServer platformMBeanServer;
     ReloadSettings rs = new ReloadSettings();
-
     {
         try {
             name = new ObjectName(
@@ -70,7 +70,7 @@ public class SingleMBeanObjectTester extends TestCase {
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "1234");
         Settings.set(CommonSettings.THIS_PHYSICAL_LOCATION, "NO");
         Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "high");
+        Settings.set("settings.harvester.harvesting.queuePriority", "high");
         platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
     }
 

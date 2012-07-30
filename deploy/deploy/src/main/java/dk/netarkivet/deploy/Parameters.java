@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,8 +49,8 @@ public class Parameters {
     private Element installDir;
     /** The machine user name.*/
     private Element machineUserName;
-    /** The directory for the database.*/
-    private Element databaseDir;
+    /** The directory for the harvest definition database.*/
+    private Element hdDatabaseDir;
     /** The directory for the archive database.*/
     private Element arcDatabaseDir;
 
@@ -68,9 +70,8 @@ public class Parameters {
         installDir = root.getChild(Constants.DEPLOY_INSTALL_DIR);
         machineUserName = root.getChild(
                 Constants.DEPLOY_MACHINE_USER_NAME);
-        databaseDir = root.getChild(Constants.DEPLOY_DATABASE_DIR);
-        arcDatabaseDir = root.getChild(
-                Constants.DEPLOY_ARCHIVE_DATABASE_DIR);
+        hdDatabaseDir = root.getChild(Constants.DEPLOY_HARVEST_DATABASE_DIR);
+        arcDatabaseDir = root.getChild(Constants.DEPLOY_ARCHIVE_DATABASE_DIR);
     }
 
     /**
@@ -101,8 +102,8 @@ public class Parameters {
             machineUserName = parent.machineUserName.createCopy();
         } 
         // copy parent harvest database dir (if any)
-        if(parent.databaseDir != null) {
-            databaseDir = parent.databaseDir.createCopy();
+        if(parent.hdDatabaseDir != null) {
+            hdDatabaseDir = parent.hdDatabaseDir.createCopy();
         }
         // copy the parent archive database dir (if any)
         if(parent.arcDatabaseDir != null) {
@@ -152,14 +153,15 @@ public class Parameters {
                         + " but " + tmp.size() + " received.");
             }
         }
-        // check if root contains a database dir to overwrite inherited ones.
-        tmp = root.elements(Constants.DEPLOY_DATABASE_DIR);
+        // check if root contains a harvest database dir to overwrite 
+        // inherited ones.
+        tmp = root.elements(Constants.DEPLOY_HARVEST_DATABASE_DIR);
         if(tmp.size() > 0) {
-            databaseDir = tmp.get(0);
+            hdDatabaseDir = tmp.get(0);
             // log if more than one database directory.
             if(tmp.size() > 1) {
                 System.out.println("Maximum 1 value expected at: "
-                        + Constants.DEPLOY_DATABASE_DIR
+                        + Constants.DEPLOY_HARVEST_DATABASE_DIR
                         + " but " + tmp.size() + " received.");
             }
         }
@@ -212,9 +214,9 @@ public class Parameters {
      * @return The database directory element, or empty string if install dir 
      * is null.
      */
-    public String getDatabaseDirValue() {
-        if(databaseDir != null) {
-            return databaseDir.getText();
+    public String getHarvestDatabaseDirValue() {
+        if(hdDatabaseDir != null) {
+            return hdDatabaseDir.getText();
         } else {
             return "";
         }

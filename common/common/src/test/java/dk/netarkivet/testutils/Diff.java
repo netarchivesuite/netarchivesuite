@@ -281,11 +281,11 @@ public class Diff
         TreeMap matches = new TreeMap();
 
         while (aStart <= aEnd && bStart <= bEnd && equals(a[aStart], b[bStart])) {
-            matches.put(new Integer(aStart++), new Integer(bStart++));
+            matches.put(Integer.valueOf(aStart++), Integer.valueOf(bStart++));
         }
 
         while (aStart <= aEnd && bStart <= bEnd && equals(a[aEnd], b[bEnd])) {
-            matches.put(new Integer(aEnd--), new Integer(bEnd--));
+            matches.put(Integer.valueOf(aEnd--), Integer.valueOf(bEnd--));
         }
 
         Map bMatches = null;
@@ -313,7 +313,7 @@ public class Diff
                 positions = new ArrayList();
                 bMatches.put(key, positions);
             }
-            positions.add(new Integer(bi));
+            positions.add(Integer.valueOf(bi));
         }
 
         thresh = new TreeMap();
@@ -324,7 +324,7 @@ public class Diff
             List   positions = (List)bMatches.get(aElement);
 
             if (positions != null) {
-                Integer  k   = new Integer(0);
+                Integer  k   = Integer.valueOf(0);
                 ListIterator pit = positions.listIterator(positions.size());
                 while (pit.hasPrevious()) {
                     Integer j = (Integer)pit.previous();
@@ -335,8 +335,9 @@ public class Diff
                         // nothing
                     }
                     else {
-                        Object value = k.intValue() > 0 ? links.get(new Integer(k.intValue() - 1)) : null;
-                        links.put(k, new Object[] { value, new Integer(i), j });
+                        Object value = k.intValue() > 0 ? links.get(Integer.valueOf(k.intValue() - 1)) : null;
+                        links.put(k, new Object[] { 
+                                value, Integer.valueOf(i), j });
                     }
                 }
             }
@@ -417,11 +418,11 @@ public class Diff
     {
         Integer addIdx = null;
         if (thresh.size() == 0) {
-            addIdx = new Integer(0);
+            addIdx = Integer.valueOf(0);
         }
         else {
             Integer lastKey = (Integer)thresh.lastKey();
-            addIdx = new Integer(lastKey.intValue() + 1);
+            addIdx = Integer.valueOf(lastKey.intValue() + 1);
         }
         thresh.put(addIdx, value);
     }
@@ -431,7 +432,8 @@ public class Diff
      */
     protected Integer insert(Integer j, Integer k)
     {
-        if (isNonzero(k) && isGreaterThan(k, j) && isLessThan(new Integer(k.intValue() - 1), j)) {
+        if (isNonzero(k) && isGreaterThan(k, j) 
+                && isLessThan(Integer.valueOf(k.intValue() - 1), j)) {
             thresh.put(k, j);
         }
         else {
@@ -447,7 +449,7 @@ public class Diff
             // off the end?
             if (hi == -1 || j.compareTo(getLastValue()) > 0) {
                 append(j);
-                k = new Integer(hi + 1);
+                k = Integer.valueOf(hi + 1);
             }
             else {
                 // binary search for insertion point:
@@ -455,7 +457,7 @@ public class Diff
 
                 while (lo <= hi) {
                     int     index = (hi + lo) / 2;
-                    Integer val   = (Integer)thresh.get(new Integer(index));
+                    Integer val   = (Integer)thresh.get(Integer.valueOf(index));
                     int     cmp   = j.compareTo(val);
 
                     if (cmp == 0) {
@@ -469,8 +471,8 @@ public class Diff
                     }
                 }
 
-                thresh.put(new Integer(lo), j);
-                k = new Integer(lo);
+                thresh.put(Integer.valueOf(lo), j);
+                k = Integer.valueOf(lo);
             }
         }
 

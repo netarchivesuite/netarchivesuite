@@ -3,7 +3,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -42,9 +44,8 @@ import dk.netarkivet.testutils.StringAsserts;
  * Test the persistence framework for Domain.
  */
 public class DomainDAOTester extends DataModelTestCase {
-    private static final int NUM_DOMAINS = 4;
 
-    Connection c;
+    private static final int NUM_DOMAINS = 4;
 
     public void setUp() throws Exception {
         super.setUp();
@@ -69,9 +70,14 @@ public class DomainDAOTester extends DataModelTestCase {
         Domain wd = TestInfo.getDefaultNewDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(wd);
         wd.addConfiguration(cfg1);
-
         String domainName = wd.getName();
-        dao.create(wd);
+
+        Connection conn = HarvestDBConnection.get();
+        try {
+            dao.create(conn, wd);
+        } finally {
+            HarvestDBConnection.release(conn);
+        }
 
         // check that it is possible to retrieve the domain information again
         DomainDAO dao2 = DomainDAO.getInstance();
@@ -101,63 +107,14 @@ public class DomainDAOTester extends DataModelTestCase {
                      seedlist1.getSeedsAsString(), seedlist2.getSeedsAsString());
 
         // Test that we can't create it again.
+        conn = HarvestDBConnection.get();
         try {
-            dao.create(wd);
-            fail("Should not be able to create an already existing domain " + wd);
+            dao.create(conn, wd);
+            fail("Should not be able to create an already existing domain "
+                    + wd);
         } catch (PermissionDenied expected) {
             // Expected case
         }
-    }
-
-    /** Test deletion of WebDomains. */
-    public void testDelete() {
-        // create domain to delete
-        DomainDAO dao = DomainDAO.getInstance();
-        Domain wd = TestInfo.getDefaultNewDomain();
-        DomainConfiguration cfg1 = TestInfo.getDefaultConfig(wd);
-        wd.addConfiguration(cfg1);
-
-        int original_count = dao.getCountDomains();
-
-        dao.create(wd);
-
-        // create new dao just to check that it works from different dao's
-        DomainDAO dao2 = DomainDAO.getInstance();
-
-        // First check invalid argument scenarios
-        try {
-            dao2.delete(null);
-            fail("null not an allowed argument");
-        } catch (ArgumentNotValid e) {
-            //expected
-        }
-
-        try {
-            dao2.delete("");
-            fail("Empty string not an allowed argument");
-        } catch (ArgumentNotValid e) {
-            //expected
-        }
-
-        try {
-            dao2.delete("UnknownId");
-            fail("No domain exists with the requested id");
-        } catch (UnknownID e) {
-            //expected
-        }
-
-        assertTrue("The domain should exist before deletion",
-                   dao2.exists(wd.getName()));
-        assertTrue("The domain should be deletable",
-                   dao2.mayDelete(wd));
-        // perform the deletion
-        dao2.delete(TestInfo.DEFAULTNEWDOMAINNAME);
-
-        // verify no domain left
-        assertFalse("The deleted domain should not exist",
-                    dao2.exists(wd.getName()));
-        assertEquals("Should have the original number of domains after deletion",
-                     original_count, dao2.getCountDomains());
     }
 
     /** Check check updating of an existing entry. */
@@ -347,10 +304,14 @@ public class DomainDAOTester extends DataModelTestCase {
 
         //Testinfo
         HarvestInfo [] his = new HarvestInfo []{
-            new HarvestInfo(new Long(4), domain0.getName(), "fuld_dybde", new Date(400000L), 40, 1, StopReason.DOWNLOAD_COMPLETE),
-            new HarvestInfo(new Long(2), domain0.getName(), "fuld_dybde", new Date(300000L), 30, 2, StopReason.OBJECT_LIMIT),
-            new HarvestInfo(new Long(3), domain0.getName(), "fuld_dybde", new Date(200000L), 20, 3, StopReason.OBJECT_LIMIT),
-            new HarvestInfo(new Long(1), domain0.getName(), "fuld_dybde", new Date(100000L), 10, 4, StopReason.OBJECT_LIMIT)
+            new HarvestInfo(Long.valueOf(4), domain0.getName(), "fuld_dybde", 
+                    new Date(400000L), 40, 1, StopReason.DOWNLOAD_COMPLETE),
+            new HarvestInfo(Long.valueOf(2), domain0.getName(), "fuld_dybde", 
+                    new Date(300000L), 30, 2, StopReason.OBJECT_LIMIT),
+            new HarvestInfo(Long.valueOf(3), domain0.getName(), "fuld_dybde", 
+                    new Date(200000L), 20, 3, StopReason.OBJECT_LIMIT),
+            new HarvestInfo(Long.valueOf(1), domain0.getName(), "fuld_dybde", 
+                    new Date(100000L), 10, 4, StopReason.OBJECT_LIMIT)
         };
 
         //clear history
@@ -396,8 +357,10 @@ public class DomainDAOTester extends DataModelTestCase {
             //expected
         }
 
-        HarvestDefinition hd = HarvestDefinition.createFullHarvest("Full Harvest", "Test of full harvest", null, 2000,
-                                                                   Constants.DEFAULT_MAX_BYTES);
+        HarvestDefinition hd = HarvestDefinition.createFullHarvest(
+                "Full Harvest", "Test of full harvest", null, 2000,
+                Constants.DEFAULT_MAX_BYTES,
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hd.setSubmissionDate(new Date());
         HarvestDefinitionDAO.getInstance().create(hd);
 
@@ -412,8 +375,9 @@ public class DomainDAOTester extends DataModelTestCase {
         long time = System.currentTimeMillis()/1000*1000;
         //An older harvest info that should NOT be returned
         Date then = new Date(time);
-        HarvestInfo old_hi0 = new HarvestInfo(new Long(42L), domain0.getName(), config0.getName(), then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        config0.addHarvestInfo(old_hi0);
+        HarvestInfo old_hi0 = new HarvestInfo(Long.valueOf(42L), domain0.getName(), 
+                config0.getName(), then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        domain0.getHistory().addHarvestInfo(old_hi0);
         dao.update(domain0);
 
         //An older harvest info with same harvest definition that should NOT be returned
@@ -424,22 +388,27 @@ public class DomainDAOTester extends DataModelTestCase {
 
         //Three harvest infos, one for each type
         Date now = new Date(time + 1000);
-        HarvestInfo hi0 = new HarvestInfo(hd.getOid(), domain0.getName(), config0.getName(), now, 1L, 1L, StopReason.OBJECT_LIMIT);
-        config0.addHarvestInfo(hi0);
+        HarvestInfo hi0 = new HarvestInfo(hd.getOid(), domain0.getName(), 
+                config0.getName(), now, 1L, 1L, StopReason.OBJECT_LIMIT);
+        domain0.getHistory().addHarvestInfo(hi0);
         dao.update(domain0);
 
-        HarvestInfo hi1 = new HarvestInfo(hd.getOid(), domain1.getName(), config1.getName(), now, 1L, 1L, StopReason.OBJECT_LIMIT);
-        config1.addHarvestInfo(hi1);
+        HarvestInfo hi1 = new HarvestInfo(hd.getOid(), domain1.getName(), 
+                config1.getName(), now, 1L, 1L, StopReason.OBJECT_LIMIT);
+        domain1.getHistory().addHarvestInfo(hi1);
         dao.update(domain1);
 
-        HarvestInfo hi2 = new HarvestInfo(hd.getOid(), domain2.getName(), config2.getName(), now, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        config2.addHarvestInfo(hi2);
+        HarvestInfo hi2 = new HarvestInfo(hd.getOid(), domain2.getName(), 
+                config2.getName(), now, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        domain2.getHistory().addHarvestInfo(hi2);
         dao.update(domain2);
 
         //A newer harvest info that should NOT be returned
         Date later = new Date(time + 2000);
-        HarvestInfo new_hi0 = new HarvestInfo(new Long(43L), domain0.getName(), config0.getName(), later, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        config0.addHarvestInfo(new_hi0);
+        HarvestInfo new_hi0 = new HarvestInfo(Long.valueOf(43L), 
+                domain0.getName(), config0.getName(), later, 1L, 1L, 
+                StopReason.DOWNLOAD_COMPLETE);
+        domain0.getHistory().addHarvestInfo(new_hi0);
         dao.update(domain0);
 
         HarvestDefinitionDAO.getInstance().update(hd);
@@ -477,7 +446,8 @@ public class DomainDAOTester extends DataModelTestCase {
         List<String> definedregexps = new ArrayList<String>();
         definedregexps.add(".*dr\\.dk.*/.*\\.cgi");
         definedregexps.add(".*statsbiblioteket\\.dk/gentofte.*");
-        d.setCrawlerTraps(definedregexps);
+        boolean strictMode = true;
+        d.setCrawlerTraps(definedregexps, strictMode);
 
         //write and read the crawler traps
         DomainDAO.getInstance().create(d);
@@ -524,16 +494,13 @@ public class DomainDAOTester extends DataModelTestCase {
 
     public void testGetDomainHarvestInfo() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
-        
-        List<DomainHarvestInfo> info = dao.getDomainHarvestInfo("dr.dk");
-        assertEquals("Should have no info for unharvested domain", 0, info.size());
 
         final String domainName = "netarkivet.dk";
         Domain d = dao.read(domainName);
         DomainConfiguration dc = d.getDefaultConfiguration();
         HarvestInfo hi = new HarvestInfo(42L, 1L, domainName, dc.getName(),
                                          new Date(2L), 10000L, 100L, StopReason.DOWNLOAD_COMPLETE);
-        dc.addHarvestInfo(hi);
+        d.getHistory().addHarvestInfo(hi);
         d.updateConfiguration(dc);
         dao.update(d);
 
@@ -542,39 +509,21 @@ public class DomainDAOTester extends DataModelTestCase {
                      1, IteratorUtils.toList(d2.getHistory().getHarvestInfo()).size());
         dc = d2.getDefaultConfiguration();
         assertEquals("Default config should have harvest info for job 1",
-                     new Long(1), d2.getHistory().getMostRecentHarvestInfo(dc.getName()).getJobID());
-        info = dao.getDomainHarvestInfo(domainName);
-        assertEquals("Should have 1 info for harvested domain", 1, info.size());
-        DomainHarvestInfo hinfo = info.get(0);
-        assertEquals("Info should have right job id",
-                     1, hinfo.getJobID());
-        assertEquals("Info should have harvest name",
-                     "Testhøstning", hinfo.getHarvestName());
-        assertEquals("Info should have right harvest num",
-                     1, hinfo.getJobID());
-        assertEquals("Info should have config name",
-                     "Dansk_netarkiv_fuld_dybde", hinfo.getConfigName());
-        assertEquals("Info should have stopreason",
-                     StopReason.DOWNLOAD_COMPLETE, hinfo.getStopReason());
-        // No start or end date on this job.
-        assertEquals("Info should have correct #bytes",
-                     10000L, hinfo.getBytesDownloaded());
-        assertEquals("Info should have correct #docs",
-                     100L, hinfo.getDocsDownloaded());
+                     Long.valueOf(1), d2.getHistory().getMostRecentHarvestInfo(dc.getName()).getJobID());
 
         // For bug 570, test if having some history info with no job id
         // generates too many entries.
-        hi = new HarvestInfo(42L, null, domainName, dc.getName(), new Date(1L), 10L, 2L, StopReason.DOWNLOAD_COMPLETE);
-        dc.addHarvestInfo(hi);
-        hi = new HarvestInfo(42L, null, domainName, dc.getName(), new Date(3L), 11L, 3L, StopReason.DOWNLOAD_COMPLETE);
-        dc.addHarvestInfo(hi);
+        hi = new HarvestInfo(42L, null, domainName, dc.getName(), new Date(1L), 
+                10L, 2L, StopReason.DOWNLOAD_COMPLETE);
+        d2.getHistory().addHarvestInfo(hi);
+        hi = new HarvestInfo(42L, null, domainName, dc.getName(), new Date(3L), 
+                11L, 3L, StopReason.DOWNLOAD_COMPLETE);
+        d2.getHistory().addHarvestInfo(hi);
         d2.updateConfiguration(dc);
         dao.update(d2);
         d2 = dao.read(domainName);
         assertEquals("Domain should now have two more harvest infos",
                      3, IteratorUtils.toList(d2.getHistory().getHarvestInfo()).size());
-        info = dao.getDomainHarvestInfo(domainName);
-        assertEquals("Should have one info for each historyinfo", 3, info.size());
     }
 
     /** Test that we cannot store a domain that drops configs, seedlists
@@ -587,8 +536,6 @@ public class DomainDAOTester extends DataModelTestCase {
         Domain d = dao.read(domainName);
 
         // passwords
-        assertTrue("mayDelete should allow deleting",
-                   dao.mayDelete(d.getPassword("alphapassword")));
         d.removePassword("alphapassword");
         dao.update(d);
         // Should not get a failure.
@@ -596,8 +543,6 @@ public class DomainDAOTester extends DataModelTestCase {
         assertFalse("Password should be deleted in stored version",
                     d.hasPassword("alphapassword"));
 
-        assertFalse("mayDelete should not allow deleting",
-                    dao.mayDelete(d.getPassword("testpassword")));
         try {
             d.removePassword("testpassword");
             dao.update(d);
@@ -612,16 +557,12 @@ public class DomainDAOTester extends DataModelTestCase {
                    d.hasPassword("testpassword"));
 
         // seedlists
-        assertTrue("mayDelete should allow deletion",
-                   dao.mayDelete(d.getSeedList("deletable")));
         d.removeSeedList("deletable");
         dao.update(d);
         d = dao.read(domainName);
         assertFalse("Seedlist should be deleted in stored version",
                     d.hasSeedList("deletable"));
 
-        assertFalse("mayDelete should not allow deletion",
-                    dao.mayDelete(d.getSeedList("default")));
         try {
             d.removeSeedList("default");
             dao.update(d);
@@ -656,9 +597,13 @@ public class DomainDAOTester extends DataModelTestCase {
         List<DomainConfiguration> configs = new ArrayList<DomainConfiguration>();
         final String nonDefaultConfigName = "fuld_dybde";
         configs.add(d.getConfiguration(nonDefaultConfigName));
+        //hddao.addDomainConfiguration(hd, new DomainConfigurationKey(
+        //		d.getConfiguration(nonDefaultConfigName)));
         hd.setDomainConfigurations(configs);
         hddao.update(hd);
-        assertFalse("mayDelete should not allow deletion",
+        
+        assertFalse("mayDelete should not allow deletion of config '" 
+        		+ nonDefaultConfigName + "'",
                     dao.mayDelete(d.getConfiguration(nonDefaultConfigName)));
         try {
             d.removeConfiguration(nonDefaultConfigName);
@@ -680,7 +625,10 @@ public class DomainDAOTester extends DataModelTestCase {
                     dao.mayDelete(d.getConfiguration(nonDefaultConfigName)));
         configs.clear();
         configs.add(d.getDefaultConfiguration());
+        hddao.addDomainConfiguration(hd, new SparseDomainConfiguration(
+        		d.getDefaultConfiguration()));
         hd.setDomainConfigurations(configs);
+        
         hddao.update(hd);
         assertTrue("mayDelete should allow deletion of "
                    + nonDefaultConfigName,
@@ -808,8 +756,8 @@ public class DomainDAOTester extends DataModelTestCase {
             DomainConfiguration cfg2 = next.getDefaultConfiguration();
             assertTrue("Order should be right, comparing " + cfg1
                        + " and " + cfg2
-                       + ":\n("+ cfg1.getOrderXmlName() +  "," + cfg1.getMaxBytes() + "," + cfg1.getDomain().getName() +  ")"
-                       + "\n("+ cfg2.getOrderXmlName() +  "," + cfg2.getMaxBytes() + "," + cfg2.getDomain().getName() +  ")",
+                       + ":\n("+ cfg1.getOrderXmlName() +  "," + cfg1.getMaxBytes() + "," + cfg1.getDomainName() +  ")"
+                       + "\n("+ cfg2.getOrderXmlName() +  "," + cfg2.getMaxBytes() + "," + cfg2.getDomainName() +  ")",
                        cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName())
                        < 0 || (cfg1.getOrderXmlName().compareTo(
                                cfg2.getOrderXmlName()) == 0)
@@ -817,7 +765,7 @@ public class DomainDAOTester extends DataModelTestCase {
             reference = next;
         }
     }
-    
+
     /** Check constructor of DomainHarvestInfo(). */
     public void testDomainHarvestInfoConstructor() {
         long jobId = 42L;
@@ -838,15 +786,14 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals(jobId, dhi.getJobID());
         assertEquals(harvestName, dhi.getHarvestName());
         assertEquals(harvestId, dhi.getHarvestID());
-        
+
         assertEquals(harvestNum, dhi.getHarvestNum());
         assertEquals(configName, dhi.getConfigName());
         assertEquals(startDate, dhi.getStartDate());
-        assertEquals(endDate, dhi.getEndDate());  
+        assertEquals(endDate, dhi.getEndDate());
         assertEquals(bytesDownloaded, dhi.getBytesDownloaded());
         assertEquals(docsdownloaded, dhi.getDocsDownloaded());
         assertEquals(theReason, dhi.getStopReason());
     }
-    
 }
 

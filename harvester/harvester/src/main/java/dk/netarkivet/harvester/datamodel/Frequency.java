@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,8 +49,8 @@ public abstract class Frequency {
     /** If this Frequency happens any time rather than at a specified time. */
     private boolean isAnytime;
 
-	/** Initialise a frequency with information about how many periods between
-     * events, and whether it's at a specified time in the period.
+    /** Initialise a frequency with information about how many periods 
+     * between events, and whether it's at a specified time in the period.
      *
      * The actual length of the period is defined by subclasses
      *
@@ -196,8 +198,8 @@ public abstract class Frequency {
         ArgumentNotValid.checkPositive(numtimeunits, "int timeunits");
                 
         Frequency freq;
-    	TimeUnit tu = TimeUnit.fromOrdinal(timeunit);
-    	log.debug("Creating a " + tu.name() + " frequency."); 
+        TimeUnit tu = TimeUnit.fromOrdinal(timeunit);
+        log.debug("Creating a " + tu.name() + " frequency."); 
         if (!anytime) {
             ArgumentNotValid.checkTrue(minute != null,
                     "Arg. minute should not be null, if anytime is false");
@@ -211,7 +213,7 @@ public abstract class Frequency {
                     "Arg. dayofmonth should not be null, if anytime is false "
                     + "and we are creating a Monthly frequency.");
         }
-    	
+    
         switch (tu) {
             case HOURLY:
                 if (anytime) {

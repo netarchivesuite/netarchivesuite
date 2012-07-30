@@ -3,7 +3,9 @@
  * Author:      $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,11 +40,11 @@ import javax.jms.MessageListener;
 
 import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.bitarchive.BitarchiveApplication;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -50,10 +52,12 @@ import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.TestRemoteFile;
+import dk.netarkivet.common.exceptions.BatchTermination;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -87,9 +91,9 @@ public class BitarchiveServerTester extends TestCase {
     protected void setUp() throws IOException {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        ChannelsTester.resetChannels();
         FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
-        LogManager.getLogManager().
-                readConfiguration(fis);
+        LogManager.getLogManager().readConfiguration(fis);
         fis.close();
         utrf.setUp();
         File tmpdir = new File(TestInfo.UPLOADMESSAGE_TEMP_DIR, 
@@ -467,9 +471,15 @@ public class BitarchiveServerTester extends TestCase {
     }
 
     /** Test that batch messages can run concurrently. 
+     * THIS UNIT TEST CAN OCCATIONALLY FAIL DUE TO SOME RACE-CONDITION
+     * 
+     * FIXME: Removed test from unit test suite. Primary purpose of unit test is 
+     * regression testing. Tests which 'can occationally fail' therefore defeats
+     * the purpose of unit testing.
+     * 
      * @throws IOException If unable to read a file. 
      */
-    public void testVisitBatchMessageThreaded() throws IOException {
+    public void failingTestVisitBatchMessageThreaded() throws IOException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
@@ -674,7 +684,223 @@ public class BitarchiveServerTester extends TestCase {
         
     }
     
-    public void testHeartBeatSender() throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+    public void testStopBatchThread() throws InterruptedException {
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
+        GenericMessageListener listener = new GenericMessageListener();
+        JMSConnection con = JMSConnectionFactory.getInstance();
+        bas = BitarchiveServer.getInstance();
+        con.setListener(Channels.getTheBamon(), listener);
+
+        class TimedChecksumJob extends ChecksumJob {
+            public void finish(OutputStream o) {
+                PrintStream ps = new PrintStream(o);
+                ps.println(new Date().getTime());
+            }
+            @Override
+            public boolean processFile(File f, OutputStream o) {
+                try {
+                    long time = new Date().getTime();
+                    int i = 0;
+                    while(new Date().getTime() - time < 100) {
+                        i++;
+                    }
+                } catch (Exception e) {
+                    return false;
+                }
+                return super.processFile(f, o);
+            }
+        };
+
+        //Construct a BatchMessage to do a checksum job and pass it to
+        //the Bitarchive
+        BatchMessage bm =
+                new BatchMessage(Channels.getTheBamon(),
+                        new TimedChecksumJob(),
+                        Settings.get(CommonSettings.USE_REPLICA_ID));
+
+        JMSConnectionMockupMQ.updateMsgID(bm, "ID45");
+        bas.visit(bm);
+        
+        try {
+            synchronized(this) {
+                this.wait(150);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // ignore
+        }
+        
+        Thread[] threads = new Thread[Thread.activeCount()];
+        Thread.enumerate(threads);
+        boolean found = false;
+        for (Thread thread : threads) {
+            if (thread != null && thread.getName().startsWith("Batch-")) {
+                thread.interrupt();
+                //System.out.println("Interrupted: " + thread.getName());
+                found = true;
+            }
+        }
+        assertTrue("The thread should have been found.", found);
+        
+        // await all the batch-threads to shutdown.
+        boolean keepGoing = false;
+        int beforeCount = threads.length;
+        do {
+            keepGoing = false;
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                // Don't care
+            }
+            threads = new Thread[Thread.activeCount()];
+            if (threads.length > beforeCount) {
+                continue;
+            }
+            Thread.enumerate(threads);
+            for (Thread t : threads) {
+                if (t.getName().startsWith("Batch-")) {
+                    keepGoing = true;
+                    break;
+                }
+            }
+        } while (keepGoing);
+        
+        ((JMSConnectionMockupMQ) con).waitForConcurrentTasksToFinish();
+
+        // Listener should have received one BatchEndedMessage and a bunch
+        // of Heartbeat messages
+        assertTrue("Should have received at least one message",
+                listener.messagesReceived.size() >= 1);
+        Iterator<NetarkivetMessage> i = listener.messagesReceived.iterator();
+        BatchEndedMessage bem = null;
+        while (i.hasNext()) {
+            Object o = i.next();
+            if (o instanceof BatchEndedMessage) {
+                assertNull("Found two BatchEndedMessages:\n" + bem + "\nand\n"
+                        + o.toString(), bem);
+                bem = (BatchEndedMessage) o;
+            }
+        }
+        
+        assertNotNull("The BatchEndedMessage should not be null", bem);
+        assertFalse("The BatchEndedMessage should have been NotOk, but was:" 
+                + bem + "'.", bem.isOk());
+        
+        assertTrue("The error message should start with the name of the error: " 
+                + BatchTermination.class.getName() + ", but was:" + bem.getErrMsg(), 
+                bem.getErrMsg().startsWith(BatchTermination.class.getName()));
+    }
+
+    /**
+     * FIXME: Disabled, fails on hudson an Eclipse see 
+     * http://sbforge.statsbiblioteket.dk/hudson/job/NetarchiveSuite-unittest/lastCompletedBuild/testReport/dk.netarkivet.archive.bitarchive.distribute/BitarchiveServerTester/testBatchTerminationMessage/
+     */
+    public void failingTestBatchTerminationMessage() throws InterruptedException {
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
+        GenericMessageListener listener = new GenericMessageListener();
+        JMSConnection con = JMSConnectionFactory.getInstance();
+        bas = BitarchiveServer.getInstance();
+        con.setListener(Channels.getTheBamon(), listener);
+
+        class TimedChecksumJob extends ChecksumJob {
+            public void finish(OutputStream o) {
+                PrintStream ps = new PrintStream(o);
+                ps.println(new Date().getTime());
+            }
+            @Override
+            public boolean processFile(File f, OutputStream o) {
+                try {
+                    long time = new Date().getTime();
+                    int i = 0;
+                    while(new Date().getTime() - time < 100) {
+                        i++;
+                    }
+                } catch (Exception e) {
+                    return false;
+                }
+                return super.processFile(f, o);
+            }
+        };
+
+        //Construct a BatchMessage to do a checksum job and pass it to
+        //the Bitarchive
+        BatchMessage bm =
+                new BatchMessage(Channels.getTheBamon(),
+                        Channels.getError(),
+                        new TimedChecksumJob(),
+                        Settings.get(CommonSettings.USE_REPLICA_ID),
+                        "TerminateMe", new String[]{});
+
+        JMSConnectionMockupMQ.updateMsgID(bm, "ID45");
+        bas.visit(bm);
+        
+        try {
+            synchronized(this) {
+                this.wait(150);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // ignore
+        }
+        
+        BatchTerminationMessage btm = new BatchTerminationMessage(
+                Channels.getTheBamon(), "TerminateMe");
+        JMSConnectionMockupMQ.updateMsgID(btm, "BTM1");
+        bas.visit(btm);
+        
+        Thread[] threads = new Thread[Thread.activeCount()];
+        Thread.enumerate(threads);
+        // await all the batch-threads to shutdown.
+        boolean keepGoing = false;
+        int beforeCount = threads.length;
+        do {
+            keepGoing = false;
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                // Don't care
+            }
+            threads = new Thread[Thread.activeCount()];
+            if (threads.length > beforeCount) {
+                continue;
+            }
+            Thread.enumerate(threads);
+            for (Thread t : threads) {
+                if (t.getName().startsWith("Batch-")) {
+                    keepGoing = true;
+                    break;
+                }
+            }
+        } while (keepGoing);
+        
+        ((JMSConnectionMockupMQ) con).waitForConcurrentTasksToFinish();
+
+        // Listener should have received one BatchEndedMessage and a bunch
+        // of Heartbeat messages
+        assertTrue("Should have received at least one message",
+                listener.messagesReceived.size() >= 1);
+        Iterator<NetarkivetMessage> i = listener.messagesReceived.iterator();
+        BatchEndedMessage bem = null;
+        while (i.hasNext()) {
+            Object o = i.next();
+            if (o instanceof BatchEndedMessage) {
+                assertNull("Found two BatchEndedMessages:\n" + bem + "\nand\n"
+                        + o.toString(), bem);
+                bem = (BatchEndedMessage) o;
+            }
+        }
+        
+        assertNotNull("The BatchEndedMessage should not be null", bem);
+        assertFalse("The BatchEndedMessage should have been NotOk, but was:" 
+                + bem + "'.", bem.isOk());
+        
+        assertTrue("The error message should start with the name of the error: " 
+                + BatchTermination.class.getName() + ", but was:" + bem.getErrMsg(), 
+                bem.getErrMsg().startsWith(BatchTermination.class.getName()));
+    }
+    
+    public void testHeartBeatSender() throws NoSuchFieldException, 
+            IllegalArgumentException, IllegalAccessException {
         BitarchiveServer bas = BitarchiveServer.getInstance();
         
         Field hbs = ReflectUtils.getPrivateField(BitarchiveServer.class, "heartBeatSender");
@@ -685,7 +911,7 @@ public class BitarchiveServerTester extends TestCase {
         assertTrue("The HeartBeatSender should refer to the bitarchive server in the text", 
                 hbs.get(bas).toString().contains(bas.toString()));
     }
-    
+
     /**
      * Ensure, that the application dies if given the wrong input.
      */

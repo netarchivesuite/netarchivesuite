@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +26,6 @@ package dk.netarkivet.wayback.indexer;
 import java.io.File;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient;
 import dk.netarkivet.common.utils.FileUtils;
@@ -45,6 +46,7 @@ public class IndexerTestCase extends TestCase {
 
     public void setUp() {
         rs.setUp();
+        System.setProperty(WaybackSettings.HIBERNATE_HBM2DDL_AUTO, "create-drop");
         HibernateUtil.getSession().getSessionFactory().close();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);

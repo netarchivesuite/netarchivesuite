@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -95,11 +97,8 @@ public class ARCReaderUtils {
                    } else  {
                        arc = (ARCRecord) arcReader.get(key.getOffset());
                        arc.skipHttpHeader();
-                       BitarchiveRecord result = new BitarchiveRecord(arc);
-
-                       if (result == null) {
-                           throw new IOFailure ("result not found");
-                       }
+                       BitarchiveRecord result = new BitarchiveRecord(arc, ArcFile.getName());
+                       
                        InputStream is = result.getData();
                        File destination = new File(destinationDir, filename);
                        int counter = 0;
@@ -146,11 +145,21 @@ public class ARCReaderUtils {
        }
        return records;
    }
-
+   
+   /**
+    * This main function dumps the arc-file given to the destination directory
+    * given except the records matching the given excludefilter:
+    * Usage: ARCReaderUtils.main tmpdir ARC-file excludefilter
+    * TODO promote the dumpARC tool to the src-branch
+    * @param args The arguments needed (3 in number).
+    * @throws IOException
+    */
    public static void main(String[] args) throws IOException {
-       dumpARC(new File("/tmp/svc"),
-               new File("/home/svc/sheet-arcs/Sheetmusic-20041217122121540/arcs/SHEETMUSIC-20041217152908-00002-asterix.arc.gz")
-               ,"^text/html");
+	   if (args.length != 3){       
+		   System.err.println("To few arguments (3 needed: dest dir, file, excludefilter");
+		   System.exit(1);
+	   }
+	   dumpARC(new File(args[0]), new File(args[1]), args[2]);
    }
    /**
     * Copies the content of an InputStream to an OutputStream.

@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,10 +37,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.indexserver.MultiFileBasedCache;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.FTPRemoteFile;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.RemoteFileSettings;
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
@@ -48,6 +53,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 
 /**
@@ -103,6 +109,15 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
     public static final String INDEXREQUEST_TIMEOUT
             = "settings.common.indexClient.indexRequestTimeout";
 
+    /**
+     * <b>settings.common.indexClient.useLocalFtpServer</b>: <br>
+     * Setting for using the ftpserver assigned to the client instead of the 
+     * one assigned to the indexserver.
+     * Set to false by default.
+     */
+    public static final String INDEXREQUEST_USE_LOCAL_FTPSERVER
+            = "settings.common.indexClient.useLocalFtpServer";
+    
     /**
      * Initialise this client, handling requests of a given type. Start
      * listening to channel if not done yet.
@@ -170,11 +185,19 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         log.info("Requesting an index of type '" + this.requestType
                  + "' for the jobs [" + StringUtils.conjoin(",", jobSet)
                  + "]");
+        // use locally defined ftp-server, if required
+        RemoteFileSettings ftpSettings = null;
+        
+        if (useLocalFtpserver()) {
+            log.debug("Requesting the use of the FTPserver defined locally.");
+            ftpSettings = FTPRemoteFile.getRemoteFileSettings();
+        }
+        
         //Send request to server
         IndexRequestMessage irMsg = new IndexRequestMessage(requestType,
-                                                            jobSet);
-        log.debug("Waiting " + getIndexTimeout()
-                + " millseconds for the index");
+                                                            jobSet, ftpSettings);
+        log.debug("Waiting " + TimeUtils.readableTimeInterval(
+                getIndexTimeout()) + " for the index");
         NetarkivetMessage msg = getSynchronizer().sendAndWaitForOneReply(
                 irMsg, getIndexTimeout());
 
@@ -281,10 +304,31 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * @return Index timeout value in milliseconds.
      */
     protected long getIndexTimeout() {
-        //NOTE: It might be a good idea to make this dependant on "type"
+        //TODO It might be a good idea to make this dependant on "type"
         return Settings.getLong(INDEXREQUEST_TIMEOUT);
     }
-
+    
+    /** 
+     * Check if we should use local ftpserver or not, provided you are using 
+     * FTPRemoteFile as the {@link CommonSettings#REMOTE_FILE_CLASS}.
+     * This always returns false, when {@link CommonSettings#REMOTE_FILE_CLASS}
+     * is not {@link FTPRemoteFile}. 
+     * @return true, if we should use the local ftpserver when retrieving
+     * data from the indexserver, false, if the indexserver should decide for us.
+     */
+    protected boolean useLocalFtpserver() {
+        // check first that RemoteFileClass is FTPRemoteFile
+        String remotefileClassname = Settings.get(CommonSettings.REMOTE_FILE_CLASS);
+        if (!remotefileClassname.equalsIgnoreCase(FTPRemoteFile.class.getName())) {
+            log.debug("Not using localftpserver as transport, because "
+                    + "this application uses " +  remotefileClassname 
+                    + " as file transport class");
+            return false;
+        } else {
+            return Settings.getBoolean(INDEXREQUEST_USE_LOCAL_FTPSERVER);
+        }
+    }
+    
     /**
      * Check the reply message is valid.
      * @param jobSet The requested set of jobs
@@ -349,5 +393,32 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                 }
             }
         }
+    }
+    
+    /**
+     * Method to request an Index without having the result sent right away.
+     * @param jobSet The set of job IDs.
+     * @param harvestId The ID of the harvest requesting this index.
+     * @throws IOFailure On trouble in communication or invalid reply types.
+     * @throws IllegalState if message is not OK. 
+     * @throws ArgumentNotValid if the jobSet is null.
+     */
+    public void requestIndex(Set<Long> jobSet, Long harvestId) 
+    throws IOFailure, IllegalState, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(jobSet, "Set<Long> id");
+        
+        log.info("Requesting an index of type '" + this.requestType
+                + "' for the jobs [" + StringUtils.conjoin(",", jobSet)
+                + "]");
+        
+        // Send request to server but ask for it not to be returned
+        // Ask that a message is sent to the scheduling queue when 
+        // index is finished
+        
+        IndexRequestMessage irMsg = new IndexRequestMessage(
+                requestType, jobSet, Channels.getTheSched(),
+                false, harvestId);
+        
+        JMSConnectionFactory.getInstance().send(irMsg);
     }
 }

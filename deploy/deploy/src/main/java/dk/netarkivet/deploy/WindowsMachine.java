@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -69,6 +71,24 @@ public class WindowsMachine extends Machine {
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_WINDOWS;
+    }
+
+    /**
+     * On windows machines console output can cause problesms so
+     * any uses of java.util.logging.ConsoleHandler are removed.
+     * @param logProperties the original contents of the logging properties file.
+     * @return logging properties with the ConsoleHandler removed
+     */
+    @Override
+    protected String modifyLogProperties(String logProperties) {
+        String output;
+        //First delete any instances followed by a comma - ie
+        //not as last handler
+        output = logProperties.replaceAll("java.util.logging.ConsoleHandler\\s*,", "");
+        //Now delete any instances where ConsoleHandler is declared
+        //last
+        output = output.replaceAll(",\\s*java.util.logging.ConsoleHandler", "");
+        return output;
     }
 
     /**
@@ -281,6 +301,8 @@ public class WindowsMachine extends Machine {
      * 
      * pseudocode:
      * - ssh 'login'@'machine' cmd /c 'environmentName'\\conf\\startall.bat
+     * - sleep 5
+     * - ssh 'login'@'machine' "more 'environmentName'\\start_APP.log
      * 
      * variables:
      * 'login' = machine user name
@@ -292,6 +314,7 @@ public class WindowsMachine extends Machine {
     @Override
     protected String osStartScript() {
         StringBuilder res = new StringBuilder();
+        // - ssh 'login'@'machine' cmd /c 'environmentName'\\conf\\startall.bat
         res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.SPACE + Constants.QUOTE_MARK 
@@ -302,25 +325,31 @@ public class WindowsMachine extends Machine {
         res.append(scriptExtension);
         res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.SPACE);
         res.append(Constants.NEWLINE);
+        // - sleep 5
+        res.append(ScriptConstants.SLEEP_5);
+        res.append(Constants.NEWLINE);
+        // - ssh 'login'@'machine' "more 'environmentName'\\start_APP.log"
+        for(Application app : applications) {
+            res.append(ScriptConstants.SSH + Constants.SPACE);
+            res.append(machineUserLogin());
+            res.append(Constants.SPACE + Constants.QUOTE_MARK 
+                    + ScriptConstants.WINDOWS_COMMAND_TYPE + Constants.SPACE);
+            res.append(getEnvironmentName() + Constants.BACKSLASH 
+                    + Constants.SCRIPT_NAME_LOCAL_START
+                    + app.getIdentification() + Constants.EXTENSION_LOG_FILES);
+            res.append(Constants.QUOTE_MARK + Constants.SPACE);
+            res.append(Constants.NEWLINE);
+        }
+        
         return res.toString();
     }
 
-    /** 
-     * The operation system specific path to the installation directory.
-     *  
-     * @return Install path.
-     */
     @Override
     protected String getInstallDirPath() {
         return machineParameters.getInstallDirValue() + Constants.BACKSLASH 
                 + getEnvironmentName();
     }
 
-    /**
-     * The operation system specific path to the conf directory.
-     * 
-     * @return Conf path.
-     */
     @Override
     protected String getConfDirPath() {
         return getInstallDirPath() + Constants.CONF_DIR_WINDOWS;
@@ -599,14 +628,6 @@ public class WindowsMachine extends Machine {
         }
     }
 
-    /**
-     * Makes all the class paths into the operation system specific syntax,
-     * and puts them into a string where they are separated by the operation
-     * system specific separator (':' for linux, ';' for windows).
-     * 
-     * @param app The application which has the class paths.
-     * @return The class paths in operation system specific syntax.
-     */
     @Override
     protected String osGetClassPath(Application app) {
         StringBuilder res = new StringBuilder();
@@ -731,6 +752,24 @@ public class WindowsMachine extends Machine {
      * - set f = fso.OpenTextFile(".\conf\kill_ps_app.bat", 2, True)
      * - f.WriteLine "taskkill /F /PID " & oExec.ProcessID
      * - f.close
+     * - 'Create a new start-log for the application
+     * - CreateObject("Scripting.FileSystemObject").OpenTextFile("
+     * start_APP.log", 2, True).close
+     * - Do While oExec.Status = 0
+     * -   WScript.Sleep 1000
+     * -   Do While oExec.StdOut.AtEndOfStream <> True
+     * -     Set outFile = CreateObject("Scripting.FileSystemObject")
+     * .OpenTextFile("start_APP.log", 8, True)
+     * -     outFile.WriteLine oExec.StdOut.ReadLine
+     * -     outFile.close
+     * -   Loop
+     * -   Do While oExec.StdErr.AtEndOfStream <> True
+     * -     Set outFile = CreateObject("Scripting.FileSystemObject")
+     * .OpenTextFile("start_APP.log", 8, True)
+     * -     outFile.WriteLine oExec.StdErr.ReadLine
+     * -     outFile.close
+     * -   Loop
+     * - Loop
      * 
      * where:
      * JAVA = the command for starting the java application (very long).
@@ -757,6 +796,8 @@ public class WindowsMachine extends Machine {
                         + scriptExtension;
                 String tmpRunPsName = Constants.FILE_TEMPORARY_RUN_WINDOWS_NAME
                         + id;
+                String startLogName = Constants.SCRIPT_NAME_LOCAL_START
+                    + id + Constants.EXTENSION_LOG_FILES;
 
                 // Set WshShell = CreateObject("WScript.Shell")
                 vbsPrint.println(ScriptConstants.VB_CREATE_SHELL_OBJ);
@@ -807,6 +848,69 @@ public class WindowsMachine extends Machine {
                 vbsPrint.println(ScriptConstants.VB_WRITE_TF_CONTENT);
                 // f.close
                 vbsPrint.println(ScriptConstants.VB_WRITE_TF_CLOSE);
+                
+                // 'Create a new start-log for the application
+                vbsPrint.println(ScriptConstants.VB_COMMENT_NEW_START_LOG);
+                // CreateObject("Scripting.FileSystemObject").OpenTextFile(
+                // "start_APP.log", 2, True).close
+                vbsPrint.println(ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
+                        + startLogName 
+                        + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_2
+                        + ScriptConstants.VB_CLOSE);
+                // Do While oExec.Status = 0
+                vbsPrint.println(ScriptConstants.VB_DO_WHILE_OEXEC_STATUS_0);
+                //   WScript.Sleep 1000
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                        + ScriptConstants.VB_WSCRIPT_SLEEP_1000);
+                //   Do While oExec.StdOut.AtEndOfStream <> True
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                        + ScriptConstants.VB_DO_WHILE
+                        + ScriptConstants.VB_OEXEC_STD_OUT
+                        + ScriptConstants.VB_AT_END_OF_STREAM_FALSE);
+                //     Set outFile = CreateObject("Scripting.FileSystemObject")
+                // .OpenTextFile("start_APP.log", 8, True)
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
+                        + ScriptConstants.VB_SET_OUTFILE
+                        + ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
+                        + startLogName
+                        + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_8);
+                //     outFile.WriteLine oExec.StdOut.ReadLine
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
+                        + ScriptConstants.VB_OUTFILE_WRITELINE
+                        + ScriptConstants.VB_OEXEC_STD_OUT
+                        + ScriptConstants.VB_READ_LINE);
+                //     outFile.close
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
+                        + ScriptConstants.VB_OUTFILE_CLOSE);
+                //   Loop
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                        + ScriptConstants.VB_LOOP);
+                //   Do While oExec.StdErr.AtEndOfStream <> True
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                        + ScriptConstants.VB_DO_WHILE
+                        + ScriptConstants.VB_OEXEC_STD_ERR
+                        + ScriptConstants.VB_AT_END_OF_STREAM_FALSE);
+                //     Set outFile = CreateObject("Scripting.FileSystemObject")
+                // .OpenTextFile("start_APP.log", 8, True)
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
+                        + ScriptConstants.VB_SET_OUTFILE
+                        + ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
+                        + startLogName 
+                        + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_8);
+                //     outFile.WriteLine oExec.StdErr.ReadLine
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
+                        + ScriptConstants.VB_OUTFILE_WRITELINE
+                        + ScriptConstants.VB_OEXEC_STD_ERR
+                        + ScriptConstants.VB_READ_LINE);
+                //     outFile.close
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_4 
+                        + ScriptConstants.VB_OUTFILE_CLOSE);
+                //   Loop
+                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
+                        + ScriptConstants.VB_LOOP);
+                // Loop
+                vbsPrint.println(ScriptConstants.VB_LOOP);
+
             } finally {
                 // close file
                 vbsPrint.close();
@@ -818,7 +922,6 @@ public class WindowsMachine extends Machine {
             throw new IOFailure(msg, e);
         }
     }
-
 
     /**
      * THIS HAS NOT BEEN IMPLEMENTED FOR WINDOWS YET - ONLY LINUX!
@@ -837,7 +940,7 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String osInstallDatabase() {
-        String databaseDir = machineParameters.getDatabaseDirValue();
+        String databaseDir = machineParameters.getHarvestDatabaseDirValue();
         // Do not install if no proper database directory.
         if(databaseDir == null || databaseDir.isEmpty()) {
             return Constants.EMPTY;
@@ -882,13 +985,6 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
     
-    /**
-     * This function makes the part of the install script for installing the
-     * external jar files from within the jarFolder.
-     * If the jarFolder is null, then no action will be performed.
-     * 
-     * @return The script for installing the external jar files (if needed).
-     */
     @Override
     protected String osInstallExternalJarFiles() {
         if(jarFolder == null) {
@@ -970,18 +1066,6 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
 
-    /**
-     * This functions makes the script for creating the new directories.
-     * 
-     * Linux creates directories directly through ssh.
-     * Windows creates an install a script file for installing the directories, 
-     * which has to be sent to the machine, then executed and finally deleted. 
-     * 
-     * @param dir The name of the directory to create.
-     * @param clean Whether the directory should be cleaned\reset.
-     * @return The lines of code for creating the directories.
-     * @see #createInstallDirScript(File)
-     */
     @Override
     protected String scriptCreateDir(String dir, boolean clean) {
         StringBuilder res = new StringBuilder();
@@ -1034,12 +1118,6 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
     
-    /**
-     * Creates the script for creating the application specified directories.
-     * Also creates the directories along the path to the directories.
-     * 
-     * @return The script for creating the application specified directories.
-     */
     @Override
     protected String getAppDirectories() {
         StringBuilder res = new StringBuilder();
@@ -1171,12 +1249,6 @@ public class WindowsMachine extends Machine {
         }
     }
 
-    /**
-     * Changes the file directory path to the format used in the security 
-     * policy.
-     * @param path The current path.
-     * @return The formatted path.
-     */
     @Override
     protected String changeFileDirPathForSecurity(String path) {
         path += Constants.BACKSLASH + Constants.SECURITY_FILE_DIR_TAG
@@ -1428,37 +1500,67 @@ public class WindowsMachine extends Machine {
         }
     }
     
-    /**
-     * Creates a script for starting the archive database on a given machine.
-     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
-     * is defined on the machine level.
-     * 
-     * @param dir The directory where the script will be placed.
-     */
     @Override
     protected void createArchiveDatabaseStartScript(File dir) {
-        
         // Ignore if no archive database directory has been defined.
         String dbDir = machineParameters.getArchiveDatabaseDirValue();
         if(dbDir.isEmpty()) {
             return;
         }
+        
+        // TODO NOT SUPPORTED!
+        System.err.println("An Admin Database is not supported on a windows "
+                + "machine. Please fix your deploy configuration.");
     }
 
-    /**
-     * Creates a script for killing the archive database on a given machine.
-     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
-     * is defined on the machine level.
-     * 
-     * @param dir The directory where the script will be placed.
-     */
     @Override
     protected void createArchiveDatabaseKillScript(File dir) {
-        
         // Ignore if no archive database directory has been defined.
         String dbDir = machineParameters.getArchiveDatabaseDirValue();
         if(dbDir.isEmpty()) {
             return;
         }
+        
+        // TODO NOT SUPPORTED!
+        System.err.println("An Admin Database is not supported on a windows "
+                + "machine. Please fix your deploy configuration.");
+    }
+
+    @Override
+    protected void createHarvestDatabaseStartScript(File dir) {
+        // Ignore if no harvest database directory has been defined.
+        String dbDir = machineParameters.getHarvestDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
+        }
+        
+        // TODO NOT SUPPORTED!
+        System.err.println("An Harvest Database is not supported on a windows "
+                + "machine. Please fix your deploy configuration.");
+    }
+    
+    @Override
+    protected void createHarvestDatabaseKillScript(File dir) {
+        // Ignore if no harvest database directory has been defined.
+        String dbDir = machineParameters.getHarvestDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
+        }
+
+        // TODO NOT SUPPORTED!
+        System.err.println("An Harvest Database is not supported on a windows "
+                + "machine. Please fix your deploy configuration.");
+    }
+
+    @Override
+    protected void createHarvestDatabaseUpdateScript(File machineDirectory) {
+        // Ignore if no harvest database directory has been defined.
+        String dbDir = machineParameters.getHarvestDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
+        }
+        
+        System.err.println("An Harvest Database is not supported on a windows "
+                + "machine. Please fix your deploy configuration.");
     }
 }

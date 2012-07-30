@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,9 +41,11 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
+import dk.netarkivet.common.distribute.arcrepository.ResultStream;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * The ARCArchiveAccess class implements reading of ARC indexes and files.
@@ -72,13 +76,19 @@ public class ARCArchiveAccess implements URIResolver {
     private static final Pattern HTTP_HEADER_PATTERN =
         Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
 
-    /** The underlying ARC record lookup object */
+    /** The underlying ARC record lookup object. */
     private ARCLookup lookup;
 
     /** Logger for this class. */
     private final Log log = LogFactory.getLog(getClass().getName());
+    
+    /** If the value is true, we will try to lookup w/ ftp instead of http, 
+     * if we don't get a hit in the index. */
+    private static final boolean tryToLookupUriAsFtp = Settings.getBoolean(
+            ViewerProxySettings.TRY_LOOKUP_URI_AS_FTP); 
+    
 
-    /** Initialise new ARCArchiveAcces with no index file.
+    /** Initialise new ARCArchiveAccess with no index file.
      *
      * @param arcRepositoryClient The arcRepositoryClient to use when retrieving
      * @throws ArgumentNotValid if arcRepositoryClient is null.
@@ -87,6 +97,7 @@ public class ARCArchiveAccess implements URIResolver {
         ArgumentNotValid.checkNotNull(
                 arcRepositoryClient, "ArcRepositoryClient arcRepositoryClient");
         lookup = new ARCLookup(arcRepositoryClient);
+        lookup.setTryToLookupUriAsFtp(tryToLookupUriAsFtp);
     }
 
     /**
@@ -103,6 +114,7 @@ public class ARCArchiveAccess implements URIResolver {
 
     /** Look up a given URI and add its contents to the Response given.
      * @param request The request to look up record for
+     * @param response The response to return to the browser
      * @return The response code for this page if found, or
      * URIResolver.NOT_FOUND otherwise.
      * @see URIResolver#lookup(Request, Response)
@@ -112,7 +124,8 @@ public class ARCArchiveAccess implements URIResolver {
         ArgumentNotValid.checkNotNull(request, "Request request");
         ArgumentNotValid.checkNotNull(response, "Response response");
         URI uri = request.getURI();
-        InputStream content = null;
+        ResultStream content = null;
+        InputStream contentStream = null;
         try {
             content = lookup.lookup(uri);
             if (content == null) {
@@ -121,14 +134,17 @@ public class ARCArchiveAccess implements URIResolver {
                 createNotFoundResponse(uri, response);
                 return URIResolver.NOT_FOUND;
             }
+            contentStream = content.getInputStream();
             // First write the original header.
-            writeHeader(content, response);
+            if (content.containsHeader()) {
+                writeHeader(contentStream, response);
+            }
             // Now flush the content to the browser.
-            readPage(content, response.getOutputStream());
+            readPage(contentStream, response.getOutputStream());
         } finally {
-            if (content != null) {
+            if (contentStream != null) {
                 try {
-                    content.close();
+                    contentStream.close();
                 } catch (IOException e) {
                     log.debug(
                                   "Error writing response to browser "

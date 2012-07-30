@@ -4,7 +4,9 @@
  * $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +46,8 @@ public class DomainHistory {
      * Sorts HarvestInfo with newest first. Sorting on HarvestID and
      * DomainConfiguration is only to make comparator consistent with equals.
      */
-    private static final Comparator<HarvestInfo> DATE_COMPARATOR = new Comparator<HarvestInfo>() {
+    private static final Comparator<HarvestInfo> DATE_COMPARATOR 
+        = new Comparator<HarvestInfo>() {
         public int compare(HarvestInfo hi1, HarvestInfo hi2) {
             int i = hi2.getDate().compareTo(hi1.getDate());
             if (i != 0) {
@@ -110,10 +113,10 @@ public class DomainHistory {
         ArgumentNotValid.checkNotNull(oid, "oid");
         ArgumentNotValid.checkNotNull(cfgName, "cfgName");
 
-        Iterator iter = harvestInfo.iterator();
+        Iterator<HarvestInfo> iter = harvestInfo.iterator();
         HarvestInfo hi;
         while (iter.hasNext()) {
-            hi = (HarvestInfo) iter.next();
+            hi = iter.next();
             if (hi.getHarvestID().equals(oid)
                     && hi.getDomainConfigurationName().equals(cfgName)) {
                 return hi;
@@ -130,5 +133,44 @@ public class DomainHistory {
     public void addHarvestInfo(HarvestInfo hi) {
         ArgumentNotValid.checkNotNull(hi, "hi");
         harvestInfo.add(hi);
+    }
+    
+   /**
+    * Return the most recent harvestresult for the configuration identified by 
+    * name that was a complete harvest of the domain. 
+    * @param configName The name of the configuration 
+    * @param history The domainHistory for a domain
+    * @return the most recent harvestresult for the configuration identified by 
+    * name that was a complete harvest of the domain. 
+    */
+    public static HarvestInfo getBestHarvestInfoExpectation(String configName,
+            DomainHistory history) {
+        ArgumentNotValid.checkNotNullOrEmpty(configName, "String configName");
+        ArgumentNotValid.checkNotNull(history, "DomainHistory history");
+        // Remember best expectation
+        HarvestInfo best = null;
+
+        //loop through all harvest infos for this configuration. The iterator is
+        //sorted by date with most recent first
+        Iterator<HarvestInfo> i = history.getHarvestInfo();
+        while (i.hasNext()) {
+            HarvestInfo hi = i.next();
+            if (hi.getDomainConfigurationName().equals(configName)) {
+                //Remember this expectation, if it harvested at least
+                //as many objects as the previously remembered
+                if ((best == null) || (best.getCountObjectRetrieved()
+                                       <= hi.getCountObjectRetrieved())) {
+                    best = hi;
+                }
+                //if this harvest completed, stop search and return best
+                //expectation,
+                if (hi.getStopReason() == StopReason.DOWNLOAD_COMPLETE) {
+                    return best;
+                }
+            }
+        }
+
+        //Return maximum uncompleted harvest, or null if never harvested
+        return best;
     }
 }

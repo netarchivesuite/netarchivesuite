@@ -5,7 +5,9 @@
 * Date:     $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -33,18 +35,20 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Utilities for working with domain names.
  */
-public class DomainUtils {
+public final class DomainUtils {
+    /** The class logger. */
     private static final Log log = LogFactory.getLog(DomainUtils.class);
 
-    /** Invalid characters in a domain name, according to RFC3490 */
+    /** Valid characters in a domain name, according to RFC3490. */
     public static final String DOMAINNAME_CHAR_REGEX_STRING
             = "[^\\0000-,.-/:-@\\[-`{-\\0177]+";
 
-    /** A string for a regexp recognising a TLD read from settings */
+    /** A string for a regexp recognising a TLD read from settings. */
     public static final String TLD_REGEX_STRING = "\\.(" + StringUtils.conjoin(
             "|", readTlds()) + ")";
 
@@ -66,13 +70,15 @@ public class DomainUtils {
             "^(|.*?\\.)(" + DOMAINNAME_CHAR_REGEX_STRING + "+"
             + TLD_REGEX_STRING + ")");
 
-    /** Utillity class, do not initialise. */
+    /** Utility class, do not initialise. */
     private DomainUtils() {}
 
     /** Helper method for reading TLDs from settings.
      * Will read all settings, validate them as legal TLDs and
      * warn and ignore them if any are invalid.
-     * Settings may be with or without prefix "." */
+     * Settings may be with or without prefix "."
+     * @return a List of TLDs as Strings 
+     */
     private static List<String> readTlds() {
         List<String> tlds = new ArrayList<String>();
         for (String tld : Settings.getAll(CommonSettings.TLDS)) {
@@ -89,9 +95,13 @@ public class DomainUtils {
         return tlds;
     }
 
-    /** Method mathcing valid domains. A valid domain is an IP address or a
-     * domainname part followed by a TLD as defined in settings. */
+    /** Check if a given domainName is valid domain. A valid domain is an IP 
+     * address or a domain name part followed by a TLD as defined in settings.
+     * @param domainName A name of a domain (netarkivet.dk)
+     * @return true if domain is valid; otherwise it returns false. 
+     */
     public static boolean isValidDomainName(String domainName) {
+        ArgumentNotValid.checkNotNull(domainName, "String domainName");
         return VALID_DOMAIN_MATCHER.matcher(domainName).matches();
     }
 
@@ -103,13 +113,14 @@ public class DomainUtils {
      * E.g. if '.dk' and 'co.uk' are valid TLDs, www.netarchive.dk will be
      * become netarchive.dk and news.bbc.co.uk will be come bbc.co.uk
      *
-     * @param hostname A hostname or IP address.
+     * @param hostname A hostname or IP address. Null hostname is not allowed
      * @return A domain name (foo.bar) or IP address, or null if no valid
-     * hostname could be obtained from the given hostname.  If non-null,
-     * the return value is guaranteed to be a valid hostname as determined
+     * domain could be obtained from the given hostname.  If non-null,
+     * the return value is guaranteed to be a valid domain as determined
      * by isValidDomainName().
      */
     public static String domainNameFromHostname(String hostname) {
+        ArgumentNotValid.checkNotNull(hostname, "String hostname");
         String result = hostname;
         // IP addresses are kept as-is, others are trimmed down.
         if (!Constants.IP_KEY_REGEXP.matcher(hostname)
@@ -123,5 +134,18 @@ public class DomainUtils {
             return result;
         }
         return null;
+    }
+    
+    /** Reduce a hostname to a more readable form.
+     *
+     * @param hostname A host name, should not be null.
+     * @return The same host name with all domain parts stripped off.
+     * @throws ArgumentNotValid if argument isn't valid.
+     */
+    public static String reduceHostname(String hostname)
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(hostname, "String hostName");
+        String[] split = hostname.split("\\.", 2);
+        return split[0];
     }
 }

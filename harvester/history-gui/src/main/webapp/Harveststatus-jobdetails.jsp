@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -270,18 +272,36 @@ if (SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME)
 <h3><fmt:message key="subtitle;reports.for.job"/></h3>
 <p><a href="/QA/QA-getreports.jsp?jobid=<%=jobID%>"><fmt:message key="harvest.reports"/></a></p>
 <p><a href="/QA/QA-getfiles.jsp?jobid=<%=jobID%>"><fmt:message key="harvest.files"/></a></p>
+
+<!-- search in crawl-logs -->
 <p>
-    <%
-    for (String domain :
-                    job.getDomainConfigurationMap().keySet()) {
-        %>
-        <a href="/QA/QA-crawlloglines.jsp?jobid=<%=jobID%>&domain=<%=domain%>"><fmt:message key="crawl.log.lines.for.domain.0">
-            <fmt:param value="<%=domain%>"/>
-        </fmt:message></a><br/>
-        <%
-    }
-    %>
+<form method="post" action="/QA/QA-searchcrawllog.jsp">
+<input type="hidden" name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.JOBID_PARAM %>"
+value="<%= jobID %>"/>
+       <input type="submit" value="<fmt:message key="display.crawl.log.lines.matching.regexp"/>"/>
+       <input type="text" name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.REGEXP_PARAM %>" size="60"/>
+</form>
 </p>
+
+<p>
+<!-- make submit button for recalling crawl.log relevant for the specific domains. -->
+
+<form method="post" action="/QA/QA-crawlloglines.jsp">
+<input type="hidden" name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.JOBID_PARAM %>"
+value="<%= jobID %>"/>
+<input type="submit" value="<fmt:message key="crawl.log.lines.for.domain"/>"/>
+<select name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.DOMAIN_PARAM %>">
+                    <% for (String domain : job.getDomainConfigurationMap().keySet()) {
+                            out.println("<option value=\""
+                                    + HTMLUtils.escapeHtmlValues(domain)
+                                    + "\">"
+                                    + HTMLUtils.escapeHtmlValues(domain)
+                                    + "</option>");
+                        }
+                    %>
+                </select>
+</form>
+</p>              
 <%
 }
 %>

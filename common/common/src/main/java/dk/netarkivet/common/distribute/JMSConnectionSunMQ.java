@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,10 +24,13 @@
  */
 package dk.netarkivet.common.distribute;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.QueueConnection;
+
 import java.util.Arrays;
+import javax.jms.QueueSession;
+import javax.jms.Session;
 
 import com.sun.messaging.ConnectionConfiguration;
 import com.sun.messaging.Queue;
@@ -95,6 +100,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
      */
     public static String JMS_BROKER_PORT = "settings.common.jms.port";
 
+    private QueueConnection qConnection;
+
     /** Constructor. */
     private JMSConnectionSunMQ() {
         super();
@@ -131,7 +138,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      *                      to 1, imqBrokerHostname and imqBrokerHostPort set to
      *                      the values defined in our settings.
      */
-    protected ConnectionFactory getConnectionFactory()
+    protected com.sun.messaging.ConnectionFactory getConnectionFactory()
             throws JMSException {
         log.info("Establishing SunMQ JMS Connection to '"
                  + Settings.get(JMS_BROKER_HOST) + ":" + Settings.getInt(
@@ -198,5 +205,14 @@ public class JMSConnectionSunMQ extends JMSConnection {
                      + "Don't know how to handle exceptions with errorcode "
                      + errorcode, e);
         }
+    }
+
+    @Override
+    public synchronized QueueSession getQueueSession() throws JMSException {
+        if (qConnection == null ) {
+            qConnection = getConnectionFactory().createQueueConnection();
+        }
+        boolean transacted = false;
+        return qConnection.createQueueSession(transacted, Session.AUTO_ACKNOWLEDGE);
     }
 }

@@ -4,7 +4,9 @@
  * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,30 +27,75 @@ package dk.netarkivet.wayback.aggregator;
 
 import java.io.File;
 
-import dk.netarkivet.wayback.TestInfo;
-
-import junit.framework.TestCase;
-
 /**
- * Verifies that the {code}IndexAggregator{code} class is able to aggregate CDX
- * index files correctly in largere files, and sort the index entries
+ * Verifies that the <code>IndexAggregator</code> class is able to aggregate CDX
+ * index files correctly in larger files, and sort the index entries
  */
-public class IndexAggregatorTest extends TestCase{
+public class IndexAggregatorTest extends AggregatorTestCase {
     private static IndexAggregator aggregator = new IndexAggregator();
-    private static final String testDataDirectory = TestInfo.DATA_DIR+File.separator+"raw-search-files"+File.separator;
-    private static final String inputFile1Name = testDataDirectory+"result1.txt";
-    private static final String inputFile2Name = testDataDirectory+"result2.txt";
 
-    private static final String outputFileName = "outputFile.txt";
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        new File(tempDirName).mkdirs();
+    }
+
 
     public void testAggregation() {
+        File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name, inputFile2Name});
         TestIndex testIndex = new TestIndex();
 
-        testIndex.addIndexesFromFiles(new String[] {inputFile1Name, inputFile2Name});
+        testIndex.addIndexesFromFiles(inputFiles);
 
-        aggregator.processFiles(new String[] {inputFile1Name, inputFile2Name}, outputFileName);
+        aggregator.sortAndMergeFiles(inputFiles, AggregationWorker.TEMP_FILE_INDEX);
 
-        assertNull("Unexpected content of aggregated index", testIndex.compareToIndex(outputFileName));
-        
+        String compareResult = testIndex.compareToIndex(AggregationWorker.TEMP_FILE_INDEX);
+        assertNull("Unexpected content of aggregated index: "+compareResult, compareResult);          
+    }
+
+    /**
+     * The <code>IndexAggregator</code> should be able to handle situations with
+     * no index files. No index files should be created in this case
+     */
+    public void testAggregationNoFiles() {
+        File[] inputFiles = prepareSourceIndex(new String[] {});
+        TestIndex testIndex = new TestIndex();
+
+        testIndex.addIndexesFromFiles(inputFiles);
+
+        aggregator.sortAndMergeFiles(inputFiles, AggregationWorker.TEMP_FILE_INDEX);
+
+        assertTrue ("temp index file found after agrregation with no new source index files",
+                    !AggregationWorker.TEMP_FILE_INDEX.exists());
+    }
+
+    public void testAggregationSingleFile() {
+        File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name});
+        TestIndex testIndex = new TestIndex();
+
+        testIndex.addIndexesFromFiles(inputFiles);
+
+        aggregator.sortAndMergeFiles(inputFiles, AggregationWorker.TEMP_FILE_INDEX);
+
+        assertNull("Unexpected content of aggregated index single file", testIndex.compareToIndex(AggregationWorker.TEMP_FILE_INDEX));
+    }
+
+    public void testMerging() {
+        File[] inputFiles1 = prepareSourceIndex(new String[] { inputFile1Name });
+        File[] inputFiles2 = prepareSourceIndex(new String[] { inputFile2Name });
+
+        File tempFile1 = new File(testWorkingDirectory,"tempFile1");
+        File tempFile2 = new File(testWorkingDirectory,"tempFile2");
+
+        aggregator.sortAndMergeFiles(inputFiles1, tempFile1);
+        aggregator.sortAndMergeFiles(inputFiles2, tempFile2);
+
+        TestIndex testIndex = new TestIndex();
+        testIndex.addIndexesFromFiles(inputFiles1);
+        testIndex.addIndexesFromFiles(inputFiles2);
+
+        aggregator.mergeFiles(new File[] {tempFile1, tempFile2}, AggregationWorker.INTERMEDIATE_INDEX_FILE);
+
+        assertNull("Unexpected content of merged index", testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
     }
 }

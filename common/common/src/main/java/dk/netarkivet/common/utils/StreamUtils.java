@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -200,5 +202,30 @@ public class StreamUtils {
         }
         
         return res.toString();
+    }
+
+
+    /**
+     * Convert inputStream to byte array.
+     *
+     * @param data       inputstream
+     * @param dataLength length of inputstream (must be larger than 0)
+     * @return byte[] containing data in inputstream
+     */
+    public static byte[] inputStreamToBytes(InputStream data, int dataLength) {
+        ArgumentNotValid.checkNotNull(data, "data");
+        ArgumentNotValid.checkNotNegative(dataLength, "dataLength");
+        byte[] contents = new byte[dataLength];
+        try {
+            int read = data.read(contents, 0, dataLength);
+            if (dataLength != read) {
+                log.debug("Only read " + read + " bytes out of the "
+                        + dataLength + " bytes requested"); 
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Unable to convert inputstream to byte array",
+                                e);
+        }
+        return contents;
     }
 }

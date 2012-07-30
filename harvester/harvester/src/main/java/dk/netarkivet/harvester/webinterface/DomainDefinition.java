@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,10 +25,15 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -36,13 +43,26 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 
 /**
  * Utility class for handling update of domain from the domain jsp page.
  *
  */
-
 public class DomainDefinition {
+    
+    
+    private static Log log = LogFactory.getLog(DomainDefinition.class.getName());
+    
+    /** Private constructor to prevent public construction of this class.*/
+    private DomainDefinition() {    
+    }
+    
     /**
      * Extracts all required parameters from the request, checks for any
      * inconsistencies, and passes the requisite data to the updateDomain method
@@ -69,8 +89,8 @@ public class DomainDefinition {
      *
      * alias: If set, this domain is an alias of the set domain
      * renewAlias: If set, the alias date should be renewed
-     * @param context
-     * @param i18n
+     * @param context The context of this request
+     * @param i18n I18n information
      * @throws IOFailure on updateerrors in the DAO
      * @throws ForwardedToErrorPage if domain is not found, if the edition is
      * out-of-date, or if parameters are missing or invalid
@@ -116,7 +136,8 @@ public class DomainDefinition {
                     "Unknown default configuration '" + defaultConf + "'");
         }
 
-        String crawlertraps = request.getParameter(Constants.CRAWLERTRAPS_PARAM);
+        String crawlertraps = request.getParameter(
+                Constants.CRAWLERTRAPS_PARAM);
         if (crawlertraps == null) {
             crawlertraps = "";
         }
@@ -135,6 +156,67 @@ public class DomainDefinition {
         }
 
         boolean renewAlias = aliasRenew.equals("yes");
+        
+        ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
+        Iterator<ExtendedField> it 
+            = extdao.getAll(ExtendedFieldTypes.DOMAIN).iterator();
+        
+        while (it.hasNext()) {
+            String value = "";
+
+            ExtendedField ef = it.next();
+            String parameterName = ef.getJspFieldname();
+            switch (ef.getDatatype()) {
+            case ExtendedFieldDataTypes.BOOLEAN:
+                String[] parb = request.getParameterValues(parameterName);
+                if (parb != null && parb.length > 0) {
+                    value = "true";
+                } else {
+                    value = "false";
+                }
+                break;
+            case ExtendedFieldDataTypes.SELECT:
+                String[] pars = request.getParameterValues(parameterName);
+                if (pars != null && pars.length > 0) {
+                    value = pars[0];
+                } else {
+                    value = "";
+                }
+
+                break;
+            default:
+                value = request.getParameter(parameterName);
+                if (ef.isMandatory()) {
+                    if (value == null) {
+                        value = ef.getDefaultValue();
+                    }
+
+                    if (value == null || value.length() == 0) {
+                        HTMLUtils.forwardWithErrorMessage(
+                                context,
+                                i18n,
+                                "errormsg;extendedfields.field.0.is.empty."
+                                + "but.mandatory",
+                                ef.getName());
+                        throw new ForwardedToErrorPage("Mandatory field "
+                                + ef.getName() + " is empty.");
+                    }
+                }
+
+                ExtendedFieldDefaultValue def = new ExtendedFieldDefaultValue(
+                        value, ef.getFormattingPattern(), ef.getDatatype());
+                if (!def.isValid()) {
+                    HTMLUtils.forwardWithRawErrorMessage(context, i18n,
+                            "errormsg;extendedfields.value.invalid");
+                    throw new ForwardedToErrorPage(
+                            "errormsg;extendedfields.value.invalid");
+                }
+                break;
+            }
+
+            domain.updateExtendedFieldValue(ef.getExtendedFieldID(), value);
+        }
+        
         updateDomain(domain, defaultConf, crawlertraps, comments, alias,
                 renewAlias);
     }
@@ -146,7 +228,8 @@ public class DomainDefinition {
      * @param crawlertraps the current crawlertraps stated for the domain
      * @param comments User-defined comments for the domain
      * @param alias if this is non-null, this domain is an alias of 'alias'.
-     * @param renewAlias true, if alias is to be updated even if it is not changed
+     * @param renewAlias true, if alias is to be updated even if it is not 
+     * changed
      */
     private static void updateDomain(Domain domain, String defaultConfig,
                                      String crawlertraps, String comments,
@@ -164,7 +247,7 @@ public class DomainDefinition {
                     trapList.add(trap);
                 }
             }
-            domain.setCrawlerTraps(trapList);
+            domain.setCrawlerTraps(trapList, true);
         }
 
         //Update alias information
@@ -182,7 +265,7 @@ public class DomainDefinition {
         String newAlias;
         // If alias is empty string, this domain is or should not be an alias.
 
-        if (alias.trim().equals("")) {
+        if (alias.trim().isEmpty()) {
             newAlias = null;
         } else {
             newAlias = alias.trim();
@@ -210,17 +293,18 @@ public class DomainDefinition {
      * @return true, if we want to update the alias information, false otherwise
      */
     private static boolean needToUpdateAlias(String oldAlias, String newAlias,
-                                             boolean renewAlias) {
+            boolean renewAlias) {
         boolean needToUpdate = false;
-        if (newAlias == null) { // If new alias is null: update if old alias is different from null
-            if (oldAlias != null){
+        // If new alias is null: update if old alias is different from null
+        if (newAlias == null) {
+            if (oldAlias != null) {
                 needToUpdate = true;
             }
         } else { // newAlias is not null
             if (oldAlias == null) {
                 needToUpdate = true;
             } else {
-                if (oldAlias.equals(newAlias)){
+                if (oldAlias.equals(newAlias)) {
                     if (renewAlias) {
                         needToUpdate = true;
                     }
@@ -242,16 +326,19 @@ public class DomainDefinition {
     public static List<String> createDomains(String... domains) {
         DomainDAO ddao = DomainDAO.getInstance();
         List<String> illegals = new ArrayList<String>();
+        List<Domain> domainsToCreate = new ArrayList<Domain>();
         for (String domain : domains) {
             if (DomainUtils.isValidDomainName(domain) && !ddao.exists(domain)) {
-                Domain dd = Domain.getDefaultDomain(domain);
-                ddao.create(dd);
+                domainsToCreate.add(Domain.getDefaultDomain(domain));
             } else {
                 if (domain.trim().length() > 0) {
                     illegals.add(domain);
                 }
             }
         }
+
+        ddao.create(domainsToCreate);
+
         return illegals;
     }
 
@@ -269,5 +356,34 @@ public class DomainDefinition {
         return "<a href=\"" + url + "\">"
                 + HTMLUtils.escapeHtmlValues(domain)
                 + "</a>";
+    }
+    
+    /**
+     * Search for domains matching the following criteria.
+     * Should we allow more than one criteria?
+     * @param context the context of the JSP page calling
+     * @param i18n The translation properties file used
+     * @param searchQuery The given searchQuery for searching for among the domains.
+     * @param searchType The given searchCriteria (TODO use Enum instead)
+     * @return the set of domain-names matching the given criteria.
+     */
+    public static List<String> getDomains(PageContext context, I18n i18n,
+            String searchQuery, String searchType) {
+        List<String> resultSet = new ArrayList<String>();
+        ArgumentNotValid.checkNotNullOrEmpty(searchQuery, "String searchQuery");
+        ArgumentNotValid.checkNotNullOrEmpty(searchType, "String searchType");
+        
+        try {
+            DomainSearchType.parse(searchType);
+        } catch (ArgumentNotValid e) {
+            HTMLUtils.forwardWithErrorMessage(context, i18n,
+                    "errormsg;invalid.domain.search.criteria.0", searchType);
+            throw new ForwardedToErrorPage("Unknown domain search criteria '" 
+                    + searchType + "'");
+        }
+        
+        log.debug("SearchQuery '" + searchQuery + "', searchType: " +  searchType);
+        resultSet = DomainDAO.getInstance().getDomains(searchQuery, searchType);
+        return resultSet;
     }
 }

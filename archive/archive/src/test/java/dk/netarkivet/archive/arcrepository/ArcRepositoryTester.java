@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -39,6 +41,8 @@ import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
+import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
@@ -54,12 +58,14 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -290,7 +296,7 @@ public class ArcRepositoryTester extends TestCase {
                                                          new ArrayList<File>(0),
                                                          new StringRemoteFile(
                                                                  arcname1
-                                                                 + dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR
+                                                                 + ChecksumJob.STRING_FILENAME_SEPARATOR
                                                                  + "f00\n"));
         JMSConnectionMockupMQ.updateMsgID(bamsg0, id1);
         a.onBatchReply(bamsg0);
@@ -363,6 +369,64 @@ public class ArcRepositoryTester extends TestCase {
         assertFalse("Should not have info about non-yet-processed arcfile",
                     ad.hasEntry(arcname1));
 
+    }
+    
+    public void testOnChecksumReply() throws Exception {
+        ArcRepository a = ArcRepository.getInstance();
+        
+        GetChecksumMessage msg = new GetChecksumMessage(Channels.getError(), 
+                Channels.getTheRepos(), "THREE", "filename");
+        JMSConnectionMockupMQ.updateMsgID(msg, "OnChecksumReply-1");
+        a.onChecksumReply(msg);
+        FileAsserts.assertFileContains("Should warn about unknown originating "
+                + "ID from GetChecksumMessage", "Received GetChecksumMessage "
+                + "with unknown originating ID", TestInfo.LOG_FILE);
+        
+        Field ocf = ReflectUtils.getPrivateField(ArcRepository.class, 
+                "outstandingChecksumFiles");
+        ocf.setAccessible(true);
+        Map<String, String> outstandingFiles = 
+            (Map<String, String>) ocf.get(a);
+
+        outstandingFiles.put("OnChecksumReply-2", "filename");
+        msg = new GetChecksumMessage(Channels.getError(), Channels.getTheRepos(), 
+                "THREE", "filename");
+        msg.setNotOk("For testing the handling of 'NotOK'!");
+        JMSConnectionMockupMQ.updateMsgID(msg, "OnChecksumReply-2");
+        assertNull("The checksum should be null.", msg.getChecksum());
+        
+        try {
+            a.onChecksumReply(msg);
+            fail("Should throw exception here!");
+        } catch (UnknownID e) {
+            // no previous knowledge about 'filename'.
+            assertTrue("Should say, that it known nothing about 'filename', but was: " + e, 
+                    e.getMessage().contains("Don't know anything about file 'filename'"));
+        }
+        
+        FileAsserts.assertFileContains("Should give Warning of about message being NotOk.", 
+                "Message 'OnChecksumReply-2' is reported not okay", 
+                TestInfo.LOG_FILE);
+    }
+    
+    public void testOldRemoveAndGetFile() {
+        ArcRepository.getInstance().cleanup();
+        ArcRepository a = ArcRepository.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
+        
+        RemoveAndGetFileMessage msg = new RemoveAndGetFileMessage(Channels.getError(), 
+                Channels.getTheRepos(), "filename", Settings.get(CommonSettings.USE_REPLICA_ID), "checksum", "credentials");
+        con.updateMsgID(msg, "remove-1");
+        TestMessageListener listener = new TestMessageListener();
+        con.setListener(Channels.getAllBa(), listener);
+                
+        a.removeAndGetFile(msg);
+        con.waitForConcurrentTasksToFinish();
+        
+        FileAsserts.assertFileContains("Unexpected content in log-file", 
+                "Requesting remove of file 'filename'", TestInfo.LOG_FILE);
+        assertEquals("number of messages on queue AllBa", 1,
+                listener.getNumReceived());
     }
 
     public void testChecksumCalls() throws Exception {

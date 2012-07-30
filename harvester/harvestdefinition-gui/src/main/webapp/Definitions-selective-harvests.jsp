@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -50,25 +52,23 @@ inactive or vice-versa.
     String flipactive = request.getParameter(Constants.FLIPACTIVE_PARAM);
     // Change activation if requested
     if (flipactive != null) {
-        HarvestDefinition hd = dao.getHarvestDefinition(flipactive);
+        SparsePartialHarvest hd = dao.getSparsePartialHarvest(flipactive);
         if (hd == null) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                     "errormsg;harvestdefinition.0.does.not.exist",
                     flipactive);
             return;
         } else {
-        	// disallow going to active mode, if no domainconfigurations 
+        	// disallow going to active mode, if no domainconfigurations
         	// associated with this harvestdefinition
-        	if (!hd.getActive()) {
-        		if (!hd.getDomainConfigurations().hasNext()) {
+        	if (!hd.isActive() &&
+				dao.getSparseDomainConfigurations(hd.getOid()).isEmpty()) {
 					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                     	"errormsg;harvestdefinition.0.cannot.be.activated;"
                     	+ "no.domains.selected.for.harvesting", hd.getName());
             	return;
-            	}
         	}
-	        hd.setActive(!hd.getActive());
-            HarvestDefinitionDAO.getInstance().update(hd);
+	        dao.flipActive(hd);
             response.sendRedirect("Definitions-selective-harvests.jsp");
             return;
         }
@@ -130,7 +130,7 @@ if (!isph.iterator().hasNext()) { %>
     %>
     <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
         <td><%=HTMLUtils.escapeHtmlValues(name)%></td>
-        <td><%=sph.getNumEvents()%></td>         
+        <td><%=sph.getNumEvents()%></td>
         <td>
         <% // Only output the date, if the HarvestDefinition is active
         if (sph.isActive()) { %>
@@ -138,13 +138,13 @@ if (!isph.iterator().hasNext()) { %>
         <% } else { out.print(Constants.NoNextDate); } %>
         </td>
         <td width="<%=COMMANDWIDTH%>"><%=HTMLUtils.escapeHtmlValues(isActive)%></td>
-        <td width="<%=COMMANDWIDTH%>"><form 
-                           id="flipActiveForm<%=sph.getOid()%>" 
-                           action="Definitions-selective-harvests.jsp" 
+        <td width="<%=COMMANDWIDTH%>"><form
+                           id="flipActiveForm<%=sph.getOid()%>"
+                           action="Definitions-selective-harvests.jsp"
                            method="post"
-                        ><input 
-                           type="hidden" 
-                           name="<%=Constants.FLIPACTIVE_PARAM%>" 
+                        ><input
+                           type="hidden"
+                           name="<%=Constants.FLIPACTIVE_PARAM%>"
                            value="<%=HTMLUtils.escapeHtmlValues(sph.getName())%>"
                          /><%=flipactiveLink%>
                         </form>
@@ -172,12 +172,12 @@ if (!isph.iterator().hasNext()) { %>
     } //for each harvest
     %>
 </table>
-<% 
+<%
 } //else (if no harvest)
 %>
 <a href="Definitions-edit-selective-harvest.jsp?createnew=1">
         <fmt:message key="create.new.selective.harvestdefinition"/>
 </a>
-<% 
+<%
 HTMLUtils.generateFooter(out);
 %>

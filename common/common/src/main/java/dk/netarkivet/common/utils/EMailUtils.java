@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,14 +44,20 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Utilities for sending an email.
- *
  */
-public class EMailUtils {
+public final class EMailUtils {
+    /** name of property defining the sender of the mail. */
     private static final String MAIL_FROM_PROPERTY_KEY = "mail.from";
+    /** name of property defining the host sending the mail. */
     private static final String MAIL_HOST_PROPERTY_KEY = "mail.host";
+    /** The mimetype used in the mail. */
     private static final String MIMETYPE = "text/plain";
+    /** The class logger. */
     private static Log log = LogFactory.getLog(EMailUtils.class);
-
+    /** private constructor to avoid initialization. */
+    private EMailUtils() {
+    }
+    
     /**
      * Send an email, throwing exceptions on errors.
      *

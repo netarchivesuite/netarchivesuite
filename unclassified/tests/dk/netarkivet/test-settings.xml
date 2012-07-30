@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  
+<!--
  * File:        $Id$
  * Revision:    $Revision$
  * Author:      $Author$
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +25,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 -->
-<!-- 
+<!--
 	This file contains the settings needed to run our unittests.
 -->
 <settings>
@@ -31,35 +33,59 @@
         <jms>
         	<class>dk.netarkivet.common.distribute.JMSConnectionMockupMQ</class>
         </jms>
+        <notifications>
+            <class>dk.netarkivet.common.utils.PrintNotifications</class>
+        </notifications>
 	    <jmx>
-    		<!-- to reduce running time of our unittests -->
+    		<!-- timeout is 2 seconds to reduce running time of our unittests 
+    		-->
 			<timeout>2</timeout>
 			<passwordFile>tests/dk/netarkivet/jmxremote.password</passwordFile>
 			<accessFile>tests/dk/netarkivet/jmxremote.access</accessFile>
 		</jmx>
 		<http>
-    		<port>8076</port>
+    		<port>7076</port>
 	    </http>
     	<remoteFile>
-	       	<class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
+	       	<class>dk.netarkivet.common.distribute.ExtendedFTPRemoteFile</class>
     	    <userName>jms</userName>
 	        <userPassword>jms*ftp</userPassword>
+	        <retries>5</retries>
+	        <datatimeout>0</datatimeout>
     	</remoteFile>
         <tempDir>./tests/commontempdir</tempDir>
+        <database>
+            <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
+            <baseUrl>jdbc:derby:harvestdefinitionbasedir/fullhddb</baseUrl>
+            <machine></machine>
+            <port></port>
+            <dir></dir>
+            <backupInitHour>3</backupInitHour>
+            <pool>
+                <minSize>5</minSize>
+	            <maxSize>10</maxSize>
+	            <acquireInc>5</acquireInc>
+	            <maxStm>0</maxStm>
+                <maxStmPerConn>0</maxStmPerConn>
+                <idleConnTestPeriod>0</idleConnTestPeriod>
+                <idleConnTestQuery></idleConnTestQuery>
+                <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
+	        </pool>
+        </database>
         <replicas>
-            <!-- All bitarcive replicas in the environment, 
-                 e.g., (ONE, "replicaOne", bitarchive) and 
+            <!-- All bitarchive replicas in the environment,
+                 e.g., (ONE, "replicaOne", bitarchive) and
                  (TWO, "replicaTwo", bitarchive).
                  NOTE: settings for checksum replicas are not use yet -->
             <replica>
                 <replicaId>ONE</replicaId>
                 <replicaType>BiTaRcHiVe</replicaType>
-                <replicaName>BarOne</replicaName>                
+                <replicaName>BarOne</replicaName>
             </replica>
             <replica>
                 <replicaId>TWO</replicaId>
                 <replicaType>bItArChIvE</replicaType>
-                <replicaName>BarTwo</replicaName>                
+                <replicaName>BarTwo</replicaName>
             </replica>
             <replica>
                 <replicaId>THREE</replicaId>
@@ -69,8 +95,8 @@
         </replicas>
         <!-- Default bit archive to use for e.g. batch jobs (if none is specified) -->
         <useReplicaId>ONE</useReplicaId>
-        <!--  Remove the following setting when the code is updated to 
-           use the setting common.replicas.useReplicaId instead of common.useReplicaId  
+        <!--  Remove the following setting when the code is updated to
+           use the setting common.replicas.useReplicaId instead of common.useReplicaId
         -->
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
@@ -82,6 +108,20 @@
         </arcrepositoryClient>
      </common>
      <harvester>
+         <datamodel>
+            <domain>
+                <defaultSeedlist>defaultseeds</defaultSeedlist>
+                <defaultConfig>defaultconfig</defaultConfig>
+                <defaultOrderxml>default_orderxml</defaultOrderxml>
+                <defaultMaxrate>100</defaultMaxrate>
+                <defaultMaxbytes>1000000000</defaultMaxbytes>
+                <defaultMaxobjects>-1</defaultMaxobjects>
+                <!-- Used when creating ids for new jobs after a admin
+                database restore. -->
+                <nextJobId>0</nextJobId>
+                <validSeedRegex>^.*$</validSeedRegex>
+            </domain>
+        </datamodel>
      	<harvesting>
      		<heritrix>
      			<jmxUsername>controlRole</jmxUsername>
@@ -89,4 +129,16 @@
      		</heritrix>
      	</harvesting>
      </harvester>
+     <archive><indexserver>
+                <maxclients>4</maxclients>
+                <maxthreads>2</maxthreads>
+                <requestdir>./tests/commontempdir/requests</requestdir>
+                <checkinterval>5000</checkinterval>
+                <indexingtimeout>172800</indexingtimeout>
+        </indexserver>
+    </archive>
+    <wayback><resourcestore>
+    	<cachedir>./tests/commontempdir/cachedir</cachedir>
+    </resourcestore>
+    </wayback>
 </settings>

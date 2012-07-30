@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,17 +31,14 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.LogManager;
-import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
-import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
@@ -740,7 +739,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"),
                         gmlOneBaMon);
-        GenericMessageListener gmlTwoBaMon = new GenericMessageListener();
+        //GenericMessageListener gmlTwoBaMon = new GenericMessageListener();
         con.setListener(Channels.retrieveReplicaChannelFromReplicaId("TWO"),
                         gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();

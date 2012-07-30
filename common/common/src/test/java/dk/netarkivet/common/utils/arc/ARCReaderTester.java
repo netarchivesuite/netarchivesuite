@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -34,26 +36,26 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: lc
- * Date: Nov 4, 2004
- * Time: 11:26:36 AM
- * To change this template use File | Settings | File Templates.
+ * A simple test of the ARCREADER that is bundled with Heritrix 1.14.4. 
  */
 public class ARCReaderTester extends TestCase {
     public static final String ARCHIVE_DIR =
             "tests/dk/netarkivet/common/utils/arc/data/input/";
+    public static final String testFileName = "working.arc";
+    
     public void testARCReaderClose() {
         try {
+            final File testfile = new File(ARCHIVE_DIR + testFileName);
             FileUtils.copyFile(new File(ARCHIVE_DIR + "fyensdk.arc"),
-                    new File(ARCHIVE_DIR + "working.arc"));
-            ARCReader reader = ARCReaderFactory.get(new File(ARCHIVE_DIR + "working.arc"));
+                    testfile);
+            
+            ARCReader reader = ARCReaderFactory.get(testfile);
             ARCRecord record = (ARCRecord) reader.get(0);
             BitarchiveRecord rec =
-                    new BitarchiveRecord(record);
+                    new BitarchiveRecord(record, testFileName);
             record.close();
             reader.close();
-            new File(ARCHIVE_DIR + "working.arc").delete();
+            testfile.delete();
         } catch (IOException e) {
             fail("Should not throw IOException " + e);
         }

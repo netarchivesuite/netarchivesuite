@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -23,12 +25,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%-- This page handles searching for domains.  With no parameters, it
 gives an input box for searching that feeds back into itself.
-With parameter name, it performs a search.  Name can be a glob pattern
+With parameter DOMAIN_QUERY_TYPE and DOMAIN_QUERY_STRING set, it performs a
+search.  
+The DOMAIN_QUERY_STRING can be a glob pattern
 (using ? and * only) or a single domain.  If domains are found, they are
-displayed, if no domains are found for a non-glob search, the user is
-asked if they should be created.
---%><%@ page import="javax.servlet.RequestDispatcher,
-                 java.util.List,
+displayed, otherwise the message is given that there are no domains matching the query.
+
+The search-system are now able to search in different fields of the 'domain' table
+ - name (the only search-option before), 
+ - comments, 
+ - crawlertraps
+ On the todo list are aliases, seeds. domainconfigurations, 
+
+--%><%@page import="dk.netarkivet.harvester.webinterface.DomainSearchType,
+				dk.netarkivet.harvester.webinterface.DomainDefinition,
+				javax.servlet.RequestDispatcher,
+                 java.util.List, java.util.Set,
+                 dk.netarkivet.common.CommonSettings,
+                 dk.netarkivet.common.utils.Settings,
                  dk.netarkivet.common.utils.DomainUtils,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
@@ -38,29 +52,137 @@ asked if they should be created.
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
+
 <%! private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
-    String domainName = request.getParameter(Constants.DOMAIN_PARAM);
-    if (domainName != null && domainName.length() > 0) {
-        domainName = domainName.trim();
-        if (domainName.contains("?") || domainName.contains("*")) {
-            List<String> matchingDomains = DomainDAO.getInstance().getDomains(
-                    domainName);
-            if (matchingDomains.isEmpty()) {//No matching domains
+	
+	String searchType = request.getParameter(Constants.DOMAIN_QUERY_TYPE_PARAM);
+	String searchQuery =  request.getParameter(Constants.DOMAIN_QUERY_STRING_PARAM);
+    
+	if (searchType == null) { // The default is NAME searchS
+	    searchType = Constants.NAME_DOMAIN_SEARCH;
+	}
+	
+    if (searchQuery != null && searchQuery.trim().length() > 0) {
+        // search field is not empty
+        searchQuery = searchQuery.trim();
+        List<String> matchingDomains = DomainDefinition.getDomains(
+                pageContext, I18N, searchQuery, searchType);
+
+            if (matchingDomains.isEmpty()) { // No matching domains
                 HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                        "errormsg;no.matching.domains.for.0", domainName);
+                        "errormsg;no.matching.domains.for.query.0.when.searching.by.1", 
+                        searchQuery, searchType);
                 return;
             } else {
-                HTMLUtils.generateHeader(pageContext);
+                // Include navigate.js 
+                HTMLUtils.generateHeader(pageContext, "navigateWithTwoParams.js");
                 %><h3 class="page_heading">
                 <fmt:message key="searching.for.0.gave.1.hits">
-                    <fmt:param value="<%=domainName%>"/>
+                    <fmt:param value="<%=searchQuery%>"/>
                     <fmt:param value="<%=matchingDomains.size()%>"/>
                 </fmt:message>
                 </h3>
-                <% for (String domainS : matchingDomains) {
+
+                <%
+                 String startPage=request.getParameter(Constants.START_PAGE_PARAMETER);
+
+                 if(startPage == null){
+                     startPage="1";
+                 }	                
+
+                 long totalResultsCount = matchingDomains.size();
+                 long pageSize = Long.parseLong(Settings.get(
+                         CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
+                 long actualPageSize = (pageSize == 0 ?
+                         totalResultsCount : pageSize);
+
+                 long startPageIndex = Long.parseLong(startPage);
+                 long startIndex = 0;
+                 long endIndex = 0;
+
+                 if (totalResultsCount > 0) {
+                     startIndex = ((startPageIndex - 1) * actualPageSize);
+                     endIndex = Math.min(startIndex + actualPageSize ,
+                             totalResultsCount);
+                 }
+                 boolean prevLinkActive = false;
+                 if (pageSize != 0 && totalResultsCount > 0 && startIndex > 1) {
+                     prevLinkActive = true;
+                 }
+
+                 boolean nextLinkActive = false;
+                 if (pageSize != 0 && totalResultsCount > 0
+                         && endIndex < totalResultsCount) {
+                     nextLinkActive = true;
+                 }
+                 %>
+
+                <fmt:message key="status.results.displayed">
+                <fmt:param><%=totalResultsCount%></fmt:param>
+                <fmt:param><%=startIndex+1%></fmt:param>
+                <fmt:param><%=endIndex%></fmt:param>
+                </fmt:message>
+                <%
+                String startPagePost=request.getParameter(Constants.START_PAGE_PARAMETER);
+
+                if(startPagePost == null){
+                    startPagePost="1";
+                }
+
+                String searchqueryParam=request.getParameter(Constants.DOMAIN_QUERY_STRING_PARAM);
+                searchqueryParam = HTMLUtils.encode(searchqueryParam);
+                %>
+
+                <p style="text-align: right">
+                    <fmt:message key="status.results.displayed.pagination">
+                        <fmt:param>
+                        <%
+                        if (prevLinkActive) {
+                        %>
+                            <a href="javascript:previousPage('<%=Constants.DOMAIN_QUERY_STRING_PARAM%>','<%=searchqueryParam%>','<%=Constants.DOMAIN_QUERY_TYPE_PARAM%>','<%=searchType%>');">
+                                <fmt:message
+                                key="status.results.displayed.prevPage"/>
+                            </a>
+                        <%
+                        } else {
+                        %>
+                            <fmt:message
+                            key="status.results.displayed.prevPage"/>
+                        <%
+                        }
+                        %>
+                        </fmt:param>
+                        <fmt:param>
+                        <%
+                        if (nextLinkActive) {
+                        %>
+                            <a href="javascript:nextPage('<%=Constants.DOMAIN_QUERY_STRING_PARAM%>','<%=searchqueryParam%>', '<%=Constants.DOMAIN_QUERY_TYPE_PARAM%>','<%=searchType%>');">
+                                <fmt:message
+                                key="status.results.displayed.nextPage"/>
+                            </a>
+                        <%
+                        } else {
+                        %>
+                            <fmt:message key="status.results.displayed.nextPage"/>
+                        <%
+                        }
+                        %>
+                        </fmt:param>
+
+                    </fmt:message>
+                </p>
+
+                <form method="post" name="filtersForm" action="Definitions-find-domains.jsp">
+                    <input type="hidden" name="START_PAGE_INDEX" value="<%=startPagePost%>"/>
+                </form>
+
+<%
+                List<String> matchingDomainsSubList = matchingDomains.
+                                      subList((int)startIndex,(int)endIndex);
+                for (String domainS : matchingDomainsSubList) {
                     String encodedDomain = HTMLUtils.encode(domainS);
                     %>
                    <a href="Definitions-edit-domain.jsp?<%=
@@ -73,51 +195,48 @@ asked if they should be created.
                 HTMLUtils.generateFooter(out);
                 return;
             }
-        } else if (DomainDAO.getInstance().exists(domainName)) {
-            RequestDispatcher rd
-                    = pageContext.getServletContext().getRequestDispatcher(
-                    "/Definitions-edit-domain.jsp");
-            rd.forward(request, response);
-        } else {
-            //Is it a legal domain name
-            boolean isLegal = DomainUtils.isValidDomainName(domainName);
-            String message;
-            if (isLegal) {
-                String createUrl = "Definitions-create-domain.jsp?"
-                        + Constants.DOMAINLIST_PARAM + "="
-                        + HTMLUtils.encode(domainName);
-                message = I18N.getString(response.getLocale(),
-                        "domain.0.not.found.create", domainName);
-                message += " <a href=\"" + createUrl + "\">";
-                message += I18N.getString(response.getLocale(), "yes");
-                message += "</a>";
-            } else {
-                message = I18N.getString(response.getLocale(),
-                        "0.is.illegal.domain.name", domainName);
-            }
-            request.setAttribute("message", message);
-            RequestDispatcher rd = pageContext.getServletContext()
-                    .getRequestDispatcher("/message.jsp");
-            rd.forward(request, response);
-            return;
-        }
+                 
     }
-
+      
+  
     //Note: This point is only reached if no name was sent to the JSP-page
-    HTMLUtils.generateHeader(
-            pageContext);
+    HTMLUtils.generateHeader(pageContext);
 %>
 <h3 class="page_heading"><fmt:message key="pagetitle;find.domains"/></h3>
 
-<form method="post" action="Definitions-find-domains.jsp">
+
+<form method="post" onclick="resetPagination();"
+                                      action="Definitions-find-domains.jsp">
     <table>
         <tr>
-            <td><fmt:message key="prompt;enter.name.of.domain.to.find"/></td>
+            <td><fmt:message key="prompt;enter.domain.query"/></td>
             <td><span id="focusElement">
-                <input name="<%=Constants.DOMAIN_PARAM%>" 
+                <input name="<%=Constants.DOMAIN_QUERY_STRING_PARAM%>"
                 	size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>" value=""/>
                 </span>
             </td>
+        </tr>
+        <tr>    
+            <!--  add selector for what kind of search to make -->
+            <td><fmt:message key="search.domains.by"/></td>
+            <td><select name="<%=Constants.DOMAIN_QUERY_TYPE_PARAM%>">
+                    <%
+                    	for(DomainSearchType aSearchType: DomainSearchType.values()) {
+                            String selected = "";
+                            
+                            if (aSearchType.equals(DomainSearchType.NAME)) {
+                                selected = "selected = \"selected\"";
+                            }
+                            %> <option value="<%=HTMLUtils.escapeHtmlValues(aSearchType.name())%>"<%=selected%>>
+                                <fmt:message key="<%=HTMLUtils.escapeHtmlValues(aSearchType.getLocalizedKey())%>"/>
+                               </option>
+                            <%             
+                    	}
+                    %>
+                </select>
+                </td>
+        </tr>
+        <tr>        
             <td><input type="submit" value="<fmt:message key="search"/>"/></td>
         </tr>
         <tr>

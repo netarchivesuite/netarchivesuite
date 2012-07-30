@@ -40,9 +40,6 @@
             </replicas>
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
             <!-- or get and getFile oprations, (as well as bitArchive monitor)    -->
-            <database>
-	        <url/>
-	    </database>
 
             <!-- tempDir corrected from ./tests/commontempdir -->
             <tempDir>tmpdircommon</tempDir> 
@@ -75,9 +72,9 @@
                         <harvesting>
                             <queuePriority>HIGHPRIORITY</queuePriority> 
                             <heritrix>
-                                <guiPort>8592</guiPort> 
+                                <guiPort>8153</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8093) -->
-                                <jmxPort>8593</jmxPort> 
+                                <jmxPort>8253</jmxPort> 
                                  <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>

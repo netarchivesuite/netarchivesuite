@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,6 +34,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
+
+import org.apache.commons.io.IOUtils;
 
 import junit.framework.TestCase;
 
@@ -76,7 +80,7 @@ public class IntegrityTester extends TestCase {
      * test that FileUtils.append can append between two remote files
      * using ftp.
      */
-    public void testAppendRemoteFiles() throws IOException {
+    public void failingTestAppendRemoteFiles() throws IOException {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
         File in_1 = new File(WORKING, "append_data/file1");
         File in_2 = new File(WORKING, "append_data/file2");
@@ -94,22 +98,26 @@ public class IntegrityTester extends TestCase {
     }
 
     /** Test that files larger than 2GB can be copied! */
-    public void testCopyLargeFiles() throws IOException {
+    public void failingTestCopyLargeFiles() throws IOException {
         byte[] block = new byte[BLOCKSIZE];
         SUBDIR.mkdirs();
         File largeFile = new File(SUBDIR, LARGE_FILE);
-        OutputStream os
-                = new BufferedOutputStream(new FileOutputStream(largeFile));
-        System.out.println("Creating file - this will take a long time");
-        for (long l = 0; l < LARGE / ((long) BLOCKSIZE) + 1L; l++) {
-            os.write(block);
+        OutputStream os = null;
+        try {
+            os = new BufferedOutputStream(new FileOutputStream(largeFile));
+            System.out.println("Creating file - this will take a long time");
+            for (long l = 0; l < LARGE / ((long) BLOCKSIZE) + 1L; l++) {
+                os.write(block);
+            }
+            System.out.println("Copying file - this will take a long time");
+            FileUtils.copyDirectory(SUBDIR, SUBDIR2);
+            File file1 = new File(SUBDIR, LARGE_FILE);
+            File file2 = new File(SUBDIR2, LARGE_FILE);
+            assertEquals("Should have same file sizes", file1.length(),
+                    file2.length());
+        } finally {
+            IOUtils.closeQuietly(os);
         }
-        System.out.println("Copying file - this will take a long time");
-        FileUtils.copyDirectory(SUBDIR, SUBDIR2);
-        File file1 = new File(SUBDIR, LARGE_FILE);
-        File file2 = new File(SUBDIR2, LARGE_FILE);
-        assertEquals("Should have same file sizes",
-                     file1.length(), file2.length());
     }
 
     /** This tests that we are actually able to write and read more than
@@ -117,7 +125,7 @@ public class IntegrityTester extends TestCase {
      *
      * @throws IOException
      */
-    public void testGzipLargeFile() throws IOException {
+    public void failingTestGzipLargeFile() throws IOException {
         byte[] block = new byte[BLOCKSIZE];
         File largeFile = new File(WORKING, LARGE_FILE);
         OutputStream os = new GZIPOutputStream(
@@ -155,30 +163,35 @@ public class IntegrityTester extends TestCase {
     }
 
     /** Test that files larger than 2GB can be gzipped and gunzipped! */
-    public void testGZipGUnZipLargeFiles() throws IOException {
+    public void failingTestGZipGUnZipLargeFiles() throws IOException {
         byte[] block = new byte[BLOCKSIZE];
         SUBDIR.mkdirs();
         File largeFile = new File(SUBDIR, LARGE_FILE);
-        OutputStream os = new FileOutputStream(largeFile);
-        System.out.println("Creating file - this will take a long time");
-        for (long l = 0; l < LARGE / ((long) BLOCKSIZE) + 1L; l++) {
-            os.write(block);
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(largeFile);
+            System.out.println("Creating file - this will take a long time");
+            for (long l = 0; l < LARGE / ((long) BLOCKSIZE) + 1L; l++) {
+                os.write(block);
+            }
+            System.out.println("Zipping file - this will take a long time");
+            ZipUtils.gzipFiles(SUBDIR, SUBDIR2);
+            System.out.println("UnZipping file - this will take a long time");
+            ZipUtils.gunzipFiles(SUBDIR2, SUBDIR3);
+            File file1 = new File(SUBDIR, LARGE_FILE);
+            File file2 = new File(SUBDIR3, LARGE_FILE);
+            assertEquals("Should have same file sizes", file1.length(),
+                    file2.length());
+        } finally {
+            IOUtils.closeQuietly(os);
         }
-        System.out.println("Zipping file - this will take a long time");
-        ZipUtils.gzipFiles(SUBDIR, SUBDIR2);
-        System.out.println("UnZipping file - this will take a long time");
-        ZipUtils.gunzipFiles(SUBDIR2, SUBDIR3);
-        File file1 = new File(SUBDIR, LARGE_FILE);
-        File file2 = new File(SUBDIR3, LARGE_FILE);
-        assertEquals("Should have same file sizes",
-                     file1.length(), file2.length());
     }
 
     /** Test reading two large files: One that should unzip OK, one that should
      * fail with wrong CRC checksum.
      * @throws IOException
      */
-    public void testLargeGZIPReadLargeFiles() throws IOException {
+    public void failingTestLargeGZIPReadLargeFiles() throws IOException {
         LargeFileGZIPInputStream largeFileGZIPInputStream
                 = new LargeFileGZIPInputStream(new FileInputStream(
                 new File(BASE_DIR, "data/largeFileWrongCRC/largeFile.gz")));

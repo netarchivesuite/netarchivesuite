@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,7 +63,7 @@ public abstract class FileBasedCache<I> {
      * main cache directory holding cached files.
      *
      * @param cacheName Name of this cache (enabling sharing among processes).
-     *                  The directoriy creating in the cachedir will have this
+     *                  The directory created in the cachedir will have this
      *                  name.
      */
     public FileBasedCache(String cacheName) {
@@ -146,6 +148,9 @@ public abstract class FileBasedCache<I> {
                     fileBehindLockFile);
             FileLock lock = null;
             // Make sure no other thread tries to create this
+            log.debug("Waiting to enter synchronization on " 
+                    + fileBehindLockFile.getAbsolutePath().intern());
+            // FIXME Potential memory leak. intern() remembers all strings until JVM exits.
             synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
                 try {
                     // Make sure no other process tries to create this.

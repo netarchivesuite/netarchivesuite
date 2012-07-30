@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -116,7 +118,8 @@ public class TestMessageListener implements MessageListener {
      * @return The instance that was most recently received, or null if no
      * messages of the specified type has been received.
      */
-    public NetarkivetMessage getLastInstance(Class msgClass) {
+    @SuppressWarnings("rawtypes")
+	public NetarkivetMessage getLastInstance(Class msgClass) {
         NetarkivetMessage result = null;
         for (NetarkivetMessage msg : received) {
             if (msgClass.isInstance(msg)) {

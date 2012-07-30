@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,29 +30,37 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
  * Various database related utilities.
  *
  */
-public class DBUtils {
+public final class DBUtils {
     
+    /** default constructor. Is private to avoid initialization. */
+    private DBUtils() {
+        
+    }
+
     /** The logger. */
     private static final Log log = LogFactory.getLog(DBUtils.class);
 
@@ -84,7 +94,9 @@ public class DBUtils {
 
     /** Execute an SQL statement and return the single int in the result set.
      * This variant takes a query string and a single string arg and combines
-     * them to form a normal query. 
+     * them to form a normal query.
+     *
+     * NB: the method does not close the provided connection.
      *
      * @param connection connection to database.
      * @param query a query with ? for parameters (must not be null or
@@ -109,10 +121,10 @@ public class DBUtils {
                     + query + " args " + Arrays.toString(args) + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
+            closeStatementIfOpen(s);
         }
     }
-    
+
     /** Execute an SQL statement and return the single long in the result set.
      *
      * @param s A prepared statement
@@ -146,6 +158,8 @@ public class DBUtils {
      * This variant takes a query string and a single string arg and combines
      * them to form a normal query.
      *
+     * NB: the provided connection is not closed.
+     *
      * @param connection connection to database.
      * @param query a query with ? for parameters (must not be null or
      * empty string)
@@ -167,15 +181,17 @@ public class DBUtils {
             return selectLongValue(s);
         } catch (SQLException e) {
             throw new IOFailure("Error preparing SQL statement "
-                    + query + " args " + Arrays.toString(args) 
+                    + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
+            closeStatementIfOpen(s);
         }
     }
 
     /** Execute an SQL statement and return the first long in the result set,
      * or null if resultset is empty.
+     *
+     * NB: the provided connection is not closed.
      *
      * @param connection connection to database.
      * @param query a query with ? for parameters (must not be null
@@ -206,19 +222,22 @@ public class DBUtils {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
+            closeStatementIfOpen(s);
         }
     }
 
     /**
      * Prepare a statement given a query string and some args.
+     *
+     * NB: the provided connection is not closed.
+     *
      * @param c a Database connection
      * @param query a query string  (must not be null or empty)
      * @param args some args to insert into this query string (must not be null)
      * @return a prepared statement
      * @throws SQLException If unable to prepare a statement
      * @throws ArgumentNotValid If unable to handle type of one the args, or
-     * the arguments are either null or an empty String. 
+     * the arguments are either null or an empty String.
      */
     public static PreparedStatement prepareStatement(Connection c, String query,
             Object... args) throws SQLException {
@@ -240,7 +259,7 @@ public class DBUtils {
                 s.setTimestamp(i, new Timestamp(((Date) arg).getTime()));
             } else {
                 throw new ArgumentNotValid("Cannot handle type '"
-                        + arg.getClass().getName() 
+                        + arg.getClass().getName()
                         + "'. We can only handle string, "
                         + "int, long, date or boolean args for query: "
                         + query);
@@ -252,7 +271,9 @@ public class DBUtils {
 
     /** Execute an SQL statement and return the list of strings
      * in its result set. This uses specifically the harvester database.
-     * 
+     *
+     * NB: the provided connection is not closed.
+     *
      * @param connection connection to the database.
      * @param query the given sql-query (must not be null or empty)
      * @param args The arguments to insert into this query (must not be null)
@@ -285,12 +306,15 @@ public class DBUtils {
                     + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
+            closeStatementIfOpen(s);
         }
     }
-    
+
     /** Execute an SQL statement and return the list of strings -> id mappings
      * in its result set.
+     *
+     * NB: the provided connection is not closed.
+     *
      * @param connection connection to the database.
      * @param query the given sql-query (must not be null or empty string)
      * @param args The arguments to insert into this query
@@ -315,29 +339,32 @@ public class DBUtils {
                 if ((resultString == null)
                         || (resultLong == 0L && result.wasNull())) {
                     String warning = "NULL pointers found in entry ("
-                        + resultString + "," + resultLong
-                        + ") in resultset from query: " + query;
+                            + resultString + "," + resultLong
+                            + ") in resultset from query: " + query;
                     log.warn(warning);
-                    //throw new IOFailure(warning);
                 }
                 results.put(resultString, resultLong);
             }
             return results;
         } finally {
-            DBUtils.closeStatementIfOpen(s);
+            closeStatementIfOpen(s);
         }
+
     }
 
     /**
      * Execute an SQL statement and return the list of Long-objects
      * in its result set.
+     *
+     * NB: the provided connection is not closed.
+     *
      * @param connection connection to the database.
      * @param query the given sql-query (must not be null or empty string)
      * @param args The arguments to insert into this query
-     * @return the list of Long-objects in its resultset
+     * @return the list of Long-objects in its result set
      */
     public static List<Long> selectLongList(Connection connection, String query,
-	    Object... args) {
+            Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -351,7 +378,6 @@ public class DBUtils {
                     String warning = "NULL value encountered in query: "
                                      + query;
                     log.warn(warning);
-                    //throw new IOFailure(warning);
                 }
                 results.add(result.getLong(1));
             }
@@ -361,7 +387,83 @@ public class DBUtils {
                     + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
+            closeStatementIfOpen(s);
+        }
+    }
+    
+    /**
+     * Return an iterator to a list of Longs.
+     * @param connection an open connection to the database
+     * @param query The given sql-query (must not be null or empty string)
+     * @param args The arguments to insert into this query
+     * @return an iterator to a list of Longs.
+     */
+    public static Iterator<Long> selectLongIterator(Connection connection, String query,
+            Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
+        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
+        ArgumentNotValid.checkNotNull(args, "Object... args");
+        PreparedStatement s = null;
+        try {
+            s = prepareStatement(connection, query, args);
+            ResultSet result = s.executeQuery();
+            Iterator<Long> results = new ResultSetIterator<Long>(result) {
+                @Override
+                public Long filter(ResultSet result) {
+                    try {
+                    return result.getLong(1);
+                    } catch (SQLException e) {
+                        log.warn("Error retrieving long from resultset\n" 
+                                + ExceptionUtils.getSQLExceptionCause(e), e);
+                       return 0L;
+                    }
+                }
+            };
+            return results;
+        } catch (SQLException e) {
+            closeStatementIfOpen(s);
+            throw new IOFailure("Error preparing SQL statement "
+                    + query + " args " + Arrays.toString(args)
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+        } 
+    }
+    
+    /**
+     * Execute an SQL statement and return the set of Long-objects
+     * in its result set.
+     *
+     * NB: the provided connection is not closed.
+     *
+     * @param connection connection to the database.
+     * @param query the given sql-query (must not be null or empty string)
+     * @param args The arguments to insert into this query
+     * @return the set of Long-objects in its result set
+     */
+    public static Set<Long> selectLongSet(Connection connection, String query,
+            Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
+        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
+        ArgumentNotValid.checkNotNull(args, "Object... args");
+        PreparedStatement s = null;
+        try {
+            s = prepareStatement(connection, query, args);
+            ResultSet result = s.executeQuery();
+            Set<Long> results = new TreeSet<Long>();
+            while (result.next()) {
+                if (result.getLong(1) == 0L && result.wasNull()){
+                    String warning = "NULL value encountered in query: "
+                                     + query;
+                    log.warn(warning);
+                }
+                results.add(result.getLong(1));
+            }
+            return results;
+        } catch (SQLException e) {
+            throw new IOFailure("Error preparing SQL statement "
+                    + query + " args " + Arrays.toString(args)
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            closeStatementIfOpen(s);
         }
     }
 
@@ -370,7 +472,7 @@ public class DBUtils {
      *
      * @param s A statement created with Statement.RETURN_GENERATED_KEYS
      * @return The single generated key
-     * @throws SQLException If a database access error occurs or 
+     * @throws SQLException If a database access error occurs or
      * the PreparedStatement is closed, or the JDBC driver does not support
      * the setGeneratedKeys() method
      */
@@ -386,6 +488,7 @@ public class DBUtils {
     /** Returns the version of a table according to schemaversions, or 0
      * for the initial, unnumbered version.
      *
+     * NB: the provided connection is not closed
      *
      * @param connection connection to the database.
      * @param tablename The name of a table in the database.
@@ -404,7 +507,10 @@ public class DBUtils {
             s.setString(1, tablename);
             ResultSet res = s.executeQuery();
             if (!res.next()) {
-                log.warn("Unknown table '" + tablename + "'");
+                log.warn("As yet unknown tablename '" + tablename 
+                        + "' in table schemaversions. The table"
+                        + " should be automatically created in the database "
+                        + "when it is first needed.");
             } else {
                 version = res.getInt(1);
                 if (res.wasNull()) {
@@ -419,25 +525,7 @@ public class DBUtils {
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
-    }
-
-    /**
-     * Close a statement, if not closed already
-     * Note: This does not throw any a SQLException, because
-     * it is always called inside a finally-clause.
-     * Exceptions are logged as warnings, though.
-     * @param s a statement
-     */
-    public static void closeStatementIfOpen(PreparedStatement s) {
-        if (s != null) {
-            try {
-                s.close();
-            } catch (SQLException e) {
-                log.warn("Error closing SQL statement " + s + "\n"
-                         + ExceptionUtils.getSQLExceptionCause(e), e);
-            }
+            closeStatementIfOpen(s);
         }
     }
 
@@ -449,7 +537,7 @@ public class DBUtils {
      * @param fieldNum a index into the above statement
      * @param contents the contents
      * @param maxSize the maximum size of field: fieldName
-     * @param o the Object, which assumedly have a field named fieldName
+     * @param o the Object, which is assumed to have a field named fieldName
      * @param fieldname the name of a given field
      * @throws SQLException if set operation fails
      */
@@ -459,7 +547,7 @@ public class DBUtils {
             throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
         ArgumentNotValid.checkNotNegative(fieldNum, "int fieldNum");
-        
+
         if (contents != null) {
             if (contents.length() > maxSize) {
                 log.warn(fieldname + " of " + o
@@ -482,7 +570,8 @@ public class DBUtils {
      * @param fieldNum the index of the given field to be set
      * @param o the Named object
      * @param maxFieldSize max size of the comments field
-     * @throws SQLException 
+     * @throws SQLException If any trouble accessing the database during 
+     * the operation
      * @throws PermissionDenied If length of o.getComments() is larger than
      * Constants.MAX_COMMENT_SIZE
      */
@@ -492,7 +581,7 @@ public class DBUtils {
         ArgumentNotValid.checkNotNegative(fieldNum, "int fieldNum");
         ArgumentNotValid.checkNotNull(o, "Named o");
         ArgumentNotValid.checkNotNegative(maxFieldSize, "int maxFieldSize");
-        
+
         if (o.getComments().length() > maxFieldSize) {
             throw new PermissionDenied("Length of comments ("
                     + o.getComments().length()
@@ -507,7 +596,9 @@ public class DBUtils {
      * @param s a prepared statement
      * @param fieldNum the index of the given field to be set
      * @param o the Named object
-     * @throws SQLException
+     * @param maxFieldSize max size of the name field
+     * @throws SQLException  If any trouble accessing the database during 
+     * the operation
      * @throws PermissionDenied If length of o.getName() is larger than
      * Constants.MAX_NAME_SIZE
      */
@@ -517,7 +608,7 @@ public class DBUtils {
         ArgumentNotValid.checkNotNegative(fieldNum, "int fieldNum");
         ArgumentNotValid.checkNotNull(o, "Named o");
         ArgumentNotValid.checkNotNegative(maxFieldSize, "int maxFieldSize");
-        
+
         if (o.getName().length() > maxFieldSize) {
             throw new PermissionDenied("Length of name ("
                     + o.getName().length()
@@ -532,13 +623,14 @@ public class DBUtils {
      * @param s a prepared statement
      * @param fieldNum the index of the given field to be set
      * @param date the date (may be null)
-     * @throws SQLException
+     * @throws SQLException  If any trouble accessing the database during 
+     * the operation
      */
     public static void setDateMaybeNull(
             PreparedStatement s, int fieldNum, Date date) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
         ArgumentNotValid.checkNotNegative(fieldNum, "int fieldNum");
- 
+
         if (date != null) {
             s.setTimestamp(fieldNum, new Timestamp(date.getTime()));
         } else {
@@ -560,7 +652,7 @@ public class DBUtils {
     throws SQLException {
         ArgumentNotValid.checkNotNull(rs, "ResultSet rs");
         ArgumentNotValid.checkNotNegative(columnIndex, "int columnIndex");
- 
+
         final Timestamp startTimestamp = rs.getTimestamp(columnIndex);
         if (rs.wasNull()) {
             return null;
@@ -580,6 +672,8 @@ public class DBUtils {
      * nothing will happen.  This should be called in a finally block with
      * no DB updates after the last commit.
      * Thus exceptions while closing are ignored, but logged as warnings.
+     *
+     * NB: the provided connection is not closed.
      *
      * @param c the db-connection
      * @param action The action going on, before calling this method
@@ -607,8 +701,8 @@ public class DBUtils {
      * @param fieldNum the field-index, where the contents are inserted
      * @param contents the contents
      * @param maxSize the maxsize for this contents
-     * @param o the Object, which assumedly have a field named fieldName
-     * @param fieldName a given field (Assumedly in Object o)
+     * @param o the Object, which is assumed to have a field named fieldName
+     * @param fieldName a given field (Assumed to present in Object o)
      * @throws SQLException If fieldNum does not correspond to a
      * parameter marker in the PreparedStatement, or a database access error
      * occurs or this method is called on a closed PreparedStatement
@@ -620,14 +714,20 @@ public class DBUtils {
         if (contents != null) {
             if (contents.length() > maxSize) {
                 log.warn(
-                        fieldName + " of " + o
-                        + " is longer than the allowed " + maxSize
-                        + " characters. The contents is now truncated to "
-                        + "length " + maxSize
-                        + ". The untruncated contents was: " + contents);
+                        "The field '" + fieldName + "' is " + contents.length() 
+                        + " characters long, which is "
+                                +  (contents.length() - maxSize) + " longer than the allowed " 
+                        + maxSize + " characters. The contents is now truncated to "
+                        + "length " + maxSize);
+                // This caused OOM if both the 'contents' and o.toString() was large
+                // (See NAS-2015).
+                // It is therefore omitted from this log-entry.
+                
                 // truncate to length maxSize (if maxSize <= Integer.MAX_VALUE)
                 // else truncate to length Integer.MAX_VALUE
                 if (maxSize > Integer.MAX_VALUE) {
+                    log.warn("The maxSize is larger than maxint (" +  Integer.MAX_VALUE
+                            + "), which is not allowed. MaxSize changed to maxint");
                     maxSize = Integer.MAX_VALUE;
                 }
                 contents = contents.substring(0, (int) maxSize);
@@ -672,7 +772,7 @@ public class DBUtils {
     public static void setIntegerMaybeNull(PreparedStatement s, int i,
                                         Integer value) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
-        
+
         if (value != null) {
             s.setInt(i, value);
         } else {
@@ -716,48 +816,10 @@ public class DBUtils {
         return res;
     }
 
-    /** Check whether an object is used elsewhere in the database.
-     *
-     * @param connection connection to the database.
-     * @param select A select statement finding the names of other uses.  The
-     * statement should result in exactly one column of string values.
-     * @param victim The object being used.
-     * @param args Any objects that may be used to prepare the select statement.
-     * @throws PermissionDenied if the object has usages.
-     */
-    public static void checkForUses(
-            Connection connection, String select, Object victim,
-            Object... args) {
-        ArgumentNotValid.checkNotNull(connection, "Connection connection");
-        String usages = DBUtils.getUsages(connection, select, victim, args);
-        if (usages != null) {
-            String message = "Cannot delete " + victim
-                + " as it is used in " + usages;
-            throw new PermissionDenied(message);
-        }
-        PreparedStatement s = null;
-        try {
-            s = prepareStatement(connection, select, args);
-            ResultSet res = s.executeQuery();
-            if (res.next()) {
-                List<String> usedIn = new ArrayList<String>();
-                do {
-                    usedIn.add(res.getString(1));
-                } while (res.next());
-            }
-        } catch (SQLException e) {
-            final String message = "SQL error deleting " + victim;
-            log.warn(message + "\n" 
-                    + ExceptionUtils.getSQLExceptionCause(e), e);
-            throw new IOFailure(message + "\n" 
-                    + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            closeStatementIfOpen(s);
-        }
-    }
-
     /** Return a description of where an object is used elsewhere in the
      * database, or null.
+     *
+     * NB: the provided connection is not closed.
      *
      * @param connection connection to the database.
      * @param select A select statement finding the names of other uses.  The
@@ -793,32 +855,10 @@ public class DBUtils {
         }
     }
 
-    /** Check that a database table is of the expected version.
-     *
-     * @param connection connection to the database.
-     * @param tablename The table to check.
-     * @param desiredVersion The version it should be.
-     * @throws IllegalState if the version isn't as expected.
-     */
-    public static void checkTableVersion(Connection connection,
-                                         String tablename, int desiredVersion) {
-        ArgumentNotValid.checkNotNull(connection, "Connection connection");
-        ArgumentNotValid.checkNotNullOrEmpty(tablename, "String tablename");
-        ArgumentNotValid.checkPositive(desiredVersion, "int desiredVersion");
-        int actualVersion = getTableVersion(connection, tablename);
-        if (actualVersion != desiredVersion) {
-            String message = "Wrong table version for '" + tablename
-                    + "': Should be " + desiredVersion
-                    + ", but is " + actualVersion;
-            log.warn(message);
-            throw new IllegalState(message);
-        }
-    }
-
     /** Execute an SQL statement and return the single string in the result set.
      * This variant takes a query string and a single string arg and combines
      * them to form a normal query.
-     * 
+     *
      * This assumes the connection is to the harvester database.
      *
      * @param connection connection to the database.
@@ -881,6 +921,8 @@ public class DBUtils {
 
     /** Execute an SQL query and return whether the result contains any rows.
      *
+     * NB: the provided connection is not closed.
+     *
      * @param connection connection to the database.
      * @param query a query with ? for parameters (must not be null or
      * an empty String)
@@ -923,6 +965,8 @@ public class DBUtils {
      *  It must only be used in connection with temporary tables e.g. used
      *  for backup.
      *
+     *  NB: the method does not close the provided connection.
+     *
      * @param connection connection to the database.
      * @param updates The SQL statements that makes the necessary
      * updates.
@@ -933,7 +977,7 @@ public class DBUtils {
         ArgumentNotValid.checkNotNull(updates, "String... updates");
         PreparedStatement st = null;
         String s = "";
-        
+
         try {
             connection.setAutoCommit(false);
             for (String update : updates) {
@@ -944,7 +988,7 @@ public class DBUtils {
                 st.close();
             }
             connection.setAutoCommit(true);
-            log.debug("Updated database using updates '" 
+            log.debug("Updated database using updates '"
                     + StringUtils.conjoin(";", updates) + "'.");
         } catch (SQLException e) {
             String msg = "SQL error updating database with sql: " + s + "\n"
@@ -954,7 +998,24 @@ public class DBUtils {
         } finally {
             rollbackIfNeeded(connection, "updating table with SQL: ",
                     StringUtils.conjoin(";", updates) + "'.");
-            closeStatementIfOpen(st);
+        }
+    }
+    
+    /**
+     * Close a statement, if not closed already
+     * Note: This does not throw any a SQLException, because
+     * it is always called inside a finally-clause.
+     * Exceptions are logged as warnings, though.
+     * @param s a statement
+     */
+    public static void closeStatementIfOpen(Statement s) {
+        if (s != null) {
+            try {
+                s.close();
+            } catch (SQLException e) {
+                log.warn("Error closing SQL statement " + s + "\n"
+                         + ExceptionUtils.getSQLExceptionCause(e), e);
+            }
         }
     }
 }

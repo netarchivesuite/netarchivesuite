@@ -4,7 +4,9 @@
  * Author:      $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,18 +40,19 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.arc.ARCKey;
 
 /** This class handles reading CDX files and finding entries in them.
- *  Furthermore it implements the possibillity to do filtering of searchresults
- *
+ *  Furthermore it implements the possibility to do filtering of searchresults
  */
 public class CDXReader {
     /** The CDX files that we want to iterate over. */
     private List<File> files = new ArrayList<File>();
 
     /** Any filters we want to apply. */
-    private Map<String, CDXRecordFilter> cdxrecordfilters = new HashMap<String, CDXRecordFilter>();
+    private Map<String, CDXRecordFilter> cdxrecordfilters 
+        = new HashMap<String, CDXRecordFilter>();
 
-    /** The regular expression that defines seperation between fields. */
+    /** The regular expression that defines separation between fields. */
     static final String SEPARATOR_REGEX = "\\s+";
+    /** The instance logger. */
     private Log log = LogFactory.getLog(CDXReader.class.getName());
 
     /** Create a new CDXReader that reads the given file.
@@ -154,10 +157,10 @@ public class CDXReader {
             long numBrokenLines = 0;
             try {
                 CDXLINES: for (String s : BinSearch.getLinesInFile(f, uri)) {
-                    String[] field_parts = s.split(SEPARATOR_REGEX);
+                    String[] fieldParts = s.split(SEPARATOR_REGEX);
                     CDXRecord cdxrec;
                     try {
-                        cdxrec = new CDXRecord(field_parts);
+                        cdxrec = new CDXRecord(fieldParts);
                     } catch (RuntimeException e) {
                         // Skip lines with wrong format
                         numBrokenLines++;
@@ -168,8 +171,8 @@ public class CDXReader {
                     }
                     String cdxuri = cdxrec.getURL();
                     if (CDXRecord.URLsEqual(uri, cdxuri)) {
-                        for (CDXRecordFilter cdxrecf :
-                                cdxrecordfilters.values()) {
+                        for (CDXRecordFilter cdxrecf 
+                                : cdxrecordfilters.values()) {
                             if (!cdxrecf.process(cdxrec)) {
                                 continue CDXLINES;
                             }

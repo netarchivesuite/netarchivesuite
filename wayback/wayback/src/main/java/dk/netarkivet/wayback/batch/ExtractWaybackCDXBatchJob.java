@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,13 +52,13 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
 
     /**
      * Utility for converting an ArcRecord to a CaptureSearchResult
-     * (wayback's representation of a CDX record)
+     * (wayback's representation of a CDX record).
      */
     private NetarchiveSuiteARCRecordToSearchResultAdapter aToSAdapter;
 
     /**
      * Utility for converting a wayback CaptureSearchResult to a String
-     * representing a line in a CDX file
+     * representing a line in a CDX file.
      */
     private SearchResultToCDXLineAdapter srToCDXAdapter;
 
@@ -68,8 +70,8 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
     }
 
     /**
-     * Constructor
-     * @param timeout specific timout period
+     * Constructor.
+     * @param timeout specific timeout period
      */
     public ExtractWaybackCDXBatchJob(long timeout) {
         batchJobTimeout = timeout;

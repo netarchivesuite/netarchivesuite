@@ -8,4 +8,8 @@ public class TestInfo {
     public static final File WORKING_DIR = new File(BASE_DIR, "working");
     public static final File ORIGINALS_DIR = new File(BASE_DIR, "originals");
 
+    public static final File BATCH_DIR = new File(WORKING_DIR, "batch");
+    
+    public static final String CONTEXT_CLASS_NAME = "batchjob";
+    
 }

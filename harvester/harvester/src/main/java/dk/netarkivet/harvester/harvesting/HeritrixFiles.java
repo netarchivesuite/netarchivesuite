@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +26,12 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -35,6 +42,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.XmlUtils;
 
 /**
@@ -62,6 +70,9 @@ public class HeritrixFiles {
 
     /** The name of the seeds.txt file. */
     private static final String SEEDS_TXT_FILENAME = "seeds.txt";
+    
+    /** The name of the recoverBackup.gz file. */
+    private static final String RECOVERBACKUP_GZ_FILENAME = "recoverBackup.gz";
 
     /** The name of the index directory. */
     private File indexDir;
@@ -152,7 +163,36 @@ public class HeritrixFiles {
     public File getSeedsTxtFile() {
         return new File(crawlDir, SEEDS_TXT_FILENAME);
     }
+    
+    /** Returns the recoverbackup file object.
+    *
+    * @return A file object for the recoverbackup.gz. file
+    * (which may or may not exist).
+    */
+   public File getRecoverBackupGzFile() {
+       return new File(crawlDir, RECOVERBACKUP_GZ_FILENAME);
+   }
 
+   /**
+    * Try to write the recover-backup file.
+    * @param recoverlog The recoverlog in the form of an InputStream
+    * @return true, if operation succeeds, otherwise false
+    */
+   public boolean writeRecoverBackupfile(InputStream recoverlog) {
+       OutputStream os = null;
+       try {
+           os = new FileOutputStream(getRecoverBackupGzFile());
+           StreamUtils.copyInputStreamToOutputStream(recoverlog, os);
+       } catch (IOException e) {
+           log.debug("The writing of the recoverlog failed: ", e);
+           return false;
+       } finally {
+           IOUtils.closeQuietly(os);
+       }
+       return true;
+   }
+   
+   
     /**
      * Writes the given content to the seeds.txt file.
      *

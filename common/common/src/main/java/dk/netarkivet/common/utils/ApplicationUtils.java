@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,6 +35,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 import dk.netarkivet.common.management.MBeanConnectorCreator;
 
 /**
@@ -76,7 +79,7 @@ public abstract class ApplicationUtils {
     /**
      * Helper class for logging an exception (at level fatal)
      * and printing it to STDOUT at the same time.
-     * Also invokes the error notifyer.
+     * Also invokes the error notifier.
      * @param s a given String.
      * @param t a given Exception.
      */
@@ -103,7 +106,13 @@ public abstract class ApplicationUtils {
             System.exit(WRONG_ARGUMENTS);
         }
     }
-
+    
+    /**
+     * Should we show the version of NetarchiveSuite.
+     * @param args commandline arguments to NetarchiveSuite
+     * @return true, if we should show the version of NetarchiveSuite; 
+     * otherwise false
+     */
     private static boolean showVersion(String[] args) {
         if(args.length == 1
                 && (args[0].equals("-v") || args[0].equals("--version"))) {
@@ -128,6 +137,7 @@ public abstract class ApplicationUtils {
      * @param c The class to be started.
      * @param args The arguments to the application (should be empty).
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void startApp(Class c, String[] args) {
         String appName = c.getName();
         Settings.set(CommonSettings.APPLICATION_NAME, appName);
@@ -175,6 +185,48 @@ public abstract class ApplicationUtils {
         try {
             log.trace("Adding shutdown hook for " + appName);
             Runtime.getRuntime().addShutdownHook((new CleanupHook(instance)));
+            log.trace("Added shutdown hook for " + appName);
+        } catch (Throwable e) {
+            logExceptionAndPrint("Could not add shutdown hook for class "
+                                 + appName, e);
+            System.exit(EXCEPTION_WHEN_ADDING_SHUTDOWN_HOOK);
+        }
+    }
+    
+    /**
+     * Starts up an LifeCycleComponent. 
+     * 
+     * @param component The component to start.
+     */
+    public static void startApp(LifeCycleComponent component) {
+        ArgumentNotValid.checkNotNull(
+                component, "LifeCycleComponent component");
+        
+        String appName = component.getClass().getName();
+        Settings.set(CommonSettings.APPLICATION_NAME, appName);
+        logAndPrint("Starting " + appName + "\n"
+                    + Constants.getVersionString());
+        log.info("Using settings files '"
+                    + StringUtils.conjoin(File.pathSeparator,
+                                          Settings.getSettingsFiles()) + "'");
+        dirMustExist(FileUtils.getTempDir());
+        // Start the remote management connector
+        try {
+            MBeanConnectorCreator.exposeJMXMBeanServer();
+            log.trace("Added remote management for " + appName);
+        } catch (Throwable e) {
+            logExceptionAndPrint("Could not add remote management for class "
+                    + appName, e);
+            System.exit(EXCEPTION_WHEN_ADDING_MANAGEMENT);
+        }
+        
+        component.start();
+        logAndPrint(appName + " Running");
+        
+        // Add the shutdown hook
+        try {
+            log.trace("Adding shutdown hook for " + appName);
+            Runtime.getRuntime().addShutdownHook((new ShutdownHook(component)));
             log.trace("Added shutdown hook for " + appName);
         } catch (Throwable e) {
             logExceptionAndPrint("Could not add shutdown hook for class "

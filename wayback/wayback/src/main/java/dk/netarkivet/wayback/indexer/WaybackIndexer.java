@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,16 +23,24 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,7 +61,7 @@ public class WaybackIndexer implements CleanupIF {
     /**
      * The logger for this class.
      */
-    final static Log log = LogFactory.getLog(WaybackIndexer.class);
+    static final Log log = LogFactory.getLog(WaybackIndexer.class);
 
     /**
      * The singleton instance of this class.
@@ -61,7 +71,8 @@ public class WaybackIndexer implements CleanupIF {
     /**
      * Factory method which creates a singleton wayback indexer and sets it
      * running. It has the side effect of creating the output directories
-     * for the indexer if these do not already exist.
+     * for the indexer if these do not already exist. It also reads files for
+     * the initial ingest if necessary.
      * @return the indexer.
      */
     public static synchronized WaybackIndexer getInstance() {
@@ -71,6 +82,9 @@ public class WaybackIndexer implements CleanupIF {
           return instance;
     }
 
+    /**
+     * Private constructor.
+     */
     private WaybackIndexer() {
         File temporaryBatchDir = Settings.getFile(
                 WaybackSettings.WAYBACK_INDEX_TEMPDIR);
@@ -78,10 +92,67 @@ public class WaybackIndexer implements CleanupIF {
                 WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
         FileUtils.createDir(temporaryBatchDir);
         FileUtils.createDir(batchOutputDir);
+        ingestInitialFiles();
         startProducerThread();
         startConsumerThreads();
     }
 
+    /**
+     * The file represented by WAYBACK_INDEXER_INITIAL_FILES
+     * is read line by line and each line is ingested as an
+     * already-indexed archive file.
+     */
+    private static void ingestInitialFiles() {
+        String initialFileString = Settings.
+                    get(WaybackSettings.WAYBACK_INDEXER_INITIAL_FILES);
+        if ("".equals(initialFileString)) {
+            log.info("No initial list of indexed files is set");
+            return;
+        }
+        File initialFile = null;
+        try {
+            initialFile = Settings.
+                    getFile(WaybackSettings.WAYBACK_INDEXER_INITIAL_FILES);
+        } catch (UnknownID e) {
+            log.info("No initial list of indexed files is set");
+            return;
+        }
+        if (!initialFile.isFile()) {
+            throw new ArgumentNotValid("The file '" 
+                                       + initialFile.getAbsolutePath()
+                                       + "' does not exist or is not a file");
+        }
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(initialFile));
+        } catch (FileNotFoundException e) {
+            throw new IOFailure("Could not find file '" + initialFile + "'", e);
+        }
+        String fileName = null;
+        ArchiveFileDAO dao = new ArchiveFileDAO();
+        Date today = new Date();
+        try {
+            while ((fileName = br.readLine()) != null) {
+                ArchiveFile archiveFile = new ArchiveFile();
+                archiveFile.setFilename(fileName);
+                archiveFile.setIndexed(true);
+                archiveFile.setIndexedDate(today);
+                if (!dao.exists(fileName)) {
+                    log.info("Ingesting '" + fileName + "'");
+                    dao.create(archiveFile);
+                }
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Error reading file", e);
+        } finally {
+            IOUtils.closeQuietly(br);
+        }
+    }
+
+    /**
+     * Starts the consumer threads which do the indexing by sending
+     * concurrent batch jobs to the arcrepository.
+     */
     private static void startConsumerThreads() {
         int consumerThreads = Settings.getInt(
                 WaybackSettings.WAYBACK_INDEXER_CONSUMER_THREADS);
@@ -92,17 +163,23 @@ public class WaybackIndexer implements CleanupIF {
                  @Override
                  public void run() {
                      super.run();
-                     log.debug("Started thread '" +
-                               Thread.currentThread().getName() + "'");
+                     log.info("Started thread '" 
+                             + Thread.currentThread().getName() + "'");
                      IndexerQueue.getInstance().consume();
-                     log.debug("Ending thread '" +
-                               Thread.currentThread().getName() + "'");
+                     log.info("Ending thread '"
+                             + Thread.currentThread().getName() + "'");
 
                  }
              }.start();
         }
     }
 
+    /**
+     * Starts the producer thread. This thread runs on a timer. It downloads a
+     * list of all files in the archive and adds any new ones to the database.
+     * It then checks the database for unindexed files and adds them to the
+     * queue.
+     */
     private static void startProducerThread() {
         Long producerDelay =
             Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
@@ -111,13 +188,16 @@ public class WaybackIndexer implements CleanupIF {
         TimerTask producerTask = new TimerTask() {
             @Override
             public void run() {
+                log.info("Starting producer thread");
+                IndexerQueue iq = IndexerQueue.getInstance();
+                iq.populate();
                 FileNameHarvester.harvest();
-                IndexerQueue.getInstance().populate();
+                iq.populate();
             }
         };
         Timer producerThreadTimer = new Timer("ProducerThread");
-        producerThreadTimer.schedule
-                (producerTask, producerDelay, producerInterval);
+        producerThreadTimer.schedule(
+                producerTask, producerDelay, producerInterval);
     }
 
     /**
@@ -126,6 +206,7 @@ public class WaybackIndexer implements CleanupIF {
      * the hibernate session factory.
      */
     public void cleanup() {
+        log.info("Cleaning up WaybackIndexer");
         File temporaryBatchDir = Settings.getFile(
                 WaybackSettings.WAYBACK_INDEX_TEMPDIR);
         FileUtils.removeRecursively(temporaryBatchDir);

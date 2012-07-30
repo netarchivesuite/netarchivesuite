@@ -4,7 +4,9 @@
  * $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,6 +37,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -59,24 +63,37 @@ import dk.netarkivet.common.exceptions.UnknownID;
 public class FileUtils {
     /** Extension used for CDX files, including separator . */
     public static final String CDX_EXTENSION = ".cdx";
+    
     /** Extension used for ARC files, including separator . */
     public static final String ARC_EXTENSION = ".arc";
-    /** Extension used for ARC files, including separator . */
+    
+    /** Extension used for gzipped ARC files, including separator . */
     public static final String ARC_GZIPPED_EXTENSION = ".arc.gz";
-
+    
+    /** Extension used for gzipped WARC files, including separator . */
+    public static final String WARC_GZIPPED_EXTENSION = ".warc.gz";
+    
     /** Pattern matching ARC files, including separator.
      * Note: (?i) means case insensitive, (\\.gz)? means .gz is optionally
      * matched, and $ means matches end-of-line. Thus this pattern will match
      * file.arc.gz, file.ARC, file.aRc.GZ, but not
      * file.ARC.open */
     public static final String ARC_PATTERN = "(?i)\\.arc(\\.gz)?$";
+    
     /** Pattern matching open ARC files, including separator .
      * Note: (?i) means case insensitive, (\\.gz)? means .gz is optionally
      * matched, and $ means matches end-of-line. Thus this pattern will match
      * file.arc.gz.open, file.ARC.open, file.arc.GZ.OpEn, but not
      * file.ARC.open.txt */
     public static final String OPEN_ARC_PATTERN = "(?i)\\.arc(\\.gz)?\\.open$";
-
+    
+    /** Pattern matching WARC files, including separator.
+     * Note: (?i) means case insensitive, (\\.gz)? means .gz is optionally
+     * matched, and $ means matches end-of-line. Thus this pattern will match
+     * file.warc.gz, file.WARC, file.WaRc.GZ, but not
+     * file.WARC.open */
+    public static final String WARC_PATTERN = "(?i)\\.warc(\\.gz)?$";
+    
     /** The logger for this class. */
     public static final Log log =
             LogFactory.getLog(FileUtils.class.getName());
@@ -92,7 +109,6 @@ public class FileUtils {
                 }
             };
 
-
     /** A filter that matches files left open by a crashed Heritrix process.
      * Don't work on these files while Heritrix is still working on them.
      */
@@ -103,15 +119,26 @@ public class FileUtils {
                 }
             };
 
-    /** A filter that matches arc files, that is any file that ends on .arc or
-     * .arc.gz in any case. */
-    public static final FilenameFilter ARCS_FILTER =
-            new FilenameFilter() {
-                public boolean accept(File directory, String filename) {
-                    return filename.toLowerCase().matches(".*" + ARC_PATTERN);
-                }
-            };
+    /**
+     * A filter that matches arc files, that is any file that ends on .arc or
+     * .arc.gz in any case.
+     */
+    public static final FilenameFilter ARCS_FILTER = new FilenameFilter() {
+        public boolean accept(File directory, String filename) {
+            return filename.toLowerCase().matches(".*" + ARC_PATTERN);
+        }
+    };
 
+    /**
+     * A filter that matches warc files, that is any file that ends on .warc or
+     * .warc.gz in any case.
+     */
+    public static final FilenameFilter WARCS_FILTER = new FilenameFilter() {
+        public boolean accept(File directory, String filename) {
+            return filename.toLowerCase().matches(".*" + WARC_PATTERN);
+        }
+    };      
+            
     /** How many times we will retry making a unique directory name. */
     private static final int MAX_RETRIES = 10;
     /** How many times we will retry making a directory. */
@@ -157,14 +184,15 @@ public class FileUtils {
                         + f.getAbsolutePath());
                 final boolean success = remove(f);
                 if (!success) {
-                        throw new IOFailure("Unable to remove file: '" 
+                    log.warn("Unable to remove file: '" 
                                         + f.getAbsolutePath() + "'");
+                    return false;
                 }
             } else {
                 String errMsg = "Problem with deletion of directory: '" 
                     + f.getAbsolutePath() + "'.";
-                log.debug(errMsg);
-                throw new IOFailure(errMsg);
+                log.warn(errMsg);
+                return false;
             }
         }
 
@@ -177,7 +205,6 @@ public class FileUtils {
      *            A file to completely and utterly remove.
      * @return true if the file did exist, false otherwise.
      * @throws ArgumentNotValid if f is null.
-     * @throws IOFailure If unable to remove file.
      * @throws SecurityException
      *             If a security manager exists and its <code>{@link
      *                           java.lang.SecurityManager#checkDelete}</code>
@@ -199,7 +226,7 @@ public class FileUtils {
                 final String errMsg = "Unable to remove file '"
                     + f.getAbsolutePath() + "'.";
                 log.warn(errMsg);
-                throw new IOFailure(errMsg);
+                return false;
             }
         }
 
@@ -526,7 +553,7 @@ public class FileUtils {
     }
 
     /**
-     * Read a all lines from a file into a list of strings.
+     * Read all lines from a file into a list of strings.
      * @param file The file to read from.
      * @return The list of lines.
      * @throws IOFailure on trouble reading the file,
@@ -951,7 +978,7 @@ public class FileUtils {
         }
         return fileName;
     }
-
+    
     /** Sort a crawl.log file according to URL.  This method depends on
      * the Unix sort() command.
      *
@@ -969,12 +996,13 @@ public class FileUtils {
             log.warn(errMsg);
             throw new IOFailure(errMsg);
         }
-        int error = ProcessUtils.runProcess(new String[]{"LANG=C"},
-                // -k 4b means fourth field (from 1) ignoring leading blanks
-                // -o means output to (file)
-                "sort", "-k", "4b",
-                file.getAbsolutePath(),
-                "-o", toFile.getAbsolutePath());
+
+        File sortTempDir = null;
+        if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
+            sortTempDir = FileUtils.getTempDir();
+        }
+        boolean sortLikeCrawllog = true;
+        int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir, sortLikeCrawllog);
         if (error != 0) {
             final String errMsg = "Error code " + error + " sorting crawl log '"
                 + file + "'";
@@ -983,32 +1011,45 @@ public class FileUtils {
         }
     }
 
-    /** Sort a CDX file according to our standard for CDX file sorting.  This
-     * method depends on the Unix sort() command.
-     *
-     * @param file The raw unsorted CDX file.
-     * @param toFile The file that the result will be put into.
-     * @throws IOFailure If the file does not exist, or could not be sorted
-     */
-    public static void sortCDX(File file, File toFile) {
-        ArgumentNotValid.checkNotNull(file, "File file");
-        ArgumentNotValid.checkNotNull(toFile, "File toFile");
-        if (!file.exists()) {
-            String errMsg = "The file '" + file.getAbsolutePath()
-            + "' does not exist.";
-            log.warn(errMsg);
-            throw new IOFailure(errMsg);
-        }
-        int error = ProcessUtils.runProcess(new String[] {"LANG=C"},
-                "sort", file.getAbsolutePath(),
-                "-o", toFile.getAbsolutePath());
-        if (error != 0) {
-            final String errMsg = "Error code " + error + " sorting cdx file '"
-            + file.getAbsolutePath() + "'";
-            log.warn(errMsg);
-            throw new IOFailure(errMsg);
-        }
-    }
+   /** Sort a CDX file according to our standard for CDX file sorting.  This
+    * method depends on the Unix sort() command.
+    *
+    * @param file The raw unsorted CDX file.
+    * @param toFile The file that the result will be put into.
+    * @throws IOFailure If the file does not exist, or could not be sorted
+    */
+   public static void sortCDX(File file, File toFile) {
+       ArgumentNotValid.checkNotNull(file, "File file");
+       ArgumentNotValid.checkNotNull(toFile, "File toFile");
+       if (!file.exists()) {
+           String errMsg = "The file '" + file.getAbsolutePath()
+           + "' does not exist.";
+           log.warn(errMsg);
+           throw new IOFailure(errMsg);
+       }
+       boolean sortLikeCrawllog = false;
+       File sortTempDir = null;
+       if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
+           sortTempDir = FileUtils.getTempDir();
+       }
+       int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir, sortLikeCrawllog);
+       if (error != 0) {
+           final String errMsg = "Error code " + error + " sorting cdx file '"
+           + file.getAbsolutePath() + "'";
+           log.warn(errMsg);
+           throw new IOFailure(errMsg);
+       }
+   }
+   
+   /**
+    * Sort a file using UNIX sort.
+    * @param file the file that you want to sort.
+    * @param toFile The destination file.
+    */
+   public static void sortFile(File file, File toFile) {
+       sortCDX(file, toFile);
+   }
+    
 
     /**
      * A class for parsing an ARC filename as generated by our runs of Heritrix
@@ -1279,6 +1320,49 @@ public class FileUtils {
                     + "into a file. Filepath: '" + filePath + "'";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
+        }
+    }
+    
+    /**
+     * Get a humanly readable representation of the file size.
+     * If the file is a directory, the size is the aggregate of the files
+     * in the directory except that subdirectories are ignored.
+     * The number is given with 2 decimals.
+     * @param aFile a File object
+     * @return a humanly readable representation of the file size (rounded)
+     */
+    public static String getHumanReadableFileSize(File aFile) {
+        ArgumentNotValid.checkNotNull(aFile, "File aFile");
+        final long bytesPerOneKilobyte = 1000L;
+        final long bytesPerOneMegabyte = 1000000L;
+        final long bytesPerOneGigabyte = 1000000000L;
+        double filesize = 0L;
+        if (aFile.isDirectory()) {
+            for (File f:  aFile.listFiles()) {
+                if (f.isFile()) {
+                    filesize = filesize + f.length();
+                }
+            }
+            
+        } else {
+            filesize = aFile.length(); // normal file.
+        }
+        
+        NumberFormat decFormat = new DecimalFormat("##.##");
+        if (filesize < bytesPerOneKilobyte){ 
+            // represent size in bytes without the ".0"
+            return (long) filesize + " bytes";
+        } else if(filesize >= bytesPerOneKilobyte 
+                && filesize < bytesPerOneMegabyte) { 
+            // represent size in Kbytes
+            return decFormat.format(filesize / bytesPerOneKilobyte) + " Kbytes";
+        } else if(filesize >= bytesPerOneMegabyte
+                && filesize < bytesPerOneGigabyte) { 
+            // represent size in Mbytes
+            return decFormat.format(filesize / bytesPerOneMegabyte) + " Mbytes";
+        } else {
+            // represent in Gbytes
+            return decFormat.format(filesize / bytesPerOneGigabyte) + " Gbytes";
         }
     }
 }

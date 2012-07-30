@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,8 +37,10 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
+import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.RemoteFileSettings;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -79,16 +83,37 @@ public class IndexRequestMessage extends ArchiveMessage {
      * used.
      */
     private boolean indexIsStoredInDirectory;
+    
+    /**
+     * If true, return the index to the sender.
+     * If false, send IndexReadyMessage instead.
+     */
+    private boolean shouldReturnIndex;
+    
+    /**
+     * The harvestId needing this index for its jobs.
+     */
+    private Long harvestId;
+    
+    /** Optionally, the client can decide which connection settings
+     * to use for the RemoteFile. Only applicable when using FTPRemoteFile.
+     */
+    private RemoteFileSettings optionalConnectionSettings;
+    
 
     /**
      * Generate an index request message. Receiver is always the index server
      * channel, replyto is always this index client.
      *
      * @param requestType Type of index requested.
-     * @param jobSet Jobs for which the index is requested.
-     * @throws ArgumentNotValid if wither argument is null.
+     * @param jobSet Type of index requested.
+     * @param ftpconnectionInfo FTP connection parameters to be used (if null, 
+     * we use the local settings)
+     * 
+     * @throws ArgumentNotValid if any argument is null.
      */
-    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet) 
+    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, 
+            RemoteFileSettings ftpconnectionInfo) 
             throws ArgumentNotValid {
         super(Channels.getTheIndexServer(), Channels.getThisIndexClient());
         ArgumentNotValid.checkNotNull(requestType, "RequestType requestType");
@@ -96,8 +121,57 @@ public class IndexRequestMessage extends ArchiveMessage {
         //Note: Copy the set, since the received set may not be serializable.
         this.requestedJobs = new HashSet<Long>(jobSet);
         this.requestType = requestType;
+        this.shouldReturnIndex = true;
+        this.optionalConnectionSettings = ftpconnectionInfo;
+    }
+    
+    /**
+     * Generate an IndexRequestMessage that can send its reply to a specific 
+     * channel.
+     * @param requestType Type of index requested.
+     * @param jobSet Type of index requested.
+     * @param replyTo The channel to send the reply to.
+     * @param returnIndex If true, include the index in the reply.
+     * @param harvestId The harvestId needing this index for its jobs
+     */
+    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, 
+            ChannelID replyTo,
+            boolean returnIndex, Long harvestId)  {
+       super(Channels.getTheIndexServer(), replyTo);
+       ArgumentNotValid.checkNotNull(requestType, "RequestType requestType");
+       ArgumentNotValid.checkNotNull(jobSet, "Set<Long> jobSet");
+       //Note: Copy the set, since the received set may not be serializable.
+       this.requestedJobs = new HashSet<Long>(jobSet);
+       this.requestType = requestType;
+       this.shouldReturnIndex = returnIndex;
+       this.harvestId = harvestId;
     }
 
+    /**
+     * @return the remoteFilesettings  
+     */
+    public RemoteFileSettings getRemoteFileSettings() {
+        return this.optionalConnectionSettings;
+    }
+    
+    
+    /**
+     * 
+     * @return the harvestId which will use this index, if available.
+     */
+    public Long getHarvestId() {
+        return this.harvestId;
+    }
+    
+    /**
+     * @return true, if this index requested should be returned to the 
+     * caller. False, if we instead should send a IndexReadyMessage to the
+     * HarvestJobManager queue.
+     */
+    public boolean mustReturnIndex() {
+        return this.shouldReturnIndex;
+    }
+    
     /**
      * Calls visit on the visitor.
      * @param v The visitor of this message.

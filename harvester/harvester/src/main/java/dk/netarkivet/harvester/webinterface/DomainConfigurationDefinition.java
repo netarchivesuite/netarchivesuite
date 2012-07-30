@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,8 +52,8 @@ public class DomainConfigurationDefinition {
     /**
      * Extracts all required parameters from the request, checks for any
      * inconsistencies, and passes the requisite data to the updateDomain method
-     * for processing. The specified domain configuration is then updated and the
-     * result stored in the database.
+     * for processing. The specified domain configuration is then updated and
+     * the result stored in the database.
      *
      * update: This method does nothing if update is not set
      *
@@ -99,7 +101,8 @@ public class DomainConfigurationDefinition {
         if (!DomainDAO.getInstance().exists(name)) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;unknown.domain.0", name);
-            throw new ForwardedToErrorPage("Domain " + name + " does not exist");
+            throw new ForwardedToErrorPage(
+                    "Domain " + name + " does not exist");
         }
 
         Domain domain = DomainDAO.getInstance().read(name);
@@ -112,8 +115,8 @@ public class DomainConfigurationDefinition {
             HTMLUtils.forwardWithRawErrorMessage(context, i18n,
                     "errormsg;domain.definition.changed.0.retry.1",
                     "<br/><a href=\"Definitions-edit-domain.jsp?"
-                            + Constants.DOMAIN_PARAM + "=" +
-                            HTMLUtils.escapeHtmlValues(HTMLUtils.encode(name))
+                            + Constants.DOMAIN_PARAM + "=" 
+                            + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(name))
                             + "\">",
                     "</a>");
             throw new ForwardedToErrorPage("Domain '" + name + "' has changed");
@@ -138,10 +141,10 @@ public class DomainConfigurationDefinition {
                 context, Constants.MAX_RATE_PARAM,
                 (long) dk.netarkivet.harvester.datamodel.Constants.
                         DEFAULT_MAX_REQUEST_RATE).intValue();
-        int maxObjects = HTMLUtils.parseOptionalLong(
+        long maxObjects = HTMLUtils.parseOptionalLong(
                 context, Constants.MAX_OBJECTS_PARAM,
                 dk.netarkivet.harvester.datamodel.Constants.
-                        DEFAULT_MAX_OBJECTS).intValue();
+                        DEFAULT_MAX_OBJECTS);
         long maxBytes = HTMLUtils.parseOptionalLong(
                 context, Constants.MAX_BYTES_PARAM,
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES);
@@ -167,7 +170,7 @@ public class DomainConfigurationDefinition {
      */
     private static void updateDomain(Domain domain,
                                      String configName, String orderXml,
-                                     int load, int maxObjects,
+                                     int load, long maxObjects,
                                      long maxBytes, String[] urlListList,
                                      String comments) {
 
@@ -190,7 +193,7 @@ public class DomainConfigurationDefinition {
         domainConf.setMaxObjects(maxObjects);
         domainConf.setMaxBytes(maxBytes);
         domainConf.setMaxRequestRate(load);
-        domainConf.setSeedLists(seedlistList);
+        domainConf.setSeedLists(domain, seedlistList);
         if (comments != null) {
             domainConf.setComments(comments);
         }

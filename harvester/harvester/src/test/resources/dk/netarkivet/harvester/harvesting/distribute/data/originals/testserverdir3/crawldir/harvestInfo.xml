@@ -10,4 +10,7 @@
   <orderXMLName>defaultOrderXML</orderXMLName>
   <priority>HIGH_PRIORITY</priority>
   <origHarvestDefinitionID>1</origHarvestDefinitionID>
+  <origHarvestDefinitionName>test</origHarvestDefinitionName>
+  <origHarvestDefinitionComments>test comments</origHarvestDefinitionComments>
+  <scheduleName></scheduleName>
 </harvestInfo>

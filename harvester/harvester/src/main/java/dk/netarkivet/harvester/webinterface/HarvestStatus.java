@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,79 +25,200 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
-import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobStatusInfo;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.UI_FIELD;
 
 /**
  * This page provides support for the HarvestStatus pages of the web interface.
  */
-
 public class HarvestStatus {
-    /** Parameters used by the Harveststatus-alljobs.jsp page. */
-    public static final String[] DEFAULTABLE_PARAMETERS = new String[]{
-        Constants.JOBSTATUS_PARAM,
-        Constants.JOBIDORDER_PARAM
-    };
+    
+    /** The logger to use.    */
+    protected static final Log log = LogFactory.getLog(
+            HarvestStatus.class.getName());
+    
+    /** The total number in the full resultset.*/
+    private final long fullResultsCount;
+    
+    /** The list of jobs in this HarvestStatus object. */
+    private final List<JobStatusInfo> jobs;
+    
+    /**
+     * Constructor for the HarvestStatus class.
+     * @param fullResultsCount The total number of entries in the full resultset
+     * @param jobs The list of jobs
+     */
+    public HarvestStatus(long fullResultsCount, List<JobStatusInfo> jobs) {
+        this.fullResultsCount = fullResultsCount;
+        this.jobs = jobs;
+    }
+    
+    /**
+     * @return The total number in the full resultset
+     */
+    public long getFullResultsCount() {
+        return fullResultsCount;
+    }
 
-    /** Ascending sort order for job id. */
-    public static final String SORTORDER_ASCENDING = "ASC";
-    /** Descending sort order for job id. */
-    public static final String SORTORDER_DESCENDING = "DESC";
-
-    /** The String code to select all states. */
-    public static final String JOBSTATUS_ALL = "ALL";
-
-    /** Default sortorder (ascending). */
-    public static final String DEFAULT_SORTORDER = SORTORDER_ASCENDING;
-    /** Default Jobstatus (STARTED). */
-    public static final String DEFAULT_JOBSTATUS = JobStatus.STARTED.name();
+    /**
+     * @return The list of jobs in this HarvestStatus object.
+     */
+    public List<JobStatusInfo> getJobStatusInfo() {
+        return jobs;
+    }
 
     /**
      * Process a request from Harveststatus-alljobs.
-     *
+     * 
      * Will resubmit a job if requested, otherwise do nothing.
-     *
-     * @param context The web context used for processing
-     * @param i18n The resource i18n context.
-     * @throws ForwardedToErrorPage If an error occurs that stops processing
-     * and forwards the user to an error page.
+     * 
+     * @param context
+     *            The web context used for processing
+     * @param i18n
+     *            The resource i18n context.
+     * @throws ForwardedToErrorPage
+     *             If an error occurs that stops processing and forwards the
+     *             user to an error page.
      */
     public static void processRequest(PageContext context, I18n i18n)
             throws ForwardedToErrorPage {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
-
-        Long jobID = HTMLUtils.parseOptionalLong(context,
+        
+        // Check if it's a multiple resubmit query        
+        String resubmitJobIds = UI_FIELD.RESUBMIT_JOB_IDS.getValue(context
+                .getRequest());
+        Long resubmitJobID = HTMLUtils.parseOptionalLong(
+                context,
                 Constants.JOB_RESUBMIT_PARAM, null);
-        if ((jobID != null)) {
-            try {
-                JobDAO.getInstance().rescheduleJob(jobID);
-            } catch (UnknownID e) {
-                HTMLUtils.forwardWithErrorMessage(context, i18n,
-                        "errormsg;job.unknown.id.0", jobID);
-                throw new ForwardedToErrorPage("Job " + jobID + " not found");
-            } catch (IOFailure e) {
-                HTMLUtils.forwardWithErrorMessage(context, i18n, e,
-                        "errormsg;job.unable.to.resubmit.id.0", jobID);
-                throw new ForwardedToErrorPage("Error resubmitting job "
-                        + jobID);
+        Long rejectJobID = HTMLUtils.parseOptionalLong(
+                context,
+                Constants.JOB_REJECT_PARAM, null);
+        Long unrejectJobID = HTMLUtils.parseOptionalLong(
+                context,
+                Constants.JOB_UNREJECT_PARAM, null);
+        if (!resubmitJobIds.isEmpty()) {
+            String[] ids = resubmitJobIds.split(";");
+            for (String idStr : ids) {
+                resubmitJob(context, i18n, Long.parseLong(idStr));
             }
+        } else if (resubmitJobID != null) {
+            resubmitJob(context, i18n, resubmitJobID);
+        } else if (rejectJobID != null) {
+            rejectFailedJob(context, i18n, rejectJobID);
+        } else if (unrejectJobID != null) {
+            unrejectRejectedJob(context, i18n, unrejectJobID);
+        }       
+    }
+
+    /**
+     * Marks a failed job as rejected for resubmission. Throws a
+     * ForwardedToErrorPage if jobID is null or if it refers to a job that is
+     * not in the state FAILED to start with.
+     * @param context the context for forwarding errors
+     * @param i18n  the internationalisation to use
+     * @param jobID the job to reject
+     */
+    public static void rejectFailedJob(PageContext context, 
+            I18n i18n, Long jobID) {
+        try {
+            Job job = JobDAO.getInstance().read(jobID);
+            if (!job.getStatus().equals(JobStatus.FAILED)) {
+                HTMLUtils.forwardWithErrorMessage(
+                        context, i18n, "errormsg;job.unable.to.reject", jobID);
+                throw new ForwardedToErrorPage(
+                        "Cannot reject job in status " + job.getStatus());
+            }
+            job.setStatus(JobStatus.FAILED_REJECTED);
+            JobDAO.getInstance().update(job);
+        } catch (ArgumentNotValid argumentNotValid) {
+             HTMLUtils.forwardOnEmptyParameter(context, "jobID");
+            throw new ForwardedToErrorPage("jobID parameter is null");
+        } catch (UnknownID unknownID) {
+                 HTMLUtils.forwardWithErrorMessage(context, i18n,
+                    "errormsg;job.unknown.id.0", jobID);
+            throw new ForwardedToErrorPage("Job " + jobID + " not found");
+        } catch (IOFailure ioFailure) {
+                      HTMLUtils.forwardWithErrorMessage(
+                              context, i18n, ioFailure,
+                    "errormsg;job.unable.to.reject", jobID);
+            throw new ForwardedToErrorPage("Error resubmitting job "
+                    + jobID);
+        }
+
+    }
+
+     /**
+     * Marks as failed. Throws a
+     * ForwardedToErrorPage if the job is not in the state FAILED_REJECTED 
+     * to start with.
+     * @param context the context for forwarding errors
+     * @param i18n  the internationalisation to use
+     * @param jobID the job to unreject
+     */
+     public static void unrejectRejectedJob(PageContext context, 
+             I18n i18n, Long jobID) {
+         try {
+             Job job = JobDAO.getInstance().read(jobID);
+              if (!job.getStatus().equals(JobStatus.FAILED_REJECTED)) {
+                HTMLUtils.forwardWithErrorMessage(context, i18n, 
+                        "errormsg;job.unable.to.reject", jobID);
+                throw new ForwardedToErrorPage(
+                        "Cannot unreject job in status " + job.getStatus());
+            }
+             job.setStatus(JobStatus.FAILED);
+             JobDAO.getInstance().update(job);
+         } catch (ArgumentNotValid argumentNotValid) {
+              HTMLUtils.forwardOnEmptyParameter(context, "jobID");
+             throw new ForwardedToErrorPage("jobID parameter is null");
+         } catch (UnknownID unknownID) {
+                  HTMLUtils.forwardWithErrorMessage(context, i18n,
+                     "errormsg;job.unknown.id.0", jobID);
+             throw new ForwardedToErrorPage("Job " + jobID + " not found");
+         } catch (IOFailure ioFailure) {
+                       HTMLUtils.forwardWithErrorMessage(
+                               context, i18n, ioFailure,
+                     "errormsg;job.unable.to.reject", jobID);
+             throw new ForwardedToErrorPage("Error resubmitting job "
+                     + jobID);
+         }
+    }
+
+    /**
+     * Helpermethod to resubmit a job with a given jobID.
+     * @param context the current pageContext (used in error-handling only)
+     * @param i18n the given internalisation object.
+     * @param jobID The ID for the job that we want to resubmit.
+     */
+    private static void resubmitJob(
+            PageContext context, I18n i18n, Long jobID) {
+        try {
+            JobDAO.getInstance().rescheduleJob(jobID);
+        } catch (UnknownID e) {
+            HTMLUtils.forwardWithErrorMessage(context, i18n,
+                    "errormsg;job.unknown.id.0", jobID);
+            throw new ForwardedToErrorPage("Job " + jobID + " not found");
+        } catch (IOFailure e) {
+            HTMLUtils.forwardWithErrorMessage(context, i18n, e,
+                    "errormsg;job.unable.to.resubmit.id.0", jobID);
+            throw new ForwardedToErrorPage("Error resubmitting job "
+                    + jobID);
         }
     }
 
@@ -109,197 +232,53 @@ public class HarvestStatus {
     public static String makeHarvestRunLink(long harvestID, int harvestRun) {
         ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
         ArgumentNotValid.checkNotNegative(harvestRun, "harvestRun");
-        return "<a href=\"/History/Harveststatus-perharvestrun.jsp?harvestID="
+        return "<a href=\"/History/Harveststatus-perharvestrun.jsp?"
+                + HarvestStatusQuery.UI_FIELD.HARVEST_ID.name() + "="
                 + harvestID + "&amp;" + Constants.HARVEST_NUM_PARAM
                 + "=" + harvestRun 
-                + "&amp;" + Constants.JOBSTATUS_PARAM + "="
-                + HarvestStatus.JOBSTATUS_ALL + "\">"
+                + "&amp;" + HarvestStatusQuery.UI_FIELD.JOB_STATUS.name() + "="
+                + HarvestStatusQuery.JOBSTATUS_ALL + "\">"
                 + harvestRun + "</a>";
     }
 
-    /** Find Job status to be shown based on parameters, including possibility
-     *  for All statuses.
-     *
-     * @param dfltRequest contains defaulted parameters
-     * @return Integer value being the ordinal of a JobStatus or -1 for ALL 
-     *         (job statuses)
-     * @throws ArgumentNotValid, IllegalArgumentException
+    /**
+     * Calculate list of job information to be shown.
+     * @param query the query with its filters.
+     * @return a list of job status info objects
      */
-    public static Set<Integer> getSelectedJobStatusCodes(
-            DefaultedRequest dfltRequest) {
-        ArgumentNotValid.checkNotNull(
-                dfltRequest, "DefaultedRequest dfltRequest");
-        String[] values = dfltRequest.getParameter(Constants.JOBSTATUS_PARAM);
-        if (values == null || values.length == 0) {
-            throw new ArgumentNotValid("No Jobstatus selected");
-        }
-        Set<Integer> selectedJobStatusCodesSet = new HashSet<Integer>();
-        for (String value: values) {
-            if (value.equals(JOBSTATUS_ALL)) {
-                selectedJobStatusCodesSet = new HashSet<Integer>();
-                selectedJobStatusCodesSet.add(JobStatus.ALL_STATUS_CODE);
-                break;
-            } else {
-                selectedJobStatusCodesSet.add(
-                        JobStatus.valueOf(value).ordinal());
-            }
-        }
-        return selectedJobStatusCodesSet;
-    }
-
-    /** Find sort order of job ids to be shown based on parameters.
-     *
-     * @param dfltRequest contains defaulted parameters
-     * @return String constant for selected order
-     * @throws ArgumentNotValid
-     */
-    public static String getSelectedSortOrder(DefaultedRequest dfltRequest) {
-        ArgumentNotValid.checkNotNull(dfltRequest, "dfltRequest");
-        // Only one JOBIDORDER value allowed at any one time.
-        String[] selectedSortOrders = dfltRequest.getParameter(
-                Constants.JOBIDORDER_PARAM);
-        if (selectedSortOrders.length != 1) {
-            throw new ArgumentNotValid(
-                    "Multiple values for order parameter selected: " 
-                    + StringUtils.conjoin(",", selectedSortOrders)); 
-        }
-        String s = selectedSortOrders[0]; 
-
-        if (s.equals(SORTORDER_ASCENDING) || s.equals(SORTORDER_DESCENDING)) {
-            return s; 
-        } else {
-            throw new ArgumentNotValid("Invalid order parameter " + s); 
-        }       
-    }
-
-    /** Calculate list of job information to be shown.
-     *
-     * @param selectedJobStatusCodes integer codes for job statuses to be shown
-     * @param selectedSortOrder string code whether job ids should come in asc.
-     *        or desc. order
-     * @return list of job (status) information to be shown
-     * @throws ArgumentNotValid
-     */
-    public static List<JobStatusInfo> getjobStatusList(
-            Set<Integer> selectedJobStatusCodes, String selectedSortOrder) {
-        ArgumentNotValid.checkNotNullOrEmpty(selectedJobStatusCodes, 
-                "selectedJobStatusCodes");
-        ArgumentNotValid.checkNotNullOrEmpty(selectedSortOrder,
-                "selectedSortOrder");
-        
-        boolean asc = selectedSortOrder.equals(SORTORDER_ASCENDING);
-        if (!asc && !selectedSortOrder.equals(SORTORDER_DESCENDING)) { 
-            throw new ArgumentNotValid(
-                         "Invalid sort Order " + selectedSortOrder
-                      );
-        }
-        
-        if (selectedJobStatusCodes.contains(
-                new Integer(JobStatus.ALL_STATUS_CODE))) { 
-            return JobDAO.getInstance().getStatusInfo(asc); 
-        } else {
-            List<JobStatus> selectedJobStates = new ArrayList<JobStatus>();
-            for (Integer jobcode : selectedJobStatusCodes) {
-                JobStatus sortJobStatus = 
-                    JobStatus.fromOrdinal(jobcode);
-                selectedJobStates.add(sortJobStatus);
-            }
-            
-            JobStatus[] jobstatusArray
-                = new JobStatus[selectedJobStates.size()];
-            return JobDAO.getInstance().getStatusInfo(
-                    asc, selectedJobStates.toArray(jobstatusArray)); 
-        }
+    public static HarvestStatus getjobStatusList(HarvestStatusQuery query) {
+        log.debug("Getting a jobstatuslist based on the current query. ");
+        return JobDAO.getInstance().getStatusInfo(query);
     }
     
-    
-    /** Calculate list of job information to be shown.
-    *
-    * @param harvestId Select only jobs generated from this harvestdefinition
-    * @param harvestNum Select only jobs with this harvestNumber.
-    * @param selectedJobStatusCodes integer codes for job statuses to be shown
-    * @param selectedSortOrder string code whether job ids should come in asc.
-    *        or desc. order
-    * @return list of job (status) information to be shown
-    * @throws ArgumentNotValid If some of the arguments are invalid
-    */
-   public static List<JobStatusInfo> getjobStatusList(
-                                          long harvestId,
-                                          long harvestNum,
-                                          Set<Integer> selectedJobStatusCodes, 
-                                          String selectedSortOrder
-                                     ) {
-       ArgumentNotValid.checkNotNullOrEmpty(selectedJobStatusCodes, 
-               "selectedJobStatusCodes");
-       ArgumentNotValid.checkNotNullOrEmpty(selectedSortOrder,
-               "selectedSortOrder");
-       ArgumentNotValid.checkNotNegative(harvestId, "long harvestId");
-       ArgumentNotValid.checkNotNegative(harvestNum, "long harvestNum");
-
-       boolean asc = selectedSortOrder.equals(SORTORDER_ASCENDING);
-       if (!asc && !selectedSortOrder.equals(SORTORDER_DESCENDING)) {
-           // no logging not considered necessary at this time
-           throw new ArgumentNotValid("Invalid sort Order: "
-                   + selectedSortOrder);
-       }
-       
-       if (selectedJobStatusCodes.contains(
-               new Integer(JobStatus.ALL_STATUS_CODE))) { 
-           return JobDAO.getInstance().getStatusInfo(
-                   harvestId, harvestNum, asc);
-       } else {
-           Set<JobStatus> selectedJobStatusSet = new HashSet<JobStatus>();
-           for(int jobStatusOrdinal : selectedJobStatusCodes) {
-              selectedJobStatusSet.add(JobStatus.fromOrdinal(
-                      jobStatusOrdinal)); 
-           }
-           return JobDAO.getInstance().getStatusInfo(
-                   harvestId, harvestNum, 
-                   asc, selectedJobStatusSet); 
-       }
-   }
-
-    /** This class encapsulates a request for reload, making non-existing
-     * parameters appear as there default value.
+    /**
+     * Check if next link is active.
+     * @param pageSize the size of the page
+     * @param totalResultsCount the number of results. 
+     * @param endIndex the index of the last result shown on this page 
+     * @return true, if link to next page is active
      */
-    public static class DefaultedRequest {
-        /** the encapsulated servlet request. */
-        ServletRequest req;
-
-        /** Constructor.
-         * @param req with parameters to jsp page which can be defaulted
-         * @throws ArgumentNotValid
-         */
-        public DefaultedRequest(ServletRequest req) {
-            ArgumentNotValid.checkNotNull(req, "ServletRequest req");
-            this.req = req;
+    public static boolean isNextLinkActive(long pageSize,
+            long totalResultsCount, long endIndex) {
+        if (pageSize != 0 && totalResultsCount > 0
+                && endIndex < totalResultsCount) {
+            return true;
         }
-        
-        /** Gets a parameter from the original request, except if the
-         * parameter is unset, return the default value for the parameter.
-         * @param paramName a parameter
-         * @return The parameter or the default value; never null or empty.
-         * @throws ArgumentNotValid
-         */
-        public String[] getParameter(String paramName) {
-            ArgumentNotValid.checkNotNullOrEmpty(paramName, "paramName");
-            String[] values = req.getParameterValues(paramName);
-            if (values == null || values.length == 0) {
-                if (paramName.equals(Constants.JOBSTATUS_PARAM)) {
-                    return new String[]{DEFAULT_JOBSTATUS};
-                } else {
-                    if (paramName.equals(Constants.JOBIDORDER_PARAM)) {
-                        return new String[]{DEFAULT_SORTORDER};
-                    } else {
-                        // no logging not considered necessary at this time
-                        throw new ArgumentNotValid(
-                                     "Invalid parameter name '" + paramName
-                                     + "'");
-                    }
-                } 
-            } else {
-                return values;  
-            }
+        return false;
+    }
+    
+    /**
+     * Check if previous link is active.
+     * @param pageSize the size of the page
+     * @param totalResultsCount the number of results. 
+     * @param startIndex the index of the first result shown on this page 
+     * @return true, if link to previous page is active
+     */
+    public static boolean isPreviousLinkActive(long pageSize,
+            long totalResultsCount, long startIndex) {
+        if (pageSize != 0 && totalResultsCount > 0 && startIndex > 1) {
+            return true;
         }
+        return false;
     }
 }

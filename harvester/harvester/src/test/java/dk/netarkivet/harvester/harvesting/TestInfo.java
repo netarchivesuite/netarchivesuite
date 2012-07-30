@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,15 +50,15 @@ public class TestInfo {
     static final StopReason DEFAULT_STOPREASON = StopReason.DOWNLOAD_COMPLETE;
 
     //General dirs:
-    private static final File BASEDIR = new File("tests/dk/netarkivet/harvester/harvesting/data");
-    
+    protected static final File BASEDIR = new File("tests/dk/netarkivet/harvester/harvesting/data");
+
     private static final File FUTURE_BASEDIR = new File("tests/dk/netarkivet/harvester/data");
     private static final File TEMPLATES_DIR = new File(FUTURE_BASEDIR, "originals/order_templates");
-    
+
     private static final File ONE_LEVEL_ORDER_FILE = new File(TEMPLATES_DIR, "OneLevel-order.xml");
-    
+
     static final File ORIGINALS_DIR = new File(BASEDIR, "originals");
-    
+
     static final File WORKING_DIR = new File(BASEDIR, "working");
     static final File CRAWLDIR_ORIGINALS_DIR = new File(BASEDIR, "crawldir");
     static final File UNFINISHED_CRAWLDIR = new File(BASEDIR,
@@ -67,7 +69,7 @@ public class TestInfo {
     //(We should ALWAYS move these to WORKING_DIR and reference the copies!)
     static final File ORDER_FILE
             = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "order.xml");
-    static final File ORDER_FILE_WITH_DEDUPLICATION_DISABLED 
+    static final File ORDER_FILE_WITH_DEDUPLICATION_DISABLED
             = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "order-without-deduplication.xml");
     static final File DEDUP_ORDER_FILE
             = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "order-deduplicator.xml");
@@ -132,14 +134,14 @@ public class TestInfo {
     static final File ARC_FILE_0 = new File(ARC_REAL_DIR, "42-117-20051212141240-00000-sb-test-har-001.statsbiblioteket.dk.arc");
     static final File ARC_FILE_1 = new File(ARC_REAL_DIR, "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc");
     static final File CDX_FILE = new File(CDX_DIR, "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.cdx");
-   
-   
+
+
     //static final File ARC_FILE2 = new File(ORIGINAL_ARCS_DIR, "IAH-20050506114726-00001-kb-prod-udv-001.kb.dk.arc.gz");
     //static final File CDX_FILE2 = new File(CDX_DIR, "IAH-20050506114726-00001-kb-prod-udv-001.kb.dk.cdx");
     static final File ARC_FILE2 = new File(ORIGINAL_ARCS_DIR, "NetarchiveSuite-netarkivet.arc.gz");
     static final File CDX_FILE2 = new File(CDX_DIR, "NetarchiveSuite-netarkivet.arc.gz.cdx");
-    
-    
+
+
     static final long JOB_ID = 42;
     static final long HARVEST_ID = 142L;
     static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
@@ -166,7 +168,9 @@ public class TestInfo {
     static final String TEST_DOMAIN = "netarkivet.dk";
     static final int NO_OF_OBJECTS_TEST = 37;
     static final int NO_OF_BYTES_TEST = 1162154;
-   
+
+    public static final File IDNA_CRAW_LOG = new File(BASEDIR, "idna/idna-crawllog.txt");
+
     /** Get a simple job with high priority.
      *  @return a simple job with high priority
      */
@@ -175,13 +179,13 @@ public class TestInfo {
         try {
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
                     Job.class, Long.class, Map.class, JobPriority.class, Long.TYPE,
-                    Long.TYPE, JobStatus.class, String.class, Document.class,
-                    String.class, Integer.TYPE);
+                    Long.TYPE, Long.TYPE, JobStatus.class, String.class, 
+                    Document.class, String.class, Integer.TYPE, Long.class);
             String seedList = "www.netarkivet.dk";
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 JobPriority.HIGHPRIORITY, -1L, -1L,
+                                 JobPriority.HIGHPRIORITY, -1L, -1L, 0L,
                                  JobStatus.STARTED, "OneLevel-order", d,
-                                 seedList, 1);
+                                 seedList, 1, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

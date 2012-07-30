@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -210,6 +212,30 @@ public class Settings {
         } catch (NumberFormatException e) {
             String msg = "Invalid setting. Value '" + value + "' for key '"
                          + key + "' could not be parsed as a long.";
+            throw new ArgumentNotValid(msg, e);
+        }
+    }
+    
+    /**
+     * Gets a setting as a double. This method calls get(key) and then parses the
+     * value as a double.
+     *
+     * @param key name of the setting to retrieve
+     *
+     * @return the retrieved double
+     *
+     * @throws ArgumentNotValid if key is null, the empty string or key is not
+     *                          parseable as a double
+     * @throws UnknownID        if no setting loaded matches key
+     */
+    public static double getDouble(String key)
+            throws UnknownID, ArgumentNotValid {
+        String value = get(key);
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            String msg = "Invalid setting. Value '" + value + "' for key '"
+                         + key + "' could not be parsed as a double.";
             throw new ArgumentNotValid(msg, e);
         }
     }

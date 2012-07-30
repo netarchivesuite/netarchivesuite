@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,7 +49,7 @@ public interface RemoteFile extends Serializable {
      * @throws IOFailure on communication trouble.
      * @throws ArgumentNotValid on null parameter or non-writable file
      */
-    public void copyTo(File destFile);
+    void copyTo(File destFile);
 
     /**
      * Write the contents of this remote file to an output stream.
@@ -56,7 +58,7 @@ public interface RemoteFile extends Serializable {
      * @throws IOFailure If append operation fails
      * @throws ArgumentNotValid on null parameter
      */
-    public void appendTo(OutputStream out);
+    void appendTo(OutputStream out);
 
     /**
      * Get an inputstream that contains the data transferred in this RemoteFile.
@@ -65,28 +67,28 @@ public interface RemoteFile extends Serializable {
      * is detected.
      * @throws IOFailure on communication trouble.
      */
-    public InputStream getInputStream();
+    InputStream getInputStream();
 
     /**
      * Return the file name.
      * @return the file name
      */
-    public String getName();
+    String getName();
 
     /**
      * Returns a MD5 Checksum on the file. May return null, if checksums not
      * supported for this operation.
      * @return MD5 checksum
      */
-    public String getChecksum();
+    String getChecksum();
 
     /**
      * Cleanup this remote file. The file is invalid after this.
      */
-    public void cleanup();
+    void cleanup();
 
     /** Returns the total size of the remote file.
      * @return Size of the remote file.
      */
-    public long getSize();
+    long getSize();
 }

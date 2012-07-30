@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -29,7 +31,7 @@ But the actual reading is done in auxiliary class
 dk.netarkivet.monitor.jmx.HostForwarding
 
 If the application is down, this can be seen on this page. Furthermore,
-the last 100 significant (log-level INFO and above) logmessages
+the last 100 significant (log-level INFO and above) log-messages
 for each application can be browsed here.
 
 Warning: Any applications added to the system after starting the GUI-application
@@ -39,10 +41,13 @@ will not appear here.
                  java.util.Locale,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
+                 dk.netarkivet.common.utils.DomainUtils,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.monitor.Constants,
                  dk.netarkivet.monitor.webinterface.JMXSummaryUtils,
-                 dk.netarkivet.monitor.webinterface.StatusEntry"
+                 dk.netarkivet.monitor.webinterface.StatusEntry,
+                 java.net.URLEncoder,
+                 java.net.URLDecoder"
          pageEncoding="UTF-8"
         %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
@@ -55,17 +60,29 @@ will not appear here.
     HTMLUtils.setUTF8(request);
     // Reload settings if changed
     HTMLUtils.generateHeader(pageContext);
+    Locale currentLocale = response.getLocale();
 
     // remove application if parameter remove is set.
     String remove = request.getParameter(Constants.REMOVE);
     if(remove != null) {
-        System.out.println("remove app");
         JMXSummaryUtils.StarredRequest starredRequest =
-            new JMXSummaryUtils.StarredRequest(request);
+                new JMXSummaryUtils.StarredRequest(request);
         try {
             JMXSummaryUtils.unregisterJMXInstance(
-                JMXSummaryUtils.STARRABLE_PARAMETERS, starredRequest,
-                            pageContext);
+                    JMXSummaryUtils.STARRABLE_PARAMETERS, starredRequest,
+                    pageContext);
+            StringBuilder builder = new StringBuilder("/");
+            builder.append(JMXSummaryUtils.STATUS_MONITOR_JMXSUMMARY);
+            builder.append("?");
+            /**
+             * oldquery is set in the link to remove an application from the summary view. It is used to
+             * enable us to return to the previous view after removing an application.
+             */
+            String oldquery = starredRequest.getParameter("oldquery");
+            if (oldquery != null) {
+                builder.append(java.net.URLDecoder.decode(oldquery));
+            }
+            response.sendRedirect(builder.toString());
         } catch (ForwardedToErrorPage e) {
             return;
         }
@@ -86,14 +103,13 @@ will not appear here.
     } catch (ForwardedToErrorPage e) {
         return;
     }
-    Locale currentLocale = response.getLocale();
 %><%= JMXSummaryUtils.generateShowColumn(starredRequest, currentLocale) %>
-<table>
+<table id="system_state_table">
     <tr>
         <%
-        if (JMXSummaryUtils.showColumn(starredRequest,
-                                       JMXSummaryUtils.JMXPhysLocationProperty)) {
-    %>
+            if (JMXSummaryUtils.showColumn(starredRequest,
+                                           JMXSummaryUtils.JMXPhysLocationProperty)) {
+        %>
         <th><fmt:message
                 key="tablefield;location"/> <%=JMXSummaryUtils.generateShowLink(
                 starredRequest,
@@ -205,7 +221,7 @@ will not appear here.
                                             JMXSummaryUtils.JMXMachineNameProperty,
                                             entry.getMachineName(),
                                             HTMLUtils.escapeHtmlValues
-                                                    (JMXSummaryUtils.reduceHostname(
+                                                    (DomainUtils.reduceHostname(
                                                             entry.getMachineName())))%>
         </td>
         <%
@@ -285,7 +301,10 @@ will not appear here.
                + Constants.REMOVE + "=" + Constants.REMOVE
                + "&machine=" + HTMLUtils.escapeHtmlValues(entry.getMachineName())
                + "&httpport=" + HTMLUtils.escapeHtmlValues(entry.getHTTPPort())
-               + "&applicationname=" + HTMLUtils.escapeHtmlValues(entry.getApplicationName()) + "'\" type=\"button\" value=\""%><fmt:message key="tablefield;removeapplication"/><%="\" />"
+               + "&applicationinstanceid=" + HTMLUtils.escapeHtmlValues(entry.getApplicationInstanceID())
+               + "&applicationname=" + HTMLUtils.escapeHtmlValues(entry.getApplicationName())
+               + "&oldquery=" + java.net.URLEncoder.encode("" + request.getQueryString())
+               + "'\" type=\"button\" value=\""%><fmt:message key="tablefield;removeapplication"/><%="\" />"
                + "</form>"
             %>
         </td>

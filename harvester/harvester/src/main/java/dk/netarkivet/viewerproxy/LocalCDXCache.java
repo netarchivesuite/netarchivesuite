@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,6 +46,7 @@ import dk.netarkivet.common.distribute.indexserver.Index;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.ProcessUtils;
@@ -244,5 +247,12 @@ public class LocalCDXCache implements JobIndexCache {
         */
         public void finish(OutputStream os) {
         }
+    }
+
+    @Override
+    public void requestIndex(Set<Long> jobSet, Long harvestId) {
+       throw new NotImplementedException(
+               "Not implemented for this type of cache");
+        
     }
 }

@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,10 +34,11 @@ import dk.netarkivet.common.utils.SettingsFactory;
 public class MonitorRegistryClientFactory
         extends SettingsFactory<MonitorRegistryClient> {
     /** Returns a new MonitorRegistryClient as defined by the setting
-     * Settings.MONITOR_REGISTRY_CLIENT
+     * Settings.MONITOR_REGISTRY_CLIENT. 
      * @return A MonitorRegistryClient.
      */
     public static MonitorRegistryClient getInstance() {
-        return SettingsFactory.getInstance(CommonSettings.MONITOR_REGISTRY_CLIENT);
+        return SettingsFactory.getInstance(
+                CommonSettings.MONITOR_REGISTRY_CLIENT);
     }
 }

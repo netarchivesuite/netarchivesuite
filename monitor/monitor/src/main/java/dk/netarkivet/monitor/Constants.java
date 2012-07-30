@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +25,7 @@
 package dk.netarkivet.monitor;
 
 /**
- * Constants for the Monitor module
+ * Constants for the Monitor module.
  */
 public class Constants {
     /**
@@ -31,5 +33,10 @@ public class Constants {
      */
     public static final String TRANSLATIONS_BUNDLE =
             "dk.netarkivet.monitor.Translations";
+    /**
+     * Signals that an application is to be removed from the status-page.
+     * Constant used by the script webpages/Status/Monitor-JMXsummary.jsp.
+     */
     public static final String REMOVE = "remove";
+
 }

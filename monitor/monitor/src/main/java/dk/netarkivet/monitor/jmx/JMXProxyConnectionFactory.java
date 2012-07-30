@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +45,7 @@ public interface JMXProxyConnectionFactory {
      * @return a connection object that can be used for accessing
      * MBeans on the remote server.
      */
-    public JMXProxyConnection getConnection(
+    JMXProxyConnection getConnection(
             String server,
             int port,
             int rmiPort,

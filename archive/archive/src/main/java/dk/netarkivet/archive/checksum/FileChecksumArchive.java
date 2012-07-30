@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,11 +37,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -51,6 +53,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * A checksum archive in the form of a file (as alternative to a database).<br>
@@ -69,8 +72,8 @@ public final class FileChecksumArchive extends ChecksumArchive {
     /**
      * The character sequence for separating the filename from the checksum.
      */
-    private static final String CHECKSUM_SEPARATOR = dk.netarkivet.archive
-            .arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR;
+    private static final String CHECKSUM_SEPARATOR 
+        = ChecksumJob.STRING_FILENAME_SEPARATOR;
     
     /** The prefix to the filename. */
     private static final String FILENAME_PREFIX = "checksum_";
@@ -608,9 +611,6 @@ public final class FileChecksumArchive extends ChecksumArchive {
     /**
      * The method for uploading a file to the archive.
      * 
-     * TODO use file instead of remoteFile. Now the remoteFile is not 
-     * automatically cleaned up afterwards.
-     * 
      * @param file The remote file containing the file to be uploaded.
      * @param filename The name of the arcFile.
      * @throws ArgumentNotValid If the RemoteFile is null or if the filename
@@ -619,40 +619,44 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * different checksum.
      */
     public void upload(RemoteFile file, String filename) throws  
-            ArgumentNotValid, IllegalState {
+    ArgumentNotValid, IllegalState {
         // Validate arguments.
         ArgumentNotValid.checkNotNull(file, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
-        // synchronize the memory.
-        synchronizeWithFile();
+        InputStream input = null;
 
-        // calculate the checksum
-        String checksum = calculateChecksum(file.getInputStream());
-        
-        // check if file already exist in archive.
-        if(checksumArchive.containsKey(filename)) {
-            // handle whether the checksum are the same.
-            if(checksumArchive.get(filename).equals(checksum)) {
-                log.warn("Cannot upload arcfile '" + filename + "', "
-                        + "it is already archived with the same checksum: '"
-                        + checksum);
-            } else {
-                // This is not allowed!
-                throw new IllegalState("Cannot upload arcfile '" + filename 
-                        + "', it is already archived with different checksum."
-                        + " Archive checksum: '" + checksumArchive.get(filename)
-                        + "' and the uploaded file has: '" + checksum + "'.");
+        try {
+            input = file.getInputStream();
+            synchronizeMemoryWithFile();
+            String checksum = calculateChecksum(input);
+
+            if(checksumArchive.containsKey(filename)) {
+                if(checksumArchive.get(filename).equals(checksum)) {
+                    log.warn("Cannot upload arcfile '" + filename + "', "
+                            + "it is already archived with the same checksum: '"
+                            + checksum);
+                } else {
+                    throw new IllegalState("Cannot upload arcfile '" + filename 
+                            + "', it is already archived with different checksum."
+                            + " Archive checksum: '" + checksumArchive.get(filename)
+                            + "' and the uploaded file has: '" + checksum + "'.");
+                }
+
+                // It is considered a success that it already is within the archive, 
+                // thus do not throw an exception. 
+                return;
             }
-                
-            // It is a success that it already is within the archive, thus do
-            // not throw an exception. 
-            return;
+
+            // otherwise put the file into memory and file. 
+            appendEntryToFile(filename, checksum);
+            checksumArchive.put(filename, checksum);
+        } finally {
+            if (input != null) {
+                IOUtils.closeQuietly(input);
+            }
         }
-        
-        // otherwise put the file into memory and file. 
-        appendEntryToFile(filename, checksum);
-        checksumArchive.put(filename, checksum);
+
     }
     
     /**
@@ -666,8 +670,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // validate the argument
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         
-        // Synchronize memory with file.
-        synchronizeWithFile();
+        synchronizeMemoryWithFile();
         
         // Return the checksum of the record.
         return checksumArchive.get(filename);
@@ -744,7 +747,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         ArgumentNotValid.checkNotNull(correctFile, "File correctFile");
         
         // synchronize the memory.
-        synchronizeWithFile();
+        synchronizeMemoryWithFile();
 
         // If no file entry exists, then IllegalState
         if(!checksumArchive.containsKey(filename)) {
@@ -809,9 +812,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * @return A temporary checksum file, which is a copy of the archive file.
      * @throws IOFailure If problems occurs during the creation of the file.
      */
+    @Override
     public File getArchiveAsFile() throws IOFailure {
-        // synchronize the memory.
-        synchronizeWithFile();
+        synchronizeMemoryWithFile();
         
         try {
             // create new temporary file of the archive.
@@ -838,9 +841,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * This file has one filename per line.
      * @throws IOFailure If problems occurs during the creation of the file.
      */
+    @Override
     public File getAllFilenames() throws IOFailure {
-        // synchronize the memory.
-        synchronizeWithFile();
+        synchronizeMemoryWithFile();
         
         try {
             File tempFile = File.createTempFile("tmp", "tmp", 
@@ -875,7 +878,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * be checked whether it corresponds the 'last modified' date of the file.
      * If they are different, then the memory archive is reloaded from the file.
      */
-    public synchronized void synchronizeWithFile() {
+    private synchronized void synchronizeMemoryWithFile() {
         log.debug("Synchronizing memory archive with file archive.");
         
         // Check if the checksum file has changed since last access.
@@ -894,6 +897,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * The method for cleaning up when done.
      * It sets the checksum file and the instance to null. 
      */
+    @Override
     public void cleanup() {
         checksumFile = null;
         instance = null;

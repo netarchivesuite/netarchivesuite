@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,6 +40,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 /** A class that implements the StringTree<T> interface by backing it with
  * XML. The name of each XML node corresponds to the identifier of a node
  * in the tree.
+ * @param <T> The type of XmlTree
  */
 public class XmlTree<T> implements StringTree<T> {
     /** This matches string values that are valid for identifying a field. */
@@ -275,7 +278,7 @@ public class XmlTree<T> implements StringTree<T> {
 
     /**
      * Get a map of the names and values of all subtrees, assuming that all
-     * subtrees are leafs and are uniquely named
+     * subtrees are leafs and are uniquely named.
      *
      * @return Map from subtree names to values of their leaves.
      *

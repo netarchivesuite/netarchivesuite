@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -27,28 +29,31 @@ import java.io.File;
 import junit.framework.TestCase;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
+import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
  * Basic unit tests for the StoreMessage.
- * TODO do test methods for the getters.
- * 
  */
 public class StoreMessageTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
+    UseTestRemoteFile rm = new UseTestRemoteFile();
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS, TestInfo.WORKING);
 
     public void setUp() {
         rs.setUp();
+        rm.setUp();
         mtf.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
     public void tearDown() {
+        rm.tearDown();
         rs.tearDown();
         mtf.tearDown();
     }
@@ -56,14 +61,14 @@ public class StoreMessageTester extends TestCase {
     public void testInvalidArguments() {
 
         try {
-            new StoreMessage(null, new File(""));
+            new StoreMessage( (ChannelID) null, new File(""));
             fail("Should throw ArgumentNotValid on null Channel");
         } catch (ArgumentNotValid e) {
             // expected case
         }
 
         try {
-            new StoreMessage(Channels.getTheRepos(), null);
+            new StoreMessage(Channels.getTheRepos(), (File) null);
             fail("Should throw ArgumentNotValid on null file");
         } catch (ArgumentNotValid e) {
             // expected case
@@ -88,6 +93,9 @@ public class StoreMessageTester extends TestCase {
         };
         
         msg.accept(amv);
+        // test getters
+        assertEquals(Channels.getError(), msg.getReplyTo());
+        assertEquals(TestInfo.ARCFILE.getName(), msg.getArcfileName());
     }
 
 }

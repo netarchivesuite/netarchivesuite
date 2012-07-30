@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,7 +44,7 @@ public class SparseDomainConfiguration {
      * @param configurationName Name of configuration.
      * @throws ArgumentNotValid if either argument is null or empty.
      */
-    SparseDomainConfiguration(String domainName,
+    public SparseDomainConfiguration(String domainName,
                               String configurationName){
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         ArgumentNotValid.checkNotNullOrEmpty(configurationName,
@@ -50,7 +52,17 @@ public class SparseDomainConfiguration {
         this.domainName = domainName;
         this.configurationName = configurationName;
     }
-
+    
+    /** Alternate constructor taking a DomainConfiguration as input.
+     * 
+     * @param dc a DomainConfiguration 
+     */
+    public SparseDomainConfiguration(DomainConfiguration dc) {
+        ArgumentNotValid.checkNotNull(dc, "DomainConfiguration dc");
+        this.domainName = dc.getDomainName();
+        this.configurationName = dc.getName();
+    }
+    
     /**
      * Get domain name.
      * @return The domain name.
@@ -66,4 +78,25 @@ public class SparseDomainConfiguration {
     public String getConfigurationName(){
         return this.configurationName;
     }
+    
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SparseDomainConfiguration)) return false;
+
+        final SparseDomainConfiguration configKey = (SparseDomainConfiguration) o;
+
+        if (!configurationName.equals(configKey.getConfigurationName())) return false;
+        if (!domainName.equals(configKey.getDomainName())) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+        result = domainName.hashCode();
+        result = 29 * result + configurationName.hashCode();
+        return result;
+    }
+    
+    
 }

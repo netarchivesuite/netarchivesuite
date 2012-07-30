@@ -4,7 +4,9 @@
  * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +26,10 @@
 
 package dk.netarkivet.archive.indexserver;
 
+import java.util.Set;
+
+import dk.netarkivet.common.exceptions.NotImplementedException;
+
 /**
  * A cache of crawl log indices appropriate for the Icelandic deduplicator
  * code, excluding all text entries.
@@ -38,6 +44,12 @@ public class DedupCrawlLogIndexCache extends CrawlLogIndexCache {
      */
     public DedupCrawlLogIndexCache() {
         super("dedupcrawllogindex", true, "^text/.*");
+    }
+
+    @Override
+    public void requestIndex(Set<Long> jobSet, Long harvestId) {
+        throw new NotImplementedException(
+        "This feature is not implemented for the cdxIndexCache");        
     }
 }
 

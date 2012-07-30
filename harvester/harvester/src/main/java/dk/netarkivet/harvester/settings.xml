@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  
+<!--
  * File:        $Id$
  * Revision:    $Revision$
  * Author:      $Author$
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +25,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 -->
-<!-- 
+<!--
 	This file contains the default settings used by the harvester module.
 
 	For documentation of the individual settings, please refer to the
@@ -31,6 +33,9 @@
 -->
 <settings>
     <harvester>
+    	<aliases>
+    		<timeout>31536000</timeout>
+    	</aliases>
         <datamodel>
             <domain>
                 <defaultSeedlist>defaultseeds</defaultSeedlist>
@@ -39,9 +44,10 @@
                 <defaultMaxrate>100</defaultMaxrate>
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
                 <defaultMaxobjects>-1</defaultMaxobjects>
-                <!-- Used when creating ids for new jobs after a admin 
+                <!-- Used when creating ids for new jobs after a admin
                 database restore. -->
                 <nextJobId>0</nextJobId>
+                <validSeedRegex>^.*$</validSeedRegex>
             </domain>
         </datamodel>
         <scheduler>
@@ -53,23 +59,43 @@
                 <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
                 <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
                 <maxTotalSize>2000000</maxTotalSize>
+                <!-- used to set a limit on how long Heritrix should run. 0 means no limit. -->
+            	<maxTimeToCompleteJob>0</maxTimeToCompleteJob>
             </jobs>
             <configChunkSize>10000</configChunkSize>
             <splitByObjectLimit>false</splitByObjectLimit>
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
+            <dispatchperiode>30000</dispatchperiode>
+            <jobgenerationperiode>60</jobgenerationperiode>
+            <useQuotaEnforcer>true</useQuotaEnforcer>
         </scheduler>
+        <monitor>
+            <!--  1 minute -->
+            <refreshInterval>60</refreshInterval>
+            <displayedHistorySize>30</displayedHistorySize>
+            <historySampleRate>300</historySampleRate><!--  in seconds, 5 minutes -->
+            <historyChartGenInterval>300</historyChartGenInterval><!--  in seconds, 5 minutes -->
+        </monitor>
         <harvesting>
             <serverDir>server</serverDir>
             <!-- Default is 400000000 bytes (~400 Mbytes). -->
             <minSpaceLeft>400000000</minSpaceLeft>
             <oldjobsDir>oldjobs</oldjobsDir>
-            <queuePriority>HIGHPRIORITY</queuePriority>
+            <queuePriority></queuePriority>
+            <sendReadyInterval>300</sendReadyInterval>
+            <sendReadyDelay>1000</sendReadyDelay>
+            <continuationFromHeritrixRecoverlogEnabled>false</continuationFromHeritrixRecoverlogEnabled>
             <heritrix>
                 <!-- 30 minutes -->
                 <inactivityTimeout>1800</inactivityTimeout>
                 <!-- 30 minutes -->
                 <noresponseTimeout>1800</noresponseTimeout>
+                <!--  10 minutes -->
+                <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
+                <!--  20 seconds -->
+                <crawlLoopWaitTime>20</crawlLoopWaitTime>
+                <abortIfConnectionLost>true</abortIfConnectionLost>
                 <adminName>admin</adminName>
                 <adminPassword>adminPassword</adminPassword>
                 <guiPort>8090</guiPort>
@@ -77,11 +103,26 @@
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
-                <javaOpts></javaOpts>                
+                <javaOpts></javaOpts>
             </heritrix>
+            <frontier>
+                <!-- 10 minutes -->
+                <frontierReportWaitTime>600</frontierReportWaitTime>
+                <filter>
+					<class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
+					<args></args>
+                </filter>
+            </frontier>
+            <heritrixLauncher>
+                <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher</class>
+            </heritrixLauncher>
             <heritrixController>
-                <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
+                <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController</class>
             </heritrixController>
+            <harvestReport>
+                <class>dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport</class>
+                <disregardSeedURLInfo>false</disregardSeedURLInfo>
+            </harvestReport>
             <deduplication>
                 <enabled>true</enabled>
             </deduplication>
@@ -89,6 +130,7 @@
                 <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
+                <generateArcFilesReport>true</generateArcFilesReport>
             </metadata>
         </harvesting>
     </harvester>

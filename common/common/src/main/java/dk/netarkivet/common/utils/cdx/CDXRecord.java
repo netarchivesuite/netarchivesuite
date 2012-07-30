@@ -4,7 +4,9 @@
  * Author:      $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,17 +39,25 @@ import dk.netarkivet.common.utils.StringUtils;
  * fields for uri, ip, date, mimetype, length, arcfile, and offset in the file.
  */
 public class CDXRecord {
+    /** The logger for this class. */
     private static Log log = LogFactory.getLog(CDXRecord.class.getName());
+    /** The uri information in a CDX entry. */
     private String url;
+    /** The ip information in a CDX entry. */
     private String ip;
+    /** The date information in a CDX entry. */
     private String date;
+    /** The mimetype information in a CDX entry. */
     private String mimetype;
+    /** The length information in a CDX entry. */
     private long length;
+    /** The arcfile information in a CDX entry. */
     private String arcfile;
+    /** The offset information in a CDX entry. */
     private long offset;
 
     /**
-     * Helper method to avoid exception in URL decoding
+     * Helper method to avoid exception in URL decoding.
      * @param s The string to unescape.
      * @return the unescaped string.
      */
@@ -123,13 +133,17 @@ public class CDXRecord {
             throw new ArgumentNotValid(message);
         }
     }
-
+    
+    /**
+     * Constructor, which tries to parse the given string as a CDXRecord.
+     * @param line a CDXline
+     */
     public CDXRecord(String line) {
         this(line.split(CDXReader.SEPARATOR_REGEX));
     }
 
     /**
-     * Get the given URL
+     * Get the given URL.
      * @return the URL
      */
     public String getURL() {
@@ -137,7 +151,7 @@ public class CDXRecord {
     }
 
     /**
-     * Get the given IP
+     * Get the given IP.
      * @return the IP
      */
     public String getIP() {
@@ -145,7 +159,7 @@ public class CDXRecord {
     }
 
     /**
-     * Get the given date
+     * Get the given date.
      * @return the date
      */
     public String getDate() {
@@ -153,7 +167,7 @@ public class CDXRecord {
     }
 
     /**
-     * Get the given mimetype
+     * Get the given mimetype.
      * @return The given mimetype
      */
     public String getMimetype() {
@@ -161,7 +175,7 @@ public class CDXRecord {
     }
 
     /**
-     * Get the given length
+     * Get the given length.
      * @return The given length
      */
     public long getLength() {
@@ -169,7 +183,7 @@ public class CDXRecord {
     }
 
     /**
-     * Get the given arcfile
+     * Get the given arcfile.
      * @return The given arcfile
      */
     public String getArcfile() {
@@ -177,12 +191,10 @@ public class CDXRecord {
     }
 
     /**
-     * Get the given offset
+     * Get the given offset.
      * @return The given offset
      */
     public long getOffset() {
         return offset;
     }
-
 }
-

@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,9 +25,7 @@
 package dk.netarkivet.harvester.datamodel;
 
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +36,6 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
  * A Data Access Object for harvest definitions.
@@ -50,14 +49,9 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
       * thread-safety.
       */
     private static HarvestDefinitionDAO instance;
+
     /** The log. */
     protected final Log log = LogFactory.getLog(getClass());
-
-    /** The set of HDs (or rather their OIDs) that are currently being
-     * scheduled in a separate thread.
-     * This set is a SynchronizedSet
-     */
-    private Set<Long> harvestDefinitionsBeingScheduled = Collections.synchronizedSet(new HashSet<Long>());
 
     /**
      * Default constructor.
@@ -87,14 +81,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     public abstract Long create(HarvestDefinition harvestDefinition);
 
     /**
-     * Generates the next id of a harvest definition.
-     * TODO: Maybe this method is not needed in this superclass as an abstract method.
-     * It is really only a helper method for the create() method.
-     * @return id The next available id.
-     */
-    protected abstract Long generateNextID();
-
-    /**
      * Read the stored harvest definition for the given ID.
      *
      * @param harvestDefinitionID An ID number for a harvest definition
@@ -107,22 +93,6 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     public abstract HarvestDefinition read(Long harvestDefinitionID)
             throws UnknownID, IOFailure;
 
-    /** Return a string describing the current uses of a harvest definition,
-     * or null if the harvest definition is safe to delete (i.e. has never been
-     * run).
-     *
-     * @param oid a given identifier designating a harvest definition.
-     * @return the above mentioned usage-string.
-     */
-    public abstract String describeUsages(Long oid);
-
-    /**
-     * Delete a harvest definition from persistent storage.
-     *
-     * @param oid The ID of a harvest definition to delete.
-     */
-    public abstract void delete(Long oid);
-
     /**
      * Update an existing harvest definition with new info
      * in persistent storage.
@@ -133,12 +103,26 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     public abstract void update(HarvestDefinition harvestDefinition);
 
     /**
+     * Activates or deactivates a partial harvest definition,
+     * depending on its activation status.
+     * @param harvestDefinition the harvest definition object
+     */
+    public abstract void flipActive(SparsePartialHarvest harvestDefinition);
+
+    /**
      * Check, if there exists a HarvestDefinition identified by a given OID.
      * @param oid a given OID
      * @return true, if such a harvestdefinition exists.
      */
     public abstract boolean exists(Long oid);
 
+    /**
+     * Check, if there exists a HarvestDefinition identified by a given name.
+     * @param name a given name
+     * @return true, if such a harvestdefinition exists.
+     */
+    public abstract boolean exists(String name);
+    
     /**
      * Get a list of all existing harvest definitions.
      *
@@ -163,118 +147,9 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      */
     public abstract Iterator<DomainConfiguration> getSnapShotConfigurations();
 
-
-
-    /**
-     * Edit the harvestdefinition.
-     * @param harvestDefinitionID The ID for the harvestdefintion to be updated
-     * @param harvestDefinition the HarvestDefinition object to used to update
-     *        harvestdefinition with the above ID
-     * @return the ID for the updated harvestdefinition
-     * (this should be equal to harvestDefinitionID?)
-     *
-     */
-    public Long editHarvestDefinition(Long harvestDefinitionID,
-                                      HarvestDefinition harvestDefinition) {
-        ArgumentNotValid.checkNotNull(harvestDefinitionID,
-                "harvestDefinitionID");
-        ArgumentNotValid.checkNotNull(harvestDefinition, "harvestDefinition");
-
-        HarvestDefinition oldhd = read(harvestDefinitionID);
-        harvestDefinition.setOid(oldhd.getOid());
-        harvestDefinition.setSubmissionDate(oldhd.getSubmissionDate());
-        update(harvestDefinition);
-        return harvestDefinition.getOid();
-    }
-
-    /**
-     * Generate new jobs for the harvestdefinitions in persistent storage.
-     * @param now The current time (hopefully)
-     */
-    public void generateJobs(Date now) {
-        ArgumentNotValid.checkNotNull(now, "now");
-        // loop over all harvestdefinitions that are ready to run
-        for (final Long id : getReadyHarvestDefinitions(now)) {
-            // The synchronization must take place within the loop, as we don't
-            // want to lock everybody out for the entire time.
-            synchronized(this) {
-                // Make every HD run in its own thread, but at most once.
-                if (harvestDefinitionsBeingScheduled.contains(id)) {
-                    // With the small importance of this logmessage,
-                    // we won't spend time looking up the corresponding name for
-                    // the harvestdefinition with this id number.
-                    log.debug("Not creating jobs for harvestdefinition with id #" + id
-                            + " as the previous scheduling is still running");
-                    continue;
-                }
-
-                // Get all heritrix-jobs that
-                // the harvestdefinition consists of !
-                final HarvestDefinition harvestDefinition = read(id);
-
-                if (!harvestDefinition.runNow(now)) {
-                    log.trace("The harvestdefinition '"
-                            +  harvestDefinition.getName()
-                            + "' should not run now.");
-                    log.trace("numEvents: "
-                            + harvestDefinition.getNumEvents());
-                    continue;
-                }
-                harvestDefinitionsBeingScheduled.add(id);
-                // create the jobs
-                final Thread t = new Thread() {
-                    public void run() {
-                        try {
-                            int jobsMade = harvestDefinition.createJobs();
-                            log.info("Created " + jobsMade
-                                    + " jobs for harvest definition '"
-                                    + harvestDefinition.getName() + "'");
-                            update(harvestDefinition);
-                        } catch (Throwable e) {
-                            try {
-                                HarvestDefinition hd
-                                        = read(harvestDefinition.getOid());
-                                hd.setActive(false);
-                                update(hd);
-                                String errMsg = "Exception while scheduling"
-                                        + "harvestdefinition '"
-                                        + harvestDefinition.getName()
-                                        + "'. The harvestdefinition has been"
-                                        + " deactivated!";
-                                log.warn(errMsg, e);
-                                NotificationsFactory.getInstance()
-                                    .errorEvent(errMsg, e);
-                            } catch (Exception e1) {
-                                String errMsg = "Exception while scheduling"
-                                        + "harvestdefinition '"
-                                        + harvestDefinition.getName()
-                                        + "'. The harvestdefinition couldn't be"
-                                        + " deactivated!";
-                                log.warn(errMsg, e);
-                                log.warn("Unable to deactivate", e1);
-                                NotificationsFactory.getInstance()
-                                    .errorEvent(errMsg, e);
-
-                            }
-                        } finally {
-                            harvestDefinitionsBeingScheduled.
-                                remove(id);
-                            log.debug("Removed '" + harvestDefinition.getName()
-                                    + "' from list of harvestdefinitions to be "
-                                    + "scheduled. Harvestdefinitions still to "
-                                    + "be scheduled: "
-                                    + harvestDefinitionsBeingScheduled);
-                        }
-                    }
-                };
-                t.start();
-            }
-        }
-    }
-
     /** Get the IDs of the harvest definitions that are ready to run.
      *
-     * @param now
+     * @param now 
      * @return IDs of the harvest definitions that are currently ready to
      * be scheduled.  Some of these might already be in the process of being
      * scheduled.
@@ -290,19 +165,8 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      */
     public abstract HarvestDefinition getHarvestDefinition(String name);
 
-    /** Returns an iterator of all snapshot harvest definitions.
-     *
-     * @return An iterator (possibly empty) of FullHarvests
-     */
-    public abstract Iterator<FullHarvest> getAllFullHarvestDefinitions();
-
-    /** Returns an iterator of all non-snapshot harvest definitions.
-     *
-     * @return An iterator (possibly empty) of PartialHarvests
-     */
-    public abstract Iterator<PartialHarvest> getAllPartialHarvestDefinitions();
-
     /** Returns a list with information on the runs of a particular harvest.
+     * The list is ordered by descending run number.
      *
      * @param harvestID ID of an existing harvest
      * @return List of objects with selected information.
@@ -316,39 +180,16 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
         instance = null;
     }
 
-    /** Returns true if any harvestdefinition is in the middle of having
-     * jobs scheduled.  Notice that this synchronizes with generateJobs.
-     *
-     * @return true if there is at least one harvestdefinition currently
-     * scheduling jobs.
-     */
-    public boolean isGeneratingJobs() {
-        return !harvestDefinitionsBeingScheduled.isEmpty();
-    }
-
-    /** Return whether the given harvestdefinition can be deleted.
-     * This should be a fairly lightweight method, but is not likely to be
-     * instantaneous.
-     * Note that to increase speed, this method may rely on underlying systems
-     * to enforce transitive invariants.  This means that if this method says
-     * a harvestdefinition can be deleted, the dao may still reject a delete
-     * request.  If this method returns false, deletion will however
-     * definitely not be allowed.
-     * @param hd A given harvestdefinition
-     * @return true, if this HarvestDefinition can be deleted without problems.
-     */
-    public abstract boolean mayDelete(HarvestDefinition hd);
-
     /**
      * Get all domain,configuration pairs for a harvest definition in sparse
      * version for GUI purposes.
      *
      * @param harvestDefinitionID The ID of the harvest definition.
-     * @return Domain,configuration pairs for that HD. Returns an empty iterable
+     * @return Domain,configuration pairs for that HD. Returns an empty list
      *         for unknown harvest definitions.
      * @throws ArgumentNotValid on null argument.
      */
-    public abstract Iterable<SparseDomainConfiguration>
+    public abstract List<SparseDomainConfiguration>
             getSparseDomainConfigurations(Long harvestDefinitionID);
 
     /**
@@ -406,7 +247,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      * @throws IOFailure        on any other error talking to the database
      */
     public abstract boolean isSnapshot(Long harvestDefinitionID);
-    
+
     /** Get a sorted list of all domainnames of a HarvestDefintion
     *
     * @param harvestName of HarvestDefintion
@@ -414,8 +255,9 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     * @throws ArgumentNotValid on null argument
     * @throws IOFailure        on any other error talking to the database
     */
-    public abstract List<String> getListOfDomainsOfHarvestDefinition(String harvestName);
-    
+    public abstract List<String> getListOfDomainsOfHarvestDefinition(
+            String harvestName);
+
     /** Get a sorted list of all seeds of a Domain in a HarvestDefinition.
     *
     * @param harvestName of HarvestDefintion
@@ -424,5 +266,52 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     * @throws ArgumentNotValid on null argument
     * @throws IOFailure        on any other error talking to the database
     */
-    public abstract List<String> getListOfSeedsOfDomainOfHarvestDefinition(String harvestName, String domainName);
+    public abstract List<String> getListOfSeedsOfDomainOfHarvestDefinition(
+            String harvestName, String domainName);
+    
+    /**
+     * Get a collection of jobIds for snapshot deduplication index.
+     * @param harvestId the id of the harvest
+     * @return a collection of jobIds to create a deduplication index.
+     */
+    public abstract Set<Long> getJobIdsForSnapshotDeduplicationIndex(
+            Long harvestId);
+
+    /**
+     * Set the isindexready field available for snapshot harvests.
+     * @param harvestId the ID of the harvest.
+     * @param newValue the new isindexready value 
+     */
+    public abstract void setIndexIsReady(Long harvestId, boolean newValue);
+    
+    /**
+     * Remove Domain configuration from a specific PartialHarvest.
+     * @param harvestId Id for a specific PartialHarvest
+     * @param key a SparseDomainConfiguration uniquely identifying the 
+     * domainconfig.
+     */
+    public abstract void removeDomainConfiguration(Long harvestId, 
+            SparseDomainConfiguration key);
+    /**
+     * Update the given PartialHarvest (i.e. Selective Harvest) with a new 
+     * time for the next harvestrun.
+     * @param ph A given PartialHarvest (i.e. Selective Harvest).
+     * @param nextdate A new date for the next harvest run.
+     */
+    public abstract void updateNextdate(PartialHarvest ph, Date nextdate);
+    
+    /**
+     * Add a domainconfiguration to a PartialHarvest.
+     * @param hdd a given PartialHarvest
+     * @param sparseDomainConfiguration a reduced domainconfiguration object
+     */
+    public abstract void addDomainConfiguration(PartialHarvest hdd,
+            SparseDomainConfiguration sparseDomainConfiguration);
+    /**
+     * Reset the list of domainconfiguration for a PartialHarvest.
+     * @param hdd a given PartialHarvest
+     * @param dcList the new list of domainconfigurations
+     */
+    public abstract void resetDomainConfigurations(PartialHarvest hdd,
+            List<DomainConfiguration> dcList);
 }

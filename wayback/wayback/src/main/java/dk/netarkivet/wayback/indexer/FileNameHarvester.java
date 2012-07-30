@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,18 +28,16 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.RemoteFile;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.wayback.WaybackSettings;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -62,8 +62,7 @@ public class FileNameHarvester {
         ArchiveFileDAO dao = new ArchiveFileDAO();
         PreservationArcRepositoryClient client = ArcRepositoryClientFactory
                 .getPreservationInstance();
-        FileBatchJob job = new FileListJob();
-        BatchStatus status = client.batch(job,
+        BatchStatus status = client.batch(new FileListJob(),
                                  Settings.get(WaybackSettings.WAYBACK_REPLICA));
         RemoteFile results = status.getResultFile();
         InputStream is = results.getInputStream();
@@ -78,10 +77,13 @@ public class FileNameHarvester {
                     log.info("Creating object store entry for '" +
                              file.getFilename() + "'");
                     dao.create(file);
-                }
+                } // If the file is already known in the persistent store, no
+                // action needs to be taken.
             }
         } catch (IOException e) {
             throw new IOFailure("Error reading remote file", e);
+        } finally {
+            IOUtils.closeQuietly(reader);
         }
     }
 

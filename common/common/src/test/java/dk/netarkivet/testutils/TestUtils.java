@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,25 +25,14 @@
 
 package dk.netarkivet.testutils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Logger;
-
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.DomainDAOTester;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAOTester;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
-import dk.netarkivet.harvester.datamodel.JobDAOTester;
-import dk.netarkivet.harvester.datamodel.ScheduleDAOTester;
-import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
+
+import java.util.logging.Logger;
 
 /**
  * This class allows checking who's running the tests.
  */
-
 public class TestUtils {
     private static final String RUN_AS_USER
             = "dk.netarkivet.testutils.runningAs";
@@ -74,32 +65,5 @@ public class TestUtils {
         }
         log.info("User " + user + " excluded " + caller + "()");
         return false;
-    }
-
-    public static void resetDAOs() {
-        DomainDAOTester.resetDomainDAO();
-        TemplateDAOTester.resetTemplateDAO();
-        HarvestDefinitionDAOTester.resetDAO();
-        ScheduleDAOTester.resetDAO();
-        JobDAOTester.resetDAO();
-        GlobalCrawlerTrapListDBDAO.reset();
-    }
-
-    /**
-     * Convert inputStream to byte array.
-     *
-     * @param data       inputstream
-     * @param dataLength length of inputstream
-     * @return byte[] containing data in inputstream
-     */
-    public static byte[] inputStreamToBytes(InputStream data, int dataLength) {
-        byte[] contents = new byte[dataLength];
-        try {
-            data.read(contents, 0, dataLength);
-        } catch (IOException e) {
-            throw new IOFailure("Unable to convert inputstream to byte array",
-                                e);
-        }
-        return contents;
     }
 }

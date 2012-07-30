@@ -4,7 +4,9 @@
  * Date:       $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,9 +33,9 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCReader;
-import org.archive.io.arc.ARCReaderFactory;
-import org.archive.io.arc.ARCRecord;
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
+import org.archive.io.ArchiveRecord;
 
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -89,13 +91,13 @@ public class Bitarchive {
     }
 
     /**
-     * Get an ARC record out of the archive. Returns null if the arcfile is
-     * not found in this bitarchive.
+     * Get an ARC or WARC record out of the archive. Returns null if the 
+     * archive file is not found in this bitarchive.
      *
      * @param arcfile
-     *            The name of an ARC file.
+     *            The name of an Archive file.
      * @param index
-     *            Index of the ARC record in the file
+     *            Index of the Archive record in the file
      * @return A BitarchiveRecord object for the record in question. This record
      *         contains the data from the file.
      * @throws ArgumentNotValid
@@ -117,8 +119,8 @@ public class Bitarchive {
             log.debug("Get request for file not on this machine: " + arcfile);
             return null;
         }
-        ARCReader arcReader = null;
-        ARCRecord arc = null;
+        ArchiveReader arcReader = null;
+        ArchiveRecord arc = null;
         try {
             if ((barc.getSize() <= index) || (index < 0)) {
                 String s = "GET: index out of bounds: " + arcfile + ":" + index
@@ -127,9 +129,9 @@ public class Bitarchive {
                 throw new ArgumentNotValid(s);
             }
             File in = barc.getFilePath();
-            arcReader = ARCReaderFactory.get(in);
-            arc = (ARCRecord) arcReader.get(index);
-            BitarchiveRecord result = new BitarchiveRecord(arc);
+            arcReader = ArchiveReaderFactory.get(in);
+            arc = arcReader.get(index);
+            BitarchiveRecord result = new BitarchiveRecord(arc, arcfile);
 
             // release resources locked
             log.info("GET: Got " + result.getLength()
@@ -222,9 +224,10 @@ public class Bitarchive {
                 bitarchiveAppId, "String bitarchiveAppId");
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         log.info("Starting batch job on bitarchive application with id '"
-                + bitarchiveAppId + "': " + job.getClass().getName());
+                + bitarchiveAppId + "': '" + job.getClass().getName() 
+                + "', on filename-pattern: '" + job.getFilenamePattern() + "'");
         BatchStatus returnStatus;
-
+        
         File tmpFile = null;
         try {
             tmpFile = File.createTempFile("BatchOutput", "",
@@ -237,6 +240,7 @@ public class Bitarchive {
                         + new Date());
                 File[] processFiles
                         = admin.getFilesMatching(job.getFilenamePattern());
+
                 final BatchLocalFiles localBatchRunner =
                     new BatchLocalFiles(processFiles);
                 localBatchRunner.run(job, os);

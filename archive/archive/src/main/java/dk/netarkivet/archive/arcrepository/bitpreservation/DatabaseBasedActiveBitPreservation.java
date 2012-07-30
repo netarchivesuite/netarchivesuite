@@ -4,7 +4,9 @@
  * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,8 +26,10 @@
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +60,7 @@ public final class DatabaseBasedActiveBitPreservation implements
         ActiveBitPreservation, CleanupIF {
     /** The log.*/
     private Log log
-            = LogFactory.getLog(
-                    DatabaseBasedActiveBitPreservation.class);
+            = LogFactory.getLog(DatabaseBasedActiveBitPreservation.class);
     
     /**
      * When replacing a broken file, the broken file is downloaded and stored in
@@ -76,6 +79,14 @@ public final class DatabaseBasedActiveBitPreservation implements
     
     /** The instance to contain the access to the database.*/
     private BitPreservationDAO cache;
+    
+    /** The list of the replicas, which are having their filelist updated. */
+    private List<Replica> updateFilelistReplicas = Collections.synchronizedList(
+            new ArrayList<Replica>());
+    
+    /** The list of the replicas, which are having their checksums updated. */
+    private List<Replica> updateChecksumReplicas = Collections.synchronizedList(
+            new ArrayList<Replica>());
     
     /**
      * Constructor.
@@ -108,23 +119,22 @@ public final class DatabaseBasedActiveBitPreservation implements
      * A GetAllFilenamesMessage is sent to the specific replica.
      * 
      * @param replica The replica to retrieve the filelist from.
-     * @return The names of the files in a list.
+     * @return The names of the files in a File.
      * @throws ArgumentNotValid If the replica is 'null'.
      */
-    private List<String> getFilenamesList(Replica replica) throws 
+    private File getFilenamesAsFile(Replica replica) throws 
             ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
         // send request
-        log.info("Retrieving checksum from replica '" + replica + "'.");
+        log.info("Retrieving filelist from replica '" + replica + "'.");
 
         // Retrieve a file containing the list of filenames of the replica.
-        File outputFile = ArcRepositoryClientFactory.getPreservationInstance()
+        File result = ArcRepositoryClientFactory.getPreservationInstance()
                 .getAllFilenames(replica.getId());
-        
-        // Return the content of the file in list form.
-        return FileUtils.readListFromFile(outputFile);
+        log.info("Retrieved filelist from replica '" + replica + "'.");
+        return result;
     }
     
     /**
@@ -132,23 +142,24 @@ public final class DatabaseBasedActiveBitPreservation implements
      * A GetAllChecksumsMessage is sent to the specific replica.
      * 
      * @param replica The replica to retrieve the checksums from.
-     * @return A list of checksumjob results, i.e. a filename##checksum.
+     * @return A file containing the checksumjob results, i.e. a filename##checksum.
      * @throws ArgumentNotValid If the replica is null.
      */
-    private List<String> getChecksumList(Replica replica)
+    private File getChecksumListAsFile(Replica replica)
             throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
-        // send request
         log.info("Retrieving checksum from replica '" + replica + "'.");
 
-        // Retrieve a file containing the checksums of the replica.
+        // Request and retrieve a file containing the checksums of the replica,
+        // and return this
         File outputFile = ArcRepositoryClientFactory.getPreservationInstance()
                 .getAllChecksums(replica.getId());
         
-        // Return the content of the file in a list.
-        return FileUtils.readListFromFile(outputFile);
+        log.info("Retrieved checksum from replica '" + replica + "'.");
+        
+        return outputFile;
     }
     
     /**
@@ -180,6 +191,9 @@ public final class DatabaseBasedActiveBitPreservation implements
             arcrep.store(missingFile);
             // remove the temporary file afterwards.
             tmpDir.delete();
+            
+            // Update the checksum status for the file.
+            cache.updateChecksumStatus(filename);
         } catch (Exception e) {
             String errMsg = "Failed to reestablish '" + filename
                     + "' with copy from '" + repWithFile + "'";
@@ -237,18 +251,47 @@ public final class DatabaseBasedActiveBitPreservation implements
     }
     
     /**
-     * The method for retrieving the checksums for all the files witin a
+     * The method for retrieving the checksums for all the files within a
      * replica.
      * This method sends the checksum job to the replica archive.
      * 
      * @param replica The replica to retrieve the checksums from.
      */
     private void runChecksum(Replica replica) {
-        // Run checksum job upon replica
-        List<String> checksumEntries = getChecksumList(replica);
+        File checksumlistFile = null;
+        try {
+            checksumlistFile = getChecksumListAsFile(replica);
+            cache.addChecksumInformation(checksumlistFile, replica);
+        } finally {
+            if (checksumlistFile != null) {
+                FileUtils.remove(checksumlistFile);
+            }
+        }
+    }
+    
+    /**
+     * Retrieves and update the status of a file for a specific replica.
+     * 
+     * @param filename The name of the file.
+     */
+    private void updateChecksumStatus(String filename) {
+        // retrieve the ArcRepositoryClient before using it in the for-loop.
+        PreservationArcRepositoryClient arcClient = ArcRepositoryClientFactory
+                .getPreservationInstance();
+        
+        // retrieve the checksum status for the file for all the replicas
+        for(Replica replica : Replica.getKnown()) {
+            // retrieve the checksum.
+            String checksum = arcClient.getChecksum(replica.getId(), 
+                            filename);
 
-        // update database with new checksums
-        cache.addChecksumInformation(checksumEntries, replica);
+            // insert the checksum results for the file into the database.
+            cache.updateChecksumInformationForFileOnReplica(filename, 
+                    checksum, replica);
+        }
+        
+        // Vote for the specific file.
+        cache.updateChecksumStatus(filename);
     }
 
     /**
@@ -395,43 +438,77 @@ public final class DatabaseBasedActiveBitPreservation implements
      * retrieved checksum results will be updated. Then a checksum update will 
      * be performed to check for corrupted replicafileinfo.
      * 
+     * Each replica can only be updated once at the time.
+     * 
      * @param replica The replica to find the changed files for.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public synchronized void findChangedFiles(Replica replica) throws ArgumentNotValid {
+    public void findChangedFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        
+        // check whether a update of the replica is already in progress.
+        if(updateChecksumReplicas.contains(replica)) {
+            log.warn("A checksum update is already being performed for "
+                    + "replica '" + replica + "'. Operation ignored!");
+            return;
+        }
+
         log.info("Initiating findChangedFiles for replica '" +  replica + "'.");
+        updateChecksumReplicas.add(replica);
+        
+        try {
+            // retrieve updated checksums from the replica.
+            runChecksum(replica);
 
-        // retrieve updated checksums from the replica.
-        runChecksum(replica);
+            // make sure, that all replicas are up-to-date.
+            initChecksumStatusUpdate();
 
-        // make sure, that all replicas are up-to-date.
-        initChecksumStatusUpdate();
-
-        // update to find changes.
-        cache.updateChecksumStatus();
-        log.info("Completed findChangedFiles for replica '" +  replica + "'.");
+            // update to find changes.
+            cache.updateChecksumStatus();
+            log.info("Completed findChangedFiles for replica '" +  replica 
+                    + "'.");
+        } finally {
+            updateChecksumReplicas.remove(replica);
+        }
     }
 
     /**
      * This method retrieves the filelist for the replica, and then it updates
      * the database with this list of filenames.
+     * Each replica can only be updated once at the time.
      * 
      * @param replica The replica to find the missing files for.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public synchronized void findMissingFiles(Replica replica) throws ArgumentNotValid {
+    public void findMissingFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        
+        // check whether a update of the replica is already in progress.
+        if(updateFilelistReplicas.contains(replica)) {
+            log.warn("A filelist update is already being performed for "
+                    + "replica '" + replica + "'. Operation ignored!");
+            return;
+        }
         log.info("Initiating findMissingFiles for replica '" +  replica + "'.");
- 
-        // retrieve the filelist from the replica.
-        List<String> filenames = getFilenamesList(replica);
-
-        // put them into the database.
-        cache.addFileListInformation(filenames, replica);
-        log.info("Completed findMissingFiles for replica '" +  replica + "'.");
+        updateFilelistReplicas.add(replica);
+        File filenamesFile = null;
+        try {
+            // retrieve the filelist from the replica
+            filenamesFile = getFilenamesAsFile(replica);
+            // put them into the database.
+            cache.addFileListInformation(filenamesFile, replica);
+            log.info("Completed findMissingFiles for replica '" +  replica 
+                    + "'.");
+        } finally {
+            updateFilelistReplicas.remove(replica);
+            if (filenamesFile != null) {
+                FileUtils.remove(filenamesFile);
+            }
+        }
     }
 
     /**
@@ -451,7 +528,10 @@ public final class DatabaseBasedActiveBitPreservation implements
         List<ReplicaFileInfo> rfis = new ArrayList<ReplicaFileInfo>(
                 Replica.getKnown().size());
         
-        // retrieve each entry for the file, and put it into the list.
+        // update the checksum status for the file for all the replicas.
+        updateChecksumStatus(filename);
+        
+        // Retrieve the replicafileinfo entries for the file.
         for(Replica replica : Replica.getKnown()) {
             rfis.add(cache.getReplicaFileInfo(filename, replica));
         }
@@ -555,7 +635,8 @@ public final class DatabaseBasedActiveBitPreservation implements
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         ArgumentNotValid.checkPositive(filenames.length, "Length of argument "
                 + "String... filenames");
-        log.info("UploadMissingFiles initiated of " +  filenames.length + " filenames");
+        log.info("UploadMissingFiles initiated of " +  filenames.length 
+                + " filenames");
         // make record of files, which is not uploaded correct.
         List<String> filesFailedReestablishment = new ArrayList<String>();
 

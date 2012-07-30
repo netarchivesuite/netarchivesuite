@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,7 +35,9 @@ import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
+import org.archive.io.warc.WARCRecord;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -44,6 +48,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCUtils;
+import dk.netarkivet.common.utils.WARCUtils;
 
 /**
  * Class to hold the result of a lookup operation in the bitarchive:
@@ -63,10 +68,10 @@ public class BitarchiveRecord implements Serializable {
     /** The actual data. */
     private byte[] objectBuffer;
 
-    /** The offset of the ARCRecord contained. */
+    /** The offset of the ArchiveRecord contained. */
     private long offset;
 
-    /** The length of the ARCRecord contained. */
+    /** The length of the ArchiveRecord contained. */
     private long length;
 
     /** The actual data as a remote file.*/
@@ -88,43 +93,64 @@ public class BitarchiveRecord implements Serializable {
         = LogFactory.getLog(BitarchiveRecord.class.getName());
 
     /**
-     * Creates a BitarchiveRecord from the a ARCRecord.
+     * Creates a BitarchiveRecord from the a ArchiveRecord, which can be either
+     * a ARCRecord or WARCRecord. Note that record metadata is not included with
+     * the BitarchiveRecord, only the payload of the record.
      * 
-     * The filename of the original ARC is read from the ARCRecord itself.
      * If the length of the record is higher than Settings
      * .BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE
      *  the data is stored in a RemoteFile, otherwise the data is stored in
      *  a byte array.
-     * @param record the ARCRecord that the data should come from.  We do not
-     * close the ARCRecord.
+     * @param record the ArchiveRecord that the data should come from.  We do not
+     * close the ArchiveRecord.
+     * @param filename The filename of the ArchiveFile
    */
-    public BitarchiveRecord(ARCRecord record) {
-        ArgumentNotValid.checkNotNull(record, "ARCRecord record");
-        fileName = record.getMetaData().getArcFile().getName();
-        offset = record.getMetaData().getOffset();
-        length = record.getMetaData().getLength();
+    public BitarchiveRecord(ArchiveRecord record, String filename) {
+        ArgumentNotValid.checkNotNull(record, "ArchiveRecord record");
+        ArgumentNotValid.checkNotNull(filename, "String filename");
+        this.fileName = filename;
+        this.offset = record.getHeader().getOffset();
+        if (record instanceof ARCRecord) {
+            length = record.getHeader().getLength();
+        } else if (record instanceof WARCRecord) {
+            // The length of the payload of the warc-record is not getLength(),
+            // but getLength minus getContentBegin(), which is the number of
+            // bytes used for the record-header!
+            length = record.getHeader().getLength() - record.getHeader().getContentBegin();
+        } else {
+            throw new ArgumentNotValid("Unknown type of ArchiveRecord");
+        }
         if (length > LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER) {
             // copy arc-data to local file and create a RemoteFile based on this
-            log.info("ARCRecord exceeds limit of "
-                    + LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER
-                    + " bytes. Length is " + length
-                    + " bytes, Storing as "
-                    + Settings.get(CommonSettings.REMOTE_FILE_CLASS));
-            File localTmpFile = null;
-            try {
-                localTmpFile = File.createTempFile("BitarchiveRecord-"
-                        + fileName, ".tmp", FileUtils.getTempDir());
-                record.dump(new FileOutputStream(localTmpFile));
-                objectAsRemoteFile = RemoteFileFactory.getMovefileInstance(
-                        localTmpFile);
+            log.info("Record exceeds limit of "
+                     + LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER
+                     + " bytes. Length is " + length
+                     + " bytes, Storing as instance of "
+                     + Settings.get(CommonSettings.REMOTE_FILE_CLASS));
+            if (RemoteFileFactory.isExtendedRemoteFile()) {
+                objectAsRemoteFile = RemoteFileFactory.getExtendedInstance(record);
                 isStoredAsRemoteFile = true;
-            } catch (IOException e) {
-                throw new IOFailure("Unable to store record(" + fileName
-                        + "," + offset + ") as remotefile", e);
+            }  else {
+                File localTmpFile = null;
+                try {
+                    localTmpFile = File.createTempFile("BitarchiveRecord-"
+                                                       + fileName, ".tmp", FileUtils.getTempDir());
+                    record.dump(new FileOutputStream(localTmpFile));
+                    objectAsRemoteFile = RemoteFileFactory.getMovefileInstance(
+                            localTmpFile);
+                    isStoredAsRemoteFile = true;
+                } catch (IOException e) {
+                    throw new IOFailure("Unable to store record(" + fileName
+                                        + "," + offset + ") as remotefile", e);
+                }
             }
         } else { // Store data in objectbuffer
             try {
-                objectBuffer = ARCUtils.readARCRecord(record);
+                if (record instanceof ARCRecord) {
+                    objectBuffer = ARCUtils.readARCRecord((ARCRecord) record);
+                } else if (record instanceof WARCRecord) {
+                    objectBuffer = WARCUtils.readWARCRecord((WARCRecord) record);
+                }
                 log.debug("Bytes stored in objectBuffer: "
                         + objectBuffer.length);
             } catch (IOException e) {

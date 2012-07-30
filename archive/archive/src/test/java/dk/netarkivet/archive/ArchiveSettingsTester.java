@@ -3,7 +3,9 @@
 * Author:   $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -29,14 +31,16 @@ import junit.framework.TestCase;
 /** Unittestersuite for the ArchiveSettings class. */
 public class ArchiveSettingsTester extends TestCase {
 
-    public void testNoFinalSettingsConstants() {
+    @SuppressWarnings("rawtypes")
+	public void testNoFinalSettingsConstants() {
         Class c = ArchiveSettings.class;
         Field[] fields = c.getDeclaredFields();
         for (Field f: fields) {
             // Check that all static public fields are not final
             int modifiers = f.getModifiers();
             if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
-                assertFalse("public static fields must not be final, but this was violated by field " + f.getName(),            
+                assertFalse("public static fields must not be final, "
+                		+ "but this was violated by field " + f.getName(),            
                          Modifier.isFinal(modifiers));
             }
         }

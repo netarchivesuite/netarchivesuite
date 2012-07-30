@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -93,6 +95,7 @@ public class AliasInfo {
      * Is this alias expired?
      * This method depends upon the Constant:
      * dk.netarkivet.harvester.webinterface.Constants.ALIAS_TIMEOUT_IN_MILLISECONDS
+     * Note that this constant is now read from settings.
      * @return true, if alias is expired
      */
     public boolean isExpired() {

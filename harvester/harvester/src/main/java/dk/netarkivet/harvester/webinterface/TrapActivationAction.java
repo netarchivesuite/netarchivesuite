@@ -31,7 +31,7 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 
 /**
- * Action class for changing the activation status of a crawler trap list
+ * Action class for changing the activation status of a crawler trap list.
  *
  */
 

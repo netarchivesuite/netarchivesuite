@@ -4,7 +4,9 @@
  * Author:      $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,8 +35,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * Constants used by the datamodel and webinterface packages.
  *
  */
-
-public class Constants {
+public final class Constants {
     /** Pattern not used by anyone, except unittests. */
     private static final Pattern ID_PATTERN =
             Pattern.compile(".*_(\\d+)\\.xml");
@@ -70,32 +71,42 @@ public class Constants {
     public static final int MAX_ERROR_DETAIL_SIZE = 10000;
     /** This is the default number set as max request rate. */
     public static final int DEFAULT_MAX_REQUEST_RATE = 60;
-    /** Max bytes of -1 means infinity. */
+    /** Max bytes of -1 means infinity 
+     * (i.e other factors will determine when the job ends). */
     public static final long HERITRIX_MAXBYTES_INFINITY = -1L;
-    /** Max objects of -1 means infinity. */
+    /** Max objects of -1 means infinity (i.e other factors will determine 
+     * when the job ends). */
     public static final long HERITRIX_MAXOBJECTS_INFINITY = -1L;
+    
+    /** Max job running time of 0 means infinite job running time 
+     * (i.e other factors will determine when the job ends). 
+     */
+    public static final long HERITRIX_MAXJOBRUNNINGTIME_INFINITY = 0L;
+    
     /** This is the default number set as max bytes harvested.
      * Set to the max number of bytes we harvest from any domain per harvest,
      * unless explicitly deciding otherwise. */
     public static final long DEFAULT_MAX_BYTES
             = Settings.getLong(HarvesterSettings.DOMAIN_CONFIG_MAXBYTES);
-    /** This is the default number set as max harvested objects. Note, that
-     * although this is a long it is sometimes used as an int, so don't set
-     * this value too high. Default max objects should now be infinity, since
-     * we use the byte limit. */
+    
+    /** This is the default number set as max harvested objects. */
     public static final long DEFAULT_MAX_OBJECTS 
         = Settings.getLong(HarvesterSettings.DOMAIN_CONFIG_MAXOBJECTS);
+    
     /**
-     * Default value for alias timeout, 1 year.
-     * TODO make this into a setting in HarvesterSettings
+     * The default maximum time in seconds available for each harvesting job.
+     * Set to unlimited (0) in the default settings. 
+     * Used to restrict the running time for snapshot harvest jobs.
      */
-    public static final long ALIAS_TIMEOUT_IN_MILLISECONDS = 365 * 24 * 60 * 60
-                                                             * 1000L;
-    /** Descending sort order. */
-    public static final String DESCENDING_SORT_ORDER = "DESC";
-    /** Ascending sort order. */
-    public static final String ASCENDING_SORT_ORDER = "ASC";
+    public static final long DEFAULT_MAX_JOB_RUNNING_TIME
+        = Settings.getLong(HarvesterSettings.JOBS_MAX_TIME_TO_COMPLETE);
 
+    /**
+     * The value for alias timeout, in milliseconds.
+     */
+    public static final long ALIAS_TIMEOUT_IN_MILLISECONDS 
+        = Settings.getLong(HarvesterSettings.ALIAS_TIMEOUT) * 1000L;
+    
     /** Settings used in JobDBDao after admin machine break down. **/
     public static final String NEXT_JOB_ID =
                 "settings.harvester.datamodel.domain.nextJobId";

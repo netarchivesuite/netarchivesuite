@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -35,109 +37,113 @@ import org.archive.wayback.WaybackConstants;
 import org.apache.commons.httpclient.Header;
 
 /**
- *This class is cut and paste from waybacks ARCRecordToSearchResultAdapter,
- *except for the use of NetarchiveSuiteUrlOperations as a substitute for UrlOperations
+ * This class is cut and paste from waybacks ARCRecordToSearchResultAdapter,
+ * except for the use of NetarchiveSuiteUrlOperations as a substitute for
+ * UrlOperations.
+ * 
  * @deprecated use org.archive.wayback.
  */
 public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<ARCRecord,CaptureSearchResult> {
         private UrlCanonicalizer canonicalizer = null;
 
-public NetarchiveSuiteARCRecordToSearchResultAdapter() {
-    canonicalizer = new IdentityUrlCanonicalizer();
-}
-//	public static SearchResult arcRecordToSearchResult(final ARCRecord rec)
-//	throws IOException, ParseException {
-
-/* (non-Javadoc)
- * @see org.archive.wayback.util.Adapter#adapt(java.lang.Object)
- */
-public CaptureSearchResult adapt(ARCRecord rec) {
-    try {
-        return adaptInner(rec);
-    } catch (IOException e) {
-        e.printStackTrace();
-        return null;
+    public NetarchiveSuiteARCRecordToSearchResultAdapter() {
+        canonicalizer = new IdentityUrlCanonicalizer();
     }
-}
+    
+    //public static SearchResult arcRecordToSearchResult(final ARCRecord rec)
+    //      throws IOException, ParseException {
 
-private CaptureSearchResult adaptInner(ARCRecord rec) throws IOException {
-    rec.close();
-    ARCRecordMetaData meta = rec.getMetaData();
-
-    CaptureSearchResult result = new CaptureSearchResult();
-    String arcName = meta.getArc();
-    int index = arcName.lastIndexOf(File.separator);
-    if (index > 0 && (index + 1) < arcName.length()) {
-        arcName = arcName.substring(index + 1);
-    }
-    result.setFile(arcName);
-    result.setOffset(meta.getOffset());
-
-    // initialize with default HTTP code...
-    result.setHttpCode("-");
-
-    result.setDigest(rec.getDigestStr());
-    result.setMimeType(meta.getMimetype());
-    result.setCaptureTimestamp(meta.getDate());
-
-    String uriStr = meta.getUrl();
-    if (uriStr.startsWith(ARCRecord.ARC_MAGIC_NUMBER)) {
-        // skip filedesc record altogether...
-        return null;
-    }
-    if (uriStr.startsWith(WaybackConstants.DNS_URL_PREFIX)) {
-        // skip URL + HTTP header processing for dns records...
-
-        result.setOriginalUrl(uriStr);
-        result.setRedirectUrl("-");
-        result.setUrlKey(uriStr);
-
-    } else {
-
-        result.setOriginalUrl(uriStr);
-
-
-        String statusCode = (meta.getStatusCode() == null) ? "-" : meta
-                .getStatusCode();
-        result.setHttpCode(statusCode);
-
-        String redirectUrl = "-";
-        Header[] headers = rec.getHttpHeaders();
-        if (headers != null) {
-
-            for (int i = 0; i < headers.length; i++) {
-                if (headers[i].getName().equals(
-                        WaybackConstants.LOCATION_HTTP_HEADER)) {
-
-                    String locationStr = headers[i].getValue();
-                    // TODO: "Location" is supposed to be absolute:
-                    // (http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html)
-                    // (section 14.30) but Content-Location can be
-                    // relative.
-                    // is it correct to resolve a relative Location, as
-                    // we are?
-                    // it's also possible to have both in the HTTP
-                    // headers...
-                    // should we prefer one over the other?
-                    // right now, we're ignoring "Content-Location"
-                    redirectUrl = NetarchiveSuiteUrlOperations.resolveUrl(uriStr,
-                            locationStr);
-
-                    break;
-                }
-            }
-            result.setRedirectUrl(redirectUrl);
-
-            String urlKey = canonicalizer.urlStringToKey(meta.getUrl());
-            result.setUrlKey(urlKey);
+    /* (non-Javadoc)
+     * @see org.archive.wayback.util.Adapter#adapt(java.lang.Object)
+     */
+    public CaptureSearchResult adapt(ARCRecord rec) {
+        try {
+            return adaptInner(rec);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
-    return result;
-}
-public UrlCanonicalizer getCanonicalizer() {
-    return canonicalizer;
-}
-public void setCanonicalizer(UrlCanonicalizer canonicalizer) {
-    this.canonicalizer = canonicalizer;
-}
+
+    private CaptureSearchResult adaptInner(ARCRecord rec) throws IOException {
+        rec.close();
+        ARCRecordMetaData meta = rec.getMetaData();
+
+        CaptureSearchResult result = new CaptureSearchResult();
+        String arcName = meta.getArc();
+        int index = arcName.lastIndexOf(File.separator);
+        if (index > 0 && (index + 1) < arcName.length()) {
+            arcName = arcName.substring(index + 1);
+        }
+        result.setFile(arcName);
+        result.setOffset(meta.getOffset());
+
+        // initialize with default HTTP code...
+        result.setHttpCode("-");
+
+        result.setDigest(rec.getDigestStr());
+        result.setMimeType(meta.getMimetype());
+        result.setCaptureTimestamp(meta.getDate());
+
+        String uriStr = meta.getUrl();
+        if (uriStr.startsWith(ARCRecord.ARC_MAGIC_NUMBER)) {
+            // skip filedesc record altogether...
+            return null;
+        }
+        if (uriStr.startsWith(WaybackConstants.DNS_URL_PREFIX)) {
+            // skip URL + HTTP header processing for dns records...
+
+            result.setOriginalUrl(uriStr);
+            result.setRedirectUrl("-");
+            result.setUrlKey(uriStr);
+
+        } else {
+
+            result.setOriginalUrl(uriStr);
+
+            String statusCode = (meta.getStatusCode() == null) ? "-" : meta
+                    .getStatusCode();
+            result.setHttpCode(statusCode);
+
+            String redirectUrl = "-";
+            Header[] headers = rec.getHttpHeaders();
+            if (headers != null) {
+
+                for (int i = 0; i < headers.length; i++) {
+                    if (headers[i].getName().equals(
+                            WaybackConstants.LOCATION_HTTP_HEADER)) {
+
+                        String locationStr = headers[i].getValue();
+                        // TODO "Location" is supposed to be absolute:
+                        // (http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html)
+                        // (section 14.30) but Content-Location can be
+                        // relative.
+                        // is it correct to resolve a relative Location, as
+                        // we are?
+                        // it's also possible to have both in the HTTP
+                        // headers...
+                        // should we prefer one over the other?
+                        // right now, we're ignoring "Content-Location"
+                        redirectUrl = NetarchiveSuiteUrlOperations.resolveUrl(
+                                uriStr, locationStr);
+
+                        break;
+                    }
+                }
+                result.setRedirectUrl(redirectUrl);
+
+                String urlKey = canonicalizer.urlStringToKey(meta.getUrl());
+                result.setUrlKey(urlKey);
+            }
+        }
+        return result;
+    }
+
+    public UrlCanonicalizer getCanonicalizer() {
+        return canonicalizer;
+    }
+
+    public void setCanonicalizer(UrlCanonicalizer canonicalizer) {
+        this.canonicalizer = canonicalizer;
+    }
 }

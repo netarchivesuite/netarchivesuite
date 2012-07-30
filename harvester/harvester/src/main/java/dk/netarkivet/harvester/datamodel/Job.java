@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,6 +47,8 @@ import java.util.regex.Pattern;
 
 import gnu.inet.encoding.IDNA;
 import gnu.inet.encoding.IDNAException;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
@@ -89,7 +93,9 @@ public class Job implements Serializable {
     private Long jobID;
     /** The Id of the harvestdefinition, that generated this job. */
     private Long origHarvestDefinitionID;
-    /** The status of the job. See the JobStatus class for the possible states. */
+    /** The status of the job. See the JobStatus class for 
+     * the possible states. 
+     */
     private JobStatus status;
     /**
      * The priority of this job.
@@ -150,6 +156,11 @@ public class Job implements Serializable {
     private Long resubmittedAsJobWithID;
     
     /**
+     * Continuation of this job.
+     */
+    private Long continuationOF;
+    
+    /**
      * A map (domainName, domainConfigurationName), must be accessible in order
      * to update job information (see Ass. 2.4.3)
      */
@@ -195,6 +206,12 @@ public class Job implements Serializable {
      * The total number of objects expected by all added configurations.
      */
     private long totalCountObjects;
+    
+    /**
+     * The max time in seconds given to the harvester for this job. 
+     * 0 is unlimited.
+     */
+    private long forceMaxRunningTime;
 
     /** If true, this job object is still undergoing changes due to having
      * more configurations added.  When set to false, the object is no longer
@@ -222,6 +239,9 @@ public class Job implements Serializable {
             = Long.parseLong(Settings.get(
                     HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE));
 
+    private boolean useQuotaEnforcer =
+        Settings.getBoolean(HarvesterSettings.USE_QUOTA_ENFORCER);
+
     private static final int BYTES_PER_HERITRIX_BYTELIMIT_UNIT = 1024;
 
     /**
@@ -236,6 +256,8 @@ public class Job implements Serializable {
      *                                 -1 means no limit
      * @param forceMaxBytesPerDomain The maximum number of objects harvested
      * from a domain, or -1 for no limit.
+     * @param forceMaxJobRunningTime The max time in seconds given to the 
+     *                              harvester for this job
      * @param harvestNum               the run number of the harvest definition
      * @throws ArgumentNotValid if cfg or priority is null or harvestID is
      *                          invalid, or if any limit < -1
@@ -243,6 +265,7 @@ public class Job implements Serializable {
      */
     Job(Long harvestID, DomainConfiguration cfg, JobPriority priority,
         long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
+        long forceMaxJobRunningTime,
         int harvestNum) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
@@ -302,6 +325,10 @@ public class Job implements Serializable {
         // as result of this method-call.
         addConfiguration(cfg);
         addGlobalCrawlerTraps();
+        
+        // Set MaxJobrunningTime for this job
+        setMaxJobRunningTime(forceMaxJobRunningTime);
+        
         status = JobStatus.NEW;
     }
 
@@ -315,6 +342,8 @@ public class Job implements Serializable {
      *                                 configuration settings. 0 means no limit.
      * @param forceMaxBytesPerDomain The maximum number of objects harvested
      * from a domain, or -1 for no limit.
+     * @param forceMaxJobRunningTime The max time in seconds given to the 
+     *                              harvester for this job
      * @param status                   the current status of the job.
      * @param orderXMLname             the name of the order template used.
      * @param orderXMLdoc              the (possibly modified) template
@@ -324,21 +353,24 @@ public class Job implements Serializable {
     Job(Long harvestID, Map<String, String> configurations,
             JobPriority priority,
             long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
+            long forceMaxJobRunningTime,
             JobStatus status,
             String orderXMLname,
-            Document orderXMLdoc, String seedlist, int harvestNum) {
+            Document orderXMLdoc, String seedlist, int harvestNum, 
+            Long continuationOf) {
         origHarvestDefinitionID = harvestID;
         domainConfigurationMap = configurations;
         this.priority = priority;
 
         this.forceMaxBytesPerDomain = forceMaxBytesPerDomain;
         this.forceMaxObjectsPerDomain = forceMaxObjectsPerDomain;
+        this.forceMaxRunningTime = forceMaxJobRunningTime;
         this.status = status;
         this.orderXMLname = orderXMLname;
         this.orderXMLdoc = orderXMLdoc;
         this.setSeedList(seedlist);
         this.harvestNum = harvestNum;
-
+        this.continuationOF = continuationOf;
         underConstruction = false;
     }
 
@@ -357,7 +389,8 @@ public class Job implements Serializable {
         // Use -1 to indicate no limits for max objects and max bytes.
         return new Job(harvestID, cfg, JobPriority.HIGHPRIORITY,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY,
-                Constants.HERITRIX_MAXBYTES_INFINITY, harvestNum);
+                Constants.HERITRIX_MAXBYTES_INFINITY, 
+                Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, harvestNum);
     }
 
     /**
@@ -378,6 +411,8 @@ public class Job implements Serializable {
      *                            domain, overrides individual configuration
      *                            settings unless the domain has overrideLimits
      *                            set.  -1 means no limit.
+     * @param maxJobRunningTime The maximum of seconds which the harvest can 
+     *                          spend on the harvest. 0 means no limit. 
      * @param harvestNum          Which run of the harvest definition this is
      *                           (should always be 1).
      * @return SnapShotJob
@@ -385,10 +420,12 @@ public class Job implements Serializable {
      */
     public static Job createSnapShotJob(Long harvestID, DomainConfiguration cfg,
                                         long maxObjectsPerDomain,
-                                        long maxBytesPerDomain, int harvestNum)
+                                        long maxBytesPerDomain, 
+                                        long maxJobRunningTime, int harvestNum)
             throws ArgumentNotValid {
         return new Job(harvestID, cfg, JobPriority.LOWPRIORITY,
-                maxObjectsPerDomain, maxBytesPerDomain, harvestNum);
+                maxObjectsPerDomain, maxBytesPerDomain, 
+                maxJobRunningTime, harvestNum);
     }
 
     /**
@@ -396,8 +433,8 @@ public class Job implements Serializable {
      * database and adds them to the crawl template for this job.
      */
     private void addGlobalCrawlerTraps() {
-        GlobalCrawlerTrapListDBDAO dao =
-                GlobalCrawlerTrapListDBDAO.getInstance();
+        GlobalCrawlerTrapListDAO dao =
+                GlobalCrawlerTrapListDAO.getInstance();
         editOrderXMLAddCrawlerTraps(Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
                                     dao.getAllActiveTrapExpressions());
     }
@@ -441,7 +478,7 @@ public class Job implements Serializable {
         }
 
         //Add configuration in map
-        domainConfigurationMap.put(cfg.getDomain().getName(), cfg.getName());
+        domainConfigurationMap.put(cfg.getDomainName(), cfg.getName());
 
         // Add the seeds from the configuration to the Job seeds.
         // Take care of duplicates.
@@ -491,7 +528,7 @@ public class Job implements Serializable {
             }
         }
 
-        editOrderXMLAddPerDomainCrawlerTraps(cfg.getDomain());
+        editOrderXMLAddPerDomainCrawlerTraps(cfg);
 
         //TODO update limits in settings files - see also bug 269
 
@@ -509,7 +546,7 @@ public class Job implements Serializable {
     }
 
     /** Updates this jobs order.xml to include a MatchesListRegExpDecideRule
-     *  for each crawlertrap associated with for the given domain.
+     *  for each crawlertrap associated with for the given DomainConfiguration.
      *
      * The added nodes have the form
      *
@@ -523,14 +560,14 @@ public class Job implements Serializable {
      *       </stringList> 
      *     </newObject>
      *
-     * @param d The domain for which to generate crawler trap deciderules
+     * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
      * @throws IllegalState
      *          If unable to update order.xml due to wrong order.xml format
      */
-    private void editOrderXMLAddPerDomainCrawlerTraps(Domain d) {
+    private void editOrderXMLAddPerDomainCrawlerTraps(DomainConfiguration cfg) {
         //Get the regexps to exclude
-        List<String> crawlerTraps = d.getCrawlerTraps();
-        String elementName = d.getName();
+        List<String> crawlerTraps = cfg.getCrawlertraps();
+        String elementName = cfg.getDomainName();
         editOrderXMLAddCrawlerTraps(elementName, crawlerTraps);
     }
 
@@ -600,9 +637,9 @@ public class Job implements Serializable {
 
         // check if domain in DomainConfiguration cfg is not already in this job
         // domainName is used as key in domainConfigurationMap
-        if (domainConfigurationMap.containsKey(cfg.getDomain().getName())) {
+        if (domainConfigurationMap.containsKey(cfg.getDomainName())) {
             log.debug("Job already has a configuration for Domain '"
-                    + cfg.getDomain().getName() +"'.");
+                    + cfg.getDomainName() +"'.");
             return false;
         }
 
@@ -616,8 +653,8 @@ public class Job implements Serializable {
         }
 
         // By default byte limit is used as base criterion for splitting a 
-        // harvest in config chunks, however the configuration can override this 
-        // and instead use object limit.
+        // harvest in config chunks, however the configuration can override 
+        // this and instead use object limit.
         boolean splitByObjectLimit = Settings.getBoolean(
                 HarvesterSettings.SPLIT_BY_OBJECTLIMIT);
         if (splitByObjectLimit) {
@@ -819,7 +856,11 @@ public class Job implements Serializable {
         }
         this.actualStop = (Date) actualStop.clone();
     }
-
+    
+    /**
+     * Set the orderxml for this job.
+     * @param doc A orderxml to be used by this job
+     */
     public void setOrderXMLDoc(Document doc) {
         ArgumentNotValid.checkNotNull(doc, "doc");
         this.orderXMLdoc = doc;
@@ -862,6 +903,10 @@ public class Job implements Serializable {
                 url = seed;
             }
             String domain = getDomain(url);
+            if (domain == null) {
+                // stop processing this url, and continue to the next seed
+                continue; 
+            }
             Set<String> set;
             if (urlMap.containsKey(domain)) {
                 set = urlMap.get(domain);
@@ -881,7 +926,8 @@ public class Job implements Serializable {
     /**
      * Get the domain, that the given URL belongs to.
      * @param url an URL
-     * @return the domain, that the given URL belongs to.
+     * @return the domain, that the given URL belongs to, or 
+     * null if unable to do so.
      */
     private String getDomain(String url) {
         try {
@@ -894,16 +940,13 @@ public class Job implements Serializable {
     }
 
     /**
-     * Set the seedlist from a seedlist,
-     * where the individual seeds are separated by
-     * a '\n' character. Duplicate seeds are removed.
+     * Set the seedlist of the job from the seedList argument.
+     * Individual seeds are separated by a '\n' character. 
+     * Duplicate seeds are removed.
      * @param seedList List of seeds as one String
      */
     public void setSeedList(String seedList) {
-        //TODO The following is removed, because it breaks a "lot" of unittests.
-        // and it has not been checked up until now.
-        //ArgumentNotValid.checkNotNullOrEmpty(seedList, "seedList");
-        ArgumentNotValid.checkNotNull(seedList, "seedList");
+        ArgumentNotValid.checkNotNullOrEmpty(seedList, "seedList");
         seedListSet = new HashSet<String>();
         BufferedReader reader = new BufferedReader(new StringReader(seedList));
         String seed;
@@ -914,8 +957,13 @@ public class Job implements Serializable {
         } catch (IOException e) {
             // This never happens, as we're reading from a string!
             throw new IOFailure("IOException reading from seed string", e);
+        } finally {
+            IOUtils.closeQuietly(reader);
         }
-        log.debug("Now " + seedListSet.size() + " seeds in the list");
+        
+        if (log.isTraceEnabled()) {
+            log.trace("Now " + seedListSet.size() + " seeds in the list");
+        }
     }
 
     /**
@@ -927,7 +975,6 @@ public class Job implements Serializable {
         return StringUtils.conjoin("\n", seedListSet);
     }
 
-
     /**
      * Get the current status of this Job.
      *
@@ -935,17 +982,6 @@ public class Job implements Serializable {
      */
     public JobStatus getStatus() {
         return status;
-    }
-
-    /**
-     * Sets status of this job.
-     *
-     * @param status Must be one of the values STATUS_NEW, ..., STATUS_FAILED
-     * @throws ArgumentNotValid
-     *  in case of invalid status argument or invalid status change
-     */
-    public void setStatus(int status) {
-        setStatus(JobStatus.fromOrdinal(status));
     }
 
     /**
@@ -963,6 +999,13 @@ public class Job implements Serializable {
             log.debug(message);
             throw new ArgumentNotValid(message);
         }
+
+        if ((this.status == JobStatus.NEW
+                || this.status == JobStatus.RESUBMITTED)
+                && newStatus == JobStatus.SUBMITTED) {
+            editOrderXML_fixQuotaEnforcer();
+        }
+
         if (this.status == JobStatus.SUBMITTED
                 && newStatus == JobStatus.STARTED) {
             setActualStart(new Date());
@@ -1005,7 +1048,7 @@ public class Job implements Serializable {
     public long getMaxBytesPerDomain() {
         return forceMaxBytesPerDomain;
     }
-
+    
     /**
      * Get the edition number.
      *
@@ -1034,6 +1077,7 @@ public class Job implements Serializable {
             + getOrigHarvestDefinitionID() + ", priority = " + getPriority()
             + ", forcemaxcount = " + getForceMaxObjectsPerDomain()
             + ", forcemaxbytes = " + getMaxBytesPerDomain()
+            + ", forcemaxrunningtime = " + forceMaxRunningTime
             + ", orderxml = " + getOrderXMLName()
             + ", numconfigs = " + getDomainConfigurationMap().size()
             + ")";
@@ -1079,13 +1123,37 @@ public class Job implements Serializable {
         this.forceMaxBytesPerDomain = maxBytesPerDomain;
         editOrderXML_maxBytesPerDomain(maxBytesPerDomain);
     }
+    
+    /**
+     * Set the maxJobRunningTime value.
+     * @param maxJobRunningTime The maxJobRunningTime in seconds to set,
+     *                          or 0 for no limit.
+     */
+    private void setMaxJobRunningTime(long maxJobRunningTime) {
+        if (!underConstruction) {
+            final String msg = "Cannot modify job "
+                    + this + " as it is no longer under construction";
+            log.debug(msg);
+            throw new IllegalState(msg);
+        }
+        this.forceMaxRunningTime = maxJobRunningTime;
+        editOrderXML_maxJobRunningTime(maxJobRunningTime);
+    }
+    
+    /**
+     * @return Returns the MaxJobRunningTime. 0 means no limit.
+     */
+    public long getMaxJobRunningTime() {
+        return forceMaxRunningTime;
+    }
+    
 
     /**
      * Auxiliary method to modify the orderXMLdoc Document
      * with respect to setting the maximum number of objects to be retrieved
      * per domain.
-     * This method updates 'group-max-fetch-success' element of the QuotaEnforcer
-     * pre-fetch processor snode
+     * This method updates 'group-max-fetch-success' element of the 
+     * QuotaEnforcer pre-fetch processor node
      * (org.archive.crawler.frontier.BdbFrontier)
      * with the value of the argument forceMaxObjectsPerDomain
      *
@@ -1102,17 +1170,18 @@ public class Job implements Serializable {
      */
     private void editOrderXML_maxObjectsPerDomain(
             long forceMaxObjectsPerDomain) {
-              
-        String xpath = HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH;
-        Node groupMaxFectResponsesNode = orderXMLdoc.selectSingleNode(xpath);
-        if (groupMaxFectResponsesNode != null) {
-            groupMaxFectResponsesNode.setText(
-                    String.valueOf(forceMaxObjectsPerDomain));            
+
+        String xpath = (useQuotaEnforcer ?
+                HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH :
+                    HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
+
+        Node orderXmlNode = orderXMLdoc.selectSingleNode(xpath);
+        if (orderXmlNode != null) {
+            orderXmlNode.setText(
+                    String.valueOf(forceMaxObjectsPerDomain));
         } else {
             throw new IOFailure(
-                    "Unable to locate " 
-                    +  HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH
-                    + " element in order.xml: "
+                    "Unable to locate " +  xpath + " element in order.xml: "
                     + orderXMLdoc.asXML());
         }
     }
@@ -1160,6 +1229,57 @@ public class Job implements Serializable {
             throw new IOFailure(
                     "Unable to locate QuotaEnforcer object in order.xml: "
                     + orderXMLdoc.asXML());
+        }
+    }
+    
+    /**
+     * @param maxJobRunningTime Force the job to end after maxJobRunningTime
+     */
+    private void editOrderXML_maxJobRunningTime(long maxJobRunningTime) {
+        // get and set the "max-time-sec" node of the orderXMLdoc
+        String xpath = HeritrixTemplate.MAXTIMESEC_PATH_XPATH;
+        Node groupMaxTimeSecNode = orderXMLdoc.selectSingleNode(xpath);
+        if (groupMaxTimeSecNode != null) {
+            String currentMaxTimeSec = groupMaxTimeSecNode.getText();
+            groupMaxTimeSecNode.setText(Long.toString(maxJobRunningTime));
+            log.trace("Value of groupMaxTimeSecNode changed from " 
+                    + currentMaxTimeSec + " to " + maxJobRunningTime);
+        } else {
+            throw new IOFailure(
+                    "Unable to locate xpath '" + xpath + "' in the order.xml: "
+                    + orderXMLdoc.asXML());
+        }
+    }
+
+    /**
+     * Activates or deactivates the quota-enforcer, according to how the budget
+     * has been set.
+     */
+    private void editOrderXML_fixQuotaEnforcer() {
+
+        boolean quotaEnabled = true;
+
+        if (!useQuotaEnforcer) {
+            // Quota enforcer should be disabled if there is no byte limit
+            quotaEnabled = forceMaxBytesPerDomain
+                != Constants.HERITRIX_MAXBYTES_INFINITY;
+
+        } else {
+            quotaEnabled =
+                forceMaxObjectsPerDomain
+                    != Constants.HERITRIX_MAXOBJECTS_INFINITY
+                || forceMaxBytesPerDomain
+                != Constants.HERITRIX_MAXBYTES_INFINITY;
+        }
+
+        String xpath = HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
+        Node qeNode = orderXMLdoc.selectSingleNode(xpath);
+        if (qeNode != null) {
+            qeNode.setText(Boolean.toString(quotaEnabled));
+        } else {
+            throw new IOFailure(
+                    "Unable to locate " +  xpath
+                    + " element in order.xml: " + orderXMLdoc.asXML());
         }
     }
 
@@ -1372,7 +1492,15 @@ public class Job implements Serializable {
      * @param resubmittedAsJob An Id for a new job.
      */
     public void setResubmittedAsJob(Long resubmittedAsJob) {
-        this.resubmittedAsJobWithID = resubmittedAsJob;
-        
+        this.resubmittedAsJobWithID = resubmittedAsJob;   
     }
+    
+    /**
+     * @return id of the job that this job is supposed to continue 
+     * using Heritrix recover-log or null if it starts from scratch.
+     */
+    public Long getContinuationOf() {
+        return this.continuationOF;
+    }
+    
 }

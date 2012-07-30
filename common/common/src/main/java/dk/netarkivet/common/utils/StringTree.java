@@ -5,7 +5,9 @@
  *
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,6 +38,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * type T.
  * Each non-leaf tree can have any number of subnodes, each identified by
  * a String.
+ * @param <T> The leaf type
  */
 public interface StringTree<T> {
     /**
@@ -118,7 +121,7 @@ public interface StringTree<T> {
 
     /**
      * Get a map of the names and values of all subtrees, assuming that all
-     * subtrees are leafs and are uniquely named
+     * subtrees are leafs and are uniquely named.
      *
      * @return Map from subtree names to values of their leaves.
      *

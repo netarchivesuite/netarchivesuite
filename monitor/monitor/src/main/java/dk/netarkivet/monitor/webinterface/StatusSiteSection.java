@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,6 +33,7 @@ import dk.netarkivet.monitor.registry.distribute.MonitorRegistryServer;
  * Site section that creates the menu for system status.
  */
 public class StatusSiteSection extends SiteSection {
+    /** The monitorRegistryServer used by this SiteSection. */
     private MonitorRegistryServer monitorListener;
 
     /**
@@ -51,7 +54,7 @@ public class StatusSiteSection extends SiteSection {
     }
 
     /**
-     * Shut down monitor server when undeploying,
+     * Shut down monitor server when undeploying.
      */
     public void close() {
         if (monitorListener != null) {

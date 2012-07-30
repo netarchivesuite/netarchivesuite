@@ -14,10 +14,10 @@ echo copying settings and scripts
 scp -r kb-test-adm-001.kb.dk/* test@kb-test-adm-001.kb.dk:/home/test/TEST/conf/
 echo Installing external jar files.
 if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then scp -r tests/dk/netarkivet/deploy/data/working/externals test@kb-test-adm-001.kb.dk:/home/test/TEST/external; fi;
-echo Copying harvest definition database
-scp tests/dk/netarkivet/deploy/data/working/database.jar test@kb-test-adm-001.kb.dk:/home/test/TEST/harvestdefinitionbasedir/fullhddb.jar
 echo Unzipping harvest definition database
 ssh test@kb-test-adm-001.kb.dk "cd /home/test/TEST; if [ -d harvestDatabase ]; then echo The database directory already exists. Thus database not reset.; else unzip -q -o harvestdefinitionbasedir/fullhddb.jar -d harvestDatabase; fi; exit; "
+echo Unzipping archive database
+ssh test@kb-test-adm-001.kb.dk "cd /home/test/TEST; if [ -d adminDB ]; then echo The database directory already exists. Thus database not reset.; else unzip -q -o archivedatabasedir/archivedb.jar -d adminDB; fi; exit; "
 echo make scripts executable
 ssh test@kb-test-adm-001.kb.dk "chmod 700 /home/test/TEST/conf/*.sh "
 echo make password and access files readonly

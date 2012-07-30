@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,25 +45,25 @@ public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
 
     /**
      * A regular expression representing the url in a metadata arcfile of a
-     * crawl log entry
+     * crawl log entry.
      */
     private static final String CRAWL_LOG_URL_PATTERN_STRING =
             "metadata://(.*)crawl[.]log(.*)";
 
     /**
      * A Patteren representing a compiled expression representing the url in
-     * a metadata arcfile of a crawl log entry
+     * a metadata arcfile of a crawl log entry.
      */
-    private Pattern crawl_log_url_pattern;
+    private Pattern crawlLogUrlPattern;
 
     /**
-     * Initializes various fields of this class
+     * Initializes various fields of this class.
      * @param os unused parameter
      */
     @Override
     public void initialize(OutputStream os) {
         adapter = new DeduplicateToCDXAdapter();
-        crawl_log_url_pattern = Pattern.compile(CRAWL_LOG_URL_PATTERN_STRING);
+        crawlLogUrlPattern = Pattern.compile(CRAWL_LOG_URL_PATTERN_STRING);
     }
 
     /**
@@ -73,7 +75,7 @@ public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
      */
     @Override
     public void processRecord(ARCRecord record, OutputStream os) {
-        if (crawl_log_url_pattern
+        if (crawlLogUrlPattern
                 .matcher(record.getMetaData().getUrl()).matches()) {
             adapter.adaptStream(record, os);
         } else {
@@ -83,8 +85,8 @@ public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
     }
 
     /**
-     * Does nothing
-     * @param os
+     * Does nothing.
+     * @param os an outputstream
      */
     @Override
     public void finish(OutputStream os) {

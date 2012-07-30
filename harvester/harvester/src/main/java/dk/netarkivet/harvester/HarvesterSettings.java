@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,13 +27,18 @@ package dk.netarkivet.harvester;
 import java.util.regex.Pattern;
 
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
+import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
+import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.scheduler.JobDispatcher;
 
 /** Settings specific to the harvester module of NetarchiveSuite. */
 public class HarvesterSettings {
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/harvester/settings.xml";
-
     /*
      * The static initialiser is called when the class is loaded.
      * It will add default values for all settings defined in this class, by
@@ -54,6 +61,15 @@ public class HarvesterSettings {
      */
     public static String DEFAULT_SEEDLIST
             = "settings.harvester.datamodel.domain.defaultSeedlist";
+
+    /**
+     * <b>settings.harvester.datamodel.domain.validSeedRegex</b>: <br>
+     * Regular expression used to validate a seed within a seedlist.
+     *
+     * Default value accepts all non-empty strings.
+     */
+    public static String VALID_SEED_REGEX
+            = "settings.harvester.datamodel.domain.validSeedRegex";
 
     /**
      * <b>settings.harvester.datamodel.domain.defaultConfig</b>: <br> The name
@@ -154,6 +170,14 @@ public class HarvesterSettings {
      */
     public static String JOBS_MAX_TOTAL_JOBSIZE
             = "settings.harvester.scheduler.jobs.maxTotalSize";
+    
+    /**
+     * <b>settings.harvester.scheduler.jobs.maxTimeToCompleteJob</b>: 
+     * <br> The limit on how many seconds Heritrix should continue on 
+     * each job. O means no limit.
+     */
+    public static String JOBS_MAX_TIME_TO_COMPLETE
+    		= "settings.harvester.scheduler.jobs.maxTimeToCompleteJob";
 
     /**
      * <b>settings.harvester.scheduler.configChunkSize</b>: <br> How many domain
@@ -175,11 +199,33 @@ public class HarvesterSettings {
             "settings.harvester.scheduler.splitByObjectLimit";
 
     /**
+     * <b>settings.harvester.scheduler.useQuotaEnforcer</b>: <br> Controls
+     * whether the domain configuration object limit should be set in
+     * Heritrix's crawl order through the QuotaEnforcer configuration (parameter
+     * set to true) or through the frontier parameter 'queue-total-budget' (
+     * parameter set to false).
+     *
+     * Default value is true, as legacy implementation was to use only
+     * the QuotaEnforcer.
+     */
+    public static String USE_QUOTA_ENFORCER =
+            "settings.harvester.scheduler.useQuotaEnforcer";
+
+    /**
      * <b>settings.harvester.scheduler.jobtimeouttime</b>:<br /> Time before a
      * STARTED job times out and change status to FAILED. In seconds.
      */
     public static String JOB_TIMEOUT_TIME =
             "settings.harvester.scheduler.jobtimeouttime";
+
+    /**
+	 * <b>settings.harvester.scheduler.jobgenerationperiode</b>: <br>
+     * The period between checking if new jobs should be generated, in seconds.
+     * This is one minute because that's the finest we can define in a harvest
+     * definition.
+     */
+    public static String GENERATE_JOBS_PERIOD =
+        "settings.harvester.scheduler.jobgenerationperiode";
 
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br> Each job gets a
@@ -234,6 +280,116 @@ public class HarvesterSettings {
      */
     public static String CRAWLER_TIMEOUT_NON_RESPONDING
             = "settings.harvester.harvesting.heritrix.noresponseTimeout";
+    /**
+     * <b>settings.harvester.monitor.refreshInterval</b>:<br>
+     * Time interval in seconds after which the harvest monitor pages will be
+     * automatically refreshed.
+     */
+    public static String HARVEST_MONITOR_REFRESH_INTERVAL =
+        "settings.harvester.monitor.refreshInterval";
+
+    /**
+     * <b>settings.harvester.monitor.historySampleRate</b>:<br>
+     * Time interval in seconds between historical records stores in the DB.
+     * Default value is 5 minutes.
+     */
+    public static String HARVEST_MONITOR_HISTORY_SAMPLE_RATE =
+        "settings.harvester.monitor.historySampleRate";
+
+    /**
+     * <b>settings.harvester.monitor.historyChartGenIntervall</b>:<br>
+     * Time interval in seconds between regenerating the chart of historical
+     * data for a running job.
+     * Default value is 5 minutes.
+     */
+    public static String HARVEST_MONITOR_HISTORY_CHART_GEN_INTERVAL =
+        "settings.harvester.monitor.historyChartGenInterval";
+
+    /**
+     * <b>settings.harvester.monitor.displayedHistorySize</b>:<br>
+     * Maximum number of most recent history records displayed on the
+     * running job details page.
+     */
+    public static String HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE =
+        "settings.harvester.monitor.displayedHistorySize";
+
+    /**
+     * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>
+     * Time interval in seconds to wait during a crawl loop in the
+     * harvest controller. Default value is 20 seconds.
+     */
+    public static String CRAWL_LOOP_WAIT_TIME =
+        "settings.harvester.harvesting.heritrix.crawlLoopWaitTime";
+
+    /**
+     * <b>settings.harvester.harvesting.sendReadyInterval</b>:<br>
+     * Time interval in seconds to wait before transmitting a
+     * {@link HarvesterReadyMessage} to the {@link JobDispatcher}.<p>
+     * 
+     * Lower values will make the JobDispatcher detect ready harvester
+     * faster, but will make it more likely that the harvester may send two 
+     * ready messages before a job is received, causing the JobDispatcher to 
+     * dispatch two jobs.
+     * 
+     * Default value is 30 second.
+     */
+    public static String SEND_READY_INTERVAL =
+        "settings.harvester.harvesting.sendReadyInterval";
+
+    /**
+     * <b>settings.harvester.harvesting.sendReadyDelay</b>:<br>
+     * Time in milliseconds to wait from starting to listen on the job queue to 
+     * a potential ready message is sent to the HarvestJobManager. This small 
+     * delay is used to retrieve any left over jobs on the queue before sending 
+     * the ready message to the harvester.
+     * Default value is 1000 millisecond.
+     */
+    public static String SEND_READY_DELAY =
+        "settings.harvester.harvesting.sendReadyDelay";
+    
+    /**
+     * <b>settings.harvester.harvesting.frontier.frontierReportWaitTime</b>:<br>
+     * Time interval in seconds to wait between two requests to generate a full
+     * frontier report. Default value is 600 seconds (10 min).
+     */
+    public static String FRONTIER_REPORT_WAIT_TIME =
+        "settings.harvester.harvesting.frontier.frontierReportWaitTime";
+
+    /**
+     * <b>settings.harvester.harvesting.frontier.filter.class</b>
+     * Defines a filter to apply to the full frontier report.
+     * the default class: {@link TopTotalEnqueuesFilter}
+     */
+    public static String FRONTIER_REPORT_FILTER_CLASS =
+            "settings.harvester.harvesting.frontier.filter.class";
+
+    /**
+     * <b>settings.harvester.harvesting.frontier.filter.args</b>
+     * Defines a frontier report filter's arguments. Arguments should be
+     * separated by semicolons.
+     */
+    public static String FRONTIER_REPORT_FILTER_ARGS =
+            "settings.harvester.harvesting.frontier.filter.args";
+
+    /**
+     * <b>settings.harvester.harvesting.heritrix.abortIfConnectionLost</b>:<br>
+     * Boolean flag. If set to true, the harvest controller will abort the
+     * current crawl when the JMX connection is lost. If set to true it will
+     * only log a warning, leaving the crawl operator shutting down harvester
+     * manually.
+     * Default value is true.
+     * @see BnfHeritrixController
+     */
+    public static String ABORT_IF_CONNECTION_LOST =
+        "settings.harvester.harvesting.heritrix.abortIfConnectionLost";
+
+    /**
+     * <b>settings.harvester.harvesting.heritrix.waitForReportGenerationTimeout</b>:<br>
+     * Maximum time in seconds to wait for Heritrix to generate report files
+     * once crawling is over.
+     */
+    public static String WAIT_FOR_REPORT_GENERATION_TIMEOUT =
+        "settings.harvester.harvesting.heritrix.waitForReportGenerationTimeout";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.adminName</b>: <br> The name
@@ -312,6 +468,29 @@ public class HarvesterSettings {
             "settings.harvester.harvesting.heritrixController.class";
 
     /**
+     * <b>settings.harvester.harvesting.heritrixLauncherClass</b>:<br/> The
+     * implementation of the HeritrixLauncher abstract class to be used.
+     */
+    public static String HERITRIX_LAUNCHER_CLASS =
+            "settings.harvester.harvesting.heritrixLauncher.class";
+
+    /**
+     * <b>settings.harvester.harvesting.harvestReport</b>:<br/> The
+     * implementation of {@link HarvestReport} interface to be used.
+     */
+    public static String HARVEST_REPORT_CLASS =
+            "settings.harvester.harvesting.harvestReport.class";
+    
+    /**
+     * <b>settings.harvester.harvesting.harvestReport.disregardSeedsURLInfo</b>:<br/> 
+     * Should we disregard seedURL-information and thus assign the harvested bytes to 
+     * the domain of the harvested URL instead of the seed url domain?
+     * The default is false;
+     */
+    public static String DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG =
+            "settings.harvester.harvesting.harvestReport.disregardSeedURLInfo";
+    
+    /**
      * <b>settings.harvester.harvesting.deduplication.enabled</b>:<br/> This
      * setting tells the system whether or not to use deduplication. This
      * setting is true by default.
@@ -348,5 +527,31 @@ public class HarvesterSettings {
      */
     public static String METADATA_LOG_FILE_PATTERN =
             "settings.harvester.harvesting.metadata.logFilePattern";
+
+    /**
+     * <b>settings.harvester.harvesting.metadata.generateArcFilesReport</b> This setting
+     * is a boolean flag that enables/disables the generation of an ARC files report.
+     * Default value is 'true'.
+     *
+     * @see HarvestDocumentation#documentHarvest(java.io.File, long, long)
+     */
+    public static String METADATA_GENERATE_ARCFILES_REPORT =
+            "settings.harvester.harvesting.metadata.generateArcFilesReport";
+
+    /**
+     * <b>settings.harvester.aliases.timeout</b> The amount of time in seconds before 
+     * an alias times out, and needs to be re-evaluated.
+     * The default value is one year, i.e 31536000 seconds.
+     */
+    public static String ALIAS_TIMEOUT = "settings.harvester.aliases.timeout";
+    
+    /**
+     * <b>settings.harvester.harvesting.continuationFromHeritrixRecoverlogEnabled</b>:</br> 
+     * Setting for whether or not a restarted job should try fetching the recoverlog 
+     * of the previous failed job, and ask Heritrix to continue from this log. 
+     * The default is false.
+     */
+    public static String RECOVERlOG_CONTINUATION_ENABLED 
+        = "settings.harvester.harvesting.continuationFromHeritrixRecoverlogEnabled";
 }
 

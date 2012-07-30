@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -31,8 +33,12 @@ Parameters:
 harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
    displayed.
 
---%><%@ page import="java.util.Date,
+--%>
+<?xml version="1.0" encoding="utf-8"?>
+<%@ page import="java.util.Date,
                  java.util.List,
+                 dk.netarkivet.common.CommonSettings,
+                 dk.netarkivet.common.utils.Settings,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
@@ -41,10 +47,12 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                  dk.netarkivet.harvester.datamodel.JobStatus,
                  dk.netarkivet.harvester.datamodel.SparseFullHarvest,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
-                 dk.netarkivet.harvester.webinterface.HarvestStatus, 
-                 dk.netarkivet.harvester.webinterface.Constants"
+                 dk.netarkivet.harvester.webinterface.HarvestStatus,
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.harvester.webinterface.HarvestStatusQuery"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
-%><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
+%>
+<fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page"
        basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N = new I18n(
@@ -102,7 +110,120 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     }
     List<HarvestRunInfo> hrList = hddao.getHarvestRunInfo(hdoid);
     HTMLUtils.generateHeader(pageContext);
+
+    String startPage=request.getParameter(Constants.START_PAGE_PARAMETER);
+
+    if(startPage == null){
+        startPage="1";
+    }
+    long pageSize = Long.parseLong(Settings.get(
+            CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
+
+    String startPagePost=request.getParameter(Constants.START_PAGE_PARAMETER);
+
+    if(startPagePost == null){
+        startPagePost="1";
+    }
+
+    String searchParam=request.getParameter(Constants.HARVEST_PARAM);
 %>
+
+<form method="post" name="filtersForm" action="Harveststatus-perhd.jsp">
+<input type="hidden"
+       name="<%=Constants.START_PAGE_PARAMETER%>"
+       value="<%=startPagePost%>"/>
+</form>
+
+<%
+    long totalResultsCount = hrList.size();
+    long actualPageSize = (pageSize == 0 ?
+        totalResultsCount : pageSize);
+
+    long startPageIndex = Long.parseLong(startPage);
+    long startIndex = 0;
+    long endIndex = 0;
+
+    if (totalResultsCount > 0) {
+        startIndex = ((startPageIndex - 1) * actualPageSize);
+        endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
+    }
+
+    boolean prevLinkActive = false;
+    if (pageSize != 0
+            && totalResultsCount > 0
+            && startIndex > 1) {
+        prevLinkActive = true;
+    }
+
+    boolean nextLinkActive = false;
+    if (pageSize != 0
+            && totalResultsCount > 0
+            && endIndex < totalResultsCount) {
+        nextLinkActive = true;
+    }
+%>
+
+              <h3 class="page_heading">
+                <fmt:message key="searching.for.0.gave.1.hits">
+                    <fmt:param value="<%=searchParam%>"/>
+                    <fmt:param value="<%=hrList.size()%>"/>
+                </fmt:message>
+                </h3>
+
+                <fmt:message key="status.results.displayed">
+                    <fmt:param><%=totalResultsCount%></fmt:param>
+                    <fmt:param><%=startIndex+1%></fmt:param>
+                    <fmt:param><%=endIndex%></fmt:param>
+                </fmt:message>
+
+                <p style="text-align: right">
+                    <fmt:message key="status.results.displayed.pagination">
+                        <fmt:param>
+                        <%
+                        if (prevLinkActive) {
+                            String link =
+                                "Harveststatus-perhd.jsp?"
+                            	+ Constants.START_PAGE_PARAMETER 
+                                + "=" + (startPageIndex - 1)
+                                + "&" + Constants.HARVEST_PARAM + "="
+                                + HTMLUtils.encode(searchParam);
+                        %>
+                            <a href="<%= link %>">
+                                <fmt:message key="status.results.displayed.prevPage"/>
+                            </a>
+                        <%
+                        } else {
+                        %>
+                            <fmt:message key="status.results.displayed.prevPage"/>
+                        <%
+                        }
+                        %>
+                        </fmt:param>
+                        <fmt:param>
+                        <%
+                        if (nextLinkActive) {
+                            String link =
+                                "Harveststatus-perhd.jsp?"
+                                + Constants.START_PAGE_PARAMETER 
+                                + "=" + (startPageIndex + 1)
+                                + "&" + Constants.HARVEST_PARAM + "="
+                                + HTMLUtils.encode(searchParam);
+                        %>
+                            <a href="<%= link %>">
+                                <fmt:message key="status.results.displayed.nextPage"/>
+                            </a>
+                        <%
+                        } else {
+                        %>
+                            <fmt:message key="status.results.displayed.nextPage"/>
+                        <%
+                        }
+                        %>
+                        </fmt:param>
+                    </fmt:message>
+                </p>
+
+
 <h3 class="page_heading"><%=heading%></h3>
 <%
     if (partialhd != null) {
@@ -165,7 +286,10 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
     </tr>
     <%
         int rowcount = 0;
-        for (HarvestRunInfo hri : hrList) {
+        List<HarvestRunInfo> matchingSubList=hrList.
+        subList((int)startIndex,(int)endIndex);
+
+        for (HarvestRunInfo hri : matchingSubList) {
     %>
     <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>">
         <td><%=dk.netarkivet.harvester.webinterface.HarvestStatus
@@ -191,7 +315,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
             <a href="Harveststatus-perharvestrun.jsp?<%=
             Constants.HARVEST_ID_PARAM%>=<%=hri.getHarvestID()%>&amp;<%=
             Constants.HARVEST_NUM_PARAM%>=<%=hri.getRunNr()%>&amp;<%=
-            Constants.JOBSTATUS_PARAM%>=<%=HarvestStatus.JOBSTATUS_ALL%>">
+            Constants.JOBSTATUS_PARAM%>=<%=HarvestStatusQuery.JOBSTATUS_ALL%>">
                 <fmt:message key="show.jobs"/>
             </a>
         </td>

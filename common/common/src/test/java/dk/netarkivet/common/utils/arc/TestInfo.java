@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,10 +28,9 @@ package dk.netarkivet.common.utils.arc;
 import java.io.File;
 
 /**
- * Static constants for utils.arc testing.
+ * Static constants for utils.arc and also utils.batch testing.
  *
  */
-
 public class TestInfo {
     public static final File BASE_DIR
             = new File("tests/dk/netarkivet/common/utils/arc/data");
@@ -43,4 +44,5 @@ public class TestInfo {
     public static final File INPUT_1 = new File(WORKING_DIR, "input-1.arc");
     public static final File INPUT_2 = new File(WORKING_DIR, "input-2.arc");
     public static final File INPUT_3 = new File(WORKING_DIR, "input-3.arc");
+    public static final File FAIL_ARCHIVE_DIR = new File(WORKING_DIR, "bitarchive1_to_fail");
 }

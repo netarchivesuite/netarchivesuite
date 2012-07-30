@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,14 +34,10 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.testutils.Serial;
 
 /**
- * Unit tests for CrawlStatusMessage
- *
+ * Unit tests for CrawlStatusMessage.
  */
-
 public class CrawlStatusMessageTester extends TestCase {
-
-
-
+    
     /**
      * Test that we can call the constructor for finished jobs
      */
@@ -100,16 +98,15 @@ public class CrawlStatusMessageTester extends TestCase {
     }
 
     public void testJobNotFinishedCTORFails() {
-        CrawlStatusMessage csm;
         try {
-            csm = new CrawlStatusMessage(
+            new CrawlStatusMessage(
                     -1L, JobStatus.DONE);
             fail("CTOR without RemoteFile should fail if jobid is negative") ;
         } catch (ArgumentNotValid e ) {
             //expected
         }
         try {
-            csm = new CrawlStatusMessage(
+            new CrawlStatusMessage(
                     12l, null);
             fail("CTOR without RemoteFile should fail if JobStatus is null") ;
         } catch (ArgumentNotValid e ) {
@@ -117,7 +114,6 @@ public class CrawlStatusMessageTester extends TestCase {
         }
 
     }
-
 
     /**
      * Test that class is serializable
@@ -137,7 +133,7 @@ public class CrawlStatusMessageTester extends TestCase {
      * @return  the string representation
      */
     public String relevantState(CrawlStatusMessage csm){
-        return ""+csm.getJobID()+" "+csm.getStatusCode();
+        return "" + csm.getJobID() + " " + csm.getStatusCode();
     }
 
 }

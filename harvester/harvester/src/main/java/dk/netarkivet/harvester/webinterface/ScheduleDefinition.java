@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,27 +47,43 @@ import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
  * Contains utility methods for creating and editing schedule definitions for
  * harvests.
  */
-public class ScheduleDefinition {
+public final class ScheduleDefinition {
     
-    /**
+    /*
      * Parameters for the Definitions-edit-schedule.jsp page. They should
      * be self explanatory.
      */
+    /** BeginAt parameter. */
     static final String BEGIN_AT_PARAMETER = "beginAt";
+    /** FirsrHarvestTime parameter. */
     static final String FIRST_HARVEST_TIME_PARAMETER = "firstHarvestTime";
+    /** Continue parameter. */
     static final String CONTINUE_PARAMETER = "continue";
+    /** EndHarvestTime parameter. */
     static final String END_HARVEST_TIME_PARAMETER = "endHarvestTime";
+    /** Timespan parameter. */
     static final String TIMESPAN_PARAMETER = "timespan";
+    /** HarvestTime parameter. */
     static final String HARVEST_TIME_PARAMETER = "harvestTime";
+    /** Frequency in minutes parameter. */
     static final String FREQUENCY_MINUTES_PARAMETER = "frequency_minutes";
+    /** Frequency in hours parameter. */
     static final String FREQUENCY_HOURS_PARAMETER = "frequency_hours";
+    /** Frequency defined by day parameter. */
     static final String FREQUENCY_DAY_PARAMETER = "frequency_day";
+    /** Frequency defined by date parameter. */
     static final String FREQUENCY_DATE_PARAMETER = "frequency_date";
+    /** Comments parameter. */
     static final String COMMENTS_PARAMETERS = "comments";
+    /** Edition parameter. */
     static final String EDITION_PARAMETER = "edition";
+    /** Number of harvests parameter. */
     static final String NUMBER_OF_HARVESTS_PARAMETER = "numberOfHarvests";
+    /** name parameter. */
     static final String NAME_PARAMETER = "name";
+    /** update parameter. */
     static final String UPDATE_PARAMETER = "update";
+    /** Frequency parameter. */
     static final String FREQUENCY_PARAMETER = "frequency";
 
     /**
@@ -142,7 +160,8 @@ public class ScheduleDefinition {
                 HTMLUtils.forwardWithRawErrorMessage(context, i18n,
                         "errormsg;schedule.has.changed.0.retry.1",
                         "<br/><a href=\"Definitions-edit-schedule.jsp?name="
-                                + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(name))
+                                + HTMLUtils.escapeHtmlValues(
+                                        HTMLUtils.encode(name))
                                 + "\">", "</a>");
                 throw new ForwardedToErrorPage("Schedule '" + name
                         + "' has changed");
@@ -163,7 +182,18 @@ public class ScheduleDefinition {
         updateSchedule(freq, startDate, continueS, endDate, repeats, name,
                 edition, comments);
     }
-
+    
+    /**
+     * Update or create the schedule in persistent storage.
+     * @param freq The frequency of the schedule
+     * @param startDate The start date of the schedule
+     * @param continueS The continue-mode of the schedule
+     * @param endDate The end date for the schedule (if any)
+     * @param repeats How many time should the schedule be repeated
+     * @param name The name of the schedule
+     * @param edition The edition of the schedule
+     * @param comments Any comments associated with the schedule
+     */
     private static void updateSchedule(Frequency freq, Date startDate,
                                        String continueS, Date endDate,
                                        int repeats, String name, long edition,
@@ -206,7 +236,11 @@ public class ScheduleDefinition {
             String firstHarvestTime = context.getRequest()
                     .getParameter(FIRST_HARVEST_TIME_PARAMETER);
             try {
-                startDate = (new SimpleDateFormat(I18n.getString(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE, context.getResponse().getLocale(), "harvestdefinition.schedule.edit.timeformat"))).
+                startDate = (new SimpleDateFormat(
+                        I18n.getString(
+                                dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE,
+                                context.getResponse().getLocale(), 
+                                "harvestdefinition.schedule.edit.timeformat"))).
                         parse(firstHarvestTime);
             } catch (ParseException e) {
                 HTMLUtils.forwardWithErrorMessage(context, i18n,
@@ -230,12 +264,16 @@ public class ScheduleDefinition {
         HTMLUtils.forwardOnIllegalParameter(context,
                 CONTINUE_PARAMETER, "forever", "toTime",
                 "numberOfHarvests");
-        String continueS = context.getRequest().getParameter(CONTINUE_PARAMETER);
+        String continueS = context.getRequest().getParameter(
+                CONTINUE_PARAMETER);
         if (continueS.equals("toTime")) {
             String endHarvestTime = context.getRequest()
                     .getParameter(END_HARVEST_TIME_PARAMETER);
             try {
-                endDate = (new SimpleDateFormat(I18n.getString(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE, context.getResponse().getLocale(), "harvestdefinition.schedule.edit.timeformat"))).
+                endDate = (new SimpleDateFormat(I18n.getString(
+                        dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE, 
+                        context.getResponse().getLocale(), 
+                        "harvestdefinition.schedule.edit.timeformat"))).
                         parse(endHarvestTime);
             } catch (ParseException e) {
                 HTMLUtils.forwardWithErrorMessage(context, i18n,
@@ -279,35 +317,35 @@ public class ScheduleDefinition {
             }
         }
 
-        int frequency_minutes;
-        int frequency_hours = 0;
-        int frequency_day = 0;
-        int frequency_date = 0;
-        frequency_minutes = HTMLUtils.parseAndCheckInteger(context,
+        int frequencyMinutes;
+        int frequencyHours = 0;
+        int frequencyDay = 0;
+        int frequencyDate = 0;
+        frequencyMinutes = HTMLUtils.parseAndCheckInteger(context,
                 FREQUENCY_MINUTES_PARAMETER, 0, 59);
         if (!timespan.equals("hours")) {
-            frequency_hours = HTMLUtils.parseAndCheckInteger(context,
+            frequencyHours = HTMLUtils.parseAndCheckInteger(context,
                     FREQUENCY_HOURS_PARAMETER, 0, 23);
         }
         if (timespan.equals("weeks")) {
-            frequency_day = HTMLUtils.parseAndCheckInteger(context,
+            frequencyDay = HTMLUtils.parseAndCheckInteger(context,
                     FREQUENCY_DAY_PARAMETER, 1, 7);
         }
         if (timespan.equals("months")) {
-            frequency_date = HTMLUtils.parseAndCheckInteger(context,
+            frequencyDate = HTMLUtils.parseAndCheckInteger(context,
                     FREQUENCY_DATE_PARAMETER, 1, 31);
         }
         if (timespan.equals("hours")) {
-            return new HourlyFrequency(frequency, frequency_minutes);
+            return new HourlyFrequency(frequency, frequencyMinutes);
         } else if (timespan.equals("days")) {
-            return new DailyFrequency(frequency,  frequency_hours,
-                    frequency_minutes);
+            return new DailyFrequency(frequency,  frequencyHours,
+                    frequencyMinutes);
         } else if (timespan.equals("weeks")) {
-            return new WeeklyFrequency(frequency,  frequency_day,
-                    frequency_hours, frequency_minutes);
+            return new WeeklyFrequency(frequency,  frequencyDay,
+                    frequencyHours, frequencyMinutes);
         } else {
-            return new MonthlyFrequency(frequency, frequency_date,
-                    frequency_hours, frequency_minutes);
+            return new MonthlyFrequency(frequency, frequencyDate,
+                    frequencyHours, frequencyMinutes);
         }
     }
 }

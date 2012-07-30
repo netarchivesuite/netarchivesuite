@@ -4,7 +4,9 @@
  * Author:  $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -33,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.BatchTermination;
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -111,12 +114,27 @@ public class BatchLocalFiles {
                     }
                     processFile(job, file, os);
                 }
+                
+                // check whether the batchjob should stop. 
+                if(Thread.currentThread().isInterrupted()) {
+                    // log and throw an error (not exception, they are caught!)
+                    String errMsg = "The batchjob '" + job.toString() 
+                            + "' has been interrupted and will terminate!";
+                    log.warn(errMsg);
+                    // TODO make new exception to thrown instead.
+                    throw new BatchTermination(errMsg);
+                }
             }
         } catch (Exception e) {
             // TODO Consider adding this initialization exception to the list
             // of exception accumulated:
             // job.addInitializeException(outputOffset, e)
             log.warn("Exception while initializing job " + job, e);
+            
+            // rethrow exception
+            if(e instanceof BatchTermination) {
+                throw (BatchTermination) e;
+            }
         } finally {
             // Finally, allow the job to finish: */
             try {
@@ -126,6 +144,11 @@ public class BatchLocalFiles {
                 // of exception accumulated:
                 // job.addFinishException(outputOffset, e)
                 log.warn("Exception while finishing job " + job, e);
+
+                // rethrow exception
+                if(e instanceof BatchTermination) {
+                    throw (BatchTermination) e;
+                }
             }
         }
     }

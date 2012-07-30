@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -198,12 +200,12 @@ public class BitpreserveFileState {
                     preserve.uploadMissingFiles(ba, filename);
                     res.append(HTMLUtils.escapeHtmlValues(I18N.getString(
                             l,
-                            "file.0.has.been.restored.in.bitarchive.on.1",
+                            "file.0.has.been.restored.in.replica.on.1",
                             filename, ba.getName())));
                     res.append("<br/>");
                 } catch (Exception e) {
                     res.append(I18N.getString(
-                            l, "errormsg;attempt.at.restoring.0.in.bitarchive"
+                            l, "errormsg;attempt.at.restoring.0.in.replica"
                             + ".at.1.failed", filename, ba));
                     res.append("<br/>");
                     res.append(e.getMessage());
@@ -337,7 +339,7 @@ public class BitpreserveFileState {
             } else if (credentials == null) { // param CREDENTIALS_PARAM not set
                 res.append(I18N.getString(
                         l,
-                        "errormsg;lacking.privileges.to.correct.in.bitarchive")
+                        "errormsg;lacking.privileges.to.correct.in.replica")
                 );
                 res.append("<br/>");
             } else {
@@ -352,7 +354,7 @@ public class BitpreserveFileState {
                     res.append("<br/>");
                 } catch (Exception e) {
                     res.append(I18N.getString(
-                            l, "errormsg;attempt.at.restoring.0.in.bitarchive"
+                            l, "errormsg;attempt.at.restoring.0.in.replica"
                             + ".at.1.failed", filename, bitarchive));
                     res.append("<br/>");
                     res.append(e.getMessage());
@@ -462,8 +464,9 @@ public class BitpreserveFileState {
                     + Constants.FIND_MISSING_FILES_OPTION + "&amp;"
                     + (Constants.BITARCHIVE_NAME_PARAM
                        + "=" + HTMLUtils
-                .encodeAndEscapeHTML(replica.getName())) + "\">" + I18N
-                .getString(locale, "update") + "</a>");
+                .encodeAndEscapeHTML(replica.getName())) + "\">" 
+                + I18N.getString(locale, "update.filestatus.for.0", 
+                        replica.getId()) + "</a>");
         out.println("<br/><br/>");
     }
 
@@ -528,7 +531,8 @@ public class BitpreserveFileState {
                     + Constants.CHECKSUM_OPTION + "&amp;" 
                     + (Constants.BITARCHIVE_NAME_PARAM + "=" + HTMLUtils
                 .encodeAndEscapeHTML(replica.getName())) + "\">" + I18N
-                .getString(locale, "update") + "</a>");
+                .getString(locale, "update.checksum.and.file.status.for.0", 
+                        replica.getId()) + "</a>");
 
         //Separator
         out.println("<br/><br/>");

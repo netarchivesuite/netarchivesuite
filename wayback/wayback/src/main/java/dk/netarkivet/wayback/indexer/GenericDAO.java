@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +34,7 @@ import java.io.Serializable;
  */
 public interface GenericDAO<T, PK extends Serializable> {
 
-     /** Persist the newInstance object into database
+     /** Persist the newInstance object into database.
       * @param newInstance  the object to persist.
       * @return the key assigned to the object.
       */
@@ -56,3 +58,4 @@ public interface GenericDAO<T, PK extends Serializable> {
     void delete(T persistentObject);
 
 }
+

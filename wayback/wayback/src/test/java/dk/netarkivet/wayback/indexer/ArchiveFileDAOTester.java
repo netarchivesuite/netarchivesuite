@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -60,6 +62,7 @@ public class ArchiveFileDAOTester extends TestCase {
         String id = dao.create(file1);
         assertTrue("File should exist", dao.exists("foobar"));
         assertFalse("File should not exist", dao.exists("barfoo"));
+        assertTrue(id != null && !id.isEmpty());
     }
 
     public void testNotIndexed() {
@@ -68,17 +71,21 @@ public class ArchiveFileDAOTester extends TestCase {
         file1.setIndexed(false);
         ArchiveFileDAO dao = new ArchiveFileDAO();
         String id1 = dao.create(file1);
+        assertTrue(id1 != null && !id1.isEmpty());
         ArchiveFile file2 = new ArchiveFile();
         file2.setFilename("foobarbar");
         file2.setIndexed(false);
         file2.setIndexingFailedAttempts(1);
         String id2 = dao.create(file2);
-        assertEquals("Should have 2 unindexed files", 2, dao.getFilesAwaitingIndexing().size());
+        assertTrue(id2 != null && !id2.isEmpty());
+        assertEquals("Should have 2 unindexed files", 
+                2, dao.getFilesAwaitingIndexing().size());
         ArchiveFile file3 = new ArchiveFile();
         file3.setFilename("foofoobarbar");
         file3.setIndexed(false);
         file3.setIndexingFailedAttempts(100);
         String id3 = dao.create(file3);
+        assertTrue(id3 != null && !id3.isEmpty());
         assertEquals("Should still have 2 unindexed files", 2, 
                      dao.getFilesAwaitingIndexing().size());
         assertEquals("Untried file should be returned first",
@@ -86,7 +93,8 @@ public class ArchiveFileDAOTester extends TestCase {
                      dao.getFilesAwaitingIndexing().get(0).getFilename());
         file1.setIndexed(true);
         dao.update(file1);
-        assertEquals("Should now have 1 unindexed file1", 1, dao.getFilesAwaitingIndexing().size());
+        assertEquals("Should now have 1 unindexed file1", 
+                1, dao.getFilesAwaitingIndexing().size());
     }
 
 }

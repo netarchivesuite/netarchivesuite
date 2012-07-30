@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,13 +24,12 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.FilterIterator;
 
 /**
  * Persistent storage for Domain objects.
@@ -53,7 +54,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
      *
      * @return the singleton DomainDAO
      */
-    public synchronized static DomainDAO getInstance() {
+    public static synchronized DomainDAO getInstance() {
         if (instance == null) {
             instance = new DomainDBDAO();
         }
@@ -63,9 +64,38 @@ public abstract class DomainDAO implements Iterable<Domain> {
 
     /**
      * Create a domain in persistent storage.
-     * @param domain a given Domain object
+     * @param domain a given {@link Domain} object.
      */
-    public abstract void create(Domain domain);
+    public synchronized void create(Domain domain) {
+        Connection c = HarvestDBConnection.get();
+        try {
+            create(c, domain);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
+    /**
+     * Create a list of domains in persistent storage.
+     * @param domains a list of {@link Domain} objects.
+     */
+    public synchronized void create(List<Domain> domains) {
+        Connection c = HarvestDBConnection.get();
+        try {
+            for (Domain d : domains) {
+                create(c, d);
+            }
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
+    /**
+     * Create a domain in persistent storage.
+     * @param connection a connection to the harvest definition database.
+     * @param domain a given {@link Domain} object.
+     */
+    protected abstract void create(Connection connection, Domain domain);
 
     /**
      * Read a domain from the persistent storage.
@@ -73,7 +103,23 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * @param domainName the name of the domain to retrieve
      * @return the retrieved Domain
      */
-    public abstract Domain read(String domainName);
+    public synchronized Domain read(String domainName) {
+        Connection c = HarvestDBConnection.get();
+        try {
+            return read(c, domainName);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
+    /**
+     * Read a domain from the persistent storage.
+     *
+     * @param connection a connection to the harvest definition database.
+     * @param domainName the name of the domain to retrieve
+     * @return the retrieved Domain
+     */
+    protected abstract Domain read(Connection connection, String domainName);
 
     /**
      * Check existence of a domain with the given domainName.
@@ -84,42 +130,22 @@ public abstract class DomainDAO implements Iterable<Domain> {
      */
     public abstract boolean exists(String domainName);
 
-    /** Check where a domain is being used.  This method is this way to
-     * check if a domain can be deleted.
-     *
-     * @param domainName A domain to check for usages of.
-     * @return A string explaining (in human-readable format) where
-     * the domain has been used.  If it hasn't been used in any place
-     * that would prevent it from being deleted, returns null.
-     */
-    public abstract String describeUsages(String domainName);
-
-    /**
-     * Delete domain from persistent storage.
-     *
-     * @param domainName name of the domain to delete
-     * @throws ArgumentNotValid if null or empty domainName supplied
-     * @throws UnknownID        if domainName does not match an existing domain
-     * @throws PermissionDenied if the domain can not be deleted
-     */
-    public abstract void delete(String domainName);
-
     /**
      * Update information about existing domain information.
      *
      * @param domain the domain to update
      * @throws ArgumentNotValid if domain is null
-     * @throws UnknownID        if the Domain domain has not been added previously to persistent storage.
+     * @throws UnknownID        if the Domain domain has not been added 
+     * previously to persistent storage.
      */
     public abstract void update(Domain domain);
 
     /**
      * Get the total number of domains available.
      *
-     * @return the total number of registered domanis.
+     * @return the total number of registered domains.
      */
     public abstract int getCountDomains();
-
 
     /**
      * Gets list of all domains.
@@ -148,6 +174,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
 
     /**
      * Reset the singleton.  Only for use in tests!
+     * TODO remove this, no test methods in business classes!
      */
     static void resetSingleton() {
         instance = null;
@@ -161,62 +188,19 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * @return An array of information for all domainconfigurations
      *         which were harvested by the given harvest definition.
      */
-    public Iterator<HarvestInfo> getHarvestInfoBasedOnPreviousHarvestDefinition(
-            final HarvestDefinition previousHarvestDefinition) {
-        ArgumentNotValid.checkNotNull(previousHarvestDefinition,
-                                      "previousHarvestDefinition");
-        // For each domainConfig, get harvest infos if there is any for the
-        // previous harvest definition
-        return new FilterIterator<DomainConfiguration,HarvestInfo>(
-                previousHarvestDefinition.getDomainConfigurations()) {
-            /**
-             * @see FilterIterator#filter(Object)
-             */
-            protected HarvestInfo filter(DomainConfiguration o){
-                DomainConfiguration config = o;
-                DomainHistory domainHistory
-                        = config.getDomain().getHistory();
-                HarvestInfo hi = domainHistory.getSpecifiedHarvestInfo(
-                        previousHarvestDefinition.getOid(),
-                        config.getName());
-                return hi;
-            }
-        }; // Here ends the above return-statement
-    }
-
-    /** Close down any connections used by the DAO. */
-    public abstract void close();
+    public abstract Iterator<HarvestInfo> getHarvestInfoBasedOnPreviousHarvestDefinition(
+            final HarvestDefinition previousHarvestDefinition);
 
     /** Use a glob-like matcher to find a subset of domains.
-     *
-     * In this simple matcher, * stands for any number of arbitrary characters,
-     * and ? stands for one arbitrary character.  Including these, the
-     * given string must match the entire domain name.
-     *
-     * @param glob A domain name with * and ? wildcards
-     * @return List of domain names matching the glob, sorted by name.
-     */
-    public abstract List<String> getDomains(String glob);
-
-    /**
-     * Find the number of domains matching a given glob.
-     * @param glob A domain name with * and ? wildcards
-     * @return the number of domains matching the glob
-     * @see DomainDAO#getDomains(String)
-     */
-    public abstract int getCountDomains(String glob);
-
-
-    /** Get a list of info about harvests performed on a given domain.
-     *
-     * Note that harvest info from before the DB DAOs are unreliable, as
-     * harvests cannot be told apart and no dates are available.
-     *
-     * @param domainName Domain to get info for.
-     * @return List of DomainHarvestInfo objects with information on that domain.
-     *
-     */
-    public abstract List<DomainHarvestInfo> getDomainHarvestInfo(String domainName);
+    *
+    * In this simple matcher, * stands for any number of arbitrary characters,
+    * and ? stands for one arbitrary character.  Including these, the
+    * given string must match the entire domain name.
+    *
+    * @param glob A domain name with * and ? wildcards
+    * @return List of domain names matching the glob, sorted by name.
+    */
+   public abstract List<String> getDomains(String glob);
 
     /** Return whether the given configuration can be deleted.
      * This should be a fairly lightweight method, but is not likely to be
@@ -227,48 +211,10 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * request.  If this method returns false, deletion will however
      * definitely not be allowed.
      * @param config the given configuration
-     * @return true if the he given configuration can be deleted, false otherwise
+     * @return true if the he given configuration can be deleted, 
+     * false otherwise
      */
     public abstract boolean mayDelete(DomainConfiguration config);
-
-    /** Return whether the given seedlist can be deleted.
-     * This should be a fairly lightweight method, but is not likely to be
-     * instantaneous.
-     * Note that to increase speed, this method may rely on underlying systems
-     * to enforce transitive invariants.  This means that if this method says
-     * a seedlist can be deleted, the dao may still reject a delete
-     * request.  If this method returns false, deletion will however
-     * definitely not be allowed.
-     * @param seedlist the given seedlist
-     * @return true, if the given seedlist can be deleted, otherwise false.
-     */
-    public abstract boolean mayDelete(SeedList seedlist);
-
-    /** Return whether the given password can be deleted.
-     * This should be a fairly lightweight method, but is not likely to be
-     * instantaneous.
-     * Note that to increase speed, this method may rely on underlying systems
-     * to enforce transitive invariants.  This means that if this method says
-     * a password can be deleted, the dao may still reject a delete
-     * request.  If this method returns false, deletion will however
-     * definitely not be allowed.
-     * @param password the given password
-     * @return true, if the given password can be deleted, otherwise false.
-     */
-    public abstract boolean mayDelete(Password password);
-
-    /** Return whether the given domain can be deleted.
-     * This should be a fairly lightweight method, but is not likely to be
-     * instantaneous.
-     * Note that to increase speed, this method may rely on underlying systems
-     * to enforce transitive invariants.  This means that if this method says
-     * a domain can be deleted, the dao may still reject a delete
-     * request.  If this method returns false, deletion will however
-     * definitely not be allowed.
-     * @param domainName the given domain
-     * @return true, if  the given domain can be deleted, otherwise false.
-     */
-    public abstract boolean mayDelete(Domain domainName);
 
     /**
      * Read a Domain from Database, and return the domain information
@@ -306,19 +252,71 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * Get a list of all TLDs present in the domains table.
      * IP-numbers registered are counted together.
      *
+     * @param level maximum level of TLD
      * @return a list of all TLDs present in the domains table, sorted
      * alphabetically.
      */
-    public abstract List<TLDInfo> getTLDs();
-    
+    public abstract List<TLDInfo> getTLDs(int level);
+
     /**
      * Get the HarvestInfo object for a certain job and DomainConfiguration
      * defined by domainName and configName.
      * @param domainName the name of a given domain
      * @param configName the name of a given configuration
      * @param job the job
-     * @return The HarvestInfo object for a certain job and DomainConfiguration 
+     * @return The HarvestInfo object for a certain job and DomainConfiguration
      *  or null, if job has not yet been started.
      */
-    public abstract HarvestInfo getDomainJobInfo(Job job, String domainName, String configName);
+    public abstract HarvestInfo getDomainJobInfo(
+            Job job, String domainName, String configName);
+    
+    
+    /** Get a list of info about harvests performed on a given domain.
+     *
+     * Note that harvest info from before the DB DAOs are unreliable, as
+     * harvests cannot be told apart and no dates are available.
+     *
+     *
+     * @param domainName Domain to get info for.
+     * @param latestFirst true if histories are to be returned sorted with the
+     * most recent harvests first, false if they are to be sorted with the
+     * oldest harvests first.
+     * @return List of DomainHarvestInfo objects with information on that 
+     * domain.
+     *
+     */
+    public abstract List<DomainHarvestInfo> getDomainHarvestInfo(
+            String domainName, boolean latestFirst);
+
+    /**
+     * Get the DomainConfiguration given a specific domainName and a 
+     * configurationName.
+     * @param domainName The name of a domain
+     * @param configName The name of a configuration for this domain
+     * @return the DomainConfiguration, if the specified configuration exists;
+     * otherwise throws UnknownID 
+     */
+    public abstract DomainConfiguration getDomainConfiguration(
+            String domainName, String configName);
+    
+    /**
+     * Get the domainHistory for a specific domain.
+     * 
+     * @param domainName
+     *            A name of a specific domain.
+     * @return the domainHistory for a specific domain.
+     */
+    public abstract DomainHistory getDomainHistory(String domainName);
+
+    /** Use a glob-like matcher to find a subset of domains.
+    *
+    * In this simple matcher, * stands for any number of arbitrary characters,
+    * and ? stands for one arbitrary character.  Including these, the
+    * given string must match the entire domain name.
+    *
+    * @param glob A domain name with * and ? wildcards
+    * @param searchField The field in the Domain table to search  
+    * @return List of domain names matching the glob, sorted by name.
+    */
+   public abstract List<String> getDomains(String glob, String searchField);
 }

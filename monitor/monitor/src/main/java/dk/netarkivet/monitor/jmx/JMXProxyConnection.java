@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -47,7 +49,7 @@ public interface JMXProxyConnection {
      * @return an object implementing T. This object forwards all method calls
      * to the named MBean.
      */
-    public <T> T createProxy(ObjectName name, Class<T> intf);
+    <T> T createProxy(ObjectName name, Class<T> intf);
     /**
      * Get the set of ObjectNames from the remote MBeanserver, that matches
      * the given query.
@@ -56,12 +58,12 @@ public interface JMXProxyConnection {
      * @throws IOFailure on communication trouble.
      * @throws ArgumentNotValid on null or empty query.
      */
-    public Set<ObjectName> query(String query);
+    Set<ObjectName> query(String query);
 
     /** Returns true if this object still can return usable proxies.
      *
      * @return True if we can return usable proxies.  Otherwise, somebody
      * may have to make a new instance of JMXProxyFactory to get new proxies.
      */
-    public boolean isLive();
+    boolean isLive();
 }

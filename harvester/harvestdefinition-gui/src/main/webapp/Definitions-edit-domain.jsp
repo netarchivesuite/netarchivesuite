@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -39,6 +41,7 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                  java.util.Iterator,
                  java.util.List,
                  java.util.Locale,
+                 java.util.Map,                 
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.utils.StringUtils,
@@ -49,11 +52,19 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                  dk.netarkivet.harvester.datamodel.DomainConfiguration,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
                  dk.netarkivet.harvester.datamodel.SeedList, 
-                 dk.netarkivet.harvester.webinterface.Constants, 
-                 dk.netarkivet.harvester.webinterface.DomainDefinition"
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.harvester.webinterface.DomainDefinition,
+				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
+				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes,
+                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes,				 
+				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
+                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue,
+				 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO
+				 "
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
-%><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
+%>
+<fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -155,6 +166,16 @@ Display all the form information for this domain
                    value='yes'/> <fmt:message key="renew.alias"/>
     <%    }
     }
+    %>
+    <br/>
+
+    <%
+    int extendedFieldType = ExtendedFieldTypes.DOMAIN;
+    %>
+    
+    <%@ include file="extendedfields_element.jspf" %>
+        
+    <%
     Locale loc = HTMLUtils.getLocaleObject(pageContext);
     %>
 

@@ -4,7 +4,9 @@
 * Date:    $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -79,7 +81,14 @@ public enum StopReason {
      * Stop reason is configuration object limit reached, when the domain 
      * reached the maximum number of objects allowed by the configuration. 
      */
-    CONFIG_OBJECT_LIMIT;
+    CONFIG_OBJECT_LIMIT,
+    
+    /**
+     * Stop reason is harvesting time limit reached, when the harvester 
+     * is not finished with harvesting the domain when the harvester reaches
+     * its time-limit.
+     */
+    TIME_LIMIT;
 
     /** Internationalisation object. */
     private static final I18n I18N
@@ -105,6 +114,8 @@ public enum StopReason {
                 return DOWNLOAD_UNFINISHED;
             case 5: 
                 return CONFIG_OBJECT_LIMIT;
+            case 6:
+                return TIME_LIMIT;
             default:
                 throw new UnknownID("No stop reason assigned to "
                                     + stopreasonNum);
@@ -132,6 +143,8 @@ public enum StopReason {
                        "stopreason.max.domainconfig.limit.reached");
            case DOWNLOAD_UNFINISHED:
                return I18N.getString(l, "stopreason.download.unfinished");
+           case TIME_LIMIT:
+               return I18N.getString(l, "stopreason.timelimit.reached");
            default:            
                return I18N.getString(l, "stopreason.unknown.0", this);
        }

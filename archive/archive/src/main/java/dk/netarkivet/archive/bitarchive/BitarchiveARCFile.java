@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,7 +28,6 @@ package dk.netarkivet.archive.bitarchive;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 /** The representation of an ARC file in the bit archive.
  * This class keeps the connection between the name that was used
@@ -52,7 +53,7 @@ public class BitarchiveARCFile  {
      */
     public BitarchiveARCFile(String fn, File fp) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(fp, "File fp");
-        if (fp.getName().equals("")) {
+        if (fp.getName().isEmpty()) {
             throw new ArgumentNotValid("fp denotes an empty filename");
         }
         ArgumentNotValid.checkNotNullOrEmpty(fn, "String fn");
@@ -87,11 +88,11 @@ public class BitarchiveARCFile  {
     }
 
     /** Get the size of this file.
+     * If the file does not exist, the size is 0L.
      *
-     * @return The size of this file
-     * @throws FileNotFoundException if the file does not exist.
+     * @return The size of this file. 
      */
-    public long getSize() throws FileNotFoundException {
+    public long getSize() {
         return (filePath.length());
     }
 }

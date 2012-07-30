@@ -3,7 +3,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -198,28 +200,6 @@ public class ScheduleDAOTester extends DataModelTestCase {
         } catch (PermissionDenied e) {
           //expected
         }
-
-    }
-
-    /** Test that we can delete a schedule */
-    public void testDelete() {
-        ScheduleDAO dao = ScheduleDAO.getInstance();
-        String scheduleToDelete = "Hver hele time";
-        assertTrue("Schedule must exist before deletion", dao.exists(scheduleToDelete));
-        assertTrue("Schedule should be deletable", dao.mayDelete(dao.read(scheduleToDelete)));
-        dao.delete(scheduleToDelete);
-        assertFalse("Schedule must not exist after deletion", dao.exists(scheduleToDelete));
-
-        scheduleToDelete = TestInfo.DEFAULT_SCHEDULE_NAME;
-        assertTrue("Schedule must exist before deletion", dao.exists(scheduleToDelete));
-        assertFalse("Schedule should not be deletable", dao.mayDelete(dao.read(scheduleToDelete)));
-        try {
-            dao.delete(scheduleToDelete);
-            fail("Should not have been able to delete used schedule");
-        } catch (PermissionDenied e) {
-            // Expected
-        }
-        assertTrue("Schedule must exist after deletion", dao.exists(scheduleToDelete));
 
     }
 

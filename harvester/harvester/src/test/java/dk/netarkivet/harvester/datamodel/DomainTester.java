@@ -4,7 +4,9 @@
 * $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -46,6 +48,11 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.CollectionAsserts;
 
@@ -63,6 +70,31 @@ public class DomainTester extends DataModelTestCase {
         super.tearDown();
     }
 
+    /**
+     * Test extended fields
+     */
+    public void testExtendedFields() {
+        ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
+        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", ExtendedFieldDataTypes.STRING, true, 1, "defaultvalue", "");
+        extDAO.create(extField);
+        
+        extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Boolean", "", ExtendedFieldDataTypes.BOOLEAN, true, 1, "true", "");
+        extDAO.create(extField);
+        
+    	
+        ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
+        extField = extDAO2.read(Long.valueOf(1));
+        assertEquals(extField.getExtendedFieldID().longValue(), 1);
+        extField = extDAO2.read(Long.valueOf(2));
+        assertEquals(extField.getExtendedFieldID().longValue(), 2);
+        
+        // FIXME does not work, because of changes in Domain.getDefaultDomain() method
+        // See NAS-1925
+        // Domain d =  Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
+        //assertEquals(d.getExtendedFieldValue(new Long(1)).getContent(), "defaultvalue");
+        //assertEquals(d.getExtendedFieldValue(new Long(2)).getBooleanValue(), true);
+    }
+    
     /**
      * Test setters and getters with correct parameters.
      */
@@ -154,9 +186,10 @@ public class DomainTester extends DataModelTestCase {
         }
 
         /* Test invalid configuration parameters */
+        Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg = new DomainConfiguration(
                 "test",
-                TestInfo.getDefaultDomain(),
+                d,
                 Arrays.asList(new SeedList[]{TestInfo.seedlist}),
                 new ArrayList<Password>());
 
@@ -189,7 +222,7 @@ public class DomainTester extends DataModelTestCase {
         }
 
         try {
-            cfg.addSeedList(null);
+            cfg.addSeedList(d, null);
             fail("Null not a valid argument");
         } catch (ArgumentNotValid e) {
             // expected
@@ -206,7 +239,7 @@ public class DomainTester extends DataModelTestCase {
             wd.addSeedList(TestInfo.seedlist);
 
             DomainConfiguration cfg1 = TestInfo.getDefaultConfig(wd);
-            cfg1.addSeedList(new SeedList("Unknown-seedlist", TestInfo.SEEDS1));
+            cfg1.addSeedList(wd, new SeedList("Unknown-seedlist", TestInfo.SEEDS1));
             wd.addConfiguration(cfg1);
             fail("The seedlist is unknown");
         } catch (UnknownID e) {
@@ -657,6 +690,7 @@ public class DomainTester extends DataModelTestCase {
     //test invalid values with constructor
     public void testSetAndGetInvalidValues() {
         Date date = new Date();
+        final Long defaultHid = Long.valueOf(1L);
 
         try {
             new HarvestInfo(null, "foo", "bar", date, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
@@ -666,42 +700,45 @@ public class DomainTester extends DataModelTestCase {
         }
 
         try {
-            new HarvestInfo(new Long(1L), null, "bar", date, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+            new HarvestInfo(defaultHid, null, "bar", date, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
             fail("parameters should not be null");
         } catch (ArgumentNotValid e) { 
             //expected
         }
 
         try {
-            new HarvestInfo(new Long(1L), "foo", null, date, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+            new HarvestInfo(defaultHid, "foo", null, date, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
             fail("parameters should not be null");
         } catch (ArgumentNotValid e) { 
             //expected
         }
 
         try {
-            new HarvestInfo(new Long(1L), "foo", "bar", null, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+            new HarvestInfo(defaultHid, "foo", "bar", null, 1L, 1L, 
+                    StopReason.DOWNLOAD_COMPLETE);
             fail("parameters should not be null");
         } catch (ArgumentNotValid e) { 
             //expected
         }
 
         try {
-            new HarvestInfo(new Long(1L), "foo", "bar", date, -1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+            new HarvestInfo(defaultHid, "foo", "bar", date, -1L, 1L, 
+                    StopReason.DOWNLOAD_COMPLETE);
             fail("One of the parameters should not be negative");
         } catch (ArgumentNotValid e) { 
             //expected
         }
 
         try {
-            new HarvestInfo(new Long(1L), "foo", "bar", date, 1L, -1L, StopReason.DOWNLOAD_COMPLETE);
+            new HarvestInfo(defaultHid, "foo", "bar", date, 1L, -1L, 
+                    StopReason.DOWNLOAD_COMPLETE);
             fail("One of the parameters should not be negative");
         } catch (ArgumentNotValid e) { 
             //expected
         }
 
         try {
-            new HarvestInfo(new Long(1L), "foo", "bar", date, 1L, 1L, null);
+            new HarvestInfo(Long.valueOf(1L), "foo", "bar", date, 1L, 1L, null);
             fail("parameters should not be null");
         } catch (ArgumentNotValid e) { 
             //expected
@@ -789,7 +826,7 @@ public class DomainTester extends DataModelTestCase {
         assertTrue("Password should exist after adding",
                    d.hasPassword(TestInfo.PASSWORD_NAME));
         DomainConfiguration conf = d.getDefaultConfiguration();
-        conf.addPassword(TestInfo.password);
+        conf.addPassword(d, TestInfo.password);
         try {
             d.removePassword(TestInfo.PASSWORD_NAME);
             fail("Should not be allowed to remove password in use");
@@ -817,7 +854,8 @@ public class DomainTester extends DataModelTestCase {
         List<String> definedregexps = new ArrayList<String>();
         definedregexps.add(".*dr\\.dk.*/.*\\.cgi");
         definedregexps.add(".*statsbiblioteket\\.dk/gentofte.*");
-        d.setCrawlerTraps(definedregexps);
+        boolean strictMode = true;
+        d.setCrawlerTraps(definedregexps, strictMode);
         List<String> foundregexps = d.getCrawlerTraps();
         assertEquals("Crawler traps should be remembered as given",
                      definedregexps, foundregexps);
@@ -827,22 +865,39 @@ public class DomainTester extends DataModelTestCase {
 
         definedregexps = new ArrayList<String>();
         definedregexps.add(" ");
-        d.setCrawlerTraps(definedregexps);
+        d.setCrawlerTraps(definedregexps, strictMode);
         assertEquals("Crawler traps containing only whitespace should not be considered as a valid crawler-trap",
                      0, d.getCrawlerTraps().size());
 
         // Whitespace is not removed from a crawler-trap containing other characters than whitespace.
         definedregexps = new ArrayList<String>();
         definedregexps.add("http://valid crawlertrap ");
-        d.setCrawlerTraps(definedregexps);
-        assertEquals("Leading and trailing whitespace should be conserved in a regexp containing other characters than whitespace",
+        d.setCrawlerTraps(definedregexps, strictMode);
+        assertEquals("Leading and trailing whitespace should be conserved in a regexp containing other "
+        		+ "characters than whitespace",
                      definedregexps, d.getCrawlerTraps());
 
         try {
-            d.setCrawlerTraps(null);
+            d.setCrawlerTraps(null, strictMode);
             fail("Expected error on null argument");
         } catch (ArgumentNotValid e) {
             //expected
+        }
+        
+        final String invalidRegexp = ".*starpaint\\dk\\";
+        definedregexps.add(invalidRegexp);
+        
+        try {
+            d.setCrawlerTraps(definedregexps, strictMode);
+            fail("Expected error on invalid regexp in strictMode");
+        } catch (ArgumentNotValid e) {
+            // Expected
+        }
+        strictMode = false;
+        try {
+            d.setCrawlerTraps(definedregexps, strictMode);
+        } catch (ArgumentNotValid e) {
+            fail("Unexpected error on invalid regexp in strictMode=false");
         }
     }
 
@@ -914,13 +969,16 @@ public class DomainTester extends DataModelTestCase {
 
         for (Map.Entry<String,String> entry : hostnameToDomainname.entrySet()) {
             String domainName = DomainUtils.domainNameFromHostname(entry.getKey());
-            assertEquals("Domain name should be correctly calculated for " + entry.getKey(),
-                         entry.getValue(), domainName);
+            assertEquals("Domain name should be correctly calculated for " 
+                    + entry.getKey(), entry.getValue(), domainName);
             if (entry.getValue() != null) {
-                assertTrue("Domain name calculated from " + entry.getKey() + " must be a legal domain name",
-                           DomainUtils.isValidDomainName(domainName));
+                assertTrue("Domain name calculated from " + entry.getKey() 
+                        + " must be a legal domain name",
+                        DomainUtils.isValidDomainName(domainName));
             } else {
-                assertFalse("Should not get null domain name from legal domainname " + entry.getKey(),
+                assertFalse(
+                        "Should not get null domain name from legal domainname "
+                                + entry.getKey(),
                             DomainUtils.isValidDomainName(entry.getKey()));
             }
         }
@@ -1276,7 +1334,8 @@ public class DomainTester extends DataModelTestCase {
         while (passwordIterator.hasNext()) {
             passwordList.add(passwordIterator.next());
         }
-        return new DomainConfiguration(nameOfClone, config.getDomain(), seedListList, passwordList);
+        return new DomainConfiguration(nameOfClone, config.getDomainName(), config.getDomainhistory(), 
+        		config.getCrawlertraps(), seedListList, passwordList);
     }
 
     private Password createDefaultPassword(String name) {
@@ -1293,6 +1352,4 @@ public class DomainTester extends DataModelTestCase {
                 thePassword.getUsername(),
                 thePassword.getPassword());
     }
-
-
 }

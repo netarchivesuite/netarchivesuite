@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -45,11 +47,9 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
-import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
-import dk.netarkivet.harvester.webinterface.JspTestCase;
-import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
+import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -144,7 +144,6 @@ public class HTMLUtilsTester extends TestCase {
         }
 
         //Test locale
-        int i = 0;
         StringTree<String> webinterfaceSettings = Settings.getTree(
                 CommonSettings.WEBINTERFACE_SETTINGS);
 
@@ -259,20 +258,19 @@ public class HTMLUtilsTester extends TestCase {
                 request);
 
         assertEquals("Should be able to parse simple long",
-                     new Long(10L),
+                     Long.valueOf(10L),
                      HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
         parameterMap.put("aLong", new String[]{" -11  "});
 
         assertEquals("Should be able to parse spaced negative long",
-                     new Long(-11L),
+                     Long.valueOf(-11L),
                      HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
         assertEquals("Should get default if not set",
-                     new Long(-1L), HTMLUtils.parseOptionalLong(pageContext,
+                     Long.valueOf(-1L), HTMLUtils.parseOptionalLong(pageContext,
                                                                 "anotherLong",
                                                                 -1L));
-
         parameterMap.put("aLong", new String[]{
                 Long.toString(((long) Integer.MAX_VALUE) * 5)});
         assertEquals("Should be able to parse large long",
@@ -281,12 +279,12 @@ public class HTMLUtilsTester extends TestCase {
 
         parameterMap.put("aLong", new String[]{""});
         assertEquals("Should get default from empty param",
-                     new Long(-2),
+                     Long.valueOf(-2L),
                      HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
 
         parameterMap.put("aLong", new String[]{"   "});
         assertEquals("Should get default from space-only param",
-                     new Long(-2),
+                     Long.valueOf(-2L),
                      HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
 
         parameterMap.put("aLong", new String[]{"   "});
@@ -320,8 +318,8 @@ public class HTMLUtilsTester extends TestCase {
         WebinterfaceTestCase.TestServletRequest request
                 = new WebinterfaceTestCase.TestServletRequest();
         request.setParameterMap(parameterMap);
-        I18n I18N = new I18n(
-                dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
+        //I18n I18N = new I18n(
+        //        dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
                 request);
 

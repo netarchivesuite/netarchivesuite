@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -75,6 +77,7 @@ public class LargeFileGZIPInputStreamTester extends TestCase {
             while ((bytesRead = largeFileGZIPInputStream.read(buffer)) > 0) {
                 //just carry on.
             }
+            assertFalse(bytesRead > 0);
             largeFileGZIPInputStream.close();
             fail("Should throw exception on wrong CRC");
         } catch (IOException e) {
@@ -91,6 +94,7 @@ public class LargeFileGZIPInputStreamTester extends TestCase {
             while ((bytesRead = largeFileGZIPInputStream.read(buffer)) > 0) {
                 //just carry on.
             }
+            assertFalse(bytesRead > 0);
             largeFileGZIPInputStream.close();
             fail("Should throw exception on wrong Length");
         } catch (IOException e) {
@@ -107,6 +111,7 @@ public class LargeFileGZIPInputStreamTester extends TestCase {
             while ((bytesRead = largeFileGZIPInputStream.read(buffer)) > 0) {
                 //just carry on.
             }
+            assertFalse(bytesRead > 0);
             largeFileGZIPInputStream.close();
             fail("Should throw exception on missing Length");
         } catch (IOException e) {

@@ -110,9 +110,6 @@
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
             <!-- or get and getFile oprations, (as well as bitArchive monitor)    -->
             <useReplicaId>KB</useReplicaId>
-            <database>
-	        <url></url>
-	    </database>
             <!-- tempDir corrected from ./tests/commontempdir -->
             <tempDir>tmpdircommon</tempDir> 
         </common>
@@ -162,8 +159,9 @@
 
         <deployMachine name="kb-test-adm-001.kb.dk">
             <deployInstallDir>/home/test</deployInstallDir>
-            <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
-            <deployArchiveDatabaseDir>bitpreservationdb</deployArchiveDatabaseDir>
+            <deployHarvestDatabaseDir>harvestDatabase</deployHarvestDatabaseDir>
+            <deployHarvestDatabaseExternal>true</deployHarvestDatabaseExternal>
+            <deployArchiveDatabaseDir>adminDB</deployArchiveDatabaseDir>
             <settings>
                 <archive>
                     <admin>
@@ -177,6 +175,15 @@
                         </database>
                     </admin>
                 </archive>
+                <common>
+                    <database>
+                        <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
+                        <baseUrl>jdbc:derby</baseUrl>
+                        <machine>localhost</machine>
+                        <port>8118</port>
+                        <dir>harvestDatabase/fullhddb</dir>
+                    </database>
+                </common>
             </settings>
 
             <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
@@ -193,9 +200,6 @@
                             <port>8110</port> 
                             <rmiPort>8210</rmiPort>
                         </jmx>
-                        <database>
-                             <url>jdbc:derby:harvestDatabase/fullhddb</url>
-                        </database>
                     </common>
                 </settings>
             </applicationName>

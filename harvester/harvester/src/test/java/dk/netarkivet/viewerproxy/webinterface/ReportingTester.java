@@ -5,7 +5,9 @@
 * Date:     $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -28,9 +30,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -106,25 +108,25 @@ public class ReportingTester extends TestCase {
 
     public void testGetMetdataCDXRecordsForJob() throws Exception {
         try {
-            Reporting.getMetdataCDXRecordsForJob(-1);
+            Reporting.getMetadataCDXRecordsForJob(-1);
             fail("Should fail on negative values");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            Reporting.getMetdataCDXRecordsForJob(0);
+            Reporting.getMetadataCDXRecordsForJob(0);
             fail("Should fail on zero");
         } catch (ArgumentNotValid e) {
             //Expected
         }
-        List<CDXRecord> recordsForJob = Reporting.getMetdataCDXRecordsForJob(2);
+        List<CDXRecord> recordsForJob = Reporting.getMetadataCDXRecordsForJob(2);
         assertEquals("Should return the expected number of records", 18, recordsForJob.size());
         StringAsserts.assertStringMatches("First record should be preharvester metadata dedup", 
                 "^metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs.*", recordsForJob.get(0).getURL());
         StringAsserts.assertStringMatches("Last record should be cdx", 
                 "^metadata://netarkivet.dk/crawl/index/cdx.*", recordsForJob.get(recordsForJob.size() - 1).getURL());
         CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty", 
-                Reporting.getMetdataCDXRecordsForJob(4));
+                Reporting.getMetadataCDXRecordsForJob(4));
     }
 
     /**

@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -89,7 +91,7 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
         ReflectUtils.getPrivateField(CrawlLogIndexCache.class,
                                      "cdxcache").set(cache,
                                                      new CDXDataCache() {
-                                                         public Long cache(long ID) {
+                                                         public Long cache(Long ID) {
                                                              if (ID % 3 == 0) {
                                                                  return null;
                                                              } else {
@@ -113,7 +115,8 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
         cache.prepareCombine(jobIDs);
         LogUtils.flushLogs(CrawlLogIndexCache.class.getName());
         FileAsserts.assertFileContains("Should have info about starting index",
-                                       "Starting to generate fullcrawllogindex for jobs: " + jobIDs,
+                                       "Starting to generate fullcrawllogindex for the " 
+                                        + jobIDs.size() + " jobs: " + jobIDs,
                                        TestInfo.LOG_FILE);
     }
 }

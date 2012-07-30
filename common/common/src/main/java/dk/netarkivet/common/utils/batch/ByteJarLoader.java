@@ -1,10 +1,12 @@
-/* $Id: LoadableJarBatchJob.java 1400 2010-05-19 12:07:24Z jolf $
- * $Revision: 1400 $
- * $Date: 2010-05-19 14:07:24 +0200 (Wed, 19 May 2010) $
- * $Author: jolf $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,6 +47,7 @@ import dk.netarkivet.common.utils.StreamUtils;
  * the key to the map is the class name, and the value is the class stored
  * as a byte array.
  */
+@SuppressWarnings("serial")
 public class ByteJarLoader extends ClassLoader implements Serializable {
     /** The log. */
     transient Log log = LogFactory.getLog(this.getClass().getName());
@@ -91,8 +94,8 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
     }
 
     /**
-     * Lookup and return the Class with the given className. This method overrides the
-     * ClassLoader.findClass method.
+     * Lookup and return the Class with the given className. 
+     * This method overrides the ClassLoader.findClass method.
      * 
      * @param className
      *            The name of the class to lookup
@@ -101,6 +104,7 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
      * @return the Class with the given className.
      * 
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Class findClass(String className) throws ClassNotFoundException {
         ArgumentNotValid.checkNotNullOrEmpty(className, "String className");
         // replace all dots with '/' in the className before looking it up

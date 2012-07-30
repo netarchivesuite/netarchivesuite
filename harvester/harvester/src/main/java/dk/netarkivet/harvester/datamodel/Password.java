@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -125,10 +127,10 @@ public final class Password implements Named {
     }
 
     /** Set the ID of this password.  Only for use by DBDAO.
-     * @param id the new ID of this password
+     * @param newid the new ID of this password
      */
-    void setID(long id) {
-        this.id = id;
+    void setID(long newid) {
+        this.id = newid;
     }
 
     /** Check if this password has an ID set yet (doesn't happen until

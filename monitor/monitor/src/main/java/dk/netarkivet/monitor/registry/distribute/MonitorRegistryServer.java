@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -74,7 +76,9 @@ public class MonitorRegistryServer extends MonitorMessageHandler
 
     /** Remove listener on shutdown. */
     public void cleanup() {
-        JMSConnectionFactory.getInstance().removeListener(
-                Channels.getTheMonitorServer(), this);
+        // FIXME These commands fail when shutting down properly. (kill $PID)
+        // instead of kill -9 $PID. See NAS-1976
+        //JMSConnectionFactory.getInstance().removeListener(
+        //        Channels.getTheMonitorServer(), this);
     }
 }

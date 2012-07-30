@@ -4,7 +4,9 @@
 * Date:        $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -23,16 +25,6 @@
 
 package dk.netarkivet.harvester.scheduler;
 
-import javax.jms.JMSException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.logging.LogManager;
-
-import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -41,31 +33,24 @@ import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.Constants;
-import dk.netarkivet.harvester.datamodel.Domain;
-import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.DomainDAOTester;
-import dk.netarkivet.harvester.datamodel.FullHarvest;
-import dk.netarkivet.harvester.datamodel.HarvestDefinition;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
-import dk.netarkivet.harvester.datamodel.HarvestInfo;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.ScheduleDAOTester;
-import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
-import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
+import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
-import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
-import dk.netarkivet.testutils.DatabaseTestUtils;
+import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
+import javax.jms.JMSException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.logging.LogManager;
 
 /**
  * Tests of the class HarvestSchedulerMonitorServer.
@@ -73,7 +58,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class HarvestSchedulerMonitorServerTester extends TestCase {
 
 
-    public static JobDAO the_dao;
+    public static JobDAO theDAO;
     public static final File LOG_FILE =
             new File("tests/testlogs/netarkivtest.log");
     public static final File BASEDIR =
@@ -87,6 +72,10 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     private static final StopReason DEFAULT_STOPREASON =
         StopReason.DOWNLOAD_COMPLETE;
     ReloadSettings rs = new ReloadSettings();
+    private HarvestSchedulerMonitorServer hsms;
+
+    private static final HeritrixFiles HX_FILES =
+        new HeritrixFiles(new File(WORKING, "harvestreports"), 1, 1);
 
     /**
      * setUp method for this set of unit tests.
@@ -100,28 +89,30 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         fis.close();
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         //JobDAO.reset();
-        Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
+        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                 + WORKING.getCanonicalPath() + "/fullhddb");
         DatabaseTestUtils.getHDDB(new File(BASEDIR, "fullhddb.jar"),
                 "fullhddb", WORKING);
-        the_dao = JobDAO.getInstance();
+        theDAO = JobDAO.getInstance();
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                      RememberNotifications.class.getName());
+        hsms = new HarvestSchedulerMonitorServer();
+        hsms.start();
     }
     /**
      * tearDown method for this set of unit tests.
      */
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         FileUtils.removeRecursively(WORKING);
         JMSConnectionMockupMQ.clearTestQueues();
-        HarvestSchedulerMonitorServer.getInstance().close();
+        hsms.shutdown();
         DatabaseTestUtils.dropHDDB();
         JobDAO.reset();
         HarvestDefinitionDAOTester.resetDAO();
@@ -135,8 +126,6 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * @throws JMSException
      */
     public void testOnMessageUsesUnpack() throws JMSException {
-        HarvestSchedulerMonitorServer hsms
-            = HarvestSchedulerMonitorServer.getInstance();
         NetarkivetMessage nmsg = new CrawlStatusMessage(1, JobStatus.STARTED);
         JMSConnectionMockupMQ.TestObjectMessage omsg
                 = (JMSConnectionMockupMQ.TestObjectMessage)
@@ -153,11 +142,9 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     public void testListens() {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
-        HarvestSchedulerMonitorServer hsms
-            = HarvestSchedulerMonitorServer.getInstance();
         assertEquals("Should be exactly one listener to the THE_SCHED queue ",
                      1, con.getListeners(Channels.getTheSched()).size());
-        hsms.close();
+        hsms.shutdown();
         assertEquals("Should have removed listener to the THE_SCHED queue ",
                      0, con.getListeners(Channels.getTheSched()).size());
     }
@@ -170,28 +157,25 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = dk.netarkivet.harvester.scheduler.TestInfo.getJob();
-        the_dao.create(j1);
+        theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
-        HarvestSchedulerMonitorServer hsms
-            = HarvestSchedulerMonitorServer.getInstance();
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID, JobStatus.STARTED);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
         // Send a job-done message
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
         // Job should now have status "done"
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status DONE: ",
                 JobStatus.DONE, j1.getStatus());
         //Look for the domain persistence
@@ -216,13 +200,11 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
-        HarvestSchedulerMonitorServer hsms
-            = HarvestSchedulerMonitorServer.getInstance();
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
@@ -230,14 +212,13 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
 
         // Send a job-failed message
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_failed = new
                 CrawlStatusMessage(j1ID, JobStatus.FAILED, hhr);
         csm_failed.setNotOk("Simulated failed message");
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Job should now have status "done"
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status FAILED: ",
                 JobStatus.FAILED, j1.getStatus());
         //Look for the domain persistence
@@ -261,13 +242,11 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
-        HarvestSchedulerMonitorServer hsms =
-                HarvestSchedulerMonitorServer.getInstance();
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
@@ -281,7 +260,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         csm_failed.setNotOk("Simulated failed message");
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Job should now have status "failed"
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status FAILED: ", JobStatus.FAILED,
                      j1.getStatus());
     }
@@ -306,16 +285,14 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
-        HarvestSchedulerMonitorServer hsms =
-                HarvestSchedulerMonitorServer.getInstance();
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID,
                                    JobStatus.STARTED);
         hsms.visit(csm_start);
-        j1 = the_dao.read(j1.getJobID());
+        j1 = theDAO.read(j1.getJobID());
         assertEquals("Status should now be started: ",
                      JobStatus.STARTED, j1.getStatus());
     }
@@ -330,18 +307,15 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
-        HarvestSchedulerMonitorServer hsms =
-                HarvestSchedulerMonitorServer.getInstance();
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
         //
         // Send the "done" message
         //
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
@@ -355,7 +329,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         //
         //All usual tests should work and job status should still be done
         //
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status DONE: ",
                 JobStatus.DONE, j1.getStatus());
         //Look for the domain persistence
@@ -382,18 +356,15 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
-        HarvestSchedulerMonitorServer hsms =
-                HarvestSchedulerMonitorServer.getInstance();
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
         //
         // Send the "failed" message
         //
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_failed = new
                 CrawlStatusMessage(j1ID, JobStatus.FAILED, hhr);
         csm_failed.setNotOk("Simulated failed message");
@@ -409,7 +380,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         //
         //All usual tests should work and job status should still be done
         //
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status Failed: ",
                 JobStatus.FAILED, j1.getStatus());
         //Look for the domain persistence
@@ -429,22 +400,20 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
-        the_dao.create(j1);
+        theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
-        HarvestSchedulerMonitorServer hsms
-            = HarvestSchedulerMonitorServer.getInstance();
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID, JobStatus.STARTED);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
         // Send a job-done message
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
@@ -455,7 +424,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         csm_failed.setNotOk("Failed");
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Job should now have status "failed"
-        j1 = the_dao.read(new Long(j1ID));
+        j1 = theDAO.read(Long.valueOf(j1ID));
         assertEquals("Job should have status Failed: ", JobStatus.FAILED, j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
@@ -463,8 +432,10 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
         assertFalse("Should NOT have two harvests remembered", hist.hasNext());
-        assertEquals("Unexpected number of objects retrieved", 22, dh.getCountObjectRetrieved());
-        assertEquals("Unexpected total size of harvest", 270, dh.getSizeDataRetrieved());
+        assertEquals("Unexpected number of objects retrieved", 22, 
+                dh.getCountObjectRetrieved());
+        assertEquals("Unexpected total size of harvest", 270, 
+                dh.getSizeDataRetrieved());
         // Check log
         LogUtils.flushLogs(hsms.getClass().getName());
         FileAsserts.assertFileContains("Failed to log out of order messages",
@@ -478,14 +449,13 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
-        the_dao.create(j1);
+        theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
-        HarvestSchedulerMonitorServer hsms = HarvestSchedulerMonitorServer.getInstance();
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
@@ -499,21 +469,24 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Send a job-done message
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
         // Job should now have status "failed"
-        j1 = the_dao.read(new Long(j1ID));
-        assertEquals("Job should have status Failed: ", JobStatus.FAILED, j1.getStatus());
+        j1 = theDAO.read(Long.valueOf(j1ID));
+        assertEquals("Job should have status Failed: ", JobStatus.FAILED, 
+                j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
         Iterator<HarvestInfo> hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
         assertFalse("Should NOT have two harvests remembered", hist.hasNext());
-        assertEquals("Unexpected number of objects retrieved", 22, dh.getCountObjectRetrieved());
-        assertEquals("Unexpected total size of harvest", 270, dh.getSizeDataRetrieved());
+        assertEquals("Unexpected number of objects retrieved", 22, 
+                dh.getCountObjectRetrieved());
+        assertEquals("Unexpected total size of harvest", 270, 
+                dh.getSizeDataRetrieved());
     }
 
      /**
@@ -524,34 +497,34 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
-        the_dao.create(j1);
+        theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
-        the_dao.update(j1);
-        HarvestSchedulerMonitorServer hsms
-            = HarvestSchedulerMonitorServer.getInstance();
+        theDAO.update(j1);
         long j1ID = j1.getJobID().longValue();
         // Set job status to submitted
         j1.setStatus(JobStatus.SUBMITTED);
-        the_dao.update(j1);
+        theDAO.update(j1);
 
 
         // Send a job-done message
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
         CrawlStatusMessage csmDone = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
          hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csmDone));
         // Job should now have status "done"
-        j1 = the_dao.read(new Long(j1ID));
-        assertEquals("Job should have status DONE: ", JobStatus.DONE, j1.getStatus());
+        j1 = theDAO.read(Long.valueOf(j1ID));
+        assertEquals("Job should have status DONE: ", JobStatus.DONE, 
+                j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
         Iterator<HarvestInfo> hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
         assertFalse("Should NOT have two harvests remembered", hist.hasNext());
-        assertEquals("Unexpected number of objects retrieved", 22, dh.getCountObjectRetrieved());
-        assertEquals("Unexpected total size of harvest", 270, dh.getSizeDataRetrieved());
+        assertEquals("Unexpected number of objects retrieved", 22, 
+                dh.getCountObjectRetrieved());
+        assertEquals("Unexpected total size of harvest", 270, 
+                dh.getSizeDataRetrieved());
         // Check log
         LogUtils.flushLogs(hsms.getClass().getName());
         FileAsserts.assertFileContains("Failed to log out of order messages",
@@ -584,14 +557,14 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         DomainDAO.getInstance().create(Domain.getDefaultDomain("dr.dk"));
 
         //The host report we use
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
-                STOP_REASON_CRAWL_REPORT, DEFAULT_STOPREASON);
+        AbstractHarvestReport hhr = new LegacyHarvestReport(HX_FILES);
 
         //A harvest definition with no limit
         HarvestDefinition snapshot =
             new FullHarvest("TestHarvest", "", null,
                     Constants.HERITRIX_MAXOBJECTS_INFINITY,
-                    Constants.HERITRIX_MAXBYTES_INFINITY);
+                    Constants.HERITRIX_MAXBYTES_INFINITY,
+                    Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, false);
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest
@@ -599,7 +572,9 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         DomainConfiguration conf = dom.getDefaultConfiguration();
         Job job = Job.createSnapShotJob(snapshot.getOid(), conf,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY,
-                Constants.HERITRIX_MAXBYTES_INFINITY, 0);
+                Constants.HERITRIX_MAXBYTES_INFINITY, 
+                Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY,
+                0);
         dom = DomainDAO.getInstance().read("statsbiblioteket.dk");
         conf = dom.getDefaultConfiguration();
         job.addConfiguration(conf);
@@ -614,8 +589,6 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 CrawlStatusMessage(job.getJobID(), JobStatus.DONE, hhr);
 
         //Receive the message
-        HarvestSchedulerMonitorServer hsms
-            = HarvestSchedulerMonitorServer.getInstance();
         hsms.visit(csmDone);
 
         //Check correct historyinfo for kb.dk: complete
@@ -655,12 +628,15 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
         //A harvest definition with low byte limit
         snapshot = new FullHarvest("TestHarvest2", "", null,
-                Constants.HERITRIX_MAXOBJECTS_INFINITY, 10L);
+                Constants.HERITRIX_MAXOBJECTS_INFINITY, 
+                10L,
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, false);
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest (note: conf is the dr.dk config)
         job = Job.createSnapShotJob(snapshot.getOid(), conf,
-                Constants.HERITRIX_MAXOBJECTS_INFINITY, 10L, 0);
+                Constants.HERITRIX_MAXOBJECTS_INFINITY, 10L, 
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         job.setStatus(JobStatus.STARTED);
         JobDAO.getInstance().create(job);
 

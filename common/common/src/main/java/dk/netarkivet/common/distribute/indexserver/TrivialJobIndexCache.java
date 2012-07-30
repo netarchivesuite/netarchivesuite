@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 
@@ -51,6 +54,7 @@ public class TrivialJobIndexCache implements JobIndexCache {
      *
      * The directory that the files are to be put into will be created by
      * this method.
+     * @param t The type of requests handled
      */
     public TrivialJobIndexCache(RequestType t) {
         ArgumentNotValid.checkNotNull(t, "RequestType t");
@@ -70,11 +74,13 @@ public class TrivialJobIndexCache implements JobIndexCache {
      *         cache of data.
      * @throws IOFailure if there is no cache file for the set.
      */
+    @Override
     public Index<Set<Long>> getIndex(Set<Long> jobIDs) {
         ArgumentNotValid.checkNotNull(jobIDs, "Set<Long> jobIDs");
 
         File cacheFile = new File(dir,
-                FileUtils.generateFileNameFromSet(jobIDs, "-" + requestType + "-cache"));
+                FileUtils.generateFileNameFromSet(jobIDs, "-" + requestType
+                        + "-cache"));
 
         if (!cacheFile.exists()) {
             throw new IOFailure("The cache does not contain '" + cacheFile
@@ -82,4 +88,10 @@ public class TrivialJobIndexCache implements JobIndexCache {
         }
         return new Index<Set<Long>>(cacheFile, jobIDs);
     }
+
+    @Override
+    public void requestIndex(Set<Long> jobSet, Long harvestId) {
+        throw new NotImplementedException(
+        "This feature is not implemented for this type of cache");
+    }    
 }

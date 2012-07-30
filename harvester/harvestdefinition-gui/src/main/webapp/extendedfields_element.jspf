@@ -1,0 +1,91 @@
+<%--
+File:        $Id$
+Revision:    $Revision$
+Author:      $Author$
+Date:        $Date$
+
+ Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ --%>
+
+<%
+    ExtendedFieldDAO extdao = ExtendedFieldDAO.getInstance();
+    List<ExtendedField> extlist = extdao.getAll(extendedFieldType);
+    
+    String selectedAttribute = " selected=\"selected\" ";
+    String checkedAttribute = " checked=\"checked\" ";
+    
+    for (ExtendedField field : extlist) {
+        String fieldname = field.getJspFieldname();
+        
+        ExtendedFieldValue fieldValue = domain.getExtendedFieldValue(field.getExtendedFieldID());
+
+        %>
+        <%=field.getName() %>:
+        <%
+        
+        switch(field.getDatatype()) {
+            case ExtendedFieldDataTypes.STRING:
+            case ExtendedFieldDataTypes.NUMBER:
+            case ExtendedFieldDataTypes.TIMESTAMP:
+                %>
+                <input name="<%=fieldname %>" size="50" type="text" value="<%=fieldValue.getContent()%>"/>
+                <%
+                break;
+            case ExtendedFieldDataTypes.BOOLEAN:
+                %>
+                <input name="<%=fieldname %>" type="checkbox" value="true" <%= (fieldValue.getBooleanValue()) ? checkedAttribute : "" %> />
+                <%
+                break;
+            case ExtendedFieldDataTypes.NOTE:
+                %>
+                <textarea name="<%=fieldname %>" rows="5" cols="50"><%=fieldValue.getContent()%></textarea>
+                <%
+                break;
+            case ExtendedFieldDataTypes.SELECT:
+                %>
+                <select name="<%=fieldname %>" size="1">
+                    <%
+                    Map<String,String> options = field.getOptionValues();
+                    Iterator<String> it = options.keySet().iterator();
+                    
+                    if (!field.isMandatory()) {
+                        %>
+                        <option value=""></option>
+                        <%
+                    }
+                    
+                    while(it.hasNext()) {
+                        String key = it.next();
+                        String value = options.get(key);
+                    %>
+                
+                    <option value="<%= key %>" <%= (fieldValue.getContent().equals(key)) ? selectedAttribute : "" %>>
+                    <%= value %> 
+                    </option>
+                    <%
+                    }
+                    %>
+                </select>
+                
+                <%
+                break;
+        }
+        %>
+        <br/>
+        <%
+    }
+ %>

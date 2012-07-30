@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,12 +47,13 @@ import dk.netarkivet.common.utils.SystemUtils;
 /**
  * Wrapper class for registering objects of type I as MBeans.
  *
- * The register method will register a given obejct under an object name,
+ * The register method will register a given object under an object name,
  * generated with the domain given in constructor, and fields from the Hashtable
  * nameProperties. It is prefilled with values common for all MBeans, but it is
  * expected to be extended after the object is created with additional info.
+ * @param <I> The Type of Object to expose as an MBean. Currently only used 
+ * with {@link SingleMBeanObject}
  */
-
 public class SingleMBeanObject<I> {
     /** Properties for the ObjectName name. */
     private Hashtable<String, String> nameProperties
@@ -76,7 +79,7 @@ public class SingleMBeanObject<I> {
     private static Log log = LogFactory.getLog(SingleMBeanObject.class
             .getName());
 
-    //Following environment constant are defined here in order to avoid
+    // FIXME Following environment constant are defined here in order to avoid
     //refering to independent modules - the environment values are only
     //used if defined
     //Note that HARVESTER_HARVEST_CONTROLLER_PRIORITY should be identical to

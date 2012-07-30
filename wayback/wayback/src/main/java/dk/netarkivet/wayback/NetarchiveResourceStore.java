@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,25 +55,25 @@ import dk.netarkivet.common.utils.InputStreamUtils;
  */
 public class NetarchiveResourceStore implements ResourceStore {
 
-    /* JMS ArcRepositoryClient. */
+    /** JMS ArcRepositoryClient. */
     private ViewerArcRepositoryClient client;
 
-    /* Pattern for matching http version header. */
+    /** Pattern for matching http version header. */
     private static final Pattern HTTP_HEADER_PATTERN =
         Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
 
-    /* Logger. */
+    /** Logger. */
     private Log logger = LogFactory.getLog(getClass().getName());
 
     /**
-     *  Constuctor.
+     *  Constructor.
      */
     public NetarchiveResourceStore() {
         client = ArcRepositoryClientFactory.getViewerInstance();
     }
 
     /**
-     * Transforms search result into a reasource, acording to ResourceStore
+     * Transforms search result into a resource, according to the ResourceStore
      * interface.
      * @param captureSearchResult the search result.
      * @return a valid resource containing metadata and a link to the ARC
@@ -105,7 +107,7 @@ public class NetarchiveResourceStore implements ResourceStore {
         BitarchiveRecord bitarchiveRecord = client.get(arcfile, offset);
         if (bitarchiveRecord == null) {
             throw new ResourceNotAvailableException("NetarchiveResourceStore: "
-                    + "Bitarchive didn't return requested record.");
+                    + "Bitarchive didn't return the requested record.");
         }
         logger.info("Retrieved resource from file '" + arcfile + "' at offset '"
                     + offset + "'");
@@ -147,7 +149,7 @@ public class NetarchiveResourceStore implements ResourceStore {
             logger.error("Error looking for empty line", e);
             throw new ResourceNotAvailableException(e.getMessage());
         }
-        // fill metedata for ARC record.
+        // fill metadata for ARC record.
         metadata.put(ARCRecordMetaData.URL_FIELD_KEY,
                      captureSearchResult.getUrlKey());
         //TODO the following is the correct way to set the URL. If we do
@@ -184,7 +186,7 @@ public class NetarchiveResourceStore implements ResourceStore {
 
         // create ARCRecord.
         try {
-            arcRecord = new ARCRecord(is,header, 0,false,false,true);
+            arcRecord = new ARCRecord(is, header, 0, false, false, true);
             int code = arcRecord.getStatusCode();
             logger.debug("ARCRecord created with code '" + code + "'");
             arcRecord.skipHttpHeader();
@@ -209,10 +211,14 @@ public class NetarchiveResourceStore implements ResourceStore {
                     return metadataF;
                 }
         };
-        logger.info("Returning resouce '" + resource + "'");
+        logger.info("Returning resource '" + resource + "'");
         return resource;
     }
 
+    /**
+     * Shuts down this resource store, closing the arcrepository client.
+     * @throws IOException if an exception occurred while closing the client.
+     */
     public void shutdown() throws IOException {
         // Close JMS connection.
         client.close();

@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -22,10 +24,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * Tests the StopReason class.
- */
-
 import java.util.Locale;
 
 import junit.framework.TestCase;
@@ -33,6 +31,9 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
 
+/**
+ * Tests the StopReason class.
+ */
 public class StopReasonTester extends TestCase {
     
     private static final I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -84,9 +85,22 @@ public class StopReasonTester extends TestCase {
                      StopReason.CONFIG_OBJECT_LIMIT,
                      StopReason.getStopReason(5));
 
-        // Test that stopreasonNum less than 0 and greater than 5 results in IOFailure
+       //Test that stopreasonNum=6 returns StopReason.TIME_LIMIT
+        assertEquals("getStopReason(6) should return StopReason.TIME_LIMIT",
+                     StopReason.TIME_LIMIT,
+                     StopReason.getStopReason(6));
+
+        
+        
+        // Test that stopreasonNum less than 0 and greater than 6 results in IOFailure
         try {
-            StopReason.getStopReason(6);
+            StopReason.getStopReason(-1);
+            fail ("UnknownID expected");
+        } catch (UnknownID e){
+            // UnknownID expected
+        }
+        try {
+            StopReason.getStopReason(7);
             fail ("UnknownID expected");
         } catch (UnknownID e){
             // UnknownID expected
@@ -100,23 +114,33 @@ public class StopReasonTester extends TestCase {
    public void testGetLocalizedString() {
        Locale l = new Locale("en");
        assertEquals("StopReason.DOWNLOAD_UNFINISHED.getLocalizedString(l) " +
-            "should return correct String for english Locale", StopReason.DOWNLOAD_UNFINISHED.getLocalizedString(l), 
+            "should return correct String for english Locale", 
+            StopReason.DOWNLOAD_UNFINISHED.getLocalizedString(l), 
             I18N.getString(l,"stopreason.download.unfinished"));
        
        assertEquals("StopReason.DOWNLOAD_COMPLETE.getLocalizedString(l) " +
-               "should return correct String for english Locale", StopReason.DOWNLOAD_COMPLETE.getLocalizedString(l), 
+               "should return correct String for english Locale", 
+               StopReason.DOWNLOAD_COMPLETE.getLocalizedString(l), 
                I18N.getString(l,"stopreason.complete"));
        
+       assertEquals("StopReason.CONFIG_OBJECT_LIMIT.getLocalizedString(l) " +
+               "should return correct String for english Locale", 
+               StopReason.CONFIG_OBJECT_LIMIT.getLocalizedString(l), 
+               I18N.getString(l,"stopreason.max.domainobjects.limit.reached"));
+       
        assertEquals("StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l) " +
-               "should return correct String for english Locale", StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l), 
+               "should return correct String for english Locale", 
+               StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l), 
                I18N.getString(l,"stopreason.max.domainconfig.limit.reached"));
        
        assertEquals("StopReason.OBJECT_LIMIT.getLocalizedString(l) " +
-               "should return correct String for english Locale", StopReason.OBJECT_LIMIT.getLocalizedString(l), 
+               "should return correct String for english Locale", 
+               StopReason.OBJECT_LIMIT.getLocalizedString(l), 
                I18N.getString(l,"stopreason.max.objects.limit.reached"));
        
        assertEquals("StopReason.SIZE_LIMIT.getLocalizedString(l) " +
-               "should return correct String for english Locale", StopReason.SIZE_LIMIT.getLocalizedString(l), 
+               "should return correct String for english Locale", 
+               StopReason.SIZE_LIMIT.getLocalizedString(l), 
                I18N.getString(l,"stopreason.max.bytes.limit.reached"));
        
        // Verify that the unknown case does not break I18n

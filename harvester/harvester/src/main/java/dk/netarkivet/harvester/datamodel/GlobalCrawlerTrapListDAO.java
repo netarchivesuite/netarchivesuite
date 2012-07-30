@@ -34,6 +34,27 @@ import dk.netarkivet.common.exceptions.UnknownID;
  */
 public abstract class GlobalCrawlerTrapListDAO {
 
+    /** The database singleton model. */
+    private static GlobalCrawlerTrapListDAO instance;
+
+    /**
+     * Factory method to return the singleton instance of this class.
+     * @return the singleton instance of this class.
+     */
+    public static synchronized GlobalCrawlerTrapListDAO getInstance() {
+        if (instance == null) {
+            instance = new GlobalCrawlerTrapListDBDAO();
+        }
+        return instance;
+    }
+
+    /**
+     * Resets the singleton instance of this class. Mostly for testing.
+     */
+    public static void reset() {
+        instance = null;
+    }
+
     /**
      * Get all active crawler traps.
      * @return a list of all active crawler traps.
@@ -63,13 +84,13 @@ public abstract class GlobalCrawlerTrapListDAO {
      * @return the id of the created list
      * @throws ArgumentNotValid if the trapList is null.
      */
-    public abstract int create(GlobalCrawlerTrapList trapList) throws
-                                                               ArgumentNotValid;
+    public abstract int create(GlobalCrawlerTrapList trapList)
+    throws ArgumentNotValid;
 
     /**
      * Deletes a crawler trap list from the database.
      * @param id the id of the list to be deleted
-     * @throws UnknownID if the argument doesn not correspond to a known 
+     * @throws UnknownID if the argument doesn not correspond to a known
      * trap list.
      */
     public abstract void delete(int id) throws UnknownID;
@@ -80,7 +101,7 @@ public abstract class GlobalCrawlerTrapListDAO {
      * @throws UnknownID if the id of the trapList argument does not correspond
      * to an existing trap list in the database.
      */
-    public abstract void update(GlobalCrawlerTrapList trapList) 
+    public abstract void update(GlobalCrawlerTrapList trapList)
     throws UnknownID;
 
     /**
@@ -91,4 +112,12 @@ public abstract class GlobalCrawlerTrapListDAO {
      * the database.
      */
     public abstract GlobalCrawlerTrapList read(int id) throws UnknownID;
+
+    /**
+     * Does crawlertrap with this name already exist.
+     * @param name The name for a crawlertrap
+     * @return true, if a crawlertrap with the given name already exists
+     * in the database; otherwise false
+     */
+    public abstract boolean exists(String name);
 }

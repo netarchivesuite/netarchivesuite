@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,27 +32,25 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
+import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
-import dk.netarkivet.harvester.scheduler.HarvestScheduler;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 
 /**
- * Site section that creates the menu for data definitions, and starts the
- * harvest scheduler.
+ * Site section that creates the menu for data definitions.
  */
 public class DefinitionsSiteSection extends SiteSection {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
-    /** The scheduler being started to schedule and monitor jobs. */
-    private HarvestScheduler theScheduler;
     /** number of pages visible in the left menu. */
-    private static final int PAGES_VISIBLE_IN_MENU = 9;
-
+    private static final int PAGES_VISIBLE_IN_MENU = 10;
+    
     /**
      * Create a new definition SiteSection object.
      */
@@ -68,6 +68,8 @@ public class DefinitionsSiteSection extends SiteSection {
                           "pagetitle;edit.harvest.templates"},
                       {"edit-global-crawler-traps",
                           "pagetitle;edit.global.crawler.traps"},
+                      {"list-extendedfields",
+                      "pagetitle;list-extendedfields"},
                       // The pages listed below are not visible in the left menu
                       {"upload-harvest-template",
                               "pagetitle;upload.template"},
@@ -80,15 +82,15 @@ public class DefinitionsSiteSection extends SiteSection {
                       {"add-event-seeds", "pagetitle;add.seeds"},
                       {"edit-domain-config", "pagetitle;edit.configuration"},
                       {"edit-domain-seedlist", "pagetitle;edit.seed.list"},
-                      {"edit-schedule", "pagetitle;edit.schedule"}
+                      {"edit-schedule", "pagetitle;edit.schedule"},
+                      {"edit-extendedfield", "pagetitle;edit.extendedfield"}
               }, "HarvestDefinition",
                  dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     }
 
     /**
      * Initialise the site section. This forces migration of all DAOs, validates
-     * that a default order.xml template exists, and starts the harvest
-     * scheduler.
+     * that a default order.xml template exists.
      *
      * @throws UnknownID If the default order.xml does not exist.
      */
@@ -114,25 +116,13 @@ public class DefinitionsSiteSection extends SiteSection {
         ScheduleDAO.getInstance();
         HarvestDefinitionDAO.getInstance();
         JobDAO.getInstance();
-
-        // Start the scheduler in a new thread, to allow the website to start 
-        // while rescheduling happens.
-        new Thread() {
-            public void run() {
-                theScheduler = HarvestScheduler.getInstance();
-            }
-        }.start();
+        GlobalCrawlerTrapListDAO.getInstance();
+        // Start the harvest monitor sever
+        HarvestMonitor.getInstance();
     }
-
-    /**
-     * Clean up this site section. This stops the harvest scheduler, and closes
-     * the database.
-     */
+    
+    /** Release DB resources. */
     public void close() {
-        if (theScheduler != null) {
-            theScheduler.close();
-        }
-        theScheduler = null;
-        DBSpecifics.getInstance().shutdownDatabase();
+        HarvestDBConnection.cleanup();
     }
 }

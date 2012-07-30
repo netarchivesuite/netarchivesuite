@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -28,14 +30,16 @@ import org.apache.commons.httpclient.URIException;
 
 /**
  * This class overrides the standard wayback canonicalizer in order to use our
- * version of UURIFactory (see Bug 1719). Everything in this class is cut and pasted
- * from wayback's AggressiveUrlCanonicalizer, with substitution of
+ * version of UURIFactory (see Bug 1719). Everything in this class is cut and 
+ * pasted from wayback's AggressiveUrlCanonicalizer, with substitution of
  * NetarchiveSuiteUURIFactory for UURIFactory.
  * @deprecated use org.archive.wayback.util.url.AggressiveUrlCanonicalizer
  * instead
  */
-public class NetarchiveSuiteAggressiveUrlCanonicalizer extends
-                                                       AggressiveUrlCanonicalizer {
+public class NetarchiveSuiteAggressiveUrlCanonicalizer 
+extends AggressiveUrlCanonicalizer {
+   
+    @Override
     public String urlStringToKey(String urlString) throws URIException {
 
       if(urlString.startsWith("dns:")) {
@@ -55,7 +59,7 @@ public class NetarchiveSuiteAggressiveUrlCanonicalizer extends
         searchUrl = scheme + searchUrl;
     }
 
-    // TODO: These next few lines look crazy -- need to be reworked.. This
+    // TODO These next few lines look crazy -- need to be reworked.. This
     // was the only easy way I could find to get the correct unescaping
     // out of UURIs, possible a bug. Definitely needs some TLC in any case,
     // as building UURIs is *not* a cheap operation.
@@ -68,24 +72,25 @@ public class NetarchiveSuiteAggressiveUrlCanonicalizer extends
     UURI searchURI = NetarchiveSuiteUURIFactory.getInstance(tmpURI.getURI());
 
     // replace ' ' with '+' (this is only to match Alexa's canonicalization)
-    String newPath = searchURI.getEscapedPath().replace("%20","+");
+    String newPath = searchURI.getEscapedPath().replace("%20", "+");
 
     // replace multiple consecutive '/'s in the path.
     while(newPath.contains("//")) {
-        newPath = newPath.replace("//","/");
+        newPath = newPath.replace("//", "/");
     }
 
     // this would remove trailing a '/' character, unless the path is empty
     // but we're not going to do this just yet..
-//		if((newPath.length() > 1) && newPath.endsWith("/")) {
-//			newPath = newPath.substring(0,newPath.length()-1);
-//		}
+    //if((newPath.length() > 1) && newPath.endsWith("/")) {
+    //newPath = newPath.substring(0,newPath.length()-1);
+    //}
 
     StringBuilder sb = new StringBuilder(searchUrl.length());
     sb.append(searchURI.getHostBasename());
 
     // omit port if scheme default:
-    int defaultSchemePort = NetarchiveSuiteUrlOperations.schemeToDefaultPort(scheme);
+    int defaultSchemePort = NetarchiveSuiteUrlOperations.schemeToDefaultPort(
+            scheme);
     if(searchURI.getPort() != defaultSchemePort
             && searchURI.getPort() != -1) {
 

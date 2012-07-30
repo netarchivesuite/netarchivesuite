@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -61,27 +63,57 @@ public class PartialHarvestTester extends DataModelTestCase {
      * appropriate objects.
      */
     public void testAddSeedsSimpleCase() {
-        String seedlist = "http://www.mydomain.dk/page1.jsp?aparam=avalue";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("http://www.mydomain.dk/page1.jsp?aparam=avalue");
+        
         final long maxbytes = 20000L;
-        harvest.addSeeds(seedlist, order1xml, maxbytes);
+        final int maxobjects = -1;
+        harvest.addSeeds(seedlist, order1xml, maxbytes,maxobjects);
         PartialHarvest updatedHarvest =
                 (PartialHarvest) HarvestDefinitionDAO.getInstance().
                 getHarvestDefinition(harvestName);
-        String expectedName = harvestName +"_" + order1xml + "_" + maxbytes 
-            + "Bytes";
+        String expectedName = harvestName + "_" + order1xml + "_" + maxbytes 
+            + "Bytes" + "_UnlimitedObjects";
         
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc = dci.next();
         assertEquals("DomainConfiguration should have expected name, ", expectedName, dc.getName());
-        assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomain().getName());
+        assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomainName());
         assertEquals("Should have expected byte limits", maxbytes, dc.getMaxBytes());
         Iterator<SeedList> si = dc.getSeedLists();
         SeedList sl = si.next();
         assertEquals("Should have expected seedlist name", expectedName, sl.getName());
-        assertEquals("Seedlist should contain specified URL", seedlist, sl.getSeedsAsString().trim());
+        assertTrue("Seedlist should contain specified URL", seedlist.contains(sl.getSeedsAsString().trim()));
         //Should be no more domainconfigurations or seedlists
         assertFalse("Should only be one configuration in the harvest", dci.hasNext());
         assertFalse("Should only be one seedlist in the configuration", si.hasNext());
+    }
+
+    /**
+     * Test names of seedlist with max bytes and max object defined.
+     */
+    public void testMixedLimitsSeedlistNames() {
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("http://www.mydomain.dk/page1.jsp?aparam=avalue");
+        final long maxbytes = 1024L;
+        final int maxobjects = 250;
+        harvest.addSeeds(seedlist, order1xml, maxbytes,maxobjects);
+        PartialHarvest updatedHarvest =
+                (PartialHarvest) HarvestDefinitionDAO.getInstance().
+                getHarvestDefinition(harvestName);
+        
+        //maxbytes and max objects defined
+        String expectedName = harvestName +"_" + order1xml + "_" + maxbytes 
+            + "Bytes" + "_"+maxobjects + "Objects";
+        
+        Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
+        DomainConfiguration dc = dci.next();
+        assertEquals("DomainConfiguration should have expected name, ", 
+                expectedName, dc.getName());
+        assertEquals("Should have expected byte limits", maxbytes, 
+                dc.getMaxBytes());
+        assertEquals("Should have expected objects limits", maxobjects, 
+                dc.getMaxObjects());
     }
 
     /**
@@ -89,15 +121,19 @@ public class PartialHarvestTester extends DataModelTestCase {
      * appropriate objects.
      */
     public void testAddSeedsInvalid() {
-        String seedlist = "http://www.x.dk/page1.jsp?aparam=avalue\n"
-                          + "http:// /\n"
-                          + "www\n"
-                          + "www x\n"
-                          + "http://a.b//\n"
-                          + "http://x.y/ /";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("http://www.x.dk/page1.jsp?aparam=avalue");
+        seedlist.add("http:// /");
+        seedlist.add("www");
+        seedlist.add("www x");
+        seedlist.add("http://a.b//");
+        seedlist.add("http://x.y/ /");
+        
         final long maxbytes = 30000L;
+        final int maxobjects = -1;
+        
         try {
-            harvest.addSeeds(seedlist, order1xml, maxbytes);
+            harvest.addSeeds(seedlist, order1xml, maxbytes,maxobjects);
             fail("Should fail on wrong seeds");
         } catch (ArgumentNotValid e) {
             assertTrue("Wrong seeds must be in message: " + e,
@@ -119,28 +155,34 @@ public class PartialHarvestTester extends DataModelTestCase {
      * b) That omitting "http://" is not a problem
      */
     public void testAddSeedsNonDefaultValues() {
-        String seedlist = "www.mydomain.dk/page1.jsp?aparam=avalue";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("www.mydomain.dk/page1.jsp?aparam=avalue");
         final long maxbytes = -1L; // unlimited
-        harvest.addSeeds(seedlist, order1xml, maxbytes);
+        final int maxobjects = -1;
+        
+        harvest.addSeeds(seedlist, order1xml, maxbytes,maxobjects);
         PartialHarvest updatedHarvest =
                 (PartialHarvest) HarvestDefinitionDAO.getInstance().
                 getHarvestDefinition(harvestName);
-        String expectedName = harvestName + "_" + order1xml + "_" + "UnlimitedBytes";
+        String expectedName = harvestName + "_" + order1xml + "_" + "UnlimitedBytes"+ "_UnlimitedObjects";
         
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc = dci.next();
         assertEquals("DomainConfiguration should have expected name, ", 
                 expectedName, dc.getName());
         assertEquals("Should have expected domain name", "mydomain.dk", 
-                dc.getDomain().getName());
+                dc.getDomainName());
         assertEquals("Should have expected byte limits", 
                 maxbytes, dc.getMaxBytes());
         Iterator<SeedList> si = dc.getSeedLists();
         SeedList sl = si.next();
         assertEquals("Should have expected seedlist name", 
                 expectedName, sl.getName());
+        assertTrue("Should only contain one seed, but has " + seedlist.size(), 
+                seedlist.size() == 1);
+        Object[] seedsAsArray = seedlist.toArray();
         assertEquals("Seedlist should contain specified URL", 
-                "http://" + seedlist, sl.getSeedsAsString().trim());
+                "http://" + seedsAsArray[0], sl.getSeedsAsString().trim());
         //Should be no more domainconfigurations or seedlists
         assertFalse("Should only be one configuration in the harvest", dci.hasNext());
         assertFalse("Should only be one seedlist in the configuration", si.hasNext());
@@ -152,24 +194,27 @@ public class PartialHarvestTester extends DataModelTestCase {
      * b) https is supported
      */
     public void testAddSeedsWithSubdomain() {
-        String seedlist = "https://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("https://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue");
         final long maxbytes = 50000L;
-        harvest.addSeeds(seedlist, order1xml, maxbytes);
+        final int maxobjects = -1;
+        
+        harvest.addSeeds(seedlist, order1xml, maxbytes,maxobjects);
         PartialHarvest updatedHarvest =
                 (PartialHarvest) HarvestDefinitionDAO.getInstance().
                 getHarvestDefinition(harvestName);
         String expectedName = harvestName + "_" + order1xml + "_"
-            + maxbytes + "Bytes";
+            + maxbytes + "Bytes"+ "_UnlimitedObjects";
         //
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc = dci.next();
         assertEquals("DomainConfiguration should have expected name, ", expectedName, dc.getName());
-        assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomain().getName());
+        assertEquals("Should have expected domain name", "mydomain.dk", dc.getDomainName());
         assertEquals("Should have expected byte limits", maxbytes, dc.getMaxBytes());
         Iterator<SeedList> si = dc.getSeedLists();
         SeedList sl = si.next();
         assertEquals("Should have expected seedlist name", expectedName, sl.getName());
-        assertEquals("Seedlist should contain specified URL", seedlist, sl.getSeedsAsString().trim());
+        assertTrue("Seedlist should contain specified URL", seedlist.contains(sl.getSeedsAsString().trim()));
         //Should be no more domainconfigurations or seedlists
         assertFalse("Should only be one configuration in the harvest", dci.hasNext());
         assertFalse("Should only be one seedlist in the configuration", si.hasNext());
@@ -179,17 +224,20 @@ public class PartialHarvestTester extends DataModelTestCase {
      * Test that we can correctly process a seedlist with multiple entries.
      */
     public void testAddComplexSeedlist() {
-        String seedlist =
-                "\thttps://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue\n"+
-                "www.anewdomain.dk/index.html  \n" +
-                "www.mydomain.dk/page2.jsp ";
+        Set<String> seedlist = new HashSet<String>();
+        seedlist.add("\thttps://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue");
+        seedlist.add("www.anewdomain.dk/index.html  ");
+        seedlist.add("www.mydomain.dk/page2.jsp ");
+        
         final long maxbytes = 60000L;
-        harvest.addSeeds(seedlist, order1xml, maxbytes);
+        final int maxobjects = -1;
+        
+        harvest.addSeeds(seedlist, order1xml, maxbytes,maxobjects);
         PartialHarvest updatedHarvest =
                 (PartialHarvest) HarvestDefinitionDAO.getInstance().
                 getHarvestDefinition(harvestName);
         String expectedName = harvestName + "_" + order1xml + "_"
-            + maxbytes + "Bytes";
+            + maxbytes + "Bytes"+ "_UnlimitedObjects";
         // Should be two configurations
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc1 = dci.next();
@@ -199,8 +247,8 @@ public class PartialHarvestTester extends DataModelTestCase {
         assertEquals("Configuration should have expected name", expectedName, dc2.getName());
         assertEquals("Should have expected byte limits", maxbytes, dc1.getMaxBytes());
         assertEquals("Should have expected byte limits", maxbytes, dc2.getMaxBytes());
-        String name1 = dc1.getDomain().getName();
-        String name2 = dc2.getDomain().getName();
+        String name1 = dc1.getDomainName();
+        String name2 = dc2.getDomainName();
         boolean order1 = name1.equals("mydomain.dk") && name2.equals("anewdomain.dk");
         boolean order2 = name2.equals("mydomain.dk") && name1.equals("anewdomain.dk");
         assertTrue("The two domains should correspond to the configurations", order1 || order2);
@@ -237,18 +285,33 @@ public class PartialHarvestTester extends DataModelTestCase {
      * configurations and add new ones
      */
     public void testAddSeedsMultipleAdds() {
-        String list1 = "www.1.dk\nwww.2.dk/index.jsp\nwww.3.dk";
-        String list2 = "http://www.1.dk/private\nwww.4.dk\nwww.3.dk/private";
-        String list3 = "www.2.dk/images\n www.4.dk/images\nwww.3.dk/images";
+        Set<String> list1 = new HashSet<String>();
+        list1.add("www.1.dk\n");
+        list1.add("www.2.dk/index.jsp\n");
+        list1.add("www.1.dk\n");
+        list1.add("www.3.dk");
+        
+        Set<String> list2 = new HashSet<String>();
+        list2.add("http://www.1.dk/private\n");
+        list2.add("www.4.dk\n");
+        list2.add("www.3.dk/private");
+        
+        Set<String> list3 = new HashSet<String>();
+        list3.add("www.2.dk/images\n");
+        list3.add(" www.4.dk/images\n");
+        list3.add("www.3.dk/images");
+        
         final long maxbytes1 = 70000L;
         final long maxbytes2 = 80000L;
-        String name1 = harvestName + "_" + order1xml + "_" + maxbytes1 + "Bytes";
-        String name2 = harvestName + "_" + order2xml + "_" + maxbytes2 + "Bytes";
-        harvest.addSeeds(list1, order1xml, maxbytes1);
+        final int maxobjects = -1;
+        
+        String name1 = harvestName + "_" + order1xml + "_" + maxbytes1 + "Bytes"+ "_UnlimitedObjects";
+        String name2 = harvestName + "_" + order2xml + "_" + maxbytes2 + "Bytes"+ "_UnlimitedObjects";
+        harvest.addSeeds(list1, order1xml, maxbytes1,maxobjects);
         harvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(harvestName);
-        harvest.addSeeds(list2, order2xml, maxbytes2);
+        harvest.addSeeds(list2, order2xml, maxbytes2,maxobjects);
         harvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(harvestName);
-        harvest.addSeeds(list3, order1xml, maxbytes1);
+        harvest.addSeeds(list3, order1xml, maxbytes1,maxobjects);
         //
         // So now we have the following:
         // www.1.dk has two configurations name1 and name2, each with one seed
@@ -275,34 +338,34 @@ public class PartialHarvestTester extends DataModelTestCase {
             if (dc.getName().equals(name2)) {
                 assertEquals("Should have right max bytes", maxbytes2, dc.getMaxBytes());
             }
-            if (dc.getName().equals(name1) && dc.getDomain().getName().equals("1.dk")) {
+            if (dc.getName().equals(name1) && dc.getDomainName().equals("1.dk")) {
                 countName1++;
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name2) && dc.getDomain().getName().equals("1.dk")) {
+            if (dc.getName().equals(name2) && dc.getDomainName().equals("1.dk")) {
                 countName2++;
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name1) && dc.getDomain().getName().equals("2.dk")) {
+            if (dc.getName().equals(name1) && dc.getDomainName().equals("2.dk")) {
                 countName1++;
                 assertEquals("Should have two seeds", 2, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name2) && dc.getDomain().getName().equals("2.dk")) {
+            if (dc.getName().equals(name2) && dc.getDomainName().equals("2.dk")) {
                 throw new UnknownID("Did not expect configuration with name " + name2 + "for 2.dk");
             }
-            if (dc.getName().equals(name1) && dc.getDomain().getName().equals("3.dk")) {
+            if (dc.getName().equals(name1) && dc.getDomainName().equals("3.dk")) {
                 countName1++;
                 assertEquals("Should have two seeds", 2, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name2) && dc.getDomain().getName().equals("3.dk")) {
+            if (dc.getName().equals(name2) && dc.getDomainName().equals("3.dk")) {
                 countName2++;
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name1) && dc.getDomain().getName().equals("4.dk")) {
+            if (dc.getName().equals(name1) && dc.getDomainName().equals("4.dk")) {
                 countName1++;
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getName().equals(name2) && dc.getDomain().getName().equals("4.dk")) {
+            if (dc.getName().equals(name2) && dc.getDomainName().equals("4.dk")) {
                 countName2++;
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
@@ -311,7 +374,7 @@ public class PartialHarvestTester extends DataModelTestCase {
         assertEquals("Should be 3 configurations with name " + name2, 3, countName2);
     }
 
-    /** Test that setting domain configurations actually removes dups.
+    /** Test that setting domain configurations actually removes duplicates.
      * @throws Exception
      */
     public void testSetDomainConfigurations() throws Exception {
@@ -360,10 +423,17 @@ public class PartialHarvestTester extends DataModelTestCase {
      * configurations and add new ones
      */
     public void testAddSeedsMiscNewlines() {
-        String list1 = "www.1.dk\n\rwww.2.dk/index.jsp\n\nwww.3.dk\r\n3.dk/test\r"
-                       + "3.dk/tyst";
+        Set<String> list1 = new HashSet<String>();
+        list1.add("www.1.dk\n\r");
+        list1.add("www.2.dk/index.jsp\n\n");
+        list1.add("www.3.dk\r\n");
+        list1.add("3.dk/test\r");
+        list1.add("3.dk/tyst");
+        
         final long maxbytes = 90000L;
-        harvest.addSeeds(list1, order1xml, maxbytes);
+        final int maxobjects = -1;
+        
+        harvest.addSeeds(list1, order1xml, maxbytes,maxobjects);
         //
         // So now we have the following:
         // www.1.dk has one configuration, with one seed
@@ -378,17 +448,40 @@ public class PartialHarvestTester extends DataModelTestCase {
         while (dcs.hasNext()) {
             count++;
             dc = dcs.next();
-            if (dc.getDomain().getName().equals("1.dk")) {
+            if (dc.getDomainName().equals("1.dk")) {
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getDomain().getName().equals("2.dk")) {
+            if (dc.getDomainName().equals("2.dk")) {
                 assertEquals("Should have one seed", 1, dc.getSeedLists().next().getSeeds().size());
             }
-            if (dc.getDomain().getName().equals("3.dk")) {
+            if (dc.getDomainName().equals("3.dk")) {
                 assertEquals("Should have three seeds", 3, dc.getSeedLists().next().getSeeds().size());
             }
             assertEquals("Should have right max bytes", maxbytes, dc.getMaxBytes());
         }
         assertEquals("Three domains shopuld be added", 3, count);
     }
+    
+    /**
+     * Verify that you can delete only DomainConfiguration from the list of
+     * DomainConfigurations associated with a PartialHarvest. 
+     */
+    public void testRemoveDomainconfiguration() {
+        DomainDAO ddao = DomainDAO.getInstance();
+        Domain d = ddao.read("netarkivet.dk");
+        DomainConfiguration dc = d.getDefaultConfiguration();
+        SparseDomainConfiguration dcKey = new SparseDomainConfiguration(dc.getDomainName(), 
+                dc.getName());
+        List<DomainConfiguration> dclist = new ArrayList<DomainConfiguration>();
+        dclist.add(dc);
+        harvest.setDomainConfigurations(dclist);
+        List<DomainConfiguration> configList =
+            IteratorUtils.toList(harvest.getDomainConfigurations());
+        assertTrue("Should have one config now", configList.size() == 1);
+        harvest.removeDomainConfiguration(dcKey);
+        configList =
+            IteratorUtils.toList(harvest.getDomainConfigurations());
+        assertTrue("Should have zero configs now", configList.size() == 0);  
+    }
+    
 }

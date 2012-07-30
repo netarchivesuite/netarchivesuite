@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,8 +25,12 @@
 
 package dk.netarkivet.harvester.distribute;
 
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
+import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 
 /**
  * Interface for all classes which handles harvester-related messages received
@@ -44,12 +50,41 @@ public interface HarvesterMessageVisitor {
      *
      * @param msg A received message.
      */
-    public void visit(CrawlStatusMessage msg);
+    void visit(CrawlStatusMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(DoOneCrawlMessage msg);
+    void visit(DoOneCrawlMessage msg);
+    
+    /** This method should be overridden to handle the receipt of a message.
+    *
+    * @param msg A received message.
+    */
+    void visit(CrawlProgressMessage msg);
+    
+    /** This method should be overridden to handle the receipt of a message.
+    *
+    * @param msg A received message.
+    */
+    void visit(FrontierReportMessage msg);
 
+    /** This method should be overridden to handle the receipt of a message.
+    *
+    * @param msg A received message.
+    */
+    void visit(JobEndedMessage msg);
+
+    /** This method should be overridden to handle the receipt of a message.
+    *
+    * @param msg A received message.
+    */
+    void visit(HarvesterReadyMessage msg);
+    
+    /** This method should be overridden to handle the receipt of a message.
+    *
+    * @param msg A received message.
+    */
+    void visit(IndexReadyMessage msg);   
 }

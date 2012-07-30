@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -22,21 +24,13 @@
 */
 package dk.netarkivet.harvester.webinterface;
 
-import java.io.IOException;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
-import dk.netarkivet.common.webinterface.SiteSection;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.TestInfo;
-import dk.netarkivet.harvester.scheduler.HarvestScheduler;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -58,12 +52,12 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         // Add a DefinitionsSiteSection to the list of Sitesections being loaded
         // when GUIWebServer starts.
         Settings.set(
-                CommonSettings.SITESECTION_WEBAPPLICATION, 
+                CommonSettings.SITESECTION_WEBAPPLICATION,
                 TestInfo.HARVESTDEFINITION_JSP_DIR);
         Settings.set(
-                CommonSettings.SITESECTION_CLASS, 
+                CommonSettings.SITESECTION_CLASS,
                 TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
- 
+
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
@@ -107,30 +101,6 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     }
 
     /**
-     * Test that we actually start and stop the HarvestScheduler.
-     * @throws InterruptedException
-     * @throws IOException
-     */
-    public void testSchedulerStarted() throws IOException, InterruptedException {
-        gui = GUIWebServer.getInstance();
-        Thread.sleep(1000);
-        LogUtils.flushLogs(HarvestScheduler.class.getName());
-        FileAsserts.assertFileContains("Scheduler startup should be in log",
-                "Creating HarvestScheduler", TestInfo.LOG_FILE);
-        Thread.sleep(1000);
-        gui.cleanup();
-        Thread.sleep(1000);
-        LogUtils.flushLogs(HarvestScheduler.class.getName());
-        FileAsserts.assertFileContains("Scheduler shutdown should be in log",
-                "HarvestScheduler closing down", TestInfo.LOG_FILE);
-
-        // If we get here without exceptions, everything has shut down nicely
-
-        // Except some threads may be still hanging around, keeping the DB alive.
-        Thread.sleep(1000);
-    }
-
-    /**
      * Test, that GUIWebServer.getInstance throws UnknownID exception
      * if templates tables does not contain the template with name
      * Settings.DOMAIN_DEFAULT_ORDERXML
@@ -150,20 +120,6 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
          assertTrue("Test-requirement not met: "
                  + "DefinitionsSiteSection not in default settings",
                  harvestdefinitionFound);
-         
-         TemplateDAO dao = TemplateDAO.getInstance();
-         // remove default order.xml from dao
-        dao.delete(Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML));
-         try {
-             gui = GUIWebServer.getInstance();
-             
-             for (SiteSection s: SiteSection.getSections()) {
-                 System.out.println(s);
-             }
-             fail("Should fail if default template is gone");
-         } catch (IOFailure e) {
-             // expected
-         }
      }
 
 }

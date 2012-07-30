@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,18 +32,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Date;
 
-import junit.framework.TestCase;
 import org.archive.io.ArchiveRecordHeader;
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.archive.wayback.core.CaptureSearchResult;
-import org.archive.wayback.core.Resource;
 import org.archive.wayback.exception.ResourceNotAvailableException;
 import org.archive.wayback.resourcestore.resourcefile.ArcResource;
 import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
@@ -246,9 +244,9 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
 
     /**
-     * DummyGetMessageReplyServer, which acts as an intemediate JMS Server.
+     * DummyGetMessageReplyServer, which acts as an intermediate JMS Server.
      * Functionality:
-     *  - If ARC file exists read the approiate data into an ARC record, and create metadata information
+     *  - If ARC file exists read the appropriate data into an ARC record, and create metadata information
      *  - If ARC file doesn't exists, make dummy ARC record, with no data and dummy metadata information
      */
     private static class DummyGetMessageReplyServer implements MessageListener {
@@ -259,7 +257,7 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
         public DummyGetMessageReplyServer() {
             conn.setListener(Channels.getTheRepos(), this);
         }
-
+        
         public void close() {
             conn.removeListener(Channels.getTheRepos(), this);
         }
@@ -304,7 +302,7 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
                                     ((Long)headers.get(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY))+ tmp_length);
                         ArchiveRecordHeader header = new ARCRecordMetaData(filename, headers);
                         ARCRecord archiveRecord = new ARCRecord(in, header);
-                        bar = new BitarchiveRecord(archiveRecord);
+                        bar = new BitarchiveRecord(archiveRecord, filename);
                     }
 
                     uploadResource.setUrlKey((String) headers.get(ARCRecordMetaData.URL_FIELD_KEY));
@@ -324,7 +322,8 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
                         final ARCRecordMetaData meta = new ARCRecordMetaData(netMsg.getArcFile(), metadata);
 
                         metadata.put(ARCConstants.LENGTH_FIELD_KEY, Integer.toString(encodedKey.length));
-                        setBitarchiveRecord(new BitarchiveRecord(new ARCRecord(new ByteArrayInputStream(encodedKey),meta)));
+                        setBitarchiveRecord(new BitarchiveRecord(new ARCRecord(new ByteArrayInputStream(encodedKey),meta)
+                        , netMsg.getArcFile()));
                         netMsg.setRecord(bar);
                     } catch (IOException ex) {
                         throw new Error(e);
@@ -338,16 +337,16 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
               // IO error
             }
         }
-      public void setBitarchiveRecord(BitarchiveRecord bar) {
+        public void setBitarchiveRecord(BitarchiveRecord bar) {
              this.bar = bar;
-     }
+        }
 
-     private byte[] encode(String arcFile, long index) {
-        String s = arcFile + " " + index;
-        return s.getBytes();
-     }
+        private byte[] encode(String arcFile, long index) {
+            String s = arcFile + " " + index;
+            return s.getBytes();
+        }
 
-     }
+    }
 
 
 }

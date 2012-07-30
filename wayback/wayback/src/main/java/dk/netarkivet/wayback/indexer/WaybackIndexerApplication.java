@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +25,12 @@ package dk.netarkivet.wayback.indexer;
 
 import dk.netarkivet.common.utils.ApplicationUtils;
 
+/**
+ * The entry point for the wayback indexer. This application determines what
+ * files in the arcrepository remain to be indexed and indexes them concurrently
+ * via batch jobs. The status of all files in the archive is maintained in a
+ * persistent object store managed by Hibernate.
+ */
 public class WaybackIndexerApplication {
 
     /**

@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +39,6 @@ import org.dom4j.io.SAXReader;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
-
 
 /**
  * Contains test information about all harvest definition test data.
@@ -91,7 +92,7 @@ public class TestInfo {
 
     public static final int GUI_WEB_SERVER_PORT = 4242;
     public static final String GUI_WEB_SERVER_WEBBASE = "/jsp";
-    public static final String GUI_WEB_SERVER_JSP_DIRECTORY = "tests/dk/netarkivet/harvester/datamodel/data/jsp";
+    //public static final String GUI_WEB_SERVER_JSP_DIRECTORY = "tests/dk/netarkivet/harvester/datamodel/data/jsp";
     public static HourlyFrequency FREQUENCY = new HourlyFrequency(1);
     public static File HARVEST_DEFINITIONS_DIR = new File(TEMPDIR,
             "harvestdefinitions");
@@ -162,7 +163,7 @@ public class TestInfo {
     public static final int STATUS_DONE = 3;
     public static final int STATUS_FAILED = 4;
     public static final String EXISTINGSCHEDULENAME = "DefaultSchedule";
-    public static final Long EXISTINGHARVESTDEFINITIONOID = new Long(42l);
+    public static final Long EXISTINGHARVESTDEFINITIONOID = Long.valueOf(42l);
     public static final String SHORTDOMAINNAME = "x.dk";
     public static final int MAX_OBJECTS_PER_DOMAIN = 33;
     public static final File NON_EXISTING_FILE = new File("/no/such/file");
@@ -179,12 +180,11 @@ public class TestInfo {
     static final File EMPTYDBFILE = new File(TOPDATADIR, "emptyhddb.jar");
     public static final File NONEXISTINGDIR =
             new File(TEMPDIR, "nonexisting");
-    public static final String GUI_WEB_SERVER_SITESECTION_CLASS
-            = TestSiteSection.class.getName();
     public static final String HARVESTDEFINITION_SITESECTIONCLASS
             = DefinitionsSiteSection.class.getName();
     public static final String CRAWLER_TRAPS_01 = "crawler_traps_01.txt";
     public static final String CRAWLER_TRAPS_02 = "crawler_traps_02.txt";
+    public static final String CRAWLER_TRAPS_03 = "crawler_traps_03.txt";
 
     /**
      * Load resources needed by unit tests.
@@ -204,15 +204,14 @@ public class TestInfo {
     public static DomainConfiguration createConfig(String domainName, String configName,
                                                     long objectCount) {
         DomainDAO dao = DomainDAO.getInstance();
-
-        DomainConfiguration cfg = dao.read(domainName).getConfiguration(configName);
-        Domain d = cfg.getDomain();
+        Domain d = dao.read(domainName);
+        DomainConfiguration cfg = d.getConfiguration(configName);
         cfg.setMaxObjects(4000);
         cfg.setMaxBytes(-1);
         HarvestInfo hi = new HarvestInfo(new Long(1234), d.getName(),
                 cfg.getName(), new Date(), 1L, objectCount, StopReason.DOWNLOAD_COMPLETE);
 
-        cfg.addHarvestInfo(hi);
+        d.getHistory().addHarvestInfo(hi);
         dao.update(d);
 
         return dao.read(domainName).getConfiguration(configName);

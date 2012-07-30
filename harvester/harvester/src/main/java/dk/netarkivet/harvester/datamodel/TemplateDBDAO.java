@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +25,8 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -59,7 +63,12 @@ public class TemplateDBDAO extends TemplateDAO {
      * Only used by TemplateDAO,getInstance().
      */
     TemplateDBDAO() {
-        DBUtils.checkTableVersion(DBConnect.getDBConnection(), "ordertemplates", 1);
+        Connection connection = HarvestDBConnection.get();
+        try {
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.ORDERTEMPLATES);
+        } finally {
+            HarvestDBConnection.release(connection);
+        }
     }
 
     /**
@@ -71,7 +80,7 @@ public class TemplateDBDAO extends TemplateDAO {
     public synchronized HeritrixTemplate read(String orderXmlName) {
         ArgumentNotValid.checkNotNullOrEmpty(
                 orderXmlName, "String orderXmlName");
-        Connection c = DBConnect.getDBConnection();
+        Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
@@ -81,10 +90,16 @@ public class TemplateDBDAO extends TemplateDAO {
             if (!res.next()) {
                 throw new UnknownID("Can't find template " + orderXmlName);
             }
-            Clob clob = res.getClob(1);
+            Reader orderTemplateReader = null;
+            if (DBSpecifics.getInstance().supportsClob()) {
+                Clob clob = res.getClob(1);
+                orderTemplateReader = clob.getCharacterStream();
+            } else {
+                orderTemplateReader = new StringReader(res.getString(1));
+            }
             SAXReader reader = new SAXReader();
             // TODO Check what happens on non-ascii
-            Document orderXMLdoc = reader.read(clob.getCharacterStream());
+            Document orderXMLdoc = reader.read(orderTemplateReader);
             return new HeritrixTemplate(orderXMLdoc);
         } catch (SQLException e) {
             final String message = "SQL error finding order.xml for "
@@ -99,6 +114,7 @@ public class TemplateDBDAO extends TemplateDAO {
             throw new IOFailure(message, e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
         }
     }
 
@@ -108,10 +124,15 @@ public class TemplateDBDAO extends TemplateDAO {
      * @return Iterator<String> with all names of templates (without .xml).
      */
     public synchronized Iterator<String> getAll() {
-        List<String> names = DBUtils.selectStringList(
-                DBConnect.getDBConnection(),
-                "SELECT name FROM ordertemplates ORDER BY name");
-        return names.iterator();
+        Connection c = HarvestDBConnection.get();
+        try {
+            List<String> names = DBUtils.selectStringList(
+                    c,
+                    "SELECT name FROM ordertemplates ORDER BY name");
+            return names.iterator();
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     /** Return true if the database contains a template with the given name.
@@ -124,12 +145,27 @@ public class TemplateDBDAO extends TemplateDAO {
         ArgumentNotValid.checkNotNullOrEmpty(
                 orderXmlName, "String orderXmlName");
 
-        int count = DBUtils.selectIntValue(
-                DBConnect.getDBConnection(),
-                "SELECT COUNT(*) FROM ordertemplates WHERE name = ?",
-                orderXmlName);
-        return count == 1;
+        Connection c = HarvestDBConnection.get();
+        try {
+            return exists(c, orderXmlName);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
+
+    /** Return true if the database contains a template with the given name.
+    *
+    * @param orderXmlName Name of an order.xml template (without .xml).
+    * @return True if such a template exists.
+    * @throws ArgumentNotValid If the orderXmlName is null or an empty String
+    */
+   private synchronized boolean exists(Connection c, String orderXmlName) {
+       int count = DBUtils.selectIntValue(
+               c,
+               "SELECT COUNT(*) FROM ordertemplates WHERE name = ?",
+               orderXmlName);
+       return count == 1;
+   }
 
     /** Create a template. The template must not already exist.
      *
@@ -143,14 +179,15 @@ public class TemplateDBDAO extends TemplateDAO {
         ArgumentNotValid.checkNotNullOrEmpty(
                 orderXmlName, "String orderXmlName");
         ArgumentNotValid.checkNotNull(orderXml, "HeritrixTemplate orderXml");
-        
-        if (exists(orderXmlName)) {
-            throw new PermissionDenied("An order template called "
-                    + orderXmlName + " already exists");
-        }
-        Connection c = DBConnect.getDBConnection();
+
+        Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
+            if (exists(c, orderXmlName)) {
+                throw new PermissionDenied("An order template called "
+                        + orderXmlName + " already exists");
+            }
+
             s = c.prepareStatement("INSERT INTO ordertemplates "
                     + "( name, orderxml ) VALUES ( ?, ? )");
             DBUtils.setStringMaxLength(s, 1, orderXmlName,
@@ -162,29 +199,8 @@ public class TemplateDBDAO extends TemplateDAO {
             throw new IOFailure("SQL error creating template " + orderXmlName
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
         }
-    }
-
-    /** Describe where a given template has been used.
-     *
-     * @param orderXmlName Name of the template.
-     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
-     * @return A string describing the usages of the template, or null if it
-     *  is not used.
-     */
-    public String describeUsages(String orderXmlName) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                orderXmlName, "String orderXmlName");
-        
-        return DBUtils.getUsages(DBConnect.getDBConnection(),
-                                 "SELECT DISTINCT domains.name "
-                + "  FROM domains, configurations, ordertemplates"
-                + " WHERE ordertemplates.name = ?"
-                + "   AND configurations.template_id "
-                +       "= ordertemplates.template_id"
-                + "   AND domains.domain_id = configurations.domain_id",
-                orderXmlName, orderXmlName);
     }
 
     /** Update a template. The template must already exist.
@@ -192,7 +208,7 @@ public class TemplateDBDAO extends TemplateDAO {
      * @param orderXmlName Name of the template.
      * @param orderXml XML document that is a Heritrix order.xml template.
      * @throws PermissionDenied If the template does not exist
-     * @throws IOFailure If the template could not be 
+     * @throws IOFailure If the template could not be
      * @throws ArgumentNotValid If the orderXmlName is null or an empty String,
      * or the orderXml is null.
      */
@@ -201,14 +217,15 @@ public class TemplateDBDAO extends TemplateDAO {
         ArgumentNotValid.checkNotNullOrEmpty(
                 orderXmlName, "String orderXmlName");
         ArgumentNotValid.checkNotNull(orderXml, "HeritrixTemplate orderXml");
-        
-        if (!exists(orderXmlName)) {
-            throw new PermissionDenied("No order template called "
-                    + orderXmlName + " exists");
-        } 
-        Connection c = DBConnect.getDBConnection();
+
+        Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
+            if (!exists(c, orderXmlName)) {
+                throw new PermissionDenied("No order template called "
+                        + orderXmlName + " exists");
+            }
+
             s = c.prepareStatement("UPDATE ordertemplates "
                     + "SET orderxml = ? "
                     + "WHERE name = ?");
@@ -220,44 +237,7 @@ public class TemplateDBDAO extends TemplateDAO {
             throw new IOFailure("SQL error updating template " + orderXmlName
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
-    }
-
-    /** Delete a template entirely from the database.
-     *
-     * @param orderXmlName Name of the template to delete.
-     * @throws PermissionDenied if the template is in use or the template
-     * does not exist.
-     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
-     */
-    public synchronized void delete(String orderXmlName) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                orderXmlName, "String orderXmlName");
-        if (!exists(orderXmlName)) {
-            throw new PermissionDenied("No order template called '"
-                    + orderXmlName + "' exists");
-        }
-        Connection c = DBConnect.getDBConnection();
-        PreparedStatement s = null;
-        try {
-            String usages = describeUsages(orderXmlName);
-            if (usages != null) {
-                String message = "Cannot delete template '" + orderXmlName
-                        + "' as it is used in " + usages;
-                log.debug(message);
-                throw new PermissionDenied(message);
-            }
-            s = c.prepareStatement("DELETE FROM ordertemplates "
-                                + "WHERE name = ?");
-            s.setString(1, orderXmlName);
-            s.executeUpdate();
-            log.debug("Deleting template '" + orderXmlName + "'");
-        } catch (SQLException e) {
-            throw new IOFailure("SQL error deleting template '" + orderXmlName
-                    + "'\n" + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
         }
     }
 }

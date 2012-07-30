@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -49,22 +51,22 @@ public class CommonSettings {
 
     /** The path in the XML-tree for the settings branch. (Used by deploy).*/
     public static String SETTINGS = "settings";
-    
+
     /**
      * <b>settings.common.environmentName</b>: <br>
      * The name of the environment in which this code is running.
-     * E.g. PROD, RELEASETEST. It is used as a Common prefix to all JMS 
+     * E.g. PROD, RELEASETEST. It is used as a Common prefix to all JMS
      * channels created in a NetarchiveSuite installation. */
     public static String ENVIRONMENT_NAME = "settings.common.environmentName";
 
-    /** 
+    /**
      * <b>settings.common.tempDir</b>: <br>
-     * Common temporary directory for all applications. 
+     * Common temporary directory for all applications.
      * Some subdirs of this directory  must be set to have AllPermision in the
      * conf/security.conf file, or the web pages won't work. */
     public static String DIR_COMMONTEMPDIR = "settings.common.tempDir";
 
-    /** 
+    /**
      * <b>settings.common.remoteFile.class</b>: <br>
      * The class to use for RemoteFile objects (for transferring files around).
      * This class must implement the dk.netarkivet.common.distribute.RemoteFile
@@ -79,6 +81,13 @@ public class CommonSettings {
     public static String JMS_BROKER_CLASS = "settings.common.jms.class";
 
     /**
+     * <b>settings.common.jms.retries</b>: <br>
+     * Selects the number of times the JMS connection tries to 
+     * reconnect to the broker.
+     * */
+    public static String JMS_BROKER_RETRIES = "settings.common.jms.retries";
+    
+    /**
      * <b>settings.common.http.port</b>: <br>
      * The *unique* (per host) port number that may or may not be used to serve
      * http. */
@@ -87,7 +96,7 @@ public class CommonSettings {
     /**
      * <b>settings.common.arcrepositoryClient.class</b>: <br>
      * The class that implements the ArcRepositoryClient. The class must
-     * implement the interface 
+     * implement the interface
      * dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient
      * This class will be instantiated by the ArcRepositoryClientFactory.
      */
@@ -100,47 +109,59 @@ public class CommonSettings {
      */
     public static String MAX_NUM_BATCH_EXCEPTIONS
             = "settings.common.batch.maxExceptions";
-    
+
     /**
      * <b>settings.common.batch.loggingInterval</b>: <br/>
      * The time between logging the status of a batch job.
      */
-    public static String BATCH_LOGGING_INTERVAL 
+    public static String BATCH_LOGGING_INTERVAL
             = "settings.common.batch.loggingInterval";
-    
+
     /**
      * <b>settings.common.batch.defaultBatchTimeout</b>: <br/>
      * The default timeout for batchjobs. This will be used for batchjobs which
      * has the batchJobTimeout set to -1 (inherited value from FileBatchJob).
      */
-    public static String BATCH_DEFAULT_TIMEOUT = 
+    public static String BATCH_DEFAULT_TIMEOUT =
         "settings.common.batch.defaultBatchTimeout";
 
-    /** 
+    /**
      * <b>settings.common.monitorregistryClient.class</b>: <br>
      * Which class to use for monitor registry. Must implement the interface
      * dk.netarkivet.common.distribute.monitorregistry.MonitorRegistryClient. */
     public static String MONITOR_REGISTRY_CLIENT
             = "settings.common.monitorregistryClient.class";
 
-    /** 
+    /**
      * <b>settings.common.monitorregistryClient.reregisterdelay</b>: <br>
-     * Delay between every reregistering in minutes, 
-     * e.g. 1 for one minute. 
-     */ 
+     * Delay between every reregistering in minutes,
+     * e.g. 1 for one minute.
+     */
     public static String MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
             = "settings.common.monitorregistryClient.reregisterdelay";
-    
+
     /**
      * <b>settings.common.indexClient.class</b>: <br>
      * The class instantiated to give access to indices.  The class must
-     * implement the interface 
+     * implement the interface
      * dk.netarkivet.common.distribute.indexserver.JobIndexCache
      * The class instantiations are manufactored by IndexClientFactory.
      */
     public static String INDEXSERVER_CLIENT
             = "settings.common.indexClient.class";
 
+    /**
+     * <b>settings.common.unixSort.useCommonTempDir</b>: <br>
+     * When using the Unix sort command, by default it stores temporary files
+     * in the system temp dir, but if this setting is set to true, then it will be configured to
+     * use the common temp dir defined by common.settings.tempDir.
+     * By default the value is false (use system temp), which is the legacy behavior.
+     * This setting is part of the fix for Jira issue NAS-1995.
+     * @see #DIR_COMMONTEMPDIR
+     */
+    public static String UNIX_SORT_USE_COMMON_TEMP_DIR
+            = "settings.common.unixSort.useCommonTempDir";
+    
     /**
      * <b>settings.common.cacheDir</b>: <br>
      * The name of the directory where cache data global to the entire
@@ -151,16 +172,16 @@ public class CommonSettings {
 
     // TODO Currently only used by heritrix shutdown - move to harvester
     // settings?
-    /** 
+    /**
      * <b>settings.common.processTimeout</b>: <br>
      * The number of milliseconds we wait for processes to react to
      * shutdown requests. */
     public static String PROCESS_TIMEOUT
             = "settings.common.processTimeout";
 
-    /** 
+    /**
      * <b>settings.common.notifications.class</b>: <br>
-     * The implementation class for notifications, e.g. error notification. 
+     * The implementation class for notifications, e.g. error notification.
      * The class must extend dk.netarkivet.common.utils.Notifications */
     public static String NOTIFICATIONS_CLASS
             = "settings.common.notifications.class";
@@ -170,59 +191,59 @@ public class CommonSettings {
      * The mail server to use when sending mails. */
     public static String MAIL_SERVER = "settings.common.mail.server";
 
-    /** 
+    /**
      * <b>settings.common.jmx.port</b>: <br>
      * The port to use for JMX. */
     public static String JMX_PORT = "settings.common.jmx.port";
 
-    /** 
+    /**
      * <b>settings.common.jmx.rmiPort</b>: <br>
      * The JMX's RMI port to use for internal communication with beans. */
     public static String JMX_RMI_PORT = "settings.common.jmx.rmiPort";
 
-    /** 
+    /**
      * <b>settings.common.jmx.passwordFile</b>: <br>
      * The password file, containing information about who may connect to the
-     * beans. 
+     * beans.
      * The file has a format defined by the JMX standard,
      * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html#PasswordAccessFiles>*/
     public static String JMX_PASSWORD_FILE
             = "settings.common.jmx.passwordFile";
 
-    /** 
+    /**
      * <b>settings.common.jmx.accessFile</b>: <br>
      * The access file, containing information about who have which JMX roles
-     * have which access privileges. 
+     * have which access privileges.
      * The file has a format defined by the JMX standard,
      * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html#PasswordAccessFiles>*/
     public static String JMX_ACCESS_FILE
             = "settings.common.jmx.accessFile";
 
-    
-    /** 
+
+    /**
      * <b>settings.common.jmx.timeout</b>: <br>
      * How many seconds we will wait before giving up on a JMX connection. */
     public static String JMX_TIMEOUT
             = "settings.common.jmx.timeout";
 
-    /** 
+    /**
      * <b>settings.common.webinterface</b>: <br>
      * The entire webinterface setting structure. */
     public static String WEBINTERFACE_SETTINGS
             = "settings.common.webinterface";
 
-    /** 
+    /**
      * settings.common.webinterface.<b>language</b>: <br>
-     * The entire language setting structure under the webinterface setting. 
+     * The entire language setting structure under the webinterface setting.
      * Is repeated for each language */
     public static String WEBINTERFACE_LANGUAGE = "language";
-    
-    /** 
+
+    /**
      * settings.common.webinterface.language.<b>locale</b>: <br>
      * The locale the GUI is available as under specific language setting. */
     public static String WEBINTERFACE_LANGUAGE_LOCALE = "locale";
 
-    /** 
+    /**
      * settings.common.webinterface.language.<b>name</b>: <br>
      * The native name of the language for the locale under specific language
      * setting. */
@@ -231,7 +252,7 @@ public class CommonSettings {
     /**
      * <b>settings.common.webinterface.siteSection.class</b>: <br>
      * The subclass of SiteSection that defines a part of the
-     * web interface. Is part of repeated siteSection settings for each 
+     * web interface. Is part of repeated siteSection settings for each
      * part. */
     public static String SITESECTION_CLASS
             = "settings.common.webinterface.siteSection.class";
@@ -239,22 +260,29 @@ public class CommonSettings {
     /**
      * <b>settings.common.webinterface.siteSection.webapplication</b>: <br>
      * The directory or war-file containing the web application
-     * for a site section. Is part of repeated siteSection settings for each 
+     * for a site section. Is part of repeated siteSection settings for each
      * part. */
     public static String SITESECTION_WEBAPPLICATION
             = "settings.common.webinterface.siteSection.webapplication";
 
-    /** 
+    /**
+     * <b>settings.common.webinterface.harvestStatus.defaultPageSize</b>: <br>
+     * The default number of jobs to show in the harvest status section,
+     * on one result page.
+     */
+    public static String HARVEST_STATUS_DFT_PAGE_SIZE
+            = "settings.common.webinterface.harvestStatus.defaultPageSize";
+    /**
      * <b>settings.common.topLevelDomains.tld</b>: <br>
-     * Valid top level domain, like .co.uk, .dk, .org. Is part of repeated 
+     * Valid top level domain, like .co.uk, .dk, .org. Is part of repeated
      * in settings for each top level domain */
     public static String TLDS = "settings.common.topLevelDomains.tld";
 
     // TODO Currently only used by harvestscheduler - move to harvester
     // settings?
-    /** 
+    /**
      * <b>settings.common.database.class</b>: <br>
-     * The class that defines DB-specific methods. This class must extend 
+     * The class that defines DB-specific methods. This class must extend
      * the DBSpecifics class */
     public static String DB_SPECIFICS_CLASS
             = "settings.common.database.class";
@@ -266,35 +294,131 @@ public class CommonSettings {
     public static String DB_IS_DERBY_IF_CONTAINS = "Derby";
 
     /**
-     * <b>settings.common.database.url</b>: <br>
-     * The URL to use to connect to the database specified in the 
+     * <b>settings.common.database.baseUrl</b>: <br>
+     * The URL to use to connect to the database specified in the
      * DB_SPECIFICS_CLASS setting.
      */
-    public static String DB_URL
-            = "settings.common.database.url";
-    
+    public static String DB_BASE_URL = "settings.common.database.baseUrl";
+
+    /**
+     * <b>settings.common.database.machine</b>: <br>
+     * Used for the external harvest definition database. The machine where
+     * the harvest definition database is located.
+     */
+    public static String DB_MACHINE = "settings.common.database.machine";
+
+    /**
+     * <b>settings.common.database.port</b>: <br>
+     * Used for the external harvest definition database. The port where the
+     * external harvest definition database is attached.
+     */
+    public static String DB_PORT = "settings.common.database.port";
+
+    /**
+     * <b>settings.common.database.dir</b>: <br>
+     * Used for the external harvest definition database. The directory where
+     * the external harvest definition database is located.
+     */
+    public static String DB_DIR = "settings.common.database.dir";
+
     /**
      * <b>settings.common.database.validityCheckTimeout</b>: <br>
-     * Timeout in seconds to check for the validity of a JDBC connection on 
-     * the server. This is the time in seconds to wait for the database 
-     * operation used to validate the connection to complete. 
-     * If the timeout period expires before the operation completes, this 
-     * method returns false. A value of 0 indicates a timeout is not 
-     * applied to the database operation. 
-     * 
+     * Timeout in seconds to check for the validity of a JDBC connection on
+     * the server. This is the time in seconds to wait for the database
+     * operation used to validate the connection to complete.
+     * If the timeout period expires before the operation completes, this
+     * method returns false. A value of 0 indicates a timeout is not
+     * applied to the database operation.
+     *
      * {@link java.sql.Connection#isValid(int)}
      */
     public static String DB_CONN_VALID_CHECK_TIMEOUT
             = "settings.common.database.validityCheckTimeout";
 
     /**
-     * <b>settings.common.database.backupInitHour</b>: <br>
-     * The earliest time of day backup will be initiated, 0..24 hours.  At
-     * a time shortly after this, a consistent backup copy of the database
-     * will be created.
+     * <b>settings.common.database.pool.minSize</b>: <br>
+     * Configure the minimum size of the DB connection pool.
+     * Default value is 5.
      */
-    public static String DB_BACKUP_INIT_HOUR
-            = "settings.common.database.backupInitHour";
+    public static String DB_POOL_MIN_SIZE =
+        "settings.common.database.pool.minSize";
+
+    /**
+     * <b>settings.common.database.pool.maxSize</b>: <br>
+     * Configure the maximum size of the DB connection pool.
+     * Default value is 10.
+     */
+    public static String DB_POOL_MAX_SIZE =
+        "settings.common.database.pool.maxSize";
+
+    /**
+     * <b>settings.common.database.pool.acquireInc</b>: <br>
+     * Configure the increment size DB connection pool.
+     * Default value is 5 (half the max size).
+     */
+    public static String DB_POOL_ACQ_INC =
+        "settings.common.database.pool.acquireInc";
+
+    /**
+     * <b>settings.common.database.pool.maxStm</b>: <br>
+     * Configure statement pooling, by setting the global maximum number
+     * of pooled prepared statements for a data source.
+     * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
+     * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
+     * fully deactivated.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html">c3p0 documentation</a>
+     */
+    public static String DB_POOL_MAX_STM =
+        "settings.common.database.pool.maxStm";
+
+    /**
+     * <b>settings.common.database.pool.maxStmPerConn</b>: <br>
+     * Configure statement pooling, by setting the global maximum number
+     * of pooled prepared statements for a data source.
+     * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
+     * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
+     * fully deactivated.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html">c3p0 documentation</a>
+     */
+    public static String DB_POOL_MAX_STM_PER_CONN =
+        "settings.common.database.pool.maxStmPerConn";
+
+    /**
+     * <b>settings.common.database.pool.idleConnTestPeriod</b>: <br>
+     * Configure idle connection testing period in seconds.
+     * Default is 0, which means no idle connection testing
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#idleConnectionTestPeriod"/>
+     */
+    public static String DB_POOL_IDLE_CONN_TEST_PERIOD =
+        "settings.common.database.pool.idleConnTestPeriod";
+
+    /**
+     * <b>settings.common.database.pool.idleConnTestOnCheckin</b>: <br>
+     * Configure if a connection validity should be checked when returned to the pool.
+     * Default is false.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#testConnectionOnCheckin"/>
+     */
+    public static String DB_POOL_IDLE_CONN_TEST_ON_CHECKIN =
+        "settings.common.database.pool.idleConnTestOnCheckin";
+
+    /**
+     * <b>settings.common.database.pool.idleConnTestQuery</b>: <br>
+     * The SQL query to be used when testing an idle connection.
+     * Default is empty, which means using c3p0 defaults.
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#preferredTestQuery"/>
+     */
+    public static String DB_POOL_IDLE_CONN_TEST_QUERY =
+        "settings.common.database.pool.idleConnTestQuery";
+
+    /**
+     * The username for login to the harvest database.
+     */
+    public static String DB_USERNAME = "settings.common.database.username";
+
+    /**
+     * The password for login to the harvest database.
+     */
+    public static String DB_PASSWORD = "settings.common.database.password";
 
     /**
      * <b>settings.common.repository.limitForRecordDatatransferInFile</b>: <br>
@@ -329,8 +453,8 @@ public class CommonSettings {
     /**
      * settings.common.replicas.replica.<b>replicaName</b>: <br>
      * The tags for name of the replica, placed under the replica tag.
-     * The replica name is used in interfaces like the GUI or command-line 
-     * batch-programs. 
+     * The replica name is used in interfaces like the GUI or command-line
+     * batch-programs.
      * The name can be the same value as the id. */
     public static String REPLICANAME_TAG
             = "replicaName";
@@ -338,83 +462,76 @@ public class CommonSettings {
      * settings.common.replicas.replica.<b>replicaType</b>: <br>
      * The tags for type of the replica, placed under the replica tag.
      * The type is used to identify whether it is a bitarchive or a checksum
-     * replica. NOTE: checksum replicas are not implemented yet 
+     * replica. NOTE: checksum replicas are not implemented yet
      * Possible values are defined in ReplicaType */
     public static String REPLICATYPE_TAG
             = "replicaType";
 
     /**
      * <b>settings.common.replicas.replica.replicaId</b>: <br>
-     * The identifiers of all replicas in the environment. 
+     * The identifiers of all replicas in the environment.
      */
     public static String REPLICA_IDS
             = REPLICAS_SETTINGS + "." + REPLICA_TAG + "." + REPLICAID_TAG;
-    
-    /**
-     * <b>settings.common.replicas.replica.replicaType</b>: <br>
-     * The types for all replicas in the environment.
-     */
-    public static String REPLICA_TYPES = REPLICAS_SETTINGS + "." + REPLICA_TAG 
-            + "." + REPLICATYPE_TAG;
 
-    /** 
+    /**
      * <b>settings.common.useReplicaId</b>: <br>
      * Default bitarchive to use for e.g. batch jobs (if none is specified). */
     public static String USE_REPLICA_ID
             = "settings.common.useReplicaId";
 
-    /** 
+    /**
      * <b>settings.common.thisPhysicalLocation</b>: <br>
      * Physical location of where the application is running.
      * Only use for System state GUI and deploy */
     public static String THIS_PHYSICAL_LOCATION
             = "settings.common.thisPhysicalLocation";
 
-    /** 
+    /**
      * <b>settings.common.applicationName</b>: <br>
-     * The name of the application, e.g. "BitarchiveServerApplication". 
+     * The name of the application, e.g. "BitarchiveServerApplication".
      * The monitor puts this with each log message. */
     public static String APPLICATION_NAME
             = "settings.common.applicationName";
 
-    /** 
+    /**
      * <b>settings.common.applicationInstanceId</b>: <br>
      * The identifier of the instance of the application.
      * This is used when there are more than one of the same application
      * running on the same machine, e.g. when more harvesters are running
-     * on the same machine or more bitarchive applications are running on 
+     * on the same machine or more bitarchive applications are running on
      * the same machine. */
     public static String APPLICATION_INSTANCE_ID
             = "settings.common.applicationInstanceId";
-    
-    /** 
+
+    /**
      * <b>settings.common.freespaceprovider.class</b>: <br>
-     * The implementation class for free space provider, 
-     * e.g. dk.netarkivet.common.utils.DefaultFreeSpaceProvider. 
+     * The implementation class for free space provider,
+     * e.g. dk.netarkivet.common.utils.DefaultFreeSpaceProvider.
      * The class must implement FreeSpaceProvider-Interface.  */
     public static String FREESPACE_PROVIDER_CLASS
             = "settings.common.freespaceprovider.class";
 
     /**
      * <b>settings.common.batch.batchjobs.batchjob.class</b>: <br/>
-     * The list of batchjobs to be runnable from the GUI. Must be the complete 
-     * path to the batchjob classes (e.g. 
+     * The list of batchjobs to be runnable from the GUI. Must be the complete
+     * path to the batchjob classes (e.g.
      * dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob).
      * Must inherit FileBatchJob.
      */
-    public static String BATCHJOBS_CLASS 
+    public static String BATCHJOBS_CLASS
             = "settings.common.batch.batchjobs.batchjob.class";
-    
+
     /**
-     * <b>settings.common.batch.batchjobs.batchjob.arcfile</b>: <br/>
-     * The list of the corresponding arc-files containing the batchjob.
-     * This will be used for LoadableArcBatchJobs. If no file is specified, 
-     * it is assumed, that the batchjob exists with the default classpath of 
-     * the involved applications (BitarchiveMonitor, ArcRepository, 
+     * <b>settings.common.batch.batchjobs.batchjob.jarfile</b>: <br/>
+     * The list of the corresponding jar-files containing the batchjob.
+     * This will be used for LoadableJarBatchJobs. If no file is specified,
+     * it is assumed, that the batchjob exists with the default classpath of
+     * the involved applications (BitarchiveMonitor, ArcRepository,
      * GUIWebServer and BitArchive).
      */
-    public static String BATCHJOBS_ARCFILE 
-            = "settings.common.batch.batchjobs.batchjob.arcfile";    
+    public static String BATCHJOBS_JARFILE
+            = "settings.common.batch.batchjobs.batchjob.jarfile";
 
     /**
      * <b>settings.common.batch.baseDir</b>: <br/>
@@ -422,4 +539,37 @@ public class CommonSettings {
      * batchjob through the GUI interface.
      */
     public static String BATCHJOBS_BASEDIR = "settings.common.batch.baseDir";
+    /**
+     * <b>settings.common.remoteFile.serverName</b>: <br>
+     * The setting for the FTP-server used. */
+    public static String FTP_SERVER_NAME
+            = "settings.common.remoteFile.serverName";
+    /**
+     * <b>settings.common.remoteFile.serverPort</b>: <br>
+     * The setting for the FTP-server port used. */
+    public static String FTP_SERVER_PORT
+            = "settings.common.remoteFile.serverPort";
+    /**
+     * <b>settings.common.remoteFile.userName</b>: <br>
+     * The setting for the FTP username. */
+    public static String FTP_USER_NAME
+            = "settings.common.remoteFile.userName";
+    /**
+     * <b>settings.common.remoteFile.userPassword</b>: <br>
+     * The setting for the FTP password. * */
+    public static String FTP_USER_PASSWORD
+            = "settings.common.remoteFile.userPassword";
+    /**
+     * <b>settings.common.remoteFile.retries</b>: <br>
+     * The setting for the number of times FTPRemoteFile should try before
+     * giving up a copyTo operation or logOn operation. */
+    public static String FTP_RETRIES_SETTINGS
+            = "settings.common.remoteFile.retries";
+    /**
+     * <b>settings.common.remoteFile.datatimeout</b>: <br>
+     * The setting for the FTP data timeout in seconds.
+     * The default value is 600 (10 minutes). */
+    public static String FTP_DATATIMEOUT_SETTINGS
+            = "settings.common.remoteFile.datatimeout";
+
 }

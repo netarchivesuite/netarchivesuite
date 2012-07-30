@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -34,6 +36,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.indexserver.MockupIndexServer;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -41,7 +44,6 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
@@ -100,7 +102,7 @@ public class IndexRequestClientTester extends TestCase {
                 IndexRequestClient.getInstance(t));
         }
         try {
-            IndexRequestClient.getInstance(null);
+            IndexRequestClient.getInstance(( RequestType) null);
             fail("Factory method should not accept null input");
         } catch (ArgumentNotValid e) {
             //Expected

@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -65,14 +67,19 @@ public class FileUtilsTester extends TestCase{
     private static final File NO_SUCH_FILE = new File(WORKING, "no_file");
     private static final File SUBDIR = new File(WORKING, "subdir");
     private static final File EMPTY = new File(WORKING, "emptyfile.txt");
-
+    private static final File SMALL_FILE = new File(WORKING, "smallfile.txt");
+    private static final File RATHER_BIG_FILE = new File(WORKING, "rather_bigfile.txt");
+    private static final File SMALL_COMPRESSED_INDEX_DIR = new File(WORKING, "smallindex");
+    
+    @Override
     public void setUp() {
         rs.setUp();
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         rf.setUp();
     }
-
+    
+    @Override
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
         rf.tearDown();
@@ -176,7 +183,10 @@ public class FileUtilsTester extends TestCase{
         final File threaddir = new File(WORKING, "threaddir/dir1/dir2");
         for (int i=0; i<10; i++) {
             threads.clear();
-            threaddir.delete();
+            boolean deleted = threaddir.delete();
+            if (!deleted) {
+                System.out.println("a File could not be deleted");
+            }
             for (int j =0; j <10; j++) {
                 threads.add(new Thread() {
                     public void run() {
@@ -402,5 +412,83 @@ public class FileUtilsTester extends TestCase{
                                            FileUtils.readListFromFile(testFile),
                                            "A single line", "Another line",
                                            "and then one", "A broken", "line");
+    }
+    
+    /**
+     *  Unittest for testing that removing a file using FileUtils.remove(File)
+     *  does not throw an exception, if it fails to do so.
+     */
+    public void tetRemoveFile() {
+        File testFile = new File(WORKING, "test");
+        FileUtils.appendToFile(testFile);
+        // change to read-only
+        boolean b = testFile.setReadOnly();
+        b= testFile.delete();
+        if (!b) {
+            fail ("failed when trying to set file to readonly");
+        }
+        boolean removedReadonly = FileUtils.remove(testFile);
+        if (!testFile.exists()) {
+            fail("File should still exist.");
+        }
+        testFile.setWritable(true);
+        boolean removedWritable = FileUtils.remove(testFile);
+        if (removedReadonly) {
+            fail ("File should have returned false when trying to remove readonly-file");
+        }
+        if (!removedWritable) {
+            fail ("File should have returned true when trying to remove readonly-file");
+        }
+    }
+    
+    /**
+     * Unittest that tests the method {@link FileUtils#formatFilename(String)}.
+     */
+    public void testFormatFilename() {
+        // Check that spaces, the '+' and ':' character is replaced by 
+        // underscores, and other strings are left untouched
+        
+        final String previousFilenameOne = "royal library:+.txt";
+        final String resultingFilenameOne = "royal_library__.txt";
+        assertEquals("Illegal characters should have replaced by underscores",
+                resultingFilenameOne, FileUtils.formatFilename(previousFilenameOne)
+                );
+        
+        final String previousFilenameTwo = "RoyalLibrary.txt";
+        final String resultingFilenameTwo = "RoyalLibrary.txt";
+        assertEquals("Strings with no illegal characters should have been left untouched",
+                resultingFilenameTwo, FileUtils.formatFilename(previousFilenameTwo)
+                );
+    }
+    
+    /**
+     *  Unittest that tests the method 
+     *  {@link FileUtils#getHumanReadableFileSize(File)}.
+     */
+    public void testGetHumanReadableFileSize() {
+        // test on a directory with multiple files
+        String outputOne = FileUtils.getHumanReadableFileSize(
+                SMALL_COMPRESSED_INDEX_DIR);
+//        long indexdirtotalsize = 0;
+//        for (File f : SMALL_COMPRESSED_INDEX_DIR.listFiles()) {
+//            if (f.isFile()) {
+//                indexdirtotalsize = indexdirtotalsize + f.length();
+//            }
+//        }
+//        System.out.println("indextotalsize: " + indexdirtotalsize);
+        
+        assertTrue("Wrong output, was " +  outputOne, 
+                outputOne.equals("5.88 Kbytes"));
+        
+        // test on a single files < 1 Kbyte and > 1 Kbyte
+        String outputTwo = FileUtils.getHumanReadableFileSize(
+                SMALL_FILE);
+        assertTrue("Wrong output, was " +  outputTwo, 
+                outputTwo.equals(SMALL_FILE.length() + " bytes"));
+        
+        String outputThree = FileUtils.getHumanReadableFileSize(
+                RATHER_BIG_FILE);
+        assertTrue("Wrong output, was " +  outputThree, 
+                outputThree.equals("5.6 Kbytes"));
     }
 }

@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -49,7 +51,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     int domainCount = dao.getCountDomains();
     %><h2><fmt:message key="prompt;number.of.registered.domains"/> <%=domainCount%></h2>
     <%
-    List<TLDInfo> tldList = dao.getTLDs();
+    List<TLDInfo> tldList = dao.getTLDs(2);
     if (tldList.size() > 0) {
     %>
     <table><tr><th><fmt:message key="top.level.domain"/></th><th><fmt:message key="number.of.subdomains"/></th></tr>
@@ -67,9 +69,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             } else {
                 domain = HTMLUtils.escapeHtmlValues(tld.getName());
                 count = "<a href=\"/HarvestDefinition/Definitions-find-domains.jsp?"
-                        + dk.netarkivet.harvester.webinterface.Constants.DOMAIN_PARAM
-                        + "=*."
+                        + dk.netarkivet.harvester.webinterface.Constants.DOMAIN_QUERY_STRING_PARAM
+                        + "=*." 
                         + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(tld.getName()))
+                        + "&" + dk.netarkivet.harvester.webinterface.Constants.DOMAIN_QUERY_TYPE_PARAM
+                        + "=" + dk.netarkivet.harvester.webinterface.Constants.NAME_DOMAIN_SEARCH
                         + "\">" + HTMLUtils.localiseLong(tld.getCount(), pageContext)
                         + "</a>";
             }

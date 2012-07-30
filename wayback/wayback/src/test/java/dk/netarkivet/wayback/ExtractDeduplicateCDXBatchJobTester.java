@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +46,9 @@ import dk.netarkivet.wayback.batch.ExtractDeduplicateCDXBatchJob;
 public class ExtractDeduplicateCDXBatchJobTester extends TestCase {
 
     public static final String METADATA_FILENAME = "duplicate.metadata.arc";
+    public static final String METADATA_FILENAME_REAL_1 = "124412-metadata-1.arc";
+    public static final String METADATA_FILENAME_REAL_2 = "124399-metadata-1.arc";
+
 
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -77,6 +82,23 @@ public class ExtractDeduplicateCDXBatchJobTester extends TestCase {
             CaptureSearchResult csr = adapter.adapt(cdx_line);
             assertNotNull("Expect a mime type for every result", csr.getMimeType());
         }
+    }
+
+    public void testJobReal() throws IOException {
+        ARCBatchJob job = new ExtractDeduplicateCDXBatchJob();
+        File arcFile =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_REAL_1);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        job.initialize(os);
+        job.processFile(arcFile, os);
+        job.finish(os);
+        ARCBatchJob job2 = new ExtractDeduplicateCDXBatchJob();
+        File arcFile2 =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_REAL_2);
+        ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+        job2.initialize(os2);
+        job2.processFile(arcFile2, os2);
+        job2.finish(os2);
+        //os.writeTo(System.out);
+        job2.getExceptionArray();
     }
 
 }

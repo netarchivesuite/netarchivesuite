@@ -4,7 +4,9 @@
  * Date:            $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,15 +38,17 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
 /**
- * A class that does MD5 checksumming
+ * A class that does MD5 checksumming.
  * We don't want everybody to have to do MessageDigest.getInstance() and hex
  * conversion.
  */
 public class MD5 {
-    static final int MAGIC_INTEGER_4 = 4;
-    static final int MAGIC_INTEGER_OxOF = 0x0F;
+    /** magic integer 4 used in translating an integer to hex. */
+    private static final int MAGIC_INTEGER_4 = 4;
+    /** magic integer OxOF (dec: 15) used in translating an integer to hex. */
+    private static final int MAGIC_INTEGER_OxOF = 0x0F;
+    /** digest algorithm used here. */
     private static final String MD5_ALGORITHM = "MD5";
 
     /** Return na MD5 MessageDigest object.
@@ -75,21 +79,21 @@ public class MD5 {
      *
      * @param file Unique reference to file for which to generate checksum
      * @return The generated MD5 checksum as string.
-     * @throws IOException
-     * @throws FileNotFoundException
+     * @throws IOException If the unable to read from the
+     * @throws FileNotFoundException If the file doesn't exist.
      */
     public static String generateMD5onFile(final File file)
         throws IOException, FileNotFoundException {
         final MessageDigest messageDigest = getMessageDigestInstance();
         byte[] bytes = new byte[4000];
-        int bytes_read;
+        int bytesRead;
         DataInputStream fis = null;
         try {
             fis = new DataInputStream(new BufferedInputStream(
                                           new FileInputStream(file)));
             messageDigest.reset();
-            while ((bytes_read = fis.read(bytes)) > 0) {
-                messageDigest.update(bytes, 0, bytes_read);
+            while ((bytesRead = fis.read(bytes)) > 0) {
+                messageDigest.update(bytes, 0, bytesRead);
             }
         } finally {
             if (fis != null) {
@@ -135,9 +139,9 @@ public class MD5 {
             };
 
         StringBuffer sb = new StringBuffer("");
-        int ba_len = ba.length;
+        int baLen = ba.length;
 
-        for (int i = 0; i < ba_len; i++) {
+        for (int i = 0; i < baLen; i++) {
             sb.append(hexdigit[(ba[i] >> MAGIC_INTEGER_4)
                                & MAGIC_INTEGER_OxOF]);
             sb.append(hexdigit[ba[i] & MAGIC_INTEGER_OxOF]);

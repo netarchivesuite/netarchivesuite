@@ -40,9 +40,6 @@
             </replicas>
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
             <!-- or get and getFile oprations, (as well as bitArchive monitor)    -->
-            <database>
-	        <url>jdbc:derby:harvestDatabase/fullhddb</url>
-	    </database>
 
             <!-- tempDir corrected from ./tests/commontempdir -->
             <tempDir>tmpdircommon</tempDir> 
@@ -53,7 +50,13 @@
                     <!-- T: receiver to be modified by test -->
                     <receiver>test@kb.dk</receiver> 
                     <sender>test@kb-prod-udv-001.kb.dk</sender>
-                </notifications><useReplicaId>KB</useReplicaId><thisPhysicalLocation>K</thisPhysicalLocation><http>
+                </notifications><useReplicaId>KB</useReplicaId><thisPhysicalLocation>K</thisPhysicalLocation><database>
+                        <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
+                        <baseUrl>jdbc:derby</baseUrl>
+                        <machine>localhost</machine>
+                        <port>8118</port>
+                        <dir>harvestDatabase/fullhddb</dir>
+                    </database><http>
                             <port>1005</port>
                         </http><applicationName>dk.netarkivet.common.webinterface.GUIApplication</applicationName></common>
 
@@ -74,7 +77,7 @@
                         <database>
                             <baseUrl>jdbc:derby</baseUrl>
                             <machine>localhost</machine>
-                            <port>8050</port>
+                            <port>8010</port>
                             <dir>adminDB</dir>
                         </database>
                     </admin></archive>

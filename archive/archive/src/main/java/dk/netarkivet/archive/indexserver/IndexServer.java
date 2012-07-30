@@ -4,7 +4,9 @@
  * Date:                $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +25,6 @@
  */
 package dk.netarkivet.archive.indexserver;
 
-import dk.netarkivet.archive.indexserver.distribute.IndexRequestServer;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.utils.CleanupIF;
 
@@ -44,7 +45,7 @@ import java.util.Set;
  * */
 public class IndexServer implements CleanupIF{
     /** The remote server that hands us indexes. */
-    private IndexRequestServer remoteServer;
+    private IndexRequestServerInterface remoteServer;
     /** The singleton instance of this class. */
     private static IndexServer instance;
 
@@ -60,13 +61,15 @@ public class IndexServer implements CleanupIF{
         cdxCache.getIndex(emptySet);
         dedupCrawlLogCache.getIndex(emptySet);
         fullCrawlLogCache.getIndex(emptySet);
-        
-        remoteServer = IndexRequestServer.getInstance();
+                 
+        remoteServer = IndexRequestServerFactory.getInstance();
+
         remoteServer.setHandler(RequestType.CDX, cdxCache);
         remoteServer.setHandler(RequestType.DEDUP_CRAWL_LOG,
                 dedupCrawlLogCache);
         remoteServer.setHandler(RequestType.FULL_CRAWL_LOG,
                 fullCrawlLogCache);
+        remoteServer.start();
     }
 
     /** Get the unique index server instance.

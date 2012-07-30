@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +45,7 @@ import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
  * The monitor registry client sends messages with JMS to register the host
  * for JMX monitoring.
  */
-public class JMSMonitorRegistryClient implements MonitorRegistryClient,
+public final class JMSMonitorRegistryClient implements MonitorRegistryClient,
                                                  CleanupIF {
     /** The singleton instance of this class. */
     private static JMSMonitorRegistryClient instance;
@@ -71,7 +73,7 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
     /** Get the registry client singleton.
      * @return The registry client.
      */
-    public static JMSMonitorRegistryClient getInstance() {
+    public static synchronized JMSMonitorRegistryClient getInstance() {
         if (instance == null) {
             instance = new JMSMonitorRegistryClient();
         }
@@ -115,18 +117,17 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
             }
         };
         
-        long reregister_delay = Settings.getLong(MonitorSettings.DEFAULT_REREGISTER_DELAY);
+        long reregisterDelay = Settings.getLong(
+                MonitorSettings.DEFAULT_REREGISTER_DELAY);
         try {
-            reregister_delay = Long.parseLong(Settings.get(
+            reregisterDelay = Long.parseLong(Settings.get(
                     CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY));
-        }
-        catch (NumberFormatException e1) {
+        } catch (NumberFormatException e1) {
             log.warn("Couldn't parse setting " 
                      + CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
                      + ". Only numbers are allowed. Using defaultvalue "
                      + MonitorSettings.DEFAULT_REREGISTER_DELAY);
-        }
-        catch(NetarkivetException e2) {
+        } catch(NetarkivetException e2) {
             log.warn("Couldn't find setting " 
                     + CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
                     + ". Using defaultvalue "
@@ -134,13 +135,13 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
         }
 
         log.info("Registering this client for monitoring every "
-                 + reregister_delay
+                 + reregisterDelay
                  + " minutes, using hostname '"
                  + localHostName + "' and JMX/RMI ports "
                  + jmxPort + "/"
                  + rmiPort);
         registryTimer.scheduleAtFixedRate(timerTask, NOW,
-                                            reregister_delay
+                                            reregisterDelay
                                           * MINUTE_IN_MILLISECONDS);
     }
 

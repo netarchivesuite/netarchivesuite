@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +36,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 /**
  * Generic class for creating class instances from class names given in
  * settings.
- *
+ * @param <T> the object-type returned by this class.
  */
 public class SettingsFactory<T> {
     /** Creates a new class of the class given in the settings field.
@@ -55,19 +57,21 @@ public class SettingsFactory<T> {
      * @param args The arguments that will be passed to the getInstance method
      * or the constructor. These will also be used to determine which
      * getInstance method or constructor to find.
-     * @return A new instance created by calling getInstance() or by invoking
-     * a constructor.
+     * @param <T> the object-type returned by this method.
+     * @return A new instance of type T created by calling getInstance() or by 
+     * invoking a constructor.
      * @throws ArgumentNotValid if settingsField is null or the invoked method
      * or constructor threw an exception.
      * @throws IOFailure if there are unrecoverable errors reflecting upon the
      * class.
      * @throws PermissionDenied if the class or methods cannot be accessed.
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static<T> T getInstance(String settingsField, Object... args) {
         ArgumentNotValid.checkNotNull(settingsField, "String settingsField");
         String className = Settings.get(settingsField);
         try {
-            Class<T> aClass = (Class<T>)Class.forName(className);
+            Class<T> aClass = (Class<T>) Class.forName(className);
             Class[] classArgs = new Class[args.length];
             int i = 0;
             for (Object o : args) {
@@ -96,7 +100,7 @@ public class SettingsFactory<T> {
                 }
             }
             try {
-                return (T)m.invoke(null, args);
+                return (T) m.invoke(null, args);
             } catch (InvocationTargetException e) {
                 throw new ArgumentNotValid("Error creating singleton of class '"
                         + className + "': ", e.getCause());

@@ -4,7 +4,9 @@
 *  $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -50,14 +52,13 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.MessageAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-
 
 /**
  * Test bitarchive client and server As a number of tests only succeed if both
@@ -96,7 +97,7 @@ public class BitarchiveClientTester extends TestCase {
     /**
      * Number of ARC records in the file uploaded.
      */
-    private static final int NUM_RECORDS = 13;
+    private static final int NUM_RECORDS = 21;
     private JMSConnectionMockupMQ con;
     ReloadSettings rs = new ReloadSettings();
 
@@ -311,7 +312,7 @@ public class BitarchiveClientTester extends TestCase {
         assertNotNull("ARC record should be non-null", record);
         assertEquals(ARC_FILE_NAME, record.getFile());
 
-        byte[] contents = TestUtils.inputStreamToBytes(
+        byte[] contents = StreamUtils.inputStreamToBytes(
                 record.getData(), (int) record.getLength());
 
         String targetcontents = FileUtils.readFile(ARC_RECORD_FILE);
@@ -394,6 +395,7 @@ public class BitarchiveClientTester extends TestCase {
      * chekcs that - exactly one reply was generated - that the reply had its OK
      * flag set to true - that the output file contains a text that indicates
      * proper processing was done.
+     * @throws Exception 
      */
     private void verifyBatchWentWell() {
         // Wait for up to 10 seconds to see if the message gets back
@@ -418,38 +420,13 @@ public class BitarchiveClientTester extends TestCase {
         }
         msg.getResultFile().copyTo(BATCH_OUTPUT_FILE);
 
-        FileAsserts.assertFileContains("Expected record report not found: ",
-                                       "Records Processed = " + NUM_RECORDS,
-                                       BATCH_OUTPUT_FILE);
-
-    }
-
-    /**
-     * Verify that a message has the correct id,destination and origin values.
-     *
-     * @param id   Expected id or "" to ignore
-     * @param dest Expected destination or "" to ignore
-     * @param org  Expected origin or "" to ignore
-     * @param msg  Message to check
-     * @return true if all checks succeeds else false
-     */
-    public boolean checkIdDestOrigin(String id, String dest, String org,
-                                     NetarkivetMessage msg) {
-        boolean res = true;
-
-        if ((id.length() > 0) && (!id.equals(msg.getID()))) {
-            res = false;
+        try {
+            FileAsserts.assertFileContains("Expected record report not found: " 
+                    + NUM_RECORDS + ", but found: " + FileUtils.readFile(BATCH_OUTPUT_FILE), 
+                    "Records Processed = " + NUM_RECORDS, BATCH_OUTPUT_FILE);
+        } catch (Exception e) {
+            fail(e.getMessage());
         }
-
-        if ((dest.length() > 0) && (!dest.equals(msg.getTo()))) {
-            res = false;
-        }
-
-        if ((org.length() > 0) && (!dest.equals(msg.getReplyTo()))) {
-            res = false;
-        }
-
-        return res;
     }
     
     public void testNewMessages() {

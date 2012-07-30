@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -33,10 +35,10 @@ import java.util.HashMap;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Class encapsulating the Heritrix order.xml. 
+ * Class encapsulating the Heritrix order.xml.
  * Enables verification that dom4j Document obey the constraints
  * required by our software, specifically the Job class.
- * 
+ *
  * The class assumes the type of order.xml used in configuring Heritrix
  * version 1.10+.
  * Information about the Heritrix crawler, and its processes and modules
@@ -51,6 +53,11 @@ public class HeritrixTemplate {
     private boolean verified;
 
     /** Xpath needed by Job.editOrderXML_maxBytesPerDomain(). */
+    public static final String QUOTA_ENFORCER_ENABLED_XPATH =
+        "/crawl-order/controller/map[@name='pre-fetch-processors']"
+        + "/newObject[@name='QuotaEnforcer']"
+        + "/boolean[@name='enabled']";;
+    /** Xpath needed by Job.editOrderXML_maxBytesPerDomain(). */
     public static final String GROUP_MAX_ALL_KB_XPATH =
         "/crawl-order/controller/map[@name='pre-fetch-processors']"
         + "/newObject[@name='QuotaEnforcer']"
@@ -60,12 +67,16 @@ public class HeritrixTemplate {
         "/crawl-order/controller/map[@name='pre-fetch-processors']"
         + "/newObject[@name='QuotaEnforcer']"
         + "/long[@name='group-max-fetch-successes']";
+    /** Xpath needed by Job.editOrderXML_maxObjectsPerDomain(). */
+    public static final String QUEUE_TOTAL_BUDGET_XPATH =
+        "/crawl-order/controller/newObject[@name='frontier']"
+        + "/long[@name='queue-total-budget']";
     /** Xpath needed by Job.editOrderXML_crawlerTraps(). */
-    public static final String DECIDERULES_MAP_XPATH = 
+    public static final String DECIDERULES_MAP_XPATH =
         "/crawl-order/controller/newObject"
         + "/newObject[@name='decide-rules']"
         + "/map[@name='rules']";
-    
+
     /** Xpath checked by Heritrix for correct user-agent field in requests. */
     public static final String HERITRIX_USER_AGENT_XPATH =
             "/crawl-order/controller/map[@name='http-headers']"
@@ -86,9 +97,6 @@ public class HeritrixTemplate {
             "/crawl-order/controller/map[@name='write-processors']"
             + "/newObject[@name='DeDuplicator']";
 
-    
-    
-    
     /** Xpath to check, that all templates use the same archiver path,
      * {@link dk.netarkivet.common.Constants#ARCDIRECTORY_NAME}.
      * The archive path tells Heritrix to which directory it shall write
@@ -97,12 +105,12 @@ public class HeritrixTemplate {
     public static final String ARCHIVER_PATH_XPATH =
         "/crawl-order/controller/map[@name='write-processors']/"
         + "newObject[@name='Archiver']/stringList[@name='path']/string";
-    
+
     /** Map from required xpaths to a regular expression describing
      * legal content for the path text. */
     private static final Map<String, Pattern> requiredXpaths
             = new HashMap<String, Pattern>();
-    
+
     /** A regular expression that matches a whole number, possibly negative,
      * and with optional whitespace around it.
      */
@@ -110,7 +118,7 @@ public class HeritrixTemplate {
     /** A regular expression that matches everything.  Except newlines,
      * unless DOTALL is given to Pattern.compile(). */
     private static final String EVERYTHING_REGEXP = ".*";
-
+    
     // These two regexps are copied from
     // org.archive.crawler.datamodel.CrawlOrder because they're private there.
 
@@ -124,30 +132,41 @@ public class HeritrixTemplate {
      * field.  This should be a valid email address.
      */
     private static final String FROM_REGEXP = "\\S+@\\S+\\.\\S+";
+    
+    /** Xpath to check, that all templates have the max-time-sec attribute.
+     */
+    public static final String MAXTIMESEC_PATH_XPATH =
+        "/crawl-order/controller/long[@name='max-time-sec']";
 
     static {
         requiredXpaths.put(GROUP_MAX_FETCH_SUCCESS_XPATH,
                            Pattern.compile(WHOLE_NUMBER_REGEXP));
+        requiredXpaths.put(QUEUE_TOTAL_BUDGET_XPATH,
+                Pattern.compile(WHOLE_NUMBER_REGEXP));
         requiredXpaths.put(GROUP_MAX_ALL_KB_XPATH,
                            Pattern.compile(WHOLE_NUMBER_REGEXP));
-        
+
         //Required that we use DecidingScope
         requiredXpaths.put(DECIDINGSCOPE_XPATH,
-                            Pattern.compile(EVERYTHING_REGEXP));   
-        
+                            Pattern.compile(EVERYTHING_REGEXP));
+
         //Required that we have a rules map used to add crawlertraps
         requiredXpaths.put(DECIDERULES_MAP_XPATH,
                            Pattern.compile(EVERYTHING_REGEXP, Pattern.DOTALL));
- 
+
         requiredXpaths.put(HERITRIX_USER_AGENT_XPATH,
                            Pattern.compile(USER_AGENT_REGEXP, Pattern.DOTALL));
         requiredXpaths.put(HERITRIX_FROM_XPATH, Pattern.compile(FROM_REGEXP));
-      
+
         //Required that Heritrix write its arcfiles to the correct dir
-        // relative to the crawldir. This dir is defined by the constant: 
+        // relative to the crawldir. This dir is defined by the constant:
         //dk.netarkivet.common.Constants.ARCDIRECTORY_NAME.
         requiredXpaths.put(ARCHIVER_PATH_XPATH, Pattern.compile(
                 dk.netarkivet.common.Constants.ARCDIRECTORY_NAME));
+        // max-time-sec attribute needed, so we can't override it set
+        // a timelimit on broad crawls.
+        requiredXpaths.put(MAXTIMESEC_PATH_XPATH, Pattern.compile(
+                WHOLE_NUMBER_REGEXP));
     }
 
     /** Constructor for HeritrixTemplate class.

@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,60 +27,23 @@ package dk.netarkivet.wayback.indexer;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
-import dk.netarkivet.testutils.TestFileUtils;
 
 public class ArchiveFileTester extends IndexerTestCase {
-   /* private String oldClient = System.getProperty(CommonSettings.ARC_REPOSITORY_CLIENT);
-    private String oldFileDir = System.getProperty("settings.common.arcrepositoryClient.fileDir");
+    private final File destDir = Settings.getFile(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
 
-    public void setUp() {
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, "dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient");
-        System.setProperty("settings.common.arcrepositoryClient.fileDir", TestInfo.WORKING_DIR.getAbsolutePath());
-        assertTrue(ArcRepositoryClientFactory.getPreservationInstance() instanceof LocalArcRepositoryClient);
-        FileUtils.removeRecursively(tempdir);
-        FileUtils.createDir(tempdir);
-    }
-
-
-    public void tearDown() {
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        FileUtils.removeRecursively(tempdir);
-        FileUtils.remove(TestInfo.LOG_FILE);
-        if (oldClient != null) {
-            System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, oldClient);
-        } else {
-            System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, "");
-        }
-        if (oldFileDir != null ) {
-            System.setProperty("settings.common.arcrepositoryClient.fileDir", oldFileDir);
-        } else {
-            System.setProperty("settings.common.arcrepositoryClient.fileDir", "");
-        }
-    }
-*/
 
     @Override
     public void setUp() {
         super.setUp();
-        File destDir = new File(Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR) );
         FileUtils.removeRecursively(destDir);
     }
 
     @Override
     public void tearDown() {
         super.tearDown();
-        File destDir = new File(Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR) );
         FileUtils.removeRecursively(destDir);
     }
 
@@ -90,7 +55,7 @@ public class ArchiveFileTester extends IndexerTestCase {
         file.setFilename("arcfile_withredirects.arc");
         (new ArchiveFileDAO()).create(file);
         file.index();
-        File outputFile = new File(tempdir,
+        File outputFile = new File(destDir,
                                    file.getOriginalIndexFileName());
         assertTrue("Should have a resonable numer of lines in output file",
                    FileUtils.countLines(outputFile)>5);
@@ -104,7 +69,7 @@ public class ArchiveFileTester extends IndexerTestCase {
         file.setFilename("duplicate.metadata.arc");
         (new ArchiveFileDAO()).create(file);
         file.index();
-        File outputFile = new File(tempdir,
+        File outputFile = new File(destDir,
                                    file.getOriginalIndexFileName());
         assertTrue("Should have a resonable numer of lines in output file",
                    FileUtils.countLines(outputFile) == 15);

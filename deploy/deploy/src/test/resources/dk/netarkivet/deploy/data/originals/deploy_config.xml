@@ -110,9 +110,6 @@
             </replicas>
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
             <!-- or get and getFile oprations, (as well as bitArchive monitor)    -->
-            <database>
-	        <url></url>
-	    </database>
 
             <!-- tempDir corrected from ./tests/commontempdir -->
             <tempDir>tmpdircommon</tempDir> 
@@ -163,7 +160,8 @@
 
         <deployMachine name="kb-test-adm-001.kb.dk">
             <deployInstallDir>/home/test</deployInstallDir>
-            <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
+            <deployHarvestDatabaseDir>harvestDatabase</deployHarvestDatabaseDir>
+            <deployArchiveDatabaseDir>adminDB</deployArchiveDatabaseDir>
             <settings>
                 <archive>
                     <admin>
@@ -175,6 +173,15 @@
                         </database>
                     </admin>
                 </archive>
+                <common>
+                    <database>
+                        <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
+                        <baseUrl>jdbc:derby</baseUrl>
+                        <machine>localhost</machine>
+                        <port>8118</port>
+                        <dir>harvestDatabase/fullhddb</dir>
+                    </database>
+                </common>
             </settings>
 
             <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
@@ -191,9 +198,6 @@
                             <port>8110</port> 
                             <rmiPort>8210</rmiPort>
                         </jmx>
-                        <database>
-                             <url>jdbc:derby:harvestDatabase/fullhddb</url>
-                        </database>
                     </common>
                 </settings>
             </applicationName>
@@ -297,9 +301,9 @@
                          <harvesting>
                              <queuePriority>LOWPRIORITY</queuePriority> <!-- on http port-->
                              <heritrix>
-                                 <guiPort>8190</guiPort> 
+                                 <guiPort>8111</guiPort> 
                                  <!-- T: jmxPort to be modified by test (was 8091) -->
-                                 <jmxPort>8191</jmxPort>
+                                 <jmxPort>8211</jmxPort>
                                  <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                              </heritrix>
@@ -330,9 +334,9 @@
                         <harvesting>
                             <queuePriority>LOWPRIORITY</queuePriority>
                             <heritrix>
-                                <guiPort>8190</guiPort> 
+                                <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
-                                <jmxPort>8191</jmxPort>
+                                <jmxPort>8211</jmxPort>
                                  <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
@@ -355,9 +359,9 @@
                         <harvesting>
                             <queuePriority>HIGHPRIORITY</queuePriority> 
                             <heritrix>
-                                <guiPort>8192</guiPort> 
+                                <guiPort>8113</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8093) -->
-                                <jmxPort>8193</jmxPort> 
+                                <jmxPort>8213</jmxPort> 
                                  <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
@@ -448,9 +452,9 @@
                         <harvesting>
                             <queuePriority>HIGHPRIORITY</queuePriority>
                             <heritrix>
-                                <guiPort>8190</guiPort> 
+                                <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
-                                <jmxPort>8191</jmxPort>
+                                <jmxPort>8211</jmxPort>
                                  <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>

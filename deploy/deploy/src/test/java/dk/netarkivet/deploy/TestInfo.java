@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,7 +35,7 @@ public class TestInfo {
     public static final File ORIGINALS_DIR = new File(DATA_DIR, "originals");
     public static final File WORKING_DIR = new File(DATA_DIR, "working");
     public static final File TMPDIR = new File(WORKING_DIR, "tmpdir");
-    public static final File TARGETDIR = new File(WORKING_DIR,"target");
+    public static final File TARGETDIR = new File(WORKING_DIR, "target");
     public static final File SINGLE_TARGET_DIR = new File(
 	    WORKING_DIR, "single_target");
     public static final File DATABASE_TARGET_DIR = new File(
@@ -78,7 +80,7 @@ public class TestInfo {
 	Constants.ARG_INIT_ARG + Constants.ARG_LOG_PROPERTY_FILE;
     public static final String ARGUMENT_OUTPUT_DIRECTORY = 
 	Constants.ARG_INIT_ARG + Constants.ARG_OUTPUT_DIRECTORY;
-    public static final String ARGUMENT_DATABASE_FILE = 
+    public static final String ARGUMENT_HARVEST_DATABASE_FILE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_DATABASE_FILE;
     public static final String ARGUMENT_ARCHIVE_DATABASE_FILE = 
         Constants.ARG_INIT_ARG + Constants.ARG_ARC_DB;

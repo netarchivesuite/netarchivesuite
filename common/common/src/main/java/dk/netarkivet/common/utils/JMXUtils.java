@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,10 +55,14 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Various JMX-related utility functions that have nowhere better to live.
- *
+ * Various JMX-related utility functions.
  */
-public class JMXUtils {
+public final class JMXUtils {
+    
+    /** Private constructor to prevent instantiation. */
+    private JMXUtils() {
+    }
+    
     /** The logger. */
     public static final Log log = LogFactory.getLog(JMXUtils.class.getName());
 
@@ -65,8 +71,13 @@ public class JMXUtils {
      */
     private static final String JNDI_INITIAL_CONTEXT_PROPERTY =
         "java.naming.factory.initial";
-
-
+    /** seconds per milliseconds as a double figure. */
+    private static final double DOUBLE_SECONDS_IN_MILLIS 
+        = TimeUtils.SECOND_IN_MILLIS * 1.0;
+    /** The JMX timeout in seconds. */
+    private static final long timeoutInseconds = Settings.getLong(
+            CommonSettings.JMX_TIMEOUT);
+   
     /** The maximum number of times we back off on getting an mbean or a job.
      * The cumulative time trying is 2^(MAX_TRIES) milliseconds,
      * thus the constant is defined as log_2(TIMEOUT), as set in settings.
@@ -74,10 +85,17 @@ public class JMXUtils {
      */
     public static int getMaxTries() {
         return (int) Math.ceil(
-                Math.log((double) Settings.getLong(CommonSettings.JMX_TIMEOUT)
-                         * 1000.0) / Math.log(2.0));
+                Math.log((double) timeoutInseconds * DOUBLE_SECONDS_IN_MILLIS) 
+                    / Math.log(2.0));
     }
-
+    
+    /**
+     * @return the JMX timeout in milliseconds.
+     */
+    public static long getJmxTimeout() {
+        return TimeUtils.SECOND_IN_MILLIS * timeoutInseconds;
+    }
+    
     /**
      * If no initial JNDI context has been configured,
      * configures the system to use Sun's standard one.
@@ -106,7 +124,7 @@ public class JMXUtils {
      * Example URL:
      * service:jmx:rmi://0.0.0.0:9999/jndi/rmi://0.0.0.0:1099/JMXConnector
      * where RMI port number = 9999, JMX port number = 1099
-     * server = 0.0.0.0 aka localhost(?).
+     * server = 0.0.0.0 a.k.a localhost(?).
      *
      * @param server The server that should be connected to using
      * the constructed URL.
@@ -158,13 +176,17 @@ public class JMXUtils {
         ArgumentNotValid.checkNotNegative(rmiPort, "int rmiPort");
         ArgumentNotValid.checkNotNullOrEmpty(userName, "String userName");
         ArgumentNotValid.checkNotNullOrEmpty(password, "String password");
-        log.debug("Getting a connection to server '" + server 
-                + "' on jmxport/rmiport=" + jmxPort + "/" + rmiPort
-                + " using username=" + userName);
+        String logMsgSuffix = "a connection to server '" + server 
+        + "' on jmxport/rmiport=" + jmxPort + "/" + rmiPort
+        + " using username=" + userName;
+        log.debug("Establishing " + logMsgSuffix);
         JMXServiceURL jmxServiceUrl = getUrl(server, jmxPort, rmiPort);
         Map<String, String[]> credentials =
             packageCredentials(userName, password);
-        return getMBeanServerConnection(jmxServiceUrl, credentials);
+        MBeanServerConnection connection = getMBeanServerConnection(
+                jmxServiceUrl, credentials);
+        log.debug("Established successfully " + logMsgSuffix);
+        return connection;
     }
 
     /**
@@ -233,6 +255,7 @@ public class JMXUtils {
 
         log.debug("Preparing to execute " + command + " with args " 
                 + Arrays.toString(arguments) + " on " + beanName);
+        final int maxJmxRetries = getMaxTries();
         try {
             final String[] signature = new String[arguments.length];
             Arrays.fill(signature, String.class.getName());
@@ -251,7 +274,7 @@ public class JMXUtils {
                     return ret;
                 } catch (InstanceNotFoundException e) {
                     lastException = e;
-                    if (tries < getMaxTries()) {
+                    if (tries < maxJmxRetries) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
@@ -259,11 +282,11 @@ public class JMXUtils {
                              + " with args " + Arrays.toString(arguments) 
                              + " on " + beanName, e);
                     lastException = e;
-                    if (tries < getMaxTries()) {
+                    if (tries < maxJmxRetries) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 }
-            } while (tries < getMaxTries());
+            } while (tries < maxJmxRetries);
             throw new IOFailure("Failed to find MBean " + beanName
                                 + " for executing " + command
                                 + " after " + tries + " attempts",
@@ -291,6 +314,7 @@ public class JMXUtils {
         
         log.debug("Preparing to get attribute " + attribute
                  + " on " + beanName);
+        final int maxJmxRetries = getMaxTries();
         try {
             // The first time we attempt to connect to an mbean, we might have
             // to wait a bit for it to appear
@@ -308,18 +332,18 @@ public class JMXUtils {
                     log.trace("Error while getting attribute " + attribute
                              + " on " + beanName, e);
                     lastException = e;
-                    if (tries < getMaxTries()) {
+                    if (tries < maxJmxRetries) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
                     log.trace("Error while getting attribute " + attribute
                              + " on " + beanName, e);
                     lastException = e;
-                    if (tries < getMaxTries()) {
+                    if (tries < maxJmxRetries) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 }
-            } while (tries < getMaxTries());
+            } while (tries < maxJmxRetries);
             throw new IOFailure("Failed to find MBean " + beanName
                                 + " for getting attribute " + attribute
                                 + " after " + tries + " attempts",
@@ -371,26 +395,28 @@ public class JMXUtils {
         Map<String, ?> environment = packageCredentials(login, password);
         Throwable lastException;
         int retries = 0;
+        final int maxJmxRetries = getMaxTries();
         do {
             try {
                 return JMXConnectorFactory.connect(rmiurl, environment);
             } catch (IOException e) {
                 lastException = e;
-                if (retries < getMaxTries() && e.getCause() != null
-                    && (e.getCause() instanceof ServiceUnavailableException ||
-                        e.getCause() instanceof SocketTimeoutException) ) {   
+                if (retries < maxJmxRetries && e.getCause() != null
+                    && (e.getCause() instanceof ServiceUnavailableException 
+                          || e.getCause() instanceof SocketTimeoutException)) {
                     // Sleep a bit before trying again
                     TimeUtils.exponentialBackoffSleep(retries);
                     /*  called exponentialBackoffSleep(retries) which used
-                        Calendar.MILISECOND as time unit, which means we only
-                        wait an exponential number of miliseconds.            */
+                        Calendar.MILLISECOND as time unit, which means we only
+                        wait an exponential number of milliseconds.
+                    */
                     continue;
                 }
                 break;
             }
-        } while (retries++ < getMaxTries());
+        } while (retries++ < maxJmxRetries);
         throw new IOFailure("Failed to connect to URL " + rmiurl + " after "
-                            + retries + " of " + getMaxTries()
+                            + retries + " of " + maxJmxRetries
                             + " attempts.\nException type: "
                             + lastException.getCause().getClass().getName(),
                             lastException);

@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,6 +47,6 @@ class TestInfo {
     
     static final File ORIGINAL_DATABASE_DIR = new File(DATA_DIR, "database");
     static final File DATABASE_DIR = new File(WORKING_DIR, "database");
-    static final File DATABASE_FILE = new File("harvestdefinitionbasedir", "archivedb.jar");
+    static final File DATABASE_FILE = new File("archivedatabasedir", "archivedb.jar");
 }
 

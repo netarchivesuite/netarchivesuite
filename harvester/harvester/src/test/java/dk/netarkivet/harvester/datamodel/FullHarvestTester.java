@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -23,14 +25,14 @@
 package dk.netarkivet.harvester.datamodel;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 
 /**
- * Tests for class dk.netarkivet.datamodel.FullHarvest
+ * Tests for class dk.netarkivet.datamodel.FullHarvest.
  */
-
-
 public class FullHarvestTester extends DataModelTestCase {
     public FullHarvestTester(String s) {
         super(s);
@@ -52,7 +54,9 @@ public class FullHarvestTester extends DataModelTestCase {
     public void testMaxBytes() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         FullHarvest fh = HarvestDefinition.createFullHarvest("testfullharvest",
-                                                             "comment", null, 200L, Constants.DEFAULT_MAX_BYTES);
+                                                             "comment", null, 200L, 
+                                                             Constants.DEFAULT_MAX_BYTES,
+                                                             Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         assertEquals("Should have default number of max bytes from start",
                      Constants.DEFAULT_MAX_BYTES, fh.getMaxBytes());
         final int maxBytes = 201 * 1024 * 1024;
@@ -75,18 +79,25 @@ public class FullHarvestTester extends DataModelTestCase {
     /**
      * Test that in getDomainConfigurations() only DomainConfigurations are returned for Domains
      * which are not aliases, or where the alias information is expired.
-     *
      */
     public void testGetDomainsConfigurations() {
         DomainDAO ddao = DomainDAO.getInstance();
-        FullHarvest fh = HarvestDefinition.createFullHarvest("testfullharvest",
-                                                             "comment", null, 200L, Constants.DEFAULT_MAX_BYTES);
-        // Test, at der findes DomainConfiguration objekter for de domæner, der ikke skal springes over.
-        // Der findes ikke nogen aliasdomæner i test-databasen, så dette trin skulle gå godt.
+        FullHarvest fh = HarvestDefinition.createFullHarvest(
+        		"testfullharvest",
+                "comment", null, 200L, 
+                Constants.DEFAULT_MAX_BYTES,
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+        // Test, that there exist DomainConfiguration objects for those domains, which 
+        // are to be skipped.
+        // There is no alias-domains in the database used by this test, 
+        // so this step should succeed.
+        Map<String,Domain> domainMap = new HashMap<String, Domain>();
         Iterator<Domain> domainIterator = ddao.getAllDomains();
 
         while(domainIterator.hasNext()) {
-            assertDomainConfigurationsForDomain(fh.getDomainConfigurations(), domainIterator.next().getName());
+        	Domain d = domainIterator.next();
+        	domainMap.put(d.getName(), d);
+            assertDomainConfigurationsForDomain(fh.getDomainConfigurations(), d.getName());
         }
 
         // Add two new domains which both are aliases
@@ -96,12 +107,19 @@ public class FullHarvestTester extends DataModelTestCase {
         //Very old alias indeed
         aliasDomain.setAliasInfo(new AliasInfo("alias1.dk", "kb.dk", new Date(0L)));
         ddao.update(aliasDomain);
+        domainMap.put(aliasDomain.getName(), aliasDomain);
         aliasDomain = ddao.read("alias2.dk");
         aliasDomain.updateAlias("netarkivet.dk");
         ddao.update(aliasDomain);
+        domainMap.put(aliasDomain.getName(), aliasDomain);
         fh = HarvestDefinition.createFullHarvest("testfullharvest-1",
-                                                 "comment", null, 200L, Constants.DEFAULT_MAX_BYTES);
-        assertNoAliasDomainConfigurations(fh.getDomainConfigurations());
+                                                 "comment", null, 200L, 
+                                                 Constants.DEFAULT_MAX_BYTES,
+                                                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+        
+        
+        assertNoAliasDomainConfigurations(domainMap,
+        		fh.getDomainConfigurations());
     }
 
     /**
@@ -112,7 +130,8 @@ public class FullHarvestTester extends DataModelTestCase {
     public void testGetDomainsPreviousHarvestAborted() {
           DomainDAO ddao = DomainDAO.getInstance();
         FullHarvest previousHarvest = HarvestDefinition.
-                createFullHarvest("previous", "comment", null, 200L, 10000L);
+                createFullHarvest("previous", "comment", null, 200L, 10000L,
+                		Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         hddao.create(previousHarvest);
         previousHarvest = (FullHarvest) hddao.getHarvestDefinition("previous");
@@ -126,12 +145,14 @@ public class FullHarvestTester extends DataModelTestCase {
                                            StopReason.DOWNLOAD_UNFINISHED);
         d.getHistory().addHarvestInfo(hi);
         ddao.update(d);
-        FullHarvest newHarvest = HarvestDefinition.createFullHarvest("new", "comment", previousHarvest.getOid(), 500L, 100000L);
+        FullHarvest newHarvest = HarvestDefinition.createFullHarvest("new", "comment", 
+        		previousHarvest.getOid(), 500L, 100000L, 
+        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
         hddao.create(newHarvest);
         newHarvest = (FullHarvest) hddao.getHarvestDefinition("new");
         Iterator<DomainConfiguration> configs = newHarvest.getDomainConfigurations();
         while (configs.hasNext()) {
-             if (configs.next().getDomain().getName().equals("netarkivet.dk")) {
+             if (configs.next().getDomainName().equals("netarkivet.dk")) {
                  fail("DomainConfiguration for netarkivet.dk found but should "
                       + "be absent because it has status DOWNLOAD_UNFINISHED in"
                       + " the previous harvest");
@@ -148,14 +169,15 @@ public class FullHarvestTester extends DataModelTestCase {
          DomainDAO ddao = DomainDAO.getInstance();
          // Create a previous FullHarvest for this test previousFullHarvest
          FullHarvest previousFullHarvest = HarvestDefinition.createFullHarvest("previousfullharvest",
-                 "comment", null, 200L, 10000L);
+                 "comment", null, 200L, 10000L, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
          HarvestDefinitionDAO hdao = HarvestDefinitionDAO.getInstance();
          hdao.create(previousFullHarvest);
          previousFullHarvest = (FullHarvest) hdao.getHarvestDefinition("previousfullharvest");
 
          // Create a FullHarvest, that has previousFullHarvest as previous FullHarvest
          FullHarvest fh = HarvestDefinition.createFullHarvest("previousfullharvest",
-                 "comment", previousFullHarvest.getOid(), 200L, Constants.DEFAULT_MAX_BYTES);
+                 "comment", previousFullHarvest.getOid(), 200L, 
+                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
 
          // Create one HarvestInfo objects for netarkivet.dk for this FullHarvest.
          Domain d = ddao.read("netarkivet.dk");
@@ -168,8 +190,8 @@ public class FullHarvestTester extends DataModelTestCase {
          d.getHistory().addHarvestInfo(hi);
          ddao.update(d);
 
-         /** Denne kode kaldes i HarvestSchedulerMonitorServer.processCrawlData()
-          *  for at bestemme om dens StopReason er StopReason.CONFIG_SIZE_LIMIT;
+         /** This code is called in HarvestSchedulerMonitorServer.processCrawlData()
+          *  to decide if its StopReason is StopReason.CONFIG_SIZE_LIMIT;
           *
           *  long configMaxBytes = domain.getConfiguration(
           *        configurationMap.get(domainName)).getMaxBytes();
@@ -204,11 +226,10 @@ public class FullHarvestTester extends DataModelTestCase {
          assertNoDomainConfigurationsForDomain(fh.getDomainConfigurations(), "netarkivet.dk");
      }
 
-
-
-    private void assertDomainConfigurationsForDomain(Iterator<DomainConfiguration> domainConfigurations, String anotherDomainName) {
+    private void assertDomainConfigurationsForDomain(Iterator<DomainConfiguration> domainConfigurations, 
+            String anotherDomainName) {
         while (domainConfigurations.hasNext()) {
-            String domainName = domainConfigurations.next().getDomain().getName();
+            String domainName = domainConfigurations.next().getDomainName();
             if (domainName.equals(anotherDomainName)){
                 return;
             }
@@ -216,20 +237,23 @@ public class FullHarvestTester extends DataModelTestCase {
         fail ("DomainConfiguration for Domain '" + anotherDomainName + "' not found");
     }
 
-    private void assertNoDomainConfigurationsForDomain(Iterator<DomainConfiguration> domainConfigurations, String anotherDomainName) {
+    private void assertNoDomainConfigurationsForDomain(Iterator<DomainConfiguration> domainConfigurations, 
+            String anotherDomainName) {
         while (domainConfigurations.hasNext()) {
-            String domainName = domainConfigurations.next().getDomain().getName();
+            String domainName = domainConfigurations.next().getDomainName();
             if (domainName.equals(anotherDomainName)){
                 fail ("DomainConfiguration for Domain '" + anotherDomainName + "' found");
             }
         }
     }
 
-    private void assertNoAliasDomainConfigurations(Iterator<DomainConfiguration> iterator) {
+    private void assertNoAliasDomainConfigurations(Map<String, Domain> domains, 
+            Iterator<DomainConfiguration> iterator) {
         while (iterator.hasNext()) {
-            Domain d = iterator.next().getDomain();
+            Domain d = domains.get(iterator.next().getDomainName());
             if (d.getAliasInfo() != null) {
-                AliasInfo ai = new AliasInfo(d.getName(), d.getAliasInfo().getAliasOf(), d.getAliasInfo().getLastChange());
+                AliasInfo ai = new AliasInfo(d.getName(), d.getAliasInfo().getAliasOf(), 
+                        d.getAliasInfo().getLastChange());
                 if (!ai.isExpired()) {
                     fail("There should not have be DomainConfigurations for alias domain: "
                          + d.getName());

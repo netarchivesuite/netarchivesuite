@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -53,7 +55,9 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
-                 dk.netarkivet.harvester.datamodel.SparseFullHarvest, dk.netarkivet.harvester.webinterface.Constants, dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition"
+                 dk.netarkivet.harvester.datamodel.SparseFullHarvest, 
+                 dk.netarkivet.harvester.webinterface.Constants, 
+                 dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -160,6 +164,22 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
                    %>"/>
              </td>
         </tr>
+        <tr> <!-- edit area for max job running time -->
+            <%
+            long dftMaxJobRunningTime =
+                dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_JOB_RUNNING_TIME;
+            %>
+            <td><fmt:message key="prompt;max.seconds.per.crawljob"/></td>
+            <td><input 
+                name="<%= Constants.JOB_TIMELIMIT_PARAM %>"
+                size="20" 
+                value="<%= HTMLUtils.localiseLong(
+                    (hd != null ? hd.getMaxJobRunningTime() : dftMaxJobRunningTime), 
+                    pageContext)                
+                   %>"/>
+             </td>
+        </tr>
+        
     </table>
 
     <br/>

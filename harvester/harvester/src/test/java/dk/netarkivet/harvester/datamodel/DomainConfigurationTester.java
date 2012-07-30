@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -81,7 +83,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
         assertEquals("Expecting name that we created the object with",
                 TestInfo.CONFIGURATION_NAME, cfg.getName());
         assertEquals("Expecting domain that we created the object with",
-                wd, cfg.getDomain());
+                wd.getName(), cfg.getDomainName());
         Iterator<SeedList> seeds = cfg.getSeedLists();
         assertEquals("Expecting the seedlists that we created the object with",
                 TestInfo.seedlist,
@@ -145,7 +147,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
         d.addPassword(TestInfo.password);
         DomainConfiguration conf = d.getDefaultConfiguration();
-        conf.addPassword(TestInfo.password);
+        conf.addPassword(d, TestInfo.password);
         assertTrue("Configuration uses password",
                 conf.usesPassword(TestInfo.PASSWORD_NAME));
         conf.removePassword(TestInfo.PASSWORD_NAME);
@@ -168,13 +170,14 @@ public class DomainConfigurationTester extends DataModelTestCase {
         DomainConfiguration conf = d.getDefaultConfiguration();
         assertFalse("Configuration should not be using any passwords by default",
                 conf.usesPassword(TestInfo.PASSWORD_NAME));
-        conf.addPassword(TestInfo.password);
+        conf.addPassword(d, TestInfo.password);
         assertTrue("Configuration uses password",
                 conf.usesPassword(TestInfo.PASSWORD_NAME));
     }
 
     public void testGetExpectedNumberOfObjects() throws Exception {
-        DomainConfiguration dc = Domain.getDefaultDomain("testdomain01.dk").getDefaultConfiguration();
+    	Domain domain = Domain.getDefaultDomain("testdomain01.dk");
+        DomainConfiguration dc = domain.getDefaultConfiguration();
         assertEquals("Unharvested config should return the default given number", 5000,
                      dc.getExpectedNumberOfObjects(-1L, -1L));
         dc.setMaxObjects(4000);
@@ -187,19 +190,21 @@ public class DomainConfigurationTester extends DataModelTestCase {
         Date d1 = new GregorianCalendar(1970, 01, 01).getTime();
         Date d2 = new GregorianCalendar(1980, 01, 01).getTime();
 
-        addHistoryObject(dc, d1, 100L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        addHistoryObject(domain, dc, d1, 100L, 1L, StopReason.DOWNLOAD_COMPLETE);
         dc.setMaxObjects(1100);
         assertEquals("Completed harvest should add 10% of difference", 200L,
                      dc.getExpectedNumberOfObjects(-1L, -1L));
-
-        dc = Domain.getDefaultDomain("testdomain02.dk").getDefaultConfiguration();
-        addHistoryObject(dc, d1, 100L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        
+        domain = Domain.getDefaultDomain("testdomain02.dk");
+        dc = domain.getDefaultConfiguration();
+        addHistoryObject(domain, dc, d1, 100L, 1L, StopReason.DOWNLOAD_COMPLETE);
         dc.setMaxObjects(1100);
         assertEquals("Completed harvest should add 10% of difference", 300L,
                      dc.getExpectedNumberOfObjects(2100L, -1L));
-
-        dc = Domain.getDefaultDomain("testdomain03.dk").getDefaultConfiguration();
-        addHistoryObject(dc, d1, 100L, 1L, StopReason.OBJECT_LIMIT);
+        
+        domain = Domain.getDefaultDomain("testdomain03.dk");
+        dc = domain.getDefaultConfiguration();
+        addHistoryObject(domain, dc, d1, 100L, 1L, StopReason.OBJECT_LIMIT);
 
         dc.setMaxObjects(1100);
         assertEquals("Unfinished harvest should add 50% of difference", 600L,
@@ -217,52 +222,60 @@ public class DomainConfigurationTester extends DataModelTestCase {
         assertEquals("Override flag should be a maximum of the end result", 1000L,
                 dc.getExpectedNumberOfObjects(2200L, -1L));
 
-        dc = Domain.getDefaultDomain("testdomain02.dk").getDefaultConfiguration();
-        addHistoryObject(dc, d1, 100L, 1L, StopReason.SIZE_LIMIT);
+        domain = Domain.getDefaultDomain("testdomain02.dk"); 	
+        dc = domain.getDefaultConfiguration();
+        addHistoryObject(domain, dc, d1, 100L, 1L, StopReason.SIZE_LIMIT);
         dc.setMaxObjects(1100);
         assertEquals("Unfinished harvest should add 50% of difference", 1100L,
                      dc.getExpectedNumberOfObjects(2100L, -1L));
-
-        dc = Domain.getDefaultDomain("testdomain03.dk").getDefaultConfiguration();
-        addHistoryObject(dc, d1, 200L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        addHistoryObject(dc, d2, 100L, 1L, StopReason.SIZE_LIMIT);
+        
+        domain = Domain.getDefaultDomain("testdomain03.dk"); 
+        dc = domain.getDefaultConfiguration();
+        addHistoryObject(domain, dc, d1, 200L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        addHistoryObject(domain, dc, d2, 100L, 1L, StopReason.SIZE_LIMIT);
         assertEquals("Newer smaller unfinished harvest should not affect expectation", 400L,
                      dc.getExpectedNumberOfObjects(2200L, -1L));
 
-        dc = Domain.getDefaultDomain("testdomain04.dk").getDefaultConfiguration();
-        addHistoryObject(dc, d1, 200L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        addHistoryObject(dc, d2, 300L, 1L, StopReason.SIZE_LIMIT);
+        domain = Domain.getDefaultDomain("testdomain04.dk");
+        dc = domain.getDefaultConfiguration();
+        addHistoryObject(domain, dc, d1, 200L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        addHistoryObject(domain, dc, d2, 300L, 1L, StopReason.SIZE_LIMIT);
         dc.setMaxObjects(2300);
         assertEquals("Newer larger unfinished harvest should define expectation", 1300L,
                      dc.getExpectedNumberOfObjects(-1L, -1L));
-
-        dc = Domain.getDefaultDomain("testdomain04.dk").getDefaultConfiguration();
-        addHistoryObject(dc, d1, 300L, 1L, StopReason.SIZE_LIMIT);
-        addHistoryObject(dc, d2, 200L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        
+        domain = Domain.getDefaultDomain("testdomain04.dk");
+        dc = domain.getDefaultConfiguration();
+        addHistoryObject(domain, dc, d1, 300L, 1L, StopReason.SIZE_LIMIT);
+        addHistoryObject(domain, dc, d2, 200L, 1L, StopReason.DOWNLOAD_COMPLETE);
         assertEquals("Older larger unfinished harvest should not affect expectation", 400L,
                      dc.getExpectedNumberOfObjects(2200L, -1L));
 
         //Testing limits using expected object sizes from byte limits
-        dc = Domain.getDefaultDomain("testdomain05.dk").getDefaultConfiguration();
-        addHistoryObject(dc, d1, 40L, 400L, StopReason.SIZE_LIMIT);
-        assertEquals("The expeected object size should be 38000 because only 40 objects were harvested",
+        domain = Domain.getDefaultDomain("testdomain05.dk");
+        dc = domain.getDefaultConfiguration();
+        addHistoryObject(domain, dc, d1, 40L, 400L, StopReason.SIZE_LIMIT);
+        assertEquals("The expected object size should be 38000 because only 40 objects were harvested",
                      85L,
                      dc.getExpectedNumberOfObjects(-1L, 5000000L));
 
-        dc = Domain.getDefaultDomain("testdomain06.dk").getDefaultConfiguration();
-        addHistoryObject(dc, d1, 100L, 1000L, StopReason.SIZE_LIMIT);
-        assertEquals("The expeected object size should be 10 because 100 objects were harvested",
+        domain = Domain.getDefaultDomain("testdomain06.dk");
+        dc = domain.getDefaultConfiguration();
+        addHistoryObject(domain, dc, d1, 100L, 1000L, StopReason.SIZE_LIMIT);
+        assertEquals("The expected object size should be 10 because 100 objects were harvested",
                      250050L,
                      dc.getExpectedNumberOfObjects(-1L, 5000000L));
-
-        dc = Domain.getDefaultDomain("testdomain07.dk").getDefaultConfiguration();
-        addHistoryObject(dc, d1, 1L, 1L, StopReason.SIZE_LIMIT);
+        
+        domain = Domain.getDefaultDomain("testdomain07.dk");
+        dc = domain.getDefaultConfiguration();
+        addHistoryObject(domain, dc, d1, 1L, 1L, StopReason.SIZE_LIMIT);
         assertEquals("When heritrix writes 1/1 we shouldn't expect too many objects next time",
                      66L,
                      dc.getExpectedNumberOfObjects(-1L, 5000000L));
 
-        dc = Domain.getDefaultDomain("testdomain08.dk").getDefaultConfiguration();
-        addHistoryObject(dc, d1, 10L, 10000000L, StopReason.SIZE_LIMIT);
+        domain = Domain.getDefaultDomain("testdomain08.dk");
+        dc = domain.getDefaultConfiguration();
+        addHistoryObject(domain, dc, d1, 10L, 10000000L, StopReason.SIZE_LIMIT);
         assertEquals("Even on small harvests we should trust large expectations",
                      5L,
                      dc.getExpectedNumberOfObjects(-1L, 5000000L));
@@ -276,12 +289,12 @@ public class DomainConfigurationTester extends DataModelTestCase {
         DomainConfiguration dc = d.getAllConfigurations().next();
         final ArrayList<SeedList> seedlists = new ArrayList<SeedList>();
         seedlists.add(copy);
-        dc.setSeedLists(seedlists); // Should work
+        dc.setSeedLists(d, seedlists); // Should work
         assertSame("Should have domains seedlist, not the copy",
                 seedlist, dc.getSeedLists().next());
         try {
             copy = new SeedList("badname", seedlist.getSeeds());
-            dc.addSeedList(copy);
+            dc.addSeedList(d, copy);
             fail("Should not accept an unknown seedlist");
         } catch (UnknownID e) {
             //expected
@@ -290,7 +303,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
             final ArrayList<String> seeds = new ArrayList<String>();
             seeds.add("foobarbaz");
             copy = new SeedList(seedlist.getName(), seeds);
-            dc.addSeedList(copy);
+            dc.addSeedList(d, copy);
             fail("Should not accept an empty seedlist");
         } catch (PermissionDenied e) {
             //expected
@@ -309,14 +322,14 @@ public class DomainConfigurationTester extends DataModelTestCase {
         DomainConfiguration dc = d.getAllConfigurations().next();
         final ArrayList<Password> passwords = new ArrayList<Password>();
         passwords.add(copy);
-        dc.setPasswords(passwords); // Should work
+        dc.setPasswords(d, passwords); // Should work
         assertSame("Should have domains password, not the copy",
                 password, dc.getPasswords().next());
         try {
             copy = new Password("badname", password.getComments(),
                     password.getPasswordDomain(), password.getRealm(),
                     password.getUsername(), password.getPassword());
-            dc.addPassword(copy);
+            dc.addPassword(d, copy);
             fail("Should not accept an unknown password");
         } catch (UnknownID e) {
             //expected
@@ -327,20 +340,20 @@ public class DomainConfigurationTester extends DataModelTestCase {
             copy = new Password(password.getName(), password.getComments(),
                     password.getPasswordDomain(), password.getRealm(),
                     password.getUsername(), "TrustEveryOne");
-            dc.addPassword(copy);
+            dc.addPassword(d, copy);
             fail("Should not accept an wrong password");
         } catch (PermissionDenied e) {
             //expected
         }
     }
 
-    private void addHistoryObject(DomainConfiguration dc, Date d1,
+    private void addHistoryObject(Domain d, DomainConfiguration dc, Date d1,
                                   final long countObjectRetrieved,
                                   long sizeDataRetrieved,
                                   final StopReason stopReason
     ) {
-        dc.addHarvestInfo
-                (new HarvestInfo(new Long(1L), dc.getDomain().getName(),
+        d.getHistory().addHarvestInfo
+               (new HarvestInfo(Long.valueOf(1L), d.getName(),
                         dc.getName(), d1, sizeDataRetrieved, countObjectRetrieved, stopReason));
     }
 

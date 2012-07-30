@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -26,13 +28,13 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.arcrepository.MockupArcRepositoryClient;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.preconfigured.MockupArcRepositoryClient;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
@@ -104,6 +106,7 @@ public class UploadTester extends TestCase {
         assertStoreStatus(0, TestInfo.ARC1, true);
         assertStoreStatus(1, TestInfo.ARC2, true);
     }
+    
     /**
      * Verify that non-ARC files are rejected and execution fails.
      * Also verifies that nothing is stored in that case.
@@ -119,7 +122,17 @@ public class UploadTester extends TestCase {
             assertMsgCount(0, 0);
         }
     }
-
+    
+    /**
+     * Verify that uploading a single WARC file works as expected
+     * and deletes the file locally.
+     */
+    public void testMainOneWarcFile() {
+        Upload.main(new String[]{TestInfo.WARC1.getAbsolutePath()});
+        assertMsgCount(1, 0);
+        assertStoreStatus(0, TestInfo.WARC1, true);
+    }
+    
     /**
      * Verify that  the system fails as expected when the store operation
      * fails on the server side. (Local files must NOT be deleted).

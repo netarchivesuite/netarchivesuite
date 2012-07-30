@@ -4,7 +4,9 @@
  * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,20 +45,22 @@ public class TestIndex {
     /**
      * Adds the indexes contained in the indicated file to this objects index
      *
-     * @param indexFileName Name of the files to add the indexes for
+     * @param indexFile Name of the files to add the indexes for
      */
-    public void addIndexesFromFile(String indexFileName) {
-        indexSet.addAll(indexFileToIndexSet(indexFileName));
+    public void addIndexesFromFile(File indexFile) {
+        indexSet.addAll(indexFileToIndexSet(indexFile));
     }
 
     /**
-     * Adds the indexes contained in the indicated files to this objects index
+     * Adds the indexes contained in the indicated files to this objects index.
+     * Assumes the index file are located in the AggregatorTestCase#inputDirName
+     * directory.
      *
-     * @param indexFileNames Names of the files to add the indexes for
+     * @param indexFiles Names of the files to add the indexes for
      */
-    public void addIndexesFromFiles(String[] indexFileNames) {
-        for(int i = 0;i < indexFileNames.length; i++) {
-            indexSet.addAll(indexFileToIndexSet(indexFileNames[i]));
+    public void addIndexesFromFiles(File[] indexFiles) {
+        for(int i = 0;i < indexFiles.length; i++) {
+            indexSet.addAll(indexFileToIndexSet(indexFiles[i]));
         }
     }
 
@@ -66,19 +70,25 @@ public class TestIndex {
      * same, including the sorting of the indexes. If thew indexes are different
      * a string describing the difference is returned
      *
-     * @param indexFileName The file which should be compate to the testindex
+     * @param indexFile The file which should be compared to the testindex
      * @return Null if the indexes are equal, else a difference description.
      */
-    public String compareToIndex(String indexFileName) {
+    public String compareToIndex(File indexFile) {
         String result = null;
-        Iterator<String> fileIndexIterator = indexFileToIndexSet(indexFileName).iterator();
+
+        TreeSet<String> fileIndexSet = indexFileToIndexSet(indexFile);
+        if (fileIndexSet.size() != indexSet.size()) {
+            return "The number of indexes ("+fileIndexSet.size()+") are different "
+                   + "from the number("+indexSet.size()+" in the reference index";
+        }
+        Iterator<String> fileIndexIterator = fileIndexSet.iterator();
 
         for (String index : indexSet) {
             String fileIndex = fileIndexIterator.next();
             if (!index.equals(fileIndex)) {
                 result = "Found index difference \n "+
                     "expected "+index+"\n"+
-                    "but found "+fileIndexIterator;
+                    "but found "+fileIndex;
                 return result;
             }
         }
@@ -88,14 +98,14 @@ public class TestIndex {
     /**
      * Loads all the indexes in a files into a sorted TreeSet
      *
-     * @param indexFileName The file to load
+     * @param indexFile The file to load
      *
      * @return The sorted set containing the file indexes
      */
-    private TreeSet<String> indexFileToIndexSet(String indexFileName) {
+    private TreeSet<String> indexFileToIndexSet(File indexFile) {
         TreeSet<String> indexSet = new TreeSet<String>();
         try {
-            BufferedReader input = new BufferedReader(new FileReader(new File(indexFileName)));
+            BufferedReader input = new BufferedReader(new FileReader(indexFile));
             try {
                 String line = null;
                 while ((line = input.readLine()) != null) {

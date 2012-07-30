@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +29,7 @@ import java.util.Collection;
 /**
  * Indicates that one or more arguments are invalid.
  */
+@SuppressWarnings("serial")
 public class ArgumentNotValid extends NetarkivetException {
     /**
      * Constructs new ArgumentNotValid with the specified detail message.
@@ -141,7 +144,7 @@ public class ArgumentNotValid extends NetarkivetException {
      * @param name the name and type of the value being checked.
      * @throws ArgumentNotValid if test fails
      */
-    public static void checkNotNullOrEmpty(Collection c, String name) {
+    public static void checkNotNullOrEmpty(Collection<?> c, String name) {
         checkNotNull(c, name);
 
         if (c.isEmpty()) {

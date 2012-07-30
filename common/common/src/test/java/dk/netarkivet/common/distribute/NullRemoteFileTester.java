@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,28 +29,31 @@
 
 package dk.netarkivet.common.distribute;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import junit.framework.TestCase;
 
 public class NullRemoteFileTester extends TestCase {
 
-    RemoteFile nrf;
-
-    public NullRemoteFileTester(String arg0) {
-        super(arg0);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        nrf = NullRemoteFile.getInstance(null, false, false, false);
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     public void testNewInstance() {
         RemoteFile nrf1 = NullRemoteFile.getInstance(null, false, false, false);
         assertTrue(nrf1 instanceof NullRemoteFile);
+        assertEquals(nrf1.getSize(), 0);
+        assertEquals(nrf1.getInputStream(), null);
+        assertEquals(nrf1.getName(), null);
+        try {
+        	nrf1.getChecksum();
+        	fail("Should have thrown NotImplementedException");
+        } catch (NotImplementedException e){
+        	// Expected
+        }
+        OutputStream os = new ByteArrayOutputStream();
+        nrf1.appendTo(os);
+        try {
+            nrf1.appendTo(null);
+        } catch (Exception e) {
+            fail("Exception not expected with appendTo and null arg ");
+        }
     }
-
 }

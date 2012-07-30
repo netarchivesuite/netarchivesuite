@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,9 +50,10 @@ public class HistorySiteSectionTester extends TestCase {
         int harvestRun = 5;
         assertEquals("Should get correctly formatted link for run",
                 "<a href=\"/History/Harveststatus-perharvestrun.jsp?"
-                        + "harvestID=" + harvestID 
-                        + "&amp;harvestNum=" + harvestRun
-                        + "&amp;jobstatusname=" + HarvestStatus.JOBSTATUS_ALL
+                        + "HARVEST_ID=" + harvestID 
+                        + "&amp;HARVEST_RUN=" + harvestRun
+                        + "&amp;JOB_STATUS=" 
+                        + HarvestStatusQuery.JOBSTATUS_ALL
                         + "\">" + harvestRun + "</a>",
                 HarvestStatus.makeHarvestRunLink(harvestID, harvestRun));
         try {

@@ -104,23 +104,40 @@ public class Difference
         addEnd   = Math.max(line, addEnd);
     }
 
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + addEnd;
+        result = prime * result + addStart;
+        result = prime * result + delEnd;
+        result = prime * result + delStart;
+        return result;
+    }
+    
     /**
      * Compares this object to the other for equality. Both objects must be of
      * type Difference, with the same starting and ending points.
      */
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof Difference) {
-            Difference other = (Difference)obj;
-
-            return (delStart == other.delStart &&
-                    delEnd   == other.delEnd &&
-                    addStart == other.addStart &&
-                    addEnd   == other.addEnd);
-        }
-        else {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
             return false;
-        }
+        if (getClass() != obj.getClass())
+            return false;
+        Difference other = (Difference) obj;
+        if (addEnd != other.addEnd)
+            return false;
+        if (addStart != other.addStart)
+            return false;
+        if (delEnd != other.delEnd)
+            return false;
+        if (delStart != other.delStart)
+            return false;
+        return true;
     }
 
     /**

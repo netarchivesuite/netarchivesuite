@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,9 +30,6 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.SettingsFactory;
@@ -45,9 +44,6 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     
     /** The instance of the DBSpecifics class. */
     private static DBSpecifics instance;
-    
-    /** The log of this class.*/
-    protected Log log = LogFactory.getLog(DBSpecifics.class);
 
     /** Get the singleton instance of the DBSpecifics implementation class.
      *
@@ -62,7 +58,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     }
 
     /**
-     * Shutdown the database system, if running embeddedly.  Otherwise, this
+     * Shutdown the database system, if running in embedded mode.  Otherwise, this
      * is ignored.
      *
      * Will log a warning on errors, but otherwise ignore them.

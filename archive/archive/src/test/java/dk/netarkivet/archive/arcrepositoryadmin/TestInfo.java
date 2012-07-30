@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -85,7 +87,7 @@ public class TestInfo {
     public static final String DATABASE_URL = "jdbc:derby:" + DATABASE_DIR.getAbsolutePath();
     
     /** The file for the archive database.*/
-    static final File DATABASE_FILE = new File("harvestdefinitionbasedir", "archivedb.jar");
+    static final File DATABASE_FILE = new File("archivedatabasedir", "archivedb.jar");
 
 
     public static final File TEST_FILE_1 = new File(TEST_DIR, "test1.arc");

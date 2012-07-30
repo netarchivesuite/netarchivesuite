@@ -4,7 +4,9 @@
 * Date:        $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -31,5 +33,5 @@ public interface MonitorRegistryClient {
      * @param jmxPort The port for JMX communication.
      * @param rmiPort The RMI port for JMX communication.
      */
-    public void register(String hostName, int jmxPort, int rmiPort);
+    void register(String hostName, int jmxPort, int rmiPort);
 }

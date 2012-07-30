@@ -4,7 +4,9 @@
  * $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +37,7 @@ public class HarvestInfo {
     /** The date the harvest information was created. */
     private final Date date;
 
-    /** The identifier of the harverst. */
+    /** The identifier of the harvest. */
     private final Long harvestID;
 
     /** The total number of objects retrieved. */
@@ -138,7 +140,7 @@ public class HarvestInfo {
     }
 
     /**
-     * Get the date this harvest information was recorded
+     * Get the date this harvest information was recorded.
      * @return the date the harvest information was recorded
      */
     public Date getDate() {
@@ -146,7 +148,7 @@ public class HarvestInfo {
     }
 
     /**
-     * Get the id of the harvest
+     * Get the id of the harvest.
      * @return the harvest ID
      */
     public Long getHarvestID() {
@@ -162,7 +164,7 @@ public class HarvestInfo {
     }
 
     /**
-     * Get the domain name of the harvest
+     * Get the domain name of the harvest.
      * @return the domain name
      */
     public String getDomainName() {
@@ -170,7 +172,7 @@ public class HarvestInfo {
     }
 
     /**
-     * Get the domain configuration name of the harvest
+     * Get the domain configuration name of the harvest.
      * @return the domain configuration name
      */
     public String getDomainConfigurationName() {
@@ -185,10 +187,10 @@ public class HarvestInfo {
     }
 
     /** Set the ID of this harvestinfo.  Only for use by DBDAO
-     * @param id the new ID of this harvestinfo
+     * @param newid the new ID of this harvestinfo
      */
-    void setID(long id) {
-        this.id = id;
+    void setID(long newid) {
+        this.id = newid;
     }
 
     /** Check if this harvestinfo has an ID set yet (doesn't happen until

@@ -4,7 +4,9 @@
  * Author:      $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -93,6 +95,16 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             Collections.synchronizedMap(new HashMap<String, BatchJobStatus>());
 
     /**
+     * Whether the timer will be created as a daemon-thread.
+     */
+    private static final boolean IS_DAEMON = true;
+    
+    /**
+     * The timer for keeping track of running batchjobs.
+     */
+    protected final Timer batchTimer = new Timer(IS_DAEMON);
+    
+    /**
      * Logger for this class.
      */
     private static Log log = LogFactory.getLog(BitarchiveMonitor.class);
@@ -161,13 +173,14 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                                       "ChannelID requestReplyTo");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID,
                                              "String bitarchiveBatchID");
-        log.info("Registered Batch job from " + requestID + " with timeout "
-                 + timeout);
         BatchJobStatus bjs = new BatchJobStatus(
                 requestID, requestReplyTo, bitarchiveBatchID,
                 getRunningBitarchiveIDs(), timeout
         );
         runningBatchJobs.put(bitarchiveBatchID, bjs);
+        log.info("Registered Batch job from " + requestID + " with timeout "
+                + timeout + ". Number of outstanding batchjobs are now: " 
+               + runningBatchJobs.size());
     }
 
     /**
@@ -268,6 +281,9 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         // Notify observers that this batch is done
         setChanged();
         notifyObservers(batchJobStatus);
+        log.info("Batchjob '" + batchJobStatus.bitarchiveBatchID + "' finished."
+                + "The number of outstanding batchjobs are now: " 
+                + runningBatchJobs.size());
     }
 
     /**
@@ -373,8 +389,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             batchTimeoutTask
                     = new BatchTimeoutTask(bitarchiveBatchID);
             batchTimeout = timeout;
-            Timer timer = new Timer(true);
-            timer.schedule(batchTimeoutTask, batchTimeout);
+            batchTimer.schedule(batchTimeoutTask, batchTimeout);
             this.noOfFilesProcessed = 0;
             try {
                 this.batchResultFile = File.createTempFile(
@@ -526,6 +541,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                 BitarchiveMonitor.this.notifyBatchEnded(this);
             }
         }
+
     }
 
     /**

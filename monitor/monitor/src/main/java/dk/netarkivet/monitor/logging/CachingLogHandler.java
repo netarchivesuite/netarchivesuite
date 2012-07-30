@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,9 +50,9 @@ public class CachingLogHandler extends Handler {
     /** The size of the logging cache. */
     private final int loggingHistorySize;
     /** The logging cache itself, caching the last
-     * "loggingHistorySize" logentries. */
+     * "loggingHistorySize" log entries. */
     private final List<LogRecord> loggingHistory;
-    /** The logentries exposed as MBeans. */
+    /** The log entries exposed as MBeans. */
     private final List<CachingLogRecord> loggingMBeans;
     /** The place in the loggingHistory for the next LogRecord. */ 
     private int currentIndex;
@@ -94,6 +96,7 @@ public class CachingLogHandler extends Handler {
      * @return The filter from the property if set and parsable, the
      *         defaultValue otherwise
      */
+    @SuppressWarnings("rawtypes")
     private Filter getFilterProperty(String name, Filter defaultValue) {
         String val = LogManager.getLogManager().getProperty(name);
         try {
@@ -125,6 +128,7 @@ public class CachingLogHandler extends Handler {
      * @return The formatter from the property if set and parsable, the
      *         defaultValue otherwise
      */
+    @SuppressWarnings("rawtypes")
     private Formatter getFormatterProperty(String name,
                                            Formatter defaultValue) {
         String val = LogManager.getLogManager().getProperty(name);

@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,6 +37,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.RemoteFileSettings;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
@@ -75,21 +78,21 @@ public class IndexRequestMessageTester extends TestCase {
      */
     public void testIndexRequestMessage() throws Exception {
         try {
-            new IndexRequestMessage(null, JOB_SET);
+            new IndexRequestMessage(null, JOB_SET, null);
             fail("Should throw argument not valid");
         } catch (ArgumentNotValid e) {
             assertTrue("Should be right exception",
                        e.getMessage().contains("requestType"));
         }
         try {
-            new IndexRequestMessage(RequestType.CDX, null);
+            new IndexRequestMessage(RequestType.CDX, null, null);
             fail("Should throw argument not valid");
         } catch (ArgumentNotValid e) {
             assertTrue("Should be right exception",
                        e.getMessage().contains("jobSet"));
         }
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         assertEquals("Should preserve jobs", JOB_SET,
                      irMsg.getRequestedJobs());
         assertEquals("Should preserve type", RequestType.CDX,
@@ -109,7 +112,7 @@ public class IndexRequestMessageTester extends TestCase {
      */
     public void testAccept() throws Exception {
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
 
         IndexRequestMessageHandler v
                 = new IndexRequestMessageHandler();
@@ -122,7 +125,7 @@ public class IndexRequestMessageTester extends TestCase {
      */
     public void testSetFoundJobs() throws Exception {
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         try {
             irMsg.setFoundJobs(null);
             fail("Should throw ArgumentNotValid");
@@ -140,7 +143,7 @@ public class IndexRequestMessageTester extends TestCase {
      */
     public void testSetResultFiles() throws Exception {
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         try {
             irMsg.setResultFiles(null);
             fail("Should throw ArgumentNotValid");
@@ -180,7 +183,7 @@ public class IndexRequestMessageTester extends TestCase {
 
     public void testSetResultFile() throws IOException {
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         try {
             irMsg.setResultFile(null);
             fail("Should throw ArgumentNotValid");
@@ -210,6 +213,24 @@ public class IndexRequestMessageTester extends TestCase {
                     "already has result files", e.getMessage());
         }
     }
+    
+    /** 
+     * Test NAS-2017.
+     * Test that included FTPServer information can be retrieved again.
+     */
+    public void testMessageWithNonNullRemoteFileSettings() {
+        
+        RemoteFileSettings ftpSettings = new RemoteFileSettings("localhost", 25, "test", "test123");
+        
+        IndexRequestMessage irMsg
+            = new IndexRequestMessage(RequestType.CDX, JOB_SET, ftpSettings);
+        RemoteFileSettings ftpSettingsCopy = irMsg.getRemoteFileSettings();
+        
+        assertTrue(ftpSettings.getServerName().equals(ftpSettingsCopy.getServerName()));
+        assertTrue(ftpSettings.getServerPort() == ftpSettingsCopy.getServerPort());
+        assertTrue(ftpSettings.getUserName().equals(ftpSettingsCopy.getUserName()));
+        assertTrue(ftpSettings.getUserPassword().equals(ftpSettingsCopy.getUserPassword()));
+    }
 
     private static class IndexRequestMessageHandler
             extends ArchiveMessageHandler {
@@ -221,15 +242,16 @@ public class IndexRequestMessageTester extends TestCase {
         }
     }
 
-    /** Test serializability
+    /** Test serializability.
      *
      * @throws IOException
      * @throws ClassNotFoundException
      */
     public void testSerializability()
             throws IOException, ClassNotFoundException {
+        RemoteFileSettings ftpSettings = new RemoteFileSettings("localhost", 25, "test", "test123");
         IndexRequestMessage irMsg
-                = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+                = new IndexRequestMessage(RequestType.CDX, JOB_SET, ftpSettings);
         IndexRequestMessage irMsg2 = Serial.serial(irMsg);
         assertEquals("Must deserialize to same state",
                      relevantState(irMsg), relevantState(irMsg2));
@@ -245,7 +267,7 @@ public class IndexRequestMessageTester extends TestCase {
                      relevantState(irMsg), relevantState(irMsg2));
         //Try with non-serializable sets
         irMsg = new IndexRequestMessage(RequestType.CDX,
-                                        new HashMap<Long,Long>().keySet());
+                                        new HashMap<Long,Long>().keySet(), ftpSettings);
         irMsg.setFoundJobs(new HashMap<Long,Long>().keySet());
         irMsg2 = Serial.serial(irMsg);
         assertEquals("Must deserialize to same state",

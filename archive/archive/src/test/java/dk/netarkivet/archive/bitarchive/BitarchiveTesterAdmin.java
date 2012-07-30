@@ -3,7 +3,9 @@
  * Author:                $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -81,7 +83,6 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
 
         // upload the file and verify that the file now exists
         archive.upload(new TestRemoteFile(ARC_FILE, false, false, false), ARC_FILE_NAME);
-        archive.close();
 
         // now verify that admin data updated correctly
         arcfile = admin.lookup(ARC_FILE_NAME);

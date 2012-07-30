@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +37,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Similar to a FilterIterator, but takes a java.sql.ResultSet (which is neither
  * Iterable, Iterator nor Enumeration).
  * @param <T> The type returned by the ResultSetIterator
- * //TODO this class is apparently not used in any code. Consider deleting.
  */
 
 public abstract class ResultSetIterator<T> implements Iterator<T> {

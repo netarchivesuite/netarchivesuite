@@ -4,7 +4,9 @@
 * $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +27,8 @@ package dk.netarkivet.common;
 import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
 
+import org.apache.lucene.util.Version;
+
 /**
  * This class is used for global constants only.
  *
@@ -33,14 +37,14 @@ import java.util.regex.Pattern;
  * modifiers).
  *
  * If your constant is used in a single class only, put it in that class, and
- * make sure it is private
+ * make sure it is private.
  *
  * Remember everything placed here MUST be constants.
  *
  * This class is never instantiated, so thread security is not an issue.
  *
  */
-public class Constants {
+public final class Constants {
     /** The pattern for an IP-address key. */
     public static final String IP_REGEX_STRING
             = "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}";
@@ -62,7 +66,14 @@ public class Constants {
 
     /** Possible states of code. */
     private static enum CodeStatus {
-        RELEASE, CODEFREEZE, UNSTABLE
+        /** Released code. */
+        RELEASE,
+        /** Code is under codefreeze. The code is a release candidate. */
+        CODEFREEZE, 
+        /** The code is not production ready. Although it usually compiles,
+         * all code has not necessarily been tested. 
+         */
+        UNSTABLE
     }
 
     /** Extension of XML file names. */
@@ -73,14 +84,14 @@ public class Constants {
     /** Major version number. */
     public static final int MAJORVERSION = 3;
     /** Minor version number. */
-    public static final int MINORVERSION = 13;
+    public static final int MINORVERSION = 20;
     /** Patch version number. */
-    public static final int PATCHVERSION = 0;
+    public static final int PATCHVERSION = 1;
     /** Current status of code. */
     private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
 
     /** Current version of Heritrix used by netarkivet-code. */
-    private static final String HERITRIX_VERSION = "1.14.3";
+    private static final String HERITRIX_VERSION = "1.14.4";
 
     /**
      * Read this much data when copying data from a file channel. Note that due
@@ -122,10 +133,23 @@ public class Constants {
      * @return A string telling current version and status of code.
      */
     public static String getVersionString() {
-        return "Version: " + MAJORVERSION + "." + MINORVERSION + "."
-               + PATCHVERSION + " status " + BUILDSTATUS;
-    }
+        if (BUILDSTATUS.equals(CodeStatus.RELEASE)) {
+            return "Version: " + MAJORVERSION + "." + MINORVERSION + "."
+                    + PATCHVERSION + " status " + BUILDSTATUS;
+        } else {
+            String version = "Version: " + MAJORVERSION + "." 
+                    + MINORVERSION + "."
+                    + PATCHVERSION + " status " + BUILDSTATUS;
+            String implementationVersion = Constants.class.getPackage()
+                    .getImplementationVersion();
+            if (implementationVersion != null) {
+                version += " (r" + implementationVersion + ")";
+            } 
+            return version;
+        }       
+    }     
 
+    
     /**
      * Get the Heritrix version presently in use.
      *
@@ -134,7 +158,6 @@ public class Constants {
     public static String getHeritrixVersionString() {
         return HERITRIX_VERSION;
     }
-
 
     /**
      * Get a formatter that can read and write a date in ISO format including
@@ -153,8 +176,12 @@ public class Constants {
     public static final long ONE_DAY_IN_MILLIES = 24 * 60 * ONE_MIN_IN_MILLIES;
 
     /** Pattern that matches our our CDX mimetype. */
-    public static String CDX_MIME_PATTERN = "application/x-cdx";
+    public static final String CDX_MIME_PATTERN = "application/x-cdx";
 
     /** Pattern that matches everything. */
-    public static String ALL_PATTERN = ".*";
+    public static final String ALL_PATTERN = ".*";
+    
+    /** Lucene version used by this release of NetarchiveSuite. */
+    public static final Version LUCENE_VERSION = Version.LUCENE_36;
+    
 }

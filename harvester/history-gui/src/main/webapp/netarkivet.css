@@ -86,6 +86,7 @@ th {
 font-size:16px;
 font-weight:bold;
 background-color: #ACC8E3;
+text-align: left;
 }
 
 tr {
@@ -133,6 +134,23 @@ h3 A{
 }
 .selection_table th {
 text-align: left;
+}
+
+.selection_table .harvestHeader {
+text-align: center;
+background-color: #cce1f4;
+font-size:14px;
+font-weight:bold;
+}
+
+.selection_table .spacerRowSmall {
+margin: 5;
+padding: 0;
+}
+
+.selection_table .spacerRowBig {
+margin: 15;
+padding: 0;
 }
 
 .edit_box{
@@ -217,4 +235,12 @@ form.inlineform {
 
 .sidebarHeader img {
     vertical-align: middle;
+}
+
+.crawlerHost a:link {
+    font-weight:bold;
+}
+
+.crawlerhost a:visited {
+    color: #660099;
 }

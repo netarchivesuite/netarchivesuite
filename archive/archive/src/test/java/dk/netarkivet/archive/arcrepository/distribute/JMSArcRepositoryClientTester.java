@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -39,14 +41,12 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
-import junit.framework.TestListener;
 
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
-import dk.netarkivet.archive.arcrepository.bitpreservation.TestInfo;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
@@ -81,13 +81,12 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.CollectionAsserts;
-import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
@@ -230,7 +229,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         assertNotNull("The reply should not be null", bar);
         // BitarchiveRecord.getData() now returns a InputStream instead of a byte[]
         InputStream theData = bar.getData();
-        byte[] contents = TestUtils.inputStreamToBytes(theData,
+        byte[] contents = StreamUtils.inputStreamToBytes(theData,
                                                        (int) bar.getLength());
         assertEquals("The reply doesn't contain the correct data",
                      filename + " " + index, new String(contents));
@@ -830,7 +829,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         runner.start();
         
         synchronized (this) {
-            wait(50);
+            wait(100);
         }
         jmsCon.waitForConcurrentTasksToFinish();
         
@@ -991,7 +990,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
 //                            meta)));
                     setBitarchiveRecord(new BitarchiveRecord(new ARCRecord(
                             new ByteArrayInputStream(encodedKey),
-                            meta)));
+                            meta), netMsg.getArcFile()));
                     netMsg.setRecord(bar);
 
 

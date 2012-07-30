@@ -5,7 +5,9 @@
 * Date:     $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -30,8 +32,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
+import org.apache.commons.io.IOUtils;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -40,8 +44,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
+import dk.netarkivet.viewerproxy.reporting.CrawlLogLinesMatchingRegexp;
 import dk.netarkivet.viewerproxy.reporting.HarvestedUrlsForDomainBatchJob;
 
 /**
@@ -65,6 +71,7 @@ public class Reporting {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob fileListJob = new FileListJob();
         fileListJob.processOnlyFilesMatching(jobid + "-.*\\.arc(\\.gz)?");
+        
         File f;
         try {
             f = File.createTempFile(jobid + "-files", ".txt",
@@ -92,7 +99,7 @@ public class Reporting {
      * @throws ArgumentNotValid If jobid is 0 or negative.
      * @throws IOFailure On trouble generating the cdx
      */
-    public static List<CDXRecord> getMetdataCDXRecordsForJob(int jobid) {
+    public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob cdxJob = new ExtractCDXJob(false);
         cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+\\.arc(\\.gz)?");
@@ -108,8 +115,9 @@ public class Reporting {
                 cdxJob, Settings.get(CommonSettings.USE_REPLICA_ID));
         status.getResultFile().copyTo(f);
         List<CDXRecord> records;
+        BufferedReader reader = null;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(f));
+            reader = new BufferedReader(new FileReader(f));
             records = new ArrayList<CDXRecord>();
             for (String line = reader.readLine();
                  line != null; line = reader.readLine()) {
@@ -121,6 +129,7 @@ public class Reporting {
             throw new IOFailure("Unable to read results from file '" + f
                                 + "'", e);
         } finally {
+            IOUtils.closeQuietly(reader);
             FileUtils.remove(f);
         }
         return records;
@@ -133,7 +142,7 @@ public class Reporting {
      * @param jobid The jobid to get the crawl.log-lines for.
      * @return A file containing the crawl.log lines. This file is temporary,
      * and should be deleted after use.
-     * @throws ArgumentNotValid On negtaive jobids, or if domain is null or the
+     * @throws ArgumentNotValid On negative jobids, or if domain is null or the
      * empty string.
      */
     public static File getCrawlLogForDomainInJob(String domain, int jobid) {
@@ -143,25 +152,52 @@ public class Reporting {
                 = new HarvestedUrlsForDomainBatchJob(domain);
         urlsForDomainBatchJob.processOnlyFilesMatching(
                 jobid + "-metadata-[0-9]+\\.arc(\\.gz)?");
+        return getResultFile(urlsForDomainBatchJob);
+    }
+    
+    /** 
+     * Helper method to get result from a batchjob.
+     * @param batchJob a certain FileBatchJob
+     * @return a file with the result.
+     */
+    private static File getResultFile(FileBatchJob batchJob) {
         File f;
         File fsorted;
         try {
-            f = File.createTempFile(jobid + "-crawllog-" + domain,
-                                    ".txt", FileUtils.getTempDir());
+            final String uuid = UUID.randomUUID().toString();
+            f = File.createTempFile("temp", uuid + ".txt", 
+                    FileUtils.getTempDir());
             f.deleteOnExit();
-            fsorted = File.createTempFile(jobid + "-crawllog-" + domain + "-",
-                                         "-sorted.txt", FileUtils.getTempDir());
+            fsorted = File.createTempFile("temp", uuid + "-sorted.txt",
+                    FileUtils.getTempDir());
             fsorted.deleteOnExit();
         } catch (IOException e) {
             throw new IOFailure("Unable to create temporary file", e);
         }
         BatchStatus status
                 = ArcRepositoryClientFactory.getViewerInstance().batch(
-                urlsForDomainBatchJob,
+                batchJob,
                 Settings.get(CommonSettings.USE_REPLICA_ID));
         status.getResultFile().copyTo(f);
         FileUtils.sortCrawlLog(f, fsorted);
         FileUtils.remove(f);
         return fsorted;
     }
+
+    /**
+     * Return any crawllog lines for a given jobid  matching the given regular
+     * expression. 
+     * @param jobid The jobid 
+     * @param regexp A regular expression
+     * @return a File with the matching lines.
+     */
+    public static File getCrawlLoglinesMatchingRegexp(int jobid, String regexp) {
+        ArgumentNotValid.checkPositive(jobid, "jobid");
+        ArgumentNotValid.checkNotNullOrEmpty(regexp, "String regexp");
+        FileBatchJob crawlLogBatchJob = new CrawlLogLinesMatchingRegexp(regexp);
+        crawlLogBatchJob.processOnlyFilesMatching(jobid
+                + "-metadata-[0-9]+\\.arc(\\.gz)?");
+        return getResultFile(crawlLogBatchJob);
+    }
+    
 }

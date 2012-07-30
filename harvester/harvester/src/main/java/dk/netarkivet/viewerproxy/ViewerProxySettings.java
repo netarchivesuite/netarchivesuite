@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,4 +55,21 @@ public class ViewerProxySettings {
      * index for the jobs being viewed. This directory can be used by multiple
      * ViewerProxy applications running on the same machine. */
     public static String VIEWERPROXY_DIR = "settings.viewerproxy.baseDir";
+    
+    /**
+     * <b>settings.viewerproxy.tryLookupUriAsFtp</b>: <br>
+     * If we fail to lookup an URI, we will try changing the protocol to ftp,
+     * if this setting is set to true. The default is false.
+     *  
+     */
+    public static String TRY_LOOKUP_URI_AS_FTP = "settings.viewerproxy.tryLookupUriAsFtp";
+
+    /**
+     * <b>settings.viewerproxy.maxSizeInBrowser</b>
+     * The size (in bytes) of the largest object to be returned for viewing in
+     * the browser window. Larger objects will be returned with the
+     * appropriate http header for saving them to a file.
+     */
+    public static String MAXIMUM_OBJECT_IN_BROWSER = "settings.viewerproxy.maxSizeInBrowser";
+
 }

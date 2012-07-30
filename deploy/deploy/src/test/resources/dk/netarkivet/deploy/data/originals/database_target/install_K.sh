@@ -17,14 +17,16 @@ scp tests/dk/netarkivet/deploy/data/working/database.jar test@kb-test-adm-001.kb
 echo Unzipping harvest definition database
 ssh test@kb-test-adm-001.kb.dk "cd /home/test/TEST; if [ -d harvestDatabase ]; then echo The database directory already exists. Thus database not reset.; else unzip -q -o harvestdefinitionbasedir/fullhddb.jar -d harvestDatabase; fi; exit; "
 echo Copying archive database
-scp tests/dk/netarkivet/deploy/data/working/bpdb.jar test@kb-test-adm-001.kb.dk:/home/test/TEST/harvestdefinitionbasedir/archivedb.jar
+scp tests/dk/netarkivet/deploy/data/working/bpdb.jar test@kb-test-adm-001.kb.dk:/home/test/TEST/archivedatabasedir/archivedb.jar
 echo Unzipping archive database
-ssh test@kb-test-adm-001.kb.dk "cd /home/test/TEST; if [ -d bitpreservationdb ]; then echo The database directory already exists. Thus database not reset.; else unzip -q -o harvestdefinitionbasedir/archivedb.jar -d bitpreservationdb; fi; exit; "
+ssh test@kb-test-adm-001.kb.dk "cd /home/test/TEST; if [ -d adminDB ]; then echo The database directory already exists. Thus database not reset.; else unzip -q -o archivedatabasedir/archivedb.jar -d adminDB; fi; exit; "
 echo make scripts executable
 ssh test@kb-test-adm-001.kb.dk "chmod 700 /home/test/TEST/conf/*.sh "
 echo make password and access files readonly
-ssh test@kb-test-adm-001.kb.dk "chmod 400 /home/test/TEST/conf/jmxremote.password"
-ssh test@kb-test-adm-001.kb.dk "chmod 400 /home/test/TEST/conf/jmxremote.access"
+ssh test@kb-test-adm-001.kb.dk "mv -f /home/test/TEST/conf/jmxremote.access /home/test/TEST/conf/access.privileges"
+ssh test@kb-test-adm-001.kb.dk "mv -f /home/test/TEST/conf/jmxremote.password /home/test/TEST/./jmxremote.password"
+ssh test@kb-test-adm-001.kb.dk "chmod 400 /home/test/TEST/./jmxremote.password"
+ssh test@kb-test-adm-001.kb.dk "chmod 400 /home/test/TEST/conf/access.privileges"
 echo --------------------------------------------
 echo INSTALLING TO MACHINE: ba-test@kb-test-bar-010.bitarkiv.kb.dk
 echo copying null.zip to: kb-test-bar-010.bitarkiv.kb.dk
@@ -41,8 +43,10 @@ if [ $( ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c if exist TEST\\conf\\j
 echo copying settings and scripts
 scp -r kb-test-bar-010.bitarkiv.kb.dk/* ba-test@kb-test-bar-010.bitarkiv.kb.dk:TEST\\conf\\
 echo make password and access files readonly
-echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk "cmd /c cacls TEST\\conf\\jmxremote.password /P BITARKIV\\ba-test:R"
-echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk "cmd /c cacls TEST\\conf\\jmxremote.access /P BITARKIV\\ba-test:R"
+ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.access TEST\\conf\\access.privileges"
+ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.password TEST\\.\\jmxremote.password"
+echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk "cmd /c cacls TEST\\.\\jmxremote.password /P BITARKIV\\ba-test:R"
+echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk "cmd /c cacls TEST\\conf\\access.privileges /P BITARKIV\\ba-test:R"
 echo --------------------------------------------
 echo INSTALLING TO MACHINE: ba-test@kb-test-bar-011.bitarkiv.kb.dk
 echo copying null.zip to: kb-test-bar-011.bitarkiv.kb.dk
@@ -59,8 +63,10 @@ if [ $( ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c if exist TEST\\conf\\j
 echo copying settings and scripts
 scp -r kb-test-bar-011.bitarkiv.kb.dk/* ba-test@kb-test-bar-011.bitarkiv.kb.dk:TEST\\conf\\
 echo make password and access files readonly
-echo Y | ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk "cmd /c cacls TEST\\conf\\jmxremote.password /P BITARKIV\\ba-test:R"
-echo Y | ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk "cmd /c cacls TEST\\conf\\jmxremote.access /P BITARKIV\\ba-test:R"
+ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.access TEST\\conf\\access.privileges"
+ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.password TEST\\.\\jmxremote.password"
+echo Y | ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk "cmd /c cacls TEST\\.\\jmxremote.password /P BITARKIV\\ba-test:R"
+echo Y | ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk "cmd /c cacls TEST\\conf\\access.privileges /P BITARKIV\\ba-test:R"
 echo --------------------------------------------
 echo INSTALLING TO MACHINE: test@kb-test-har-001.kb.dk
 echo copying null.zip to:kb-test-har-001.kb.dk
@@ -77,8 +83,10 @@ scp -r kb-test-har-001.kb.dk/* test@kb-test-har-001.kb.dk:/home/test/TEST/conf/
 echo make scripts executable
 ssh test@kb-test-har-001.kb.dk "chmod 700 /home/test/TEST/conf/*.sh "
 echo make password and access files readonly
-ssh test@kb-test-har-001.kb.dk "chmod 400 /home/test/TEST/conf/jmxremote.password"
-ssh test@kb-test-har-001.kb.dk "chmod 400 /home/test/TEST/conf/jmxremote.access"
+ssh test@kb-test-har-001.kb.dk "mv -f /home/test/TEST/conf/jmxremote.access /home/test/TEST/conf/access.privileges"
+ssh test@kb-test-har-001.kb.dk "mv -f /home/test/TEST/conf/jmxremote.password /home/test/TEST/./jmxremote.password"
+ssh test@kb-test-har-001.kb.dk "chmod 400 /home/test/TEST/./jmxremote.password"
+ssh test@kb-test-har-001.kb.dk "chmod 400 /home/test/TEST/conf/access.privileges"
 echo --------------------------------------------
 echo INSTALLING TO MACHINE: test@kb-test-har-002.kb.dk
 echo copying null.zip to:kb-test-har-002.kb.dk
@@ -95,8 +103,10 @@ scp -r kb-test-har-002.kb.dk/* test@kb-test-har-002.kb.dk:/home/test/TEST/conf/
 echo make scripts executable
 ssh test@kb-test-har-002.kb.dk "chmod 700 /home/test/TEST/conf/*.sh "
 echo make password and access files readonly
-ssh test@kb-test-har-002.kb.dk "chmod 400 /home/test/TEST/conf/jmxremote.password"
-ssh test@kb-test-har-002.kb.dk "chmod 400 /home/test/TEST/conf/jmxremote.access"
+ssh test@kb-test-har-002.kb.dk "mv -f /home/test/TEST/conf/jmxremote.access /home/test/TEST/conf/access.privileges"
+ssh test@kb-test-har-002.kb.dk "mv -f /home/test/TEST/conf/jmxremote.password /home/test/TEST/./jmxremote.password"
+ssh test@kb-test-har-002.kb.dk "chmod 400 /home/test/TEST/./jmxremote.password"
+ssh test@kb-test-har-002.kb.dk "chmod 400 /home/test/TEST/conf/access.privileges"
 echo --------------------------------------------
 echo INSTALLING TO MACHINE: test@kb-test-acs-001.kb.dk
 echo copying null.zip to:kb-test-acs-001.kb.dk
@@ -113,6 +123,8 @@ scp -r kb-test-acs-001.kb.dk/* test@kb-test-acs-001.kb.dk:/home/test/TEST/conf/
 echo make scripts executable
 ssh test@kb-test-acs-001.kb.dk "chmod 700 /home/test/TEST/conf/*.sh "
 echo make password and access files readonly
-ssh test@kb-test-acs-001.kb.dk "chmod 400 /home/test/TEST/conf/jmxremote.password"
-ssh test@kb-test-acs-001.kb.dk "chmod 400 /home/test/TEST/conf/jmxremote.access"
+ssh test@kb-test-acs-001.kb.dk "mv -f /home/test/TEST/conf/jmxremote.access /home/test/TEST/conf/access.privileges"
+ssh test@kb-test-acs-001.kb.dk "mv -f /home/test/TEST/conf/jmxremote.password /home/test/TEST/./jmxremote.password"
+ssh test@kb-test-acs-001.kb.dk "chmod 400 /home/test/TEST/./jmxremote.password"
+ssh test@kb-test-acs-001.kb.dk "chmod 400 /home/test/TEST/conf/access.privileges"
 echo --------------------------------------------

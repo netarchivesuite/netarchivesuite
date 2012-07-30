@@ -15,8 +15,10 @@ scp -r sb-test-har-001.statsbiblioteket.dk/* netarkiv@sb-test-har-001.statsbibli
 echo make scripts executable
 ssh netarkiv@sb-test-har-001.statsbiblioteket.dk "chmod 700 /home/netarkiv/TEST/conf/*.sh "
 echo make password and access files readonly
-ssh netarkiv@sb-test-har-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/conf/jmxremote.password"
-ssh netarkiv@sb-test-har-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/conf/jmxremote.access"
+ssh netarkiv@sb-test-har-001.statsbiblioteket.dk "mv -f /home/netarkiv/TEST/conf/jmxremote.access /home/netarkiv/TEST/conf/access.privileges"
+ssh netarkiv@sb-test-har-001.statsbiblioteket.dk "mv -f /home/netarkiv/TEST/conf/jmxremote.password /home/netarkiv/TEST/./jmxremote.password"
+ssh netarkiv@sb-test-har-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/./jmxremote.password"
+ssh netarkiv@sb-test-har-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/conf/access.privileges"
 echo --------------------------------------------
 echo INSTALLING TO MACHINE: netarkiv@sb-test-bar-001.statsbiblioteket.dk
 echo copying null.zip to:sb-test-bar-001.statsbiblioteket.dk
@@ -33,8 +35,10 @@ scp -r sb-test-bar-001.statsbiblioteket.dk/* netarkiv@sb-test-bar-001.statsbibli
 echo make scripts executable
 ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk "chmod 700 /home/netarkiv/TEST/conf/*.sh "
 echo make password and access files readonly
-ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/conf/jmxremote.password"
-ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/conf/jmxremote.access"
+ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk "mv -f /home/netarkiv/TEST/conf/jmxremote.access /home/netarkiv/TEST/conf/access.privileges"
+ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk "mv -f /home/netarkiv/TEST/conf/jmxremote.password /home/netarkiv/TEST/./jmxremote.password"
+ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/./jmxremote.password"
+ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/conf/access.privileges"
 echo --------------------------------------------
 echo INSTALLING TO MACHINE: netarkiv@sb-test-acs-001.statsbiblioteket.dk
 echo copying null.zip to:sb-test-acs-001.statsbiblioteket.dk
@@ -51,6 +55,8 @@ scp -r sb-test-acs-001.statsbiblioteket.dk/* netarkiv@sb-test-acs-001.statsbibli
 echo make scripts executable
 ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk "chmod 700 /home/netarkiv/TEST/conf/*.sh "
 echo make password and access files readonly
-ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/conf/jmxremote.password"
-ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/conf/jmxremote.access"
+ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk "mv -f /home/netarkiv/TEST/conf/jmxremote.access /home/netarkiv/TEST/conf/access.privileges"
+ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk "mv -f /home/netarkiv/TEST/conf/jmxremote.password /home/netarkiv/TEST/./jmxremote.password"
+ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/./jmxremote.password"
+ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk "chmod 400 /home/netarkiv/TEST/conf/access.privileges"
 echo --------------------------------------------

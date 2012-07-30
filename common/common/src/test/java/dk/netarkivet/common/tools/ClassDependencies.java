@@ -534,7 +534,7 @@ public class ClassDependencies {
         }
 
         public void put(int i, int val) {
-            put(i, new Integer(val));
+            put(i, Integer.valueOf(val));
         }
 
         public void put(int i, int a, int b) {

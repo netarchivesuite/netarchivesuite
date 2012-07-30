@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -75,7 +77,7 @@ public class Replica {
     /** Initialize the list of known replicas from settings.
      * This must be called before using known, but after settings are loaded.
      */
-    private static void initializeKnownReplicasList() {
+    private static synchronized void initializeKnownReplicasList() {
         if (knownReplicas == null) {
             String[] replicaIds 
                 = Settings.getAll(CommonSettings.REPLICA_IDS);

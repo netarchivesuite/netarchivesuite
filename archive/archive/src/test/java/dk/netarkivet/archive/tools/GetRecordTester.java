@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -24,13 +26,13 @@ package dk.netarkivet.archive.tools;
 
 import javax.jms.Message;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.HashMap;
 
 import junit.framework.TestCase;
+
+import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
@@ -136,7 +138,7 @@ public class GetRecordTester extends TestCase {
                     map.put((String) o, Integer.toString(CONTENT.length()));
                 }
                 //insert dummy offset
-                map.put(ARCConstants.ABSOLUTE_OFFSET_KEY, new Long(0L));
+                map.put(ARCConstants.ABSOLUTE_OFFSET_KEY, Long.valueOf(0L));
                 ARCRecordMetaData meta = new ARCRecordMetaData("foo", map);
                 InputStream is = new ByteArrayInputStream(CONTENT.getBytes());
                 myRec = new ARCRecord(is, meta, 0, false, false, false);
@@ -152,9 +154,9 @@ public class GetRecordTester extends TestCase {
                 GetMessage m = (GetMessage) nmsg;
                 if ((arcFileName.equals(m.getArcFile()))
                         && (offset == m.getIndex())) {
-                    m.setRecord(new BitarchiveRecord(myRec));
+                    m.setRecord(new BitarchiveRecord((ArchiveRecord) myRec, m.getArcFile()));
                 } else {
-                    m.setRecord(new BitarchiveRecord(null));
+                    m.setRecord(new BitarchiveRecord(null, ""));
                 }
                 JMSConnectionFactory.getInstance().reply(m);
             }

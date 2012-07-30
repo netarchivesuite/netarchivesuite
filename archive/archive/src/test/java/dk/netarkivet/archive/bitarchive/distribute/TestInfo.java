@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,14 +26,12 @@ package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.io.File;
 
-/**
- */
 public class TestInfo {
     private static final File BAMON_BASEDIR =
         new File("tests/dk/netarkivet/archive/bitarchive/distribute/data");
     static final File BAMON_ORIGINALS = new File(BAMON_BASEDIR, "originals");
     static final File BAMON_WORKING = new File(BAMON_BASEDIR, "working") ;
-    static final File BAMON_TMP_FILE = new File(BAMON_ORIGINALS,"tmpout.txt");//Nonexsting, to put data in
+    static final File BAMON_TMP_FILE = new File(BAMON_ORIGINALS,"tmpout.txt");//Non-existing, to put data in
 
     static final File MONITOR_TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/monitor");
     static final File DUMMY_FILE = new File(MONITOR_TEST_DIR, "dummyTestRemoteFile.txt");

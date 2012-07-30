@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +25,8 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,12 +44,11 @@ import dk.netarkivet.harvester.datamodel.JobDAOTester;
 import dk.netarkivet.harvester.datamodel.JobDBDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobStatusInfo;
-import dk.netarkivet.harvester.webinterface.HarvestStatus.DefaultedRequest;
 
 /**
  * Test of Harvest Status utility method for resubmitting jobs.
  */
-public class HarvestStatusTester extends WebinterfaceTestCase {
+public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 
@@ -61,11 +64,62 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         super.tearDown();
     }
 
+    /** Simple unittest for the HarvestStatus constructor and associated getters. */
+    public void testHarvestStatusConstructor() {
+        List<JobStatusInfo> jsiList = new ArrayList<JobStatusInfo>();
+        HarvestStatus hs = new HarvestStatus(420L, jsiList);
+        
+        assertEquals("Should have returned the correct fullresultsCount",
+                420L, hs.getFullResultsCount());
+        assertEquals("Should have returned the same empty list "
+        		+ "of JobstatusInfo objects",
+                jsiList, hs.getJobStatusInfo());
+    }
+    
+    public void testRejectFailedJob() throws SQLException {
+        JobDAO jobDAO = JobDBDAO.getInstance();
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
+        Job job = Job.createJob(420L, DomainDAO.getInstance().read(
+                "netarkivet.dk").getDefaultConfiguration(), 0);
+        jobDAO.create(job);
+        job.setStatus(JobStatus.FAILED);
+        JobDAO.getInstance().update(job);
+        HarvestStatus.rejectFailedJob(null, null, job.getJobID());
+        assertEquals("Job should now be in status FAILED_REJECTED",
+                     jobDAO.read(job.getJobID()).getStatus(), JobStatus.FAILED_REJECTED);
+        try {
+            HarvestStatus.rejectFailedJob(null, null, job.getJobID());
+            fail("Expect to throw exception in rejecting an already rejected job");
+        } catch (Exception e) {
+            //expected
+        }
+
+    }
+
+    public void testUnrejectRejectedJob() throws SQLException {
+        JobDAO jobDAO = JobDBDAO.getInstance();
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
+        Job job = Job.createJob(420L, DomainDAO.getInstance().read(
+                "netarkivet.dk").getDefaultConfiguration(), 0);
+        jobDAO.create(job);
+        job.setStatus(JobStatus.FAILED_REJECTED);
+        JobDAO.getInstance().update(job);
+        HarvestStatus.unrejectRejectedJob(null, null, job.getJobID());
+        assertEquals("Job should now be in status FAILED",
+                     jobDAO.read(job.getJobID()).getStatus(), JobStatus.FAILED);
+        try {
+            HarvestStatus.unrejectRejectedJob(null, null, job.getJobID());
+            fail("Expect to throw exception in unrejecting a failed job");
+        } catch (Exception e) {
+            //expected
+        }
+    }
+
     public void testProcessRequest() throws Exception {
         
         JobDAO jobDAO = JobDBDAO.getInstance();
-        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(42L);
-        Job job = Job.createJob(42L, DomainDAO.getInstance().read(
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
+        Job job = Job.createJob(420L, DomainDAO.getInstance().read(
                 "netarkivet.dk").getDefaultConfiguration(), 0);
         jobDAO.create(job);
 
@@ -136,37 +190,36 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
     }
     
     public void testGetjobStatusList () throws Exception {
-        Set<Integer> allSet = new HashSet<Integer>();
-        allSet.add(JobStatus.ALL_STATUS_CODE);
-    	List<JobStatusInfo> l = HarvestStatus.getjobStatusList(allSet,"ASC");
+        
+        Map<String, String[]> params = new HashMap<String, String[]>();
+        params.put(
+        		HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), 
+        		new String[]{"ASC"});
+        List<JobStatusInfo> l = HarvestStatus.getjobStatusList(
+        		getTestQuery(params)).getJobStatusInfo();
     	assertEquals("Number of jobs should be 0", 0, l.size());
 
     	Set<Integer> testStatuscodeSet = new HashSet<Integer>();
     	testStatuscodeSet.add(0);
     	
-    	l = HarvestStatus.getjobStatusList(testStatuscodeSet, "ASC");
-    	assertEquals("Number of jobs should be 0", 0, l.size());
-    	
-    	Set<Integer> badStatuscodeSet = new HashSet<Integer>();
-        testStatuscodeSet.add(-2);
-    	
-        try {
-        	HarvestStatus.getjobStatusList(badStatuscodeSet, "DESC");
+    	try {
+    		params.clear();
+        	params.put(
+            		HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), 
+            		new String[]{ "bogus" });
+        	HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
             fail("Should have forwarded me to ArgumentNotValid for wrong job status.");
         } catch (ArgumentNotValid e) {
             //Expected
         }
 
         try {
-        	HarvestStatus.getjobStatusList(testStatuscodeSet, "XX");
-           fail("Should have forwarded me to ArgumentNotValid for unknown sort order.");
-        } catch (ArgumentNotValid e) {
-            //Expected
-        }
-
-        try {
-        	HarvestStatus.getjobStatusList(testStatuscodeSet,"");
-           fail("Should have forwarded me to ArgumentNotValid for unknown sort order.");
+        	params.clear();
+        	params.put(
+            		HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), 
+            		new String[]{ "XX" });
+        	HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
+        	fail("Should have forwarded me to ArgumentNotValid for unknown sort order.");
         } catch (ArgumentNotValid e) {
             //Expected
         }
@@ -175,29 +228,21 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
     public void testGetSelectedSortOrder () throws Exception {
     	TestServletRequest servletRequest = new TestServletRequest();
         
-    	DefaultedRequest dfltRequest =
-    	        new HarvestStatus.DefaultedRequest(servletRequest);
-        String s;
-        try {
-            s = HarvestStatus.getSelectedSortOrder(null);
-            fail("Should have thrown ANV on null parameter.");
-        } catch (ArgumentNotValid e) {
-            //Expected
-        }
-
+    	HarvestStatusQuery query = new HarvestStatusQuery(servletRequest);
+        
         //check default
-        s = HarvestStatus.getSelectedSortOrder(dfltRequest);
-        assertEquals("Expected other default sort order",
-         		HarvestStatus.DEFAULT_SORTORDER, s);
+        assertTrue(
+        		"Expected other default sort order", query.isSortAscending());
 
         //check error on faulty parameter
         Map<String, String[]> parms = new HashMap<String, String[]>();
-        parms.put(Constants.JOBIDORDER_PARAM, new String[]{"XX"});
+        parms.put(
+        		HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), 
+        		new String[]{"XX"});
         servletRequest.setParameterMap(parms);
         
-        dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
         try {
-            s = HarvestStatus.getSelectedSortOrder(dfltRequest);
+        	new HarvestStatusQuery(servletRequest);
             fail("Should have forwarded me to an error page on wrong order parameter.");
         } catch (ArgumentNotValid e) {
            //Expected
@@ -205,59 +250,68 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
 
         //check set order parameter
         parms = new HashMap<String, String[]>();
-        parms.put(Constants.JOBIDORDER_PARAM, new String[]{HarvestStatus.SORTORDER_DESCENDING});
+        parms.put(
+        		HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), 
+        		new String[]{
+        			HarvestStatusQuery.SORT_ORDER.DESC.name()}
+        		);
         servletRequest.setParameterMap(parms);
-        dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
-        s = HarvestStatus.getSelectedSortOrder(dfltRequest);
-        assertEquals("Expected descemnding sort order",
-        		HarvestStatus.SORTORDER_DESCENDING, s);
+        query = new HarvestStatusQuery(servletRequest);
+        assertFalse(
+        		"Expected descending sort order",
+        		query.isSortAscending());
     }
     
     public void testGetSelectedJobStatusCode() throws Exception {
     	TestServletRequest servletRequest = new TestServletRequest();
         
-    	DefaultedRequest dfltRequest =
-    	        new HarvestStatus.DefaultedRequest(servletRequest);
-        Set<Integer> selectedCodes;
-        try {
-            selectedCodes = HarvestStatus.getSelectedJobStatusCodes(null);
-            fail("Should have thrown ANV on null parameter.");
-        } catch (ArgumentNotValid e) {
-            //Expected
-        }
-
-        //check default
-        selectedCodes = HarvestStatus.getSelectedJobStatusCodes(dfltRequest);
-        assertTrue("Only one statuscode should have selected", 
-                selectedCodes.size() == 1);
+    	HarvestStatusQuery query = new HarvestStatusQuery(servletRequest);
         
-        assertEquals("Expected other default sort order",
-         		HarvestStatus.DEFAULT_JOBSTATUS, 
-         		JobStatus.fromOrdinal((Integer)selectedCodes.toArray()[0]).name());
+        //check default
+    	JobStatus[] selectedStatuses = query.getSelectedJobStatuses();
+        assertTrue("Only one statuscode should have selected", 
+        		selectedStatuses.length == 1);
+        
+        assertTrue("Expected other default sort order",
+         		query.isSortAscending());
 
         //check error on faulty parameter
         Map<String, String[]> parms = new HashMap<String, String[]>();
-        parms.put(Constants.JOBSTATUS_PARAM, new String[]{"XX"});
+        parms.put(
+        		HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), 
+        		new String[]{"XX"});
         servletRequest.setParameterMap(parms);
-        dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
+        
+        // FIXME this says that it should forward to error page on wrong order parameters
+        // But it does not!
         try {
-            selectedCodes = HarvestStatus.getSelectedJobStatusCodes(dfltRequest);
+        	new HarvestStatusQuery(servletRequest);
             fail("Should have forwarded me to an error page on wrong order parameter.");
-        } catch (IllegalArgumentException e) {
-           //Expected
+        //} catch (IllegalArgumentException e) {
+        //   //Expected
+        } catch (ArgumentNotValid e) {
+          //Expected
         }
-
         //check set order parameter
         parms = new HashMap<String, String[]>();
-        parms.put(Constants.JOBSTATUS_PARAM, new String[]{JobStatus.FAILED.name()});
+        parms.put(
+        		HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), 
+        		new String[]{JobStatus.FAILED.name()});
         servletRequest.setParameterMap(parms);
-        dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
-        selectedCodes = HarvestStatus.getSelectedJobStatusCodes(dfltRequest);
-        assertTrue("Only one statuscode should have selected", 
-                selectedCodes.size() == 1);
+        query = new HarvestStatusQuery(servletRequest);
+        assertEquals("Only one statuscode should have selected", 
+                query.getSelectedJobStatuses().length, 1);
         assertEquals("Expected failed job status for selection",
         		JobStatus.FAILED.name(),
-        		JobStatus.fromOrdinal((Integer)selectedCodes.toArray()[0]).name());
+        		query.getSelectedJobStatuses()[0].name());
     	
     }
+    
+    public static HarvestStatusQuery getTestQuery(
+    		Map<String, String[]> params) {
+    	TestServletRequest req = new TestServletRequest();        
+        req.setParameterMap(params);
+        return new HarvestStatusQuery(req);
+    }
+    
 }

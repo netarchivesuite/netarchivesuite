@@ -4,7 +4,9 @@
 * Date:        $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -40,6 +42,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.management.SingleMBeanObject;
 import dk.netarkivet.common.utils.ExceptionUtils;
@@ -53,7 +56,7 @@ import dk.netarkivet.monitor.registry.MonitorRegistry;
  * query and interface to a given mbean server. The interface should be of type
  * T.
  *
- * @param <T>
+ * @param <T> The type of object exposed through the MBeans.
  */
 public class HostForwarding<T> {
 
@@ -66,26 +69,59 @@ public class HostForwarding<T> {
             new HashMap<String, Set<HostEntry>>();
 
     /** The query to the MBeanserver to get the MBeans. */
-    public final String mBeanQuery;
+    private final String mBeanQuery;
     /** The MBean server we register the forwarded mbeans in. */
     private final MBeanServer mBeanServer;
     /** The interface the remote mbeans should implement. */
     private final Class<T> asInterface;
-
+    
     /**
      * The username for JMX read from either a System property, the overriding
      * settings given by the installer, or the default value stored in
      * src/dk/netarkivet/monitor/settings.xml.
      */
     private String jmxUsername;
-
+    /** 
+     * @return the JMX-Username
+     */
+    private String getJmxUsername() {
+        return jmxUsername;
+    }
+    /**
+     * Set the JMX-username with a new value. Null or empty username is not 
+     * allowed.
+     * @param newJmxUsername New value for the JMX-username
+     */
+    private synchronized void setJmxUsername(String newJmxUsername) {
+        ArgumentNotValid.checkNotNullOrEmpty(
+                newJmxUsername, "String newJmxUsername");
+        this.jmxUsername = newJmxUsername;
+    }
+    
     /**
      * The password for JMX read from either a System property, the overriding
      * settings given by the installer, or the default value stored in
      * src/dk/netarkivet/monitor/settings.xml.
      */
     private String jmxPassword;
-
+    
+    /** 
+     * @return the JMX-password
+     */
+    private String getJmxPassword() {
+        return jmxPassword;
+    }
+    /**
+     * Set the JMX-password with a new value. Null or empty password is not 
+     * allowed.
+     * @param newJmxPassword New value for the JMX-password 
+     */
+    private synchronized void setJmxPassword(String newJmxPassword) {
+        ArgumentNotValid.checkNotNullOrEmpty(
+                newJmxPassword, "String newJmxPassword");
+        this.jmxPassword = newJmxPassword;
+    }
+    
     /**
      * The instances of host forwardings, to ensure mbeans are only forwarded
      * once.
@@ -160,8 +196,8 @@ public class HostForwarding<T> {
         if (changed) {
             log.info("Settings '"
                      + MonitorSettings.JMX_USERNAME_SETTING
-                     + "' and '" + MonitorSettings.JMX_PASSWORD_SETTING +
-                     "' has been updated with value from a System property "
+                     + "' and '" + MonitorSettings.JMX_PASSWORD_SETTING 
+                     + "' has been updated with value from a System property "
                      + "or one of the files: "
                      + StringUtils.conjoin(",", Settings.getSettingsFiles()));
         }
@@ -212,21 +248,23 @@ public class HostForwarding<T> {
      *
      * @return true if the username and/or the password were changed.
      */
-    private boolean updateJmxUsernameAndPassword() {
+    private synchronized boolean updateJmxUsernameAndPassword() {
         boolean changed = false;
+        
         String newJmxUsername = Settings.get(
                 MonitorSettings.JMX_USERNAME_SETTING);
 
         String newJmxPassword = Settings.get(
                 MonitorSettings.JMX_PASSWORD_SETTING);
 
+        
         if (jmxUsername == null || !jmxUsername.equals(newJmxUsername)) {
-            jmxUsername = newJmxUsername;
+            setJmxUsername(newJmxUsername);
             changed = true;
         }
 
         if (jmxPassword == null || !jmxPassword.equals(newJmxPassword)) {
-            jmxPassword = newJmxPassword;
+            setJmxPassword(newJmxPassword);
             changed = true;
         }
         return changed;
@@ -308,7 +346,7 @@ public class HostForwarding<T> {
                 hostEntry.getName(),
                 hostEntry.getJmxPort(),
                 hostEntry.getRmiPort(),
-                jmxUsername, jmxPassword);
+                getJmxUsername(), getJmxPassword());
 
         remoteObjectNames = connection.query(mBeanQuery);
         for (ObjectName name : remoteObjectNames) {
@@ -338,12 +376,12 @@ public class HostForwarding<T> {
      * Returns the domain from a given query. Used for constructing an
      * error-mbean-name on connection trouble.
      *
-     * @param mBeanQuery The query to return the domain from.
+     * @param aMBeanQuery The query to return the domain from.
      *
      * @return the domain from a given query.
      */
-    private String queryToDomain(String mBeanQuery) {
-        return mBeanQuery.replaceAll(":.*$", "");
+    private String queryToDomain(String aMBeanQuery) {
+        return aMBeanQuery.replaceAll(":.*$", "");
     }
 
     /**
@@ -464,7 +502,7 @@ public class HostForwarding<T> {
                         hostEntry.getName(),
                         hostEntry.getJmxPort(),
                         hostEntry.getRmiPort(),
-                        jmxUsername, jmxPassword);
+                        getJmxUsername(), getJmxPassword());
             } catch (Exception e) {
                 throw new IOFailure("Could not connect to host '"
                                     + hostEntry.getName() + ":"

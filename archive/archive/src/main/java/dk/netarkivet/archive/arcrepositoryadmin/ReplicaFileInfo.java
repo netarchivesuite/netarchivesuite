@@ -4,7 +4,9 @@
  * Author:      $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +26,8 @@
 package dk.netarkivet.archive.arcrepositoryadmin;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -67,7 +71,7 @@ public class ReplicaFileInfo {
      * @param css The checksumstatus.
      * @param fDate The date for the last filelist update.
      * @param cDate The date for the last checksum update.
-     * @throws ArgumenNotValid If gId or fId is negative, the rId is either
+     * @throws ArgumentNotValid If gId or fId is negative, the rId is either
      * null or the empty string. The other variables are not validated, since
      * they are allowed to be null (e.g. the dates before they are updated). 
      */
@@ -89,6 +93,13 @@ public class ReplicaFileInfo {
         this.filelistCheckdatetime = fDate;
         this.checksumCheckdatetime = cDate;
     }
+    
+    public ReplicaFileInfo(ResultSet res) throws SQLException {
+        this(res.getLong(1), res.getString(2), 
+                res.getLong(3), res.getLong(4), res.getString(5), res.getInt(6),
+                res.getInt(7), res.getInt(8), res.getDate(9), res.getDate(10));
+    }
+    
     
     /**
      * Retrieves this object as as a string. Contains all the variables.

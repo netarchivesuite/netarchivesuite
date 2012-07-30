@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,9 +39,10 @@ import java.util.Random;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.webinterface.HTMLUtils;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
+import dk.netarkivet.monitor.MonitorSettings;
 
 /**
  * Various utility methods and classes for the JMX Monitor page.
@@ -65,7 +68,7 @@ public class JMXSummaryUtils {
     /** JMX property for the HTTP port. */
     public static final String JMXHttpportProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_HTTP_PORT;
-    /** JMX property for the harvest priority*/
+    /** JMX property for the harvest priority. */
     public static final String JMXHarvestPriorityProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_PRIORITY;
     /** JMX property for the replica name.*/
@@ -75,6 +78,18 @@ public class JMXSummaryUtils {
     public static final String JMXIndexProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_INDEX;
 
+
+    /**
+     * The preferred length of lines in the jmx log.
+     */
+    private static final int PREFERRED_LENGTH = Settings.getInt(
+            MonitorSettings.JMX_PREFERRED_MAX_LOG_LENGTH);
+
+    /**
+     * The maximum length of lines in the jmx log.
+     */
+    private static final int MAX_LENGTH = Settings.getInt(
+            MonitorSettings.JMX_ABSOLUTE_MAX_LOG_LENGTH);
 
     /** JMX properties, which can set to star. */   
     public static final String[] STARRABLE_PARAMETERS = new String[]{
@@ -126,19 +141,6 @@ public class JMXSummaryUtils {
         return split[split.length - 1];
     }
 
-    /** Reduce a hostname to a more readable form.
-     *
-     * @param hostname A host name, should not be null.
-     * @return The same host name with all domain parts stripped off.
-     * @throws ArgumentNotValid if argument isn't valid.
-     */
-    public static String reduceHostname(String hostname)
-            throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(hostname, "String hostName");
-        String[] split = hostname.split("\\.", 2);
-        return split[0];
-    }
-    
     /**
      * Creates the show links for showing columns again.
      * 
@@ -375,10 +377,9 @@ public class JMXSummaryUtils {
                         "errormsg;error.in.building.jmxquery");
                 throw new ForwardedToErrorPage("Error building JMX query", e);
             }
-        }
-        // Both InstanceNotFoundException and MBeanRegistrationException are 
-        // treated equal.
-        catch (Exception e) {
+        } catch (Exception e) {
+            // Both InstanceNotFoundException and MBeanRegistrationException
+            // are treated equal.
             HTMLUtils.forwardWithErrorMessage(context, I18N, e,
                     "errormsg;error.when.unregistering.mbean.0", query);
             throw new ForwardedToErrorPage(
@@ -423,10 +424,16 @@ public class JMXSummaryUtils {
     }
 
 
+
     /** Make an HTML fragment that shows a log message preformatted.
      * If the log message is longer than NUMBER_OF_LOG_LINES lines, the rest are
      * hidden and replaced with an internationalized link "More..." that will
-     * show the rest.
+     * show the rest. Long loglines are split to length approximately
+     * monitor.preferredMaxJMXLogLength and then split again to ensure that
+     * no lines are wider than monitor.absoluteMaxJMXLogLength.
+     * However as the wrapping algorithm is not sophisticated it is better to
+     * split the lines in a meaningful way where they are generated.
+     *
      * @param logMessage The log message to present.
      * @param l the current Locale.
      * @return An HTML fragment as defined above.
@@ -441,13 +448,17 @@ public class JMXSummaryUtils {
         // a proper HTML Anchor 
         logMessage = logMessage.replaceAll("(https?://[^ \\t\\n\"]*)",
                 "<a href=\"$1\">$1</a>");
+        logMessage = StringUtils.splitStringOnWhitespace(logMessage,
+                                                        PREFERRED_LENGTH);
+        logMessage = StringUtils.splitStringForce(logMessage,
+                                                         MAX_LENGTH);
         BufferedReader sr = new BufferedReader(new StringReader(logMessage));
         msg.append("<pre>");
         int lineno = 0;
         String line;
         try {
-            while (lineno < NUMBER_OF_LOG_LINES &&
-                    (line = sr.readLine()) != null) {
+            while (lineno < NUMBER_OF_LOG_LINES 
+                    && (line = sr.readLine()) != null) {
                 msg.append(line);
                 msg.append('\n');
                 ++lineno;

@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,7 +63,7 @@ public abstract class Machine {
     protected String name;
     /** The operating system on this machine: 'windows' or 'linux'.*/
     protected String operatingSystem;
-    /** The extension on the scipt files (specified by operating system).*/
+    /** The extension on the script files (specified by operating system).*/
     protected String scriptExtension;
     /** The name of the NetarchiveSuite.zip file.*/
     protected String netarchiveSuiteFileName;
@@ -193,11 +195,14 @@ public abstract class Machine {
         // Create kill scripts
         createApplicationKillScripts(machineDirectory);
         createOSLocalKillAllScript(machineDirectory);
+        createHarvestDatabaseKillScript(machineDirectory);
         createArchiveDatabaseKillScript(machineDirectory);
         // create start scripts
         createApplicationStartScripts(machineDirectory);
         createOSLocalStartAllScript(machineDirectory);
+        createHarvestDatabaseStartScript(machineDirectory);
         createArchiveDatabaseStartScript(machineDirectory);
+        createHarvestDatabaseUpdateScript(machineDirectory);
         // create restart script
         createRestartScript(machineDirectory);
         // copy the security policy file
@@ -363,7 +368,7 @@ public abstract class Machine {
                     prop = prop.replace(
                             Constants.LOG_PROPERTY_APPLICATION_ID_TAG, 
                             app.getIdentification());
-
+                   prop = modifyLogProperties(prop);
                     // write to file.
                     logPrinter.write(prop);
                 } finally {
@@ -375,6 +380,17 @@ public abstract class Machine {
                 throw new IOFailure(errMsg, e);
             }
         }
+    }
+
+    /**
+     * Make any OS-specific modifications to logging properties. The default
+     * makes no modifications, but this can be overridden in subclasses.
+     * @param logProperties the contents of the logging properties file.
+     * @return the contents of the logging properties file with any desired
+     * modifications.
+     */
+    protected String modifyLogProperties(String logProperties) {
+        return logProperties;
     }
 
     /**
@@ -816,9 +832,8 @@ public abstract class Machine {
      * in the settings, and thus if the archive database should be 
      * installed on this machine.
      * 
-     * If not specific database is given as deploy argument 
-     * (bitpresevationDatabaseFileName = null) then use the default in the 
-     * NetarchiveSuite.zip package.
+     * If not specific database is given (adminDatabaseFileName = null)
+     * then use the default in the NetarchiveSuite.zip package.
      * Else send the new archive database to the standard database 
      * location, and extract it to the given location.
      * 
@@ -852,6 +867,7 @@ public abstract class Machine {
     
     /**
      * Creates the script for creating the application specified directories.
+     * Also creates the directories along the path to the directories.
      * 
      * @return The script for creating the application specified directories.
      */
@@ -902,6 +918,24 @@ public abstract class Machine {
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createArchiveDatabaseKillScript(File dir);
+    
+    /**
+     * Creates a script for starting the harvest database on a given machine.
+     * This is only created if the &lt;deployHarvestDatabaseDir&gt; parameter
+     * is defined on the machine level.
+     * 
+     * @param dir The directory where the script will be placed.
+     */
+    protected abstract void createHarvestDatabaseStartScript(File dir);
+    
+    /**
+     * Creates a script for killing the harvest database on a given machine.
+     * This is only created if the &lt;globalHarvestDatabaseDir&gt; parameter
+     * is defined on the machine level.
+     * 
+     * @param dir The directory where the script will be placed.
+     */
+    protected abstract void createHarvestDatabaseKillScript(File dir);
 
     /**
      * Changes the file directory path to the format used in the security 
@@ -910,4 +944,11 @@ public abstract class Machine {
      * @return The formatted path.
      */
     protected abstract String changeFileDirPathForSecurity(String path);
+    
+    /**
+     * create a harvestDatabaseUpdatescript in the given machineDirectory.
+     * @param machineDirectory a given MachineDirectory.
+     */
+    protected abstract void createHarvestDatabaseUpdateScript(File machineDirectory);
+    
 }

@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,23 +22,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 package dk.netarkivet.testutils;
+
+import junit.framework.Assert;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import dk.netarkivet.deploy.BuildCompleteSettings;
-
-import junit.framework.Assert;
-
 
 /**
- * Methods that help in doing common reflection tasks
+ * Methods that help in doing common reflection tasks.
  *
  */
-
 public class ReflectUtils {
     /** Look up a private method and make it accessible for testing.
      *
@@ -89,8 +87,9 @@ public class ReflectUtils {
      * Method for testing the constructor of a utility class (the constructor 
      * should be private).
      */
-    public static void testUtilityConstructor(Class c) {
-        Constructor<BuildCompleteSettings>[] constructors = c.getConstructors();
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void testUtilityConstructor(Class c) {
+        Constructor[] constructors = c.getConstructors();
         
         Assert.assertEquals("There should be no public constructors.", 
                 0, constructors.length);
@@ -98,7 +97,7 @@ public class ReflectUtils {
         constructors = c.getDeclaredConstructors();
         Assert.assertEquals("There should be one constructor.", 1, constructors.length);
         
-        for(Constructor<BuildCompleteSettings> con : constructors) {
+        for(Constructor con : constructors) {
             Assert.assertFalse("The constructor should not be accessible.", 
                     con.isAccessible());
             
@@ -107,7 +106,7 @@ public class ReflectUtils {
                     con.isAccessible());
             
             try {
-                Object instance = con.newInstance(null);
+                Object instance = con.newInstance((Object[]) null);
                 Assert.assertNotNull("It should be possible to instatiate now.", instance);
             } catch (Throwable e) {
                 e.printStackTrace();

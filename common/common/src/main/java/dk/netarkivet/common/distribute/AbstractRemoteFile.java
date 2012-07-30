@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,11 +29,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Calendar;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StreamUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Abstract superclass for easy implementation of remote file.
@@ -44,25 +51,31 @@ import dk.netarkivet.common.utils.StreamUtils;
  *   work with the factory.
  */
 public abstract class AbstractRemoteFile implements RemoteFile {
-    /** The file this is remote file for */
+    /** The file this is remote file for. */
     protected final File file;
     /** If true, communication is checksummed. */
     protected final boolean useChecksums;
     /** If true, the file may be deleted after all transfers are done. */
     protected final boolean fileDeletable;
-    /** If true, the file may be downloaded multple times. Otherwise, the
+    /** If true, the file may be downloaded multiple times. Otherwise, the
      * remote file is invalidated after first transfer. */
     protected final boolean multipleDownloads;
     /** The size of the file. */
     protected final long filesize;
 
     /**
+     * A named logger for this class.
+     */
+    private static final transient Log log =
+            LogFactory.getLog(AbstractRemoteFile.class.getName());
+
+    /**
      * Initialise common fields in remote file.
-     * Overriding classes should also initalise checksum field.
+     * Overriding classes should also initialise checksum field.
      *
      * @param file The file to make remote file for.
      * @param useChecksums If true, communications should be checksummed.
-     * @param fileDeletable If true, the file may be downloaded multple times.
+     * @param fileDeletable If true, the file may be downloaded multiple times.
      * Otherwise, the remote file is invalidated after first transfer.
      * @param multipleDownloads If useChecksums is true, contains the file
      * checksum.
@@ -100,22 +113,47 @@ public abstract class AbstractRemoteFile implements RemoteFile {
                     + "' does not point to a writable file for remote file '"
                     + file + "'");
         }
-        FileOutputStream fos = null;
         try {
-            try {
-                fos = new FileOutputStream(destFile);
-                appendTo(fos);
-            } finally {
-                if (fos != null) {
-                    fos.close();
+            FileOutputStream fos = null;
+            int retry = 0;
+            boolean success = false;
+            
+            // retry if it fails, but always make at least one attempt.
+            do {
+                try {
+                    try {
+                        fos = new FileOutputStream(destFile);
+                        appendTo(fos);
+                        success = true;
+                    } finally {
+                        if (fos != null) {
+                            fos.close();
+                        }
+                    }
+                } catch (IOFailure e) {
+                    // log problem and try again!
+                    log.warn("Could not retrieve the file '" + getName() 
+                            + "' in attempt '" + retry + "' with '"
+                            + getNumberOfRetries() + "' retries.", e);
                 }
+                retry++;
+                if (!success && retry < getNumberOfRetries()) {
+                    log.debug("CopyTo attempt #" + retry + " of max "
+                            + getNumberOfRetries()
+                            + " failed. Will sleep a while before trying to "
+                            + "copyTo again.");
+                    TimeUtils.exponentialBackoffSleep(retry, Calendar.MINUTE);
+                }
+            } while(!success && retry < getNumberOfRetries());
+            
+            // handle case when the retrieval is unsuccessful.
+            if(!success) {
+                throw new IOFailure("Unable to retrieve the file '" 
+                        + getName() + "' in '" + getNumberOfRetries() 
+                        + "' attempts.");
             }
         } catch (Exception e) {
-            try {
-                FileUtils.remove(destFile);
-            } catch(IOFailure e1) {
-                //not fatal
-            }
+            FileUtils.remove(destFile);
             throw new IOFailure("IO trouble transferring file", e);
         }
     }
@@ -161,6 +199,12 @@ public abstract class AbstractRemoteFile implements RemoteFile {
      * should be safe to call this method twice.
      */
     public abstract void cleanup();
+    
+    /**
+     * Method for retrieving the number of retries for retrieving a file.
+     * @return The number of retries for retrieving a file.
+     */
+    public abstract int getNumberOfRetries();
 
     /** Get the size of this remote file.
      * @return The size of this remote file.

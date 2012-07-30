@@ -10,3 +10,7 @@ fi
 if [ -e ./kill_BitarchiveMonitorApplication.sh ]; then 
       ./kill_BitarchiveMonitorApplication.sh
 fi
+echo Killing external harvest database.
+if [ -e ./kill_external_harvest_database.sh ]; then
+      ./kill_external_harvest_database.sh
+fi

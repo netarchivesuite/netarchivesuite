@@ -69,7 +69,8 @@ public abstract class TrapAction {
                 TrapActionEnum.CREATE_OR_UPDATE.getTrapAction()
                         .doAction(context, i18n);
             } else {
-                String requestType = request.getParameter(Constants.TRAP_ACTION);
+                String requestType 
+                    = request.getParameter(Constants.TRAP_ACTION);
                 if (requestType == null || requestType.isEmpty()) {
                     TrapActionEnum.NULL_ACTION.getTrapAction()
                             .doAction(context, i18n);
@@ -87,7 +88,7 @@ public abstract class TrapAction {
     }
 
     /**
-     * Method implementing the specific action to take
+     * Method implementing the specific action to take.
      * @param context the context of the servlet request triggering this action.
      * @param i18n the internationalisation to use for presenting the results.
      */

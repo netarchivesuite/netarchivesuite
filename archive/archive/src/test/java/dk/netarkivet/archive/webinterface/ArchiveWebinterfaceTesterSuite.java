@@ -14,6 +14,7 @@ public class ArchiveWebinterfaceTesterSuite {
 
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(BitpreserveFileStatusTester.class);
+        suite.addTestSuite(BatchGUITester.class);
     }
 
     public static void main(String args[]) {

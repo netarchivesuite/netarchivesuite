@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -153,5 +155,19 @@ public class FilterIteratorTester extends TestCase {
                 d);
         assertEquals("Should get correct domain", TestInfo.XML_FILE_1, d);
         assertFalse("Should not get more elements now", list.hasNext());
+    }
+    
+    /** Test that remove throws UnsupportedOperationException. */
+    public void testRemoveOperation() {
+        Iterator<File> list = new TestIterator(new File[] {
+                TestInfo.NON_EXISTING_FILE,
+                TestInfo.DATADIR,
+                TestInfo.XML_FILE_1});
+        try {
+            list.remove();
+            fail("Should have thrown UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
     }
 }

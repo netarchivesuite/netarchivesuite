@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +23,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
  *  USA
  */
-
 package dk.netarkivet.archive.indexserver;
 
 import java.io.File;
@@ -33,10 +34,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -110,6 +114,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
      * @param id The job to find data for.
      * @return The file where cache data for the job can be stored.
      */
+    @Override
     public File getCacheFile(Long id) {
         ArgumentNotValid.checkNotNull(id, "job ID");
         ArgumentNotValid.checkNotNegative(id, "job ID");
@@ -146,9 +151,44 @@ public class RawMetadataCache extends FileBasedCache<Long>
                     + "' for '" + prefix + "'");
             return id;
         } else {
-            log.debug("No data found for job '" + id
-                    + "' for '" + prefix + "'");
-            return null;
+            // Look for data in other bitarchive replicas, if this option is enabled
+            if (!Settings.getBoolean(
+                    ArchiveSettings.INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS)) {
+                log.info("No data found for job '" + id + "' for '" + prefix 
+                        + "' in local bitarchive '" + replicaUsed + "'. ");
+                return null;
+            } else {
+                log.info("No data found for job '" + id + "' for '" + prefix 
+                    + "' in local bitarchive '" + replicaUsed + "'. "
+                    + "Trying other replicas.");
+                for(Replica rep : Replica.getKnown()) {
+                    // Only use different bitarchive replicas than replicaUsed
+                    if(rep.getType().equals(ReplicaType.BITARCHIVE) 
+                        && !rep.getId().equals(replicaUsed)) {
+                        log.debug("Trying to retrieve index data for job '"
+                            + id + "' from '" + rep.getId() + "'.");
+                        b = arcrep.batch(job, rep.getId());
+                    
+                        // Perform same check as for the batchresults from
+                        // the default replica.
+                        if (b.hasResultFile() && (b.getNoOfFilesProcessed() 
+                            > b.getFilesFailed().size())) {
+                            File cacheFileName = getCacheFile(id);
+                            b.copyResults(cacheFileName);
+                            log.info("Cached data for job '" + id
+                                + "' for '" + prefix + "' from '" + rep 
+                                + " instead of " + replicaUsed);
+                            return id;
+                        } else {
+                            log.trace("No data found for job '" + id + "' for '" 
+                                + prefix + "' in bitarchive '" + rep + "'. ");
+                        }
+                    }
+                }
+                log.info("No data found for job '" + id + "' for '" + prefix 
+                        + "' in all bitarchive replicas");
+                return null;
+            }
         }
     }
 
@@ -171,7 +211,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
             this.urlMatcher = urlMatcher;
             this.mimeMatcher = mimeMatcher;
             /**
-            * one week in miliseconds.
+            * one week in milliseconds.
             */
             batchJobTimeout = Constants.ONE_DAY_IN_MILLIES;
         }
@@ -182,6 +222,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * 
          * @param os The output stream to print any pre-processing data.
          */
+        @Override
         public void initialize(OutputStream os) { }
 
         /**
@@ -192,6 +233,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * @throws IOFailure In an IOException is caught during handling of 
          * the arc record.
          */
+        @Override
         public void processRecord(ARCRecord sar, OutputStream os) 
                 throws IOFailure {
             if (urlMatcher.matcher(sar.getMetaData().getUrl()).matches()
@@ -219,6 +261,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * @param os The output stream to write the results of the 
          * post-processing data.
          */
+        @Override
         public void finish(OutputStream os) { }
         
         /**
@@ -226,6 +269,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * 
          * @return The human readable description of this instance.
          */
+        @Override
         public String toString() {
             return getClass().getName() + ", with arguments: URLMatcher = " 
             + urlMatcher + ", mimeMatcher = " + mimeMatcher;

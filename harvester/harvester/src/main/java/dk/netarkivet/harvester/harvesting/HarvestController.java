@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,19 +25,27 @@
 
 package dk.netarkivet.harvester.harvesting;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCWriter;
+import org.dom4j.Document;
+import org.dom4j.Node;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
+import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.HarvesterArcRepositoryClient;
 import dk.netarkivet.common.distribute.indexserver.Index;
 import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
@@ -47,12 +57,16 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.cdx.CDXRecord;
+import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
 
 /**
  * This class handles all the things in a single harvest that are not related
@@ -65,21 +79,9 @@ public class HarvestController {
      * will null this field.
      */
     private static HarvestController instance;
+    /** The instance logger. */
     private Log log
             = LogFactory.getLog(HarvestController.class);
-    /**
-     * String in crawl.log, that Heritrix writes
-     *  as the last entry in the progress-statistics.log.
-     */
-    private static final String HERITRIX_ORDERLY_FINISH_STRING =
-        "CRAWL ENDED";
-
-    /**
-     * String which shows that the harvest was deliberately aborted from
-     * the Heritrix GUI or forcibly stopped by the Netarchive Suite
-     * software due to an inactivity timeout.
-     */
-    private static final String HARVEST_ABORTED = "Ended by operator";
 
     /**
      * The max time to wait for heritrix to close last ARC files (in secs).
@@ -121,9 +123,17 @@ public class HarvestController {
         if (arcRepController != null) {
             arcRepController.close();
         }
+        
+        resetInstance();
+    }
+    
+    /**
+     * Reset the singleton instance. 
+     */
+    private static void resetInstance() {
         instance = null;
     }
-
+    
     /**
      * Writes the files involved with a harvests.
      * Creates the Heritrix arcs directory to ensure that this
@@ -133,28 +143,42 @@ public class HarvestController {
      *                        in.
      * @param job             The Job object containing various harvest setup
      *                        data.
+     * @param hdi             The object encapsulating documentary information
+     *                        about the harvest.
      * @param metadataEntries Any metadata entries sent along with the job that
      *                        should be stored for later use.
      * @return An object encapsulating where these files have been written.
      */
-    public HeritrixFiles writeHarvestFiles(File crawldir, Job job,
-                                         List<MetadataEntry> metadataEntries) {
+    public HeritrixFiles writeHarvestFiles(
+            File crawldir,
+            Job job,
+            HarvestDefinitionInfo hdi,
+            List<MetadataEntry> metadataEntries) {
         final HeritrixFiles files =
             new HeritrixFiles(crawldir,
                               job.getJobID(),
                               job.getOrigHarvestDefinitionID());
 
+        // If this job is a job that tries to continue a previous job
+        // using the Heritrix recover.gz log, and this feature is enabled,
+        // then try to fetch the recover.log from the metadata-arc-file.
+        if (job.getContinuationOf() != null 
+                && Settings.getBoolean(HarvesterSettings.RECOVERlOG_CONTINUATION_ENABLED)) {
+            tryToRetrieveRecoverLog(job, files);    
+        }
+        
         // Create harvestInfo file in crawldir
         // & create preharvest-metadata-1.arc
         log.debug("Writing persistent job data for job " + job.getJobID());
         // Check that harvestInfo does not yet exist
-
+        
         // Write job data to persistent storage (harvestinfo file)
-        new PersistentJobData(files.getCrawlDir()).write(job);
+        new PersistentJobData(files.getCrawlDir()).write(job, hdi);
         // Create jobId-preharvest-metadata-1.arc for this job
         writePreharvestMetadata(job, metadataEntries, crawldir);
 
         files.writeSeedsTxt(job.getSeedListAsString());
+       
         files.writeOrderXml(job.getOrderXMLdoc());
         // Only retrieve index if deduplication is not disabled in the template.
         if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
@@ -164,7 +188,7 @@ public class HarvestController {
         } else {
             log.debug("Deduplication disabled.");
         }
-        
+
         // Create Heritrix arcs directory before starting Heritrix to ensure
         // the arcs directory exists in advance.
         boolean created = files.getArcsDir().mkdir();
@@ -172,6 +196,74 @@ public class HarvestController {
             log.warn("Unable to create arcsdir: " + files.getArcsDir());
         }
         return files;
+    }
+
+    private void tryToRetrieveRecoverLog(Job job, HeritrixFiles files) {
+        Long previousJob = job.getContinuationOf();
+        List<CDXRecord> metaCDXes = null;
+        try {
+            metaCDXes 
+            = getMetadataCDXRecordsForJob(previousJob);
+        } catch (IOFailure e) {
+            log.debug("Failed to retrive CDX of metatadata records. Maybe the metadata arcfile for job " 
+                    + previousJob + " does not exist in repository", e);
+        }
+        
+        CDXRecord recoverlogCDX = null;
+        if (metaCDXes != null) {
+            for (CDXRecord cdx : metaCDXes) {
+                if (cdx.getURL().matches(MetadataFile.RECOVER_LOG_PATTERN)) {
+                    recoverlogCDX = cdx;
+                }
+            }
+            if (recoverlogCDX == null) {
+                log.debug("A recover.gz log file was not found in metadata-arcfile");
+            } else {
+                log.debug("recover.gz log found in metadata-arcfile");
+            }
+        }
+        
+        BitarchiveRecord br = null;
+        if (recoverlogCDX != null) { // Retrieve recover.gz from metadata.arc file
+            br = ArcRepositoryClientFactory.getViewerInstance().get(
+                    recoverlogCDX.getArcfile(), recoverlogCDX.getOffset());
+            if (br != null) {
+                log.debug("recover.gz log retrieved from metadata-arcfile");
+                if (files.writeRecoverBackupfile(br.getData())) {
+                    // modify order.xml, so Heritrix recover-path points
+                    // to the retrieved recoverlog
+                    insertHeritrixRecoverPathInOrderXML(job, files);
+                } else {
+                    log.warn("Failed to retrieve and write recoverlog to disk.");
+                }
+            } else {
+                log.debug("recover.gz log not retrieved from metadata-arcfile");
+            }
+        } 
+    }
+
+    /**
+     * Insert the correct recoverpath in the order.xml for the given harvestjob.
+     * @param job A harvestjob
+     * @param files Heritrix files related to this harvestjob.
+     */
+    private void insertHeritrixRecoverPathInOrderXML(Job job, HeritrixFiles files) {
+        Document order = job.getOrderXMLdoc();
+        final String RECOVERLOG_PATH_XPATH =
+                "/crawl-order/controller/string[@name='recover-path']";
+        Node orderXmlNode = order.selectSingleNode(RECOVERLOG_PATH_XPATH);
+        if (orderXmlNode != null) {
+            orderXmlNode.setText(files.getRecoverBackupGzFile().getAbsolutePath());
+            log.debug("The Heritrix recover path now refers to '" 
+                    + files.getRecoverBackupGzFile().getAbsolutePath()
+                    + "'.");
+            job.setOrderXMLDoc(order);
+        } else {
+            throw new IOFailure(
+                    "Unable to locate the '" + RECOVERLOG_PATH_XPATH 
+                    + "' element in order.xml: "
+                    + order.asXML());
+        }
     }
 
     /**
@@ -213,7 +305,7 @@ public class HarvestController {
                         aw.close();
                     }
                 } catch (IOException e) {
-                    //TODO: Is this fatal? What if data isn't flushed?
+                    //TODO Is this fatal? What if data isn't flushed?
                     log.warn("Unable to close ArcWriter '"
                              + aw.getFile().getAbsolutePath() + "'", e);
                 }
@@ -233,7 +325,7 @@ public class HarvestController {
      */
     public void runHarvest(HeritrixFiles files) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
-        HeritrixLauncher hl = HeritrixLauncher.getInstance(files);
+        HeritrixLauncher hl = HeritrixLauncherFactory.getInstance(files);
         hl.doCrawl();
     }
 
@@ -242,7 +334,7 @@ public class HarvestController {
      *  1) The actual ARC files,
      *  2) The metadata files
      *  The crawl.log is parsed and information for each domain is generated
-     *  and stored in a DomainHarvestReport object which
+     *  and stored in a AbstractHarvestReport object which
      *  is sent along in the crawlstatusmessage.
      *
      * Additionally, any leftover open ARC files are closed and harvest
@@ -254,11 +346,11 @@ public class HarvestController {
      * @return An object containing info about the domains harvested.
      * @throws ArgumentNotValid if an argument isn't valid.
      */
-    public DomainHarvestReport storeFiles(
+    public HarvestReport storeFiles(
             HeritrixFiles files, StringBuilder errorMessage,
             List<File> failedFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
-        ArgumentNotValid.checkNotNull(errorMessage, 
+        ArgumentNotValid.checkNotNull(errorMessage,
                 "StringBuilder errorMessage");
         ArgumentNotValid.checkNotNull(failedFiles, "List<File> failedFiles");
         long jobID = files.getJobID();
@@ -270,7 +362,7 @@ public class HarvestController {
             // Create a metadata ARC file
             HarvestDocumentation.documentHarvest(crawlDir, jobID, harvestID);
             // Upload all files
-            
+
             // Check, if arcsdir is empty
             // Send a notification, if this is the case
             if (inf.getArcFiles().isEmpty()) {
@@ -281,43 +373,16 @@ public class HarvestController {
             } else {
                 uploadFiles(inf.getArcFiles(), errorMessage, failedFiles);
             }
-            
+
             uploadFiles(inf.getMetadataArcFiles(), errorMessage, failedFiles);
-            // Make the domainHarvestReport ready for uploading
-            return generateHeritrixDomainHarvestReport(files, errorMessage);
+
+            // Make the harvestReport ready for uploading
+            return HarvestReportFactory.generateHarvestReport(files);
+
         } catch (IOFailure e) {
             String errMsg = "IOFailure occurred, while trying to upload files";
             log.warn(errMsg, e);
             throw new IOFailure(errMsg, e);
-        }
-    }
-
-    /**
-     * Generate DomainHarvestReport object that contains information about
-     * the domains harvested, or log a warning if the crawl.log was not found.
-     *
-     * @param files The heritrix files object for this crawl to get logs from.
-     * @param errorMessage An accumulator for error messages.
-     * @return A report object with the domainHarvest data, or null for none
-     * present.
-     */
-    private DomainHarvestReport generateHeritrixDomainHarvestReport(
-            HeritrixFiles files,
-            StringBuilder errorMessage) {
-        File heritrixCrawlLog = files.getCrawlLog();
-        File heritrixStatisticsLog = files.getProgressStatisticsLog();
-        StopReason defaultStopReason =
-            findDefaultStopReason(heritrixStatisticsLog);
-
-        if (heritrixCrawlLog.isFile()) {
-            return new HeritrixDomainHarvestReport(heritrixCrawlLog,
-                    defaultStopReason);
-        } else {
-            String errorMsg = "No crawl.log found in '"
-                              + heritrixCrawlLog.getAbsolutePath() + "'";
-            errorMessage.append(errorMsg).append("\n");
-            log.warn(errorMsg);
-            return null;
         }
     }
 
@@ -330,13 +395,15 @@ public class HarvestController {
      */
     private void uploadFiles(List<File> files, StringBuilder errorMessage,
                              List<File> failedFiles) {
-        // Upload all arcfiles
+        // Upload all archive files
         if (files != null) {
             for (File f : files) {
                 try {
                     log.info("Uploading file '" + f.getName()
                              + "' to arcrepository.");
                     arcRepController.store(f);
+                    log.info("File '" + f.getName()
+                            + "' uploaded successfully to arcrepository.");
                 } catch (Exception e) {
                     File oldJobsDir
                             = new File(Settings.get(
@@ -401,7 +468,7 @@ public class HarvestController {
      * @param metadataEntries list of metadataEntries top get jobIDs from.
      * @return a directory  containing the index itself.
      * @throws IOFailure on errors retrieving the index from the client.
-     * TODO: Better forgiving handling of no index available
+     * TODO Better forgiving handling of no index available
      */
     private File fetchDeduplicateIndex(List<MetadataEntry> metadataEntries) {
         // Get list of jobs, which should be used for duplicate reduction
@@ -419,30 +486,49 @@ public class HarvestController {
                 jobIDsForDuplicateReduction);
         return jobIndex.getIndexFile();
     }
-
+    
     /**
-     * Find out whether we stopped normally in progress statistics log.
-     * @param logFile A progress-statistics.log file.
-     * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with
-     * CRAWL ENDED, StopReason.DOWNLOAD_UNFINISHED otherwise or if file does
-     * not exist.
-     * @throws ArgumentNotValid on null argument.
+     * Submit a batch job to generate cdx for all metadata files for a job, and
+     * report result in a list.
+     * @param jobid The job to get cdx for.
+     * @return A list of cdx records.
+     * @throws ArgumentNotValid If jobid is 0 or negative.
+     * @throws IOFailure On trouble generating the cdx
      */
-    public static StopReason findDefaultStopReason(File logFile) 
-            throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(logFile, "File logFile");
-        if (!logFile.exists()) {
-            return StopReason.DOWNLOAD_UNFINISHED;
+    public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
+        ArgumentNotValid.checkPositive(jobid, "jobid");
+        FileBatchJob cdxJob = new ExtractCDXJob(false);
+        cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+\\.arc(\\.gz)?");
+        File f;
+        try {
+            f = File.createTempFile(jobid + "-reports", ".cdx",
+                                    FileUtils.getTempDir());
+        } catch (IOException e) {
+            throw new IOFailure("Could not create temporary file", e);
         }
-        String lastLine = FileUtils.readLastLine(logFile);
-        if (lastLine.contains(HERITRIX_ORDERLY_FINISH_STRING)) {
-            if (lastLine.contains(HARVEST_ABORTED)) {
-               return StopReason.DOWNLOAD_UNFINISHED;
-            } else {
-               return StopReason.DOWNLOAD_COMPLETE;
+        BatchStatus status
+                = ArcRepositoryClientFactory.getViewerInstance().batch(
+                cdxJob, Settings.get(CommonSettings.USE_REPLICA_ID));
+        status.getResultFile().copyTo(f);
+        List<CDXRecord> records;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(f));
+            records = new ArrayList<CDXRecord>();
+            for (String line = reader.readLine();
+                 line != null; line = reader.readLine()) {
+                String[] parts = line.split("\\s+");
+                CDXRecord record = new CDXRecord(parts);
+                records.add(record);
             }
-        } else {
-            return StopReason.DOWNLOAD_UNFINISHED;
+        } catch (IOException e) {
+            throw new IOFailure("Unable to read results from file '" + f
+                                + "'", e);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            FileUtils.remove(f);
         }
+        return records;
     }
+
 }

@@ -4,7 +4,9 @@
  * $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -266,5 +268,17 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     protected boolean isLocal() {
         return SystemUtils.getLocalHostName().equals(hostname)
                 && file.isFile() && file.canRead();
+    }
+
+    /**
+     * Retrieval of the number of retries for retrieving a file from a HTTP
+     * server. 
+     * TODO define a setting for HTTP retries, just like for the FTP retries.
+     * @return The number of retries. Currently a constant: 1.
+     */
+    @Override
+    public int getNumberOfRetries() {
+        // TODO make settings for this. 
+        return 1;
     }
 }

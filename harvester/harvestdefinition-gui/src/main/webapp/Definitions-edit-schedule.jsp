@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -56,59 +58,52 @@ Parameters:
      * endHarvestTime: a date/time field in format DD/MM YYYY hh:mm. Must be
      *                   set if continue="beginning"
      * numberOfHarvests: int > 0. Must be set if continue="numberOfHarvests"
---%><%@ page import="java.text.SimpleDateFormat,
-                 java.util.Date,
-                 dk.netarkivet.common.exceptions.ForwardedToErrorPage,
-                 dk.netarkivet.common.utils.I18n,
-                 dk.netarkivet.common.webinterface.HTMLUtils,
-                 dk.netarkivet.harvester.Constants,
-                 dk.netarkivet.harvester.datamodel.DailyFrequency,
-                 dk.netarkivet.harvester.datamodel.Frequency,
-                 dk.netarkivet.harvester.datamodel.HourlyFrequency,
-                 dk.netarkivet.harvester.datamodel.MonthlyFrequency,
-                 dk.netarkivet.harvester.datamodel.RepeatingSchedule,
-                 dk.netarkivet.harvester.datamodel.Schedule,
-                 dk.netarkivet.harvester.datamodel.ScheduleDAO, dk.netarkivet.harvester.datamodel.TimedSchedule, dk.netarkivet.harvester.datamodel.WeeklyFrequency, dk.netarkivet.harvester.webinterface.ScheduleDefinition"
+--%><%@ page import="java.text.SimpleDateFormat,java.util.Date,dk.netarkivet.common.exceptions.ForwardedToErrorPage,dk.netarkivet.common.utils.I18n,dk.netarkivet.common.webinterface.HTMLUtils,dk.netarkivet.harvester.Constants,dk.netarkivet.harvester.datamodel.DailyFrequency,dk.netarkivet.harvester.datamodel.Frequency,dk.netarkivet.harvester.datamodel.HourlyFrequency,dk.netarkivet.harvester.datamodel.MonthlyFrequency,dk.netarkivet.harvester.datamodel.RepeatingSchedule,dk.netarkivet.harvester.datamodel.Schedule,dk.netarkivet.harvester.datamodel.ScheduleDAO,dk.netarkivet.harvester.datamodel.TimedSchedule,dk.netarkivet.harvester.datamodel.WeeklyFrequency,dk.netarkivet.harvester.webinterface.ScheduleDefinition"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=Constants.TRANSLATIONS_BUNDLE%>"/><%!
-    private static final I18n I18N
-            = new I18n(Constants.TRANSLATIONS_BUNDLE);
-%><%
-    HTMLUtils.setUTF8(request);
-    // update is set to non-null when the page posts data to itself. When
-    // null, no updating is done and the form content is just displayed
-    String update = request.getParameter("update");
-    String name = request.getParameter("name");
-    ScheduleDAO sdao = ScheduleDAO.getInstance();
-    // if "name" is set then we are editing an existing schedule, otherwise this
-    //  is a new schedule
-    boolean newSchedule =
-            name == null || name.length() == 0 || !sdao.exists(name);
-    long edition = 0L;
-    Frequency oldFrequency = null;
-    Schedule oldSchedule = null;
-    if (!newSchedule) {
-        oldSchedule = ScheduleDAO.getInstance().read(name);
-        edition = oldSchedule.getEdition();
-    }
-    if (update != null) {
-        // unpack the parameters and call the backing method DomainDefinition.editDomain
-        try {
-            ScheduleDefinition.processRequest(pageContext, I18N);
-        } catch (ForwardedToErrorPage e) {
-            return;
-        }
-        // Forward to main schedule page
-%>
+/><fmt:setBundle scope="page" basename="<%=Constants.TRANSLATIONS_BUNDLE%>"/><%!private static final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);%><%HTMLUtils.setUTF8(request);
+            // update is set to non-null when the page posts data to itself. When
+            // null, no updating is done and the form content is just displayed
+            String update = request.getParameter("update");
+            String name = request.getParameter("name");
+            ScheduleDAO sdao = ScheduleDAO.getInstance();
+            // if "name" is set then we are editing an existing schedule, otherwise this
+            //  is a new schedule
+            boolean newSchedule = name == null || name.length() == 0
+                    || !sdao.exists(name);
+            long edition = 0L;
+            Frequency oldFrequency = null;
+            Schedule oldSchedule = null;
+            if (!newSchedule) {
+                oldSchedule = ScheduleDAO.getInstance().read(name);
+                edition = oldSchedule.getEdition();
+            }
+            if (update != null) {
+                // unpack the parameters and call the backing method DomainDefinition.editDomain
+                try {
+                    ScheduleDefinition.processRequest(pageContext, I18N);
+                } catch (ForwardedToErrorPage e) {
+                    return;
+                }
+                // Forward to main schedule page%>
 <jsp:forward page="Definitions-schedules.jsp"/>
 <%
     }
-    HTMLUtils.generateHeader(
-            pageContext);
+
+    // Include JS files for the calendar
+
+    String lang = HTMLUtils.getLocale(request);
+    if (lang.length() >= 2) {
+        lang = lang.substring(0, 2);
+    }
+
+    HTMLUtils.generateHeader(pageContext,
+            "./jscalendar/calendar.js",
+            "./jscalendar/lang/calendar-" + lang + ".js",
+            "./jscalendar/calendar-setup.js");
 %>
-<jsp:include page="scripts.jsp" flush="true"/>
+<jsp:include page="calendar-scripts.jsp"/>
 <%-- Presentation section --%>
 <form method="post" action="Definitions-edit-schedule.jsp">
 <%
@@ -139,9 +134,7 @@ Parameters:
         comments = oldSchedule.getComments();
     }
 %>
-<textarea name="comments" rows="5" cols="42"><%=
-   HTMLUtils.escapeHtmlValues(comments)
-%></textarea>
+<textarea name="comments" rows="5" cols="42"><%=HTMLUtils.escapeHtmlValues(comments)%></textarea>
 <br/><br/>
 <table>
 <tr>
@@ -163,25 +156,21 @@ Parameters:
             <%
                 String sel = " selected=\"selected\" ";
             %>
-            <option value="hours" <% if (oldFrequency != null) {
-                out.print((oldFrequency instanceof HourlyFrequency) ? sel :
-                          "");
-            } %> ><fmt:message key="harvestdefinition.schedule.edit.hours"/>
+            <option value="hours" <%if (oldFrequency != null) {
+                out.print((oldFrequency instanceof HourlyFrequency) ? sel : "");
+            }%> ><fmt:message key="harvestdefinition.schedule.edit.hours"/>
             </option>
-            <option value="days" <% if (oldFrequency != null) {
-                out.print((oldFrequency instanceof DailyFrequency) ? sel :
-                          "");
-            } %> ><fmt:message key="harvestdefinition.schedule.edit.days"/>
+            <option value="days" <%if (oldFrequency != null) {
+                out.print((oldFrequency instanceof DailyFrequency) ? sel : "");
+            }%> ><fmt:message key="harvestdefinition.schedule.edit.days"/>
             </option>
-            <option value="weeks" <% if (oldFrequency != null) {
-                out.print((oldFrequency instanceof WeeklyFrequency) ? sel :
-                          "");
-            } %> ><fmt:message key="harvestdefinition.schedule.edit.weeks"/>
+            <option value="weeks" <%if (oldFrequency != null) {
+                out.print((oldFrequency instanceof WeeklyFrequency) ? sel : "");
+            }%> ><fmt:message key="harvestdefinition.schedule.edit.weeks"/>
             </option>
-            <option value="months" <% if (oldFrequency != null) {
-                out.print((oldFrequency instanceof MonthlyFrequency) ? sel :
-                          "");
-            } %> ><fmt:message key="harvestdefinition.schedule.edit.months"/>
+            <option value="months" <%if (oldFrequency != null) {
+                out.print((oldFrequency instanceof MonthlyFrequency) ? sel : "");
+            }%> ><fmt:message key="harvestdefinition.schedule.edit.months"/>
             </option>
         </select>
     </td>
@@ -229,7 +218,7 @@ Parameters:
                 min = ((MonthlyFrequency) oldFrequency).getMinute() + "";
                 hr = ((MonthlyFrequency) oldFrequency).getHour() + "";
                 date = ((MonthlyFrequency) oldFrequency).getDayOfMonth()
-                       + "";
+                        + "";
             }
         }
     %>
@@ -268,30 +257,31 @@ Parameters:
         <th colspan="2"><fmt:message key="harvestdefinition.schedule.edit.startsAt"/></th>
     </tr>
     <tr>
-        <% boolean asap = oldSchedule == null
-                          || oldSchedule.getStartDate() == null; %>
+        <%
+            boolean asap = oldSchedule == null
+                    || oldSchedule.getStartDate() == null;
+        %>
         <td><input type="radio" name="beginAt" value="asSoonAsPossible"
-                <% if (asap) {
-                    out.print(check);
-                } %> /></td>
+                <%if (asap) {
+                out.print(check);
+            }%> /></td>
         <td><fmt:message key="harvestdefinition.schedule.edit.asap"/></td>
     </tr>
     <tr>
         <td><input type="radio" name="beginAt" value="beginning" id="beginning"
-                <% if (!asap) {
-                    out.print(check);
-                } %> /></td>
+                <%if (!asap) {
+                out.print(check);
+            }%> /></td>
         <td><fmt:message key="harvestdefinition.schedule.edit.atHour"/><input name="firstHarvestTime" size="25" id="howOftenField"
                       onChange="check('beginning');"
-                <%
-                    SimpleDateFormat sdf = new SimpleDateFormat(
-                            I18N.getString(response.getLocale(),
-                                    "harvestdefinition.schedule.edit.timeformat"));
-                    if (oldSchedule != null
-                            && oldSchedule.getStartDate() != null) {
-                        out.print("value=\"" + HTMLUtils.escapeHtmlValues(
-                                sdf.format(oldSchedule.getStartDate())) + "\"");                    }
-                %>
+                <%SimpleDateFormat sdf = new SimpleDateFormat(I18N.getString(
+                    response.getLocale(),
+                    "harvestdefinition.schedule.edit.timeformat"));
+            if (oldSchedule != null && oldSchedule.getStartDate() != null) {
+                out.print("value=\""
+                        + HTMLUtils.escapeHtmlValues(sdf.format(oldSchedule
+                                .getStartDate())) + "\"");
+            }%>
                 /><span id="howOften">(<fmt:message key="harvestdefinition.schedule.edit.timeformatDescription"/>)</span></td>
     </tr>
 </table>
@@ -316,8 +306,9 @@ Parameters:
         } else if (((TimedSchedule) oldSchedule).getEndDate() != null) {
             ch2 = check;
             Date endDate = ((TimedSchedule) oldSchedule).getEndDate();
-            endTime = " value=\"" + HTMLUtils.escapeHtmlValues(
-                    sdf.format(endDate)) + "\" ";
+            endTime = " value=\""
+                    + HTMLUtils.escapeHtmlValues(sdf.format(endDate))
+                    + "\" ";
         } else {
             ch1 = check;
         }

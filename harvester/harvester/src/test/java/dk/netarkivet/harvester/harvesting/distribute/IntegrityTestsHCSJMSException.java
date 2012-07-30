@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +25,21 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.scheduler.JobDispatcher;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
+
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.QueueConnection;
@@ -33,24 +50,6 @@ import java.security.Permission;
 import java.util.ArrayList;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
-
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
 /**
  * An integrity test that tests for how the HarvestControllerClient reacts
  * to the occurrence of an JMSException.
@@ -59,8 +58,7 @@ public class IntegrityTestsHCSJMSException extends TestCase{
 
     TestInfo info = new TestInfo();
 
-    /* The client and server used for testing */
-    HarvestControllerClient hcc;
+    /* The server used for testing */
     HarvestControllerServer hs;
     private SecurityManager originalSM;
     ReloadSettings rs = new ReloadSettings();
@@ -87,10 +85,9 @@ public class IntegrityTestsHCSJMSException extends TestCase{
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
                      "dk.netarkivet.common.distribute.JMSConnectionSunMQ");
         ChannelsTester.resetChannels();
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
         hs = HarvestControllerServer.getInstance();
-        hcc = HarvestControllerClient.getInstance();
         originalSM = System.getSecurityManager();
         SecurityManager manager = new SecurityManager() {
             public void checkPermission(Permission perm) {
@@ -107,15 +104,12 @@ public class IntegrityTestsHCSJMSException extends TestCase{
      * After test is done close test-objects.
      */
     public void tearDown() {
-        if (hcc != null) {
-            hcc.close();
-        }
         if (hs != null) {
             hs.close();
         }
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         ChannelsTester.resetChannels();
-        TestUtils.resetDAOs();
+        HarvestDAOUtils.resetDAOs();
         System.setSecurityManager(originalSM);
         rs.tearDown();
     }
@@ -134,12 +128,14 @@ public class IntegrityTestsHCSJMSException extends TestCase{
         QueueConnection qc = (QueueConnection) queueConnectionField.get(con);
         ExceptionListener qel = qc.getExceptionListener();
         //Start a harvest
-        Job j = TestInfo.getJob(); 
+        Job j = TestInfo.getJob();
         DataModelTestCase.addHarvestDefinitionToDatabaseWithId(
                 j.getOrigHarvestDefinitionID());
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
-        hcc.doOneCrawl(j, new ArrayList<MetadataEntry>());
+        JobDispatcher hDisp = new JobDispatcher(con);
+        hDisp.doOneCrawl(j, "test", "test", "test",
+                new ArrayList<MetadataEntry>());
         //Trigger the exception handler - should not try to exit
         qel.onException(new JMSException("Some exception"));
         // Wait for harvester to finish and try to exit

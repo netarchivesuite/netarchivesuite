@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,22 +27,28 @@ package dk.netarkivet.common.distribute.arcrepository;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import is.hi.bok.deduplicator.DigestIndexer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.TermRangeFilter;
+import org.apache.lucene.store.FSDirectory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.SparseRangeFilter;
+import dk.netarkivet.common.utils.AllDocsCollector;
 import dk.netarkivet.common.utils.arc.ARCKey;
 
 /**
@@ -50,14 +58,20 @@ import dk.netarkivet.common.utils.arc.ARCKey;
  */
 
 public class ARCLookup {
-    /** The ArcRepositoryClient we use to retrieve records */
+    /** The ArcRepositoryClient we use to retrieve records. */
     private final ViewerArcRepositoryClient arcRepositoryClient;
 
     /** The currently active lucene search engine. */
     private IndexSearcher luceneSearcher;
-
+    /** The Indexreader used by the index-searcher. */
+    private IndexReader luceneReader;
+    
     /** Logger for this class. */
     private final Log log = LogFactory.getLog(getClass().getName());
+
+    /** If the value is true, we will try to lookup w/ ftp instead of http, 
+     * if we don't get a hit in the index. */
+    private boolean tryToLookupUriAsFtp;
 
     /** Create a new ARCLookup object.
      *
@@ -70,6 +84,16 @@ public class ARCLookup {
         this.arcRepositoryClient = arcRepositoryClient;
         luceneSearcher = null;
     }
+    
+    /**
+     * 
+     * @param searchForFtpUri if true, we replace the http schema with ftp and 
+     * try again, if unsuccessful with http as the schema
+     */
+    public void setTryToLookupUriAsFtp(boolean searchForFtpUri) {
+        this.tryToLookupUriAsFtp = searchForFtpUri;
+    }
+    
 
     /** This method sets the current Lucene index this object works
      * on, replacing and closing the current index if one is already set.
@@ -79,12 +103,13 @@ public class ARCLookup {
      */
     public void setIndex(File indexDir) {
         ArgumentNotValid.checkNotNull(indexDir, "File indexDir");
-        ArgumentNotValid.checkTrue(indexDir.isDirectory(),
-                                   "indexDir '" + indexDir + "' should be a directory");
+        ArgumentNotValid.checkTrue(
+                indexDir.isDirectory(),
+                "indexDir '" + indexDir + "' should be a directory");
         if (luceneSearcher != null) {
             try {
                 // Existing lucene indices must be shut down
-                luceneSearcher.close();
+                luceneReader.close();
             } catch (IOException e) {
                 throw new IOFailure("Unable to close index " + luceneSearcher,
                         e);
@@ -94,7 +119,10 @@ public class ARCLookup {
             }
         }
         try {
-            luceneSearcher = new IndexSearcher(indexDir.getAbsolutePath());
+            // IndexReader.open is deprecated in Lucene 4.0
+            //luceneReader = org.apache.lucene.index.DirectoryReader.open(FSDirectory.open(indexDir));
+            luceneReader = IndexReader.open(FSDirectory.open(indexDir));
+            luceneSearcher = new IndexSearcher(luceneReader);
         } catch (IOException e) {
             throw new IOFailure("Unable to find/open index " + indexDir, e);
         }
@@ -105,6 +133,10 @@ public class ARCLookup {
      * is converted to "%2C"). If this returns no match, the method then
      * searches for a non-url-decoded match. If neither returns a match
      * the method returns null.
+     * 
+     * If the tryToLookupUriAsFtp field is set to true, we will try exchanging
+     * the schema with ftp, whenever we can't lookup the uri with the original
+     * schema.
      *
      * @param uri The URI to find in the archive.  If the URI does not
      * match any entries in the archive, null is returned.
@@ -114,16 +146,38 @@ public class ARCLookup {
      * in the bit archive, or if some other failure happened while finding
      * the file.
      */
-    public InputStream lookup(URI uri) {
+    public ResultStream lookup(URI uri) {
         ArgumentNotValid.checkNotNull(uri, "uri");
+        boolean containsHeader = true;
         // the URI.getSchemeSpecificPart() carries out the url-decoding
-        ARCKey key = luceneLookup(uri.getScheme() + ":" +
-                                  uri.getSchemeSpecificPart());
+        ARCKey key = luceneLookup(uri.getScheme() + ":" 
+                + uri.getSchemeSpecificPart());
         if (key == null) {
             // the URI.getRawSchemeSpecificPart() returns the uri in non-decoded form
-            key = luceneLookup(uri.getScheme() + ":" +
-                               uri.getRawSchemeSpecificPart());
+            key = luceneLookup(uri.getScheme() + ":" 
+                    + uri.getRawSchemeSpecificPart());
         }
+        
+        if (key == null && tryToLookupUriAsFtp) {
+            log.debug("Url not found with the schema '" + uri.getScheme()
+                    + ". Now trying with 'ftp' as the schema");
+            final String ftpSchema = "ftp";
+            key = luceneLookup(ftpSchema + ":" + uri.getSchemeSpecificPart());
+            if (key == null) {
+                key = luceneLookup(ftpSchema + ":"
+                        + uri.getRawSchemeSpecificPart());
+                if (key != null) {
+                    // Remember, that the found ftp-records don't have any HTTP
+                    // Header
+                    containsHeader = false;
+                }
+            } else {
+                // Remember, that the found ftp-record don't have any HTTP
+                // Header
+                containsHeader = false;
+            }
+        }
+        
         if (key == null) {
             return null; // key not found
         } else {
@@ -139,7 +193,7 @@ public class ARCLookup {
                 log.debug(message);
                 throw new IOFailure(message);
             }
-            return bitarchiveRecord.getData();
+            return new ResultStream(bitarchiveRecord.getData(), containsHeader);
         }
     }
 
@@ -156,23 +210,45 @@ public class ARCLookup {
             throw new IOFailure("No index set while searching for '"
                     + uri + "'");
         }
+        return luceneLookUp(uri);
+    }
+    
+    /**
+     * Lucene Lookup.
+     * It now uses the new Lucene API used in release 3.6
+     * @param uri A URI to look for.
+     * @return The file and offset where that URI can be found, or null if it
+     * doesn't exist.
+     * TODO Does TermRangeFilter needs to be modified to memory efficient enough. 
+     * The the optimizations in the previous used SparseRangeFilter may or may not
+     * relevant for Lucene 3.6+ 
+     */
+    private ARCKey luceneLookUp(String uri) {
         // SparseRangeFilter + ConstantScoreQuery means we ignore norms,
         // bitsets, and other memory-eating things we don't need that TermQuery
         // or RangeFilter would imply.
-        Query query = new ConstantScoreQuery(new SparseRangeFilter(
+        //Query query = new ConstantScoreQuery(new SparseRangeFilter(
+        //        DigestIndexer.FIELD_URL, uri, uri, true, true));
+        
+        Query query = new ConstantScoreQuery(new TermRangeFilter(
                 DigestIndexer.FIELD_URL, uri, uri, true, true));
+        
         try {
-            Hits hits = luceneSearcher.search(query);
+            AllDocsCollector allResultsCollector = new AllDocsCollector();
+            luceneSearcher.search(query, allResultsCollector);
             Document doc = null;
+            List<ScoreDoc> hits = allResultsCollector.getHits();
             if (hits != null) {
-                log.debug("Found " + hits.length() + " hits for uri: " +  uri);
-                for (int i = 0 ; i < hits.length(); i++) {
-                    doc = hits.doc(i);
+                log.debug("Found " + hits.size() + " hits for uri: " +  uri);
+                int i = 0;
+                for (ScoreDoc hit: hits) {
+                    int docId = hit.doc;
+                    doc = luceneSearcher.doc(docId);
                     String origin = doc.get(DigestIndexer.FIELD_ORIGIN);
                     // Here is where we will handle multiple hits in the future
                     if (origin == null) {
                         log.debug("No origin for URL '" + uri
-                                  + "' hit " + i);
+                                + "' hit " + i++);
                         continue;
                     }
                     String[] originParts = origin.split(",");
@@ -191,3 +267,5 @@ public class ARCLookup {
         return null;
     }
 }
+
+

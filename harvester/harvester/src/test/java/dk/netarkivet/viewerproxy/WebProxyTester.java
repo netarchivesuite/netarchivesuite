@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -68,8 +70,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 
 /**
- * Test the WebProxy class
- *
+ * Test the WebProxy class.
  */
 public class WebProxyTester extends TestCase {
     private static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
@@ -92,8 +93,9 @@ public class WebProxyTester extends TestCase {
             new Socket(InetAddress.getLocalHost(), httpPort);
             fail("Port already in use before unit test");
         } catch (IOException e) {
-            //expected
+           // Expected
         }
+        
         FileInputStream fis
                 = new FileInputStream("tests/dk/netarkivet/testlog.prop");
         LogManager.getLogManager().readConfiguration(fis);

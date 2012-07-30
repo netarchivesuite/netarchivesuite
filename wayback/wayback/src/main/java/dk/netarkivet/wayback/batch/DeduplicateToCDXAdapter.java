@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +45,7 @@ public class DeduplicateToCDXAdapter implements
                                      DeduplicateToCDXAdapterInterface {
 
     /**
-     * Logger for this class
+     * Logger for this class.
      */
     private final Log log = LogFactory.getLog(DeduplicateToCDXAdapter.class);
 
@@ -60,7 +62,7 @@ public class DeduplicateToCDXAdapter implements
 
     /**
      * Pattern representing the part of a crawl log entry describing a
-     * duplicate record
+     * duplicate record.
      */
     private static final String duplicateRecordPatternString
             = "duplicate:\"(.*),(.*)\",(.*)";
@@ -68,12 +70,12 @@ public class DeduplicateToCDXAdapter implements
             = Pattern.compile(duplicateRecordPatternString);
 
     /**
-     * canonicalizer used to canonicalize urls
+     * canonicalizer used to canonicalize urls.
      */
     UrlCanonicalizer canonicalizer;
 
     /**
-     * String for identifying crawl-log entries representing duplicates
+     * String for identifying crawl-log entries representing duplicates.
      */
     private static final String DUPLICATE_MATCHING_STRING = "duplicate:";
 
@@ -95,22 +97,24 @@ public class DeduplicateToCDXAdapter implements
     public String adaptLine(String line) {
         if (line != null && line.contains(DUPLICATE_MATCHING_STRING)) {
             try {
-                String[] crawl_elements = line.split("\\s+");
+                String[] crawlElements = line.split("\\s+");
                 StringBuffer result = new StringBuffer();
-                String original_url = crawl_elements[3];
-                String canonical_url =
-                        canonicalizer.urlStringToKey(original_url);
-                result.append(canonical_url).append(' ');
-                String cdx_date = cdxDateFormat.format(crawlDateFormat.parse(crawl_elements[0]));
-                result.append(cdx_date).append(' ').append(original_url).append(' ');
-                String mimetype = crawl_elements[6];
+                String originalUrl = crawlElements[3];
+                String canonicalUrl =
+                        canonicalizer.urlStringToKey(originalUrl);
+                result.append(canonicalUrl).append(' ');
+                String cdxDate = cdxDateFormat.format(
+                        crawlDateFormat.parse(crawlElements[0]));
+                result.append(cdxDate).append(' ')
+                    .append(originalUrl).append(' ');
+                String mimetype = crawlElements[6];
                 result.append(mimetype).append(' ');
-                String http_code = crawl_elements[1];
-                result.append(http_code).append(' ');
-                String digest = crawl_elements[9].replaceAll("sha1:","");
+                String httpCode = crawlElements[1];
+                result.append(httpCode).append(' ');
+                String digest = crawlElements[9].replaceAll("sha1:", "");
                 result.append(digest).append(" - ");
-                String duplicate_record = crawl_elements[11];
-                Matcher m = duplicateRecordPattern.matcher(duplicate_record);
+                String duplicateRecord = crawlElements[11];
+                Matcher m = duplicateRecordPattern.matcher(duplicateRecord);
                 if (m.matches()) {
                     String arcfile = m.group(1);
                     String offset = m.group(2);
@@ -118,7 +122,7 @@ public class DeduplicateToCDXAdapter implements
                 } else {
                     throw new ArgumentNotValid("crawl record did not match "
                                                + "expected pattern for duplicate"
-                                               + " record: '" + duplicate_record
+                                               + " record: '" + duplicateRecord
                                                + "'");
                 }
                 return result.toString();
@@ -146,9 +150,9 @@ public class DeduplicateToCDXAdapter implements
                     new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
-                String cdx_line = adaptLine(line);
-                if (cdx_line != null) {
-                    os.write((cdx_line + "\n").getBytes());
+                String cdxLine = adaptLine(line);
+                if (cdxLine != null) {
+                    os.write((cdxLine + "\n").getBytes());
                 }
             }
         } catch (IOException e) {

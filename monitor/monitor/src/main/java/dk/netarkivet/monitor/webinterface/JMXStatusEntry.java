@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,7 +44,6 @@ import dk.netarkivet.monitor.jmx.HostForwarding;
 import dk.netarkivet.monitor.logging.SingleLogRecord;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
-import javax.management.ObjectInstance;
 
 /**
  * Implementation of StatusEntry, that receives its data from the MBeanServer
@@ -350,9 +351,9 @@ public class JMXStatusEntry implements StatusEntry {
             throws MalformedObjectNameException, InstanceNotFoundException,
                    MBeanRegistrationException {
         ArgumentNotValid.checkNotNull(query, "query");
-        
-        for(ObjectName name:
-                    mBeanServer.queryNames(new ObjectName(query), null)) {
+        Set<ObjectName> namesMatchingQuery = mBeanServer.queryNames(
+                new ObjectName(query), null); 
+        for(ObjectName name : namesMatchingQuery) {
             mBeanServer.unregisterMBean(name);
         }
     }

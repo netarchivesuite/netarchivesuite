@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -22,10 +24,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * Tests the JobPriority class.
- */
-
 import java.util.Locale;
 
 import junit.framework.TestCase;
@@ -33,6 +31,9 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
 
+/**
+ * Tests the JobPriority class.
+ */
 public class JobPriorityTester extends TestCase {
     
     private static final I18n I18N =

@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,38 +24,42 @@
 
 package dk.netarkivet.harvester.harvesting;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
+import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
+import dk.netarkivet.harvester.harvesting.controller.HeritrixControllerFactory;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import junit.framework.TestCase;
+
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import dk.netarkivet.testutils.LuceneUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- *
+ * Unittest for the HeritrixControllerFactory class.
  */
-
 public class HeritrixControllerFactoryTester extends TestCase {
 
-     private MoveTestFiles mtf;
+    private MoveTestFiles mtf;
     private File dummyLuceneIndex;
     private String defaultController;
 
     public HeritrixControllerFactoryTester() {
-        mtf = new MoveTestFiles (TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
+        mtf = new MoveTestFiles(
+                TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
     public void setUp() throws IOException {
         mtf.setUp();
         dummyLuceneIndex = mtf.newTmpDir();
-        LuceneUtils.makeDummyIndex(dummyLuceneIndex);
-        defaultController = Settings.get(HarvesterSettings.HERITRIX_CONTROLLER_CLASS);
+        // Out commented to avoid reference to archive module from harvester module.
+        // LuceneUtils.makeDummyIndex(dummyLuceneIndex);
+        defaultController = Settings.get(
+                HarvesterSettings.HERITRIX_CONTROLLER_CLASS);
     }
 
     public void tearDown() {
@@ -73,11 +79,14 @@ public class HeritrixControllerFactoryTester extends TestCase {
         File seedsTxt = new File(crawlDir, "seeds.txt");
         FileUtils.copyFile(TestInfo.ORDER_FILE, orderXml);
         FileUtils.copyFile(origSeeds, seedsTxt);
-        HeritrixFiles files = new HeritrixFiles(crawlDir,
-                                                Long.parseLong(TestInfo.ARC_JOB_ID),
-                                                Long.parseLong(TestInfo.ARC_HARVEST_ID));
-        HeritrixController hc = HeritrixControllerFactory.getDefaultHeritrixController(files);
-        assertTrue("Should have got a JMXHeritricController, not " + hc, hc instanceof JMXHeritrixController);
+        HeritrixFiles files = new HeritrixFiles(
+                crawlDir,
+                Long.parseLong(TestInfo.ARC_JOB_ID),
+                Long.parseLong(TestInfo.ARC_HARVEST_ID));
+        HeritrixController hc
+            = HeritrixControllerFactory.getDefaultHeritrixController(files);
+        assertTrue("Should have got a JMXHeritricController, not " + hc,
+                hc instanceof BnfHeritrixController);
     }
 
     /**
@@ -85,7 +94,8 @@ public class HeritrixControllerFactoryTester extends TestCase {
      * construct
      */
     public void testGetDefaultHeritrixControllerChangeDefaultSettigs() {
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.HeritrixControllerFactoryTester$DummyHeritrixController");
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+                "dk.netarkivet.harvester.harvesting.HeritrixControllerFactoryTester$DummyHeritrixController");
         HeritrixController hc = HeritrixControllerFactory.getDefaultHeritrixController("hello world");
         assertTrue("Should have got a DummyHeritrixController, not " + hc, hc instanceof DummyHeritrixController);
 
@@ -95,9 +105,12 @@ public class HeritrixControllerFactoryTester extends TestCase {
      * Test we throw the expected exception when the signature is invalid
      */
     public void testGetDefaultHeritrixControllerWrongSignature() {
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.HeritrixControllerFactoryTester$DummyHeritrixController");
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+                "dk.netarkivet.harvester.harvesting.HeritrixControllerFactoryTester$DummyHeritrixController");
         try {
-            HeritrixController hc = HeritrixControllerFactory.getDefaultHeritrixController("hello world", "hello world");
+            HeritrixController hc
+                = HeritrixControllerFactory.getDefaultHeritrixController(
+                        "hello world", "hello world");
             fail("Expected to throw ArgumentNotValid on invlaid signature");
         } catch (ArgumentNotValid e) {
             //expected

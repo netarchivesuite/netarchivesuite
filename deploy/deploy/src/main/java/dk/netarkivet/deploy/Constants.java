@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -101,7 +103,8 @@ public final class Constants {
     /** The path to the machine user name.*/
     static final String DEPLOY_MACHINE_USER_NAME = "deployMachineUserName";
     /** The path to the directory for the database.*/
-    static final String DEPLOY_DATABASE_DIR = "deployDatabaseDir";
+    static final String DEPLOY_HARVEST_DATABASE_DIR = 
+        "deployHarvestDatabaseDir";
     /** The path to the directory for the archive database.*/
     static final String DEPLOY_ARCHIVE_DATABASE_DIR = 
         "deployArchiveDatabaseDir";
@@ -151,7 +154,7 @@ public final class Constants {
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the database directory from the settings branch.*/
     static final String[] DATABASE_URL_SETTING_LEAF_PATH = CommonSettings
-        .DB_URL.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+        .DB_BASE_URL.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The complete path to the port leaf from beyond settings.*/
     static final String[] COMPLETE_HTTP_PORT_LEAF = 
         CommonSettings.HTTP_PORT_NUMBER.split("[.]");
@@ -177,6 +180,13 @@ public final class Constants {
     static final String[] SETTINGS_ARCHIVE_DATABASE_PORT =
         ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to the harvest database port leaf from beyond settings.*/
+    static final String[] COMPLETE_HARVEST_DATABASE_PORT =
+        CommonSettings.DB_PORT.split("[.]");
+    /** The path to the harvest database port leaf from settings.*/
+    static final String[] SETTINGS_HARVEST_DATABASE_PORT =
+        CommonSettings.DB_PORT.replace(CommonSettings.SETTINGS + ".", "")
+                .split("[.]");
     /** The path to the heritrix jmxPort from the settings branch.*/
     static final String[] SETTINGS_HARVEST_HERITRIX_JMX_PORT =
         HarvesterSettings.HERITRIX_JMX_PORT
@@ -270,15 +280,19 @@ public final class Constants {
     /** The offset for the digit to replace during test in the 
      * heritrix jmx port.
      */
-    static final int TEST_OFFSET_HERITRIX_JMX_PORT = 1;
+    static final int TEST_OFFSET_HERITRIX_JMX_PORT = 2;
     /** The offset for the digit to replace during test in the 
      * heritrix gui port.
      */
-    static final int TEST_OFFSET_HERITRIX_GUI_PORT = 1;
+    static final int TEST_OFFSET_HERITRIX_GUI_PORT = 2;
     /** The offset for the digit to replace during test of the
      * port in the archive database url.
      */
     static final int TEST_OFFSET_ARCHIVE_DB_URL_PORT = 2;
+    /** The offset for the digit to replace during test of the
+     * port in the harvest database url.
+     */
+    static final int TEST_OFFSET_HARVEST_DB_URL_PORT = 2;
     /** The index of the offset part of the test argument.*/ 
     static final int TEST_ARGUMENT_OFFSET_INDEX = 0;
     /** The index of the http part of the test argument.*/ 
@@ -305,31 +319,36 @@ public final class Constants {
     static final String LOG_PROP_APPLICATION_PREFIX = "log_";
     /** The suffix for the log property file for the application.*/
     static final String LOG_PROP_APPLICATION_SUFFIX = ".prop";
-    /** The directory for the database in the unpacked NetarchiveSuite.
+    
+    /** The directory for the harvest database in the unpacked NetarchiveSuite.
      *  The default directory for the database file.
      */
-    static final String DATABASE_BASE_DIR = "harvestdefinitionbasedir/";
-    /** The name of the database in the directory above.
+    static final String HARVEST_DATABASE_BASE_DIR = "harvestdefinitionbasedir";
+    /** The name of the harvest database in the directory above.
      *  The default name for the database file.
      */
-    static final String DATABASE_BASE_FILE = "fullhddb.jar";
-    /** The path to the base database (the two above combined).
+    static final String HARVEST_DATABASE_BASE_FILE = "fullhddb.jar";
+    
+    /** The path to the base harvestdatabase (the two above combined).
      *  This is the default location for the database. 
      */
-    static final String DATABASE_BASE_PATH = 
-        DATABASE_BASE_DIR + DATABASE_BASE_FILE;
+    static final String HARVEST_DATABASE_BASE_PATH = 
+        HARVEST_DATABASE_BASE_DIR + SLASH + HARVEST_DATABASE_BASE_FILE;
     /**
      * The name of the archive database in the database base dir above.
      * This is the default name of the archive database.
      */
     static final String ARCHIVE_DATABASE_BASE_FILE = "archivedb.jar";
+    
+    public static final String ARCHIVE_DATABASE_BASE_DIR = "archivedatabasedir";        
+    
     /** 
      * The path to the base archive database (the one above combined 
      * with the base database dir).
      * This is the default location for the archive database. 
      */
     static final String ARCHIVE_DATABASE_BASE_PATH =
-        DATABASE_BASE_DIR + ARCHIVE_DATABASE_BASE_FILE;
+        ARCHIVE_DATABASE_BASE_DIR + SLASH + ARCHIVE_DATABASE_BASE_FILE;
     /** The name of the new modified configuration file for tests.*/
     static final String TEST_CONFIG_FILE_REPLACE_ENDING = "_test.xml";
     /** The script extension for Linux/Unix.*/
@@ -344,10 +363,21 @@ public final class Constants {
     static final String SCRIPT_NAME_START_ALL = "startall";
     /** The name of the restart all application script. 'restart'.*/
     static final String SCRIPT_NAME_RESTART = "restart";
-    /** The name of the archive database start script.*/
-    static final String SCRIPT_NAME_ARC_DB_START = "start_external_database";
-    /** The name of the archive database kill script.*/
-    static final String SCRIPT_NAME_ARC_DB_KILL = "kill_external_database";
+    /** The name of the admin database start script.*/
+    static final String SCRIPT_NAME_ADMIN_DB_START 
+            = "start_external_admin_database";
+    /** The name of the admin database kill script.*/
+    static final String SCRIPT_NAME_ADMIN_DB_KILL 
+            = "kill_external_admin_database";
+    /** The name of the harvest database start script.*/
+    static final String SCRIPT_NAME_HARVEST_DB_START 
+            = "start_external_harvest_database";
+    /** The name of the harvest database kill script.*/
+    static final String SCRIPT_NAME_HARVEST_DB_KILL 
+            = "kill_external_harvest_database";
+    /** The name of the harvest database update script.*/
+    static final String SCRIPT_NAME_HARVEST_DB_UPDATE 
+            = "update_external_harvest_database";;
     /** The name of the wait script for windows. 'wait'.*/
     static final String SCRIPT_NAME_WAIT = "wait";
     /** Prefix for the application kill script. 'kill_' .*/
@@ -391,6 +421,7 @@ public final class Constants {
         "dk/netarkivet/harvester/settings.xml",
         "dk/netarkivet/monitor/settings.xml",
         "dk/netarkivet/viewerproxy/settings.xml",
+        "dk/netarkivet/wayback/settings.xml",
         "dk/netarkivet/archive/arcrepository/distribute/"
             + "JMSArcRepositoryClientSettings.xml",
         "dk/netarkivet/archive/indexserver/distribute/"
@@ -571,6 +602,7 @@ public final class Constants {
     public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = 
         "Warning: A NetarchiveSuite file already exists. "
         + "It will be overriden. ";
+
     
     // functions
     /**

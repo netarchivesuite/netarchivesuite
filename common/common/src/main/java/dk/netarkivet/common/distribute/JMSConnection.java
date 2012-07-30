@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,6 +34,9 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.QueueBrowser;
+import javax.jms.QueueSession;
 import javax.jms.Session;
 import java.util.Calendar;
 import java.util.Collections;
@@ -42,11 +47,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
 
 /**
@@ -68,8 +75,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     protected static final String CONSUMER_KEY_SEPARATOR = "##";
 
     /** The number to times to (re)try whenever a JMSException is thrown. */
-    protected static final int JMS_MAXTRIES = 3;
-
+    static final int JMS_MAXTRIES = Settings.getInt(
+            CommonSettings.JMS_BROKER_RETRIES);
+    
     /** The JMS Connection. */
     protected Connection connection;
 
@@ -78,7 +86,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * queues and topics.
      */
     protected Session session;
-
+    
     /** Map for caching message producers. */
     protected final Map<String, MessageProducer> producers
             = Collections.synchronizedMap(
@@ -279,6 +287,34 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     }
 
     /**
+     * Creates a QueueBrowser object to peek at the messages on the specified
+     * queue.
+     * @param queueID The ChannelID for a specified queue.
+     * @return A new QueueBrowser instance with access to the specified queue
+     * @throws JMSException
+     *             If unable to create the specified queue browser
+     */
+    public QueueBrowser createQueueBrowser(ChannelID queueID)
+            throws JMSException {
+        ArgumentNotValid.checkNotNull(queueID, "ChannelID queueID");
+        Queue queue = getQueueSession().createQueue(queueID.getName());
+        return getQueueSession().createBrowser(queue);
+    }
+
+    /**
+     * Provides a QueueSession instance. Functionality for retrieving a
+     * <code>QueueSession</code> object isen't available on the generic
+     * <code>JMSConnectionFactory</code>
+     * 
+     * @return A <code>QueueSession</code> object connected to the current JMS
+     *         broker
+     * @throws JMSException
+     *             Failure to retrieve the <code>QueueBrowser</code> JMS
+     *             Browser
+     */
+    public abstract QueueSession getQueueSession() throws JMSException;
+
+    /**
      * Clean up. Remove close connection, remove shutdown hook and null the
      * instance.
      */
@@ -357,6 +393,11 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             netMsg = (NetarkivetMessage) objMsg.getObject();
             // Note: Id is only updated if the message does not already have an
             // id. On unpack, this means the first time the message is received.
+            
+            // FIXME Fix for NAS-2043 doesn't seem to work
+            //String randomID = UUID.randomUUID().toString();
+            //netMsg.updateId(randomID);
+            
             netMsg.updateId(msg.getJMSMessageID());
         } catch (ClassCastException e) {
             log.warn("Invalid message type: " + classname, e);
@@ -536,7 +577,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             String channel, MessageListener messageListener) {
         return channel + CONSUMER_KEY_SEPARATOR + messageListener;
     }
-
+    
     /**
      * Get the channelName embedded in a consumerKey.
      *
@@ -550,7 +591,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     }
 
     /**
-     * Helper method to establish one Connection and associated Session,
+     * Helper method to establish one Connection and associated Session.
      *
      * @throws JMSException If some JMS error occurred during the creation of
      *                      the required JMS connection and session
@@ -581,7 +622,13 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 getProducer(to.getName()).send(message);
                 // Note: Id is only updated if the message does not already have
                 // an id. This ensures that resent messages keep the same ID
+                // TODO Is it always OK for resent messages to keep the same ID
+                
+                // FIXME Solution for NAS-2043 doesn't work; rolled back
+                //String randomID = UUID.randomUUID().toString();
+                //msg.updateId(randomID);
                 msg.updateId(message.getJMSMessageID());
+                
             }
         } finally {
             connectionLock.readLock().unlock();
@@ -698,7 +745,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * publishers.
      *
      * @throws JMSException If unable to reconnect to JMSBroker and/or
-     *                      reestablish sesssions
+     *                      reestablish sessions
      */
     private void doReconnect()
             throws JMSException {
@@ -714,3 +761,4 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         log.info("Reconnect successful");
     }
 }
+

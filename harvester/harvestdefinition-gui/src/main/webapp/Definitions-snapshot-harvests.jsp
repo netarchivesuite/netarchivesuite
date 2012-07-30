@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -86,22 +88,20 @@ if (!ihd.iterator().hasNext()) { %>
                     + HTMLUtils.encode(name);
 
             String isActive;
-            String flipActiveText;
+            String flipActiveText="";
+            String flipactiveLink="";
             if (hd.isActive()) {
-                isActive = I18N.getString(response.getLocale(),
-                        "active");
-                flipActiveText = I18N.getString(response.getLocale(),
-                        "deactivate");
+                isActive = I18N.getString(response.getLocale(), "active");
             } else {
                 isActive = I18N.getString(response.getLocale(),
                         "inactive");
                 flipActiveText = I18N.getString(response.getLocale(),
                         "activate");
-            }
-            String flipactiveLink
+                flipactiveLink
                     = "<a href=\"\" onclick=\"document.getElementById('flipActiveForm"
                     + hd.getOid() + "').submit(); return false;\">"
-                    + HTMLUtils.escapeHtmlValues(flipActiveText) + "</a>";
+                    + HTMLUtils.escapeHtmlValues(flipActiveText) + "</a>";        
+            }
     %>
     <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
         <td><%=HTMLUtils.escapeHtmlValues(name)%></td>

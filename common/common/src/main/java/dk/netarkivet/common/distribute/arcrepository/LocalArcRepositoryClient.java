@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,23 +41,22 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
-import dk.netarkivet.common.distribute.RemoteFileFactory;
+import dk.netarkivet.common.distribute.FileRemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * A simple implementation of ArcRepositoryClient that just has a number of
- * local directories that it keeps its files in.  It doesn't implement
- * credentials checks or checksum storing.
+ * local directories where it stores its files.  This class doesn't implement
+ * credentials checking or checksum storing!
  */
 public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /** The logger for this class. */
@@ -70,6 +71,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /** Store the file in the directories designated by this setting. */
     private static final String FILE_DIRS
             = "settings.common.arcrepositoryClient.fileDir";
+    /** The credentials used to correct data in the archive. */
     private static final String CREDENTIALS_SETTING
             = "settings.archive.bitarchive.thisCredentials";
 
@@ -89,7 +91,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         }
     }
 
-    /** Call on shutdown to release external resources. */
+    @Override
     public void close() {
     }
 
@@ -104,6 +106,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws ArgumentNotValid if file parameter is null or file is not an
      *                          existing file.
      */
+    @Override
     public void store(File file) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkTrue(file.exists(), "File '" + file
@@ -133,6 +136,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * negative.
      * @throws IOFailure If the get operation failed.
      */
+    @Override
     public BitarchiveRecord get(String arcfile, long index)
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "String arcfile");
@@ -148,7 +152,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         try {
             reader = ARCReaderFactory.get(f, index);
             record = (ARCRecord) reader.get();
-            return new BitarchiveRecord(record);
+            return new BitarchiveRecord(record, arcfile);
         } catch (IOException e) {
             throw new IOFailure("Error reading record from '"
                     + arcfile + "' offset " + index, e);
@@ -175,12 +179,14 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      *
      * @param arcfilename Name of the arcfile to retrieve. 
      * @param replica The bitarchive to retrieve the data from.
+     *  (Note argument is ignored)
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile
      * is null
      * @throws IOFailure if there are problems reading or writing file, or 
      * the file with the given arcfilename could not be found.
      */
+    @Override
     public void getFile(String arcfilename, Replica replica, File toFile) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "String arcfilename");
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
@@ -198,12 +204,20 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @param job An object that implements the FileBatchJob interface. The
      *  initialize() method will be called before processing and the finish()
      *  method will be called afterwards. The process() method will be called
-     *  with each File entry.
-     * @param replicaId The id of the archive to execute the job on.
-     * @return The status of the batch job after it ended.
+     *  with each File entry. An optional function postProcess() allows handling
+     *  the combined results of the batchjob, e.g. summing the results, sorting,
+     *  etc.
      *
+     * @param replicaId The archive to execute the job on.
+     * @param args The arguments for the batchjob. This can be null.
+     * @return The status of the batch job after it ended.
+     * @throws ArgumentNotValid If the job is null or the replicaId is either
+     * null or the empty string.
+     * @throws IOFailure If a problem occurs during processing the batchjob.
      */
-    public BatchStatus batch(final FileBatchJob job, String replicaId) {
+    @Override
+    public BatchStatus batch(final FileBatchJob job, String replicaId, 
+            String... args) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, 
                 "String replicaId");
@@ -246,19 +260,19 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         }
         return new BatchStatus(replicaId, job.getFilesFailed(),
                 job.getNoOfFilesProcessed(),
-                RemoteFileFactory.getMovefileInstance(resultFile),
-                //new ArrayList<FileBatchJob.ExceptionOccurrence>(0))
+                new FileRemoteFile(resultFile),
                 job.getExceptions());
     }
 
     /** Updates the administrative data in the ArcRepository for a given
-     * file and replica.
+     * file and replica. This implementation does nothing.
      *
      * @param fileName The name of a file stored in the ArcRepository.
      * @param bitarchiveId The id of the replica that the administrative
      * data for fileName is wrong for.
      * @param newval What the administrative data will be updated to.
      */
+    @Override
     public void updateAdminData(String fileName, String bitarchiveId,
                                 ReplicaStoreState newval) {
     }
@@ -266,10 +280,12 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /** Updates the checksum kept in the ArcRepository for a given
      * file.  It is the responsibility of the ArcRepository implementation to
      * ensure that this checksum matches that of the underlying files.
+     * This implementation does nothing.
      *
      * @param filename The name of a file stored in the ArcRepository.
      * @param checksum The new checksum.
      */
+    @Override
     public void updateAdminChecksum(String filename, String checksum) {
     }
 
@@ -289,6 +305,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure On IO trouble.
      * @throws PermissionDenied On wrong MD5 sum or wrong credentials.
      */
+    @Override
     public File removeAndGetFile(String fileName, String bitarchiveId,
                                  String checksum, String credentials) {
         // Ignores bitarchiveName, checksum, and credentials for now
@@ -424,7 +441,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      */
     @Override
     public File correct(String replicaId, String checksum, File file, 
-	    String credentials) throws ArgumentNotValid, PermissionDenied {
+            String credentials) throws ArgumentNotValid, PermissionDenied {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -445,7 +462,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @param replicaId Inherited dummy variable.
      * @param filename The name of the file to calculate the checksum.
      * @return The checksum of the file, or the empty string if the file was 
-     * not found or an error occured.
+     * not found or an error occurred.
      * @throws ArgumentNotValid If the replicaId or the filename is either
      * null or the empty string.
      */

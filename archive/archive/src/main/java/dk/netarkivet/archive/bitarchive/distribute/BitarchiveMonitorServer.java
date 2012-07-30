@@ -4,7 +4,9 @@
  * Author:   $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,8 +38,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
-import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
 import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
@@ -59,7 +59,9 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileListJob;
 
 /**
  * Class representing message handling for the monitor for bitarchives. The
@@ -206,10 +208,10 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * @param beMsg The BatchEndedMessage to be handled.
      * @throws ArgumentNotValid If the BatchEndedMessage is null.
      */
-    public void visit(final BatchEndedMessage beMsg) {
+    public void visit(final BatchEndedMessage beMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(beMsg, "BatchEndedMessage beMsg");
         
-        log.info("Received batch ended from bitarchive '"
+        log.debug("Received batch ended from bitarchive '"
                  + beMsg.getBitarchiveID() + "': " + beMsg);
         bamon.signOfLife(beMsg.getBitarchiveID());
         try {
@@ -271,21 +273,29 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         ArgumentNotValid.checkNotNull(cm, "CorrectMessage cm");
         log.info("Receiving CorrectMessage: " + cm);
         
-        // Create the RemoveAndGetFileMessage for removing the file.
-        RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(
-                Channels.getAllBa(), Channels.getTheBamon(), 
-                cm.getArcfileName(), cm.getReplicaId(), 
-                cm.getIncorrectChecksum(), cm.getCredentials());
-        
-        // Send the message.
-        con.send(ragfm);
-        
-        log.info("Step 1 of handling CorrectMessage. Sending "
-                + "RemoveAndGetFileMessage: " + ragfm);
-        
-        // Put the CorrectMessage into the map along the id of the 
-        // RemoveAndGetFileMessage
-        correctMessages.put(ragfm.getID(), cm);
+        try {
+            // Create the RemoveAndGetFileMessage for removing the file.
+            RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(
+                    Channels.getAllBa(), Channels.getTheBamon(), 
+                    cm.getArcfileName(), cm.getReplicaId(), 
+                    cm.getIncorrectChecksum(), cm.getCredentials());
+
+            // Send the message.
+            con.send(ragfm);
+
+            log.info("Step 1 of handling CorrectMessage. Sending "
+                    + "RemoveAndGetFileMessage: " + ragfm);
+
+            // Put the CorrectMessage into the map along the id of the 
+            // RemoveAndGetFileMessage
+            correctMessages.put(ragfm.getID(), cm);
+        } catch (Exception e) {
+            String errMsg = "An error occurred during step 1 of handling "
+                + " the CorrectMessage: sending RemoveAndGetFileMessage";
+            log.warn(errMsg, e);
+            cm.setNotOk(e);
+            con.reply(cm);
+        }
     }
     
     /**
@@ -310,9 +320,6 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         // Retrieve the correct message
         CorrectMessage cm = correctMessages.remove(msg.getID());
 
-        // update the correct message.
-        cm.setRemovedFile(msg.getRemoteFile());
-
         // If the RemoveAndGetFileMessage has failed, then the CorrectMessage
         // has also failed, and should be returned as a fail.
         if(!msg.isOk()) {
@@ -324,16 +331,28 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             con.reply(cm);
             return;
         }
-        
-        // Create the upload message, send it. 
-        UploadMessage um = new UploadMessage(Channels.getAllBa(), 
-                Channels.getTheBamon(), cm.getCorrectFile());
-        con.send(um);
-        log.info("Step 2 of handling CorrectMessage. Sending UploadMessage: " 
-                + um);
-        
-        // Store the CorrectMessage along with the ID of the UploadMessage.
-        correctMessages.put(um.getID(), cm);
+
+        try {
+            // update the correct message.
+            cm.setRemovedFile(msg.getRemoteFile());
+
+            // Create the upload message, send it. 
+            UploadMessage um = new UploadMessage(Channels.getAllBa(), 
+                    Channels.getTheBamon(), cm.getCorrectFile());
+            con.send(um);
+            log.info(
+                    "Step 2 of handling CorrectMessage. Sending UploadMessage: "
+                    + um);
+
+            // Store the CorrectMessage along with the ID of the UploadMessage.
+            correctMessages.put(um.getID(), cm);
+        } catch (Exception e) {
+            String errMsg = "An error occurred during step 2 of handling "
+                + " the CorrectMessage: sending UploadMessage";
+            log.warn(errMsg, e);
+            cm.setNotOk(e);
+            con.reply(cm);
+        }
     }
     
     /**
@@ -402,7 +421,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
         
-        log.info("Receiving GetAllChecksumsMessage '" + msg + "'");
+        log.info("Receiving GetAllFilenamesMessage '" + msg + "'");
 
         // Create batchjob for the GetAllChecksumsMessage.
         FileListJob flj = new FileListJob();
@@ -425,11 +444,13 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     public void visit(GetChecksumMessage msg) throws ArgumentNotValid { 
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
         
-        log.info("Receiving GetAllChecksumsMessage '" + msg + "'");
+        log.info("Receiving GetChecksumsMessage '" + msg + "'");
         
         // Create batchjob for the GetAllChecksumsMessage.
         ChecksumJob cj = new ChecksumJob();
         cj.processOnlyFileNamed(msg.getArcfileName());
+        cj.setBatchJobTimeout(Settings.getLong(
+                ArchiveSettings.SINGLE_CHECKSUM_TIMEOUT));
         
         // Execute the batchjob.
         executeConvertedBatch(cj, msg);
@@ -548,11 +569,13 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                     log.debug("Post processing finished.");
                 } else {
                     log.debug("No post processing. Using concatenated file.");
+                    tryAndDeleteTemporaryFile(postFile);
                     postFile = bjs.batchResultFile;
                 }
             } catch (Exception e) {
                 log.warn("Exception caught during post processing batchjob. "
                         + "Concatenated file used instead.", e);
+                tryAndDeleteTemporaryFile(postFile);
                 postFile = bjs.batchResultFile;
             }
             
@@ -582,6 +605,21 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                 + "to queue: '" + brMsg.getTo() + "'");
     }
     
+    /** Helper method to delete temporary files.
+     * Logs at level debug, if it couldn't delete the file.
+     * @param tmpFile the tmpFile that needs to be deleted.
+     */
+    private void tryAndDeleteTemporaryFile(File tmpFile) {
+        boolean deleted = tmpFile.delete();
+        if (!deleted) {
+            log.debug("Failed to delete temporary file '"
+                    + tmpFile.getAbsolutePath() + "'");
+        } else {
+            log.trace("Deleted temporary file '" + tmpFile.getAbsolutePath()
+                    + "' successfully");
+        }
+    }
+
     /**
      * Uses the batchjobstatus on the message converted batchjob to reply on 
      * the original message.
@@ -702,7 +740,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
 
                 // check if any different values.
                 String firstVal = output.get(0);
-                for(int i=1; i < output.size(); i++) {
+                for(int i = 1; i < output.size(); i++) {
                     if(!output.get(i).equals(firstVal)) {
                         String errorString = "Replica '" + msg.getReplicaId() 
                                 + "' has unidentical duplicates: '" + firstVal 
@@ -764,7 +802,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     /**
      * Closes this BitarchiveMonitorServer cleanly.
      */
-    public void cleanup() {
+    public synchronized void cleanup() {
         if (instance != null) {
             con.removeListener(Channels.getTheBamon(), this);
             batchConversions.clear();

@@ -38,6 +38,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList;
@@ -50,14 +51,13 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
  * determined by whether the TRAP_ID is specified in the request.
  *
  */
-
 public class TrapCreateOrUpdateAction extends TrapAction {
 
     /**
      * The logger for this class.
      */
     private static final Log log =
-            LogFactory.getLog(TrapCreateOrUpdateAction.class) ;
+            LogFactory.getLog(TrapCreateOrUpdateAction.class);
 
     @Override
     protected void doAction(PageContext context, I18n i18n) {
@@ -110,18 +110,31 @@ public class TrapCreateOrUpdateAction extends TrapAction {
             trap.setActive(isActive);
             trap.setDescription(description);
             trap.setName(name);
-            if (fileName != null && !"".equals(fileName)) {
-                log.debug("Reading global crawler trap list from '" +
-                          fileName + "'");
-                trap.setTrapsFromInputStream(is);
+            if (fileName != null && !fileName.isEmpty()) {
+                log.debug("Reading global crawler trap list from '"
+                          + fileName + "'");
+                try {
+                    trap.setTrapsFromInputStream(is);
+                } catch (ArgumentNotValid argumentNotValid) {
+                    HTMLUtils.forwardWithErrorMessage(context, i18n,
+                                                      "errormsg;crawlertrap.regexp.error");
+                    throw new ForwardedToErrorPage(argumentNotValid.getMessage());
+                }
             }
             dao.update(trap);
         } else {  //create new trap list
             GlobalCrawlerTrapList trap = new GlobalCrawlerTrapList(is, name,
                                                        description, isActive);
-            dao.create(trap);
+            if (!dao.exists(name)) {
+                dao.create(trap);
+            } else {
+                // crawlertrap named like this already exists.
+                HTMLUtils.forwardWithErrorMessage(context, i18n,
+                "errormsg;crawlertrap.0.exists.error", name);
+                throw new
+                ForwardedToErrorPage("Crawlertrap with name '" 
+                        + name + "' exists already");
+            }
         }
-
-
     }
 }

@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -314,7 +316,7 @@ public class HTTPControllerServerTester extends TestCase {
         assertEquals("Should have received one job id",
                      1, c.changeIndexJobListArgument.size());
         assertEquals("Should have received job id '1'",
-                     new Long(1L), c.changeIndexJobListArgument.toArray()[0]);
+                Long.valueOf(1L), c.changeIndexJobListArgument.toArray()[0]);
         assertEquals("Should have received label", "myTestLabel",
                      c.changeIndexLabelParameter);
 
@@ -344,8 +346,8 @@ public class HTTPControllerServerTester extends TestCase {
  
         // Check, that the set of expected Job ids is {1L,8L}
         Set<Long> setOfExpectedJobIds = new HashSet<Long>();
-        setOfExpectedJobIds.add(new Long(1L));
-        setOfExpectedJobIds.add(new Long(8L));
+        setOfExpectedJobIds.add(Long.valueOf(1L));
+        setOfExpectedJobIds.add(Long.valueOf(8L));
         assertTrue("Should have received job ids '1' and '8'",
                 setOfExpectedJobIds.containsAll(c.changeIndexJobListArgument));
 

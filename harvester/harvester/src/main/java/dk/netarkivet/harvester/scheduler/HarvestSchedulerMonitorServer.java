@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,10 +26,6 @@
 package dk.netarkivet.harvester.scheduler;
 
 import javax.jms.MessageListener;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,17 +33,17 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.harvester.datamodel.Domain;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.HarvestInfo;
+import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.NumberUtils;
-import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
+import dk.netarkivet.harvester.distribute.IndexReadyMessage;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
-import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
+import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /**
  * Submitted harvesting jobs are registered with this singleton. The class
@@ -54,39 +52,19 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
  *
  */
 public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
-        implements MessageListener {
+        implements MessageListener, ComponentLifeCycle {
     /**
      * The JobDAO.
      */
     private final JobDAO jobDAO = JobDAO.getInstance();
 
-    /**
-     * The unique instance of this class.
-     */
-    private static HarvestSchedulerMonitorServer instance;
-
     /** The private logger for this class. */
     private final Log log = LogFactory.getLog(getClass().getName());
 
-    /**
-     * private to ensure use of getInstance method.
-     */
-    private HarvestSchedulerMonitorServer() {
+    @Override
+    public void start() {
         JMSConnectionFactory.getInstance().setListener(
                 Channels.getTheSched(), this);
-    }
-
-    /**
-     * Get the instance of the HarvestSchedulerMonitor.
-     *
-     * @return The HarvestScheduler instance
-     */
-    static HarvestSchedulerMonitorServer getInstance() {
-        if (instance == null) {
-            instance =
-            new HarvestSchedulerMonitorServer();
-        }
-        return instance;
     }
 
     /**
@@ -101,7 +79,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
             throws ArgumentNotValid {
         long jobID = cmsg.getJobID();
         JobStatus newStatus = cmsg.getStatusCode();
-        Job job = jobDAO.read(new Long(jobID));
+        Job job = jobDAO.read(Long.valueOf(jobID));
         JobStatus oldStatus = job.getStatus();
         // Update the job status
 
@@ -133,6 +111,13 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                     }
                     // The usual case submitted -> started
                     job.setStatus(newStatus);
+
+                    // Send the initial progress message
+                    JMSConnectionFactory.getInstance().send(
+                            new CrawlProgressMessage(
+                                    job.getOrigHarvestDefinitionID(),
+                                    job.getJobID()));
+
                     log.debug(job + " has started crawling.");
                     jobDAO.update(job);
                 } else {
@@ -198,6 +183,12 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                 }
                 //Always process the data!
                 processCrawlData(job, cmsg.getDomainHarvestReport());
+
+                // Send message to notify HarvestMonitor that
+                // it should stop monitoring this job
+                JMSConnectionFactory.getInstance().send(
+                        new JobEndedMessage(job.getJobID(), newStatus));
+
                 break;
             default:
                 log.warn("CrawlStatusMessage tried to update job status to "
@@ -209,88 +200,25 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
     /**
      * Takes the crawl report from the job and updates the domain information
      * with harvesting history.
-     * If the crawler was unable to generate a DomainHarvestReport,
+     * If the crawler was unable to generate a {@link HarvestReport},
      * it will do nothing.
      * @param job the completed job
      * @param dhr the domain harvest report, or null if none available.
      * @throws ArgumentNotValid if job is null
      */
-    private void processCrawlData(Job job, DomainHarvestReport dhr)
+    private void processCrawlData(Job job, HarvestReport dhr)
     throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(job, "job");
 
-        //If the crawler was unable to generate a DomainHarvestReport,
+        //If the crawler was unable to generate a HarvestReport,
         //we will do nothing.
 
         if (dhr == null) {
             return;
         }
 
-        // Get the map from domain names to domain configurations
-        Map<String, String> configurationMap = job.getDomainConfigurationMap();
-
-        // For each domain harvested, check if it corresponds to a
-        // domain configuration for this Job and if so add a new HarvestInfo
-        // to the DomainHistory of the corresponding Domain object.
-        // TODO:  Information about the domains harvested by the crawler
-        // without a domain configuration for this job is deleted!
-        // Should this information be saved in some way (perhaps stored
-        // in metadata.arc-files?)
-
-        final Set<String> domainNames = new HashSet<String>();
-        domainNames.addAll(dhr.getDomainNames());
-        domainNames.retainAll(configurationMap.keySet());
-        final DomainDAO dao = DomainDAO.getInstance();
-        for (String domainName : domainNames) {
-            Domain domain = dao.read(domainName);
-
-            // Retrieve crawl data from log and add it to HarvestInfo
-            StopReason stopReason = dhr.getStopReason(domainName);
-            long countObjectRetrieved = dhr.getObjectCount(domainName);
-            long bytesReceived = dhr.getByteCount(domainName);
-
-            //If StopReason is SIZE_LIMIT, we check if it's the harvests' size
-            //limit, or rather a configuration size limit.
-
-            //A harvest is considered to have hit the configuration limit if
-            //1) The limit is lowest, or
-            //2) The number of harvested bytes is greater than the limit
-
-            // Note: Even though the per-config-byte-limit might have changed
-            // between the time we calculated the job and now, it's okay we
-            // compare with the new limit, since it gives us the most accurate
-            // result for whether we want to harvest any more.
-            if (stopReason == StopReason.SIZE_LIMIT) {
-                long maxBytesPerDomain = job.getMaxBytesPerDomain();
-                long configMaxBytes = domain.getConfiguration(
-                        configurationMap.get(domainName)).getMaxBytes();
-                if (NumberUtils.compareInf(configMaxBytes, maxBytesPerDomain)
-                    <= 0
-                    || NumberUtils.compareInf(configMaxBytes, bytesReceived)
-                       <= 0) {
-                    stopReason = StopReason.CONFIG_SIZE_LIMIT;
-                }
-            } else if (stopReason == StopReason.OBJECT_LIMIT) {
-                long maxObjectsPerDomain = job.getMaxObjectsPerDomain();
-                long configMaxObjects = domain.getConfiguration(
-                        configurationMap.get(domainName)).getMaxObjects();
-                if (NumberUtils.compareInf(configMaxObjects, maxObjectsPerDomain)
-                    <= 0) {
-                    stopReason = StopReason.CONFIG_OBJECT_LIMIT;
-                }
-            }
-            // Create the HarvestInfo object
-            HarvestInfo hi = new HarvestInfo(
-                    job.getOrigHarvestDefinitionID(), job.getJobID(),
-                    domain.getName(), configurationMap.get(domain.getName()),
-                    new Date(), bytesReceived, countObjectRetrieved,
-                    stopReason);
-
-            // Add HarvestInfo to Domain and make data persistent
-            // by updating DAO
-            domain.getHistory().addHarvestInfo(hi);
-            dao.update(domain);
-        }
+        // Post-process the report.
+        dhr.postProcess(job);
     }
 
     /**
@@ -304,23 +232,38 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
     }
 
     /**
-     * Close down the HarvestSchedulerMonitorServer singleton.
-     * This removes the HarvestSchedulerMonitorServer as listener
-     * to the JMS scheduler Channel, and resets the singleton.
-     *
+     * Removes the HarvestSchedulerMonitorServer as listener
+     * to the JMS scheduler Channel.
      */
-    public void close() {
-        JMSConnectionFactory.getInstance().removeListener(
-                Channels.getTheSched(), this);
-        cleanup();
+    @Override
+    public void shutdown() {
+        // FIXME This command fail when shutting down properly. (kill $PID)
+        // instead of kill -9 $PID. See NAS-1976
+        //JMSConnectionFactory.getInstance().removeListener(
+        //        Channels.getTheSched(), this);
     }
 
+    @Override
+    public void visit(IndexReadyMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        processIndexReadyMessage(msg);
+    }
+    
     /**
-     *  Cleanup method. Resets HarvestSchedulerMonitorServer singleton.
-     *  Note: this cleanup() method is called from
-     *  HarvestScheduler.cleanup(), therefore it needs to be public
+     * Process an incoming IndexReadyMessage.
+     * @param msg the message
      */
-    public void cleanup() {
-        instance = null;
+    private void processIndexReadyMessage(IndexReadyMessage msg) {
+        // Set isindexready to true
+        Long harvestId = msg.getHarvestId();
+        HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
+        if (dao.isSnapshot(harvestId)) {
+            dao.setIndexIsReady(harvestId, true);
+            log.info("Got message from IndexServer, that index is ready for"
+                    + " harvest # " + harvestId);
+        } else {
+            log.debug("Ignoring IndexreadyMesssage sent on behalf on "
+                    + "selective harvest w/id " + harvestId);
+        }
     }
 }

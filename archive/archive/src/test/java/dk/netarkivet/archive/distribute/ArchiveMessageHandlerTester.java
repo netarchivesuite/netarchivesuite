@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,7 +32,6 @@ import java.util.HashSet;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchEndedMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
@@ -54,6 +55,7 @@ import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
@@ -224,7 +226,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
      */
     public final void testVisitIndexRequestMessage() {
         try {
-            tmh.visit(new IndexRequestMessage(RequestType.CDX, new HashSet<Long>()));
+            tmh.visit(new IndexRequestMessage(RequestType.CDX, new HashSet<Long>(), null));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected

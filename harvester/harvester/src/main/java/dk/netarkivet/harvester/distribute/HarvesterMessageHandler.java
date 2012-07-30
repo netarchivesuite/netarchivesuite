@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,10 +32,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
+import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 
 /**
  * This default message handler shields of all unimplemented methods from the
@@ -62,11 +69,18 @@ public abstract class HarvesterMessageHandler
      *
      * @param msg an ObjectMessage
      */
+    @Override
     public void onMessage(Message msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         log.trace("Message received:\n" + msg.toString());
         try {
-            ((HarvesterMessage) JMSConnection.unpack(msg)).accept(this);
+            NetarkivetMessage unpackedMsg = JMSConnection.unpack(msg);
+            if (unpackedMsg instanceof HarvesterMessage) {
+                ((HarvesterMessage) unpackedMsg).accept(this);
+            } else {
+                ((IndexReadyMessage) unpackedMsg).accept(this);
+            }
+            //((HarvesterMessage) ).accept(this);
         } catch (ClassCastException e) {
             log.warn("Invalid message type", e);
         } catch (Throwable e) {
@@ -91,6 +105,7 @@ public abstract class HarvesterMessageHandler
      * @param msg a CrawlStatusMessage
      * @throws PermissionDenied when invoked
      */
+    @Override
     public void visit(CrawlStatusMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
@@ -102,7 +117,68 @@ public abstract class HarvesterMessageHandler
      * @param msg a DoOneCrawlMessage
      * @throws PermissionDenied when invoked
      */
+    @Override
     public void visit(DoOneCrawlMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg a {@link CrawlProgressMessage}
+     * @throws PermissionDenied when invoked
+     */
+    @Override
+    public void visit(CrawlProgressMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+    
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg a {@link FrontierReportMessage}
+     * @throws PermissionDenied when invoked
+     */
+    @Override
+    public void visit(FrontierReportMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg a {@link JobEndedMessage}
+     * @throws PermissionDenied when invoked
+     */
+    @Override
+    public void visit(JobEndedMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg a {@link HarvesterReadyMessage}
+     * @throws PermissionDenied when invoked
+     */
+    @Override
+    public void visit(HarvesterReadyMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg a {@link IndexReadyMessage}
+     * @throws PermissionDenied when invoked
+     */
+    @Override
+    public void visit(IndexReadyMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }

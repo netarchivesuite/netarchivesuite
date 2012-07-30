@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +27,6 @@ import java.lang.reflect.Field;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import dk.netarkivet.testutils.ReflectUtils;
-
-import junit.framework.TestCase;
-import org.hibernate.criterion.Restrictions;
 
 public class IndexerQueueTester extends IndexerTestCase {
 
@@ -55,8 +54,12 @@ public class IndexerQueueTester extends IndexerTestCase {
         IndexerQueue.getInstance().populate();
         assertEquals("Queue should still have four objects in it", 4, queue.size());
     }
-
-   /* public void testConsume()
+    
+    /**
+     * testConsume has been removed from unittestersuite, as it fails.
+     */
+    /*  
+    public void testConsume()
             throws NoSuchFieldException, IllegalAccessException,
                    InterruptedException {
         FileNameHarvester.harvest();
@@ -77,6 +80,6 @@ public class IndexerQueueTester extends IndexerTestCase {
                 Restrictions.eq("indexed", true)).size());
         assertTrue("Queue should be empty now", queue.isEmpty());
         assertEquals("Should have four files", 4, tempdir.listFiles().length);
-    }*/
+    } */
 
 }

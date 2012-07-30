@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,11 +34,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.ProcessUtils;
 
 /**
  * A cache that serves CDX index files for job IDs.
@@ -70,7 +73,14 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
     protected void combine(Map<Long, File> filesFound) {        
         File resultFile = getCacheFile(filesFound.keySet());
         concatenateFiles(filesFound.values(), resultFile);
-        sortFile(resultFile);
+        File workFile = new File(resultFile.getAbsolutePath() + WORK_SUFFIX);
+        workFile.deleteOnExit();
+        try {
+            FileUtils.sortCDX(resultFile, workFile);
+            workFile.renameTo(resultFile);
+        } finally {
+            FileUtils.remove(workFile);
+        }
     }
 
     /** Concatenate a set of files into a single file.
@@ -110,24 +120,9 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
         }
     }
 
-    /** Sort a (potentionally huge) CDX index file on disk.
-     *
-     * This method uses the Unix sort(1) command as an external process call,
-     * as that one is optimized for handling large, disk-based sorts.  It
-     * doesn't, however, depend on the file being an index file.
-     *
-     * @param file The file containing an unsorted index.
-     */
-    private void sortFile(File file) {
-        File workFile = new File(file.getAbsolutePath() + WORK_SUFFIX);
-        workFile.deleteOnExit();
-        try {
-            ProcessUtils.runProcess(new String[] {"LANG=C"} ,
-                    "sort", file.getAbsolutePath(),
-                    "-o", workFile.getAbsolutePath());
-            workFile.renameTo(file);
-        } finally {
-            FileUtils.remove(workFile);
-        }
+    @Override
+    public void requestIndex(Set<Long> jobSet, Long harvestId) {
+        throw new NotImplementedException(
+                "This feature is not implemented for this type of cache");
     }
 }

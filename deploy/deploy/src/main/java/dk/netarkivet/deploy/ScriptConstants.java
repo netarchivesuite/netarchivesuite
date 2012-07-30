@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -89,6 +91,8 @@ public final class ScriptConstants {
 
     /** cmd /c - Command for running programs on windows.*/
     static final String WINDOWS_COMMAND_RUN = "cmd /c";
+    /** more - the command for reading a log file.*/
+    static final String WINDOWS_COMMAND_TYPE = "type";
     /** cmd /c unzip.exe -q -d - Command for unzipping on windows.*/
     static final String WINDOWS_UNZIP_COMMAND = WINDOWS_COMMAND_RUN 
             + " unzip.exe -q -d";
@@ -117,20 +121,26 @@ public final class ScriptConstants {
     static final String ETC_PROFILE = "/etc/profile";
     /** The linux command for sleeping. sleep.*/
     static final String SLEEP = "sleep";
+    /** sleep 2.*/
+    static final String SLEEP_2 = SLEEP + " 2";
     /** sleep 5.*/
     static final String SLEEP_5 = SLEEP + " 5";
     /** *.log.*/
     static final String STAR_LOG = "*.log";
     /** '      '.*/
-    static final String MULTI_SPACE = "      ";
+    static final String MULTI_SPACE_6 = "      ";
     /** '    '.*/
-    static final String MULTI_SPACE_2 = "    ";
+    static final String MULTI_SPACE_4 = "    ";
+    /** '  '.*/
+    static final String MULTI_SPACE_2 = "  ";
     /** ssh.*/
     static final String SSH = "ssh";
     /** scp.*/
     static final String SCP = "scp";
     /** $PIDS.*/
     static final String PIDS = "$PIDS";
+    /** "    kill $PIDS".*/
+    static final String KILL_PIDS = "    kill $PIDS";
     /** "    kill -9 $PIDS".*/
     static final String KILL_9_PIDS = "    kill -9 $PIDS";
     /** "    export CLASSPATH=".*/
@@ -226,7 +236,6 @@ public final class ScriptConstants {
     /** The argument for the port for the external database: -p. */
     static final String DATABASE_PORT_ARGUMENT = "-p";
     
-    
     // echos
     /** echo.*/
     static final String ECHO = "echo";
@@ -293,12 +302,26 @@ public final class ScriptConstants {
     /** echo Unzipping archive database.*/
     static final String ECHO_UNZIPPING_ARCHIVE_DATABASE = 
         "echo Unzipping archive database";
-    /** echo Starting external database.*/
-    static final String ECHO_START_EXTERNAL_DATABASE = 
-        "echo Starting external database.";
-    /** echo Killing external database.*/
-    static final String ECHO_KILL_EXTERNAL_DATABASE = 
-        "echo Killing external database.";
+    /** echo Starting external admin database.*/
+    static final String ECHO_START_EXTERNAL_ADMIN_DATABASE = 
+        "echo Starting external admin database.";
+    /** echo Killing external admin database.*/
+    static final String ECHO_KILL_EXTERNAL_ADMIN_DATABASE = 
+        "echo Killing external admin database.";
+    /** echo Starting external harvest database.*/
+    static final String ECHO_START_EXTERNAL_HARVEST_DATABASE = 
+        "echo Starting external harvest database.";
+    /** echo Killing external harvest database.*/
+    static final String ECHO_KILL_EXTERNAL_HARVEST_DATABASE = 
+        "echo Killing external harvest database.";
+    
+    /** echo Updating external harvest database.*/
+    static final String ECHO_UPDATE_EXTERNAL_HARVEST_DATABASE = 
+        "echo Updating external harvest database.";
+    
+    /** Name of the app called in the harvest database update script. */
+    static final String HARVEST_DATABASE_UPDATE_APP =
+            "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication";
     
     // VB script
     /** Set WshShell= CreateObject(\"WScript.Shell\").*/
@@ -312,7 +335,7 @@ public final class ScriptConstants {
     /** "set f=fso.OpenTextFile(\".\\conf\\".*/
     static final String VB_WRITE_F_PREFIX = 
         "set f=fso.OpenTextFile(\".\\conf\\";
-    /** "\",2,True)".*/
+    /** "\",2,True)". */
     static final String VB_WRITE_F_SURFIX = "\",2,True)";
     /** "f.WriteLine \"taskkill /F /PID \" & oExec.ProcessID".*/
     static final String VB_WRITE_F_KILL = "f.WriteLine \"taskkill /F /PID \""
@@ -331,6 +354,41 @@ public final class ScriptConstants {
     static final String VB_WRITE_TF_CLOSE = "tf.close";
     /** WScript.Sleep.*/
     static final String VB_WRITE_WAIT = "WScript.Sleep";
+    /** 'Create a new start-log for the application. */
+    static final String VB_COMMENT_NEW_START_LOG 
+            = "'Create a new start-log for the application";
+    /** CreateObject("Scripting.FileSystemObject").OpenTextFile(".*/
+    static final String VB_OPEN_WRITE_FILE_PREFIX 
+            = "CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"";
+    /** ", 2, True). Means "write to new file", e.g. override existing. */
+    static final String VB_OPEN_WRITE_FILE_SUFFIX_2 = "\", 2, True)";
+    /** ", 8, True). Means "append to file" */
+    static final String VB_OPEN_WRITE_FILE_SUFFIX_8 = "\", 8, True)";
+    /** .close.*/
+    static final String VB_CLOSE = ".close";
+    /** Do While oExec.Status = 0.*/
+    static final String VB_DO_WHILE_OEXEC_STATUS_0 
+            = "Do While oExec.Status = 0";
+    /** WScript.Sleep 1000.*/
+    static final String VB_WSCRIPT_SLEEP_1000 = "WScript.Sleep 1000";
+    /** Do While. */
+    static final String VB_DO_WHILE = "Do While ";
+    /** oExec.StdOut.*/
+    static final String VB_OEXEC_STD_OUT = "oExec.StdOut";
+    /** oExec.StdErr.*/
+    static final String VB_OEXEC_STD_ERR = "oExec.StdErr";
+    /** .AtEndOfStream <> True. */
+    static final String VB_AT_END_OF_STREAM_FALSE = ".AtEndOfStream <> True";
+    /** Set outFile = . */
+    static final String VB_SET_OUTFILE = "Set outFile = ";
+    /** outFile.WriteLine. */
+    static final String VB_OUTFILE_WRITELINE = "outFile.WriteLine ";
+    /** ReadLine.*/
+    static final String VB_READ_LINE = ".ReadLine";
+    /** outFile.close.*/
+    static final String VB_OUTFILE_CLOSE = "outFile.close";
+    /** Loop. */
+    static final String VB_LOOP = "Loop";
     
     // integers
     /** Number of '-' repeat for the writeDashLine function.*/

@@ -4,7 +4,9 @@
  * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,6 +41,10 @@ import dk.netarkivet.common.tools.ToolRunnerBase;
  * Method for reestablishing the admin database from a 'admin.data' file. 
  */
 public class ReestablishAdminDatabase extends ToolRunnerBase {
+    /** The number of instances required for how many lines to ingest into
+     * the database between printing out, to tell how far we have come.*/
+    private static final int PRINT_INTERVAL = 10000;
+    
     /**
      * Main method. 
      * Instantiates the tool and runs it.
@@ -155,7 +161,8 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
                                 + "tells the version. Expected 0.4, but got: "
                                 + line + ". Continues any way.");
                     } else {
-                        System.out.println("Reading admin.data version " + line);
+                        System.out.println("Reading admin.data version " 
+                                + line);
                     }
                     while ((line = in.readLine()) != null) {
                         linesRead++;
@@ -165,7 +172,7 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
                             System.err.println("Bad line(#" + badlines +"): ");
                             System.err.println(line);
                         } 
-                        if ((linesRead % 10000) == 0) {
+                        if ((linesRead % PRINT_INTERVAL) == 0) {
                             System.out.println("[" + new java.util.Date()
                                     + "] Processed " 
                                     + linesRead + " admin data lines");
@@ -184,8 +191,8 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
             
             // update the filelist and checksumlist dates for the replicas.
             rcd.setAdminDate(fileDate);
-            System.out.println("[" + new java.util.Date()
-                    + "] ReestablishAdminDatabase tool finished ingest of file '"
+            System.out.println("[" + new java.util.Date() + "] "
+                    + "ReestablishAdminDatabase tool finished ingest of file '"
                     + adminFile.getAbsolutePath() + "'.");
         }
 

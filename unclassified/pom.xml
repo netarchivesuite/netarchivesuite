@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>dk.netarchivesuite</groupId>
+  <artifactId>netarchivesuite</artifactId>
+  <version>3.20.0-SNAPSHOT</version>
+
+  <parent>
+    <groupId>org.sbforge</groupId>
+    <artifactId>sbforge-parent</artifactId>
+    <version>11</version>
+  </parent>
+
+  <modules>
+    <module>m2-build/netarchivesuite-common</module>
+    <module>m2-build/netarchivesuite-harvester</module>
+    <module>m2-build/netarchivesuite-archive</module>
+    <module>m2-build/netarchivesuite-viewerproxy</module>
+    <module>m2-build/netarchivesuite-deploy</module>
+    <module>m2-build/netarchivesuite-monitor</module>
+    <module>m2-build/netarchivesuite-wayback</module>
+    <module>netarchivesuite-integration-test</module>
+  </modules>
+
+  <name>NetarchiveSuite</name>
+  <description>
+    NetarchiveSuite can plan, schedule and run web harvests of parts of the Internet.
+    The NetarchiveSuite is built around the Heritrix web crawler, which it uses to harvest the web.
+    </description>
+  <url>http://netarchive.dk/suite</url>
+  <packaging>pom</packaging>
+
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License 3.0</name>
+      <url>http://www.gnu.org/licenses/lgpl.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:svn:https://sbforge.org/svn/netarchivesuite/trunk</connection>
+    <developerConnection>scm:svn:https://sbforge.org/svn/netarchivesuite/trunk</developerConnection>
+    <url>https://sbforge.org/fisheye/browse/NetarchiveSuite</url>
+  </scm>
+
+  <organization>
+    <name>The Royal Danish Library, the Danish State and University Library, the National Library
+     of France and the Austrian National Library.</name>
+    <url>https://sbforge.org/display/NAS</url>
+  </organization>
+
+  <developers>
+    <developer>
+      <name>Mikis Seth Sørensen</name>
+      <roles>
+        <role>Project manager</role>
+      </roles>
+      <email>mss@statsbiblioteket.dk</email>
+      <organization>Statsbiblioteket</organization>
+      <organizationUrl>http://statsbiblioteket.dk</organizationUrl>
+    </developer>
+    <developer>
+      <name>Søren Vejrup Carlsen </name>
+      <roles>
+        <role>Lead developer</role>
+      </roles>
+      <email>svc@kb.dk</email>
+      <organization>The Royal Danish Library</organization>
+      <organizationUrl>http://kb.dk</organizationUrl>
+    </developer>
+    <developer>
+      <name>Colin Rosenthal</name>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <email>csr@statsbiblioteket.dk</email>
+      <organization>Statsbiblioteket</organization>
+      <organizationUrl>http://statsbiblioteket.dk</organizationUrl>
+    </developer>
+    <developer>
+      <name>Jonas Lindberg Frellesen</name>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <email>jolf@kb.dk</email>
+      <organization>The Royal Danish Library</organization>
+      <organizationUrl>http://kb.dk</organizationUrl>
+    </developer>
+    <developer>
+      <name>Andreas P.</name>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <email>aponb@gmx.at</email>
+      <organization>Österreichische Nationalbibliothek</organization>
+      <organizationUrl>http://www.onb.ac.at</organizationUrl>
+    </developer>
+    <developer>
+      <name>Nicolas Giraud</name>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <organization>Bibliothèque nationale de France</organization>
+      <organizationUrl>http://www.bnf.fr/</organizationUrl>
+    </developer>
+  </developers>
+
+  <repositories>
+    <repository>
+      <id>sbforge-nexus</id>
+      <url>https://sbforge.org/nexus/content/groups/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <build>
+
+    <!-- Hacking resources to allow for ant based convention of
+    keeping resource files together with .java files -->
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/java</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/src/test/java</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.5.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.8.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.3.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.12</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>2.0</version>
+      </extension>
+    </extensions>
+
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.8</version>
+        <!--configuration> <configLocation> https://sbforge.org/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=SBForge%2520way 
+          </configLocation> </configuration -->
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.12</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <linkJavadoc>true</linkJavadoc>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <author>false</author>
+          <links>
+            <link>http://commons.apache.org/fileupload/apidocs/</link>
+          </links>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <linkXref>true</linkXref>
+          <targetJdk>1.6</targetJdk>
+          <!--rulesets> <ruleset> https://sbforge.org/sonar/profiles/export?format=pmd&amp;language=java&amp;name=SBForge%2520way 
+            </ruleset> </rulesets -->
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <xmlOutput>true</xmlOutput>
+          <effort>Max</effort>
+          <!--includeFilterFile> https://sbforge.org/sonar/profiles/export?format=findbugs&amp;language=java&amp;name=SBForge%2520way 
+            </includeFilterFile -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+</project>                                                                                                              

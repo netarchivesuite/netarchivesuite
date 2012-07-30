@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +39,6 @@ import junit.framework.TestCase;
 import org.apache.commons.net.ftp.FTPClient;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -53,11 +54,11 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
 
 /**
  * Test bitarchive client and server
@@ -142,12 +143,12 @@ public class IntegrityTests extends TestCase {
 
         /** Read ftp-related settings from settings.xml. */
         final String ftpServerName = Settings.get(
-                FTPRemoteFile.FTP_SERVER_NAME);
+                CommonSettings.FTP_SERVER_NAME);
         final int ftpServerPort = Integer.parseInt(Settings.get(
-                FTPRemoteFile.FTP_SERVER_PORT));
-        final String ftpUserName = Settings.get(FTPRemoteFile.FTP_USER_NAME);
+                CommonSettings.FTP_SERVER_PORT));
+        final String ftpUserName = Settings.get(CommonSettings.FTP_USER_NAME);
         final String ftpUserPassword = Settings.get(
-                FTPRemoteFile.FTP_USER_PASSWORD);
+                CommonSettings.FTP_USER_PASSWORD);
 
         /** Connect to test ftp-server. */
         theFTPClient = new FTPClient();
@@ -482,6 +483,7 @@ public class IntegrityTests extends TestCase {
                                                  RemoteFileFactory.getInstance(
                                                          testARCFile, true,
                                                          false, true));
+            assertTrue("uploadMessage should not be null", um != null);
             upLoadedFiles.add(testARCFile.getName());
         } catch (IOException e) {
             throw new IOFailure("Creation of UploadMessage failed", e);
@@ -490,34 +492,6 @@ public class IntegrityTests extends TestCase {
         /** test, if original ARC file still exists, and has the same size as before */
         assertEquals("Test-file has been modified!!", fileSize,
                 testARCFile.length());
-    }
-
-    /**
-     * Verify that a message has the correct id,destination and origin values
-     *
-     * @param id   Expected id or "" to ignore
-     * @param dest Expected destination or "" to ignore
-     * @param org  Expected origin or "" to ignore
-     * @param msg  Message to check
-     * @return true if all checks succeeds else false
-     */
-    public boolean checkIdDestOrigin(String id, String dest, String org,
-                                     NetarkivetMessage msg) {
-        boolean res = true;
-
-        if ((id.length() > 0) && (!id.equals(msg.getID()))) {
-            res = false;
-        }
-
-        if ((dest.length() > 0) && (!dest.equals(msg.getTo()))) {
-            res = false;
-        }
-
-        if ((org.length() > 0) && (!dest.equals(msg.getReplyTo()))) {
-            res = false;
-        }
-
-        return res;
     }
 
     /* Receive and check messages */

@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -139,8 +141,10 @@ public class CreateTestInstance {
                         Constants.COMPLETE_HARVEST_HERITRIX_GUI_PORT_PATH),
                 new OffsetSystem(Constants.TEST_OFFSET_HERITRIX_JMX_PORT, 
                         Constants.COMPLETE_HARVEST_HERITRIX_JMX_PORT),
-                new OffsetSystem(Constants.TEST_OFFSET_ARCHIVE_DB_URL_PORT,
-                        Constants.COMPLETE_ARCHIVE_DATABASE_PORT)
+               // new OffsetSystem(Constants.TEST_OFFSET_ARCHIVE_DB_URL_PORT,
+               //         Constants.COMPLETE_ARCHIVE_DATABASE_PORT),
+               // new OffsetSystem(Constants.TEST_OFFSET_HARVEST_DB_URL_PORT,
+               //         Constants.COMPLETE_HARVEST_DATABASE_PORT)
                 };
 
         // apply the arguments

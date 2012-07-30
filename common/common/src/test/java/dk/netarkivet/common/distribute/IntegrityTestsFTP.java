@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -49,6 +51,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TestInfo;
+import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -114,12 +117,12 @@ public class IntegrityTestsFTP extends TestCase {
 
         /* Read ftp-related settings from settings.xml. */
         final String ftpServerName = Settings.get(
-                FTPRemoteFile.FTP_SERVER_NAME);
+                CommonSettings.FTP_SERVER_NAME);
         final int ftpServerPort = Integer.parseInt(Settings.get(
-                FTPRemoteFile.FTP_SERVER_PORT));
-        final String ftpUserName = Settings.get(FTPRemoteFile.FTP_USER_NAME);
+                CommonSettings.FTP_SERVER_PORT));
+        final String ftpUserName = Settings.get(CommonSettings.FTP_USER_NAME);
         final String ftpUserPassword = Settings.get(
-                FTPRemoteFile.FTP_USER_PASSWORD);
+                CommonSettings.FTP_USER_PASSWORD);
 
         /* Connect to test ftp-server. */
         theFTPClient = new FTPClient();
@@ -384,10 +387,8 @@ public class IntegrityTestsFTP extends TestCase {
                 TestInfo.FIVE_HUNDRED_MEGA_FILE_ZIPPED);
         assertTrue("File '" + TestInfo.FIVE_HUNDRED_MEGA_FILE_ZIPPED +
                 " does not exist!", zipFile.exists());
-
-        if (!TestInfo.unzipTo(zipFile, TestInfo.TEMPDIR)) {
-            logger.warning("Unzipping operation failed!!");
-        }
+        
+        ZipUtils.unzip(zipFile, TestInfo.TEMPDIR);
 
         File unzippedFile = new File(TestInfo.TEMPDIR,
                 TestInfo.FIVE_HUNDRED_MEGA_FILE_UNZIPPED);
@@ -448,10 +449,10 @@ public class IntegrityTestsFTP extends TestCase {
         //upload error to ftp server
         File temp = File.createTempFile("foo", "bar");
         FTPClient client = new FTPClient();
-        client.connect(Settings.get(FTPRemoteFile.FTP_SERVER_NAME), Integer.parseInt(
-                Settings.get(FTPRemoteFile.FTP_SERVER_PORT)));
-        client.login(Settings.get(FTPRemoteFile.FTP_USER_NAME),
-                     Settings.get(FTPRemoteFile.FTP_USER_PASSWORD));
+        client.connect(Settings.get(CommonSettings.FTP_SERVER_NAME), Integer.parseInt(
+                Settings.get(CommonSettings.FTP_SERVER_PORT)));
+        client.login(Settings.get(CommonSettings.FTP_USER_NAME),
+                     Settings.get(CommonSettings.FTP_USER_PASSWORD));
         Field field = FTPRemoteFile.class.getDeclaredField("ftpFileName");
         field.setAccessible(true);
         String filename = (String)field.get(rf);

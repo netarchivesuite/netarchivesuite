@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +24,8 @@
 */
 package dk.netarkivet.harvester.harvesting;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
@@ -29,6 +33,7 @@ import org.archive.net.UURI;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FixedUURI;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests of the DomainnameQueueAssignmentPolicy.
@@ -92,6 +97,19 @@ public class DomainnameQueueAssignmentPolicyTester extends TestCase {
                         getCandidateURI("foo.dk#1010#fnord")));
     }
 
+    public void testTopLevelDomains() throws URIException {
+        ReloadSettings rs = new ReloadSettings(
+                new File(
+                        TestInfo.ORIGINALS_DIR, 
+                        "topLevelDomains_settings.xml"));
+        rs.setUp();
+        
+        assertEquals("free.fr", getDomainName("http://test.free.fr"));
+        assertEquals("test.asso.fr", getDomainName("http://test.asso.fr"));
+        
+        rs.tearDown();      
+    }
+    
     /** Create an arbitrarily bogus CandidateURI. 
      * As constructor "new UURI("", true)" is no longer visible
      */

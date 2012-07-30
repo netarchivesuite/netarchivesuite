@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,11 +31,13 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
  * Unit tests for FileListJob.
+ * TODO Move unittest to common.utils.batch
  */
 public class FileListJobTester extends TestCase {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,

@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,11 +30,16 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /** This implementation of FileBatchJob is a bridge to a class file given
@@ -49,14 +56,26 @@ public class LoadableFileBatchJob extends FileBatchJob {
     byte[] fileContents;
     /** The name of the file before they are turned into a class. */    
     String fileName;
+    /** The arguments for instantiating the batchjob.*/
+    private List<String> args;
 
     /** Create a new batch job that runs the loaded class.
      * @param classFile the classfile for the batch job we want to run.
+     * @param arguments The arguments for the batchjobs. This can be null.
+     * @throws ArgumentNotValid If the classfile is null.
      */
-    public LoadableFileBatchJob(File classFile) {
+    public LoadableFileBatchJob(File classFile, List<String> arguments)
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(classFile, "File classFile");
         fileContents = FileUtils.readBinaryFile(classFile);
         fileName = classFile.getName();
+        if(arguments == null) {
+            this.args = new ArrayList<String>();
+        } else {
+            this.args = arguments;
+        }
+        
+        loadBatchJob();
     }
 
     /** Override of the default toString to include name of loaded class.
@@ -105,16 +124,44 @@ public class LoadableFileBatchJob extends FileBatchJob {
     
     /**
      * Method for initializing the loaded batchjob.
+     * @throws IOFailure If the batchjob cannot be loaded.
      */
-    protected void loadBatchJob() {
+    protected void loadBatchJob() throws IOFailure {
         ByteClassLoader singleClassLoader = new ByteClassLoader(fileContents);
         try {
-            loadedJob = (FileBatchJob) singleClassLoader
-                    .defineClass().newInstance();
+            Class batchClass = singleClassLoader.defineClass();
+            if(args.size() == 0) {
+                loadedJob = (FileBatchJob) batchClass.newInstance();
+            } else {
+                // get argument classes (string only).
+                Class[] argClasses = new Class[args.size()];
+                for(int i = 0; i < args.size(); i++) {
+                    argClasses[i] = String.class;
+                }
+
+                // extract the constructor and instantiate the batchjob.
+                Constructor con = batchClass.getConstructor(argClasses);
+                loadedJob = (FileBatchJob) con.newInstance(args.toArray());
+                log.debug("Loaded batchjob with arguments: '" + args + "'.");
+            }
+        } catch (InvocationTargetException e) {
+            final String msg = "Not allowed to invoke the batchjob '" 
+                + fileName + "'.";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
+        } catch (NoSuchMethodException e) {
+            final String msg = "No constructor for the arguments '" + args 
+                    + "' can be found for the batchjob '" + fileName + "'.";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
         } catch (InstantiationException e) {
-            log.warn("Cannot load job from byte array", e);
+            String errMsg = "Cannot instantiate batchjob from byte array";
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         } catch (IllegalAccessException e) {
-            log.warn("Cannot access loaded job from byte array", e);
+            String errMsg = "Cannot access loaded job from byte array";
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
 

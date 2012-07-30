@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -83,16 +85,12 @@ DomainConfigurations are posted as pairs
                  dk.netarkivet.harvester.datamodel.SparseDomain,
                  dk.netarkivet.harvester.datamodel.SparseDomainConfiguration,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
-                 dk.netarkivet.harvester.webinterface.Constants,
-                 dk.netarkivet.harvester.webinterface.SelectiveHarvest"
+                 dk.netarkivet.harvester.webinterface.Constants,dk.netarkivet.harvester.webinterface.SelectiveHarvestUtil"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
-    private static final I18n I18N
-            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-%><%
-    HTMLUtils.setUTF8(request);
+/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!private static final I18n I18N
+            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%><%HTMLUtils.setUTF8(request);
 
     HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
     // Update all relevant HD data from request, some results are saved in
@@ -100,7 +98,7 @@ DomainConfigurations are posted as pairs
     List<String> unknownDomains = new ArrayList<String>();
     List<String> illegalDomains = new ArrayList<String>();
     try {
-        SelectiveHarvest.processRequest(pageContext, I18N,
+        SelectiveHarvestUtil.processRequest(pageContext, I18N,
                 unknownDomains, illegalDomains);
     } catch (ForwardedToErrorPage e) {
         return;
@@ -127,9 +125,21 @@ DomainConfigurations are posted as pairs
         }
     }
 
-    HTMLUtils.generateHeader(pageContext);
-%>
-<jsp:include page="scripts.jsp" flush="true"/>
+    // Include JS files for the calendar
+
+    String lang = HTMLUtils.getLocale(request);
+    if (lang.length() >= 2) {
+        lang = lang.substring(0, 2);
+    }
+
+    HTMLUtils.generateHeader(
+            pageContext,
+            "./jscalendar/calendar.js",
+            "./jscalendar/lang/calendar-" + lang + ".js",
+            "./jscalendar/calendar-setup.js");%>
+
+<jsp:include page="calendar-scripts.jsp"/>
+
 <h3 class="page_heading"><fmt:message key="pagetitle;selective.harvest"/></h3>
 
 <form method="post" action="Definitions-edit-selective-harvest.jsp">
@@ -156,10 +166,11 @@ DomainConfigurations are posted as pairs
             out.print("<input type=\"text\" name=\"" + Constants.HARVEST_PARAM
                       + "\" value=\""
                       + HTMLUtils.escapeHtmlValues(harvestName)
-                      + "\" readonly=\"readonly\" />  \n");
+                      + "\" size=\"60\""
+                      + " readonly=\"readonly\" />  \n");
         } else {
             out.print("<span id=\"focusElement\"><input type=\"text\" name=\""
-                      + Constants.HARVEST_PARAM + "\" size=\"20\"/></span>\n");
+                      + Constants.HARVEST_PARAM + "\" size=\"60\"/></span>\n");
         }
     %>
 </h4>
@@ -224,21 +235,33 @@ setupNextdateCalendar();
 </script>
 <%
 }
+
+List<SparseDomainConfiguration> sparseDomainConfigurations =
+    new ArrayList<SparseDomainConfiguration>();
+
+if (hdd != null) {
+    sparseDomainConfigurations =
+        hddao.getSparseDomainConfigurations(hdd.getOid());
+}
+
 %>
+<br/>
+<br/>
+<fmt:message key="harvest.configuration.count">
+<fmt:param><%= sparseDomainConfigurations.size() %></fmt:param>
+</fmt:message>
 <br/>
 <br/>
 <table class="selection_table" width="100%">
     <tr>
-        <th width="65%"><fmt:message key="domain"/></th>
-        <th width="25%"><fmt:message key="choose.configuration"/></th>
+        <th width="45%"><fmt:message key="domain"/></th>
+        <th width="35%"><fmt:message key="choose.configuration"/></th>
         <th width="10%"><fmt:message key="remove.from.list"/></th>
     </tr>
     <%
         // New definitions do not contain any domains
         if (hdd != null) {
             int rowcount = 0;
-            Iterable<SparseDomainConfiguration> sparseDomainConfigurations
-                    = hddao.getSparseDomainConfigurations(hdd.getOid());
             for (SparseDomainConfiguration dcc : sparseDomainConfigurations) {
                 //Switch between grey and white every three lines
 
@@ -251,12 +274,12 @@ setupNextdateCalendar();
                         + HTMLUtils.encode(domainName);
     %>
     <tr class="<%= HTMLUtils.getRowClass(rowcount++) %>">
-        <td width="65%">
+        <td width="45%">
             <a href="<%= HTMLUtils.escapeHtmlValues(link) %>">
                 <%= HTMLUtils.escapeHtmlValues(domainName) %>
             </a>
         </td>
-        <td width="25%">
+        <td width="35%">
             <select name="<%= Constants.DOMAIN_IDENTIFIER
             + HTMLUtils.escapeHtmlValues(domainName) %>" style="width: 100%">
                 <%
@@ -359,9 +382,9 @@ setupNextdateCalendar();
         String seedLink = "Definitions-add-event-seeds.jsp?" + Constants.HARVEST_PARAM
                           + "=" + HTMLUtils.encode(harvestName);
         String seedFromFileLink = "Definitions-add-event-seeds.jsp?"
-        					+ Constants.FROM_FILE_PARAM + "=1&" 
+        					+ Constants.FROM_FILE_PARAM + "=1&"
         					+ Constants.HARVEST_PARAM
-                          	+ "=" + HTMLUtils.encode(harvestName);                          
+                          	+ "=" + HTMLUtils.encode(harvestName);
     %>
       <a href="<%= HTMLUtils.escapeHtmlValues(seedLink) %>"><fmt:message key="add.seeds"/></a>
       &nbsp;&nbsp;

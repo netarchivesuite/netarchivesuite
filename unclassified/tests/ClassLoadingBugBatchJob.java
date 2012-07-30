@@ -19,6 +19,7 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteUURIFactory;
  * loaded but that a NoClassDefFoundError is thrown during initialisation.
  */
 public class ClassLoadingBugBatchJob extends ARCBatchJob {
+    
     public void initialize(OutputStream os) {
         Class<?> urifactory = null;
         try {

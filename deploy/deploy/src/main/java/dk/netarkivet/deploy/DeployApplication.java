@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -75,7 +77,7 @@ public final class DeployApplication {
     private static File externalJarFolder; 
 
     /**
-     * Run the new deploy.
+     * Run deploy.
      * 
      * @param args The Command-line arguments in no particular order:
      * 
@@ -91,7 +93,10 @@ public final class DeployApplication {
      * -E  [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes')
      * -A  [OPTIONAL] For archive database.
      * -J  [OPTIONAL] For deploying with external jar files. Must be the total
-     *                path to the directory containing jar-files.
+     *                path to the directory containing jar-files. These external
+     *                files will be placed on every machine, and they have to 
+     *                manually be put into the classpath, where they should be 
+     *                used.
      */
     public static void main(String[] args) {
         try {

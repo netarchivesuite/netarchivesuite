@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,6 +41,9 @@ import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.QueueBrowser;
+import javax.jms.QueueReceiver;
+import javax.jms.QueueSender;
+import javax.jms.QueueSession;
 import javax.jms.ServerSessionPool;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
@@ -62,7 +67,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.Settings;
@@ -100,7 +104,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
      *
      * @return A JMSConnection
      */
-    public static JMSConnection getInstance() {
+    public static synchronized JMSConnection getInstance() {
         if (instance == null) {
             instance = new JMSConnectionMockupMQ();
             instance.initConnection();
@@ -219,14 +223,6 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         TestDestination destination = destinations.get(channelID.getName());
         for (TestObjectMessage sentMessage : destination.sent) {
             NetarkivetMessage message = unpack(sentMessage);
-            if (message instanceof BatchMessage) {
-                FileBatchJob batchJob = ((BatchMessage) message).getJob();
-                if (batchJob instanceof TestJob) {
-                    if (((TestJob) batchJob).getTestId().equals(job.getTestId())) {
-                        return true;
-                    }
-                }
-            }
         }
         return false;
     }
@@ -402,8 +398,9 @@ public class JMSConnectionMockupMQ extends JMSConnection {
             throw new NotImplementedException("Not implemented");
         }
 
+        @Override
         public Queue createQueue(String string) throws JMSException {
-            throw new NotImplementedException("Not implemented");
+            return new TestQueue(string);
         }
 
         public Topic createTopic(String string) throws JMSException {
@@ -448,7 +445,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
 
     protected static class TestMessageConsumer implements MessageConsumer {
         private MessageListener listener;
-        private TestDestination destination;
+        protected TestDestination destination;
 
         public TestMessageConsumer(Destination destination) {
             this.destination = (TestDestination) destination;
@@ -470,20 +467,40 @@ public class JMSConnectionMockupMQ extends JMSConnection {
             listener = null;
         }
 
+        @Override
         public String getMessageSelector() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        @Override
         public Message receive() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        @Override
         public Message receive(long l) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
         public Message receiveNoWait() throws JMSException {
             throw new NotImplementedException("Not implemented");
+        }
+    }
+    
+    public class TestQueueReceiver 
+    extends TestMessageConsumer 
+    implements QueueReceiver {
+        public TestQueueReceiver(Destination destination) {
+            super(destination);
+        }
+        public Queue getQueue() throws JMSException {
+            return (Queue)destination;
+        }        
+        @Override
+        public Message receiveNoWait() throws JMSException {
+            List<TestObjectMessage> messageQueue = ((TestQueue)getQueue()).messageQueue;
+            if (messageQueue.isEmpty()) return null;
+            else return ((TestQueue)getQueue()).messageQueue.remove(0);
         }
     }
 
@@ -537,8 +554,15 @@ public class JMSConnectionMockupMQ extends JMSConnection {
                     throw new JMSException("Serialization failed: " + e);
                 }
                 new CallOnMessageThread(ml, clone).start();
+            } else if (destination instanceof Queue) {                
+                ((TestQueue)destination).messageQueue.add(testObjectMessage);
             }
             destination.sent.add(testObjectMessage);
+        }
+
+        private void checkForExceptionsToThrow() {
+            // TODO Auto-generated method stub
+            
         }
 
         public void setDisableMessageID(boolean b) throws JMSException {
@@ -606,6 +630,8 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     }
 
     protected static class TestQueue extends TestDestination implements Queue {
+        protected List<TestObjectMessage> messageQueue = 
+            new ArrayList<TestObjectMessage>();
         public TestQueue(String name) {
             this.name = name;
         }
@@ -908,5 +934,56 @@ public class JMSConnectionMockupMQ extends JMSConnection {
                 }
             }
         }
+    }
+    
+    public class TestQueueBrowser implements QueueBrowser {
+        private final TestQueue queue;
+        
+        public TestQueueBrowser(TestQueue queue) {
+            this.queue = queue;
+        }
+
+        @Override
+        public void close() throws JMSException {
+        }
+
+        @Override
+        public Enumeration getEnumeration() throws JMSException {
+            return Collections.enumeration(queue.messageQueue);
+        }
+
+        @Override
+        public String getMessageSelector() throws JMSException {
+            return null;
+        }
+        @Override
+        public Queue getQueue() throws JMSException {
+            return queue;
+        }
+    }
+    
+    public class TestQueueSession extends TestSession implements QueueSession {
+        @Override
+        public QueueBrowser createBrowser(Queue queue) throws JMSException {
+            return new TestQueueBrowser((TestQueue)getDestination(queue.getQueueName()));
+        }
+        @Override
+        public QueueReceiver createReceiver(Queue queue) throws JMSException {
+            return new TestQueueReceiver((TestQueue)getDestination(queue.getQueueName()));
+        }
+        @Override
+        public QueueReceiver createReceiver(Queue arg0, String arg1)
+                throws JMSException {
+            return null;
+        }
+        @Override
+        public QueueSender createSender(Queue arg0) throws JMSException {
+            return null;
+        }
+    }
+
+    @Override
+    public QueueSession getQueueSession() throws JMSException {
+        return new TestQueueSession();
     }
 }

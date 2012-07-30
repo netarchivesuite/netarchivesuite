@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -342,7 +344,9 @@ public class LocalCDXCacheTester extends TestCase {
 
         // Set up a dummy client that serves files out of the workingdir.
         ArcRepositoryClient dummyARC = new JMSArcRepositoryClient() {
-            public BatchStatus batch(FileBatchJob job, String replicaId) {
+            @Override
+            public BatchStatus batch(FileBatchJob job, String replicaId, 
+                    String... args) {
                 batchCounter++;
                 if (batchMustDie) {
                     throw new IOFailure("Committing suicide as ordered, SIR!");

@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +23,14 @@
  */
 package dk.netarkivet.wayback;
 
+import dk.netarkivet.wayback.aggregator.AggregationWorkerTest;
+import dk.netarkivet.wayback.aggregator.IndexAggregatorTest;
 import dk.netarkivet.wayback.indexer.ArchiveFileDAOTester;
 import dk.netarkivet.wayback.indexer.ArchiveFileTester;
 import dk.netarkivet.wayback.indexer.FileNameHarvesterTester;
 import dk.netarkivet.wayback.indexer.HibernateUtilTester;
 import dk.netarkivet.wayback.indexer.IndexerQueueTester;
+import dk.netarkivet.wayback.indexer.WaybackIndexerTester;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -36,7 +41,7 @@ import junit.textui.TestRunner;
  * change this template use File | Settings | File Templates.
  */
 public class WaybackTesterSuite {
-            /**
+    /**
      * Create a test suite just for these tests.
      * @return this testsuite
      */
@@ -63,6 +68,10 @@ public class WaybackTesterSuite {
         suite.addTestSuite(ExtractDeduplicateCDXBatchJobTester.class);
         suite.addTestSuite(DeduplicateToCDXApplicationTester.class);
         suite.addTestSuite(HibernateUtilTester.class);
+        suite.addTestSuite(WaybackIndexerTester.class);
+        suite.addTestSuite(IndexAggregatorTest.class);
+        suite.addTestSuite(AggregationWorkerTest.class);
+        suite.addTestSuite(LRUCacheTester.class);
     }
 
     public static void main(String args[]) {

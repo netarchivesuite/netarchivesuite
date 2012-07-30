@@ -36,7 +36,10 @@ handlers=java.util.logging.FileHandler,java.util.logging.ConsoleHandler,dk.netar
 #setup the File Handler
 java.util.logging.FileHandler.level=FINE
 java.util.logging.FileHandler.pattern=./log/APPID%u.log
-java.util.logging.FileHandler.limit=1000000
+# set the max number of bytes in each log file to 10 Mbytes (0 means infinite)
+java.util.logging.FileHandler.limit=10000000
+
+# set the number of rotating logfiles
 java.util.logging.FileHandler.count=100
 java.util.logging.FileHandler.append=true
 java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter

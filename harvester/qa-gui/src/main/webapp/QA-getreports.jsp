@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -46,19 +48,17 @@ jobid - The id of the job to show reports for.
 
     private static final I18n I18N = new I18n(
             dk.netarkivet.viewerproxy.Constants.TRANSLATIONS_BUNDLE);
-%><%
-    HTMLUtils.setUTF8(request);
+%><%HTMLUtils.setUTF8(request);
     int jobid;
     List<CDXRecord> records;
     try {
         jobid = HTMLUtils.parseAndCheckInteger(pageContext, Constants.JOBID_PARAM,
                                                1, Integer.MAX_VALUE);
-        records = Reporting.getMetdataCDXRecordsForJob(jobid);
+        records = Reporting.getMetadataCDXRecordsForJob(jobid);
     } catch (ForwardedToErrorPage e) {
         return;
     }
-    HTMLUtils.generateHeader(pageContext);
-%>
+    HTMLUtils.generateHeader(pageContext);%>
     <h3><fmt:message key="pagetitle;reports.for.job.1">
         <fmt:param value="<%=jobid%>"/>
     </fmt:message></h3>

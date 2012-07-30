@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,12 +38,17 @@ import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.SeedList;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 
 /**
  * Tests for class DomainDefinition associated with JSP-page
  * Definitions-edit-domain.jsp.
  */
-public class DomainDefinitionTester extends WebinterfaceTestCase {
+public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     public DomainDefinitionTester(String s) {
         super(s);
     }
@@ -54,6 +61,50 @@ public class DomainDefinitionTester extends WebinterfaceTestCase {
         super.tearDown();
     }
 
+    /**
+     * Test Extended Fields
+     */
+    public void testExtendedFields() {
+        ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
+        // id 1
+        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "defaultvalue", "");
+        extDAO.create(extField);
+        
+        // id 2
+        extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Boolean", "", 1, true, 1, "true", "");
+        extDAO.create(extField);
+    	
+        DomainDAO ddao = DomainDAO.getInstance();
+        Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+        parameterMap.put(Constants.UPDATE_PARAM, new String[]{"1"});
+        parameterMap.put(Constants.DOMAIN_PARAM, new String[]{"netarkivet.dk"});
+        parameterMap.put(Constants.DEFAULT_PARAM, new String[]{"conf2"});
+        TestServletRequest request = new TestServletRequest();
+        parameterMap.put("configName", new String[]{"new_config"});
+        parameterMap.put("order_xml", new String[]{"OneLevel-order"});
+        parameterMap.put("urlListList", new String[]{"seeds", "defaultseeds"});
+        parameterMap.put(Constants.EDITION_PARAM, new String[]{1l + ""});
+        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[]{""});
+        parameterMap.put(Constants.COMMENTS_PARAM, new String[]{""});
+        parameterMap.put(Constants.ALIAS_PARAM, new String[]{""});
+        
+        parameterMap.put(ExtendedFieldConstants.EXTF_PREFIX + "1", new String[]{"test"});
+        parameterMap.put(ExtendedFieldConstants.EXTF_PREFIX + "2", new String[]{"true"});
+        
+        request.setParameterMap(parameterMap);
+        I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+        PageContext pageContext = new TestPageContext(request);
+        DomainDefinition.processRequest(pageContext, I18N);
+        
+        Domain domain = ddao.read("netarkivet.dk");
+        
+        ExtendedFieldValue efv = domain.getExtendedFieldValue(Long.valueOf(1));
+        assertEquals(efv.getContent(), "defaultvalue");
+
+        efv = domain.getExtendedFieldValue(Long.valueOf(2));
+        assertTrue(efv.getBooleanValue());
+    }
+    
     /**
      * Test that we can change the default configuration of a domain.
      */

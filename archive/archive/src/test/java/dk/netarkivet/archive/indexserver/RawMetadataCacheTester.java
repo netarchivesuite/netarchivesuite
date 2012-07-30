@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -26,10 +28,10 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.archive.arcrepository.TestArcRepositoryClient;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestArcRepositoryClient;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 
 
@@ -87,7 +89,9 @@ public class RawMetadataCacheTester extends CacheTestCase {
         RawMetadataCache rmc = new RawMetadataCache("test3",
                 Pattern.compile(".*index/cdx.*"), null);
         arcrepfield.set(rmc, tarc);
+        // TODO find out why it stops here!
         Long id1 = rmc.cache(4L);
+        // TODO find out why it stops here!
         assertEquals("Should have exactly the one id asked for",
                 (Long) 4L, id1);
         File cacheFile1 = rmc.getCacheFile(id1);

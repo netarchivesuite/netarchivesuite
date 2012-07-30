@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,11 +31,6 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
  *
  */
 public final class Constants {
-
-    /** Characters used for separating a file identifier 
-     * from the checksum in the output from a checksum job.
-     */
-    public static final String STRING_FILENAME_SEPARATOR = "##";
 
     /**
      * On min in milliseconds.

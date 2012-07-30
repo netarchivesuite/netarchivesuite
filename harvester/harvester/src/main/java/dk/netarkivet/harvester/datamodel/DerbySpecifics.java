@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,10 +34,8 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
-import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
  * Derby-specific implementation of DB methods.
@@ -56,18 +56,14 @@ public abstract class DerbySpecifics extends DBSpecifics {
      */
     public String getJobConfigsTmpTable(Connection c) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
-        PreparedStatement s = null;
-        try {
-            s = c.prepareStatement("DECLARE GLOBAL TEMPORARY TABLE "
-                    + "jobconfignames "
-                    + "( domain_name varchar(" + Constants.MAX_NAME_SIZE + "), "
-                    + " config_name varchar(" + Constants.MAX_NAME_SIZE + ") )"
-                    + " ON COMMIT DELETE ROWS NOT LOGGED ON ROLLBACK DELETE ROWS");
-            s.execute();
-            s.close();
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
+        PreparedStatement s = 
+            c.prepareStatement("DECLARE GLOBAL TEMPORARY TABLE "
+                + "jobconfignames "
+                + "( domain_name varchar(" + Constants.MAX_NAME_SIZE + "), "
+                + " config_name varchar(" + Constants.MAX_NAME_SIZE + ") )"
+                + " ON COMMIT DELETE ROWS NOT LOGGED ON ROLLBACK DELETE ROWS");
+        s.execute();
+        s.close();
         return "session.jobconfignames";
     }
 
@@ -90,10 +86,21 @@ public abstract class DerbySpecifics extends DBSpecifics {
         } catch (SQLException e) {
             log.warn("Couldn't drop temporary table " + tableName + "\n" +
                      ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
         }
     }
+
+    @Override
+    public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
+        // LIMIT sub-clause supported by Derby 10.5.3
+        // see http://db.apache.org/derby/docs/10.5/ref/rrefsqljoffsetfetch.html
+        return "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
+    }
+
+    @Override
+    public boolean supportsClob() {
+        return true;
+    }
+
     /** Migrates the 'jobs' table from version 3 to version 4
      * consisting of a change of the field forcemaxbytes from int to bigint
      * and setting its default to -1.
@@ -101,197 +108,53 @@ public abstract class DerbySpecifics extends DBSpecifics {
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected synchronized void migrateJobsv3tov4() {
-        // Due to use of old version of Derby, it is not possible to use ALTER
-        // table for the migration. Thus the migration is done by full backup
-        // table of the jobs table.
-        // TODO rewrite to simpler SQL when upgrading Derby version:
-        // <copy values of jobs.forcemaxbytes and jobs.jobid into backup table>
-        // ALTER TABLE jobs DROP COLUMN forcemaxbytes RESTRICT
-        // ALTER TABLE jobs ADD COLUMN forcemaxbytes BIGINT NOT NULL DEFAULT -1
-        // UPDATE TABLE jobs SET forcemaxbytes =
-        // (SELECT forcemaxbytes FROM backupjobcolv3tov4
-        // WHERE jobs.job_id = forcemaxbytesvalues.job_id)
-        // DELETE table backupjobcolv3tov4;
-        String sql;
-        int countOfJobsTable;
-        int countOfBackuptable;
-        String table = "jobs";
-        String tmptable = "backupJobs3to4";
-
-        // Check that temporary table from earlier tries does not exist
-
-        Connection connection = DBConnect.getDBConnection();
-        try {
-            countOfBackuptable = DBUtils
-            .selectIntValue(connection,
-                            "select count(*) from " + tmptable);
-        } catch (IOFailure e) {
-            // expected, otherwise the backupJobs3to4 table exists
-            countOfBackuptable = -1;
-        }
-        if (countOfBackuptable >= 0) {
-            try {
-                countOfJobsTable = DBUtils.selectIntValue(
-                        connection,
-                        "select count(*) from " + table);
-            } catch (IOFailure e) {
-                // close to worst case, but data can still be found in back-up
-                // table
-                String errMsg = "Earlier migration of table "
-                    + table
-                    + " seems to have failed. The "
-                    + table
-                    + " table is missing, but a temporary table named "
-                    + tmptable
-                    + " seem to still contain the data. Please check, "
-                    + "- make a new "
-                    + table
-                    + " table, and insert data from the temporary table.";
-                NotificationsFactory.getInstance().errorEvent(errMsg, e);
-                throw new IOFailure(errMsg);
-            }
-            if (countOfBackuptable != countOfJobsTable) {
-                // close to worst case, but data can maybe still be found in
-                // back-up table
-                String errMsg = "Earlier migration of table "
-                    + table
-                    + " seems to have failed. "
-                    + "Some data from the jobs table is missing, "
-                    + "but a temporary table named "
-                    + tmptable
-                    + "seem to still contain the extra data. Please check, - "
-                    + " and insert missing data in " + table
-                    + " table data from the temporary table.";
-                NotificationsFactory.getInstance().errorEvent(errMsg);
-                throw new IOFailure(errMsg);
-            } else {
-                // backup table exists already. Delete it. 
-                sql = "DROP TABLE " + tmptable;
-                DBUtils.executeSQL(connection, sql);
-            }
-        }
-        
-        final String partialJobsDefinition = 
-            "job_id bigint not null primary key, "
-            + "harvest_id bigint not null, "
-            + "status int not null, " + "priority int not null, "
-            + "forcemaxbytes bigint not null default -1, "
-            + "forcemaxcount bigint, "
-            + "orderxml varchar(300) not null, "
-            + "orderxmldoc clob(64M) not null, "
-            + "seedlist clob(64M) not null, "
-            + "harvest_num int not null, "
-            + "harvest_errors varchar(300), "
-            + "harvest_error_details varchar(10000), "
-            + "upload_errors varchar(300), "
-            + "upload_error_details varchar(10000), "
-            + "startdate timestamp, " + "enddate timestamp, "
-            + "num_configs int not null default 0, "
-            + "edition bigint not null ";
-            
-            
-        // create backup table for jobs table
-        sql = "CREATE TABLE " + tmptable 
-        + " ("
-        +    partialJobsDefinition
-        + ")";
-        DBUtils.executeSQL(connection, sql);
-
-        // copy contents of jobs table into backup table
-        
-        final String listOfFieldsInJobsTable =
-            "job_id, harvest_id, status, priority, forcemaxbytes, "
-            + "forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, "
-            + "harvest_errors, harvest_error_details, upload_errors, "
-            + "upload_error_details, startdate, enddate, num_configs, edition ";
-        
-        sql = "INSERT INTO " + tmptable
-            + " ( " + listOfFieldsInJobsTable + ") "
-            + "SELECT " + listOfFieldsInJobsTable
-            + "FROM " + table;
-        DBUtils.executeSQL(connection, sql);
-
-        // check everything looks okay
-        countOfJobsTable = DBUtils.selectIntValue(
-                connection, "select count(*) from " + table);
-        countOfBackuptable = DBUtils.selectIntValue(
-                connection, "select count(*) from " + tmptable);
-        if (countOfBackuptable != countOfJobsTable) {
-            throw new IOFailure("Unexpected inconsistency: the number of "
-                    + "backed up entries from " + table
-                    + "does not correspond " + "to the number of entries in "
-                    + table);
-        }
-
-        // Update jobs table to version 4
+        // Change the forcemaxbytes from 'int' to 'bigint'.
+        // Procedure for changing the datatype of a derby table was found here:
+        // https://issues.apache.org/jira/browse/DERBY-1515
         String[] sqlStatements = {
-                // drop jobs table (are backed up in backupJobs3to4)
-                "DROP TABLE " + table,
+        "ALTER TABLE jobs ADD COLUMN forcemaxbytes_new bigint NOT NULL DEFAULT -1",
+        "UPDATE jobs SET forcemaxbytes_new = forcemaxbytes",
+        "ALTER TABLE jobs DROP COLUMN forcemaxbytes",
+        "RENAME COLUMN jobs.forcemaxbytes_new TO forcemaxbytes",
+        "ALTER TABLE jobs ALTER COLUMN num_configs SET DEFAULT 0"
 
-                // create jobs table again
-                "CREATE TABLE " + table + " (" + partialJobsDefinition + ")",
-
-                // create indices again:
-                "create index jobstatus on " + table + "(status)",
-                "create index jobharvestid on " + table + "(harvest_id)",
-
-                // insert data from backup table to jobs table:
-                "INSERT INTO " + table
-                + " ( " + listOfFieldsInJobsTable + ") "
-                + "SELECT " + listOfFieldsInJobsTable
-                + "FROM " + tmptable };
-        DBConnect.updateTable("jobs", 4, sqlStatements);
-
-        //check everything looks okay
-        countOfJobsTable = DBUtils.selectIntValue(
-                connection, "select count(*) from " + table);
-        countOfBackuptable = DBUtils.selectIntValue(
-                connection, "select count(*) from " + tmptable);
-        if (countOfBackuptable != countOfJobsTable) {
-            throw new IOFailure("Unexpected inconsistency: the number of "
-                    + "backed up entries from " + table
-                    + "does not correspond " + "to the number of entries in "
-                    + table + "although no " + "exception has arised");
-        }
-
-        //drop backup table
-        sql = "DROP TABLE backupJobs3to4";
-        DBUtils.executeSQL(connection, sql);
+        };
+        HarvestDBConnection.updateTable("jobs", 4, sqlStatements);
     }
-    
+
     /** Migrates the 'jobs' table from version 4 to version 5
      * consisting of adding new fields 'resubmitted_as_job' and 'submittedDate'.
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected synchronized void migrateJobsv4tov5() {
      // Update jobs table to version 5
-        String[] SqlStatements = {
+        String[] sqlStatements = {
                 "ALTER TABLE jobs ADD COLUMN submitteddate timestamp",
-                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"    
+                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"
             };
-        DBConnect.updateTable("jobs", 5, SqlStatements);
+        HarvestDBConnection.updateTable("jobs", 5, sqlStatements);
     }
-    
+
     /** Migrates the 'configurations' table from version 3 to version 4.
      * This consists of altering the default value of field 'maxbytes' to -1.
      */
     protected synchronized void migrateConfigurationsv3ov4() {
      // Update configurations table to version 4
-        String[] SqlStatements = {
+        String[] sqlStatements = {
                 "ALTER TABLE configurations ALTER maxbytes WITH DEFAULT -1"
             };
-        DBConnect.updateTable("configurations", 4, SqlStatements);
+        HarvestDBConnection.updateTable("configurations", 4, sqlStatements);
     }
- 
+
     /** Migrates the 'fullharvests' table from version 2 to version 3.
      * This consists of altering the default value of field 'maxbytes' to -1.
      */
     protected synchronized void migrateFullharvestsv2tov3() {
         // Update fullharvests table to version 3
-        String[] SqlStatements = {
+        String[] sqlStatements = {
                 "ALTER TABLE fullharvests ALTER maxbytes WITH DEFAULT -1"
             };
-        DBConnect.updateTable("fullharvests", 3, SqlStatements);
+        HarvestDBConnection.updateTable("fullharvests", 3, sqlStatements);
     }
 
     @Override
@@ -302,7 +165,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
                                  + "  name VARCHAR(300) NOT NULL UNIQUE,  "
                                  + "  description VARCHAR(30000),"
                                  + "  isActive INT NOT NULL) ";
-        DBConnect.updateTable("global_crawler_trap_lists", 1, createStatement);
+        HarvestDBConnection.updateTable(
+                "global_crawler_trap_lists", 1, createStatement);
     }
 
     @Override
@@ -313,7 +177,228 @@ public abstract class DerbySpecifics extends DBSpecifics {
                                  + "    trap_expression VARCHAR(1000),"
                                  + "    PRIMARY KEY (crawler_trap_list_id, "
                                  + "trap_expression))";
-        DBConnect.updateTable("global_crawler_trap_expressions", 1,
+        HarvestDBConnection.updateTable("global_crawler_trap_expressions", 1,
                               createStatement);
     }
+
+    @Override
+    public void createFrontierReportMonitorTable() {
+        String createStatement = "CREATE TABLE frontierReportMonitor ("
+            + " jobId bigint NOT NULL, "
+            + "filterId varchar(200) NOT NULL,"
+            + "tstamp timestamp NOT NULL,"
+            + "domainName varchar(300) NOT NULL,"
+            + "currentSize bigint NOT NULL,"
+            + "totalEnqueues bigint NOT NULL,"
+            + "sessionBalance bigint NOT NULL,"
+            + "lastCost numeric NOT NULL,"
+            + "averageCost numeric NOT NULL,"
+            + "lastDequeueTime varchar(100) NOT NULL,"
+            + "wakeTime varchar(100) NOT NULL,"
+            + "totalSpend bigint NOT NULL,"
+            + "totalBudget bigint NOT NULL,"
+            + "errorCount bigint NOT NULL,"
+            + "lastPeekUri varchar(1000) NOT NULL,"
+            + "lastQueuedUri varchar(1000) NOT NULL,"
+            + "UNIQUE (jobId, filterId, domainName)"
+            + ")";
+        HarvestDBConnection.updateTable("frontierreportmonitor", 1,
+                createStatement);
+    }
+
+    @Override
+    public void createRunningJobsHistoryTable() {
+        String createStatement = "CREATE TABLE runningJobsHistory ("
+                + "jobId bigint NOT NULL, "
+                + "harvestName varchar(300) NOT NULL,"
+                + "hostUrl varchar(300) NOT NULL,"
+                + "progress numeric NOT NULL,"
+                + "queuedFilesCount bigint NOT NULL,"
+                + "totalQueuesCount bigint NOT NULL,"
+                + "activeQueuesCount bigint NOT NULL,"
+                + "exhaustedQueuesCount bigint NOT NULL,"
+                + "elapsedSeconds bigint NOT NULL,"
+                + "alertsCount bigint NOT NULL,"
+                + "downloadedFilesCount bigint NOT NULL,"
+                + "currentProcessedKBPerSec int NOT NULL,"
+                + "processedKBPerSec int NOT NULL,"
+                + "currentProcessedDocsPerSec numeric NOT NULL,"
+                + "processedDocsPerSec numeric NOT NULL,"
+                + "activeToeCount integer NOT NULL,"
+                + "status int NOT NULL,"
+                + "tstamp timestamp NOT NULL,"
+                + "PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)"
+                + ")";
+        HarvestDBConnection.updateTable("runningjobshistory", 1,
+                createStatement);
+
+        Connection c = HarvestDBConnection.get();
+        try {
+        DBUtils.executeSQL(c,
+            "CREATE INDEX runningJobsHistoryCrawlJobId on runningJobsHistory (jobId)",
+            "CREATE INDEX runningJobsHistoryCrawlTime on runningJobsHistory (elapsedSeconds)",
+            "CREATE INDEX runningJobsHistoryHarvestName on runningJobsHistory (harvestName)"
+            );
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
+    @Override
+    public void createRunningJobsMonitorTable() {
+        String createStatement = "CREATE TABLE runningJobsMonitor ("
+            + "jobId bigint NOT NULL, "
+            + "harvestName varchar(300) NOT NULL,"
+            + "hostUrl varchar(300) NOT NULL,"
+            + "progress numeric NOT NULL,"
+            + "queuedFilesCount bigint NOT NULL,"
+            + "totalQueuesCount bigint NOT NULL,"
+            + "activeQueuesCount bigint NOT NULL,"
+            + "exhaustedQueuesCount bigint NOT NULL,"
+            + "elapsedSeconds bigint NOT NULL,"
+            + "alertsCount bigint NOT NULL,"
+            + "downloadedFilesCount bigint NOT NULL,"
+            + "currentProcessedKBPerSec integer NOT NULL,"
+            + "processedKBPerSec integer NOT NULL,"
+            + "currentProcessedDocsPerSec numeric NOT NULL,"
+            + "processedDocsPerSec numeric NOT NULL,"
+            + "activeToeCount integer NOT NULL,"
+            + "status integer NOT NULL,"
+            + "tstamp timestamp NOT NULL, "
+            + "PRIMARY KEY (jobId, harvestName)"
+            + ")";
+        HarvestDBConnection.updateTable("runningjobsmonitor", 1,
+                createStatement);
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            DBUtils.executeSQL(c,
+                "CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId)",
+                "CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName)"
+            );
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
+    // Below DB changes introduced with development release 3.15
+    // with changes to tables 'runningjobshistory', 'runningjobsmonitor',
+    // 'configurations', 'fullharvests', and 'jobs'.
+
+    /**
+     * Migrates the 'runningjobshistory' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    @Override
+    protected void migrateRunningJobsHistoryTableV1ToV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobshistory "
+                + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
+        };
+        HarvestDBConnection.updateTable("runningjobshistory", 2, sqlStatements);
+    }
+
+    /**
+     * Migrates the 'runningjobsmonitor' table from version 1 to version 2. This
+     * consists of adding the new column 'retiredQueuesCount'.
+     */
+    @Override
+    protected void migrateRunningJobsMonitorTableV1ToV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobsmonitor "
+                + "ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"
+        };
+        HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
+    }
+
+    @Override
+    protected void migrateConfigurationsv4tov5() {
+        // Change the maxobjects from 'int' to 'bigint'.
+        // Procedure for changing the datatype of a derby table was found here:
+        // https://issues.apache.org/jira/browse/DERBY-1515
+        String[] sqlStatements = {
+        "ALTER TABLE configurations ADD COLUMN maxobjects_new bigint NOT NULL DEFAULT -1",
+        "UPDATE configurations SET maxobjects_new = maxobjects",
+        "ALTER TABLE configurations DROP COLUMN maxobjects",
+        "RENAME COLUMN configurations.maxobjects_new TO maxobjects"
+        };
+        HarvestDBConnection.updateTable("configurations", 5, sqlStatements);
+}
+
+    @Override
+    protected void migrateFullharvestsv3tov4() {
+        // Add new bigint field maxjobrunningtime with default 0
+        String[] sqlStatements
+        = {"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"};
+        HarvestDBConnection.updateTable("fullharvests", 4, sqlStatements);
+    }
+
+    @Override
+    protected void migrateJobsv5tov6() {
+        // Add new bigint field with default 0
+        String[] sqlStatements
+        = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0"};
+        HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
+    }
+    
+    @Override
+    protected void migrateFullharvestsv4tov5() {
+        // Add new bigint field isindexready (0 is not ready, 1 is ready).
+        String[] sqlStatements
+        = {"ALTER TABLE fullharvests ADD COLUMN isindexready int NOT NULL DEFAULT 0"};
+        HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
+    }
+    
+    @Override
+    protected void createExtendedFieldTypeTable() {
+        String[] statements = new String[3];
+        statements[0] = "" + "CREATE TABLE extendedfieldtype " + "  ( "
+                + "     extendedfieldtype_id BIGINT NOT NULL PRIMARY KEY, "
+                + "     name             VARCHAR(50) NOT NULL " + "  )";
+
+        statements[1] = "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )"
+                + " VALUES ( 1, 'domains')";
+        statements[2] = "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name ) "
+                + "VALUES ( 2, 'harvestdefinitions')";
+
+        HarvestDBConnection.updateTable("extendedfieldtype", 1, statements);
+    }
+    
+    @Override
+    protected void createExtendedFieldTable() {
+        String createStatement = "" + "CREATE TABLE extendedfield " + "  ( "
+                + "     extendedfield_id BIGINT NOT NULL PRIMARY KEY, "
+                + "     extendedfieldtype_id BIGINT NOT NULL, "
+                + "     name             VARCHAR(50) NOT NULL, "
+                + "     format           VARCHAR(50) NOT NULL, "
+                + "     defaultvalue     VARCHAR(50) NOT NULL, "
+                + "     options          VARCHAR(50) NOT NULL, "
+                + "     datatype         INT NOT NULL, "
+                + "     mandatory        INT NOT NULL, "
+                + "     sequencenr       INT " + "  )";
+
+        HarvestDBConnection.updateTable("extendedfield", 1, createStatement);
+    }
+
+    @Override
+    protected void createExtendedFieldValueTable() {
+        String createStatement = "" + "CREATE TABLE extendedfieldvalue "
+                + "  ( "
+                + "     extendedfieldvalue_id BIGINT NOT NULL PRIMARY KEY, "
+                + "     extendedfield_id      BIGINT NOT NULL, "
+                + "     instance_id           BIGINT NOT NULL, "
+                + "     content               VARCHAR(100) NOT NULL " + "  )";
+
+        HarvestDBConnection.updateTable("extendedfieldvalue", 1,
+                createStatement);
+    }
+    
+    @Override
+    protected synchronized void migrateJobsv6tov7() {
+           String[] sqlStatements = {
+                   "ALTER TABLE jobs ADD COLUMN continuationof BIGINT DEFAULT NULL"
+               };
+           HarvestDBConnection.updateTable("jobs", 7, sqlStatements);
+       }
+    
 }

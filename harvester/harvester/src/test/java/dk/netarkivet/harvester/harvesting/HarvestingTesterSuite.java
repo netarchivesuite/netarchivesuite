@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +24,7 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
+import dk.netarkivet.harvester.harvesting.extractor.ExtractorOAITest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -50,11 +53,12 @@ public class HarvestingTesterSuite {
         suite.addTestSuite(HeritrixControllerFactoryTester.class);
         suite.addTestSuite(HarvestControllerTester.class);
         suite.addTestSuite(HarvestDocumentationTester.class);
-        suite.addTestSuite(HeritrixDomainHarvestReportTester.class);
+        suite.addTestSuite(LegacyHarvestReportTester.class);
         suite.addTestSuite(HeritrixFilesTester.class);
         suite.addTestSuite(HeritrixLauncherTester.class);
         suite.addTestSuite(IngestableFilesTester.class);
         suite.addTestSuite(OnNSDomainsDecideRuleTester.class);
+        suite.addTestSuite(ExtractorOAITest.class);
     }
 
     public static void main(String[] args) {

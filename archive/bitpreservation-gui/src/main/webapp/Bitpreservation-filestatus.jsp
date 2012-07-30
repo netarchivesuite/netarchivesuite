@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -44,7 +46,7 @@ There are no parameters.
 %>
 <h3 class="page_heading"><fmt:message key="pagetitle;filestatus"/></h3>
 
-<h4><fmt:message key="bitarchive.state"/></h4>
+<h4><fmt:message key="replica.state"/></h4>
 
 <%
     Collection<Replica> knownReplicas = Replica.getKnown(); 

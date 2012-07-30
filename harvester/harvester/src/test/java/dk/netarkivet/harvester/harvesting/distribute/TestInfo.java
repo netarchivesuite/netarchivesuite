@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,7 +44,6 @@ import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Contains test information about all harvestdefinition test data.
- *
  */
 public class TestInfo {
     public static final File DATA_DIR = new File("tests/dk/netarkivet/harvester/harvesting/distribute/data/");
@@ -55,14 +56,14 @@ public class TestInfo {
     public static final MetadataEntry sampleEntry = new MetadataEntry(
             "metadata://netarkivet.dk",
             "text/plain",
-            "DETTE ER NOGET METADATA");
+            "THIS IS SOME METADATA");
     public static final List<MetadataEntry> emptyMetadata = new ArrayList<MetadataEntry>();
     public static final List<MetadataEntry> oneMetadata = new ArrayList<MetadataEntry>();
     public static final String prefix = "ID";
     public static final String suffix = "X";
 
     /**
-     * The properties-file containg properties for logging in unit-tests.
+     * The properties-file containing properties for logging in unit-tests.
      */
     public static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
     static File WORKING_DIR = new File(TestInfo.DATA_DIR, "working");
@@ -91,9 +92,12 @@ public class TestInfo {
     static final File LEFTOVER_CRAWLDIR_3 = new File(TestInfo.LEFTOVER_JOB_DIR_3,"crawldir");
     static final File TEST_CRAWL_DIR = new File ("tests/dk/netarkivet/harvester/harvesting/data/crawldir");
     static final File CRAWL_DIR_COPY = new File ("tests/dk/netarkivet/harvester/harvesting/data/copyOfCrawldir");
-
+    
+    static final String HarvestInfofilename = "harvestInfo.xml";
+    
+    
     /**
-     * Load resources needed by unit tests
+     * Load resources needed by unit tests.
      */
     public TestInfo() {
     }
@@ -105,13 +109,13 @@ public class TestInfo {
         try {
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
                     Job.class, Long.class, Map.class, JobPriority.class, Long.TYPE,
-                    Long.TYPE, JobStatus.class, String.class, Document.class,
-                    String.class, Integer.TYPE);
+                    Long.TYPE, Long.TYPE, JobStatus.class, String.class, Document.class,
+                    String.class, Integer.TYPE, Long.class);
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 JobPriority.HIGHPRIORITY, -1L, -1L,
+                                 JobPriority.HIGHPRIORITY, -1L, -1L, 0L,
                                  JobStatus.NEW, "default_orderxml",
                                  XmlUtils.getXmlDoc(ORDER_FILE),
-                                 "www.netarkivet.dk", 1);
+                                 "www.netarkivet.dk", 1, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -123,14 +127,15 @@ public class TestInfo {
     static Job getJobLowPriority() {
         try {
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
-                    Job.class, Long.class, Map.class, JobPriority.class, Long.TYPE,
-                    Long.TYPE, JobStatus.class, String.class, Document.class,
-                    String.class, Integer.TYPE);
+                    Job.class, Long.class, Map.class, JobPriority.class, 
+                    Long.TYPE, Long.TYPE, Long.TYPE, 
+                    JobStatus.class, String.class, Document.class,
+                    String.class, Integer.TYPE, Long.class);
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 JobPriority.LOWPRIORITY, -1L, -1L,
+                                 JobPriority.LOWPRIORITY, -1L, -1L, 0L,
                                  JobStatus.NEW, "default_template",
                                  XmlUtils.getXmlDoc(ORDER_FILE),
-                                 "www.netarkivet.dk", 1);
+                                 "www.netarkivet.dk", 1, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

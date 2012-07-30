@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,14 +31,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,9 +53,12 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
-import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.webinterface.HarvestStatus;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.SORT_ORDER;
 
 /**
  * A database-based implementation of the JobDAO class.
@@ -64,12 +68,6 @@ import dk.netarkivet.common.utils.StringUtils;
 public class JobDBDAO extends JobDAO {
     /** The logger for this class. */
     private final Log log = LogFactory.getLog(getClass());
-    
-    /** Version of jobs table needed by our code. */
-    private static final int JOBS_VERSION_NEEDED = 5;
-    
-    /** Version of job_configs table needed by our code. */
-    private static final int JOB_CONFIGS_VERSION_NEEDED = 1;
 
     /**
      * Create a new JobDAO implemented using database.
@@ -79,21 +77,13 @@ public class JobDBDAO extends JobDAO {
      * make the necessary updates.
      */
     protected JobDBDAO() {
-        Connection connection = DBConnect.getDBConnection();
-        int jobVersion = DBUtils.getTableVersion(connection,
-                                                 "jobs");
-        
-        // Try to upgrade the jobs table to version JOBS_VERSION_NEEDED
-        if (jobVersion < JOBS_VERSION_NEEDED) {
-            log.info("Migrate table" + " 'jobs' to version "
-                    + JOBS_VERSION_NEEDED);
-            DBSpecifics.getInstance().updateTable("jobs", JOBS_VERSION_NEEDED);
+        Connection connection = HarvestDBConnection.get();
+        try {
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.JOBS);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.JOBCONFIGS);
+        } finally {
+            HarvestDBConnection.release(connection);
         }
-        
-        DBUtils.checkTableVersion(connection, "jobs", JOBS_VERSION_NEEDED);
-        DBUtils.checkTableVersion(connection,
-                                  "job_configs", JOB_CONFIGS_VERSION_NEEDED
-        );
     }
 
     /**
@@ -114,29 +104,30 @@ public class JobDBDAO extends JobDAO {
         if (!HarvestDefinitionDAO.getInstance().exists(harvestId)) {
             throw new UnknownID("No harvestdefinition with ID=" + harvestId);
         }
-        
+
+        Connection connection = HarvestDBConnection.get();
         if (job.getJobID() != null) {
             log.warn("The jobId for the job is already set. "
                 + "This should probably never happen.");
         } else {
-            job.setJobID(generateNextID());
+            job.setJobID(generateNextID(connection));
         }
-        
+
         log.debug("Creating " + job.toString());
-        
-        Connection dbconnection = DBConnect.getDBConnection();
+
         PreparedStatement statement = null;
         try {
-            dbconnection.setAutoCommit(false);
-            statement = dbconnection.prepareStatement(
+            connection.setAutoCommit(false);
+            statement = connection.prepareStatement(
                     "INSERT INTO jobs "
                     + "(job_id, harvest_id, status, priority, forcemaxcount, "
-                    + "forcemaxbytes, orderxml, orderxmldoc, seedlist, "
+                    + "forcemaxbytes, forcemaxrunningtime, orderxml, "
+                    + "orderxmldoc, seedlist, "
                     + "harvest_num, startdate, enddate, submitteddate, "
                     + "num_configs, edition, resubmitted_as_job) "
                     + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
-                    + "?, ? )");
-            
+                    + "?, ?, ? )");
+
 
             statement.setLong(1, job.getJobID());
             statement.setLong(2, job.getOrigHarvestDefinitionID());
@@ -144,30 +135,31 @@ public class JobDBDAO extends JobDAO {
             statement.setInt(4, job.getPriority().ordinal());
             statement.setLong(5, job.getForceMaxObjectsPerDomain());
             statement.setLong(6, job.getMaxBytesPerDomain());
-            DBUtils.setStringMaxLength(statement, 7, job.getOrderXMLName(),
-                                         Constants.MAX_NAME_SIZE, job, 
+            statement.setLong(7, job.getMaxJobRunningTime());
+            DBUtils.setStringMaxLength(statement, 8, job.getOrderXMLName(),
+                                         Constants.MAX_NAME_SIZE, job,
                                          "order.xml name");
             final String orderreader = job.getOrderXMLdoc().asXML();
-            DBUtils.setClobMaxLength(statement, 8, orderreader,
+            DBUtils.setClobMaxLength(statement, 9, orderreader,
                                        Constants.MAX_ORDERXML_SIZE, job,
                                        "order.xml");
-            DBUtils.setClobMaxLength(statement, 9, job.getSeedListAsString(),
+            DBUtils.setClobMaxLength(statement, 10, job.getSeedListAsString(),
                                        Constants.MAX_COMBINED_SEED_LIST_SIZE,
                                        job, "seedlist");
-            statement.setInt(10, job.getHarvestNum());
-            DBUtils.setDateMaybeNull(statement, 11, job.getActualStart());
-            DBUtils.setDateMaybeNull(statement, 12, job.getActualStop());
-            DBUtils.setDateMaybeNull(statement, 13, job.getSubmittedDate());
-            
+            statement.setInt(11, job.getHarvestNum());
+            DBUtils.setDateMaybeNull(statement, 12, job.getActualStart());
+            DBUtils.setDateMaybeNull(statement, 13, job.getActualStop());
+            DBUtils.setDateMaybeNull(statement, 14, job.getSubmittedDate());
+
             // The size of the configuration map == number of configurations
-            statement.setInt(14, job.getDomainConfigurationMap().size());
+            statement.setInt(15, job.getDomainConfigurationMap().size());
             long initialEdition = 1;
-            statement.setLong(15, initialEdition);
-            DBUtils.setLongMaybeNull(statement, 16, job.getResubmittedAsJob());
-            
+            statement.setLong(16, initialEdition);
+            DBUtils.setLongMaybeNull(statement, 17, job.getResubmittedAsJob());
+
             statement.executeUpdate();
-            createJobConfigsEntries(dbconnection, job);
-            dbconnection.commit();
+            createJobConfigsEntries(connection, job);
+            connection.commit();
             job.setEdition(initialEdition);
         } catch (SQLException e) {
             String message = "SQL error creating job " + job + " in database"
@@ -175,8 +167,8 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(statement);
-            DBUtils.rollbackIfNeeded(dbconnection, "create job", job);
+            DBUtils.rollbackIfNeeded(connection, "create job", job);
+            HarvestDBConnection.release(connection);
         }
     }
 
@@ -186,7 +178,7 @@ public class JobDBDAO extends JobDAO {
      *
      * @param dbconnection A connection to work on
      * @param job The job to store entries for
-     * @throws SQLException If any problems occur during creation of the 
+     * @throws SQLException If any problems occur during creation of the
      * new entries in the job_configs table.
      */
     private void createJobConfigsEntries(Connection dbconnection, Job job)
@@ -223,7 +215,7 @@ public class JobDBDAO extends JobDAO {
                         + "( job_id, config_id ) "
                         + "SELECT ?, configurations.config_id "
                         + "  FROM domains, configurations, " + tmpTable
-                        + " WHERE domains.name = " + tmpTable 
+                        + " WHERE domains.name = " + tmpTable
                         + ".domain_name"
                         + "   AND domains.domain_id = configurations.domain_id"
                         + "   AND configurations.name = "
@@ -238,7 +230,6 @@ public class JobDBDAO extends JobDAO {
                 }
                 dbconnection.commit();
             } finally {
-                DBUtils.closeStatementIfOpen(statement);
                 if (tmpTable != null) {
                     DBSpecifics.getInstance().dropJobConfigsTmpTable(
                             dbconnection, tmpTable);
@@ -253,28 +244,48 @@ public class JobDBDAO extends JobDAO {
      * @param jobID Id of the job.
      * @return true if the job exists in any state.
      */
-    public synchronized boolean exists(Long jobID) {
+    @Override
+    public boolean exists(Long jobID) {
         ArgumentNotValid.checkNotNull(jobID, "Long jobID");
-        return 1 == DBUtils.selectLongValue(
-                DBConnect.getDBConnection(),
-                "SELECT COUNT(*) FROM jobs WHERE job_id = ?", jobID);
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            return exists(c, jobID);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
-    
-    /** 
-     * @see JobDAO#generateNextID()
+
+    /** Check whether a particular job exists.
+    *
+    * @param c an open connection to the harvestDatabase
+    * @param jobID Id of the job.
+    * @return true if the job exists in any state.
+    */
+   private boolean exists(Connection c, Long jobID) {
+       return 1 == DBUtils.selectLongValue(
+               c,
+               "SELECT COUNT(*) FROM jobs WHERE job_id = ?", jobID);
+   }
+
+    /**
+     * Generates the next id of job.
+     * @param c an open connection to the harvestDatabase
+     * @return id
      */
-    synchronized Long generateNextID() {
+    private Long generateNextID(Connection c) {
         // Set to zero original, can be set after admin machine breakdown,
         // and the use this as the point of reference.
         Long restoreId = Settings.getLong(Constants.NEXT_JOB_ID);
-        Long maxVal = DBUtils.selectLongValue(DBConnect.getDBConnection(),
-                                              "SELECT MAX(job_id) FROM jobs"
-        );
+
+        Long maxVal =
+            DBUtils.selectLongValue(c, "SELECT MAX(job_id) FROM jobs");
         if (maxVal == null) {
             maxVal = 0L;
         }
         // return the largest number of the two numbers: the NEXT_JOB_ID
-        // declared in settings and max value of job_id used in the jobs table.
+        // declared in settings and max value of job_id used
+        // in the jobs table.
         return ((restoreId > maxVal) ? restoreId : maxVal + 1L);
     }
 
@@ -287,23 +298,27 @@ public class JobDBDAO extends JobDAO {
      * @throws IOFailure If writing the job to persistent storage fails
      * @throws PermissionDenied If the job has been updated behind our backs
      */
+    @Override
     public synchronized void update(Job job) {
         ArgumentNotValid.checkNotNull(job, "job");
-        final Long jobID = job.getJobID();
-        if (!exists(jobID)) {
-            throw new UnknownID("Job id " + jobID
-                                + " is not known in persistent storage");
-        }
-        Connection dbconnection = DBConnect.getDBConnection();
+
+        Connection connection = HarvestDBConnection.get();
         // Not done as a transaction as it's awfully big.
         // TODO Make sure that a failed job update does... what?
         PreparedStatement statement = null;
         try {
-            dbconnection.setAutoCommit(false);
-            statement = dbconnection.prepareStatement(
+            final Long jobID = job.getJobID();
+            if (!exists(connection, jobID)) {
+                throw new UnknownID("Job id " + jobID
+                                    + " is not known in persistent storage");
+            }
+
+            connection.setAutoCommit(false);
+            statement = connection.prepareStatement(
                     "UPDATE jobs SET "
                     + "harvest_id = ?, status = ?, priority = ?, "
                     + "forcemaxcount = ?, forcemaxbytes = ?, "
+                    + "forcemaxrunningtime = ?,"
                     + "orderxml = ?, "
                     + "orderxmldoc = ?, seedlist = ?, "
                     + "harvest_num = ?, harvest_errors = ?, "
@@ -317,50 +332,51 @@ public class JobDBDAO extends JobDAO {
             statement.setInt(3, job.getPriority().ordinal());
             statement.setLong(4, job.getForceMaxObjectsPerDomain());
             statement.setLong(5, job.getMaxBytesPerDomain());
-            DBUtils.setStringMaxLength(statement, 6, job.getOrderXMLName(),
-                                         Constants.MAX_NAME_SIZE, job, 
+            statement.setLong(6, job.getMaxJobRunningTime());
+            DBUtils.setStringMaxLength(statement, 7, job.getOrderXMLName(),
+                                         Constants.MAX_NAME_SIZE, job,
                                          "order.xml name");
             final String orderreader = job.getOrderXMLdoc().asXML();
-            DBUtils.setClobMaxLength(statement, 7, orderreader,
-                                       Constants.MAX_ORDERXML_SIZE, job, 
+            DBUtils.setClobMaxLength(statement, 8, orderreader,
+                                       Constants.MAX_ORDERXML_SIZE, job,
                                        "order.xml");
-            DBUtils.setClobMaxLength(statement, 8, job.getSeedListAsString(),
-                                       Constants.MAX_COMBINED_SEED_LIST_SIZE, 
+            DBUtils.setClobMaxLength(statement, 9, job.getSeedListAsString(),
+                                       Constants.MAX_COMBINED_SEED_LIST_SIZE,
                                        job, "seedlist");
-            statement.setInt(9, job.getHarvestNum()); // Not in job yet
-            DBUtils.setStringMaxLength(statement, 10, job.getHarvestErrors(),
-                                         Constants.MAX_ERROR_SIZE, job, 
+            statement.setInt(10, job.getHarvestNum()); // Not in job yet
+            DBUtils.setStringMaxLength(statement, 11, job.getHarvestErrors(),
+                                         Constants.MAX_ERROR_SIZE, job,
                                          "harvest_error");
             DBUtils.setStringMaxLength(
-                    statement, 11, job.getHarvestErrorDetails(),
-                    Constants.MAX_ERROR_DETAIL_SIZE, job, 
+                    statement, 12, job.getHarvestErrorDetails(),
+                    Constants.MAX_ERROR_DETAIL_SIZE, job,
                     "harvest_error_details");
-            DBUtils.setStringMaxLength(statement, 12, job.getUploadErrors(),
+            DBUtils.setStringMaxLength(statement, 13, job.getUploadErrors(),
                                          Constants.MAX_ERROR_SIZE, job,
                                          "upload_error");
             DBUtils.setStringMaxLength(
-                    statement, 13, job.getUploadErrorDetails(),
-                    Constants.MAX_ERROR_DETAIL_SIZE, job, 
+                    statement, 14, job.getUploadErrorDetails(),
+                    Constants.MAX_ERROR_DETAIL_SIZE, job,
                     "upload_error_details");
             long edition = job.getEdition() + 1;
-            DBUtils.setDateMaybeNull(statement, 14, job.getActualStart());
-            DBUtils.setDateMaybeNull(statement, 15, job.getActualStop());
-            statement.setInt(16, job.getDomainConfigurationMap().size());
-            statement.setLong(17, edition);
-            DBUtils.setDateMaybeNull(statement, 18, job.getSubmittedDate());
-            DBUtils.setLongMaybeNull(statement, 19, job.getResubmittedAsJob());
-            
-            statement.setLong(20, job.getJobID());
-            statement.setLong(21, job.getEdition());
+            DBUtils.setDateMaybeNull(statement, 15, job.getActualStart());
+            DBUtils.setDateMaybeNull(statement, 16, job.getActualStop());
+            statement.setInt(17, job.getDomainConfigurationMap().size());
+            statement.setLong(18, edition);
+            DBUtils.setDateMaybeNull(statement, 19, job.getSubmittedDate());
+            DBUtils.setLongMaybeNull(statement, 20, job.getResubmittedAsJob());
+
+            statement.setLong(21, job.getJobID());
+            statement.setLong(22, job.getEdition());
             final int rows = statement.executeUpdate();
             if (rows == 0) {
-                String message = "Edition " + job.getEdition() 
+                String message = "Edition " + job.getEdition()
                     + " has expired, not updating";
                 log.debug(message);
                 throw new PermissionDenied(message);
             }
-            createJobConfigsEntries(dbconnection, job);
-            dbconnection.commit();
+            createJobConfigsEntries(connection, job);
+            connection.commit();
             job.setEdition(edition);
         } catch (SQLException e) {
             String message = "SQL error updating job " + job + " in database"
@@ -368,35 +384,54 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.rollbackIfNeeded(dbconnection, "update job", job);
-            DBUtils.closeStatementIfOpen(statement);
+            DBUtils.rollbackIfNeeded(connection, "update job", job);
+            HarvestDBConnection.release(connection);
         }
     }
 
     /** Read a single job from the job database.
+    *
+    * @param jobID ID of the job.
+    * @return A Job object
+    * @throws UnknownID if the job id does not exist.
+    * @throws IOFailure if there was some problem talking to the database.
+    */
+   @Override
+   public Job read(Long jobID) {
+        ArgumentNotValid.checkNotNull(jobID, "jobID");
+       Connection connection = HarvestDBConnection.get();
+       try {
+           return read(connection, jobID);
+       } finally {
+           HarvestDBConnection.release(connection);
+       }
+   }
+
+    /** Read a single job from the job database.
      *
      * @param jobID ID of the job.
+     * @param connection an open connection to the harvestDatabase
      * @return A Job object
      * @throws UnknownID if the job id does not exist.
      * @throws IOFailure if there was some problem talking to the database.
      */
-    public synchronized Job read(Long jobID) {
-        if (!exists(jobID)) {
+    private synchronized Job read(Connection connection, Long jobID) {
+        if (!exists(connection, jobID)) {
             throw new UnknownID("Job id "
                                 + jobID
                                 + " is not known in persistent storage");
         }
-        Connection dbconnection = DBConnect.getDBConnection();
         PreparedStatement statement = null;
         try {
-            statement = dbconnection.prepareStatement("SELECT "
+            statement = connection.prepareStatement("SELECT "
                                    + "harvest_id, status, priority, "
-                                   + "forcemaxcount, forcemaxbytes, orderxml, "
+                                   + "forcemaxcount, forcemaxbytes, "
+                                   + "forcemaxrunningtime, orderxml, "
                                    + "orderxmldoc, seedlist, harvest_num,"
                                    + "harvest_errors, harvest_error_details, "
                                    + "upload_errors, upload_error_details, "
                                    + "startdate, enddate, submitteddate, "
-                                   + "edition, resubmitted_as_job "
+                                   + "edition, resubmitted_as_job, continuationof "
                                    + "FROM jobs WHERE job_id = ?");
             statement.setLong(1, jobID);
             ResultSet result = statement.executeQuery();
@@ -406,29 +441,43 @@ public class JobDBDAO extends JobDAO {
             JobPriority pri = JobPriority.fromOrdinal(result.getInt(3));
             long forceMaxCount = result.getLong(4);
             long forceMaxBytes = result.getLong(5);
-            String orderxml = result.getString(6);
-            
-            Clob clob = result.getClob(7);
-            Document orderXMLdoc = getOrderXMLdocFromClob(clob);
-            clob = result.getClob(8);
-            String seedlist = clob.getSubString(1, (int) clob.length());
-            int harvestNum = result.getInt(9);
-            String harvestErrors = result.getString(10);
-            String harvestErrorDetails = result.getString(11);
-            String uploadErrors = result.getString(12);
-            String uploadErrorDetails = result.getString(13);
-            Date startdate = DBUtils.getDateMaybeNull(result, 14);
-            Date stopdate = DBUtils.getDateMaybeNull(result, 15);
-            Date submittedDate = DBUtils.getDateMaybeNull(result, 16);
-            Long edition = result.getLong(17);
-            Long resubmittedAsJob = DBUtils.getLongMaybeNull(result, 18);
-            
+            long forceMaxRunningTime = result.getLong(6);
+            String orderxml = result.getString(7);
+
+            Document orderXMLdoc = null;
+
+            boolean useClobs = DBSpecifics.getInstance().supportsClob();
+            if (useClobs) {
+                Clob clob = result.getClob(8);
+                orderXMLdoc = getOrderXMLdocFromClob(clob);
+            } else {
+                orderXMLdoc = XmlUtils.documentFromString(result.getString(8));
+            }
+            String seedlist = "";
+            if (useClobs) {
+                Clob clob = result.getClob(9);
+                seedlist = clob.getSubString(1, (int) clob.length());
+            } else {
+                seedlist = result.getString(9);
+            }
+
+            int harvestNum = result.getInt(10);
+            String harvestErrors = result.getString(11);
+            String harvestErrorDetails = result.getString(12);
+            String uploadErrors = result.getString(13);
+            String uploadErrorDetails = result.getString(14);
+            Date startdate = DBUtils.getDateMaybeNull(result, 15);
+            Date stopdate = DBUtils.getDateMaybeNull(result, 16);
+            Date submittedDate = DBUtils.getDateMaybeNull(result, 17);
+            Long edition = result.getLong(18);
+            Long resubmittedAsJob = DBUtils.getLongMaybeNull(result, 19);
+            Long continuationOfJob = DBUtils.getLongMaybeNull(result, 20);
             statement.close();
             // IDs should match up in a natural join
             // The following if-block is an attempt to fix Bug 1856, an
             // unexplained derby deadlock, by making this statement a dirty
             // read.
-            String domainStatement = 
+            String domainStatement =
                     "SELECT domains.name, configurations.name "
                     + "FROM domains, configurations, job_configs "
                     + "WHERE job_configs.job_id = ?"
@@ -436,23 +485,24 @@ public class JobDBDAO extends JobDAO {
                     + "  AND domains.domain_id = configurations.domain_id";
             if (Settings.get(CommonSettings.DB_SPECIFICS_CLASS).
                     contains(CommonSettings.DB_IS_DERBY_IF_CONTAINS)) {
-                statement = dbconnection.prepareStatement(domainStatement
+                statement = connection.prepareStatement(domainStatement
                         + " WITH UR");
             } else {
-                statement = dbconnection.prepareStatement(domainStatement); 
+                statement = connection.prepareStatement(domainStatement);
             }
             statement.setLong(1, jobID);
             result = statement.executeQuery();
-            Map<String, String> configurationMap 
+            Map<String, String> configurationMap
                 = new HashMap<String, String>();
             while (result.next()) {
                 String domainName = result.getString(1);
                 String configName = result.getString(2);
                 configurationMap.put(domainName, configName);
             }
-            final Job job = new Job(harvestID, configurationMap, 
-                    pri, forceMaxCount, forceMaxBytes, status, orderxml,
-                    orderXMLdoc, seedlist, harvestNum);
+            final Job job = new Job(harvestID, configurationMap,
+                    pri, forceMaxCount, forceMaxBytes, forceMaxRunningTime,
+                    status, orderxml,
+                    orderXMLdoc, seedlist, harvestNum, continuationOfJob);
             job.appendHarvestErrors(harvestErrors);
             job.appendHarvestErrorDetails(harvestErrorDetails);
             job.appendUploadErrors(uploadErrors);
@@ -463,15 +513,15 @@ public class JobDBDAO extends JobDAO {
             if (stopdate != null) {
                 job.setActualStop(stopdate);
             }
-            
+
             if (submittedDate != null) {
                 job.setSubmittedDate(submittedDate);
             }
-            
+
             job.configsChanged = false;
             job.setJobID(jobID);
             job.setEdition(edition);
-            
+
             if (resubmittedAsJob != null) {
                 job.setResubmittedAsJob(resubmittedAsJob);
             }
@@ -485,8 +535,6 @@ public class JobDBDAO extends JobDAO {
             String message = "XML error reading job " + jobID + " in database";
             log.warn(message, e);
             throw new IOFailure(message, e);
-        } finally {
-            DBUtils.closeStatementIfOpen(statement);
         }
     }
 
@@ -519,17 +567,24 @@ public class JobDBDAO extends JobDAO {
      * @param status A given status.
      * @return A list of all job with given status
      */
+    @Override
     public synchronized Iterator<Job> getAll(JobStatus status) {
         ArgumentNotValid.checkNotNull(status, "JobStatus status");
-        List<Long> idList = DBUtils.selectLongList(
-                DBConnect.getDBConnection(),
-                "SELECT job_id FROM jobs WHERE status = ? "
-                + "ORDER BY job_id", status.ordinal());
-        return new FilterIterator<Long, Job>(idList.iterator()) {
-            public Job filter(Long aLong) {
-                return read(aLong);
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            List<Long> idList = DBUtils.selectLongList(
+                    c,
+                    "SELECT job_id FROM jobs WHERE status = ? "
+                    + "ORDER BY job_id", status.ordinal());
+            List<Job> orderedJobs = new LinkedList<Job>();
+            for (Long jobId : idList) {
+                orderedJobs.add(read(c, jobId));
             }
-        };
+            return orderedJobs.iterator();
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     /**
@@ -540,41 +595,75 @@ public class JobDBDAO extends JobDAO {
      * @throws ArgumentNotValid If the given status is not one of the
      *                          five valid statuses specified in Job.
      */
-    public synchronized Iterator<Long> getAllJobIds(JobStatus status) {
+    @Override
+    public Iterator<Long> getAllJobIds(JobStatus status) {
         ArgumentNotValid.checkNotNull(status, "JobStatus status");
-        List<Long> idList = DBUtils.selectLongList(
-                DBConnect.getDBConnection(),
-                "SELECT job_id FROM jobs WHERE status = ? "
-                + "ORDER BY job_id", status.ordinal());
-        return idList.iterator();
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            List<Long> idList = DBUtils.selectLongList(
+                    c,
+                    "SELECT job_id FROM jobs WHERE status = ? "
+                    + "ORDER BY job_id", status.ordinal());
+            return idList.iterator();
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
+
+   @Override
+   public Iterator<Long> getAllJobIds(
+           JobStatus status,
+           JobPriority priority) {
+       ArgumentNotValid.checkNotNull(status, "JobStatus status");
+       ArgumentNotValid.checkNotNull(priority, "JobPriority priority");
+
+       Connection c = HarvestDBConnection.get();
+       try {
+           List<Long> idList = DBUtils.selectLongList(
+                   c,
+                   "SELECT job_id FROM jobs WHERE status = ? AND priority = ? "
+                   + "ORDER BY job_id", status.ordinal(), priority.ordinal());
+           return idList.iterator();
+       } finally {
+           HarvestDBConnection.release(c);
+       }
+   }
 
     /**
      * Return a list of all jobs.
      *
      * @return A list of all jobs
      */
+    @Override
     public synchronized Iterator<Job> getAll() {
-        List<Long> idList = DBUtils.selectLongList(
-                DBConnect.getDBConnection(),
-                "SELECT job_id FROM jobs ORDER BY job_id");
-        return new FilterIterator<Long, Job>(idList.iterator()) {
-            public Job filter(Long aLong) {
-                return read(aLong);
+        Connection c = HarvestDBConnection.get();
+        try {
+            List<Long> idList = DBUtils.selectLongList(
+                    c, "SELECT job_id FROM jobs ORDER BY job_id");
+            List<Job> orderedJobs = new LinkedList<Job>();
+            for (Long jobId : idList) {
+                orderedJobs.add(read(c, jobId));
             }
-        };
+            return orderedJobs.iterator();
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     /**
      * Return a list of all job_ids .
-     *
      * @return A list of all job_ids
      */
-    public synchronized Iterator<Long> getAllJobIds(){
-        List<Long> idList = DBUtils.selectLongList(
-                DBConnect.getDBConnection(),
-                "SELECT job_id FROM jobs ORDER BY job_id");
-        return idList.iterator();
+    public Iterator<Long> getAllJobIds(){
+        Connection c = HarvestDBConnection.get();
+        try {
+            List<Long> idList = DBUtils.selectLongList(
+                    c, "SELECT job_id FROM jobs ORDER BY job_id");
+            return idList.iterator();
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     /**
@@ -582,7 +671,7 @@ public class JobDBDAO extends JobDAO {
      * for given status and in given order. Is used by getStatusInfo
      * functions in order to share code (and SQL)
      * TODO should also include given harvest run
-     *
+     * @param connection an open connection to the harvestDatabase
      * @param jobStatusCode code for jobstatus, -1 if all
      * @param asc true if it is to be sorted in ascending order,
      *        false if it is to be sorted in descending order
@@ -590,7 +679,8 @@ public class JobDBDAO extends JobDAO {
      * @throws ArgumentNotValid for invalid jobStatusCode
      * @throws IOFailure on trouble getting data from database
      */
-    private List<JobStatusInfo> getStatusInfo(int jobStatusCode, boolean asc) {
+    private List<JobStatusInfo> getStatusInfo(
+            Connection connection, int jobStatusCode, boolean asc) {
         // Validate jobStatusCode
         // Throws ArgumentNotValid if it is an invalid job status
         if (jobStatusCode != JobStatus.ALL_STATUS_CODE) {
@@ -604,19 +694,18 @@ public class JobDBDAO extends JobDAO {
             + " enddate, resubmitted_as_job"
             + " FROM jobs, harvestdefinitions "
             + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ");
-        
+
         if (jobStatusCode != JobStatus.ALL_STATUS_CODE)  {
             sqlBuffer.append(" AND status = ").append(jobStatusCode);
         }
         sqlBuffer.append(" ORDER BY jobs.job_id");
         if (!asc)  { // Assume default is ASCENDING
-            sqlBuffer.append(" " + Constants.DESCENDING_SORT_ORDER);
+            sqlBuffer.append(" " + HarvestStatusQuery.SORT_ORDER.DESC.name());
         }
 
-        Connection dbconnection = DBConnect.getDBConnection();
         PreparedStatement statement = null;
         try {
-            statement = dbconnection.prepareStatement(sqlBuffer.toString());
+            statement = connection.prepareStatement(sqlBuffer.toString());
             ResultSet res = statement.executeQuery();
             return makeJobStatusInfoListFromResultset(res);
         } catch (SQLException e) {
@@ -625,19 +714,7 @@ public class JobDBDAO extends JobDAO {
                            + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
-        } finally {
-            DBUtils.closeStatementIfOpen(statement);
         }
-    }
-
-    /**
-     * Get a list of small and immediately usable status information.
-     *
-     * @return List of JobStatusInfo objects for all jobs.
-     * @throws IOFailure on trouble getting data from database
-     */
-    public List<JobStatusInfo> getStatusInfo() {
-        return getStatusInfo(JobStatus.ALL_STATUS_CODE, true);
     }
 
     /**
@@ -649,97 +726,49 @@ public class JobDBDAO extends JobDAO {
      * @throws ArgumentNotValid for invalid jobStatus
      * @throws IOFailure on trouble getting data from database
      */
+    @Override
     public List<JobStatusInfo> getStatusInfo(JobStatus status) {
         ArgumentNotValid.checkNotNull(status, "status");
-        return getStatusInfo(status.ordinal(), true);
-    }
-
-    /**
-     * Get a list of small and immediately usable status information in given
-     * job id order.
-     *
-     * @param asc True if result must be given in ascending order, false
-     *        if result must be given in descending order
-     * @return List of JobStatusInfo objects for all jobs with given
-     *         job id order
-     * @throws IOFailure on trouble getting data from database
-     */
-    public List<JobStatusInfo> getStatusInfo(boolean asc) {
-        return getStatusInfo(JobStatus.ALL_STATUS_CODE, asc);
+        Connection c = HarvestDBConnection.get();
+        try {
+            return getStatusInfo(c, status.ordinal(), true);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
 
     /**
      * Get a list of small and immediately usable status information for given
      * job status and in given job id order.
      *
-     * @param states The states (one or more) asked for.
-     * @param asc True if result must be given in ascending order, false
-     *        if result must be given in descending order
-     * @return List of JobStatusInfo objects for all jobs with given job status
-     *         and job id order
-     * @throws ArgumentNotValid for invalid jobStatusCode
+     * @param query the user query
      * @throws IOFailure on trouble getting data from database
      */
-    public List<JobStatusInfo> getStatusInfo(boolean asc, JobStatus ...states) {
-        ArgumentNotValid.checkNotNull(states, "states");
-        if (states.length == 0) {
-            return getStatusInfo(asc);
-        } else {
-            Set<Integer> codes = new HashSet<Integer>();
-            for (JobStatus status: states) {
-                codes.add(status.ordinal());
-            }
-            return getStatusInfo(codes, asc);
-        }
-    }
-    
-    /**
-     * Private method to retrieve all JobStatusInfo objects which have 
-     * a JobStatus for which their ordinal value belongs to the codes set.
-     * The list is ordered after JobID, and the sortorder can be either 
-     * ascending or descending.
-     *  @param codes A set of integers representing ordinal values for
-     *              JobStatus objects.
-     * @param asc if true, the sortorder is asscending; otherwise the sortorder
-     * is desscending
-     * @return a list of JobStatusInfo objects.
-     */
-    private List<JobStatusInfo> getStatusInfo(Set<Integer> codes, boolean asc) {
-        StringBuffer sqlBuffer = new StringBuffer(
-                "SELECT jobs.job_id, status, jobs.harvest_id, "
-            + "harvestdefinitions.name, harvest_num, harvest_errors,"
-            + " upload_errors, orderxml, num_configs,"
-            + " submitteddate, startdate, enddate, resubmitted_as_job"
-            + " FROM jobs, harvestdefinitions "
-            + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ");
-        if (!codes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))  {
-            if (codes.size() == 1) {
-                Integer theWantedStatus = codes.iterator().next();
-                sqlBuffer.append(" AND status = ")
-                        .append(theWantedStatus.intValue());
-            } else {
-                Iterator<Integer> it = codes.iterator();
-                Integer nextInt = it.next();
-                StringBuffer res = new StringBuffer("AND (status = " + nextInt);
-                while (it.hasNext()) {
-                    nextInt = it.next();
-                    res.append(" OR status = ").append(nextInt);
-                }
-                res.append(") ");
-                sqlBuffer.append(res);
-            }
-        }
-        sqlBuffer.append(" ORDER BY jobs.job_id");
-        if (!asc)  { // Assume default is ASCENDING
-            sqlBuffer.append(" " + Constants.DESCENDING_SORT_ORDER);
-        }
-        
-        Connection c = DBConnect.getDBConnection();
+    @Override
+    public HarvestStatus getStatusInfo(HarvestStatusQuery query) {
+        log.debug("Constructing Harveststatus based on given query.");
         PreparedStatement s = null;
+        Connection c = HarvestDBConnection.get();
+
         try {
-            s = c.prepareStatement(sqlBuffer.toString());
+         // Obtain total count without limit
+            // NB this will be a performance bottleneck if the table gets big
+            long totalRowsCount = 0;
+
+            s = buildSqlQuery(query, true).getPopulatedStatement(c);
             ResultSet res = s.executeQuery();
-            return makeJobStatusInfoListFromResultset(res);
+            res.next();
+            totalRowsCount = res.getLong(1);
+
+            s = buildSqlQuery(query, false).getPopulatedStatement(c);
+            res = s.executeQuery();
+            List<JobStatusInfo> jobs = makeJobStatusInfoListFromResultset(res);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Harveststatus constructed based on given query.");
+            }
+            return new HarvestStatus(totalRowsCount, jobs);
+
         } catch (SQLException e) {
             String message
                        = "SQL error asking for job status list in database"
@@ -747,25 +776,10 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
         }
     }
 
-
-    /**
-     * Get a list of small and immediately usable status information for
-     * a given harvest run.
-     *
-     * @param harvestId The ID of the harvest
-     * @param numEvent The harvest run number
-     *
-     * @return List of JobStatusInfo objects for all jobs for a given harvest
-     * ID.
-     * @throws IOFailure on trouble getting data from database
-     */
-    public List<JobStatusInfo> getStatusInfo(long harvestId, long numEvent) {
-        return getStatusInfo(harvestId, numEvent, true, getSetWithAllStates());
-    }
 
     /**
      * Calculate all jobIDs to use for duplication reduction.
@@ -789,45 +803,52 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized List<Long> getJobIDsForDuplicateReduction(long jobID)
             throws UnknownID {
-        if (!exists(jobID)) {
-            throw new UnknownID("Job ID '" + jobID
-                                + "' does not exist in database");
-        }
 
+        Connection connection = HarvestDBConnection.get();
         List<Long> jobs;
         //Select the previous harvest from the same harvestdefinition
-        Connection connection = DBConnect.getDBConnection();
-        jobs = DBUtils.selectLongList(
-                connection,
-                "SELECT jobs.job_id FROM jobs, jobs AS original_jobs"
-                + " WHERE original_jobs.job_id=?"
-                + " AND jobs.harvest_id=original_jobs.harvest_id"
-                + " AND jobs.harvest_num=original_jobs.harvest_num-1",
-                jobID);
-        List<Long> harvestDefinitions = getPreviousFullHarvests(jobID);
-        if (!harvestDefinitions.isEmpty()) {
-            //Select all jobs from a given list of harvest definitions
-            jobs.addAll(DBUtils.selectLongList(
+        try {
+            if (!exists(connection, jobID)) {
+                throw new UnknownID("Job ID '" + jobID
+                                    + "' does not exist in database");
+            }
+
+            jobs = DBUtils.selectLongList(
                     connection,
-                    "SELECT jobs.job_id FROM jobs"
-                    + " WHERE jobs.harvest_id IN ("
-                    + StringUtils.conjoin(",", harvestDefinitions)
-                    + ")"));
-        }
+                    "SELECT jobs.job_id FROM jobs, jobs AS original_jobs"
+                    + " WHERE original_jobs.job_id=?"
+                    + " AND jobs.harvest_id=original_jobs.harvest_id"
+                    + " AND jobs.harvest_num=original_jobs.harvest_num-1",
+                    jobID);
+            List<Long> harvestDefinitions =
+                getPreviousFullHarvests(connection, jobID);
+            if (!harvestDefinitions.isEmpty()) {
+                //Select all jobs from a given list of harvest definitions
+                jobs.addAll(DBUtils.selectLongList(
+                        connection,
+                        "SELECT jobs.job_id FROM jobs"
+                        + " WHERE jobs.harvest_id IN ("
+                        + StringUtils.conjoin(",", harvestDefinitions)
+                        + ")"));
+            }
         return jobs;
+        } finally {
+            HarvestDBConnection.release(connection);
+        }
     }
 
 
     /**
      * Find the harvest definition ids from this chain of snapshot harvests and
      * the previous chain of snapshot harvests.
+     * @param connection an open connection to the harvestDatabase
      * @param jobID The ID of the job
      * @return A (possibly empty) list of harvest definition ids
      */
-    private List<Long> getPreviousFullHarvests(long jobID) {
+    private List<Long> getPreviousFullHarvests(
+            Connection connection, long jobID) {
         List<Long> results = new ArrayList<Long>();
         //Find the jobs' fullharvest id
-        Connection connection = DBConnect.getDBConnection();
         Long thisHarvest = DBUtils.selectFirstLongValueIfAny(
                 connection,
                 "SELECT jobs.harvest_id FROM jobs, fullharvests"
@@ -842,12 +863,12 @@ public class JobDBDAO extends JobDAO {
 
         //Follow the chain of orginating IDs back
         for (Long originatingHarvest = thisHarvest;
-             originatingHarvest != null;
-             originatingHarvest = DBUtils.selectFirstLongValueIfAny(
-                     connection,
-                     "SELECT previoushd FROM fullharvests"
-                     + " WHERE fullharvests.harvest_id=?",
-                     originatingHarvest)) {
+        originatingHarvest != null;
+        originatingHarvest = DBUtils.selectFirstLongValueIfAny(
+                connection,
+                "SELECT previoushd FROM fullharvests"
+                + " WHERE fullharvests.harvest_id=?",
+                originatingHarvest)) {
             if (!originatingHarvest.equals(thisHarvest)) {
                 results.add(originatingHarvest);
             }
@@ -865,18 +886,19 @@ public class JobDBDAO extends JobDAO {
                 + " FROM fullharvests, harvestdefinitions,"
                 + "  harvestdefinitions AS currenthd"
                 + " WHERE currenthd.harvest_id=?"
-                + " AND fullharvests.harvest_id=harvestdefinitions.harvest_id"
+                + " AND fullharvests.harvest_id"
+                + "=harvestdefinitions.harvest_id"
                 + " AND harvestdefinitions.submitted<currenthd.submitted"
                 + " ORDER BY harvestdefinitions.submitted "
-                + Constants.DESCENDING_SORT_ORDER, firstHarvest);
+                + HarvestStatusQuery.SORT_ORDER.DESC.name(), firstHarvest);
         //Follow the chain of orginating IDs back
         for (Long originatingHarvest = olderHarvest;
-             originatingHarvest != null;
-             originatingHarvest = DBUtils.selectFirstLongValueIfAny(
-                     connection,
-                     "SELECT previoushd FROM fullharvests"
-                     + " WHERE fullharvests.harvest_id=?",
-                     originatingHarvest)) {
+        originatingHarvest != null;
+        originatingHarvest = DBUtils.selectFirstLongValueIfAny(
+                connection,
+                "SELECT previoushd FROM fullharvests"
+                + " WHERE fullharvests.harvest_id=?",
+                originatingHarvest)) {
             results.add(originatingHarvest);
         }
         return results;
@@ -887,20 +909,23 @@ public class JobDBDAO extends JobDAO {
      *
      * @return Number of jobs in 'jobs' table
      */
-    public synchronized int getCountJobs() {
-        return DBUtils.selectIntValue(DBConnect.getDBConnection(),
-                                      "SELECT COUNT(*) FROM jobs");
+    @Override
+    public int getCountJobs() {
+        Connection c = HarvestDBConnection.get();
+        try {
+            return DBUtils.selectIntValue(c, "SELECT COUNT(*) FROM jobs");
+        } finally {
+            HarvestDBConnection.release(c);
+        }
     }
-    
-    /**
-     * @see JobDAO#rescheduleJob(long)
-     */
+
+    @Override
     public synchronized long rescheduleJob(long oldJobID) {
-        Connection dbconnection = DBConnect.getDBConnection();
-        long newJobID = generateNextID();
+        Connection connection = HarvestDBConnection.get();
+        long newJobID = generateNextID(connection);
         PreparedStatement statement = null;
         try {
-            statement = dbconnection.prepareStatement(
+            statement = connection.prepareStatement(
                     "SELECT status FROM jobs WHERE job_id = ?");
             statement.setLong(1, oldJobID);
             ResultSet res = statement.executeQuery();
@@ -910,33 +935,45 @@ public class JobDBDAO extends JobDAO {
             }
             final JobStatus currentJobStatus
                 = JobStatus.fromOrdinal(res.getInt(1));
-            if (currentJobStatus != JobStatus.SUBMITTED 
+            if (currentJobStatus != JobStatus.SUBMITTED
                     && currentJobStatus != JobStatus.FAILED) {
                         throw new IllegalState("Job " + oldJobID
                         + " is not ready to be copied.");
             }
+            
 
             // Now do the actual copying.
             // Note that startdate, and enddate is not copied.
             // They must be null in JobStatus NEW.
-            dbconnection.setAutoCommit(false);
-            statement = dbconnection.prepareStatement("INSERT INTO jobs "
+            statement.close();
+            connection.setAutoCommit(false);
+            
+            statement = connection.prepareStatement("INSERT INTO jobs "
                                    + " (job_id, harvest_id, priority, status,"
                                    + "  forcemaxcount, forcemaxbytes, orderxml,"
                                    + "  orderxmldoc, seedlist, harvest_num,"
-                                   + "  num_configs, edition) "
+                                   + "  num_configs, edition, continuationof) "
                                    + " SELECT ?, harvest_id, priority, ?,"
                                    + "  forcemaxcount, forcemaxbytes, orderxml,"
                                    + "  orderxmldoc, seedlist, harvest_num,"
-                                   + " num_configs, ?"
+                                   + " num_configs, ?, ?"
                                    + " FROM jobs WHERE job_id = ?");
             statement.setLong(1, newJobID);
             statement.setLong(2, JobStatus.NEW.ordinal());
             long initialEdition = 1;
             statement.setLong(3, initialEdition);
-            statement.setLong(4, oldJobID);
+            Long continuationOf = null;
+            // In case we want to try to continue using the Heritrix recover log
+            if (currentJobStatus == JobStatus.FAILED) {
+                continuationOf = oldJobID;
+            } 
+            DBUtils.setLongMaybeNull(statement, 4, continuationOf);
+
+            statement.setLong(5, oldJobID);
+
             statement.executeUpdate();
-            statement = dbconnection.prepareStatement("INSERT INTO job_configs "
+            statement.close();
+            statement = connection.prepareStatement("INSERT INTO job_configs "
                                    + "( job_id, config_id ) "
                                    + "SELECT ?, config_id "
                                    + "  FROM job_configs"
@@ -944,114 +981,30 @@ public class JobDBDAO extends JobDAO {
             statement.setLong(1, newJobID);
             statement.setLong(2, oldJobID);
             statement.executeUpdate();
-            statement = dbconnection.prepareStatement(
+            statement.close();
+            statement = connection.prepareStatement(
                     "UPDATE jobs SET status = ?, resubmitted_as_job = ? "
                   + " WHERE job_id = ?");
             statement.setInt(1, JobStatus.RESUBMITTED.ordinal());
             statement.setLong(2, newJobID);
             statement.setLong(3, oldJobID);
             statement.executeUpdate();
-            dbconnection.commit();
+            connection.commit();
         } catch (SQLException e) {
-            String message = "SQL error rescheduling job in database"
+            String message = "SQL error rescheduling job #" +  oldJobID 
+                    + " in database"
                 + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
             DBUtils.closeStatementIfOpen(statement);
-            DBUtils.rollbackIfNeeded(dbconnection, "resubmit job", oldJobID);
+            DBUtils.rollbackIfNeeded(connection, "resubmit job", oldJobID);
+            HarvestDBConnection.release(connection);
         }
+        log.info("Job # " + oldJobID + " successfully as job # " + newJobID);
         return newJobID;
     }
-    
-    /**
-     * @see JobDAO#getStatusInfo(long, long, boolean)
-     */
-    public List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
-            boolean asc) {
-        ArgumentNotValid.checkNotNegative(harvestId, "long harvestId");
-        ArgumentNotValid.checkNotNegative(harvestNum, "long harvestNum");
-       
-        return getStatusInfo(harvestId, harvestNum, asc, getSetWithAllStates());
-    }
-    
-    /** 
-     * Helper method that returns a set with all JobStatus objects.
-     * 
-     * @return a set with all JobStatus objects.
-     */
-    private Set<JobStatus> getSetWithAllStates() {
-        Set<JobStatus>statusSet = new HashSet<JobStatus>();
-        statusSet.addAll(Arrays.asList(JobStatus.values()));
-        return statusSet;
-    }
-    
-    
-    /**
-     * Get statusInfo.
-     * @see JobDAO#getStatusInfo(long, long, boolean, Set)
-     */
-    public List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
-            boolean asc, Set<JobStatus> selectedStatusSet) {
-        ArgumentNotValid.checkNotNegative(harvestId, "harvestId");
-        ArgumentNotValid.checkNotNegative(harvestNum, "harvestNum");
-        ArgumentNotValid.checkNotNullOrEmpty(selectedStatusSet, 
-                "selectedStatusSet");
-        
-        String ascdescString = (asc)? Constants.ASCENDING_SORT_ORDER
-                    : Constants.DESCENDING_SORT_ORDER;
-        StringBuffer statusSortBuffer = new StringBuffer();
-        
-        boolean selectAllJobStates = (selectedStatusSet.size() 
-                    == JobStatus.values().length);
-        
-        if (!selectAllJobStates) {
-           if (selectedStatusSet.size() == 1) {
-               int theWantedStatus = selectedStatusSet.iterator()
-                   .next().ordinal();
-               statusSortBuffer.append(" AND status = ")
-                       .append(theWantedStatus);
-           } else {
-               Iterator<JobStatus> it = selectedStatusSet.iterator();
-               int nextInt = it.next().ordinal();
-               StringBuffer res = new StringBuffer("AND (status = " + nextInt);
-               while (it.hasNext()) {
-                   nextInt = it.next().ordinal();
-                   res.append(" OR status = ").append(nextInt);
-               }
-               res.append(") ");
-               statusSortBuffer.append(res);
-           }
-        }
-   
-        Connection dbconnection = DBConnect.getDBConnection();
-        PreparedStatement statement = null;
-        try {
-            statement = dbconnection.prepareStatement(
-                    "SELECT jobs.job_id, status, jobs.harvest_id, "
-                    + "harvestdefinitions.name, harvest_num, harvest_errors,"
-                    + " upload_errors, orderxml, num_configs, submitteddate,"
-                    +   " startdate, enddate, resubmitted_as_job"
-                    + " FROM jobs, harvestdefinitions "
-                    + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id "
-                    + " AND jobs.harvest_id = "
-                    + harvestId
-                    + " AND jobs.harvest_num = "
-                    + harvestNum
-                    + statusSortBuffer.toString()
-                    + " ORDER BY jobs.job_id " + ascdescString);
-            ResultSet res = statement.executeQuery();
-            return makeJobStatusInfoListFromResultset(res);
-        } catch (SQLException e) {
-            String message = "SQL error asking for job status list in database"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-        } finally {
-            DBUtils.closeStatementIfOpen(statement);
-        }
-    }
-    
+
     /** Helper-method that constructs a list of JobStatusInfo objects
      * from the given resultset.
      * @param res a given resultset
@@ -1067,12 +1020,12 @@ public class JobDBDAO extends JobDAO {
             final long jobId = res.getLong(1);
             joblist.add(
                     new JobStatusInfo(
-                            jobId, 
+                            jobId,
                             JobStatus.fromOrdinal(res.getInt(2)),
                             res.getLong(3), res.getString(4), res.getInt(5),
                             res.getString(6), res.getString(7),
                             res.getString(8), res.getInt(9),
-                            
+
                             DBUtils.getDateMaybeNull(res, 10),
                             DBUtils.getDateMaybeNull(res, 11),
                             DBUtils.getDateMaybeNull(res, 12),
@@ -1081,4 +1034,228 @@ public class JobDBDAO extends JobDAO {
         }
         return joblist;
     }
+
+    /**
+      * Internal utility class to build a SQL query using a prepared statement.
+      */
+    private class HarvestStatusQueryBuilder {
+        /** The sql string. */
+        private String sqlString;
+        // from java.sql.Types
+        /** list of parameter classes. */
+        private LinkedList<Class<?>> paramClasses = new LinkedList<Class<?>>();
+        /** list of parameter values. */
+        private LinkedList<Object> paramValues = new LinkedList<Object>();
+        /**
+         * Constructor.
+         */
+        HarvestStatusQueryBuilder() {
+            super();
+        }
+
+        /**
+         * @param sqlString the sqlString to set
+         */
+        void setSqlString(String sqlString) {
+            this.sqlString = sqlString;
+        }
+        
+        /**
+         * Add the given class and given value to the list of paramClasses and 
+         * paramValues respectively.
+         * @param clazz a given class.
+         * @param value a given value
+         */
+        void addParameter(Class<?> clazz, Object value) {
+            paramClasses.addLast(clazz);
+            paramValues.addLast(value);
+        }
+        
+        /**
+         * Prepare a statement for the database that uses
+         * the sqlString, and the paramClasses, and paramValues.
+         * Only Integer, Long, String, and Date values accepted.
+         * @param c an Open connection to the harvestDatabase
+         * @return the prepared statement 
+         * @throws SQLException If unable to prepare the statement
+         * @throws UnknownID If one of the parameter classes is unexpected 
+         */
+        PreparedStatement getPopulatedStatement(Connection c)
+        throws SQLException {
+            PreparedStatement stm = c.prepareStatement(sqlString);
+
+            Iterator<Class<?>> pClasses = paramClasses.iterator();
+            Iterator<Object> pValues = paramValues.iterator();
+            int pIndex = 0;
+            while (pClasses.hasNext()) {
+                pIndex++;
+                Class<?> pClass = pClasses.next();
+                Object pVal = pValues.next();
+
+                if (Integer.class.equals(pClass)) {
+                    stm.setInt(pIndex, (Integer) pVal);
+                } else if (Long.class.equals(pClass)) {
+                    stm.setLong(pIndex, (Long) pVal);
+                } else if (String.class.equals(pClass)) {
+                    stm.setString(pIndex, (String) pVal);
+                } else if (java.sql.Date.class.equals(pClass)) {
+                    stm.setDate(pIndex, (java.sql.Date) pVal);
+                } else {
+                    throw new UnknownID("Unexpected parameter class " + pClass);
+                }
+            }
+            return stm;
+        }
+
+    }
+
+    /**
+     * Builds a query to fetch jobs according to selection criteria.
+     * @param query the selection criteria.
+     * @param count build a count query instead of selecting columns.
+     * @return the proper SQL query.
+     */
+    private HarvestStatusQueryBuilder buildSqlQuery(
+            HarvestStatusQuery query, boolean count) {
+
+        HarvestStatusQueryBuilder sq = new HarvestStatusQueryBuilder();
+        StringBuffer sql = new StringBuffer("SELECT");
+        if (count) {
+            sql.append(" count(*)");
+        } else {
+            sql.append(" jobs.job_id, status, jobs.harvest_id,");
+            sql.append(" harvestdefinitions.name, harvest_num,");
+            sql.append(" harvest_errors, upload_errors, orderxml,");
+            sql.append(" num_configs, submitteddate, startdate, enddate,");
+            sql.append(" resubmitted_as_job");
+        }
+
+        sql.append(" FROM jobs, harvestdefinitions ");
+        sql.append(" WHERE harvestdefinitions.harvest_id = jobs.harvest_id ");
+
+        JobStatus[] jobStatuses = query.getSelectedJobStatuses();
+        if (jobStatuses.length > 0) {
+            if (jobStatuses.length == 1) {
+                int statusOrdinal = jobStatuses[0].ordinal();
+                sql.append(" AND status = ?");
+                sq.addParameter(Integer.class, statusOrdinal);
+            } else {
+                sql.append("AND (status = ");
+                sql.append(jobStatuses[0].ordinal());
+                for (int i = 1; i < jobStatuses.length; i++) {
+                    sql.append(" OR status = ?");
+                    sq.addParameter(Integer.class, jobStatuses[i].ordinal());
+                }
+                sql.append(")");
+            }
+        }
+
+        String harvestName = query.getHarvestName();
+        boolean caseSensitiveHarvestName = query.getCaseSensitiveHarvestName();
+        if (!harvestName.isEmpty()) {
+            if(caseSensitiveHarvestName) {
+                     if (harvestName.indexOf(
+                         HarvestStatusQuery.HARVEST_NAME_WILDCARD) == -1) {
+                         // No wildcard, exact match
+                         sql.append(" AND harvestdefinitions.name = ?");
+                         sq.addParameter(String.class, harvestName);
+                     } else {
+                         String harvestNamePattern =
+                             harvestName.replaceAll("\\*", "%");
+                             sql.append(" AND harvestdefinitions.name LIKE ?");
+                         sq.addParameter(String.class, harvestNamePattern);
+                     }
+            } else {
+                harvestName = harvestName.toUpperCase();
+                if (harvestName.indexOf(
+                        HarvestStatusQuery.HARVEST_NAME_WILDCARD) == -1) {
+                        // No wildcard, exact match
+                        sql.append(" AND UPPER(harvestdefinitions.name) = ?");
+                        sq.addParameter(String.class, harvestName);
+                    } else {
+                        String harvestNamePattern =
+                                            harvestName.replaceAll("\\*", "%");
+                        sql.append(" AND UPPER(harvestdefinitions.name) " 
+                                            + " LIKE ?");
+                        sq.addParameter(String.class, harvestNamePattern);
+                    }
+            }
+        }
+
+        Long harvestRun = query.getHarvestRunNumber();
+        if (harvestRun != null) {
+            sql.append(" AND jobs.harvest_num = ?");
+            sq.addParameter(Long.class, harvestRun);
+        }
+
+        Long harvestId = query.getHarvestId();
+        if (harvestId != null) {
+            sql.append(" AND harvestdefinitions.harvest_id = ?");
+            sq.addParameter(Long.class, harvestId);
+        }
+
+        long startDate = query.getStartDate();
+        if (startDate != HarvestStatusQuery.DATE_NONE) {
+            sql.append(" AND startdate >= ?");
+            sq.addParameter(java.sql.Date.class, new java.sql.Date(startDate));
+        }
+
+        long endDate = query.getEndDate();
+        if (endDate != HarvestStatusQuery.DATE_NONE) {
+            sql.append(" AND enddate < ?");
+            // end date must be set +1 day at midnight
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(endDate);
+            cal.roll(Calendar.DAY_OF_YEAR, 1);
+            sq.addParameter(
+                    java.sql.Date.class,
+                    new java.sql.Date(cal.getTimeInMillis()));
+        }
+
+        if (!count) {
+            sql.append(" ORDER BY jobs.job_id");
+            if (!query.isSortAscending()) {
+                sql.append(" " + SORT_ORDER.DESC.name());
+            } else {
+                sql.append(" " + SORT_ORDER.ASC.name());
+            }
+
+            long pagesize = query.getPageSize();
+            if (pagesize != HarvestStatusQuery.PAGE_SIZE_NONE) {
+                sql.append(" "
+                        + DBSpecifics.getInstance()
+                                .getOrderByLimitAndOffsetSubClause(
+                                        pagesize,
+                                        (query.getStartPageIndex() - 1)
+                                                * pagesize));
+            }
+        }
+
+        sq.setSqlString(sql.toString());
+        return sq;
+    }
+
+    /**
+     * Get Jobstatus for the job with the given id.
+     * @param jobID A given Jobid
+     * @return the Jobstatus for the job with the given id.
+     * @throws UnknownID if no job exists with id jobID
+     */
+    public JobStatus getJobStatus(Long jobID) {
+        ArgumentNotValid.checkNotNull(jobID, "Long jobID");
+
+        Connection c = HarvestDBConnection.get();
+        try {
+            Integer statusAsInteger = DBUtils.selectIntValue(
+                    c,
+                    "SELECT status FROM jobs WHERE job_id = ?", jobID);
+            if (statusAsInteger == null) {
+                throw new UnknownID("No known job with id=" + jobID);
+            }
+            return JobStatus.fromOrdinal(statusAsInteger);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
 }

@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -120,7 +122,7 @@ dk.netarkivet.common.webinterface.HTMLUtils"
 	    <%
 	    for (String filename : missingFiles) {
 	        //Print a row for the file with info
-	        BitpreserveFileState.printFileName(out, filename, rowCount, response.getLocale());
+	        BitpreserveFileState.printFileName(out, filename, rowCount, response.getLocale());    //This prints the  |filename| Get info| line
 	        // If info for file exists, output it
 	        if (fileInfo.containsKey(filename)) {
 	            %>
@@ -139,11 +141,11 @@ dk.netarkivet.common.webinterface.HTMLUtils"
 	                // If the file is indeed missing
 	                if (fs.getReplicaChecksum(bitarchive).isEmpty()) {
 	                    // Give opportunity to reupload the file.
-	                    %></td><td><%
+	                    %></td><td><fmt:message key="add.to.replica"/>&nbsp;<%=bitarchive.getName()%><%
 	                    out.println(BitpreserveFileState.makeCheckbox(
 	                            Constants.ADD_COMMAND,
 	                            bitarchive.getName(), filename));
-	                    %><fmt:message key="add.to.archive"/><%
+	                    %><%
 	                    uploadableFiles++;
 	                } // if (fs.getBitarchiveChecksum(bitarchive).isEmpty())
 	            } // if (fs != null)

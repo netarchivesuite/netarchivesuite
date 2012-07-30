@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,6 +33,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.indexserver.MockupMultiFileBasedCache;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -40,13 +43,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
-import dk.netarkivet.testutils.preconfigured.MockupJMS;
-import dk.netarkivet.testutils.preconfigured.MockupMultiFileBasedCache;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
-import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import dk.netarkivet.testutils.preconfigured.*;
 
 public class IndexRequestServerTester extends TestCase {
     private static final Set<Long> JOB_SET = new HashSet<Long>(Arrays.asList(
@@ -79,6 +76,7 @@ public class IndexRequestServerTester extends TestCase {
         if (server != null) {
             server.close();
         }
+        
         mmfbc.tearDown();
         pse.tearDown();
         pss.tearDown();
@@ -107,6 +105,7 @@ public class IndexRequestServerTester extends TestCase {
         server = IndexRequestServer.getInstance();
         mmfbc.setMode(MockupMultiFileBasedCache.Mode.FAILING);
         server.setHandler(RequestType.CDX, mmfbc);
+        server.start();
         try {
             server.visit((IndexRequestMessage) null);
             fail("Should throw ArgumentNotValid on null");
@@ -115,7 +114,7 @@ public class IndexRequestServerTester extends TestCase {
         }
 
         IndexRequestMessage irMsg = new IndexRequestMessage(
-                RequestType.CDX, JOB_SET);
+                RequestType.CDX, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irMsg, "irMsg1");
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnectionMockupMQ conn
@@ -139,7 +138,7 @@ public class IndexRequestServerTester extends TestCase {
                      irMsg.getID(), msg.getID());
         assertFalse("Should not be OK", msg.isOk());
 
-        irMsg = new IndexRequestMessage(RequestType.DEDUP_CRAWL_LOG, JOB_SET);
+        irMsg = new IndexRequestMessage(RequestType.DEDUP_CRAWL_LOG, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irMsg, "irMsg2");
 
         server.visit(irMsg);
@@ -158,7 +157,7 @@ public class IndexRequestServerTester extends TestCase {
                      irMsg.getID(), msg.getID());
         assertFalse("Should not be OK", msg.isOk());
 
-        irMsg = new IndexRequestMessage(RequestType.DEDUP_CRAWL_LOG, JOB_SET);
+        irMsg = new IndexRequestMessage(RequestType.DEDUP_CRAWL_LOG, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irMsg, "irMsg3");
 
     }
@@ -182,9 +181,10 @@ public class IndexRequestServerTester extends TestCase {
         mmfbc.setMode(MockupMultiFileBasedCache.Mode.REPLYING);
         server = IndexRequestServer.getInstance();
         server.setHandler(t, mmfbc);
+        server.start();
 
         //A message to visit with
-        IndexRequestMessage irm = new IndexRequestMessage(t, JOB_SET);
+        IndexRequestMessage irm = new IndexRequestMessage(t, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irm, "irm-1");
 
         //Listen for replies
@@ -229,12 +229,19 @@ public class IndexRequestServerTester extends TestCase {
 
         Set<Long> longFromExtractFile = new HashSet<Long>();
         FileInputStream fis = new FileInputStream(extractFile);
+        try {
         for (int i = 0; i < JOB_SET.size(); i++) {
-            longFromExtractFile.add(new Long(fis.read()));
+            longFromExtractFile.add(Long.valueOf(fis.read()));
         }
         assertEquals("End of file expected after this",
                      -1, fis.read());
-
+        } catch (IOException e) {
+            fail("Exception thrown: " + e);
+        } finally {
+            if (fis != null) {
+                fis.close();
+            }
+        }
         assertTrue(
                 "JOBSET, and the contents of extractfile should be identical",
                 longFromExtractFile.containsAll(JOB_SET));
@@ -251,12 +258,15 @@ public class IndexRequestServerTester extends TestCase {
      */
     public void testIndexServerListener() throws InterruptedException {
         //Start server and set a handler
+    	
         server = IndexRequestServer.getInstance();
         server.setHandler(RequestType.CDX, mmfbc);
+        server.start();
+        Thread.sleep(200); // necessary for the unittest to pass 
 
         //Send OK message
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
-                                                          JOB_SET);
+                                                          JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irm, "ID-0");
         JMSConnectionMockupMQ conn
                 = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
@@ -269,7 +279,7 @@ public class IndexRequestServerTester extends TestCase {
         assertHandlerCalledWithParameter(mmfbc);
 
         //Send not-OK message
-        irm = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+        irm = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
         JMSConnectionMockupMQ.updateMsgID(irm, "ID-1");
         irm.setNotOk("Not OK");
         conn.send(irm);
@@ -310,8 +320,8 @@ public class IndexRequestServerTester extends TestCase {
 
         //A message to visit with
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
-                                                          JOB_SET);
-
+                                                          JOB_SET, null);
+        JMSConnectionMockupMQ.updateMsgID(irm, "dummyID");
         //Execute visit
         server.visit(irm);
         JMSConnectionMockupMQ conn
@@ -329,7 +339,8 @@ public class IndexRequestServerTester extends TestCase {
         server.setHandler(RequestType.CDX, mjic2);
 
         //Execute new visit
-        irm = new IndexRequestMessage(RequestType.CDX, JOB_SET);
+        irm = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
+        JMSConnectionMockupMQ.updateMsgID(irm, "dummyID");
         server.visit(irm);
         conn.waitForConcurrentTasksToFinish();
         //Give a little time to reply
@@ -348,13 +359,15 @@ public class IndexRequestServerTester extends TestCase {
         mmfbc.setMode(MockupMultiFileBasedCache.Mode.WAITING);
         server = IndexRequestServer.getInstance();
         server.setHandler(RequestType.CDX, mmfbc);
+        server.start();
+        Thread.sleep(200); // necessary for the unittest to pass 
 
         //A message to visit with
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
-                                                          JOB_SET);
+                                                          JOB_SET, null);
         //Another message to visit with
         IndexRequestMessage irm2 = new IndexRequestMessage(RequestType.CDX,
-                                                           JOB_SET2);
+                                                           JOB_SET2, null);
 
         //Listen for replies
         GenericMessageListener listener = new GenericMessageListener();
@@ -386,6 +399,4 @@ public class IndexRequestServerTester extends TestCase {
         assertEquals("Handler should be called with right parameter",
                      JOB_SET, mjic.cacheParameter);
     }
-
-
 }

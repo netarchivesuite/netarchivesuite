@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -22,13 +24,12 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import junit.framework.TestCase;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import junit.framework.TestCase;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Tests an hourly frequency.

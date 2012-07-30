@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,7 +32,6 @@ import java.util.ArrayList;
 import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -41,6 +42,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -109,7 +111,8 @@ public class HarvesterMessageHandlerTester extends TestCase {
         Job job = TestInfo.getJob();
         try {
             tmh.visit(new DoOneCrawlMessage(job, Channels.getTheRepos(),
-                                            new ArrayList<MetadataEntry>()));
+                    new HarvestDefinitionInfo("test", "test", "test"),
+                    new ArrayList<MetadataEntry>()));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected

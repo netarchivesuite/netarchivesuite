@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,11 +28,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.common.webinterface.GUIWebServerTester;
 import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
-
-//import dk.netarkivet.common.webinterface.GUIWebServerTester;
-//import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
 
 /**
  * 
@@ -52,7 +50,7 @@ public class HarvesterDataModelTesterSuite {
         suite.addTestSuite(AliasInfoTester.class);
         suite.addTestSuite(ConstantsTester.class);
         suite.addTestSuite(DailyFrequencyTester.class);
-        suite.addTestSuite(DBConnectTester.class);
+        suite.addTestSuite(HarvestDBConnectionTester.class);
         suite.addTestSuite(DerbySpecificsTester.class);
         suite.addTestSuite(DomainConfigurationTester.class);
         suite.addTestSuite(DomainDAOTester.class);
@@ -64,8 +62,6 @@ public class HarvesterDataModelTesterSuite {
         suite.addTestSuite(FullHarvestTester.class);
         suite.addTestSuite(GlobalCrawlerTrapListTester.class);
         suite.addTestSuite(GlobalCrawlerTrapListDBDAOTester.class  );
-        // TODO  move elsewhere
-        suite.addTestSuite(GUIWebServerTester.class);
         suite.addTestSuite(HarvestDefinitionDAOTester.class);
         suite.addTestSuite(HarvestDefinitionGUITester.class);
         suite.addTestSuite(HarvestDefinitionTester.class);
@@ -81,6 +77,7 @@ public class HarvesterDataModelTesterSuite {
         suite.addTestSuite(NumberUtilsTester.class);
         suite.addTestSuite(PartialHarvestTester.class);
         suite.addTestSuite(RepeatingScheduleTester.class);
+        suite.addTestSuite(RunningJobsInfoDAOTester.class);
         suite.addTestSuite(ScheduleDAOTester.class);
         suite.addTestSuite(ScheduleDBDAOTester.class);
         suite.addTestSuite(ScheduleTester.class);
@@ -89,6 +86,7 @@ public class HarvesterDataModelTesterSuite {
         suite.addTestSuite(TemplateDAOTester.class);
         suite.addTestSuite(TemplateDAOTesterAlternate.class);
         suite.addTestSuite(TimedScheduleTester.class);
+        suite.addTestSuite(TimeUnitTester.class);
         suite.addTestSuite(TLDInfoTester.class);
         suite.addTestSuite(WeeklyFrequencyTester.class);
         suite.addTestSuite(SeedListTester.class);

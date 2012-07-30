@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -25,28 +27,26 @@ package dk.netarkivet.archive.indexserver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.MMapDirectory;
 
-import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.AllDocsCollector;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.StringAsserts;
-
 
 /**
  * Unit test(s) for the DedupCrawlLogIndexCache class.
@@ -98,7 +98,6 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         
         DedupCrawlLogIndexCache cache = new DedupCrawlLogIndexCache();
         File resultFile = cache.getCacheFile(files.keySet());
-        setDummyCDXCache(cache);
 
         cache.combine(files);
 
@@ -108,7 +107,10 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
                 new File(resultFile.getAbsolutePath().substring(0,
                         resultFile.getAbsolutePath().length() - 4)).exists());
         File unzipDir = new File(TestInfo.WORKING_DIR, "luceneindex");
-        unzipDir.mkdir();
+        if (!unzipDir.mkdir()) {
+            fail("Unable to create unzipDir '" + unzipDir.getAbsolutePath() 
+                    + "' for luceneindex: ");
+        }
         File[] resultFiles = resultFile.listFiles();
         for (File f : resultFiles) {
             if (f.getName().endsWith(".gz")) {
@@ -118,18 +120,32 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
                 in.close();
             }
         }
-        String indexName = unzipDir.getAbsolutePath();
-
-        IndexSearcher index = new IndexSearcher(indexName);
-        QueryParser queryParser = new QueryParser("url", new WhitespaceAnalyzer());
+        
+        Directory luceneDirectory = new MMapDirectory(unzipDir);
+        
+        
+        IndexReader reader = IndexReader.open(luceneDirectory);
+        System.out.println("doc-count: " + reader.maxDoc());
+        IndexSearcher index = new IndexSearcher(reader);
+        //QueryParser queryParser = new QueryParser("url", 
+        //        new WhitespaceAnalyzer(dk.netarkivet.common.constants.LUCENE_VERSION));
+        QueryParser queryParser = new QueryParser(dk.netarkivet.common.Constants.LUCENE_VERSION, "url", 
+                new WhitespaceAnalyzer(dk.netarkivet.common.Constants.LUCENE_VERSION));
         Query q = queryParser.parse("http\\://www.kb.dk*");
-
-        Hits hits = index.search(q);
+        
+        AllDocsCollector collector = new AllDocsCollector();
+        index.search(q, collector);
+        List<ScoreDoc> hits = collector.getHits();
+        
         // Crawl log 1 has five entries for www.kb.dk, but two are robots
         // and /, which the indexer ignores, leaving 3
         // Crawl log 4 has five entries for www.kb.dk
-        for (int i = 0; i < hits.length(); i++) {
-            Document doc = hits.doc(i);
+        
+        //System.out.println("Found hits: " + hits.size());
+        for (ScoreDoc hit : hits) {
+            int docID = hit.doc;
+            Document doc = index.doc(docID);
+            
             String url = doc.get("url");
             String origin = doc.get("origin");
 
@@ -138,52 +154,19 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
             // Ensure that each occurs only once.
             origins.remove(url);
         }
-        assertTrue("Should have hit all origins, but have " + origins,
-                origins.isEmpty());
+        assertTrue("Should have found all origins, but have still " + origins.size() + " left: " 
+                + origins, origins.isEmpty());
     }
 
     public void testGetSortedCDX() throws Exception {
-        Method getSortedCDX = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
-                "getSortedCDX", Long.TYPE);
-        DedupCrawlLogIndexCache logcache = new DedupCrawlLogIndexCache();
-
-        setDummyCDXCache(logcache);
-
-        File reader = (File)getSortedCDX.invoke(logcache, 4L);
+        CDXDataCache dummyindexcache = new CDXDataCache();
+        File cdxUnsorted = dummyindexcache.getCacheFile(4L);
+        
+        File reader = DedupCrawlLogIndexCache.getSortedCDX(cdxUnsorted);
         assertNotNull("Should get a file for an existing job", reader);
-        assertEquals("CDX file returned should contain same as presorted file",
+        assertEquals("CDX file returned should have same content as presorted file",
                 FileUtils.readListFromFile(TestInfo.CDX_CACHE_4),
                 FileUtils.readListFromFile(reader));
-
-        try {
-            getSortedCDX.invoke(logcache, 2L);
-            fail("Should have had exception on unknown ID 2");
-        } catch (InvocationTargetException e) {
-            // Real exception gets wrapped in the invoke call
-            UnknownID cause = (UnknownID)e.getCause();
-            StringAsserts.assertStringContains(
-                    "Should have job ID mentioned in message",
-                    "2", cause.getMessage());
-        }
-    }
-
-    /** Sets up a dummy CDX index cache that just serves the files existing
-     * It even just assumes that you only ask for one id at a time.
-    */
-    private void setDummyCDXCache(DedupCrawlLogIndexCache logcache) throws
-            NoSuchFieldException, IllegalAccessException {
-        CDXDataCache dummyindexcache = new CDXDataCache() {
-            public Long cache(Long id) {
-                File cacheFile = getCacheFile(id);
-                if (cacheFile.exists()) {
-                    return id;
-                }
-                return null;
-            }
-        };
-        Field indexcachefield = ReflectUtils.getPrivateField(CrawlLogIndexCache.class,
-                "cdxcache");
-        indexcachefield.set(logcache, dummyindexcache);
     }
 
     public void testGetCacheFile() throws Exception {

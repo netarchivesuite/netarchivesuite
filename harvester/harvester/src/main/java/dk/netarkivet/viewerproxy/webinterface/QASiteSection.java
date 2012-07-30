@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +36,7 @@ import dk.netarkivet.viewerproxy.Constants;
  */
 public class QASiteSection extends SiteSection {
     /** The amount of pages visible in the QA menu.*/
-    private static final int PAGES_VISIBLE_IN_MENU = 2;
+    private static final int PAGES_VISIBLE_IN_MENU = 1;
     
     /**
      * Create a QA SiteSection object.
@@ -46,16 +48,13 @@ public class QASiteSection extends SiteSection {
         super("sitesection;qa", "QA", PAGES_VISIBLE_IN_MENU,
               new String[][]{
                       {"status", "pagetitle;qa.status"},
-                      {"batchoverview", "pagetitle;qa.batchjob.overview"},
                       // Pages below is not visible in the menu
-                      {"batchjob", "pagetitle;qa.batchjob"},
-                      {"batchjob-retrieve", 
-                          "pagetitle;qa.batchjob.retrieve.resultfile"},
-                      {"batchjob-execute", "pagetitle;qa.batchjob.execute"},
                       {"getreports", "pagetitle;qa.get.reports"},
                       {"getfiles", "pagetitle;qa.get.files"},
                       {"crawlloglines",
-                       "pagetitle;qa.crawllog.lines.for.domain"}
+                       "pagetitle;qa.crawllog.lines.for.domain"},
+                      {"searchcrawllog", 
+                           "pagetitle;qa.crawllog.lines.matching.regexp"}
               }, "QA",
                  Constants.TRANSLATIONS_BUNDLE);
     }

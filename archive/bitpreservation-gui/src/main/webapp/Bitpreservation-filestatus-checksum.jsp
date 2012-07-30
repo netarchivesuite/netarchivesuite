@@ -5,7 +5,9 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -128,7 +130,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                         value="<%=HTMLUtils.escapeHtmlValues(checksum.get(0))%>" 
                         name="<%=Constants.CHECKSUM_PARAM%>">
                     <input type="submit" 
-                        value="<fmt:message key="replace.file.in.bitarchive.0">
+                        value="<fmt:message key="replace.file.in.replica.0">
                         <fmt:param><%=bitarchive%></fmt:param></fmt:message>">
                     <%
                     // Either (1) no checksums or more than one checksum were returned from location 'bitarchive' for this file

@@ -3,7 +3,9 @@
  * Author:      $Author$
  * Date:        $Date$
  *
- * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,22 +23,7 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.List;
-
-import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.wayback.TestInfo;
-
-import junit.framework.TestCase;
 
 public class FileNameHarvesterTester extends IndexerTestCase {
 

@@ -3,7 +3,9 @@
  * Author:                $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -64,34 +66,14 @@ public class ArcRepositoryTesterLog extends TestCase {
      */
     private static final File ORIGINALS_DIR =
             new File(new File(TEST_DIR, "logging"), "originals");
-    /**
-     * The properties-file containing properties for logging in unit-tests
-     */
-    private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
-
+    
     /**
      * List of files that can be used in the scripts 
      * (content of the ORIGINALS_DIR).
      */
-    private static final List FILES =
+    private static final List<String> FILES =
             Arrays.asList(new String[]{"logging1.ARC",
                                        "logging2.ARC"});
-    /**
-     * The archive directory to work on.
-     */
-    private static final File ARCHIVE_DIR =
-            new File(new File(TEST_DIR, "store"), "bitarchive1");
-
-    /**
-     * An arc file that doesn't exist.
-     */
-    private static final String NON_EXISTING_ARC_NAME = "must_not_exist";
-    /**
-     * The message put in the log when an arc file is not found.
-     */
-    private static final String ERROR_MESSAGE_ARCREPOSITORY_NO_ARCFILE =
-            "dk.netarkivet.archive.arcrepository.ArcRepository get\n"
-    		+ "WARNING: GET";
 
     /**
      * A Controller object.

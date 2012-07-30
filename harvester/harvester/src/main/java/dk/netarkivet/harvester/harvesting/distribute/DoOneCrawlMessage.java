@@ -4,7 +4,9 @@
  * $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,15 +36,22 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
-
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
 
 /**
  * Container for doOneCrawl request.
  * Contains the crawler job definition.
  */
 public class DoOneCrawlMessage extends HarvesterMessage implements Serializable {
+
     /** the Job to crawl.    */
     private Job submittedJob;
+
+    /**
+     * The original harvest info.
+     */
+    private final HarvestDefinitionInfo origHarvestInfo;
+
     /** Extra metadata associated with the crawl-job. */
     private List<MetadataEntry> metadata;
 
@@ -52,15 +61,18 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
      * @param submittedJob    the Job to crawl
      * @param to      the ChannelID for the Server
      * @param metadata A list of job-metadata
-     * @throws ArgumentNotValid when sJob is null
+     * @throws ArgumentNotValid when submittedJob is null
      */
-    public DoOneCrawlMessage(Job submittedJob, ChannelID to,
-                             List<MetadataEntry> metadata)
+    public DoOneCrawlMessage(
+            Job submittedJob, ChannelID to,
+            HarvestDefinitionInfo harvestInfo,
+            List<MetadataEntry> metadata)
     throws ArgumentNotValid {
         super(to, Channels.getError());
-        ArgumentNotValid.checkNotNull(submittedJob, "sJob");
+        ArgumentNotValid.checkNotNull(submittedJob, "submittedJob");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
         this.submittedJob = submittedJob;
+        this.origHarvestInfo = harvestInfo;
         this.metadata = metadata;
     }
 
@@ -69,6 +81,13 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
      */
     public Job getJob() {
         return submittedJob;
+    }
+
+    /**
+     * @return the origHarvestInfo
+     */
+    public HarvestDefinitionInfo getOrigHarvestInfo() {
+        return origHarvestInfo;
     }
 
     /**

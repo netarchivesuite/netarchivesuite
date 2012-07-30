@@ -4,7 +4,9 @@
  * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -143,13 +145,13 @@ public class HarvestDocumentation {
             aw = ingestables.getMetadataArcWriter();
 
             // insert the pre-harvest metadata file, if it exists.
-            // TODO: Place preharvestmetadata in IngestableFiles-defined area
+            // TODO Place preharvestmetadata in IngestableFiles-defined area
             File preharvestMetadata = new File(crawlDir,
                     getPreharvestMetadataARCFileName(jobID));
             if (preharvestMetadata.exists()) {
                 ARCUtils.insertARCFile(preharvestMetadata, aw);
             }
-            //TODO: This is a good place to copy deduplicate information from the
+            //TODO This is a good place to copy deduplicate information from the
             //crawl log to the cdx file.
 
             // Insert harvestdetails into metadata arcfile.
@@ -185,9 +187,7 @@ public class HarvestDocumentation {
             if (arcFilesDir.isDirectory()) {
                 moveAwayForeignFiles(arcFilesDir, jobID);
                 //Generate CDX
-                // TODO: Place r
-                //
-                // esults in IngestableFiles-defined area
+                // TODO Place results in IngestableFiles-defined area
                 File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
                                                                  "cdx");
                 CDXUtils.generateCDX(arcFilesDir, cdxFilesDir);
@@ -261,7 +261,7 @@ public class HarvestDocumentation {
             String jobID,
             String timeStamp,
             String serialNumber)
-    throws ArgumentNotValid,UnknownID {
+    throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
         ArgumentNotValid.checkNotNull(jobID, "jobID");
         ArgumentNotValid.checkNotNull(timeStamp, "timeStamp");
@@ -271,12 +271,12 @@ public class HarvestDocumentation {
             result =
                 new URI(
                     CDX_URI_SCHEME,
-                    null,//Don't include user info (e.g. "foo@")
+                    null, //Don't include user info (e.g. "foo@")
                     CDX_URI_AUTHORITY_HOST,
-                    -1,//Don't include port no. (e.g. ":8080")
+                    -1, //Don't include port no. (e.g. ":8080")
                     CDX_URI_PATH,
                     getCDXURIQuery(harvestID, jobID, timeStamp, serialNumber),
-                    null);//Don't include fragment (e.g. "#foo")
+                    null); //Don't include fragment (e.g. "#foo")
         } catch (URISyntaxException e) {
             throw new UnknownID(
                     "Failed to generate URI for "
@@ -406,8 +406,7 @@ public class HarvestDocumentation {
             long harvestID, File crawlDir, ARCWriter writer,
             String heritrixVersion) {
         List<File> filesAdded = new ArrayList<File>();
-        HeritrixFiles harvestFiles =
-            new HeritrixFiles(crawlDir, jobID, harvestID);
+       
         // We will sort the files by URL
         TreeSet<MetadataFile> files = new TreeSet<MetadataFile>();
 
@@ -425,6 +424,15 @@ public class HarvestDocumentation {
             files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
         }
 
+        
+        // Generate an arcfiles-report.txt if configured to do so.
+        boolean genArcFilesReport = Settings.getBoolean(
+                HarvesterSettings.METADATA_GENERATE_ARCFILES_REPORT);
+        if (genArcFilesReport) {
+            files.add(new MetadataFile(new ArcFilesReportGenerator(crawlDir)
+                    .generateReport(), harvestID, jobID, heritrixVersion));
+        }
+        
         // Add log files
         File logDir = new File(crawlDir, "logs");
         if (logDir.exists()) {
@@ -448,13 +456,16 @@ public class HarvestDocumentation {
 
         // Check if exists any settings directory (domain-specific settings)
         // if yes, add any settings.xml hiding in this directory.
-        // TODO: Delete any settings-files found in the settings directory */
+        // TODO Delete any settings-files found in the settings directory */
         File settingsDir = new File(crawlDir, "settings");
         if (settingsDir.isDirectory()) {
             Map<File, String> domainSettingsFiles =
                 findDomainSpecificSettings(settingsDir);
-            for (File dsf : domainSettingsFiles.keySet()) {
-                String domain = domainSettingsFiles.get(dsf);
+            for (Map.Entry<File, String> entry : domainSettingsFiles
+                    .entrySet()) {
+
+                File dsf = entry.getKey();
+                String domain = entry.getValue();
                 files.add(
                         new MetadataFile(
                                 dsf,
@@ -517,7 +528,8 @@ public class HarvestDocumentation {
      * @param settingsDir the given settings directory
      * @return the settings file paired with their domain..
      */
-    private static Map<File, String> findDomainSpecificSettings(File settingsDir) {
+    private static Map<File, String> findDomainSpecificSettings(
+            File settingsDir) {
 
         // find any domain specific configurations (settings.xml)
         List<String> reversedDomainsWithSettings =
@@ -611,7 +623,10 @@ public class HarvestDocumentation {
         return writeHarvestDetails(jobID, harvestID, crawlDir, aw,
                                    getHeritrixVersion(hf.getOrderXmlFile()));
     }
-
+    /**
+     * @param orderXml the file containing the heritrix order.xml 
+     * @return the Heritrix version in the order.xml. 
+     * */
     private static String getHeritrixVersion(File orderXml) {
         Document doc = XmlUtils.getXmlDoc(orderXml);
         Node userAgentNode = doc.selectSingleNode(
@@ -659,7 +674,7 @@ public class HarvestDocumentation {
      */
     private static String reverseDomainString(String reversedDomain) {
         String domain = "";
-        String remaining = new String(reversedDomain);
+        String remaining = reversedDomain;
         int lastDotIndex = remaining.lastIndexOf(".");
         while (lastDotIndex != -1) {
             domain += remaining.substring(lastDotIndex + 1) + ".";

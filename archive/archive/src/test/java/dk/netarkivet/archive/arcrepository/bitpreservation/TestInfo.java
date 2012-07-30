@@ -4,7 +4,9 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +39,7 @@ public class TestInfo {
     /** Subdir to use for working copy. */
     public static final File WORKING_DIR = new File(TEST_DIR, "working");
     /** The file for the archive database.*/
-    static final File DATABASE_FILE = new File("harvestdefinitionbasedir", "archivedb.jar");
+    static final File DATABASE_FILE = new File("archivedatabasedir", "archivedb.jar");
 
 
     /** A directory with valid bitarchive files. */

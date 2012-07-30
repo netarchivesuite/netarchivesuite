@@ -4,7 +4,9 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,6 +50,7 @@ public class MonitorWebinterfaceTesterSuite {
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(JMXStatusEntryTester.class);
+        suite.addTestSuite(JMXSummaryUtilsTester.class);
     }
 
     public static void main(String args[]) {

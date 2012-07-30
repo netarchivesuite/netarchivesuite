@@ -4,7 +4,9 @@
  * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,6 +31,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
+ * Unittests for the HearBeatMessage class.
  */
 public class HeartBeatMessageTester extends TestCase {
 
@@ -53,19 +56,22 @@ public class HeartBeatMessageTester extends TestCase {
         try {
             hbm = new HeartBeatMessage(baMon, null);
             fail("HeartBeatMessage constructor shouldn't accept null as application ID.");
-        } catch (ArgumentNotValid e) {//Expected.
+        } catch (ArgumentNotValid e) {
+            //Expected.
         }
 
 
         try {
             hbm = new HeartBeatMessage(baMon, "");
             fail("HeartBeatMessage constructor shouldn't accept empty string as application ID.");
-        } catch (ArgumentNotValid e) {//Expected.
+        } catch (ArgumentNotValid e) {
+            //Expected.
         }
 
         // The OK case:
         hbm = new HeartBeatMessage(baMon, baID);
 
+        assertNotNull(hbm);
     }
 
     /**

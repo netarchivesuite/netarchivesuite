@@ -4,7 +4,9 @@
  * $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -74,7 +76,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
         // Have not implemented replying to a topic because there is no use
         // for it in our current architecture
-        if (replyTo.isTopic()) {
+        if (Channels.isTopic(replyTo.getName())) {
             throw new ArgumentNotValid("Reply channel must be queue but "
                     + replyTo.toString() + " is a Topic");
         }
@@ -112,7 +114,8 @@ public abstract class NetarkivetMessage implements Serializable {
      * @param e An exception thrown during processing.
      */
     public void setNotOk(Throwable e) {
-        setNotOk(e.toString()+"\n"+ExceptionUtils.getStackTrace(e));
+        setNotOk(e.toString() + "\n" 
+                + ExceptionUtils.getStackTrace(e));
     }
 
     /**
@@ -161,7 +164,7 @@ public abstract class NetarkivetMessage implements Serializable {
      * the subclass doesn't set replyOfId, this method behaves like getId.
      * @return replyOfId
      */
-    public String getReplyOfId() {
+    public synchronized String getReplyOfId() {
         if (replyOfId != null) {
             return replyOfId;
         } else {

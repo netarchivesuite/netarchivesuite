@@ -1,10 +1,12 @@
-/* File:   $Id$
+/* File:  $Id$
  * Revision: $Revision$
  * Author:   $Author$
  * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,10 +34,14 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 
+/**
+ * Class for threading a bitpreservation update into a thread.
+ */
 public class BitpreservationUpdateThread extends Thread {
 
     /** The log. */
-    Log log = LogFactory.getLog(BitpreservationUpdateThread.class.getName());
+    private Log log = LogFactory.getLog(
+            BitpreservationUpdateThread.class.getName());
     
     /** The ActiveBitPreservation class. */
     private final ActiveBitPreservation preserve;
@@ -49,12 +55,16 @@ public class BitpreservationUpdateThread extends Thread {
     
     /** Constructor for the BitpreservationUpdateThread. 
      * 
-     * @param replica The given replica to work on
-     * @param updateType The type of update requested
+     * @param replica The given replica to work on.
+     * @param updateType The type of update requested.
+     * @throws ArgumentNotValid If either the Replica or the 
+     * BitpreservationUpdateType is null.
      */
-    public BitpreservationUpdateThread(Replica replica, BitpreservationUpdateType updateType) {
+    public BitpreservationUpdateThread(Replica replica, 
+            BitpreservationUpdateType updateType) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
-        ArgumentNotValid.checkNotNull(updateType, "BitpreservationUpdateType updateType");
+        ArgumentNotValid.checkNotNull(updateType, "BitpreservationUpdateType " 
+                + "updateType");
         preserve = ActiveBitPreservationFactory.getInstance();
         type = updateType;
         theReplica = replica;
@@ -75,4 +85,3 @@ public class BitpreservationUpdateThread extends Thread {
         }    
     }
 }
-
