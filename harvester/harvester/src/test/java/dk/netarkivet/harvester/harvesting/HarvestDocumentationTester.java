@@ -92,7 +92,7 @@ public class HarvestDocumentationTester extends TestCase {
                                              TestInfo.HARVEST_ID
         );
         //Verify that the new file exists.
-        HarvestDocumentation.getMetadataARCFileName(
+        MetadataFileWriter.getMetadataARCFileName(
                 TestInfo.ARC_JOB_ID);
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,
                                                   Long.parseLong(
@@ -182,7 +182,7 @@ public class HarvestDocumentationTester extends TestCase {
                                                        TestInfo.JOB_ID).getMetadataArcFiles();
         File metadataDir = new File(TestInfo.WORKING_DIR, "metadata");
         File target1 = new File(
-                metadataDir, HarvestDocumentation.getMetadataARCFileName(
+                metadataDir, MetadataFileWriter.getMetadataARCFileName(
                         Long.toString(TestInfo.JOB_ID)));
         assertEquals("Should generate exactly one metadata file",
                      1, metadataFiles.size());
@@ -192,19 +192,19 @@ public class HarvestDocumentationTester extends TestCase {
     }
 
     /**
-     * Unit test for HarvestDocumentation.getMetadataARCFileName() Verifies that
+     * Unit test for MetadataFileWriter.getMetadataARCFileName() Verifies that
      * the name of the new ARC file ends on .arc and that the parameter is part
      * of the file name. Also verifies that null parameters are not accepted.
      */
     public void testGetMetadataARCFileName() {
         String job = "7";
         try {
-            HarvestDocumentation.getMetadataARCFileName(null);
+            MetadataFileWriter.getMetadataARCFileName(null);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
             //Expected
         }
-        String fn = HarvestDocumentation.getMetadataARCFileName(job);
+        String fn = MetadataFileWriter.getMetadataARCFileName(job);
         assertTrue("File name should end on '-1.arc' - was " + fn,
                    fn.endsWith("-1.arc")
         );
@@ -217,13 +217,13 @@ public class HarvestDocumentationTester extends TestCase {
     }
 
     /**
-     * Unit test for HarvestDocumentation.getPreharvestMetadataARCFileName()
+     * Unit test for MetadataFileWriter.getPreharvestMetadataARCFileName()
      * Verifies that the name of the new ARC file ends on .arc and that the
      * parameter is part of the file name.
      */
     public void testGetPreharvestMetadataARCFileName() {
         long jobId = 7;
-        String fn = HarvestDocumentation.getPreharvestMetadataARCFileName(
+        String fn = MetadataFileWriter.getPreharvestMetadataARCFileName(
                 jobId);
         assertTrue("File name should end on '-1.arc' - was " + fn,
                    fn.endsWith("-1.arc")

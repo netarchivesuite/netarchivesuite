@@ -11,7 +11,7 @@ import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCRecord;
 import org.jwat.common.ByteCountingPushBackInputStream;
 import org.jwat.common.ContentType;
-import org.jwat.common.HttpResponse;
+import org.jwat.common.HttpHeader;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -147,10 +147,11 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         	mimeType = contentType.toStringShort();
         }
         ByteCountingPushBackInputStream pbin = new ByteCountingPushBackInputStream(sar, 8192);
-        HttpResponse httpResponse = null;
+        HttpHeader httpResponse = null;
         if (bResponse) {
             try {
-    			httpResponse = HttpResponse.processPayload(pbin, header.getLength(), null);
+    			httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE,
+    			        pbin, header.getLength(), null);
     			if (httpResponse != null && httpResponse.contentType != null) {
     				contentType = ContentType.parseContentType(httpResponse.contentType);
     		        if (contentType != null) {

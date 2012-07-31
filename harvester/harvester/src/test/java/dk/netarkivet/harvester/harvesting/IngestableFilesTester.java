@@ -29,6 +29,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 import junit.framework.TestCase;
 import org.archive.io.arc.ARCWriter;
+import org.hibernate.type.MetaType;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -78,7 +79,7 @@ public class IngestableFilesTester extends TestCase {
      * Verify that method returns true after metadata generation has finished.
      *
      * Note that disallowed actions concerning metdataReady are tested in another method.
-     * Note that rediscoevry of metadata is tested in another method.
+     * Note that rediscovery of metadata is tested in another method.
      */
     public void testGetSetMetadataReady() {
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR, 1);
@@ -86,6 +87,8 @@ public class IngestableFilesTester extends TestCase {
                 inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false before metadata has been generated",
                 inf.isMetadataFailed());
+        MetadataFileWriter mfw = inf.getMetadataWriter();
+        
         ARCWriter aw = inf.getMetadataArcWriter();
         writeOneRecord(aw);
         assertFalse("isMetadataReady() should return false before all metadata has been generated",

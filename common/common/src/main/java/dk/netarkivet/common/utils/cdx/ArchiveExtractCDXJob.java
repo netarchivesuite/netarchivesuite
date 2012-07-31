@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
 import org.jwat.common.ByteCountingPushBackInputStream;
 import org.jwat.common.ContentType;
-import org.jwat.common.HttpResponse;
+import org.jwat.common.HttpHeader;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -136,10 +136,11 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         	mimeType = contentType.toStringShort();
         }
         ByteCountingPushBackInputStream pbin = new ByteCountingPushBackInputStream(record.getInputStream(), 8192);
-        HttpResponse httpResponse = null;
+        HttpHeader httpResponse = null;
         if (bResponse) {
             try {
-    			httpResponse = HttpResponse.processPayload(pbin, header.getLength(), null);
+    			httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE, 
+    			        pbin, header.getLength(), null);
     			if (httpResponse != null && httpResponse.contentType != null) {
     				contentType = ContentType.parseContentType(httpResponse.contentType);
     		        if (contentType != null) {

@@ -35,7 +35,9 @@ import org.archive.io.warc.WARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
+import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 
 
@@ -200,5 +202,12 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
             throw new IOFailure("Error writing CDX line '"
                     + sb + "' to batch outstream", e);
         }
+    }
+
+    @Override
+    public void processRecord(ArchiveRecordBase record, OutputStream os) {
+        // TODO Auto-generated method stub
+        throw new NotImplementedException("Processrecord is not yet implemented");
+        
     }
 }
