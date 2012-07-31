@@ -36,11 +36,15 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     }
 
     @Override
-	public void close() throws IOException {
+	public void close() {
     	if (writer != null) {
-    		writer.close();
-    		writer = null;
+        	try {
+        		writer.close();
+        	} catch (IOException e) {
+        		throw new IOFailure("Error closing MetadataFileWriterWarc", e);
+        	}
     	}
+		writer = null;
     }
 
     @Override

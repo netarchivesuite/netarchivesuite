@@ -63,7 +63,8 @@
             <configChunkSize>10000</configChunkSize>
             <splitByObjectLimit>false</splitByObjectLimit>
             <!-- one week in seconds  - time before jobs terminate -->
-            <jobtimeouttime>604800</jobtimeouttime>
+            <!--jobtimeouttime>604800</jobtimeouttime-->
+            <jobtimeouttime>300</jobtimeouttime>
             <dispatchperiode>30000</dispatchperiode>
             <jobgenerationperiode>60</jobgenerationperiode>
             <useQuotaEnforcer>true</useQuotaEnforcer>

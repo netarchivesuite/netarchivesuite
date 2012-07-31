@@ -38,7 +38,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCWriter;
 import org.dom4j.Document;
 import org.dom4j.Node;
 
@@ -51,7 +50,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
@@ -180,6 +178,9 @@ public class HarvestDocumentation {
                 }
             }
 
+            boolean bArcMetadataGenerationSucceeded = false;
+            boolean bWarcMetadataGenerationSucceeded = false;
+
             // Create CDX over ARC files.
             File arcFilesDir = new File(crawlDir, Constants.ARCDIRECTORY_NAME);
             if (arcFilesDir.isDirectory()) {
@@ -188,32 +189,37 @@ public class HarvestDocumentation {
                 // TODO Place results in IngestableFiles-defined area
                 File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
                                                                  "cdx");
-                CDXUtils.generateCDX(arcFilesDir, cdxFilesDir);
-
-                //For each CDX file...
-                File[] cdxFiles
-                        = cdxFilesDir.listFiles(FileUtils.CDX_FILE_FILTER);
-                for (File cdxFile : cdxFiles) {
-                    //...write its content to the ARCWriter
-                	mdfw.writeFileTo(cdxFile,
-                            getURIforFileName(cdxFile).toASCIIString(),
-                            Constants.CDX_MIME_TYPE);
-                    //...and delete it afterwards
-                    try {
-                        FileUtils.remove(cdxFile);
-                    } catch (IOFailure e) {
-                        log.warn("Couldn't delete file '"
-                                 + cdxFile.getAbsolutePath()
-                                 + "' after adding in metadata file, ignoring.",
-                                 e);
-                    }
-                }
-                ingestables.setMetadataGenerationSucceeded(true);
+                CDXUtils.generateCDX(arcFilesDir, cdxFilesDir, FileUtils.ARCS_FILTER, FileUtils.ARC_PATTERN);
+                mdfw.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
+                bArcMetadataGenerationSucceeded = true;
             } else {
                 log.warn("No directory with ARC files found in '"
                          + arcFilesDir.getAbsolutePath() + "'");
             }
 
+            // Create CDX over WARC files.
+            File warcFilesDir = new File(crawlDir, Constants.WARCDIRECTORY_NAME);
+            if (warcFilesDir.isDirectory()) {
+                moveAwayForeignFiles(warcFilesDir, jobID);
+                //Generate CDX
+                // TODO Place results in IngestableFiles-defined area
+                File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
+                                                                 "cdx");
+                CDXUtils.generateCDX(warcFilesDir, cdxFilesDir, FileUtils.WARCS_FILTER, FileUtils.ARC_PATTERN);
+                mdfw.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
+                bWarcMetadataGenerationSucceeded = true;
+            } else {
+                log.warn("No directory with WARC files found in '"
+                         + warcFilesDir.getAbsolutePath() + "'");
+            }
+
+            if (bArcMetadataGenerationSucceeded || bWarcMetadataGenerationSucceeded) {
+            	// This implies that running with both ARC and WARC
+            	// at the same time is not supported by this check.
+                ingestables.setMetadataGenerationSucceeded(true);
+            }
+
+            mdfw.close();
         } finally {
             // If at this point metadata is not ready, an error occurred.
             if (!ingestables.isMetadataReady()) {
@@ -221,26 +227,6 @@ public class HarvestDocumentation {
             }
         }
     }
-
-    /**
-     * Parses the name of the given file
-     * and generates a URI representation of it.
-     * @param cdx A CDX file.
-     * @return A URI appropriate for identifying the
-     * file's content in Netarkivet.
-     * @throws UnknownID if something goes terribly wrong in the CDX URI
-     * construction.
-     */
-    private static URI getURIforFileName(File cdx)
-        throws UnknownID {
-        FilenameParser parser = new FilenameParser(cdx);
-        return getCDXURI(
-                parser.getHarvestID(),
-                parser.getJobID(),
-                parser.getTimeStamp(),
-                parser.getSerialNo());
-    }
-
 
     /**
      * Generates a URI identifying CDX info for one harvested ARC file.

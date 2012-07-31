@@ -25,6 +25,7 @@ package dk.netarkivet.common.utils.cdx;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,18 +49,18 @@ public class CDXUtils {
     private static Log log = LogFactory.getLog(CDXUtils.class.getName());
 
     /**
-     * Add cdx info for a given ARC file to a given OutputStream.
+     * Add cdx info for a given archive file to a given OutputStream.
      * Note, any exceptions are logged on level FINE but otherwise ignored.
      *
-     * @param arcfile A file with arc records
+     * @param archivefile A file with archive records
      * @param cdxstream An output stream to add CDX lines to
      */
-    public static void writeCDXInfo(File arcfile, OutputStream cdxstream) {
-        ExtractCDXJob job = new ExtractCDXJob();
-        BatchLocalFiles runner = new BatchLocalFiles(new File [] {arcfile});
+    public static void writeCDXInfo(File archivefile, OutputStream cdxstream) {
+        ArchiveExtractCDXJob job = new ArchiveExtractCDXJob();
+        BatchLocalFiles runner = new BatchLocalFiles(new File [] {archivefile});
         runner.run(job, cdxstream);
         log.trace("Created index for " + job.noOfRecordsProcessed()
-                     + " records on file '" + arcfile + "'");
+                     + " records on file '" + archivefile + "'");
         Exception[] exceptions = job.getExceptionArray();
         if (exceptions.length > 0) {
             StringBuilder msg = new StringBuilder();
@@ -68,10 +69,10 @@ public class CDXUtils {
                 msg.append('\n');
             }
             log.debug("Exceptions during generation of index on file '"
-                        + arcfile + "': " + msg.toString());
+                        + archivefile + "': " + msg.toString());
         }
         log.debug("Created index of " + job.noOfRecordsProcessed()
-                    + " records on file '" + arcfile + "'");
+                    + " records on file '" + archivefile + "'");
 
     }
 
@@ -92,7 +93,9 @@ public class CDXUtils {
      * existing directory, or if cdxFileDirectory is not writable.
      */
     public static void generateCDX(File arcFileDirectory,
-                                   File cdxFileDirectory)
+                                   File cdxFileDirectory,
+                                   FilenameFilter filter,
+                                   String pattern)
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(arcFileDirectory,
                                       "File arcFileDirectory");
@@ -111,9 +114,9 @@ public class CDXUtils {
         Map<File, Exception> exceptions
                 = new HashMap<File, Exception>();
         for (File arcfile : arcFileDirectory.listFiles(
-                FileUtils.ARCS_FILTER)) {
+                filter)) {
             File cdxfile = new File(cdxFileDirectory, arcfile.getName()
-                    .replaceFirst(FileUtils.ARC_PATTERN,
+                    .replaceFirst(pattern,
                                   FileUtils.CDX_EXTENSION));
             if (cdxfile.getName().equals(arcfile.getName())) {
                 // If for some reason the file is not renamed (should never

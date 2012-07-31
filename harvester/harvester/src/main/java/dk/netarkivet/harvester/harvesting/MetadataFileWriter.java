@@ -1,14 +1,25 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 public abstract class MetadataFileWriter {
+
+    private static final Log log = LogFactory.getLog(MetadataFileWriter.class);
 
 	protected static final int MDF_ARC = 1;
 
@@ -92,7 +103,7 @@ public abstract class MetadataFileWriter {
         }
     }
 
-	public abstract void close() throws IOException;
+	public abstract void close();
 
 	public abstract File getFile();
 
@@ -114,5 +125,45 @@ public abstract class MetadataFileWriter {
     public abstract void write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, long recordLength, InputStream in)
             									throws java.io.IOException;
+
+    public void insertFiles(File parentDir, FilenameFilter filter, String mimetype) {
+        //For each CDX file...
+        File[] cdxFiles
+                = parentDir.listFiles(filter);
+        for (File cdxFile : cdxFiles) {
+            //...write its content to the ARCWriter
+        	writeFileTo(cdxFile,
+                    getURIforFileName(cdxFile).toASCIIString(),
+                    mimetype);
+            //...and delete it afterwards
+            try {
+                FileUtils.remove(cdxFile);
+            } catch (IOFailure e) {
+                log.warn("Couldn't delete file '"
+                         + cdxFile.getAbsolutePath()
+                         + "' after adding in metadata file, ignoring.",
+                         e);
+            }
+        }
+    }
+
+    /**
+     * Parses the name of the given file
+     * and generates a URI representation of it.
+     * @param cdx A CDX file.
+     * @return A URI appropriate for identifying the
+     * file's content in Netarkivet.
+     * @throws UnknownID if something goes terribly wrong in the CDX URI
+     * construction.
+     */
+    private static URI getURIforFileName(File cdx)
+        throws UnknownID {
+        FilenameParser parser = new FilenameParser(cdx);
+        return HarvestDocumentation.getCDXURI(
+                parser.getHarvestID(),
+                parser.getJobID(),
+                parser.getTimeStamp(),
+                parser.getSerialNo());
+    }
 
 }

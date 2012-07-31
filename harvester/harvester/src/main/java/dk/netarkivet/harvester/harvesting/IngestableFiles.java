@@ -129,13 +129,15 @@ public class IngestableFiles {
                     "Metadata file " + getMetadataFile().getAbsolutePath()
                     + " already exists");
         }
+        //writer.close();
+        writer = null;
+        /*
         try {
-            writer.close();
-            writer = null;
         } catch (IOException e) {
             String message = "Error closing metadata arc writer";
             throw new IOFailure(message, e);
         }
+        */
         if (success) {
             if (!getTmpMetadataFile().exists()) {
                 String message = "No metadata was generated despite claims"

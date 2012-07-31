@@ -214,15 +214,17 @@ public class HarvestController {
                              bais);
                 }
             } finally {
+                if (mdfw != null) {
+                    mdfw.close();
+                }
+                /*
                 try {
-                    if (mdfw != null) {
-                        mdfw.close();
-                    }
                 } catch (IOException e) {
                     //TODO Is this fatal? What if data isn't flushed?
                     log.warn("Unable to close MeatadataFileWriter '"
                              + mdfw.getFile().getAbsolutePath() + "'", e);
                 }
+                */
             }
         } catch (IOException e) {
             throw new IOFailure("Error writing to metadatfile for job "

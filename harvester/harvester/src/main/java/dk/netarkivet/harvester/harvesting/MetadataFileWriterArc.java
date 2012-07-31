@@ -27,9 +27,13 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     }
 
     @Override
-	public void close() throws IOException {
+	public void close() {
     	if (writer != null) {
-    		writer.close();
+    		try {
+        		writer.close();
+    		} catch (IOException e) {
+        		throw new IOFailure("Error closing MetadataFileWriterArc", e);
+    		}
     		writer = null;
     	}
     }
