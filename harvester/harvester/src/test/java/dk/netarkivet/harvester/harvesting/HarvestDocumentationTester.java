@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
@@ -329,55 +330,68 @@ public class HarvestDocumentationTester extends TestCase {
 
     /**
      * Unit test for generating CDX indexes on all arc files.
-     *
+     * TODO move to CDXUtilsTester (if it exists), otherwise create it
+     * NOTE: have added DEFAULT_FILENAME_FILTER, DEFAULT_PATTERN as args to all calls of
+     * CDXUtils.generateCDX
      * @throws IOException
      */
     public void testGenerateCDX() throws IOException {
+        FilenameFilter DEFAULT_FILENAME_FILTER = FileUtils.ARCS_FILTER;
+        String DEFAULT_PATTERN = "*";
+        
         try {
-            CDXUtils.generateCDX(null, TestInfo.CDX_WORKING_DIR);
+            CDXUtils.generateCDX(null, TestInfo.CDX_WORKING_DIR, 
+                    DEFAULT_FILENAME_FILTER, DEFAULT_PATTERN);
             fail("Should throw exception on null argument");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, null);
+            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, null, 
+                    DEFAULT_FILENAME_FILTER, DEFAULT_PATTERN);
             fail("Should throw exception on null argument");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(TestInfo.ARC_FILE_1, TestInfo.CDX_WORKING_DIR);
+            CDXUtils.generateCDX(TestInfo.ARC_FILE_1, TestInfo.CDX_WORKING_DIR,
+                    DEFAULT_FILENAME_FILTER, DEFAULT_PATTERN);
             fail("Should throw exception on non-directory");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.ARC_FILE_1);
+            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.ARC_FILE_1,
+                    DEFAULT_FILENAME_FILTER, DEFAULT_PATTERN);
             fail("Should throw exception on non-directory");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(new File("foo"), TestInfo.CDX_WORKING_DIR);
+            CDXUtils.generateCDX(new File("foo"), TestInfo.CDX_WORKING_DIR, 
+                    DEFAULT_FILENAME_FILTER, DEFAULT_PATTERN);
             fail("Should throw exception on non-existing");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, new File("foo"));
+            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, new File("foo"),
+                    DEFAULT_FILENAME_FILTER, DEFAULT_PATTERN);
             fail("Should throw exception on non-existing");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, new File("/"));
+            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, new File("/"), 
+                    DEFAULT_FILENAME_FILTER, DEFAULT_PATTERN);
             fail("Should throw exception on non-writable");
         } catch (ArgumentNotValid e) {
             //Expected
         }
 
         TestInfo.CDX_WORKING_DIR.mkdirs();
-        CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR);
+        CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR,
+                DEFAULT_FILENAME_FILTER, DEFAULT_PATTERN);
         File[] originalFiles
                 = TestInfo.ARC_REAL_DIR.listFiles(FileUtils.ARCS_FILTER);
         File[] generatedFiles = TestInfo.CDX_WORKING_DIR.listFiles();
