@@ -534,12 +534,19 @@ public class HarvesterSettings {
      * The default value is one year, i.e 31536000 seconds.
      */
     public static String ALIAS_TIMEOUT = "settings.harvester.aliases.timeout";
-
+    /**
+     * <b>settings.harvester.harvesting.metadata.metadataFormat</b>  The dataformat used by Netarchivesuite to write the metadata associated
+     * with a given harvest job.
+     * default: warc (alternative: arc) 
+     */
     public static String METADATA_FORMAT =
             "settings.harvester.harvesting.metadata.metadataFormat";
 
+    /**
+     * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the harvested data.
+     * default: warc (alternative: arc) 
+     */
     public static String METADATA_ARCHIVE_FORMAT =
-            "settings.harvester.harvesting.metadata.archiveFormat";
-
+            "settings.harvester.harvesting.heritrix.archiveFormat";
 }
 

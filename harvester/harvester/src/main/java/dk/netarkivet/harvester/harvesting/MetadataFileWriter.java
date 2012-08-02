@@ -1,10 +1,12 @@
-/* File:        $Id: CDXUtils.java 2420 2012-07-31 14:42:21Z nicl@kb.dk $
- * Revision:    $Revision: 2420 $
- * Author:      $Author: nicl@kb.dk $
- * Date:        $Date: 2012-07-31 16:42:21 +0200 (Tue, 31 Jul 2012) $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +20,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
  */
 package dk.netarkivet.harvester.harvesting;
 
