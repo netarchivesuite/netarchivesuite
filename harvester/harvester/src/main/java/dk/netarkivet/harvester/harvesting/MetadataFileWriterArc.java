@@ -1,3 +1,25 @@
+/* File:        $Id: CDXUtils.java 2420 2012-07-31 14:42:21Z nicl@kb.dk $
+ * Revision:    $Revision: 2420 $
+ * Author:      $Author: nicl@kb.dk $
+ * Date:        $Date: 2012-07-31 16:42:21 +0200 (Tue, 31 Jul 2012) $
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
@@ -88,8 +110,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     /* Copied from the ARCWriter. */
     @Override
     public void write(String uri, String contentType, String hostIP,
-            long fetchBeginTimeStamp, long recordLength, InputStream in)
-            											throws IOException {
+            long fetchBeginTimeStamp, long recordLength, InputStream in) throws IOException {
     	writer.write(uri, contentType, hostIP, fetchBeginTimeStamp, recordLength, in);
     }
 

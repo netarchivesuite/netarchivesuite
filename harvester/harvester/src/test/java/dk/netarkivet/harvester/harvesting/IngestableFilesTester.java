@@ -25,12 +25,9 @@ package dk.netarkivet.harvester.harvesting;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 import junit.framework.TestCase;
-import org.archive.io.arc.ARCWriter;
-import org.hibernate.type.MetaType;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -90,9 +87,7 @@ public class IngestableFilesTester extends TestCase {
                 inf.isMetadataFailed());
         MetadataFileWriter mfw = inf.getMetadataWriter();
         
-        ARCWriter aw = null;
-        // FIXME inf.getMetadataArcWriter();
-        writeOneRecord(aw);
+        writeOneRecord(mfw);
         assertFalse("isMetadataReady() should return false before all metadata has been generated",
                 inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false before all metadata has been generated",
@@ -108,8 +103,8 @@ public class IngestableFilesTester extends TestCase {
                 inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false before metadata has been generated",
                 inf.isMetadataFailed());
-        // FIXME aw = inf.getMetadataArcWriter();
-        writeOneRecord(aw);
+        mfw = inf.getMetadataWriter();
+        writeOneRecord(mfw);
         assertFalse("isMetadataReady() should return false before all metadata has been generated",
                 inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false before all metadata has been generated",
@@ -129,14 +124,14 @@ public class IngestableFilesTester extends TestCase {
     public void testDisallowedActions() {
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR, 1);
         assertCannotGetMetadata(inf);
-        ARCWriter aw = null;
-        // FIXME inf.getMetadataArcWriter();
+        
+        MetadataFileWriter aw = inf.getMetadataWriter();
         assertCannotGetMetadata(inf);
         writeOneRecord(aw);
         assertCannotGetMetadata(inf);
         inf.setMetadataGenerationSucceeded(true);
         try {
-            // FIXME inf.getMetadataArcWriter();
+            inf.getMetadataWriter();
             fail("Should reject getMetadataArcWriter() when metadata is ready");
         } catch (PermissionDenied e) {
             //Expected
@@ -150,13 +145,13 @@ public class IngestableFilesTester extends TestCase {
 
         inf = new IngestableFiles(TestInfo.WORKING_DIR, 2);
         assertCannotGetMetadata(inf);
-        // FIXME aw = inf.getMetadataArcWriter();
+        aw = inf.getMetadataWriter();
         assertCannotGetMetadata(inf);
         writeOneRecord(aw);
         assertCannotGetMetadata(inf);
         inf.setMetadataGenerationSucceeded(false);
         try {
-            // FIXME inf.getMetadataArcWriter();
+            inf.getMetadataWriter();
             fail("Should reject getMetadataArcWriter() when metadata is failed");
         } catch (PermissionDenied e) {
             //Expected
@@ -188,8 +183,7 @@ public class IngestableFilesTester extends TestCase {
     public void testMetadataRediscovery() throws FileNotFoundException, IOException {
         //Original crawl: write some metadata
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,1);
-        ARCWriter aw = null;
-        // FIXME inf.getMetadataArcWriter();
+        MetadataFileWriter aw = inf.getMetadataWriter();
         writeOneRecord(aw);
         inf.setMetadataGenerationSucceeded(true);
         //Now forget about old state:
@@ -211,8 +205,7 @@ public class IngestableFilesTester extends TestCase {
      */
     public void testGetMetadataArcWriter() {
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,1);
-        ARCWriter aw = null;
-        // FIXME inf.getMetadataArcWriter();
+        MetadataFileWriter aw = inf.getMetadataWriter();
         writeOneRecord(aw);
     }
 
@@ -222,8 +215,7 @@ public class IngestableFilesTester extends TestCase {
      */
     public void testGetMetadataFiles() throws FileNotFoundException, IOException {
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,1);
-        ARCWriter aw = null;
-        // FIXME inf.getMetadataArcWriter();
+        MetadataFileWriter aw = inf.getMetadataWriter();
         writeOneRecord(aw);
         inf.setMetadataGenerationSucceeded(true);
         boolean found = false;
@@ -238,9 +230,6 @@ public class IngestableFilesTester extends TestCase {
 
     public void testMetadataFailure() {
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,1);
-        ARCWriter aw = null;
-        //FIXME inf.getMetadataArcWriter();
-        writeOneRecord(aw);
         inf.setMetadataGenerationSucceeded(false);
         try {
             inf.getMetadataArcFiles();
@@ -304,11 +293,11 @@ public class IngestableFilesTester extends TestCase {
                     new File(changedPath).exists());
         }
     }
-
+    
     /**
      * Writes a single ARC record (containing MSG) and closes the ARCWriter.
      */
-    private static void writeOneRecord(ARCWriter aw) {
+    private static void writeOneRecord(MetadataFileWriter aw) {
         InputStream is = new ByteArrayInputStream(MSG.getBytes());
         try {
             aw.write("test://test.test/test", "text/plain", "0.0.0.0", new Date().getTime(),
@@ -317,4 +306,5 @@ public class IngestableFilesTester extends TestCase {
             fail("Should have written a test record and closed ARCWriter");
         }
     }
+    
 }

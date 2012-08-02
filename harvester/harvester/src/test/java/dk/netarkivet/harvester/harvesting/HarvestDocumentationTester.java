@@ -73,7 +73,7 @@ public class HarvestDocumentationTester extends TestCase {
      * by the method below.
      *
      * Verifies that after calling the method, a new ARC file is created with
-     * the appropriate name (see getMetadataARCFileName()). Verfies that this
+     * the appropriate name (see getMetadataARCFileName()). Verifies that this
      * ARC file contains one record of MIME type "application/cdx" per original
      * ARC file in the dir (and no other records of that type). Verifies that
      * the CDX records are named appropriately (see getCDXURI()).
@@ -81,6 +81,10 @@ public class HarvestDocumentationTester extends TestCase {
      * @throws IOException
      */
     public void testDocumentHarvestOrdinaryCase() throws IOException {
+        // Force the format to be ARC
+        Settings.set(HarvesterSettings.METADATA_FORMAT, "arc");
+        MetadataFileWriter.resetMetadataFormat();
+        
         /* Run the method on a working-dir that mirrors
          * TestInfo.METADATA_TEST_DIR.
          */
@@ -93,8 +97,9 @@ public class HarvestDocumentationTester extends TestCase {
                                              TestInfo.HARVEST_ID
         );
         //Verify that the new file exists.
-        MetadataFileWriter.getMetadataARCFileName(
-                TestInfo.ARC_JOB_ID);
+        
+        String name = MetadataFileWriter.getMetadataARCFileName(TestInfo.ARC_JOB_ID);
+        System.out.println("name: " + name);
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,
                                                   Long.parseLong(
                                                           TestInfo.ARC_JOB_ID));
@@ -337,7 +342,7 @@ public class HarvestDocumentationTester extends TestCase {
      */
     public void testGenerateCDX() throws IOException {
         FilenameFilter DEFAULT_FILENAME_FILTER = FileUtils.ARCS_FILTER;
-        String DEFAULT_PATTERN = "*";
+        String DEFAULT_PATTERN = FileUtils.ARC_PATTERN;
         
         try {
             CDXUtils.generateCDX(null, TestInfo.CDX_WORKING_DIR, 
@@ -392,9 +397,17 @@ public class HarvestDocumentationTester extends TestCase {
         TestInfo.CDX_WORKING_DIR.mkdirs();
         CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR,
                 DEFAULT_FILENAME_FILTER, DEFAULT_PATTERN);
+        for (File f: TestInfo.ARC_REAL_DIR.listFiles()) {
+            System.out.println("ARC-File: " + f.getAbsolutePath());
+        }
+        for (File f: TestInfo.CDX_WORKING_DIR.listFiles()) {
+            System.out.println("CDX-File: " + f.getAbsolutePath());
+        }
         File[] originalFiles
                 = TestInfo.ARC_REAL_DIR.listFiles(FileUtils.ARCS_FILTER);
+        
         File[] generatedFiles = TestInfo.CDX_WORKING_DIR.listFiles();
+        
         assertEquals("Should have generated the right number of files, but "
                      + "found " + Arrays.asList(generatedFiles),
                      originalFiles.length, generatedFiles.length);

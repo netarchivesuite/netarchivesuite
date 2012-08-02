@@ -1,8 +1,29 @@
+/* File:        $Id: CDXUtils.java 2420 2012-07-31 14:42:21Z nicl@kb.dk $
+ * Revision:    $Revision: 2420 $
+ * Author:      $Author: nicl@kb.dk $
+ * Date:        $Date: 2012-07-31 16:42:21 +0200 (Tue, 31 Jul 2012) $
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
@@ -20,27 +41,33 @@ import dk.netarkivet.harvester.HarvesterSettings;
 public abstract class MetadataFileWriter {
 
     private static final Log log = LogFactory.getLog(MetadataFileWriter.class);
-
-	protected static final int MDF_ARC = 1;
-
-	protected static final int MDF_WARC = 2;
-
+    /** Constant representing the ARC format. */
+    protected static final int MDF_ARC = 1;
+    /** Constant representing the WARC format. */
+    protected static final int MDF_WARC = 2;
+    /** Constant representing the metadata Format. Recognized formats are either MDF_ARC
+     * or MDF_WARC */
     protected static int metadataFormat = 0;
 
-	protected static synchronized void getMetadataFormat() {
+    /**
+     * Initialize the used metadata format from settings.  
+     */
+    protected static synchronized void initializeMetadataFormat() {
         String metadataFormatSetting = Settings.get(HarvesterSettings.METADATA_FORMAT);
         if ("arc".equalsIgnoreCase(metadataFormatSetting)) {
-        	metadataFormat = MDF_ARC;
+            metadataFormat = MDF_ARC;
         } else if ("warc".equalsIgnoreCase(metadataFormatSetting)) {
             metadataFormat = MDF_WARC;
         } else {
-        	throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
+            throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT 
+                    + "' is invalid! Unrecognized format '"
+                    + metadataFormatSetting + "'.");
         }
-	}
+    }
 
-	/**
+    /**
      * Generates a name for an ARC file containing "preharvest" metadata
-     * regarding a given job (e.g. excluded alises).
+     * regarding a given job (e.g. excluded aliases).
      *
      * @param jobID the number of the harvester job
      * @return The file name to use for the preharvest metadata, as a String.
@@ -50,7 +77,7 @@ public abstract class MetadataFileWriter {
         throws ArgumentNotValid {
         ArgumentNotValid.checkNotNegative(jobID, "jobID");
         if (metadataFormat == 0) {
-        	getMetadataFormat();
+            initializeMetadataFormat();
         }
         switch (metadataFormat) {
         case MDF_ARC:
@@ -74,10 +101,10 @@ public abstract class MetadataFileWriter {
      * @throws ArgumentNotValid if any parameter was null.
      */
     public static String getMetadataARCFileName(String jobID)
-        throws ArgumentNotValid {
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
         if (metadataFormat == 0) {
-        	getMetadataFormat();
+            initializeMetadataFormat();
         }
         switch (metadataFormat) {
         case MDF_ARC:
@@ -85,13 +112,19 @@ public abstract class MetadataFileWriter {
         case MDF_WARC:
             return jobID + "-metadata-" + 1 + ".warc";
         default:
-        	throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
+            throw new ArgumentNotValid("Configuration of '"
+                    + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
     }
-
+    
+    /**
+     * 
+     * @param metadataFile
+     * @return
+     */
     public static MetadataFileWriter createWriter(File metadataFile) {
         if (metadataFormat == 0) {
-        	getMetadataFormat();
+            initializeMetadataFormat();
         }
         switch (metadataFormat) {
         case MDF_ARC:
@@ -102,13 +135,26 @@ public abstract class MetadataFileWriter {
         	throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
     }
-
-	public abstract void close();
-
-	public abstract File getFile();
-
-	public abstract void insertMetadataFile(File metadataFile);
-
+    
+    /**
+     * Close the metadatafile Writer.
+     */
+    public abstract void close();
+    
+    /**
+     * @return the finished metadataFile
+     */
+    public abstract File getFile();
+    
+    /**
+     * @param 
+     */
+    public abstract void insertMetadataFile(File metadataFile);
+    /**
+     * @param file
+     * @param uri
+     * @param mime
+     */
     public abstract void writeFileTo(File file, String uri, String mime);
 
     /** Writes a File to an ARCWriter, if available,
@@ -121,10 +167,14 @@ public abstract class MetadataFileWriter {
      */
     public abstract boolean writeTo(File fileToArchive, String URL, String mimetype);
 
-    /* Copied from the ARCWriter. */
+    /** 
+     * 
+     * 
+     * Copied from the ARCWriter.
+     * 
+     */
     public abstract void write(String uri, String contentType, String hostIP,
-            long fetchBeginTimeStamp, long recordLength, InputStream in)
-            									throws java.io.IOException;
+            long fetchBeginTimeStamp, long recordLength, InputStream in) throws java.io.IOException;
 
     public void insertFiles(File parentDir, FilenameFilter filter, String mimetype) {
         //For each CDX file...
@@ -166,4 +216,11 @@ public abstract class MetadataFileWriter {
                 parser.getSerialNo());
     }
 
+    /**
+     * Reset the metadata format. Should only be used by a unittest.
+     */
+    public static void resetMetadataFormat() {
+        metadataFormat = 0;
+    }
+    
 }

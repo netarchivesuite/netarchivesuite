@@ -89,6 +89,8 @@ public class CDXUtils {
      * @param arcFileDirectory A directory with arcfiles to generate index
      * for
      * @param cdxFileDirectory A directory to generate CDX files in
+     * @param filter  A filter matching the files that should be delivered to the CXDInfo class.
+     * @param pattern A pattern matching ?????
      * @throws ArgumentNotValid if any of directories are null or is not an
      * existing directory, or if cdxFileDirectory is not writable.
      */
@@ -113,8 +115,8 @@ public class CDXUtils {
         }
         Map<File, Exception> exceptions
                 = new HashMap<File, Exception>();
-        for (File arcfile : arcFileDirectory.listFiles(
-                filter)) {
+        for (File arcfile : arcFileDirectory.listFiles(filter)) {
+            
             File cdxfile = new File(cdxFileDirectory, arcfile.getName()
                     .replaceFirst(pattern,
                                   FileUtils.CDX_EXTENSION));
