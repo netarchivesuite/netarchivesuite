@@ -50,6 +50,7 @@ import org.dom4j.Document;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -73,6 +74,7 @@ public class HeritrixLauncherTester extends TestCase {
 
     public HeritrixLauncherTester() {
         mtf = new MoveTestFiles (TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
+        Settings.set(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT, "arc");
     }
 
     public void setUp() throws IOException {
@@ -232,15 +234,18 @@ public class HeritrixLauncherTester extends TestCase {
      */
 
     private void myTesterOfBadOrderfiles(File orderfile) {
-        HeritrixLauncher hl = getHeritrixLauncher(orderfile, null);
-
         try {
+            HeritrixLauncher hl = getHeritrixLauncher(orderfile, null);
             hl.doCrawl();
             fail("An exception should have been caught when launching with a bad order.xml file !");
         } catch (IOFailure e) {
             // expected case since a searched node could not be found in the bad
             // XML-order-file!
+        } catch (IllegalState e) {
+            // expected case since a searched node could not be found in the bad
+            // XML-order-file!
         }
+        
     }
 
     /**

@@ -31,6 +31,7 @@ import org.dom4j.Node;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -187,19 +188,50 @@ public abstract class HeritrixLauncher {
         XmlUtils.setNode(doc, SEEDS_FILE_XPATH,
                          files.getSeedsTxtFile().getAbsolutePath());
 
-        XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
-        XmlUtils.setNode(doc, WARCSDIR_XPATH, Constants.WARCDIRECTORY_NAME);
-
-        String archiveFormat = Settings.get(HarvesterSettings.METADATA_ARCHIVE_FORMAT);
-
-        String useArc = ("arc".equalsIgnoreCase(archiveFormat)) ? "true" : "false";
-        String useWarc = ("warc".equalsIgnoreCase(archiveFormat)) ? "true" : "false";
-
-        // TODO
-    	//throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_ARCHIVE_FORMAT + "' is invalid!");
-
-        XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, useArc);
-        XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, useWarc);
+        String archiveFormat = Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT);
+        
+        boolean arcMode = false;
+        boolean warcMode = false;
+        
+        if ("arc".equalsIgnoreCase(archiveFormat)) {
+            arcMode = true;
+            log.debug("ARC format selected to be used by Heritrix");
+        } else if ("warc".equalsIgnoreCase(archiveFormat)) {
+            warcMode = true;
+            log.debug("WARC format selected to be used by Heritrix");
+        } else {
+            throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.HERITRIX_ARCHIVE_FORMAT 
+                    + "' is invalid! Unrecognized format '"
+                    + archiveFormat + "'.");
+        }
+        
+        if (arcMode) {
+            // enable ARC writing in Heritrix and disable WARC writing if needed.
+            if (doc.selectSingleNode(ARCSDIR_XPATH) != null 
+                    && doc.selectSingleNode(ARCS_ENABLED_XPATH) != null) {
+                XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
+                XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, "true");
+            } else {
+                throw new IllegalState("Unable to choose ARC as Heritrix archive format because "
+                       + " one of the following xpaths are invalid in the given order.xml: " 
+                        + ARCSDIR_XPATH + "," +  ARCS_ENABLED_XPATH);
+            }
+        } else if (warcMode){ // WARCmode
+         
+            if (doc.selectSingleNode(WARCSDIR_XPATH) != null 
+                    && doc.selectSingleNode(WARCS_ENABLED_XPATH) != null) {
+                XmlUtils.setNode(doc, WARCSDIR_XPATH, Constants.WARCDIRECTORY_NAME);
+                XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, "true");
+            } else {
+                throw new IllegalState("Unable to choose WARC as Heritrix archive format because "
+                       + " one of the following xpaths are invalid in the given order.xml: " 
+                        + WARCSDIR_XPATH + "," +  WARCS_ENABLED_XPATH);
+            }
+            
+        } else {
+            throw new IllegalState(
+                    "Unknown state: Should have selected either ARC or WARC as heritrix archive format");
+        }
 
         //WARCDIRECTORY_NAME
         if (isDeduplicationEnabledInTemplate(doc)) {

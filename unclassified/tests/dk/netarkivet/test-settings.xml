@@ -42,7 +42,7 @@
 			<accessFile>tests/dk/netarkivet/jmxremote.access</accessFile>
 		</jmx>
 		<http>
-    		<port>8076</port>
+    		<port>8077</port>
 	    </http>
     	<remoteFile>
 	       	<class>dk.netarkivet.common.distribute.FTPRemoteFile</class>

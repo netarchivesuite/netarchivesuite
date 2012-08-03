@@ -546,7 +546,7 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the harvested data.
      * default: warc (alternative: arc) 
      */
-    public static String METADATA_ARCHIVE_FORMAT =
+    public static String HERITRIX_ARCHIVE_FORMAT =
             "settings.harvester.harvesting.heritrix.archiveFormat";
 }
 
