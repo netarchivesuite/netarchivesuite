@@ -4,9 +4,7 @@
 * $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2012 The Royal Danish Library, the Danish State and
- * University Library, the National Library of France and the Austrian
- * National Library.
+* Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -25,20 +23,19 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FilenameFilter;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCWriter;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.ARCUtils;
 
 
 /**
@@ -64,7 +61,7 @@ public class IngestableFiles {
     /** Writer to this jobs metadatafile.
      * This is closed when the metadata is marked as ready.
      */
-    private ARCWriter writer = null;
+    private MetadataFileWriter writer = null;
 
     /** Whether we've had an error in metadata generation. */
     private boolean error = false;
@@ -131,13 +128,15 @@ public class IngestableFiles {
                     "Metadata file " + getMetadataFile().getAbsolutePath()
                     + " already exists");
         }
+        //writer.close();
+        writer = null;
+        /*
         try {
-            writer.close();
-            writer = null;
         } catch (IOException e) {
             String message = "Error closing metadata arc writer";
             throw new IOFailure(message, e);
         }
+        */
         if (success) {
             if (!getTmpMetadataFile().exists()) {
                 String message = "No metadata was generated despite claims"
@@ -160,6 +159,7 @@ public class IngestableFiles {
      * @throws PermissionDenied if metadata generation is already
      * finished.
      */
+    /*
     public ARCWriter getMetadataArcWriter() {
         if (isMetadataReady()) {
             throw new PermissionDenied(
@@ -173,6 +173,33 @@ public class IngestableFiles {
         }
         if (writer == null) {
             writer = ARCUtils.createARCWriter(getTmpMetadataFile());
+        }
+        return writer;
+    }
+    */
+
+    /**
+     * Get a ARCWriter for the temporary metadata arc-file.
+     * Successive calls to this method on the same object will return the
+     * same writer.  Once the metadata have been finalized, calling
+     * this method will fail.
+     * @return a ARCWriter for the temporary metadata arc-file.
+     * @throws PermissionDenied if metadata generation is already
+     * finished.
+     */
+    public MetadataFileWriter getMetadataWriter() {
+        if (isMetadataReady()) {
+            throw new PermissionDenied(
+                    "Metadata file " + getMetadataFile().getAbsolutePath()
+                    + " already exists");
+        }
+        if (isMetadataFailed()) {
+            throw new PermissionDenied("Metadata generation of file "
+                    + getMetadataFile().getAbsolutePath()
+                    + " has already failed.");
+        }
+        if (writer == null) {
+            writer = MetadataFileWriter.createWriter(getTmpMetadataFile());
         }
         return writer;
     }
@@ -209,8 +236,7 @@ public class IngestableFiles {
     private File getMetadataFile(){
         return
             new File(getMetadataDir(),
-                    HarvestDocumentation.
-                    getMetadataARCFileName(Long.toString(jobId)));
+                    MetadataFileWriter.getMetadataARCFileName(Long.toString(jobId)));
     }
 
     /**
@@ -229,11 +255,8 @@ public class IngestableFiles {
     private File getTmpMetadataFile(){
         return
             new File(getTmpMetadataDir(),
-                    HarvestDocumentation.
-                    getMetadataARCFileName(Long.toString(jobId)));
+                    MetadataFileWriter.getMetadataARCFileName(Long.toString(jobId)));
     }
-
-
 
     /** Get a list of all ARC files that should get ingested.  Any open files
      * should be closed with closeOpenFiles first.
@@ -242,15 +265,36 @@ public class IngestableFiles {
      */
     public List<File> getArcFiles() {
         File arcsdir = new File(crawlDir, Constants.ARCDIRECTORY_NAME);
-        if (!arcsdir.isDirectory()) {
-            throw new IOFailure(arcsdir.getPath() + " is not a directory");
+        if (arcsdir.exists()) {
+            if (!arcsdir.isDirectory()) {
+                throw new IOFailure(arcsdir.getPath() + " is not a directory");
+            }
+            return Arrays.asList(arcsdir.listFiles(FileUtils.ARCS_FILTER));
+        } else {
+        	return new LinkedList<File>();
         }
-        return Arrays.asList(arcsdir.listFiles(FileUtils.ARCS_FILTER));
     }
 
-    /** Close any ".open" files left by a crashed Heritrix.  ARC files ending
-     * in .open indicate that Heritrix is still writing to them. If Heritrix
-     * has died, we can just rename them before we upload.
+    /** Get a list of all WARC files that should get ingested.  Any open files
+     * should be closed with closeOpenFiles first.
+     *
+     * @return The WARC files that are ready to get ingested.
+     */
+    public List<File> getWarcFiles() {
+        File warcsdir = new File(crawlDir, Constants.WARCDIRECTORY_NAME);
+        if (warcsdir.exists()) {
+            if (!warcsdir.isDirectory()) {
+                throw new IOFailure(warcsdir.getPath() + " is not a directory");
+            }
+            return Arrays.asList(warcsdir.listFiles(FileUtils.WARCS_FILTER));
+        } else {
+        	return new LinkedList<File>();
+        }
+    }
+
+    /** Close any ".open" files left by a crashed Heritrix.  ARC and/or WARC
+     * files ending in .open indicate that Heritrix is still writing to them.
+     * If Heritrix has died, we can just rename them before we upload.
      * This must not be done while harvesting is still in progress.
      *
      * @param waitSeconds How many seconds to wait before closing files.  This
@@ -265,8 +309,21 @@ public class IngestableFiles {
             log.debug("Thread woken prematurely from sleep.", e);
         }
 
-        File arcsdir = new File(crawlDir, Constants.ARCDIRECTORY_NAME);
-        File[] files = arcsdir.listFiles(FileUtils.OPEN_ARCS_FILTER);
+        closeOpenFiles(Constants.ARCDIRECTORY_NAME, FileUtils.OPEN_ARCS_FILTER);
+        closeOpenFiles(Constants.WARCDIRECTORY_NAME, FileUtils.OPEN_WARCS_FILTER);
+    }
+
+    /**
+     * Given an archive sub-directory name and a filter to match against this
+     * method tries to rename the matched files. Files that can not be renamed
+     * generate a log message. The filter should always match files that end
+     * with ".open" as a minimum.
+     * @param archiveDirName archive directory name, currently "arc" or "warc"
+     * @param filter filename filter used to select ".open" files to rename
+     */
+    protected void closeOpenFiles(String archiveDirName, FilenameFilter filter) {
+        File arcsdir = new File(crawlDir, archiveDirName);
+        File[] files = arcsdir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
                 final String fname = file.getAbsolutePath();

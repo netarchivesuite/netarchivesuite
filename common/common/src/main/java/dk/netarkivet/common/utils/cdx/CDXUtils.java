@@ -27,6 +27,7 @@ package dk.netarkivet.common.utils.cdx;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -144,6 +145,87 @@ public class CDXUtils {
                     "Exceptions during cdx file generation:\n");
             for (Map.Entry<File, Exception> fileException
                     : exceptions.entrySet()) {
+                errorMsg.append("Could not create cdxfile '");
+                errorMsg.append(fileException.getKey().getAbsolutePath());
+                errorMsg.append("':\n");
+                errorMsg.append(ExceptionUtils.getStackTrace(
+                        fileException.getValue()));
+                errorMsg.append('\n');
+            }
+            log.debug(errorMsg.toString());
+        }
+    }
+    
+    /**
+     * Applies createCDXRecord() to all ARC files in a directory, creating
+     * one CDX file per ARC file.
+     * Note, any exceptions during index generation are logged at level FINE
+     * but otherwise ignored.
+     * Exceptions creating any cdx file are logged at level WARNING but
+     * otherwise ignored.
+     * CDX files are named as the arc files except ".arc" or ".arc.gz" is
+     * replaced with ".cdx"
+     *
+     * @param arcFileDirectory A directory with arcfiles to generate index
+     * for
+     * @param cdxFileDirectory A directory to generate CDX files in
+     * @param filter  A filter matching the files that should be delivered to the CXDInfo class.
+     * @param pattern A pattern matching ?????
+     * @throws ArgumentNotValid if any of directories are null or is not an
+     * existing directory, or if cdxFileDirectory is not writable.
+     */
+    public static void generateCDX(File arcFileDirectory,
+                                   File cdxFileDirectory,
+                                   FilenameFilter filter,
+                                   String pattern)
+                                           throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(arcFileDirectory,
+                                      "File arcFileDirectory");
+        ArgumentNotValid.checkNotNull(cdxFileDirectory,
+                                      "File cdxFileDirectory");
+        if (!arcFileDirectory.isDirectory() || !arcFileDirectory.canRead()) {
+            throw new ArgumentNotValid("The directory for arc files '"
+                                       + arcFileDirectory
+                                       + "' is not a readable directory");
+        }
+        if (!cdxFileDirectory.isDirectory() || !cdxFileDirectory.canWrite()) {
+            throw new ArgumentNotValid("The directory for cdx files '"
+                                       + arcFileDirectory
+                                       + "' is not a writable directory");
+        }
+        Map<File, Exception> exceptions
+                = new HashMap<File, Exception>();
+        for (File arcfile : arcFileDirectory.listFiles(filter)) {
+            
+            File cdxfile = new File(cdxFileDirectory, arcfile.getName()
+                    .replaceFirst(pattern,
+                                  FileUtils.CDX_EXTENSION));
+            if (cdxfile.getName().equals(arcfile.getName())) {
+                // If for some reason the file is not renamed (should never
+                // happen), simply add the .cdx extension to avoid overwriting
+                // existing file
+                cdxfile = new File(cdxFileDirectory,
+                                   cdxfile.getName() + FileUtils.CDX_EXTENSION);
+            }
+            try {
+                OutputStream cdxstream = null;
+                try {
+                    cdxstream = new FileOutputStream(cdxfile);
+                    writeCDXInfo(arcfile, cdxstream);
+                } finally {
+                    if (cdxstream != null) {
+                        cdxstream.close();
+                    }
+                }
+            } catch (Exception e) {
+                exceptions.put(cdxfile, e);
+            }
+        }
+        // Log any errors
+        if (exceptions.size() > 0) {
+            StringBuilder errorMsg = new StringBuilder(
+                    "Exceptions during cdx file generation:\n");
+            for (Map.Entry<File, Exception> fileException: exceptions.entrySet()) {
                 errorMsg.append("Could not create cdxfile '");
                 errorMsg.append(fileException.getKey().getAbsolutePath());
                 errorMsg.append("':\n");

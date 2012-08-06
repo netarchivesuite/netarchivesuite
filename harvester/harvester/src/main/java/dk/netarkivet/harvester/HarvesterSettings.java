@@ -553,5 +553,20 @@ public class HarvesterSettings {
      */
     public static String RECOVERlOG_CONTINUATION_ENABLED 
         = "settings.harvester.harvesting.continuationFromHeritrixRecoverlogEnabled";
+    
+    /**
+     * <b>settings.harvester.harvesting.metadata.metadataFormat</b>  The dataformat used by Netarchivesuite to write the metadata associated
+     * with a given harvest job.
+     * default: arc (alternative: warc) 
+     */
+    public static String METADATA_FORMAT =
+            "settings.harvester.harvesting.metadata.metadataFormat";
+
+    /**
+     * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the harvested data.
+     * default: arc (alternative: warc) 
+     */
+    public static String HERITRIX_ARCHIVE_FORMAT =
+            "settings.harvester.harvesting.heritrix.archiveFormat";
 }
 

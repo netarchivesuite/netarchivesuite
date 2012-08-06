@@ -138,11 +138,11 @@ public class HeritrixFiles {
         return crawlDir;
     }
 
-    /** Returns the prefix used to generate ARC files.
+    /** Returns the prefix used to generate Archive files (ARC or WARC).
      *
-     * @return The ARC file prefix, currently jobID-harvestID.
+     * @return The archive file prefix, currently jobID-harvestID.
      */
-    public String getArcFilePrefix() {
+    public String getArchiveFilePrefix() {
         return arcFilePrefix;
     }
 
@@ -355,6 +355,16 @@ public class HeritrixFiles {
     public File getArcsDir() {
         return new File(crawlDir, Constants.ARCDIRECTORY_NAME);
     }
+    
+    
+    /**
+     * Return the directory, where Heritrix writes its warcfiles.
+     * @return the directory, where Heritrix writes its warcfiles.
+     */
+    public File getWarcsDir() {
+        return new File(crawlDir, Constants.WARCDIRECTORY_NAME);
+    }
+
     
     /**
      * Method for retrieving the jmxremote.password file.

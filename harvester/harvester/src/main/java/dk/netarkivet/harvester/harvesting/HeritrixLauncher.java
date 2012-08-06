@@ -1,7 +1,7 @@
-/* File:     $Id$
- * Revision: $Revision$
- * Author:   $Author$
- * Date:     $Date$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and
@@ -22,7 +22,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 package dk.netarkivet.harvester.harvesting;
 
 import org.apache.commons.logging.Log;
@@ -33,6 +32,7 @@ import org.dom4j.Node;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -82,7 +82,7 @@ public abstract class HeritrixLauncher {
             "//crawl-order/controller"
             + "/string[@name='disk-path']";
     /** Xpath for the arcfile 'prefix' in the order.xml . */
-    private static final String ARCFILE_PREFIX_XPATH =
+    private static final String ARCHIVEFILE_PREFIX_XPATH =
             "//crawl-order/controller"
             + "/map[@name='write-processors']"
             + "/newObject/string[@name='prefix']";
@@ -90,12 +90,26 @@ public abstract class HeritrixLauncher {
     private static final String ARCSDIR_XPATH =
             "//crawl-order/controller"
             + "/map[@name='write-processors']"
-            + "/newObject/stringList[@name='path']/string";
+            + "/newObject[@name='Archiver']/stringList[@name='path']/string";
+    /** Xpath for the WARCs dir in the order.xml. */
+    private static final String WARCSDIR_XPATH =
+            "//crawl-order/controller"
+            + "/map[@name='write-processors']"
+            + "/newObject[@name='WARCArchiver']/stringList[@name='path']/string";
     /** Xpath for the 'seedsfile' in the order.xml. */
     private static final String SEEDS_FILE_XPATH =
             "//crawl-order/controller"
             + "/newObject[@name='scope']"
             + "/string[@name='seedsfile']";
+    private static final String ARCS_ENABLED_XPATH =
+            "//crawl-order/controller"
+            + "/map[@name='write-processors']"
+            + "/newObject[@name='Archiver']/boolean[@name='enabled']";
+    /** Xpath for the WARCs dir in the order.xml. */
+    private static final String WARCS_ENABLED_XPATH =
+            "//crawl-order/controller"
+            + "/map[@name='write-processors']"
+            + "/newObject[@name='WARCArchiver']/boolean[@name='enabled']";
 
     /**
      * Private HeritrixLaucher constructor. Sets up the HeritrixLauncher from
@@ -170,12 +184,57 @@ public abstract class HeritrixLauncher {
         XmlUtils.setNode(doc, DISK_PATH_XPATH,
                          files.getCrawlDir().getAbsolutePath());
 
-        XmlUtils.setNode(doc, ARCFILE_PREFIX_XPATH, files.getArcFilePrefix());
+        XmlUtils.setNode(doc, ARCHIVEFILE_PREFIX_XPATH, files.getArchiveFilePrefix());
 
         XmlUtils.setNode(doc, SEEDS_FILE_XPATH,
                          files.getSeedsTxtFile().getAbsolutePath());
-        XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
 
+        String archiveFormat = Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT);
+        
+        boolean arcMode = false;
+        boolean warcMode = false;
+        
+        if ("arc".equalsIgnoreCase(archiveFormat)) {
+            arcMode = true;
+            log.debug("ARC format selected to be used by Heritrix");
+        } else if ("warc".equalsIgnoreCase(archiveFormat)) {
+            warcMode = true;
+            log.debug("WARC format selected to be used by Heritrix");
+        } else {
+            throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.HERITRIX_ARCHIVE_FORMAT 
+                    + "' is invalid! Unrecognized format '"
+                    + archiveFormat + "'.");
+        }
+        
+        if (arcMode) {
+            // enable ARC writing in Heritrix and disable WARC writing if needed.
+            if (doc.selectSingleNode(ARCSDIR_XPATH) != null 
+                    && doc.selectSingleNode(ARCS_ENABLED_XPATH) != null) {
+                XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
+                XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, "true");
+            } else {
+                throw new IllegalState("Unable to choose ARC as Heritrix archive format because "
+                       + " one of the following xpaths are invalid in the given order.xml: " 
+                        + ARCSDIR_XPATH + "," +  ARCS_ENABLED_XPATH);
+            }
+        } else if (warcMode){ // WARCmode
+         
+            if (doc.selectSingleNode(WARCSDIR_XPATH) != null 
+                    && doc.selectSingleNode(WARCS_ENABLED_XPATH) != null) {
+                XmlUtils.setNode(doc, WARCSDIR_XPATH, Constants.WARCDIRECTORY_NAME);
+                XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, "true");
+            } else {
+                throw new IllegalState("Unable to choose WARC as Heritrix archive format because "
+                       + " one of the following xpaths are invalid in the given order.xml: " 
+                        + WARCSDIR_XPATH + "," +  WARCS_ENABLED_XPATH);
+            }
+            
+        } else {
+            throw new IllegalState(
+                    "Unknown state: Should have selected either ARC or WARC as heritrix archive format");
+        }
+
+        //WARCDIRECTORY_NAME
         if (isDeduplicationEnabledInTemplate(doc)) {
             XmlUtils.setNode(doc, DEDUPLICATOR_INDEX_LOCATION_XPATH,
                              files.getIndexDir().getAbsolutePath());

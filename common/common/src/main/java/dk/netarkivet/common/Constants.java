@@ -59,7 +59,7 @@ public final class Constants {
      * Add job IDs to the front as necessary.
      */
     public static final String METADATA_FILE_PATTERN_SUFFIX
-            = "-metadata-[0-9]+.arc";
+            = "-metadata-[0-9]+.(w)?arc";
     /** The mimetype for a list of CDX entries. */
     public static final String CDX_MIME_TYPE =
             "application/x-cdx";
@@ -102,6 +102,8 @@ public final class Constants {
     public static final long IO_CHUNK_SIZE = 65536L;
     /** The directory name of the heritrix directory with arcfiles. */
     public static final String ARCDIRECTORY_NAME = "arcs";
+    /** The directory name of the heritrix directory with warcfiles. */
+    public static final String WARCDIRECTORY_NAME = "warcs";
     /**
      * How big a buffer we use for read()/write() operations on InputStream/
      * OutputStream.

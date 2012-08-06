@@ -196,7 +196,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
         HeritrixFiles files = getHeritrixFiles();
         executeHeritrixCommand(ADD_JOB_COMMAND,
                              files.getOrderXmlFile().getAbsolutePath(),
-                             files.getArcFilePrefix(), getJobDescription(),
+                             files.getArchiveFilePrefix(), getJobDescription(),
                              files.getSeedsTxtFile().getAbsolutePath());
         jobName = getJobName();
         initializeProgressStatisticsLegend();

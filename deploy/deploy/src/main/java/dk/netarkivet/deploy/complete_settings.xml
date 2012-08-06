@@ -612,6 +612,7 @@
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
                 <javaOpts/>
+                <archiveFormat>arc</archiveFormat>
             </heritrix>
             <frontier>
                 <!-- 10 minutes -->
@@ -639,6 +640,7 @@
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
                 <generateArcFilesReport>true</generateArcFilesReport>
+                <metadataFormat>arc</metadataFormat>
             </metadata>
         </harvesting>
     </harvester><monitor>

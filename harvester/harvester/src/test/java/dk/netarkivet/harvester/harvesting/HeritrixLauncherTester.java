@@ -26,6 +26,7 @@ package dk.netarkivet.harvester.harvesting;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
@@ -243,6 +244,9 @@ public class HeritrixLauncherTester extends TestCase {
             fail("An exception should have been caught when launching with a bad order.xml file !");
         } catch (IOFailure e) {
             // expected case since a searched node could not be found in the bad
+            // XML-order-file!
+        } catch (IllegalState e) {
+         // expected case since a searched node could not be found in the bad
             // XML-order-file!
         }
     }

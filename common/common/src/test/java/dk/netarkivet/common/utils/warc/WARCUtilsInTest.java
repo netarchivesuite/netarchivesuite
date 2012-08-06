@@ -41,10 +41,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
 * We have borrowed code from wayback.
 * @see org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter.java
 */
-public class WARCUtils {
+public class WARCUtilsInTest {
     
     /** Logging output place. */
-    protected static final Log log = LogFactory.getLog(WARCUtils.class);
+    protected static final Log log = LogFactory.getLog(WARCUtilsInTest.class);
 
     /**
      * Read the contents (payload) of an WARC record into a byte array.
