@@ -115,7 +115,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         Map<String, String> fieldsread = new HashMap<String,String>();
         fieldsread.put("A", header.getUrl());
         fieldsread.put("e", header.getIp());
-        fieldsread.put("b", header.getDate());
+        fieldsread.put("b", header.getArcDateStr());
         fieldsread.put("n", Long.toString(header.getLength()));
         fieldsread.put("g", record.getHeader().getArchiveFile().getName());
         fieldsread.put("v", Long.toString(record.getHeader().getOffset())); 
@@ -124,6 +124,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         String msgType;
         ContentType contentType = ContentType.parseContentType(mimeType);
         boolean bResponse = false;
+        boolean bRequest = false;
         if (contentType != null) {
         	if ("application".equals(contentType.contentType)
         			&& "http".equals(contentType.mediaType)) {
@@ -131,6 +132,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         		if ("response".equals(msgType)) {
         			bResponse = true;
         		} else if ("request".equals(msgType)) {
+        			bRequest = true;
         		}
         	}
         	mimeType = contentType.toStringShort();

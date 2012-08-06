@@ -116,7 +116,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         Map<String, String> fieldsread = new HashMap<String,String>();
         fieldsread.put("A", header.getUrl());
         fieldsread.put("e", header.getIp());
-        fieldsread.put("b", header.getDate());
+        fieldsread.put("b", header.getArcDateStr());
         fieldsread.put("n", Long.toString(header.getLength()));
 
         /* Note about offset:

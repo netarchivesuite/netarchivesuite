@@ -55,7 +55,7 @@ public final class Constants {
      * Add job IDs to the front as necessary.
      */
     public static final String METADATA_FILE_PATTERN_SUFFIX
-            = "-metadata-[0-9]+.arc";
+            = "-metadata-[0-9]+.(w)?arc";
     /** The mimetype for a list of CDX entries. */
     public static final String CDX_MIME_TYPE =
             "application/x-cdx";

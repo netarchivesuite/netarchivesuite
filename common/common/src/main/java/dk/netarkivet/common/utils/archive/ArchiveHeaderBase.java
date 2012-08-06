@@ -1,6 +1,7 @@
 package dk.netarkivet.common.utils.archive;
 
 import java.io.File;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +19,9 @@ public abstract class ArchiveHeaderBase {
 
 	public abstract Map<String, Object> getHeaderFields();
 
-	public abstract String getDate();
+	public abstract Date getDate();
+
+	public abstract String getArcDateStr();
 
 	public abstract long getLength();
 

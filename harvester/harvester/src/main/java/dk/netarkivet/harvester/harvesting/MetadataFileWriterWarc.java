@@ -100,7 +100,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
                 .format(new Date());
         URI recordId;
         try {
-            recordId = new URI(UUID.randomUUID().toString());
+            recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
         } catch (URISyntaxException e) {
             throw new IllegalState("Epic fail creating URI from UUID!");
         }
@@ -110,7 +110,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             ANVLRecord namedFields = new ANVLRecord();
             namedFields.addLabelValue("X-Metadata-Version", "1");
             writer.writeMetadataRecord(URL, create14DigitDate,
-                    "x-nas/metadata", recordId, namedFields, in,
+                    "application/nas-metadata", recordId, namedFields, in,
                     fileToArchive.length());
         } catch (FileNotFoundException e) {
             throw new IOFailure("Unable to open file: "
@@ -125,13 +125,13 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     @Override
     public void write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, long recordLength, InputStream in)
-            throws java.io.IOException {
+                    throws java.io.IOException {
         // hostIP?
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat()
                 .format(new Date(fetchBeginTimeStamp));
         URI recordId;
         try {
-            recordId = new URI(UUID.randomUUID().toString());
+            recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
         } catch (URISyntaxException e) {
             throw new IllegalState("Epic fail creating URI from UUID!");
         }

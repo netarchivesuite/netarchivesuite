@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,6 +50,7 @@ import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.common.utils.archive.HeritrixArchiveHeaderWrapper;
 
 /**
@@ -77,7 +79,7 @@ public class WARCUtils {
                     newFile, 
                     false, //Don't compress
                     //Use current time
-                    ArchiveUtils.get14DigitDate(System.currentTimeMillis()),
+                    ArchiveDateConverter.getWarcDateFormat().format(new Date()),
                     null //No particular file metadata to add
             );
         } catch (IOException e) {
@@ -140,7 +142,9 @@ public class WARCUtils {
         	String warcType = header.getHeaderStringValue("WARC-Type");
 
             String url = header.getUrl();
-            String create14DigitDate = header.getDate();
+            Date date = header.getDate();
+            String dateStr = ArchiveDateConverter.getWarcDateFormat()
+                    .format(date);
             String mimetype = header.getMimetype();
             URI recordId;
     		try {
@@ -158,17 +162,17 @@ public class WARCUtils {
 
     		// Worst API EVER!
     		if ("metadata".equals(warcType)) {
-    			aw.writeMetadataRecord(url, create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+    			aw.writeMetadataRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
     		} else if ("request".equals(warcType)) {
-                aw.writeRequestRecord(url, create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+                aw.writeRequestRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
         	} else if ("resource".equals(warcType)) {
-                aw.writeResourceRecord(url, create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+                aw.writeResourceRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
     		} else if ("response".equals(warcType)) {
-                aw.writeResponseRecord(url, create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+                aw.writeResponseRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
 			} else if ("revisit".equals(warcType)) {
-	            aw.writeRevisitRecord(url, create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+	            aw.writeRevisitRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
 			} else if ("warcinfo".equals(warcType)) {
-	            aw.writeWarcinfoRecord(create14DigitDate, mimetype, recordId, namedFields, in, payloadLength);
+	            aw.writeWarcinfoRecord(dateStr, mimetype, recordId, namedFields, in, payloadLength);
 			} else {
 				throw new IOFailure("Unknown WARC-Type!");
 			}

@@ -2,6 +2,7 @@ package dk.netarkivet.common.utils.archive;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,10 @@ import org.archive.io.warc.WARCRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
+
+	protected DateFormat warcDateFormat = ArchiveDateConverter.getWarcDateFormat();
+
+	protected DateFormat arcDateFormat = ArchiveDateConverter.getArcDateFormat();
 
 	protected HeritrixArchiveRecordWrapper recordWrapper;
 
@@ -113,18 +118,32 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 	 * Conversion required.
 	 */
 
-	public String getDate() {
+	public Date getDate() {
+		String dateStr = header.getDate();
+		Date date = null;
+		try {
+			if (bIsArc) {
+				date = arcDateFormat.parse(dateStr);
+			} else if (bIsWarc) {
+				date = warcDateFormat.parse(dateStr);
+			}
+		} catch (ParseException e) {
+			// TODO maybe log?
+		}
+		return date;
+	} 
+
+	public String getArcDateStr() {
 		if (bIsArc) {
 			return header.getDate();
 		} else if (bIsWarc) {
 			try {
 				String dateStr = header.getDate();
-				DateFormat warcDateFormat = ArchiveDateConverter.getWarcDateFormat();
 				Date warcDate = warcDateFormat.parse(dateStr);
-				DateFormat arcDateFormat = ArchiveDateConverter.getArcDateFormat();
 				dateStr = arcDateFormat.format(warcDate);
 				return dateStr;
 			} catch (Exception e) {
+				// TODO maybe log?
 				return null;
 			}
 		}
