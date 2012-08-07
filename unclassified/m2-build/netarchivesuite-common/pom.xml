@@ -133,6 +133,11 @@
       <version>1.0</version>
     </dependency>
     <dependency>
+      <groupId>org.jwat</groupId>
+      <artifactId>jwat-common</artifactId>
+      <version>0.9.1</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.2</version>
