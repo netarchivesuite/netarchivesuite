@@ -166,6 +166,16 @@ public class FileUtils {
             return filename.toLowerCase().matches(".*" + WARC_PATTERN);
         }
     };      
+
+    /**
+     * A filter that matches warc and arc files, that is any file that ends 
+     * on .warc, .warc.gz, .arc or .arc.gz in any case.
+     */
+    public static final FilenameFilter WARCS_ARCS_FILTER = new FilenameFilter() {
+        public boolean accept(File directory, String filename) {
+            return filename.toLowerCase().matches(".*" + WARC_ARC_PATTERN);
+        }
+    };
             
     /** How many times we will retry making a unique directory name. */
     private static final int MAX_RETRIES = 10;

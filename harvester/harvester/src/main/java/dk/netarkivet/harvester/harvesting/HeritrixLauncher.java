@@ -112,7 +112,7 @@ public abstract class HeritrixLauncher {
             + "/newObject[@name='WARCArchiver']/boolean[@name='enabled']";
 
     /**
-     * Private HeritrixLaucher constructor. Sets up the HeritrixLauncher from
+     * Private HeritrixLauncher constructor. Sets up the HeritrixLauncher from
      * the given order file and seedsfile.
      *
      * @param files Object encapsulating location of Heritrix crawldir and
@@ -184,7 +184,7 @@ public abstract class HeritrixLauncher {
         XmlUtils.setNode(doc, DISK_PATH_XPATH,
                          files.getCrawlDir().getAbsolutePath());
 
-        XmlUtils.setNode(doc, ARCHIVEFILE_PREFIX_XPATH, files.getArchiveFilePrefix());
+        XmlUtils.setNodes(doc, ARCHIVEFILE_PREFIX_XPATH, files.getArchiveFilePrefix());
 
         XmlUtils.setNode(doc, SEEDS_FILE_XPATH,
                          files.getSeedsTxtFile().getAbsolutePath());
@@ -212,17 +212,23 @@ public abstract class HeritrixLauncher {
                     && doc.selectSingleNode(ARCS_ENABLED_XPATH) != null) {
                 XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
                 XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, "true");
+                if (doc.selectSingleNode(WARCS_ENABLED_XPATH) != null) {
+                    XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, "false");
+                }
             } else {
                 throw new IllegalState("Unable to choose ARC as Heritrix archive format because "
                        + " one of the following xpaths are invalid in the given order.xml: " 
                         + ARCSDIR_XPATH + "," +  ARCS_ENABLED_XPATH);
             }
-        } else if (warcMode){ // WARCmode
-         
+        } else if (warcMode) { // WARCmode
+            // enable ARC writing in Heritrix and disable WARC writing if needed.
             if (doc.selectSingleNode(WARCSDIR_XPATH) != null 
                     && doc.selectSingleNode(WARCS_ENABLED_XPATH) != null) {
                 XmlUtils.setNode(doc, WARCSDIR_XPATH, Constants.WARCDIRECTORY_NAME);
                 XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, "true");
+                if (doc.selectSingleNode(ARCS_ENABLED_XPATH) != null) {
+                    XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, "false");
+                }
             } else {
                 throw new IllegalState("Unable to choose WARC as Heritrix archive format because "
                        + " one of the following xpaths are invalid in the given order.xml: " 

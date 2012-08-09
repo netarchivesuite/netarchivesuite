@@ -129,7 +129,30 @@ public class XmlUtils {
         }
         xpathNode.setText(value);
     }
-    
+
+    /**
+     * Set a List of XmlNodes defined by the given XPath to the given value.
+     *
+     * @param doc   the Document, which is being modified
+     * @param xpath the given XPath
+     * @param value the given value
+     * @throws IOFailure If the given XPath was not found in the document
+     */
+    public static void setNodes(Document doc, String xpath, String value) {
+        ArgumentNotValid.checkNotNull(doc, "Document doc");
+        ArgumentNotValid.checkNotNullOrEmpty(xpath, "String xpath");
+        ArgumentNotValid.checkNotNull(value, "String value");
+        List<Node> xpathNodes = doc.selectNodes(xpath);
+        if (xpathNodes == null) {
+            throw new IOFailure("Element '" + xpath
+                                + "' could not be found in the document '"
+                                + doc.getRootElement().getName() + "'!");
+        }
+        for (int i=0; i<xpathNodes.size(); ++i) {
+            xpathNodes.get(i).setText(value);
+        }
+    }
+
     /**
      * Validate that the settings xml files conforms to the XSD.
      *
