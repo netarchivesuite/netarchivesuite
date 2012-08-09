@@ -51,12 +51,15 @@ public class TwitterHarvesterProcessor extends Processor {
     protected void initialTasks() {
         super.initialTasks();
         logger.info("Initial tasks for " + PROCESSOR_FULL_NAME);
+        System.out.println("Initial tasks for " + PROCESSOR_FULL_NAME);
         StringList keywords = (StringList) getAttributeUnchecked(ATTR_KEYWORDS);
         for (Object keyword: keywords) {
             logger.info("Twitter processor keyword: " + keyword);
+            System.out.println("Twitter processor keyword: " + keyword);
         }
         int pages = ((Integer) getAttributeUnchecked(ATTR_PAGES)).intValue();
         logger.info("Twitter processor will queue " + pages + " page(s) of results.");
+        System.out.println("Twitter processor will queue " + pages + " page(s) of results.");
     }
 
     /**
