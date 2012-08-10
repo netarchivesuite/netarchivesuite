@@ -12,14 +12,33 @@ import javax.management.MBeanException;
 import javax.management.ReflectionException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CrawlURI;
+import org.archive.crawler.extractor.Link;
 import org.archive.crawler.framework.Processor;
 import org.archive.crawler.settings.SimpleType;
 import org.archive.crawler.settings.StringList;
 import org.archive.crawler.settings.Type;
+import twitter4j.Annotation;
+import twitter4j.Annotations;
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.Tweet;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.URLEntity;
 
+/**
+ * A processors which queues urls to tweets and, optionally, embedded links.
+ * Although written as a link extractor for heritrix, the processor actually
+ * browses twitter through its API using parameters passed in via the order
+ * template. Seeds are irrelevant, and all the work is done on the first call
+ * to innerProcess().
+ */
 public class TwitterHarvesterProcessor extends Processor {
 
     public static final String PROCESSOR_NAME = "Twitter Harvester Processor";
@@ -40,13 +59,22 @@ public class TwitterHarvesterProcessor extends Processor {
 
     private StringList keywords;
     private int pages;
+    private int resultsPerPage = 5;
+    private boolean queueLinks = true;
+
+    private boolean firstUri = true;
+    private Twitter twitter;
+    private int tweetCount = 0;
+    private int linkCount = 0;
 
 
     public TwitterHarvesterProcessor(String name) {
         super(name, PROCESSOR_NAME);
-        System.out.println("Constructing instance of " + TwitterHarvesterProcessor.class);
+        System.out.println(
+                "Constructing instance of " + TwitterHarvesterProcessor.class);
         Type e = addElementToDefinition(new StringList(ATTR_KEYWORDS, "Keywords to search for"));
         e = addElementToDefinition(new SimpleType(ATTR_PAGES, "Number of pages of twitter results to use.", new Integer(0) ));
+        twitter = (new TwitterFactory()).getInstance();
     }
 
     @Override
@@ -63,7 +91,8 @@ public class TwitterHarvesterProcessor extends Processor {
         int pages = ((Integer) getAttributeUnchecked(ATTR_PAGES)).intValue();
         this.pages = pages;
         logger.info("Twitter processor will queue " + pages + " page(s) of results.");
-        System.out.println("Twitter processor will queue " + pages + " page(s) of results.");
+        System.out.println("Twitter processor will queue " + pages
+                           + " page(s) of results.");
     }
 
     /**
@@ -90,17 +119,59 @@ public class TwitterHarvesterProcessor extends Processor {
     @Override
     protected void innerProcess(CrawlURI curi) throws InterruptedException {
         super.innerProcess(
-                curi);    //To change body of overridden methods use File | Settings | File Templates.
-        System.out.println(TwitterHarvesterProcessor.class  + " processing " + curi);
+                curi);
+        System.out.println(
+                TwitterHarvesterProcessor.class + " processing " + curi);
+        if (firstUri) {
+            for (Object keyword: keywords) {
+                 for (int page = 1; page <= pages; page++) {
+                     Query query = new Query();
+                     query.setRpp(resultsPerPage);
+                     query.setQuery((String) keyword);
+                     query.setPage(page);
+                     try {
+                         List<Tweet> tweets = twitter.search(query).getTweets();
+                         for (Tweet tweet: tweets) {
+                             long id = tweet.getId();
+                             String fromUser = tweet.getFromUser();
+                             String tweetUrl = "http://twitter.com/" + fromUser + "/status/" + id;
+                             try {
+                                 curi.createAndAddLink(tweetUrl, Link.EMBED_MISC, Link.NAVLINK_HOP);
+                                 tweetCount++;
+                             } catch (URIException e) {
+                                 logger.log(Level.SEVERE, e.getMessage());
+                             }
+                             if (queueLinks) {
+                                 for (URLEntity urlEntity : tweet.getURLEntities()) {
+                                     try {
+                                         curi.createAndAddLink(urlEntity.getDisplayURL(), Link.EMBED_MISC, Link.NAVLINK_HOP);
+                                         curi.createAndAddLink(urlEntity.getExpandedURL().toString(), Link.EMBED_MISC, Link.NAVLINK_HOP);
+                                         curi.createAndAddLink(urlEntity.toString(), Link.EMBED_MISC, Link.NAVLINK_HOP);
+                                     } catch (URIException e) {
+                                         logger.log(Level.SEVERE, e.getMessage());
+                                     }
+                                     linkCount++;
+                                 }
+                             }
+                         }
+                     } catch (TwitterException e) {
+                        logger.log(Level.SEVERE, e.getMessage());
+                     }
+                 }
+            }
+            firstUri = false;
+        }
     }
 
     @Override
     public String report() {
         StringBuffer ret = new StringBuffer();
-               ret.append("Processor:" + TwitterHarvesterProcessor.class.getName() + "\n");
-               ret.append("Processed" + keywords.size() + "keywords\n");
-               ret.append("Processed " + pages + " pages\n");
-               return ret.toString();
+        ret.append("Processor:" + TwitterHarvesterProcessor.class.getName() + "\n");
+        ret.append("Processed " + keywords.size() + " keywords.\n");
+        ret.append("Processed " + pages + " pages with " + resultsPerPage + " results per page.\n");
+        ret.append("Queued " + tweetCount + " tweets.\n");
+        ret.append("Queued " + linkCount + " external links.\n");
+        return ret.toString();
     }
 
 }
