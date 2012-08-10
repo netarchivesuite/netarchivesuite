@@ -134,7 +134,7 @@ public class TwitterHarvesterProcessor extends Processor {
                              String fromUser = tweet.getFromUser();
                              String tweetUrl = "http://twitter.com/" + fromUser + "/status/" + id;
                              try {
-                                 curi.createAndAddLink(tweetUrl, Link.EMBED_MISC, Link.NAVLINK_HOP);
+                                 curi.createAndAddLink(tweetUrl, Link.EMBED_MISC, Link.PREREQ_HOP);
                                  System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + tweetUrl);
                                  tweetCount++;
                              } catch (URIException e) {
@@ -143,10 +143,8 @@ public class TwitterHarvesterProcessor extends Processor {
                              if (queueLinks) {
                                  for (URLEntity urlEntity : tweet.getURLEntities()) {
                                      try {
-                                         curi.createAndAddLink(urlEntity.getDisplayURL(), Link.EMBED_MISC, Link.NAVLINK_HOP);
                                          curi.createAndAddLink(urlEntity.getExpandedURL().toString(), Link.EMBED_MISC, Link.NAVLINK_HOP);
                                          curi.createAndAddLink(urlEntity.getURL().toString(), Link.EMBED_MISC, Link.NAVLINK_HOP);
-                                         System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getDisplayURL());
                                          System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getExpandedURL().toString());
                                          System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getURL().toString());
                                      } catch (URIException e) {
