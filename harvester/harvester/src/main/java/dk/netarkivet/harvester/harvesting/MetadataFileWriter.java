@@ -121,9 +121,9 @@ public abstract class MetadataFileWriter {
     }
     
     /**
-     * 
-     * @param metadataFile
-     * @return
+     * Create a writer that writes data to the given archive file.
+     * @param metadataFile The archive file to write to.
+     * @return a writer that writes data to the given archive file.
      */
     public static MetadataFileWriter createWriter(File metadataFile) {
         if (metadataFormat == 0) {
@@ -150,19 +150,21 @@ public abstract class MetadataFileWriter {
     public abstract File getFile();
     
     /**
-     * @param 
+     * Insert given metadata file into the destination archive file.
+     * @param metadataFile A given metadata file to insert 
      */
     public abstract void insertMetadataFile(File metadataFile);
+    
     /**
-     * @param file
-     * @param uri
-     * @param mime
+     * Write the given file to the metadata file.
+     * @param file A given file with metadata to write to the metadata archive file.
+     * @param uri The uri associated with the piece of metadata
+     * @param mime The mimetype associated with the piece of metadata
      */
     public abstract void writeFileTo(File file, String uri, String mime);
 
     /** Writes a File to an ARCWriter, if available,
      * otherwise logs the failure to the class-logger.
-     * @param writer the given ARCWriter
      * @param fileToArchive the File to archive
      * @param URL the URL with which it is stored in the arcfile
      * @param mimetype The mimetype of the File-contents
@@ -171,14 +173,25 @@ public abstract class MetadataFileWriter {
     public abstract boolean writeTo(File fileToArchive, String URL, String mimetype);
 
     /** 
-     * 
-     * 
-     * Copied from the ARCWriter.
-     * 
+     * Write a record to the archive file.
+     * @param uri
+     * @param contentType 
+     * @param hostIP
+     * @param fetchBeginTimeStamp
+     * @param recordLength
+     * @param in
+     * @see ARCWriter#write(String uri, String contentType, String hostIP,
+            long fetchBeginTimeStamp, long recordLength, InputStream in
      */
     public abstract void write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, long recordLength, InputStream in) throws java.io.IOException;
 
+    /**
+     * 
+     * @param parentDir
+     * @param filter
+     * @param mimetype
+     */
     public void insertFiles(File parentDir, FilenameFilter filter, String mimetype) {
         //For each CDX file...
         File[] cdxFiles

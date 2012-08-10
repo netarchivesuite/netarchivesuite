@@ -38,7 +38,6 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCWriter;
 import org.dom4j.Document;
 import org.dom4j.Node;
 
@@ -56,7 +55,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
