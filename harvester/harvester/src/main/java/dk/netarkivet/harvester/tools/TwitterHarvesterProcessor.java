@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CrawlURI;
+import org.archive.crawler.extractor.Extractor;
 import org.archive.crawler.extractor.Link;
 import org.archive.crawler.framework.Processor;
 import org.archive.crawler.settings.SimpleType;
@@ -36,7 +37,7 @@ import twitter4j.URLEntity;
  * template. Seeds are irrelevant, and all the work is done on the first call
  * to innerProcess().
  */
-public class TwitterHarvesterProcessor extends Processor {
+public class TwitterHarvesterProcessor extends Extractor {
 
     public static final String PROCESSOR_NAME = "Twitter Harvester Processor";
 
@@ -112,52 +113,50 @@ public class TwitterHarvesterProcessor extends Processor {
         return result;
     }
 
-
     @Override
-    protected void innerProcess(CrawlURI curi) throws InterruptedException {
-        super.innerProcess(
-                curi);
+    protected void extract(CrawlURI crawlURI) {
         if (firstUri) {
-            for (Object keyword: keywords) {
-                 for (int page = 1; page <= pages; page++) {
-                     Query query = new Query();
-                     query.setRpp(resultsPerPage);
-                     query.setQuery((String) keyword);
-                     query.setPage(page);
-                     try {
-                         List<Tweet> tweets = twitter.search(query).getTweets();
-                         for (Tweet tweet: tweets) {
-                             long id = tweet.getId();
-                             String fromUser = tweet.getFromUser();
-                             String tweetUrl = "http://twitter.com/" + fromUser + "/status/" + id;
-                             try {
-                                 curi.createAndAddLink(tweetUrl, Link.PREREQ_MISC, Link.NAVLINK_HOP);
-                                 System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + tweetUrl);
-                                 tweetCount++;
-                             } catch (URIException e) {
-                                 logger.log(Level.SEVERE, e.getMessage());
-                             }
-                             if (queueLinks) {
-                                 for (URLEntity urlEntity : tweet.getURLEntities()) {
-                                     try {
-                                         curi.createAndAddLink(urlEntity.getExpandedURL().toString(), Link.PREREQ_MISC, Link.PREREQ_HOP);
-                                         curi.createAndAddLink(urlEntity.getURL().toString(), Link.PREREQ_MISC, Link.EMBED_HOP);
-                                         System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getExpandedURL().toString());
-                                         System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getURL().toString());
-                                     } catch (URIException e) {
-                                         logger.log(Level.SEVERE, e.getMessage());
-                                     }
-                                     linkCount++;
-                                 }
-                             }
-                         }
-                     } catch (TwitterException e) {
-                        logger.log(Level.SEVERE, e.getMessage());
-                     }
-                 }
-            }
-            firstUri = false;
-        }
+                   for (Object keyword: keywords) {
+                        for (int page = 1; page <= pages; page++) {
+                            Query query = new Query();
+                            query.setRpp(resultsPerPage);
+                            query.setQuery((String) keyword);
+                            query.setPage(page);
+                            try {
+                                List<Tweet> tweets = twitter.search(query).getTweets();
+                                for (Tweet tweet: tweets) {
+                                    long id = tweet.getId();
+                                    String fromUser = tweet.getFromUser();
+                                    String tweetUrl = "http://twitter.com/" + fromUser + "/status/" + id;
+                                    try {
+                                        crawlURI.createAndAddLink(tweetUrl, Link.PREREQ_MISC, Link.NAVLINK_HOP);
+                                        System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + tweetUrl);
+                                        tweetCount++;
+                                    } catch (URIException e) {
+                                        logger.log(Level.SEVERE, e.getMessage());
+                                    }
+                                    if (queueLinks) {
+                                        for (URLEntity urlEntity : tweet.getURLEntities()) {
+                                            try {
+                                                crawlURI.createAndAddLink(urlEntity.getExpandedURL().toString(), Link.PREREQ_MISC, Link.PREREQ_HOP);
+                                                crawlURI.createAndAddLink(urlEntity.getURL().toString(), Link.PREREQ_MISC, Link.EMBED_HOP);
+                                                System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getExpandedURL().toString());
+                                                System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getURL().toString());
+                                            } catch (URIException e) {
+                                                logger.log(Level.SEVERE, e.getMessage());
+                                            }
+                                            linkCount++;
+                                        }
+                                    }
+                                }
+                            } catch (TwitterException e) {
+                               logger.log(Level.SEVERE, e.getMessage());
+                            }
+                        }
+                   }
+                   firstUri = false;
+               }
+           crawlURI.linkExtractorFinished();
     }
 
     @Override
