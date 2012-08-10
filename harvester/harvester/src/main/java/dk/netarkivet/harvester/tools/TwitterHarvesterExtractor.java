@@ -137,7 +137,7 @@ public class TwitterHarvesterExtractor extends Extractor {
                                         for (URLEntity urlEntity : tweet.getURLEntities()) {
                                             try {
                                                 crawlURI.createAndAddLink(urlEntity.getExpandedURL().toString(), Link.PREREQ_MISC, Link.PREREQ_HOP);
-                                                crawlURI.createAndAddLink(urlEntity.getURL().toString(), Link.PREREQ_MISC, Link.EMBED_HOP);
+                                                crawlURI.createAndAddLink(urlEntity.getURL().toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
                                                 System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + urlEntity.getExpandedURL().toString());
                                                 System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + urlEntity.getURL().toString());
                                             } catch (URIException e) {
