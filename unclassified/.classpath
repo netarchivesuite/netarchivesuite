@@ -65,5 +65,6 @@
 	<classpathentry kind="lib" path="lib/lucene-core-3.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/wayback-core-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/jwat-common-0.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/twitter4j-core-2.2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
