@@ -10,7 +10,6 @@ package dk.netarkivet.harvester.tools;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanException;
 import javax.management.ReflectionException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +18,6 @@ import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.extractor.Extractor;
 import org.archive.crawler.extractor.Link;
-import org.archive.crawler.framework.Processor;
 import org.archive.crawler.settings.SimpleType;
 import org.archive.crawler.settings.StringList;
 import org.archive.crawler.settings.Type;
@@ -30,18 +28,18 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.URLEntity;
 
-/**
+/**                                 T
  * A processors which queues urls to tweets and, optionally, embedded links.
  * Although written as a link extractor for heritrix, the processor actually
  * browses twitter through its API using parameters passed in via the order
  * template. Seeds are irrelevant, and all the work is done on the first call
  * to innerProcess().
  */
-public class TwitterHarvesterProcessor extends Extractor {
+public class TwitterHarvesterExtractor extends Extractor {
 
-    public static final String PROCESSOR_NAME = "Twitter Harvester Processor";
+    public static final String PROCESSOR_NAME = "Twitter Harvester Extractor";
 
-    public static final String PROCESSOR_FULL_NAME = TwitterHarvesterProcessor.class
+    public static final String PROCESSOR_FULL_NAME = TwitterHarvesterExtractor.class
             .getName();
 
     public static final String PROCESSOR_DESCRIPTION = "Harvests Twitter and embedded url's via Twitter API";
@@ -66,10 +64,10 @@ public class TwitterHarvesterProcessor extends Extractor {
     private int linkCount = 0;
 
 
-    public TwitterHarvesterProcessor(String name) {
+    public TwitterHarvesterExtractor(String name) {
         super(name, PROCESSOR_NAME);
         System.out.println(
-                "Constructing instance of " + TwitterHarvesterProcessor.class);
+                "Constructing instance of " + TwitterHarvesterExtractor.class);
         Type e = addElementToDefinition(new StringList(ATTR_KEYWORDS, "Keywords to search for"));
         e = addElementToDefinition(new SimpleType(ATTR_PAGES, "Number of pages of twitter results to use.", new Integer(0) ));
         twitter = (new TwitterFactory()).getInstance();
@@ -130,7 +128,7 @@ public class TwitterHarvesterProcessor extends Extractor {
                                     String tweetUrl = "http://twitter.com/" + fromUser + "/status/" + id;
                                     try {
                                         crawlURI.createAndAddLink(tweetUrl, Link.PREREQ_MISC, Link.NAVLINK_HOP);
-                                        System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + tweetUrl);
+                                        System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + tweetUrl);
                                         tweetCount++;
                                     } catch (URIException e) {
                                         logger.log(Level.SEVERE, e.getMessage());
@@ -140,8 +138,8 @@ public class TwitterHarvesterProcessor extends Extractor {
                                             try {
                                                 crawlURI.createAndAddLink(urlEntity.getExpandedURL().toString(), Link.PREREQ_MISC, Link.PREREQ_HOP);
                                                 crawlURI.createAndAddLink(urlEntity.getURL().toString(), Link.PREREQ_MISC, Link.EMBED_HOP);
-                                                System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getExpandedURL().toString());
-                                                System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getURL().toString());
+                                                System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + urlEntity.getExpandedURL().toString());
+                                                System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + urlEntity.getURL().toString());
                                             } catch (URIException e) {
                                                 logger.log(Level.SEVERE, e.getMessage());
                                             }
@@ -155,14 +153,14 @@ public class TwitterHarvesterProcessor extends Extractor {
                         }
                    }
                    firstUri = false;
+                   crawlURI.linkExtractorFinished();
                }
-           crawlURI.linkExtractorFinished();
     }
 
     @Override
     public String report() {
         StringBuffer ret = new StringBuffer();
-        ret.append("Processor:" + TwitterHarvesterProcessor.class.getName() + "\n");
+        ret.append("Processor:" + TwitterHarvesterExtractor.class.getName() + "\n");
         ret.append("Processed " + keywords.size() + " keywords.\n");
         ret.append("Processed " + pages + " pages with " + resultsPerPage + " results per page.\n");
         ret.append("Queued " + tweetCount + " tweets.\n");

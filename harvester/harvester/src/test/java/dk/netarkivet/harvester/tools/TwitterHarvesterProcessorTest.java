@@ -40,7 +40,7 @@ public class TwitterHarvesterProcessorTest extends TestCase {
         handler.getOrCreateSettingsObject("twitter.com");
         CrawlerSettings settings =  handler.getSettings("twitter.com");
         CrawlerSettings settings2 = new CrawlerSettings(handler, "twitter.com");
-        TwitterHarvesterProcessor processor = new TwitterHarvesterProcessor("aname");
+        TwitterHarvesterExtractor processor = new TwitterHarvesterExtractor("aname");
         processor.earlyInitialize(settings);
         processor.initialTasks();
     }

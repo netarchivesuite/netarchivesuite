@@ -216,7 +216,7 @@
             </newObject>
         </map>
         <map name="extract-processors">
-            <newObject name="TwitterProcessor" class="dk.netarkivet.harvester.tools.TwitterHarvesterProcessor">
+            <newObject name="TwitterProcessor" class="dk.netarkivet.harvester.tools.TwitterHarvesterExtractor">
                 <boolean name="enabled">true</boolean>
                 <integer name="pages">1</integer>
                 <stringList name="keywords">
