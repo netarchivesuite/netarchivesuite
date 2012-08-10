@@ -120,8 +120,6 @@ public class TwitterHarvesterProcessor extends Processor {
     protected void innerProcess(CrawlURI curi) throws InterruptedException {
         super.innerProcess(
                 curi);
-        System.out.println(
-                TwitterHarvesterProcessor.class + " processing " + curi);
         if (firstUri) {
             for (Object keyword: keywords) {
                  for (int page = 1; page <= pages; page++) {
@@ -137,6 +135,7 @@ public class TwitterHarvesterProcessor extends Processor {
                              String tweetUrl = "http://twitter.com/" + fromUser + "/status/" + id;
                              try {
                                  curi.createAndAddLink(tweetUrl, Link.EMBED_MISC, Link.NAVLINK_HOP);
+                                 System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + tweetUrl);
                                  tweetCount++;
                              } catch (URIException e) {
                                  logger.log(Level.SEVERE, e.getMessage());
@@ -146,7 +145,10 @@ public class TwitterHarvesterProcessor extends Processor {
                                      try {
                                          curi.createAndAddLink(urlEntity.getDisplayURL(), Link.EMBED_MISC, Link.NAVLINK_HOP);
                                          curi.createAndAddLink(urlEntity.getExpandedURL().toString(), Link.EMBED_MISC, Link.NAVLINK_HOP);
-                                         curi.createAndAddLink(urlEntity.toString(), Link.EMBED_MISC, Link.NAVLINK_HOP);
+                                         curi.createAndAddLink(urlEntity.getURL().toString(), Link.EMBED_MISC, Link.NAVLINK_HOP);
+                                         System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getDisplayURL());
+                                         System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getExpandedURL().toString());
+                                         System.out.println(TwitterHarvesterProcessor.class.getName() + " adding " + urlEntity.getURL().toString());
                                      } catch (URIException e) {
                                          logger.log(Level.SEVERE, e.getMessage());
                                      }
