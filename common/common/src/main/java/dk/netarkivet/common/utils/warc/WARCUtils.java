@@ -148,7 +148,7 @@ public class WARCUtils {
             String mimetype = header.getMimetype();
             URI recordId;
     		try {
-    			recordId = new URI(UUID.randomUUID().toString());
+    			recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
     		} catch (URISyntaxException e) {
     			throw new IllegalState("Epic fail creating URI from UUID!");
     		}

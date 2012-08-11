@@ -110,7 +110,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             ANVLRecord namedFields = new ANVLRecord();
             namedFields.addLabelValue("X-Metadata-Version", "1");
             writer.writeMetadataRecord(URL, create14DigitDate,
-                    "application/nas-metadata", recordId, namedFields, in,
+            		mimetype, recordId, namedFields, in,
                     fileToArchive.length());
         } catch (FileNotFoundException e) {
             throw new IOFailure("Unable to open file: "
