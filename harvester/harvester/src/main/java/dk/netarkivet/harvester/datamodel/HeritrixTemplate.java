@@ -147,8 +147,8 @@ public class HeritrixTemplate {
                            Pattern.compile(WHOLE_NUMBER_REGEXP));
 
         //Required that we use DecidingScope
-        requiredXpaths.put(DECIDINGSCOPE_XPATH,
-                            Pattern.compile(EVERYTHING_REGEXP));
+        //requiredXpaths.put(DECIDINGSCOPE_XPATH,
+        //                    Pattern.compile(EVERYTHING_REGEXP));
 
         //Required that we have a rules map used to add crawlertraps
         requiredXpaths.put(DECIDERULES_MAP_XPATH,
