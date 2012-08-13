@@ -10,6 +10,7 @@ package dk.netarkivet.harvester.tools;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanException;
 import javax.management.ReflectionException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.logging.Level;
@@ -128,11 +129,16 @@ public class TwitterHarvesterExtractor extends Extractor {
                                     String fromUser = tweet.getFromUser();
                                     String tweetUrl = "http://twitter.com/" + fromUser + "/status/" + id;
                                     try {
-                                        crawlURI.createAndAddLink(tweetUrl, Link.PREREQ_MISC, Link.NAVLINK_HOP);
+                                        URI uri = new URI(tweetUrl);
+                                        crawlURI.createAndAddLink(tweetUrl, Link.NAVLINK_MISC, Link.NAVLINK_HOP);
                                         System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + tweetUrl);
                                         tweetCount++;
                                     } catch (URIException e) {
                                         logger.log(Level.SEVERE, e.getMessage());
+                                        e.printStackTrace();
+                                    } catch (URISyntaxException e) {
+                                        logger.log(Level.SEVERE, e.getMessage());
+                                        e.printStackTrace();
                                     }
                                     if (queueLinks) {
                                         for (URLEntity urlEntity : tweet.getURLEntities()) {
