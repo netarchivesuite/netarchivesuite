@@ -439,6 +439,9 @@ public abstract class HarvestDefinition implements Named {
      * harvestDefName, and comments.
      *
      * @return the hashCode
+     *
+     *
+     *
      */
     public int hashCode() {
         int result;
