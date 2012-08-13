@@ -17,12 +17,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.URIException;
+import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.extractor.Extractor;
 import org.archive.crawler.extractor.Link;
 import org.archive.crawler.settings.SimpleType;
 import org.archive.crawler.settings.StringList;
 import org.archive.crawler.settings.Type;
+import org.archive.net.UURI;
+import org.archive.net.UURIFactory;
 import twitter4j.Query;
 import twitter4j.Tweet;
 import twitter4j.Twitter;
@@ -130,7 +133,9 @@ public class TwitterHarvesterExtractor extends Extractor {
                                     String tweetUrl = "http://twitter.com/" + fromUser + "/status/" + id;
                                     try {
                                         URI uri = new URI(tweetUrl);
-                                        crawlURI.createAndAddLink(tweetUrl, Link.NAVLINK_MISC, Link.NAVLINK_HOP);
+                                        crawlURI.createAndAddLink(uri.toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
+                                        CandidateURI curi = new CandidateURI(UURIFactory.getInstance(tweetUrl));
+                                        getController().getScope().addSeed(curi);
                                         System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + tweetUrl);
                                         tweetCount++;
                                     } catch (URIException e) {
