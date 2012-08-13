@@ -130,7 +130,7 @@ public class TwitterHarvesterExtractor extends Extractor {
                                 for (Tweet tweet: tweets) {
                                     long id = tweet.getId();
                                     String fromUser = tweet.getFromUser();
-                                    String tweetUrl = "http://twitter.com/" + fromUser + "/status/" + id;
+                                    String tweetUrl = "http://www.twitter.com/" + fromUser + "/status/" + id;
                                     try {
                                         URI uri = new URI(tweetUrl);
                                         crawlURI.createAndAddLink(uri.toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
@@ -152,6 +152,7 @@ public class TwitterHarvesterExtractor extends Extractor {
                                                 crawlURI.createAndAddLink(urlEntity.getURL().toURI().toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
                                                 System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + urlEntity.getExpandedURL().toString());
                                                 System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + urlEntity.getURL().toString());
+                                                getController().getScope().addSeed(new CandidateURI(UURIFactory.getInstance(urlEntity.getURL().toString())));
                                             } catch (URIException e) {
                                                 logger.log(Level.SEVERE, e.getMessage());
                                             }  catch (URISyntaxException e) {
