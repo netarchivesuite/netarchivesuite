@@ -153,7 +153,9 @@
           <root url="jar://$MODULE_DIR$/lib/heritrix/lib/heritrix-1.14.4.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$USER_HOME$/sources/heritrix-1.14.4/src/java" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
