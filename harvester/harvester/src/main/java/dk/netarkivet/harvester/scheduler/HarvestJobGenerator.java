@@ -153,6 +153,9 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                     continue;
                 }
 
+                log.info("Starting to create jobs for harvest definition '"
+                        + harvestDefinition.getName() + "'");
+
                 new Thread("JobGeneratorTask-" + id) {
                     public void run() {
                         try {
