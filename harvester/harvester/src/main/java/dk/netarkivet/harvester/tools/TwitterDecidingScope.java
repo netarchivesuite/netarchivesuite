@@ -51,14 +51,14 @@ public class TwitterDecidingScope extends DecidingScope {
 
     public TwitterDecidingScope(String name) {
         super(name);
-        Type e = addElementToDefinition(new StringList(ATTR_KEYWORDS, "Keywords to search for"));
-        e = addElementToDefinition(new SimpleType(ATTR_PAGES, "Number of pages of twitter results to use.", new Integer(0) ));
+        addElementToDefinition(new StringList(ATTR_KEYWORDS, "Keywords to search for"));
+        addElementToDefinition(new SimpleType(ATTR_PAGES, "Number of pages of twitter results to use.", new Integer(0) ));
         twitter = (new TwitterFactory()).getInstance();
         StringList keywords = null;
         int pages = 0;
         try {
-            keywords = (StringList) getAttribute(ATTR_KEYWORDS);
-            pages = ((Integer) getAttribute(ATTR_PAGES)).intValue();
+            keywords = (StringList) super.getAttribute(ATTR_KEYWORDS);
+            pages = ((Integer) super.getAttribute(ATTR_PAGES)).intValue();
         } catch (AttributeNotFoundException e1) {
             e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             throw new RuntimeException(e1);
