@@ -4,6 +4,7 @@ import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.deciderules.DecidingFilter;
 import org.archive.crawler.deciderules.DecidingScope;
+import org.archive.crawler.framework.CrawlController;
 import org.archive.crawler.settings.SimpleType;
 import org.archive.crawler.settings.StringList;
 import org.archive.crawler.settings.Type;
@@ -49,85 +50,89 @@ public class TwitterDecidingScope extends DecidingScope {
     private int tweetCount = 0;
     private int linkCount = 0;
 
+    @Override
+    public void initialize(CrawlController controller) {
+        super.initialize(controller);
+        twitter = (new TwitterFactory()).getInstance();
+                keywords = null;
+                pages = 0;
+                try {
+                    keywords = (StringList) super.getAttribute(ATTR_KEYWORDS);
+                    pages = ((Integer) super.getAttribute(ATTR_PAGES)).intValue();
+                } catch (AttributeNotFoundException e1) {
+                    e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    throw new RuntimeException(e1);
+                } catch (MBeanException e1) {
+                    e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    throw new RuntimeException(e1);
+                } catch (ReflectionException e1) {
+                    e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    throw new RuntimeException(e1);
+                }
+                for (Object keyword: keywords) {
+                    logger.info("Twitter Scope keyword: " + keyword);
+                    System.out.println("Twitter Scope keyword: " + keyword);
+                }
+                logger.info("Twitter Scope will queue " + pages + " page(s) of results.");
+                System.out.println("Twitter Scope will queue " + pages
+                        + " page(s) of results.");
+                for (Object keyword: keywords) {
+                    for (int page = 1; page <= pages; page++) {
+                        Query query = new Query();
+                        query.setRpp(resultsPerPage);
+                        query.setQuery((String) keyword);
+                        query.setPage(page);
+                        try {
+                            List<Tweet> tweets = twitter.search(query).getTweets();
+                            for (Tweet tweet: tweets) {
+                                long id = tweet.getId();
+                                String fromUser = tweet.getFromUser();
+                                String tweetUrl = "http://www.twitter.com/" + fromUser + "/status/" + id;
+                                try {
+                                    //URI uri = new URI(tweetUrl);
+                                    //crawlURI.createAndAddLink(uri.toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
+                                    //CandidateURI curi = new CandidateURI(UURIFactory.getInstance(tweetUrl));
+                                    CandidateURI curi = CandidateURI.createSeedCandidateURI(UURIFactory.getInstance(tweetUrl));
+                                    System.out.println("Adding seed: '" + curi.toString() + "'" );
+                                    System.out.println("Is seed? " + curi.isSeed());
+                                    addSeed(curi);
+                                    //System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + tweetUrl);
+                                    tweetCount++;
+                                } catch (URIException e1) {
+                                    logger.log(Level.SEVERE, e1.getMessage());
+                                    e1.printStackTrace();
+                                }
+                                if (queueLinks) {
+                                    for (URLEntity urlEntity : tweet.getURLEntities()) {
+                                        try {
+                                            //crawlURI.createAndAddLink(urlEntity.getExpandedURL().toString(), Link.PREREQ_MISC, Link.PREREQ_HOP);
+                                            //crawlURI.createAndAddLink(urlEntity.getURL().toURI().toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
+                                            //System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + urlEntity.getExpandedURL().toString());
+                                            //System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + urlEntity.getURL().toString());
+                                            UURI uuri = UURIFactory.getInstance(urlEntity.getURL().toString());
+                                            CandidateURI curi = CandidateURI.createSeedCandidateURI(uuri);
+                                            addSeed(curi);
+                                            System.out.println("Added seed: '" + curi.toString() + "'");
+                                            //getController().getScope().addSeed(new CandidateURI(UURIFactory.getInstance(urlEntity.getURL().toString())));
+                                        } catch (URIException e1) {
+                                            logger.log(Level.SEVERE, e1.getMessage());
+                                        }
+                                        linkCount++;
+                                    }
+                                }
+                            }
+                        } catch (TwitterException e1) {
+                            logger.log(Level.SEVERE, e1.getMessage());
+                        }
+                    }
+
+                }
+    }
+
     public TwitterDecidingScope(String name) {
         super(name);
         addElementToDefinition(new StringList(ATTR_KEYWORDS, "Keywords to search for"));
-        addElementToDefinition(new SimpleType(ATTR_PAGES, "Number of pages of twitter results to use.", new Integer(0) ));
-        twitter = (new TwitterFactory()).getInstance();
-        StringList keywords = null;
-        int pages = 0;
-        try {
-            keywords = (StringList) super.getAttribute(ATTR_KEYWORDS);
-            pages = ((Integer) super.getAttribute(ATTR_PAGES)).intValue();
-        } catch (AttributeNotFoundException e1) {
-            e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            throw new RuntimeException(e1);
-        } catch (MBeanException e1) {
-            e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            throw new RuntimeException(e1);
-        } catch (ReflectionException e1) {
-            e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            throw new RuntimeException(e1);
-        }
-        for (Object keyword: keywords) {
-            logger.info("Twitter Scope keyword: " + keyword);
-            System.out.println("Twitter Scope keyword: " + keyword);
-        }
-        this.pages = pages;
-        logger.info("Twitter Scope will queue " + pages + " page(s) of results.");
-        System.out.println("Twitter Scope will queue " + pages
-                + " page(s) of results.");
-        for (Object keyword: keywords) {
-            for (int page = 1; page <= pages; page++) {
-                Query query = new Query();
-                query.setRpp(resultsPerPage);
-                query.setQuery((String) keyword);
-                query.setPage(page);
-                try {
-                    List<Tweet> tweets = twitter.search(query).getTweets();
-                    for (Tweet tweet: tweets) {
-                        long id = tweet.getId();
-                        String fromUser = tweet.getFromUser();
-                        String tweetUrl = "http://www.twitter.com/" + fromUser + "/status/" + id;
-                        try {
-                            //URI uri = new URI(tweetUrl);
-                            //crawlURI.createAndAddLink(uri.toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
-                            //CandidateURI curi = new CandidateURI(UURIFactory.getInstance(tweetUrl));
-                            CandidateURI curi = CandidateURI.createSeedCandidateURI(UURIFactory.getInstance(tweetUrl));
-                            System.out.println("Adding seed: '" + curi.toString() + "'" );
-                            System.out.println("Is seed? " + curi.isSeed());
-                            addSeed(curi);
-                            //System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + tweetUrl);
-                            tweetCount++;
-                        } catch (URIException e1) {
-                            logger.log(Level.SEVERE, e1.getMessage());
-                            e1.printStackTrace();
-                        }
-                        if (queueLinks) {
-                            for (URLEntity urlEntity : tweet.getURLEntities()) {
-                                try {
-                                    //crawlURI.createAndAddLink(urlEntity.getExpandedURL().toString(), Link.PREREQ_MISC, Link.PREREQ_HOP);
-                                    //crawlURI.createAndAddLink(urlEntity.getURL().toURI().toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
-                                    //System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + urlEntity.getExpandedURL().toString());
-                                    //System.out.println(TwitterHarvesterExtractor.class.getName() + " adding " + urlEntity.getURL().toString());
-                                    UURI uuri = UURIFactory.getInstance(urlEntity.getURL().toString());
-                                    CandidateURI curi = CandidateURI.createSeedCandidateURI(uuri);
-                                    addSeed(curi);
-                                    System.out.println("Added seed: '" + curi.toString() + "'");
-                                    //getController().getScope().addSeed(new CandidateURI(UURIFactory.getInstance(urlEntity.getURL().toString())));
-                                } catch (URIException e1) {
-                                    logger.log(Level.SEVERE, e1.getMessage());
-                                }
-                                linkCount++;
-                            }
-                        }
-                    }
-                } catch (TwitterException e1) {
-                    logger.log(Level.SEVERE, e1.getMessage());
-                }
-            }
-
-        }
+        addElementToDefinition(new SimpleType(ATTR_PAGES, "Number of pages of twitter results to use.", new Integer(0)));
     }
 
     @Override
