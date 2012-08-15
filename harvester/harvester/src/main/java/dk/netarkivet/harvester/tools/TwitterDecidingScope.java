@@ -8,6 +8,7 @@ import org.archive.crawler.settings.SimpleType;
 import org.archive.crawler.settings.StringList;
 import org.archive.net.UURI;
 import org.archive.net.UURIFactory;
+import sun.rmi.runtime.NewThreadAction;
 import twitter4j.GeoLocation;
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -20,6 +21,7 @@ import twitter4j.URLEntity;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanException;
 import javax.management.ReflectionException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -42,12 +44,16 @@ public class TwitterDecidingScope extends DecidingScope {
     public static final String ATTR_KEYWORDS= "keywords";
     public static final String ATTR_PAGES = "pages";
     public static final String ATTR_GEOLOCATIONS = "geo_locations";
+    public static final String ATTR_LANG = "language";
 
     private StringList keywords;
     private StringList geoLocations;
+    private String language;
     private int pages;
     private int resultsPerPage = 5;
     private boolean queueLinks = true;
+    private boolean queueUserStatus = true;
+    private boolean queueKeywordLinks = true;
 
     private Twitter twitter;
     private int tweetCount = 0;
@@ -63,6 +69,7 @@ public class TwitterDecidingScope extends DecidingScope {
                     keywords = (StringList) super.getAttribute(ATTR_KEYWORDS);
                     pages = ((Integer) super.getAttribute(ATTR_PAGES)).intValue();
                     geoLocations = (StringList) super.getAttribute(ATTR_GEOLOCATIONS);
+                    language = (String) super.getAttribute(ATTR_LANG);
                 } catch (AttributeNotFoundException e1) {
                     e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     throw new RuntimeException(e1);
@@ -91,8 +98,17 @@ public class TwitterDecidingScope extends DecidingScope {
                 + " page(s) of results.");
         for (Object keyword: keywords) {
             for (Object geoLocation: geoLocations) {
+                String urlQuery = "keyword";
+                Query query = new Query();
+                if (language != null && !language.equals("")) {
+                    query.setLang(language);
+                    urlQuery += "lang:" + language;
+                }
+                urlQuery = "http://twitter.com/search/" + URLEncoder.encode(urlQuery);
+                if (queueKeywordLinks) {
+                    addSeedIfLegal(urlQuery);
+                }
                 for (int page = 1; page <= pages; page++) {
-                    Query query = new Query();
                     query.setRpp(resultsPerPage);
                     if (!keyword.equals("")) {
                         query.setQuery((String) keyword);
@@ -105,40 +121,21 @@ public class TwitterDecidingScope extends DecidingScope {
                     }
                     try {
                         final QueryResult result = twitter.search(query);
-                        String queryUrl = "http://twitter.com/search/" + result.getRefreshUrl();
-                        try {
-                            CandidateURI curiQuery = CandidateURI.createSeedCandidateURI(UURIFactory.getInstance(queryUrl));
-                            addSeed(curiQuery);
-                        } catch (URIException e) {
-                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                        }
                         List<Tweet> tweets = result.getTweets();
                         for (Tweet tweet: tweets) {
                             long id = tweet.getId();
                             String fromUser = tweet.getFromUser();
                             String tweetUrl = "http://www.twitter.com/" + fromUser + "/status/" + id;
-                            try {
-                                CandidateURI curi = CandidateURI.createSeedCandidateURI(UURIFactory.getInstance(tweetUrl));
-                                System.out.println("Adding seed: '" + curi.toString() + "'" );
-                                System.out.println("Is seed? " + curi.isSeed());
-                                addSeed(curi);
-                                tweetCount++;
-                            } catch (URIException e1) {
-                                logger.log(Level.SEVERE, e1.getMessage());
-                                e1.printStackTrace();
-                            }
+                            addSeedIfLegal(tweetUrl);
                             if (queueLinks) {
                                 for (URLEntity urlEntity : tweet.getURLEntities()) {
-                                    try {
-                                        UURI uuri = UURIFactory.getInstance(urlEntity.getURL().toString());
-                                        CandidateURI curi = CandidateURI.createSeedCandidateURI(uuri);
-                                        addSeed(curi);
-                                        System.out.println("Added seed: '" + curi.toString() + "'");
-                                    } catch (URIException e1) {
-                                        logger.log(Level.SEVERE, e1.getMessage());
-                                    }
-                                    linkCount++;
+                                        final String embeddedUrl = urlEntity.getURL().toString();
+                                        addSeedIfLegal(embeddedUrl);
                                 }
+                            }
+                            if (queueUserStatus) {
+                                String statusUrl = "http://twitter.com/" + tweet.getFromUser() + "/";
+                                addSeedIfLegal(statusUrl);
                             }
                         }
                     } catch (TwitterException e1) {
@@ -150,12 +147,25 @@ public class TwitterDecidingScope extends DecidingScope {
         }
     }
 
+    private void addSeedIfLegal(String tweetUrl) {
+        try {
+            CandidateURI curi = CandidateURI.createSeedCandidateURI(UURIFactory.getInstance(tweetUrl));
+            System.out.println("Adding seed: '" + curi.toString() + "'" );
+            addSeed(curi);
+            tweetCount++;
+        } catch (URIException e1) {
+            logger.log(Level.SEVERE, e1.getMessage());
+            e1.printStackTrace();
+        }
+    }
+
     public TwitterDecidingScope(String name) {
         super(name);
         addElementToDefinition(new StringList(ATTR_KEYWORDS, "Keywords to search for"));
         addElementToDefinition(new SimpleType(ATTR_PAGES, "Number of pages of twitter results to use.", new Integer(0)));
         addElementToDefinition(new StringList(ATTR_GEOLOCATIONS, "Geolocations to search for, comma separated as " +
                 "lat,long,radius,units e.g. 56.0,10.1,200.0,km"));
+        addElementToDefinition(new SimpleType(ATTR_LANG, "Exclusive language for search", ""));
     }
 
     @Override
