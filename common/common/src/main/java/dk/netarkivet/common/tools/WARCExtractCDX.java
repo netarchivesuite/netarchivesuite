@@ -82,7 +82,7 @@ public class WARCExtractCDX {
      */
     private static void dieWithUsage() {
         System.err.println("Usage: java " + ExtractCDX.class.getName()
-                + " file1.warc [file2.warc ...]");
+                + " file1.warc[.gz] [file2.warc[.gz] ...]");
         System.exit(1);
     }
 

@@ -32,6 +32,11 @@ import org.archive.io.warc.WARCRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
 
+/** A filter class for batch entries.  Allows testing whether or not
+ * to process an entry without loading the entry data first.
+ * The class in itself is abstract but contains implementation of several
+ * filters.
+ */
 public abstract class WARCBatchFilter implements Serializable {
 
     /**
@@ -49,20 +54,13 @@ public abstract class WARCBatchFilter implements Serializable {
             }
         };
     
-    /** The WARCRecord url for the filedesc record (the header record of every 
-     * ARC File).
-     */    
-    /*
-    private static final String FILE_HEADERS_FILEDESC_PREFIX
-        = "filedesc";
-    */
-    /** The name of the filter that filters out the filedesc record. */
-    private static final String EXCLUDE_FILE_HEADERS_FILTER_NAME
-        = "EXCLUDE_FILE_HEADERS";
+    /** The name of the filter that filters out non response records. */
+    private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME
+        = "EXCLUDE_NON_RESPONSE_RECORDS";
 
-    /** A default filter: Accepts all but the first file. */
-    public static final WARCBatchFilter EXCLUDE_FILE_HEADERS = new WARCBatchFilter(
-            EXCLUDE_FILE_HEADERS_FILTER_NAME) {
+    /** A default filter: Accepts on response records. */
+    public static final WARCBatchFilter EXCLUDE_NON_RESPONSE_RECORDS = new WARCBatchFilter(
+    		EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME) {
             public boolean accept(WARCRecord record) {
                 HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
                 String warcType = recordWrapper.getHeader().getHeaderStringValue("WARC-Type");

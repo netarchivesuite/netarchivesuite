@@ -200,8 +200,8 @@ public abstract class WARCBatchJob extends FileBatchJob {
     /**
      * Private method that handles our exception.
      * @param e the given exception
-     * @param arcFile The ARCFile where the exception occurred.
-     * @param index The offset in the ARCFile where the exception occurred.
+     * @param warcFile The WARCFile where the exception occurred.
+     * @param index The offset in the WARCFile where the exception occurred.
      */
     private void handleOurException(
             NetarkivetException e, File arcFile, long index) {
@@ -212,12 +212,12 @@ public abstract class WARCBatchJob extends FileBatchJob {
      * When the org.archive.io.arc classes throw IOExceptions while reading,
      * this is where they go. Subclasses are welcome to override the default
      * functionality which simply logs and records them in a list.
-     * TODO Actually use the arcfile/index entries in the exception list
+     * TODO Actually use the warcfile/index entries in the exception list
      *
      * @param e An Exception thrown by the org.archive.io.arc classes.
      * @param warcfile The arcFile that was processed while the Exception
      * was thrown
-     * @param index The index (in the ARC file) at which the Exception
+     * @param index The index (in the WARC file) at which the Exception
      * was thrown
      * @throws ArgumentNotValid if e is null
      */
@@ -233,7 +233,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
 
     /**
      * Returns a representation of the list of Exceptions recorded for this
-     * ARC batch job.
+     * WARC batch job.
      * If called by a subclass, a method overriding handleException()
      * should always call super.handleException().
      *

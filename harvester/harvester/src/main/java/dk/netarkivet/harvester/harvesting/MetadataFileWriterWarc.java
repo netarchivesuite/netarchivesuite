@@ -47,7 +47,7 @@ import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.common.utils.warc.WARCUtils;
 
 /**
- * MetadataFileWriter that writes to ARC files.
+ * MetadataFileWriter that writes to WARC files.
  * 
  */
 public class MetadataFileWriterWarc extends MetadataFileWriter {
@@ -59,6 +59,11 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
      */
     private WARCWriter writer = null;
 
+    /**
+     * Create a <code>MetadataFileWriter</code> for WARC output.
+     * @param metadataFile WARC output filename
+     * @return <code>MetadataFileWriter</code> for writing metadata files in WARC
+     */
     public static MetadataFileWriter createWriter(File metadataFile) {
     	MetadataFileWriterWarc mtfw = new MetadataFileWriterWarc();
     	mtfw.writer = WARCUtils.createWARCWriter(metadataFile);

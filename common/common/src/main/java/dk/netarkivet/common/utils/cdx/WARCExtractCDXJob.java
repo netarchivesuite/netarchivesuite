@@ -103,14 +103,14 @@ public class WARCExtractCDXJob extends WARCBatchJob {
     }
 
     /** Filter out the filedesc: headers.
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#getFilter()
-     * @return The filter that defines what ARC records are wanted
+     * @see dk.netarkivet.common.utils.warc.WARCBatchJob#getFilter()
+     * @return The filter that defines what WARC records are wanted
      * in the output CDX file.
      */
     @Override
     public WARCBatchFilter getFilter() {
-        //Per default we want to index all records except ARC file headers:
-        return WARCBatchFilter.EXCLUDE_FILE_HEADERS;
+        //Per default we want to index all response records.
+        return WARCBatchFilter.EXCLUDE_NON_RESPONSE_RECORDS;
     }
 
     /**
@@ -191,7 +191,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         /* Only include checksum if necessary: */
         if (includeChecksum) {
             // To avoid taking all of the record into an array, we
-            // slurp it directly from the ARCRecord.  This leaves the
+            // slurp it directly from the ArchiveRecord.  This leaves the
             // sar in an inconsistent state, so it must not be used
             // afterwards.
             //InputStream instream = sar; //Note: ARCRecord extends InputStream

@@ -108,10 +108,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
      */
     @Override
     public ArchiveBatchFilter getFilter() {
-        //Per default we want to index all records except ARC file headers:
-        //return ArchiveBatchFilter.EXCLUDE_FILE_HEADERS;
-        return ArchiveBatchFilter.NO_FILTER;
-
+        return ArchiveBatchFilter.EXCLUDE_NON_RESPONSE_RECORDS;
     }
 
     /**
@@ -123,8 +120,8 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
     }
 
     /** Process this entry, reading metadata into the output stream.
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(
-     * ARCRecord, OutputStream)
+     * @see dk.netarkivet.common.utils.arc.ArchiveBatchJob#processRecord(
+     * ArchiveRecordBase, OutputStream)
      * @throws IOFailure on trouble reading arc record data
      */
     @Override

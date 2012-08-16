@@ -82,7 +82,7 @@ public class ArchiveExtractCDX {
      */
     private static void dieWithUsage() {
         System.err.println("Usage: java " + ExtractCDX.class.getName()
-                + " file1.arc [file2.arc ...]");
+                + " file1.arc[.gz] [file2.warc[.gz] ...]");
         System.exit(1);
     }
 

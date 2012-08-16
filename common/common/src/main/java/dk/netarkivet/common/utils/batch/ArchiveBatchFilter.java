@@ -81,16 +81,27 @@ public abstract class ArchiveBatchFilter implements Serializable {
 		}
     };
 
-    private static final String EXCLUDE_FILE_HEADERS_FILEDESC_PREFIX = "filedesc";
-    private static final String EXCLUDE_FILE_HEADERS_FILTER_NAME = "EXCLUDE_FILE_HEADERS";
+    /** The ARCRecord url for the filedesc record (the header record of every 
+     * ARC File).
+     */    
+    private static final String ARC_FILE_FILEDESC_HEADER_PREFIX = "filedesc";
 
+    /** The name of the filter that filters out the filedesc record. */
+    private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME = "EXCLUDE_FILE_HEADERS";
+    
     /** A default filter: Accepts all but the first file */
-    public static final ArchiveBatchFilter EXCLUDE_FILE_HEADERS = new ArchiveBatchFilter(
-            EXCLUDE_FILE_HEADERS_FILTER_NAME) {
+    public static final ArchiveBatchFilter EXCLUDE_NON_RESPONSE_RECORDS = new ArchiveBatchFilter(
+            EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME) {
             public boolean accept(ArchiveRecordBase record) {
-                //return !record.getMetaData().getUrl().startsWith(EXCLUDE_FILE_HEADERS_FILEDESC_PREFIX);
-                String warcType = record.getHeader().getHeaderStringValue("WARC-Type");
-            	return "response".equalsIgnoreCase(warcType);
+            	if (record.bIsArc) {
+                    return !record.getHeader().getUrl().startsWith(
+                            ARC_FILE_FILEDESC_HEADER_PREFIX);
+            	}
+            	if (record.bIsWarc) {
+                    String warcType = record.getHeader().getHeaderStringValue("WARC-Type");
+                	return "response".equalsIgnoreCase(warcType);
+            	}
+            	return false;
             }
     };
 
@@ -123,7 +134,6 @@ public abstract class ArchiveBatchFilter implements Serializable {
         return new ArchiveBatchFilter(MIMETYPE_BATCH_FILTER_NAME_PREFIX + mimetype) {
                 public boolean accept(ArchiveRecordBase record) {
                     return record.getHeader().getMimetype().startsWith(mimetype);
-                    //return record.getMetaData().getMimetype().startsWith(mimetype);
                 }
             };
     }

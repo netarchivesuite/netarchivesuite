@@ -43,7 +43,6 @@ import org.archive.io.warc.WARCReader;
 import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCRecord;
 import org.archive.io.warc.WARCWriter;
-import org.archive.util.ArchiveUtils;
 import org.archive.util.anvl.ANVLRecord;
 
 import dk.netarkivet.common.Constants;
@@ -64,9 +63,9 @@ public class WARCUtils {
     protected static final Log log = LogFactory.getLog(WARCUtils.class);
 
     /**
-     * Create new ARCWriter, writing to arcfile newFile.
-     * @param newFile the ARCfile, that the ARCWriter writes to.
-     * @return new ARCWriter, writing to arcfile newFile.
+     * Create new WARCWriter, writing to warcfile newFile.
+     * @param newFile the WARCfile, that the WARCWriter writes to.
+     * @return new WARCWriter, writing to warcfile newFile.
      */
     public static WARCWriter createWARCWriter(File newFile) {
         WARCWriter writer;
@@ -94,10 +93,10 @@ public class WARCUtils {
         return writer;
     }
 
-    /** Insert the contents of an ARC file (skipping an optional initial
-     *  filedesc: header) in another ARCfile.
+    /** Insert the contents of a WARC file (skipping an optional initial
+     *  filedesc: header) in another ARCfile. TODO
      *
-     * @param warcFile An ARC file to read.
+     * @param warcFile An WARC file to read.
      * @param writer A place to write the arc records
      * @throws IOFailure if there are problems reading the file.
      */
@@ -122,16 +121,12 @@ public class WARCUtils {
     }
 
     /**
-     * Writes the given ARCRecord on the given ARCWriter.
+     * Writes the given WARCRecord on the given WARCWriter.
      * 
-     * Note that the ARCWriter.write method takes the metadata fields as
-     * separate arguments instead of accepting an ARCRecordMetaData object. It
-     * uses the ArchiveUtils.getDate method to convert an ARCstyle datestring to
-     * a Date object.
+     * Creates a new unique UUID for the copied record.
      * 
-     * @see ArchiveUtils#getDate(java.lang.String)
      * @param aw
-     *            The ARCWriter to output the record on.
+     *            The WARCWriter to output the record on.
      * @param record
      *            The record to output
      */
@@ -154,6 +149,7 @@ public class WARCUtils {
     		}
             String ip = header.getIp();
 
+            // TODO this throws away all original headers! Improve.
     		ANVLRecord  namedFields = new ANVLRecord();
 
     		InputStream in = record;
@@ -230,7 +226,7 @@ public class WARCUtils {
         // Check if the number of bytes read (= totalbytes) matches the
         // size of the buffer.
         if (tmpbuffer.length != totalBytes) {
-            // make sure we only return an array with bytes we actualy read
+            // make sure we only return an array with bytes we actually read
             byte[] truncateBuffer = new byte[totalBytes];
             System.arraycopy(tmpbuffer, 0, truncateBuffer, 0, totalBytes);
             log.debug("Storing " + totalBytes + " bytes. Expected to store: "

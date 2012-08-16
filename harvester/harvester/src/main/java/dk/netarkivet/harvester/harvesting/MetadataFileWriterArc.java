@@ -51,6 +51,11 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
      */
     private ARCWriter writer = null;
 
+    /**
+     * Create a <code>MetadataFileWriter</code> for ARC output.
+     * @param metadataFile ARC output filename
+     * @return <code>MetadataFileWriter</code> for writing metadata files in ARC
+     */
     public static MetadataFileWriter createWriter(File metadataFile) {
     	MetadataFileWriterArc mtfw = new MetadataFileWriterArc();
     	mtfw.writer = ARCUtils.createARCWriter(metadataFile);

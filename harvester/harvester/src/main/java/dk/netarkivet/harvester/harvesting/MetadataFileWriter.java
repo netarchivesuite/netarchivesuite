@@ -41,8 +41,15 @@ import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
+/**
+ * Abstract base class for Metadata file writer.
+ * Implementations must extend this class.
+ *
+ * @author nicl
+ */
 public abstract class MetadataFileWriter {
 
+    /** Logging output place. */
     private static final Log log = LogFactory.getLog(MetadataFileWriter.class);
     /** Constant representing the ARC format. */
     protected static final int MDF_ARC = 1;
@@ -93,13 +100,13 @@ public abstract class MetadataFileWriter {
     }
 
     /**
-     * Generates a name for an ARC file containing metadata regarding
+     * Generates a name for a WARC file containing metadata regarding
      * a given job.
      *
-     * @param jobID The number of the job that generated the ARC file.
+     * @param jobID The number of the job that generated the WARC file.
      * @return A "flat" file name (i.e. no path) containing the jobID parameter
-     * and ending on "-metadata-N.arc", where N is the serial number of the
-     * metadata files for this job, e.g. "42-metadata-1.arc".  Currently,
+     * and ending on "-metadata-N.warc", where N is the serial number of the
+     * metadata files for this job, e.g. "42-metadata-1.warc".  Currently,
      * only one file is ever made.
      * @throws ArgumentNotValid if any parameter was null.
      */
@@ -174,12 +181,12 @@ public abstract class MetadataFileWriter {
 
     /** 
      * Write a record to the archive file.
-     * @param uri
-     * @param contentType 
-     * @param hostIP
-     * @param fetchBeginTimeStamp
-     * @param recordLength
-     * @param in
+     * @param uri record URI
+     * @param contentType  content-type of record
+     * @param hostIP resource ip-address
+     * @param fetchBeginTimeStamp record datetime
+     * @param recordLength record length
+     * @param in input stream of data to be written as record payload
      * @see ARCWriter#write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, long recordLength, InputStream in
      */
@@ -187,10 +194,11 @@ public abstract class MetadataFileWriter {
             long fetchBeginTimeStamp, long recordLength, InputStream in) throws java.io.IOException;
 
     /**
-     * 
-     * @param parentDir
-     * @param filter
-     * @param mimetype
+     * Append the files contained in the directory to the metadata file, but
+     * only if the filename matches the supplied filter.
+     * @param parentDir directory containing files to append to metadata
+     * @param filter filter describing which files to ignre
+     * @param mimetype content-type write along with the files in the metadata output
      */
     public void insertFiles(File parentDir, FilenameFilter filter, String mimetype) {
         //For each CDX file...
