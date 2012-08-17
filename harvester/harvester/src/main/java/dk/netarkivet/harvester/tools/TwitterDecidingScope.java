@@ -233,15 +233,21 @@ public class TwitterDecidingScope extends DecidingScope {
      * @param tweet
      */
     private void extractEmbeddedLinks(Tweet tweet) {
-        for (URLEntity urlEntity : tweet.getURLEntities()) {
-            final String embeddedUrl = urlEntity.getURL().toString();
-            addSeedIfLegal(embeddedUrl);
-            linkCount++;
+        final URLEntity[] urlEntities = tweet.getURLEntities();
+        if (urlEntities != null) {
+            for (URLEntity urlEntity : urlEntities) {
+                final String embeddedUrl = urlEntity.getURL().toString();
+                addSeedIfLegal(embeddedUrl);
+                linkCount++;
+            }
         }
-        for (MediaEntity mediaEntity: tweet.getMediaEntities()) {
-            final String mediaUrl = mediaEntity.getMediaURL().toString();
-            addSeedIfLegal(mediaUrl);
-            linkCount++;
+        final MediaEntity[] mediaEntities = tweet.getMediaEntities();
+        if (mediaEntities != null) {
+            for (MediaEntity mediaEntity: mediaEntities) {
+                final String mediaUrl = mediaEntity.getMediaURL().toString();
+                addSeedIfLegal(mediaUrl);
+                linkCount++;
+            }
         }
     }
 
