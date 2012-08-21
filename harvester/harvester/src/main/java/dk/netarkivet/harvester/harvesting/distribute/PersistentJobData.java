@@ -37,6 +37,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
+import dk.netarkivet.harvester.harvesting.JobInfo;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.XmlState.OKSTATE;
 
 
@@ -44,7 +45,7 @@ import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.XmlState.
  * Class PersistentJobData holds information about an ongoing harvest.
  * Presently the information is stored in a XML-file.
  */
-public class PersistentJobData {
+public class PersistentJobData implements JobInfo {
     
     /** Innerclass containing Info about a harvestjob. */
     public static class HarvestDefinitionInfo implements Serializable {
@@ -110,6 +111,7 @@ public class PersistentJobData {
 
     /** the crawlDir. */
     private final File crawlDir;
+    
     /** The filename for the file containing the persistent job data, 
      * stored in crawlDir. */
     private static final String HARVEST_INFO_FILENAME = "harvestInfo.xml";
@@ -148,32 +150,35 @@ public class PersistentJobData {
      * schedule, will be empty for broad crawls. */
     private static final String HARVEST_SCHED_KEY =
         ROOT_ELEMENT + ".scheduleName";
-
+    /** The harvestname prefix used by this job set in the Job class. */    
+    private static final String HARVEST_NAME_PREFIX_KEY =
+            ROOT_ELEMENT + ".harvestNamePrefix";
+    
     /** Key in harvestinfo file for the file version. */
     private static final String HARVESTVERSION_KEY = "harvestInfo.version";
     /** Value for current version number. */
-    private static final String HARVESTVERSION_NUMBER = "0.3";
+    private static final String HARVESTVERSION_NUMBER = "0.4";
     
-    /** Also support for version 0.2 of harvestInfo xml. 
-     * In the previous format the field origHarvestDefinitionName
-     * did not exist. However version 0.2 of harvestInfo.xml will contain
-     * this field as well when running 3.16.* of NetarchiveSuite.
+    /** Also support for version 0.3 of harvestInfo xml. 
+     * In the previous format the field harvestNamePrefix
+     * did not exist.
      */
-    private static final String OLD_HARVESTVERSION_NUMBER = "0.2";
+    private static final String OLD_HARVESTVERSION_NUMBER = "0.3";
 
-    /** String array containing all keys contained in valid version 0.3 xml.  */
+    /** String array containing all keys contained in valid version 0.4 xml.  */
     private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
         ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
-        HARVEST_NAME_KEY};
+        HARVEST_NAME_KEY, HARVEST_NAME_PREFIX_KEY};
     
     /** String array containing all keys contained in old valid version 
-     * 0.2 xml.  */
+     * 0.3 xml.  */
     private static final String[] ALL_KEYS_OLD = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
-        ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY};
+        ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
+        HARVEST_NAME_KEY};
         
     /** The logger to use. */
     private static final Log log
@@ -285,7 +290,7 @@ public class PersistentJobData {
                 harvestJob.getOrderXMLName());
 
         sx.add(HARVEST_NAME_KEY, hdi.getOrigHarvestName());
-
+        
         String comments = hdi.getOrigHarvestDesc();
         if (!comments.isEmpty()) {
             sx.add(HARVEST_DESC_KEY, comments);
@@ -295,6 +300,8 @@ public class PersistentJobData {
         if (!schedName.isEmpty()) {
             sx.add(HARVEST_SCHED_KEY, schedName);
         }
+        // Store the harvestname prefix selected by the used Naming Strategy.
+        sx.add(HARVEST_NAME_PREFIX_KEY, harvestJob.getHarvestNamePrefix());
         
         XmlState validationResult = validateHarvestInfo(sx); 
         if (validationResult.getOkState().equals(XmlState.OKSTATE.NOTOK)) {
@@ -550,5 +557,22 @@ public class PersistentJobData {
         public String getError() {
             return error;
         }
+    }
+
+    @Override
+    /** If not set in persistentJobData, fall back to the standard way.
+     *  jobid-harvestid.
+     */
+    public String getHarvestNamePrefix() {
+        SimpleXml sx = read(); // reads and validates XML
+        String prefix = null;
+        if (!sx.hasKey(HARVEST_NAME_PREFIX_KEY)) {
+            prefix = this.getJobID() + "-" + this.getOrigHarvestDefinitionID();
+            log.warn("harvestNamePrefix not part of persistentJobData. Using old standard naming: " 
+                    + prefix); 
+        } else {
+            prefix = sx.getString(HARVEST_NAME_PREFIX_KEY);
+        }
+        return prefix;
     }
 }

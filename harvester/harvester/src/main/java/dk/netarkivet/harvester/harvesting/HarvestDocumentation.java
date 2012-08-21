@@ -534,35 +534,35 @@ public class HarvestDocumentation {
         return filesToReturn;
     }
 
-    /**
-     * Document an old job from an oldjobs directory on the harvesters.
-     * Generates a file named <jobid>-metadata-2.arc.
-     * Note: This method sets "heritrixVersion" to the heritrix-version
-     * written in the user-agent.
-     * This version may not be correct!
-     *
-     * @param crawlDir the given crawlDir
-     * @param jobID the given job-identifier
-     * @param harvestID the given harvest-identifier
-     * @return a list of files added to the arcfile
-     */
-   public static List<File> documentOldJob(File crawlDir, long jobID,
-           long harvestID) {
-       String jobIdString = Long.toString(jobID);
-       MetadataFileWriter mdfw = null;
-       String metadataFilename =
-          MetadataFileWriter.getMetadataARCFileName(jobIdString)
-              .replaceAll("-1\\.arc$", "-2.arc");
-
-       File metadataFile = new File(metadataFilename);
-       mdfw = MetadataFileWriter.createWriter(metadataFile);
-
-       HeritrixFiles hf = new HeritrixFiles(crawlDir, jobID, harvestID);
-
-       // Insert harvestdetails into metadata arcfile.
-       return writeHarvestDetails(jobID, harvestID, crawlDir, mdfw,
-                                  getHeritrixVersion(hf.getOrderXmlFile()));
-   }
+//    /**
+//     * Document an old job from an oldjobs directory on the harvesters.
+//     * Generates a file named <jobid>-metadata-2.arc.
+//     * Note: This method sets "heritrixVersion" to the heritrix-version
+//     * written in the user-agent.
+//     * This version may not be correct!
+//     *
+//     * @param crawlDir the given crawlDir
+//     * @param jobID the given job-identifier
+//     * @param harvestID the given harvest-identifier
+//     * @return a list of files added to the arcfile
+//     */
+//   public static List<File> doumentOldJob(File crawlDir, long jobID,
+//           long harvestID) {
+//       String jobIdString = Long.toString(jobID);
+//       MetadataFileWriter mdfw = null;
+//       String metadataFilename =
+//          MetadataFileWriter.getMetadataARCFileName(jobIdString)
+//              .replaceAll("-1\\.arc$", "-2.arc");
+//
+//       File metadataFile = new File(metadataFilename);
+//       mdfw = MetadataFileWriter.createWriter(metadataFile);
+//
+//       HeritrixFiles hf = new HeritrixFiles(crawlDir, jobID, harvestID);
+//
+//       // Insert harvestdetails into metadata arcfile.
+//       return writeHarvestDetails(jobID, harvestID, crawlDir, mdfw,
+//                                  getHeritrixVersion(hf.getOrderXmlFile()));
+//   }
 
     /**
      * @param orderXml the file containing the heritrix order.xml 

@@ -281,7 +281,7 @@ public class HarvestControllerTester extends TestCase {
      */
     public void testRunHarvest() throws Exception {
         HeritrixFiles files = new HeritrixFiles(
-                new File(TestInfo.WORKING_DIR, "bogus"), 42L, 23L);
+                new File(TestInfo.WORKING_DIR, "bogus"), new JobInfoTestImpl(42L, 23L));
         hc = HarvestController.getInstance();
         String cause =  "Error creating singleton of class '"
             + "dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher':";
@@ -308,7 +308,7 @@ public class HarvestControllerTester extends TestCase {
 
         hc = HarvestController.getInstance();
         HeritrixFiles files = new HeritrixFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR,
-                                                1L, 1L);
+                new JobInfoTestImpl(1L, 1L));
         StringBuilder errs = new StringBuilder();
         HarvestReport dhr = HarvestReportFactory.generateHarvestReport(files);
         assertEquals("Error accumulator should be empty", 0, errs.length());
@@ -318,7 +318,7 @@ public class HarvestControllerTester extends TestCase {
                      dhr.getByteCount("netarkivet.dk").longValue());
 
         File crawlDir2 = new File(TestInfo.CRAWLDIR_ORIGINALS_DIR, "bogus");
-        HeritrixFiles files2 = new HeritrixFiles(crawlDir2, 1L, 1L);
+        HeritrixFiles files2 = new HeritrixFiles(crawlDir2, new JobInfoTestImpl(1L, 1L));
 
         dhr = null;
         try {

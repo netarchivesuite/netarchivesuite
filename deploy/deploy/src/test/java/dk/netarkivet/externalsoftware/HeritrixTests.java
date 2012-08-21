@@ -33,6 +33,7 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncherFactory;
+import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.controller.AbstractJMXHeritrixController;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
@@ -213,7 +214,7 @@ public class HeritrixTests extends TestCase {
         }
         FileUtils.copyFile(origSeedsFile,seedsTxt);
         HeritrixFiles files = new HeritrixFiles(crawlDir,
-                TestInfo.JOBID, TestInfo.HARVESTID,
+                new JobInfoTestImpl(TestInfo.JOBID, TestInfo.HARVESTID),
                 jmxPasswordFile,
                 jmxAccessFile);
         /*
@@ -396,7 +397,7 @@ public class HeritrixTests extends TestCase {
                     TestInfo.SEEDS_FILE_MAX_OBJECTS, tempDir);
 
         HeritrixFiles hFiles =
-            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 0L, 0L);
+            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(0L, 0L));
         File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
         HarvestReport hhr = new LegacyHarvestReport(hFiles);
         Long tv2_objects = hhr.getObjectCount("tv2.dk");
@@ -654,7 +655,7 @@ public class HeritrixTests extends TestCase {
         runHeritrix(MaxbytesOrderFile, TestInfo.SEEDS_DEFAULT, tempDir);
         //File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
         HeritrixFiles hFiles =
-            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 0L, 0L);
+            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(0L, 0L));
         AbstractHarvestReport hhr = new LegacyHarvestReport(hFiles);
         Long netarkivet_bytes = hhr.getByteCount("netarkivet.dk");
         long lastNetarkivetBytes = getLastFetchedBytesForDomain("netarkivet.dk");

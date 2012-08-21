@@ -30,7 +30,7 @@ import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- * Factory class for instanciating a specific implementation
+ * Factory class for instantiating a specific implementation
  * of {@link HarvestReport}. The implementation class is defined
  * by the setting {@link HarvesterSettings#HARVEST_REPORT_CLASS}
  */

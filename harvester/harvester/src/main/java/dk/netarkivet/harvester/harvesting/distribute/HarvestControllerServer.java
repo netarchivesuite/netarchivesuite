@@ -593,8 +593,7 @@ implements CleanupIF {
         HeritrixFiles files =
                 new HeritrixFiles(
                         crawlDir,
-                        jobID,
-                        harvestInfo.getOrigHarvestDefinitionID());
+                        harvestInfo);
         try {
             log.info("Store files in directory '" + crawlDir + "' "
                     + "from jobID: " + jobID + ".");

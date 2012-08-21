@@ -81,8 +81,8 @@ public class HeritrixControllerFactoryTester extends TestCase {
         FileUtils.copyFile(origSeeds, seedsTxt);
         HeritrixFiles files = new HeritrixFiles(
                 crawlDir,
-                Long.parseLong(TestInfo.ARC_JOB_ID),
-                Long.parseLong(TestInfo.ARC_HARVEST_ID));
+                new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID),
+                Long.parseLong(TestInfo.ARC_HARVEST_ID)));
         HeritrixController hc
             = HeritrixControllerFactory.getDefaultHeritrixController(files);
         assertTrue("Should have got a JMXHeritricController, not " + hc,

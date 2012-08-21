@@ -30,26 +30,26 @@ import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * Factory class for instantiating a specific implementation 
- * of {@link HeritrixLauncher}. The implementation class is defined 
+ * of {@link ArchiveFileNaming}. The implementation class is defined 
  * by the setting 
- * <em>dk.netarkivet.harvester.harvesting.heritrixLauncher.class</em>.
+ * <em>settings.harvester.harvesting.heritrix.archiveNaming.class</em>.
  */
-public class HeritrixLauncherFactory extends SettingsFactory<HeritrixLauncher> {
+public class ArchiveFileNamingFactory extends SettingsFactory<ArchiveFileNaming> {
 
     /**
-     * Returns an instance of the default {@link HeritrixLauncher} 
+     * Returns an instance of the default {@link ArchiveFileNaming} 
      * implementation defined by the setting
-     * dk.netarkivet.harvester.harvesting.heritrixLauncher.class .
+     * settings.harvester.harvesting.heritrix.archiveNaming.class .
      * This class must have a constructor or factory method with a
      * signature matching the array args.
      * @param args the arguments to the constructor or factory method
      * @throws ArgumentNotValid if the instance cannot be constructed.
-     * @return the {@link HeritrixLauncher} instance.
+     * @return the {@link ArchiveFileNaming} instance.
      */
-    public static HeritrixLauncher getInstance(Object ...args) 
+    public static ArchiveFileNaming getInstance(Object ...args) 
     throws ArgumentNotValid {
         return SettingsFactory.getInstance(
-                HarvesterSettings.HERITRIX_LAUNCHER_CLASS, args);
+                HarvesterSettings.HERITRIX_ARCHIVE_NAMING_CLASS, args);
     }
 
 }

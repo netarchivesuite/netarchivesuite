@@ -613,6 +613,9 @@
                 <heapSize>1598M</heapSize>
                 <javaOpts/>
                 <archiveFormat>arc</archiveFormat>
+                <archiveNaming>
+                	<class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
+                </archiveNaming>
             </heritrix>
             <frontier>
                 <!-- 10 minutes -->

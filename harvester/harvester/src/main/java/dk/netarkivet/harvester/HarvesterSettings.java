@@ -568,5 +568,14 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_ARCHIVE_FORMAT =
             "settings.harvester.harvesting.heritrix.archiveFormat";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.archiveNaming.class</b> The class implementing the chosen way of naming your archive-files
+     * default: LegacyNamingConvention.
+     * This class decides what to put into the Heritrix "prefix" property of the org.archive.crawler.writer.ARCWriterProcessor and/or 
+     * org.archive.crawler.writer.WARCWriterProcessor.
+     */
+    public static String HERITRIX_ARCHIVE_NAMING_CLASS =
+            "settings.harvester.harvesting.heritrix.archiveNaming.class";
+    
 }
 

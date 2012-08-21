@@ -46,11 +46,7 @@ public class CompleteSettingsTester extends TestCase {
      * You probably need to rebuild the file src/dk/netarkivet/deploy/complete_settings.xml
      * using the program dk.netarkivet.deploy.BuildCompleteSettings and replace the version
      * in ../originals/complete_settings/complete_settings.xml with the new version.
-     *
-     * This test case is very fragile and breaks often. The amount of work needed to 
-     * maintain this test, and investigate failing regression test outweighs the possible 
-     * benefits of including this test in the NAS unit tests. We should consider deleting it.
-	*/
+     */
     public void testCompleteSettings() throws Exception {
             // the output directory is not automatically created,
             // hence create it before running.

@@ -42,7 +42,7 @@ import java.io.File;
 public class HeritrixFilesTester extends TestCase {
 
     private MockupJMS mjms = new MockupJMS();
-    private File resultFile = new File(TestInfo.HERITRIX_TEMP_DIR, "result");
+    //private File resultFile = new File(TestInfo.HERITRIX_TEMP_DIR, "result");
     
     private File defaultJmxPasswordFile = new File("/path/to/jmxpasswordfile");
     private File defaultJmxAccessFile = new File("/path/to/jmxaccessfile");
@@ -67,7 +67,7 @@ public class HeritrixFilesTester extends TestCase {
      */
     public void testConstructor() {
         try {
-            new HeritrixFiles(null, 0, 0, null, null);
+            new HeritrixFiles(null, null, null, null);
             fail("Invalid arguments should throw ArgumentNotValid");
         } catch (ArgumentNotValid e) {
             // Expected
@@ -99,8 +99,8 @@ public class HeritrixFilesTester extends TestCase {
      */
     public void testAlternateConstructor() {
         HeritrixFiles hf 
-            = new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
-     // check, that crawlDir is correctly set
+            = new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(42L, 42L));
+        // check, that crawlDir is correctly set
         assertEquals("crawlDir should be set up correctly.",
                      TestInfo.HERITRIX_TEMP_DIR.getAbsolutePath(),
                      hf.getCrawlDir().getAbsolutePath());
@@ -214,8 +214,11 @@ public class HeritrixFilesTester extends TestCase {
      * @return
      */
     public HeritrixFiles getStandardHeritrixFiles() {
-        return new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42,
+        return new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(42L, 42L),
             new File("/path/to/jmxpasswordfile"),
             new File("/path/to/jmxaccessfile"));
-    }     
+    }
+
+     
+    
 }

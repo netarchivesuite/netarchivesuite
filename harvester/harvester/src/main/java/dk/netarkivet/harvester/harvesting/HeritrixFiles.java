@@ -44,6 +44,8 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
 
 /**
  * This class encapsulates all the files that Heritrix gets from our system,
@@ -52,14 +54,14 @@ import dk.netarkivet.common.utils.XmlUtils;
 public class HeritrixFiles {
     /** The directory that crawls are performed in. */
     private final File crawlDir;
-    /** The prefix we put on generated ARC files. */
-    private final String arcFilePrefix;
-
     /** The job ID this object represents files for. */
     private final Long jobID;
     /** The job ID this object represents files for. */
     private final Long harvestID;
 
+    /** The prefix we put on generated ARC or WARC files. */
+    private final String arcFilePrefix;
+    
     /** The JMX password file to be used by Heritrix. */
     private final File jmxPasswordFile;
     /** The JMX access file to be used by Heritrix. */
@@ -79,6 +81,7 @@ public class HeritrixFiles {
 
     /** The logger. */
     private Log log = LogFactory.getLog(getClass().getName());
+    private JobInfo JobInfo;
 
     /** The name of the progress statistics log. */
     private static final String PROGRESS_STATISTICS_LOG_FILENAME
@@ -101,30 +104,30 @@ public class HeritrixFiles {
      * @throws ArgumentNotValid if null crawlDir,
      *  or non-positive jobID and harvestID.
      */
-    public HeritrixFiles(File crawlDir, long jobID, long harvestID,
+    public HeritrixFiles(File crawlDir, JobInfo harvestJob,
             File jmxPasswordFile, File jmxAccessFile) {
         ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
-        ArgumentNotValid.checkPositive(jobID, "jobID");
-        ArgumentNotValid.checkPositive(harvestID, "harvestID");
+        ArgumentNotValid.checkNotNull(harvestJob, "harvestJob");
         ArgumentNotValid.checkNotNull(jmxPasswordFile, "jmxPasswordFile");
         ArgumentNotValid.checkNotNull(jmxAccessFile, "jmxAccessFile");
         this.crawlDir = crawlDir;
-        this.arcFilePrefix = jobID + "-" + harvestID;
-        this.jobID = jobID;
-        this.harvestID = harvestID;
+        this.JobInfo = harvestJob;
+        this.jobID = harvestJob.getJobID();
+        this.harvestID = harvestJob.getOrigHarvestDefinitionID();
+        this.arcFilePrefix = harvestJob.getHarvestNamePrefix();
         this.jmxPasswordFile = jmxPasswordFile;
         this.jmxAccessFile = jmxAccessFile;
     }
-
+    
     /**
      * Alternate constructor that by default reads the jmxPasswordFile,
        and jmxAccessFile from the current settings.
      * @param crawlDir The dir, where the crawl-files are placed
-     * @param jobID The JobID of this crawl.
+     * @param harvestJob The harvestjob behind this instance of HeritrixFiles
      * @param harvestID The harvestID of this crawl.
      */
-     public HeritrixFiles(File crawlDir, long jobID, long harvestID) {
-         this(crawlDir, jobID, harvestID,
+     public HeritrixFiles(File crawlDir, JobInfo harvestJob) {
+         this(crawlDir, harvestJob,
                  new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)),
                  new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)));
      }
@@ -143,7 +146,7 @@ public class HeritrixFiles {
      * @return The archive file prefix, currently jobID-harvestID.
      */
     public String getArchiveFilePrefix() {
-        return arcFilePrefix;
+        return this.arcFilePrefix;
     }
 
     /** Returns the order.xml file object.

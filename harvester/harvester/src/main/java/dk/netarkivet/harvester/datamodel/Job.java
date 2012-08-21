@@ -66,6 +66,8 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
+import dk.netarkivet.harvester.harvesting.JobInfo;
 
 
 /**
@@ -85,7 +87,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * job, as well as the ID of the harvest definition that defined it and names
  * of all the configurations it is based on.
  */
-public class Job implements Serializable {
+public class Job implements Serializable, JobInfo {
     private transient Log log = LogFactory.getLog(getClass());
 
     //Persistent fields stored in and read from DAO
@@ -1501,6 +1503,11 @@ public class Job implements Serializable {
      */
     public Long getContinuationOf() {
         return this.continuationOF;
+    }
+
+    @Override
+    public String getHarvestNamePrefix() {
+        return ArchiveFileNamingFactory.getInstance().getPrefix(this);
     }
     
 }

@@ -44,11 +44,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainHistory;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.Password;
-import dk.netarkivet.harvester.datamodel.SeedList;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
@@ -103,7 +98,7 @@ public class LegacyHarvestReportTester extends TestCase {
         FileUtils.copyFile(
                 TestInfo.INVALID_REPORT_FILE,
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
+        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         new LegacyHarvestReport(hf);
         LogUtils.flushLogs(LegacyHarvestReport.class.getName());
         FileAsserts.assertFileContains("Should have log about invalid line",
@@ -114,7 +109,7 @@ public class LegacyHarvestReportTester extends TestCase {
         FileUtils.copyFile(
                 TestInfo.REPORT_FILE,
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
+        hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hostReport = new LegacyHarvestReport(hf);
 
         assertNotNull(
@@ -133,7 +128,7 @@ public class LegacyHarvestReportTester extends TestCase {
         FileUtils.copyFile(
                 TestInfo.REPORT_FILE,
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
+        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hostReport = new LegacyHarvestReport(hf);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -204,7 +199,7 @@ public class LegacyHarvestReportTester extends TestCase {
         FileUtils.copyFile(
                 testFile,
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
+        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         Long expectedObjectCount = Long.valueOf(2L);
         Long expectedByteCount = new Long(5500000001L);
@@ -225,7 +220,7 @@ public class LegacyHarvestReportTester extends TestCase {
         FileUtils.copyFile(
                 testFile,
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
+        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
 
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         assertEquals("Counts should equal input data", new Long(2500000000l),
@@ -238,7 +233,7 @@ public class LegacyHarvestReportTester extends TestCase {
         FileUtils.copyFile(
                 testFile,
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
+        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         assertEquals("kb.dk is unfinished",
@@ -260,19 +255,8 @@ public class LegacyHarvestReportTester extends TestCase {
         FileUtils.copyFile(
                 testFile,
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
+        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
-//        List<SeedList> seedLists = new ArrayList<SeedList>();
-//        SeedList s = new SeedList("default", "www.ølejr.dk");
-//        seedLists.add(s);
-//        List<String> traps = new ArrayList<String>();
-//        List<Password> pws = new ArrayList<Password>();
-//        DomainConfiguration dc = new DomainConfiguration("theconfig", "ølejr.dk", 
-//                new DomainHistory(), traps, seedLists, pws);
-//        DomainConfiguration dc1 = new DomainConfiguration("theconfig", "ølejr.dk", 
-//                new DomainHistory(), traps, seedLists, pws);
-//        //Job idnaJob = Job.createJob(42L, dc, 0);
-//        //idnaJob.addConfiguration(dc1);
         boolean disregardSeedUrl = Settings.getBoolean(
                 HarvesterSettings.DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG); 
         if (disregardSeedUrl) { 
@@ -298,7 +282,7 @@ public class LegacyHarvestReportTester extends TestCase {
         FileUtils.copyFile(
                 testFile,
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
+        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         AbstractHarvestReport hr2 = Serial.serial(hr);
         assertEquals("Relevant state should be preserved",
@@ -321,7 +305,7 @@ public class LegacyHarvestReportTester extends TestCase {
         FileUtils.copyFile(
                 testFile,
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 1, 1);
+        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         return new LegacyHarvestReport(hf);
     }
 

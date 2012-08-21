@@ -35,6 +35,7 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.*;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
@@ -75,7 +76,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     private HarvestSchedulerMonitorServer hsms;
 
     private static final HeritrixFiles HX_FILES =
-        new HeritrixFiles(new File(WORKING, "harvestreports"), 1, 1);
+        new HeritrixFiles(new File(WORKING, "harvestreports"), new JobInfoTestImpl(1L, 1L));
 
     /**
      * setUp method for this set of unit tests.

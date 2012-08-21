@@ -152,9 +152,7 @@ public class HarvestController {
             HarvestDefinitionInfo hdi,
             List<MetadataEntry> metadataEntries) {
         final HeritrixFiles files =
-            new HeritrixFiles(crawldir,
-                              job.getJobID(),
-                              job.getOrigHarvestDefinitionID());
+            new HeritrixFiles(crawldir, job);
 
         // If this job is a job that tries to continue a previous job
         // using the Heritrix recover.gz log, and this feature is enabled,
