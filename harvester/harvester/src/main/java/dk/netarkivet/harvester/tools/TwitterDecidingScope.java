@@ -261,6 +261,9 @@ public class TwitterDecidingScope extends DecidingScope {
         query.setRpp(20);
         try {
             List<Tweet> results = twitter.search(query).getTweets();
+            if (results != null && !results.isEmpty()) {
+                System.out.println("Extracting embedded links for user " + user);
+            }
             for (Tweet result: results) {
                 extractEmbeddedLinks(result);
             }

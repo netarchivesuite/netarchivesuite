@@ -36,7 +36,7 @@
             <boolean name="queue_user_status">true</boolean>
             <boolean name="queue_user_status_links">true</boolean>
             <boolean name="queue_keyword_links">true</boolean>
-            <boolean name="twitter_results_per_page">20</boolean>
+            <integer name="twitter_results_per_page">20</integer>
 
             <!--The number of pages of API search results to process -->
             <integer name="pages">2</integer>
