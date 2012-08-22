@@ -140,6 +140,10 @@ public class TwitterDecidingScope extends DecidingScope {
             pages = ((Integer) super.getAttribute(ATTR_PAGES)).intValue();
             geoLocations = (StringList) super.getAttribute(ATTR_GEOLOCATIONS);
             language = (String) super.getAttribute(ATTR_LANG);
+            if (language == null) {
+                language = "";
+            }
+            System.out.println("Twitter scope language: " + language);
             resultsPerPage = (Integer) super.getAttribute(ATTR_RESULTS_PER_PAGE);
             queueLinks = (Boolean) super.getAttribute(ATTR_QUEUE_LINKS);
             queueUserStatus = (Boolean) super.getAttribute(ATTR_QUEUE_USER_STATUS);
@@ -175,6 +179,7 @@ public class TwitterDecidingScope extends DecidingScope {
                 + " page(s) of results with " + resultsPerPage + " results per page.");
         //Nested loop over keywords, geo_locations and pages.
         for (Object keyword: keywords) {
+            String keywordString = (String) keyword;
             for (Object geoLocation: geoLocations) {
                 String urlQuery = (String) keyword;
                 Query query = new Query();
@@ -182,6 +187,7 @@ public class TwitterDecidingScope extends DecidingScope {
                 if (language != null && !language.equals("")) {
                     query.setLang(language);
                     urlQuery += " lang:" + language;
+                    keywordString += " lang:" + keywordString;
                 }
                 urlQuery = "http://twitter.com/search/" + URLEncoder.encode(urlQuery);
                 if (queueKeywordLinks) {
@@ -190,7 +196,7 @@ public class TwitterDecidingScope extends DecidingScope {
                 for (int page = 1; page <= pages; page++) {
                     query.setPage(page);
                     if (!keyword.equals("")) {
-                        query.setQuery((String) keyword);
+                        query.setQuery(keywordString);
                     }
                     if (!geoLocation.equals("")) {
                         String[] locationArray = ((String) geoLocation).split(",");
@@ -198,24 +204,29 @@ public class TwitterDecidingScope extends DecidingScope {
                         query.setGeoCode(location, Double.parseDouble(locationArray[2]), locationArray[3]);
                     }
                     try {
+                        System.out.println("Preparing to execute query: " + query);
                         final QueryResult result = twitter.search(query);
                         List<Tweet> tweets = result.getTweets();
                         for (Tweet tweet: tweets) {
-                            long id = tweet.getId();
-                            String fromUser = tweet.getFromUser();
-                            String tweetUrl = "http://www.twitter.com/" + fromUser + "/status/" + id;
-                            addSeedIfLegal(tweetUrl);
-                            tweetCount++;
-                            if (queueLinks) {
-                                extractEmbeddedLinks(tweet);
-                            }
-                            if (queueUserStatus) {
-                                String statusUrl = "http://twitter.com/" + tweet.getFromUser() + "/";
-                                addSeedIfLegal(statusUrl);
-                                linkCount++;
-                                if (queueUserStatusLinks) {
-                                    queueUserStatusLinks(tweet.getFromUser());
+                            if (tweet.getIsoLanguageCode().equals(language) || language.equals("")) {
+                                long id = tweet.getId();
+                                String fromUser = tweet.getFromUser();
+                                String tweetUrl = "http://www.twitter.com/" + fromUser + "/status/" + id;
+                                addSeedIfLegal(tweetUrl);
+                                tweetCount++;
+                                if (queueLinks) {
+                                    extractEmbeddedLinks(tweet);
                                 }
+                                if (queueUserStatus) {
+                                    String statusUrl = "http://twitter.com/" + tweet.getFromUser() + "/";
+                                    addSeedIfLegal(statusUrl);
+                                    linkCount++;
+                                    if (queueUserStatusLinks) {
+                                        queueUserStatusLinks(tweet.getFromUser());
+                                    }
+                                }
+                            } else {
+                                System.out.println("Surprising twitter result (wrong language): " + tweet);
                             }
                         }
                     } catch (TwitterException e1) {
@@ -236,8 +247,8 @@ public class TwitterDecidingScope extends DecidingScope {
         final URLEntity[] urlEntities = tweet.getURLEntities();
         if (urlEntities != null) {
             for (URLEntity urlEntity : urlEntities) {
-                final String embeddedUrl = urlEntity.getURL().toString();
-                addSeedIfLegal(embeddedUrl);
+                addSeedIfLegal(urlEntity.getURL().toString());
+                addSeedIfLegal(urlEntity.getExpandedURL().toString());
                 linkCount++;
             }
         }
@@ -259,13 +270,18 @@ public class TwitterDecidingScope extends DecidingScope {
         Query query = new Query();
         query.setQuery("@"+user);
         query.setRpp(20);
+        if (!language.equals("")) {
+            query.setLang(language);
+        }
         try {
             List<Tweet> results = twitter.search(query).getTweets();
             if (results != null && !results.isEmpty()) {
                 System.out.println("Extracting embedded links for user " + user);
             }
             for (Tweet result: results) {
-                extractEmbeddedLinks(result);
+                if (result.getIsoLanguageCode().equals(language) || language.equals("")) {
+                    extractEmbeddedLinks(result);
+                }
             }
         } catch (TwitterException e) {
             e.printStackTrace();
