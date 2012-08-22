@@ -187,7 +187,7 @@ public class TwitterDecidingScope extends DecidingScope {
                 if (language != null && !language.equals("")) {
                     query.setLang(language);
                     urlQuery += " lang:" + language;
-                    keywordString += " lang:" + keywordString;
+                    keywordString += " lang:" + language;
                 }
                 urlQuery = "http://twitter.com/search/" + URLEncoder.encode(urlQuery);
                 if (queueKeywordLinks) {
