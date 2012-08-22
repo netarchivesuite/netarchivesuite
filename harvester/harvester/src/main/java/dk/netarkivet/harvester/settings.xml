@@ -67,7 +67,7 @@ National Library.
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
             <dispatchperiode>30000</dispatchperiode>
-            <jobgenerationperiode>60</jobgenerationperiode>
+            <jobgenerationperiode>10</jobgenerationperiode>
             <useQuotaEnforcer>true</useQuotaEnforcer>
         </scheduler>
         <monitor>
@@ -83,8 +83,8 @@ National Library.
             <minSpaceLeft>400000000</minSpaceLeft>
             <oldjobsDir>oldjobs</oldjobsDir>
             <queuePriority></queuePriority>
-            <sendReadyInterval>300</sendReadyInterval>
-            <sendReadyDelay>1000</sendReadyDelay>
+            <sendReadyInterval>30</sendReadyInterval>
+            <sendReadyDelay>300</sendReadyDelay>
             <continuationFromHeritrixRecoverlogEnabled>false</continuationFromHeritrixRecoverlogEnabled>
             <heritrix>
                 <!-- 30 minutes -->
