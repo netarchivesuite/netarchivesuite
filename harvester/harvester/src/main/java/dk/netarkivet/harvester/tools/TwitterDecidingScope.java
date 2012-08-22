@@ -35,6 +35,7 @@ import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Query;
 import twitter4j.QueryResult;
+import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -93,6 +94,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Attribute/value pair. If set, the language to which results are restricted.
+     * (Broken. See http://code.google.com/p/twitter-api/issues/detail?id=1942 )
      */
     public static final String ATTR_LANG = "language";
     private String language;
@@ -208,6 +210,11 @@ public class TwitterDecidingScope extends DecidingScope {
                         final QueryResult result = twitter.search(query);
                         List<Tweet> tweets = result.getTweets();
                         for (Tweet tweet: tweets) {
+                            System.out.println("Processing Tweet: " + tweet);
+                            //
+                            // Twitter API is buggy so need to check each tweet here for correct language code.
+                            //
+                            Status status = twitter.showStatus(tweet.getId());
                             if (tweet.getIsoLanguageCode().equals(language) || language.equals("")) {
                                 long id = tweet.getId();
                                 String fromUser = tweet.getFromUser();
