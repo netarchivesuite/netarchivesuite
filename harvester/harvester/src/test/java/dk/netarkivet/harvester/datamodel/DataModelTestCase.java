@@ -233,7 +233,6 @@ public class DataModelTestCase extends TestCase {
                 defaultOrderXmlDocument, "netarkivet.dk", harvestNum, null);
     }
 
-
     public static void addHarvestDefinitionToDatabaseWithId(long id) throws SQLException {
         Connection con = HarvestDBConnection.get();
         try {
@@ -267,6 +266,4 @@ public class DataModelTestCase extends TestCase {
         }
 
     }
-
-
 }

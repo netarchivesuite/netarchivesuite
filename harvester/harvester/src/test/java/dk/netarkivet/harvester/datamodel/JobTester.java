@@ -756,6 +756,7 @@ public class JobTester extends DataModelTestCase {
                 // Checked outside this method, because order of seeds is random
                 //+ "\nSeedlist: " + job.getSeedListAsString()
                 + "\nSubmitted tid: " + job.getSubmittedDate()
+                + "\nCreation tid: " + job.getCreationDate()
                 + "\nActual Start: " + job.getActualStart()
                 + "\nActual Stop: " + job.getActualStop()
                 + "\nPriority: " + job.getPriority().toString();
@@ -1020,6 +1021,31 @@ public class JobTester extends DataModelTestCase {
         JobDAO.getInstance().update(job);
         job = JobDAO.getInstance().read(jobID);
         assertEquals(now, job.getSubmittedDate());
+    }
+
+    /**
+     * Test method getCreationDate().
+     */
+    public void testGetCreationDate() {
+        Job job = Job.createJob(Long.valueOf(42),
+                TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        assertNull("Should be null, before being set explicitly",
+                job.getCreationDate());
+        Date now = new Date();
+        job.setCreationDate(now);
+        assertEquals("Should be set correctly, after being set explicitly",
+                now, job.getCreationDate());
+
+        job = Job.createJob(Long.valueOf(43),
+                TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+
+
+        JobDAO.getInstance().create(job);
+        Long jobID = job.getJobID();
+        job.setCreationDate(now);
+        JobDAO.getInstance().update(job);
+        job = JobDAO.getInstance().read(jobID);
+        assertEquals(now, job.getCreationDate());
     }
 
     /**

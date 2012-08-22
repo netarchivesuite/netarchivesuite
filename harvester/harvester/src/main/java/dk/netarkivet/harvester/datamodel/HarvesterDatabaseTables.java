@@ -253,7 +253,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about jobs. */
     JOBS {
         static final String NAME = "jobs";
-        static final int REQUIRED_VERSION = 7;
+        static final int REQUIRED_VERSION = 8;
        
         @Override
         public int getRequiredVersion() {

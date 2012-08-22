@@ -52,6 +52,8 @@ public class JobStatusInfo {
     private final int configCount;
     /** The time when this job was submitted. */
     private final Date submittedDate;
+    /** The time when this job was submitted. */
+    private final Date creationDate;
     /** The time when this job started. */
     private final Date startDate;
     /** The time when this job finished. */
@@ -86,6 +88,7 @@ public class JobStatusInfo {
                   long harvestDefinitionID, String harvestDefinition,
                   int harvestNum, String harvestErrors, String uploadErrors,
                   String orderXMLname, int domainCount, Date submittedDate,
+                  Date creationDate,
                   Date startDate, Date endDate, Long resubmittedAsJobWithID) {
         this.jobID = jobID;
         this.status = status;
@@ -97,6 +100,7 @@ public class JobStatusInfo {
         this.orderXMLname = orderXMLname;
         this.configCount = domainCount;
         this.submittedDate = submittedDate;
+        this.creationDate = creationDate;
         this.startDate = startDate;
         this.endDate = endDate;
         this.resubmittedAsJobWithID = resubmittedAsJobWithID;
@@ -173,7 +177,13 @@ public class JobStatusInfo {
         return submittedDate;
     }
 
-    
+    /**
+     * @return The time when the job was created
+     */
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
     /**
      * @return The time when the job started
      */

@@ -378,6 +378,7 @@ public abstract class HarvestDefinition implements Named {
                             + "Deduplication is disabled");
                 } 
             }
+            job.setCreationDate(new Date());
             dao.create(job);
             log.debug("Generated job: '" + job.toString() + "'");
             if (log.isDebugEnabled()) {

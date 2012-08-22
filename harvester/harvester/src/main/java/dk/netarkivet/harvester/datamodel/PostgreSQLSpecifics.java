@@ -307,13 +307,12 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfieldvalue", 1,
                 createStatement);
     }
-    
+
     @Override
     protected synchronized void migrateJobsv6tov7() {
-           String[] sqlStatements = {
-                   "ALTER TABLE jobs ADD COLUMN continuationof BIGINT DEFAULT NULL"
-               };
-           HarvestDBConnection.updateTable("jobs", 7, sqlStatements);
-       }
-    
+        String[] sqlStatements = {
+                "ALTER TABLE jobs ADD COLUMN continuationof BIGINT DEFAULT NULL"
+        };
+        HarvestDBConnection.updateTable("jobs", 7, sqlStatements);
+    }
 }

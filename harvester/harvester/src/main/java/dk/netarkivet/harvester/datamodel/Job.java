@@ -145,6 +145,8 @@ public class Job implements Serializable, JobInfo {
     private Date actualStop;
     /** The time when this job was submitted. */
     private Date submittedDate;
+    /** The time when this job was created. */
+    private Date creationDate;
     
     /**
      * Edition is used by the DAO to keep track of changes.
@@ -759,14 +761,20 @@ public class Job implements Serializable, JobInfo {
     public Date getActualStart() {
         return actualStart;
     }
-    
-    /** Get the time when this job was submitted. 
+
+    /** Get the time when this job was submitted.
      * @return the time as Date
      */
     public Date getSubmittedDate() {
         return submittedDate;
     }
-    
+
+    /** Get the time when this job was created.
+     * @return the creation time as a <code>Date</code>
+     */
+    public Date getCreationDate() {
+        return creationDate;
+    }
 
     /**
      * Get a list of Heritrix settings.xml files.
@@ -1487,6 +1495,15 @@ public class Job implements Serializable, JobInfo {
      */
     public void setSubmittedDate(Date submittedDate) {
         this.submittedDate = submittedDate;
+    }
+
+    /**
+     * Set the Date for when this job was created.
+     * If null, this job has not been created.
+     * @param creationDate The date when this was created
+     */
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     /**

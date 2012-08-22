@@ -123,10 +123,10 @@ public class JobDBDAO extends JobDAO {
                     + "(job_id, harvest_id, status, priority, forcemaxcount, "
                     + "forcemaxbytes, forcemaxrunningtime, orderxml, "
                     + "orderxmldoc, seedlist, "
-                    + "harvest_num, startdate, enddate, submitteddate, "
+                    + "harvest_num, startdate, enddate, submitteddate, creationdate, "
                     + "num_configs, edition, resubmitted_as_job) "
                     + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
-                    + "?, ?, ? )");
+                    + "?, ?, ?, ? )");
 
 
             statement.setLong(1, job.getJobID());
@@ -150,12 +150,13 @@ public class JobDBDAO extends JobDAO {
             DBUtils.setDateMaybeNull(statement, 12, job.getActualStart());
             DBUtils.setDateMaybeNull(statement, 13, job.getActualStop());
             DBUtils.setDateMaybeNull(statement, 14, job.getSubmittedDate());
+            DBUtils.setDateMaybeNull(statement, 15, job.getCreationDate());
 
             // The size of the configuration map == number of configurations
-            statement.setInt(15, job.getDomainConfigurationMap().size());
+            statement.setInt(16, job.getDomainConfigurationMap().size());
             long initialEdition = 1;
-            statement.setLong(16, initialEdition);
-            DBUtils.setLongMaybeNull(statement, 17, job.getResubmittedAsJob());
+            statement.setLong(17, initialEdition);
+            DBUtils.setLongMaybeNull(statement, 18, job.getResubmittedAsJob());
 
             statement.executeUpdate();
             createJobConfigsEntries(connection, job);
@@ -325,7 +326,8 @@ public class JobDBDAO extends JobDAO {
                     + "harvest_error_details = ?, upload_errors = ?, "
                     + "upload_error_details = ?, startdate = ?,"
                     + "enddate = ?, num_configs = ?, edition = ?, "
-                    + "submitteddate = ?, resubmitted_as_job = ?"
+                    + "submitteddate = ?, creationdate = ?,"
+                    + "resubmitted_as_job = ?"
                     + " WHERE job_id = ? AND edition = ?");
             statement.setLong(1, job.getOrigHarvestDefinitionID());
             statement.setInt(2, job.getStatus().ordinal());
@@ -364,10 +366,11 @@ public class JobDBDAO extends JobDAO {
             statement.setInt(17, job.getDomainConfigurationMap().size());
             statement.setLong(18, edition);
             DBUtils.setDateMaybeNull(statement, 19, job.getSubmittedDate());
-            DBUtils.setLongMaybeNull(statement, 20, job.getResubmittedAsJob());
+            DBUtils.setDateMaybeNull(statement, 20, job.getCreationDate());
+            DBUtils.setLongMaybeNull(statement, 21, job.getResubmittedAsJob());
 
-            statement.setLong(21, job.getJobID());
-            statement.setLong(22, job.getEdition());
+            statement.setLong(22, job.getJobID());
+            statement.setLong(23, job.getEdition());
             final int rows = statement.executeUpdate();
             if (rows == 0) {
                 String message = "Edition " + job.getEdition()
@@ -430,7 +433,7 @@ public class JobDBDAO extends JobDAO {
                                    + "orderxmldoc, seedlist, harvest_num,"
                                    + "harvest_errors, harvest_error_details, "
                                    + "upload_errors, upload_error_details, "
-                                   + "startdate, enddate, submitteddate, "
+                                   + "startdate, enddate, submitteddate, creationdate, "
                                    + "edition, resubmitted_as_job, continuationof "
                                    + "FROM jobs WHERE job_id = ?");
             statement.setLong(1, jobID);
@@ -469,9 +472,10 @@ public class JobDBDAO extends JobDAO {
             Date startdate = DBUtils.getDateMaybeNull(result, 15);
             Date stopdate = DBUtils.getDateMaybeNull(result, 16);
             Date submittedDate = DBUtils.getDateMaybeNull(result, 17);
-            Long edition = result.getLong(18);
-            Long resubmittedAsJob = DBUtils.getLongMaybeNull(result, 19);
-            Long continuationOfJob = DBUtils.getLongMaybeNull(result, 20);
+            Date creationDate = DBUtils.getDateMaybeNull(result, 18);
+            Long edition = result.getLong(19);
+            Long resubmittedAsJob = DBUtils.getLongMaybeNull(result, 20);
+            Long continuationOfJob = DBUtils.getLongMaybeNull(result, 21);
             statement.close();
             // IDs should match up in a natural join
             // The following if-block is an attempt to fix Bug 1856, an
@@ -517,6 +521,11 @@ public class JobDBDAO extends JobDAO {
             if (submittedDate != null) {
                 job.setSubmittedDate(submittedDate);
             }
+
+            if (creationDate != null) {
+                job.setCreationDate(creationDate);
+            }
+
 
             job.configsChanged = false;
             job.setJobID(jobID);
@@ -690,7 +699,7 @@ public class JobDBDAO extends JobDAO {
         StringBuffer sqlBuffer = new StringBuffer(
                 "SELECT jobs.job_id, status, jobs.harvest_id, "
             + "harvestdefinitions.name, harvest_num, harvest_errors,"
-            + " upload_errors, orderxml, num_configs, submitteddate, startdate,"
+            + " upload_errors, orderxml, num_configs, submitteddate, creationdate, startdate,"
             + " enddate, resubmitted_as_job"
             + " FROM jobs, harvestdefinitions "
             + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ");
@@ -1029,7 +1038,8 @@ public class JobDBDAO extends JobDAO {
                             DBUtils.getDateMaybeNull(res, 10),
                             DBUtils.getDateMaybeNull(res, 11),
                             DBUtils.getDateMaybeNull(res, 12),
-                            DBUtils.getLongMaybeNull(res, 13)
+                            DBUtils.getDateMaybeNull(res, 13),
+                            DBUtils.getLongMaybeNull(res, 14)
                             ));
         }
         return joblist;
@@ -1126,7 +1136,7 @@ public class JobDBDAO extends JobDAO {
             sql.append(" jobs.job_id, status, jobs.harvest_id,");
             sql.append(" harvestdefinitions.name, harvest_num,");
             sql.append(" harvest_errors, upload_errors, orderxml,");
-            sql.append(" num_configs, submitteddate, startdate, enddate,");
+            sql.append(" num_configs, submitteddate, creationdate, startdate, enddate,");
             sql.append(" resubmitted_as_job");
         }
 

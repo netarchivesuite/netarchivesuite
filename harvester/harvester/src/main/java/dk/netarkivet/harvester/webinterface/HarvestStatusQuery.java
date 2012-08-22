@@ -114,7 +114,7 @@ public class HarvestStatusQuery {
         /** The harvest ID. No default. */
         HARVEST_ID(""), 
         /** The harvest Run number. No default. */
-        HARVEST_RUN(""), 
+        HARVEST_RUN(""),
         /** The harvest start date. No default. */
         START_DATE(""), 
         /** The harvest end date. No default. */
@@ -365,7 +365,7 @@ public class HarvestStatusQuery {
     public long getEndDate() {
         return (endDate == null ? DATE_NONE : endDate.getTime());
     }
-    
+
     /**
      * @return the start date as a string, or an empty string if 
      * start date is undefined

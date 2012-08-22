@@ -54,7 +54,9 @@ public class DerbySpecificsTester extends DataModelTestCase {
     public void testDummy() {
         
     }
-    
+
+
+
     /**
      * FIXME Broken by connection code refactoring 
      * https://sbforge.org/jira/browse/NAS-1924

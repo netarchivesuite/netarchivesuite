@@ -43,6 +43,7 @@ public class HarvesterToolsTesterSuite {
         suite.addTestSuite(CreateCDXMetadataFileTester.class);
     }
 
+
     public static void main(String args[]) {
         String args2[] = {"-noloading", HarvesterToolsTesterSuite.class.getName()};
 

@@ -48,6 +48,7 @@ public class TestInfo {
     public static final File TOPDATADIR = new File("./tests/dk/netarkivet/harvester/datamodel/data/");
     public static final File DATADIR = new File(TOPDATADIR, "hadebasedir/");
     public static final File TEMPDIR = new File(TOPDATADIR, "working/");
+    //public static final File TEMPDIR = new File("target/working/");
     public static final String LONG_DOMAIN_LIST = "domainlist/longdomainlist.txt";
     public static final String DOMAIN_LIST = "domainlist/domainlist.txt";
     public static final String INVALID_DOMAIN_LIST = "domainlist/invalid_domainlist.txt";
@@ -176,7 +177,7 @@ public class TestInfo {
     public static final int NO_OF_TESTDOMAINS = 7;
 
     public static File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
-    static final File DBFILE = new File(TOPDATADIR, "fullhddb.jar");
+    public static final File DBFILE = new File(TOPDATADIR, "fullhddb.jar");
     static final File EMPTYDBFILE = new File(TOPDATADIR, "emptyhddb.jar");
     public static final File NONEXISTINGDIR =
             new File(TEMPDIR, "nonexisting");

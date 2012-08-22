@@ -124,7 +124,7 @@ and reponse.getLocale use this locale.
         <th><fmt:message key="table.job.type"/></th>
         <th><fmt:message key="table.job.harvestname"/></th>
         <th><fmt:message key="table.job.harvestnumber"/></th>
-        <th><fmt:message key="table.job.submittedtime"/></th>
+        <th><fmt:message key="table.job.creationtime"/></th>
         <th><fmt:message key="table.job.starttime"/></th>
         <th><fmt:message key="table.job.stoptime"/></th>
         <th><fmt:message key="table.job.jobstatus"/></th>
@@ -142,7 +142,7 @@ and reponse.getLocale use this locale.
                 .makeHarvestRunLink(harvestID,
                                     job.getHarvestNum())%>
         </td>
-        <td><fmt:formatDate type="both" value="<%=job.getSubmittedDate()%>"/></td>
+        <td><fmt:formatDate type="both" value="<%=job.getCreationDate()%>"/></td>
         <td><fmt:formatDate type="both" value="<%=job.getActualStart()%>"/></td>
         <td><fmt:formatDate type="both" value="<%=job.getActualStop()%>"/></td>
         <td><%=jobstatusTdContents %></td>

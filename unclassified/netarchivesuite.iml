@@ -355,7 +355,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file:///Users/mss/.m2/repository/c3p0/c3p0/0.9.1/c3p0-0.9.1-sources.jar" />
+          <root url="file://$M2_REPO$/c3p0/c3p0/0.9.1/c3p0-0.9.1-sources.jar" />
         </SOURCES>
       </library>
     </orderEntry>

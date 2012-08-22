@@ -362,6 +362,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             migrateJobsv6tov7();
             currentVersion = 7;
         }
+        if (currentVersion == 7 && toVersion >= 8) {
+            migrateJobsv7tov8();
+            currentVersion = 8;
+        }
         // future updates of the jobs table are inserted here
         if (currentVersion == HarvesterDatabaseTables.JOBS.getRequiredVersion() 
                 && toVersion >= HarvesterDatabaseTables.JOBS.getRequiredVersion() + 1) {
@@ -600,6 +604,17 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * the bigint fieldcontinuationof with null as default
      */
     protected abstract void migrateJobsv6tov7();
+
+    /**
+     * Migrates the 'jobs' table from version 7 to version 8 consisting of adding
+     * the date creationdate with null as default
+     */
+    protected void migrateJobsv7tov8() {
+        String[] sqlStatements = {
+                "ALTER TABLE jobs ADD COLUMN creationdate TIMESTAMP DEFAULT NULL"
+        };
+        HarvestDBConnection.updateTable("jobs", 8, sqlStatements);
+    }
     
     /**
      * Update all tables in the enum class {@link HarvesterDatabaseTables} to the required

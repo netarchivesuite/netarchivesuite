@@ -81,15 +81,6 @@
       <organizationUrl>http://statsbiblioteket.dk</organizationUrl>
     </developer>
     <developer>
-      <name>Jonas Lindberg Frellesen</name>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <email>jolf@kb.dk</email>
-      <organization>The Royal Danish Library</organization>
-      <organizationUrl>http://kb.dk</organizationUrl>
-    </developer>
-    <developer>
       <name>Andreas P.</name>
       <roles>
         <role>Developer</role>
@@ -181,7 +172,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.3.2</version>
+          <version>2.2.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>

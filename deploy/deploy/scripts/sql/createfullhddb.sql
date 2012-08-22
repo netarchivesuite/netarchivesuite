@@ -82,7 +82,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'jobs', 7);
+    values ( 'jobs', 8);
 insert into schemaversions ( tablename, version )
     values ( 'job_configs', 1);
 insert into schemaversions (tablename, version )
@@ -439,6 +439,7 @@ create table jobs (
     enddate timestamp,                   -- The time when this job was reported
                                          --  done or failed.
     submitteddate timestamp, 			-- The time when this job was submitted
+    creationdate timestamp, 			-- The time when this job was created
     resubmitted_as_job bigint,          -- The jobId this job was resubmitted as.
                                         --  This is null, if this job has not been
                                         --  resubmitted.

@@ -35,7 +35,7 @@ public class HarvestdatabaseUpdateApplication {
     /**
      * The main method of the HarvestdatabaseUpdateApplication.
      * Updates all tables in the enum class 
-     * {@link dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables} 
+     * {@link dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables}
      * to the required version. There is no attempt to undo the update.
      *
      * @param args no Arg
@@ -44,5 +44,5 @@ public class HarvestdatabaseUpdateApplication {
         System.out.println("Beginning database upgrade");
         DBSpecifics.getInstance().updateTables();
         System.out.println("Database upgrade finished");
-        }
-    }   
+    }
+}
