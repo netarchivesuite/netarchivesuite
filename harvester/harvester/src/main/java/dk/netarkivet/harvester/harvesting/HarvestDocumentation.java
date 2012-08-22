@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -58,9 +59,9 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
  * This class contains code for documenting a harvest.
  * Metadata is read from the directories associated with a given
  * harvest-job-attempt (i.e. one DoCrawlMessage sent to a harvest server).
- * The collected metadata are written to a new ARC file that is managed
+ * The collected metadata are written to a new metadata file that is managed
  * by IngestableFiles. Temporary metadata files will be deleted after this
- * metadata-ARC file has been written.
+ * metadata file has been written.
  */
 public class HarvestDocumentation {
 
@@ -84,9 +85,34 @@ public class HarvestDocumentation {
         "timestamp";
     private static final String CDX_URI_SERIALNO_PARAMETER_NAME =
         "serialno";
-    public static final Pattern metadataFilenamePattern =
-            Pattern.compile("([0-9]+)-metadata-([0-9]+).arc");
 
+    public static class ArchiveProfile {
+        public final FilenameFilter filename_filter;
+        public final String filename_pattern;
+        public final Pattern metadataFilenamePattern;
+        public final String archive_directory;
+    	public ArchiveProfile(FilenameFilter filename_filter,
+    			String filename_pattern,
+    			Pattern metadataFilenamePattern,
+    			String archive_directory) {
+    		this.filename_filter = filename_filter;
+    		this.filename_pattern = filename_pattern;
+    		this.metadataFilenamePattern = metadataFilenamePattern;
+    		this.archive_directory = archive_directory;
+        }
+    }
+    public static final ArchiveProfile ARC_PROFILE = new ArchiveProfile(
+    		FileUtils.ARCS_FILTER,
+    		FileUtils.ARC_PATTERN,
+    		Pattern.compile("([0-9]+)-metadata-([0-9]+).arc"),
+    		Constants.ARCDIRECTORY_NAME
+    		);
+    public static final ArchiveProfile WARC_PROFILE = new ArchiveProfile(
+    		FileUtils.WARCS_FILTER,
+    		FileUtils.WARC_PATTERN,
+    		Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"),
+    		Constants.WARCDIRECTORY_NAME
+    		);
 
     /**
      * Documents the harvest under the given dir in a packaged metadata arc
@@ -143,7 +169,7 @@ public class HarvestDocumentation {
             // insert the pre-harvest metadata file, if it exists.
             // TODO Place preharvestmetadata in IngestableFiles-defined area
             File preharvestMetadata = new File(crawlDir,
-                    MetadataFileWriter.getPreharvestMetadataARCFileName(jobID));
+                    MetadataFileWriter.getPreharvestMetadataArchiveFileName(jobID));
             if (preharvestMetadata.exists()) {
             	mdfw.insertMetadataFile(preharvestMetadata);
             }
@@ -184,12 +210,12 @@ public class HarvestDocumentation {
             // Create CDX over ARC files.
             File arcFilesDir = new File(crawlDir, Constants.ARCDIRECTORY_NAME);
             if (arcFilesDir.isDirectory()) {
-                moveAwayForeignFiles(arcFilesDir, jobID);
+                moveAwayForeignFiles(ARC_PROFILE, arcFilesDir, jobID);
                 //Generate CDX
                 // TODO Place results in IngestableFiles-defined area
                 File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
                                                                  "cdx");
-                CDXUtils.generateCDX(arcFilesDir, cdxFilesDir, FileUtils.ARCS_FILTER, FileUtils.ARC_PATTERN);
+                CDXUtils.generateCDX(ARC_PROFILE, arcFilesDir, cdxFilesDir);
                 mdfw.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
                 bArcMetadataGenerationSucceeded = true;
             } else {
@@ -200,12 +226,12 @@ public class HarvestDocumentation {
             // Create CDX over WARC files.
             File warcFilesDir = new File(crawlDir, Constants.WARCDIRECTORY_NAME);
             if (warcFilesDir.isDirectory()) {
-                moveAwayForeignFiles(warcFilesDir, jobID);
+                moveAwayForeignFiles(WARC_PROFILE, warcFilesDir, jobID);
                 //Generate CDX
                 // TODO Place results in IngestableFiles-defined area
                 File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
                                                                  "cdx");
-                CDXUtils.generateCDX(warcFilesDir, cdxFilesDir, FileUtils.WARCS_FILTER, FileUtils.ARC_PATTERN);
+                CDXUtils.generateCDX(WARC_PROFILE, warcFilesDir, cdxFilesDir);
                 mdfw.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
                 bWarcMetadataGenerationSucceeded = true;
             } else {
@@ -216,6 +242,8 @@ public class HarvestDocumentation {
             if (bArcMetadataGenerationSucceeded || bWarcMetadataGenerationSucceeded) {
             	// This implies that running with both ARC and WARC
             	// at the same time is not supported by this check.
+            	// This check is no full proof if generating ARC and
+            	// WARC metadata at the same time.
                 ingestables.setMetadataGenerationSucceeded(true);
             }
 
@@ -302,19 +330,19 @@ public class HarvestDocumentation {
      * otherwise they will go into a directory under oldjobs named with a
      * timestamp.
      *
+     * @param archiveProfile archive profile including filters, patterns, etc.
      * @param dir A directory containing one or more ARC files.
      * @param jobID ID of the job whose directory we're in.
-     * @throws UnknownID If ?????????????????????????????????????
      */
-    private static void moveAwayForeignFiles(File dir, long jobID)
-        throws UnknownID {
-        File[] arcFiles = dir.listFiles(FileUtils.ARCS_FILTER);
+    private static void moveAwayForeignFiles(ArchiveProfile archiveProfile,
+    		File dir, long jobID) {
+        File[] archiveFiles = dir.listFiles(archiveProfile.filename_filter);
         File oldJobsDir = new File(
                 Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
         File unknownJobDir = new File(oldJobsDir,
                 "lost-files-" + new Date().getTime());
         List<File> movedFiles = new ArrayList<File>();
-        for (File arcFile : arcFiles) {
+        for (File arcFile : archiveFiles) {
             long foundJobID = -1;
             try {
                 FileUtils.FilenameParser parser = new FilenameParser(arcFile);
@@ -322,7 +350,7 @@ public class HarvestDocumentation {
             } catch (UnknownID e) {
                 // Non-Heritrix-generated ARC file
                 Matcher matcher =
-                    metadataFilenamePattern.matcher(arcFile.getName());
+                    archiveProfile.metadataFilenamePattern.matcher(arcFile.getName());
                 if (matcher.matches()) {
                     foundJobID = Long.parseLong(matcher.group(1));
                 }
@@ -331,11 +359,11 @@ public class HarvestDocumentation {
                 File arcsDir;
                 if (foundJobID == -1) {
                     arcsDir = new File(unknownJobDir,
-                            Constants.ARCDIRECTORY_NAME);
+                    		archiveProfile.archive_directory);
                 } else {
                     arcsDir = new File(oldJobsDir,
                                 foundJobID + "-lost-files/"
-                                + Constants.ARCDIRECTORY_NAME);
+                                + archiveProfile.archive_directory);
                 }
                 try {
                     FileUtils.createDir(arcsDir);
@@ -356,7 +384,7 @@ public class HarvestDocumentation {
     }
 
     /**
-     * Write harvestdetails to arcfile(s).
+     * Write harvestdetails to archive file(s).
      * This includes the order.xml, seeds.txt,
      * specific settings.xml for certain domains,
      * the harvestInfo.xml,
@@ -366,11 +394,11 @@ public class HarvestDocumentation {
      * @param jobID the given job Id
      * @param harvestID the id for the harvestdefinition, which created this job
      * @param crawlDir the directory where the crawljob took place
-     * @param writer an ARCWriter used to store the harvest configuration,
+     * @param writer an MetadaFileWriter used to store the harvest configuration,
      *      and harvest logs and reports.
      * @param heritrixVersion the heritrix version used by the harvest.
      * @throws ArgumentNotValid If null arguments occur
-     * @return a list of files added to the arc-file.
+     * @return a list of files added to the archive file.
      */
     private static List<File> writeHarvestDetails(long jobID,
             long harvestID, File crawlDir, MetadataFileWriter mdfw,
@@ -447,7 +475,7 @@ public class HarvestDocumentation {
                     + crawlDir.getAbsolutePath());
         }
 
-        // Write files in order to ARC
+        // Write files in order to metadata archive file.
         for (MetadataFile mdf : files) {
 
             File heritrixFile = mdf.getHeritrixFile();
@@ -568,6 +596,7 @@ public class HarvestDocumentation {
      * @param orderXml the file containing the heritrix order.xml 
      * @return the Heritrix version in the order.xml. 
      * */
+    /*
     private static String getHeritrixVersion(File orderXml) {
         Document doc = XmlUtils.getXmlDoc(orderXml);
         Node userAgentNode = doc.selectSingleNode(
@@ -588,8 +617,8 @@ public class HarvestDocumentation {
         } else {
             return "null";
         }
-
     }
+    */
 
     /**
      * Reverses a domain string, e.g. reverses "com.amazon" to "amazon.com"

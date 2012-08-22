@@ -53,7 +53,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
 
     /**
      * Create a <code>MetadataFileWriter</code> for ARC output.
-     * @param metadataFile ARC output filename
+     * @param metadataFile ARC <code>File</code>
      * @return <code>MetadataFileWriter</code> for writing metadata files in ARC
      */
     public static MetadataFileWriter createWriter(File metadataFile) {

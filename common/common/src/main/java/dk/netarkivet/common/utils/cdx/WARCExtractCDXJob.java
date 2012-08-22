@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCRecord;
 import org.jwat.common.ByteCountingPushBackInputStream;
 import org.jwat.common.ContentType;
@@ -55,11 +54,6 @@ import dk.netarkivet.common.utils.warc.WARCBatchJob;
 * See http://www.archive.org/web/researcher/cdx_file_format.php
 */
 public class WARCExtractCDXJob extends WARCBatchJob {
-
-    /**
-	 * UID.
-	 */
-	private static final long serialVersionUID = 4559297377025672571L;
 
 	/** An encoding for the standard included metadata fields without
      * checksum.*/
@@ -96,13 +90,14 @@ public class WARCExtractCDXJob extends WARCBatchJob {
     }
 
     /**
-     * Equivalent to ExtractCDXJob(true).
+     * Equivalent to WARCExtractCDXJob(true).
      */
     public WARCExtractCDXJob() {
         this(true);
     }
 
-    /** Filter out the filedesc: headers.
+    /** 
+     * Filters out the NON-RESPONSE records.
      * @see dk.netarkivet.common.utils.warc.WARCBatchJob#getFilter()
      * @return The filter that defines what WARC records are wanted
      * in the output CDX file.
@@ -115,20 +110,20 @@ public class WARCExtractCDXJob extends WARCBatchJob {
 
     /**
      * Initialize any data needed (none).
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#initialize(OutputStream)
+     * @see dk.netarkivet.common.utils.warc.WARCBatchJob#initialize(OutputStream)
      */
     @Override
     public void initialize(OutputStream os) {
     }
 
     /** Process this entry, reading metadata into the output stream.
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(
-     * ARCRecord, OutputStream)
-     * @throws IOFailure on trouble reading arc record data
+     * @see dk.netarkivet.common.utils.warc.WARCBatchJob#processRecord(
+     * WARCRecord, OutputStream)
+     * @throws IOFailure on trouble reading WARC record data
      */
     @Override
     public void processRecord(WARCRecord sar, OutputStream os) {
-        log.trace("Processing ARCRecord with offset: "
+        log.trace("Processing WARCRecord with offset: "
                 + sar.getHeader().getOffset());
         /*
         * Fields are stored in a map so that it's easy
@@ -190,10 +185,6 @@ public class WARCExtractCDXJob extends WARCBatchJob {
 
         /* Only include checksum if necessary: */
         if (includeChecksum) {
-            // To avoid taking all of the record into an array, we
-            // slurp it directly from the ArchiveRecord.  This leaves the
-            // sar in an inconsistent state, so it must not be used
-            // afterwards.
             //InputStream instream = sar; //Note: ARCRecord extends InputStream
             //fieldsread.put("c", MD5.generateMD5(instream));
             fieldsread.put("c", MD5.generateMD5(pbin));
@@ -211,7 +202,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
     }
 
     /** End of the batch job.
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#finish(OutputStream)
+     * @see dk.netarkivet.common.utils.warc.WARCBatchJob#finish(OutputStream)
      */
     @Override
     public void finish(OutputStream os) {

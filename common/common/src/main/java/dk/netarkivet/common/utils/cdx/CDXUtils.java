@@ -27,7 +27,6 @@ package dk.netarkivet.common.utils.cdx;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +38,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.harvester.harvesting.HarvestDocumentation.ArchiveProfile;
 
 /**
  * Utility class for creating CDX-files.
@@ -46,7 +46,7 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
  * http://www.archive.org/web/researcher/cdx_file_format.php
  */
 public class CDXUtils {
-    
+
     /** The logger. */
     private static Log log = LogFactory.getLog(CDXUtils.class.getName());
 
@@ -155,50 +155,48 @@ public class CDXUtils {
             log.debug(errorMsg.toString());
         }
     }
-    
+
     /**
-     * Applies createCDXRecord() to all ARC files in a directory, creating
-     * one CDX file per ARC file.
+     * Applies createCDXRecord() to all ARC/WARC files in a directory, creating
+     * one CDX file per ARC/WARC file.
      * Note, any exceptions during index generation are logged at level FINE
      * but otherwise ignored.
      * Exceptions creating any cdx file are logged at level WARNING but
      * otherwise ignored.
-     * CDX files are named as the arc files except ".arc" or ".arc.gz" is
-     * replaced with ".cdx"
+     * CDX files are named as the ARC/WARC files except ".(w)arc" or
+     * ".(w)arc.gz" is replaced with ".cdx"
      *
-     * @param arcFileDirectory A directory with arcfiles to generate index
-     * for
+     * @param archiveProfile archive profile including filters, patterns, etc.
+     * @param archiveFileDirectory A directory with archive files to generate
+     * index for
      * @param cdxFileDirectory A directory to generate CDX files in
-     * @param filter  A filter matching the files that should be delivered to the CXDInfo class.
-     * @param pattern A pattern matching ?????
      * @throws ArgumentNotValid if any of directories are null or is not an
      * existing directory, or if cdxFileDirectory is not writable.
      */
-    public static void generateCDX(File arcFileDirectory,
-                                   File cdxFileDirectory,
-                                   FilenameFilter filter,
-                                   String pattern)
-                                           throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(arcFileDirectory,
-                                      "File arcFileDirectory");
+    public static void generateCDX(ArchiveProfile archiveProfile,
+    		File archiveFileDirectory, File cdxFileDirectory) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(archiveProfile,
+                "ArchiveProfile archiveProfile");
+        ArgumentNotValid.checkNotNull(archiveFileDirectory,
+                                      "File archiveFileDirectory");
         ArgumentNotValid.checkNotNull(cdxFileDirectory,
                                       "File cdxFileDirectory");
-        if (!arcFileDirectory.isDirectory() || !arcFileDirectory.canRead()) {
+        if (!archiveFileDirectory.isDirectory() || !archiveFileDirectory.canRead()) {
             throw new ArgumentNotValid("The directory for arc files '"
-                                       + arcFileDirectory
+                                       + archiveFileDirectory
                                        + "' is not a readable directory");
         }
         if (!cdxFileDirectory.isDirectory() || !cdxFileDirectory.canWrite()) {
             throw new ArgumentNotValid("The directory for cdx files '"
-                                       + arcFileDirectory
+                                       + archiveFileDirectory
                                        + "' is not a writable directory");
         }
         Map<File, Exception> exceptions
                 = new HashMap<File, Exception>();
-        for (File arcfile : arcFileDirectory.listFiles(filter)) {
-            
-            File cdxfile = new File(cdxFileDirectory, arcfile.getName()
-                    .replaceFirst(pattern,
+        for (File arcfile : archiveFileDirectory.listFiles(
+        		archiveProfile.filename_filter)) {
+        	File cdxfile = new File(cdxFileDirectory, arcfile.getName()
+                    .replaceFirst(archiveProfile.filename_pattern,
                                   FileUtils.CDX_EXTENSION));
             if (cdxfile.getName().equals(arcfile.getName())) {
                 // If for some reason the file is not renamed (should never

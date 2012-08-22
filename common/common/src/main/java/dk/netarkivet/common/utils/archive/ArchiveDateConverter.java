@@ -28,6 +28,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
+/**
+ * Utility class for dispensing ARC/WARC <code>DateFormat</code> objects.
+ * Each object is thread safe as long as it it only used by the same thread.
+ * This means no caching of this object for later use unless its by the same thread.
+ * <code>ThreadLocal</code> handles automatic instantiation and cleanup of objects.
+ *
+ * @author nicl
+ */
 public class ArchiveDateConverter {
 
     /** ARC date format string as speficied in the ARC documentation. */
@@ -42,14 +50,6 @@ public class ArchiveDateConverter {
     /** WARC <code>DateFormat</code> as speficied in the WARC ISO standard. */
     private final DateFormat warcDateFormat;
 
-    /** Basic <code>DateFormat</code> is not thread safe. */
-    private static final ThreadLocal<ArchiveDateConverter> DateParserTL =
-        new ThreadLocal<ArchiveDateConverter>() {
-        public ArchiveDateConverter initialValue() {
-            return new ArchiveDateConverter();
-        }
-    };
-
     /**
      * Creates a new <code>DateParser</code>.
      */
@@ -62,10 +62,28 @@ public class ArchiveDateConverter {
         warcDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
+    /** <code>DateFormat</code> is not thread safe,
+     *  so we wrap its construction inside a <code>ThreadLocal</code> object. */
+    private static final ThreadLocal<ArchiveDateConverter> DateParserTL =
+        new ThreadLocal<ArchiveDateConverter>() {
+    	@Override
+        public ArchiveDateConverter initialValue() {
+            return new ArchiveDateConverter();
+        }
+    };
+
+    /**
+     * Returns a <code>DateFormat</code> object for ARC date conversion.
+     * @return a <code>DateFormat</code> object for ARC date conversion
+     */
     public static DateFormat getArcDateFormat() {
     	return DateParserTL.get().arcDateFormat;
     }
 
+    /**
+     * Returns a <code>DateFormat</code> object for WARC date conversion.
+     * @return a <code>DateFormat</code> object for WARC date conversion
+     */
     public static DateFormat getWarcDateFormat() {
     	return DateParserTL.get().warcDateFormat;
     }

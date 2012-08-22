@@ -56,8 +56,8 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
-import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
@@ -200,6 +200,13 @@ public class HarvestController {
         return files;
     }
 
+    /**
+     * This method attempts to retrieve the Heritrix recover log from the job
+     * which this job tries to continue. If successful, the Heritrix template
+     * is updated accordingly.
+     * @param job The harvest Job object containing various harvest setup data.
+     * @param files Heritrix files related to this harvestjob.
+     */
     private void tryToRetrieveRecoverLog(Job job, HeritrixFiles files) {
         Long previousJob = job.getContinuationOf();
         List<CDXRecord> metaCDXes = null;
@@ -269,13 +276,13 @@ public class HarvestController {
     }
 
     /**
-     * Writes metadata to an ARC with the following name:
-     * <jobid>-preharvest-metadata-1.arc.
+     * Writes metadata to an ARC/WARC with the following name:
+     * <jobid>-preharvest-metadata-1.(w)arc.
      *
      * @param harvestJob a given Job.
-     * @param metadata   the list of metadata entries to write to ARC.
-     * @param crawlDir   the directory, where the ARC-file will be written.
-     * @throws IOFailure If there are errors in writing the ARC file.
+     * @param metadata   the list of metadata entries to write to metadata file.
+     * @param crawlDir   the directory, where the metadata file will be written.
+     * @throws IOFailure If there are errors in writing the metadata file.
      */
     private void writePreharvestMetadata(Job harvestJob,
                                          List<MetadataEntry> metadata,
@@ -287,7 +294,7 @@ public class HarvestController {
         }
         File arcFile =
             new File(crawlDir,
-                    MetadataFileWriter.getPreharvestMetadataARCFileName(
+                    MetadataFileWriter.getPreharvestMetadataArchiveFileName(
                                         harvestJob.getJobID()));
         try {
             MetadataFileWriter mdfw = null;
@@ -306,14 +313,6 @@ public class HarvestController {
                 if (mdfw != null) {
                     mdfw.close();
                 }
-                /*
-                try {
-                } catch (IOException e) {
-                    //TODO Is this fatal? What if data isn't flushed?
-                    log.warn("Unable to close ArcWriter '"
-                             + mdfw.getFile().getAbsolutePath() + "'", e);
-                }
-                */
             }
         } catch (IOException e) {
             throw new IOFailure("Error writing to metadatafileWriter for job "
@@ -384,6 +383,8 @@ public class HarvestController {
                 }                
             }
 
+            // Now the ARC/WARC files have been uploaded,
+            // we finally upload the metadata archive file.
             uploadFiles(inf.getMetadataArcFiles(), errorMessage, failedFiles);
 
             // Make the harvestReport ready for uploading
@@ -508,9 +509,8 @@ public class HarvestController {
      */
     public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
-        FileBatchJob cdxJob = new ExtractCDXJob(false);
-        // TODO: make ready for warc
-        cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+\\.arc(\\.gz)?");
+        FileBatchJob cdxJob = new ArchiveExtractCDXJob(false);
+        cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+\\.(w)?arc(\\.gz)?");
         File f;
         try {
             f = File.createTempFile(jobid + "-reports", ".cdx",

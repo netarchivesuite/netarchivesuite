@@ -76,14 +76,14 @@ public abstract class MetadataFileWriter {
     }
 
     /**
-     * Generates a name for an ARC file containing "preharvest" metadata
+     * Generates a name for an archive(ARC/WARC) file containing "preharvest" metadata
      * regarding a given job (e.g. excluded aliases).
      *
      * @param jobID the number of the harvester job
      * @return The file name to use for the preharvest metadata, as a String.
      * @throws ArgumentNotValid If jobId is negative
      */
-    public static String getPreharvestMetadataARCFileName(long jobID)
+    public static String getPreharvestMetadataArchiveFileName(long jobID)
         throws ArgumentNotValid {
         ArgumentNotValid.checkNotNegative(jobID, "jobID");
         if (metadataFormat == 0) {
@@ -100,17 +100,17 @@ public abstract class MetadataFileWriter {
     }
 
     /**
-     * Generates a name for a WARC file containing metadata regarding
+     * Generates a name for an archive(ARC/WARC) file containing metadata regarding
      * a given job.
      *
-     * @param jobID The number of the job that generated the WARC file.
+     * @param jobID The number of the job that generated the archive file.
      * @return A "flat" file name (i.e. no path) containing the jobID parameter
-     * and ending on "-metadata-N.warc", where N is the serial number of the
-     * metadata files for this job, e.g. "42-metadata-1.warc".  Currently,
+     * and ending on "-metadata-N.(w)arc", where N is the serial number of the
+     * metadata files for this job, e.g. "42-metadata-1.(w)arc".  Currently,
      * only one file is ever made.
      * @throws ArgumentNotValid if any parameter was null.
      */
-    public static String getMetadataARCFileName(String jobID)
+    public static String getMetadataArchiveFileName(String jobID)
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
         if (metadataFormat == 0) {
@@ -129,18 +129,18 @@ public abstract class MetadataFileWriter {
     
     /**
      * Create a writer that writes data to the given archive file.
-     * @param metadataFile The archive file to write to.
+     * @param metadataArchiveFile The archive file to write to.
      * @return a writer that writes data to the given archive file.
      */
-    public static MetadataFileWriter createWriter(File metadataFile) {
+    public static MetadataFileWriter createWriter(File metadataArchiveFile) {
         if (metadataFormat == 0) {
             initializeMetadataFormat();
         }
         switch (metadataFormat) {
         case MDF_ARC:
-        	return MetadataFileWriterArc.createWriter(metadataFile);
+        	return MetadataFileWriterArc.createWriter(metadataArchiveFile);
         case MDF_WARC:
-        	return MetadataFileWriterWarc.createWriter(metadataFile);
+        	return MetadataFileWriterWarc.createWriter(metadataArchiveFile);
         default:
         	throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
@@ -197,7 +197,7 @@ public abstract class MetadataFileWriter {
      * Append the files contained in the directory to the metadata file, but
      * only if the filename matches the supplied filter.
      * @param parentDir directory containing files to append to metadata
-     * @param filter filter describing which files to ignre
+     * @param filter filter describing which files to ignore
      * @param mimetype content-type write along with the files in the metadata output
      */
     public void insertFiles(File parentDir, FilenameFilter filter, String mimetype) {
@@ -205,7 +205,7 @@ public abstract class MetadataFileWriter {
         File[] cdxFiles
                 = parentDir.listFiles(filter);
         for (File cdxFile : cdxFiles) {
-            //...write its content to the ARCWriter
+            //...write its content to the MetadataFileWriter
         	writeFileTo(cdxFile,
                     getURIforFileName(cdxFile).toASCIIString(),
                     mimetype);

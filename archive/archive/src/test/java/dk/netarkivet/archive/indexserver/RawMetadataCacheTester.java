@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 import dk.netarkivet.archive.arcrepository.TestArcRepositoryClient;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
@@ -66,7 +67,7 @@ public class RawMetadataCacheTester extends CacheTestCase {
         
         // check that the matchers of the batchjob have the correct settings.
         Field job = ReflectUtils.getPrivateField(RawMetadataCache.class, "job");
-        ARCBatchJob a = (ARCBatchJob) job.get(cache);
+        ArchiveBatchJob a = (ArchiveBatchJob) job.get(cache);
         assertTrue("The batchjob should tell which arguments they have.", 
                 a.toString().contains(" with arguments: URLMatcher = .*, mimeMatcher = .*"));
     }

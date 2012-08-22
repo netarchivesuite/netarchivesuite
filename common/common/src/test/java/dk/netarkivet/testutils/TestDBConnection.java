@@ -43,6 +43,7 @@ import java.sql.Statement;
 import java.sql.Struct;
 import java.util.Properties;
 import java.util.Stack;
+import java.util.concurrent.Executor;
 
 /**
  * A wrapper around another SQL connection that changes the following:
@@ -993,5 +994,31 @@ public class TestDBConnection implements Connection {
         // TODO Auto-generated method stub
         return null;
     }
+
+	public void setSchema(String schema) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String getSchema() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void abort(Executor executor) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setNetworkTimeout(Executor executor, int milliseconds)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public int getNetworkTimeout() throws SQLException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

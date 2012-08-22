@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCRecord;
 import org.jwat.common.ByteCountingPushBackInputStream;
 import org.jwat.common.ContentType;
 import org.jwat.common.HttpHeader;
@@ -53,11 +52,6 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
  * See http://www.archive.org/web/researcher/cdx_file_format.php
  */
 public class ArchiveExtractCDXJob extends ArchiveBatchJob {
-
-    /**
-     *  UUID
-     */
-    private static final long serialVersionUID = -5136098924912556708L;
 
     /** An encoding for the standard included metadata fields without
      * checksum.
@@ -95,15 +89,16 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
     }
 
     /**
-     * Equivalent to ExtractCDXJob(true).
+     * Equivalent to ArchiveExtractCDXJob(true).
      */
     public ArchiveExtractCDXJob() {
         this(true);
     }
 
-    /** Filter out the filedesc: headers.
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#getFilter()
-     * @return The filter that defines what ARC records are wanted
+    /**
+     * Filters out the NON-RESPONSE records.
+     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#getFilter()
+     * @return The filter that defines what ARC/WARC records are wanted
      * in the output CDX file.
      */
     @Override
@@ -113,20 +108,21 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /**
      * Initialize any data needed (none).
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#initialize(OutputStream)
+     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#initialize(OutputStream)
      */
     @Override
     public void initialize(OutputStream os) {
     }
 
-    /** Process this entry, reading metadata into the output stream.
-     * @see dk.netarkivet.common.utils.arc.ArchiveBatchJob#processRecord(
+    /**
+     * Process this entry, reading metadata into the output stream.
+     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#processRecord(
      * ArchiveRecordBase, OutputStream)
      * @throws IOFailure on trouble reading arc record data
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
-        log.trace("Processing ARCRecord with offset: "
+        log.trace("Processing Archive Record with offset: "
                 + record.getHeader().getOffset());
         /*
         * Fields are stored in a map so that it's easy
@@ -179,10 +175,6 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
         /* Only include checksum if necessary: */
         if (includeChecksum) {
-            // To avoid taking all of the record into an array, we
-            // slurp it directly from the ARCRecord.  This leaves the
-            // sar in an inconsistent state, so it must not be used
-            // afterwards.
             //InputStream instream = sar; //Note: ARCRecord extends InputStream
             //fieldsread.put("c", MD5.generateMD5(instream));
             fieldsread.put("c", MD5.generateMD5(pbin));

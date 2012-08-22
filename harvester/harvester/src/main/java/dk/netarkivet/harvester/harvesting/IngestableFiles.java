@@ -1,25 +1,27 @@
-/* $Id$
-* $Revision$
-* $Date$
-* $Author$
-*
-* The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
-*
-* This library is free software; you can redistribute it and/or
-* modify it under the terms of the GNU Lesser General Public
-* License as published by the Free Software Foundation; either
-* version 2.1 of the License, or (at your option) any later version.
-*
-* This library is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-* Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public
-* License along with this library; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
@@ -128,15 +130,7 @@ public class IngestableFiles {
                     "Metadata file " + getMetadataFile().getAbsolutePath()
                     + " already exists");
         }
-        //writer.close();
         writer = null;
-        /*
-        try {
-        } catch (IOException e) {
-            String message = "Error closing metadata arc writer";
-            throw new IOFailure(message, e);
-        }
-        */
         if (success) {
             if (!getTmpMetadataFile().exists()) {
                 String message = "No metadata was generated despite claims"
@@ -151,39 +145,11 @@ public class IngestableFiles {
     }
 
     /**
-     * Get a ARCWriter for the temporary metadata arc-file.
+     * Get a MetaDatafileWriter for the temporary metadata file.
      * Successive calls to this method on the same object will return the
      * same writer.  Once the metadata have been finalized, calling
      * this method will fail.
-     * @return a ARCWriter for the temporary metadata arc-file.
-     * @throws PermissionDenied if metadata generation is already
-     * finished.
-     */
-    /*
-    public ARCWriter getMetadataArcWriter() {
-        if (isMetadataReady()) {
-            throw new PermissionDenied(
-                    "Metadata file " + getMetadataFile().getAbsolutePath()
-                    + " already exists");
-        }
-        if (isMetadataFailed()) {
-            throw new PermissionDenied("Metadata generation of file "
-                    + getMetadataFile().getAbsolutePath()
-                    + " has already failed.");
-        }
-        if (writer == null) {
-            writer = ARCUtils.createARCWriter(getTmpMetadataFile());
-        }
-        return writer;
-    }
-    */
-
-    /**
-     * Get a ARCWriter for the temporary metadata arc-file.
-     * Successive calls to this method on the same object will return the
-     * same writer.  Once the metadata have been finalized, calling
-     * this method will fail.
-     * @return a ARCWriter for the temporary metadata arc-file.
+     * @return a MetaDatafileWriter for the temporary metadata file.
      * @throws PermissionDenied if metadata generation is already
      * finished.
      */
@@ -236,7 +202,7 @@ public class IngestableFiles {
     private File getMetadataFile(){
         return
             new File(getMetadataDir(),
-                    MetadataFileWriter.getMetadataARCFileName(Long.toString(jobId)));
+                    MetadataFileWriter.getMetadataArchiveFileName(Long.toString(jobId)));
     }
 
     /**
@@ -255,7 +221,7 @@ public class IngestableFiles {
     private File getTmpMetadataFile(){
         return
             new File(getTmpMetadataDir(),
-                    MetadataFileWriter.getMetadataARCFileName(Long.toString(jobId)));
+                    MetadataFileWriter.getMetadataArchiveFileName(Long.toString(jobId)));
     }
 
     /** Get a list of all ARC files that should get ingested.  Any open files
@@ -302,7 +268,7 @@ public class IngestableFiles {
      * the files.
      */
     public void closeOpenFiles(int waitSeconds) {
-        // wait for Heritrix threads to create and close last arc files
+        // wait for Heritrix threads to create and close last arc or warc files
         try {
             Thread.sleep(waitSeconds * 1000L);
         } catch (InterruptedException e) {

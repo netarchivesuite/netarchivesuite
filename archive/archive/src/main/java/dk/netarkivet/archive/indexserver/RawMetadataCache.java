@@ -27,12 +27,12 @@ package dk.netarkivet.archive.indexserver;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
@@ -45,7 +45,9 @@ import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
+import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
+import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /**
  * This is an implementation of the RawDataCache specialized for data out
@@ -66,7 +68,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
         = ArcRepositoryClientFactory.getViewerInstance();
 
     /** The job that we use to dig through metadata files. */
-    private final ARCBatchJob job;
+    private final ArchiveBatchJob job;
 
     /** The logger for this class. */
     private final Log log = LogFactory.getLog(getClass());
@@ -105,7 +107,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
         log.info("Metadata cache for '" + prefix + "' is fetching"
                  + " metadata with urls matching '" + urlMatcher1.toString()
                  + "' and mimetype matching '" + mimeMatcher1 + "'");
-        job = new GetMetadataARCBatchJob(urlMatcher1, mimeMatcher1);
+        job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
     }
 
     /** Get the file potentially containing (cached) data for a single job.
@@ -193,12 +195,13 @@ public class RawMetadataCache extends FileBasedCache<Long>
     }
 
     /** A batch job that extracts metadata. */
-    private static class GetMetadataARCBatchJob extends ARCBatchJob {
+    private static class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
+        /** The logger for this class. */
+        private final Log log = LogFactory.getLog(getClass());
         /** The pattern for matching the urls.*/
         private final Pattern urlMatcher;
         /** The pattern for the mimetype matcher.*/
         private final Pattern mimeMatcher;
-
         /**
          * Constructor.
          * 
@@ -207,7 +210,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * @param mimeMatcher A pattern for matching mime-types of the desired
          * entries.  If null, a .* pattern will be used.
          */
-        public GetMetadataARCBatchJob(Pattern urlMatcher, Pattern mimeMatcher) {
+        public GetMetadataArchiveBatchJob(Pattern urlMatcher, Pattern mimeMatcher) {
             this.urlMatcher = urlMatcher;
             this.mimeMatcher = mimeMatcher;
             /**
@@ -228,29 +231,42 @@ public class RawMetadataCache extends FileBasedCache<Long>
         /**
          * The method for processing the arc-records.
          * 
-         * @param sar The arc-record to process.
+         * @param record The arc-record to process.
          * @param os The output stream to write the results of the processing.
          * @throws IOFailure In an IOException is caught during handling of 
          * the arc record.
          */
         @Override
-        public void processRecord(ARCRecord sar, OutputStream os) 
+        public void processRecord(ArchiveRecordBase record, OutputStream os) 
                 throws IOFailure {
-            if (urlMatcher.matcher(sar.getMetaData().getUrl()).matches()
+            ArchiveHeaderBase header = record.getHeader();
+            InputStream in = record.getInputStream();
+
+            log.info(header.getUrl() + " - " + header.getMimetype());
+
+            if (urlMatcher.matcher(header.getUrl()).matches()
                     && mimeMatcher.matcher(
-                            sar.getMetaData().getMimetype()).matches()) {
+                            header.getMimetype()).matches()) {
                 try {
                         byte[] buf = new byte[Constants.IO_BUFFER_SIZE];
                         int bytesRead;
-                        while ((bytesRead = sar.read(buf)) != -1) {
+                        while ((bytesRead = in.read(buf)) != -1) {
                             os.write(buf, 0, bytesRead);
                         }
                 } catch (IOException e) {
-                    String message = "Error writing body of ARC entry '"
-                            + sar.getMetaData().getArcFile() + "' offset '"
-                            + sar.getMetaData().getOffset() + "'";
+                	// TODO is getOffset() correct using the IA archiveReader?
+                    String message = "Error writing body of Archive entry '"
+                            + header.getArchiveFile() + "' offset '"
+                            + header.getOffset() + "'";
                     throw new IOFailure(message, e);
                 }
+            }
+
+            try {
+                in.close();
+            } catch (IOException e) {
+                String message = "Error closing Archive input stream";
+                throw new IOFailure(message, e);
             }
         }
 

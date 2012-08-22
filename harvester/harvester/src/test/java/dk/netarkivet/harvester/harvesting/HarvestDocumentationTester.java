@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
+
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
@@ -48,6 +49,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.HarvestDocumentation.ArchiveProfile;
 import dk.netarkivet.testutils.ARCTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -94,7 +96,7 @@ public class HarvestDocumentationTester extends TestCase {
                                              TestInfo.HARVEST_ID
         );
         //Verify that the new file exists.
-        MetadataFileWriter.getMetadataARCFileName(
+        MetadataFileWriter.getMetadataArchiveFileName(
                 TestInfo.ARC_JOB_ID);
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,
                                                   Long.parseLong(
@@ -184,7 +186,7 @@ public class HarvestDocumentationTester extends TestCase {
                                                        TestInfo.JOB_ID).getMetadataArcFiles();
         File metadataDir = new File(TestInfo.WORKING_DIR, "metadata");
         File target1 = new File(
-                metadataDir, MetadataFileWriter.getMetadataARCFileName(
+                metadataDir, MetadataFileWriter.getMetadataArchiveFileName(
                         Long.toString(TestInfo.JOB_ID)));
         assertEquals("Should generate exactly one metadata file",
                      1, metadataFiles.size());
@@ -201,12 +203,12 @@ public class HarvestDocumentationTester extends TestCase {
     public void testGetMetadataARCFileName() {
         String job = "7";
         try {
-            MetadataFileWriter.getMetadataARCFileName((String)null);
+            MetadataFileWriter.getMetadataArchiveFileName((String)null);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
             //Expected
         }
-        String fn = MetadataFileWriter.getMetadataARCFileName(job);
+        String fn = MetadataFileWriter.getMetadataArchiveFileName(job);
         assertTrue("File name should end on '-1.arc' - was " + fn,
                    fn.endsWith("-1.arc")
         );
@@ -225,7 +227,7 @@ public class HarvestDocumentationTester extends TestCase {
      */
     public void testGetPreharvestMetadataARCFileName() {
         long jobId = 7;
-        String fn = MetadataFileWriter.getPreharvestMetadataARCFileName(
+        String fn = MetadataFileWriter.getPreharvestMetadataArchiveFileName(
                 jobId);
         assertTrue("File name should end on '-1.arc' - was " + fn,
                    fn.endsWith("-1.arc")
@@ -405,7 +407,7 @@ public class HarvestDocumentationTester extends TestCase {
     public void testMoveAwayForeignFiles() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestDocumentation.class,
                                                  "moveAwayForeignFiles",
-                                                 File.class, Long.TYPE);
+                                                 ArchiveProfile.class, File.class, Long.TYPE);
         // Set oldjobs place to a different name to check use of setting.
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR,
                      new File(TestInfo.WORKING_DIR,
@@ -419,7 +421,7 @@ public class HarvestDocumentationTester extends TestCase {
         FileUtils.copyFile(new File(TestInfo.METADATA_TEST_DIR,
                                     "arcs/not-an-arc-file.txt"),
                            new File(arcsDir, "43-metadata-1.arc"));
-        m.invoke(null, arcsDir, 42);
+        m.invoke(null, HarvestDocumentation.ARC_PROFILE, arcsDir, 42);
         // Check that one file got moved.
         LogUtils.flushLogs(HarvestDocumentation.class.getName());
         FileAsserts.assertFileContains("Should have found foreign files",

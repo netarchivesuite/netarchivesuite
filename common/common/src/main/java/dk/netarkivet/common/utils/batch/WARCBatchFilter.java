@@ -24,6 +24,7 @@
  */
 package dk.netarkivet.common.utils.batch;
 
+import java.awt.datatransfer.MimeTypeParseException;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 
@@ -38,11 +39,6 @@ import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
  * filters.
  */
 public abstract class WARCBatchFilter implements Serializable {
-
-    /**
-     * UID.
-     */
-    private static final long serialVersionUID = 1371298946366194533L;
 
     /** The name of the BatchFilter. */
     private String name;
@@ -70,32 +66,22 @@ public abstract class WARCBatchFilter implements Serializable {
 
     /** Prefix for the url in HTTP records. */    
     private static final String HTTP_ENTRIES_HTTP_PREFIX = "http:";
-    /** The name of th filter accepting only HTTP entries. */
+    /** The name of the filter accepting only HTTP entries. */
     private static final String ONLY_HTTP_ENTRIES_FILTER_NAME
         = "ONLY_HTTP_ENTRIES";
 
     /**
      * Filter that only accepts records where the url starts with http.
      */
-    /*
     public static final WARCBatchFilter ONLY_HTTP_ENTRIES = new WARCBatchFilter(
             ONLY_HTTP_ENTRIES_FILTER_NAME) {
             public boolean accept(WARCRecord record) {
-                return record.getMetaData().getUrl().startsWith(
+                HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
+                return recordWrapper.getHeader().getUrl().startsWith(
                         HTTP_ENTRIES_HTTP_PREFIX);
             }
         };
-    */
     
-    /** The name-prefix for mimetype filters. */    
-    private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX
-        = "MimetypeBatchFilter-";
-    /** Regexp for mimetypes. */
-    private static final String MIMETYPE_REGEXP = "\\w+/\\w+";
-    /** Pattern for mimetypes. */
-    private static final Pattern MIMETYPE_PATTERN = Pattern.compile(
-            MIMETYPE_REGEXP);
-
     /** Create a new filter with the given name.
      * @param name The name of this filter, for debugging mostly.
      */
@@ -113,12 +99,12 @@ public abstract class WARCBatchFilter implements Serializable {
     }
     
     /**
+     * Note that the mimetype of the WARC responserecord is not (necessarily) the same as its payload.
      * @param mimetype String denoting the mimetype this filter represents
      * @return a BatchFilter that filters out all WARCRecords, that does not 
      *  have this mimetype
      * @throws MimeTypeParseException If mimetype is invalid
      */
-    /*
     public static WARCBatchFilter getMimetypeBatchFilter(final String mimetype)
         throws MimeTypeParseException {
         ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
@@ -126,15 +112,23 @@ public abstract class WARCBatchFilter implements Serializable {
             throw new MimeTypeParseException("Mimetype argument '" + mimetype
                 + "' is invalid");
         }
-
         return new WARCBatchFilter(MIMETYPE_BATCH_FILTER_NAME_PREFIX + mimetype) {
                 public boolean accept(WARCRecord record) {
-                    return record.getMetaData().getMimetype().startsWith(
+                    HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
+                    return recordWrapper.getHeader().getMimetype().startsWith(
                             mimetype);
                 }
             };
     }
-    */
+
+    /** The name-prefix for mimetype filters. */    
+    private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX
+        = "MimetypeBatchFilter-";
+    /** Regexp for mimetypes. */
+    private static final String MIMETYPE_REGEXP = "\\w+/\\w+";
+    /** Pattern for mimetypes. */
+    private static final Pattern MIMETYPE_PATTERN = Pattern.compile(
+            MIMETYPE_REGEXP);
 
     /**
     * Check, if a certain mimetype is valid.

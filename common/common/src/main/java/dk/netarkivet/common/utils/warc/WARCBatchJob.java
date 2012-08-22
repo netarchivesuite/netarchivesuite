@@ -51,11 +51,6 @@ import dk.netarkivet.common.utils.batch.WARCBatchFilter;
  */
 public abstract class WARCBatchJob extends FileBatchJob {
 
-    /**
-     * UID.
-     */
-    private static final long serialVersionUID = -571097126180970412L;
-
     /** The total number of records processed. */
     protected int noOfRecordsProcessed = 0;
 
@@ -200,12 +195,12 @@ public abstract class WARCBatchJob extends FileBatchJob {
     /**
      * Private method that handles our exception.
      * @param e the given exception
-     * @param warcFile The WARCFile where the exception occurred.
-     * @param index The offset in the WARCFile where the exception occurred.
+     * @param warcFile The WARC File where the exception occurred.
+     * @param index The offset in the WARC File where the exception occurred.
      */
     private void handleOurException(
-            NetarkivetException e, File arcFile, long index) {
-        handleException(e, arcFile, index);
+            NetarkivetException e, File warcFile, long index) {
+        handleException(e, warcFile, index);
     }
 
     /**

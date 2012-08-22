@@ -1,10 +1,12 @@
-/* $Id$
- * $Date$
- * $Revision$
- * $Author$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,7 +74,7 @@ public class WARCUtils {
         PrintStream ps = null;
         try {
             ps = new PrintStream(new FileOutputStream(newFile));
-            writer = new WARCWriter(
+            writer = new WARCWriterNAS(
                     new AtomicInteger(), ps,
                     //This name is used for the first (file metadata) record
                     newFile, 
@@ -93,8 +95,8 @@ public class WARCUtils {
         return writer;
     }
 
-    /** Insert the contents of a WARC file (skipping an optional initial
-     *  filedesc: header) in another ARCfile. TODO
+    /**
+     * Insert the contents of a WARC file into another WARCFile.
      *
      * @param warcFile An WARC file to read.
      * @param writer A place to write the arc records
@@ -108,7 +110,7 @@ public class WARCUtils {
         try {
             r = WARCReaderFactory.get(warcFile);
         } catch (IOException e) {
-            String message = "Error while copying ARC records from " + warcFile;
+            String message = "Error while copying WARC records from " + warcFile;
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -156,7 +158,7 @@ public class WARCUtils {
     		// getContentBegin only works for WARC and in H1.44.x!
     		Long payloadLength = header.getLength() - record.getHeader().getContentBegin();
 
-    		// Worst API EVER!
+    		// Write WARC record with type=warcType
     		if ("metadata".equals(warcType)) {
     			aw.writeMetadataRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
     		} else if ("request".equals(warcType)) {

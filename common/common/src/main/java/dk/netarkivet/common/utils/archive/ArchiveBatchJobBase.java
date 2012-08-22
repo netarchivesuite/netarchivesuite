@@ -37,11 +37,6 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 public abstract class ArchiveBatchJobBase extends FileBatchJob {
 
-	/**
-	 * UID.
-	 */
-	private static final long serialVersionUID = 6009508388703527028L;
-
 	/** The total number of records processed. */
     protected int noOfRecordsProcessed = 0;
 
@@ -62,8 +57,8 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
     /**
      * Private method that handles our exception.
      * @param e the given exception
-     * @param archiveFile The ARCFile where the exception occurred.
-     * @param index The offset in the ARCFile where the exception occurred.
+     * @param archiveFile The archive file where the exception occurred.
+     * @param index The offset in the archive file where the exception occurred.
      */
     protected void handleOurException(
             NetarkivetException e, File archiveFile, long index) {
@@ -74,11 +69,11 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
      * When the org.archive.io.arc classes throw IOExceptions while reading,
      * this is where they go. Subclasses are welcome to override the default
      * functionality which simply logs and records them in a list.
-     * TODO: Actually use the arcfile/index entries in the exception list
+     * TODO: Actually use the archive file/index entries in the exception list
      *
      * @param e An Exception thrown by the org.archive.io.arc classes.
-     * @param arcfile The arcFile that was processed while the Exception was thrown
-     * @param index The index (in the ARC file) at which the Exception was thrown
+     * @param archiveFile The archive file that was processed while the Exception was thrown
+     * @param index The index (in the archive file) at which the Exception was thrown
      * @throws ArgumentNotValid if e is null
      */
     public void handleException(Exception e, File archiveFile, long index)
@@ -93,7 +88,7 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
 
     /**
      * Returns a representation of the list of Exceptions recorded for this
-     * ARC batch job.
+     * archive batch job.
      * If called by a subclass, a method overriding handleException()
      * should always call super.handleException().
      *
@@ -108,14 +103,13 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
         }
         return exceptionList;
     }
-    
+
     /**
-     * 
+     * Returns the number of records processed.
      * @return the number of records processed.
      */
     public int noOfRecordsProcessed() {
         return noOfRecordsProcessed;
     }
 
-    
 }

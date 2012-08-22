@@ -195,7 +195,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                     = new BufferedReader(new FileReader(resultFile));
             try {
                 ARCWriter writer = ARCUtils.createARCWriter(
-                        new File(MetadataFileWriter.getMetadataARCFileName(
+                        new File(MetadataFileWriter.getMetadataArchiveFileName(
                                         Long.toString(jobID))));
                 try {
                     String line;

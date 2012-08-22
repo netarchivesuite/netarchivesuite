@@ -240,7 +240,6 @@ public abstract class HeritrixLauncher {
                     "Unknown state: Should have selected either ARC or WARC as heritrix archive format");
         }
 
-        //WARCDIRECTORY_NAME
         if (isDeduplicationEnabledInTemplate(doc)) {
             XmlUtils.setNode(doc, DEDUPLICATOR_INDEX_LOCATION_XPATH,
                              files.getIndexDir().getAbsolutePath());

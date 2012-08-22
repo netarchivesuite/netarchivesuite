@@ -43,15 +43,10 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
  * Abstract class defining a batch job to run on a set of ARC/WARC files.
  * Each implementation is required to define initialize() , processRecord() and
  * finish() methods. The bitarchive application then ensures that the batch
- * job run initialize(), runs processRecord() on each record in each file in
+ * job runs initialize(), runs processRecord() on each record in each file in
  * the archive, and then runs finish().
  */
 public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
-
-    /**
-     * UID.
-     */
-    private static final long serialVersionUID = -6776271561735259429L;
 
     /**
      * Exceptions should be handled with the handleException() method.
@@ -61,7 +56,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
     public abstract void processRecord(ArchiveRecordBase record, OutputStream os);
 
     /**
-     * returns a BatchFilter object which restricts the set of arcrecords in the
+     * Returns an ArchiveBatchFilter object which restricts the set of records in the 
      * archive on which this batch-job is performed. The default value is
      * a neutral filter which allows all records.
      *
@@ -72,11 +67,11 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
     }
 
     /**
-     * Accepts only WARC and WARCGZ files. Runs through all records and calls
+     * Accepts only arc(.gz) and warc(.gz) files. Runs through all records and calls
      * processRecord() on every record that is allowed by getFilter().
-     * Does nothing on a non-arc file.
+     * Does nothing on a non-(w)arc file.
      *
-     * @param archiveFile The WARC or WARCGZ file to be processed.
+     * @param archiveFile The arc(.gz) or warc(.gz) file to be processed.
      * @param os the OutputStream to which output is to be written
      * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
@@ -88,10 +83,10 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
         Log log = LogFactory.getLog(getClass().getName());
         long arcFileIndex = 0;
         boolean success = true;
-        log.info("Processing WARCfile: " + archiveFile.getName());
+        log.info("Processing archive file: " + archiveFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
-            //Create an WARCReader and retrieve its Iterator:
+            //Create an ArchiveReader and retrieve its Iterator:
             ArchiveReader archiveReader = null;
 
             try {
@@ -105,10 +100,10 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
             try {
                 Iterator<? extends ArchiveRecord> it = archiveReader.iterator();
                 /* Process all records from this Iterator: */
-                log.debug("Starting processing records in WARCfile '"
+                log.debug("Starting processing records in archive file '"
                         + archiveFile.getName() + "'.");
                 if (!it.hasNext()) {
-                    log.debug("No WARCRecords found in WARCfile '"
+                    log.debug("No records found in archive file '"
                             + archiveFile.getName() + "'.");
                 }
                 ArchiveRecord archiveRecord = null;
@@ -124,8 +119,8 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                             continue;
                         }
                         log.debug(
-                                "Processing WARCRecord #" + noOfRecordsProcessed
-                                + " in WARCfile '" + archiveFile.getName()  + "'.");
+                                "Processing record #" + noOfRecordsProcessed
+                                + " in archive file '" + archiveFile.getName()  + "'.");
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
