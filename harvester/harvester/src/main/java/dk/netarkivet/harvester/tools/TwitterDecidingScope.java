@@ -94,13 +94,15 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Attribute/value pair. If set, the language to which results are restricted.
+     * Unfortunately the twitter language identification heuristics are so poor
+     * that this option is unusable.
      * (Broken. See http://code.google.com/p/twitter-api/issues/detail?id=1942 )
      */
     public static final String ATTR_LANG = "language";
-    private String language;
+    private String language = "all";
 
     /**
-     * Attribute/value pair pecifying whether embedded links should be queued.
+     * Attribute/value pair specifying whether embedded links should be queued.
      */
     public static final String ATTR_QUEUE_LINKS = "queue_links";
     private boolean queueLinks = true;
@@ -143,9 +145,8 @@ public class TwitterDecidingScope extends DecidingScope {
             geoLocations = (StringList) super.getAttribute(ATTR_GEOLOCATIONS);
             language = (String) super.getAttribute(ATTR_LANG);
             if (language == null) {
-                language = "";
+                language = "all";
             }
-            System.out.println("Twitter scope language: " + language);
             resultsPerPage = (Integer) super.getAttribute(ATTR_RESULTS_PER_PAGE);
             queueLinks = (Boolean) super.getAttribute(ATTR_QUEUE_LINKS);
             queueUserStatus = (Boolean) super.getAttribute(ATTR_QUEUE_USER_STATUS);
@@ -163,10 +164,6 @@ public class TwitterDecidingScope extends DecidingScope {
         }
         for (Object keyword: keywords) {
             logger.info("Twitter Scope keyword: " + keyword);
-            System.out.println("Twitter Scope keyword: " + keyword);
-        }
-        for (Object geolocation: geoLocations) {
-            System.out.println("Twitter GeoLocation: " + geolocation);
         }
         //If keywords or geoLocations is missing, add a list with a single empty string so that the main loop is
         // executed at least once.
@@ -177,8 +174,6 @@ public class TwitterDecidingScope extends DecidingScope {
             geoLocations = new StringList("geolocations", "empty geolocation list",new String[]{""} );
         }
         logger.info("Twitter Scope will queue " + pages + " page(s) of results.");
-        System.out.println("Twitter Scope will queue " + pages
-                + " page(s) of results with " + resultsPerPage + " results per page.");
         //Nested loop over keywords, geo_locations and pages.
         for (Object keyword: keywords) {
             String keywordString = (String) keyword;
@@ -206,16 +201,9 @@ public class TwitterDecidingScope extends DecidingScope {
                         query.setGeoCode(location, Double.parseDouble(locationArray[2]), locationArray[3]);
                     }
                     try {
-                        System.out.println("Preparing to execute query: " + query);
                         final QueryResult result = twitter.search(query);
                         List<Tweet> tweets = result.getTweets();
                         for (Tweet tweet: tweets) {
-                            System.out.println("Processing Tweet: " + tweet);
-                            //
-                            // Twitter API is buggy so need to check each tweet here for correct language code.
-                            //
-                            Status status = twitter.showStatus(tweet.getId());
-                            if (tweet.getIsoLanguageCode().equals(language) || language.equals("")) {
                                 long id = tweet.getId();
                                 String fromUser = tweet.getFromUser();
                                 String tweetUrl = "http://www.twitter.com/" + fromUser + "/status/" + id;
@@ -232,9 +220,6 @@ public class TwitterDecidingScope extends DecidingScope {
                                         queueUserStatusLinks(tweet.getFromUser());
                                     }
                                 }
-                            } else {
-                                System.out.println("Surprising twitter result (wrong language): " + tweet);
-                            }
                         }
                     } catch (TwitterException e1) {
                         logger.log(Level.SEVERE, e1.getMessage());
