@@ -773,6 +773,13 @@ public abstract class Machine {
     protected abstract String getConfDirPath();
 
     /**
+     * The operation system specific path to the lib directory.
+     * 
+     * @return Lib path.
+     */
+    protected abstract String getLibDirPath();
+    
+    /**
      * Creates the operation system specific killing script for this machine.
      * 
      * @return Operation system specific part of the killscript.

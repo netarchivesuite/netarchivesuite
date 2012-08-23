@@ -3,6 +3,8 @@ echo --------------------------------------------
 echo INSTALLING TO MACHINE: test@kb-test-adm-001.kb.dk
 echo copying null.zip to:kb-test-adm-001.kb.dk
 scp null.zip test@kb-test-adm-001.kb.dk:/home/test
+echo deleting test@kb-test-adm-001.kb.dk:/home/test/TEST/lib
+ssh test@kb-test-adm-001.kb.dk rm -rf /home/test/TEST/lib
 echo unzipping null.zip at:kb-test-adm-001.kb.dk
 ssh test@kb-test-adm-001.kb.dk unzip -q -o /home/test/null.zip -d /home/test/TEST
 echo Creating directories.
@@ -31,6 +33,8 @@ echo --------------------------------------------
 echo INSTALLING TO MACHINE: ba-test@kb-test-bar-010.bitarkiv.kb.dk
 echo copying null.zip to: kb-test-bar-010.bitarkiv.kb.dk
 scp null.zip ba-test@kb-test-bar-010.bitarkiv.kb.dk:
+echo removing old libraries if they exist.
+ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c if exist TEST\\lib DEL /Q TEST\\lib 
 echo unzipping null.zip at: kb-test-bar-010.bitarkiv.kb.dk
 ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c unzip.exe -q -d TEST -o null.zip
 echo Creating directories.
@@ -51,6 +55,8 @@ echo --------------------------------------------
 echo INSTALLING TO MACHINE: ba-test@kb-test-bar-011.bitarkiv.kb.dk
 echo copying null.zip to: kb-test-bar-011.bitarkiv.kb.dk
 scp null.zip ba-test@kb-test-bar-011.bitarkiv.kb.dk:
+echo removing old libraries if they exist.
+ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c if exist TEST\\lib DEL /Q TEST\\lib 
 echo unzipping null.zip at: kb-test-bar-011.bitarkiv.kb.dk
 ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c unzip.exe -q -d TEST -o null.zip
 echo Creating directories.
@@ -71,6 +77,8 @@ echo --------------------------------------------
 echo INSTALLING TO MACHINE: test@kb-test-har-001.kb.dk
 echo copying null.zip to:kb-test-har-001.kb.dk
 scp null.zip test@kb-test-har-001.kb.dk:/home/test
+echo deleting test@kb-test-har-001.kb.dk:/home/test/TEST/lib
+ssh test@kb-test-har-001.kb.dk rm -rf /home/test/TEST/lib
 echo unzipping null.zip at:kb-test-har-001.kb.dk
 ssh test@kb-test-har-001.kb.dk unzip -q -o /home/test/null.zip -d /home/test/TEST
 echo Creating directories.
@@ -91,6 +99,8 @@ echo --------------------------------------------
 echo INSTALLING TO MACHINE: test@kb-test-har-002.kb.dk
 echo copying null.zip to:kb-test-har-002.kb.dk
 scp null.zip test@kb-test-har-002.kb.dk:/home/test
+echo deleting test@kb-test-har-002.kb.dk:/home/test/TEST/lib
+ssh test@kb-test-har-002.kb.dk rm -rf /home/test/TEST/lib
 echo unzipping null.zip at:kb-test-har-002.kb.dk
 ssh test@kb-test-har-002.kb.dk unzip -q -o /home/test/null.zip -d /home/test/TEST
 echo Creating directories.
@@ -111,6 +121,8 @@ echo --------------------------------------------
 echo INSTALLING TO MACHINE: test@kb-test-acs-001.kb.dk
 echo copying null.zip to:kb-test-acs-001.kb.dk
 scp null.zip test@kb-test-acs-001.kb.dk:/home/test
+echo deleting test@kb-test-acs-001.kb.dk:/home/test/TEST/lib
+ssh test@kb-test-acs-001.kb.dk rm -rf /home/test/TEST/lib
 echo unzipping null.zip at:kb-test-acs-001.kb.dk
 ssh test@kb-test-acs-001.kb.dk unzip -q -o /home/test/null.zip -d /home/test/TEST
 echo Creating directories.

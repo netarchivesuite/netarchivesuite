@@ -402,10 +402,15 @@ public final class Constants {
     static final String EXTENSION_VBS_FILES = ".vbs";
     /** The extension on log files.*/
     static final String EXTENSION_LOG_FILES = ".log";
-    /** The config directory path from install directory.*/
+    /** The windows config directory path from install directory.*/
     static final String CONF_DIR_WINDOWS = "\\conf\\";
-    /** The config directory path from install directory.*/
+    /** The Linux config directory path from install directory.*/
     static final String CONF_DIR_LINUX = "/conf/";
+    /** The Linux lib directory relative to the install directory. */
+    static final String LIB_DIR_LINUX = "/lib";
+    /** The windows lib directory relative to the install directory. */
+    static final String LIB_DIR_WINDOWS = "\\lib";
+    
     /** Settings prefix. settings_.*/
     static final String SETTINGS_PREFIX = "settings_";
     /** Log property prefix. log_.*/
@@ -597,12 +602,11 @@ public final class Constants {
     public static final String MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS = 
         "Too many instances of jmxremote.password or jmxremote.access "
         + "files defined.";
-    /** The warning when the NetarchiveSuite file cannot be copied, since 
+    /** The warning when the NetarchiveSuite file will be overridden, since 
      * another file with same name exists.*/
     public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = 
         "Warning: A NetarchiveSuite file already exists. "
-        + "It will be overriden. ";
-
+        + "It will be overridden. ";
     
     // functions
     /**

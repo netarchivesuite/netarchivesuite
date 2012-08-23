@@ -91,6 +91,20 @@ public class LinuxMachine extends Machine {
         res.append(Constants.COLON);
         res.append(machineParameters.getInstallDirValue());
         res.append(Constants.NEWLINE);
+        // echo deleting kb-test-adm-001.kb.dk:/home/dev/TEST/lib
+        res.append(ScriptConstants.ECHO_DELETING + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.COLON);
+        res.append(getInstallDirPath() + getLocalLibDirPath());
+        res.append(Constants.NEWLINE);
+        // ssh dev@kb-test-adm-001.kb.dk rm -rf /home/dev/TEST/lib
+        res.append(ScriptConstants.SSH + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE);
+        res.append(ScriptConstants.LINUX_FORCE_RECURSIVE_DELETE);
+        res.append(Constants.SPACE);
+        res.append(getInstallDirPath() + getLocalLibDirPath());
+        res.append(Constants.NEWLINE);
         // echo unzipping null.zip at:kb-test-adm-001.kb.dk
         res.append(ScriptConstants.ECHO_UNZIPPING + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
@@ -253,7 +267,17 @@ public class LinuxMachine extends Machine {
     protected String getConfDirPath() {
         return getInstallDirPath() + Constants.CONF_DIR_LINUX;
     }
-
+   
+    /**
+     * Creates the local path to the lib dir.
+     * 
+     * @return The path to the lib dir for ssh.
+     */
+    protected String getLocalLibDirPath() {
+        return Constants.LIB_DIR_LINUX;
+    }
+    
+    
     /**
      * This function creates the script to kill all applications on this 
      * machine.
@@ -1789,6 +1813,11 @@ public class LinuxMachine extends Machine {
                 + Constants.COLON);
         }
         return res.toString();
+    }
+
+    @Override
+    protected String getLibDirPath() {
+        return getInstallDirPath() + Constants.LIB_DIR_LINUX;
     }
     
 }

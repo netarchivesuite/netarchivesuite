@@ -74,7 +74,7 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * On windows machines console output can cause problesms so
+     * On windows machines console output can cause problems so
      * any uses of java.util.logging.ConsoleHandler are removed.
      * @param logProperties the original contents of the logging properties file.
      * @return logging properties with the ConsoleHandler removed
@@ -154,6 +154,23 @@ public class WindowsMachine extends Machine {
         res.append(machineUserLogin());
         res.append(Constants.COLON);
         res.append(Constants.NEWLINE);
+        // echo removing old libraries if they exist.
+        res.append(ScriptConstants.ECHO_DELETING_OLD_LIBRARIES);
+        res.append(Constants.NEWLINE);
+        
+        // ssh 'login'@'machine' cmd /c if exist 
+        // 'environmentName'\\'lib' del /Q 'environmentName'\\'lib' 
+        
+        res.append(ScriptConstants.SSH + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
+                + Constants.SPACE + ScriptConstants.IF + Constants.SPACE
+                + ScriptConstants.EXIST + Constants.SPACE);
+        res.append(ScriptConstants.doubleBackslashes(getLocalLibDirPath())
+                + Constants.SPACE + "DEL /Q" + Constants.SPACE);
+        res.append(ScriptConstants.doubleBackslashes(getLocalLibDirPath()));
+        res.append(Constants.SPACE + Constants.NEWLINE);
+        
         // - echo unzipping 'NetarchiveSuite.zip' at: 'machine'
         res.append(ScriptConstants.ECHO_UNZIPPING + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
@@ -355,6 +372,11 @@ public class WindowsMachine extends Machine {
         return getInstallDirPath() + Constants.CONF_DIR_WINDOWS;
     }
     
+    @Override
+    protected String getLibDirPath() {
+        return getInstallDirPath() + Constants.LIB_DIR_WINDOWS;
+    }
+    
     /**
      * Creates the local path to the conf dir.
      * 
@@ -363,6 +385,16 @@ public class WindowsMachine extends Machine {
     protected String getLocalConfDirPath() {
         return getEnvironmentName() + Constants.CONF_DIR_WINDOWS;
     }
+    
+    /**
+     * Creates the local path to the lib dir.
+     * 
+     * @return The path to the lib dir for ssh.
+     */
+    protected String getLocalLibDirPath() {
+        return getEnvironmentName() + Constants.LIB_DIR_WINDOWS;
+    }
+    
     
     /**
      * Creates the local path to the installation directory.

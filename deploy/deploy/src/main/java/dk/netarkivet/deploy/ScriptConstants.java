@@ -243,6 +243,11 @@ public final class ScriptConstants {
     static final String ECHO_COPYING = "echo copying";
     /** echo unzipping.*/
     static final String ECHO_UNZIPPING = "echo unzipping";
+    /** echo deleting. */
+    static final String ECHO_DELETING = "echo deleting";
+    
+    /** Do a recursive delete in Linux. */
+    static final String LINUX_FORCE_RECURSIVE_DELETE = "rm -rf";
     /** echo preparing for copying of settings and scripts.*/
     static final String ECHO_PREPARING_FOR_COPY = 
         "echo preparing for copying of settings and scripts";
@@ -730,4 +735,7 @@ public final class ScriptConstants {
         + NEWLINE
         + ""
         + NEWLINE;
+   
+    static final String ECHO_DELETING_OLD_LIBRARIES 
+        = "echo removing old libraries if they exist.";
 }
