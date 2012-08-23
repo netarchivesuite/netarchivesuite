@@ -25,7 +25,6 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -35,12 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Document;
-import org.dom4j.Node;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -50,10 +46,9 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.common.utils.archive.ArchiveProfile;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
 /**
  * This class contains code for documenting a harvest.
@@ -85,34 +80,6 @@ public class HarvestDocumentation {
         "timestamp";
     private static final String CDX_URI_SERIALNO_PARAMETER_NAME =
         "serialno";
-
-    public static class ArchiveProfile {
-        public final FilenameFilter filename_filter;
-        public final String filename_pattern;
-        public final Pattern metadataFilenamePattern;
-        public final String archive_directory;
-    	public ArchiveProfile(FilenameFilter filename_filter,
-    			String filename_pattern,
-    			Pattern metadataFilenamePattern,
-    			String archive_directory) {
-    		this.filename_filter = filename_filter;
-    		this.filename_pattern = filename_pattern;
-    		this.metadataFilenamePattern = metadataFilenamePattern;
-    		this.archive_directory = archive_directory;
-        }
-    }
-    public static final ArchiveProfile ARC_PROFILE = new ArchiveProfile(
-    		FileUtils.ARCS_FILTER,
-    		FileUtils.ARC_PATTERN,
-    		Pattern.compile("([0-9]+)-metadata-([0-9]+).arc"),
-    		Constants.ARCDIRECTORY_NAME
-    		);
-    public static final ArchiveProfile WARC_PROFILE = new ArchiveProfile(
-    		FileUtils.WARCS_FILTER,
-    		FileUtils.WARC_PATTERN,
-    		Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"),
-    		Constants.WARCDIRECTORY_NAME
-    		);
 
     /**
      * Documents the harvest under the given dir in a packaged metadata arc
@@ -210,12 +177,12 @@ public class HarvestDocumentation {
             // Create CDX over ARC files.
             File arcFilesDir = new File(crawlDir, Constants.ARCDIRECTORY_NAME);
             if (arcFilesDir.isDirectory()) {
-                moveAwayForeignFiles(ARC_PROFILE, arcFilesDir, jobID);
+                moveAwayForeignFiles(ArchiveProfile.ARC_PROFILE, arcFilesDir, jobID);
                 //Generate CDX
                 // TODO Place results in IngestableFiles-defined area
                 File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
                                                                  "cdx");
-                CDXUtils.generateCDX(ARC_PROFILE, arcFilesDir, cdxFilesDir);
+                CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, arcFilesDir, cdxFilesDir);
                 mdfw.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
                 bArcMetadataGenerationSucceeded = true;
             } else {
@@ -226,12 +193,12 @@ public class HarvestDocumentation {
             // Create CDX over WARC files.
             File warcFilesDir = new File(crawlDir, Constants.WARCDIRECTORY_NAME);
             if (warcFilesDir.isDirectory()) {
-                moveAwayForeignFiles(WARC_PROFILE, warcFilesDir, jobID);
+                moveAwayForeignFiles(ArchiveProfile.WARC_PROFILE, warcFilesDir, jobID);
                 //Generate CDX
                 // TODO Place results in IngestableFiles-defined area
                 File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
                                                                  "cdx");
-                CDXUtils.generateCDX(WARC_PROFILE, warcFilesDir, cdxFilesDir);
+                CDXUtils.generateCDX(ArchiveProfile.WARC_PROFILE, warcFilesDir, cdxFilesDir);
                 mdfw.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
                 bWarcMetadataGenerationSucceeded = true;
             } else {

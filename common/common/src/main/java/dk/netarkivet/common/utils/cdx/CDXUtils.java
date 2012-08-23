@@ -37,8 +37,8 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.archive.ArchiveProfile;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
-import dk.netarkivet.harvester.harvesting.HarvestDocumentation.ArchiveProfile;
 
 /**
  * Utility class for creating CDX-files.

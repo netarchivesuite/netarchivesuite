@@ -47,9 +47,9 @@ import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.archive.ArchiveProfile;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HarvestDocumentation.ArchiveProfile;
 import dk.netarkivet.testutils.ARCTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -421,7 +421,7 @@ public class HarvestDocumentationTester extends TestCase {
         FileUtils.copyFile(new File(TestInfo.METADATA_TEST_DIR,
                                     "arcs/not-an-arc-file.txt"),
                            new File(arcsDir, "43-metadata-1.arc"));
-        m.invoke(null, HarvestDocumentation.ARC_PROFILE, arcsDir, 42);
+        m.invoke(null, ArchiveProfile.ARC_PROFILE, arcsDir, 42);
         // Check that one file got moved.
         LogUtils.flushLogs(HarvestDocumentation.class.getName());
         FileAsserts.assertFileContains("Should have found foreign files",
