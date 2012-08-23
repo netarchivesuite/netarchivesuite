@@ -58,8 +58,9 @@
                 <string>@politikenfeed</string>
             </stringList>
 
-            <!--The language to which results should be restricted. Leave empty for all languages. -->
-            <string name="language">da</string>
+            <!--The language to which results should be restricted. Unfortunately works very poorly -->
+            <!--<string name="language">da</string>-->
+
             <!-- DecideRuleSequence. Multiple DecideRules applied in order with last non-PASS the resulting decision -->
             <newObject name="decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
         	<map name="rules">
