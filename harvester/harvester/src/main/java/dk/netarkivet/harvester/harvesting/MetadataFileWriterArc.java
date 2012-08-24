@@ -91,7 +91,6 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
 
     /** Writes a File to an ARCWriter, if available,
      * otherwise logs the failure to the class-logger.
-     * @param writer the given ARCWriter
      * @param fileToArchive the File to archive
      * @param URL the URL with which it is stored in the arcfile
      * @param mimetype The mimetype of the File-contents
