@@ -42,7 +42,6 @@ import java.io.File;
 public class HeritrixFilesTester extends TestCase {
 
     private MockupJMS mjms = new MockupJMS();
-    //private File resultFile = new File(TestInfo.HERITRIX_TEMP_DIR, "result");
     
     private File defaultJmxPasswordFile = new File("/path/to/jmxpasswordfile");
     private File defaultJmxAccessFile = new File("/path/to/jmxaccessfile");
@@ -218,7 +217,4 @@ public class HeritrixFilesTester extends TestCase {
             new File("/path/to/jmxpasswordfile"),
             new File("/path/to/jmxaccessfile"));
     }
-
-     
-    
 }

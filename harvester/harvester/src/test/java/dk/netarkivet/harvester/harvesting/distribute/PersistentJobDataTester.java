@@ -112,27 +112,7 @@ public class PersistentJobDataTester extends TestCase {
         // cleanup after this unit-test.
         FileUtils.removeRecursively(crawldir);
     }
-    
-//    /**
-//     * Test reading the version 0.3 harvestInfo.xml written by NAS up to and including 3.14.X
-//     */
-//    public void testReadVersion0_2() {
-//        File hiVersion02 = new File(TestInfo.DATA_DIR, "harvestInfo-0.2.xml");
-//        FileUtils.copyFile(hiVersion02, new File(crawldir, TestInfo.HarvestInfofilename));
-//        PersistentJobData pjd = new PersistentJobData(crawldir);
-//        pjd.getVersion(); // force validation
-//    }
-//    
-//    /**
-//     * Test reading the version 0.2 written by NAS 3.16.1.
-//     */
-//    public void testReadVersion0_2A() {
-//        File hiVersion02A = new File(TestInfo.DATA_DIR, "harvestInfo-0.2a.xml");
-//        FileUtils.copyFile(hiVersion02A, new File(crawldir, TestInfo.HarvestInfofilename));
-//        PersistentJobData pjd = new PersistentJobData(crawldir);
-//        pjd.getVersion();
-//    }
-    
+        
     /** Test reading the version 0.3 harvestInfo.xml. */
     public void testReadVersion0_3() {
         File hiVersion03 = new File(TestInfo.DATA_DIR, "harvestInfo-0.3.xml");
