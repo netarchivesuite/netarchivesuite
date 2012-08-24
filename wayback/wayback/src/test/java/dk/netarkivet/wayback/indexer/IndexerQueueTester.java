@@ -50,9 +50,9 @@ public class IndexerQueueTester extends IndexerTestCase {
                                                         "queue");
         LinkedBlockingQueue<ArchiveFile> queue =
                 (LinkedBlockingQueue<ArchiveFile>) queueField.get(null);
-        assertEquals("Queue should have four objects in it", 4, queue.size());
+        assertEquals("Queue should have four objects in it", 6, queue.size());
         IndexerQueue.getInstance().populate();
-        assertEquals("Queue should still have four objects in it", 4, queue.size());
+        assertEquals("Queue should still have four objects in it", 6, queue.size());
     }
     
     /**

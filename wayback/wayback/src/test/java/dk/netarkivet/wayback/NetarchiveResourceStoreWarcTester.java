@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:        $Id: NetarchiveResourceStoreTester.java 2360 2012-06-01 15:31:11Z svc $
+ * Revision:    $Revision: 2360 $
+ * Author:      $Author: svc $
+ * Date:        $Date: 2012-06-01 17:31:11 +0200 (Fri, 01 Jun 2012) $
  *
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and
  * University Library, the National Library of France and the Austrian
@@ -23,17 +23,18 @@
  */
 package dk.netarkivet.wayback;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.jms.Message;
+import javax.jms.MessageListener;
 
 import org.archive.io.ArchiveRecordHeader;
 import org.archive.io.arc.ARCConstants;
@@ -41,8 +42,8 @@ import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.exception.ResourceNotAvailableException;
-import org.archive.wayback.resourcestore.resourcefile.ArcResource;
 import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
+import org.archive.wayback.resourcestore.resourcefile.ArcResource;
 
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
@@ -63,8 +64,13 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.indexer.IndexerTestCase;
 
-/** Unit test for testNetarchiveResourceStore */
-public class NetarchiveResourceStoreTester extends IndexerTestCase {
+/**
+ * Unit test for testNetarchiveResourceStore with WARC files.
+ *
+ * This test should be integrated with NetarchiveResourceStoreTester.
+ * But since we are not using JUnit4 Parameterized testing is to cumbersome.
+ */
+public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
 
     NetarchiveResourceStore netarchiveResourceStore = null;
     CaptureSearchResult metadataResource = null;
@@ -75,8 +81,8 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
     ReloadSettings rs = new ReloadSettings();
     ArcRepositoryClient arc;
 
-    private final String metadataFile = "2-metadata-1.arc";
-    private final String uploadFile = "Upload4.ARC";
+    private final String metadataFile = "2-metadata-1.warc";
+    private final String uploadFile = "Upload4.WARC";
 
     @Override
     public void setUp() {
@@ -348,6 +354,5 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
         }
 
     }
-
 
 }

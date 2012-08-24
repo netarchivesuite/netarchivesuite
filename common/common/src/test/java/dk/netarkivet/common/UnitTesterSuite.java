@@ -28,7 +28,6 @@ package dk.netarkivet.common;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-
 import dk.netarkivet.common.distribute.CommonDistributeTesterSuite;
 import dk.netarkivet.common.distribute.indexserver.CommonDistributeIndexserverTesterSuite;
 import dk.netarkivet.common.exceptions.CommonExceptionsTesterSuite;
@@ -39,6 +38,7 @@ import dk.netarkivet.common.utils.CommonUtilsTesterSuite;
 import dk.netarkivet.common.utils.arc.CommonUtilsArcTesterSuite;
 import dk.netarkivet.common.utils.batch.CommonUtilsBatchTesterSuite;
 import dk.netarkivet.common.utils.cdx.CommonUtilsCdxTesterSuite;
+import dk.netarkivet.common.utils.warc.CommonUtilsWarcTesterSuite;
 import dk.netarkivet.common.webinterface.CommonWebinterfaceTesterSuite;
 
 /**
@@ -47,6 +47,7 @@ import dk.netarkivet.common.webinterface.CommonWebinterfaceTesterSuite;
 public class UnitTesterSuite {
     public static void addToSuite(TestSuite suite) {
         CommonUtilsArcTesterSuite.addToSuite(suite);
+        CommonUtilsWarcTesterSuite.addToSuite(suite);
         CommonUtilsBatchTesterSuite.addToSuite(suite);
         CommonUtilsCdxTesterSuite.addToSuite(suite);
         CommonsTesterSuite.addToSuite(suite);

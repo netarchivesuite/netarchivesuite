@@ -32,7 +32,12 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -122,6 +127,45 @@ public class WARCUtils {
         }
     }
 
+    private static final Set<String> ignoreHeadersMap = new HashSet<String>();
+
+    private static final Map<String, String> headerNamesCaseMap = new HashMap<String, String>();
+
+    static {
+    	ignoreHeadersMap.add("content-type");
+    	ignoreHeadersMap.add("reader-identifier");
+    	ignoreHeadersMap.add("absolute-offset");
+    	ignoreHeadersMap.add("content-length");
+    	ignoreHeadersMap.add("warc-date");
+    	ignoreHeadersMap.add("warc-record-id");
+    	ignoreHeadersMap.add("warc-type");
+    	ignoreHeadersMap.add("warc-target-uri");
+    	String[] headerNames = {
+    	        "WARC-Type",
+    	        "WARC-Record-ID",
+    	        "WARC-Date",
+    	        "Content-Length",
+    	        "Content-Type",
+    	        "WARC-Concurrent-To",
+    	        "WARC-Block-Digest",
+    	        "WARC-Payload-Digest",
+    	        "WARC-IP-Address",
+    	        "WARC-Refers-To",
+    	        "WARC-Target-URI",
+    	        "WARC-Truncated",
+    	        "WARC-Warcinfo-ID",
+    	        "WARC-Filename",
+    	        "WARC-Profile",
+    	        "WARC-Identified-Payload-Type",
+    	        "WARC-Segment-Origin-ID",
+    	        "WARC-Segment-Number",
+    	        "WARC-Segment-Total-Length"
+    	};
+    	for (int i=0; i<headerNames.length; ++i) {
+    		headerNamesCaseMap.put(headerNames[i].toLowerCase(), headerNames[i]);
+    	}
+    }
+
     /**
      * Writes the given WARCRecord on the given WARCWriter.
      * 
@@ -143,16 +187,39 @@ public class WARCUtils {
             String dateStr = ArchiveDateConverter.getWarcDateFormat()
                     .format(date);
             String mimetype = header.getMimetype();
+            String recordIdStr;
             URI recordId;
     		try {
-    			recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
+    			//recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
+    			recordIdStr = header.getHeaderStringValue("warc-record-id");
+    			if (recordIdStr.startsWith("<") && recordIdStr.endsWith(">")) {
+    				recordIdStr = recordIdStr.substring(1, recordIdStr.length() - 1);
+    			}
+    			recordId = new URI(recordIdStr);    			
     		} catch (URISyntaxException e) {
     			throw new IllegalState("Epic fail creating URI from UUID!");
     		}
-            String ip = header.getIp();
 
-            // TODO this throws away all original headers! Improve.
     		ANVLRecord  namedFields = new ANVLRecord();
+
+    		// Copy to headers from the original WARC record to the new one.
+    		// Since we store the headres lowercase, we recase them.
+    		// Non WARC header header are lowercase and loose their case.
+    		Iterator<Entry<String, Object>> headerIter = header.getHeaderFields().entrySet().iterator();
+    		Entry<String, Object> headerEntry;
+    		String headerName;
+    		String headerNameCased;
+    		while (headerIter.hasNext()) {
+    			headerEntry = headerIter.next();
+    			if (!ignoreHeadersMap.contains(headerEntry.getKey())) {
+    				headerName = headerEntry.getKey();
+    				headerNameCased = headerNamesCaseMap.get(headerName);
+    				if (headerNameCased != null) {
+    					headerName = headerNameCased;
+    				}
+        			namedFields.addLabelValue(headerName, headerEntry.getValue().toString());
+        		}
+        	}
 
     		InputStream in = record;
     		// getContentBegin only works for WARC and in H1.44.x!

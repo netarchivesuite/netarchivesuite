@@ -37,9 +37,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCReader;
-import org.archive.io.arc.ARCReaderFactory;
-import org.archive.io.arc.ARCRecord;
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
+import org.archive.io.ArchiveRecord;
 
 import dk.netarkivet.common.distribute.FileRemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -147,11 +147,11 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
                     + "' does not exist. Null BitarchiveRecord returned");
             return null;
         }
-        ARCReader reader = null;
-        ARCRecord record = null;
+        ArchiveReader reader = null;
+        ArchiveRecord record = null;
         try {
-            reader = ARCReaderFactory.get(f, index);
-            record = (ARCRecord) reader.get();
+            reader = ArchiveReaderFactory.get(f, index);
+            record = reader.get();
             return new BitarchiveRecord(record, arcfile);
         } catch (IOException e) {
             throw new IOFailure("Error reading record from '"
