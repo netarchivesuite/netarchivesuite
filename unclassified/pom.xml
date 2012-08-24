@@ -63,7 +63,7 @@
       <organizationUrl>http://statsbiblioteket.dk</organizationUrl>
     </developer>
     <developer>
-      <name>Søren Vejrup Carlsen </name>
+      <name>Søren Vejrup Carlsen</name>
       <roles>
         <role>Lead developer</role>
       </roles>
@@ -96,6 +96,15 @@
       </roles>
       <organization>Bibliothèque nationale de France</organization>
       <organizationUrl>http://www.bnf.fr/</organizationUrl>
+    </developer>
+    <developer>
+      <name>Nicholas Clarke</name>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <email>nicl@kb.dk</email>
+      <organization>The Royal Danish Library</organization>
+      <organizationUrl>http://kb.dk</organizationUrl>
     </developer>
   </developers>
 
