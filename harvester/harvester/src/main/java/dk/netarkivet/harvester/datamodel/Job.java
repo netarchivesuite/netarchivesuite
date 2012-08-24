@@ -1523,7 +1523,7 @@ public class Job implements Serializable, JobInfo {
     }
 
     @Override
-    public String getHarvestNamePrefix() {
+    public String getHarvestFilenamePrefix() {
         return ArchiveFileNamingFactory.getInstance().getPrefix(this);
     }
     

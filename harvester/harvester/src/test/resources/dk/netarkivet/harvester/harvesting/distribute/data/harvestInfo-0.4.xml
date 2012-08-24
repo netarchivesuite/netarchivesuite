@@ -10,5 +10,5 @@
   <orderXMLName>default_orderxml</orderXMLName>
   <origHarvestDefinitionName>netarkivet</origHarvestDefinitionName>
   <scheduleName>Once_a_week</scheduleName>
-  <harvestNamePrefix>1-2</harvestNamePrefix>
+  <harvestFilenamePrefix>1-2</harvestFilenamePrefix>
 </harvestInfo>

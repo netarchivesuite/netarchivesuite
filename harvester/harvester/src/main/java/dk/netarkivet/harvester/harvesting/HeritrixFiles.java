@@ -44,8 +44,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
 
 /**
  * This class encapsulates all the files that Heritrix gets from our system,
@@ -81,7 +79,6 @@ public class HeritrixFiles {
 
     /** The logger. */
     private Log log = LogFactory.getLog(getClass().getName());
-    private JobInfo JobInfo;
 
     /** The name of the progress statistics log. */
     private static final String PROGRESS_STATISTICS_LOG_FILENAME
@@ -111,10 +108,9 @@ public class HeritrixFiles {
         ArgumentNotValid.checkNotNull(jmxPasswordFile, "jmxPasswordFile");
         ArgumentNotValid.checkNotNull(jmxAccessFile, "jmxAccessFile");
         this.crawlDir = crawlDir;
-        this.JobInfo = harvestJob;
         this.jobID = harvestJob.getJobID();
         this.harvestID = harvestJob.getOrigHarvestDefinitionID();
-        this.arcFilePrefix = harvestJob.getHarvestNamePrefix();
+        this.arcFilePrefix = harvestJob.getHarvestFilenamePrefix();
         this.jmxPasswordFile = jmxPasswordFile;
         this.jmxAccessFile = jmxAccessFile;
     }

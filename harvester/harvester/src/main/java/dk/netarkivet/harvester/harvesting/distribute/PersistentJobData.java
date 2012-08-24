@@ -150,9 +150,9 @@ public class PersistentJobData implements JobInfo {
      * schedule, will be empty for broad crawls. */
     private static final String HARVEST_SCHED_KEY =
         ROOT_ELEMENT + ".scheduleName";
-    /** The harvestname prefix used by this job set in the Job class. */    
-    private static final String HARVEST_NAME_PREFIX_KEY =
-            ROOT_ELEMENT + ".harvestNamePrefix";
+    /** The harvestfilename prefix used by this job set in the Job class. */    
+    private static final String HARVEST_FILENAME_PREFIX_KEY =
+            ROOT_ELEMENT + ".harvestFilenamePrefix";
     
     /** Key in harvestinfo file for the file version. */
     private static final String HARVESTVERSION_KEY = "harvestInfo.version";
@@ -170,7 +170,7 @@ public class PersistentJobData implements JobInfo {
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
         ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
-        HARVEST_NAME_KEY, HARVEST_NAME_PREFIX_KEY};
+        HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY};
     
     /** String array containing all keys contained in old valid version 
      * 0.3 xml.  */
@@ -301,7 +301,7 @@ public class PersistentJobData implements JobInfo {
             sx.add(HARVEST_SCHED_KEY, schedName);
         }
         // Store the harvestname prefix selected by the used Naming Strategy.
-        sx.add(HARVEST_NAME_PREFIX_KEY, harvestJob.getHarvestNamePrefix());
+        sx.add(HARVEST_FILENAME_PREFIX_KEY, harvestJob.getHarvestFilenamePrefix());
         
         XmlState validationResult = validateHarvestInfo(sx); 
         if (validationResult.getOkState().equals(XmlState.OKSTATE.NOTOK)) {
@@ -563,15 +563,15 @@ public class PersistentJobData implements JobInfo {
     /** If not set in persistentJobData, fall back to the standard way.
      *  jobid-harvestid.
      */
-    public String getHarvestNamePrefix() {
+    public String getHarvestFilenamePrefix() {
         SimpleXml sx = read(); // reads and validates XML
         String prefix = null;
-        if (!sx.hasKey(HARVEST_NAME_PREFIX_KEY)) {
+        if (!sx.hasKey(HARVEST_FILENAME_PREFIX_KEY)) {
             prefix = this.getJobID() + "-" + this.getOrigHarvestDefinitionID();
-            log.warn("harvestNamePrefix not part of persistentJobData. Using old standard naming: " 
+            log.warn("harvestFilenamePrefix not part of persistentJobData. Using old standard naming: " 
                     + prefix); 
         } else {
-            prefix = sx.getString(HARVEST_NAME_PREFIX_KEY);
+            prefix = sx.getString(HARVEST_FILENAME_PREFIX_KEY);
         }
         return prefix;
     }

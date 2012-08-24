@@ -43,8 +43,8 @@ public interface JobInfo {
     Long getOrigHarvestDefinitionID();
    
     /**
-     * Get the harvestName prefix.
-     * @return the harvestName prefix.
+     * Get the harvestFilename prefix.
+     * @return the harvestFilename prefix.
      */
-     String getHarvestNamePrefix();
+     String getHarvestFilenamePrefix();
 }
