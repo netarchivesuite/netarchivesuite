@@ -91,7 +91,7 @@ public class LinuxMachine extends Machine {
         res.append(Constants.COLON);
         res.append(machineParameters.getInstallDirValue());
         res.append(Constants.NEWLINE);
-        // echo deleting kb-test-adm-001.kb.dk:/home/dev/TEST/lib
+        // echo deleting dev@kb-test-adm-001.kb.dk:/home/dev/TEST/lib
         res.append(ScriptConstants.ECHO_DELETING + Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.COLON);
