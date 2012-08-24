@@ -35,7 +35,6 @@ import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Query;
 import twitter4j.QueryResult;
-import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
