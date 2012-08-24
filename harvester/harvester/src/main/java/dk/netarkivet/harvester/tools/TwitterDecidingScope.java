@@ -1,7 +1,7 @@
-/* File:       $Id: $
- * Revision:   $Revision:  $
- * Author:     $Author:  $
- * Date:       $Date: $
+/* File:       $Id$
+ * Revision:   $Revision$
+ * Author:     $Author$
+ * Date:       $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and
@@ -52,7 +52,15 @@ import java.util.logging.Logger;
 
 /**
  * Heritrix CrawlScope that uses the Twitter Search API (https://dev.twitter.com/docs/api/1/get/search)
- * to add seeds to a crawl.
+ * to add seeds to a crawl. The following parameters to twitter search are supported:
+ * keywords: a list equivalent twitters "query" text.
+ * geo_locations: as defined in the twitter api.
+ * language: quivalent to twitter's "lang" parameter.
+ * These may be omitted. In practice only "keywords" works well in the current version of twitter.
+ *
+ *
+ * In addition, the number of results to be considered is determined by the parameters "pages" and
+ * "twitter_results_per_page".
  */
 public class TwitterDecidingScope extends DecidingScope {
 
@@ -132,7 +140,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * This routine makes any necessary Twitter API calls and queues the content discovered.
-     * @param controller
+     * @param controller The controller for this crawl.
      */
     @Override
     public void initialize(CrawlController controller) {
@@ -153,13 +161,13 @@ public class TwitterDecidingScope extends DecidingScope {
             queueUserStatusLinks = (Boolean) super.getAttribute(ATTR_QUEUE_USER_STATUS_LINKS);
             queueKeywordLinks = (Boolean) super.getAttribute(ATTR_QUEUE_KEYWORD_LINKS);
         } catch (AttributeNotFoundException e1) {
-            e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e1.printStackTrace();
             throw new RuntimeException(e1);
         } catch (MBeanException e1) {
-            e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e1.printStackTrace();
             throw new RuntimeException(e1);
         } catch (ReflectionException e1) {
-            e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e1.printStackTrace();
             throw new RuntimeException(e1);
         }
         for (Object keyword: keywords) {
@@ -197,8 +205,12 @@ public class TwitterDecidingScope extends DecidingScope {
                     }
                     if (!geoLocation.equals("")) {
                         String[] locationArray = ((String) geoLocation).split(",");
-                        GeoLocation location = new GeoLocation(Double.parseDouble(locationArray[0]), Double.parseDouble(locationArray[1]));
-                        query.setGeoCode(location, Double.parseDouble(locationArray[2]), locationArray[3]);
+                        try {
+                            GeoLocation location = new GeoLocation(Double.parseDouble(locationArray[0]), Double.parseDouble(locationArray[1]));
+                            query.setGeoCode(location, Double.parseDouble(locationArray[2]), locationArray[3]);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
                     }
                     try {
                         final QueryResult result = twitter.search(query);
@@ -233,7 +245,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Adds links to embedded url's and media in a tweet.
-     * @param tweet
+     * @param tweet The tweet from which links are to be extracted.
      */
     private void extractEmbeddedLinks(Tweet tweet) {
         final URLEntity[] urlEntities = tweet.getURLEntities();
@@ -256,7 +268,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Searches for a given users recent tweets and queues and embedded material found.
-     * @param user
+     * @param user The twitter username (without the @ prefix).
      */
     private void queueUserStatusLinks(String user) {
         Query query = new Query();
@@ -282,7 +294,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Adds a url as a seed if possible. Otherwise just prints an error description and returns.
-     * @param tweetUrl
+     * @param tweetUrl The url to be added.
      */
     private void addSeedIfLegal(String tweetUrl) {
         try {
@@ -297,7 +309,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Constructor for the method. Sets up all known attributes.
-     * @param name
+     * @param name the name of this scope.
      */
     public TwitterDecidingScope(String name) {
         super(name);
@@ -313,6 +325,11 @@ public class TwitterDecidingScope extends DecidingScope {
         addElementToDefinition(new SimpleType(ATTR_QUEUE_USER_STATUS_LINKS, "Whether to search for and queue links embedded in the status of discovered users.", new Boolean(true)));
     }
 
+    /**
+     * Adds a candidate uri as a seed for the crawl.
+     * @param curi  The crawl uri to be added.
+     * @return whether the uri was added as a seed.
+     */
     @Override
     public boolean addSeed(CandidateURI curi) {
         return super.addSeed(curi);
