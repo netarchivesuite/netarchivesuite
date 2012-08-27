@@ -146,23 +146,23 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 schedulingStartedMap.put(id, System.currentTimeMillis());
 
                 if (!harvestDefinition.runNow(timeToGenerateJobsFor)) {
-                    log.trace("The harvestdefinition '"
+                    log.trace("The harvestdefinition #" + id + "'"
                             + harvestDefinition.getName() 
                             + "' should not run now.");
                     log.trace("numEvents: " + harvestDefinition.getNumEvents());
                     continue;
                 }
 
-                log.info("Starting to create jobs for harvest definition '"
-                        + harvestDefinition.getName() + "'");
+                log.info("Starting to create jobs for harvest definition #" + id + "("
+                        + harvestDefinition.getName() + ")");
 
                 new Thread("JobGeneratorTask-" + id) {
                     public void run() {
                         try {
                             int jobsMade = harvestDefinition.createJobs();
                             log.info("Created " + jobsMade
-                                    + " jobs for harvest definition '"
-                                    + harvestDefinition.getName() + "'");
+                                    + " jobs for harvest definition ("
+                                    + harvestDefinition.getName() + ")");
                             haDefinitionDAO.update(harvestDefinition);
                         } catch (Throwable e) {
                             try {
@@ -171,17 +171,17 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                                 hd.setActive(false);
                                 haDefinitionDAO.update(hd);
                                 String errMsg = "Exception while scheduling"
-                                    + "harvestdefinition '" 
-                                    + harvestDefinition.getName() + "'. The "
+                                    + "harvestdefinition #" + id + "("
+                                    + harvestDefinition.getName() + "). The "
                                     + "harvestdefinition has been deactivated!";
                                 log.warn(errMsg, e);
                                 NotificationsFactory.getInstance().
                                 errorEvent(errMsg, e);
                             } catch (Exception e1) {
                                 String errMsg = "Exception while scheduling"
-                                    + "harvestdefinition '" 
+                                    + "harvestdefinition #" + id + "("
                                     + harvestDefinition.getName()
-                                    + "'. The harvestdefinition couldn't be "
+                                    + "). The harvestdefinition couldn't be "
                                     +   "deactivated!";
                                 log.warn(errMsg, e);
                                 log.warn("Unable to deactivate", e1);
@@ -192,8 +192,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             harvestDefinitionsBeingScheduled.
                             remove(id);
                             schedulingStartedMap.remove(id);
-                            log.debug("Removed '" + harvestDefinition.getName()
-                                    + "' from list of harvestdefinitions to be "
+                            log.debug("Removed HD #" + id + "(" + harvestDefinition.getName()
+                                    + ") from list of harvestdefinitions to be "
                                     + "scheduled. Harvestdefinitions still to "
                                     + "be scheduled: "
                                     + harvestDefinitionsBeingScheduled);
