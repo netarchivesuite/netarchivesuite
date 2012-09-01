@@ -500,9 +500,6 @@
                         <!-- T: baseFileDir to be extended with $TESTX by test -->
                         <bitarchive>
                             <baseFileDir>/netarkiv/0001</baseFileDir>
-                        </bitarchive>
-                        <!-- T: baseFileDir to be extended with $TESTX by test -->
-                        <bitarchive>
                             <baseFileDir>/netarkiv/0002</baseFileDir>
                         </bitarchive>
                     </archive>
