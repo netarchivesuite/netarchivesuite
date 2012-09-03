@@ -87,8 +87,7 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
         return new ArchiveBatchFilter("OnlyCrawlLog") {
             @Override
             public boolean accept(ArchiveRecordBase record) {
-                record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
-                return true;
+                return record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
             }
         };
     }
