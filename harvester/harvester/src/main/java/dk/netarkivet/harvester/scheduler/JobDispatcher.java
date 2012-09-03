@@ -81,7 +81,7 @@ public class JobDispatcher {
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Submitting new " + priority + " job");
+                log.debug("Submitting new " + priority + " job" + jobToSubmit.getJobID());
             }
             try {
                 List<MetadataEntry> metadata = createMetadata(jobToSubmit);
@@ -150,13 +150,8 @@ public class JobDispatcher {
         if (!jobsToSubmit.hasNext()) {
             return null;
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Submitting new " + priority + " job");
-            }
             final long jobID = jobsToSubmit.next();
-            Job jobToSubmit = null;
-            jobToSubmit = jobDao.read(jobID);
-
+            Job jobToSubmit = jobDao.read(jobID);
             jobToSubmit.setStatus(JobStatus.SUBMITTED);
             jobToSubmit.setSubmittedDate(new Date());
             jobDao.update(jobToSubmit);
