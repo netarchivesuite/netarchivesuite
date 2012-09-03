@@ -30,14 +30,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
-import org.archive.io.arc.ARCRecord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.batch.ARCBatchFilter;
+import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
+import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
+import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 import dk.netarkivet.common.Constants;
 
 /**
@@ -45,7 +45,7 @@ import dk.netarkivet.common.Constants;
  * The batch job should be restricted to run on metadata files for a specific
  * job only, using the {@link #processOnlyFilesMatching(String)} construct.
  */
-public class CrawlLogLinesMatchingRegexp extends ARCBatchJob {
+public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /** The logger. */
     private final Log log = LogFactory.getLog(getClass().getName());
@@ -67,7 +67,7 @@ public class CrawlLogLinesMatchingRegexp extends ARCBatchJob {
         this.regexp = regexp;
 
         /**
-        * Two weeks in miliseconds.
+        * Two weeks in milliseconds.
         */
         batchJobTimeout = 7* Constants.ONE_DAY_IN_MILLIES;
     }
@@ -81,9 +81,9 @@ public class CrawlLogLinesMatchingRegexp extends ARCBatchJob {
     }
     
     @Override
-    public ARCBatchFilter getFilter() {
-        return new ARCBatchFilter("OnlyCrawlLog") {
-            public boolean accept(ARCRecord record) {
+    public ArchiveBatchFilter getFilter() {
+        return new ArchiveBatchFilter("OnlyCrawlLog") {
+            public boolean accept(ArchiveRecordBase record) {
                 return record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
             }
         };
@@ -98,11 +98,11 @@ public class CrawlLogLinesMatchingRegexp extends ARCBatchJob {
      * @throws IOFailure on trouble processing the record.
      */
     @Override
-    public void processRecord(ARCRecord record, OutputStream os) {
+    public void processRecord(ArchiveRecordBase record, OutputStream os) {
         ArgumentNotValid.checkNotNull(record, "ARCRecord record");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
         BufferedReader arcreader
-                = new BufferedReader(new InputStreamReader(record));
+                = new BufferedReader(new InputStreamReader(record.getInputStream()));
         try {
             for(String line = arcreader.readLine(); line != null;
                 line = arcreader.readLine()) {

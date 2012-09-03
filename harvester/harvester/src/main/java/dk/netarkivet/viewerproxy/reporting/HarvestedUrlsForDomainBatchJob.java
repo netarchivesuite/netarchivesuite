@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
-import org.archive.io.arc.ARCRecord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,8 +37,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FixedUURI;
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.batch.ARCBatchFilter;
+import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
+import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
+import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 import dk.netarkivet.common.Constants;
 
 /**
@@ -47,7 +47,7 @@ import dk.netarkivet.common.Constants;
  * The batch job should be restricted to run on metadata files for a specific
  * job only, using the {@link #processOnlyFilesMatching(String)} construct.
  */
-public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
+public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
 
     // logger
     private final Log log = LogFactory.getLog(getClass().getName());
@@ -69,7 +69,7 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
         this.domain = domain;
 
         /**
-        * Two week in miliseconds.
+        * Two week in milliseconds.
         */
         batchJobTimeout = 7* Constants.ONE_DAY_IN_MILLIES;
     }
@@ -78,13 +78,17 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
      * Does nothing, no initialisation is needed.
      * @param os Not used.
      */
+    @Override
     public void initialize(OutputStream os) {
     }
-
-    public ARCBatchFilter getFilter() {
-        return new ARCBatchFilter("OnlyCrawlLog") {
-            public boolean accept(ARCRecord record) {
-                return record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
+    
+    @Override
+    public ArchiveBatchFilter getFilter() {
+        return new ArchiveBatchFilter("OnlyCrawlLog") {
+            @Override
+            public boolean accept(ArchiveRecordBase record) {
+                record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
+                return true;
             }
         };
     }
@@ -97,11 +101,12 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
      * @throws ArgumentNotValid on null parameters
      * @throws IOFailure on trouble processing the record.
      */
-    public void processRecord(ARCRecord record, OutputStream os) {
+    @Override
+    public void processRecord(ArchiveRecordBase record, OutputStream os) {
         ArgumentNotValid.checkNotNull(record, "ARCRecord record");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
         BufferedReader arcreader
-                = new BufferedReader(new InputStreamReader(record));
+                = new BufferedReader(new InputStreamReader(record.getInputStream()));
         try {
             for(String line = arcreader.readLine(); line != null;
                 line = arcreader.readLine()) {
@@ -154,6 +159,7 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
      * Does nothing, no finishing is needed.
      * @param os Not used.
      */
+    @Override
     public void finish(OutputStream os) {
     }
     
@@ -161,6 +167,7 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
      * Humanly readable representation of this instance.
      * @return The class content.
      */
+    @Override
     public String toString() {
         return getClass().getName() + ", with arguments: Domain = " + domain
                 + ", Filter = " + getFilter();

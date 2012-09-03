@@ -59,6 +59,12 @@ public class Reporting {
      */
     private Reporting() {}
 
+    /** The suffix for the data arc/warc files produced by Heritrix */
+    final static String archivefile_suffix = "-.*\\.(w)?arc(\\.gz)?";
+    
+    /** The suffix for the data arc/warc metadata file created by NetarchiveSuite */
+    final static String metadatafile_suffix = "-metadata-[0-9]+\\.(w)?arc(\\.gz)?";
+       
     /**
      * Submit a batch job to list all files for a job, and report result in a
      * sorted list.
@@ -70,7 +76,7 @@ public class Reporting {
     public static List<String> getFilesForJob(int jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob fileListJob = new FileListJob();
-        fileListJob.processOnlyFilesMatching(jobid + "-.*\\.arc(\\.gz)?");
+        fileListJob.processOnlyFilesMatching(jobid + archivefile_suffix);
         
         File f;
         try {
@@ -102,7 +108,8 @@ public class Reporting {
     public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob cdxJob = new ExtractCDXJob(false);
-        cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+\\.arc(\\.gz)?");
+        cdxJob.processOnlyFilesMatching(jobid + metadatafile_suffix);
+        
         File f;
         try {
             f = File.createTempFile(jobid + "-reports", ".cdx",
@@ -151,7 +158,7 @@ public class Reporting {
         FileBatchJob urlsForDomainBatchJob
                 = new HarvestedUrlsForDomainBatchJob(domain);
         urlsForDomainBatchJob.processOnlyFilesMatching(
-                jobid + "-metadata-[0-9]+\\.arc(\\.gz)?");
+                jobid + metadatafile_suffix);
         return getResultFile(urlsForDomainBatchJob);
     }
     
@@ -196,7 +203,7 @@ public class Reporting {
         ArgumentNotValid.checkNotNullOrEmpty(regexp, "String regexp");
         FileBatchJob crawlLogBatchJob = new CrawlLogLinesMatchingRegexp(regexp);
         crawlLogBatchJob.processOnlyFilesMatching(jobid
-                + "-metadata-[0-9]+\\.arc(\\.gz)?");
+                + metadatafile_suffix);
         return getResultFile(crawlLogBatchJob);
     }
     

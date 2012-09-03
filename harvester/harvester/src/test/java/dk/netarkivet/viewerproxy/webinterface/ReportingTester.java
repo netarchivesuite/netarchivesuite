@@ -167,6 +167,7 @@ public class ReportingTester extends TestCase {
         // Find the crawl-log lines for domain netarkivet.dk in metadata file for job 2
         File file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk", jobId);
         List<String> lines = FileUtils.readListFromFile(file);
+        assertTrue("Should have found a result, but found none", lines.size() > 0);
         StringAsserts.assertStringContains("First line should be dns", "dns:", lines.get(0));
         StringAsserts.assertStringContains("Last line should be www.netarkivet.dk", 
                 "www.netarkivet.dk", lines.get(lines.size() - 1));
