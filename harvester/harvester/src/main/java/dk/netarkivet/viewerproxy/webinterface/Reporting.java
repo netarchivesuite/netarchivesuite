@@ -45,8 +45,8 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
+import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
-import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.viewerproxy.reporting.CrawlLogLinesMatchingRegexp;
 import dk.netarkivet.viewerproxy.reporting.HarvestedUrlsForDomainBatchJob;
 
@@ -107,7 +107,7 @@ public class Reporting {
      */
     public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
-        FileBatchJob cdxJob = new ExtractCDXJob(false);
+        FileBatchJob cdxJob = new ArchiveExtractCDXJob(false);
         cdxJob.processOnlyFilesMatching(jobid + metadatafile_suffix);
         
         File f;
