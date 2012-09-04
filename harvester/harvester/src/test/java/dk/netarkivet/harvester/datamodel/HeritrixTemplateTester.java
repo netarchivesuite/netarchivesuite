@@ -74,7 +74,50 @@ public class HeritrixTemplateTester extends TestCase {
                  + e);
         }
 
-        File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
+        Object[][] orderXmls = {
+        		{"default_orderxml.xml", new Callback() {
+					@Override
+					public void check(File f) {
+					    checkArcValues(f);
+					}
+        		}},
+        		{"default_orderxml_warc.xml", new Callback() {
+        			@Override
+        			public void check(File f) {
+					    checkWarcValues(f);
+        			}
+        		}},
+        		{"default_orderxml_arc_warc.xml", new Callback() {
+        			@Override
+        			public void check(File f) {
+					    checkArcValues(f);
+					    checkWarcValues(f);
+        			}
+        		}}
+        };
+        for (int i=0; i<orderXmls.length; ++i) {
+            checkHeritrixTemplate((String)orderXmls[i][0], (Callback)orderXmls[i][1]);
+        }
+
+        File f = new File(TestInfo.TOPDATADIR, "default_orderxml_nowriter.xml");
+        doc = XmlUtils.getXmlDoc(f);
+        try {
+            HeritrixTemplate ht = new HeritrixTemplate(doc, true);
+            assertFalse("HeritrixTemplate should be missing a write processor",
+            		ht.isVerified());
+        } catch (ArgumentNotValid e) {
+            // expected
+        }
+    }
+
+    private interface Callback {
+    	public void check(File f);
+    }
+
+    private void checkHeritrixTemplate(String orderXmlFilename,
+    		Callback callback) {
+    	Document doc;
+        File f = new File(TestInfo.TOPDATADIR, orderXmlFilename);
         doc = XmlUtils.getXmlDoc(f);
 
         try {
@@ -150,26 +193,39 @@ public class HeritrixTemplateTester extends TestCase {
         checkIllegalValues("The value should be illegal for heritrixFromXpath",
                            doc, HeritrixTemplate.HERITRIX_FROM_XPATH,
                            "@bar.com", "foO@bar", "bar.com");
-        
+
         // Check validation of HeritrixTemplate.ARCHIVER_PATH_XPATH
         // Make sure that Heritrix writes the arcfiles to the correct dir.
-        doc = XmlUtils.getXmlDoc(f);
-        checkLegalValues("The value should be legal for ARCHIVER_PATH_XPATH",
-                doc, HeritrixTemplate.ARCHIVER_PATH_XPATH,
+        callback.check(f);
+    }
+
+    private void checkArcValues(File f) {
+        Document doc = XmlUtils.getXmlDoc(f);
+        checkLegalValues("The value should be legal for ARC_ARCHIVER_PATH_XPATH",
+                doc, HeritrixTemplate.ARC_ARCHIVER_PATH_XPATH,
                 dk.netarkivet.common.Constants.ARCDIRECTORY_NAME);
-        
-        checkIllegalValues("The value should be illegal for ARCHIVER_PATH_XPATH",
-                doc, HeritrixTemplate.ARCHIVER_PATH_XPATH,
+        checkIllegalValues("The value should be illegal for ARC_ARCHIVER_PATH_XPATH",
+                doc, HeritrixTemplate.ARC_ARCHIVER_PATH_XPATH,
                 "*", "", "bar.com");
-   }
+    }
+
+    private void checkWarcValues(File f) {
+        Document doc = XmlUtils.getXmlDoc(f);
+        checkLegalValues("The value should be legal for WARC_ARCHIVER_PATH_XPATH",
+                doc, HeritrixTemplate.WARC_ARCHIVER_PATH_XPATH,
+                dk.netarkivet.common.Constants.WARCDIRECTORY_NAME);
+        checkIllegalValues("The value should be illegal for WARC_ARCHIVER_PATH_XPATH",
+                doc, HeritrixTemplate.WARC_ARCHIVER_PATH_XPATH,
+                "*", "", "bar.com");
+    }
 
     private void checkIllegalValues(String msg, Document doc,
                                     String xpath, String... values) {
         for (String value : values) {
             try {
                 XmlUtils.setNode(doc, xpath, value);
-                new HeritrixTemplate(doc, true);
-                fail(msg + ": '" + value + "' should not be legal");
+                HeritrixTemplate ht = new HeritrixTemplate(doc, true);
+                assertFalse(msg + ": '" + value + "' should not be legal", ht.isVerified());
             } catch (ArgumentNotValid e) {
                 // expected
             }
@@ -182,7 +238,8 @@ public class HeritrixTemplateTester extends TestCase {
         for (String value : values) {
             try {
                 XmlUtils.setNode(doc, xpath, value);
-                    new HeritrixTemplate(doc, true);
+                HeritrixTemplate ht = new HeritrixTemplate(doc, true);
+                assertTrue(msg + ": '" + value + "' should be legal", ht.isVerified());
             } catch (ArgumentNotValid e) {
                 fail(msg + ": '" + value + "' should be legal: " + e);
             }

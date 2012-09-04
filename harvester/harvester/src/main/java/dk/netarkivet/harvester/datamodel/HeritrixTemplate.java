@@ -97,14 +97,23 @@ public class HeritrixTemplate {
             "/crawl-order/controller/map[@name='write-processors']"
             + "/newObject[@name='DeDuplicator']";
 
-    /** Xpath to check, that all templates use the same archiver path,
+    /** Xpath to check, that all templates use the same ARC archiver path,
      * {@link dk.netarkivet.common.Constants#ARCDIRECTORY_NAME}.
      * The archive path tells Heritrix to which directory it shall write
      * its arc files.
      */
-    public static final String ARCHIVER_PATH_XPATH =
+    public static final String ARC_ARCHIVER_PATH_XPATH =
         "/crawl-order/controller/map[@name='write-processors']/"
         + "newObject[@name='Archiver']/stringList[@name='path']/string";
+
+    /** Xpath to check, that all templates use the same WARC archiver path,
+     * {@link dk.netarkivet.common.Constants#WARCDIRECTORY_NAME}.
+     * The archive path tells Heritrix to which directory it shall write
+     * its arc files.
+     */
+    public static final String WARC_ARCHIVER_PATH_XPATH =
+            "/crawl-order/controller/map[@name='write-processors']/"
+            + "newObject[@name='WARCArchiver']/stringList[@name='path']/string";
 
     /** Map from required xpaths to a regular expression describing
      * legal content for the path text. */
@@ -158,11 +167,6 @@ public class HeritrixTemplate {
                            Pattern.compile(USER_AGENT_REGEXP, Pattern.DOTALL));
         requiredXpaths.put(HERITRIX_FROM_XPATH, Pattern.compile(FROM_REGEXP));
 
-        //Required that Heritrix write its arcfiles to the correct dir
-        // relative to the crawldir. This dir is defined by the constant:
-        //dk.netarkivet.common.Constants.ARCDIRECTORY_NAME.
-        requiredXpaths.put(ARCHIVER_PATH_XPATH, Pattern.compile(
-                dk.netarkivet.common.Constants.ARCDIRECTORY_NAME));
         // max-time-sec attribute needed, so we can't override it set
         // a timelimit on broad crawls.
         requiredXpaths.put(MAXTIMESEC_PATH_XPATH, Pattern.compile(
@@ -178,16 +182,20 @@ public class HeritrixTemplate {
      */
     public HeritrixTemplate(Document doc, boolean verify) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
+        String xpath;
+        Node node;
+        Pattern pattern;
+        Matcher matcher;
         if (verify) {
             for (Map.Entry<String, Pattern> required: requiredXpaths.entrySet()) {
-                final String xpath = required.getKey();
-                Node node = doc.selectSingleNode(xpath);
+                xpath = required.getKey();
+                node = doc.selectSingleNode(xpath);
                 ArgumentNotValid.checkTrue(node != null,
                         "Template error: Missing node: "
                         + xpath);
 
-                final Pattern pattern = required.getValue();
-                final Matcher matcher = pattern.matcher(node.getText().trim());
+                pattern = required.getValue();
+                matcher = pattern.matcher(node.getText().trim());
 
                 ArgumentNotValid.checkTrue(
                         matcher.matches(),
@@ -197,6 +205,40 @@ public class HeritrixTemplate {
                         + pattern + "'");
             }
             verified = true;
+            //Required that Heritrix write its ARC/WARC files to the correct dir
+            // relative to the crawldir. This dir is defined by the constant:
+            //dk.netarkivet.common.Constants.ARCDIRECTORY_NAME.
+            //dk.netarkivet.common.Constants.WARCDIRECTORY_NAME.
+            int validArchivePaths = 0;
+            node = doc.selectSingleNode(ARC_ARCHIVER_PATH_XPATH);
+            if (node != null) {
+                pattern = Pattern.compile(
+                		dk.netarkivet.common.Constants.ARCDIRECTORY_NAME);
+                matcher = pattern.matcher(node.getText().trim());
+                ArgumentNotValid.checkTrue(
+                        matcher.matches(),
+                        "Template error: Value '" + node.getText()
+                        + "' of node '" + ARC_ARCHIVER_PATH_XPATH
+                        + "' does not match required regexp '"
+                        + pattern + "'");
+                ++validArchivePaths;
+            }
+            node = doc.selectSingleNode(WARC_ARCHIVER_PATH_XPATH);
+            if (node != null) {
+                pattern = Pattern.compile(
+                		dk.netarkivet.common.Constants.WARCDIRECTORY_NAME);
+                matcher = pattern.matcher(node.getText().trim());
+                ArgumentNotValid.checkTrue(
+                        matcher.matches(),
+                        "Template error: Value '" + node.getText()
+                        + "' of node '" + WARC_ARCHIVER_PATH_XPATH
+                        + "' does not match required regexp '"
+                        + pattern + "'");
+                ++validArchivePaths;
+            }
+            ArgumentNotValid.checkTrue(
+            		validArchivePaths > 0,
+                    "Template error: Missing write processor(s)");
         }
         this.template = (Document) doc.clone();
     }

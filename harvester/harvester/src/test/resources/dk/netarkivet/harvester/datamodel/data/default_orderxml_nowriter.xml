@@ -271,25 +271,7 @@
         	<string name="origin"/>
         	<string name="origin-handling">Use index information</string>
         	<boolean name="stats-per-host">true</boolean>
-    	    </newObject>
-            <newObject name="Archiver" class="org.archive.crawler.writer.ARCWriterProcessor">
-                <boolean name="enabled">true</boolean>
-		<newObject name="Archiver#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
-          		<map name="rules">
-          		</map>
-		</newObject>
-		<boolean name="compress">false</boolean>
-                <string name="prefix">IAH</string>
-                <string name="suffix">${HOSTNAME}</string>
-                <integer name="max-size-bytes">100000000</integer>
-                <stringList name="path">
-                    <string>arcs</string>
-                </stringList>
-                <integer name="pool-max-active">5</integer>
-                <integer name="pool-max-wait">300000</integer>
-                <long name="total-bytes-to-write">0</long>
-		<boolean name="skip-identical-digests">false</boolean>
-            </newObject>
+    	   </newObject>
         </map> <!-- End of Heritrix write processors -->
         <!-- Heritrix post processors --> 
         <map name="post-processors">
