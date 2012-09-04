@@ -238,7 +238,8 @@ public class HeritrixTemplate {
             }
             ArgumentNotValid.checkTrue(
             		validArchivePaths > 0,
-                    "Template error: Missing write processor(s)");
+                    "Template error: "
+            		+ "An ARC or WARC writer processor seems to be missing");
         }
         this.template = (Document) doc.clone();
     }
