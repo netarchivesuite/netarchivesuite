@@ -35,4 +35,8 @@ public class TestInfo {
             = new File("tests/dk/netarkivet/viewerproxy/webinterface/data");
     static final File ORIGINALS_DIR
             = new File(DATA_DIR, "originals");
+    static final File WARC_ORIGINALS_DIR
+    = new File(DATA_DIR, "warc-originals");
+
+    
 }

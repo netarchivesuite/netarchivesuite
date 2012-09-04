@@ -43,6 +43,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
@@ -107,7 +108,12 @@ public class Reporting {
      */
     public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
-        FileBatchJob cdxJob = new ArchiveExtractCDXJob(false);
+        FileBatchJob cdxJob = new ArchiveExtractCDXJob(false) {
+            @Override
+            public ArchiveBatchFilter getFilter() {
+                return ArchiveBatchFilter.EXCLUDE_NON_WARCINFO_RECORDS;
+            }
+        };
         cdxJob.processOnlyFilesMatching(jobid + metadatafile_suffix);
         
         File f;

@@ -29,15 +29,13 @@ import java.io.Serializable;
 import java.util.regex.Pattern;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /** A filter class for batch entries.  Allows testing whether or not
  * to process an entry without loading the entry data first.
  *
- * accept() is given an ARCRecord rather than a ShareableARCRecord to
- * avoid unnecessary reading and copying of data of records
- * not accepted by filter.
+ * accept() is given an ArchiveRecord to avoid unnecessary reading and 
+ * copying of data of records not accepted by filter.
  */
 public abstract class ArchiveBatchFilter implements Serializable {
 
@@ -70,9 +68,10 @@ public abstract class ArchiveBatchFilter implements Serializable {
 
     /** A default filter: Accepts everything. */
     public static final ArchiveBatchFilter NO_FILTER = new ArchiveBatchFilter("NO_FILTER") {
-		public boolean accept(ArchiveRecordBase record) {
-			return true;
-		}
+        @Override
+        public boolean accept(ArchiveRecordBase record) {
+            return true;
+        }
     };
 
     /** The ARCRecord url for the filedesc record (the header record of every 
@@ -80,23 +79,46 @@ public abstract class ArchiveBatchFilter implements Serializable {
      */    
     private static final String ARC_FILE_FILEDESC_HEADER_PREFIX = "filedesc";
 
-    /** The name of the filter that filters out the filedesc record. */
-    private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME = "EXCLUDE_NON_RESPONSE_RECORDS";
+    /** The name of the filter that filters out the filedesc record and/or non-response records. */
+    private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME 
+        = "EXCLUDE_NON_RESPONSE_RECORDS";
+    
+    /** The name of the filter that filters out the filedesc record and/or non-warcinfo records */
+    private static final String EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS_FILTER_NAME 
+        = "EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS";
     
     /** A default filter: Accepts only response records. */
     public static final ArchiveBatchFilter EXCLUDE_NON_RESPONSE_RECORDS = new ArchiveBatchFilter(
             EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME) {
-            public boolean accept(ArchiveRecordBase record) {
-            	if (record.bIsArc) {
-                    return !record.getHeader().getUrl().startsWith(
-                            ARC_FILE_FILEDESC_HEADER_PREFIX);
-            	}
-            	if (record.bIsWarc) {
-                    String warcType = record.getHeader().getHeaderStringValue("WARC-Type");
-                	return "response".equalsIgnoreCase(warcType);
-            	}
-            	return false;
+        @Override
+        public boolean accept(ArchiveRecordBase record) {
+            if (record.bIsArc) {
+                return !record.getHeader().getUrl().startsWith(
+                        ARC_FILE_FILEDESC_HEADER_PREFIX);
             }
+            if (record.bIsWarc) {
+                String warcType = record.getHeader().getHeaderStringValue("WARC-Type");
+                return "response".equalsIgnoreCase(warcType);
+            }
+            return false;
+        }
+    };
+
+    /** A default filter: Accepts only response records. */
+    public static final ArchiveBatchFilter EXCLUDE_NON_WARCINFO_RECORDS = new ArchiveBatchFilter(
+            EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS_FILTER_NAME){
+        @Override
+        public boolean accept(ArchiveRecordBase record) {
+            if (record.bIsArc) {
+                return !record.getHeader().getUrl().startsWith(
+                        ARC_FILE_FILEDESC_HEADER_PREFIX);
+            }
+            if (record.bIsWarc) {
+                String warcType = record.getHeader().getHeaderStringValue("WARC-Type");
+                return !"warcinfo".equalsIgnoreCase(warcType);
+            }
+            return false;
+        }
     };
 
 
@@ -110,6 +132,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
      */
     public static final ArchiveBatchFilter ONLY_HTTP_ENTRIES = new ArchiveBatchFilter(
         ONLY_HTTP_ENTRIES_FILTER_NAME) {
+        @Override
         public boolean accept(ArchiveRecordBase record) {
             return record.getHeader().getUrl().startsWith(EXCLUDE_HTTP_ENTRIES_HTTP_PREFIX);
         }
@@ -125,16 +148,17 @@ public abstract class ArchiveBatchFilter implements Serializable {
      * @throws java.awt.datatransfer.MimeTypeParseException (if mimetype is invalid)
      */
     public static ArchiveBatchFilter getMimetypeBatchFilter(final String mimetype)
-        throws MimeTypeParseException {
+            throws MimeTypeParseException {
         if (!mimetypeIsOk(mimetype)) {
             throw new MimeTypeParseException("Mimetype argument '" + mimetype +
-                "' is invalid");
+                    "' is invalid");
         }
         return new ArchiveBatchFilter(MIMETYPE_BATCH_FILTER_NAME_PREFIX + mimetype) {
-                public boolean accept(ArchiveRecordBase record) {
-                    return record.getHeader().getMimetype().startsWith(mimetype);
-                }
-            };
+            @Override
+            public boolean accept(ArchiveRecordBase record) {
+                return record.getHeader().getMimetype().startsWith(mimetype);
+            }
+        };
     }
 
     /** Regexp for mimetypes. */

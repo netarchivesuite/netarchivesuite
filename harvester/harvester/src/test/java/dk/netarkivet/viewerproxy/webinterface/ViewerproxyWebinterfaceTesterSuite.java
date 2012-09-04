@@ -51,6 +51,7 @@ public class ViewerproxyWebinterfaceTesterSuite {
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ReportingTester.class);
+        suite.addTestSuite(ReportingWarcTester.class);
     }
 
     public static void main(String[] args) {
