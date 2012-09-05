@@ -131,10 +131,15 @@ public abstract class AbstractRemoteFile implements RemoteFile {
                         }
                     }
                 } catch (IOFailure e) {
-                    // log problem and try again!
-                    log.warn("Could not retrieve the file '" + getName() 
-                            + "' in attempt '" + retry + "' with '"
+                    if (retry == 0) {
+                       log.warn("Could not retrieve the file '" + getName()
+                            + "' on first attempt. Will retry up to '"
+                            + getNumberOfRetries() + "' times.", e);
+                    } else {
+                       log.warn("Could not retrieve the file '" + getName()
+                            + "' on retry number '" + retry + "' of '"
                             + getNumberOfRetries() + "' retries.", e);
+                    }
                 }
                 retry++;
                 if (!success && retry < getNumberOfRetries()) {

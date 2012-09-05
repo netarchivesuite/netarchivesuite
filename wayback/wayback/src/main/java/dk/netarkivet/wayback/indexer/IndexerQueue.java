@@ -78,8 +78,10 @@ public class IndexerQueue {
      * queue.
      */
     public synchronized void populate() {
+        log.info("Populating indexing queue from object store.");
         List<ArchiveFile> files = (new ArchiveFileDAO())
                 .getFilesAwaitingIndexing();
+        log.info("Will now add '" + files.size() + "' unindexed files to queue (if they are not already queued).");
         for (ArchiveFile file: files) {
             if (!queue.contains(file)) {
                 log.info("Adding file '" + file.getFilename()
@@ -98,20 +100,23 @@ public class IndexerQueue {
      */
     public void consume() {
         while (true) {
-            ArchiveFile file = null;
             try {
-                file = queue.take();
-                log.info("Taken file '" + file.getFilename()
-                        + "' from indexing queue.");
-                log.info("Files in queue: '" + queue.size() + "'");
-            } catch (InterruptedException e) {
-                String message 
-                    = "Unexpected interrupt in indexer while waiting "
-                            + "for new elements";
-                log.error(message, e);
-                throw new IllegalState(message, e);
+                ArchiveFile file = null;
+                try {
+                    file = queue.take();
+                    log.info("Taken file '" + file.getFilename()
+                            + "' from indexing queue.");
+                    log.info("Files in queue: '" + queue.size() + "'");
+                } catch (InterruptedException e) {
+                    String message
+                        = "Unexpected interrupt in indexer while waiting "
+                                + "for new elements";
+                    log.error(message, e);
+                }
+                file.index();
+            } catch (Exception e) {   //Fault Barrier
+                log.warn("Caught exception at fault barrier for " + Thread.currentThread().getName(), e);
             }
-            file.index();
         }
     }
 
