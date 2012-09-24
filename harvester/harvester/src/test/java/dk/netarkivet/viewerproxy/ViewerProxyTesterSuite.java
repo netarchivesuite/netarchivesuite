@@ -54,7 +54,6 @@ public class ViewerProxyTesterSuite {
         suite.addTestSuite(CommandResolverTester.class);
         suite.addTestSuite(DelegatingControllerTester.class);
         suite.addTestSuite(GetDataResolverTester.class);
-        suite.addTestSuite(LocalCDXCacheTester.class);
         suite.addTestSuite(MissingURIRecorderTester.class);
         suite.addTestSuite(NotifyingURIResolverTester.class);
         suite.addTestSuite(UnknownCommandResolverTester.class);
