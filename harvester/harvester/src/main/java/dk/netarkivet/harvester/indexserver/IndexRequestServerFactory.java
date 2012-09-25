@@ -25,9 +25,9 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
-import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.SettingsFactory;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 public class IndexRequestServerFactory extends SettingsFactory<IndexRequestServerInterface> {
 
@@ -41,6 +41,6 @@ public class IndexRequestServerFactory extends SettingsFactory<IndexRequestServe
          */
         public static IndexRequestServerInterface getInstance() throws ArgumentNotValid {
             return SettingsFactory.getInstance(
-                    ArchiveSettings.INDEXREQUEST_SERVER_CLASS);
+                    HarvesterSettings.INDEXREQUEST_SERVER_CLASS);
         }
 }

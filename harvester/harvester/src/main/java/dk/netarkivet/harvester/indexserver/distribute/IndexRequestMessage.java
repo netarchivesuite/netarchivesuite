@@ -45,12 +45,14 @@ import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.harvester.distribute.HarvesterMessage;
+import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 
 /**
  * Message for requesting and index from the index server, and for giving back
  * the reply.
  */
-public class IndexRequestMessage extends ArchiveMessage {
+public class IndexRequestMessage extends HarvesterMessage {
     /** The log.*/
     private transient Log log
             = LogFactory.getLog(IndexRequestMessage.class.getName());
@@ -103,7 +105,7 @@ public class IndexRequestMessage extends ArchiveMessage {
 
     /**
      * Generate an index request message. Receiver is always the index server
-     * channel, replyto is always this index client.
+     * channel, replyTo is always this index client.
      *
      * @param requestType Type of index requested.
      * @param jobSet Type of index requested.
@@ -171,14 +173,16 @@ public class IndexRequestMessage extends ArchiveMessage {
     public boolean mustReturnIndex() {
         return this.shouldReturnIndex;
     }
-    
+       
     /**
      * Calls visit on the visitor.
      * @param v The visitor of this message.
-     * @see ArchiveMessageVisitor
+     * @see HarvesterMessageVisitor
      */
-    public void accept(ArchiveMessageVisitor v) {
+    @Override
+    public void accept(HarvesterMessageVisitor v) {
         v.visit(this);
+        
     }
 
     /**

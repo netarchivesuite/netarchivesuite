@@ -35,7 +35,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFileSettings;
 import dk.netarkivet.common.distribute.TestRemoteFile;
@@ -45,6 +44,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.StringAsserts;
@@ -234,7 +234,7 @@ public class IndexRequestMessageTester extends TestCase {
     }
 
     private static class IndexRequestMessageHandler
-            extends ArchiveMessageHandler {
+            extends HarvesterMessageHandler {
 
         private boolean b = false;
 

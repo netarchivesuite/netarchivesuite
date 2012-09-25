@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
@@ -36,6 +37,7 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
+import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -43,6 +45,7 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
+import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -118,6 +121,19 @@ public class HarvesterMessageHandlerTester extends TestCase {
             // Expected
         }
     }
+    
+    /*
+     * Class under test for void visit(IndexRequestMessage)
+     */
+    public final void testVisitIndexRequestMessage() {
+        try {
+            tmh.visit(new IndexRequestMessage(RequestType.CDX, new HashSet<Long>(), null));
+            fail("Should have thrown a permission denied.");
+        } catch (PermissionDenied e) {
+            // Expected
+        }
+    }
+    
 
     private static class TestMessageHandler extends HarvesterMessageHandler {
         public TestMessageHandler() {}
@@ -159,8 +175,4 @@ public class HarvesterMessageHandlerTester extends TestCase {
             return testID;
         }
     }
-
-    
-    
-    
 }

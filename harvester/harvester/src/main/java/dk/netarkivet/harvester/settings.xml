@@ -138,5 +138,19 @@ National Library.
                 <metadataFormat>arc</metadataFormat>
             </metadata>
         </harvesting>
+        <indexserver>
+        	<listeningcheckinterval>30000</listeningcheckinterval>
+        	<maxclients>20</maxclients>
+        	<maxthreads>10</maxthreads>
+        	<requestdir>requests</requestdir>
+        	<checkinterval>30000</checkinterval>
+        	<indexingtimeout>259200000</indexingtimeout>
+        	<maxsegments>42</maxsegments>
+        	<satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
+        	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
+        	<indexrequestserver>
+        		<class>dk.netarkivet.archive.indexserver.distribute.IndexRequestServer</class>
+        	</indexrequestserver>	
+        </indexserver>
     </harvester>
 </settings>

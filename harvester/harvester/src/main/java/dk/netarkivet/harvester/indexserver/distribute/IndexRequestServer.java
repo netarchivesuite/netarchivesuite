@@ -45,8 +45,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -62,6 +60,8 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.distribute.IndexReadyMessage;
 import dk.netarkivet.harvester.indexserver.FileBasedCache;
 import dk.netarkivet.harvester.indexserver.IndexRequestServerInterface;
@@ -75,7 +75,7 @@ import dk.netarkivet.harvester.indexserver.IndexRequestServerInterface;
  * telling that only a subset is available, and which, or an error message,
  *
  */
-public final class IndexRequestServer extends ArchiveMessageHandler
+public final class IndexRequestServer extends HarvesterMessageHandler
         implements CleanupIF, IndexRequestServerInterface  {
     /** The class logger. */
     private static Log log = LogFactory.getLog(IndexRequestServer.class);
@@ -110,13 +110,13 @@ public final class IndexRequestServer extends ArchiveMessageHandler
      */
     private IndexRequestServer() {
         maxConcurrentJobs = Settings.getLong(
-                ArchiveSettings.INDEXSERVER_INDEXING_MAXCLIENTS);
+                HarvesterSettings.INDEXSERVER_INDEXING_MAXCLIENTS);
         requestDir = Settings.getFile(
-                ArchiveSettings.INDEXSERVER_INDEXING_REQUESTDIR);
+                HarvesterSettings.INDEXSERVER_INDEXING_REQUESTDIR);
         listeningInterval = Settings.getLong(
-                ArchiveSettings.INDEXSERVER_INDEXING_LISTENING_INTERVAL);
+                HarvesterSettings.INDEXSERVER_INDEXING_LISTENING_INTERVAL);
         satisfactoryThresholdPercentage = Settings.getInt(
-                ArchiveSettings.INDEXSERVER_INDEXING_SATISFACTORYTHRESHOLD_PERCENTAGE);
+                HarvesterSettings.INDEXSERVER_INDEXING_SATISFACTORYTHRESHOLD_PERCENTAGE);
         
         currentJobs = new HashMap<String, IndexRequestMessage>();
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(

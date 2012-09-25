@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -48,6 +47,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * This is an implementation of the RawDataCache specialized for data out
@@ -155,7 +155,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
         } else {
             // Look for data in other bitarchive replicas, if this option is enabled
             if (!Settings.getBoolean(
-                    ArchiveSettings.INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS)) {
+                    HarvesterSettings.INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS)) {
                 log.info("No data found for job '" + id + "' for '" + prefix 
                         + "' in local bitarchive '" + replicaUsed + "'. ");
                 return null;

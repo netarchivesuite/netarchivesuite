@@ -41,6 +41,7 @@ import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
+import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 
 /**
  * This default message handler shields of all unimplemented methods from the
@@ -182,4 +183,18 @@ public abstract class HarvesterMessageHandler
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
+    
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg a {@link IndexRequestMessage}
+     * @throws PermissionDenied when invoked
+     */
+    @Override
+    public void visit(IndexRequestMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+    
+    
 }

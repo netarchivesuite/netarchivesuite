@@ -50,13 +50,13 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
-import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.common.utils.ZipUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * A cache that serves Lucene indices of crawl logs for given job IDs.
@@ -86,7 +86,7 @@ public abstract class CrawlLogIndexCache extends
             = LogFactory.getLog(CrawlLogIndexCache.class.getName());
     /** The time to sleep between each check of completeness.*/
     private final long sleepintervalBetweenCompletenessChecks 
-        = Settings.getLong(ArchiveSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
+        = Settings.getLong(HarvesterSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
     /** Number to separate logs the different combine tasks. */
     private int indexingJobCount = 0;
     
@@ -159,7 +159,7 @@ public abstract class CrawlLogIndexCache extends
             long count = 0;
             Set<IndexingState> outstandingJobs = new HashSet<IndexingState>();
             final int maxThreads = Settings.getInt(
-                    ArchiveSettings.INDEXSERVER_INDEXING_MAXTHREADS);
+                    HarvesterSettings.INDEXSERVER_INDEXING_MAXTHREADS);
             executor = new ThreadPoolExecutor(maxThreads, maxThreads,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>());
@@ -204,7 +204,7 @@ public abstract class CrawlLogIndexCache extends
             
             // Deadline for the combine-task
             long combineTimeout = Settings.getLong(
-                    ArchiveSettings.INDEXSERVER_INDEXING_TIMEOUT);
+                    HarvesterSettings.INDEXSERVER_INDEXING_TIMEOUT);
             long timeOutTime = System.currentTimeMillis() + combineTimeout;
             
             // The indexwriter for the totalindex.
@@ -212,7 +212,7 @@ public abstract class CrawlLogIndexCache extends
             int subindicesInTotalIndex = 0;
             // Max number of segments in totalindex.
             int maxSegments = Settings.getInt(
-                    ArchiveSettings.INDEXSERVER_INDEXING_MAX_SEGMENTS);
+                    HarvesterSettings.INDEXSERVER_INDEXING_MAX_SEGMENTS);
             
             final int ACCUMULATED_SUBINDICES_BEFORE_MERGING = 200;
             

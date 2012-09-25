@@ -115,13 +115,7 @@ public interface ArchiveMessageVisitor {
      * @param msg A received message.
      */
     void visit(RemoveAndGetFileMessage msg);
-
-    /** This method should be overridden to handle the receipt of a message.
-     *
-     * @param msg A received message.
-     */
-    void visit(IndexRequestMessage msg);
-    
+   
     /** This method should be overridden to handle the receipt of a message.
      * 
      * @param msg A received message.

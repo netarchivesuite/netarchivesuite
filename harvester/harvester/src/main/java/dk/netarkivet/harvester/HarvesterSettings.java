@@ -576,6 +576,89 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_ARCHIVE_NAMING_CLASS =
             "settings.harvester.harvesting.heritrix.archiveNaming.class";
+
+    /* ************************* */
+    /* Indexserver - settings.   */
+    /* ************************* */
     
+    /**
+     * <b>settings.harvester.indexserver.requestdir</b>: <br>
+     * Setting for where the requests of the indexserver are stored.
+     */
+    public static String INDEXSERVER_INDEXING_REQUESTDIR
+            = "settings.harvester.indexserver.requestdir";
+    
+    /**
+     * <b>settings.harvester.indexserver.maxclients</b>: <br>
+     * Setting for the max number of clients the indexserver can handle 
+     * simultaneously.
+     */
+    public static String INDEXSERVER_INDEXING_MAXCLIENTS
+            = "settings.harvester.indexserver.maxclients";   
+    
+    /**
+     * <b>settings.harvester.indexserver.maxthreads</b>: <br>
+     * Setting for the max number of threads the deduplication indexer 
+     * shall use.
+     */
+    public static String INDEXSERVER_INDEXING_MAXTHREADS
+            = "settings.harvester.indexserver.maxthreads";
+    /**
+     * <b>settings.harvester.indexserver.checkinterval</b>: <br>
+     * Setting for the time in milliseconds between each 
+     * check of the state of sub-indexing.
+     * Default: 30 seconds (30000 milliseconds).
+     */
+    public static String INDEXSERVER_INDEXING_CHECKINTERVAL
+            = "settings.harvester.indexserver.checkinterval";
+    
+    /**
+     * <b>settings.harvester.indexserver.indexingtimeout</b>: <br>
+     * Setting for the indexing timeout in milliseconds. The default is
+     * 259200000 (3 days).
+     */
+    public static String INDEXSERVER_INDEXING_TIMEOUT
+            = "settings.harvester.indexserver.indexingtimeout";
+    
+    /**
+     * <b>settings.harvester.indexserver.maxsegments</b>: <br>
+     * Setting for how many segments we will accept in our lucene indices.
+     * The default is 15.
+     */
+    public static String INDEXSERVER_INDEXING_MAX_SEGMENTS
+            = "settings.harvester.indexserver.maxsegments";
+    
+    /**
+     * <b>settings.harvester.indexserver.listeningcheckinterval</b>: <br>
+     * Setting for the interval between each listening check in milliseconds. 
+     * The default is 30000 (5 minutes).
+     */
+    public static String INDEXSERVER_INDEXING_LISTENING_INTERVAL 
+        = "settings.harvester.indexserver.listeningcheckinterval";
+    /**
+     * <b>settings.archive.indexserver.satisfactorythresholdpercentage</b>: <br>
+     * Setting for the satisfactory threshold of the indexing result as a percentage.
+     * The default is 70 percent
+     */
+    public static String INDEXSERVER_INDEXING_SATISFACTORYTHRESHOLD_PERCENTAGE
+        = "settings.harvester.indexserver.satisfactorythresholdpercentage";
+    
+    /**
+     * <b>settings.harvester.indexserver.indexrequestserver.class</b>: <br>
+     * Setting for which type of indexrequestserver to use.
+     * The default is: 
+     * {@link dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer}
+     */
+    public static String INDEXREQUEST_SERVER_CLASS
+        = "settings.harvester.indexserver.indexrequestserver.class";
+    
+    /**
+     * b>settings.harvester.indexserver.lookfordataInAllBitarchiveReplicas</b>: <br>
+     * Setting for whether or not data not found in the default bitarchive replica
+     * shall be looked for in other bitarchive replicas.
+     * The default is false.
+     */
+    public static String INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS
+        = "settings.harvester.indexserver.lookfordataInAllBitarchiveReplicas";
 }
 

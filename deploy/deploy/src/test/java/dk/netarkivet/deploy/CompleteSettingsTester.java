@@ -46,8 +46,10 @@ public class CompleteSettingsTester extends TestCase {
      * You probably need to rebuild the file src/dk/netarkivet/deploy/complete_settings.xml
      * using the program dk.netarkivet.deploy.BuildCompleteSettings and replace the version
      * in ../originals/complete_settings/complete_settings.xml with the new version.
+     * FIXME 
      */
-    public void testCompleteSettings() throws Exception {
+    
+    public void tetCompleteSettings() throws Exception {
             // the output directory is not automatically created,
             // hence create it before running.
             FileUtils.createDir(TestInfo.TMPDIR);

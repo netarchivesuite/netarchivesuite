@@ -47,7 +47,6 @@ import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 
 /**
  * This default message handler shields of all unimplemented methods from the
@@ -207,17 +206,6 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(RemoveAndGetFileMessage msg) throws PermissionDenied {
-        ArgumentNotValid.checkNotNull(msg, "msg");
-        deny(msg);
-    }
-
-    /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
-     * @param msg an IndexRequestMessage
-     * @throws PermissionDenied when invoked
-     */
-    public void visit(IndexRequestMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
