@@ -40,7 +40,7 @@ import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
-import dk.netarkivet.archive.indexserver.distribute.IndexRequestMessage;
+import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 
 /**
  * Interface for all classes which handles archive-related messages received

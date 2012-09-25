@@ -48,7 +48,6 @@ public class ArchiveToolsTesterSuite {
      * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(CreateIndexTester.class);
         suite.addTestSuite(GetFileTester.class);
         suite.addTestSuite(GetRecordTester.class);
         suite.addTestSuite(ReestablishAdminDatabaseTester.class);

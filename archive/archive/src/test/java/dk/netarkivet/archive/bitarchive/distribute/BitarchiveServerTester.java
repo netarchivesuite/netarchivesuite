@@ -143,7 +143,7 @@ public class BitarchiveServerTester extends TestCase {
         bas.close();
         LogUtils.flushLogs("BitarchiveServer");
         String log = FileUtils.readFile(TestInfo.LOG_FILE);
-        assertFalse("Should have non-empty log", log.equals(""));
+        assertFalse("Should have non-empty log", log.isEmpty());
         FileAsserts.assertFileContains(
                 "Log should show bitarchive server created",
                 "Created bitarchive server", TestInfo.LOG_FILE);
@@ -160,7 +160,8 @@ public class BitarchiveServerTester extends TestCase {
         SERVER1.mkdirs();
 
         // Set to just over the minimum size guaranteed.        
-        Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "" + (FileUtils.getBytesFree(SERVER1) - 12000));
+        Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, 
+                "" + (FileUtils.getBytesFree(SERVER1) - 12000));
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
 

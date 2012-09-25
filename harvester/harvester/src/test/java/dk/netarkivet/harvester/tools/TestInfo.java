@@ -41,4 +41,11 @@ public class TestInfo {
 
     static final File TEXT_FILE_1 = new File(dk.netarkivet.harvester.tools.TestInfo.WORKING_DIR,"testfile01.txt");
     static final File TEXT_FILE_2 = new File(dk.netarkivet.harvester.tools.TestInfo.WORKING_DIR,"testfile02.txt");
+    
+    /** data files used by createIndex tests. */
+    static final File CACHE_DIR = new File(WORKING_DIR, "cache");
+    static final File CACHE_TEMP_DIR = new File(WORKING_DIR, "tempCache");
+    static final File CACHE_1_FILE = new File(CACHE_TEMP_DIR, "cache_file_1");
+    static final File CACHE_OUTPUT_DIR = new File(WORKING_DIR, "outCache");
+    static final File CACHE_ZIP_FILE = new File(CACHE_OUTPUT_DIR, "cache_file_1.gz");
 }

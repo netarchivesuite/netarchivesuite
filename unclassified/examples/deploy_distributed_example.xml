@@ -379,7 +379,7 @@
                 </viewerproxy>
             </settings>
 
-            <applicationName name="dk.netarkivet.archive.indexserver.IndexServerApplication">
+            <applicationName name="dk.netarkivet.harvester.indexserver.IndexServerApplication">
                 <settings>
                     <common>
                         <jmx>

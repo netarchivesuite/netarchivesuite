@@ -95,7 +95,7 @@ National Library.
         <indexClient>
             <!-- The class instantiated to give access to indices.  Will be
                  created by IndexClientFactory -->
-            <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
+            <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient</class>
             <!-- The amount of time, in milliseconds, we should wait for replies
                  when issuing a call to generate an index over som jobs.
              -->

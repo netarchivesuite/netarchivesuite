@@ -94,7 +94,7 @@
             <reregisterdelay>1</reregisterdelay>
         </monitorregistryClient>
         <indexClient>
-            <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
+            <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient</class>
         <indexRequestTimeout>3600000</indexRequestTimeout><useLocalFtpServer>false</useLocalFtpServer></indexClient> 
         <unixSort>
             <useCommonTempDir>false</useCommonTempDir>

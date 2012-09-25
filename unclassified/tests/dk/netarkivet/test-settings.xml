@@ -128,15 +128,14 @@ National Library.
      			<jmxPassword>R_D</jmxPassword>
      		</heritrix>
      	</harvesting>
-     </harvester>
-     <archive><indexserver>
+     <indexserver>
                 <maxclients>4</maxclients>
                 <maxthreads>2</maxthreads>
                 <requestdir>./tests/commontempdir/requests</requestdir>
                 <checkinterval>5000</checkinterval>
                 <indexingtimeout>172800</indexingtimeout>
         </indexserver>
-    </archive>
+    </harvester>
     <wayback><resourcestore>
     	<cachedir>./tests/commontempdir/cachedir</cachedir>
     </resourcestore>

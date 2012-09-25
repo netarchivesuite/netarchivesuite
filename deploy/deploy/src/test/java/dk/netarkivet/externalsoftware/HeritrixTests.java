@@ -24,7 +24,6 @@
 */
 package dk.netarkivet.externalsoftware;
 
-import dk.netarkivet.archive.indexserver.LuceneUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.*;
@@ -38,6 +37,7 @@ import dk.netarkivet.harvester.harvesting.controller.AbstractJMXHeritrixControll
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
+import dk.netarkivet.harvester.indexserver.LuceneUtils;
 import dk.netarkivet.testutils.*;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import is.hi.bok.deduplicator.DeDuplicator;

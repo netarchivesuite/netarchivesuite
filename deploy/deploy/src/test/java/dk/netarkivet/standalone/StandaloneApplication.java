@@ -27,13 +27,13 @@ package dk.netarkivet.standalone;
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
-import dk.netarkivet.archive.indexserver.IndexServer;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
+import dk.netarkivet.harvester.indexserver.IndexServer;
 import dk.netarkivet.viewerproxy.ViewerProxy;
 
 /**

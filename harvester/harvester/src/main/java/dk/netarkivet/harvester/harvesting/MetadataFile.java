@@ -66,7 +66,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
     /**
      * A pattern identifying a CDX metadata entry.
      *
-     * @see dk.netarkivet.archive.indexserver.CDXDataCache#CDXDataCache()
+     * @see dk.netarkivet.harvester.indexserver.CDXDataCache#CDXDataCache()
      */
     public static final String CDX_PATTERN =
         "metadata://[^/]*/crawl/index/cdx.*";
@@ -74,7 +74,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
     /**
      * A pattern identifying the crawl log metadata entry.
      *
-     * @see dk.netarkivet.archive.indexserver.CrawlLogDataCache
+     * @see dk.netarkivet.harvester.indexserver.CrawlLogDataCache
      * #CrawlLogDataCache()
      */
     public static final String CRAWL_LOG_PATTERN =

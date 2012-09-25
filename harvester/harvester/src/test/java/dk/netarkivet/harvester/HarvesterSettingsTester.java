@@ -32,7 +32,7 @@ import junit.framework.TestCase;
 public class HarvesterSettingsTester extends TestCase {
 
     public void testNoFinalSettingsConstants() {
-        Class c = HarvesterSettings.class;
+        Class<HarvesterSettings> c = HarvesterSettings.class;
         Field[] fields = c.getDeclaredFields();
         for (Field f: fields) {
             // Check that all static public fields are not final

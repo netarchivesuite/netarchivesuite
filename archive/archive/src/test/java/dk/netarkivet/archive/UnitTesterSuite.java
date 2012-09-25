@@ -39,10 +39,10 @@ import dk.netarkivet.archive.bitarchive.distribute.ArchiveBitarchiveDistributeTe
 import dk.netarkivet.archive.checksum.ArchiveChecksumTesterSuite;
 import dk.netarkivet.archive.checksum.distribute.ArchiveChecksumDistributeTesterSuite;
 import dk.netarkivet.archive.distribute.ArchiveDistributeTesterSuite;
-import dk.netarkivet.archive.indexserver.ArchiveIndexServerTesterSuite;
-import dk.netarkivet.archive.indexserver.distribute.ArchiveIndexserverDistributeTesterSuite;
 import dk.netarkivet.archive.tools.ArchiveToolsTesterSuite;
 import dk.netarkivet.archive.webinterface.ArchiveWebinterfaceTesterSuite;
+import dk.netarkivet.harvester.indexserver.ArchiveIndexServerTesterSuite;
+import dk.netarkivet.harvester.indexserver.distribute.ArchiveIndexserverDistributeTesterSuite;
 
 /**
  * This class runs all the archive module unit tests.

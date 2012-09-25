@@ -53,7 +53,7 @@ National Library.
             <reregisterdelay>1</reregisterdelay>
         </monitorregistryClient>
         <indexClient>
-            <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
+            <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient</class>
         </indexClient> 
         <unixSort>
             <useCommonTempDir>false</useCommonTempDir>

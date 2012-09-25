@@ -28,11 +28,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import dk.netarkivet.archive.indexserver.distribute.IndexRequestMessage;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 
 /**
  * Send an {@link IndexRequestMessage} of type {@link RequestType#DEDUP_CRAWL_LOG}

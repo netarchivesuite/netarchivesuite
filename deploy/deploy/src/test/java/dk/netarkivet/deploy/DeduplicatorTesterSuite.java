@@ -30,7 +30,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.archive.indexserver.CDXOriginCrawlLogIteratorTester;
+import dk.netarkivet.harvester.indexserver.CDXOriginCrawlLogIteratorTester;
 
 /**
  * This class runs all tests of Deduplicator functionality.  Must be run as part

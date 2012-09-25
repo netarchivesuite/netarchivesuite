@@ -429,7 +429,7 @@ public final class Constants {
         "dk/netarkivet/wayback/settings.xml",
         "dk/netarkivet/archive/arcrepository/distribute/"
             + "JMSArcRepositoryClientSettings.xml",
-        "dk/netarkivet/archive/indexserver/distribute/"
+        "dk/netarkivet/harvester/indexserver/distribute/"
             + "IndexRequestClientSettings.xml",
         "dk/netarkivet/common/utils/EMailNotificationsSettings.xml",
         "dk/netarkivet/common/utils/FilebasedFreeSpaceProviderSettings.xml",

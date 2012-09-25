@@ -426,7 +426,7 @@ public class ArchiveSettings {
      * <b>settings.archive.indexserver.indexrequestserver.class</b>: <br>
      * Setting for which type of indexrequestserver to use.
      * The default is: 
-     * {@link dk.netarkivet.archive.indexserver.distribute.IndexRequestServer}
+     * {@link dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer}
      */
     public static String INDEXREQUEST_SERVER_CLASS
         = "settings.archive.indexserver.indexrequestserver.class";

@@ -34,7 +34,6 @@ import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 
-import dk.netarkivet.archive.indexserver.distribute.IndexRequestClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -42,6 +41,7 @@ import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
