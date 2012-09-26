@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <fileset-config file-format-version="1.2.0" simple-config="true" sync-formatter="false">
-  <local-check-config name="NetarchiveSuite_Checks" location="NetarchiveSuite_checks.xml" type="external" description="">
+  <local-check-config name="NetarchiveSuite_Checks" location="/home/svc/workspace/netarchivesuite/NetarchiveSuite_checks.xml" type="external" description="">
     <property name="checkstyle.localeCountry" value="dk"/>
     <property name="checkstyle.cache.file" value="checkstyleCache"/>
-    <additional-data name="protect-config-file" value="false"/>
+    <additional-data name="protect-config-file" value="true"/>
   </local-check-config>
-  <fileset name="all" enabled="true" check-config-name="SBForge way" local="false">
+  <fileset name="all" enabled="true" check-config-name="Sun Checks" local="false">
     <file-match-pattern match-pattern="." include-pattern="true"/>
   </fileset>
   <filter name="FileTypesFilter" enabled="true">

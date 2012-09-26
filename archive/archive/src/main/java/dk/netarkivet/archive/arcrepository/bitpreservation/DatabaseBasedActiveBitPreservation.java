@@ -26,7 +26,6 @@
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;

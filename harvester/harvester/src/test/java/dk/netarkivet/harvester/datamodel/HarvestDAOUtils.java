@@ -25,7 +25,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.harvester.datamodel.*;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 
 /**

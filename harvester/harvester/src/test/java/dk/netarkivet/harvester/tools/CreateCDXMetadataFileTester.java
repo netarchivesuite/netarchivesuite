@@ -23,9 +23,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.harvester.tools;
-/**
- * Tests of the tool to create metadata files.
- */
 
 import javax.jms.Message;
 import java.io.BufferedReader;
@@ -56,7 +53,9 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-
+/**
+ * Tests of the tool to create metadata files.
+ */
 public class CreateCDXMetadataFileTester extends TestCase {
     private static String CONTENT = "This is a test message";
     private PreventSystemExit pse = new PreventSystemExit();
