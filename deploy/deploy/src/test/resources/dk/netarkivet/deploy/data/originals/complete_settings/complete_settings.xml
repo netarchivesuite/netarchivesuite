@@ -58,20 +58,6 @@
 	        	</pool>
             </database>
         </admin>
-        <indexserver>
-        	<listeningcheckinterval>30000</listeningcheckinterval>
-        	<maxclients>20</maxclients>
-        	<maxthreads>10</maxthreads>
-        	<requestdir>requests</requestdir>
-        	<checkinterval>30000</checkinterval>
-        	<indexingtimeout>259200000</indexingtimeout>
-        	<maxsegments>42</maxsegments>
-        	<satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
-        	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
-        	<indexrequestserver>
-        		<class>dk.netarkivet.archive.indexserver.distribute.IndexRequestServer</class>
-        	</indexrequestserver>	
-        </indexserver>
     </archive>
 <common>
         <environmentName>DEV</environmentName>
@@ -646,6 +632,20 @@
                 <metadataFormat>arc</metadataFormat>
             </metadata>
         </harvesting>
+        <indexserver>
+        	<listeningcheckinterval>30000</listeningcheckinterval>
+        	<maxclients>20</maxclients>
+        	<maxthreads>10</maxthreads>
+        	<requestdir>requests</requestdir>
+        	<checkinterval>30000</checkinterval>
+        	<indexingtimeout>259200000</indexingtimeout>
+        	<maxsegments>42</maxsegments>
+        	<satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
+        	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
+        	<indexrequestserver>
+        		<class>dk.netarkivet.archive.indexserver.distribute.IndexRequestServer</class>
+        	</indexrequestserver>	
+        </indexserver>
     </harvester><monitor>
         <jmxUsername>monitorRole</jmxUsername>
         <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
