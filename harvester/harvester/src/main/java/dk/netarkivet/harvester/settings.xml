@@ -149,7 +149,7 @@ National Library.
         	<satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
         	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
         	<indexrequestserver>
-        		<class>dk.netarkivet.archive.indexserver.distribute.IndexRequestServer</class>
+        		<class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
         	</indexrequestserver>	
         </indexserver>
     </harvester>
