@@ -219,7 +219,12 @@ public class ArchiveFile {
                 || !batchStatus.getExceptions().isEmpty()) {
             logBatchError(batchStatus);
         } else {
-            collectResults(batchStatus);
+            try {
+                collectResults(batchStatus);
+            } catch (Exception e) {
+                logBatchError(batchStatus);
+                log.error("Failed to retrieve results", e);
+            }
         }
     }
 
