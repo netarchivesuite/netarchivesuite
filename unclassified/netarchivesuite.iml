@@ -632,7 +632,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/wayback-core-1.7.0-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jwat-common-0.9.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -641,7 +641,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jwat-common-0.9.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/wayback-core-1.6.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

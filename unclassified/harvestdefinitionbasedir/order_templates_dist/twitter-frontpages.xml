@@ -58,9 +58,8 @@
                 <string>@politikenfeed</string>
             </stringList>
 
-            <!--The language to which results should be restricted. Unfortunately works very poorly -->
+            <!--The language to which results should be restricted. Leave empty for all languages. -->
             <!--<string name="language">da</string>-->
-
             <!-- DecideRuleSequence. Multiple DecideRules applied in order with last non-PASS the resulting decision -->
             <newObject name="decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
         	<map name="rules">
@@ -190,9 +189,9 @@
             <integer name="preference-embed-hops">1</integer>
             <integer name="total-bandwidth-usage-KB-sec">1500</integer>
             <integer name="max-per-host-bandwidth-usage-KB-sec">500</integer>
-            
+
         <string name="queue-assignment-policy">dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy</string>
-    
+
             <string name="force-queue-assignment"/>
             <boolean name="pause-at-start">false</boolean>
             <boolean name="pause-at-finish">false</boolean>
@@ -204,7 +203,7 @@
             <long name="queue-total-budget">-1</long>
             <string name="cost-policy">org.archive.crawler.frontier.UnitCostAssignmentPolicy</string>
             <long name="snooze-deactivate-ms">300000</long>
-	    <integer name="target-ready-backlog">50</integer>	
+	    <integer name="target-ready-backlog">50</integer>
             <string name="uri-included-structure">org.archive.crawler.util.BdbUriUniqFilter</string>
             <boolean name="dump-pending-at-close">false</boolean>
         </newObject>
@@ -296,7 +295,7 @@
 		</newObject>
                 <newObject name="midfetch-decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
 			<map name="rules">
-          		</map>	
+          		</map>
 		</newObject>
 		<integer name="timeout-seconds">300</integer>
                 <integer name="sotimeout-ms">20000</integer>
@@ -322,7 +321,7 @@
 		<string name="http-bind-address"/>
     </newObject>
         </map> <!-- end of Heritrix Fetch processors -->
-               
+
         <!-- Heritrix extract processors -->
         <map name="extract-processors">
             <newObject name="ExtractorHTTP" class="org.archive.crawler.extractor.ExtractorHTTP">
@@ -366,7 +365,7 @@
 		</newObject>
 	     </newObject>
         </map> <!-- end of Heritrix extract processors -->
-        <!-- Heritrix write processors -->  
+        <!-- Heritrix write processors -->
         <map name="write-processors">
             <newObject name="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
         	<boolean name="enabled">true</boolean>
@@ -405,7 +404,7 @@
     </newObject>
 
         </map> <!-- End of Heritrix write processors -->
-        <!-- Heritrix post processors --> 
+        <!-- Heritrix post processors -->
         <map name="post-processors">
             <newObject name="Updater" class="org.archive.crawler.postprocessor.CrawlStateUpdater">
                 <boolean name="enabled">true</boolean>
@@ -429,7 +428,7 @@
           		</map>
 		</newObject>
             </newObject>
-            
+
     	<newObject name="Scheduler" class="org.archive.crawler.postprocessor.FrontierScheduler">
                 <boolean name="enabled">true</boolean>
 		<newObject name="Scheduler#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
@@ -437,7 +436,7 @@
           		</map>
 		</newObject>
 	</newObject>
-    
+
     	<newObject name="ContentSize" class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor">
         	<boolean name="enabled">true</boolean>
 		<newObject name="ContentSize#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
@@ -445,8 +444,8 @@
           		</map>
 		</newObject>
     	</newObject>
-    
-        </map>  <!-- end of Heritrix post processors --> 
+
+        </map>  <!-- end of Heritrix post processors -->
 
         <map name="loggers">
             <newObject name="crawl-statistics" class="org.archive.crawler.admin.StatisticsTracker">
