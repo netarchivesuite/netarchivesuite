@@ -215,10 +215,14 @@ public class ArchiveFile {
         // is considered to have failed unless the result shows exactly one
         // file processed with no exceptions thrown.
         if (!batchStatus.getFilesFailed().isEmpty() 
-                || batchStatus.getNoOfFilesProcessed() != 1 
+                || batchStatus.getNoOfFilesProcessed() == 0
                 || !batchStatus.getExceptions().isEmpty()) {
             logBatchError(batchStatus);
         } else {
+            if (batchStatus.getNoOfFilesProcessed() > 1) {
+                log.warn("Processed '" + batchStatus.getNoOfFilesProcessed() + "' files for " + this.getFilename() +
+                        ".\n This may indicate a doublet in the arcrepository. Proceeding with caution.");
+            }
             try {
                 collectResults(batchStatus);
             } catch (Exception e) {
@@ -281,10 +285,10 @@ public class ArchiveFile {
      * @param status the status of the batch job.
      */
     private void logBatchError(BatchStatus status) {
-        String message = "Error indexing file '" + getFilename() + "\n"
+        String message = "Error indexing file '" + getFilename() + "'\n"
                 + "Number of files processed: '"
-                + status.getNoOfFilesProcessed() + "\n"
-                + "Number of files failed + '" + status.getFilesFailed().size();
+                + status.getNoOfFilesProcessed() + "'\n"
+                + "Number of files failed '" + status.getFilesFailed().size() + "'";
         if (!status.getExceptions().isEmpty()) {
             message += "\n Exceptions thrown: " + "\n";
             for (FileBatchJob.ExceptionOccurrence e: status.getExceptions()) {

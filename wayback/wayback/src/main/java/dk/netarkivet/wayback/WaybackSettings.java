@@ -134,11 +134,24 @@ public class WaybackSettings {
             "settings.wayback.indexer.producerDelay";
 
     /**
-     * The interval, in milliseconds, between successive runs of the
-     * producer thread.
+     * The interval, in milliseconds, between successive fecthes of the complete
+     * file list from the archive.
      */
     public static String WAYBACK_INDEXER_PRODUCER_INTERVAL =
             "settings.wayback.indexer.producerInterval";
+
+    /**
+     * How long ago to fetch newer files from the archive for indexing,
+     * measured in milliseconds since now.
+     */
+    public static final String WAYBACK_INDEXER_RECENT_PRODUCER_SINCE =
+            "settings.wayback.indexer.recentProducerSince";
+
+    /**
+     * How often to fetch recent files from the archive (milliseconds).
+     */
+    public static final String WAYBACK_INDEXER_RECENT_PRODUCER_INTERVAL =
+            "settings.wayback.indexer.recentProducerInterval";
     
     /**
      * The number of consumer threads to run.

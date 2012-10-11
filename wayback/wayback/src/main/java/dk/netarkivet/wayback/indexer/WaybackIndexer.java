@@ -182,22 +182,35 @@ public class WaybackIndexer implements CleanupIF {
      */
     private static void startProducerThread() {
         Long producerDelay =
-            Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
+                Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
         Long producerInterval =
-            Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_INTERVAL);
-        TimerTask producerTask = new TimerTask() {
+                Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_INTERVAL);
+        Long recentProducerInterval =
+                Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_INTERVAL);
+        TimerTask completeProducerTask = new TimerTask() {
             @Override
             public void run() {
-                log.info("Starting producer thread");
+                log.info("Starting producer task for all filenames");
                 IndexerQueue iq = IndexerQueue.getInstance();
                 iq.populate();
-                FileNameHarvester.harvest();
+                FileNameHarvester.harvestAllFilenames();
                 iq.populate();
             }
         };
         Timer producerThreadTimer = new Timer("ProducerThread");
         producerThreadTimer.schedule(
-                producerTask, producerDelay, producerInterval);
+                completeProducerTask, producerDelay, producerInterval);
+        TimerTask recentProducerTask = new TimerTask() {
+            @Override
+            public void run() {
+                log.info("Starting producer task for recent files");
+                IndexerQueue iq = IndexerQueue.getInstance();
+                iq.populate();
+                FileNameHarvester.harvestRecentFilenames();
+                iq.populate();
+            }
+        };
+        producerThreadTimer.schedule(recentProducerTask, producerDelay, recentProducerInterval);
     }
 
     /**
