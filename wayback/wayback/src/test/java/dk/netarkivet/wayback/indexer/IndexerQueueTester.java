@@ -23,10 +23,13 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.wayback.TestInfo;
 
 public class IndexerQueueTester extends IndexerTestCase {
 
@@ -44,7 +47,7 @@ public class IndexerQueueTester extends IndexerTestCase {
 
     public void testProduce()
             throws NoSuchFieldException, IllegalAccessException {
-        FileNameHarvester.harvest();
+        FileNameHarvester.harvestAllFilenames();
         IndexerQueue.getInstance().populate();
         Field queueField = ReflectUtils.getPrivateField(IndexerQueue.class,
                                                         "queue");
@@ -54,7 +57,29 @@ public class IndexerQueueTester extends IndexerTestCase {
         IndexerQueue.getInstance().populate();
         assertEquals("Queue should still have four objects in it", 6, queue.size());
     }
-    
+
+    public void testProduceRecent()
+            throws NoSuchFieldException, IllegalAccessException {
+
+        File dir = TestInfo.FILE_DIR;
+        int i = 0;
+        for (File file: dir.listFiles()) {
+            if (i < 2) {
+                file.setLastModified(new Date().getTime() - 7*24*3600*1000L);
+                i++;
+            }
+        }
+        FileNameHarvester.harvestRecentFilenames();
+        IndexerQueue.getInstance().populate();
+        Field queueField = ReflectUtils.getPrivateField(IndexerQueue.class,
+                                                        "queue");
+        LinkedBlockingQueue<ArchiveFile> queue =
+                (LinkedBlockingQueue<ArchiveFile>) queueField.get(null);
+        assertEquals("Queue should have four objects in it", 2, queue.size());
+        IndexerQueue.getInstance().populate();
+        assertEquals("Queue should still have four objects in it", 2, queue.size());
+    }
+
     /**
      * testConsume has been removed from unittestersuite, as it fails.
      */

@@ -29,11 +29,11 @@ public class FileNameHarvesterTester extends IndexerTestCase {
 
 
     public void testHarvest() {
-        FileNameHarvester.harvest();
+        FileNameHarvester.harvestAllFilenames();
         ArchiveFileDAO dao = new ArchiveFileDAO();
         List<ArchiveFile> files = dao.getSession().createQuery("from ArchiveFile").list();
         assertEquals("There should be four files", 6, files.size());
-        FileNameHarvester.harvest();
+        FileNameHarvester.harvestAllFilenames();
         assertEquals("There should still be four files", 6, files.size());      
     }
 
