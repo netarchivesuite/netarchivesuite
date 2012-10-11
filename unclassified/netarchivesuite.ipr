@@ -74,6 +74,8 @@
             <emptyLine />
             <package name="" withSubpackages="true" static="false" />
             <emptyLine />
+            <package name="" withSubpackages="true" static="false" />
+            <emptyLine />
             <package name="" withSubpackages="true" static="true" />
           </value>
         </option>
@@ -134,16 +136,6 @@
           <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="gsp">
-          <option name="INDENT_SIZE" value="2" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-          <option name="USE_RELATIVE_INDENTS" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
-        <ADDITIONAL_INDENT_OPTIONS fileType="haml">
           <option name="INDENT_SIZE" value="2" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
           <option name="TAB_SIZE" value="4" />
@@ -243,99 +235,6 @@
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
           <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
-        <codeStyleSettings language="ECMA Script Level 4">
-          <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
-          <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
-          <option name="ALIGN_MULTILINE_ASSIGNMENT" value="true" />
-          <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
-          <option name="ALIGN_MULTILINE_THROWS_LIST" value="true" />
-          <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
-          <option name="ALIGN_MULTILINE_PARENTHESIZED_EXPRESSION" value="true" />
-          <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
-          <option name="CALL_PARAMETERS_WRAP" value="1" />
-          <option name="METHOD_PARAMETERS_WRAP" value="1" />
-          <option name="EXTENDS_LIST_WRAP" value="1" />
-          <option name="THROWS_LIST_WRAP" value="1" />
-          <option name="EXTENDS_KEYWORD_WRAP" value="1" />
-          <option name="THROWS_KEYWORD_WRAP" value="1" />
-          <option name="BINARY_OPERATION_WRAP" value="1" />
-          <option name="BINARY_OPERATION_SIGN_ON_NEXT_LINE" value="true" />
-          <option name="TERNARY_OPERATION_WRAP" value="1" />
-          <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
-          <option name="FOR_STATEMENT_WRAP" value="1" />
-          <option name="ARRAY_INITIALIZER_WRAP" value="1" />
-          <option name="ASSIGNMENT_WRAP" value="1" />
-          <option name="PLACE_ASSIGNMENT_SIGN_ON_NEXT_LINE" value="true" />
-          <option name="WRAP_COMMENTS" value="true" />
-          <option name="ASSERT_STATEMENT_WRAP" value="1" />
-          <option name="IF_BRACE_FORCE" value="3" />
-          <option name="DOWHILE_BRACE_FORCE" value="3" />
-          <option name="WHILE_BRACE_FORCE" value="3" />
-          <option name="FOR_BRACE_FORCE" value="3" />
-          <option name="ENUM_CONSTANTS_WRAP" value="1" />
-          <option name="PARENT_SETTINGS_INSTALLED" value="true" />
-        </codeStyleSettings>
-        <codeStyleSettings language="JavaScript">
-          <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
-          <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
-          <option name="ALIGN_MULTILINE_ASSIGNMENT" value="true" />
-          <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
-          <option name="ALIGN_MULTILINE_THROWS_LIST" value="true" />
-          <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
-          <option name="ALIGN_MULTILINE_PARENTHESIZED_EXPRESSION" value="true" />
-          <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
-          <option name="CALL_PARAMETERS_WRAP" value="1" />
-          <option name="METHOD_PARAMETERS_WRAP" value="1" />
-          <option name="EXTENDS_LIST_WRAP" value="1" />
-          <option name="THROWS_LIST_WRAP" value="1" />
-          <option name="EXTENDS_KEYWORD_WRAP" value="1" />
-          <option name="THROWS_KEYWORD_WRAP" value="1" />
-          <option name="BINARY_OPERATION_WRAP" value="1" />
-          <option name="BINARY_OPERATION_SIGN_ON_NEXT_LINE" value="true" />
-          <option name="TERNARY_OPERATION_WRAP" value="1" />
-          <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
-          <option name="FOR_STATEMENT_WRAP" value="1" />
-          <option name="ARRAY_INITIALIZER_WRAP" value="1" />
-          <option name="ASSIGNMENT_WRAP" value="1" />
-          <option name="PLACE_ASSIGNMENT_SIGN_ON_NEXT_LINE" value="true" />
-          <option name="WRAP_COMMENTS" value="true" />
-          <option name="ASSERT_STATEMENT_WRAP" value="1" />
-          <option name="IF_BRACE_FORCE" value="3" />
-          <option name="DOWHILE_BRACE_FORCE" value="3" />
-          <option name="WHILE_BRACE_FORCE" value="3" />
-          <option name="FOR_BRACE_FORCE" value="3" />
-          <option name="ENUM_CONSTANTS_WRAP" value="1" />
-          <option name="PARENT_SETTINGS_INSTALLED" value="true" />
-        </codeStyleSettings>
-        <codeStyleSettings language="PHP">
-          <option name="ALIGN_MULTILINE_ASSIGNMENT" value="true" />
-          <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
-          <option name="ALIGN_MULTILINE_THROWS_LIST" value="true" />
-          <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
-          <option name="ALIGN_MULTILINE_PARENTHESIZED_EXPRESSION" value="true" />
-          <option name="CALL_PARAMETERS_WRAP" value="1" />
-          <option name="METHOD_PARAMETERS_WRAP" value="1" />
-          <option name="EXTENDS_LIST_WRAP" value="1" />
-          <option name="THROWS_LIST_WRAP" value="1" />
-          <option name="EXTENDS_KEYWORD_WRAP" value="1" />
-          <option name="THROWS_KEYWORD_WRAP" value="1" />
-          <option name="BINARY_OPERATION_WRAP" value="1" />
-          <option name="BINARY_OPERATION_SIGN_ON_NEXT_LINE" value="true" />
-          <option name="TERNARY_OPERATION_WRAP" value="1" />
-          <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
-          <option name="FOR_STATEMENT_WRAP" value="1" />
-          <option name="ARRAY_INITIALIZER_WRAP" value="1" />
-          <option name="ASSIGNMENT_WRAP" value="1" />
-          <option name="PLACE_ASSIGNMENT_SIGN_ON_NEXT_LINE" value="true" />
-          <option name="WRAP_COMMENTS" value="true" />
-          <option name="ASSERT_STATEMENT_WRAP" value="1" />
-          <option name="IF_BRACE_FORCE" value="3" />
-          <option name="DOWHILE_BRACE_FORCE" value="3" />
-          <option name="WHILE_BRACE_FORCE" value="3" />
-          <option name="FOR_BRACE_FORCE" value="3" />
-          <option name="ENUM_CONSTANTS_WRAP" value="1" />
-          <option name="PARENT_SETTINGS_INSTALLED" value="true" />
-        </codeStyleSettings>
       </value>
     </option>
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
@@ -537,7 +436,7 @@
     </list>
   </component>
   <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_STRING" value="-target 1.5" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-target 1.6" />
     <option name="MAXIMUM_HEAP_SIZE" value="512" />
   </component>
   <component name="JavadocGenerationManager">
@@ -940,18 +839,11 @@
     <option name="projectName" value="netarchivesuite" />
   </component>
   <component name="ProjectKey">
-    <option name="state" value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/trunk/netarchivesuite.ipr" />
+    <option name="state" value="https://sbforge.org/svn/netarchivesuite/trunk/netarchivesuite.ipr" />
   </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/netarchivesuite.iml" filepath="$PROJECT_DIR$/netarchivesuite.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-archive/netarchivesuite-archive.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-archive/netarchivesuite-archive.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-common/netarchivesuite-common.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-common/netarchivesuite-common.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-deploy/netarchivesuite-deploy.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-deploy/netarchivesuite-deploy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-harvester/netarchivesuite-harvester.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/netarchivesuite-harvester.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-monitor/netarchivesuite-monitor.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/netarchivesuite-monitor.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/netarchivesuite-viewerproxy.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/netarchivesuite-viewerproxy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/m2-build/netarchivesuite-wayback/netarchivesuite-wayback.iml" filepath="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/netarchivesuite-wayback.iml" />
     </modules>
   </component>
   <component name="ProjectResources">
@@ -1008,7 +900,7 @@
       <method />
     </configuration>
     <configuration default="false" name="All Unittests" type="JUnit" factoryName="JUnit">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="coverage" enabled="false" merge="false" runner="emma" />
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -1080,6 +972,718 @@
                 </list>
               </option>
               <option name="trunkUrl" value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/main/java/dk/netarkivet/archive.mine/arcrepository">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/archive/arcrepository" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/main/java/dk/netarkivet/archive.mine/arcrepositoryadmin">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/archive/arcrepositoryadmin" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/main/java/dk/netarkivet/archive.mine/bitarchive">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/archive/bitarchive" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/main/java/dk/netarkivet/archive.mine/checksum">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/archive/checksum" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/main/java/dk/netarkivet/archive.mine/distribute">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/archive/distribute" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/main/java/dk/netarkivet/archive.mine/indexserver">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/archive/indexserver" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/main/java/dk/netarkivet/archive.mine/tools">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/archive/tools" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/main/java/dk/netarkivet/archive.mine/webinterface">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/archive/webinterface" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/main/java/is/hi">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/test/java/dk/netarkivet/archive.mine/arcrepository">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/archive/arcrepository" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/test/java/dk/netarkivet/archive.mine/arcrepositoryadmin">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/archive/arcrepositoryadmin" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/test/java/dk/netarkivet/archive.mine/bitarchive">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/archive/bitarchive" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/test/java/dk/netarkivet/archive.mine/checksum">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/archive/checksum" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/test/java/dk/netarkivet/archive.mine/distribute">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/archive/distribute" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/test/java/dk/netarkivet/archive.mine/indexserver">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/archive/indexserver" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/test/java/dk/netarkivet/archive.mine/tools">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/archive/tools" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-archive/src/test/java/dk/netarkivet/archive.mine/webinterface">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/archive/webinterface" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/main/java/dk/netarkivet/common.mine/distribute">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/common/distribute" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/main/java/dk/netarkivet/common.mine/exceptions">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/common/exceptions" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/main/java/dk/netarkivet/common.mine/lifecycle">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/common/lifecycle" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/main/java/dk/netarkivet/common.mine/management">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/common/management" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/main/java/dk/netarkivet/common.mine/tools">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/common/tools" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/main/java/dk/netarkivet/common.mine/utils">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/common/utils" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/main/java/dk/netarkivet/common.mine/webinterface">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/common/webinterface" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/test/java/dk/netarkivet/common.mine/arcrepository">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/common/arcrepository" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/test/java/dk/netarkivet/common.mine/distribute">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/common/distribute" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/test/java/dk/netarkivet/common.mine/exceptions">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/common/exceptions" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/test/java/dk/netarkivet/common.mine/lifecycle">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/common/lifecycle" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/test/java/dk/netarkivet/common.mine/management">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/common/management" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/test/java/dk/netarkivet/common.mine/tools">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/common/tools" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/test/java/dk/netarkivet/common.mine/utils">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/common/utils" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-common/src/test/java/dk/netarkivet/common.mine/webinterface">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/tests/dk/netarkivet/common/webinterface" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-deploy/src/test/java/dk/netarkivet/deploy/data">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/main/java/dk/netarkivet/harvester/datamodel">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/main/java/dk/netarkivet/harvester/distribute">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/main/java/dk/netarkivet/harvester/harvesting">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/main/java/dk/netarkivet/harvester/scheduler">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/main/java/dk/netarkivet/harvester/tools">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/main/java/dk/netarkivet/harvester/webinterface">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/test/java/dk/netarkivet/harvester/data">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/test/java/dk/netarkivet/harvester/datamodel">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/test/java/dk/netarkivet/harvester/distribute">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/test/java/dk/netarkivet/harvester/harvesting">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/test/java/dk/netarkivet/harvester/scheduler">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/test/java/dk/netarkivet/harvester/tools">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/test/java/dk/netarkivet/harvester/webinterface">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-harvester/src/test/java/dk/netarkivet/harvester/webinterface/data/originals/harvestdefinitionbasedir/Dir for unpacking DB">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/src/main/java/dk/netarkivet/monitor/distribute">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/src/main/java/dk/netarkivet/monitor/jmx">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/src/main/java/dk/netarkivet/monitor/logging">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/src/main/java/dk/netarkivet/monitor/registry">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/src/main/java/dk/netarkivet/monitor/tools">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/src/main/java/dk/netarkivet/monitor/webinterface">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/src/test/java/dk/netarkivet/monitor/jmx">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/src/test/java/dk/netarkivet/monitor/logging">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/src/test/java/dk/netarkivet/monitor/registry">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-monitor/src/test/java/dk/netarkivet/monitor/webinterface">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet/viewerproxy/distribute">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet/viewerproxy/reporting">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet/viewerproxy/webinterface">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/src/test/java/dk/netarkivet/viewerproxy/data">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/src/test/java/dk/netarkivet/viewerproxy/distribute">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-viewerproxy/src/test/java/dk/netarkivet/viewerproxy/webinterface">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/src/main/java/dk/netarkivet/wayback/accesscontrol">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk/src/dk/netarkivet/wayback/accesscontrol" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/src/main/java/dk/netarkivet/wayback/aggregator">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/src/main/java/dk/netarkivet/wayback/batch">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/src/main/java/dk/netarkivet/wayback/indexer">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/src/test/java/dk/netarkivet/wayback/aggregator">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/src/test/java/dk/netarkivet/wayback/data">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/m2-build/netarchivesuite-wayback/src/test/java/dk/netarkivet/wayback/indexer">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
             </SvnBranchConfiguration>
           </value>
         </entry>
@@ -1207,7 +1811,7 @@
         <root url="jar://$M2_REPO$/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: commons-net:commons-net:2.0">
+    <library name="Maven: commons-net:commons-net:3.0.1">
       <CLASSES>
         <root url="jar://$M2_REPO$/commons-net/commons-net/2.0/commons-net-2.0.jar!/" />
       </CLASSES>
@@ -1593,7 +2197,6 @@
         <root url="jar://$PROJECT_DIR$/lib/heritrix-dependencies/commons-lang-2.3.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/heritrix-dependencies/je-3.3.82.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/heritrix-dependencies/mg4j-1.0.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/lucene-core-2.9.4.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/commons-cli-1.0.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/commons-fileupload-1.2.1.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/libidn-0.5.9.jar!/" />
@@ -1614,7 +2217,8 @@
         <root url="jar://$PROJECT_DIR$/lib/dk.netarkivet.deploy.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/dk.netarkivet.harvester.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/dk.netarkivet.wayback.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/wayback-core-1.6.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jwat-common-0.9.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/wayback-core-1.7.0-SNAPSHOT.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
