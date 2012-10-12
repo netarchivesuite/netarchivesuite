@@ -211,9 +211,7 @@ public class ArchiveFile {
                 + getFilename() + " to " + replicaId);
         BatchStatus batchStatus = client.batch(theJob, replicaId);
         log.info("Batch job for " + this.getFilename() + " returned");
-        // Since we index exactly one file at a time, the batch job
-        // is considered to have failed unless the result shows exactly one
-        // file processed with no exceptions thrown.
+        //Normally expect exactly one file per job.
         if (!batchStatus.getFilesFailed().isEmpty() 
                 || batchStatus.getNoOfFilesProcessed() == 0
                 || !batchStatus.getExceptions().isEmpty()) {

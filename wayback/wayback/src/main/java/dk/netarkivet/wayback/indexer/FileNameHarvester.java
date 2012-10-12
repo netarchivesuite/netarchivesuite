@@ -60,7 +60,7 @@ public class FileNameHarvester {
         PreservationArcRepositoryClient client = ArcRepositoryClientFactory
                 .getPreservationInstance();
         BatchStatus status = client.batch(new FileListJob(),
-                                 Settings.get(WaybackSettings.WAYBACK_REPLICA));
+                Settings.get(WaybackSettings.WAYBACK_REPLICA));
         RemoteFile results = status.getResultFile();
         InputStream is = results.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -72,7 +72,7 @@ public class FileNameHarvester {
                     file.setFilename(line.trim());
                     file.setIndexed(false);
                     log.info("Creating object store entry for '" +
-                             file.getFilename() + "'");
+                            file.getFilename() + "'");
                     dao.create(file);
                 } // If the file is already known in the persistent store, no
                 // action needs to be taken.
@@ -86,37 +86,37 @@ public class FileNameHarvester {
 
 
     /**
-        * This method harvests a list of all the recently added files
+     * This method harvests a list of all the recently added files
      * in the archive.
-        */
-       public static synchronized void harvestRecentFilenames() {
-           ArchiveFileDAO dao = new ArchiveFileDAO();
-           PreservationArcRepositoryClient client = ArcRepositoryClientFactory
-                   .getPreservationInstance();
-           long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
-           Date since = new Date(new Date().getTime() - timeAgo);
-           BatchStatus status = client.batch(new DatedFileListJob(since),
-                                    Settings.get(WaybackSettings.WAYBACK_REPLICA));
-           RemoteFile results = status.getResultFile();
-           InputStream is = results.getInputStream();
-           BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-           String line;
-           try {
-               while ((line = reader.readLine()) != null){
-                   if (!dao.exists(line.trim())) {
-                       ArchiveFile file = new ArchiveFile();
-                       file.setFilename(line.trim());
-                       file.setIndexed(false);
-                       log.info("Creating object store entry for '" +
-                                file.getFilename() + "'");
-                       dao.create(file);
-                   } // If the file is already known in the persistent store, no
-                   // action needs to be taken.
-               }
-           } catch (IOException e) {
-               throw new IOFailure("Error reading remote file", e);
-           } finally {
-               IOUtils.closeQuietly(reader);
-           }
-       }
+     */
+    public static synchronized void harvestRecentFilenames() {
+        ArchiveFileDAO dao = new ArchiveFileDAO();
+        PreservationArcRepositoryClient client = ArcRepositoryClientFactory
+                .getPreservationInstance();
+        long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
+        Date since = new Date(System.currentTimeMillis() - timeAgo);
+        BatchStatus status = client.batch(new DatedFileListJob(since),
+                Settings.get(WaybackSettings.WAYBACK_REPLICA));
+        RemoteFile results = status.getResultFile();
+        InputStream is = results.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        String line;
+        try {
+            while ((line = reader.readLine()) != null){
+                if (!dao.exists(line.trim())) {
+                    ArchiveFile file = new ArchiveFile();
+                    file.setFilename(line.trim());
+                    file.setIndexed(false);
+                    log.info("Creating object store entry for '" +
+                            file.getFilename() + "'");
+                    dao.create(file);
+                } // If the file is already known in the persistent store, no
+                // action needs to be taken.
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Error reading remote file", e);
+        } finally {
+            IOUtils.closeQuietly(reader);
+        }
+    }
 }

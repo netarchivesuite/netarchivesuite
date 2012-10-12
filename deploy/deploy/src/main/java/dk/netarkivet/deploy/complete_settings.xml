@@ -691,13 +691,6 @@
             <finalBatchOutputDir>batchOutputDir</finalBatchOutputDir>
             <tempBatchOutputDir>tempdir</tempBatchOutputDir>
             <maxFailedAttempts>3</maxFailedAttempts>
-             <!--
-             There is a double-strategy for fetching filenames to queue for harvesting
-             i) Fetch all newer files on a short delay
-             ii) Fill any gaps by fetching the complete file list occasionally
-             e.g. Fetch all files from the last day once every half-hour and then fetch the complete file-list
-             daily.
-             -->
             <recentProducerSince>86400000</recentProducerSince>
             <recentProducerInterval>1800000</recentProducerInterval>
             <producerDelay>0</producerDelay>

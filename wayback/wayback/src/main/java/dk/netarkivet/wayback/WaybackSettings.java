@@ -142,13 +142,15 @@ public class WaybackSettings {
 
     /**
      * How long ago to fetch newer files from the archive for indexing,
-     * measured in milliseconds since now.
+     * measured in milliseconds since now. Default values is one day
+     * (86400000)
      */
     public static final String WAYBACK_INDEXER_RECENT_PRODUCER_SINCE =
             "settings.wayback.indexer.recentProducerSince";
 
     /**
      * How often to fetch recent files from the archive (milliseconds).
+     * Default values is a half hour (1800000).
      */
     public static final String WAYBACK_INDEXER_RECENT_PRODUCER_INTERVAL =
             "settings.wayback.indexer.recentProducerInterval";
