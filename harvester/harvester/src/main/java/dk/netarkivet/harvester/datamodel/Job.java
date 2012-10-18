@@ -24,6 +24,9 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import gnu.inet.encoding.IDNA;
+import gnu.inet.encoding.IDNAException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -45,9 +48,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-import gnu.inet.encoding.IDNA;
-import gnu.inet.encoding.IDNAException;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,6 +68,8 @@ import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
 import dk.netarkivet.harvester.harvesting.JobInfo;
+import dk.netarkivet.harvester.scheduler.jobgen.JobGenerator;
+import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
 
 
 /**
@@ -230,21 +232,8 @@ public class Job implements Serializable, JobInfo {
     //Note: The following constants are intentionally left non-static for easy
     //unit testing
 
-    /**
-     * Job limits read from settings during construction.
-     */
-    private final long LIM_MAX_REL_SIZE
-            = Long.parseLong(
-            Settings.get(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE));
-    private final long LIM_MIN_ABS_SIZE
-            = Long.parseLong(
-            Settings.get(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE));
-    private final long LIM_MAX_TOTAL_SIZE
-            = Long.parseLong(Settings.get(
-                    HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE));
-
-    private boolean useQuotaEnforcer =
-        Settings.getBoolean(HarvesterSettings.USE_QUOTA_ENFORCER);
+    private boolean maxObjectsIsSetByQuotaEnforcer =
+        Settings.getBoolean(HarvesterSettings.OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER);
 
     private static final int BYTES_PER_HERITRIX_BYTELIMIT_UNIT = 1024;
 
@@ -275,6 +264,7 @@ public class Job implements Serializable, JobInfo {
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
         ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
         ArgumentNotValid.checkNotNull(priority, "priority");
+
         if (forceMaxObjectsPerDomain < -1) {
             String msg
                 = "forceMaxObjectsPerDomain must be either -1 or positive";
@@ -310,7 +300,7 @@ public class Job implements Serializable, JobInfo {
 
         long maxObjects = NumberUtils.minInf(
                 forceMaxObjectsPerDomain, cfg.getMaxObjects());        
-        setForceMaxObjectsPerDomain(maxObjects);
+        setMaxObjectsPerDomain(maxObjects);
         configurationSetsObjectLimit = (maxObjects != forceMaxObjectsPerDomain);
 
         long maxBytes = NumberUtils.minInf(
@@ -456,20 +446,25 @@ public class Job implements Serializable, JobInfo {
     public void addConfiguration(DomainConfiguration cfg) {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
 
-        log.trace("Adding configuration '" + cfg.toString() + "' to job '"
-                  + cfg.getName() + "'");
+        if (log.isTraceEnabled()) {
+            log.trace("Adding configuration '" + cfg.toString() + "' to job '"
+                    + cfg.getName() + "'");
+        }
 
         if (!underConstruction) {
             final String msg = "Cannot modify job "
                     + this + " as it is no longer under construction";
-            log.debug(msg);
+            if (log.isDebugEnabled()) {
+                log.debug(msg);
+            }
             throw new IllegalState(msg);
         }
 
         // Will accept unacceptable configurations if the map is empty so far
         // This allows configurations that exceed the normal max number of
         // objects
-        if (!canAccept(cfg) && !domainConfigurationMap.isEmpty()) {
+        JobGenerator jobGen = JobGeneratorFactory.getInstance();
+        if (!jobGen.canAccept(this, cfg) && !domainConfigurationMap.isEmpty()) {
             throw new ArgumentNotValid("This job cannot accept the "
                                        + "configuration '" + cfg + "'");
         }
@@ -523,11 +518,13 @@ public class Job implements Serializable, JobInfo {
                         seedListSet.add(seedASCII);
                     }
                 } catch (IDNAException e) {
-                    log.trace("Cannot convert seed "
-                              + seedUrl + " to ASCII", e);
+                    if (log.isTraceEnabled()) {
+                        log.trace("Cannot convert seed " + seedUrl + " to ASCII", e);
+                    }
                 } catch (MalformedURLException e) {
-                    log.trace("Cannot convert seed "
-                              + seedUrl + " to ASCII", e);
+                    if (log.isTraceEnabled()) {
+                        log.trace("Cannot convert seed " + seedUrl + " to ASCII", e);
+                    }
                 }
             }
         }
@@ -621,118 +618,6 @@ public class Job implements Serializable, JobInfo {
         for (String trap : crawlerTraps) {
                 regexpList.addElement("string").addText(trap);
         }
-    }
-
-    /**
-     * Tests if a configuration fits into this Job.
-     * First tests if it's the right type of order-template and bytelimit, and
-     * whether the bytelimit is right for the job.
-     * The Job limits are compared against the configuration
-     * estimates and if no limits are exceeded true is returned
-     * otherwise false is returned.
-     *
-     * @param cfg the configuration to check
-     * @return true if adding the configuration to this Job does
-     *         not exceed any of the Job limits.
-     * @throws ArgumentNotValid if cfg is null
-     */
-    public boolean canAccept(DomainConfiguration cfg) {
-        ArgumentNotValid.checkNotNull(cfg, "cfg");
-
-        // check if domain in DomainConfiguration cfg is not already in this job
-        // domainName is used as key in domainConfigurationMap
-        if (domainConfigurationMap.containsKey(cfg.getDomainName())) {
-            log.debug("Job already has a configuration for Domain '"
-                    + cfg.getDomainName() +"'.");
-            return false;
-        }
-
-        // check if template is same as this job.
-        if (!orderXMLname.equals(cfg.getOrderXmlName())) {
-            log.debug("This Job only accept configurations "
-                    + "using the harvest template '" + orderXMLname
-                    + "'. This configuration uses the harvest template '"
-                    + cfg.getOrderXmlName() + "'.");
-            return false;
-        }
-
-        // By default byte limit is used as base criterion for splitting a 
-        // harvest in config chunks, however the configuration can override 
-        // this and instead use object limit.
-        boolean splitByObjectLimit = Settings.getBoolean(
-                HarvesterSettings.SPLIT_BY_OBJECTLIMIT);
-        if (splitByObjectLimit) {
-            if (NumberUtils.compareInf(
-                    cfg.getMaxObjects(), forceMaxObjectsPerDomain) < 0
-                || (configurationSetsObjectLimit
-                        && NumberUtils.compareInf(
-                                cfg.getMaxObjects(), 
-                                forceMaxObjectsPerDomain) != 0)) {
-                return false;
-            }
-        } else {
-            if (NumberUtils.compareInf(
-                    cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
-                    || (configurationSetsByteLimit
-                            && NumberUtils.compareInf(
-                                    cfg.getMaxBytes(), 
-                                    forceMaxBytesPerDomain) != 0)) {
-                return false;
-            }
-        } 
-
-        assert (maxCountObjects >= minCountObjects) : "basic invariant";
-
-        // The expected number of objects retrieved by this job from
-        // the configuration based on historical harvest results.
-        long expectation = cfg.getExpectedNumberOfObjects(
-                forceMaxObjectsPerDomain,
-                forceMaxBytesPerDomain);
-
-        // Check if total count is exceeded
-        if ((totalCountObjects > 0)
-                && ((expectation + totalCountObjects) > LIM_MAX_TOTAL_SIZE)) {
-            return false;
-        }
-
-        // total count OK
-        // Check if size within existing limits
-        if ((expectation <= maxCountObjects)
-            && (expectation >= minCountObjects)) {
-            // total count ok and within current max and min
-            return true;
-        }
-
-        // Outside current range we need to check the relative difference
-        long absDiff;
-        long xmaxCountObjects = maxCountObjects;
-        long yminCountObjects = minCountObjects;
-
-        // New max or new min ?
-        if (expectation > maxCountObjects) {
-            xmaxCountObjects = expectation;
-        } else {
-            assert (expectation < minCountObjects) : "New minimum expected";
-            yminCountObjects = expectation;
-        }
-
-        absDiff = (xmaxCountObjects - yminCountObjects);
-
-        if ((absDiff == 0) || (absDiff <= LIM_MIN_ABS_SIZE)) {
-            return true; // difference too small to matter
-        }
-
-        if (yminCountObjects == 0) {
-            yminCountObjects = 1; // make sure division succeeds
-        }
-
-        float relDiff = (float) xmaxCountObjects / (float) yminCountObjects;
-        if (relDiff > LIM_MAX_REL_SIZE) {
-            return false;
-        }
-
-        // all tests passed
-        return true;
     }
 
     /**
@@ -1013,7 +898,7 @@ public class Job implements Serializable, JobInfo {
         if ((this.status == JobStatus.NEW
                 || this.status == JobStatus.RESUBMITTED)
                 && newStatus == JobStatus.SUBMITTED) {
-            editOrderXML_fixQuotaEnforcer();
+            editOrderXML_configureQuotaEnforcer();
         }
 
         if (this.status == JobStatus.SUBMITTED
@@ -1096,26 +981,30 @@ public class Job implements Serializable, JobInfo {
     /**
      * @return Returns the forceMaxObjectsPerDomain. 0 means no limit.
      */
-    long getForceMaxObjectsPerDomain() {
+    public long getForceMaxObjectsPerDomain() {
         return forceMaxObjectsPerDomain;
     }
 
     /**
      * Sets the maxObjectsPerDomain value.
-     * @param forceMaxObjectsPerDomain The forceMaxObjectsPerDomain to set.
+     * @param maxObjectsPerDomain The forceMaxObjectsPerDomain to set.
      * 0 means no limit.
      * @throws IOFailure
      *  Thrown from auxiliary method editOrderXML_maxObjectsPerDomain.
      */
-    private void setForceMaxObjectsPerDomain(long forceMaxObjectsPerDomain) {
+    private void setMaxObjectsPerDomain(long maxObjectsPerDomain) {
         if (!underConstruction) {
             final String msg = "Cannot modify job "
                     + this + " as it is no longer under construction";
             log.debug(msg);
             throw new IllegalState(msg);
         }
-        this.forceMaxObjectsPerDomain = forceMaxObjectsPerDomain;
-        editOrderXML_maxObjectsPerDomain(forceMaxObjectsPerDomain);
+        this.forceMaxObjectsPerDomain = maxObjectsPerDomain;
+        editOrderXML_maxObjectsPerDomain(maxObjectsPerDomain);
+
+        if (0L == maxObjectsPerDomain && 0L != forceMaxBytesPerDomain) {
+            setMaxBytesPerDomain(0L);
+        }
     }
 
     /**
@@ -1132,6 +1021,10 @@ public class Job implements Serializable, JobInfo {
         }
         this.forceMaxBytesPerDomain = maxBytesPerDomain;
         editOrderXML_maxBytesPerDomain(maxBytesPerDomain);
+
+        if (0L == maxBytesPerDomain && 0L != forceMaxObjectsPerDomain) {
+            setMaxObjectsPerDomain(0L);
+        }
     }
     
     /**
@@ -1181,7 +1074,7 @@ public class Job implements Serializable, JobInfo {
     private void editOrderXML_maxObjectsPerDomain(
             long forceMaxObjectsPerDomain) {
 
-        String xpath = (useQuotaEnforcer ?
+        String xpath = (maxObjectsIsSetByQuotaEnforcer ?
                 HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH :
                     HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
 
@@ -1222,8 +1115,9 @@ public class Job implements Serializable, JobInfo {
         String xpath = HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
         Node groupMaxSuccessKbNode = orderXMLdoc.selectSingleNode(xpath);
         if (groupMaxSuccessKbNode != null) {
-            if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY)
-            {
+            if (forceMaxBytesPerDomain == 0) {
+                groupMaxSuccessKbNode.setText("0");
+            } else if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
                 // Divide by 1024 since Heritrix uses KB rather than bytes,
                 // and add 1 to avoid to low limit due to rounding.
                 groupMaxSuccessKbNode.setText(
@@ -1262,24 +1156,31 @@ public class Job implements Serializable, JobInfo {
     }
 
     /**
-     * Activates or deactivates the quota-enforcer, according to how the budget
-     * has been set.
+     * Activates or deactivate the quota-enforcer, depending on budget definition.
+     * Object limit can be defined either by using the queue-total-budget property or
+     * the quota enforcer, as per{@link #maxObjectsIsSetByQuotaEnforcer}'s value.
+     * So quota enforcer is set as follows:
+     * <ul>
+     * <li>Object limit is not set by quota enforcer, disabled only if there is no byte limit.</li>
+     * <li>Object limit is set by quota enforcer, so it should be enabled whether
+     * a byte or object limit is set.</li>
+     * </ul>
      */
-    private void editOrderXML_fixQuotaEnforcer() {
+    private void editOrderXML_configureQuotaEnforcer() {
 
         boolean quotaEnabled = true;
 
-        if (!useQuotaEnforcer) {
-            // Quota enforcer should be disabled if there is no byte limit
-            quotaEnabled = forceMaxBytesPerDomain
-                != Constants.HERITRIX_MAXBYTES_INFINITY;
+        if (!maxObjectsIsSetByQuotaEnforcer) {
+            // Object limit is not set by quota enforcer, so it should be disabled only
+            // if there is no byte limit.
+            quotaEnabled = forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
 
         } else {
+            // Object limit is set by quota enforcer, so it should be enabled whether
+            // a byte or object limit is set.
             quotaEnabled =
-                forceMaxObjectsPerDomain
-                    != Constants.HERITRIX_MAXOBJECTS_INFINITY
-                || forceMaxBytesPerDomain
-                != Constants.HERITRIX_MAXBYTES_INFINITY;
+                    forceMaxObjectsPerDomain != Constants.HERITRIX_MAXOBJECTS_INFINITY
+                || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
         }
 
         String xpath = HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
@@ -1526,5 +1427,47 @@ public class Job implements Serializable, JobInfo {
     public String getHarvestFilenamePrefix() {
         return ArchiveFileNamingFactory.getInstance().getPrefix(this);
     }
-    
+
+    /**
+     * @return the forceMaxBytesPerDomain
+     */
+    public long getForceMaxBytesPerDomain() {
+        return forceMaxBytesPerDomain;
+    }
+
+    /**
+     * @return the configurationSetsObjectLimit
+     */
+    public boolean isConfigurationSetsObjectLimit() {
+        return configurationSetsObjectLimit;
+    }
+
+    /**
+     * @return the configurationSetsByteLimit
+     */
+    public boolean isConfigurationSetsByteLimit() {
+        return configurationSetsByteLimit;
+    }
+
+    /**
+     * @return the minCountObjects
+     */
+    public long getMinCountObjects() {
+        return minCountObjects;
+    }
+
+    /**
+     * @return the maxCountObjects
+     */
+    public long getMaxCountObjects() {
+        return maxCountObjects;
+    }
+
+    /**
+     * @return the totalCountObjects
+     */
+    public long getTotalCountObjects() {
+        return totalCountObjects;
+    }
+
 }

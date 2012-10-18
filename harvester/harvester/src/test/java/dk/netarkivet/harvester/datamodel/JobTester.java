@@ -62,6 +62,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -274,9 +275,9 @@ public class JobTester extends DataModelTestCase {
         Domain defaultDomain = TestInfo.getDefaultDomain();
         DomainConfiguration dc = TestInfo.getDefaultConfig(defaultDomain);
         Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
-
+        DefaultJobGenerator jobGen = new DefaultJobGenerator();
         try {
-            job.canAccept(null);
+            jobGen.canAccept(job, null);
             fail("Failed to throw ArgumentNotValid on null argument");
         } catch (ArgumentNotValid e) {
             // expected
@@ -285,7 +286,8 @@ public class JobTester extends DataModelTestCase {
         assertFalse(
                 "Job should not accept configuration asscoiated with domain "
                 + defaultDomain,
-                job.canAccept(
+                jobGen.canAccept(
+                        job,
                         TestInfo.getConfigurationNotDefault(defaultDomain)));
 
         // Test with a config associated with another domain:
@@ -293,7 +295,7 @@ public class JobTester extends DataModelTestCase {
                 TestInfo.getDomainNotDefault());
         assertTrue("Job should accept configuration associated with domain "
                    + anotherConfig.getDomainName(),
-                   job.canAccept(anotherConfig));
+                   jobGen.canAccept(job, anotherConfig));
 
         //Test split according to byte limits
 
@@ -304,15 +306,15 @@ public class JobTester extends DataModelTestCase {
 
         anotherConfig.setMaxBytes(2000000);
         assertTrue("Should accept config with same limit",
-                   job.canAccept(anotherConfig));
+                   jobGen.canAccept(job, anotherConfig));
 
         anotherConfig.setMaxBytes(1000000);
         assertFalse("Should NOT accept config with lower limit",
-                    job.canAccept(anotherConfig));
+                    jobGen.canAccept(job, anotherConfig));
 
         anotherConfig.setMaxBytes(3000000);
         assertTrue("Should accept config with higher limit",
-                   job.canAccept(anotherConfig));
+                   jobGen.canAccept(job, anotherConfig));
 
         //Make a job with limit of 2000000 defined by harvest definition
         dc.setMaxBytes(2000000);
@@ -321,15 +323,15 @@ public class JobTester extends DataModelTestCase {
 
         anotherConfig.setMaxBytes(2000000);
         assertTrue("Should accept config with same limit",
-                   job.canAccept(anotherConfig));
+                   jobGen.canAccept(job, anotherConfig));
 
         anotherConfig.setMaxBytes(1000000);
         assertFalse("Should NOT accept config with lower limit",
-                    job.canAccept(anotherConfig));
+                    jobGen.canAccept(job, anotherConfig));
 
         anotherConfig.setMaxBytes(3000000);
         assertFalse("Should NOT accept config with higher limit",
-                    job.canAccept(anotherConfig));
+                    jobGen.canAccept(job, anotherConfig));
 
         // TODO: Should also be tested that expected size associated with this configuration
         // is with limits (minCountObjects, maxCountObjects). This should be a separate

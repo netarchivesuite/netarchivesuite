@@ -949,6 +949,29 @@ public class HTMLUtils {
         }
     }
 
+    /** Parse an optionally present boolean from a request parameter.
+    *
+    * @param context The context of the web request.
+    * @param param The name of the parameter to parse
+    * @param defaultValue A value to return if the parameter is not present
+    * (may be null)
+    * @return Parsed value or default value if the parameter is missing
+    * or empty. Null will only be returned if passed as the default value.
+    */
+   public static boolean parseOptionalBoolean(
+           PageContext context,
+           String param,
+           boolean defaultValue) {
+       ArgumentNotValid.checkNotNullOrEmpty(param, "String param");
+       String paramValue = context.getRequest().getParameter(param);
+       if (paramValue != null && paramValue.trim().length() > 0) {
+           paramValue = paramValue.trim();
+           return Boolean.parseBoolean(paramValue);
+       } else {
+           return defaultValue;
+       }
+   }
+
     /**
      * Create a localized string representation of the given long.
      * @param i A long integer

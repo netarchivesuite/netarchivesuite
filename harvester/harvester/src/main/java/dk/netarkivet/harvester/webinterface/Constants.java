@@ -72,6 +72,8 @@ public class Constants {
 
     public static final String HARVEST_PARAM = "harvestname";
 
+    public static final String HARVEST_ID = "harvestid";
+
     public static final String COLUMN_PARAM = "column";
 
     public static final String FROM_FILE_PARAM = "fromFile";
@@ -97,6 +99,8 @@ public class Constants {
     public static final String COMMENTS_PARAM = "comments";
 
     public static final String NEXTDATE_PARAM = "nextdate";
+
+    public static final String NEXTDATE_SUBMIT = "setnextdate";
 
     public static final String DELETEDOMAIN_PARAM = "deletedomain";
 

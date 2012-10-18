@@ -42,6 +42,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.scheduler.jobgen.JobGenerator;
+import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
 
 /**
  * Handles the generation of new jobs based on the harvest definitions in
@@ -159,7 +161,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 new Thread("JobGeneratorTask-" + id) {
                     public void run() {
                         try {
-                            int jobsMade = harvestDefinition.createJobs();
+                            JobGenerator jobGen = JobGeneratorFactory.getInstance();
+                            int jobsMade = jobGen.generateJobs(harvestDefinition);
                             log.info("Created " + jobsMade
                                     + " jobs for harvest definition ("
                                     + harvestDefinition.getName() + ")");

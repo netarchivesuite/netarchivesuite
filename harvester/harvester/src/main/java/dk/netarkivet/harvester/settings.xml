@@ -51,24 +51,30 @@ National Library.
             </domain>
         </datamodel>
         <scheduler>
-            <errorFactorPrevResult>10</errorFactorPrevResult>
-            <errorFactorBestGuess>2</errorFactorBestGuess>
-            <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
-            <maxDomainSize>5000</maxDomainSize>
-            <jobs> <!-- One Job corresponds to a Heritrix run -->
-                <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
-                <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
-                <maxTotalSize>2000000</maxTotalSize>
-                <!-- used to set a limit on how long Heritrix should run. 0 means no limit. -->
-            	<maxTimeToCompleteJob>0</maxTimeToCompleteJob>
-            </jobs>
-            <configChunkSize>10000</configChunkSize>
-            <splitByObjectLimit>false</splitByObjectLimit>
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
-            <dispatchperiode>30000</dispatchperiode>
             <jobgenerationperiode>10</jobgenerationperiode>
-            <useQuotaEnforcer>true</useQuotaEnforcer>
+            <jobGen>
+                <class>dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator</class>
+                <objectLimitIsSetByQuotaEnforcer>true</objectLimitIsSetByQuotaEnforcer>
+                <!-- used to set a limit on how long Heritrix should run. 0 means no limit. -->
+                <maxTimeToCompleteJob>0</maxTimeToCompleteJob>
+                <domainConfigSubsetSize>10000</domainConfigSubsetSize>
+                <config>
+                    <!-- Only used by DefaultJobGenerator -->
+                    <splitByObjectLimit>false</splitByObjectLimit>
+                    <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
+                    <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
+                    <maxTotalSize>2000000</maxTotalSize>
+                    <errorFactorPrevResult>10</errorFactorPrevResult>
+                    <errorFactorBestGuess>2</errorFactorBestGuess>
+                    <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
+                    <maxDomainSize>5000</maxDomainSize>
+                    <!-- Only used by FixedDomainConfigurationCountJobGenerator -->
+                    <fixedDomainCountSnapshot>0</fixedDomainCountSnapshot>
+                    <fixedDomainCountFocused>0</fixedDomainCountFocused>
+                </config>
+            </jobGen>
         </scheduler>
         <monitor>
             <!--  1 minute -->

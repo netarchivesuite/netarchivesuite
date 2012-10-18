@@ -232,7 +232,22 @@ if (hdd != null) {
 (<fmt:message key="harvestdefinition.schedule.edit.timeformatDescription"/>)
 <script type="text/javascript">
 setupNextdateCalendar();
+
+function submitNextDate() {
+  var nextDate = document.getElementById("<%=Constants.NEXTDATE_PARAM%>").value;
+  document.location.href="<%=pageContext.getServletContext().getContextPath()%>"
+    + "/Definitions-edit-selective-harvest.jsp?"
+    + "<%=Constants.NEXTDATE_SUBMIT%>=true"
+    + "&<%=Constants.NEXTDATE_PARAM%>=" + nextDate
+    + "&<%=Constants.HARVEST_ID%>=<%=hdd.getOid()%>"
+    + "&<%=Constants.HARVEST_PARAM%>=<%=harvestName%>";
+}
 </script>
+<button type="button"
+        name="<%=Constants.NEXTDATE_SUBMIT%>" id="<%=Constants.NEXTDATE_SUBMIT%>"
+        onclick="submitNextDate();">
+<fmt:message key="harvestdefinition.schedule.edit.setNextDate"/>
+</button>
 <%
 }
 

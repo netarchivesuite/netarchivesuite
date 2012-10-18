@@ -1488,10 +1488,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     @Override
-    public void updateNextdate(PartialHarvest ph, Date nextdate) {
-        ArgumentNotValid.checkNotNull(ph, "PartialHarvest ph");
+    public void updateNextdate(long harvestId, Date nextdate) {
+        ArgumentNotValid.checkNotNull(harvestId, "Long harvest ID");
         ArgumentNotValid.checkNotNull(nextdate, "Date nextdate");
-        if (ph.getOid() == null) {
+        if (harvestId < 0) {
             // Don't need to do anything, if PartialHarvest is not
             // yet stored in database
             return;
@@ -1502,14 +1502,15 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s = connection.prepareStatement("UPDATE partialharvests SET "
                     + "nextdate = ? " + "WHERE harvest_id = ?");
             DBUtils.setDateMaybeNull(s, 1, nextdate);
-            s.setLong(2, ph.getOid());
+            s.setLong(2, harvestId);
             s.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             log.warn("Exception thrown while updating " + " nextdate: "
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
-            DBUtils.rollbackIfNeeded(connection, "Updating nextdate from", ph);
+            DBUtils.rollbackIfNeeded(connection, "Updating nextdate from", harvestId);
             HarvestDBConnection.release(connection);
         }
     }

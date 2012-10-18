@@ -33,6 +33,8 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
+import dk.netarkivet.harvester.scheduler.jobgen.FixedDomainConfigurationCountJobGenerator;
+import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 
 /** Settings specific to the harvester module of NetarchiveSuite. */
 public class HarvesterSettings {
@@ -110,97 +112,124 @@ public class HarvesterSettings {
             = "settings.harvester.datamodel.domain.defaultMaxobjects";
 
     /**
-     * <b>settings.harvester.scheduler.errorFactorPrevResult</b>: <br> Used when
-     * calculating expected size of a harvest of some configuration during
+     * <b>settings.harvester.scheduler.jobGen.config.errorFactorPrevResult</b>: <br>
+     * Used when calculating expected size of a harvest of some configuration during
      * job-creation process. This defines how great a possible factor we will
      * permit a harvest to be larger then the expectation, when basing the
      * expectation on a previous completed job.
      */
     public static String ERRORFACTOR_PERMITTED_PREVRESULT
-            = "settings.harvester.scheduler.errorFactorPrevResult";
+            = "settings.harvester.scheduler.jobGen.config.errorFactorPrevResult";
 
     /**
-     * <b>settings.harvester.scheduler.errorFactorBestGuess</b>: <br> Used when
+     * <b>settings.harvester.scheduler.jobGen.config.errorFactorBestGuess</b>: <br> Used when
      * calculating expected size of a harvest of some configuration during
      * job-creation process. This defines how great a possible factor we will
      * permit a harvest to be larger then the expectation, when basing the
      * expectation on previous uncompleted harvests or no harvest data at all.
      */
     public static String ERRORFACTOR_PERMITTED_BESTGUESS
-            = "settings.harvester.scheduler.errorFactorBestGuess";
+            = "settings.harvester.scheduler.jobGen.config.errorFactorBestGuess";
 
     /**
-     * <b>settings.harvester.scheduler.expectedAverageBytesPerObject</b>: <br>
+     * <b>settings.harvester.scheduler.jobGen.config.expectedAverageBytesPerObject</b>: <br>
      * How many bytes the average object is expected to be on domains where we
      * don't know any better.  This number should grow over time, as of end of
      * 2005 empirical data shows 38000.
      */
     public static String EXPECTED_AVERAGE_BYTES_PER_OBJECT
-            = "settings.harvester.scheduler.expectedAverageBytesPerObject";
+            = "settings.harvester.scheduler.jobGen.config.expectedAverageBytesPerObject";
 
     /**
-     * <b>settings.harvester.scheduler.maxDomainSize</b>: <br> The initial guess
+     * <b>settings.harvester.scheduler.jobGen.config.maxDomainSize</b>: <br> The initial guess
      * of the domain size (number of objects) of an unknown domain.
      */
     public static String MAX_DOMAIN_SIZE
-            = "settings.harvester.scheduler.maxDomainSize";
+            = "settings.harvester.scheduler.jobGen.config.maxDomainSize";
 
     /**
-     * <b>settings.harvester.scheduler.jobs.maxRelativeSizeDifference</b>: <br>
+     * <b>settings.harvester.scheduler.jobGen.config.maxRelativeSizeDifference</b>: <br>
      * The maximum allowed relative difference in expected number of objects
      * retrieved in a single job definition. To avoid job splitting, set the
      * value as Long.MAX_VALUE.
      */
     public static String JOBS_MAX_RELATIVE_SIZE_DIFFERENCE
-            = "settings.harvester.scheduler.jobs.maxRelativeSizeDifference";
+            = "settings.harvester.scheduler.jobGen.config.maxRelativeSizeDifference";
 
     /**
-     * <b>settings.harvester.scheduler.jobs.minAbsoluteSizeDifference</b>: <br>
+     * <b>settings.harvester.scheduler.jobGen.config.minAbsoluteSizeDifference</b>: <br>
      * Size differences for jobs below this threshold are ignored, regardless of
      * the limits for the relative size difference. To avoid job splitting, set
      * the value as Long.MAX_VALUE.
      */
     public static String JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE
-            = "settings.harvester.scheduler.jobs.minAbsoluteSizeDifference";
+            = "settings.harvester.scheduler.jobGen.config.minAbsoluteSizeDifference";
 
     /**
-     * <b>settings.harvester.scheduler.jobs.maxTotalSize</b>: <br> When this
+     * <b>settings.harvester.scheduler.jobGen.config.maxTotalSize</b>: <br> When this
      * limit is exceeded no more configurations may be added to a job. To avoid
      * job splitting, set the value as Long.MAX_VALUE.
      */
     public static String JOBS_MAX_TOTAL_JOBSIZE
-            = "settings.harvester.scheduler.jobs.maxTotalSize";
-    
+            = "settings.harvester.scheduler.jobGen.config.maxTotalSize";
+
     /**
-     * <b>settings.harvester.scheduler.jobs.maxTimeToCompleteJob</b>: 
-     * <br> The limit on how many seconds Heritrix should continue on 
+     * <b>settings.harvester.scheduler.jobGen.maxTimeToCompleteJob</b>:
+     * <br> The limit on how many seconds Heritrix should continue on
      * each job. O means no limit.
      */
     public static String JOBS_MAX_TIME_TO_COMPLETE
-    		= "settings.harvester.scheduler.jobs.maxTimeToCompleteJob";
+            = "settings.harvester.scheduler.jobGen.maxTimeToCompleteJob";
 
     /**
-     * <b>settings.harvester.scheduler.configChunkSize</b>: <br> How many domain
-     * configurations we will process in one go before making jobs out of them.
-     * This amount of domains will be stored in memory at the same time.  To
-     * avoid job splitting, set this value as Long.MAX_VALUE.
+     * <b>settings.harvester.scheduler.jobGen.domainConfigSubsetSize</b>: <br>
+     * How many domain configurations we will process in one go before making jobs out
+     * of them. This amount of domains will be stored in memory at the same time.
+     * To avoid job splitting, set this value as Long.MAX_VALUE.
      */
-    public static String MAX_CONFIGS_PER_JOB_CREATION
-            = "settings.harvester.scheduler.configChunkSize";
+    public static String JOBGEN_DOMAIN_CONFIG_SUBSET_SIZE
+            = "settings.harvester.scheduler.jobGen.domainConfigSubsetSize";
 
     /**
-     * <b>settings.harvester.scheduler.splitByObjectLimit</b>: <br> By default
+     * <b>settings.harvester.scheduler.jobGen.config.fixedDomainCountFocused</b>: <br>
+     * If the job generator is {@link FixedDomainConfigurationCountJobGenerator},
+     * then this parameter represents the maximum number of domain configurations
+     * in a partial harvest job.
+     */
+    public static String JOBGEN_FIXED_CONFIG_COUNT_FOCUSED
+            = "settings.harvester.scheduler.jobGen.config.fixedDomainCountFocused";
+
+    /**
+     * <b>settings.harvester.scheduler.jobGen.config.fixedDomainCountSnapshot</b>: <br>
+     * If the job generator is {@link FixedDomainConfigurationCountJobGenerator},
+     * then this parameter represents the maximum number of domain configurations
+     * in a full harvest job.
+     */
+    public static String JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT
+            = "settings.harvester.scheduler.jobGen.config.fixedDomainCountSnapshot";
+
+    /**
+     * <b>settings.harvester.scheduler.jobGen.class</b>: <br>
+     * The fully qualified class name of the chosen job generator implementation,
+     * currently either {@link DefaultJobGenerator}
+     * or {@link FixedDomainConfigurationCountJobGenerator}.
+     * The default is {@link DefaultJobGenerator}.
+     */
+    public static String JOBGEN_CLASS = "settings.harvester.scheduler.jobGen.class";
+
+    /**
+     * <b>settings.harvester.scheduler.jobGen.config.splitByObjectLimit</b>: <br> By default
      * the byte limit is used as the base criterion for how many domain
      * configurations are put into one harvest job. However if this parameter is
      * set to "true", then the object limit is used instead as the base
      * criterion.
      */
     public static String SPLIT_BY_OBJECTLIMIT =
-            "settings.harvester.scheduler.splitByObjectLimit";
+            "settings.harvester.scheduler.jobGen.config.splitByObjectLimit";
 
     /**
-     * <b>settings.harvester.scheduler.useQuotaEnforcer</b>: <br> Controls
-     * whether the domain configuration object limit should be set in
+     * <b>settings.harvester.scheduler.jobGen.objectLimitIsSetByQuotaEnforcer</b>: <br>
+     * Controls whether the domain configuration object limit should be set in
      * Heritrix's crawl order through the QuotaEnforcer configuration (parameter
      * set to true) or through the frontier parameter 'queue-total-budget' (
      * parameter set to false).
@@ -208,8 +237,8 @@ public class HarvesterSettings {
      * Default value is true, as legacy implementation was to use only
      * the QuotaEnforcer.
      */
-    public static String USE_QUOTA_ENFORCER =
-            "settings.harvester.scheduler.useQuotaEnforcer";
+    public static String OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER =
+            "settings.harvester.scheduler.jobGen.objectLimitIsSetByQuotaEnforcer";
 
     /**
      * <b>settings.harvester.scheduler.jobtimeouttime</b>:<br /> Time before a

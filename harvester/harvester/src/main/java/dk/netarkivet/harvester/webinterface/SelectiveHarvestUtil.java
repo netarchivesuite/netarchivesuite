@@ -74,6 +74,34 @@ public final class SelectiveHarvestUtil {
         ArgumentNotValid.checkNotNull(unknownDomains, "List unknownDomains");
         ArgumentNotValid.checkNotNull(illegalDomains, "List illegalDomains");
 
+        // Was the set next date button pressed?
+        boolean setNextDateOnly = HTMLUtils.parseOptionalBoolean(
+                context,
+                Constants.NEXTDATE_SUBMIT,
+                false);
+        if (setNextDateOnly) {
+            HTMLUtils.forwardOnEmptyParameter(context,
+                    Constants.NEXTDATE_PARAM, Constants.NEXTDATE_PARAM);
+            HTMLUtils.forwardOnEmptyParameter(context,
+                    Constants.HARVEST_ID, Constants.HARVEST_ID);
+
+            //If the override date is set, parse it and set the override date.
+            Date date = HTMLUtils.parseOptionalDate(
+                    context,
+                    Constants.NEXTDATE_PARAM,
+                    I18n.getString(
+                            dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE,
+                            context.getResponse().getLocale(),
+                            "harvestdefinition.schedule.edit.timeformat"),
+                    null);
+            long harvestId =
+                    HTMLUtils.parseOptionalLong(context, Constants.HARVEST_ID, -1L);
+
+            HarvestDefinitionDAO.getInstance().updateNextdate(harvestId, date);
+
+            return; // nothin' more to do!
+        }
+
         ServletRequest request = context.getRequest();
         if (request.getParameter(Constants.UPDATE_PARAM) == null) {
             return; //nothing to do.

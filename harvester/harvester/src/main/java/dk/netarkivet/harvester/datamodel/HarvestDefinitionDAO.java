@@ -298,8 +298,8 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      * @param ph A given PartialHarvest (i.e. Selective Harvest).
      * @param nextdate A new date for the next harvest run.
      */
-    public abstract void updateNextdate(PartialHarvest ph, Date nextdate);
-    
+    public abstract void updateNextdate(long harvestId, Date nextdate);
+
     /**
      * Add a domainconfiguration to a PartialHarvest.
      * @param hdd a given PartialHarvest

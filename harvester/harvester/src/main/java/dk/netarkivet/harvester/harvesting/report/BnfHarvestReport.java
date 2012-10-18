@@ -53,7 +53,7 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
  * This implementation of the harvest report has the same pre-processing as
  *  {@link LegacyHarvestReport}, but is intended to be used with a crawl order
  *  that sets budget using "queue-total-budget" instead of the QuotaEnforcer
- *   (@see {@link HarvesterSettings#USE_QUOTA_ENFORCER}).
+ *   (@see {@link HarvesterSettings#OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER}).
  *  Hence post-processing cannot rely any more on annotations added by
  *  QuotaEnforcer anymore and thus simply compares actual document counts to
  *  crawl and configuration budgets.

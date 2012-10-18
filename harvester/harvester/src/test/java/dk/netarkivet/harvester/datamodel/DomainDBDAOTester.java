@@ -51,6 +51,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
+import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 
 /**
  * Unit tests for the class dk.netarkivet.harvester.datamodel.DomainDBDAO.
@@ -446,7 +447,8 @@ public class DomainDBDAOTester extends DataModelTestCase {
         //DomainDAO dao = DomainDAO.getInstance();
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
         HarvestDefinition hd = hdDao.read(Long.valueOf(42));
-        hd.createJobs();
+        DefaultJobGenerator jobGen = new DefaultJobGenerator();
+        jobGen.generateJobs(hd);
         JobDAO jdao = JobDBDAO.getInstance();
         Job j = jdao.getAll().next();
         Map<String,String> dcMap  = j.getDomainConfigurationMap();
@@ -483,7 +485,9 @@ public class DomainDBDAOTester extends DataModelTestCase {
     public void testGetDomainHarvestInfo() {
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
         HarvestDefinition hd = hdDao.read(Long.valueOf(42));
-        hd.createJobs();
+
+        DefaultJobGenerator jobGen = new DefaultJobGenerator();
+        jobGen.generateJobs(hd);
         JobDAO jdao = JobDBDAO.getInstance();
         Iterator<Job> jobs = jdao.getAll();
         Job j = jobs.next();

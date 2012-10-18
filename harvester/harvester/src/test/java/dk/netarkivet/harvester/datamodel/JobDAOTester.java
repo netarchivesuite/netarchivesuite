@@ -32,6 +32,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.harvester.webinterface.HarvestStatusTester;
 import org.dom4j.Document;
@@ -71,10 +72,11 @@ public class JobDAOTester extends DataModelTestCase {
                      INITIAL_JOB_COUNT, dao.getCountJobs());
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
         HarvestDefinition hd = hdDao.read(Long.valueOf(42));
-        int jobsMade = hd.createJobs();
+        DefaultJobGenerator jobGen = new DefaultJobGenerator();
+        int jobsMade = jobGen.generateJobs(hd);
         assertEquals("Must find same number of jobs as we created",
                      jobsMade + INITIAL_JOB_COUNT, dao.getCountJobs());
-        jobsMade = hd.createJobs();
+        jobsMade = jobGen.generateJobs(hd);
         assertEquals("Must find all the jobs we have created",
                      2 * jobsMade + INITIAL_JOB_COUNT,
                      dao.getCountJobs());

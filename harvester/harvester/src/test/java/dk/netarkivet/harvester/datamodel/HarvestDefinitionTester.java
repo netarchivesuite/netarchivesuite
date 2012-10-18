@@ -42,6 +42,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.testutils.CollectionAsserts;
 
 
@@ -445,13 +446,14 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         assertTrue("Before creating any jobs, runNow() should be true",
                    harvestDef.runNow(new Date()));
 
-        harvestDef.createJobs();
+        DefaultJobGenerator jobGen = new DefaultJobGenerator();
+        jobGen.generateJobs(harvestDef);
 
         assertFalse("After all subsequent creations of jobs, runNow() "
                 + "should return false",
                 harvestDef.runNow(new Date()));
 
-        harvestDef.createJobs();
+        jobGen.generateJobs(harvestDef);
         assertFalse("After all subsequent creations of jobs, runNow() should return false",
                     harvestDef.runNow(new Date()));
     }
@@ -513,7 +515,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         int numEvents0 = harvestDef0.getNumEvents();
         Date nextDate0 = harvestDef0.getNextDate();
-        harvestDef0.createJobs();
+        DefaultJobGenerator jobGen = new DefaultJobGenerator();
+        jobGen.generateJobs(harvestDef0);
         assertEquals("Must count up number of events on generating jobs",
                      numEvents0 + 1, harvestDef0.getNumEvents());
         assertEquals("Must set next date on generating jobs",
@@ -521,7 +524,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                      harvestDef0.getNextDate());
 
         int numEvents1 = harvestDef1.getNumEvents();
-        harvestDef1.createJobs();
+        jobGen.generateJobs(harvestDef1);
         assertEquals("Must count up number of events on generating jobs",
                      numEvents1 + 1, harvestDef1.getNumEvents());
         assertEquals("No more events, schedule time ended",
@@ -529,7 +532,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                      harvestDef1.getNextDate());
 
         int numEvents2 = harvestDef2.getNumEvents();
-        harvestDef2.createJobs();
+        jobGen.generateJobs(harvestDef2);
         assertEquals("Must count up number of events on generating jobs",
                      numEvents2 + 1, harvestDef2.getNumEvents());
         assertEquals("No more events, just one harvest",
@@ -566,7 +569,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         assertTrue("Should be ready to create jobs", hd.runNow(now));
 
         //One job should have been created
-        assertEquals("Should create one job", 1, hd.createJobs());
+        assertEquals("Should create one job", 1, new DefaultJobGenerator().generateJobs(hd));
 
         //Next date should be in the future
         assertTrue("Next date should be in the future",
@@ -666,7 +669,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
         hd = hdao.read(hd.getOid());
-        int jobsMade = hd.createJobs();
+        DefaultJobGenerator jobGen = new DefaultJobGenerator();
+        int jobsMade = jobGen.generateJobs(hd);
 
         // verify only one job is created
         assertEquals("Limits set to allow one job", 1, jobsMade);
@@ -677,7 +681,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "3500");
         hd = hdao.read(hd.getOid());
-        jobsMade = hd.createJobs();
+        jobsMade = jobGen.generateJobs(hd);
 
         // verify only one job is created
         assertEquals("Limits set to allow one job", 1, jobsMade);
@@ -689,7 +693,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
         hd = hdao.read(hd.getOid());
-        jobsMade = hd.createJobs();
+        jobsMade = jobGen.generateJobs(hd);
 
 
         // verify that 2 jobs are created
@@ -702,7 +706,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "10");
         hd = hdao.read(hd.getOid());
-        jobsMade = hd.createJobs();
+        jobsMade = jobGen.generateJobs(hd);
 
         // verify one job per configuration
         assertEquals("Limits set to allow 4 jobs", 4, jobsMade);
@@ -725,7 +729,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE,
                      "10000");
-        int jobsMade = hd.createJobs();
+        DefaultJobGenerator jobGen = new DefaultJobGenerator();
+        int jobsMade = jobGen.generateJobs(hd);
 
         assertEquals("3 different order.xmls used", 3, jobsMade);
     }
@@ -745,7 +750,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
         Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
-        int jobsMade = hd.createJobs();
+        DefaultJobGenerator jobGen = new DefaultJobGenerator();
+        int jobsMade = jobGen.generateJobs(hd);
 
         // verify only one job is created
         assertEquals("Limits set to allow one job", 1, jobsMade);
@@ -754,7 +760,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
         Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "6500");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
-        jobsMade = hd.createJobs();
+        jobsMade = jobGen.generateJobs(hd);
 
         // verify that 2 jobs are created
         assertEquals("Limits set to allow 2 jobs", 2, jobsMade);
@@ -764,7 +770,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
         Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "0");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
-        jobsMade = hd.createJobs();
+        jobsMade = jobGen.generateJobs(hd);
 
         // verify one job per configuration
         assertEquals("Limits set to allow 4 jobs", 4, jobsMade);
@@ -978,7 +984,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
     private static List<Job> createAndGetJobs(HarvestDefinition fh) {
         List<Job> oldJobs = IteratorUtils.toList(JobDAO.getInstance().getAll());
-        fh.createJobs();
+        new DefaultJobGenerator().generateJobs(fh);
         List<Job> createdJobs
             = IteratorUtils.toList(JobDAO.getInstance().getAll());
         for (Iterator<Job> i = createdJobs.iterator(); i.hasNext(); ) {

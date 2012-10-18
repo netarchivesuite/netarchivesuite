@@ -96,7 +96,7 @@
                 <minAbsoluteSizeDifference>100</minAbsoluteSizeDifference>
                 <maxTotalSize>1000000</maxTotalSize>
             </jobs>
-            <configChunkSize>10000</configChunkSize>
+            <domainConfigSubsetSize>10000</domainConfigSubsetSize>
             <splitByObjectLimit>false</splitByObjectLimit>
         </harvestdefinition>
 

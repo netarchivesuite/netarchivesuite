@@ -212,35 +212,34 @@ The search-system are now able to search in different fields of the 'domain' tab
             <td><fmt:message key="prompt;enter.domain.query"/></td>
             <td><span id="focusElement">
                 <input name="<%=Constants.DOMAIN_QUERY_STRING_PARAM%>"
-                	size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>" value=""/>
+                  size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>" value=""/>
                 </span>
             </td>
+            <td><fmt:message key="may.use.wildcards"/></td>
         </tr>
-        <tr>    
+        <tr>
             <!--  add selector for what kind of search to make -->
             <td><fmt:message key="search.domains.by"/></td>
             <td><select name="<%=Constants.DOMAIN_QUERY_TYPE_PARAM%>">
                     <%
-                    	for(DomainSearchType aSearchType: DomainSearchType.values()) {
+                      for(DomainSearchType aSearchType: DomainSearchType.values()) {
                             String selected = "";
-                            
+
                             if (aSearchType.equals(DomainSearchType.NAME)) {
                                 selected = "selected = \"selected\"";
                             }
                             %> <option value="<%=HTMLUtils.escapeHtmlValues(aSearchType.name())%>"<%=selected%>>
                                 <fmt:message key="<%=HTMLUtils.escapeHtmlValues(aSearchType.getLocalizedKey())%>"/>
                                </option>
-                            <%             
-                    	}
+                            <%
+                      }
                     %>
                 </select>
                 </td>
-        </tr>
-        <tr>        
-            <td><input type="submit" value="<fmt:message key="search"/>"/></td>
+                <td>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="2"><fmt:message key="may.use.wildcards"/></td>
+            <td colspan="3"><input type="submit" value="<fmt:message key="search"/>"/></td>
         </tr>
     </table>
 </form>

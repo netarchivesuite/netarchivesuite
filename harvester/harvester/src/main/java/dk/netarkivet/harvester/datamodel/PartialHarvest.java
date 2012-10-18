@@ -108,75 +108,6 @@ public class PartialHarvest extends HarvestDefinition {
     }
 
     /**
-     * Generates jobs in files from this harvest definition, and updates the
-     * schedule for when the harvest definition should happen next time.
-     *
-     * Create Jobs from the domainconfigurations in this harvestdefinition
-     * and the current value of the limits in Settings.
-     * Multiple jobs are generated if different order.xml-templates are used,
-     * or if the size of the job is inappropriate.
-     *
-     * The following settings are used:
-     * {@link HarvesterSettings#JOBS_MAX_RELATIVE_SIZE_DIFFERENCE}:
-     * The maximum relative difference between the smallest and largest
-     * number of objects expected in a job
-     * <p/>
-     * {@link HarvesterSettings#JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE}:
-     * Size differences below this threshold are ignored even if
-     * the relative difference exceeds {@link HarvesterSettings#JOBS_MAX_RELATIVE_SIZE_DIFFERENCE}
-     * <p/>
-     * {@link HarvesterSettings#JOBS_MAX_TOTAL_JOBSIZE}:
-     * The upper limit on the total number of objects that a job may
-     * retrieve
-     *
-     * Also updates the harvest definition to schedule the next event using
-     * the defined schedule. Will skip events if the next event would be in the
-     * past when using the schedule definition.
-     *
-     * @return Number of jobs created
-     */
-    public int createJobs() {
-        //Generate jobs
-        int jobsMade = super.createJobs();
-
-        //Calculate next event
-        Date now = new Date();
-        Date nextEvent = schedule.getNextEvent(getNextDate(), getNumEvents());
-
-        //Refuse to schedule event in the past
-        if (nextEvent != null && nextEvent.before(now)) {
-            int eventsSkipped = 0;
-            while (nextEvent != null && nextEvent.before(now)) {
-                nextEvent = schedule.getNextEvent(nextEvent, getNumEvents());
-                eventsSkipped++;
-            }
-            log.warn("Refusing to schedule harvest definition '"
-                        + getName() + "' in the past. Skipped "
-                        + eventsSkipped + " events. Old nextDate was "
-                        + nextDate
-                        + " new nextDate is " + nextEvent);
-        }
-
-        //Set next event
-        setNextDate(nextEvent);
-        log.trace("Next event for harvest definition " + getName()
-                  + " happens: "
-                  + (nextEvent == null ? "Never" : nextEvent.toString()));
-
-        return jobsMade;
-    }
-
-    /**
-     * Get a new Job suited for this type of HarvestDefinition.
-     *
-     * @param cfg The configuration to use when creating the job
-     * @return a new job
-     */
-    protected Job getNewJob(DomainConfiguration cfg) {
-        return Job.createJob(getOid(), cfg, numEvents);
-    }
-
-    /**
      * Returns the schedule defined for this harvest definition.
      *
      * @return schedule
@@ -331,14 +262,14 @@ public class PartialHarvest extends HarvestDefinition {
      * Always returns no limit.
      * @return 0, meaning no limit.
      */
-    protected long getMaxCountObjects() {
+    public long getMaxCountObjects() {
         return Constants.HERITRIX_MAXOBJECTS_INFINITY;
     }
 
     /** Always returns no limit.
      * @return -1, meaning no limit.
      */
-    protected long getMaxBytes() {
+    public long getMaxBytes() {
         return Constants.HERITRIX_MAXBYTES_INFINITY;
     }
 

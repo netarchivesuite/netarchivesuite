@@ -132,17 +132,23 @@
       </heritrix>
     </harvesting>
     <scheduler>
-      <maxDomainSize>5000</maxDomainSize>
-      <jobs>
-        <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
-        <maxTotalSize>2000000</maxTotalSize>
-        <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
-      </jobs>
-      <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
-      <configChunkSize>10000</configChunkSize>
-      <splitByObjectLimit>false</splitByObjectLimit>
-      <errorFactorBestGuess>20</errorFactorBestGuess>
-      <errorFactorPrevResult>10</errorFactorPrevResult>
+      <!-- one week in seconds  - time before jobs terminate -->
+      <jobtimeouttime>604800</jobtimeouttime>
+      <jobgenerationperiode>60</jobgenerationperiode>
+      <jobGen>
+          <class>dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator</class>
+          <domainConfigSubsetSize>10000</domainConfigSubsetSize>
+          <config>
+              <splitByObjectLimit>false</splitByObjectLimit>
+              <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
+              <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
+              <maxTotalSize>2000000</maxTotalSize>
+              <errorFactorPrevResult>10</errorFactorPrevResult>
+              <errorFactorBestGuess>20</errorFactorBestGuess>
+              <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
+              <maxDomainSize>5000</maxDomainSize>
+          </config>
+      </jobGen>
     </scheduler>
   </harvester>
   <monitor>

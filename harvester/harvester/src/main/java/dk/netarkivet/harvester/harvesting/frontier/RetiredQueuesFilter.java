@@ -65,8 +65,9 @@ public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {
      */
     private boolean isOverBudget(FrontierReportLine l) {
         long totalBudget = l.getTotalBudget();
-        return l.getSessionBalance() <= 0
-            || (totalBudget >= 0 && l.getTotalSpend() >= totalBudget);
+//        return l.getSessionBalance() <= 0
+//            || (totalBudget >= 0 && l.getTotalSpend() >= totalBudget);
+        return totalBudget >= 0 && l.getTotalSpend() >= totalBudget;
     }
 
 }

@@ -174,7 +174,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
                 "Hele time", "");
         hd1.setSubmissionDate(now);
         hddao.create(hd1);
-        hddao.updateNextdate((PartialHarvest)hd1, yesterday);
+        hddao.updateNextdate(((PartialHarvest) hd1).getOid(), yesterday);
         Iterable<Long> readyHarvestDefinitions =
                 hddao.getReadyHarvestDefinitions(now);
         Iterator<Long> iterator = readyHarvestDefinitions.iterator();

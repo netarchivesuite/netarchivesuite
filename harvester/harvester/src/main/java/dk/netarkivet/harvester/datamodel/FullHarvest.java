@@ -106,19 +106,6 @@ public class FullHarvest extends HarvestDefinition {
     }
 
     /**
-     * Get a new Job suited for this type of HarvestDefinition.
-     *
-     * @param cfg The configuration to use when creating the job
-     *
-     * @return a new job
-     */
-    protected Job getNewJob(DomainConfiguration cfg) {
-        return Job.createSnapShotJob(getOid(), cfg, this.getMaxCountObjects(),
-                                     this.getMaxBytes(), 
-                                     this.getMaxJobRunningTime(), numEvents);
-    }
-
-    /**
      * Get the previous HarvestDefinition which is used to base this.
      *
      * @return The previous HarvestDefinition
