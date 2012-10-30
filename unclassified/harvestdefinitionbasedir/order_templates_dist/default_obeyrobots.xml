@@ -371,7 +371,29 @@
                 <long name="total-bytes-to-write">0</long>
 		<boolean name="skip-identical-digests">false</boolean>
     </newObject>
-
+<newObject name="WARCArchiver" class="org.archive.crawler.writer.WARCWriterProcessor">
+        <boolean name="enabled">false</boolean>
+        <newObject name="WARCArchiver#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          <map name="rules">
+          </map>
+        </newObject>
+        <boolean name="compress">false</boolean>
+        <string name="prefix">netarkivet</string>
+        <string name="suffix">${HOSTNAME}</string>
+        <long name="max-size-bytes">100000000</long>
+        <stringList name="path">
+          <string>warcs</string>
+        </stringList>
+        <integer name="pool-max-active">5</integer>
+        <integer name="pool-max-wait">300000</integer>
+        <long name="total-bytes-to-write">0</long>
+        <boolean name="skip-identical-digests">false</boolean>
+        <boolean name="write-requests">true</boolean>
+        <boolean name="write-metadata">true</boolean>
+        <boolean name="write-revisit-for-identical-digests">true</boolean>
+        <boolean name="write-revisit-for-not-modified">true</boolean>
+      </newObject>
+      
         </map> <!-- End of Heritrix write processors -->
         <!-- Heritrix post processors --> 
         <map name="post-processors">
