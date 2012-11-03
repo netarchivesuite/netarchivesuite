@@ -50,6 +50,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveProfile;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.testutils.ARCTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;

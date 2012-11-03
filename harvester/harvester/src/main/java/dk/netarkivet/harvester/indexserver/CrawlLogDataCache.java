@@ -28,7 +28,7 @@ package dk.netarkivet.harvester.indexserver;
 
 import java.util.regex.Pattern;
 
-import dk.netarkivet.harvester.harvesting.MetadataFile;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 
 /**
  * This class implements the low-level cache for crawl log Lucene indexing.

@@ -24,7 +24,7 @@
  *   USA
  *
  */
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,11 +38,13 @@ import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.io.warc.WARCConstants;
 import org.archive.io.warc.WARCWriter;
 import org.archive.util.anvl.ANVLRecord;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.common.utils.warc.WARCUtils;
 
@@ -61,12 +63,12 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
 
     /**
      * Create a <code>MetadataFileWriter</code> for WARC output.
-     * @param metadataFile WARC output filename
+     * @param metadataWarcFile The WARC output file
      * @return <code>MetadataFileWriter</code> for writing metadata files in WARC
      */
-    public static MetadataFileWriter createWriter(File metadataFile) {
+    public static MetadataFileWriter createWriter(File metadataWarcFile) {
     	MetadataFileWriterWarc mtfw = new MetadataFileWriterWarc();
-    	mtfw.writer = WARCUtils.createWARCWriter(metadataFile);
+    	mtfw.writer = WARCUtils.createWARCWriter(metadataWarcFile);
     	return mtfw;
     }
 
@@ -86,7 +88,14 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     public File getFile() {
         return writer.getFile();
     }
-
+    /**
+     * FIXME
+     * @param payloadToInfoRecord
+     */
+    public void insertInfoRecord(ANVLRecord payloadToInfoRecord){
+        //WARCUtils.insertWARCFile(metadataFile, writer.);
+    }
+    
     @Override
     public void insertMetadataFile(File metadataFile) {
         WARCUtils.insertWARCFile(metadataFile, writer);
@@ -100,7 +109,9 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     @Override
     public boolean writeTo(File fileToArchive, String URL, String mimetype) {
         log.info(fileToArchive + " " + fileToArchive.length());
-
+        // generate a Block-Digest for the file
+        String blockDigest = ChecksumCalculator.sha1(fileToArchive);
+        
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat()
                 .format(new Date());
         URI recordId;
@@ -112,8 +123,11 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         InputStream in = null;
         try {
             in = new FileInputStream(fileToArchive);
-            ANVLRecord namedFields = new ANVLRecord();
+            ANVLRecord namedFields = new ANVLRecord(2);
             namedFields.addLabelValue("X-Metadata-Version", "1");
+            namedFields.addLabelValue(
+                    WARCConstants.HEADER_KEY_BLOCK_DIGEST, blockDigest);
+            
             writer.writeMetadataRecord(URL, create14DigitDate,
             		mimetype, recordId, namedFields, in,
                     fileToArchive.length());

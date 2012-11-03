@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.harvesting;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 import junit.framework.TestCase;

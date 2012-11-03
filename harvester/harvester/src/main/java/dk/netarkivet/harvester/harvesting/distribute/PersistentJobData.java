@@ -197,7 +197,7 @@ public class PersistentJobData implements JobInfo {
         if (!crawlDir.isDirectory()) {
             throw new ArgumentNotValid("Given crawldir '" 
                     + crawlDir.getAbsolutePath()
-                    + "' does not exist!");
+                    + "' does not exist or is not a directory!");
         }
         this.crawlDir = crawlDir;
     }
@@ -575,4 +575,25 @@ public class PersistentJobData implements JobInfo {
         }
         return prefix;
     }
+    
+    /**
+     * Return the harvestname in this xml.
+     * @return the harvestname in this xml.
+     * @throws IOFailure if no harvestInfo exists or it is invalid.
+     */
+    public String getharvestName() {
+        SimpleXml sx = read(); // reads and validates XML
+        return sx.getString(HARVEST_NAME_KEY);
+    }
+    
+    /**
+     * Return the schedulename in this xml.
+     * @return the schedulename in this xml.
+     * @throws IOFailure if no harvestInfo exists or it is invalid.
+     */
+    public String getScheduleName() {
+        SimpleXml sx = read(); // reads and validates XML
+        return sx.getString(HARVEST_SCHED_KEY);
+    }
+    
 }

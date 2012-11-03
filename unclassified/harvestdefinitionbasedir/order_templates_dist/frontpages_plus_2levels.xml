@@ -371,7 +371,7 @@
                 <long name="total-bytes-to-write">0</long>
 		<boolean name="skip-identical-digests">false</boolean>
     </newObject>
-<newObject name="WARCArchiver" class="org.archive.crawler.writer.WARCWriterProcessor">
+<newObject name="WARCArchiver" class="dk.netarkivet.harvester.harvesting.WARCWriterProcessor">
         <boolean name="enabled">false</boolean>
         <newObject name="WARCArchiver#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
           <map name="rules">

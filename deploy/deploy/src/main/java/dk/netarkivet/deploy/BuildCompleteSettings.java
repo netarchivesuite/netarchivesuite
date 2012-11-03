@@ -42,10 +42,10 @@ import dk.netarkivet.common.utils.FileUtils;
  * complete settings file.
  * The different settings are listed here: {@link Constants#BUILD_SETTING_FILES}
  * 
- * export NAS_SRC=$HOME/workspace/netarchivesuite
- * cd $NAS_SRC
- * ant jarfiles
- * export CLASSPATH=$NAS_SRC/lib/dk.netarkivet.harvester.jar:$NAS_SRC/lib/dk.netarkivet.archive.jar:\
+   export NAS_SRC=$HOME/workspace/netarchivesuite
+   cd $NAS_SRC
+   ant jarfiles
+   export CLASSPATH=$NAS_SRC/lib/dk.netarkivet.harvester.jar:$NAS_SRC/lib/dk.netarkivet.archive.jar:\
 $NAS_SRC/lib/dk.netarkivet.wayback.jar:$NAS_SRC/lib/dk.netarkivet.deploy.jar:\
 $NAS_SRC/lib/dk.netarkivet.monitor.jar:$NAS_SRC/lib/dk.netarkivet.viewerproxy.jar
    cd src

@@ -24,7 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *   USA
  */
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,12 +53,12 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
 
     /**
      * Create a <code>MetadataFileWriter</code> for ARC output.
-     * @param metadataFile ARC <code>File</code>
+     * @param metadataARCFile The metadata ARC <code>File</code>
      * @return <code>MetadataFileWriter</code> for writing metadata files in ARC
      */
-    public static MetadataFileWriter createWriter(File metadataFile) {
+    public static MetadataFileWriter createWriter(File metadataARCFile) {
     	MetadataFileWriterArc mtfw = new MetadataFileWriterArc();
-    	mtfw.writer = ARCUtils.createARCWriter(metadataFile);
+    	mtfw.writer = ARCUtils.createARCWriter(metadataARCFile);
     	return mtfw;
     }
 

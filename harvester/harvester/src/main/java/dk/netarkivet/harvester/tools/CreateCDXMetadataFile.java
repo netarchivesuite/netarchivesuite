@@ -54,7 +54,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
-import dk.netarkivet.harvester.harvesting.MetadataFileWriter;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 
 /**
  * This tool creates a CDX metadata file for a given jobID by running a

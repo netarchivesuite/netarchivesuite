@@ -316,4 +316,16 @@ public class WARCUtils {
         return (String) header.getHeaderValue(WARCConstants.HEADER_KEY_TYPE);
     }
     
+    /**
+     * Generate a digest of the given file of the given digestType.
+     * @param fileToDigest The file to digest
+     * @param digestType The digest Type
+     * @return A digest of the given file of the given digestType
+     */
+    public static String geerateDigest(File fileToDigest, String digestType) {
+        return null;
+    }
+    
+    
+    
 }

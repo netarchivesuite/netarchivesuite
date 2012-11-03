@@ -22,7 +22,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.File;
 
@@ -126,7 +126,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
      * pattern, then again the logfile pattern. If the name matches neither of
      * these, it is considered a setup file.
      */
-    MetadataFile(
+    public MetadataFile(
             File heritrixFile,
             Long harvestId,
             Long jobId,
@@ -165,7 +165,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
      * @param heritrixVersion the version of Heritrix generating the file
      * @param domain The name of the domain, this metadata belongs to
      */
-    MetadataFile(
+    public MetadataFile(
             File heritrixFile,
             Long harvestId,
             Long jobId,

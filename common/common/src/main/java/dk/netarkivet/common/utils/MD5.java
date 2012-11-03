@@ -51,7 +51,7 @@ public class MD5 {
     /** digest algorithm used here. */
     private static final String MD5_ALGORITHM = "MD5";
 
-    /** Return na MD5 MessageDigest object.
+    /** Return an MD5 MessageDigest object.
      *  @return a MessageDigest object
      */
     public static MessageDigest getMessageDigestInstance() {

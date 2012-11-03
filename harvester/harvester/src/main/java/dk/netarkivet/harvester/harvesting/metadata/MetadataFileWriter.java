@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *   USA
  */
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -40,6 +40,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 
 /**
  * Abstract base class for Metadata file writer.
@@ -95,7 +96,8 @@ public abstract class MetadataFileWriter {
         case MDF_WARC:
             return jobID + "-preharvest-metadata-" + 1 + ".warc";
         default:
-        	throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
+        	throw new ArgumentNotValid("Configuration of '" 
+        	        + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
     }
 
@@ -142,7 +144,8 @@ public abstract class MetadataFileWriter {
         case MDF_WARC:
         	return MetadataFileWriterWarc.createWriter(metadataArchiveFile);
         default:
-        	throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
+        	throw new ArgumentNotValid("Configuration of '" 
+        	        + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
     }
     

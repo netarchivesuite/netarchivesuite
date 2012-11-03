@@ -63,6 +63,8 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
 

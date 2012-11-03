@@ -63,14 +63,14 @@ public class ExtractDeduplicateCDXBatchJobTester extends TestCase {
     }
 
     public void testInitialize() {
-        ARCBatchJob job = new ExtractDeduplicateCDXBatchJob();
+        ExtractDeduplicateCDXBatchJob job = new ExtractDeduplicateCDXBatchJob();
         job.initialize(new ByteArrayOutputStream());
     }
 
     public void testJob() throws IOException {
         BatchLocalFiles files = new BatchLocalFiles(new File[] {new File(
                 TestInfo.WORKING_DIR, METADATA_FILENAME)});
-        ARCBatchJob job = new ExtractDeduplicateCDXBatchJob();
+        ExtractDeduplicateCDXBatchJob job = new ExtractDeduplicateCDXBatchJob();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         files.run(job, os);
         os.flush();
@@ -85,13 +85,13 @@ public class ExtractDeduplicateCDXBatchJobTester extends TestCase {
     }
 
     public void testJobReal() throws IOException {
-        ARCBatchJob job = new ExtractDeduplicateCDXBatchJob();
+        ExtractDeduplicateCDXBatchJob job = new ExtractDeduplicateCDXBatchJob();
         File arcFile =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_REAL_1);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         job.initialize(os);
         job.processFile(arcFile, os);
         job.finish(os);
-        ARCBatchJob job2 = new ExtractDeduplicateCDXBatchJob();
+        ExtractDeduplicateCDXBatchJob job2 = new ExtractDeduplicateCDXBatchJob();
         File arcFile2 =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_REAL_2);
         ByteArrayOutputStream os2 = new ByteArrayOutputStream();
         job2.initialize(os2);

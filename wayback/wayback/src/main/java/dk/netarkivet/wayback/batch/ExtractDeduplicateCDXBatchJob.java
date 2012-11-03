@@ -26,16 +26,15 @@ package dk.netarkivet.wayback.batch;
 
 import java.io.OutputStream;
 import java.util.regex.Pattern;
-import org.archive.io.arc.ARCRecord;
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
+import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /**
  * This batch batch job takes deduplication records from a crawl log in a
  * metadata arcfile and converts them to cdx records for use in wayback.
  *
  */
-
-public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
+public class ExtractDeduplicateCDXBatchJob extends ArchiveBatchJob {
 
     /**
      * A utility which has methods for converting a deduplicate crawl-log
@@ -51,7 +50,7 @@ public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
             "metadata://(.*)crawl[.]log(.*)";
 
     /**
-     * A Patteren representing a compiled expression representing the url in
+     * A Pattern representing a compiled expression representing the url in
      * a metadata arcfile of a crawl log entry.
      */
     private Pattern crawlLogUrlPattern;
@@ -74,10 +73,10 @@ public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
      * @param os the stream to which output is written
      */
     @Override
-    public void processRecord(ARCRecord record, OutputStream os) {
+    public void processRecord(ArchiveRecordBase record, OutputStream os) {
         if (crawlLogUrlPattern
-                .matcher(record.getMetaData().getUrl()).matches()) {
-            adapter.adaptStream(record, os);
+                .matcher(record.getHeader().getUrl()).matches()) {
+            adapter.adaptStream(record.getInputStream(), os);
         } else {
            return;
         }
@@ -92,4 +91,5 @@ public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
     public void finish(OutputStream os) {
         //Nothing to finalise
     }
+    
 }
