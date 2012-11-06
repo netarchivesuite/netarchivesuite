@@ -28,9 +28,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
-import dk.netarkivet.archive.arcrepository.TestArcRepositoryClient;
+import dk.netarkivet.common.arcrepository.TestArcRepositoryClient;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
-import dk.netarkivet.harvester.indexserver.RawMetadataCache;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;

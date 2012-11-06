@@ -32,7 +32,7 @@ import java.net.URISyntaxException;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.archive.arcrepository.TestArcRepositoryClient;
+import dk.netarkivet.common.arcrepository.TestArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.exceptions.IOFailure;

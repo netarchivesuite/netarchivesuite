@@ -169,7 +169,7 @@ public class DigestIndexer {
      * Writes the contents of a {@link CrawlDataIterator} to this index.
      * <p>
      * This method may be invoked multiple times with different 
-     * CrawlDataIterators until {@link #close(boolean)} has been called.
+     * CrawlDataIterators until {@link #close} has been called.
      * 
      * @param dataIt The CrawlDataIterator that provides the data to index.
      * @param mimefilter A regular expression that is used as a filter on the 
@@ -200,7 +200,7 @@ public class DigestIndexer {
      * Writes the contents of a {@link CrawlDataIterator} to this index.
      * <p>
      * This method may be invoked multiple times with different 
-     * CrawlDataIterators until {@link #close(boolean)} has been called.
+     * CrawlDataIterators until {@link #close} has been called.
      * 
      * @param dataIt The CrawlDataIterator that provides the data to index.
      * @param mimefilter A regular expression that is used as a filter on the 

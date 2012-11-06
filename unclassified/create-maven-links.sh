@@ -20,20 +20,20 @@ ln -s $WORKING_DIR/tests/dk/netarkivet/common $M2_BUILD_HOME/netarchivesuite-com
 rm $M2_BUILD_HOME/netarchivesuite-common/src/test/java/dk/netarkivet/testutils
 ln -s $WORKING_DIR/tests/dk/netarkivet/testutils $M2_BUILD_HOME/netarchivesuite-common/src/test/java/dk/netarkivet
 
-# Archive module
-rm $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/dk/netarkivet/archive
-ln -s $WORKING_DIR/src/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/dk/netarkivet
-rm $M2_BUILD_HOME/netarchivesuite-archive/src/test/java/dk/netarkivet/archive
-ln -s $WORKING_DIR/tests/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/test/java/dk/netarkivet
-# Extra is.hi.bok.deduplicator.DigestIndexer
-rm $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/is
-ln -s $WORKING_DIR/src/is $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/
-
 # Harvester module
 rm $M2_BUILD_HOME/netarchivesuite-harvester/src/main/java/dk/netarkivet/harvester
 ln -s $WORKING_DIR/src/dk/netarkivet/harvester $M2_BUILD_HOME/netarchivesuite-harvester/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-harvester/src/test/java/dk/netarkivet/harvester
 ln -s $WORKING_DIR/tests/dk/netarkivet/harvester $M2_BUILD_HOME/netarchivesuite-harvester/src/test/java/dk/netarkivet
+# Extra is.hi.bok.deduplicator.DigestIndexer
+rm $M2_BUILD_HOME/netarchivesuite-harvester/src/main/java/is
+ln -s $WORKING_DIR/src/is $M2_BUILD_HOME/netarchivesuite-harvester/src/main/java/
+
+# Archive module
+rm $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/dk/netarkivet/archive
+ln -s $WORKING_DIR/src/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/dk/netarkivet
+rm $M2_BUILD_HOME/netarchivesuite-archive/src/test/java/dk/netarkivet/archive
+ln -s $WORKING_DIR/tests/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/test/java/dk/netarkivet
 
 # Monitor module
 rm $M2_BUILD_HOME/netarchivesuite-monitor/src/main/java/dk/netarkivet/monitor
