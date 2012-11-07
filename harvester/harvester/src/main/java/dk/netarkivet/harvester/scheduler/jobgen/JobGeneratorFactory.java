@@ -43,7 +43,6 @@ public class JobGeneratorFactory extends SettingsFactory<JobGenerator> {
      * This class must have a constructor or factory method with a
      * signature matching the array args.
      * @param args the arguments to the constructor or factory method
-     * @throws ArgumentNotValid if the instance cannot be constructed.
      * @return the {@link JobGenerator} instance.
      */
     public static JobGenerator getInstance(Object ...args)

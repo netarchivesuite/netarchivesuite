@@ -122,7 +122,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      * @return true, if such a harvestdefinition exists.
      */
     public abstract boolean exists(String name);
-    
+
     /**
      * Get a list of all existing harvest definitions.
      *
@@ -149,7 +149,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
 
     /** Get the IDs of the harvest definitions that are ready to run.
      *
-     * @param now 
+     * @param now
      * @return IDs of the harvest definitions that are currently ready to
      * be scheduled.  Some of these might already be in the process of being
      * scheduled.
@@ -268,7 +268,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     */
     public abstract List<String> getListOfSeedsOfDomainOfHarvestDefinition(
             String harvestName, String domainName);
-    
+
     /**
      * Get a collection of jobIds for snapshot deduplication index.
      * @param harvestId the id of the harvest
@@ -280,22 +280,23 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     /**
      * Set the isindexready field available for snapshot harvests.
      * @param harvestId the ID of the harvest.
-     * @param newValue the new isindexready value 
+     * @param newValue the new isindexready value
      */
     public abstract void setIndexIsReady(Long harvestId, boolean newValue);
-    
+
     /**
      * Remove Domain configuration from a specific PartialHarvest.
      * @param harvestId Id for a specific PartialHarvest
-     * @param key a SparseDomainConfiguration uniquely identifying the 
+     * @param key a SparseDomainConfiguration uniquely identifying the
      * domainconfig.
      */
-    public abstract void removeDomainConfiguration(Long harvestId, 
+    public abstract void removeDomainConfiguration(Long harvestId,
             SparseDomainConfiguration key);
     /**
-     * Update the given PartialHarvest (i.e. Selective Harvest) with a new 
-     * time for the next harvestrun.
-     * @param ph A given PartialHarvest (i.e. Selective Harvest).
+     * Update the given PartialHarvest (i.e. Selective Harvest) with a new
+     * time for the next harvestrun. If no selective harvest matching the given id is
+     * found in the storage, the method should silently return.
+     * @param harvestId A given PartialHarvest id (i.e. Selective Harvest).
      * @param nextdate A new date for the next harvest run.
      */
     public abstract void updateNextdate(long harvestId, Date nextdate);
