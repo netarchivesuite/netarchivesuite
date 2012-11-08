@@ -46,8 +46,6 @@ public final class Constants {
     static final int MAX_NAME_SIZE = 300;
     /** Maximum size of comment entries in the database. */
     static final int MAX_COMMENT_SIZE = 30000;
-    /** Maximum size of crawlertrap entries in the database. */
-    static final int MAX_CRAWLER_TRAP_SIZE = 1000;
     /** Maximum size of password url entries in the database. */
     static final int MAX_URL_SIZE = 300;
     /** Maximum size of password realm entries in the database. */

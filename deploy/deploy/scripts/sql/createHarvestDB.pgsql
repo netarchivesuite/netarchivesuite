@@ -90,7 +90,7 @@ CREATE TABLE domains (
     name varchar(300) NOT NULL UNIQUE,
     comments varchar(30000),
     defaultconfig bigint NOT NULL,
-    crawlertraps varchar(1000),
+    crawlertraps text,
     edition bigint NOT NULL,
     alias bigint,
     lastaliasupdate timestamp

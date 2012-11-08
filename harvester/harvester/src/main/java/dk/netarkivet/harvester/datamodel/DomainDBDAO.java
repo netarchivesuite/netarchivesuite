@@ -131,9 +131,6 @@ public class DomainDBDAO extends DomainDAO {
             // until we have configs
             DBUtils.setName(s, 1, d, Constants.MAX_NAME_SIZE);
             DBUtils.setComments(s, 2, d, Constants.MAX_COMMENT_SIZE);
-            DBUtils.setStringMaxLength(s, 3, StringUtils.conjoin("\n", d
-                    .getCrawlerTraps()), Constants.MAX_CRAWLER_TRAP_SIZE, d,
-                    "crawlertraps");
             long initialEdition = 1;
             s.setLong(4, initialEdition);
             AliasInfo aliasInfo = d.getAliasInfo();
@@ -252,10 +249,6 @@ public class DomainDBDAO extends DomainDAO {
                     + "alias = ?, lastAliasUpdate = ? "
                     + "WHERE domain_id = ? AND edition = ?");
             DBUtils.setComments(s, 1, d, Constants.MAX_COMMENT_SIZE);
-            DBUtils.setStringMaxLength(s, 2, StringUtils.conjoin("\n", d
-                    .getCrawlerTraps()), Constants.MAX_CRAWLER_TRAP_SIZE, d,
-                    "crawlertraps");
-
             final long newEdition = d.getEdition() + 1;
             s.setLong(3, newEdition);
             AliasInfo aliasInfo = d.getAliasInfo();
