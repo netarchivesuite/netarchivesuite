@@ -115,7 +115,7 @@ public final class DBUtils {
             s = DBUtils.prepareStatement(connection, query, args);
             // We do not test for 0-values here, already tested in
             // selectIntValue(s)
-            returnselectIntValue(s);
+            return selectIntValue(s);
         } catch (SQLException e) {
             throw new IOFailure("SQL error preparing statement "
                     + query + " args " + Arrays.toString(args) + "\n"
