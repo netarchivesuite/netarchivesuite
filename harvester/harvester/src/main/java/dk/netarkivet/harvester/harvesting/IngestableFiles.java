@@ -50,7 +50,7 @@ public class IngestableFiles {
     private final Log log = LogFactory.getLog(getClass());
 
     /** Subdir with final metadata file in it. */
-    private static final String METADATA_SUB_DIR = "metadata";
+    protected static final String METADATA_SUB_DIR = "metadata";
 
     /** Subdir with temporary metadata file in it. */
     private static final String TMP_SUB_DIR = "tmp-meta";
@@ -200,7 +200,7 @@ public class IngestableFiles {
      * Constructs the single metadata arc file from the crawlDir and the jobID.
      * @return metadata arc file as a File
      */
-    private File getMetadataFile(){
+    protected File getMetadataFile(){
         return
             new File(getMetadataDir(),
                     MetadataFileWriter.getMetadataArchiveFileName(Long.toString(jobId)));

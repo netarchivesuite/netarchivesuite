@@ -26,14 +26,16 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -54,17 +56,15 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
-import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
-import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
+import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
+import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
 
@@ -84,7 +84,7 @@ public class HarvestController {
             = LogFactory.getLog(HarvestController.class);
 
     /**
-     * The max time to wait for heritrix to close last ARC files (in secs).
+     * The max time to wait for heritrix to close last ARC or WARC files (in secs).
      */
     private static final int WAIT_FOR_HERITRIX_TIMEOUT_SECS = 5;
 
@@ -276,51 +276,37 @@ public class HarvestController {
                     + order.asXML());
         }
     }
-
+       
     /**
-     * Writes metadata to an ARC/WARC with the following name:
-     * <jobid>-preharvest-metadata-1.(w)arc.
+     * Writes pre-harvest metadata to the "metadata" directory. 
      *
      * @param harvestJob a given Job.
      * @param metadata   the list of metadata entries to write to metadata file.
-     * @param crawlDir   the directory, where the metadata file will be written.
-     * @throws IOFailure If there are errors in writing the metadata file.
+     * @param crawlDir   the directory, where the metadata will be written.
+     * @throws IOFailure If there are errors in writing the metadata. 
      */
     private void writePreharvestMetadata(Job harvestJob,
                                          List<MetadataEntry> metadata,
                                          File crawlDir)
-            throws IOFailure {
+            throws IOFailure  {
         if (metadata.size() == 0) {
             // Do not generate preharvest metadata file for empty list
             return;
         }
-        File arcFile =
-            new File(crawlDir,
-                    MetadataFileWriter.getPreharvestMetadataArchiveFileName(
-                                        harvestJob.getJobID()));
-        try {
-            MetadataFileWriter mdfw = null;
-            try {
-                mdfw = MetadataFileWriter.createWriter(arcFile);
-
-                for (MetadataEntry m : metadata) {
-                    ByteArrayInputStream bais = new ByteArrayInputStream(
-                            m.getData());
-                    mdfw.write(m.getURL(), m.getMimeType(),
-                             SystemUtils.getLocalIP(),
-                             System.currentTimeMillis(), m.getData().length,
-                             bais);
-                }
-            } finally {
-                if (mdfw != null) {
-                    mdfw.close();
-                }
-            }
-        } catch (IOException e) {
-            throw new IOFailure("Error writing to metadatafileWriter for job "
-                                + harvestJob.getJobID() + ".\n", e);
-        }
-    }
+        
+        // make sure that metadata directory exists
+        File metadataDir = new File(crawlDir, IngestableFiles.METADATA_SUB_DIR);
+        metadataDir.mkdir();
+        if (!(metadataDir.exists() && metadataDir.isDirectory())) {
+            throw new IOFailure(
+                    "Unable to write preharvest metadata for job '" +
+             + harvestJob.getJobID() + "' to directory '" 
+            + metadataDir.getAbsolutePath() + "', as directory does not exist.");
+        }                
+        
+        // Serializing the MetadataEntry objects to the metadataDir
+        MetadataEntry.storemetadataToDisk(metadata, metadataDir);
+ }
 
     /**
      * Creates the actual HeritrixLauncher instance and runs it, after the

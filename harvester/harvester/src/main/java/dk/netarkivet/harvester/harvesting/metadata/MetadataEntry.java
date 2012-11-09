@@ -22,23 +22,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.harvester.harvesting.distribute;
+package dk.netarkivet.harvester.harvesting.metadata;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.AliasInfo;
 
 /**
  * Class used to carry metadata in DoOneCrawl messages, including the URL
- * and mimetype necessary to write the metadata to metadata ARC files.
+ * and mimetype necessary to write the metadata to metadata (W)ARC files.
  */
 public class MetadataEntry implements Serializable {
     /** The URL for this metadataEntry: Used as the unique identifier for this
@@ -91,6 +98,7 @@ public class MetadataEntry implements Serializable {
     /** Common prefix for all deduplication metadata URLs. */
     private static final String DUPLICATEREDUCTION_METADATA_URL_PREFIX
         = "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs";
+    
     /** Metadata URL pattern for duplicate reduction jobs. */
     private static final String DUPLICATEREDUCTION_METADATA_URL
             = DUPLICATEREDUCTION_METADATA_URL_PREFIX
@@ -317,5 +325,58 @@ public class MetadataEntry implements Serializable {
         return "URL= " + getURL() + " ; mimetype= " + getMimeType()
         + " ; data= " + new String(getData());
     }
-
+    
+    /**
+     * Store a list of metadata entries to disk.
+     * @param metadata the given metadata
+     * @param destinationDir the directory to store the metadata.
+     */
+    public static void storemetadataToDisk(List<MetadataEntry> metadata, File destinationDir) {
+        try {
+            for (MetadataEntry m : metadata) {
+                File mFile = new File(destinationDir, UUID.randomUUID().toString() + ".ser");
+                FileOutputStream fos = new FileOutputStream(mFile);
+                ObjectOutputStream out =
+                        new ObjectOutputStream(fos);
+                out.writeObject(m);
+                fos.close();
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Unable to store metadata temporarily in directory ' " 
+                    + destinationDir.getAbsolutePath() + "'", e);
+        }
+    }
+    
+    public static List<MetadataEntry> getmetadataFromDisk(File sourceDir) {
+        List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
+        FilenameFilter filter = new FilenameFilter() {
+            
+            @Override
+            public boolean accept(File dir, String name) {
+                if (name.endsWith(".ser")) {
+                    return true;
+                }
+                return false;
+            }
+        };
+        
+        for (String file : sourceDir.list(filter)) {
+            File metadataEntryFile = new File(sourceDir, file);
+            try {
+                FileInputStream fileIn =
+                    new FileInputStream(metadataEntryFile);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                MetadataEntry o = (MetadataEntry) in.readObject();
+                metadata.add(o);
+                in.close();
+                fileIn.close();
+            } catch (IOException e) {
+                throw new IOFailure("Unable to read the serialized metadata", e);
+            } catch (ClassNotFoundException e) {
+                throw new IllegalState("Unable to read the serialized metadata", e);
+            }
+        }
+        
+        return metadata;
+    }
 }

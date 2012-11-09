@@ -160,10 +160,10 @@ public abstract class MetadataFileWriter {
     public abstract File getFile();
     
     /**
-     * Insert given metadata file into the destination archive file.
+     * Insert all records in the given metadata file into the destination archive file.
      * @param metadataFile A given metadata file to insert 
      */
-    public abstract void insertMetadataFile(File metadataFile);
+    public abstract void insertMetadataFileRecords(File metadataFile);
     
     /**
      * Write the given file to the metadata file.
@@ -188,13 +188,14 @@ public abstract class MetadataFileWriter {
      * @param contentType  content-type of record
      * @param hostIP resource ip-address
      * @param fetchBeginTimeStamp record datetime
-     * @param recordLength record length
-     * @param in input stream of data to be written as record payload
      * @see ARCWriter#write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, long recordLength, InputStream in
      */
+  //   * @param recordLength record length
+  //   * @param in input stream of data to be written as record payload
+  //   */
     public abstract void write(String uri, String contentType, String hostIP,
-            long fetchBeginTimeStamp, long recordLength, InputStream in) throws java.io.IOException;
+            long fetchBeginTimeStamp, byte[] payload) throws java.io.IOException;
 
     /**
      * Append the files contained in the directory to the metadata file, but

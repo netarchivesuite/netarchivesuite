@@ -62,7 +62,7 @@ import org.archive.util.XmlUtils;
 import org.archive.util.anvl.ANVLRecord;
 import org.w3c.dom.Document;
 
-import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
+import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
 
 /**
  * WARCWriterProcessor.

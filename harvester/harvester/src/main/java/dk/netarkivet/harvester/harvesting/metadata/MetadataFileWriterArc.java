@@ -26,9 +26,9 @@
  */
 package dk.netarkivet.harvester.harvesting.metadata;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -80,7 +80,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     }
 
     @Override
-    public void insertMetadataFile(File metadataFile) {
+    public void insertMetadataFileRecords(File metadataFile) {
         ARCUtils.insertARCFile(metadataFile, writer);
     }
 
@@ -123,8 +123,9 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     /* Copied from the ARCWriter. */
     @Override
     public void write(String uri, String contentType, String hostIP,
-            long fetchBeginTimeStamp, long recordLength, InputStream in) throws IOException {
-    	writer.write(uri, contentType, hostIP, fetchBeginTimeStamp, recordLength, in);
+            long fetchBeginTimeStamp, byte[] payload) throws IOException {
+        ByteArrayInputStream in = new ByteArrayInputStream(payload);
+    	writer.write(uri, contentType, hostIP, fetchBeginTimeStamp, payload.length, in);
     }
 
 }

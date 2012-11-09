@@ -39,7 +39,7 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.testutils.ReflectUtils;
 
 /**

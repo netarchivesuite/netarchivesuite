@@ -46,8 +46,8 @@ import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
-import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
-import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
+import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
 
 /**
  * This class handles dispatching of Harvest jobs to the Harvesters.
@@ -176,6 +176,8 @@ public class JobDispatcher {
                         job.getHarvestNum(),
                         job.getJobID());
         if (aliasMetadataEntry != null) {
+            // Add an entry documenting that this job 
+            // contains domains that has aliases
             metadata.add(aliasMetadataEntry);
         }
 
@@ -188,10 +190,9 @@ public class JobDispatcher {
                     job.getHarvestNum(),
                     job.getJobID()
                     );
-
-            if (duplicateReductionMetadataEntry != null) {
-                metadata.add(duplicateReductionMetadataEntry);
-            }
+            // Always add a duplicationReductionMetadataEntry when deduplication is enabled
+            // even if the list of JobIDs for deduplication is empty!
+            metadata.add(duplicateReductionMetadataEntry);
         }
         return metadata;
     }

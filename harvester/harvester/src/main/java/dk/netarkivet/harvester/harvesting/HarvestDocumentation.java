@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import java.util.regex.Matcher;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.util.anvl.ANVLRecord;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -46,11 +48,15 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.archive.ArchiveProfile;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
+import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
 
 /**
  * This class contains code for documenting a harvest.
@@ -126,8 +132,9 @@ public class HarvestDocumentation {
         // If metadata-arcfile already exists, we are done
         // See bug 722
         if (ingestables.isMetadataReady()) {
-            log.debug("The metadata-arc already exists, "
-                      + "so we don't make another one!");
+            log.debug("The metadata-file '" 
+                    + ingestables.getMetadataFile().getAbsolutePath() 
+                    + "' already exists, so we don't make another one!");
             return;
         }
 
@@ -135,17 +142,46 @@ public class HarvestDocumentation {
             MetadataFileWriter mdfw = null;
             mdfw = ingestables.getMetadataWriter();
 
-            // insert the pre-harvest metadata file, if it exists.
+            
             // TODO Place preharvestmetadata in IngestableFiles-defined area
-            File preharvestMetadata = new File(crawlDir,
-                    MetadataFileWriter.getPreharvestMetadataArchiveFileName(jobID));
-            if (preharvestMetadata.exists()) {
-            	mdfw.insertMetadataFile(preharvestMetadata);
-            }
             //TODO This is a good place to copy deduplicate information from the
             //crawl log to the cdx file.
-
-            // Insert harvestdetails into metadata arcfile.
+            
+            if (mdfw instanceof MetadataFileWriterWarc) {
+                // add warc-info record
+                ANVLRecord infoPayload = new ANVLRecord(3);
+                infoPayload.addLabelValue("software", "NetarchiveSuite/" 
+                        + dk.netarkivet.common.Constants.getVersionString()
+                        + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
+                infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
+                infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());
+                infoPayload.addLabelValue("conformsTo", "http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf");
+                
+                PersistentJobData psj = new PersistentJobData(crawlDir);
+                
+                infoPayload.addLabelValue("isPartOf", "harvestname:" + psj.getharvestName() + "/harvestID:" 
+                        + psj.getOrigHarvestDefinitionID()
+                        + "/harvestnum:" + psj.getJobHarvestNum() + "/job-id: " 
+                        + psj.getJobID());
+                //infoPayload.addLabelValue("format","WARC File Format 1.0");
+                MetadataFileWriterWarc mfww = (MetadataFileWriterWarc) mdfw; 
+                mfww.insertInfoRecord(infoPayload);
+            }
+            
+            //  Fetch any serialized preharvest metadata objects, if they exists.
+            
+            List<MetadataEntry> storedMetadata = getStoredMetadata(crawlDir);
+            try {
+                for (MetadataEntry m : storedMetadata) {
+                     mdfw.write(m.getURL(), m.getMimeType(),
+                            SystemUtils.getLocalIP(),
+                            System.currentTimeMillis(), m.getData());
+                }
+            } catch (IOException e) {
+                log.warn("Unable to write premetadata to metadata archivefile", e);
+            }
+            
+            // Insert harvestdetails into metadata archivefile.
             List<File> filesAdded =
                writeHarvestDetails(jobID, harvestID,
                        crawlDir, mdfw, Constants.getHeritrixVersionString());
@@ -222,6 +258,23 @@ public class HarvestDocumentation {
             if (!ingestables.isMetadataReady()) {
                 ingestables.setMetadataGenerationSucceeded(false);
             }
+        }
+    }
+
+    /**
+     * Restore serialized MetadataEntry objects from the "metadata" subdirectory of
+     * the crawldir.
+     * @param crawlDir the given crawl directory
+     * @return a set of deserialized MetadataEntry objects
+     */
+    private static List<MetadataEntry> getStoredMetadata(File crawlDir) {
+        File metadataDir = new File(crawlDir, IngestableFiles.METADATA_SUB_DIR);
+        if (!metadataDir.isDirectory()) {
+            log.warn("Should have an metadata directory '" + metadataDir.getAbsolutePath()
+                    +  "' but there wasn't");
+            return new ArrayList<MetadataEntry>();
+        } else {
+            return MetadataEntry.getmetadataFromDisk(metadataDir);
         }
     }
 
@@ -365,7 +418,7 @@ public class HarvestDocumentation {
      * @param crawlDir the directory where the crawljob took place
      * @param writer an MetadaFileWriter used to store the harvest configuration,
      *      and harvest logs and reports.
-     * @param heritrixVersion the heritrix version used by the harvest.
+     * @param heritrixVersion the heritrix version used by the harvest. 
      * @throws ArgumentNotValid If null arguments occur
      * @return a list of files added to the archive file.
      */
@@ -373,7 +426,7 @@ public class HarvestDocumentation {
             long harvestID, File crawlDir, MetadataFileWriter mdfw,
             String heritrixVersion) {
         List<File> filesAdded = new ArrayList<File>();
-       
+
         // We will sort the files by URL
         TreeSet<MetadataFile> files = new TreeSet<MetadataFile>();
 
@@ -451,7 +504,6 @@ public class HarvestDocumentation {
             String heritrixFileName = heritrixFile.getName();
             String mimeType =
                 (heritrixFileName.endsWith(".xml") ? "text/xml" : "text/plain");
-
             if (mdfw.writeTo(heritrixFile, mdf.getUrl(), mimeType)) {
                 filesAdded.add(heritrixFile);
             }

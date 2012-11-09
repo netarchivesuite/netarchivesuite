@@ -34,7 +34,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.*;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
-import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -169,8 +169,8 @@ public class JobDispatcherTester extends TestCase {
 
         DoOneCrawlMessage crawlMessage = (DoOneCrawlMessage) 
                 hacoListener.getReceived();
-        assertEquals("Should have 1 metadata entry, but got "
-                + crawlMessage.getMetadata(), 1, crawlMessage.getMetadata()
+        assertEquals("Should have 2 metadata entry, but got "
+                + crawlMessage.getMetadata(), 2, crawlMessage.getMetadata()
                 .size());
         MetadataEntry metadataEntry = crawlMessage.getMetadata().get(0);
         assertNotNull("Should have 1 metadata entry", metadataEntry);

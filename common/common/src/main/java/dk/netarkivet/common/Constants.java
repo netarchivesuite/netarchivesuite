@@ -186,4 +186,6 @@ public final class Constants {
     /** Lucene version used by this release of NetarchiveSuite. */
     public static final Version LUCENE_VERSION = Version.LUCENE_36;
     
+    /** The current website for the NetarchiveSuite project. */
+    public static final String PROJECT_WEBSITE = "https://sbforge.org/display/NAS/NetarchiveSuite";
 }

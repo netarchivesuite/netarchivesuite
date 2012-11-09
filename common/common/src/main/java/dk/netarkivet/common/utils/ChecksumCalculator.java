@@ -112,7 +112,7 @@ public final class ChecksumCalculator {
     * @return The generated sha1 checksum as a string.
     */
     @SuppressWarnings("PMD.AssignmentInOperand")
-    private static String md5(final InputStream instream) {
+    public static String md5(final InputStream instream) {
         final byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         final String algorithm = "MD5";
         final MessageDigest messageDigest = getMessageDigest(algorithm);
@@ -140,7 +140,7 @@ public final class ChecksumCalculator {
      * stream will not be closed.
      * @return The generated sha1 checksum as a string.
      */
-    private static String sha1(final InputStream instream) {
+    public static String sha1(final InputStream instream) {
         final byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         final String algorithm = "SHA-1";
         final MessageDigest messageDigest = getMessageDigest(algorithm);

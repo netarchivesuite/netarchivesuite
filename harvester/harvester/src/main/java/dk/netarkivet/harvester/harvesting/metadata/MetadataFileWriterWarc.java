@@ -26,6 +26,7 @@
  */
 package dk.netarkivet.harvester.harvesting.metadata;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -60,7 +61,12 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
      * This is closed when the metadata is marked as ready.
      */
     private WARCWriter writer = null;
-
+    
+    /** The ID of the Warcinfo record. Set when calling the 
+     * insertInfoRecord method.
+     */
+    private URI warcInfoUID = null;
+    
     /**
      * Create a <code>MetadataFileWriter</code> for WARC output.
      * @param metadataWarcFile The WARC output file
@@ -88,16 +94,44 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     public File getFile() {
         return writer.getFile();
     }
+    
     /**
-     * FIXME
-     * @param payloadToInfoRecord
+     * Insert a warcInfoRecord in the WARC-file, if it doesn't already exists.
+     * saves the recordID of the written info-record for future reference 
+     * to be used for later in the 
+     * 
+     * @param payloadToInfoRecord the given payload for this record.
      */
     public void insertInfoRecord(ANVLRecord payloadToInfoRecord){
-        //WARCUtils.insertWARCFile(metadataFile, writer.);
+        
+        if (warcInfoUID != null) {
+            throw new IllegalState("An WarcInfo record has already been inserted");
+        }
+        
+        String filename = writer.getFile().getName();
+        String datestring = ArchiveDateConverter.getWarcDateFormat()
+                .format(new Date());
+        URI recordId;
+        try {
+            recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
+        } catch (URISyntaxException e) {
+            throw new IllegalState("Epic fail creating URI from UUID!");
+        }
+        warcInfoUID = recordId;
+        ANVLRecord namedFields = new ANVLRecord(1);
+        namedFields.addLabelValue("WARC-Filename", filename);
+        
+        try {
+            byte[] payloadAsBytes = payloadToInfoRecord.getUTF8Bytes();
+            writer.writeWarcinfoRecord(datestring, "application/warc-fields", recordId, 
+                namedFields, (InputStream) new ByteArrayInputStream(payloadAsBytes), payloadAsBytes.length);
+        } catch (IOException e) {
+            throw new IllegalState("Error inserting warcinfo record", e);
+        }
     }
     
     @Override
-    public void insertMetadataFile(File metadataFile) {
+    public void insertMetadataFileRecords(File metadataFile) {
         WARCUtils.insertWARCFile(metadataFile, writer);
     }
 
@@ -108,7 +142,11 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
 
     @Override
     public boolean writeTo(File fileToArchive, String URL, String mimetype) {
+        if (warcInfoUID == null) {
+            throw new IllegalState("An WarcInfo record has not been inserted yet");
+        }
         log.info(fileToArchive + " " + fileToArchive.length());
+        
         // generate a Block-Digest for the file
         String blockDigest = ChecksumCalculator.sha1(fileToArchive);
         
@@ -123,10 +161,13 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         InputStream in = null;
         try {
             in = new FileInputStream(fileToArchive);
-            ANVLRecord namedFields = new ANVLRecord(2);
-            namedFields.addLabelValue("X-Metadata-Version", "1");
+            ANVLRecord namedFields = new ANVLRecord(3);
+            
+            //namedFields.addLabelValue("X-Metadata-Version", "1");
             namedFields.addLabelValue(
                     WARCConstants.HEADER_KEY_BLOCK_DIGEST, blockDigest);
+            namedFields.addLabelValue("WARC-Concurrent-To", warcInfoUID.toString());
+            namedFields.addLabelValue("WARC-Warcinfo-ID", warcInfoUID.toString());
             
             writer.writeMetadataRecord(URL, create14DigitDate,
             		mimetype, recordId, namedFields, in,
@@ -143,11 +184,19 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
 
     @Override
     public void write(String uri, String contentType, String hostIP,
-            long fetchBeginTimeStamp, long recordLength, InputStream in)
+            long fetchBeginTimeStamp, byte[] payload)
                     throws java.io.IOException {
         // hostIP?
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat()
                 .format(new Date(fetchBeginTimeStamp));
+        ByteArrayInputStream in = new ByteArrayInputStream(payload);
+        String blockDigest = ChecksumCalculator.sha1(in);
+        in = new ByteArrayInputStream(payload); // A re-read is necessary here!
+        ANVLRecord namedFields = new ANVLRecord(3);
+        namedFields.addLabelValue(
+        WARCConstants.HEADER_KEY_BLOCK_DIGEST, blockDigest);
+        namedFields.addLabelValue("WARC-Concurrent-To", warcInfoUID.toString());
+        namedFields.addLabelValue("WARC-Warcinfo-ID", warcInfoUID.toString());
         URI recordId;
         try {
             recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
@@ -155,7 +204,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             throw new IllegalState("Epic fail creating URI from UUID!");
         }
         writer.writeMetadataRecord(uri, create14DigitDate, contentType,
-                recordId, null, in, recordLength);
+                recordId, namedFields, in, payload.length);
     }
 
 }

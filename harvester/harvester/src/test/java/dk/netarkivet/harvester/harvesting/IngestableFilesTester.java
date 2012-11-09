@@ -30,11 +30,9 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 import junit.framework.TestCase;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 
 public class IngestableFilesTester extends TestCase {
@@ -299,10 +297,10 @@ public class IngestableFilesTester extends TestCase {
      * Writes a single ARC record (containing MSG) and closes the ARCWriter.
      */
     private static void writeOneRecord(MetadataFileWriter aw) {
-        InputStream is = new ByteArrayInputStream(MSG.getBytes());
+        //InputStream is = new ByteArrayInputStream(MSG.getBytes());
         try {
             aw.write("test://test.test/test", "text/plain", "0.0.0.0", new Date().getTime(),
-                    MSG.length(), is);
+                    MSG.getBytes());
         } catch (IOException e) {
             fail("Should have written a test record and closed ARCWriter");
         }

@@ -38,6 +38,7 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.AliasInfo;
 import dk.netarkivet.harvester.datamodel.Constants;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 
 /**
  * Tests for class MetadataEntry.

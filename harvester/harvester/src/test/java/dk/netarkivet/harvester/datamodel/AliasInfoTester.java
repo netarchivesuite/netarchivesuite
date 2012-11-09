@@ -31,7 +31,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.testutils.StringAsserts;
 
 /** Test-class for AliasInfo class. */

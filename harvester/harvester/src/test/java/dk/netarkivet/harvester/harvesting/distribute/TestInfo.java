@@ -40,6 +40,7 @@ import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.testutils.ReflectUtils;
 
 /**

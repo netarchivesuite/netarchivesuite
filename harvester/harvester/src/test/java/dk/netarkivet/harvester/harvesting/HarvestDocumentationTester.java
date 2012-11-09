@@ -77,7 +77,7 @@ public class HarvestDocumentationTester extends TestCase {
      * by the method below.
      *
      * Verifies that after calling the method, a new ARC file is created with
-     * the appropriate name (see getMetadataARCFileName()). Verfies that this
+     * the appropriate name (see getMetadataARCFileName()). Verifies that this
      * ARC file contains one record of MIME type "application/cdx" per original
      * ARC file in the dir (and no other records of that type). Verifies that
      * the CDX records are named appropriately (see getCDXURI()).
@@ -100,8 +100,7 @@ public class HarvestDocumentationTester extends TestCase {
         MetadataFileWriter.getMetadataArchiveFileName(
                 TestInfo.ARC_JOB_ID);
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,
-                                                  Long.parseLong(
-                                                          TestInfo.ARC_JOB_ID));
+                                                  Long.parseLong(TestInfo.ARC_JOB_ID));
         List<File> fs = inf.getMetadataArcFiles();
         assertEquals("Should have created exactly one file ",
                      1, fs.size());

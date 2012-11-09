@@ -35,8 +35,8 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
-import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.HarvestDefinitionInfo;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
+import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
@@ -44,17 +44,11 @@ import dk.netarkivet.testutils.*;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 import junit.framework.TestCase;
-import org.archive.io.ArchiveRecord;
-import org.archive.io.arc.ARCReader;
-import org.archive.io.arc.ARCReaderFactory;
-import org.archive.io.arc.ARCRecord;
-import org.archive.io.arc.ARCRecordMetaData;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -228,49 +222,42 @@ public class HarvestControllerTester extends TestCase {
         Job someJob = TestInfo.getJob();
         someJob.setJobID(1L);
 
-        /** Test that empty metadata list does not produce any preharvest metadata file. */
-        File arcFile = new File(TestInfo.CRAWLDIR_ORIGINALS_DIR, someJob.getJobID() + "-preharvest-metadata-1.arc");
-        if (arcFile.exists()) {
-            FileUtils.remove(arcFile);
+        /** Test that empty metadata list does not produce any preharvest metadata objects in crawldir/metadata. */
+        File metadataDir = new File(TestInfo.WORKING_DIR, IngestableFiles.METADATA_SUB_DIR);
+        if (metadataDir.exists()) {
+            FileUtils.removeRecursively(metadataDir);
         }
-        assertFalse("preharvest-metadata file should not exist before calling this method", arcFile.exists());
+        
+        
+        assertFalse("metadata dir should not exist before calling this method", metadataDir.isDirectory());
         final HarvestController hc = HarvestController.getInstance();
         Method writePreharvestMetadata = ReflectUtils.getPrivateMethod(
                 hc.getClass(), "writePreharvestMetadata",
                 Job.class, List.class, File.class);
 
-        writePreharvestMetadata.invoke(hc, someJob, TestInfo.emptyMetadata, TestInfo.CRAWLDIR_ORIGINALS_DIR);
+        writePreharvestMetadata.invoke(hc, someJob, TestInfo.emptyMetadata, TestInfo.WORKING_DIR);
 
-        assertFalse("preharvest-metadata file should not be created with empty metadata list", arcFile.exists());
+        assertFalse("metadata files should not be created with empty metadata list", metadataDir.isDirectory());
 
-        /** Test that non-empty metadata list does produce a preharvest metadata file. */
-        writePreharvestMetadata.invoke(hc, someJob, TestInfo.oneMetadata, TestInfo.CRAWLDIR_ORIGINALS_DIR);
-        assertTrue("preharvest-metadata file should be created with non-empty metadata list", arcFile.exists());
+        /** Test that non-empty metadata list produces serialized metadata. */
+        writePreharvestMetadata.invoke(hc, someJob, TestInfo.oneMetadata, TestInfo.WORKING_DIR);
+        
+        List<MetadataEntry> metadata = MetadataEntry.getmetadataFromDisk(metadataDir);
+        
+        assertTrue("preharvest-metadata files should be created with non-empty metadata list", 
+                metadata.size() > 0);
+        
+        /** Test the contents of this preharvest metadata */
+        
+        MetadataEntry meta = metadata.get(0);
 
-        /** Test the contents of this preharvest-metadata file. */
-        assertTrue("The preharvest-metadata-1.arc is not valid ARC", isArcValid(arcFile));
-        ARCReader r = ARCReaderFactory.get(arcFile);
-        Iterator<ArchiveRecord> iterator = r.iterator();
-        iterator.next(); //Skip ARC file header
-        // Read the record, checking mime-type, uri and content.
-        ARCRecord record = (ARCRecord) iterator.next();
-        ARCRecordMetaData meta = record.getMetaData();
         assertEquals("Should record the object under the given URI",
-                     TestInfo.sampleEntry.getURL(), meta.getUrl());
+                     TestInfo.sampleEntry.getURL(), meta.getURL());
         assertEquals("Should indicate the intended MIME type",
-                     TestInfo.sampleEntry.getMimeType(), meta.getMimetype());
-        String foundContent = ARCTestUtils.readARCRecord(record);
+                     TestInfo.sampleEntry.getMimeType(), meta.getMimeType());;
+        String foundContent = new String(meta.getData());
         assertEquals("Should store content unchanged",
                      new String(TestInfo.sampleEntry.getData()), foundContent);
-        //Cleanup
-        if (arcFile.exists()) {
-            FileUtils.remove(arcFile);
-        }
-    }
-
-    private boolean isArcValid(File thisArc) throws IOException {
-        ARCReader ar = ARCReaderFactory.get(thisArc);
-        return ar.isValid();
     }
 
     /**

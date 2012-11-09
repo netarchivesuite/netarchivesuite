@@ -22,7 +22,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.harvester.harvesting.distribute;
+package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.harvesting.JobInfo;
-import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData.XmlState.OKSTATE;
+import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.XmlState.OKSTATE;
 
 
 /**
