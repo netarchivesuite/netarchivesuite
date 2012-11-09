@@ -54,13 +54,13 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
      * The comparison will put the largest configuration first (with respect
      * to 2) and 3))
      */
-    private static class CompareConfigsDesc
+    public static class CompareConfigsDesc
     implements Comparator<DomainConfiguration> {
 
         private long objectLimit;
         private long byteLimit;
 
-        CompareConfigsDesc(long objectLimit, long byteLimit) {
+        public CompareConfigsDesc(long objectLimit, long byteLimit) {
             this.objectLimit = objectLimit;
             this.byteLimit = byteLimit;
         }
