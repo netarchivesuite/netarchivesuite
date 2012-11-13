@@ -276,4 +276,9 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         return true;
     }
 
+    /** Only to be used by unittests. */
+    public static void reset() {
+        instance = null;
+    }
+
 }

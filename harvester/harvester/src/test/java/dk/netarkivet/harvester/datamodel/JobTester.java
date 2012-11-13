@@ -90,7 +90,7 @@ public class JobTester extends DataModelTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
-
+    
     /**
      * Tests that seedlists have ascii versions added.
      */
@@ -145,7 +145,10 @@ public class JobTester extends DataModelTestCase {
         DomainConfiguration dc1 = TestInfo.createConfig("kb.dk", "fuld_dybde", 112);
         DomainConfiguration dc2 = TestInfo.createConfig("netarkivet.dk", "fuld_dybde", 1112);
         DomainConfiguration dc3 = TestInfo.createConfig("statsbiblioteket.dk", "fuld_dybde", 2223);
-
+        //System.out.println("generatorclass: " + Settings.get(HarvesterSettings.JOBGEN_CLASS));
+        // This line is needed for this test to pass if this test is run as part of the whole suite
+        // If the default JOBGEN_CLASS is changed, this will not work. 
+        dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator.reset();
         Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "3");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "0");
         Job job = Job.createJob(42L, dc1, 0);
@@ -158,9 +161,9 @@ public class JobTester extends DataModelTestCase {
         } catch (ArgumentNotValid e) {
             //expected
         }
-
-    }
-
+        
+    }    
+    
     /**
      * Verify that a Job can be created and the correct data retrieved.
      */
