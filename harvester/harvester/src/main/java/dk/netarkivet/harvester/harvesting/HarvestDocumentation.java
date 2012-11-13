@@ -132,7 +132,7 @@ public class HarvestDocumentation {
         // If metadata-arcfile already exists, we are done
         // See bug 722
         if (ingestables.isMetadataReady()) {
-            log.debug("The metadata-file '" 
+            log.warn("The metadata-file '" 
                     + ingestables.getMetadataFile().getAbsolutePath() 
                     + "' already exists, so we don't make another one!");
             return;

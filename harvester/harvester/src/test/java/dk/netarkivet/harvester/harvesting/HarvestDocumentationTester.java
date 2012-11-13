@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,6 +51,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveProfile;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.testutils.ARCTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
@@ -85,6 +87,8 @@ public class HarvestDocumentationTester extends TestCase {
      * @throws IOException
      */
     public void testDocumentHarvestOrdinaryCase() throws IOException {
+        
+        
         /* Run the method on a working-dir that mirrors
          * TestInfo.METADATA_TEST_DIR.
          */
@@ -92,19 +96,32 @@ public class HarvestDocumentationTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.METADATA_TEST_DIR,
                 TestInfo.WORKING_DIR);
+        
+        
+        // Add preharvest metadata to "metadata" subdirectory of the crawldir
+        MetadataEntry me = new MetadataEntry(
+                "metadata://netarkivet.dk/crawl/setup/aliases?version=1&harvestid=42&harvestnum=1&jobid=117", 
+                "text/plain", "tv2.dk is an alias of statsbiblioteket.dk\n");
+        List<MetadataEntry> l = new ArrayList<MetadataEntry>();
+        l.add(me);
+        File metadatadir = new File(TestInfo.WORKING_DIR, IngestableFiles.METADATA_SUB_DIR);
+        metadatadir.mkdir();
+        MetadataEntry.storemetadataToDisk(l, metadatadir);
+        
+        
         HarvestDocumentation.documentHarvest(TestInfo.WORKING_DIR,
                                              TestInfo.JOB_ID,
                                              TestInfo.HARVEST_ID
         );
+             
         //Verify that the new file exists.
-        MetadataFileWriter.getMetadataArchiveFileName(
-                TestInfo.ARC_JOB_ID);
+        MetadataFileWriter.getMetadataArchiveFileName(TestInfo.ARC_JOB_ID);
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,
                                                   Long.parseLong(TestInfo.ARC_JOB_ID));
         List<File> fs = inf.getMetadataArcFiles();
-        assertEquals("Should have created exactly one file ",
-                     1, fs.size());
+        assertEquals("Should have created exactly one file ", 1, fs.size());
         File f = fs.get(0);
+        //System.out.println(f.getAbsolutePath());
         assertTrue("The file should exist: " + f.toString(), f.exists());
         //Put an ARCReader on top of the file.
         ARCReader r = ARCReaderFactory.get(f);
@@ -125,6 +142,7 @@ public class HarvestDocumentationTester extends TestCase {
         while (it.hasNext()) {
             ARCRecord record = (ARCRecord) it.next();
             ARCRecordMetaData meta = record.getMetaData();
+            //System.out.println("Url: " + meta.getUrl());
             if (meta.getMimetype().equals("application/x-cdx")) {
                 assertTrue("Bad URI in metadata: " + meta.getUrl(),
                            cdxURISet.contains(meta.getUrl()));
@@ -489,7 +507,7 @@ public class HarvestDocumentationTester extends TestCase {
         String fileContent = FileUtils.readFile(
                 ingestableFiles.getMetadataArcFiles().get(0));
 
-        // test 2:Dont generate metadata-arc file, it already exists
+        // test 2: Don't generate metadata-arc file, it already exists
         // but issue a warning instead.
 
         HarvestDocumentation.documentHarvest(TestInfo.WORKING_DIR,
@@ -498,9 +516,14 @@ public class HarvestDocumentationTester extends TestCase {
         FileUtils.remove(new File(arcsDir,
                                   "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc"));
         LogUtils.flushLogs(HarvestDocumentation.class.getName());
+        
+        String metadataDirPath = new File(TestInfo.WORKING_DIR, 
+                IngestableFiles.METADATA_SUB_DIR).getAbsolutePath();
+        String filename = MetadataFileWriter.getMetadataArchiveFileName(""+ TestInfo.JOB_ID);
+        
         FileAsserts.assertFileContains(
                 "Should have issued warning about existing metadata-arcfile",
-                "The metadata-arc already exists, so we don't make another one!",
+                "The metadata-file '" + metadataDirPath + "/" + filename + "' already exists, so we don't make another one!",
                 TestInfo.LOG_FILE
         );
 
