@@ -96,6 +96,7 @@ domain - the domain to get the log for
             outputStream.flush();
             outputStream.close();
             FileUtils.remove(crawlLogExtract);
+            return;
         }
     } catch (ForwardedToErrorPage e) {
         return;
