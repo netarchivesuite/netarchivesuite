@@ -118,7 +118,7 @@ public class MetadataEntry implements Serializable {
     public MetadataEntry(String url, String mimeType, String data) {
         ArgumentNotValid.checkNotNullOrEmpty(url, "url");
         ArgumentNotValid.checkNotNullOrEmpty(mimeType, "mimetype");
-        ArgumentNotValid.checkNotNullOrEmpty(data, "data");
+        ArgumentNotValid.checkNotNull(data, "data");
         setURL(url); // Ensures this is a valid url
         setMimetype(mimeType); // Ensures this is a valid mimetype
         this.mimeType = mimeType;
@@ -201,10 +201,7 @@ public class MetadataEntry implements Serializable {
                 "Long origHarvestDefinitionID");
         ArgumentNotValid.checkNotNegative(harvestNum, "int harvestNum");
         ArgumentNotValid.checkNotNull(jobId, "Long jobId");
-
-        if (jobIDsForDuplicateReduction.isEmpty()) {
-            return null;
-        }
+        
         // construct a metadata-URL for this MetadataEntry
         String metadataUrl = String.format(
                 DUPLICATEREDUCTION_METADATA_URL,

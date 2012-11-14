@@ -119,9 +119,11 @@ public class JobDispatcher {
                 log.info("Job #" + jobToSubmit.getJobID() + " submitted");
 
             } catch (Throwable e) {
+                
                 String message = "Error while dispatching job " + 
                         jobToSubmit.getJobID()
                         + ". Job status changed to FAILED";
+                System.out.println(message + e.fillInStackTrace());//sssssssssssss
                 log.warn(message, e);
                 if (jobToSubmit != null) {
                     jobToSubmit.setStatus(JobStatus.FAILED);

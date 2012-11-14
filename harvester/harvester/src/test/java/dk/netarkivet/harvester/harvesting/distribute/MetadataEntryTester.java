@@ -116,13 +116,13 @@ public class MetadataEntryTester extends TestCase {
         } catch (ArgumentNotValid e) {
             // expected
         }
-        // check, that null & empty arguments are not accepted. (6)
-        try {
-            new MetadataEntry(aRealURL, aRealMimetype, emptyData);
-            fail("ArgumentNotValid exception expected for null/empty arguments");
-        } catch (ArgumentNotValid e) {
-            // expected
-        }
+//        // check, that null & empty arguments are not accepted. (6)
+//        try {
+//            new MetadataEntry(aRealURL, aRealMimetype, emptyData);
+//            fail("ArgumentNotValid exception expected for null/empty arguments");
+//        } catch (ArgumentNotValid e) {
+//            // expected
+//        }
 
         // check, that valid arguments are accepted.
         try {
