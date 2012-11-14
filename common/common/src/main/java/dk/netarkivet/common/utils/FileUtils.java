@@ -1017,8 +1017,7 @@ public class FileUtils {
         return fileName;
     }
     
-    /** Sort a crawl.log file according to URL.  This method depends on
-     * the Unix sort() command.
+    /** Sort a crawl.log file according to the timestamp.
      *
      * @param file The file containing the unsorted data.
      * @param toFile The file that the sorted data can be put into.
@@ -1039,7 +1038,7 @@ public class FileUtils {
         if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
             sortTempDir = FileUtils.getTempDir();
         }
-        boolean sortLikeCrawllog = true;
+        boolean sortLikeCrawllog = false;
         int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir, sortLikeCrawllog);
         if (error != 0) {
             final String errMsg = "Error code " + error + " sorting crawl log '"

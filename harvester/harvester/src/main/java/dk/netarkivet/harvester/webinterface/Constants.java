@@ -270,4 +270,4 @@ public class Constants {
     public static final String DEFAULT_DOMAIN_SEARCH_TYPE = NAME_DOMAIN_SEARCH;
     
     public static final String JOB_ORDERING_BY_STARTDATE_PARAM = "ORDERING_BY_STARTDATE";
-}     
+}

@@ -689,5 +689,10 @@ public class HarvesterSettings {
      */
     public static String INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS
         = "settings.harvester.indexserver.lookfordataInAllBitarchiveReplicas";
+
+    /**
+     * The maximum length (in lines) of crawllog to be displayed in a browser window.
+     */
+    public static String MAX_CRAWLLOG_IN_BROWSER = "settings.harvester.webinterface.maxCrawlLogInBrowser";
 }
 

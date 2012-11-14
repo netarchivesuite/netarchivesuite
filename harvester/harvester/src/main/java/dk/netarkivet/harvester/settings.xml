@@ -158,5 +158,8 @@ National Library.
         		<class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
         	</indexrequestserver>	
         </indexserver>
+        <webinterface>
+            <maxCrawlLogInBrowser>100</maxCrawlLogInBrowser>
+        </webinterface>
     </harvester>
 </settings>

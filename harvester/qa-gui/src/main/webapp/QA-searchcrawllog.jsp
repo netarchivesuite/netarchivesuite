@@ -24,7 +24,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%--
-This page shows selected parts of a crawllog for a given job and domain.
+This page shows selected parts of a crawllog for a given job, filtered by
+either domain or regexp.
 
 Note that the response language for the page is set using requested locale
 of the client browser when fmt:setBundle is called. After that, fmt:format
@@ -33,6 +34,8 @@ and reponse.getLocale use this locale.
 Parameters:
 jobid - the id of the job to get the log for
 regexp - the regular expression used to match the wanted extract of the crawl.log.
+or
+domain - the domain to get the log for
 --%><%@ page import="java.io.File,
                  java.io.FileInputStream,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
@@ -43,22 +46,57 @@ regexp - the regular expression used to match the wanted extract of the crawl.lo
                  dk.netarkivet.viewerproxy.webinterface.Constants,
                  dk.netarkivet.viewerproxy.webinterface.Reporting"
          pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%>
+<%@ page import="org.apache.commons.io.IOUtils" %>
+<%@ page import="java.io.LineNumberReader" %>
+<%@ page import="java.io.FileReader" %>
+<%@ page import="dk.netarkivet.common.utils.Settings" %>
+<%@ page import="dk.netarkivet.harvester.HarvesterSettings" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.viewerproxy.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.viewerproxy.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
+    String domain;
     String regexp;
     int jobid;
     File crawlLogExtract;
     try {
-        HTMLUtils.forwardOnMissingParameter(pageContext, Constants.JOBID_PARAM, Constants.REGEXP_PARAM);
+        HTMLUtils.forwardOnMissingParameter(pageContext, Constants.JOBID_PARAM);
         regexp = request.getParameter(Constants.REGEXP_PARAM);
+        domain = request.getParameter(Constants.DOMAIN_PARAM);
+        if ( (regexp == null || regexp.length() == 0) && (domain == null || domain.length() == 0) ) {
+            pageContext.getRequest().setAttribute("message", "Must specify either 'domain' or 'regexp' " +
+                    "parameter on request.");
+            RequestDispatcher rd
+                    = pageContext.getServletContext().getRequestDispatcher(
+                    "/message.jsp");
+            rd.forward(pageContext.getRequest(), pageContext.getResponse());
+            return;
+        }
         jobid = HTMLUtils.parseAndCheckInteger(pageContext, Constants.JOBID_PARAM, 1,
-                                               Integer.MAX_VALUE);
-        crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
+                Integer.MAX_VALUE);
+        if (regexp != null && regexp.length() != 0 ) {
+            crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
+        } else {
+            crawlLogExtract = Reporting.getCrawlLogForDomainInJob(domain, jobid);
+        }
+        LineNumberReader reader = new LineNumberReader(new FileReader(crawlLogExtract));
+        reader.skip(Long.MAX_VALUE);
+        int linesInFile = reader.getLineNumber();
+        int maxLinesInBrowser =
+                Settings.getInt(HarvesterSettings.MAX_CRAWLLOG_IN_BROWSER);
+        if (linesInFile > maxLinesInBrowser) {
+            response.setHeader("Content-Type", "binary/octet-stream");
+            response.setHeader("Content-Disposition", "Attachment; filename=crawl_log_extract.txt");
+            final ServletOutputStream outputStream = response.getOutputStream();
+            IOUtils.copy(new FileInputStream(crawlLogExtract), outputStream);
+            outputStream.flush();
+            outputStream.close();
+            FileUtils.remove(crawlLogExtract);
+        }
     } catch (ForwardedToErrorPage e) {
         return;
     }
