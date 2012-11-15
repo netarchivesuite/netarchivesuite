@@ -1017,7 +1017,7 @@ public class FileUtils {
         return fileName;
     }
     
-    /** Sort a crawl.log file according to the timestamp.
+    /** Sort a crawl.log file according to the url.
      *
      * @param file The file containing the unsorted data.
      * @param toFile The file that the sorted data can be put into.
@@ -1038,11 +1038,42 @@ public class FileUtils {
         if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
             sortTempDir = FileUtils.getTempDir();
         }
-        boolean sortLikeCrawllog = false;
+        boolean sortLikeCrawllog = true;
         int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir, sortLikeCrawllog);
         if (error != 0) {
             final String errMsg = "Error code " + error + " sorting crawl log '"
                 + file + "'";
+            log.warn(errMsg);
+            throw new IOFailure(errMsg);
+        }
+    }
+
+    /** Sort a crawl.log file according to the timestamp.
+     *
+     * @param file The file containing the unsorted data.
+     * @param toFile The file that the sorted data can be put into.
+     * @throws IOFailure if there were errors running the sort process, or
+     * if the file does not exist.
+     */
+    public static void sortCrawlLogOnTimestamp(File file, File toFile) {
+        ArgumentNotValid.checkNotNull(file, "File file");
+        ArgumentNotValid.checkNotNull(toFile, "File toFile");
+        if (!file.exists()) {
+            String errMsg = "The file '" + file.getAbsolutePath()
+                            + "' does not exist.";
+            log.warn(errMsg);
+            throw new IOFailure(errMsg);
+        }
+
+        File sortTempDir = null;
+        if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
+            sortTempDir = FileUtils.getTempDir();
+        }
+        boolean sortLikeCrawllog = false;
+        int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir, sortLikeCrawllog);
+        if (error != 0) {
+            final String errMsg = "Error code " + error + " sorting crawl log '"
+                                  + file + "'";
             log.warn(errMsg);
             throw new IOFailure(errMsg);
         }

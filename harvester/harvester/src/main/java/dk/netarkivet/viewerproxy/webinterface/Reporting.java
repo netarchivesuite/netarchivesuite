@@ -192,7 +192,7 @@ public class Reporting {
                 batchJob,
                 Settings.get(CommonSettings.USE_REPLICA_ID));
         status.getResultFile().copyTo(f);
-        FileUtils.sortCrawlLog(f, fsorted);
+        FileUtils.sortCrawlLogOnTimestamp(f, fsorted);
         FileUtils.remove(f);
         return fsorted;
     }
