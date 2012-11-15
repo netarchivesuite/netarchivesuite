@@ -652,6 +652,9 @@
         		<class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
         	</indexrequestserver>	
         </indexserver>
+        <webinterface>
+            <maxCrawlLogInBrowser>100</maxCrawlLogInBrowser>
+        </webinterface>
     </harvester><monitor>
         <jmxUsername>monitorRole</jmxUsername>
         <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>

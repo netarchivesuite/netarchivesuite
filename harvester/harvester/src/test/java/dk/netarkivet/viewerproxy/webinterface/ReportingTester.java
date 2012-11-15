@@ -169,15 +169,11 @@ public class ReportingTester extends TestCase {
         List<String> lines = FileUtils.readListFromFile(file);
         assertTrue("Should have found a result, but found none", lines.size() > 0);
         StringAsserts.assertStringContains("First line should be dns", "dns:", lines.get(0));
-        StringAsserts.assertStringContains("Last line should be www.netarkivet.dk", 
-                "www.netarkivet.dk", lines.get(lines.size() - 1));
         assertEquals("Should have 126 lines (2 dns, 1 netarchive.dk, 121 netarkivet.dk, and 2 www.netarkivet.dk)", 126, lines.size());
  
         // Find the crawl-log lines for domain kaarefc.dk in metadata file for job 2
         file = Reporting.getCrawlLogForDomainInJob("kaarefc.dk", jobId);
         lines = FileUtils.readListFromFile(file);
-        StringAsserts.assertStringContains("First line should be dns", "dns:", lines.get(0));
-        StringAsserts.assertStringContains("Last line should be w3.org", "w3.org", lines.get(lines.size() - 1));
         assertEquals("Should have 44 lines (1 dns, 40 kaarefc.dk, 3 others)", 44, lines.size());
         //System.out.println(FileUtils.readFile(file));
 
