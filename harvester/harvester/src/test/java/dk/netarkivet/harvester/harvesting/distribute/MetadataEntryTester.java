@@ -54,7 +54,6 @@ public class MetadataEntryTester extends TestCase {
     final private String aNullMimetype = null;
 
     private String realData;
-    private String emptyData;
     final private String nullData = null;
     
     private String anInvalidUrl;
@@ -68,7 +67,6 @@ public class MetadataEntryTester extends TestCase {
             + "a bla bla bla bla bla bla bla bla bla bla bla";
         anEmptyURL = "";
         anEmptyMimetype = "";
-        emptyData = "";
         anInvalidUrl = "http:/aninvalidUrl";
         anInvalidMimetype = "textplain";
     }
@@ -116,13 +114,6 @@ public class MetadataEntryTester extends TestCase {
         } catch (ArgumentNotValid e) {
             // expected
         }
-//        // check, that null & empty arguments are not accepted. (6)
-//        try {
-//            new MetadataEntry(aRealURL, aRealMimetype, emptyData);
-//            fail("ArgumentNotValid exception expected for null/empty arguments");
-//        } catch (ArgumentNotValid e) {
-//            // expected
-//        }
 
         // check, that valid arguments are accepted.
         try {
