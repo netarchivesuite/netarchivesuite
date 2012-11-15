@@ -36,7 +36,7 @@ CREATE TABLE schemaversions (
 );
 
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'domains', 2);
+    VALUES ( 'domains', 3);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'configurations', 5);
 INSERT INTO schemaversions ( tablename, version )

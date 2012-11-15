@@ -400,4 +400,10 @@ public abstract class DerbySpecifics extends DBSpecifics {
         };
         HarvestDBConnection.updateTable("jobs", 7, sqlStatements);
     }
+
+    @Override
+    protected void migrateDomainsv2tov3() {
+        String[] sqlStatements = {}; //noop
+        HarvestDBConnection.updateTable("domains", 3, sqlStatements);
+    }
 }

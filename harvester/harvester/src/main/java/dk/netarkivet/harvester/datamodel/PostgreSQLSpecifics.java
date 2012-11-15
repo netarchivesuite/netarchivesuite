@@ -231,6 +231,15 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     }
 
     @Override
+    protected void migrateDomainsv2tov3() {
+        String[] sqlStatements = {
+                "ALTER TABLE domains "
+                + "ALTER COLUMN crawlertraps type text"
+        };
+        HarvestDBConnection.updateTable("domains", 3, sqlStatements);
+    }
+
+    @Override
     protected void migrateConfigurationsv4tov5() {
         // Update configurations table to version 5
         String[] sqlStatements

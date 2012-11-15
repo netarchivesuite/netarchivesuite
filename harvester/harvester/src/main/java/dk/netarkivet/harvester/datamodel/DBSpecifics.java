@@ -167,6 +167,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             upgradeExtendedFieldValueTable(currentVersion, toVersion);
         } else if (tableName.equals(HarvesterDatabaseTables.EXTENDEDFIELDTYPE.getTablename())) {
             upgradeExtendedFieldTypeTable(currentVersion, toVersion);
+        } else if (tableName.equals(HarvesterDatabaseTables.DOMAINS.getTablename())) {
+            upgradeDomainsTable(currentVersion, toVersion);
             // Add new if else when other tables need to be upgraded
         } else {
             throw new NotImplementedException(
@@ -425,6 +427,20 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
     }   
 
+    private void upgradeDomainsTable(int currentVersion, int toVersion)  {
+           if (currentVersion < 2) {
+            throw new IllegalState("Database is in an illegalState: "
+                    + "The current version " + currentVersion
+                    + " of table '" + HarvesterDatabaseTables.DOMAINS.getTablename()
+                    + "' is not acceptable. "
+                    + "(current version is less than open source version).");
+        }
+        if (currentVersion == 2 && toVersion >= 3) {
+            migrateDomainsv2tov3();
+            currentVersion = 3;
+        }
+    }
+
     /** Migrate the fullharvests table.
      * 
      * @param currentVersion the current version of the fullharvests table
@@ -508,6 +524,13 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * consists of adding the new column 'retiredQueuesCount'.
      */
     protected abstract void migrateRunningJobsMonitorTableV1ToV2();
+
+     /**
+     * Migrates the 'domains' table from version 2 to version 3. This
+     * consists of altering the type of the crawlertraps column to "text"
+     * in postgres, and noop in derbyDB
+     */
+    protected abstract void migrateDomainsv2tov3();
 
     /**
      * Creates the initial (version 1) of table 'global_crawler_trap_lists'.

@@ -46,7 +46,7 @@ CREATE TABLE schemaversions (
 );
 
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'domains', 2);
+    VALUES ( 'domains', 3);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'configurations', 5);
 INSERT INTO schemaversions ( tablename, version )
@@ -108,7 +108,7 @@ CREATE TABLE domains (
     name varchar(300) NOT NULL UNIQUE,
     comments varchar(30000),
     defaultconfig bigint NOT NULL,
-    crawlertraps varchar(1000),
+    crawlertraps text,
     edition bigint NOT NULL,
     alias bigint,
     lastaliasupdate timestamp

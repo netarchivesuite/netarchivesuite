@@ -39,7 +39,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about domains. */
     DOMAINS {        
         static final String NAME = "domains";
-        static final int REQUIRED_VERSION = 2;
+        static final int REQUIRED_VERSION = 3;
         
         @Override
         public int getRequiredVersion() {

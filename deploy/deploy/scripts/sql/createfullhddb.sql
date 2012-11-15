@@ -54,7 +54,7 @@ create table schemaversions (
 );
 
 insert into schemaversions ( tablename, version )
-    values ( 'domains', 2);
+    values ( 'domains', 3);
 insert into schemaversions ( tablename, version )
     values ( 'configurations', 5);
 insert into schemaversions ( tablename, version )

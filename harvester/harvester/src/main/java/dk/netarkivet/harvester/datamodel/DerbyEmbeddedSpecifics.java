@@ -46,4 +46,6 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
     public String getDriverClassName() {
         return "org.apache.derby.jdbc.EmbeddedDriver";
     }
+
+
 }
