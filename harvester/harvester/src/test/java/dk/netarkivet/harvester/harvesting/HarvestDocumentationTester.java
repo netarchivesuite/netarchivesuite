@@ -239,30 +239,6 @@ public class HarvestDocumentationTester extends TestCase {
     }
 
     /**
-     * Unit test for HarvestDocumentation.getPreharvestMetadataARCFileName()
-     * Verifies that the name of the new ARC file ends on .arc and that the
-     * parameter is part of the file name.
-     */
-    public void testGetPreharvestMetadataARCFileName() {
-        long jobId = 7;
-        String fn = MetadataFileWriter.getPreharvestMetadataArchiveFileName(
-                jobId);
-        assertTrue("File name should end on '-1.arc' - was " + fn,
-                   fn.endsWith("-1.arc")
-        );
-        assertTrue("File name should contain jobID - was " + fn,
-                   fn.contains(Long.toString(jobId))
-        );
-        assertTrue("File name should contain the string 'metadata' - was " + fn,
-                   fn.contains("metadata")
-        );
-        assertTrue(
-                "File name should contain the string 'preharvest' - was " + fn,
-                fn.contains("preharvest")
-        );
-    }
-
-    /**
      * Unit test for HarvestDocumentation.getCDXURI() Verfies that the URI
      * begins with "metadata://netarkivet.dk/crawl/index/cdx?" and that it
      * contains all four of the method's parameters. Also verifies that null

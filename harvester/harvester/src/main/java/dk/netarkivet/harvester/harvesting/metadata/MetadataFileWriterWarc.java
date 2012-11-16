@@ -129,11 +129,6 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             throw new IllegalState("Error inserting warcinfo record", e);
         }
     }
-    
-    @Override
-    public void insertMetadataFileRecords(File metadataFile) {
-        WARCUtils.insertWARCFile(metadataFile, writer);
-    }
 
     @Override
     public void writeFileTo(File file, String uri, String mime) {
@@ -194,7 +189,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         in = new ByteArrayInputStream(payload); // A re-read is necessary here!
         ANVLRecord namedFields = new ANVLRecord(3);
         namedFields.addLabelValue(
-        WARCConstants.HEADER_KEY_BLOCK_DIGEST, blockDigest);
+        WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
         namedFields.addLabelValue("WARC-Concurrent-To", warcInfoUID.toString());
         namedFields.addLabelValue("WARC-Warcinfo-ID", warcInfoUID.toString());
         URI recordId;

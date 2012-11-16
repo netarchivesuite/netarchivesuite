@@ -27,7 +27,6 @@ package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.commons.logging.Log;
@@ -73,31 +72,6 @@ public abstract class MetadataFileWriter {
             throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT 
                     + "' is invalid! Unrecognized format '"
                     + metadataFormatSetting + "'.");
-        }
-    }
-
-    /**
-     * Generates a name for an archive(ARC/WARC) file containing "preharvest" metadata
-     * regarding a given job (e.g. excluded aliases).
-     *
-     * @param jobID the number of the harvester job
-     * @return The file name to use for the preharvest metadata, as a String.
-     * @throws ArgumentNotValid If jobId is negative
-     */
-    public static String getPreharvestMetadataArchiveFileName(long jobID)
-        throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNegative(jobID, "jobID");
-        if (metadataFormat == 0) {
-            initializeMetadataFormat();
-        }
-        switch (metadataFormat) {
-        case MDF_ARC:
-            return jobID + "-preharvest-metadata-" + 1 + ".arc";
-        case MDF_WARC:
-            return jobID + "-preharvest-metadata-" + 1 + ".warc";
-        default:
-        	throw new ArgumentNotValid("Configuration of '" 
-        	        + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
     }
 
@@ -158,12 +132,6 @@ public abstract class MetadataFileWriter {
      * @return the finished metadataFile
      */
     public abstract File getFile();
-    
-    /**
-     * Insert all records in the given metadata file into the destination archive file.
-     * @param metadataFile A given metadata file to insert 
-     */
-    public abstract void insertMetadataFileRecords(File metadataFile);
     
     /**
      * Write the given file to the metadata file.

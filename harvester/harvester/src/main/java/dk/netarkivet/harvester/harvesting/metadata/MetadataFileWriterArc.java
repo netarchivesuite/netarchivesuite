@@ -80,11 +80,6 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     }
 
     @Override
-    public void insertMetadataFileRecords(File metadataFile) {
-        ARCUtils.insertARCFile(metadataFile, writer);
-    }
-
-    @Override
     public void writeFileTo(File file, String uri, String mime) {
         ARCUtils.writeFileToARC(writer, file, uri, mime);
     }
