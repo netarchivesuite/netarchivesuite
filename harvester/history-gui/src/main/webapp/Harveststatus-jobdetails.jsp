@@ -287,22 +287,19 @@ value="<%= jobID %>"/>
 <!-- make submit button for recalling crawl.log relevant for the specific domains. -->
 
 <form method="post" action="/QA/QA-searchcrawllog.jsp">
-<input type="hidden" name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.JOBID_PARAM %>"
-value="<%= jobID %>"/>
-<input type="submit" value="<fmt:message key="crawl.log.lines.for.domain"/>"/>
-<select name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.DOMAIN_PARAM %>">
-                    <% for (String domain : job.getDomainConfigurationMap().keySet()) {
-                        //TODO the following line uses out.println in a jsp page which is bad practice.
-                            out.println("<option value=\""
-                                    + HTMLUtils.escapeHtmlValues(domain)
-                                    + "\">"
-                                    + HTMLUtils.escapeHtmlValues(domain)
-                                    + "</option>");
-                        }
-                    %>
-                </select>
+    <input type="hidden" name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.JOBID_PARAM %>"
+           value="<%= jobID %>"/>
+    <input type="submit" value="<fmt:message key="crawl.log.lines.for.domain"/>"/>
+    <select name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.DOMAIN_PARAM %>">
+        <% for (String domain : job.getDomainConfigurationMap().keySet()) {
+        %>
+        <option value="<%=HTMLUtils.escapeHtmlValues(domain)%>"><%=HTMLUtils.escapeHtmlValues(domain)%></option>
+        <%
+            }
+        %>
+    </select>
 </form>
-</p>              
+</p>
 <%
 }
 %>
