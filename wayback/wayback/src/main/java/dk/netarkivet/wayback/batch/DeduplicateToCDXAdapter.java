@@ -82,7 +82,8 @@ public class DeduplicateToCDXAdapter implements
     /**
      * Default constructor. Initializes the canonicalizer.
      */
-    public DeduplicateToCDXAdapter() {
+    public
+    DeduplicateToCDXAdapter() {
         canonicalizer = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
     }
 

@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveRecordHeader;
+import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.archive.wayback.ResourceStore;
@@ -202,7 +203,7 @@ public class NetarchiveResourceStore implements ResourceStore {
         final Map<String, String> metadataF = metadata;
         //TODO This the sleaziest thing in this class. Why does the
         //ARCRecord give the wrong status code if we don't override this method?
-        Resource resource = new ArcResource(arcRecord, null)  {
+        Resource resource = new ArcResource(arcRecord, (ARCReader) null)  {
             public int getStatusCode() {
                 return Integer.parseInt(statusCode);
             }

@@ -403,7 +403,12 @@ public abstract class DerbySpecifics extends DBSpecifics {
 
     @Override
     protected void migrateDomainsv2tov3() {
-        String[] sqlStatements = {}; //noop
+        String[] sqlStatements = {
+                "ALTER TABLE domains ADD COLUMN NEW_COLUMN CLOB(64M)",
+                "UPDATE domains SET NEW_COLUMN=crawlertraps",
+                "ALTER TABLE domains DROP COLUMN crawlertraps",
+                "RENAME COLUMN domains.NEW_COLUMN TO crawlertraps"
+        };
         HarvestDBConnection.updateTable("domains", 3, sqlStatements);
     }
 }

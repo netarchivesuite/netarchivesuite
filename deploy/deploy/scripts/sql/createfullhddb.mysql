@@ -40,7 +40,7 @@ create table IF NOT EXISTS schemaversions (
 );
 
 insert into schemaversions ( tablename, version )
-    values ( 'domains', 2);
+    values ( 'domains', 3);
 insert into schemaversions ( tablename, version )
     values ( 'configurations', 5);
 insert into schemaversions ( tablename, version )
@@ -93,7 +93,7 @@ create table IF NOT EXISTS domains (
     name varchar(300) not null unique,
     comments varchar(30000),
     defaultconfig bigint not null,
-    crawlertraps varchar(1000),
+    crawlertraps longtext,
     edition bigint not null,
     alias bigint,
     lastaliasupdate datetime

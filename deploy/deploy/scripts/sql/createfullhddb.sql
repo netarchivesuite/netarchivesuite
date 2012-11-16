@@ -122,7 +122,7 @@ create table domains (
     comments varchar(30000),           -- Comments on domain, if any
     defaultconfig bigint not null,     -- Configuration used for snapshot
                                        --  harvests
-    crawlertraps varchar(1000),        -- Regexp(s) for excluded urls.
+    crawlertraps clob(64M),        -- Regexp(s) for excluded urls.
     edition bigint not null,           -- Marker for optimistic locking by
                                        --  web interface
     alias bigint,                      -- Domain that this domain is an alias
