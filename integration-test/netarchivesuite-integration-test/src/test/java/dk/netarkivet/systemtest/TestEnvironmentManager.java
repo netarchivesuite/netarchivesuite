@@ -185,9 +185,11 @@ public class TestEnvironmentManager {
 
                 String s;
                 while ((s = inReader.readLine()) != null) {
+                    log.debug("The following Standard out was received");
                     log.debug("ssh: " + s);
                 }
                 while ((s = errReader.readLine()) != null) {
+                    log.warn("The following Standard error output was received");
                     log.warn("ssh error: " + s);
                 }
             } catch (InterruptedException ie) {
