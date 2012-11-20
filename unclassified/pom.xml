@@ -17,7 +17,6 @@
     <module>m2-build/netarchivesuite-common</module>
     <module>m2-build/netarchivesuite-harvester</module>
     <module>m2-build/netarchivesuite-archive</module>
-    <module>m2-build/netarchivesuite-viewerproxy</module>
     <module>m2-build/netarchivesuite-deploy</module>
     <module>m2-build/netarchivesuite-monitor</module>
     <module>m2-build/netarchivesuite-wayback</module>
