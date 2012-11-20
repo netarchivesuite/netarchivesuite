@@ -56,7 +56,7 @@ public class CompleteSettingsTester extends TestCase {
      * in ../originals/complete_settings/complete_settings.xml with the new version.
      */
     
-    public void testCompleteSettings() throws Exception {
+    public void unmaintainableTestCompleteSettings() throws Exception {
             // the output directory is not automatically created,
             // hence create it before running.
             FileUtils.createDir(TestInfo.TMPDIR);
