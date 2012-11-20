@@ -113,6 +113,13 @@ public class JobDBDAO extends JobDAO {
             job.setJobID(generateNextID(connection));
         }
 
+        if (job.getCreationDate() != null) {
+            log.warn("The creation time for the job is already set. "
+                + "This should probably never happen.");
+        } else {
+            job.setCreationDate(new Date());
+        }
+
         log.debug("Creating " + job.toString());
 
         PreparedStatement statement = null;
