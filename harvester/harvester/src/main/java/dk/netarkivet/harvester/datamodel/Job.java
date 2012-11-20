@@ -980,8 +980,8 @@ public class Job implements Serializable, JobInfo {
             + ", numconfigs = " + getDomainConfigurationMap().size()
             + ", created = " + getCreationDate()
             + (getSubmittedDate() != null ? ", submitted = " + getSubmittedDate() : "")
-            + (getActualStart() != null ? ", started = " + getSubmittedDate() : "")
-            + (getActualStop() != null ? ", stopped = " + getSubmittedDate() : "")
+            + (getActualStart() != null ? ", started = " + getActualStart() : "")
+            + (getActualStop() != null ? ", stopped = " + getActualStop() : "")
             + ")";
     }
 
