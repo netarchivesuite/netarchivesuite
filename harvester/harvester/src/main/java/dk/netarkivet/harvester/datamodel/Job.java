@@ -979,9 +979,9 @@ public class Job implements Serializable, JobInfo {
             + ", orderxml = " + getOrderXMLName()
             + ", numconfigs = " + getDomainConfigurationMap().size()
             + ", created = " + getCreationDate()
-            + getSubmittedDate() != null ? ", submitted = " + getSubmittedDate() : ""
-            + getActualStart() != null ? ", started = " + getSubmittedDate() : ""
-            + getActualStop() != null ? ", stopped = " + getSubmittedDate() : ""
+            + (getSubmittedDate() != null ? ", submitted = " + getSubmittedDate() : "")
+            + (getActualStart() != null ? ", started = " + getSubmittedDate() : "")
+            + (getActualStop() != null ? ", stopped = " + getSubmittedDate() : "")
             + ")";
     }
 
