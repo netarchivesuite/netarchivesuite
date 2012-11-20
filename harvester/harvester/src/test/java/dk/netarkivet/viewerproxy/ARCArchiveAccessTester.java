@@ -24,6 +24,26 @@
  */
 package dk.netarkivet.viewerproxy;
 
+import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.arc.ARCKey;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.testutils.FileAsserts;
+import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -39,31 +59,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.LogManager;
-
 import junit.framework.TestCase;
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
-
-import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.ARCKey;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
-import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unit tests for ARCArchiveAccess.  This only tests that we connect the CDX
@@ -136,7 +135,7 @@ public class ARCArchiveAccessTester extends TestCase {
         //Although we also need some real data
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
-        Settings.set(ViewerProxySettings.VIEWERPROXY_DIR, new File(WORKING, "viewerproxy").getAbsolutePath());
+        Settings.set(HarvesterSettings.VIEWERPROXY_DIR, new File(WORKING, "viewerproxy").getAbsolutePath());
         FileUtils.createDir(new File(WORKING, "viewerproxy"));
 
         aaa = new ARCArchiveAccess(fakeArcRepos);

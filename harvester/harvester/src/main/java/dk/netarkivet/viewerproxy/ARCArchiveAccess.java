@@ -24,6 +24,14 @@
  */
 package dk.netarkivet.viewerproxy;
 
+import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
+import dk.netarkivet.common.distribute.arcrepository.ResultStream;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -35,17 +43,8 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
-import dk.netarkivet.common.distribute.arcrepository.ResultStream;
-import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.Settings;
 
 /**
  * The ARCArchiveAccess class implements reading of ARC indexes and files.
@@ -85,7 +84,7 @@ public class ARCArchiveAccess implements URIResolver {
     /** If the value is true, we will try to lookup w/ ftp instead of http, 
      * if we don't get a hit in the index. */
     private static final boolean tryToLookupUriAsFtp = Settings.getBoolean(
-            ViewerProxySettings.TRY_LOOKUP_URI_AS_FTP); 
+            HarvesterSettings.TRY_LOOKUP_URI_AS_FTP);
     
 
     /** Initialise new ARCArchiveAccess with no index file.

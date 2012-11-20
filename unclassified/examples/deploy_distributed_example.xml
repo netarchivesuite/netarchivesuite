@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployGlobal>
     <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-    <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
+    <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
     <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
     <deployClassPath>lib/dk.netarkivet.wayback.jar</deployClassPath>
     <deployJavaOpt>-Xmx1536m</deployJavaOpt>
@@ -134,7 +134,6 @@
             <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
                 <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
                 <settings>
                     <common>
@@ -151,7 +150,6 @@
             <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
                 <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
                 <settings>
                     <common>
@@ -287,7 +285,6 @@
         <deployMachine name="east-har-001.kb.dk">
             <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-            <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
                 <settings>
@@ -318,7 +315,6 @@
         <deployMachine name="east-har-002.kb.dk">
             <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-            <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
  
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
@@ -391,7 +387,7 @@
             </applicationName>
         
             <applicationName name="dk.netarkivet.viewerproxy.ViewerProxyApplication">
-                <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
+                <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
                 <settings>
@@ -454,7 +450,6 @@
         <deployMachine name="west-har-001.statsbiblioteket.dk">
             <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-            <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
 
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">

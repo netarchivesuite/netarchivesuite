@@ -1,10 +1,10 @@
 <settings>
     <wayback>
-         <urlcanonicalizer>
-             <classname>
-                 dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
-             </classname>
-         </urlcanonicalizer>
+        <urlcanonicalizer>
+            <classname>
+                dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
+            </classname>
+        </urlcanonicalizer>
         <hibernate>
             <c3p0>
                 <acquireIncrement>1</acquireIncrement>
@@ -48,7 +48,7 @@
             <maxMainIndexFileSize>104857600</maxMainIndexFileSize>
         </aggregator>
         <resourcestore>
-        	<cachedir>filecache</cachedir>
+            <cachedir>filecache</cachedir>
             <maxfiles>100</maxfiles>
         </resourcestore>
     </wayback>

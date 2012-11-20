@@ -244,6 +244,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <junit fork="true" forkmode="once" printsummary="true" timeout="3000000">
             <jvmarg value="-Xmx768m"/>
             <jvmarg value="-XX:MaxPermSize=265m"/>
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
             <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
@@ -277,7 +278,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     </target>
 
     <target name="jarfiles"
-            depends="clean, commonjar, harvesterjar, archivejar, viewerproxyjar, monitorjar, deployjar, waybackjar"
+            depends="clean, commonjar, harvesterjar, archivejar, monitorjar, deployjar, waybackjar"
             description="Compile all jar files">
     </target>
 
@@ -435,24 +436,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
         <jar destfile="lib/dk.netarkivet.harvester.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/harvester/**/*.class"/>
+            <include name="dk/netarkivet/viewerproxy/**/*.class"/>
             <include name="dk/netarkivet/harvester/**/*.properties"/>
             <include name="dk/netarkivet/harvester/**/*.xml"/>
             <include name="modules/**"/>
             <!-- removed jndi.properties from src
 		 <include name="jndi.properties"/> -->
-            <manifest>
-                <attribute name="Builder" value="${builder}"/>
-                <attribute name="Class-Path" value="dk.netarkivet.common.jar ${jarclasspath}"/>
-            </manifest>
-        </jar>
-    </target>
-
-    <target name="viewerproxyjar" depends="compileclean"
-            description="Build a jar file with the dk.netarkivet.viewerproxy package with all required libs in the manifest class path">
-        <jar destfile="lib/dk.netarkivet.viewerproxy.jar" basedir="${classdir}" update="no">
-            <include name="dk/netarkivet/viewerproxy/**/*.class"/>
-            <include name="dk/netarkivet/viewerproxy/**/*.properties"/>
-            <include name="dk/netarkivet/viewerproxy/**/*.xml"/>
             <manifest>
                 <attribute name="Builder" value="${builder}"/>
                 <attribute name="Class-Path" value="dk.netarkivet.common.jar ${jarclasspath}"/>
@@ -487,7 +476,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                            value="dk.netarkivet.common.jar
                                   dk.netarkivet.archive.jar
                                   dk.netarkivet.harvester.jar
-                                  dk.netarkivet.viewerproxy.jar
                                   dk.netarkivet.monitor.jar
                                   ${jarclasspath}"/>
             </manifest>
@@ -523,7 +511,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <path path="./lib/dk.netarkivet.common.jar"/>
                 <path path="./lib/dk.netarkivet.archive.jar"/>
                 <path path="./lib/dk.netarkivet.harvester.jar"/>
-                <path path="./lib/dk.netarkivet.viewerproxy.jar"/>
                 <path path="./lib/dk.netarkivet.deploy.jar"/>
                 <path path="./lib/dk.netarkivet.monitor.jar"/>
                 <path path="./lib/dk.netarkivet.wayback.jar"/>

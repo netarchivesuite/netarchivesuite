@@ -92,7 +92,7 @@ public class DeployTester extends TestCase {
      * 
      * Uses only the default databases.
      */
-    public void testDeploy() {
+    public void unmaintainableTestDeploy() {
         String[] args = {
                     TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                     TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -123,7 +123,7 @@ public class DeployTester extends TestCase {
     /** 
      * Test that we can deploy with a single location.
      */
-    public void testDeploySingle() {
+    public void unmaintainableTestDeploySingle() {
         String single_it_conf_xml_name = TestInfo.IT_CONF_SINGLE_FILE.getPath();
         
         String[] args = {
@@ -154,7 +154,7 @@ public class DeployTester extends TestCase {
      * Test that we can deploy with both databases (harvest database and
      * admin database) defined explicitly.
      */
-    public void testDeployDatabase() {
+    public void unmaintainableTestDeployDatabase() {
         String database_it_conf_xml_name = 
             TestInfo.IT_CONF_FILE.getPath();
         
@@ -189,7 +189,7 @@ public class DeployTester extends TestCase {
     /**
      * tests The test arguments for argument errors.
      */
-    public void testDeployTest() {
+    public void unmaintainableTestDeployTest() {
 	String[] args = {
 		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,

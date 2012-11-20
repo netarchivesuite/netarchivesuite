@@ -361,19 +361,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </jar>
     </target>
 
-    <target name="viewerproxyjar" depends="compileclean"
-            description="Build a jar file with the dk.netarkivet.viewerproxy package with all required libs in the manifest class path">
-        <jar destfile="lib/dk.netarkivet.viewerproxy.jar" basedir="${classdir}" update="no">
-            <include name="dk/netarkivet/viewerproxy/**/*.class"/>
-            <include name="dk/netarkivet/viewerproxy/**/*.properties"/>
-            <include name="dk/netarkivet/viewerproxy/**/*.xml"/>
-            <manifest>
-                <attribute name="Builder" value="${builder}"/>
-                <attribute name="Class-Path" value="dk.netarkivet.common.jar ${jarclasspath}"/>
-            </manifest>
-        </jar>
-    </target>
-
     <target name="monitorjar" depends="compileclean"
             description="Build a jar file with the dk.netarkivet.monitor package with all required libs in the manifest class path">
         <jar destfile="lib/dk.netarkivet.monitor.jar" basedir="${classdir}" update="no">
@@ -401,7 +388,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                            value="dk.netarkivet.common.jar
                                   dk.netarkivet.archive.jar
                                   dk.netarkivet.harvester.jar
-                                  dk.netarkivet.viewerproxy.jar
                                   dk.netarkivet.monitor.jar
                                   ${jarclasspath}"/>
             </manifest>

@@ -691,6 +691,29 @@ public class HarvesterSettings {
         = "settings.harvester.indexserver.lookfordataInAllBitarchiveReplicas";
 
     /**
+     * <b>settings.viewerproxy.baseDir</b>: <br>
+     * The main directory for the ViewerProxy, used for storing the Lucene
+     * index for the jobs being viewed. This directory can be used by multiple
+     * ViewerProxy applications running on the same machine. */
+    public static String VIEWERPROXY_DIR = "settings.harvester.viewerproxy.baseDir";
+
+    /**
+     * <b>settings.viewerproxy.tryLookupUriAsFtp</b>: <br>
+     * If we fail to lookup an URI, we will try changing the protocol to ftp,
+     * if this setting is set to true. The default is false.
+     *
+     */
+    public static String TRY_LOOKUP_URI_AS_FTP = "settings.harvester.viewerproxy.tryLookupUriAsFtp";
+
+    /**
+     * <b>settings.viewerproxy.maxSizeInBrowser</b>
+     * The size (in bytes) of the largest object to be returned for viewing in
+     * the browser window. Larger objects will be returned with the
+     * appropriate http header for saving them to a file.
+     */
+    public static String MAXIMUM_OBJECT_IN_BROWSER = "settings.harvester.viewerproxy.maxSizeInBrowser";
+
+    /**
      * The maximum length (in lines) of crawllog to be displayed in a browser window.
      */
     public static String MAX_CRAWLLOG_IN_BROWSER = "settings.harvester.webinterface.maxCrawlLogInBrowser";

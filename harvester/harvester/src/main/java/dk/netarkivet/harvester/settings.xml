@@ -33,9 +33,9 @@ National Library.
 -->
 <settings>
     <harvester>
-    	<aliases>
-    		<timeout>31536000</timeout>
-    	</aliases>
+        <aliases>
+            <timeout>31536000</timeout>
+        </aliases>
         <datamodel>
             <domain>
                 <defaultSeedlist>defaultseeds</defaultSeedlist>
@@ -112,15 +112,15 @@ National Library.
                 <javaOpts></javaOpts>
                 <archiveFormat>arc</archiveFormat>
                 <archiveNaming>
-                	<class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
+                    <class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
                 </archiveNaming>
             </heritrix>
             <frontier>
                 <!-- 10 minutes -->
                 <frontierReportWaitTime>600</frontierReportWaitTime>
                 <filter>
-					<class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
-					<args></args>
+                    <class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
+                    <args></args>
                 </filter>
             </frontier>
             <heritrixLauncher>
@@ -145,19 +145,24 @@ National Library.
             </metadata>
         </harvesting>
         <indexserver>
-        	<listeningcheckinterval>30000</listeningcheckinterval>
-        	<maxclients>20</maxclients>
-        	<maxthreads>10</maxthreads>
-        	<requestdir>requests</requestdir>
-        	<checkinterval>30000</checkinterval>
-        	<indexingtimeout>259200000</indexingtimeout>
-        	<maxsegments>42</maxsegments>
-        	<satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
-        	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
-        	<indexrequestserver>
-        		<class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
-        	</indexrequestserver>	
+            <listeningcheckinterval>30000</listeningcheckinterval>
+            <maxclients>20</maxclients>
+            <maxthreads>10</maxthreads>
+            <requestdir>requests</requestdir>
+            <checkinterval>30000</checkinterval>
+            <indexingtimeout>259200000</indexingtimeout>
+            <maxsegments>42</maxsegments>
+            <satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
+            <lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
+            <indexrequestserver>
+                <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
+            </indexrequestserver>
         </indexserver>
+        <viewerproxy>
+            <baseDir>viewerproxy</baseDir>
+            <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
+            <maxSizeInBrowser>100000000</maxSizeInBrowser>
+        </viewerproxy>
         <webinterface>
             <maxCrawlLogInBrowser>100</maxCrawlLogInBrowser>
         </webinterface>

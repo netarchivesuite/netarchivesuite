@@ -32,5 +32,5 @@ public class Constants {
      * Internationalisation resource bundle.
      */
     public static final String TRANSLATIONS_BUNDLE =
-            "dk.netarkivet.viewerproxy.Translations";
+            "dk.netarkivet.harvester.Translations";
     }

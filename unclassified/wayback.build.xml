@@ -135,7 +135,6 @@ v) repacking the warfile as ROOT.war for deployment
                 -->
                 <exclude name="dk.netarkivet.deploy.jar" />
                 <exclude name="dk.netarkivet.harvester.jar" />
-                <exclude name="dk.netarkivet.viewerproxy.jar" />
                 <exclude name="dk.netarkivet.monitor.jar" />
                 <exclude name="heritrix*/**.jar" />
                 <exclude name="**/je-*.jar" />

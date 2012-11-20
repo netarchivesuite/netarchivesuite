@@ -54,7 +54,7 @@ National Library.
         </monitorregistryClient>
         <indexClient>
             <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient</class>
-        </indexClient> 
+        </indexClient>
         <unixSort>
             <useCommonTempDir>false</useCommonTempDir>
         </unixSort>
@@ -117,8 +117,8 @@ National Library.
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>
-	    <harvestStatus>
-           	<defaultPageSize>100</defaultPageSize>
+            <harvestStatus>
+                <defaultPageSize>100</defaultPageSize>
             </harvestStatus>
 
         </webinterface>
@@ -447,14 +447,14 @@ National Library.
             <validityCheckTimeout>0</validityCheckTimeout>
             <pool>
                 <minSize>5</minSize>
-	            <maxSize>10</maxSize>
-	            <acquireInc>5</acquireInc>
-	            <maxStm>0</maxStm>
+                <maxSize>10</maxSize>
+                <acquireInc>5</acquireInc>
+                <maxStm>0</maxStm>
                 <maxStmPerConn>0</maxStmPerConn>
                 <idleConnTestPeriod>0</idleConnTestPeriod>
                 <idleConnTestQuery></idleConnTestQuery>
                 <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
-	        </pool>
+            </pool>
         </database>
         <repository>
             <!-- Currently set to 10 MB -->

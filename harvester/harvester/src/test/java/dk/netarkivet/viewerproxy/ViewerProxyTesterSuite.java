@@ -59,7 +59,6 @@ public class ViewerProxyTesterSuite {
         suite.addTestSuite(UnknownCommandResolverTester.class);
         suite.addTestSuite(URIObserverTester.class);
         suite.addTestSuite(ViewerProxyTester.class);
-        suite.addTestSuite(ViewerProxySettingsTester.class);
         suite.addTestSuite(WebProxyTester.class);
        
     }

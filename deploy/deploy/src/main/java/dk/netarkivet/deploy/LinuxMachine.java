@@ -100,11 +100,11 @@ public class LinuxMachine extends Machine {
         // ssh dev@kb-test-adm-001.kb.dk rm -rf /home/dev/TEST/lib
         res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(Constants.SPACE);
+        res.append(Constants.SPACE + Constants.QUOTE_MARK);
         res.append(ScriptConstants.LINUX_FORCE_RECURSIVE_DELETE);
         res.append(Constants.SPACE);
         res.append(getInstallDirPath() + getLocalLibDirPath());
-        res.append(Constants.NEWLINE);
+        res.append(Constants.NEWLINE + Constants.QUOTE_MARK);
         // echo unzipping null.zip at:kb-test-adm-001.kb.dk
         res.append(ScriptConstants.ECHO_UNZIPPING + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
@@ -115,14 +115,14 @@ public class LinuxMachine extends Machine {
         // /home/dev/TEST
         res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(Constants.SPACE + ScriptConstants.LINUX_UNZIP_COMMAND
+        res.append(Constants.SPACE + Constants.QUOTE_MARK + ScriptConstants.LINUX_UNZIP_COMMAND
                 + Constants.SPACE);
         res.append(machineParameters.getInstallDirValue());
         res.append(Constants.SLASH);
         res.append(netarchiveSuiteFileName);
         res.append(Constants.SPACE + ScriptConstants.SCRIPT_DIR 
                 + Constants.SPACE);
-        res.append(getInstallDirPath());
+        res.append(getInstallDirPath() + Constants.QUOTE_MARK);
         res.append(Constants.NEWLINE);
         // create other directories.
         res.append(osInstallScriptCreateDir());
@@ -877,7 +877,7 @@ public class LinuxMachine extends Machine {
         res.append(Constants.NEWLINE);
         res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK 
+        res.append(Constants.SPACE + Constants.QUOTE_MARK
                 + ScriptConstants.CD + Constants.SPACE);
         res.append(getInstallDirPath());
         res.append(Constants.SEMICOLON + Constants.SPACE);

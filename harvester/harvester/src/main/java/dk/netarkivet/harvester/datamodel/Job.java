@@ -968,13 +968,20 @@ public class Job implements Serializable, JobInfo {
      * @return a human readable string representing this object.
      */
     public String toString() {
-        return "Job " + getJobID() + " (state = " + getStatus() + ", HD = "
-            + getOrigHarvestDefinitionID() + ", priority = " + getPriority()
+        return
+            "Job " + getJobID()
+            + " (state = " + getStatus()
+            + ", HD = " + getOrigHarvestDefinitionID()
+            + ", priority = " + getPriority()
             + ", forcemaxcount = " + getForceMaxObjectsPerDomain()
             + ", forcemaxbytes = " + getMaxBytesPerDomain()
             + ", forcemaxrunningtime = " + forceMaxRunningTime
             + ", orderxml = " + getOrderXMLName()
             + ", numconfigs = " + getDomainConfigurationMap().size()
+            + ", created = " + getCreationDate()
+            + getSubmittedDate() != null ? ", submitted = " + getSubmittedDate() : ""
+            + getActualStart() != null ? ", started = " + getSubmittedDate() : ""
+            + getActualStop() != null ? ", stopped = " + getSubmittedDate() : ""
             + ")";
     }
 

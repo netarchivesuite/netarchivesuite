@@ -45,21 +45,20 @@
                 <!-- Reconnect to database default: 5 tries with 5 min between-->
                 <reconnectMaxRetries>5</reconnectMaxRetries>
                 <reconnectRetryDelay>300000</reconnectRetryDelay>
-            	<validityCheckTimeout>0</validityCheckTimeout>
-            	<pool>
-                	<minSize>5</minSize>
-	            	<maxSize>10</maxSize>
-	            	<acquireInc>5</acquireInc>
-	            	<maxStm>0</maxStm>
-                	<maxStmPerConn>0</maxStmPerConn>
-                	<idleConnTestPeriod>30</idleConnTestPeriod>
-                	<idleConnTestQuery/>
-                	<idleConnTestOnCheckin>true</idleConnTestOnCheckin>
-	        	</pool>
+                <validityCheckTimeout>0</validityCheckTimeout>
+                <pool>
+                    <minSize>5</minSize>
+                    <maxSize>10</maxSize>
+                    <acquireInc>5</acquireInc>
+                    <maxStm>0</maxStm>
+                    <maxStmPerConn>0</maxStmPerConn>
+                    <idleConnTestPeriod>30</idleConnTestPeriod>
+                    <idleConnTestQuery/>
+                    <idleConnTestOnCheckin>true</idleConnTestOnCheckin>
+                </pool>
             </database>
         </admin>
-    </archive>
-<common>
+    </archive><common>
         <environmentName>DEV</environmentName>
         <tempDir>./tests/commontempdir</tempDir>
         <remoteFile>
@@ -81,7 +80,7 @@
         </monitorregistryClient>
         <indexClient>
             <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient</class>
-        <indexRequestTimeout>3600000</indexRequestTimeout><useLocalFtpServer>false</useLocalFtpServer></indexClient> 
+        <indexRequestTimeout>3600000</indexRequestTimeout><useLocalFtpServer>false</useLocalFtpServer></indexClient>
         <unixSort>
             <useCommonTempDir>false</useCommonTempDir>
         </unixSort>
@@ -144,8 +143,8 @@
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>
-	    <harvestStatus>
-           	<defaultPageSize>100</defaultPageSize>
+            <harvestStatus>
+                <defaultPageSize>100</defaultPageSize>
             </harvestStatus>
 
         </webinterface>
@@ -474,14 +473,14 @@
             <validityCheckTimeout>0</validityCheckTimeout>
             <pool>
                 <minSize>5</minSize>
-	            <maxSize>10</maxSize>
-	            <acquireInc>5</acquireInc>
-	            <maxStm>0</maxStm>
+                <maxSize>10</maxSize>
+                <acquireInc>5</acquireInc>
+                <maxStm>0</maxStm>
                 <maxStmPerConn>0</maxStmPerConn>
                 <idleConnTestPeriod>0</idleConnTestPeriod>
                 <idleConnTestQuery/>
                 <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
-	        </pool>
+            </pool>
         </database>
         <repository>
             <!-- Currently set to 10 MB -->
@@ -527,9 +526,9 @@
         <applicationName>NA</applicationName>
         <applicationInstanceId/>
     </common><harvester>
-    	<aliases>
-    		<timeout>31536000</timeout>
-    	</aliases>
+        <aliases>
+            <timeout>31536000</timeout>
+        </aliases>
         <datamodel>
             <domain>
                 <defaultSeedlist>defaultseeds</defaultSeedlist>
@@ -574,8 +573,10 @@
             <!--  1 minute -->
             <refreshInterval>60</refreshInterval>
             <displayedHistorySize>30</displayedHistorySize>
-            <historySampleRate>300</historySampleRate><!--  in seconds, 5 minutes -->
-            <historyChartGenInterval>300</historyChartGenInterval><!--  in seconds, 5 minutes -->
+            <!--  in seconds, 5 minutes -->
+            <historySampleRate>300</historySampleRate>
+            <!--  in seconds, 5 minutes -->
+            <historyChartGenInterval>300</historyChartGenInterval>
         </monitor>
         <harvesting>
             <serverDir>server</serverDir>
@@ -606,15 +607,15 @@
                 <javaOpts/>
                 <archiveFormat>arc</archiveFormat>
                 <archiveNaming>
-                	<class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
+                    <class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
                 </archiveNaming>
             </heritrix>
             <frontier>
                 <!-- 10 minutes -->
                 <frontierReportWaitTime>600</frontierReportWaitTime>
                 <filter>
-					<class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
-					<args/>
+                    <class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
+                    <args/>
                 </filter>
             </frontier>
             <heritrixLauncher>
@@ -639,19 +640,24 @@
             </metadata>
         </harvesting>
         <indexserver>
-        	<listeningcheckinterval>30000</listeningcheckinterval>
-        	<maxclients>20</maxclients>
-        	<maxthreads>10</maxthreads>
-        	<requestdir>requests</requestdir>
-        	<checkinterval>30000</checkinterval>
-        	<indexingtimeout>259200000</indexingtimeout>
-        	<maxsegments>42</maxsegments>
-        	<satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
-        	<lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
-        	<indexrequestserver>
-        		<class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
-        	</indexrequestserver>	
+            <listeningcheckinterval>30000</listeningcheckinterval>
+            <maxclients>20</maxclients>
+            <maxthreads>10</maxthreads>
+            <requestdir>requests</requestdir>
+            <checkinterval>30000</checkinterval>
+            <indexingtimeout>259200000</indexingtimeout>
+            <maxsegments>42</maxsegments>
+            <satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
+            <lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
+            <indexrequestserver>
+                <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
+            </indexrequestserver>
         </indexserver>
+        <viewerproxy>
+            <baseDir>viewerproxy</baseDir>
+            <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
+            <maxSizeInBrowser>100000000</maxSizeInBrowser>
+        </viewerproxy>
     </harvester><monitor>
         <jmxUsername>monitorRole</jmxUsername>
         <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
@@ -662,16 +668,12 @@
         <reregisterDelay>1</reregisterDelay>
         <preferredMaxJMXLogLength>70</preferredMaxJMXLogLength>
         <absoluteMaxJMXLogLength>100</absoluteMaxJMXLogLength>
-    </monitor><viewerproxy>
-        <baseDir>viewerproxy</baseDir>
-        <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
-        <maxSizeInBrowser>100000000</maxSizeInBrowser>
-    </viewerproxy><wayback>
-         <urlcanonicalizer>
-             <classname>
-                 dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
-             </classname>
-         </urlcanonicalizer>
+    </monitor><wayback>
+        <urlcanonicalizer>
+            <classname>
+                dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
+            </classname>
+        </urlcanonicalizer>
         <hibernate>
             <c3p0>
                 <acquireIncrement>1</acquireIncrement>
@@ -715,7 +717,7 @@
             <maxMainIndexFileSize>104857600</maxMainIndexFileSize>
         </aggregator>
         <resourcestore>
-        	<cachedir>filecache</cachedir>
+            <cachedir>filecache</cachedir>
             <maxfiles>100</maxfiles>
         </resourcestore>
     </wayback></settings>

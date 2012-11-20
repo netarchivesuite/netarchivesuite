@@ -33,7 +33,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.EMailNotifications;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.monitor.MonitorSettings;
-import dk.netarkivet.viewerproxy.ViewerProxySettings;
 
 /**
  * Class containing the constant variables.
@@ -215,7 +214,7 @@ public final class Constants {
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the viewer proxy base dir leaf from settings.*/
     static final String[] SETTINGS_VIEWERPROXY_BASEDIR_LEAF = 
-        ViewerProxySettings.VIEWERPROXY_DIR
+        HarvesterSettings.VIEWERPROXY_DIR
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path from monitor to the jmxUsername leaf.*/
     static final String[] SETTINGS_MONITOR_JMX_NAME_LEAF = 
@@ -425,7 +424,6 @@ public final class Constants {
         "dk/netarkivet/common/settings.xml",
         "dk/netarkivet/harvester/settings.xml",
         "dk/netarkivet/monitor/settings.xml",
-        "dk/netarkivet/viewerproxy/settings.xml",
         "dk/netarkivet/wayback/settings.xml",
         "dk/netarkivet/archive/arcrepository/distribute/"
             + "JMSArcRepositoryClientSettings.xml",

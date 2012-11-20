@@ -43,9 +43,9 @@ ln -s $WORKING_DIR/tests/dk/netarkivet/monitor $M2_BUILD_HOME/netarchivesuite-mo
 
 # Viewerproxy module
 rm $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet/viewerproxy
-ln -s $WORKING_DIR/src/dk/netarkivet/viewerproxy $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet
+ln -s $WORKING_DIR/src/dk/netarkivet/harvester $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/main/java/dk/netarkivet
 rm $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/test/java/dk/netarkivet/viewerproxy
-ln -s $WORKING_DIR/tests/dk/netarkivet/viewerproxy $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/test/java/dk/netarkivet
+ln -s $WORKING_DIR/tests/dk/netarkivet/harvester $M2_BUILD_HOME/netarchivesuite-viewerproxy/src/test/java/dk/netarkivet
 
 # Wayback module
 rm $M2_BUILD_HOME/netarchivesuite-wayback/src/main/java/dk/netarkivet/wayback
