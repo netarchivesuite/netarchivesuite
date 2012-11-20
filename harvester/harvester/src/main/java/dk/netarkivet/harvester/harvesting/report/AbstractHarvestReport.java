@@ -184,6 +184,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      *
      * @return a Set of Strings
      */
+    @Override
     public final Set<String> getDomainNames() {
         return Collections.unmodifiableSet(domainstats.keySet());
     }
@@ -195,6 +196,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * @return How many objects were collected for that domain
      * @throws ArgumentNotValid if null or empty domainName
      */
+    @Override
     public final Long getObjectCount(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         final DomainStats domainStats = domainstats.get(domainName);
@@ -320,8 +322,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
                     final String message = "Invalid line in '"
                                            + file.getAbsolutePath()
                                            + "' line " + lineCnt + ": '"
-                                           + line + "'. Ignoring.";
-                    LOG.debug(message, e);
+                                           + line + "'. Ignoring due to reason: " 
+                                           + e.getMessage();
+                    System.out.println(message);
+                    LOG.debug(message);
                 }
             }
         } catch (IOException e) {
