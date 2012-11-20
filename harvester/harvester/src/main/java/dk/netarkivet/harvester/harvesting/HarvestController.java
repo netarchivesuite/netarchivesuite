@@ -433,6 +433,9 @@ public class HarvestController {
         for (MetadataEntry me : metadataEntries) {
             if (me.isDuplicateReductionMetadataEntry()) {
                 String s = new String(me.getData());
+                if (s.isEmpty()) { // An empty string is now possible
+                    continue;
+                }
                 String[] longs = s.split(",");
                 for (String stringLong : longs) {
                     try {
