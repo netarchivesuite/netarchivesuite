@@ -101,7 +101,9 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             statement.setString(5, aExtendedField.getDefaultValue());
             statement.setString(6, aExtendedField.getOptions());
             statement.setInt(7, aExtendedField.getDatatype());
-            statement.setBoolean(8, aExtendedField.isMandatory());
+            // the following converstion from boolean to int is necessary, 
+            // because the database column 'mandatory' is  a field (NAS-2127)
+            statement.setInt(8, aExtendedField.isMandatory()? 1: 0); 
             statement.setInt(9, aExtendedField.getSequencenr());
 
             statement.executeUpdate();
@@ -201,7 +203,9 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             statement.setString(5, aExtendedField.getDefaultValue());
             statement.setString(6, aExtendedField.getOptions());
             statement.setInt(7, aExtendedField.getDatatype());
-            statement.setBoolean(8, aExtendedField.isMandatory());
+            // the following converstion from boolean to int is necessary, 
+            // because the database column 'mandatory' is  a field (NAS-2127)
+            statement.setInt(8, aExtendedField.isMandatory()? 1: 0);
             statement.setInt(9, aExtendedField.getSequencenr());
             statement.setLong(10, aExtendedField.getExtendedFieldID());
 
@@ -266,7 +270,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             String defaultvalue = result.getString(4);
             String options = result.getString(5);
             int datatype = result.getInt(6);
-            boolean mandatory = result.getBoolean(7);
+            boolean mandatory = (result.getInt(7) != 0);
             int sequencenr = result.getInt(8);
 
             extendedField = new ExtendedField(aExtendedfieldId,

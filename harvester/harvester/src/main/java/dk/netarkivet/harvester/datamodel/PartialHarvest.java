@@ -50,7 +50,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 
 

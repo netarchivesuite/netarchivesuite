@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%>
 <%--
-This is a summary page displaying all known schedules. It takes no
+This is a summary page displaying all known extended fields. It takes no
 parameters.
 --%><%@ page import="dk.netarkivet.common.utils.I18n,
                	dk.netarkivet.common.webinterface.HTMLUtils,
