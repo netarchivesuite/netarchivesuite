@@ -719,32 +719,41 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
         } catch (IOException e) {
             logger.log(Level.WARNING,"obtaining warcinfo", e);
         } 
-
         
+        //TODO add version of netarchivesuite 
         
         // add fields from harvesInfo.xml version 0.4
-        record.addLabelValue("harvest_info_version", pjd.getVersion());
-        record.addLabelValue("harvest_job_id", "" + pjd.getJobID());
-        record.addLabelValue("harvest_job_number", "" + pjd.getJobHarvestNum());
-        record.addLabelValue("harvest_job_priority", "" + pjd.getJobPriority());
-        record.addLabelValue("harvest_original_harvestdefinition_id", 
+        /*
+        <harvestInfo>
+          <version>0.4</version>
+          <jobId>1</jobId>
+          <priority>HIGHPRIORITY</priority>
+          <harvestNum>0</harvestNum>
+          <origHarvestDefinitionID>1</origHarvestDefinitionID>
+          <maxBytesPerDomain>500000000</maxBytesPerDomain>
+          <maxObjectsPerDomain>2000</maxObjectsPerDomain>
+          <orderXMLName>default_orderxml</orderXMLName>
+          <origHarvestDefinitionName>netarkivet</origHarvestDefinitionName>
+          <scheduleName>Once_a_week</scheduleName>
+          <harvestFilenamePrefix>1-1</harvestFilenamePrefix>
+           </harvestInfo>
+        */
+        record.addLabelValue("harvestInfo.version", pjd.getVersion());
+        record.addLabelValue("harvestInfo.jobId", "" + pjd.getJobID());
+        record.addLabelValue("harvestInfo.priority", pjd.getJobPriority().name());
+        record.addLabelValue("harvestInfo.harvestNum", "" + pjd.getJobHarvestNum());
+        record.addLabelValue("harvestInfo.origHarvestDefinitionID", 
                 "" + pjd.getOrigHarvestDefinitionID());
-        record.addLabelValue("harvest_max_bytes_per_domain", 
+        record.addLabelValue("harvestInfo.maxBytesPerDomain", 
                 "" + pjd.getMaxBytesPerDomain());
-        record.addLabelValue("harvest_max_objects_per_domain", 
-                "" + pjd.getMaxBytesPerDomain());
-        record.addLabelValue("harvest_max_objects_per_domain", 
-                "" + pjd.getMaxBytesPerDomain());
-        record.addLabelValue("harvest_max_objects_per_domain", 
-                "" + pjd.getMaxBytesPerDomain());
-        record.addLabelValue("harvest_max_objects_per_domain", 
+        record.addLabelValue("harvestInfo.maxObjectsPerDomain", 
                 "" + pjd.getMaxObjectsPerDomain());
-        record.addLabelValue("harvest_orderXML_name", 
+        record.addLabelValue("harvestInfo.orderXMLName", 
                 pjd.getOrderXMLName());
-        record.addLabelValue("harvest_harvestdefinition_name", 
+        record.addLabelValue("harvestInfo.origHarvestDefinitionName", 
                 pjd.getharvestName());
-        record.addLabelValue("harvest_schedule_name", pjd.getScheduleName());
-        record.addLabelValue("harvest_filename_prefix", pjd.getHarvestFilenamePrefix());
+        record.addLabelValue("harvestInfo.scheduleName", pjd.getScheduleName());
+        record.addLabelValue("harvestInfo.harvestFilenamePrefix", pjd.getHarvestFilenamePrefix());
        
         // really ugly to return as string, when it may just be merged with 
         // a couple other fields at write time, but changing would require 
