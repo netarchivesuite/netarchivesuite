@@ -112,7 +112,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     private StopReason defaultStopReason;
 
     /** The logger for this class. */
-    private static final Log LOG =
+    private static final Log log =
         LogFactory.getLog(AbstractHarvestReport.class);
 
 
@@ -143,8 +143,8 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      */
     @Override
     public void preProcess(HeritrixFiles files) {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Starting pre-processing of harvest report for job "
+        if (log.isInfoEnabled()) {
+            log.info("Starting pre-processing of harvest report for job "
                     + files.getJobID());
         }
         long startTime = System.currentTimeMillis();
@@ -157,9 +157,9 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         }
         parseCrawlLog(files.getCrawlLog());
 
-        if (LOG.isInfoEnabled()) {
+        if (log.isInfoEnabled()) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.info("Finished pre-processing of harvest report for job "
+            log.info("Finished pre-processing of harvest report for job "
                     + files.getJobID() + ", operation took "
                     + StringUtils.formatDuration(time));
         }
@@ -324,21 +324,20 @@ public abstract class AbstractHarvestReport implements HarvestReport {
                                            + "' line " + lineCnt + ": '"
                                            + line + "'. Ignoring due to reason: " 
                                            + e.getMessage();
-                    System.out.println(message);
-                    LOG.debug(message);
+                    log.debug(message);
                 }
             }
         } catch (IOException e) {
             String msg = "Unable to open/read crawl.log file '"
                          + file.getAbsolutePath() + "'.";
-            LOG.warn(msg, e);
+            log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    LOG.debug("Unable to close " + file, e);
+                    log.debug("Unable to close " + file, e);
                     // Can't throw here, as would destroy the real exception
                 }
             }
@@ -388,7 +387,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
                     seedDomain = IDNA.toUnicode(seedDomain);
                 }
             } catch (URIException e) {
-                LOG.debug("Unable to extract a domain from the seedURL found in field 11 of crawl.log: '"
+                log.debug("Unable to extract a domain from the seedURL found in field 11 of crawl.log: '"
                         + seedURL + "'.", e);
             }
         }
@@ -404,7 +403,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
                 objectDomain = IDNA.toUnicode(objectDomain);
             }
         } catch (URIException e) {
-            LOG.debug("Unable to extract a domain from the object URL found in field 4 of crawl.log: '"
+            log.debug("Unable to extract a domain from the object URL found in field 4 of crawl.log: '"
                     + objectUrl + "'.", e);
         }
         
@@ -491,7 +490,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
             UURI uuri = new FixedUURI(uriAsString, false);
             String hostName = uuri.getReferencedHost();
             if (hostName == null){
-                LOG.debug("Not possible to extract domainname from URL:" + uriAsString);
+                log.debug("Not possible to extract domainname from URL:" + uriAsString);
                 return null;
             }
             return DomainUtils.domainNameFromHostname(hostName);
