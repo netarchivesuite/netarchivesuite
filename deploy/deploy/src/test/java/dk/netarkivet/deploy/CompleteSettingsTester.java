@@ -24,9 +24,9 @@
 */
 package dk.netarkivet.deploy;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import junit.framework.TestCase;
 
 public class CompleteSettingsTester extends TestCase {
     @Override
@@ -35,38 +35,27 @@ public class CompleteSettingsTester extends TestCase {
         FileUtils.removeRecursively(TestInfo.TMPDIR);
 
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
+            TestInfo.WORKING_DIR);
     }
-    
+
     @Override
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMPDIR);
     }
-    
-    
+
+
 
     /**
-     * Tests if the complete settings file is correctly created.
-     * If this test fails, it is most likely because the file 
-     * tests/dk/netarkivet/deploy/
-     * data/originals/complete_settings/complete_settings.xml is obsolete.
-     * You probably need to rebuild the file src/dk/netarkivet/deploy/complete_settings.xml
-     * using the program dk.netarkivet.deploy.BuildCompleteSettings and replace the version
-     * in ../originals/complete_settings/complete_settings.xml with the new version.
+     * Rebuilds the file src/dk/netarkivet/deploy/default_settings.xml. Eg.
+     * this is not a real test.
      */
-    
-    public void unmaintainableTestCompleteSettings() throws Exception {
-            // the output directory is not automatically created,
-            // hence create it before running.
-            FileUtils.createDir(TestInfo.TMPDIR);
 
-            String[] args = { TestInfo.FILE_COMPLETE_SETTINGS.getAbsolutePath() };
-            BuildCompleteSettings.main(args);
-
-            String differences = TestFileUtils.compareDirsText(
-                    TestInfo.COMPLETE_SETTINGS_DIR, TestInfo.TMPDIR);
-
-            assertEquals("No differences expected", "", differences);
+    public void testCompleteSettings() throws Exception {
+        // ToDo The generation of the complete settings file should be moved
+        // to the build functionality directly.
+        BuildCompleteSettings.buildCompleteSettings(
+            "src/dk/netarkivet/deploy/complete_settings.xml"
+        );
     }
 }

@@ -26,8 +26,6 @@ package dk.netarkivet.deploy;
 
 import java.io.File;
 
-import dk.netarkivet.deploy.Constants;
-
 public class TestInfo {
     // directories
     public static final File DATA_DIR 
@@ -61,13 +59,6 @@ public class TestInfo {
     public static final File FILE_BP_DATABASE = new File(
             WORKING_DIR, "bpdb.jar");
     public static final File EXTERNALS_DIR = new File(WORKING_DIR, "externals");
-
-
-    // arguments for complete settings
-    public static final File COMPLETE_SETTINGS_DIR = new File(
-	    WORKING_DIR, "complete_settings");
-    public static final File FILE_COMPLETE_SETTINGS = new File(
-	    TMPDIR, "complete_settings.xml");
 
     // arguments
     public static final String ARGUMENT_CONFIG_FILE = 

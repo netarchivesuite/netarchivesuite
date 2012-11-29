@@ -58,7 +58,8 @@
                 </pool>
             </database>
         </admin>
-    </archive><common>
+    </archive>
+<common>
         <environmentName>DEV</environmentName>
         <tempDir>./tests/commontempdir</tempDir>
         <remoteFile>
@@ -573,10 +574,8 @@
             <!--  1 minute -->
             <refreshInterval>60</refreshInterval>
             <displayedHistorySize>30</displayedHistorySize>
-            <!--  in seconds, 5 minutes -->
-            <historySampleRate>300</historySampleRate>
-            <!--  in seconds, 5 minutes -->
-            <historyChartGenInterval>300</historyChartGenInterval>
+            <historySampleRate>300</historySampleRate><!--  in seconds, 5 minutes -->
+            <historyChartGenInterval>300</historyChartGenInterval><!--  in seconds, 5 minutes -->
         </monitor>
         <harvesting>
             <serverDir>server</serverDir>
@@ -658,6 +657,9 @@
             <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
             <maxSizeInBrowser>100000000</maxSizeInBrowser>
         </viewerproxy>
+        <webinterface>
+            <maxCrawlLogInBrowser>100</maxCrawlLogInBrowser>
+        </webinterface>
     </harvester><monitor>
         <jmxUsername>monitorRole</jmxUsername>
         <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
