@@ -1,7 +1,7 @@
-/* $Id: HarvestDocumentation.java 2470 2012-08-22 13:24:56Z nicl@kb.dk $
- * $Revision: 2470 $
- * $Date: 2012-08-22 15:24:56 +0200 (Wed, 22 Aug 2012) $
- * $Author: nicl@kb.dk $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2011 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

@@ -78,85 +78,7 @@ public class CDXUtils {
 
     }
 
-    /**
-     * Applies createCDXRecord() to all ARC files in a directory, creating
-     * one CDX file per ARC file.
-     * Note, any exceptions during index generation are logged at level FINE
-     * but otherwise ignored.
-     * Exceptions creating any cdx file are logged at level WARNING but
-     * otherwise ignored.
-     * CDX files are named as the arc files except ".arc" or ".arc.gz" is
-     * replaced with ".cdx"
-     *
-     * @param arcFileDirectory A directory with arcfiles to generate index
-     * for
-     * @param cdxFileDirectory A directory to generate CDX files in
-     * @throws ArgumentNotValid if any of directories are null or is not an
-     * existing directory, or if cdxFileDirectory is not writable.
-     */
-    public static void generateCDX(File arcFileDirectory,
-                                   File cdxFileDirectory)
-            throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(arcFileDirectory,
-                                      "File arcFileDirectory");
-        ArgumentNotValid.checkNotNull(cdxFileDirectory,
-                                      "File cdxFileDirectory");
-        if (!arcFileDirectory.isDirectory() || !arcFileDirectory.canRead()) {
-            throw new ArgumentNotValid("The directory for arc files '"
-                                       + arcFileDirectory
-                                       + "' is not a readable directory");
-        }
-        if (!cdxFileDirectory.isDirectory() || !cdxFileDirectory.canWrite()) {
-            throw new ArgumentNotValid("The directory for cdx files '"
-                                       + arcFileDirectory
-                                       + "' is not a writable directory");
-        }
-        Map<File, Exception> exceptions
-                = new HashMap<File, Exception>();
-        for (File arcfile : arcFileDirectory.listFiles(
-                FileUtils.ARCS_FILTER)) {
-            File cdxfile = new File(cdxFileDirectory, arcfile.getName()
-                    .replaceFirst(FileUtils.ARC_PATTERN,
-                                  FileUtils.CDX_EXTENSION));
-            if (cdxfile.getName().equals(arcfile.getName())) {
-                // If for some reason the file is not renamed (should never
-                // happen), simply add the .cdx extension to avoid overwriting
-                // existing file
-                cdxfile = new File(cdxFileDirectory,
-                                   cdxfile.getName() + FileUtils.CDX_EXTENSION);
-            }
-            try {
-                OutputStream cdxstream = null;
-                try {
-                    cdxstream = new FileOutputStream(cdxfile);
-                    writeCDXInfo(arcfile, cdxstream);
-                } finally {
-                    if (cdxstream != null) {
-                        cdxstream.close();
-                    }
-                }
-            } catch (Exception e) {
-                exceptions.put(cdxfile, e);
-            }
-        }
-        // Log any errors
-        if (exceptions.size() > 0) {
-            StringBuilder errorMsg = new StringBuilder(
-                    "Exceptions during cdx file generation:\n");
-            for (Map.Entry<File, Exception> fileException
-                    : exceptions.entrySet()) {
-                errorMsg.append("Could not create cdxfile '");
-                errorMsg.append(fileException.getKey().getAbsolutePath());
-                errorMsg.append("':\n");
-                errorMsg.append(ExceptionUtils.getStackTrace(
-                        fileException.getValue()));
-                errorMsg.append('\n');
-            }
-            log.debug(errorMsg.toString());
-        }
-    }
-
-    /**
+   /**
      * Applies createCDXRecord() to all ARC/WARC files in a directory, creating
      * one CDX file per ARC/WARC file.
      * Note, any exceptions during index generation are logged at level FINE
@@ -193,8 +115,16 @@ public class CDXUtils {
         }
         Map<File, Exception> exceptions
                 = new HashMap<File, Exception>();
-        for (File arcfile : archiveFileDirectory.listFiles(
-        		archiveProfile.filename_filter)) {
+        File[] filesToProcess = archiveFileDirectory.listFiles(
+                archiveProfile.filename_filter);
+        if (filesToProcess.length == 0) {
+            log.warn("Found no related arcfiles to process in the archive dir '" 
+                    + archiveFileDirectory.getAbsolutePath() + "'.");
+        } else {
+            log.debug("Found '" + filesToProcess + "' related arcfiles to process in the archive dir '" 
+                    + archiveFileDirectory.getAbsolutePath() + "'.");
+        } 
+        for (File arcfile : filesToProcess) {
         	File cdxfile = new File(cdxFileDirectory, arcfile.getName()
                     .replaceFirst(archiveProfile.filename_pattern,
                                   FileUtils.CDX_EXTENSION));

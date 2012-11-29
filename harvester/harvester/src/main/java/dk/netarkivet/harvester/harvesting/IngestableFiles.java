@@ -116,9 +116,8 @@ public class IngestableFiles {
     }
 
     /**
-     * Marks generated metadata as final.
-     * Closes the arcwriter and moves the temporary metadata file to its
-     * final position, if successfull.
+     * Marks generated metadata as final, closes the writer, and moves 
+     * the temporary metadata file to its final position, if successful.
      * @param success True if metadata was successfully generated, false
      * otherwise.
      * @throws PermissionDenied If the metadata has already been marked as
@@ -131,15 +130,15 @@ public class IngestableFiles {
                     "Metadata file " + getMetadataFile().getAbsolutePath()
                     + " already exists");
         }
-        writer = null;
+        
         if (success) {
+            writer.close(); // close writer down
             if (!getTmpMetadataFile().exists()) {
                 String message = "No metadata was generated despite claims"
                         + " that metadata generation was successfull.";
                 throw new PermissionDenied(message);
             }
             getTmpMetadataFile().renameTo(getMetadataFile());
-            FileUtils.removeRecursively(getTmpMetadataDir());
         } else {
             error = true;
         }
@@ -210,7 +209,7 @@ public class IngestableFiles {
      * Constructs the TEMPORARY metadata subdir from the crawlDir.
      * @return The tmp-metadata subdir as a File
      */
-    private File getTmpMetadataDir() {
+    public File getTmpMetadataDir() {
         return new File(crawlDir, TMP_SUB_DIR);
     }
 
@@ -231,7 +230,7 @@ public class IngestableFiles {
      * @return The ARC files that are ready to get ingested.
      */
     public List<File> getArcFiles() {
-        File arcsdir = new File(crawlDir, Constants.ARCDIRECTORY_NAME);
+        File arcsdir = getArcsDir();
         if (arcsdir.exists()) {
             if (!arcsdir.isDirectory()) {
                 throw new IOFailure(arcsdir.getPath() + " is not a directory");
@@ -241,14 +240,28 @@ public class IngestableFiles {
         	return new LinkedList<File>();
         }
     }
-
+    
+    /**
+     * @return the arcs dir in the our crawl directory.
+     */
+    public File getArcsDir() {
+        return new File(crawlDir, Constants.ARCDIRECTORY_NAME);
+    }
+    
+    /**
+     * @return the warcs dir in the our crawl directory.
+     */
+    public File getWarcsDir() {
+        return new File(crawlDir, Constants.WARCDIRECTORY_NAME);
+    }
+    
     /** Get a list of all WARC files that should get ingested.  Any open files
      * should be closed with closeOpenFiles first.
      *
      * @return The WARC files that are ready to get ingested.
      */
     public List<File> getWarcFiles() {
-        File warcsdir = new File(crawlDir, Constants.WARCDIRECTORY_NAME);
+        File warcsdir = getWarcsDir();
         if (warcsdir.exists()) {
             if (!warcsdir.isDirectory()) {
                 throw new IOFailure(warcsdir.getPath() + " is not a directory");
@@ -304,4 +317,21 @@ public class IngestableFiles {
             }
         }
     }
+
+    /**
+     * Remove any temporary files.
+     */
+    public void cleanup() {
+        FileUtils.removeRecursively(getTmpMetadataDir());
+        writer = null;
+    }
+    
+    /**
+     * @return the jobID of the harvest job being processed.
+     */
+    public long getJobId() {
+        return this.jobId;
+    }
 }
+
+

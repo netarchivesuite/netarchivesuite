@@ -148,7 +148,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
     }
 
     /**
-     * Returns a comparator used to sort the subset of {@link #CONFIG_SUBSET_SIZE}
+     * Returns a comparator used to sort the subset of {@link #DOMAIN_CONFIG_SUBSET_SIZE}
      * configurations that are scanned at each iteration.
      * @param harvest the {@link HarvestDefinition} being processed.
      * @return a comparator

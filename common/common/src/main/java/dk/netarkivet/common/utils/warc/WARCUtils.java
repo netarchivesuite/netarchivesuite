@@ -61,7 +61,7 @@ import dk.netarkivet.common.utils.archive.HeritrixArchiveHeaderWrapper;
 /**
 * Various utilities on WARC-records.
 * We have borrowed code from wayback.
-* @see org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter.java
+* See org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter
 */
 public class WARCUtils {
     
@@ -315,17 +315,4 @@ public class WARCUtils {
         ArchiveRecordHeader header = record.getHeader();
         return (String) header.getHeaderValue(WARCConstants.HEADER_KEY_TYPE);
     }
-    
-    /**
-     * Generate a digest of the given file of the given digestType.
-     * @param fileToDigest The file to digest
-     * @param digestType The digest Type
-     * @return A digest of the given file of the given digestType
-     */
-    public static String geerateDigest(File fileToDigest, String digestType) {
-        return null;
-    }
-    
-    
-    
 }

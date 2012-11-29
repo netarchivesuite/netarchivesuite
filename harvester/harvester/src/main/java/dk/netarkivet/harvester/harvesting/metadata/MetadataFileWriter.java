@@ -156,38 +156,36 @@ public abstract class MetadataFileWriter {
      * @param contentType  content-type of record
      * @param hostIP resource ip-address
      * @param fetchBeginTimeStamp record datetime
-     * @see ARCWriter#write(String uri, String contentType, String hostIP,
-            long fetchBeginTimeStamp, long recordLength, InputStream in
+     * @param payload A byte array containing the payload
+     * @see org.archive.io.arc.ARCWriter#write(String uri, String contentType, String hostIP,
+            long fetchBeginTimeStamp, long recordLength, InputStream in)
      */
-  //   * @param recordLength record length
-  //   * @param in input stream of data to be written as record payload
-  //   */
     public abstract void write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, byte[] payload) throws java.io.IOException;
 
     /**
-     * Append the files contained in the directory to the metadata file, but
+     * Append the files contained in the directory to the metadata archive file, but
      * only if the filename matches the supplied filter.
-     * @param parentDir directory containing files to append to metadata
-     * @param filter filter describing which files to ignore
-     * @param mimetype content-type write along with the files in the metadata output
+     * @param parentDir directory containing the files to append to metadata
+     * @param filter filter describing which files to accept and which to ignore
+     * @param mimetype The content-type to write along with the files in the metadata output
      */
     public void insertFiles(File parentDir, FilenameFilter filter, String mimetype) {
-        //For each CDX file...
-        File[] cdxFiles
+        //For each metadata source file in the parentDir that matches the filter ..
+        File[] metadataSourceFiles
                 = parentDir.listFiles(filter);
-        for (File cdxFile : cdxFiles) {
+        for (File metadataSourceFile : metadataSourceFiles) {
             //...write its content to the MetadataFileWriter
-        	writeFileTo(cdxFile,
-                    getURIforFileName(cdxFile).toASCIIString(),
+        	writeFileTo(metadataSourceFile,
+                    getURIforFileName(metadataSourceFile).toASCIIString(),
                     mimetype);
             //...and delete it afterwards
             try {
-                FileUtils.remove(cdxFile);
+                FileUtils.remove(metadataSourceFile);
             } catch (IOFailure e) {
                 log.warn("Couldn't delete file '"
-                         + cdxFile.getAbsolutePath()
-                         + "' after adding in metadata file, ignoring.",
+                         + metadataSourceFile.getAbsolutePath()
+                         + "' after adding to metadata archive file, ignoring.",
                          e);
             }
         }

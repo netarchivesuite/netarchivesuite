@@ -142,7 +142,6 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         }
         log.info(fileToArchive + " " + fileToArchive.length());
         
-        // generate a Block-Digest for the file
         String blockDigest = ChecksumCalculator.sha1(fileToArchive);
         
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat()
@@ -158,9 +157,8 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             in = new FileInputStream(fileToArchive);
             ANVLRecord namedFields = new ANVLRecord(3);
             
-            //namedFields.addLabelValue("X-Metadata-Version", "1");
             namedFields.addLabelValue(
-                    WARCConstants.HEADER_KEY_BLOCK_DIGEST, blockDigest);
+                    WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
             namedFields.addLabelValue("WARC-Concurrent-To", warcInfoUID.toString());
             namedFields.addLabelValue("WARC-Warcinfo-ID", warcInfoUID.toString());
             

@@ -332,50 +332,50 @@ public class HarvestDocumentationTester extends TestCase {
      */
     public void testGenerateCDX() throws IOException {
         try {
-            CDXUtils.generateCDX(null, TestInfo.CDX_WORKING_DIR);
+            CDXUtils.generateCDX(null, null, TestInfo.CDX_WORKING_DIR);
             fail("Should throw exception on null argument");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, null);
+            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, null);
             fail("Should throw exception on null argument");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(TestInfo.ARC_FILE_1, TestInfo.CDX_WORKING_DIR);
+            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_FILE_1, TestInfo.CDX_WORKING_DIR);
             fail("Should throw exception on non-directory");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.ARC_FILE_1);
+            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE,TestInfo.ARC_REAL_DIR, TestInfo.ARC_FILE_1);
             fail("Should throw exception on non-directory");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(new File("foo"), TestInfo.CDX_WORKING_DIR);
+            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, new File("foo"), TestInfo.CDX_WORKING_DIR);
             fail("Should throw exception on non-existing");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, new File("foo"));
+            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, new File("foo"));
             fail("Should throw exception on non-existing");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, new File("/"));
+            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, new File("/"));
             fail("Should throw exception on non-writable");
         } catch (ArgumentNotValid e) {
             //Expected
         }
 
         TestInfo.CDX_WORKING_DIR.mkdirs();
-        CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR);
+        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR);
         File[] originalFiles
                 = TestInfo.ARC_REAL_DIR.listFiles(FileUtils.ARCS_FILTER);
         File[] generatedFiles = TestInfo.CDX_WORKING_DIR.listFiles();

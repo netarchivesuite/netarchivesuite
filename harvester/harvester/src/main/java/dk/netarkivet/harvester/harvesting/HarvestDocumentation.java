@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -116,15 +117,7 @@ public class HarvestDocumentation {
         ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
         ArgumentNotValid.checkNotNegative(jobID, "jobID");
         ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
-        //Verify parameter consistency.
-        if (!crawlDir.isDirectory()) {
-            String message = "'" + crawlDir.getAbsolutePath()
-                             + "' does not exist or is not a directory.";
-            log.warn(message);
-            throw new ArgumentNotValid(message);
-        }
-
-
+        ArgumentNotValid.checkExistsDirectory(crawlDir, "crawlDir");
         // Prepare metadata-arcfile for ingestion of metadata, and enumerate
         // items to ingest.
         IngestableFiles ingestables = new IngestableFiles(crawlDir, jobID);
@@ -138,10 +131,11 @@ public class HarvestDocumentation {
             return;
         }
 
+        List<File> filesAddedAndNowDeletable = null;
+        
         try {
             MetadataFileWriter mdfw = null;
             mdfw = ingestables.getMetadataWriter();
-
             
             // TODO Place preharvestmetadata in IngestableFiles-defined area
             //TODO This is a good place to copy deduplicate information from the
@@ -151,8 +145,8 @@ public class HarvestDocumentation {
                 // add warc-info record
                 ANVLRecord infoPayload = new ANVLRecord(3);
                 infoPayload.addLabelValue("software", "NetarchiveSuite/" 
-                        + dk.netarkivet.common.Constants.getVersionString()
-                        + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
+                        + dk.netarkivet.common.Constants.getVersionString() 
+                        + "/" + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
                 infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
                 infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());
                 infoPayload.addLabelValue("conformsTo", "http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf");
@@ -163,13 +157,12 @@ public class HarvestDocumentation {
                         + psj.getOrigHarvestDefinitionID()
                         + "/harvestnum:" + psj.getJobHarvestNum() + "/job-id: " 
                         + psj.getJobID());
-                //infoPayload.addLabelValue("format","WARC File Format 1.0");
+                infoPayload.addLabelValue("format","WARC File Format 1.0");
                 MetadataFileWriterWarc mfww = (MetadataFileWriterWarc) mdfw; 
                 mfww.insertInfoRecord(infoPayload);
             }
             
             //  Fetch any serialized preharvest metadata objects, if they exists.
-            
             List<MetadataEntry> storedMetadata = getStoredMetadata(crawlDir);
             try {
                 for (MetadataEntry m : storedMetadata) {
@@ -178,89 +171,81 @@ public class HarvestDocumentation {
                             System.currentTimeMillis(), m.getData());
                 }
             } catch (IOException e) {
-                log.warn("Unable to write premetadata to metadata archivefile", e);
+                log.warn("Unable to write pre-metadata to metadata archivefile", e);
             }
             
-            // Insert harvestdetails into metadata archivefile.
-            List<File> filesAdded =
-               writeHarvestDetails(jobID, harvestID,
+            // Insert the harvestdetails into metadata archivefile.
+            filesAddedAndNowDeletable = writeHarvestDetails(jobID, harvestID,
                        crawlDir, mdfw, Constants.getHeritrixVersionString());
-            // Note: we assume, that the ARCwriter is flushed after each write.
-            // We can't do it specifically.
-
-            // Delete the added files (except files we need later):
-            // crawl.log is needed to create domainharvestreport later
-            // harvestInfo.xml is needed to upload stored data after
-            // crashes/stops on the harvesters
-            // progress-statistics.log is needed to find out if crawl ended due
-            // to hitting a size limit, or due to other completion
-            for (File fileAdded : filesAdded) {
-                if (!fileAdded.getName().equals("crawl.log")
-                        && !fileAdded.getName().equals("harvestInfo.xml")
-                        && !fileAdded.getName().equals("progress-statistics.log")) {
-                    try {
-                        FileUtils.remove(fileAdded);
-                    } catch (IOFailure e) {
-                        log.warn("Couldn't delete file '"
-                                 + fileAdded.getAbsolutePath()
-                                 + "' after adding in metadata file, ignoring.",
-                                 e);
-                    }
+            // All these files just added to the metadata archivefile can now be deleted 
+            // except for the files we need for later processing):
+            //  - crawl.log is needed to create domainharvestreport later
+            //  - harvestInfo.xml is needed to upload stored data after
+            //    crashes/stops on the harvesters
+            //  - progress-statistics.log is needed to find out if crawl ended due
+            //    to hitting a size limit, or due to other completion
+            
+            Iterator<File> iterator = filesAddedAndNowDeletable.iterator();
+            while (iterator.hasNext()) {
+                File f = iterator.next();
+                if (f.getName().equals("crawl.log")
+                        || f.getName().equals("harvestInfo.xml")
+                        || f.getName().equals("progress-statistics.log")) {
+                    iterator.remove();
                 }
             }
-
-            boolean bArcMetadataGenerationSucceeded = false;
-            boolean bWarcMetadataGenerationSucceeded = false;
-
-            // Create CDX over ARC files.
-            File arcFilesDir = new File(crawlDir, Constants.ARCDIRECTORY_NAME);
-            if (arcFilesDir.isDirectory()) {
-                moveAwayForeignFiles(ArchiveProfile.ARC_PROFILE, arcFilesDir, jobID);
-                //Generate CDX
-                // TODO Place results in IngestableFiles-defined area
-                File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
-                                                                 "cdx");
-                CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, arcFilesDir, cdxFilesDir);
-                mdfw.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
-                bArcMetadataGenerationSucceeded = true;
-            } else {
-                log.warn("No directory with ARC files found in '"
-                         + arcFilesDir.getAbsolutePath() + "'");
+            
+            boolean metadataGenerationSucceeded = false;
+            
+            // Try to create CDXes over ARC and WARC files.            
+            File arcFilesDir = ingestables.getArcsDir();
+            File warcFilesDir = ingestables.getWarcsDir();
+            // But first check if either of them exist
+            if (!(arcFilesDir.exists() || warcFilesDir.exists())) {
+                log.warn("Found no archive directory with ARC og WARC files. Looked for dirs '" 
+                        + arcFilesDir.getAbsolutePath() 
+                        + "' and '" + warcFilesDir.getAbsolutePath() + "'.");
             }
-
-            // Create CDX over WARC files.
-            File warcFilesDir = new File(crawlDir, Constants.WARCDIRECTORY_NAME);
-            if (warcFilesDir.isDirectory()) {
-                moveAwayForeignFiles(ArchiveProfile.WARC_PROFILE, warcFilesDir, jobID);
-                //Generate CDX
-                // TODO Place results in IngestableFiles-defined area
-                File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
-                                                                 "cdx");
-                CDXUtils.generateCDX(ArchiveProfile.WARC_PROFILE, warcFilesDir, cdxFilesDir);
-                mdfw.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
-                bWarcMetadataGenerationSucceeded = true;
-            } else {
-                log.warn("No directory with WARC files found in '"
-                         + warcFilesDir.getAbsolutePath() + "'");
+            
+            if (arcFilesDir.exists()) {
+                addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.ARC_PROFILE);
+                metadataGenerationSucceeded = true;
             }
-
-            if (bArcMetadataGenerationSucceeded || bWarcMetadataGenerationSucceeded) {
-            	// This implies that running with both ARC and WARC
-            	// at the same time is not supported by this check.
-            	// This check is no full proof if generating ARC and
-            	// WARC metadata at the same time.
+            if (warcFilesDir.exists()) {
+                addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
+                metadataGenerationSucceeded = true;
+            }
+                        
+            if (metadataGenerationSucceeded) {
+                // This indicates, that either the files in the arcsdir or in the warcsdir 
+                // have now been CDX-processed.
+                //
+                // TODO refactor, as this call has too many sideeffects
                 ingestables.setMetadataGenerationSucceeded(true);
             }
-
-            mdfw.close();
         } finally {
             // If at this point metadata is not ready, an error occurred.
             if (!ingestables.isMetadataReady()) {
                 ingestables.setMetadataGenerationSucceeded(false);
+            } else {
+                for (File fileAdded : filesAddedAndNowDeletable) {
+                    FileUtils.remove(fileAdded);
+                }
+               ingestables.cleanup();
             }
         }
     }
 
+    
+    private static void addCDXes(IngestableFiles files, File archiveDir, MetadataFileWriter writer, 
+            ArchiveProfile profile) {
+        moveAwayForeignFiles(profile, archiveDir, files.getJobId());
+        File cdxFilesDir = FileUtils.createUniqueTempDir(files.getTmpMetadataDir(), "cdx");
+        CDXUtils.generateCDX(profile, archiveDir, cdxFilesDir);
+        writer.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
+    }
+    
+    
     /**
      * Restore serialized MetadataEntry objects from the "metadata" subdirectory of
      * the crawldir.
@@ -442,9 +427,7 @@ public class HarvestDocumentation {
         // Add files in the crawl directory
         for (File hf : heritrixFiles) {
             files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
-        }
-
-        
+        }   
         // Generate an arcfiles-report.txt if configured to do so.
         boolean genArcFilesReport = Settings.getBoolean(
                 HarvesterSettings.METADATA_GENERATE_ARCFILES_REPORT);
@@ -583,64 +566,6 @@ public class HarvestDocumentation {
         return filesToReturn;
     }
 
-//    /**
-//     * Document an old job from an oldjobs directory on the harvesters.
-//     * Generates a file named <jobid>-metadata-2.arc.
-//     * Note: This method sets "heritrixVersion" to the heritrix-version
-//     * written in the user-agent.
-//     * This version may not be correct!
-//     *
-//     * @param crawlDir the given crawlDir
-//     * @param jobID the given job-identifier
-//     * @param harvestID the given harvest-identifier
-//     * @return a list of files added to the arcfile
-//     */
-//   public static List<File> doumentOldJob(File crawlDir, long jobID,
-//           long harvestID) {
-//       String jobIdString = Long.toString(jobID);
-//       MetadataFileWriter mdfw = null;
-//       String metadataFilename =
-//          MetadataFileWriter.getMetadataARCFileName(jobIdString)
-//              .replaceAll("-1\\.arc$", "-2.arc");
-//
-//       File metadataFile = new File(metadataFilename);
-//       mdfw = MetadataFileWriter.createWriter(metadataFile);
-//
-//       HeritrixFiles hf = new HeritrixFiles(crawlDir, jobID, harvestID);
-//
-//       // Insert harvestdetails into metadata arcfile.
-//       return writeHarvestDetails(jobID, harvestID, crawlDir, mdfw,
-//                                  getHeritrixVersion(hf.getOrderXmlFile()));
-//   }
-
-    /**
-     * @param orderXml the file containing the heritrix order.xml 
-     * @return the Heritrix version in the order.xml. 
-     * */
-    /*
-    private static String getHeritrixVersion(File orderXml) {
-        Document doc = XmlUtils.getXmlDoc(orderXml);
-        Node userAgentNode = doc.selectSingleNode(
-                HeritrixTemplate.HERITRIX_USER_AGENT_XPATH);
-        String userAgent = userAgentNode.getText();
-        //We expect to find this: Mozilla/5.0 (compatible;
-        // heritrix/1.5.0-200506132127 +http://netarkivet.dk/website/info.html)
-        String[] useragentParts = userAgent.split(" ");
-        // heritrix/1.5.0-200506132127
-        String heritrixPart = null;
-        for (String part : useragentParts) {
-            if (part.startsWith("heritrix")) {
-                heritrixPart = part;
-            }
-        }
-        if (heritrixPart != null) {
-            return heritrixPart.split("/")[1];
-        } else {
-            return "null";
-        }
-    }
-    */
-
     /**
      * Reverses a domain string, e.g. reverses "com.amazon" to "amazon.com"
      * @param reversedDomain the domain name to reverse
@@ -657,5 +582,4 @@ public class HarvestDocumentation {
         }
         return domain.substring(0, domain.length() - 1);
     }
-
 }

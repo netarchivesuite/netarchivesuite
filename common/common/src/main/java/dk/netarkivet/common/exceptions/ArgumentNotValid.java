@@ -24,6 +24,7 @@
 */
 package dk.netarkivet.common.exceptions;
 
+import java.io.File;
 import java.util.Collection;
 
 /**
@@ -163,6 +164,36 @@ public class ArgumentNotValid extends NetarkivetException {
     public static void checkTrue(boolean b, String s) {
         if (!b) {
             throw new ArgumentNotValid(s);
+        }
+    }
+    
+    /**
+     * Check, if the given argument is an existing directory.
+     * @param aDir a given File object.
+     * @param name Name of object
+     * @throws ArgumentNotValid If aDir is not an existing directory 
+     */
+    public static void checkExistsDirectory(File aDir, String name) {
+        checkNotNull(aDir, name);
+        if (!aDir.isDirectory()) {
+            String message = "The file '" + aDir.getAbsolutePath()
+                             + "' does not exist or is not a directory.";
+            throw new ArgumentNotValid(message);
+        }
+    }
+    
+    /**
+     * Check, if the given argument is an existing normal file.
+     * @param aFile a given File object.
+     * @param name Name of object
+     * @throws ArgumentNotValid If aDir is not an existing file 
+     */
+    public static void checkExistsNormalFile(File aFile, String name) {
+        checkNotNull(aFile, name);
+        if (!aFile.isFile()) {
+            String message = "The file '" + aFile.getAbsolutePath()
+                             + "' does not exist or is not a normal file.";
+            throw new ArgumentNotValid(message);
         }
     }
 }
