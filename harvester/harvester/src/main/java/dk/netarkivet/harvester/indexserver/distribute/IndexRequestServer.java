@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,8 +41,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -58,6 +62,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -88,6 +93,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
     private static JMSConnection conn;
     /** A set with the current indexing jobs in progress. */
     private static Map<String, IndexRequestMessage> currentJobs;
+    
     /** The max number of concurrent jobs. */
     private static long maxConcurrentJobs;
     /** Are we listening, now. */
@@ -157,7 +163,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                 // Start a new thread to handle the actual request.
                 new Thread() {
                     public void run() {
-                        doGenerateIndex(msg);
+                        doProcessIndexRequestMessage(msg);
                     }
                 }.start();
                 log.info("Restarting indexjob w/ ID=" + msg.getID());
@@ -252,7 +258,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
             //Start a new thread to handle the actual request.
             new Thread(){
                 public void run() {
-                    doGenerateIndex(irMsg);
+                    doProcessIndexRequestMessage(irMsg);
                 }
             }.start();
             log.debug("Now " + currentJobs.size()
@@ -275,9 +281,15 @@ public final class IndexRequestServer extends HarvesterMessageHandler
         File dest = new File(requestDir, irMsg.getID());
         log.debug("Storing message to " + dest.getAbsolutePath());
         // Writing message to file
-        FileOutputStream fos = new FileOutputStream(dest);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(irMsg);
+        ObjectOutputStream oos = null;
+        try {
+            FileOutputStream fos = new FileOutputStream(dest);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(irMsg);
+        } finally {
+            IOUtils.closeQuietly(oos);
+        }
+        
     }
 
     /**
@@ -287,25 +299,26 @@ public final class IndexRequestServer extends HarvesterMessageHandler
      */
     private IndexRequestMessage restoreMessage(File serializedObject) {        
         Object obj = null;
+        ObjectInputStream ois = null;
         try {
-        // Read the message from disk.
-        FileInputStream fis = new 
-            FileInputStream(serializedObject);
+            // Read the message from disk.
+            FileInputStream fis = new 
+                    FileInputStream(serializedObject);
+            ois = new ObjectInputStream(fis);
 
-        ObjectInputStream ois = 
-            new ObjectInputStream(fis);
-
-        obj = ois.readObject();
+            obj = ois.readObject();
         } catch (ClassNotFoundException e) {
             throw new IllegalState(
                     "Not possible to read the stored message from file '"
-                    + serializedObject.getAbsolutePath() + "':", e);
+                            + serializedObject.getAbsolutePath() + "':", e);
         } catch (IOException e) {
             throw new IOFailure(
                     "Not possible to read the stored message from file '" 
-                    + serializedObject.getAbsolutePath() + "':", e);
+                            + serializedObject.getAbsolutePath() + "':", e);
+        } finally {
+            IOUtils.closeQuietly(ois);
         }
-        
+
         if (obj instanceof IndexRequestMessage){
             return (IndexRequestMessage) obj;
         } else {
@@ -316,67 +329,80 @@ public final class IndexRequestServer extends HarvesterMessageHandler
     }
     
     /**
-     * Method that handles generating an index; supposed to be run in its own
-     * thread, because it blocks while the index is generated.
+     * Method that handles the processing of an indexRequestMessage. Returns the requested
+     * index immediately, if already available, otherwise proceeds with the index generation of
+     * the requested index. 
+     * Must be run in its own thread, because it blocks while the index is generated.
      * @see #visit(IndexRequestMessage)
      * @param irMsg A message requesting an index
      */
-    private void doGenerateIndex(final IndexRequestMessage irMsg) {
+    private void doProcessIndexRequestMessage(final IndexRequestMessage irMsg) {
         final boolean mustReturnIndex = irMsg.mustReturnIndex();
         try {
             checkMessage(irMsg);
             RequestType type = irMsg.getRequestType();
             Set<Long> jobIDs = irMsg.getRequestedJobs();
             
-            log.info("Generating an index of type '" + type
-                     + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
-                     + "]");
+            log.info("Request received for an index of type '" + type
+                     + "' for the  " + jobIDs.size() 
+                     + " jobs [" + StringUtils.conjoin(",", jobIDs) + "]");
             FileBasedCache<Set<Long>> handler = handlers.get(type);
-            Set<Long> foundIDs = handler.cache(jobIDs);
-            irMsg.setFoundJobs(foundIDs);
-            if (foundIDs.equals(jobIDs)) {
-                log.info("Successfully generated index of type '" + type
-                         + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
-                         + "]");
-                File cacheFile = handler.getCacheFile(jobIDs);
-                if (mustReturnIndex) { // return index now! 
-                    packageResultFiles(irMsg, cacheFile);
-                }
-            } else if (satisfactoryTresholdReached(foundIDs, jobIDs)) {
-                
-                // Make sure that the index of the data available is generated
-                Set<Long> theFoundIDs = handler.cache(foundIDs);
-             
-                // Make a copy of the index created, and give it the name of
-                // the index cache file wanted.
-                File cacheFileWanted = handler.getCacheFile(jobIDs);
-                File cacheFileCreated = handler.getCacheFile(foundIDs);
-                
-                log.info("Satisfactory threshold reached - copying index '" 
-                        + cacheFileCreated.getAbsolutePath()
-                        + "' to full index: " + cacheFileWanted.getAbsolutePath());
-                if (cacheFileCreated.isDirectory()) {
-                    // create destination cacheFileWanted, and 
-                    // copy all files in cacheFileCreated to cacheFileWanted.
-                    cacheFileWanted.mkdirs();
-                    FileUtils.copyDirectory(cacheFileCreated, cacheFileWanted);
+            
+            // FIXME Here we need to make sure that we don't accidentally process more than
+            // one message at the time before the whole process is over
+            List<Long> sortedList = new ArrayList<Long>(jobIDs);
+            String allIDsString = StringUtils.conjoin("-", sortedList);
+            String checksum = MD5.generateMD5(allIDsString.getBytes());
+            // Begin synchronization
+            synchronized (checksum.intern()) { 
+                Set<Long> foundIDs = handler.cache(jobIDs);
+                irMsg.setFoundJobs(foundIDs);
+                if (foundIDs.equals(jobIDs)) {
+                    log.info("Retrieved successfully index of type '" + type
+                            + "' for the " + jobIDs.size() 
+                            + "jobs [" + StringUtils.conjoin(",", jobIDs)
+                            + "]");
+                    File cacheFile = handler.getCacheFile(jobIDs);
+                    if (mustReturnIndex) { // return index now! 
+                        packageResultFiles(irMsg, cacheFile);
+                    }
+                } else if (satisfactoryTresholdReached(foundIDs, jobIDs)) {
+
+                    // Make sure that the index of the data available is generated
+                    Set<Long> theFoundIDs = handler.cache(foundIDs);
+
+                    // Make a copy of the index created, and give it the name of
+                    // the index cache file wanted.
+                    File cacheFileWanted = handler.getCacheFile(jobIDs);
+                    File cacheFileCreated = handler.getCacheFile(foundIDs);
+
+                    log.info("Satisfactory threshold reached - copying index '" 
+                            + cacheFileCreated.getAbsolutePath()
+                            + "' to full index: " + cacheFileWanted.getAbsolutePath());
+                    if (cacheFileCreated.isDirectory()) {
+                        // create destination cacheFileWanted, and 
+                        // copy all files in cacheFileCreated to cacheFileWanted.
+                        cacheFileWanted.mkdirs();
+                        FileUtils.copyDirectory(cacheFileCreated, cacheFileWanted);
+                    } else {
+                        FileUtils.copyFile(cacheFileCreated, cacheFileWanted);
+                    }
+                    // Information needed by recipient to store index in local cache
+                    irMsg.setFoundJobs(jobIDs); 
+                    if (mustReturnIndex) { // return index now.
+                        packageResultFiles(irMsg, cacheFileWanted);
+                    }
                 } else {
-                    FileUtils.copyFile(cacheFileCreated, cacheFileWanted);
+                    Set<Long> missingJobIds = new HashSet<Long>(jobIDs);
+                    missingJobIds.removeAll(foundIDs);
+                    log.warn("Failed generating index of type '" + type
+                            + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
+                            + "]. Missing data for jobs ["
+                            + StringUtils.conjoin(",", missingJobIds)
+                            + "].");
                 }
-                // Information needed by recipient to store index in local cache
-                irMsg.setFoundJobs(jobIDs); 
-                if (mustReturnIndex) { // return index now.
-                    packageResultFiles(irMsg, cacheFileWanted);
-                }
-            } else {
-                Set<Long> missingJobIds = new HashSet<Long>(jobIDs);
-                missingJobIds.removeAll(foundIDs);
-                log.warn("Failed generating index of type '" + type
-                         + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
-                         + "]. Missing data for jobs ["
-                         + StringUtils.conjoin(",", missingJobIds)
-                         + "].");
-            }
+                
+            } // End of synchronization block
         } catch (Throwable e) {
             log.warn(
                     "Unable to generate index for jobs ["
@@ -410,6 +436,11 @@ public final class IndexRequestServer extends HarvesterMessageHandler
             }
         }
     }
+    
+    
+    
+    
+    
     
     /**
      * Package the result files with the message reply.
