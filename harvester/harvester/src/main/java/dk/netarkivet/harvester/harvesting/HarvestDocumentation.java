@@ -195,33 +195,31 @@ public class HarvestDocumentation {
                 }
             }
             
-            boolean metadataGenerationSucceeded = false;
+            boolean cdxGenerationSucceeded = false;
             
             // Try to create CDXes over ARC and WARC files.            
             File arcFilesDir = ingestables.getArcsDir();
             File warcFilesDir = ingestables.getWarcsDir();
-            // But first check if either of them exist
-            if (!(arcFilesDir.exists() || warcFilesDir.exists())) {
-                log.warn("Found no archive directory with ARC og WARC files. Looked for dirs '" 
-                        + arcFilesDir.getAbsolutePath() 
-                        + "' and '" + warcFilesDir.getAbsolutePath() + "'.");
-            }
             
-            if (arcFilesDir.exists()) {
+            if(arcFilesDir.exists()) {
                 addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.ARC_PROFILE);
-                metadataGenerationSucceeded = true;
+                cdxGenerationSucceeded = true;
             }
             if (warcFilesDir.exists()) {
                 addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
-                metadataGenerationSucceeded = true;
+                cdxGenerationSucceeded = true;
             }
-                        
-            if (metadataGenerationSucceeded) {
+            
+            if (cdxGenerationSucceeded) {
                 // This indicates, that either the files in the arcsdir or in the warcsdir 
                 // have now been CDX-processed.
                 //
                 // TODO refactor, as this call has too many sideeffects
                 ingestables.setMetadataGenerationSucceeded(true);
+            } else {
+                log.warn("Found no archive directory with ARC og WARC files. Looked for dirs '" 
+                        + arcFilesDir.getAbsolutePath() 
+                        + "' and '" + warcFilesDir.getAbsolutePath() + "'.");
             }
         } finally {
             // If at this point metadata is not ready, an error occurred.
