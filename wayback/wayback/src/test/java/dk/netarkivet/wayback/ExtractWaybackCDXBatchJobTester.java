@@ -33,7 +33,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.wayback.batch.ExtractWaybackCDXBatchJob;
+import dk.netarkivet.wayback.batch.WaybackCDXExtractionBatchJob;
 
 /**
  * csr forgot to comment this!
@@ -53,7 +53,7 @@ public class ExtractWaybackCDXBatchJobTester extends TestCase {
     }
 
     public void testProcess() throws IOException {
-        ARCBatchJob job = new ExtractWaybackCDXBatchJob();
+        ARCBatchJob job = new WaybackCDXExtractionBatchJob();
         OutputStream os = new ByteArrayOutputStream();
         blaf.run(job,os);
         os.flush();

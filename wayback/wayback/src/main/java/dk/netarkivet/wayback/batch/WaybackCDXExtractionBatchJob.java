@@ -44,7 +44,7 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResu
  *
  */
 
-public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
+public class WaybackCDXExtractionBatchJob extends ARCBatchJob {
    /**
      * Logger for this class.
      */
@@ -65,7 +65,7 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
      /**
      * Constructor which set timeout to one day.
      */
-    public ExtractWaybackCDXBatchJob() {
+    public WaybackCDXExtractionBatchJob() {
         batchJobTimeout = Constants.ONE_DAY_IN_MILLIES;
     }
 
@@ -73,7 +73,7 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
      * Constructor.
      * @param timeout specific timeout period
      */
-    public ExtractWaybackCDXBatchJob(long timeout) {
+    public WaybackCDXExtractionBatchJob(long timeout) {
         batchJobTimeout = timeout;
     }
 

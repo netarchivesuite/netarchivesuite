@@ -41,8 +41,8 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.wayback.batch.ExtractDeduplicateCDXBatchJob;
-import dk.netarkivet.wayback.batch.ExtractWaybackCDXBatchJob;
+import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
+import dk.netarkivet.wayback.batch.WaybackCDXExtractionBatchJob;
 import dk.netarkivet.wayback.WaybackSettings;
 
 
@@ -198,9 +198,9 @@ public class ArchiveFile {
         //may be of value when we begin to add warc support.
         FileBatchJob theJob = null;
         if (filename.contains("metadata")) {
-            theJob = new ExtractDeduplicateCDXBatchJob();
+            theJob = new DeduplicationCDXExtractionBatchJob();
         } else {
-            theJob = new ExtractWaybackCDXBatchJob();
+            theJob = new WaybackCDXExtractionBatchJob();
         }
         theJob.processOnlyFileNamed(filename);                
         PreservationArcRepositoryClient client =

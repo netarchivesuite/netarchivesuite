@@ -36,7 +36,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.wayback.batch.ExtractDeduplicateCDXBatchJob;
+import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 
 /**
  * csr forgot to comment this!
@@ -63,14 +63,14 @@ public class ExtractDeduplicateCDXBatchJobTester extends TestCase {
     }
 
     public void testInitialize() {
-        ExtractDeduplicateCDXBatchJob job = new ExtractDeduplicateCDXBatchJob();
+        DeduplicationCDXExtractionBatchJob job = new DeduplicationCDXExtractionBatchJob();
         job.initialize(new ByteArrayOutputStream());
     }
 
     public void testJob() throws IOException {
         BatchLocalFiles files = new BatchLocalFiles(new File[] {new File(
                 TestInfo.WORKING_DIR, METADATA_FILENAME)});
-        ExtractDeduplicateCDXBatchJob job = new ExtractDeduplicateCDXBatchJob();
+        DeduplicationCDXExtractionBatchJob job = new DeduplicationCDXExtractionBatchJob();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         files.run(job, os);
         os.flush();
@@ -85,13 +85,13 @@ public class ExtractDeduplicateCDXBatchJobTester extends TestCase {
     }
 
     public void testJobReal() throws IOException {
-        ExtractDeduplicateCDXBatchJob job = new ExtractDeduplicateCDXBatchJob();
+        DeduplicationCDXExtractionBatchJob job = new DeduplicationCDXExtractionBatchJob();
         File arcFile =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_REAL_1);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         job.initialize(os);
         job.processFile(arcFile, os);
         job.finish(os);
-        ExtractDeduplicateCDXBatchJob job2 = new ExtractDeduplicateCDXBatchJob();
+        DeduplicationCDXExtractionBatchJob job2 = new DeduplicationCDXExtractionBatchJob();
         File arcFile2 =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_REAL_2);
         ByteArrayOutputStream os2 = new ByteArrayOutputStream();
         job2.initialize(os2);

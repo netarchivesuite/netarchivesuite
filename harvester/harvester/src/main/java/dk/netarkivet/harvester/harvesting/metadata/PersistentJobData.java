@@ -193,12 +193,8 @@ public class PersistentJobData implements JobInfo {
      * @throws ArgumentNotValid if crawlDir is null or does not exist.
      */
     public PersistentJobData(File crawlDir) {
-        ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
-        if (!crawlDir.isDirectory()) {
-            throw new ArgumentNotValid("Given crawldir '" 
-                    + crawlDir.getAbsolutePath()
-                    + "' does not exist or is not a directory!");
-        }
+        ArgumentNotValid.checkExistsDirectory(crawlDir, "crawlDir");
+        
         this.crawlDir = crawlDir;
     }
 
