@@ -101,8 +101,9 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             statement.setString(5, aExtendedField.getDefaultValue());
             statement.setString(6, aExtendedField.getOptions());
             statement.setInt(7, aExtendedField.getDatatype());
-            // the following converstion from boolean to int is necessary, 
-            // because the database column 'mandatory' is  a field (NAS-2127)
+            // the following conversion from boolean to int is necessary, 
+            // because the database column 'mandatory' is a integer field 
+            // and not a boolean (NAS-2127)
             statement.setInt(8, aExtendedField.isMandatory()? 1: 0); 
             statement.setInt(9, aExtendedField.getSequencenr());
 
@@ -203,8 +204,9 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             statement.setString(5, aExtendedField.getDefaultValue());
             statement.setString(6, aExtendedField.getOptions());
             statement.setInt(7, aExtendedField.getDatatype());
-            // the following converstion from boolean to int is necessary, 
-            // because the database column 'mandatory' is  a field (NAS-2127)
+            // the following conversion from boolean to int is necessary, 
+            // because the database column 'mandatory' is a int field 
+            // and not a boolean (NAS-2127)
             statement.setInt(8, aExtendedField.isMandatory()? 1: 0);
             statement.setInt(9, aExtendedField.getSequencenr());
             statement.setLong(10, aExtendedField.getExtendedFieldID());
@@ -270,7 +272,8 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             String defaultvalue = result.getString(4);
             String options = result.getString(5);
             int datatype = result.getInt(6);
-            boolean mandatory = (result.getInt(7) != 0);
+            //TODO maybe this cast is not necessary
+            boolean mandatory = (result.getInt(7) != 0); 
             int sequencenr = result.getInt(8);
 
             extendedField = new ExtendedField(aExtendedfieldId,
