@@ -142,7 +142,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         }
         log.info(fileToArchive + " " + fileToArchive.length());
         
-        String blockDigest = ChecksumCalculator.sha1(fileToArchive);
+        String blockDigest = ChecksumCalculator.generateSha1(fileToArchive);
         
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat()
                 .format(new Date());
@@ -183,7 +183,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat()
                 .format(new Date(fetchBeginTimeStamp));
         ByteArrayInputStream in = new ByteArrayInputStream(payload);
-        String blockDigest = ChecksumCalculator.sha1(in);
+        String blockDigest = ChecksumCalculator.generateSha1(in);
         in = new ByteArrayInputStream(payload); // A re-read is necessary here!
         ANVLRecord namedFields = new ANVLRecord(3);
         namedFields.addLabelValue(

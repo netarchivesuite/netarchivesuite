@@ -297,7 +297,6 @@ public class IngestableFilesTester extends TestCase {
      * Writes a single ARC record (containing MSG) and closes the ARCWriter.
      */
     private static void writeOneRecord(MetadataFileWriter aw) {
-        //InputStream is = new ByteArrayInputStream(MSG.getBytes());
         try {
             aw.write("test://test.test/test", "text/plain", "0.0.0.0", new Date().getTime(),
                     MSG.getBytes());

@@ -56,6 +56,8 @@ public class WaybackCDXExtractionBatchJob extends ARCBatchJob {
      */
     private NetarchiveSuiteARCRecordToSearchResultAdapter aToSAdapter;
 
+    
+    
     /**
      * Utility for converting a wayback CaptureSearchResult to a String
      * representing a line in a CDX file.

@@ -242,7 +242,7 @@ public class HarvestControllerTester extends TestCase {
         /** Test that non-empty metadata list produces serialized metadata. */
         writePreharvestMetadata.invoke(hc, someJob, TestInfo.oneMetadata, TestInfo.WORKING_DIR);
         
-        List<MetadataEntry> metadata = MetadataEntry.getmetadataFromDisk(metadataDir);
+        List<MetadataEntry> metadata = MetadataEntry.getMetadataFromDisk(metadataDir);
         
         assertTrue("preharvest-metadata files should be created with non-empty metadata list", 
                 metadata.size() > 0);

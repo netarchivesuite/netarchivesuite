@@ -257,7 +257,7 @@ public class HarvestDocumentation {
                     +  "' but there wasn't");
             return new ArrayList<MetadataEntry>();
         } else {
-            return MetadataEntry.getmetadataFromDisk(metadataDir);
+            return MetadataEntry.getMetadataFromDisk(metadataDir);
         }
     }
 

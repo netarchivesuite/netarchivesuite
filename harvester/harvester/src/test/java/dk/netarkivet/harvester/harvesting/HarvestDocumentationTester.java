@@ -106,7 +106,7 @@ public class HarvestDocumentationTester extends TestCase {
         l.add(me);
         File metadatadir = new File(TestInfo.WORKING_DIR, IngestableFiles.METADATA_SUB_DIR);
         metadatadir.mkdir();
-        MetadataEntry.storemetadataToDisk(l, metadatadir);
+        MetadataEntry.storeMetadataToDisk(l, metadatadir);
         
         
         HarvestDocumentation.documentHarvest(TestInfo.WORKING_DIR,

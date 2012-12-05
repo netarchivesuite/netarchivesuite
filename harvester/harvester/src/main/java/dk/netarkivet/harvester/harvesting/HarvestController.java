@@ -302,7 +302,7 @@ public class HarvestController {
         }                
         
         // Serializing the MetadataEntry objects to the metadataDir
-        MetadataEntry.storemetadataToDisk(metadata, metadataDir);
+        MetadataEntry.storeMetadataToDisk(metadata, metadataDir);
  }
 
     /**

@@ -44,12 +44,6 @@ import dk.netarkivet.common.exceptions.IllegalState;
  */
 public final class ChecksumCalculator {
     
-    /** The expected length of an MD5 checksum as a Hex string. */
-    private static final int MD5_DIGEST_STRING_LENGTH = 32;
-    
-    /** The expected length of an SHa1 checksum as a Hex string. */
-    private static final int SHA1_DIGEST_STRING_LENGTH = 40;
-   
     /**
      * The radix used for converting to hex (base 16).
      */
@@ -61,14 +55,14 @@ public final class ChecksumCalculator {
      * @param src The file to calculate MD5 for.
      * @return The MD5 sum of a file as a 32 characters long Hex string.
      */
-    public static String md5(final File src) {
+    public static String generateMd5(final File src) {
         ArgumentNotValid.checkNotNull(src, "File src");
         ArgumentNotValid.checkTrue(src.isFile(), "Argument should be a file");
         // Get the MD5 and return it
         try {
             final FileInputStream fileInputStream = new FileInputStream(src);
             try {
-                return md5(fileInputStream);
+                return generateMd5(fileInputStream);
             } finally {
                 IOUtils.closeQuietly(fileInputStream);
             }
@@ -84,14 +78,14 @@ public final class ChecksumCalculator {
      * @param src The file to calculate SHA-1 for.
      * @return The SHA-1 sum of a file as a 32 characters long Hex string.
      */
-    public static String sha1(final File src){
+    public static String generateSha1(final File src){
         ArgumentNotValid.checkNotNull(src, "File src");
         ArgumentNotValid.checkTrue(src.isFile(), "Argument should be a file");
         // Get the SHA-1 digest and return it
         try {
             final FileInputStream fileInputStream = new FileInputStream(src);
             try {
-                return sha1(fileInputStream);
+                return generateSha1(fileInputStream);
             } finally {
                 IOUtils.closeQuietly(fileInputStream);
             }
@@ -111,8 +105,7 @@ public final class ChecksumCalculator {
     * stream will not be closed.
     * @return The generated sha1 checksum as a string.
     */
-    @SuppressWarnings("PMD.AssignmentInOperand")
-    public static String md5(final InputStream instream) {
+    public static String generateMd5(final InputStream instream) {
         final byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         final String algorithm = "MD5";
         final MessageDigest messageDigest = getMessageDigest(algorithm);
@@ -127,7 +120,7 @@ public final class ChecksumCalculator {
                     + "' digest on the inputstream", e);
         }
         return convertToHex(messageDigest.digest(), 
-                MD5_DIGEST_STRING_LENGTH);
+                messageDigest.getDigestLength());
     }
     
     /**
@@ -140,7 +133,7 @@ public final class ChecksumCalculator {
      * stream will not be closed.
      * @return The generated sha1 checksum as a string.
      */
-    public static String sha1(final InputStream instream) {
+    public static String generateSha1(final InputStream instream) {
         final byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         final String algorithm = "SHA-1";
         final MessageDigest messageDigest = getMessageDigest(algorithm);
@@ -154,7 +147,7 @@ public final class ChecksumCalculator {
             throw new IOFailure("Error making a '" + algorithm
                     + "' digest on the inputstream", e);
         }
-        return convertToHex(messageDigest.digest(), SHA1_DIGEST_STRING_LENGTH);
+        return convertToHex(messageDigest.digest(), messageDigest.getDigestLength());
     }
     
     /**

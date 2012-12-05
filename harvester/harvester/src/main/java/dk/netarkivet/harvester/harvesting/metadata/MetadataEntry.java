@@ -328,7 +328,7 @@ public class MetadataEntry implements Serializable {
      * @param metadata the given metadata
      * @param destinationDir the directory to store the metadata.
      */
-    public static void storemetadataToDisk(List<MetadataEntry> metadata, File destinationDir) {
+    public static void storeMetadataToDisk(List<MetadataEntry> metadata, File destinationDir) {
         try {
             for (MetadataEntry m : metadata) {
                 File mFile = new File(destinationDir, UUID.randomUUID().toString() + ".ser");
@@ -344,7 +344,12 @@ public class MetadataEntry implements Serializable {
         }
     }
     
-    public static List<MetadataEntry> getmetadataFromDisk(File sourceDir) {
+    /**
+     * Retrieve a list of serialized metadata entries on disk.
+     * @param sourceDir the directory where the metadata is stored.
+     * @return the list of deserialized MetadataEntry object.
+     */
+    public static List<MetadataEntry> getMetadataFromDisk(File sourceDir) {
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
         FilenameFilter filter = new FilenameFilter() {
             
@@ -373,7 +378,6 @@ public class MetadataEntry implements Serializable {
                 throw new IllegalState("Unable to read the serialized metadata", e);
             }
         }
-        
         return metadata;
     }
 }
