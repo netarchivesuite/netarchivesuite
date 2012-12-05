@@ -62,8 +62,6 @@ public class NASSystemUtil {
                         "kbhigh", "HIGHPRIORITY", "KBN"),
                 new Application("kb-test-har-002", "HarvestControllerServer",
                         "kblow002", "LOWPRIORITY", "KBN"),
-                new Application("sb-test-acs-001", "ViewerProxy", null, null,
-                        "SBN"),
                 new Application("sb-test-bar-001", "BitarchiveServer", null,
                         null, "SBN"),
                 new Application("sb-test-har-001", "HarvestControllerServer",
