@@ -47,7 +47,6 @@ import org.apache.commons.io.LineIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
@@ -63,6 +62,7 @@ import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * Method for storing the bitpreservation cache in a database.
@@ -686,6 +686,41 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         
     }
 
+    /** SQL used to update the checksum status of straightforward cases.
+     *  See complete description for method below. */
+    public static final String updateChecksumStatusSql = ""
+    		+ "UPDATE replicafileinfo SET checksum_status = " + ChecksumStatus.OK.ordinal() + " "
+    		+ "WHERE checksum_status != " + ChecksumStatus.OK.ordinal() + " AND file_id IN ( "
+    		+ "  SELECT file_id "
+    		+ "  FROM ( "
+    		+ "    SELECT file_id, COUNT(file_id) AS checksums, SUM(replicas) replicas "
+    		+ "    FROM ( "
+    		+ "      SELECT file_id, COUNT(checksum) AS replicas, checksum "
+    		+ "      FROM replicafileinfo "
+    		+ "      WHERE filelist_status != " + FileListStatus.MISSING.ordinal() + " AND checksum IS NOT NULL "
+    		+ "      GROUP BY file_id, checksum "
+    		+ "    ) AS ss1 "
+    		+ "    GROUP BY file_id "
+    		+ "  ) AS ss2 "
+    		+ "  WHERE checksums = 1 "
+    		+ ")";
+
+    /** SQL used to select those files whose check status has to be voted on.
+     *  See complete description for method below. */
+    public static final String selectForFileChecksumVotingSql = ""
+    		+ "SELECT file_id "
+    		+ "FROM ( "
+    		+ "  SELECT file_id, COUNT(file_id) AS checksums, SUM(replicas) replicas "
+    		+ "  FROM ( "
+    		+ "    SELECT file_id, COUNT(checksum) AS replicas, checksum "
+    		+ "    FROM replicafileinfo "
+    		+ "    WHERE filelist_status != " + FileListStatus.MISSING.ordinal() + " AND checksum IS NOT NULL "
+    		+ "    GROUP BY file_id, checksum "
+    		+ "  ) AS ss1 "
+    		+ "  GROUP BY file_id "
+    		+ ") AS ss2 "
+    		+ "WHERE checksums > 1 ";
+
     /**
      * This method is used to update the status for the checksums for all
      * replicafileinfo entries. <br/>
@@ -713,9 +748,14 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         log.info("UpdateChecksumStatus operation commencing");
         Connection con = ArchiveDBConnection.get();
         try {
-            // Get all the fileids
+        	// Set checksum_status to 'OK' where there is the same
+        	// checksum across all replicas.
+        	DBUtils.executeSQL(con, updateChecksumStatusSql);
+
+            // Get all the fileids that need processing.
+            // Previously: "SELECT file_id FROM file"
             Iterator<Long> fileIdsIterator = DBUtils.selectLongIterator(con,
-                    "SELECT file_id FROM file");
+            		selectForFileChecksumVotingSql);
             // For each fileid
             while (fileIdsIterator.hasNext()) {
                 long fileId = fileIdsIterator.next();
