@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.FileUtils;
@@ -42,7 +43,8 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
-import dk.netarkivet.wayback.batch.WaybackCDXExtractionBatchJob;
+import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
+import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
 import dk.netarkivet.wayback.WaybackSettings;
 
 
@@ -200,7 +202,11 @@ public class ArchiveFile {
         if (filename.contains("metadata")) {
             theJob = new DeduplicationCDXExtractionBatchJob();
         } else {
-            theJob = new WaybackCDXExtractionBatchJob();
+            if (ARCUtils.isARC(filename)) {
+                theJob = new WaybackCDXExtractionARCBatchJob();
+            } else {
+                theJob = new WaybackCDXExtractionWARCBatchJob();
+            }
         }
         theJob.processOnlyFileNamed(filename);                
         PreservationArcRepositoryClient client =

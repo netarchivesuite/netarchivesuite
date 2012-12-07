@@ -39,7 +39,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 /**
 * Various utilities on WARC-records.
 * We have borrowed code from wayback.
-* @see org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter.java
+* @see org.archive.wayback.resourcestore.indexer.NetarchiveSuiteWARCRecordToSearchResultAdapter.java
 */
 public class WARCUtilsInTest {
     

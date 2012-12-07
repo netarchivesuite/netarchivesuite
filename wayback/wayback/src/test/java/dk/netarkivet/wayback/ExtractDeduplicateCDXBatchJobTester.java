@@ -33,7 +33,6 @@ import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
 
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;

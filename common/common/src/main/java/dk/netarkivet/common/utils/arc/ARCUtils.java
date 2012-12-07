@@ -334,4 +334,20 @@ public final class ARCUtils {
 
         return headers;
      }
+    
+    /**
+     * Check if the filename belongs to an ARC file.
+     * @param filename a given filename
+     * @return true, if the filename converted to lowercase ends with .arc or .arc.gz 
+     */
+    public static boolean isARC(String filename) {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
+        String filenameLowercase = filename.toLowerCase();
+        if (filenameLowercase.endsWith(".arc") 
+                || filenameLowercase.endsWith(".arc.gz")) {
+            return true;
+        } else 
+            return false;
+    }
+    
 }

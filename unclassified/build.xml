@@ -98,6 +98,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     lucene-core-3.6.0.jar
     wayback-core-1.6.0.jar
     jwat-common-0.9.1.jar
+    wayback-dependencies/htmlparser-1.6.jar
     "/>
     <property name="toolclasspath" value="${jarclasspath} "/>
     <property name="build.classes.excludes" value="overview.html,*/doc-files/,*/diagram-files/,/package.html"/>
@@ -160,6 +161,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="hibernate/log4j-1.2.15.jar"/>
                 <include name="hibernate/slf4j-api.jar"/>
                 <include name="hibernate/slf4j-log4j12-1.5.2.jar"/>
+            	<include name="wayback-dependencies/htmlparser-1.6.jar"/>
             </patternset>
         </fileset>
     </path>

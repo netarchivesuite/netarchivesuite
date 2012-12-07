@@ -41,7 +41,7 @@ import org.apache.commons.httpclient.Header;
  * except for the use of NetarchiveSuiteUrlOperations as a substitute for
  * UrlOperations.
  * 
- * @deprecated use org.archive.wayback.
+ * @deprecated use {@link org.archive.wayback.resourcestore.indexer.ARCRecordToSearchResultAdapter}
  */
 public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<ARCRecord,CaptureSearchResult> {
         private UrlCanonicalizer canonicalizer = null;

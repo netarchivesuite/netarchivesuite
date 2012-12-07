@@ -59,7 +59,7 @@ public class WaybackTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ArchiveFileTester.class);
         suite.addTestSuite(ArchiveFileDAOTester.class);
-        suite.addTestSuite(ExtractWaybackCDXBatchJobTester.class);
+        suite.addTestSuite(WaybackCDXExtractionArcAndWarcBatchJobTester.class);
         suite.addTestSuite(FileNameHarvesterTester.class);
         suite.addTestSuite(IndexerQueueTester.class);
         suite.addTestSuite(NetarchiveResourceStoreTester.class);
