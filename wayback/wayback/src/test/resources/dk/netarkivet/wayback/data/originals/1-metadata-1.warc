@@ -1,0 +1,1317 @@
+WARC/1.0
+WARC-Type: warcinfo
+WARC-Date: 2012-11-30T11:50:47Z
+WARC-Filename: 1-metadata-1.warc
+WARC-Record-ID: <urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921>
+Content-Type: application/warc-fields
+Content-Length: 332
+
+software: NetarchiveSuite/Version: 4.0.0 status UNSTABLE (r2560)/https://sbforge.org/display/NAS
+ip: 130.226.228.8
+hostname: kb-test-har-002.kb.dk
+conformsTo: http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf
+isPartOf: harvestname:test_harvest/harvestID:1/harvestnum:0/job-id: 1
+format: WARC File Format 1.0
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs?majorversion=1&minorversion=0&harvestid=1&harvestnum=0&jobid=1
+WARC-Date: 2012-11-30T11:50:47Z
+WARC-Block-Digest: sha1:da39a3ee5e6b4b0d3255bfef95601890afd80709
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:d4af02cb-f1cf-425c-835c-8d4d9437cf0c>
+Content-Length: 0
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/setup/crawl-manifest.txt?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:47Z
+WARC-Block-Digest: sha1:e0ee04dfb58ce9c402827b465e3027dc66760999
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:2f43fe66-7550-4af6-8efb-8cf6ab896784>
+Content-Type: text/plain
+Content-Length: 897
+
+L+ /home/test/INFO/harvester_high/1_1354274439056/logs/crawl.log
+L+ /home/test/INFO/harvester_high/1_1354274439056/logs/runtime-errors.log
+L+ /home/test/INFO/harvester_high/1_1354274439056/logs/local-errors.log
+L+ /home/test/INFO/harvester_high/1_1354274439056/logs/uri-errors.log
+L+ /home/test/INFO/harvester_high/1_1354274439056/logs/progress-statistics.log
+C+ /home/test/INFO/harvester_high/1_1354274439056/order.xml
+C+ /home/test/INFO/harvester_high/1_1354274439056/seeds.txt
+R+ /home/test/INFO/harvester_high/1_1354274439056/hosts-report.txt
+R+ /home/test/INFO/harvester_high/1_1354274439056/mimetype-report.txt
+R+ /home/test/INFO/harvester_high/1_1354274439056/responsecode-report.txt
+R+ /home/test/INFO/harvester_high/1_1354274439056/seeds-report.txt
+R+ /home/test/INFO/harvester_high/1_1354274439056/crawl-report.txt
+R+ /home/test/INFO/harvester_high/1_1354274439056/processors-report.txt
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/setup/harvestInfo.xml?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:47Z
+WARC-Block-Digest: sha1:9a383fa5db211fac12eb01f232fbf6b42e52c908
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:5af74128-2b1a-41ae-a83b-ccdb0229821f>
+Content-Type: text/xml
+Content-Length: 548
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<harvestInfo>
+  <version>0.4</version>
+  <jobId>1</jobId>
+  <priority>HIGHPRIORITY</priority>
+  <harvestNum>0</harvestNum>
+  <origHarvestDefinitionID>1</origHarvestDefinitionID>
+  <maxBytesPerDomain>500000000</maxBytesPerDomain>
+  <maxObjectsPerDomain>2000</maxObjectsPerDomain>
+  <orderXMLName>default_orderxml</orderXMLName>
+  <origHarvestDefinitionName>test_harvest</origHarvestDefinitionName>
+  <scheduleName>Once_a_week</scheduleName>
+  <harvestFilenamePrefix>1-1</harvestFilenamePrefix>
+</harvestInfo>
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/setup/order.xml?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:47Z
+WARC-Block-Digest: sha1:b188567b7497f247a8733b9d8586d13685596c4d
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:f337a81b-e345-440d-a699-ad79e1a546df>
+Content-Type: text/xml
+Content-Length: 23883
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<crawl-order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="heritrix_settings.xsd">  
+  <meta> 
+    <name>default_orderxml</name>  
+    <description>Default Profile</description>  
+    <operator>Admin</operator>  
+    <organization/>  
+    <audience/>  
+    <date>20080118111217</date> 
+  </meta>  
+  <controller> 
+    <string name="settings-directory">settings</string>  
+    <string name="disk-path">/home/test/INFO/harvester_high/1_1354274439056</string>  
+    <string name="logs-path">logs</string>  
+    <string name="checkpoints-path">checkpoints</string>  
+    <string name="state-path">state</string>  
+    <string name="scratch-path">scratch</string>  
+    <long name="max-bytes-download">0</long>  
+    <long name="max-document-download">0</long>  
+    <long name="max-time-sec">0</long>  
+    <integer name="max-toe-threads">50</integer>  
+    <integer name="recorder-out-buffer-bytes">4096</integer>  
+    <integer name="recorder-in-buffer-bytes">65536</integer>  
+    <integer name="bdb-cache-percent">0</integer>  
+    <!-- DecidingScope migrated from DomainScope -->  
+    <newObject name="scope" class="org.archive.crawler.deciderules.DecidingScope"> 
+      <boolean name="enabled">true</boolean>  
+      <string name="seedsfile">/home/test/INFO/harvester_high/1_1354274439056/seeds.txt</string>  
+      <boolean name="reread-seeds-on-config">true</boolean>  
+      <!-- DecideRuleSequence. Multiple DecideRules applied in order with last non-PASS the resulting decision -->  
+      <newObject name="decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+        <map name="rules"> 
+          <newObject name="rejectByDefault" class="org.archive.crawler.deciderules.RejectDecideRule"/>  
+          <newObject name="acceptURIFromSeedDomains" class="dk.netarkivet.harvester.harvesting.OnNSDomainsDecideRule"> 
+            <string name="decision">ACCEPT</string>  
+            <string name="surts-source-file"/>  
+            <boolean name="seeds-as-surt-prefixes">true</boolean>  
+            <string name="surts-dump-file"/>  
+            <boolean name="also-check-via">false</boolean>  
+            <boolean name="rebuild-on-reconfig">true</boolean> 
+          </newObject>  
+          <newObject name="rejectIfTooManyHops" class="org.archive.crawler.deciderules.TooManyHopsDecideRule"> 
+            <integer name="max-hops">25</integer> 
+          </newObject>  
+          <newObject name="rejectIfPathological" class="org.archive.crawler.deciderules.PathologicalPathDecideRule"> 
+            <integer name="max-repetitions">3</integer> 
+          </newObject>  
+          <newObject name="acceptIfTranscluded" class="org.archive.crawler.deciderules.TransclusionDecideRule"> 
+            <integer name="max-trans-hops">3</integer>  
+            <integer name="max-speculative-hops">1</integer> 
+          </newObject>  
+          <newObject name="pathdepthfilter" class="org.archive.crawler.deciderules.TooManyPathSegmentsDecideRule"> 
+            <integer name="max-path-depth">20</integer> 
+          </newObject>  
+          <newObject name="global_crawlertraps" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule"> 
+            <string name="decision">REJECT</string>  
+            <string name="list-logic">OR</string>  
+            <stringList name="regexp-list"> 
+              <string>.*core\.UserAdmin.*core\.UserLogin.*</string>  
+              <string>.*core\.UserAdmin.*register\.UserSelfRegistration.*</string>  
+              <string>.*\/w\/index\.php\?title=Speci[ae]l:Recentchanges.*</string>  
+              <string>.*act=calendar&amp;cal_id=.*</string>  
+              <string>.*advCalendar_pi.*</string>  
+              <string>.*cal\.asp\?date=.*</string>  
+              <string>.*cal\.asp\?view=monthly&amp;date=.*</string>  
+              <string>.*cal\.asp\?view=weekly&amp;date=.*</string>  
+              <string>.*cal\.asp\?view=yearly&amp;date=.*</string>  
+              <string>.*cal\.asp\?view=yearly&amp;year=.*</string>  
+              <string>.*cal\/cal_day\.php\?op=day&amp;date=.*</string>  
+              <string>.*cal\/cal_week\.php\?op=week&amp;date=.*</string>  
+              <string>.*cal\/calendar\.php\?op=cal&amp;month=.*</string>  
+              <string>.*cal\/yearcal\.php\?op=yearcal&amp;ycyear=.*</string>  
+              <string>.*calendar\.asp\?calmonth=.*</string>  
+              <string>.*calendar\.asp\?qMonth=.*</string>  
+              <string>.*calendar\.php\?sid=.*</string>  
+              <string>.*calendar\.php\?start=.*</string>  
+              <string>.*calendar\.php\?Y=.*</string>  
+              <string>.*calendar\/\?CLmDemo_horizontal=.*</string>  
+              <string>.*calendar_menu\/calendar\.php\?.*</string>  
+              <string>.*calendar_scheduler\.php\?d=.*</string>  
+              <string>.*calendar_year\.asp\?qYear=.*</string>  
+              <string>.*calendarix\/calendar\.php\?op=.*</string>  
+              <string>.*calendarix\/yearcal\.php\?op=.*</string>  
+              <string>.*calender\/default\.asp\?month=.*</string>  
+              <string>.*Default\.asp\?month=.*</string>  
+              <string>.*events\.asp\?cat=0&amp;mDate=.*</string>  
+              <string>.*events\.asp\?cat=1&amp;mDate=.*</string>  
+              <string>.*events\.asp\?MONTH=.*</string>  
+              <string>.*events\.asp\?month=.*</string>  
+              <string>.*index\.php\?iDate=.*</string>  
+              <string>.*index\.php\?module=PostCalendar&amp;func=view.*</string>  
+              <string>.*index\.php\?option=com_events&amp;task=view.*</string>  
+              <string>.*index\.php\?option=com_events&amp;task=view_day&amp;year=.*</string>  
+              <string>.*index\.php\?option=com_events&amp;task=view_detail&amp;year=.*</string>  
+              <string>.*index\.php\?option=com_events&amp;task=view_month&amp;year=.*</string>  
+              <string>.*index\.php\?option=com_events&amp;task=view_week&amp;year=.*</string>  
+              <string>.*index\.php\?option=com_events&amp;task=view_year&amp;year=.*</string>  
+              <string>.*index\.php\?option=com_extcalendar&amp;Itemid.*</string>  
+              <string>.*modules\.php\?name=Calendar&amp;op=modload&amp;file=index.*</string>  
+              <string>.*modules\.php\?name=vwar&amp;file=calendar&amp;action=list&amp;month=.*</string>  
+              <string>.*modules\.php\?name=vwar&amp;file=calendar.*</string>  
+              <string>.*modules\.php\?name=vWar&amp;mod=calendar.*</string>  
+              <string>.*modules\/piCal\/index\.php\?caldate=.*</string>  
+              <string>.*modules\/piCal\/index\.php\?cid=.*</string>  
+              <string>.*option,com_events\/task,view_day\/year.*</string>  
+              <string>.*option,com_events\/task,view_month\/year.*</string>  
+              <string>.*option,com_extcalendar\/Itemid.*</string>  
+              <string>.*task,view_month\/year.*</string>  
+              <string>.*shopping_cart\.php.*</string>  
+              <string>.*action.add_product.*</string>  
+              <string>.*action.remove_product.*</string>  
+              <string>.*action.buy_now.*</string>  
+              <string>.*checkout_payment\.php.*</string>  
+              <string>.*login.*login.*login.*login.*</string>  
+              <string>.*homepage_calendar\.asp.*</string>  
+              <string>.*MediaWiki.*Movearticle.*</string>  
+              <string>.*index\.php.*action=edit.*</string>  
+              <string>.*comcast\.net.*othastar.*</string>  
+              <string>.*Login.*Login.*Login.*</string>  
+              <string>.*redir.*redir.*redir.*</string>  
+              <string>.*bookingsystemtime\.asp\?dato=.*</string>  
+              <string>.*bookingsystem\.asp\?date=.*</string>  
+              <string>.*cart\.asp\?mode=add.*</string>  
+              <string>.*\/photo.*\/photo.*\/photo.*</string>  
+              <string>.*\/skins.*\/skins.*\/skins.*</string>  
+              <string>.*\/scripts.*\/scripts.*\/scripts.*</string>  
+              <string>.*\/styles.*\/styles.*\/styles.*</string>  
+              <string>.*\/coppermine\/login\.php\?referer=.*</string>  
+              <string>.*\/images.*\/images.*\/images.*</string>  
+              <string>.*\/stories.*\/stories.*\/stories.*</string> 
+            </stringList> 
+          </newObject>  
+          <newObject name="netarkivet.dk" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule"> 
+            <string name="decision">REJECT</string>  
+            <string name="list-logic">OR</string>  
+            <stringList name="regexp-list"> 
+              <string/> 
+            </stringList> 
+          </newObject> 
+        </map>  
+        <!-- end rules --> 
+      </newObject>  
+      <!-- end decide-rules --> 
+    </newObject>  
+    <!-- End DecidingScope -->  
+    <map name="http-headers"> 
+      <string name="user-agent">Mozilla/5.0 (compatible; heritrix/1.12.1 +http://my_website.com/my_infopage.html)</string>  
+      <string name="from">my_email@my_website.com</string> 
+    </map>  
+    <newObject name="robots-honoring-policy" class="org.archive.crawler.datamodel.RobotsHonoringPolicy"> 
+      <string name="type">ignore</string>  
+      <boolean name="masquerade">false</boolean>  
+      <text name="custom-robots"/>  
+      <stringList name="user-agents"/> 
+    </newObject>  
+    <newObject name="frontier" class="org.archive.crawler.frontier.BdbFrontier"> 
+      <float name="delay-factor">1.0</float>  
+      <integer name="max-delay-ms">1000</integer>  
+      <integer name="min-delay-ms">300</integer>  
+      <integer name="max-retries">5</integer>  
+      <long name="retry-delay-seconds">300</long>  
+      <integer name="preference-embed-hops">1</integer>  
+      <integer name="total-bandwidth-usage-KB-sec">1500</integer>  
+      <integer name="max-per-host-bandwidth-usage-KB-sec">500</integer>  
+      <string name="queue-assignment-policy">dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy</string>  
+      <string name="force-queue-assignment"/>  
+      <boolean name="pause-at-start">false</boolean>  
+      <boolean name="pause-at-finish">false</boolean>  
+      <boolean name="source-tag-seeds">false</boolean>  
+      <boolean name="recovery-log-enabled">false</boolean>  
+      <boolean name="hold-queues">true</boolean>  
+      <integer name="balance-replenish-amount">3000</integer>  
+      <integer name="error-penalty-amount">100</integer>  
+      <long name="queue-total-budget">-1</long>  
+      <string name="cost-policy">org.archive.crawler.frontier.UnitCostAssignmentPolicy</string>  
+      <long name="snooze-deactivate-ms">300000</long>  
+      <integer name="target-ready-backlog">50</integer>  
+      <string name="uri-included-structure">org.archive.crawler.util.BdbUriUniqFilter</string>  
+      <boolean name="dump-pending-at-close">false</boolean> 
+    </newObject>  
+    <map name="uri-canonicalization-rules"> 
+      <newObject name="Lowercase" class="org.archive.crawler.url.canonicalize.LowercaseRule"> 
+        <boolean name="enabled">true</boolean> 
+      </newObject>  
+      <newObject name="Userinfo" class="org.archive.crawler.url.canonicalize.StripUserinfoRule"> 
+        <boolean name="enabled">true</boolean> 
+      </newObject>  
+      <newObject name="WWW" class="org.archive.crawler.url.canonicalize.StripWWWRule"> 
+        <boolean name="enabled">false</boolean> 
+      </newObject>  
+      <newObject name="SessionIDs" class="org.archive.crawler.url.canonicalize.StripSessionIDs"> 
+        <boolean name="enabled">true</boolean> 
+      </newObject>  
+      <newObject name="QueryStrPrefix" class="org.archive.crawler.url.canonicalize.FixupQueryStr"> 
+        <boolean name="enabled">true</boolean> 
+      </newObject> 
+    </map>  
+    <!-- Heritrix pre-fetch processors -->  
+    <map name="pre-fetch-processors"> 
+      <newObject name="QuotaEnforcer" class="org.archive.crawler.prefetch.QuotaEnforcer"> 
+        <boolean name="force-retire">false</boolean>  
+        <boolean name="enabled">true</boolean>  
+        <newObject name="QuotaEnforcer#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject>  
+        <long name="server-max-fetch-successes">-1</long>  
+        <long name="server-max-success-kb">-1</long>  
+        <long name="server-max-fetch-responses">-1</long>  
+        <long name="server-max-all-kb">-1</long>  
+        <long name="host-max-fetch-successes">-1</long>  
+        <long name="host-max-success-kb">-1</long>  
+        <long name="host-max-fetch-responses">-1</long>  
+        <long name="host-max-all-kb">-1</long>  
+        <long name="group-max-fetch-successes">2000</long>  
+        <long name="group-max-success-kb">-1</long>  
+        <long name="group-max-fetch-responses">-1</long>  
+        <long name="group-max-all-kb">488282</long> 
+      </newObject>  
+      <newObject name="Preselector" class="org.archive.crawler.prefetch.Preselector"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="Preselector#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject>  
+        <boolean name="override-logger">false</boolean>  
+        <boolean name="recheck-scope">true</boolean>  
+        <boolean name="block-all">false</boolean>  
+        <string name="block-by-regexp"/>  
+        <string name="allow-by-regexp"/> 
+      </newObject>  
+      <newObject name="Preprocessor" class="org.archive.crawler.prefetch.PreconditionEnforcer"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="Preprocessor#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject>  
+        <integer name="ip-validity-duration-seconds">21600</integer>  
+        <integer name="robot-validity-duration-seconds">86400</integer>  
+        <boolean name="calculate-robots-only">false</boolean> 
+      </newObject> 
+    </map>  
+    <!--End of Heritrix pre-fetch processors -->  
+    <!-- Heritrix fetch processors -->  
+    <map name="fetch-processors"> 
+      <newObject name="DNS" class="org.archive.crawler.fetcher.FetchDNS"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="DNS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject>  
+        <boolean name="accept-non-dns-resolves">false</boolean>  
+        <boolean name="digest-content">true</boolean>  
+        <string name="digest-algorithm">sha1</string> 
+      </newObject>  
+      <newObject name="HTTP" class="org.archive.crawler.fetcher.FetchHTTP"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="HTTP#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject>  
+        <newObject name="midfetch-decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject>  
+        <integer name="timeout-seconds">1200</integer>  
+        <integer name="sotimeout-ms">20000</integer>  
+        <integer name="fetch-bandwidth">0</integer>  
+        <long name="max-length-bytes">0</long>  
+        <boolean name="ignore-cookies">false</boolean>  
+        <boolean name="use-bdb-for-cookies">true</boolean>  
+        <string name="load-cookies-from-file"/>  
+        <string name="save-cookies-to-file"/>  
+        <string name="trust-level">open</string>  
+        <stringList name="accept-headers"/>  
+        <string name="http-proxy-host"/>  
+        <string name="http-proxy-port"/>  
+        <string name="default-encoding">ISO-8859-1</string>  
+        <boolean name="digest-content">true</boolean>  
+        <string name="digest-algorithm">sha1</string>  
+        <boolean name="send-if-modified-since">true</boolean>  
+        <boolean name="send-if-none-match">true</boolean>  
+        <boolean name="send-connection-close">true</boolean>  
+        <boolean name="send-referer">true</boolean>  
+        <boolean name="send-range">false</boolean>  
+        <string name="http-bind-address"/> 
+      </newObject> 
+    </map>  
+    <!-- end of Heritrix Fetch processors -->  
+    <!-- Heritrix extract processors -->  
+    <map name="extract-processors"> 
+      <newObject name="ExtractorHTTP" class="org.archive.crawler.extractor.ExtractorHTTP"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="ExtractorHTTP#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject> 
+      </newObject>  
+      <newObject name="ExtractorHTML" class="org.archive.crawler.extractor.ExtractorHTML"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="ExtractorHTML#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject>  
+        <boolean name="extract-javascript">true</boolean>  
+        <boolean name="treat-frames-as-embed-links">true</boolean>  
+        <boolean name="ignore-form-action-urls">true</boolean>  
+        <boolean name="extract-value-attributes">true</boolean>  
+        <boolean name="ignore-unexpected-html">true</boolean> 
+      </newObject>  
+      <newObject name="ExtractorCSS" class="org.archive.crawler.extractor.ExtractorCSS"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="ExtractorCSS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject> 
+      </newObject>  
+      <newObject name="ExtractorJS" class="org.archive.crawler.extractor.ExtractorJS"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="ExtractorJS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject> 
+      </newObject>  
+      <newObject name="ExtractorSWF" class="org.archive.crawler.extractor.ExtractorSWF"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="ExtractorSWF#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject> 
+      </newObject> 
+    </map>  
+    <!-- end of Heritrix extract processors -->  
+    <!-- Heritrix write processors -->  
+    <map name="write-processors"> 
+      <newObject name="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator"> 
+        <boolean name="enabled">true</boolean>  
+        <map name="filters"/>  
+        <string name="index-location">/home/test/INFO/cache/DEDUP_CRAWL_LOG/empty-cache</string>  
+        <string name="matching-method">By URL</string>  
+        <boolean name="try-equivalent">true</boolean>  
+        <boolean name="change-content-size">false</boolean>  
+        <string name="mime-filter">^text/.*</string>  
+        <string name="filter-mode">Blacklist</string>  
+        <string name="analysis-mode">Timestamp</string>  
+        <string name="log-level">SEVERE</string>  
+        <string name="origin"/>  
+        <string name="origin-handling">Use index information</string>  
+        <boolean name="stats-per-host">true</boolean>  
+        <boolean name="use-sparse-range-filter">true</boolean> 
+      </newObject>  
+      <newObject name="Archiver" class="org.archive.crawler.writer.ARCWriterProcessor"> 
+        <boolean name="enabled">false</boolean>  
+        <newObject name="Archiver#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject>  
+        <boolean name="compress">false</boolean>  
+        <string name="prefix">1-1</string>  
+        <string name="suffix">${HOSTNAME}</string>  
+        <integer name="max-size-bytes">100000000</integer>  
+        <stringList name="path"> 
+          <string>arcs</string> 
+        </stringList>  
+        <integer name="pool-max-active">5</integer>  
+        <integer name="pool-max-wait">300000</integer>  
+        <long name="total-bytes-to-write">0</long>  
+        <boolean name="skip-identical-digests">false</boolean> 
+      </newObject>  
+      <newObject name="WARCArchiver" class="dk.netarkivet.harvester.harvesting.WARCWriterProcessor"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="WARCArchiver#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject>  
+        <boolean name="compress">false</boolean>  
+        <string name="prefix">1-1</string>  
+        <string name="suffix">${HOSTNAME}</string>  
+        <long name="max-size-bytes">100000000</long>  
+        <stringList name="path"> 
+          <string>warcs</string> 
+        </stringList>  
+        <integer name="pool-max-active">5</integer>  
+        <integer name="pool-max-wait">300000</integer>  
+        <long name="total-bytes-to-write">0</long>  
+        <boolean name="skip-identical-digests">false</boolean>  
+        <boolean name="write-requests">true</boolean>  
+        <boolean name="write-metadata">true</boolean>  
+        <boolean name="write-revisit-for-identical-digests">true</boolean>  
+        <boolean name="write-revisit-for-not-modified">true</boolean> 
+      </newObject> 
+    </map>  
+    <!-- End of Heritrix write processors -->  
+    <!-- Heritrix post processors -->  
+    <map name="post-processors"> 
+      <newObject name="Updater" class="org.archive.crawler.postprocessor.CrawlStateUpdater"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="Updater#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject> 
+      </newObject>  
+      <newObject name="LinksScoper" class="org.archive.crawler.postprocessor.LinksScoper"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="LinksScoper#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject>  
+        <boolean name="override-logger">false</boolean>  
+        <boolean name="seed-redirects-new-seed">false</boolean>  
+        <integer name="preference-depth-hops">-1</integer>  
+        <newObject name="scope-rejected-url-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject> 
+      </newObject>  
+      <newObject name="Scheduler" class="org.archive.crawler.postprocessor.FrontierScheduler"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="Scheduler#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject> 
+      </newObject>  
+      <newObject name="ContentSize" class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor"> 
+        <boolean name="enabled">true</boolean>  
+        <newObject name="ContentSize#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> 
+          <map name="rules"/> 
+        </newObject> 
+      </newObject> 
+    </map>  
+    <!-- end of Heritrix post processors -->  
+    <map name="loggers"> 
+      <newObject name="crawl-statistics" class="org.archive.crawler.admin.StatisticsTracker"> 
+        <integer name="interval-seconds">20</integer> 
+      </newObject> 
+    </map>  
+    <string name="recover-path"/>  
+    <boolean name="checkpoint-copy-bdbje-logs">true</boolean>  
+    <boolean name="recover-retain-failures">false</boolean>  
+    <newObject name="credential-store" class="org.archive.crawler.datamodel.CredentialStore"> 
+      <map name="credentials"/> 
+    </newObject> 
+  </controller> 
+</crawl-order>
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/setup/seeds.txt?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:47Z
+WARC-Block-Digest: sha1:7f1b6bed34d2a1285d3f703ef6aa608928dc27a7
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:f0d4c9f3-a02f-4575-8f0b-0a607c5b60b9>
+Content-Type: text/plain
+Content-Length: 17
+
+www.netarkivet.dk
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/reports/arcfiles-report.txt?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:3357dcefc10d20cdf7649c22400e13406e7a9041
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:70284cde-80e8-452a-abd1-cc245975708d>
+Content-Type: text/plain
+Content-Length: 146
+
+[ARCFILE] [Opened] [Closed] [Size]
+1-1-20121130112044-00000-kb-test-har-002.kb.dk.warc 2012-11-30T11:20:44.661Z 2012-11-30T11:40:52.679Z 30276251
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/reports/crawl-report.txt?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:dcc856aaa53fae6201df731eb6f874a12479d018
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:6cfe2c61-f740-4d4e-ad6d-5b89727d76b0>
+Content-Type: text/plain
+Content-Length: 377
+
+Crawl Name: default_orderxml
+Crawl Status: Finished
+Duration Time: 20m8s695ms
+Total Seeds Crawled: 1
+Total Seeds not Crawled: 0
+Total Hosts Crawled: 4
+Total Documents Crawled: 303
+Documents Crawled Successfully: 297
+Novel Documents Crawled: 297
+Processed docs/sec: 0.25
+Bandwidth in Kbytes/sec: 23
+Total Raw Data Size in Bytes: 29422109 (28 MB) 
+Novel Bytes: 29422109 (28 MB) 
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/reports/frontier-report.txt?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:c401d7270a1d1f5ce68393df6a2ebad09fa2a562
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:a6cdf36e-f4a5-4912-922f-72c17dee0d64>
+Content-Type: text/plain
+Content-Length: 15
+
+frontier empty
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/reports/hosts-report.txt?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:2760d5da94477374ea963437047dd569a6183d35
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:95113e77-de2e-4d2d-837b-3f56acce4328>
+Content-Type: text/plain
+Content-Length: 355
+
+[#urls] [#bytes] [host] [#robots] [#remaining] [#novel-urls] [#novel-bytes] [#dup-by-hash-urls] [#dup-by-hash-bytes] [#not-modified-urls] [#not-modified-bytes]
+282 29377078 netarkivet.dk 0 0 282 29377078 0 0 0 0 
+7 43006 gmpg.org 0 0 7 43006 0 0 0 0 
+4 224 dns: 0 0 4 224 0 0 0 0 
+2 1270 www 0 0 2 1270 0 0 0 0 
+2 531 www.netarkivet.dk 0 0 2 531 0 0 0 0 
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/reports/mimetype-report.txt?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:4118b05e0023539aafbfefe0777e721328dbc306
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:af44712e-3f73-4fb1-b570-c75c19be96e3>
+Content-Type: text/plain
+Content-Length: 319
+
+[#urls] [#bytes] [mime-types]
+161 1542061 text/html
+52 14828093 application/pdf
+43 11434047 image/jpeg
+8 656725 image/png
+7 146825 application/javascript
+6 6478 image/gif
+5 31293 text/css
+5 46297 text/xml
+4 224 text/dns
+3 787 text/plain
+1 723684 application/vnd.ms-powerpoint
+1 1264 application/xml
+1 4331 image/x-icon
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/reports/processors-report.txt?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:6bef6d1cb3369f1d507b6f3bde2a56c53778d429
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:034f9a95-f6f5-4934-bd20-b34312d5d937>
+Content-Type: text/plain
+Content-Length: 1853
+
+Processors report - 201211301140
+  Job being crawled:    default_orderxml
+  Number of Processors: 17
+  NOTE: Some processors may not return a report!
+
+Processor: org.archive.crawler.fetcher.FetchHTTP
+  Function:          Fetch HTTP URIs
+  CrawlURIs handled: 293
+  Recovery retries:   0
+
+Processor: org.archive.crawler.extractor.ExtractorHTTP
+  Function:          Extracts URIs from HTTP response headers
+  CrawlURIs handled: 293
+  Links extracted:   37
+
+Processor: org.archive.crawler.extractor.ExtractorHTML
+  Function:          Link extraction on HTML documents
+  CrawlURIs handled: 133
+  Links extracted:   5765
+
+Processor: org.archive.crawler.extractor.ExtractorCSS
+  Function:          Link extraction on Cascading Style Sheets (.css)
+  CrawlURIs handled: 4
+  Links extracted:   6
+
+Processor: org.archive.crawler.extractor.ExtractorJS
+  Function:          Link extraction on JavaScript code
+  CrawlURIs handled: 7
+  Links extracted:   45
+
+Processor: org.archive.crawler.extractor.ExtractorSWF
+  Function:          Link extraction on Shockwave Flash documents (.swf)
+  CrawlURIs handled: 0
+  Links extracted:   0
+
+Processor: is.hi.bok.digest.DeDuplicator
+  Function:          Abort processing of duplicate records
+                     - Lookup by url in use
+  Total handled:     119
+  Duplicates found:  0 0.0%
+  Bytes total:       27801447 (27 MB)
+  Bytes discarded:   0 (0 B) 0.0%
+  New (no hits):     119
+  Exact hits:        0
+  Equivalent hits:   0
+  Timestamp predicts: (Where exact URL existed in the index)
+  Change correctly:  0
+  Change falsly:     0
+  Non-change correct:0
+  Non-change falsly: 0
+  Missing timpestamp:0
+  [Host] [total] [duplicates] [bytes] [bytes discarded] [new] [exact] [equiv] [change correct] [change falsly] [non-change correct] [non-change falsly] [no timestamp]
+  netarkivet.dk 119 0 27801447 0 119 0 0 0 0 0 0 0
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/reports/responsecode-report.txt?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:8a2bbd81574731258f6ce26aba869ea1198f7a1d
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:70d4ca0b-4c77-4dfb-b6a4-066afb92345a>
+Content-Type: text/plain
+Content-Length: 50
+
+[rescode] [#urls]
+200 186
+404 73
+301 32
+1 4
+302 2
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/reports/seeds-report.txt?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:2651baecdc59f93f6ddb3d5a017b4ab42c8e2458
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:dd0747b3-d4c7-44a9-83f3-1d9de093aab8>
+Content-Type: text/plain
+Content-Length: 94
+
+[code] [status] [seed] [redirect]
+301 CRAWLED http://www.netarkivet.dk/ http://netarkivet.dk/
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/logs/crawl.log?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:01df8f9c3c37dcc55b189ed04b78a91da8a28483
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:fc755963-40ec-4702-abe5-0f8d6b87854b>
+Content-Type: text/plain
+Content-Length: 73068
+
+2012-11-30T11:20:44.678Z     1         59 dns:www.netarkivet.dk P http://www.netarkivet.dk/ text/dns #049 20121130112043945+91 sha1:WBK23S6W3IER6XU6W7ZAS6VWBWPE2WBU - content-size:59
+2012-11-30T11:20:46.322Z   200         59 http://www.netarkivet.dk/robots.txt P http://www.netarkivet.dk/ text/plain #045 20121130112044996+1319 sha1:4JATDZGQWECZ3XNVVBVH6IXOJRHJFYEW - content-size:262
+2012-11-30T11:20:47.922Z   301          0 http://www.netarkivet.dk/ - - text/html #046 20121130112047331+584 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:269,3t
+2012-11-30T11:20:48.639Z     1         56 dns:netarkivet.dk RP http://netarkivet.dk/ text/dns #025 20121130112048530+104 sha1:W2ZHZUY7ADPNHKC3ZDZ4SL5NH2BX3ODK - content-size:56
+2012-11-30T11:20:49.525Z   200         59 http://netarkivet.dk/robots.txt RP http://netarkivet.dk/ text/plain #049 20121130112048949+572 sha1:4JATDZGQWECZ3XNVVBVH6IXOJRHJFYEW - content-size:262
+2012-11-30T11:20:51.140Z   200      19396 http://netarkivet.dk/ R http://www.netarkivet.dk/ text/html #045 20121130112050103+784 sha1:VLPX6DBVM3KWUH62IZVP6CGH4HVIC67X - content-size:19598,3t
+2012-11-30T11:20:51.161Z     1         60 dns:www RXP http://www/ text/dns #001 20121130112051155+2 sha1:4LZTAX2YZF4ZCS4SPG7GC3HWVLZ5UNKT - content-size:60
+2012-11-30T11:20:51.461Z     1         49 dns:gmpg.org REP http://gmpg.org/xfn/11 text/dns #049 20121130112051089+368 sha1:FLR6KMQGFFVYYV6HKO7K4ZEUCAXNSGFW - content-size:49
+2012-11-30T11:20:51.480Z   302        205 http://www/robots.txt RXP http://www/ text/html #033 20121130112051471+4 sha1:33OF6EPD7ECJDQT727BMQOHKCH5TUJUP - content-size:645
+2012-11-30T11:20:51.795Z   302        195 http://www/ RX http://netarkivet.dk/ text/html #042 20121130112051787+4 sha1:X4YWQAWAQSK22MFCA3OI4K4BEX2JMISD - content-size:625,3t
+2012-11-30T11:20:52.061Z   200      25160 http://netarkivet.dk/wp-content/themes/netarkivet/style.css RE http://netarkivet.dk/ text/css #010 20121130112051930+119 sha1:22KZ2M4F2NJMMDQV5C5PEN2CWJGZ4I4O - content-size:25366
+2012-11-30T11:20:52.109Z   200         25 http://gmpg.org/robots.txt REP http://gmpg.org/xfn/11 text/plain #041 20121130112051837+270 sha1:PIBOAFKYXXCJOU3XZKF3BWLFJJNRCSGE - content-size:263
+2012-11-30T11:20:52.494Z   200       4122 http://netarkivet.dk/favicon.ico RE http://netarkivet.dk/ image/x-icon #049 20121130112052365+57 sha1:SNZDGGSMNY3LDNSLGMBIOWUQVP57K2K4 - content-size:4331
+2012-11-30T11:20:52.819Z   200       5842 http://gmpg.org/xfn/11 RE http://netarkivet.dk/ text/html #043 20121130112052414+386 sha1:LE25HHMIO4LA2R3TEXHOGEZZMQGA3U53 - content-size:6063,3t
+2012-11-30T11:20:53.440Z   200      23942 http://netarkivet.dk/feed/ RE http://netarkivet.dk/ text/xml #042 20121130112052799+638 sha1:S6TRZ52ODAWT6HZBXSY6AHSV2EKDSA5O - content-size:24231
+2012-11-30T11:20:53.626Z   200       5842 http://gmpg.org/xfn/11.html RER http://gmpg.org/xfn/11 text/html #033 20121130112053209+408 sha1:LE25HHMIO4LA2R3TEXHOGEZZMQGA3U53 - content-size:6006
+2012-11-30T11:20:54.311Z   200       2067 http://gmpg.org/xfn/default.css REE http://gmpg.org/xfn/11 text/css #010 20121130112054039+270 sha1:SRZ3V3BQQQZNXJUVXQRFFPDDIFSS55ZX - content-size:2306
+2012-11-30T11:20:54.617Z   404        907 http://netarkivet.dk/comments/feed/ RE http://netarkivet.dk/ text/xml #027 20121130112054082+533 sha1:FUF633ISGDV67D6DGVJO4KU7RO5IC44F - content-size:1314
+2012-11-30T11:20:54.885Z   200       4169 http://gmpg.org/xfn/ REE http://gmpg.org/xfn/11 text/html #033 20121130112054614+257 sha1:ZDKXU5BLH75OUJSOIT7TJW6A6TSNUKL3 - content-size:4333
+2012-11-30T11:20:55.214Z   200        887 http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=3.3.1 RE http://netarkivet.dk/ text/css #025 20121130112055156+56 sha1:FODSFYVPLQGMTVPMB5MKGNPABKTQVHQX - content-size:1091
+2012-11-30T11:20:55.573Z   200          0 http://netarkivet.dk/wp-content/plugins/gallery-to-slideshow//css/gallery-to-slideshow.css?ver=1.4 RE http://netarkivet.dk/ text/css #027 20121130112055519+52 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:202
+2012-11-30T11:20:55.603Z   200      16269 http://gmpg.org/xfn/intro REE http://gmpg.org/xfn/11 text/html #010 20121130112055189+399 sha1:EBE7VJKDDMOSKOE3LR2DT5IYZWYUF56M - content-size:16471
+2012-11-30T11:20:55.950Z   200       2123 http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/lightbox.min.css?ver=1.3.4 RE http://netarkivet.dk/ text/css #033 20121130112055876+65 sha1:57Y2JXOYAIC43K2JRC2YEKN2PH24SY4M - content-size:2328
+2012-11-30T11:20:56.400Z   200       7342 http://gmpg.org/xfn/faq REE http://gmpg.org/xfn/11 text/html #045 20121130112056006+386 sha1:MHHMH26CWO42L2BKTEYD7CEKZGLDKXMJ - content-size:7564
+2012-11-30T11:20:56.548Z   200      94861 http://netarkivet.dk/wp-includes/js/jquery/jquery.js?ver=1.7.2 RE http://netarkivet.dk/ application/javascript #042 20121130112056254+258 sha1:HOTOGWEF2OTZNJNVK6NFCBS5PVYNOUUW - content-size:95081
+2012-11-30T11:20:57.452Z   200        816 http://netarkivet.dk/xmlrpc.php?rsd RE http://netarkivet.dk/ text/xml #039 20121130112056853+597 sha1:YU3DRG6575ODSNDN2FHSMURSA3GGMPZT - content-size:972
+2012-11-30T11:20:58.182Z   200       1052 http://netarkivet.dk/wp-includes/wlwmanifest.xml RE http://netarkivet.dk/ application/xml #041 20121130112058053+127 sha1:BXSJSWZFLJHF47EI76WCJBR6UV5NZL7P - content-size:1264
+2012-11-30T11:20:59.250Z   200       7935 http://netarkivet.dk/tilmeld-domaener-uden-for-dk/ RE http://netarkivet.dk/ text/html #049 20121130112058486+695 sha1:PWPUCKIHINRYNNWPMUMBFXNARMZMQRLG - content-size:8137
+2012-11-30T11:21:00.652Z   200       7609 http://netarkivet.dk/adgang-for-forskere/ansogning-om-adgang-til-arkivet/ RE http://netarkivet.dk/ text/html #004 20121130112059950+654 sha1:MJNM2FNSQQ5MNJP2F2TBIDA7DJ42QMJO - content-size:7811
+2012-11-30T11:21:02.474Z   200       8842 http://netarkivet.dk/til-webstedejere/ RL http://netarkivet.dk/ text/html #045 20121130112101311+1116 sha1:D6YOOPZA5EQ4TD2OJS7H4VTUPS4R2NPJ - content-size:9044
+2012-11-30T11:21:04.141Z   404       6307 http://netarkivet.dk/til-webstedejere/favicon.ico RLE http://netarkivet.dk/til-webstedejere/ text/html #042 20121130112103479+649 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:21:05.445Z   200       8621 http://netarkivet.dk/adgang-for-forskere/ RL http://netarkivet.dk/ text/html #043 20121130112104794+608 sha1:EIRZL4DIIINDCFTJIMLRW3WUCV4HKPT3 - content-size:8823
+2012-11-30T11:21:06.631Z   404       6307 http://netarkivet.dk/adgang-for-forskere/favicon.ico RLE http://netarkivet.dk/adgang-for-forskere/ text/html #042 20121130112106057+563 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:21:07.947Z   200      19879 http://netarkivet.dk/om-netarkivet/publikationer/ RLE http://netarkivet.dk/adgang-for-forskere/ text/html #041 20121130112107198+680 sha1:GK37JLSPNUCW7H3CLYIQUXYEETHPGXBE - content-size:20081
+2012-11-30T11:21:09.554Z   200      10785 http://netarkivet.dk/om-netarkivet/ RL http://netarkivet.dk/ text/html #042 20121130112108630+884 sha1:MTDFDT6TYVA663CKXZ374Z3JIBV63STR - content-size:10987
+2012-11-30T11:21:11.049Z   404       6307 http://netarkivet.dk/om-netarkivet/favicon.ico RLE http://netarkivet.dk/om-netarkivet/ text/html #043 20121130112110441+600 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:21:12.179Z   200        727 http://netarkivet.dk/om-netarkivet/feed/ RLE http://netarkivet.dk/om-netarkivet/ text/xml #010 20121130112111653+524 sha1:WDBMVQSQBTE3M7KYFVMDIJW2CEMWQBC7 - content-size:1016
+2012-11-30T11:21:12.855Z   200     102612 http://netarkivet.dk/wp-content/uploads/Diagram3Hostninger_ny-560x296.png RLE http://netarkivet.dk/om-netarkivet/ image/png #041 20121130112112708+144 sha1:745QOWYNMZMOV3E7UO4KOC6Y4HUR5MXX - content-size:102820
+2012-11-30T11:21:13.752Z   200       8288 http://netarkivet.dk/kontakt/ RL http://netarkivet.dk/ text/html #010 20121130112113159+565 sha1:6346KWLJMJEYO4BEX7G2MBFPCDHFWN77 - content-size:8490
+2012-11-30T11:21:14.889Z   404       6307 http://netarkivet.dk/kontakt/favicon.ico RLE http://netarkivet.dk/kontakt/ text/html #039 20121130112114322+558 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:21:16.099Z   200      10982 http://netarkivet.dk/in-english/ RL http://netarkivet.dk/ text/html #045 20121130112115450+597 sha1:B76X42JL2Y74NJBNCX3NHZIBNLXXFN74 - content-size:11184
+2012-11-30T11:21:17.293Z   404       6307 http://netarkivet.dk/in-english/favicon.ico RLE http://netarkivet.dk/in-english/ text/html #010 20121130112116700+585 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:21:18.617Z   200      11534 http://netarkivet.dk/du-kan-hjaelpe-netarkivet/ RLE http://netarkivet.dk/in-english/ text/html #039 20121130112117882+693 sha1:FZL7DMQH6ZVSKFOVLP3UMWT7PGXM7EK2 - content-size:11736
+2012-11-30T11:21:19.380Z   200       5225 http://netarkivet.dk/wp-content/themes/netarkivet/images/01.png RE http://netarkivet.dk/ image/png #042 20121130112119314+64 sha1:JDE62VRZMIFWUDJANRWR6ADGSRV54DGB - content-size:5431
+2012-11-30T11:21:20.381Z   301          0 http://netarkivet.dk/?page_id=2 RL http://netarkivet.dk/ text/html #004 20121130112119690+688 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:283
+2012-11-30T11:21:21.651Z   301          0 http://netarkivet.dk/?page_id=26 RL http://netarkivet.dk/ text/html #043 20121130112121073+575 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:286
+2012-11-30T11:21:22.698Z   301          0 http://netarkivet.dk/?page_id=24 RL http://netarkivet.dk/ text/html #001 20121130112122230+465 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:289
+2012-11-30T11:21:23.416Z   200     568628 http://netarkivet.dk/wp-content/uploads/silkeborg-d_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #025 20121130112123167+244 sha1:V6QF66EUASDYCRTZ5WUWWJALXXI5546U - content-size:568837
+2012-11-30T11:21:23.845Z   200      55096 http://netarkivet.dk/wp-content/uploads/silkeborg-d_L_juli2005-560x397.jpg RE http://netarkivet.dk/ image/jpeg #041 20121130112123721+122 sha1:P2OSZWAYQRWRCZOTYQIPQSIIDGIAELXW - content-size:55304
+2012-11-30T11:21:24.798Z   200     574709 http://netarkivet.dk/wp-content/uploads/kum-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #027 20121130112124530+263 sha1:HV4SBZP65A4S7D24CJ6BL7P2GE2WYXW2 - content-size:574918
+2012-11-30T11:21:25.224Z   200      53272 http://netarkivet.dk/wp-content/uploads/kum-dk_L_juli2005-560x395.jpg RE http://netarkivet.dk/ image/jpeg #045 20121130112125102+120 sha1:SYQPZA43UYUFGTT6ZVEJ4MTDD4IZW5TZ - content-size:53480
+2012-11-30T11:21:26.162Z   200     531766 http://netarkivet.dk/wp-content/uploads/sa-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #046 20121130112125924+234 sha1:JZ6TD2GAPDQHAANSTG45WH3KWFCMWMSF - content-size:531975
+2012-11-30T11:21:26.569Z   200      47889 http://netarkivet.dk/wp-content/uploads/sa-dk_L_juli2005-560x381.jpg RE http://netarkivet.dk/ image/jpeg #039 20121130112126466+101 sha1:KYAKZVGD4232FWVBKV3I3TDFEWUVXGM2 - content-size:48097
+2012-11-30T11:21:27.445Z   200     523470 http://netarkivet.dk/wp-content/uploads/grundfos-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #045 20121130112127205+236 sha1:MUSEB7NI4KGUE7CZ6UVHCQQTWXCE7YXU - content-size:523679
+2012-11-30T11:21:27.850Z   200      47338 http://netarkivet.dk/wp-content/uploads/grundfos-dk_L_juli2005-560x392.jpg RE http://netarkivet.dk/ image/jpeg #027 20121130112127749+99 sha1:ODWF3FDNX4FCFCFPUBNJA5JJKKCM3AL4 - content-size:47546
+2012-11-30T11:21:28.720Z   200     468159 http://netarkivet.dk/wp-content/uploads/dst-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #039 20121130112128471+244 sha1:7JKUD4J45JI3TTJRVLXSQBFGM754RTS4 - content-size:468368
+2012-11-30T11:21:29.121Z   200      44694 http://netarkivet.dk/wp-content/uploads/dst-dk_L_juli2005-560x412.jpg RE http://netarkivet.dk/ image/jpeg #011 20121130112129026+92 sha1:VMVPKQSPO5CJC7PXVNCALUAU7HOOWILQ - content-size:44902
+2012-11-30T11:21:29.868Z   200     453184 http://netarkivet.dk/wp-content/uploads/dbu-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #043 20121130112129640+223 sha1:WAGLDMTYHGACUGAATKSNP4FDDUV7GUDD - content-size:453393
+2012-11-30T11:21:30.280Z   200      43836 http://netarkivet.dk/wp-content/uploads/dbu-dk_L_juli2005-560x394.jpg RE http://netarkivet.dk/ image/jpeg #049 20121130112130173+105 sha1:J5NIOX6SLN5732V7OQETMMSNCRFGXZUY - content-size:44044
+2012-11-30T11:21:30.984Z   200     547492 http://netarkivet.dk/wp-content/uploads/arla-dk_L_juni2005.jpg RL http://netarkivet.dk/ image/jpeg #027 20121130112130757+223 sha1:MF2FWQBVRCATV3ISPMFNECYRZEXOZ2VZ - content-size:547701
+2012-11-30T11:21:31.398Z   200      51496 http://netarkivet.dk/wp-content/uploads/arla-dk_L_juni2005-560x389.jpg RE http://netarkivet.dk/ image/jpeg #010 20121130112131288+108 sha1:WT7BOUISP2BH55S5WMDWXXYUI6GGPL4M - content-size:51704
+2012-11-30T11:21:32.473Z   200     701788 http://netarkivet.dk/wp-content/uploads/information-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #011 20121130112132058+408 sha1:VIATGSSBPVDVWR2XWGHR435TUYP4PA3U - content-size:701997
+2012-11-30T11:21:33.014Z   200      55462 http://netarkivet.dk/wp-content/uploads/information-dk_L_juli2005-560x396.jpg RE http://netarkivet.dk/ image/jpeg #027 20121130112132886+127 sha1:DQQYWX7AW53SXJYZACOKHSJFDKF3C3KE - content-size:55670
+2012-11-30T11:21:34.072Z   200     438475 http://netarkivet.dk/wp-content/uploads/dcf-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #041 20121130112133848+219 sha1:BLKV3CCAZUCKV4SPKRM4VEYBWMNN2CY6 - content-size:438684
+2012-11-30T11:21:34.471Z   200      38129 http://netarkivet.dk/wp-content/uploads/dcf-dk_L_juli2005-560x392.jpg RE http://netarkivet.dk/ image/jpeg #010 20121130112134379+89 sha1:7KYWHPGRUPOBPKWQJY3TOHIPFUPROFMC - content-size:38337
+2012-11-30T11:21:35.140Z   200     449921 http://netarkivet.dk/wp-content/uploads/venstre-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #027 20121130112134933+202 sha1:BNZCIAF6DIVZ4RUPRM722NNICJNGNZQF - content-size:450130
+2012-11-30T11:21:35.561Z   200      40415 http://netarkivet.dk/wp-content/uploads/venstre-dk_L_juli2005-560x386.jpg RE http://netarkivet.dk/ image/jpeg #045 20121130112135447+110 sha1:EVAJQIK7FSXH7ET2CKAUD2EGRWRPF3FN - content-size:40623
+2012-11-30T11:21:36.260Z   200      71828 http://netarkivet.dk/wp-content/uploads/RLJ8TYU.png RL http://netarkivet.dk/ image/png #032 20121130112136026+231 sha1:IG3N67TJ2FORPPOQXHZGOQE2BEZKPZOE - content-size:72035
+2012-11-30T11:21:36.708Z   200      94564 http://netarkivet.dk/wp-content/uploads/RLJ8TYU-560x462.png RE http://netarkivet.dk/ image/png #001 20121130112136566+140 sha1:WL6MJPIGMS5U4Q7EQEP6UBYJL77UXO23 - content-size:94771
+2012-11-30T11:21:37.292Z   200     703316 http://netarkivet.dk/wp-content/uploads/politiken-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #023 20121130112137013+273 sha1:SVVFPYHYPYSNNNJ2DVDDKWVKT4ADP3L7 - content-size:703525
+2012-11-30T11:21:37.711Z   200      62339 http://netarkivet.dk/wp-content/uploads/politiken-dk_L_juli2005-560x397.jpg RE http://netarkivet.dk/ image/jpeg #001 20121130112137597+111 sha1:V3QO7TG43HGUA2HVNMV4B4IIR2QNJWLP - content-size:62547
+2012-11-30T11:21:39.023Z   200    1181159 http://netarkivet.dk/wp-content/uploads/dcf-aarhus-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #001 20121130112138670+343 sha1:XIOSWN7ILRU7ZLKQ5RF4KBQIAQC2A5OX - content-size:1181369
+2012-11-30T11:21:39.485Z   200      55779 http://netarkivet.dk/wp-content/uploads/dcf-aarhus-dk_L_juli2005-560x387.jpg RE http://netarkivet.dk/ image/jpeg #004 20121130112139371+112 sha1:26LPFNGG6J7VA77XJTEIRGXAWHUB3EET - content-size:55987
+2012-11-30T11:21:41.558Z   200     492835 http://netarkivet.dk/wp-content/uploads/bt-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #042 20121130112141334+220 sha1:FP6ASPAYY4OCSUR26QA3GHKLI4EDCTIT - content-size:493044
+2012-11-30T11:21:41.967Z   200      50863 http://netarkivet.dk/wp-content/uploads/bt-dk_L_juli2005-560x394.jpg RE http://netarkivet.dk/ image/jpeg #043 20121130112141863+102 sha1:ZQJFVMF237NXFIIFDAB2NLYYFVGQQXOA - content-size:51071
+2012-11-30T11:21:42.744Z   200     422094 http://netarkivet.dk/wp-content/uploads/aarhus-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #042 20121130112142523+217 sha1:MRL6FYVIPPH5AR7R3NSR25WAUFRAA7W3 - content-size:422303
+2012-11-30T11:21:43.140Z   200      41607 http://netarkivet.dk/wp-content/uploads/aarhus-dk_L_juli2005-560x396.jpg RE http://netarkivet.dk/ image/jpeg #009 20121130112143049+89 sha1:AJXZMQVYXD7VZKI6ETPBOXJC3OKIAWNX - content-size:41815
+2012-11-30T11:21:43.825Z   200     580227 http://netarkivet.dk/wp-content/uploads/drk-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #045 20121130112143573+247 sha1:RTRS542KLVH2UUS7F4QQSIBAPUYZCH4I - content-size:580436
+2012-11-30T11:21:44.238Z   200      55563 http://netarkivet.dk/wp-content/uploads/drk-dk_L_juli2005-560x389.jpg RE http://netarkivet.dk/ image/jpeg #009 20121130112144129+108 sha1:JMYPCWWQP2MSWGLUWSG7LNGPRLWA732G - content-size:55771
+2012-11-30T11:21:45.142Z   200     212579 http://netarkivet.dk/wp-content/uploads/dmi-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #043 20121130112144962+177 sha1:RLNH362EZ22P3SI72AVUNUHZMIX2VTXM - content-size:212788
+2012-11-30T11:21:45.517Z   200      16744 http://netarkivet.dk/wp-content/uploads/dmi-dk_L_juli2005-560x391.jpg RE http://netarkivet.dk/ image/jpeg #025 20121130112145446+69 sha1:QUR5RSI7YRREAUKUZXSVX4MCYRL6HGMB - content-size:16952
+2012-11-30T11:21:46.070Z   200     603117 http://netarkivet.dk/wp-content/uploads/socialdemokraterne-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #045 20121130112145822+242 sha1:4OPOYQV4YHP3JTHSR5RASKHMPGGTAXHX - content-size:603326
+2012-11-30T11:21:46.489Z   200      58421 http://netarkivet.dk/wp-content/uploads/socialdemokraterne-dk_L_juli2005-560x394.jpg RE http://netarkivet.dk/ image/jpeg #010 20121130112146374+113 sha1:O3VK6YJAG2RHNXYGYB3I7XX55N3WCVCJ - content-size:58629
+2012-11-30T11:21:47.456Z   200     402009 http://netarkivet.dk/wp-content/uploads/gentofte-dk_L_november2005.jpg RL http://netarkivet.dk/ image/jpeg #032 20121130112147253+200 sha1:N6UICL44I7IR4I6Q4KK3ZEQ3SOLSYYVB - content-size:402218
+2012-11-30T11:21:47.868Z   200      36602 http://netarkivet.dk/wp-content/uploads/gentofte-dk_L_november2005-560x394.jpg RE http://netarkivet.dk/ image/jpeg #001 20121130112147762+104 sha1:YGHFT3AKNL3DXHRHIOTSK54XQMN47TXK - content-size:36810
+2012-11-30T11:21:48.474Z   200     330615 http://netarkivet.dk/wp-content/uploads/kulturarv-dk_L_juli2005.jpg RL http://netarkivet.dk/ image/jpeg #009 20121130112148247+223 sha1:RVMY2SS2VPEJDJ22K7EGIY3TGFNX7R4N - content-size:330824
+2012-11-30T11:21:48.891Z   200      30774 http://netarkivet.dk/wp-content/uploads/kulturarv-dk_L_juli2005-560x388.jpg RE http://netarkivet.dk/ image/jpeg #001 20121130112148782+107 sha1:4AFP7OUAXQWYYDPZ7WKZ23VACBUP7O72 - content-size:30982
+2012-11-30T11:21:49.302Z   200      34103 http://netarkivet.dk/wp-content/uploads/tvaersnitshoestning_nr15-400x220.jpg RE http://netarkivet.dk/ image/jpeg #046 20121130112149196+104 sha1:TLQXNVZ45SY5HGJBCJAVTG7TNUE5Q5FZ - content-size:34311
+2012-11-30T11:21:50.313Z   200      10644 http://netarkivet.dk/15-tvaersnitshoestning-afsluttet/ RL http://netarkivet.dk/ text/html #042 20121130112149609+666 sha1:5TVT5JLA3J452YJI7XAKDJRAGPRFF4RF - content-size:10899
+2012-11-30T11:21:51.632Z   404       6307 http://netarkivet.dk/15-tvaersnitshoestning-afsluttet/favicon.ico RLE http://netarkivet.dk/15-tvaersnitshoestning-afsluttet/ text/html #033 20121130112150984+639 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:21:52.829Z   301          0 http://netarkivet.dk/?p=1168 RLE http://netarkivet.dk/15-tvaersnitshoestning-afsluttet/ text/html #046 20121130112152276+550 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:302
+2012-11-30T11:21:54.071Z   200      10933 http://netarkivet.dk/faelles-international-webhoestning-offentlig/ RL http://netarkivet.dk/ text/html #032 20121130112153383+635 sha1:WQNWWUG4RCGJDNW4257Z7VO7FMCXUDFU - content-size:11187
+2012-11-30T11:21:55.301Z   404       6307 http://netarkivet.dk/faelles-international-webhoestning-offentlig/favicon.ico RLE http://netarkivet.dk/faelles-international-webhoestning-offentlig/ text/html #039 20121130112154711+583 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:21:56.454Z   301          0 http://netarkivet.dk/?p=483 RLE http://netarkivet.dk/faelles-international-webhoestning-offentlig/ text/html #001 20121130112155888+563 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:314
+2012-11-30T11:21:57.137Z   200      80018 http://netarkivet.dk/wp-content/uploads/vinterOL2010.jpg RLE http://netarkivet.dk/faelles-international-webhoestning-offentlig/ image/jpeg #032 20121130112157022+113 sha1:2UNJQ44RE5VCIM5SRS4RQHTGV5TWIMGH - content-size:80226
+2012-11-30T11:21:58.085Z   200      10571 http://netarkivet.dk/netarkivet-hylder-vaclav-havel/ RL http://netarkivet.dk/ text/html #001 20121130112157442+593 sha1:DZZX7RS5JWTIGC363H3TYEBOR5OACF6J - content-size:10825
+2012-11-30T11:21:59.320Z   404       6307 http://netarkivet.dk/netarkivet-hylder-vaclav-havel/favicon.ico RLE http://netarkivet.dk/netarkivet-hylder-vaclav-havel/ text/html #046 20121130112158682+627 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:00.718Z   200      17363 http://netarkivet.dk/glimt-fra-arkivet-2/ RLE http://netarkivet.dk/netarkivet-hylder-vaclav-havel/ text/html #001 20121130112159951+673 sha1:OWTKA7CPJRXNNFYTS2VDMCCZN4ZJGBBM - content-size:17617
+2012-11-30T11:22:01.974Z   301          0 http://netarkivet.dk/?p=454 RLE http://netarkivet.dk/netarkivet-hylder-vaclav-havel/ text/html #009 20121130112201396+575 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:300
+2012-11-30T11:22:02.657Z   200      43679 http://netarkivet.dk/wp-content/uploads/V%C3%A1clav_Havel_cut_out.jpg RLE http://netarkivet.dk/netarkivet-hylder-vaclav-havel/ image/jpeg #025 20121130112202553+102 sha1:MEJ655IBTXEZNUDTO4JFCX4YFHEPSUME - content-size:43887
+2012-11-30T11:22:03.713Z   200      19818 http://netarkivet.dk/arkiv/nyhed/ RL http://netarkivet.dk/ text/html #009 20121130112202961+695 sha1:2KPCGUPWDW5EWGBSFQWKGCEA5KDJGWJE - content-size:20020
+2012-11-30T11:22:05.008Z   404       6307 http://netarkivet.dk/arkiv/nyhed/favicon.ico RLE http://netarkivet.dk/arkiv/nyhed/ text/html #010 20121130112204413+588 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:06.224Z   200      18475 http://netarkivet.dk/arkiv/nyhed/feed/ RLE http://netarkivet.dk/arkiv/nyhed/ text/xml #033 20121130112205599+623 sha1:F2TXAQFZVTEGMULO2FMVY3USLKS33ZP3 - content-size:18764
+2012-11-30T11:22:07.058Z   200     290357 http://netarkivet.dk/wp-content/uploads/Vikingcentre-in-Wonderful-Denmark-YouTube-520x377.png RLE http://netarkivet.dk/arkiv/nyhed/ image/png #010 20121130112206852+203 sha1:CFSLCXV2WLU5IH7ACV3OXDB2YGK6RJXC - content-size:290565
+2012-11-30T11:22:07.453Z   200      15021 http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/jquery.form.min.js?ver=3.18 RE http://netarkivet.dk/ application/javascript #023 20121130112207362+78 sha1:IG2Z7WUOHCZA27HFMUBQFTRW24XSY533 - content-size:15241
+2012-11-30T11:22:07.814Z   200        847 http://netarkivet.dk//wp-content//plugins//contact-form-7//images//ajax-loader.gif RX http://netarkivet.dk/ image/gif #010 20121130112207758+55 sha1:ZLL75MIRQPDRXB2HBYI6AIVRN3G4Y6WJ - content-size:1052
+2012-11-30T11:22:08.290Z   200       6859 http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 RE http://netarkivet.dk/ application/javascript #002 20121130112208117+156 sha1:JE32ODUGO3Z76JOXMJGL373PZC7IRZCT - content-size:7078
+2012-11-30T11:22:08.686Z   200      11924 http://netarkivet.dk/wp-content/plugins/gallery-to-slideshow//js/libs/flexslider/jquery.flexslider-min.js?ver=1.8 RE http://netarkivet.dk/ application/javascript #025 20121130112208596+84 sha1:7KJ5PS667LQWOFMKT56IXTBRIZFYYJ5Z - content-size:12144
+2012-11-30T11:22:09.041Z   200       1145 http://netarkivet.dk/wp-content/plugins/gallery-to-slideshow//js/gallery.to.slideshow.min.js?ver=1.4 RE http://netarkivet.dk/ application/javascript #045 20121130112208990+49 sha1:MTVK6RW6L2XGEBRO4KMMRQAZIVHAGDA2 - content-size:1364
+2012-11-30T11:22:09.426Z   200      10630 http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/jquery.lightbox.min.js?ver=1.3.4.1 RE http://netarkivet.dk/ application/javascript #042 20121130112209346+76 sha1:GOPFBXNW6CFNJ3KLWH3J5PDR3463ZD5P - content-size:10850
+2012-11-30T11:22:09.781Z   200       4848 http://netarkivet.dk/wp-content/plugins/domain-reporting/js/validate.js?ver=3.4.2 RE http://netarkivet.dk/ application/javascript #001 20121130112209732+46 sha1:XDYDD7H7JBSA34EN4SEC5DADH4DWXR6O - content-size:5067
+2012-11-30T11:22:10.140Z   200       3624 http://netarkivet.dk/wp-content/themes/netarkivet/images/blue.png REE http://netarkivet.dk/wp-content/themes/netarkivet/style.css image/png #007 20121130112210091+48 sha1:GAHFG46MPGMOSZ5EFM3HWMP4CM47TOEO - content-size:3830
+2012-11-30T11:22:10.493Z   200       2767 http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/images/loading.gif REE http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/lightbox.min.css?ver=1.3.4 image/gif #023 20121130112210445+47 sha1:XVKNXENYD6UKT3BXZE5RBFEN3C3JBZGE - content-size:2973
+2012-11-30T11:22:10.845Z   200        979 http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/images/closelabel.gif REE http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/lightbox.min.css?ver=1.3.4 image/gif #010 20121130112210797+47 sha1:U6VYHPTUUAPD7LVNQZH44JUPAPCNRSXS - content-size:1184
+2012-11-30T11:22:11.212Z   200         43 http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/images/blank.gif REE http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/lightbox.min.css?ver=1.3.4 image/gif #041 20121130112211149+61 sha1:K3KF7CQX6UDYUIFPTFRMTEWKIZ4EKB3F - content-size:247
+2012-11-30T11:22:11.564Z   200        307 http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/images/prev.gif REE http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/lightbox.min.css?ver=1.3.4 image/gif #004 20121130112211516+47 sha1:RPDU6BCAG6E35UWVMESPCM2DDNQ4NNTB - content-size:512
+2012-11-30T11:22:11.916Z   200        305 http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/images/next.gif REE http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/styles/lightbox.min.css?ver=1.3.4 image/gif #045 20121130112211868+46 sha1:JHANR5UTIMQG5V23TUZPVYJDKNBJK7KJ - content-size:510
+2012-11-30T11:22:12.721Z   404       6307 http://netarkivet.dk/Microsoft.XMLHTTP REX http://netarkivet.dk/wp-includes/js/jquery/jquery.js?ver=1.7.2 text/html #033 20121130112212222+491 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:13.737Z   404       6307 http://netarkivet.dk/1.7.2 REX http://netarkivet.dk/wp-includes/js/jquery/jquery.js?ver=1.7.2 text/html #041 20121130112213215+516 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:14.817Z   404       6307 http://netarkivet.dk/text/xml REX http://netarkivet.dk/wp-includes/js/jquery/jquery.js?ver=1.7.2 text/html #002 20121130112214256+554 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:15.923Z   404       6307 http://netarkivet.dk/Microsoft.XMLDOM REX http://netarkivet.dk/wp-includes/js/jquery/jquery.js?ver=1.7.2 text/html #042 20121130112215375+539 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:17.041Z   404       6307 http://netarkivet.dk/submit._submit REX http://netarkivet.dk/wp-includes/js/jquery/jquery.js?ver=1.7.2 text/html #023 20121130112216466+568 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:18.155Z   404       6307 http://netarkivet.dk/propertychange._change REX http://netarkivet.dk/wp-includes/js/jquery/jquery.js?ver=1.7.2 text/html #025 20121130112217614+533 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:19.269Z   404       6307 http://netarkivet.dk/click._change REX http://netarkivet.dk/wp-includes/js/jquery/jquery.js?ver=1.7.2 text/html #033 20121130112218692+570 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:20.457Z   404       6307 http://netarkivet.dk/beforeactivate._change REX http://netarkivet.dk/wp-includes/js/jquery/jquery.js?ver=1.7.2 text/html #010 20121130112219844+606 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:21.617Z   404       6307 http://netarkivet.dk/change._change REX http://netarkivet.dk/wp-includes/js/jquery/jquery.js?ver=1.7.2 text/html #005 20121130112221068+542 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:22.747Z   404       6307 http://netarkivet.dk/tilmeld-domaener-uden-for-dk/favicon.ico REE http://netarkivet.dk/tilmeld-domaener-uden-for-dk/ text/html #012 20121130112222163+575 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:24.017Z   200      19163 http://netarkivet.dk/til-webstedejere/pligtaflevering/ REE http://netarkivet.dk/tilmeld-domaener-uden-for-dk/ text/html #039 20121130112223326+656 sha1:F6YHAI7SUZILXET4KXEGMNHDDVQZEOTT - content-size:19365
+2012-11-30T11:22:25.371Z   404      26610 http://netarkivet.dk/adgang-for-forskere/ansogning-om-adgang-til-arkivet/favicon.ico REE http://netarkivet.dk/adgang-for-forskere/ansogning-om-adgang-til-arkivet/ text/html #012 20121130112224678+663 sha1:5Z4DWNMGAYWXPK7IN5VMTQOIFO6RFPBV - content-size:26976
+2012-11-30T11:22:26.723Z   200       9731 http://netarkivet.dk/om-netarkivet/andre-webarkiver-2/ REE http://netarkivet.dk/adgang-for-forskere/ansogning-om-adgang-til-arkivet/ text/html #023 20121130112226038+643 sha1:MIQ7AS43WVZEHL6T72JPAKSQNWFUHILR - content-size:9933
+2012-11-30T11:22:27.562Z   200     242552 http://netarkivet.dk/wp-content/uploads/ansoegererklaering.pdf REL http://netarkivet.dk/adgang-for-forskere/ansogning-om-adgang-til-arkivet/ application/pdf #012 20121130112227371+189 sha1:ATD2AYVLHL6PE5A5S3MVPQHV22HNAV7V - content-size:242766
+2012-11-30T11:22:27.986Z   200      80285 http://netarkivet.dk/wp-content/uploads/Retningslinjer-for-adgang-til-Netarkivet.pdf REL http://netarkivet.dk/adgang-for-forskere/ansogning-om-adgang-til-arkivet/ application/pdf #042 20121130112227867+116 sha1:CF7FDORMGTI6I75OPPHY67YHPJJCNM4N - content-size:80498
+2012-11-30T11:22:28.863Z   301          0 http://netarkivet.dk/?page_id=123 RLL http://netarkivet.dk/til-webstedejere/ text/html #046 20121130112228290+570 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:302
+2012-11-30T11:22:30.097Z   200       7394 http://netarkivet.dk/webcrawler/ RLL http://netarkivet.dk/til-webstedejere/ text/html #010 20121130112229438+600 sha1:CRE4YWSTFUMQPQ7B2AW7X4Z5VC63ITY2 - content-size:7596
+2012-11-30T11:22:31.198Z   404       6307 http://netarkivet.dk/webcrawler/favicon.ico RLLE http://netarkivet.dk/webcrawler/ text/html #023 20121130112230701+488 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:22:32.110Z   301          0 http://netarkivet.dk/?page_id=400 RLL http://netarkivet.dk/til-webstedejere/ text/html #041 20121130112231692+416 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:290
+2012-11-30T11:22:33.108Z   200      20651 http://netarkivet.dk/til-webstedejere/faq/ RLL http://netarkivet.dk/til-webstedejere/ text/html #012 20121130112232531+536 sha1:DGXRR26IT362UDUYUFYDFRUOZDBJGZJN - content-size:20853
+2012-11-30T11:22:34.226Z   404      26548 http://netarkivet.dk/til-webstedejere/faq/favicon.ico RLLE http://netarkivet.dk/til-webstedejere/faq/ text/html #009 20121130112233648+557 sha1:JLNITPXFWEWX6HE4OGVYENDR7JX2U7EG - content-size:26914
+2012-11-30T11:22:35.372Z   404      26562 http://netarkivet.dk/om-netarkivet/publikationer/favicon.ico RLEE http://netarkivet.dk/om-netarkivet/publikationer/ text/html #001 20121130112234788+565 sha1:HWQFUSTANXFP626LBCZPCNHURBNYVUQF - content-size:26928
+2012-11-30T11:22:36.568Z   200      11326 http://netarkivet.dk/om-netarkivet/case-stories/ RLEE http://netarkivet.dk/om-netarkivet/publikationer/ text/html #045 20121130112235943+572 sha1:YZDONJKTCAXMGNZBDWVBBQRBLTSNYBIP - content-size:11528
+2012-11-30T11:22:36.568Z   -63          - http://player.vimeo.com/video/21669971?byline=0&color=FF5B1B RLEEE http://netarkivet.dk/om-netarkivet/case-stories/ no-type #004 - - - -
+2012-11-30T11:22:36.571Z   -63          - http://player.vimeo.com/video/21669085?byline=0&color=FF5B1B RLEEE http://netarkivet.dk/om-netarkivet/case-stories/ no-type #011 - - - -
+2012-11-30T11:22:36.574Z   -63          - http://player.vimeo.com/video/21669425?byline=0&color=FF5B1B RLEEE http://netarkivet.dk/om-netarkivet/case-stories/ no-type #011 - - - -
+2012-11-30T11:22:36.576Z   -63          - http://player.vimeo.com/video/21669684?byline=0&color=FF5B1B RLEEE http://netarkivet.dk/om-netarkivet/case-stories/ no-type #011 - - - -
+2012-11-30T11:22:37.320Z   200     203021 http://netarkivet.dk/wp-content/uploads/ErfaringerJacobsen.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #037 20121130112237148+169 sha1:YFCIOJ27WB2IQVL5ECJLMWI5AAMDI6J7 - content-size:203235
+2012-11-30T11:22:37.919Z   200     835366 http://netarkivet.dk/wp-content/uploads/IntegrationOfNonHarvestedData.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #005 20121130112237625+287 sha1:F3MN4YGS3G54XMDB5JTYQJSL5RTAMRWP - content-size:835580
+2012-11-30T11:22:38.375Z   200     109213 http://netarkivet.dk/wp-content/uploads/InteroperabilityInTheFuture_IFLA2007.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #032 20121130112238225+147 sha1:5GNII75TW22U2LM2PRWDW6PEHGQTDE5F - content-size:109427
+2012-11-30T11:22:39.842Z   200     922308 http://netarkivet.dk/wp-content/uploads/CollectingTheDanishInternet_2007_ES.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #045 20121130112239554+282 sha1:J24PY2HMAICEJYMB4QDHO6EEVNAPVKJZ - content-size:922522
+2012-11-30T11:22:40.451Z   200     747666 http://netarkivet.dk/wp-content/uploads/CollectingTheDanishInternet_2007.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #044 20121130112240146+300 sha1:VKC6Z63W5Q4Z4SYRMJXSZXCMKPQS2FLF - content-size:747880
+2012-11-30T11:22:41.887Z   200     454116 http://netarkivet.dk/wp-content/uploads/Event-definition-final.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #045 20121130112241648+235 sha1:WM45TXWCP6CXR7IK2HPLDPJ3NWPMEMME - content-size:454330
+2012-11-30T11:22:42.305Z   200      78087 http://netarkivet.dk/wp-content/uploads/iwaw06-clausen.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #040 20121130112242191+112 sha1:LUIV26WP27BPP5Y7UY3JEWNJKUT4FPCI - content-size:78300
+2012-11-30T11:22:42.973Z   200     120591 http://netarkivet.dk/wp-content/uploads/nhc-kb-dk-msst2006.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #002 20121130112242777+194 sha1:2XDVCDQ4BFZLS563TYKEWONPMKJZPG3W - content-size:120805
+2012-11-30T11:22:43.555Z   200     931885 http://netarkivet.dk/wp-content/uploads/DFrevy_english.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #027 20121130112243276+273 sha1:OM26J2VS6CNOHWG6ILB4OPEGIYREWDGZ - content-size:932099
+2012-11-30T11:22:44.189Z   200    1030376 http://netarkivet.dk/wp-content/uploads/DK-domaenet-i-ord-og-tal.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #045 20121130112243859+323 sha1:VBUHWDGKLIDBFQCVZV77MDJDNQTRSRWL - content-size:1030591
+2012-11-30T11:22:45.617Z   200     481188 http://netarkivet.dk/wp-content/uploads/iwaw05-christensen.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #032 20121130112245379+233 sha1:2K6NQUCSN74LJBSGLVQRXN4TRO7QMA5E - content-size:481402
+2012-11-30T11:22:46.403Z   200     284558 http://netarkivet.dk/wp-content/uploads/Kanon-Juli05.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #031 20121130112246206+193 sha1:QH4FQRSNU4D3M4EHKZBXTW4OHDRWTWDE - content-size:284772
+2012-11-30T11:22:46.833Z   200      96788 http://netarkivet.dk/wp-content/uploads/vejledning.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #046 20121130112246706+125 sha1:NFPOH2IMN5O2V3ZKVTC4AARLFCTHLGD2 - content-size:97001
+2012-11-30T11:22:47.443Z   200     928844 http://netarkivet.dk/wp-content/uploads/webarkivering-webarchiving.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #012 20121130112247136+300 sha1:D3KJJ2KBXKWFPMNZII4DL5SB5DF2AG5L - content-size:929058
+2012-11-30T11:22:47.927Z   200     202974 http://netarkivet.dk/wp-content/uploads/Etags-2004.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #046 20121130112247748+177 sha1:Z3G7EAE47UAQRA5MID6RNCPGYFKX3PBF - content-size:203188
+2012-11-30T11:22:49.440Z   200     216713 http://netarkivet.dk/wp-content/uploads/FormatRepositories-2004.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #050 20121130112249261+176 sha1:YSKZCV3U6ZW75EM6NWZOLLDOI2KILDDB - content-size:216927
+2012-11-30T11:22:50.001Z   200     429874 http://netarkivet.dk/wp-content/uploads/Archival_format_requirements-2004.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #046 20121130112249747+250 sha1:NUQAFRMVM2PAEYLHFXGW4JHDCT3VCMIH - content-size:430088
+2012-11-30T11:22:50.532Z   200     340509 http://netarkivet.dk/wp-content/uploads/FileFormats-2004.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #040 20121130112250304+221 sha1:LK4752I5S5P3VOYTSNIE6IORW4I2YBNN - content-size:340723
+2012-11-30T11:22:51.176Z   200     787861 http://netarkivet.dk/wp-content/uploads/webark-final-rapport-2003.pdf RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/pdf #005 20121130112250845+323 sha1:YMFYNHFAN5KFIGSGOGJSVGHXJZOFXOOT - content-size:788075
+2012-11-30T11:22:51.786Z   200     723456 http://netarkivet.dk/wp-content/uploads/ECDL2001-bnh-08092001.ppt RLEL http://netarkivet.dk/om-netarkivet/publikationer/ application/vnd.ms-powerpoint #040 20121130112251504+275 sha1:O7NLBCYQQ63X23QG2A25RYO6S7TL4LU5 - content-size:723684
+2012-11-30T11:22:53.412Z   200      12492 http://netarkivet.dk/om-netarkivet/tvaersnitshostninger/ RLEL http://netarkivet.dk/om-netarkivet/publikationer/ text/html #040 20121130112252718+651 sha1:YAZ3Y6BS4DTG7KFH7FXJQKHOQ5NODJNL - content-size:12694
+2012-11-30T11:22:54.888Z   404      26576 http://netarkivet.dk/om-netarkivet/tvaersnitshostninger/favicon.ico RLELE http://netarkivet.dk/om-netarkivet/tvaersnitshostninger/ text/html #039 20121130112254068+805 sha1:QDFTPDZOY5WEXHFSYRGSGOJPIYIQAG44 - content-size:26942
+2012-11-30T11:22:56.506Z   200      34393 http://netarkivet.dk/om-netarkivet/selektive-hostninger/ RLEL http://netarkivet.dk/om-netarkivet/publikationer/ text/html #039 20121130112255697+775 sha1:RWVUBCBDOJUF6R7M4CUG25SFYTCHKNGT - content-size:34595
+2012-11-30T11:22:58.058Z   404      26576 http://netarkivet.dk/om-netarkivet/selektive-hostninger/favicon.ico RLELE http://netarkivet.dk/om-netarkivet/selektive-hostninger/ text/html #043 20121130112257285+758 sha1:YWAFDJHKQQBBMCNIIWET4QFE5L3IQ6KF - content-size:26942
+2012-11-30T11:22:59.523Z   200      16816 http://netarkivet.dk/om-netarkivet/begivenhedshostninger/ RLEL http://netarkivet.dk/om-netarkivet/publikationer/ text/html #002 20121130112258820+672 sha1:SC7E637MN47SNU7UBPEJHQLCRSG7F3C5 - content-size:17018
+2012-11-30T11:23:00.860Z   404      26578 http://netarkivet.dk/om-netarkivet/begivenhedshostninger/favicon.ico RLELE http://netarkivet.dk/om-netarkivet/begivenhedshostninger/ text/html #045 20121130112300200+645 sha1:MAJAE7GDP2GV22QS2SKND5VW7S6UGI23 - content-size:26944
+2012-11-30T11:23:02.316Z   200      15485 http://netarkivet.dk/om-netarkivet/specialhostninger/ RLEL http://netarkivet.dk/om-netarkivet/publikationer/ text/html #039 20121130112301509+766 sha1:LY4X4FD2GBZGCTPHJGUWOSTG73HPCO2P - content-size:15687
+2012-11-30T11:23:03.856Z   404      26570 http://netarkivet.dk/om-netarkivet/specialhostninger/favicon.ico RLELE http://netarkivet.dk/om-netarkivet/specialhostninger/ text/html #041 20121130112303086+750 sha1:ZWT3LEVWNRA75UKPNV4DEWTQBK7SFE2K - content-size:26936
+2012-11-30T11:23:05.387Z   200       8469 http://netarkivet.dk/in-english/newsletters/ RLELE http://netarkivet.dk/om-netarkivet/specialhostninger/ text/html #027 20121130112304611+739 sha1:X3RNRUZHG3X3ZTIWNLSDD2A4NSXDVB3N - content-size:8671
+2012-11-30T11:23:06.782Z   200       9443 http://netarkivet.dk/om-netarkivet/statistik/ RLEL http://netarkivet.dk/om-netarkivet/publikationer/ text/html #010 20121130112306130+611 sha1:FIABRKKOCFOPZZ6KXJHU4UZZFQEAU5BW - content-size:9645
+2012-11-30T11:23:08.046Z   404      26554 http://netarkivet.dk/om-netarkivet/statistik/favicon.ico RLELE http://netarkivet.dk/om-netarkivet/statistik/ text/html #040 20121130112307398+629 sha1:BNAYMLILXVPOXWZ5K5Y4COKWTWBWPLEP - content-size:26920
+2012-11-30T11:23:09.395Z   200      13109 http://netarkivet.dk/om-netarkivet/presse/ RLEL http://netarkivet.dk/om-netarkivet/publikationer/ text/html #010 20121130112308679+674 sha1:HUCQQXQPAFOSARP3MBQ2ALLULSLXCHAO - content-size:13311
+2012-11-30T11:23:10.690Z   404      26548 http://netarkivet.dk/om-netarkivet/presse/favicon.ico RLELE http://netarkivet.dk/om-netarkivet/presse/ text/html #042 20121130112310073+602 sha1:LUMMOAXO4GPUYCTEGR2EP5OS2VUUVJFE - content-size:26914
+2012-11-30T11:23:11.970Z   200      12602 http://netarkivet.dk/om-netarkivet/nyhedsbreve/ RLEL http://netarkivet.dk/om-netarkivet/publikationer/ text/html #023 20121130112311296+616 sha1:XKZPTB5OAIX4ZTO5VBBS4SLWFC4ERY37 - content-size:12804
+2012-11-30T11:23:13.247Z   404      26558 http://netarkivet.dk/om-netarkivet/nyhedsbreve/favicon.ico RLELE http://netarkivet.dk/om-netarkivet/nyhedsbreve/ text/html #011 20121130112312589+643 sha1:7QRIFDTYFRZAPDPUAZLE4FI2X2KV7YOG - content-size:26924
+2012-11-30T11:23:14.596Z   200       9210 http://netarkivet.dk/om-netarkivet/diagram3hostninger_ny/ RLL http://netarkivet.dk/om-netarkivet/ text/html #023 20121130112313894+671 sha1:IUXSQY45DV6NWHWKTSTO4VIJE4U6DDPO - content-size:9412
+2012-11-30T11:23:15.965Z   404      26578 http://netarkivet.dk/om-netarkivet/diagram3hostninger_ny/favicon.ico RLLE http://netarkivet.dk/om-netarkivet/diagram3hostninger_ny/ text/html #018 20121130112315271+679 sha1:I7IHDHTXTY4TC75JRQWD2Z7OY33UWESO - content-size:26944
+2012-11-30T11:23:16.739Z   200      38443 http://netarkivet.dk/wp-content/uploads/Diagram3Hostninger_ny-400x211.png RLLE http://netarkivet.dk/om-netarkivet/diagram3hostninger_ny/ image/png #004 20121130112316649+89 sha1:E7IRVXIYMN62J55S4RADH25BS42S7TXG - content-size:38650
+2012-11-30T11:23:17.595Z   301          0 http://netarkivet.dk/?page_id=9 RLL http://netarkivet.dk/in-english/ text/html #046 20121130112317043+550 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:304
+2012-11-30T11:23:18.717Z   301          0 http://netarkivet.dk/?page_id=10 RLL http://netarkivet.dk/in-english/ text/html #005 20121130112318148+567 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:304
+2012-11-30T11:23:19.814Z   301          0 http://netarkivet.dk/?page_id=12 RLL http://netarkivet.dk/in-english/ text/html #030 20121130112319287+524 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:305
+2012-11-30T11:23:21.003Z   200      18529 http://netarkivet.dk/in-english/faq/ RLL http://netarkivet.dk/in-english/ text/html #039 20121130112320341+629 sha1:B34OBIOSSXXBOJN6FZXHGUVTDYCCUME2 - content-size:18731
+2012-11-30T11:23:22.409Z   404      26536 http://netarkivet.dk/in-english/faq/favicon.ico RLLE http://netarkivet.dk/in-english/faq/ text/html #032 20121130112321636+753 sha1:QTDMJFJ2EU3G7YMB2S2EO3BYB6F363PQ - content-size:26902
+2012-11-30T11:23:23.814Z   404       6307 http://netarkivet.dk/du-kan-hjaelpe-netarkivet/favicon.ico RLEE http://netarkivet.dk/du-kan-hjaelpe-netarkivet/ text/html #011 20121130112323165+639 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:23:25.046Z   404       6307 http://netarkivet.dk/du-kan-hjaelpe-netarkivet/3.3.1 RLEL http://netarkivet.dk/du-kan-hjaelpe-netarkivet/ text/html #031 20121130112324457+578 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:23:26.281Z   200       9221 http://netarkivet.dk/15-tvaersnitshoestning-afsluttet/tvaersnitshoestning_nr15/ RLL http://netarkivet.dk/15-tvaersnitshoestning-afsluttet/ text/html #042 20121130112325627+612 sha1:XAHZUPHOUENQS5FYXLT5N36MYMTSUIB6 - content-size:9423
+2012-11-30T11:23:27.557Z   404      26622 http://netarkivet.dk/15-tvaersnitshoestning-afsluttet/tvaersnitshoestning_nr15/favicon.ico RLLE http://netarkivet.dk/15-tvaersnitshoestning-afsluttet/tvaersnitshoestning_nr15/ text/html #041 20121130112326897+641 sha1:5PITF7VZTRSSCAMJA5AYZ7MIWW2ORDKY - content-size:26988
+2012-11-30T11:23:28.914Z   200       9126 http://netarkivet.dk/faelles-international-webhoestning-offentlig/vinterol2010/ RLL http://netarkivet.dk/faelles-international-webhoestning-offentlig/ text/html #042 20121130112328202+671 sha1:WNDVRWPPVZOGCK3MGSXFIIAKGFYVBPR2 - content-size:9328
+2012-11-30T11:23:30.219Z   404      26622 http://netarkivet.dk/faelles-international-webhoestning-offentlig/vinterol2010/favicon.ico RLLE http://netarkivet.dk/faelles-international-webhoestning-offentlig/vinterol2010/ text/html #002 20121130112329589+611 sha1:IG4WTOVL4RO754GR5DCCBVKQBLRKOLP5 - content-size:26988
+2012-11-30T11:23:31.501Z   200       9184 http://netarkivet.dk/netarkivet-hylder-vaclav-havel/vaclav_havel_cut_out/ RLL http://netarkivet.dk/netarkivet-hylder-vaclav-havel/ text/html #030 20121130112330836+627 sha1:3BBMRATEE3AQIR7OP5PP4NPX5SDMKEX6 - content-size:9386
+2012-11-30T11:23:32.800Z   404      26610 http://netarkivet.dk/netarkivet-hylder-vaclav-havel/vaclav_havel_cut_out/favicon.ico RLLE http://netarkivet.dk/netarkivet-hylder-vaclav-havel/vaclav_havel_cut_out/ text/html #002 20121130112332132+648 sha1:Q7AYWTGLQ7UKUY5LTV72XXJTFLIEXMUZ - content-size:26976
+2012-11-30T11:23:34.046Z   404       6307 http://netarkivet.dk/glimt-fra-arkivet-2/favicon.ico RLEE http://netarkivet.dk/glimt-fra-arkivet-2/ text/html #030 20121130112333451+590 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:23:35.267Z   200       9202 http://netarkivet.dk/kontakt-netarkivet/ RLEE http://netarkivet.dk/glimt-fra-arkivet-2/ text/html #005 20121130112334640+596 sha1:ZWGIEGYOPO6DLUKBNN4YP3RPB5C5PSL7 - content-size:9456
+2012-11-30T11:23:36.429Z   301          0 http://netarkivet.dk/?p=386 RLEE http://netarkivet.dk/glimt-fra-arkivet-2/ text/html #042 20121130112335866+561 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:289
+2012-11-30T11:23:37.634Z   200      11067 http://netarkivet.dk/netarkivet-arkiverer-second-life/ RLL http://netarkivet.dk/arkiv/nyhed/ text/html #018 20121130112336994+609 sha1:XZ6JNJFPDTCJ52R5Z5WS5RNY64IWV5JX - content-size:11321
+2012-11-30T11:23:38.775Z   404       6307 http://netarkivet.dk/netarkivet-arkiverer-second-life/favicon.ico RLLE http://netarkivet.dk/netarkivet-arkiverer-second-life/ text/html #005 20121130112338247+521 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:23:39.764Z   301          0 http://netarkivet.dk/?p=116 RLLE http://netarkivet.dk/netarkivet-arkiverer-second-life/ text/html #038 20121130112339300+462 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:302
+2012-11-30T11:23:40.911Z   200      10099 http://netarkivet.dk/forste-ph-d-om-netarkivet/ RLL http://netarkivet.dk/arkiv/nyhed/ text/html #007 20121130112340230+635 sha1:UAJETVOZHP4CEKUAUC4SLNWXL43QN2RI - content-size:10353
+2012-11-30T11:23:42.131Z   404       6307 http://netarkivet.dk/forste-ph-d-om-netarkivet/favicon.ico RLLE http://netarkivet.dk/forste-ph-d-om-netarkivet/ text/html #012 20121130112341549+565 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:23:43.168Z   301          0 http://netarkivet.dk/?p=114 RLLE http://netarkivet.dk/forste-ph-d-om-netarkivet/ text/html #038 20121130112342699+467 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:295
+2012-11-30T11:23:44.242Z   200       9615 http://netarkivet.dk/ny-redaktionsgruppe-for-2010-og-2011/ RLL http://netarkivet.dk/arkiv/nyhed/ text/html #018 20121130112343641+562 sha1:7O2ICZDMPB6FZ75MFZRV7E3VKAWUFGXX - content-size:9869
+2012-11-30T11:23:45.353Z   404       6307 http://netarkivet.dk/ny-redaktionsgruppe-for-2010-og-2011/favicon.ico RLLE http://netarkivet.dk/ny-redaktionsgruppe-for-2010-og-2011/ text/html #002 20121130112344809+537 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:23:46.448Z   301          0 http://netarkivet.dk/?p=112 RLLE http://netarkivet.dk/ny-redaktionsgruppe-for-2010-og-2011/ text/html #007 20121130112345894+552 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:306
+2012-11-30T11:23:47.715Z   200       9469 http://netarkivet.dk/erfaringer-med-hostning-af-det-danske-net-2005-2008/ RLL http://netarkivet.dk/arkiv/nyhed/ text/html #039 20121130112347004+671 sha1:2KE22YHZC73VP6TAQWWK2HHWFJ2EQYOE - content-size:9723
+2012-11-30T11:23:48.928Z   404       6307 http://netarkivet.dk/erfaringer-med-hostning-af-det-danske-net-2005-2008/favicon.ico RLLE http://netarkivet.dk/erfaringer-med-hostning-af-det-danske-net-2005-2008/ text/html #026 20121130112348389+533 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:23:49.975Z   301          0 http://netarkivet.dk/?p=110 RLLE http://netarkivet.dk/erfaringer-med-hostning-af-det-danske-net-2005-2008/ text/html #032 20121130112349465+507 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:321
+2012-11-30T11:23:51.176Z   200       9339 http://netarkivet.dk/newsletter-3/ RLL http://netarkivet.dk/arkiv/nyhed/ text/html #037 20121130112350486+651 sha1:IOE4ZWSHASHXQEKZGS2A56JAGAGAOTR6 - content-size:9593
+2012-11-30T11:23:52.433Z   404       6307 http://netarkivet.dk/newsletter-3/favicon.ico RLLE http://netarkivet.dk/newsletter-3/ text/html #011 20121130112351830+596 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:23:53.542Z   301          0 http://netarkivet.dk/?p=108 RLLE http://netarkivet.dk/newsletter-3/ text/html #030 20121130112353032+507 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:282
+2012-11-30T11:23:54.103Z   301        287 http://netarkivet.dk/nyheder/Newsletter_Netarchive_dk_august2008.pdf RLL http://netarkivet.dk/arkiv/nyhed/ text/html #031 20121130112354052+47 sha1:5RTSFYNHZUBEJ46U46IS5FNRHDCJCU26 - content-size:550
+2012-11-30T11:23:55.054Z   200       9358 http://netarkivet.dk/netarchivesuite-2/ RLL http://netarkivet.dk/arkiv/nyhed/ text/html #034 20121130112354408+606 sha1:653KYYEVXBYN7IFN2BVCHEFBLZVVKH2L - content-size:9612
+2012-11-30T11:23:56.379Z   404       6307 http://netarkivet.dk/netarchivesuite-2/favicon.ico RLLE http://netarkivet.dk/netarchivesuite-2/ text/html #046 20121130112355664+707 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:23:57.618Z   301          0 http://netarkivet.dk/?p=106 RLLE http://netarkivet.dk/netarchivesuite-2/ text/html #031 20121130112357090+526 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:287
+2012-11-30T11:23:58.816Z   200       9253 http://netarkivet.dk/newsletter-2/ RLL http://netarkivet.dk/arkiv/nyhed/ text/html #040 20121130112358149+625 sha1:QPHCQYMDTUDYFOS3R74MTQG7KW3T47X3 - content-size:9507
+2012-11-30T11:24:00.058Z   404       6307 http://netarkivet.dk/newsletter-2/favicon.ico RLLE http://netarkivet.dk/newsletter-2/ text/html #011 20121130112359444+607 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:01.371Z   200       9187 http://netarkivet.dk/netarchivesuite/ RLLE http://netarkivet.dk/newsletter-2/ text/html #023 20121130112400669+673 sha1:PA4CCAUFYMRHV24NPI36JPOV54KUCYEW - content-size:9441
+2012-11-30T11:24:02.645Z   301          0 http://netarkivet.dk/?p=104 RLLE http://netarkivet.dk/newsletter-2/ text/html #011 20121130112402048+595 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:282
+2012-11-30T11:24:03.293Z   301        286 http://netarkivet.dk/nyheder/Newsletter_Netarchive_dk_march2007.pdf RLL http://netarkivet.dk/arkiv/nyhed/ text/html #018 20121130112403245+45 sha1:JBL6YPIYSEA5YJDHFHBS6VXLNPKQZ6IV - content-size:548
+2012-11-30T11:24:04.313Z   200      11801 http://netarkivet.dk/arkiv/nyhed/page/2/ RLL http://netarkivet.dk/arkiv/nyhed/ text/html #001 20121130112403596+664 sha1:PMLQGLI3MWMJULYXGVQGHGOZRHDYANTB - content-size:12003
+2012-11-30T11:24:05.771Z   404       6307 http://netarkivet.dk/arkiv/nyhed/page/2/favicon.ico RLLE http://netarkivet.dk/arkiv/nyhed/page/2/ text/html #045 20121130112404980+785 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:07.228Z   404       6307 http://netarkivet.dk/multipart/form-data REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/jquery.form.min.js?ver=3.18 text/html #030 20121130112406559+663 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:08.428Z   301          0 http://netarkivet.dk/n/a REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/jquery.form.min.js?ver=3.18 text/html #026 20121130112407894+532 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:273
+2012-11-30T11:24:09.633Z   200       9025 http://netarkivet.dk/n/a/ REXR http://netarkivet.dk/n/a text/html #032 20121130112408963+639 sha1:2XXNIPC5KJKTJWG5VDJNLF5USYWYMDFF - content-size:9227
+2012-11-30T11:24:10.811Z   404       6307 http://netarkivet.dk/submit.form-plugin REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/jquery.form.min.js?ver=3.18 text/html #018 20121130112410281+525 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:11.843Z   404       6307 http://netarkivet.dk/click.form-plugin REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/jquery.form.min.js?ver=3.18 text/html #023 20121130112411339+499 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:12.880Z   404       6307 http://netarkivet.dk/img.ajax-loader REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 text/html #046 20121130112412345+530 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:13.957Z   404       6307 http://netarkivet.dk/div.wpcf7-response-output REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 text/html #002 20121130112413414+538 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:15.026Z   404       6307 http://netarkivet.dk/form.wpcf7-form REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 text/html #007 20121130112414499+520 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:16.101Z   404       6307 http://netarkivet.dk/invalid.wpcf7 REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 text/html #033 20121130112415549+547 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:17.171Z   404       6307 http://netarkivet.dk/spam.wpcf7 REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 text/html #031 20121130112416652+513 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:18.216Z   404       6307 http://netarkivet.dk/mailsent.wpcf7 REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 text/html #044 20121130112417687+523 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:19.283Z   404       6307 http://netarkivet.dk/mailfailed.wpcf7 REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 text/html #039 20121130112418742+535 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:20.345Z   404       6307 http://netarkivet.dk/submit.wpcf7 REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 text/html #018 20121130112419821+519 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:21.450Z   404       6307 http://netarkivet.dk/span.wpcf7-not-valid-tip REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 text/html #040 20121130112420867+578 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:22.679Z   404       6307 http://netarkivet.dk/span.wpcf7-quiz-label REX http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 text/html #007 20121130112422031+642 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:23.883Z   404       6307 http://netarkivet.dk/ul.slides REX http://netarkivet.dk/wp-content/plugins/gallery-to-slideshow//js/libs/flexslider/jquery.flexslider-min.js?ver=1.8 text/html #018 20121130112423326+549 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:25.167Z   404      26572 http://netarkivet.dk/til-webstedejere/pligtaflevering/favicon.ico REEE http://netarkivet.dk/til-webstedejere/pligtaflevering/ text/html #040 20121130112424435+719 sha1:JS5MF7Y4UK5IYRZOVECGZ7KVSTVO2C5S - content-size:26938
+2012-11-30T11:24:26.622Z   404      26572 http://netarkivet.dk/om-netarkivet/andre-webarkiver-2/favicon.ico REEE http://netarkivet.dk/om-netarkivet/andre-webarkiver-2/ text/html #046 20121130112425890+701 sha1:JP6WTNKFYFG3CQU4HR2W3VI3Y7DHYUUD - content-size:26938
+2012-11-30T11:24:27.992Z   404      26560 http://netarkivet.dk/om-netarkivet/case-stories/favicon.ico RLEEE http://netarkivet.dk/om-netarkivet/case-stories/ text/html #001 20121130112427326+647 sha1:T2OOYS4GCOWU4NRNJ2H5MFHDNPGIDIME - content-size:26926
+2012-11-30T11:24:29.406Z   404      26552 http://netarkivet.dk/in-english/newsletters/favicon.ico RLELEE http://netarkivet.dk/in-english/newsletters/ text/html #050 20121130112428642+750 sha1:N7K5GR7WB3OOQRM4ESNX5H53DCJP5AZ7 - content-size:26918
+2012-11-30T11:24:30.269Z   200      35393 http://netarkivet.dk/wp-content/uploads/Pressemeddelelse_20111018.pdf RLELL http://netarkivet.dk/om-netarkivet/presse/ application/pdf #040 20121130112430161+106 sha1:JAAFPLX6PXE5SE7G254GNB52YO5P6H6F - content-size:35606
+2012-11-30T11:24:30.680Z   200      39464 http://netarkivet.dk/wp-content/uploads/Pressemeddelelse_20090603.pdf RLELL http://netarkivet.dk/om-netarkivet/presse/ application/pdf #027 20121130112430573+106 sha1:MMRXKU7XHLPD6GFHABS4OW2UDCN3E6PC - content-size:39677
+2012-11-30T11:24:31.226Z   200      68784 http://netarkivet.dk/wp-content/uploads/Pressemeddelelse_om_Netarkivet.pdf RLELL http://netarkivet.dk/om-netarkivet/presse/ application/pdf #002 20121130112430984+240 sha1:W5MPCTFUPBRKTWF3RNK5FYUX4CH43CGD - content-size:68997
+2012-11-30T11:24:31.630Z   200      40490 http://netarkivet.dk/wp-content/uploads/Pressemeddelelse_20071101.pdf RLELL http://netarkivet.dk/om-netarkivet/presse/ application/pdf #042 20121130112431530+98 sha1:KJF56WLXH2SR24BPSTTFSSHWKJQDSOIL - content-size:40703
+2012-11-30T11:24:32.068Z   200      68856 http://netarkivet.dk/wp-content/uploads/Pressemeddelelse_20070903.pdf RLELL http://netarkivet.dk/om-netarkivet/presse/ application/pdf #001 20121130112431933+134 sha1:TDSIA2NUQKIFFI3LMTANI5ODOZHVIIY2 - content-size:69069
+2012-11-30T11:24:32.478Z   200      40935 http://netarkivet.dk/wp-content/uploads/Pressemeddelelse_juli2006.pdf RLELL http://netarkivet.dk/om-netarkivet/presse/ application/pdf #050 20121130112432373+104 sha1:KGGKPMZT466QKJHBFTFFA7D53XSOX4HL - content-size:41148
+2012-11-30T11:24:32.933Z   200      65703 http://netarkivet.dk/wp-content/uploads/Pressemeddelelse_nethoestning_KUM_pressemed.pdf RLELL http://netarkivet.dk/om-netarkivet/presse/ application/pdf #045 20121130112432781+150 sha1:TQNPWB7EVMGXOUSXFTF3DALATAWFW7OX - content-size:65916
+2012-11-30T11:24:33.511Z   200      33967 http://netarkivet.dk/wp-content/uploads/PressemeddelelseBryllup-20040706.pdf RLELL http://netarkivet.dk/om-netarkivet/presse/ application/pdf #044 20121130112433236+274 sha1:HSQV5MOF3YPVD2SRY653TG4T5O3UV2BQ - content-size:34180
+2012-11-30T11:24:33.959Z   200     106761 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_2011_Marts.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #023 20121130112433817+140 sha1:DS5Q3ZTKB3R7WWWL3KABKTJ7NIT5POB4 - content-size:106975
+2012-11-30T11:24:34.392Z   200      62378 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_2010_November.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #037 20121130112434263+127 sha1:YOCRAO2RQTXUEXZE365W66ITH5L7IGGL - content-size:62591
+2012-11-30T11:24:34.798Z   200      49175 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_2010_Maj.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #041 20121130112434695+101 sha1:FTJXTBK7XPHGSN4X3JDC3OPATOXPD7SM - content-size:49388
+2012-11-30T11:24:35.236Z   200      61484 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_2009_December.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #034 20121130112435102+132 sha1:7JY76EKGOJMYHGTZCPUYE6AQBPYKOY3R - content-size:61697
+2012-11-30T11:24:35.653Z   200      64099 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_2009_August.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #010 20121130112435540+111 sha1:DEEGRFUBIS25FET7FCPA3RL6EAANWNHO - content-size:64312
+2012-11-30T11:24:36.070Z   200      68760 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_AprilMaj2009.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #023 20121130112435956+112 sha1:HHOT3VAZP2BXTY47QXMZBS54L5K7OBNT - content-size:68973
+2012-11-30T11:24:36.488Z   200      70811 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_december2008.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #037 20121130112436374+112 sha1:EALSF2MLRNKDJLQTY26D7LIH7PWQSNCF - content-size:71024
+2012-11-30T11:24:36.887Z   200      51316 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_juli2008.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #041 20121130112436793+92 sha1:BT2RY6Y6TIHHUDLKI5NHLQUEKR2LOXOX - content-size:51529
+2012-11-30T11:24:37.424Z   200     366234 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_december2007.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #031 20121130112437190+230 sha1:IGRCI6JYXBWUCX5XU7ROSBFY32FRKQQP - content-size:366448
+2012-11-30T11:24:37.971Z   200     520880 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_juli2007.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #049 20121130112437728+238 sha1:GDF44AI3PFQGGCZOGU2DWRB6UCMZVHIU - content-size:521094
+2012-11-30T11:24:38.413Z   200     101314 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_marts2007.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #038 20121130112438275+135 sha1:LAWTRJHNYTFPJJT33UDTT3WZ53VV7X67 - content-size:101528
+2012-11-30T11:24:39.217Z   200     421193 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_december2006.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #023 20121130112438992+220 sha1:JZYWJSOYYGMLU2CKU3ZEX7SBRMTPAKUS - content-size:421407
+2012-11-30T11:24:39.625Z   200      45540 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_september2006.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #003 20121130112439521+102 sha1:KNIIO47FDKT5MKNG55VDRR5HWHFZDH44 - content-size:45753
+2012-11-30T11:24:40.225Z   200     303946 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_juni2006.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #001 20121130112440043+179 sha1:73FYBLJEKY2RKN4PSBWM7BVJU6MZVS7B - content-size:304160
+2012-11-30T11:24:40.757Z   200     312132 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_april2006.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #009 20121130112440529+225 sha1:RBNKAEEDIGV4XHZFVXAVFRKWAJOUXSGQ - content-size:312346
+2012-11-30T11:24:41.202Z   200      94107 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_februar2006.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #033 20121130112441060+140 sha1:3HZHDD5JNZ5WL7VQJUM2TXIBNVGTS3QG - content-size:94320
+2012-11-30T11:24:41.754Z   200     421447 http://netarkivet.dk/wp-content/uploads/Nyhedsbrev_Netarkivet_oktober2005.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #008 20121130112441506+245 sha1:ESFCS3NWEJVNQQKQVPXCCRAZI5BRSJKE - content-size:421661
+2012-11-30T11:24:42.255Z   200     198325 http://netarkivet.dk/wp-content/uploads/Newsletter_Netarchive_dk_august2011.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #033 20121130112442058+194 sha1:A76Y2XNFPIZUPNJ3J7AQGJBZXPVP4FCG - content-size:198539
+2012-11-30T11:24:42.791Z   200     222347 http://netarkivet.dk/wp-content/uploads/Newsletter_Netarchive_dk_august2010.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #003 20121130112442582+207 sha1:WXVO34S764O5FBNJZL2IDGX7MQPAOZJ6 - content-size:222561
+2012-11-30T11:24:43.592Z   200     223073 http://netarkivet.dk/wp-content/uploads/Newsletter_Netarchive_dk_august2009.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #023 20121130112443095+495 sha1:O2HAPJ5JO3U4QY6BZA6TECYY67QPAMNM - content-size:223287
+2012-11-30T11:24:44.226Z   200      97325 http://netarkivet.dk/wp-content/uploads/Newsletter_Netarchive_dk_august2008.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #001 20121130112444091+133 sha1:FBL2H5ZT3BLRAHXNFK2D2FEQG7QRNKEY - content-size:97538
+2012-11-30T11:24:44.807Z   200     647007 http://netarkivet.dk/wp-content/uploads/Newsletter_Netarchive_dk_march2007.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #024 20121130112444529+273 sha1:5WGVAIDNEHC4KMPZKM43EF4345BXRYFE - content-size:647221
+2012-11-30T11:24:45.349Z   200     388964 http://netarkivet.dk/wp-content/uploads/Newsletter_Netarchive_dk_august2006.pdf RLELL http://netarkivet.dk/om-netarkivet/nyhedsbreve/ application/pdf #001 20121130112445111+235 sha1:JKOL4334OHMZBPBDQLZNIC4RH7TLKSKU - content-size:389178
+2012-11-30T11:24:46.373Z   200      48416 http://netarkivet.dk/wp-content/uploads/Diagram3Hostninger_ny.png RLLL http://netarkivet.dk/om-netarkivet/diagram3hostninger_ny/ image/png #002 20121130112446074+297 sha1:O4DP7T7B6SABFVY6Q2ZF5KFTNAR7AXRF - content-size:48623
+2012-11-30T11:24:46.846Z   200     193070 http://netarkivet.dk/wp-content/uploads/tvaersnitshoestning_nr15.jpg RLLL http://netarkivet.dk/15-tvaersnitshoestning-afsluttet/tvaersnitshoestning_nr15/ image/jpeg #010 20121130112446676+168 sha1:54QOTHKHXSU4GAZL3DBS2THHGQZROLWL - content-size:193279
+2012-11-30T11:24:47.735Z   404       6307 http://netarkivet.dk/kontakt-netarkivet/favicon.ico RLEEE http://netarkivet.dk/kontakt-netarkivet/ text/html #034 20121130112447149+580 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:48.897Z   301          0 http://netarkivet.dk/?p=194 RLEEE http://netarkivet.dk/kontakt-netarkivet/ text/html #043 20121130112448318+576 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:288
+2012-11-30T11:24:50.151Z   404       6307 http://netarkivet.dk/netarchivesuite/favicon.ico RLLEE http://netarkivet.dk/netarchivesuite/ text/html #037 20121130112449476+669 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:51.480Z   200       9410 http://netarkivet.dk/open-source-release/ RLLEE http://netarkivet.dk/netarchivesuite/ text/html #010 20121130112450822+623 sha1:TCUC4LYRLI5OZL7WZMIKTKVGYCTAPHCT - content-size:9664
+2012-11-30T11:24:52.683Z   301          0 http://netarkivet.dk/?p=102 RLLEE http://netarkivet.dk/netarchivesuite/ text/html #037 20121130112452105+577 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:285
+2012-11-30T11:24:53.964Z   200       9380 http://netarkivet.dk/newsletter/ RLLL http://netarkivet.dk/arkiv/nyhed/page/2/ text/html #033 20121130112453265+658 sha1:TZH6MZZ56H3HPN576FS3TO6IWHAE25QW - content-size:9633
+2012-11-30T11:24:55.186Z   404       6307 http://netarkivet.dk/newsletter/favicon.ico RLLLE http://netarkivet.dk/newsletter/ text/html #046 20121130112454625+556 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:24:56.280Z   301          0 http://netarkivet.dk/?p=98 RLLLE http://netarkivet.dk/newsletter/ text/html #034 20121130112455747+531 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:280
+2012-11-30T11:24:56.864Z   301        287 http://netarkivet.dk/nyheder/Newsletter_Netarchive_dk_august2006.pdf RLLL http://netarkivet.dk/arkiv/nyhed/page/2/ text/html #003 20121130112456815+45 sha1:PIQOBXHWC764DJ2YWV4HTRMLS3X56QCA - content-size:550
+2012-11-30T11:24:57.793Z   200       9378 http://netarkivet.dk/dk-domaenet-i-ord-og-tal/ RLLL http://netarkivet.dk/arkiv/nyhed/page/2/ text/html #046 20121130112457170+584 sha1:7ASXIV3PND6SZPQAY466ZWHLRIZXBT4X - content-size:9631
+2012-11-30T11:24:58.973Z   404       6307 http://netarkivet.dk/dk-domaenet-i-ord-og-tal/favicon.ico RLLLE http://netarkivet.dk/dk-domaenet-i-ord-og-tal/ text/html #002 20121130112458379+589 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:25:00.068Z   301          0 http://netarkivet.dk/?p=91 RLLLE http://netarkivet.dk/dk-domaenet-i-ord-og-tal/ text/html #044 20121130112459564+502 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:294
+2012-11-30T11:25:00.640Z   301        257 http://netarkivet.dk/publikationer/index-da.php RLLL http://netarkivet.dk/arkiv/nyhed/page/2/ text/html #020 20121130112500574+63 sha1:G2WDKOCVYMBBFAIYSCMYH5HYF4JM7X37 - content-size:490
+2012-11-30T11:25:02.097Z   200       9609 http://netarkivet.dk/kulturministeriet-har-nedsat-netarkivets-redaktion/ RLLL http://netarkivet.dk/arkiv/nyhed/page/2/ text/html #005 20121130112500943+1125 sha1:HSIUJMGUMI7GNZY37O5XWVQWSN4PEOPA - content-size:9862
+2012-11-30T11:25:03.989Z   404       6307 http://netarkivet.dk/kulturministeriet-har-nedsat-netarkivets-redaktion/favicon.ico RLLLE http://netarkivet.dk/kulturministeriet-har-nedsat-netarkivets-redaktion/ text/html #034 20121130112503101+883 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:25:05.716Z   301          0 http://netarkivet.dk/?p=89 RLLLE http://netarkivet.dk/kulturministeriet-har-nedsat-netarkivets-redaktion/ text/html #003 20121130112504875+839 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:320
+2012-11-30T11:25:07.761Z   200       9446 http://netarkivet.dk/ny-pligtafleveringslov-vedtaget/ RLLL http://netarkivet.dk/arkiv/nyhed/page/2/ text/html #021 20121130112506559+1168 sha1:KJ34UO5WFFTTOGAGQLNSJUAZ2HLFD67B - content-size:9699
+2012-11-30T11:25:10.032Z   404       6307 http://netarkivet.dk/ny-pligtafleveringslov-vedtaget/favicon.ico RLLLE http://netarkivet.dk/ny-pligtafleveringslov-vedtaget/ text/html #007 20121130112508766+1260 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:25:11.717Z   301          0 http://netarkivet.dk/?p=87 RLLLE http://netarkivet.dk/ny-pligtafleveringslov-vedtaget/ text/html #049 20121130112511034+681 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:301
+2012-11-30T11:25:13.334Z   404      26514 http://netarkivet.dk/n/a/favicon.ico REXRE http://netarkivet.dk/n/a/ text/html #001 20121130112512400+921 sha1:ZP4UDBHBHAK36OHRGHYAOL3XY2LNRBX7 - content-size:26880
+2012-11-30T11:25:15.397Z   200       9025 http://netarkivet.dk/?attachment_id=149 REXRE http://netarkivet.dk/n/a/ text/html #001 20121130112514258+1104 sha1:2XXNIPC5KJKTJWG5VDJNLF5USYWYMDFF - content-size:9227
+2012-11-30T11:25:16.471Z   200       2351 http://netarkivet.dk/wp-content/uploads/2011/12/a.jpg REXRL http://netarkivet.dk/n/a/ image/jpeg #039 20121130112516401+68 sha1:5PLHGGCEJMP3PDZSBEDIBJNTO4ZKNWNQ - content-size:2558
+2012-11-30T11:25:17.801Z   404       6307 http://netarkivet.dk/open-source-release/favicon.ico RLLEEE http://netarkivet.dk/open-source-release/ text/html #021 20121130112516775+1013 sha1:MXVMYME4ZQBUELVFUPJTIJLCTVG2UW6P - content-size:6673
+2012-11-30T11:25:19.512Z   301          0 http://netarkivet.dk/?p=100 RLLEEE http://netarkivet.dk/open-source-release/ text/html #011 20121130112518805+705 sha1:3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ - content-size:289
+2012-11-30T11:40:51.331Z    -1          - dns:ssl RXP https://ssl/ text/dns #039 20121130114051329+2 - - 5t
+2012-11-30T11:40:51.635Z    -6          - https://ssl/ RX http://netarkivet.dk/ no-type #049 - - - 2t
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/logs/heritrix.out?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:4e418e5fedd1bc33fb1610813ad7327479887985
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:70aea46c-5512-4cc3-b733-1a89dd5a7b8f>
+Content-Type: text/plain
+Content-Length: 9280
+
+The Heritrix process is started in the following environment
+ (note that some entries will be changed by the starting JVM):
+CLASSPATH=/home/test/INFO/lib/heritrix/lib/heritrix-1.14.4.jar:/home/test/INFO/lib/heritrix/lib/ant-1.6.2.jar:/home/test/INFO/lib/heritrix/lib/bsh-2.0b4.jar:/home/test/INFO/lib/heritrix/lib/commons-cli-1.0.jar:/home/test/INFO/lib/heritrix/lib/commons-codec-1.3.jar:/home/test/INFO/lib/heritrix/lib/commons-collections-3.1.jar:/home/test/INFO/lib/heritrix/lib/commons-httpclient-3.1.jar:/home/test/INFO/lib/heritrix/lib/commons-io-1.3.1.jar:/home/test/INFO/lib/heritrix/lib/commons-lang-2.3.jar:/home/test/INFO/lib/heritrix/lib/commons-logging-1.0.4.jar:/home/test/INFO/lib/heritrix/lib/commons-net-2.0.jar:/home/test/INFO/lib/heritrix/lib/commons-pool-1.3.jar:/home/test/INFO/lib/heritrix/lib/dnsjava-2.0.3.jar:/home/test/INFO/lib/heritrix/lib/fastutil-5.0.3-heritrix-subset-1.0.jar:/home/test/INFO/lib/heritrix/lib/itext-1.2.0.jar:/home/test/INFO/lib/heritrix/lib/jasper-compiler-tomcat-4.1.30.jar:/home/test/INFO/lib/heritrix/lib/jasper-runtime-tomcat-4.1.30.jar:/home/test/INFO/lib/heritrix/lib/javaswf-CVS-SNAPSHOT-1.jar:/home/test/INFO/lib/heritrix/lib/je-3.3.82.jar:/home/test/INFO/lib/heritrix/lib/jericho-html-2.6.jar:/home/test/INFO/lib/heritrix/lib/jets3t-0.5.0.jar:/home/test/INFO/lib/heritrix/lib/jetty-4.2.23.jar:/home/test/INFO/lib/heritrix/lib/joda-time-1.6.jar:/home/test/INFO/lib/heritrix/lib/junit-3.8.2.jar:/home/test/INFO/lib/heritrix/lib/libidn-0.5.9.jar:/home/test/INFO/lib/heritrix/lib/mg4j-1.0.1.jar:/home/test/INFO/lib/heritrix/lib/poi-2.0-RC1-20031102.jar:/home/test/INFO/lib/heritrix/lib/poi-scratchpad-2.0-RC1-20031102.jar:/home/test/INFO/lib/heritrix/lib/servlet-tomcat-4.1.30.jar:/home/test/INFO/lib/dk.netarkivet.harvester.jar:/home/test/INFO/lib/dk.netarkivet.archive.jar:/home/test/INFO/lib/dk.netarkivet.monitor.jar
+G_BROKEN_FILENAMES=1
+HISTSIZE=1000
+HOME=/home/test
+HOSTNAME=kb-test-har-002.kb.dk
+INPUTRC=/etc/inputrc
+JAVA_HOME=/usr/java/jdk1.6.0_07
+KDEDIR=/usr
+KDE_IS_PRELINKED=1
+KDE_NO_IPV6=1
+LANG=en_US.UTF-8
+LD_LIBRARY_PATH=/usr/java/jdk1.6.0_07/jre/lib/i386/server:/usr/java/jdk1.6.0_07/jre/lib/i386:/usr/java/jdk1.6.0_07/jre/../lib/i386
+LESSOPEN=|/usr/bin/lesspipe.sh %s
+LOGNAME=test
+LS_COLORS=
+MAIL=/var/spool/mail/test
+NLSPATH=/usr/dt/lib/nls/msg/%L/%N.cat
+OLDPWD=/home/test/INFO/conf
+PATH=/usr/java/jdk1.6.0_07/bin:/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin
+PWD=/home/test/INFO
+SHELL=/bin/bash
+SHLVL=3
+SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
+SSH_CLIENT=130.226.231.10 51739 22
+SSH_CONNECTION=130.226.231.10 51739 130.226.228.8 22
+USER=test
+XFILESEARCHPATH=/usr/dt/app-defaults/%L/Dt
+_=/usr/java/jdk1.6.0_07/bin/java
+Process properties:
+dk.netarkivet.settings.file=/home/test/INFO/conf/settings_HarvestControllerApplication_kbhigh.xml
+file.encoding=UTF-8
+file.encoding.pkg=sun.io
+file.separator=/
+heritrix.version=1.14.4
+java.awt.graphicsenv=sun.awt.X11GraphicsEnvironment
+java.awt.printerjob=sun.print.PSPrinterJob
+java.class.path=/home/test/INFO/lib/dk.netarkivet.harvester.jar:/home/test/INFO/lib/dk.netarkivet.archive.jar:/home/test/INFO/lib/dk.netarkivet.monitor.jar:
+java.class.version=50.0
+java.endorsed.dirs=/usr/java/jdk1.6.0_07/jre/lib/endorsed
+java.ext.dirs=/usr/java/jdk1.6.0_07/jre/lib/ext:/usr/java/packages/lib/ext
+java.home=/usr/java/jdk1.6.0_07/jre
+java.io.tmpdir=/tmp
+java.library.path=/usr/java/jdk1.6.0_07/jre/lib/i386/server:/usr/java/jdk1.6.0_07/jre/lib/i386:/usr/java/jdk1.6.0_07/jre/../lib/i386:/usr/java/packages/lib/i386:/lib:/usr/lib
+java.runtime.name=Java(TM) SE Runtime Environment
+java.runtime.version=1.6.0_07-b06
+java.security.manager=
+java.security.policy=/home/test/INFO/conf/security.policy
+java.specification.name=Java Platform API Specification
+java.specification.vendor=Sun Microsystems Inc.
+java.specification.version=1.6
+java.util.logging.config.file=/home/test/INFO/conf/log_HarvestControllerApplication_kbhigh.prop
+java.vendor=Sun Microsystems Inc.
+java.vendor.url=http://java.sun.com/
+java.vendor.url.bug=http://java.sun.com/cgi-bin/bugreport.cgi
+java.version=1.6.0_07
+java.vm.info=mixed mode
+java.vm.name=Java HotSpot(TM) Server VM
+java.vm.specification.name=Java Virtual Machine Specification
+java.vm.specification.vendor=Sun Microsystems Inc.
+java.vm.specification.version=1.0
+java.vm.vendor=Sun Microsystems Inc.
+java.vm.version=10.0-b23
+line.separator=
+
+org.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger
+org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy
+os.arch=i386
+os.name=Linux
+os.version=2.6.18-274.el5PAE
+path.separator=:
+sun.arch.data.model=32
+sun.boot.class.path=/usr/java/jdk1.6.0_07/jre/lib/resources.jar:/usr/java/jdk1.6.0_07/jre/lib/rt.jar:/usr/java/jdk1.6.0_07/jre/lib/sunrsasign.jar:/usr/java/jdk1.6.0_07/jre/lib/jsse.jar:/usr/java/jdk1.6.0_07/jre/lib/jce.jar:/usr/java/jdk1.6.0_07/jre/lib/charsets.jar:/usr/java/jdk1.6.0_07/jre/classes
+sun.boot.library.path=/usr/java/jdk1.6.0_07/jre/lib/i386
+sun.cpu.endian=little
+sun.cpu.isalist=
+sun.io.unicode.encoding=UnicodeLittle
+sun.java.launcher=SUN_STANDARD
+sun.jnu.encoding=UTF-8
+sun.management.compiler=HotSpot Tiered Compilers
+sun.os.patch.level=unknown
+user.country=US
+user.dir=/home/test/INFO
+user.home=/home/test
+user.language=en
+user.name=test
+user.timezone=Europe/Copenhagen
+Working directory: harvester_high/1_1354274439056
+11:20:41.239 EVENT  Starting Jetty/4.2.23
+11:20:41.440 EVENT  Started WebApplicationContext[/,Heritrix Console]
+11:20:41.533 EVENT  Started SocketListener on 0.0.0.0:8163
+11:20:41.533 EVENT  Started org.mortbay.jetty.Server@9cbd4b
+2012-11-30 11:20:41.957 INFO thread-10 org.archive.crawler.Heritrix.postRegister() org.archive.crawler:guiport=8163,host=kb-test-har-002.kb.dk,jmxport=8263,name=Heritrix,type=CrawlService registered to MBeanServerId=kb-test-har-002.kb.dk_1354274440825, SpecificationVersion=1.4, ImplementationVersion=1.6.0_07-b06, SpecificationVendor=Sun Microsystems
+Heritrix version: 1.14.4
+2012-11-30 11:20:41.967 INFO thread-11 org.archive.crawler.Heritrix.invoke() JMX invoke: completedJobs()
+2012-11-30 11:20:41.969 INFO thread-11 org.archive.crawler.Heritrix.invoke() JMX invoke: pendingJobs()
+2012-11-30 11:20:41.972 INFO thread-11 org.archive.crawler.Heritrix.invoke() JMX invoke: addJob("/home/test/INFO/harvester_high/1_1354274439056/order.xml", "1-1", "Job 1 for harvest 1 performed in harvester_high/1_1354274439056with the deduplication index stored in '/home/test/INFO/cache/DEDUP_CRAWL_LOG/empty-cache' and 1 seeds", "/home/test/INFO/harvester_high/1_1354274439056/seeds.txt", )
+2012-11-30 11:20:42.086 INFO thread-11 org.archive.crawler.Heritrix.invoke() JMX invoke: pendingJobs()
+2012-11-30 11:20:42.123 INFO thread-11 org.archive.crawler.Heritrix.invoke() JMX invoke: startCrawling()
+log4j:WARN No appenders could be found for logger (dk.netarkivet.common.utils.Settings).
+log4j:WARN Please initialize the log4j system properly.
+2012-11-30 11:20:43.244 INFO thread-12 org.archive.crawler.admin.CrawlJob.postRegister() org.archive.crawler:host=kb-test-har-002.kb.dk,jmxport=8263,mother=Heritrix,name=1-1-20121130112042083,type=CrawlService.Job registered to MBeanServerId=kb-test-har-002.kb.dk_1354274440825, SpecificationVersion=1.4, ImplementationVersion=1.6.0_07-b06, SpecificationVendor=Sun Microsystems
+2012-11-30 11:20:44.661 INFO thread-14 org.archive.io.WriterPoolMember.createFile() Opened /home/test/INFO/harvester_high/1_1354274439056/warcs/1-1-20121130112044-00000-kb-test-har-002.kb.dk.warc.open
+2012-11-30 11:40:52.679 INFO thread-48 org.archive.io.WriterPoolMember.close() Closed /home/test/INFO/harvester_high/1_1354274439056/warcs/1-1-20121130112044-00000-kb-test-har-002.kb.dk.warc, size 30276251
+2012-11-30 11:40:52.717 INFO thread-48 org.archive.crawler.admin.CrawlJob.postDeregister() org.archive.crawler:host=kb-test-har-002.kb.dk,jmxport=8263,mother=Heritrix,name=1-1-20121130112042083,type=CrawlService.Job unregistered from MBeanServerId=kb-test-har-002.kb.dk_1354274440825, SpecificationVersion=1.4, ImplementationVersion=1.6.0_07-b06, SpecificationVendor=Sun Microsystems
+2012-11-30 11:50:42.445 INFO thread-50 org.archive.crawler.Heritrix.invoke() JMX invoke: shutdown()
+2012-11-30 11:50:42.446 INFO thread-51 org.archive.crawler.Heritrix.postDeregister() org.archive.crawler:guiport=8163,host=kb-test-har-002.kb.dk,jmxport=8263,name=Heritrix,type=CrawlService unregistered from MBeanServerId=kb-test-har-002.kb.dk_1354274440825, SpecificationVersion=1.4, ImplementationVersion=1.6.0_07-b06, SpecificationVendor=Sun Microsystems
+11:50:42.450 EVENT  Stopping Acceptor ServerSocket[addr=0.0.0.0/0.0.0.0,port=0,localport=8163]
+11:50:42.450 EVENT  Stopped SocketListener on 0.0.0.0:8163
+11:50:42.451 EVENT  Stopped WebApplicationContext[/,Heritrix Console]
+11:50:42.451 EVENT  Stopped org.mortbay.http.NCSARequestLog@5ced83
+11:50:42.451 EVENT  Stopped org.mortbay.jetty.Server@9cbd4b
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/logs/heritrix_dmesg.log?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:145b953e5bb5c9d9adf322e3fa2313c89be3a5aa
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:5797578c-4195-47c2-aef3-f8b5dc590b38>
+Content-Type: text/plain
+Content-Length: 119
+
+Heritrix 1.14.4 is running.
+Web console is at: http://0.0.0.0:8163
+Web console login and password: admin/adminPassword
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/logs/local-errors.log?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:da39a3ee5e6b4b0d3255bfef95601890afd80709
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:bbbc476c-0c7b-45e2-9a48-bf946603b1ba>
+Content-Length: 0
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/logs/progress-statistics.log?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:8395282d2d5298376503bae519812902edbaa443
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:f8dd343f-d68c-484d-86f0-eb8dbbaf6d68>
+Content-Type: text/plain
+Content-Length: 11154
+
+20121130112043 CRAWL RESUMED - Running
+           timestamp  discovered      queued   downloaded       doc/s(avg)  KB/s(avg)   dl-failures   busy-thread   mem-use-KB  heap-size-KB   congestion   max-depth   avg-depth
+2012-11-30T11:21:03Z         118          88           30         1.5(1.5)     12(12)             0             1        16420         30464            1          86          44
+2012-11-30T11:21:23Z         162         113           49       0.95(1.22)     40(26)             0             0        14941         32704            1         111          56
+2012-11-30T11:21:43Z         162          84           78        1.45(1.3)   433(162)             0             0        19902         32704            1          82          42
+2012-11-30T11:22:03Z         190          89          101       1.15(1.26)    97(145)             0             0        17173         33152            1          87          44
+2012-11-30T11:22:23Z         205          78          127        1.3(1.27)    21(121)             0             1        26047         33152            1          76          39
+2012-11-30T11:22:43Z         214          61          149        1.1(1.24)   238(140)             4             1        25147         32000            1          59          30
+2012-11-30T11:23:03Z         219          47          168        0.95(1.2)   278(160)             4             0        23578         31168            1          45          23
+2012-11-30T11:23:23Z         258          70          184        0.8(1.15)    12(141)             4             0        26542         33088            1          68          35
+2012-11-30T11:23:43Z         268          64          200        0.8(1.11)     8(127)             4             1        15376         32768            1          62          32
+2012-11-30T11:24:03Z         282          60          218        0.9(1.09)     4(114)             4             1        25739         32768            1          58          30
+2012-11-30T11:24:23Z         293          53          236        0.9(1.07)     5(104)             4             0        23777         29888            1          51          26
+2012-11-30T11:24:43Z         293          21          268        1.6(1.12)   208(113)             4             0        22768         32384            1          19          10
+2012-11-30T11:25:03Z         301           9          288          1(1.11)    70(110)             4             0        20420         29312            1           7           4
+2012-11-30T11:25:24Z         303           2          297       0.45(1.06)     3(102)             4             0        14915         31936            1           0           2
+2012-11-30T11:25:44Z         303           2          297          0(0.99)      0(95)             4             0        15209         31936            1           0           2
+2012-11-30T11:26:04Z         303           2          297          0(0.93)      0(89)             4             0        15393         31936            1           0           2
+2012-11-30T11:26:24Z         303           2          297          0(0.87)      0(84)             4             0        15482         31936            1           0           2
+2012-11-30T11:26:44Z         303           2          297          0(0.82)      0(79)             4             0        15717         31936            1           0           2
+2012-11-30T11:27:04Z         303           2          297          0(0.78)      0(75)             4             0        15831         31936            1           0           2
+2012-11-30T11:27:24Z         303           2          297          0(0.74)      0(71)             4             0        15907         31936            1           0           2
+2012-11-30T11:27:44Z         303           2          297          0(0.71)      0(68)             4             0        16135         31936            1           0           2
+2012-11-30T11:28:04Z         303           2          297          0(0.68)      0(65)             4             0        16224         31936            1           0           2
+2012-11-30T11:28:24Z         303           2          297          0(0.65)      0(62)             4             0        16324         31936            1           0           2
+2012-11-30T11:28:44Z         303           2          297          0(0.62)      0(59)             4             0        16552         31936            1           0           2
+2012-11-30T11:29:04Z         303           2          297          0(0.59)      0(57)             4             0        16676         31936            1           0           2
+2012-11-30T11:29:24Z         303           2          297          0(0.57)      0(55)             4             0        16782         31936            1           0           2
+2012-11-30T11:29:44Z         303           2          297          0(0.55)      0(53)             4             0        17000         31936            1           0           2
+2012-11-30T11:30:04Z         303           2          297          0(0.53)      0(51)             4             0        17106         31936            1           0           2
+2012-11-30T11:30:24Z         303           2          297          0(0.51)      0(49)             4             0        17150         31936            1           0           2
+2012-11-30T11:30:44Z         303           2          297           0(0.5)      0(47)             4             0        17432         31936            1           0           2
+2012-11-30T11:31:04Z         303           2          297          0(0.48)      0(46)             4             0        17670         31936            1           0           2
+2012-11-30T11:31:24Z         303           2          297          0(0.46)      0(44)             4             0        17800         31936            1           0           2
+2012-11-30T11:31:44Z         303           2          297          0(0.45)      0(43)             4             0        18013         31936            1           0           2
+2012-11-30T11:32:04Z         303           2          297          0(0.44)      0(42)             4             0        18082         31936            1           0           2
+2012-11-30T11:32:24Z         303           2          297          0(0.42)      0(41)             4             0        18194         31936            1           0           2
+2012-11-30T11:32:44Z         303           2          297          0(0.41)      0(39)             4             0        18441         31936            1           0           2
+2012-11-30T11:33:04Z         303           2          297           0(0.4)      0(38)             4             0        18555         31936            1           0           2
+2012-11-30T11:33:24Z         303           2          297          0(0.39)      0(37)             4             0        18607         31936            1           0           2
+2012-11-30T11:33:44Z         303           2          297          0(0.38)      0(36)             4             0        18808         31936            1           0           2
+2012-11-30T11:34:04Z         303           2          297          0(0.37)      0(35)             4             0        18920         31936            1           0           2
+2012-11-30T11:34:24Z         303           2          297          0(0.36)      0(35)             4             0        19044         31936            1           0           2
+2012-11-30T11:34:44Z         303           2          297          0(0.35)      0(34)             4             0        19252         31936            1           0           2
+2012-11-30T11:35:04Z         303           2          297          0(0.35)      0(33)             4             0        19302         31936            1           0           2
+2012-11-30T11:35:24Z         303           2          297          0(0.34)      0(32)             4             0        19409         31936            1           0           2
+2012-11-30T11:35:44Z         303           2          297          0(0.33)      0(31)             4             0        19630         31936            1           0           2
+2012-11-30T11:36:04Z         303           2          297          0(0.32)      0(31)             4             0        19960         31936            1           0           2
+2012-11-30T11:36:24Z         303           2          297          0(0.32)      0(30)             4             0        20054         31936            1           0           2
+2012-11-30T11:36:44Z         303           2          297          0(0.31)      0(29)             4             0        20299         31936            1           0           2
+2012-11-30T11:37:04Z         303           2          297           0(0.3)      0(29)             4             0        20407         31936            1           0           2
+2012-11-30T11:37:24Z         303           2          297           0(0.3)      0(28)             4             0        20520         31936            1           0           2
+2012-11-30T11:37:44Z         303           2          297          0(0.29)      0(28)             4             0        20755         31936            1           0           2
+2012-11-30T11:38:04Z         303           2          297          0(0.29)      0(27)             4             0        20823         31936            1           0           2
+2012-11-30T11:38:24Z         303           2          297          0(0.28)      0(27)             4             0        20926         31936            1           0           2
+2012-11-30T11:38:44Z         303           2          297          0(0.28)      0(26)             4             0        21158         31936            1           0           2
+2012-11-30T11:39:04Z         303           2          297          0(0.27)      0(26)             4             0        21259         31936            1           0           2
+2012-11-30T11:39:24Z         303           2          297          0(0.27)      0(25)             4             0        21331         31936            1           0           2
+2012-11-30T11:39:44Z         303           2          297          0(0.26)      0(25)             4             0        21555         31936            1           0           2
+2012-11-30T11:40:04Z         303           2          297          0(0.26)      0(24)             4             0        21683         31936            1           0           2
+2012-11-30T11:40:24Z         303           2          297          0(0.25)      0(24)             4             0        21772         31936            1           0           2
+2012-11-30T11:40:44Z         303           2          297          0(0.25)      0(23)             4             0        22021         31936            1           0           2
+20121130114051 CRAWL ENDING - Finished
+2012-11-30T11:40:52Z         303           0          297          0(0.25)      0(23)             6             0        22848         31936            �           0           0
+20121130114052 CRAWL ENDED - Finished
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/logs/runtime-errors.log?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:da39a3ee5e6b4b0d3255bfef95601890afd80709
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:5e4ca57f-16d7-4d38-b229-cbdc3b834c11>
+Content-Length: 0
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: metadata://netarkivet.dk/crawl/logs/uri-errors.log?heritrixVersion=1.14.4&harvestid=1&jobid=1
+WARC-Date: 2012-11-30T11:50:48Z
+WARC-Block-Digest: sha1:4364d82df67ed6d4be7c93cd4d6f7d2849492c85
+WARC-Concurrent-To: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Warcinfo-ID: urn:uuid:a1d642da-b00b-471b-8313-990b9e80d921
+WARC-Record-ID: <urn:uuid:9be1db9a-e5a0-4f7d-bfc2-6a87a930afc2>
+Content-Type: text/plain
+Content-Length: 837
+
+2012-11-30T11:22:08.275Z http://netarkivet.dk/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.3.1 "Unsupported scheme: input" input:checkbox.wpcf7-acceptance
+2012-11-30T11:22:09.422Z http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/jquery.lightbox.min.js?ver=1.3.4.1 "Unsupported scheme: javascript" javascript://
+2012-11-30T11:22:09.423Z http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/jquery.lightbox.min.js?ver=1.3.4.1 "Unsupported scheme: javascript" javascript://
+2012-11-30T11:22:09.423Z http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/jquery.lightbox.min.js?ver=1.3.4.1 "Unsupported scheme: javascript" javascript://
+2012-11-30T11:22:09.423Z http://netarkivet.dk/wp-content/plugins/wp-jquery-lightbox/jquery.lightbox.min.js?ver=1.3.4.1 "Unsupported scheme: javascript" javascript://
+
+

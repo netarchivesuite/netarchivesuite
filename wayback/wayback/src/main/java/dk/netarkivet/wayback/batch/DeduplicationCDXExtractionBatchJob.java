@@ -26,6 +26,7 @@ package dk.netarkivet.wayback.batch;
 
 import java.io.OutputStream;
 import java.util.regex.Pattern;
+
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
@@ -66,21 +67,27 @@ public class DeduplicationCDXExtractionBatchJob extends ArchiveBatchJob {
     }
 
     /**
-     * If the ARCRecord is a crawl-log entry then any duplicate entries in the
+     * If the ArchiveRecord is a crawl-log entry then any duplicate entries in the
      * crawl log are converted to CDX entries and written to the output.
      * Otherwise this method returns without doing anything.
-     * @param record The ARCRecord to be processed
+     * If the ArchiveRecord is a WarcRecord, and the record is the warcinfo, the
+     * record is skipped.
+     * @param record The ArchiveRecord to be processed
      * @param os the stream to which output is written
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
+        if (record.bIsWarc 
+                && record.getHeader().getHeaderStringValue("warc-type").equalsIgnoreCase("warcinfo")) {
+            // Skip the warc-info record
+            return;
+        }
         if (crawlLogUrlPattern
                 .matcher(record.getHeader().getUrl()).matches()) {
             adapter.adaptStream(record.getInputStream(), os);
         } else {
-           return;
+            return;
         }
-
     }
 
     /**

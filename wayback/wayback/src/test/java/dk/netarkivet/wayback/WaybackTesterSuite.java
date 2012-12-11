@@ -65,7 +65,7 @@ public class WaybackTesterSuite {
         suite.addTestSuite(NetarchiveResourceStoreTester.class);
         suite.addTestSuite(UrlCanonicalizerFactoryTester.class);
         suite.addTestSuite(DeduplicateToCDXAdapterTester.class);
-        suite.addTestSuite(ExtractDeduplicateCDXBatchJobTester.class);
+        suite.addTestSuite(DeduplicationCDXExtractionBatchJobTester.class);
         suite.addTestSuite(DeduplicateToCDXApplicationTester.class);
         suite.addTestSuite(HibernateUtilTester.class);
         suite.addTestSuite(WaybackIndexerTester.class);

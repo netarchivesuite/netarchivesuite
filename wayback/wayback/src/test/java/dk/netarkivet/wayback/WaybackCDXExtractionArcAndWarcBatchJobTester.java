@@ -67,8 +67,9 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester extends TestCase {
         OutputStream os = new ByteArrayOutputStream();
         blaf.run(job,os);
         os.flush();
-        System.out.println(os);
+        //System.out.println(os);
         assertFalse("expect a non-empty output", os.toString() == null || os.toString().length()==0);
+        assertTrue("Should be no exceptions", job.getExceptions().isEmpty());
     }
     
     public void testWARCProcess() throws IOException {
@@ -76,7 +77,8 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester extends TestCase {
         OutputStream os = new ByteArrayOutputStream();
         blafWarc.run(job,os);
         os.flush();
-        System.out.println(os);
+        //System.out.println(os);
         assertFalse("expect a non-empty output", os.toString() == null || os.toString().length()==0);
+        assertTrue("Should be no exceptions", job.getExceptions().isEmpty());
     }
 }
