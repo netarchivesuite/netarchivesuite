@@ -102,8 +102,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
      * 
      * @param payloadToInfoRecord the given payload for this record.
      */
-    public void insertInfoRecord(ANVLRecord payloadToInfoRecord){
-        
+    public void insertInfoRecord(ANVLRecord payloadToInfoRecord){ 
         if (warcInfoUID != null) {
             throw new IllegalState("An WarcInfo record has already been inserted");
         }
@@ -159,8 +158,10 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             
             namedFields.addLabelValue(
                     WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
-            namedFields.addLabelValue("WARC-Concurrent-To", warcInfoUID.toString());
-            namedFields.addLabelValue("WARC-Warcinfo-ID", warcInfoUID.toString());
+            namedFields.addLabelValue("WARC-Concurrent-To", 
+                    generateEncapsulatedRecordID(warcInfoUID));
+            namedFields.addLabelValue("WARC-Warcinfo-ID", 
+                    generateEncapsulatedRecordID(warcInfoUID));
             
             writer.writeMetadataRecord(URL, create14DigitDate,
             		mimetype, recordId, namedFields, in,
@@ -174,7 +175,17 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         }
         return true;
     }
-
+    
+    /** 
+     * Generate encapsulated recordID.
+     * @param recordID A given recordID
+     * @return An encapsulated recordID.
+     */
+    private String generateEncapsulatedRecordID(URI recordID) {
+        return "<" + recordID + ">";
+    }
+    
+    
     @Override
     public void write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, byte[] payload)
@@ -188,8 +199,10 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         ANVLRecord namedFields = new ANVLRecord(3);
         namedFields.addLabelValue(
         WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
-        namedFields.addLabelValue("WARC-Concurrent-To", warcInfoUID.toString());
-        namedFields.addLabelValue("WARC-Warcinfo-ID", warcInfoUID.toString());
+        namedFields.addLabelValue("WARC-Concurrent-To", 
+                generateEncapsulatedRecordID(warcInfoUID));
+        namedFields.addLabelValue("WARC-Warcinfo-ID", 
+                generateEncapsulatedRecordID(warcInfoUID));
         URI recordId;
         try {
             recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
