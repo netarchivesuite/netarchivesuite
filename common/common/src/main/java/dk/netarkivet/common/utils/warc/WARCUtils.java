@@ -312,7 +312,22 @@ public class WARCUtils {
      * @return the type of WARCRecord as a String.
      */
     public static String getRecordType(WARCRecord record) {
+        ArgumentNotValid.checkNotNull(record, "record");
         ArchiveRecordHeader header = record.getHeader();
         return (String) header.getHeaderValue(WARCConstants.HEADER_KEY_TYPE);
+    }
+    /** 
+     * Check if the given filename represents a WARC file.
+     * @param filename A given filename
+     * @return true, if the filename ends with .warc or .warc.gz
+     */
+    public static boolean isWarc(String filename) {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
+        String lowercaseFilename = filename.toLowerCase();
+        if (lowercaseFilename.endsWith(".warc") 
+                || lowercaseFilename.endsWith(".warc.gz")) {
+            return true;
+        }       
+        return false;
     }
 }

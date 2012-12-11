@@ -91,7 +91,7 @@ public class DeduplicationCDXExtractionBatchJobTester extends TestCase {
         job.finish(os);
         Exception[] exceptions = job.getExceptionArray();
         assertTrue(exceptions.length == 1);
-        System.out.println("exception " + exceptions[0]);   
+        //System.out.println("exception " + exceptions[0]);   
     }
     public void testJobRealTwo() throws IOException {
         DeduplicationCDXExtractionBatchJob job2 = new DeduplicationCDXExtractionBatchJob();
@@ -104,7 +104,7 @@ public class DeduplicationCDXExtractionBatchJobTester extends TestCase {
         //os.writeTo(System.out);
         Exception[] exceptions = job2.getExceptionArray();
         assertTrue(exceptions.length == 1);
-        System.out.println("exception " + exceptions[0]);   
+        //System.out.println("exception " + exceptions[0]);   
     }
     
     public void testJobRealWarc() throws IOException {
