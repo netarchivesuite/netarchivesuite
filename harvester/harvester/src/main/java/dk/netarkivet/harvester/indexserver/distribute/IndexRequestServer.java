@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,8 +40,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.io.IOUtils;
@@ -348,7 +345,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                      + " jobs [" + StringUtils.conjoin(",", jobIDs) + "]");
             FileBasedCache<Set<Long>> handler = handlers.get(type);
             
-            // FIXME Here we need to make sure that we don't accidentally process more than
+            // Here we need to make sure that we don't accidentally process more than
             // one message at the time before the whole process is over
             List<Long> sortedList = new ArrayList<Long>(jobIDs);
             String allIDsString = StringUtils.conjoin("-", sortedList);
@@ -370,7 +367,13 @@ public final class IndexRequestServer extends HarvesterMessageHandler
 
                     // Make sure that the index of the data available is generated
                     Set<Long> theFoundIDs = handler.cache(foundIDs);
-
+                    // TheFoundIDS should be identical to foundIDs
+                    // Lets make sure of that 
+                    Set<Long> diffSet = new HashSet<Long>(foundIDs);
+                    diffSet.removeAll(theFoundIDs);
+                    
+                    
+                    
                     // Make a copy of the index created, and give it the name of
                     // the index cache file wanted.
                     File cacheFileWanted = handler.getCacheFile(jobIDs);
@@ -436,12 +439,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
             }
         }
     }
-    
-    
-    
-    
-    
-    
+  
     /**
      * Package the result files with the message reply.
      * @param irMsg the message being answered

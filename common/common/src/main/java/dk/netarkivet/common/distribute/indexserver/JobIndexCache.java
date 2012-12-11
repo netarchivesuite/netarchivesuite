@@ -41,11 +41,10 @@ public interface JobIndexCache {
     Index<Set<Long>> getIndex(Set<Long> jobIDs);
 
     /**
-     * Request an index from the indexserver. Prepare the indx but don't 
+     * Request an index from the indexserver. Prepare the index but don't 
      * give it to me.
-     * @param jobSet
-     * @param harvestId
+     * @param jobSet Set of job IDs to generate index for.
+     * @param harvestId Harvestdefinition associated with this set of jobs
      */
     void requestIndex(Set<Long> jobSet, Long harvestId);
-
 }

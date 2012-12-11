@@ -53,6 +53,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
@@ -474,7 +475,7 @@ public class HarvestController {
         // Get list of jobs, which should be used for duplicate reduction
         // and retrieve a luceneIndex from the IndexServer
         // based on the crawl.logs from these jobs and their CDX'es.
-        HashSet<Long> jobIDsForDuplicateReduction = new HashSet<Long>(
+        Set<Long> jobIDsForDuplicateReduction = new HashSet<Long>(
                 parseJobIDsForDuplicateReduction(metadataEntries));
 
         // The client for requesting job index.
@@ -484,6 +485,13 @@ public class HarvestController {
         // Request the index and return the index file.
         Index<Set<Long>> jobIndex = jobIndexCache.getIndex(
                 jobIDsForDuplicateReduction);
+        // Check which jobs didn't become part of the index.
+        Set<Long> diffSet = new HashSet<Long>(jobIDsForDuplicateReduction);
+        diffSet.removeAll(jobIndex.getIndexSet());
+        log.debug("Received deduplication index containing " + jobIndex.getIndexSet().size()
+                + " jobs. " + ((diffSet.size() > 0)? 
+                        "Missing jobs: " + StringUtils.conjoin(",", diffSet) : ""));
+        
         return jobIndex.getIndexFile();
     }
     

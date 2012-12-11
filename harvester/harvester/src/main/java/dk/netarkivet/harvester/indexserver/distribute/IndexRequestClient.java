@@ -181,7 +181,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
     protected Set<Long> cacheData(Set<Long> jobSet) throws IOFailure, 
             IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobSet, "Set<Long> id");
-
+        
         log.info("Requesting an index of type '" + this.requestType
                  + "' for the jobs [" + StringUtils.conjoin(",", jobSet)
                  + "]");
@@ -206,7 +206,9 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
 
         Set<Long> foundJobs = reply.getFoundJobs();
         // Only if all jobs asked for were found will the result contain files.
-        if (jobSet.equals(foundJobs)) {
+        Set<Long> diffSet = new HashSet<Long>(jobSet);
+        diffSet.removeAll(foundJobs);
+        if (diffSet.size() == 0) {
             log.debug("Successfully received an index of type '"
                       + this.requestType
                      + "' for the jobs [" + StringUtils.conjoin(",", jobSet)
@@ -222,6 +224,9 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                 log.warn("IOFailure during unzipping of index", e);
                 return new HashSet<Long>();
             }
+        } else {
+            log.debug("No index received. The following jobs were not found: "
+                    + StringUtils.conjoin(",", diffSet));
         }
 
         //Return the set of found jobs
