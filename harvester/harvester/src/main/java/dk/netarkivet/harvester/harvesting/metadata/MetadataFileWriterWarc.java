@@ -46,6 +46,7 @@ import org.archive.util.anvl.ANVLRecord;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.ChecksumCalculator;
+import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.common.utils.warc.WARCUtils;
 
@@ -162,6 +163,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
                     generateEncapsulatedRecordID(warcInfoUID));
             namedFields.addLabelValue("WARC-Warcinfo-ID", 
                     generateEncapsulatedRecordID(warcInfoUID));
+            namedFields.addLabelValue("WARC-IP-Address", SystemUtils.getLocalIP());
             
             writer.writeMetadataRecord(URL, create14DigitDate,
             		mimetype, recordId, namedFields, in,
@@ -203,6 +205,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
                 generateEncapsulatedRecordID(warcInfoUID));
         namedFields.addLabelValue("WARC-Warcinfo-ID", 
                 generateEncapsulatedRecordID(warcInfoUID));
+        namedFields.addLabelValue("WARC-IP-Address", SystemUtils.getLocalIP());
         URI recordId;
         try {
             recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
