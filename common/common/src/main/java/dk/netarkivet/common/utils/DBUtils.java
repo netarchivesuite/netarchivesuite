@@ -269,6 +269,54 @@ public final class DBUtils {
         return s;
     }
 
+    /**
+     * Prepare a statement for iteration given a query string, fetch size
+     * and some args.
+     *
+     * NB: the provided connection is not closed.
+     *
+     * @param c a Database connection
+     * @param fetchSize hint to JDBC driver on number of results to cache
+     * @param query a query string  (must not be null or empty)
+     * @param args some args to insert into this query string (must not be null)
+     * @return a prepared statement
+     * @throws SQLException If unable to prepare a statement
+     * @throws ArgumentNotValid If unable to handle type of one the args, or
+     * the arguments are either null or an empty String.
+     */
+    public static PreparedStatement prepareStatement(Connection c, int fetchSize, String query,
+            Object... args) throws SQLException {
+        ArgumentNotValid.checkNotNull(c, "Connection c");
+        ArgumentNotValid.checkPositive(fetchSize, "int fetchSize");
+        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
+        ArgumentNotValid.checkNotNull(args, "Object... args");
+        c.setAutoCommit(false);
+        PreparedStatement s = c.prepareStatement(query, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+        s.setFetchSize(fetchSize);
+        int i = 1;
+        for (Object arg : args) {
+            if (arg instanceof String) {
+                s.setString(i, (String) arg);
+            } else if (arg instanceof Integer) {
+                s.setInt(i, (Integer) arg);
+            } else if (arg instanceof Long) {
+                s.setLong(i, (Long) arg);
+            } else if (arg instanceof Boolean) {
+                s.setBoolean(i, (Boolean) arg);
+            } else if (arg instanceof Date) {
+                s.setTimestamp(i, new Timestamp(((Date) arg).getTime()));
+            } else {
+                throw new ArgumentNotValid("Cannot handle type '"
+                        + arg.getClass().getName()
+                        + "'. We can only handle string, "
+                        + "int, long, date or boolean args for query: "
+                        + query);
+            }
+            i++;
+        }
+        return s;
+    }
+
     /** Execute an SQL statement and return the list of strings
      * in its result set. This uses specifically the harvester database.
      *
@@ -405,9 +453,9 @@ public final class DBUtils {
         ArgumentNotValid.checkNotNull(args, "Object... args");
         PreparedStatement s = null;
         try {
-            s = prepareStatement(connection, query, args);
+            s = prepareStatement(connection, 8192, query, args);
             ResultSet result = s.executeQuery();
-            Iterator<Long> results = new ResultSetIterator<Long>(result) {
+            Iterator<Long> results = new ResultSetIterator<Long>(s, result) {
                 @Override
                 public Long filter(ResultSet result) {
                     try {

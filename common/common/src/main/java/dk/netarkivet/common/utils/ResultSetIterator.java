@@ -27,11 +27,12 @@ package dk.netarkivet.common.utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Similar to a FilterIterator, but takes a java.sql.ResultSet (which is neither
@@ -41,7 +42,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 public abstract class ResultSetIterator<T> implements Iterator<T> {
 
-    /** The current ResultSet that this Iterator operates upon. */
+	/** The current Statement that this Result originates from. */
+	private final Statement stm;
+
+	/** The current ResultSet that this Iterator operates upon. */
     private final ResultSet res;
 
     /** Temporary storage to hold the object that the Iterator returns. */
@@ -53,8 +57,10 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
     /** Constructor for this class.
      * @param res a ResultSet for this Iterator to operate on.
      */
-    public ResultSetIterator(ResultSet res) {
+    public ResultSetIterator(Statement stm, ResultSet res) {
+        ArgumentNotValid.checkNotNull(stm, "Statement");
         ArgumentNotValid.checkNotNull(res, "ResultSet");
+        this.stm = stm;
         this.res = res;
     }
 
@@ -73,6 +79,7 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
                 } else {
                     isClosed = true;
                     res.close();
+                    stm.close();
                 }
             } catch (SQLException e) {
                 throw new IOFailure("SQL error getting next element from "

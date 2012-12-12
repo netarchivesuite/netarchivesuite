@@ -35,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
@@ -747,12 +748,14 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     public void updateChecksumStatus() {
         log.info("UpdateChecksumStatus operation commencing");
         Connection con = ArchiveDBConnection.get();
+    	boolean autoCommit = true;
         try {
+        	autoCommit = con.getAutoCommit();
         	// Set checksum_status to 'OK' where there is the same
         	// checksum across all replicas.
         	DBUtils.executeSQL(con, updateChecksumStatusSql);
 
-            // Get all the fileids that need processing.
+        	// Get all the fileids that need processing.
             // Previously: "SELECT file_id FROM file"
             Iterator<Long> fileIdsIterator = DBUtils.selectLongIterator(con,
             		selectForFileChecksumVotingSql);
@@ -761,7 +764,15 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 long fileId = fileIdsIterator.next();
                 ReplicaCacheHelpers.fileChecksumVote(fileId, con);
             }
-        } finally {
+        } catch (SQLException e) {
+            throw new IOFailure("Error getting auto commit.\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+		} finally {
+        	try {
+				con.setAutoCommit(autoCommit);
+			} catch (SQLException e) {
+		        log.error("Could not change auto commit back to default!");
+			}
             ArchiveDBConnection.release(con);
         }
         log.info("UpdateChecksumStatus operation completed!");
