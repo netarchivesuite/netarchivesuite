@@ -35,7 +35,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
@@ -690,37 +689,37 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     /** SQL used to update the checksum status of straightforward cases.
      *  See complete description for method below. */
     public static final String updateChecksumStatusSql = ""
-    		+ "UPDATE replicafileinfo SET checksum_status = " + ChecksumStatus.OK.ordinal() + " "
-    		+ "WHERE checksum_status != " + ChecksumStatus.OK.ordinal() + " AND file_id IN ( "
-    		+ "  SELECT file_id "
-    		+ "  FROM ( "
-    		+ "    SELECT file_id, COUNT(file_id) AS checksums, SUM(replicas) replicas "
-    		+ "    FROM ( "
-    		+ "      SELECT file_id, COUNT(checksum) AS replicas, checksum "
-    		+ "      FROM replicafileinfo "
-    		+ "      WHERE filelist_status != " + FileListStatus.MISSING.ordinal() + " AND checksum IS NOT NULL "
-    		+ "      GROUP BY file_id, checksum "
-    		+ "    ) AS ss1 "
-    		+ "    GROUP BY file_id "
-    		+ "  ) AS ss2 "
-    		+ "  WHERE checksums = 1 "
-    		+ ")";
+            + "UPDATE replicafileinfo SET checksum_status = " + ChecksumStatus.OK.ordinal() + " "
+            + "WHERE checksum_status != " + ChecksumStatus.OK.ordinal() + " AND file_id IN ( "
+            + "  SELECT file_id "
+            + "  FROM ( "
+            + "    SELECT file_id, COUNT(file_id) AS checksums, SUM(replicas) replicas "
+            + "    FROM ( "
+            + "      SELECT file_id, COUNT(checksum) AS replicas, checksum "
+            + "      FROM replicafileinfo "
+            + "      WHERE filelist_status != " + FileListStatus.MISSING.ordinal() + " AND checksum IS NOT NULL "
+            + "      GROUP BY file_id, checksum "
+            + "    ) AS ss1 "
+            + "    GROUP BY file_id "
+            + "  ) AS ss2 "
+            + "  WHERE checksums = 1 "
+            + ")";
 
     /** SQL used to select those files whose check status has to be voted on.
      *  See complete description for method below. */
     public static final String selectForFileChecksumVotingSql = ""
-    		+ "SELECT file_id "
-    		+ "FROM ( "
-    		+ "  SELECT file_id, COUNT(file_id) AS checksums, SUM(replicas) replicas "
-    		+ "  FROM ( "
-    		+ "    SELECT file_id, COUNT(checksum) AS replicas, checksum "
-    		+ "    FROM replicafileinfo "
-    		+ "    WHERE filelist_status != " + FileListStatus.MISSING.ordinal() + " AND checksum IS NOT NULL "
-    		+ "    GROUP BY file_id, checksum "
-    		+ "  ) AS ss1 "
-    		+ "  GROUP BY file_id "
-    		+ ") AS ss2 "
-    		+ "WHERE checksums > 1 ";
+            + "SELECT file_id "
+            + "FROM ( "
+            + "  SELECT file_id, COUNT(file_id) AS checksums, SUM(replicas) replicas "
+            + "  FROM ( "
+            + "    SELECT file_id, COUNT(checksum) AS replicas, checksum "
+            + "    FROM replicafileinfo "
+            + "    WHERE filelist_status != " + FileListStatus.MISSING.ordinal() + " AND checksum IS NOT NULL "
+            + "    GROUP BY file_id, checksum "
+            + "  ) AS ss1 "
+            + "  GROUP BY file_id "
+            + ") AS ss2 "
+            + "WHERE checksums > 1 ";
 
     /**
      * This method is used to update the status for the checksums for all
@@ -748,17 +747,17 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     public void updateChecksumStatus() {
         log.info("UpdateChecksumStatus operation commencing");
         Connection con = ArchiveDBConnection.get();
-    	boolean autoCommit = true;
+        boolean autoCommit = true;
         try {
-        	autoCommit = con.getAutoCommit();
-        	// Set checksum_status to 'OK' where there is the same
-        	// checksum across all replicas.
-        	DBUtils.executeSQL(con, updateChecksumStatusSql);
+            autoCommit = con.getAutoCommit();
+            // Set checksum_status to 'OK' where there is the same
+            // checksum across all replicas.
+            DBUtils.executeSQL(con, updateChecksumStatusSql);
 
         	// Get all the fileids that need processing.
             // Previously: "SELECT file_id FROM file"
             Iterator<Long> fileIdsIterator = DBUtils.selectLongIterator(con,
-            		selectForFileChecksumVotingSql);
+                    selectForFileChecksumVotingSql);
             // For each fileid
             while (fileIdsIterator.hasNext()) {
                 long fileId = fileIdsIterator.next();
@@ -767,12 +766,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         } catch (SQLException e) {
             throw new IOFailure("Error getting auto commit.\n"
             		+ ExceptionUtils.getSQLExceptionCause(e), e);
-		} finally {
-        	try {
-				con.setAutoCommit(autoCommit);
-			} catch (SQLException e) {
-		        log.error("Could not change auto commit back to default!");
-			}
+        } finally {
+            try {
+                con.setAutoCommit(autoCommit);
+            } catch (SQLException e) {
+                log.error("Could not change auto commit back to default!");
+            }
             ArchiveDBConnection.release(con);
         }
         log.info("UpdateChecksumStatus operation completed!");

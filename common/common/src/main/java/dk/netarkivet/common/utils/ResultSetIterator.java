@@ -42,8 +42,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 public abstract class ResultSetIterator<T> implements Iterator<T> {
 
-	/** The current Statement that this Result originates from. */
-	private final Statement stm;
+    /** The current Statement that this Result originates from. */
+    private final Statement stm;
 
 	/** The current ResultSet that this Iterator operates upon. */
     private final ResultSet res;
