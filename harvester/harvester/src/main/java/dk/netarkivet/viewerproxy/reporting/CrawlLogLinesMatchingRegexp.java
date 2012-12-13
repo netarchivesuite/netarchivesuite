@@ -35,9 +35,11 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 
 /**
@@ -52,7 +54,8 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
     
     /** Metadata URL for crawl logs. */
     private static final String SETUP_URL_FORMAT
-            = "metadata://netarkivet.dk/crawl/logs/crawl.log";
+            = String.format("metadata://%s/crawl/logs/crawl.log", 
+                    Settings.get(CommonSettings.ORGANIZATION));
 
     /** The regular expression to match in the crawl.log line. */
     private final String regexp;

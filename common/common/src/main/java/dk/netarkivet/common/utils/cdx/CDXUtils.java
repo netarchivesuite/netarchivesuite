@@ -121,7 +121,8 @@ public class CDXUtils {
             log.warn("Found no related arcfiles to process in the archive dir '" 
                     + archiveFileDirectory.getAbsolutePath() + "'.");
         } else {
-            log.debug("Found '" + filesToProcess + "' related arcfiles to process in the archive dir '" 
+            log.debug("Found " + filesToProcess.length 
+                    + " related arcfiles to process in the archive dir '" 
                     + archiveFileDirectory.getAbsolutePath() + "'.");
         } 
         for (File arcfile : filesToProcess) {

@@ -33,7 +33,6 @@ public class CommonSettings {
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/common/settings.xml";
-
     /*
      * The static initialiser is called when the class is loaded.
      * It will add default values for all settings defined in this class, by
@@ -572,4 +571,12 @@ public class CommonSettings {
     public static String FTP_DATATIMEOUT_SETTINGS
             = "settings.common.remoteFile.datatimeout";
 
+    /**
+     * <b>settings.common.organization</b>: <br>
+     * The name of the organization responsible.
+     * The default value is netarkivet.dk 
+     */
+    public static String ORGANIZATION 
+            = "settings.common.organization"; 
+    
 }

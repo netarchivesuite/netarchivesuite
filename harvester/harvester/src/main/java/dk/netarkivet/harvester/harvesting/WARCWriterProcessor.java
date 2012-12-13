@@ -720,7 +720,7 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
             logger.log(Level.WARNING,"obtaining warcinfo", e);
         } 
         
-        //TODO add version of netarchivesuite 
+        record.addLabel("#added by NetarchiveSuite " + dk.netarkivet.common.Constants.getVersionString());
         
         // add fields from harvesInfo.xml version 0.4
         /*
@@ -736,8 +736,10 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
           <origHarvestDefinitionName>netarkivet</origHarvestDefinitionName>
           <scheduleName>Once_a_week</scheduleName>
           <harvestFilenamePrefix>1-1</harvestFilenamePrefix>
+          <jobSubmitDate>Some date</jobSubmitDate>
            </harvestInfo>
         */
+        
         record.addLabelValue("harvestInfo.version", pjd.getVersion());
         record.addLabelValue("harvestInfo.jobId", "" + pjd.getJobID());
         record.addLabelValue("harvestInfo.priority", pjd.getJobPriority().name());
@@ -754,6 +756,7 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
                 pjd.getharvestName());
         record.addLabelValue("harvestInfo.scheduleName", pjd.getScheduleName());
         record.addLabelValue("harvestInfo.harvestFilenamePrefix", pjd.getHarvestFilenamePrefix());
+        record.addLabelValue("harvestInfo.jobSubmitDate", pjd.getJobSubmitDate());
        
         // really ugly to return as string, when it may just be merged with 
         // a couple other fields at write time, but changing would require 

@@ -25,6 +25,7 @@
 package dk.netarkivet.harvester.harvesting.distribute;
 
 import java.io.File;
+import java.util.Date;
 
 import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -90,10 +91,13 @@ public class PersistentJobDataTester extends TestCase {
         PersistentJobData pjd = new PersistentJobData(crawldir);
         Job testJob = TestInfo.getJob();
         testJob.setJobID(42L);
+        testJob.setSubmittedDate(new Date());
         pjd.write(testJob, new HarvestDefinitionInfo("test", "test", "test"));
 
         PersistentJobData pjdNew = new PersistentJobData(crawldir);
 
+        System.out.println(pjdNew.getJobSubmitDate());
+        
         assertEquals("retrieved jobID is not the same as original jobID",
                 testJob.getJobID(), pjdNew.getJobID());
         assertEquals("retrieved jobpriority is not the same as original job priority",

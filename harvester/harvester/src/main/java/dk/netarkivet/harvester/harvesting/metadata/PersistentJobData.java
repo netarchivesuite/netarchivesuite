@@ -35,6 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SimpleXml;
+import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.harvesting.JobInfo;
@@ -154,6 +155,9 @@ public class PersistentJobData implements JobInfo {
     private static final String HARVEST_FILENAME_PREFIX_KEY =
             ROOT_ELEMENT + ".harvestFilenamePrefix";
     
+    private static final String JOB_SUBMIT_DATE_KEY =
+            ROOT_ELEMENT + ".jobSubmitDate";
+    
     /** Key in harvestinfo file for the file version. */
     private static final String HARVESTVERSION_KEY = "harvestInfo.version";
     /** Value for current version number. */
@@ -170,7 +174,7 @@ public class PersistentJobData implements JobInfo {
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
         ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
-        HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY};
+        HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
     
     /** String array containing all keys contained in old valid version 
      * 0.3 xml.  */
@@ -298,6 +302,11 @@ public class PersistentJobData implements JobInfo {
         }
         // Store the harvestname prefix selected by the used Naming Strategy.
         sx.add(HARVEST_FILENAME_PREFIX_KEY, harvestJob.getHarvestFilenamePrefix());
+        // store the data in WARC Date format
+        
+        sx.add(JOB_SUBMIT_DATE_KEY, 
+                ArchiveDateConverter.getWarcDateFormat()
+                .format(harvestJob.getSubmittedDate()));
         
         XmlState validationResult = validateHarvestInfo(sx); 
         if (validationResult.getOkState().equals(XmlState.OKSTATE.NOTOK)) {
@@ -590,6 +599,16 @@ public class PersistentJobData implements JobInfo {
     public String getScheduleName() {
         SimpleXml sx = read(); // reads and validates XML
         return sx.getString(HARVEST_SCHED_KEY);
+    }
+
+    /**
+     * Return the submit date of the job in this xml.
+     * @return the submit date of the job in this xml.
+     * @throws IOFailure if no harvestInfo exists or it is invalid.
+     */
+    public String getJobSubmitDate() {
+        SimpleXml sx = read(); // reads and validates XML
+        return sx.getString(JOB_SUBMIT_DATE_KEY);
     }
     
 }

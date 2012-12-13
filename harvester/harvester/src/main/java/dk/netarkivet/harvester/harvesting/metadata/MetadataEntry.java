@@ -37,9 +37,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.AliasInfo;
 
@@ -89,21 +91,14 @@ public class MetadataEntry implements Serializable {
     private static final String METADATA_URL_SUFFIX
         = "?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s";
 
-    /** Metadata URL for aliases. */
-    private static final String ALIAS_METADATA_URL
-            = "metadata://netarkivet.dk/crawl/setup/aliases"
-               + METADATA_URL_SUFFIX;
+    /** Metadata URL template for aliases. */
+    private static final String ALIAS_METADATA_URL_TEMPLATE
+            = "metadata://%s/crawl/setup/aliases" + METADATA_URL_SUFFIX;
 
-
-    /** Common prefix for all deduplication metadata URLs. */
-    private static final String DUPLICATEREDUCTION_METADATA_URL_PREFIX
-        = "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs";
+    /** Common template prefix for all deduplication metadata URLs. */
+    private static final String DUPLICATEREDUCTION_METADATA_URL_PREFIX_TEMPLATE
+        = "metadata://%s/crawl/setup/duplicatereductionjobs";
     
-    /** Metadata URL pattern for duplicate reduction jobs. */
-    private static final String DUPLICATEREDUCTION_METADATA_URL
-            = DUPLICATEREDUCTION_METADATA_URL_PREFIX
-              + METADATA_URL_SUFFIX;
-
    /**
      * Constructor for this class.
      * @param url
@@ -161,9 +156,12 @@ public class MetadataEntry implements Serializable {
         if (nonExpiredAliases.isEmpty()){
             return null;
         }
+        
+        String organization = Settings.get(CommonSettings.ORGANIZATION);
         // construct metadata-URL for AliasMetadataEntry
         String metadataUrl = String.format(
-                ALIAS_METADATA_URL,
+                ALIAS_METADATA_URL_TEMPLATE,
+                organization,
                 origHarvestDefinitionID,
                 harvestNum,
                 jobId);
@@ -176,7 +174,6 @@ public class MetadataEntry implements Serializable {
         return new MetadataEntry(metadataUrl, MIMETYPE_TEXT_PLAIN,
                 sb.toString());
     }
-
 
     /** Generate a MetadataEntry from a list of job ids for duplicate reduction.
      *
@@ -202,9 +199,11 @@ public class MetadataEntry implements Serializable {
         ArgumentNotValid.checkNotNegative(harvestNum, "int harvestNum");
         ArgumentNotValid.checkNotNull(jobId, "Long jobId");
         
+        String organization = Settings.get(CommonSettings.ORGANIZATION);
         // construct a metadata-URL for this MetadataEntry
         String metadataUrl = String.format(
-                DUPLICATEREDUCTION_METADATA_URL,
+                DUPLICATEREDUCTION_METADATA_URL_PREFIX_TEMPLATE 
+                + METADATA_URL_SUFFIX, organization,
                 origHarvestDefinitionID,
                 harvestNum,
                 jobId);
@@ -312,9 +311,16 @@ public class MetadataEntry implements Serializable {
      * otherwise false.
      */
     public boolean isDuplicateReductionMetadataEntry() {
-        return this.getURL().startsWith(DUPLICATEREDUCTION_METADATA_URL_PREFIX);
+        return this.getURL().startsWith(
+                MetadataEntry.getDuplicatereductionMetadataURLPrefix());
     }
     
+    
+    private static String getDuplicatereductionMetadataURLPrefix() {
+        String organization = Settings.get(CommonSettings.ORGANIZATION);
+        return String.format(DUPLICATEREDUCTION_METADATA_URL_PREFIX_TEMPLATE, organization);            
+    }
+
     /**
      * @return a string representation of this object 
      */

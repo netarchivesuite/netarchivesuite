@@ -123,6 +123,9 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         
         try {
             byte[] payloadAsBytes = payloadToInfoRecord.getUTF8Bytes();
+            String blockDigest = ChecksumCalculator.generateSha1(new ByteArrayInputStream(payloadAsBytes));
+            namedFields.addLabelValue("WARC-Block-Digest", "sha1:" + blockDigest);
+            
             writer.writeWarcinfoRecord(datestring, "application/warc-fields", recordId, 
                 namedFields, (InputStream) new ByteArrayInputStream(payloadAsBytes), payloadAsBytes.length);
         } catch (IOException e) {
@@ -192,7 +195,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     public void write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, byte[] payload)
                     throws java.io.IOException {
-        // hostIP?
+        
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat()
                 .format(new Date(fetchBeginTimeStamp));
         ByteArrayInputStream in = new ByteArrayInputStream(payload);

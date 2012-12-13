@@ -61,6 +61,7 @@
     </archive>
 <common>
         <environmentName>DEV</environmentName>
+        <organization>netarkivet.dk</organization>
         <tempDir>./tests/commontempdir</tempDir>
         <remoteFile>
             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>

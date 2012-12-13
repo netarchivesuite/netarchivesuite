@@ -41,6 +41,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.util.anvl.ANVLRecord;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -76,7 +77,7 @@ public class HarvestDocumentation {
     private static final String CDX_URI_SCHEME =
         "metadata";
     private static final String CDX_URI_AUTHORITY_HOST =
-        Constants.ORGANIZATION_NAME;
+        Settings.get(CommonSettings.ORGANIZATION);
     private static final String CDX_URI_PATH =
         "/crawl/index/cdx";
     private static final String CDX_URI_VERSION_PARAMETERS =
@@ -102,6 +103,10 @@ public class HarvestDocumentation {
      *
      * If this method finishes without an exception, it is guaranteed that
      * metadata is ready for upload.
+     * 
+     * TODO Place preharvestmetadata in IngestableFiles-defined area
+     * TODO This method may be a good place to copy deduplicate information from the
+     * crawl log to the cdx file.
      *
      * @param crawlDir The directory the crawl was performed in
      * @param jobID the ID of the job for this harvest
@@ -130,16 +135,11 @@ public class HarvestDocumentation {
                     + "' already exists, so we don't make another one!");
             return;
         }
-
         List<File> filesAddedAndNowDeletable = null;
         
         try {
             MetadataFileWriter mdfw = null;
             mdfw = ingestables.getMetadataWriter();
-            
-            // TODO Place preharvestmetadata in IngestableFiles-defined area
-            //TODO This is a good place to copy deduplicate information from the
-            //crawl log to the cdx file.
             
             if (mdfw instanceof MetadataFileWriterWarc) {
                 // add warc-info record
@@ -152,12 +152,7 @@ public class HarvestDocumentation {
                 infoPayload.addLabelValue("conformsTo", "http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf");
                 
                 PersistentJobData psj = new PersistentJobData(crawlDir);
-                
-                infoPayload.addLabelValue("isPartOf", "harvestname:" + psj.getharvestName() + "/harvestID:" 
-                        + psj.getOrigHarvestDefinitionID()
-                        + "/harvestnum:" + psj.getJobHarvestNum() + "/job-id: " 
-                        + psj.getJobID());
-                infoPayload.addLabelValue("format","WARC File Format 1.0");
+                infoPayload.addLabelValue("isPartOf", "" + psj.getJobID());
                 MetadataFileWriterWarc mfww = (MetadataFileWriterWarc) mdfw; 
                 mfww.insertInfoRecord(infoPayload);
             }
@@ -430,8 +425,13 @@ public class HarvestDocumentation {
         boolean genArcFilesReport = Settings.getBoolean(
                 HarvesterSettings.METADATA_GENERATE_ARCFILES_REPORT);
         if (genArcFilesReport) {
+            log.debug("Creating an arcfiles-report.txt");
             files.add(new MetadataFile(new ArcFilesReportGenerator(crawlDir)
                     .generateReport(), harvestID, jobID, heritrixVersion));
+        } else {
+            log.debug("Creation of the arcfiles-report.txt has been disabled"
+                    + "by the setting '" + HarvesterSettings.METADATA_GENERATE_ARCFILES_REPORT
+                    + "'!");
         }
         
         // Add log files
@@ -480,13 +480,15 @@ public class HarvestDocumentation {
 
         // Write files in order to metadata archive file.
         for (MetadataFile mdf : files) {
-
             File heritrixFile = mdf.getHeritrixFile();
             String heritrixFileName = heritrixFile.getName();
             String mimeType =
                 (heritrixFileName.endsWith(".xml") ? "text/xml" : "text/plain");
             if (mdfw.writeTo(heritrixFile, mdf.getUrl(), mimeType)) {
                 filesAdded.add(heritrixFile);
+            } else {
+                log.warn("The Heritrix file '" + heritrixFile.getAbsolutePath() 
+                        + "' was not included in the metadata archivefile due to some error.");
             }
         }
 

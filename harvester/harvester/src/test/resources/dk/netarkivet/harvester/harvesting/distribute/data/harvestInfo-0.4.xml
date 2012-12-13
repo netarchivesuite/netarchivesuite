@@ -11,4 +11,5 @@
   <origHarvestDefinitionName>netarkivet</origHarvestDefinitionName>
   <scheduleName>Once_a_week</scheduleName>
   <harvestFilenamePrefix>1-2</harvestFilenamePrefix>
+  <jobSubmitDate>2012-12-13T16:49:49Z</jobSubmitDate>
 </harvestInfo>

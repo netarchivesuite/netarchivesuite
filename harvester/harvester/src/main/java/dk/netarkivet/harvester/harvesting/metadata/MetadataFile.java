@@ -26,6 +26,7 @@ package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.File;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
@@ -55,14 +56,13 @@ public class MetadataFile implements Comparable<MetadataFile> {
 
     /**
      * A string format that is used to build metadata URLs. Parameters are, in
-     * order : <ol> <li>the file type @see {@link MetadataType}</li> <li>the
+     * order : <ol> <li>The organization </li> <li>the file type @see {@link MetadataType}</li> <li>the
      * file name</li> <li>the Heritrix version</li> <li>the harvest id</li>
      * <li>the job id</li> </ol>
      */
     private static final String URL_FORMAT =
-            "metadata://netarkivet.dk/crawl/%s/%s"
-            + "?heritrixVersion=%s&harvestid=%s&jobid=%s";
-
+            "metadata://%s/crawl/%s/%s"
+            + "?heritrixVersion=%s&harvestid=%s&jobid=%s";            
     /**
      * A pattern identifying a CDX metadata entry.
      *
@@ -219,7 +219,8 @@ public class MetadataFile implements Comparable<MetadataFile> {
             long jobID,
             String heritrixVersion) {
         return String.format(
-                URL_FORMAT,
+                URL_FORMAT, 
+                Settings.get(CommonSettings.ORGANIZATION),
                 theType.name(),
                 name,
                 heritrixVersion,

@@ -109,11 +109,7 @@ public final class Constants {
      * OutputStream.
      */
     public static final int IO_BUFFER_SIZE = 4096;
-    /**
-     * The organization behind the harvesting. Only used by the
-     * HarvestDocumentation class
-     */
-    public static final String ORGANIZATION_NAME = "netarkivet.dk";
+        
     /** The date format used for NetarchiveSuite dateformatting. */
     private static final String ISO_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss Z";
 
