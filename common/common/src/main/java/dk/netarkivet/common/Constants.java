@@ -88,7 +88,7 @@ public final class Constants {
     /** Patch version number. */
     public static final int PATCHVERSION = 0;
     /** Current status of code. */
-    private static final CodeStatus BUILDSTATUS = CodeStatus.CODEFREEZE;
+    private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
 
     /** Current version of Heritrix used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.4";

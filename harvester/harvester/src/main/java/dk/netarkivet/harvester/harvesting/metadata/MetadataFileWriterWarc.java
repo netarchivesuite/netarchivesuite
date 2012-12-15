@@ -123,8 +123,12 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         
         try {
             byte[] payloadAsBytes = payloadToInfoRecord.getUTF8Bytes();
-            String blockDigest = ChecksumCalculator.generateSha1(new ByteArrayInputStream(payloadAsBytes));
+            // FIX the current code
+            /*
+            String blockDigest = ChecksumCalculator.generateSha1(
+                    new ByteArrayInputStream(payloadToInfoRecord.getUTF8Bytes()));
             namedFields.addLabelValue("WARC-Block-Digest", "sha1:" + blockDigest);
+            */
             
             writer.writeWarcinfoRecord(datestring, "application/warc-fields", recordId, 
                 namedFields, (InputStream) new ByteArrayInputStream(payloadAsBytes), payloadAsBytes.length);
@@ -145,7 +149,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         }
         log.info(fileToArchive + " " + fileToArchive.length());
         
-        String blockDigest = ChecksumCalculator.generateSha1(fileToArchive);
+        //String blockDigest = ChecksumCalculator.generateSha1(fileToArchive);
         
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat()
                 .format(new Date());
@@ -160,15 +164,15 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             in = new FileInputStream(fileToArchive);
             ANVLRecord namedFields = new ANVLRecord(3);
             
-            namedFields.addLabelValue(
-                    WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
+            //namedFields.addLabelValue(
+            //        WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
             namedFields.addLabelValue("WARC-Concurrent-To", 
                     generateEncapsulatedRecordID(warcInfoUID));
             namedFields.addLabelValue("WARC-Warcinfo-ID", 
                     generateEncapsulatedRecordID(warcInfoUID));
             namedFields.addLabelValue("WARC-IP-Address", SystemUtils.getLocalIP());
             
-            writer.writeMetadataRecord(URL, create14DigitDate,
+            writer.writeResourceRecord(URL, create14DigitDate,
             		mimetype, recordId, namedFields, in,
                     fileToArchive.length());
         } catch (FileNotFoundException e) {
@@ -215,7 +219,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         } catch (URISyntaxException e) {
             throw new IllegalState("Epic fail creating URI from UUID!");
         }
-        writer.writeMetadataRecord(uri, create14DigitDate, contentType,
+        writer.writeResourceRecord(uri, create14DigitDate, contentType,
                 recordId, namedFields, in, payload.length);
     }
 

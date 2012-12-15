@@ -397,7 +397,7 @@ public class HarvestDocumentationTester extends TestCase {
         }
 
     }
-
+    
     public void testMoveAwayForeignFiles() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestDocumentation.class,
                                                  "moveAwayForeignFiles",
@@ -457,7 +457,7 @@ public class HarvestDocumentationTester extends TestCase {
     /**
      * This tests, that bug 722 is solved. It should document, that we 1)
      * generate a metadata-arc-file for the harvestjob, if one does not exist 2)
-     * Dont generate metadata-arc file, it already exists but issue a warning
+     * Don't generate metadata-arc file, it already exists but issue a warning
      * instead. 3) [not testable in this class] only upload the
      * metadata-arc-file after all other arc-files have been uploaded.
      *
@@ -698,6 +698,10 @@ public class HarvestDocumentationTester extends TestCase {
         rs.tearDown();
     }
 
+    ////////////////////////////////////////////////////////////////// 
+    // Utility methods
+    /////////////////////////////////////////////////////////////////
+    
     private void checkThatStillExist(File fileThatStillShouldExist) {
         if (!fileThatStillShouldExist.exists()) {
             fail("This file should still exist: "
@@ -712,8 +716,7 @@ public class HarvestDocumentationTester extends TestCase {
                  + fileThatNoLongerShouldExist.getAbsolutePath());
         }
     }
-
-
+    
     private void findAndVerifyMetadata(File metadataArcFile, String url)
             throws IOException {
         ARCReader ar = null;
