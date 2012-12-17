@@ -123,12 +123,10 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         
         try {
             byte[] payloadAsBytes = payloadToInfoRecord.getUTF8Bytes();
-            // FIX the current code
-            /*
-            String blockDigest = ChecksumCalculator.generateSha1(
-                    new ByteArrayInputStream(payloadToInfoRecord.getUTF8Bytes()));
+
+            String blockDigest = ChecksumCalculator.calculateSha1(
+                    new ByteArrayInputStream(payloadAsBytes));
             namedFields.addLabelValue("WARC-Block-Digest", "sha1:" + blockDigest);
-            */
             
             writer.writeWarcinfoRecord(datestring, "application/warc-fields", recordId, 
                 namedFields, (InputStream) new ByteArrayInputStream(payloadAsBytes), payloadAsBytes.length);
@@ -149,7 +147,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         }
         log.info(fileToArchive + " " + fileToArchive.length());
         
-        //String blockDigest = ChecksumCalculator.generateSha1(fileToArchive);
+        String blockDigest = ChecksumCalculator.calculateSha1(fileToArchive);
         
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat()
                 .format(new Date());
@@ -163,9 +161,9 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         try {
             in = new FileInputStream(fileToArchive);
             ANVLRecord namedFields = new ANVLRecord(3);
-            
-            //namedFields.addLabelValue(
-            //        WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
+
+            namedFields.addLabelValue(
+                    WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
             namedFields.addLabelValue("WARC-Concurrent-To", 
                     generateEncapsulatedRecordID(warcInfoUID));
             namedFields.addLabelValue("WARC-Warcinfo-ID", 
@@ -203,7 +201,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat()
                 .format(new Date(fetchBeginTimeStamp));
         ByteArrayInputStream in = new ByteArrayInputStream(payload);
-        String blockDigest = ChecksumCalculator.generateSha1(in);
+        String blockDigest = ChecksumCalculator.calculateSha1(in);
         in = new ByteArrayInputStream(payload); // A re-read is necessary here!
         ANVLRecord namedFields = new ANVLRecord(3);
         namedFields.addLabelValue(

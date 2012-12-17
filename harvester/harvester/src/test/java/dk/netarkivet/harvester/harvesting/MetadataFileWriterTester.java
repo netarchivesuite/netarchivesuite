@@ -25,9 +25,12 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.SecureRandom;
 
 import org.archive.util.anvl.ANVLRecord;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
@@ -52,15 +55,57 @@ public class MetadataFileWriterTester extends TestCase {
         rs.tearDown();
     }
     
-    public void testMetadataArcwriter() {
+    public void testMetadataFileWriterArc() {
+    	File metafile = new File("metadata.arc");
+    	MetadataFileWriter mdfw = MetadataFileWriterArc.createWriter(metafile);
+
+    	String uri = "http://www.netarkivet.dk/";
+        long ctm = System.currentTimeMillis();
+
+        SecureRandom random = new SecureRandom();
+        byte[] payload = new byte[8192];
+        random.nextBytes(payload);
+
+        try {
+			mdfw.write(uri, "application/binary", "127.0.0.1", ctm, payload);
+			mdfw.close();
+		}
+        catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
+
+        metafile.deleteOnExit();
+
         File metadataArcFile = new File(TestInfo.WORKING_DIR, "42-metadata-1.arc");
         MetadataFileWriter mfwa = MetadataFileWriterArc.createWriter(metadataArcFile);
         for (File f : logsDir.listFiles()) {
             mfwa.writeFileTo(f, "metadata://netarkivet.dk/crawl/logs/" + f.getName(), "text/plain");
         }
     }
-    
-    public void testMetadataWarcwriter() {
+
+    public void testMetadataFileWriterWarc() {
+    	File metafile = new File("metadata.warc");
+    	MetadataFileWriter mdfw = MetadataFileWriterWarc.createWriter(metafile);
+
+    	String uri = "http://www.netarkivet.dk/";
+        long ctm = System.currentTimeMillis();
+
+        SecureRandom random = new SecureRandom();
+        byte[] payload = new byte[8192];
+        random.nextBytes(payload);
+
+        try {
+			mdfw.write(uri, "application/binary", "127.0.0.1", ctm, payload);
+			mdfw.close();
+		}
+        catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
+
+        metafile.deleteOnExit();
+
         File metadataArcFile = new File(TestInfo.WORKING_DIR, "42-metadata-1.warc");
         MetadataFileWriter mfwa = MetadataFileWriterWarc.createWriter(metadataArcFile);
         ((MetadataFileWriterWarc) mfwa).insertInfoRecord(new ANVLRecord());
@@ -68,8 +113,5 @@ public class MetadataFileWriterTester extends TestCase {
             mfwa.writeFileTo(f, "metadata://netarkivet.dk/crawl/logs/" + f.getName(), "text/plain");
         }
     }
-    
-    
-    
-    
+
 }

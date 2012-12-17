@@ -24,10 +24,10 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import dk.netarkivet.harvester.harvesting.extractor.ExtractorOAITest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
+import dk.netarkivet.harvester.harvesting.extractor.ExtractorOAITest;
 
 /**
  * Test suite for the classes
@@ -59,6 +59,7 @@ public class HarvestingTesterSuite {
         suite.addTestSuite(IngestableFilesTester.class);
         suite.addTestSuite(OnNSDomainsDecideRuleTester.class);
         suite.addTestSuite(ExtractorOAITest.class);
+        suite.addTestSuite(MetadataFileWriterTester.class);
     }
 
     public static void main(String[] args) {

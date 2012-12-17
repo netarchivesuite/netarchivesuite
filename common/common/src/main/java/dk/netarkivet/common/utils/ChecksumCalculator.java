@@ -29,149 +29,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.io.IOUtils;
+
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 
 /**
- * Calculates MD5 or SHA-1 checksums on files using the built-in Java methods.
+ * Calculates MD5 or SHA1 checksums on files using the built-in Java methods.
  */
 public final class ChecksumCalculator {
-    
-    /**
-     * The radix used for converting to hex (base 16).
-     */
-    private static final int RADIX_SIXTEEN = 16;
-
-    /**
-     * Calculate MD5 for a file.
-     * 
-     * @param src The file to calculate MD5 for.
-     * @return The MD5 sum of a file as a 32 characters long Hex string.
-     */
-    public static String generateMd5(final File src) {
-        ArgumentNotValid.checkNotNull(src, "File src");
-        ArgumentNotValid.checkTrue(src.isFile(), "Argument should be a file");
-        // Get the MD5 and return it
-        try {
-            final FileInputStream fileInputStream = new FileInputStream(src);
-            try {
-                return generateMd5(fileInputStream);
-            } finally {
-                IOUtils.closeQuietly(fileInputStream);
-            }
-        } catch (FileNotFoundException e) {
-            throw new IOFailure("Could not read file '" 
-                    + src.getAbsolutePath() + "'", e);
-        }
-    }
-    
-    /**
-     * Calculate the SHA-1 DIGEST for a file.
-     * 
-     * @param src The file to calculate SHA-1 for.
-     * @return The SHA-1 sum of a file as a 32 characters long Hex string.
-     */
-    public static String generateSha1(final File src){
-        ArgumentNotValid.checkNotNull(src, "File src");
-        ArgumentNotValid.checkTrue(src.isFile(), "Argument should be a file");
-        // Get the SHA-1 digest and return it
-        try {
-            final FileInputStream fileInputStream = new FileInputStream(src);
-            try {
-                return generateSha1(fileInputStream);
-            } finally {
-                IOUtils.closeQuietly(fileInputStream);
-            }
-        } catch (FileNotFoundException e) {
-            throw new IOFailure("Could not read file '" 
-                    + src.getAbsolutePath() + "'", e);
-        }
-    }
-    
-   /**
-    * Generates an MD5 digest on an InputStream, throwing away the 
-    * data itself. Throws Alert if there is an error reading from the 
-    * stream
-    *
-    * @param instream An inputstream to generate the MD5 digest on.  
-    * The contents of the stream will be consumed by this call, but the 
-    * stream will not be closed.
-    * @return The generated sha1 checksum as a string.
-    */
-    public static String generateMd5(final InputStream instream) {
-        final byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
-        final String algorithm = "MD5";
-        final MessageDigest messageDigest = getMessageDigest(algorithm);
-        messageDigest.reset();
-        int bytesRead;
-        try {
-            while ((bytesRead = instream.read(buffer)) != -1) {
-                messageDigest.update(buffer, 0, bytesRead);
-            }
-        } catch (IOException e) {
-            throw new IOFailure("Error making a '" + algorithm
-                    + "' digest on the inputstream", e);
-        }
-        return convertToHex(messageDigest.digest(), 
-                messageDigest.getDigestLength());
-    }
-    
-    /**
-     * Generates an SHA-1 digest on an InputStream, throwing away the 
-     * data itself. Throws Alert if there is an error reading from the 
-     * stream
-     *
-     * @param instream An inputstream to generate the SHA-1 digest on.  
-     * The contents of the stream will be consumed by this call, but the 
-     * stream will not be closed.
-     * @return The generated sha1 checksum as a string.
-     */
-    public static String generateSha1(final InputStream instream) {
-        final byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
-        final String algorithm = "SHA-1";
-        final MessageDigest messageDigest = getMessageDigest(algorithm);
-        messageDigest.reset();
-        int bytesRead;
-        try {
-            while ((bytesRead = instream.read(buffer)) != -1) {
-                messageDigest.update(buffer, 0, bytesRead);
-            }
-        } catch (IOException e) {
-            throw new IOFailure("Error making a '" + algorithm
-                    + "' digest on the inputstream", e);
-        }
-        return convertToHex(messageDigest.digest(), messageDigest.getDigestLength());
-    }
-    
-    /**
-     * Convert a buffer of bytes to a hexadecimal string.
-     * 
-     * @param data The data to convert to hex
-     * @param digestLength Assumed digestLength
-     * @return The hexadecimal representation of the given data.
-     */
-    private static String convertToHex(final byte[] data, int digestLength) {
-        // BigInteger has the required functionality for
-        // converting byte arrays to hex
-        final String digest = new BigInteger(1, data).toString(RADIX_SIXTEEN);
-        final int leadingZeros = digestLength - digest.length();
-        final StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < leadingZeros; i++) {
-            buf.append('0');
-        }
-        buf.append(digest);
-        ArgumentNotValid.checkTrue(digestLength == buf.length(), 
-                "The digestLength '" + digestLength + "' should be equal to buf.length '"
-                + buf.length() + "'.");
-        return buf.toString();
-    }
     
     /**
      * Get a MessageDigest for a specific algorithm.
@@ -188,4 +59,129 @@ public final class ChecksumCalculator {
         }
         return messageDigest;
     }
+
+    /**
+     * Calculate MD5 for a file.
+     * 
+     * @param src The file to calculate MD5 for.
+     * @return The MD5 sum of a file as a 32 characters long Hex string.
+     */
+    public static String calculateMd5(final File src) {
+        ArgumentNotValid.checkNotNull(src, "File src");
+        ArgumentNotValid.checkTrue(src.isFile(), "Argument should be a file");
+        // Get the MD5 and return it
+        try {
+            final FileInputStream fileInputStream = new FileInputStream(src);
+            try {
+                return calculateMd5(fileInputStream);
+            } finally {
+                IOUtils.closeQuietly(fileInputStream);
+            }
+        } catch (FileNotFoundException e) {
+            throw new IOFailure("Could not read file '" 
+                    + src.getAbsolutePath() + "'", e);
+        }
+    }
+    
+    /**
+     * Calculate the SHA-1 DIGEST for a file.
+     * 
+     * @param src The file to calculate SHA-1 for.
+     * @return The SHA-1 sum of a file as a 32 characters long Hex string.
+     */
+    public static String calculateSha1(final File src) {
+        ArgumentNotValid.checkNotNull(src, "File src");
+        ArgumentNotValid.checkTrue(src.isFile(), "Argument should be a file");
+        // Get the SHA-1 digest and return it
+        try {
+            final FileInputStream fileInputStream = new FileInputStream(src);
+            try {
+                return calculateSha1(fileInputStream);
+            } finally {
+                IOUtils.closeQuietly(fileInputStream);
+            }
+        } catch (FileNotFoundException e) {
+            throw new IOFailure("Could not read file '" 
+                    + src.getAbsolutePath() + "'", e);
+        }
+    }
+    
+   /**
+    * Calculates an MD5 digest on an InputStream, throwing away the 
+    * data itself. Throws Alert if there is an error reading from the 
+    * stream
+    *
+    * @param instream An <code>InputStream</code> to calculate the MD5 digest on.  
+    * The contents of the stream will be consumed by this call, but the 
+    * stream will not be closed.
+    * @return The calculated MD5 digest as a string.
+    */
+    public static String calculateMd5(final InputStream instream) {
+        return calculateDigest(instream, "MD5");
+    }
+    
+    /**
+     * Calculates an SHA-1 digest on an InputStream, throwing away the 
+     * data itself. Throws Alert if there is an error reading from the 
+     * stream
+     *
+     * @param instream An <code>InputStream</code> to calculate the SHA-1 digest on.  
+     * The contents of the stream will be consumed by this call, but the 
+     * stream will not be closed.
+     * @return The calculated SHA-1 digest as a string.
+     */
+    public static String calculateSha1(final InputStream instream) {
+        return calculateDigest(instream, "SHA1");
+    }
+
+    /**
+     * Calculates a digest on an InputStream, throwing away the 
+     * data itself. Throws Alert if there is an error reading from the 
+     * stream
+     *
+     * @param instream An <code>InputStream</code> to calculate the digest on.  
+     * The contents of the stream will be consumed by this call, but the 
+     * stream will not be closed.
+     * @param algorithm digest algorithm to use
+     * @return The calculated digest as a string.
+     */
+    private static String calculateDigest(final InputStream instream,
+    		final String algorithm) {
+        final byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
+        final MessageDigest messageDigest = getMessageDigest(algorithm);
+        messageDigest.reset();
+        int bytesRead;
+        try {
+            while ((bytesRead = instream.read(buffer)) != -1) {
+                messageDigest.update(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Error making a '" + algorithm
+                    + "' digest on the inputstream", e);
+        }
+        return toHex(messageDigest.digest());
+    }
+
+    private static final char[] hexdigit = {
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    };
+
+    /**
+     * Converts a byte array to a hexstring.
+     *
+     * @param ba the bytearray to be converted
+     * @return ba converted to a hexstring
+     */
+    public static String toHex(final byte[] ba) {
+        int baLen = ba.length;
+    	char[] hexchars = new char[baLen * 2];
+    	int cIdx = 0;
+        for (int i = 0; i < baLen; ++i) {
+            hexchars[cIdx++] = hexdigit[(ba[i] >> 4) & 0x0F];
+            hexchars[cIdx++] = hexdigit[ba[i] & 0x0F];
+        }
+        return new String(hexchars);
+    }
+
 }
