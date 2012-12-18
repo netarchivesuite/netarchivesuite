@@ -189,7 +189,6 @@ public class WARCUtils {
             String recordIdStr;
             URI recordId;
             try {
-                //recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
                 recordIdStr = header.getHeaderStringValue("warc-record-id");
                 if (recordIdStr.startsWith("<") && recordIdStr.endsWith(">")) {
                     recordIdStr = recordIdStr.substring(1, recordIdStr.length() - 1);
@@ -324,10 +323,7 @@ public class WARCUtils {
     public static boolean isWarc(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
         String lowercaseFilename = filename.toLowerCase();
-        if (lowercaseFilename.endsWith(".warc") 
-                || lowercaseFilename.endsWith(".warc.gz")) {
-            return true;
-        }       
-        return false;
+        return (lowercaseFilename.endsWith(".warc") 
+                || lowercaseFilename.endsWith(".warc.gz"));
     }
 }

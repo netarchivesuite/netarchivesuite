@@ -57,9 +57,6 @@ import dk.netarkivet.common.utils.SystemUtils;
 /**
  * Various utilities that do stuff that ARCWriter does not provide.
  * Also includes method for converting an ARCRecord to a byte array.
- *
- * TODO Turn this into a wrapper around ARCWriter instead.
- *
  */
 public final class ARCUtils {
     /** Default constructor to avoid initialization.*/
@@ -343,11 +340,7 @@ public final class ARCUtils {
     public static boolean isARC(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
         String filenameLowercase = filename.toLowerCase();
-        if (filenameLowercase.endsWith(".arc") 
-                || filenameLowercase.endsWith(".arc.gz")) {
-            return true;
-        } else 
-            return false;
+        return (filenameLowercase.endsWith(".arc") 
+                || filenameLowercase.endsWith(".arc.gz"));
     }
-    
 }
