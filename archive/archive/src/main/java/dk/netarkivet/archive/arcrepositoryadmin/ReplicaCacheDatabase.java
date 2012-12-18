@@ -754,7 +754,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             // checksum across all replicas.
             DBUtils.executeSQL(con, updateChecksumStatusSql);
 
-        	// Get all the fileids that need processing.
+            // Get all the fileids that need processing.
             // Previously: "SELECT file_id FROM file"
             Iterator<Long> fileIdsIterator = DBUtils.selectLongIterator(con,
                     selectForFileChecksumVotingSql);
@@ -765,7 +765,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             }
         } catch (SQLException e) {
             throw new IOFailure("Error getting auto commit.\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             try {
                 con.setAutoCommit(autoCommit);

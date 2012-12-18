@@ -160,7 +160,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
                     }
                     // Close the record
                     try {
-                    	// TODO maybe this works, maybe not...
+                        // TODO maybe this works, maybe not...
                         long arcRecordOffset =
                                 record.getHeader().getContentBegin() 
                                 + record.getHeader().getLength();

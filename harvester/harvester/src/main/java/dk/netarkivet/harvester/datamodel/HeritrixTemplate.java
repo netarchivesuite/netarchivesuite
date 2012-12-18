@@ -213,7 +213,7 @@ public class HeritrixTemplate {
             node = doc.selectSingleNode(ARC_ARCHIVER_PATH_XPATH);
             if (node != null) {
                 pattern = Pattern.compile(
-                		dk.netarkivet.common.Constants.ARCDIRECTORY_NAME);
+                        dk.netarkivet.common.Constants.ARCDIRECTORY_NAME);
                 matcher = pattern.matcher(node.getText().trim());
                 ArgumentNotValid.checkTrue(
                         matcher.matches(),
@@ -226,7 +226,7 @@ public class HeritrixTemplate {
             node = doc.selectSingleNode(WARC_ARCHIVER_PATH_XPATH);
             if (node != null) {
                 pattern = Pattern.compile(
-                		dk.netarkivet.common.Constants.WARCDIRECTORY_NAME);
+                        dk.netarkivet.common.Constants.WARCDIRECTORY_NAME);
                 matcher = pattern.matcher(node.getText().trim());
                 ArgumentNotValid.checkTrue(
                         matcher.matches(),
@@ -237,9 +237,9 @@ public class HeritrixTemplate {
                 ++validArchivePaths;
             }
             ArgumentNotValid.checkTrue(
-            		validArchivePaths > 0,
+                    validArchivePaths > 0,
                     "Template error: "
-            		+ "An ARC or WARC writer processor seems to be missing");
+                    + "An ARC or WARC writer processor seems to be missing");
         }
         this.template = (Document) doc.clone();
     }

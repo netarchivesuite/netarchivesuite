@@ -1,7 +1,7 @@
-/* $Id: HarvestDocumentationTester.java 2566 2012-12-05 15:08:14Z svc $
- * $Revision: 2566 $
- * $Date: 2012-12-05 16:08:14 +0100 (Wed, 05 Dec 2012) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and
@@ -56,10 +56,10 @@ public class MetadataFileWriterTester extends TestCase {
     }
     
     public void testMetadataFileWriterArc() {
-    	File metafile = new File("metadata.arc");
-    	MetadataFileWriter mdfw = MetadataFileWriterArc.createWriter(metafile);
+        File metafile = new File("metadata.arc");
+        MetadataFileWriter mdfw = MetadataFileWriterArc.createWriter(metafile);
 
-    	String uri = "http://www.netarkivet.dk/";
+        String uri = "http://www.netarkivet.dk/";
         long ctm = System.currentTimeMillis();
 
         SecureRandom random = new SecureRandom();
@@ -67,13 +67,13 @@ public class MetadataFileWriterTester extends TestCase {
         random.nextBytes(payload);
 
         try {
-			mdfw.write(uri, "application/binary", "127.0.0.1", ctm, payload);
-			mdfw.close();
-		}
+            mdfw.write(uri, "application/binary", "127.0.0.1", ctm, payload);
+            mdfw.close();
+        }
         catch (IOException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected exception!");
-		}
+            e.printStackTrace();
+            Assert.fail("Unexpected exception!");
+        }
 
         metafile.deleteOnExit();
 
@@ -85,10 +85,10 @@ public class MetadataFileWriterTester extends TestCase {
     }
 
     public void testMetadataFileWriterWarc() {
-    	File metafile = new File("metadata.warc");
-    	MetadataFileWriter mdfw = MetadataFileWriterWarc.createWriter(metafile);
+        File metafile = new File("metadata.warc");
+        MetadataFileWriter mdfw = MetadataFileWriterWarc.createWriter(metafile);
 
-    	String uri = "http://www.netarkivet.dk/";
+        String uri = "http://www.netarkivet.dk/";
         long ctm = System.currentTimeMillis();
 
         SecureRandom random = new SecureRandom();
@@ -96,13 +96,13 @@ public class MetadataFileWriterTester extends TestCase {
         random.nextBytes(payload);
 
         try {
-			mdfw.write(uri, "application/binary", "127.0.0.1", ctm, payload);
-			mdfw.close();
-		}
+            mdfw.write(uri, "application/binary", "127.0.0.1", ctm, payload);
+            mdfw.close();
+        }
         catch (IOException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected exception!");
-		}
+            e.printStackTrace();
+            Assert.fail("Unexpected exception!");
+        }
 
         metafile.deleteOnExit();
 

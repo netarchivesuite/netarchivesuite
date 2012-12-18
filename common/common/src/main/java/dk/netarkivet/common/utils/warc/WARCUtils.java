@@ -131,38 +131,38 @@ public class WARCUtils {
     private static final Map<String, String> headerNamesCaseMap = new HashMap<String, String>();
 
     static {
-    	ignoreHeadersMap.add("content-type");
-    	ignoreHeadersMap.add("reader-identifier");
-    	ignoreHeadersMap.add("absolute-offset");
-    	ignoreHeadersMap.add("content-length");
-    	ignoreHeadersMap.add("warc-date");
-    	ignoreHeadersMap.add("warc-record-id");
-    	ignoreHeadersMap.add("warc-type");
-    	ignoreHeadersMap.add("warc-target-uri");
-    	String[] headerNames = {
-    	        "WARC-Type",
-    	        "WARC-Record-ID",
-    	        "WARC-Date",
-    	        "Content-Length",
-    	        "Content-Type",
-    	        "WARC-Concurrent-To",
-    	        "WARC-Block-Digest",
-    	        "WARC-Payload-Digest",
-    	        "WARC-IP-Address",
-    	        "WARC-Refers-To",
-    	        "WARC-Target-URI",
-    	        "WARC-Truncated",
-    	        "WARC-Warcinfo-ID",
-    	        "WARC-Filename",
-    	        "WARC-Profile",
-    	        "WARC-Identified-Payload-Type",
-    	        "WARC-Segment-Origin-ID",
-    	        "WARC-Segment-Number",
-    	        "WARC-Segment-Total-Length"
-    	};
-    	for (int i=0; i<headerNames.length; ++i) {
-    		headerNamesCaseMap.put(headerNames[i].toLowerCase(), headerNames[i]);
-    	}
+        ignoreHeadersMap.add("content-type");
+        ignoreHeadersMap.add("reader-identifier");
+        ignoreHeadersMap.add("absolute-offset");
+        ignoreHeadersMap.add("content-length");
+        ignoreHeadersMap.add("warc-date");
+        ignoreHeadersMap.add("warc-record-id");
+        ignoreHeadersMap.add("warc-type");
+        ignoreHeadersMap.add("warc-target-uri");
+        String[] headerNames = {
+                "WARC-Type",
+                "WARC-Record-ID",
+                "WARC-Date",
+                "Content-Length",
+                "Content-Type",
+                "WARC-Concurrent-To",
+                "WARC-Block-Digest",
+                "WARC-Payload-Digest",
+                "WARC-IP-Address",
+                "WARC-Refers-To",
+                "WARC-Target-URI",
+                "WARC-Truncated",
+                "WARC-Warcinfo-ID",
+                "WARC-Filename",
+                "WARC-Profile",
+                "WARC-Identified-Payload-Type",
+                "WARC-Segment-Origin-ID",
+                "WARC-Segment-Number",
+                "WARC-Segment-Total-Length"
+        };
+        for (int i=0; i<headerNames.length; ++i) {
+            headerNamesCaseMap.put(headerNames[i].toLowerCase(), headerNames[i]);
+        }
     }
 
     /**
@@ -177,9 +177,9 @@ public class WARCUtils {
      */
     private static void copySingleRecord(WARCWriter aw, WARCRecord record) {
         try {
-        	//Prepare metadata...
-        	HeritrixArchiveHeaderWrapper header = HeritrixArchiveHeaderWrapper.wrapArchiveHeader(null, record);
-        	String warcType = header.getHeaderStringValue("WARC-Type");
+            //Prepare metadata...
+            HeritrixArchiveHeaderWrapper header = HeritrixArchiveHeaderWrapper.wrapArchiveHeader(null, record);
+            String warcType = header.getHeaderStringValue("WARC-Type");
 
             String url = header.getUrl();
             Date date = header.getDate();
@@ -188,58 +188,58 @@ public class WARCUtils {
             String mimetype = header.getMimetype();
             String recordIdStr;
             URI recordId;
-    		try {
-    			//recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
-    			recordIdStr = header.getHeaderStringValue("warc-record-id");
-    			if (recordIdStr.startsWith("<") && recordIdStr.endsWith(">")) {
-    				recordIdStr = recordIdStr.substring(1, recordIdStr.length() - 1);
-    			}
-    			recordId = new URI(recordIdStr);    			
-    		} catch (URISyntaxException e) {
-    			throw new IllegalState("Epic fail creating URI from UUID!");
-    		}
+            try {
+                //recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
+                recordIdStr = header.getHeaderStringValue("warc-record-id");
+                if (recordIdStr.startsWith("<") && recordIdStr.endsWith(">")) {
+                    recordIdStr = recordIdStr.substring(1, recordIdStr.length() - 1);
+                }
+                recordId = new URI(recordIdStr);
+            } catch (URISyntaxException e) {
+                throw new IllegalState("Epic fail creating URI from UUID!");
+            }
 
-    		ANVLRecord  namedFields = new ANVLRecord();
+            ANVLRecord  namedFields = new ANVLRecord();
 
-    		// Copy to headers from the original WARC record to the new one.
-    		// Since we store the headres lowercase, we recase them.
-    		// Non WARC header header are lowercase and loose their case.
-    		Iterator<Entry<String, Object>> headerIter = header.getHeaderFields().entrySet().iterator();
-    		Entry<String, Object> headerEntry;
-    		String headerName;
-    		String headerNameCased;
-    		while (headerIter.hasNext()) {
-    			headerEntry = headerIter.next();
-    			if (!ignoreHeadersMap.contains(headerEntry.getKey())) {
-    				headerName = headerEntry.getKey();
-    				headerNameCased = headerNamesCaseMap.get(headerName);
-    				if (headerNameCased != null) {
-    					headerName = headerNameCased;
-    				}
-        			namedFields.addLabelValue(headerName, headerEntry.getValue().toString());
-        		}
-        	}
+            // Copy to headers from the original WARC record to the new one.
+            // Since we store the headres lowercase, we recase them.
+            // Non WARC header header are lowercase and loose their case.
+            Iterator<Entry<String, Object>> headerIter = header.getHeaderFields().entrySet().iterator();
+            Entry<String, Object> headerEntry;
+            String headerName;
+            String headerNameCased;
+            while (headerIter.hasNext()) {
+                headerEntry = headerIter.next();
+                if (!ignoreHeadersMap.contains(headerEntry.getKey())) {
+                    headerName = headerEntry.getKey();
+                    headerNameCased = headerNamesCaseMap.get(headerName);
+                    if (headerNameCased != null) {
+                        headerName = headerNameCased;
+                    }
+                    namedFields.addLabelValue(headerName, headerEntry.getValue().toString());
+                }
+            }
 
-    		InputStream in = record;
-    		// getContentBegin only works for WARC and in H1.44.x!
-    		Long payloadLength = header.getLength() - record.getHeader().getContentBegin();
+            InputStream in = record;
+            // getContentBegin only works for WARC and in H1.44.x!
+            Long payloadLength = header.getLength() - record.getHeader().getContentBegin();
 
-    		// Write WARC record with type=warcType
-    		if ("metadata".equals(warcType)) {
-    			aw.writeMetadataRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
-    		} else if ("request".equals(warcType)) {
+            // Write WARC record with type=warcType
+            if ("metadata".equals(warcType)) {
+                aw.writeMetadataRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
+            } else if ("request".equals(warcType)) {
                 aw.writeRequestRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
-        	} else if ("resource".equals(warcType)) {
+            } else if ("resource".equals(warcType)) {
                 aw.writeResourceRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
-    		} else if ("response".equals(warcType)) {
+            } else if ("response".equals(warcType)) {
                 aw.writeResponseRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
-			} else if ("revisit".equals(warcType)) {
-	            aw.writeRevisitRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
-			} else if ("warcinfo".equals(warcType)) {
-	            aw.writeWarcinfoRecord(dateStr, mimetype, recordId, namedFields, in, payloadLength);
-			} else {
-				throw new IOFailure("Unknown WARC-Type!");
-			}
+            } else if ("revisit".equals(warcType)) {
+                aw.writeRevisitRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
+            } else if ("warcinfo".equals(warcType)) {
+                aw.writeWarcinfoRecord(dateStr, mimetype, recordId, namedFields, in, payloadLength);
+            } else {
+                throw new IOFailure("Unknown WARC-Type!");
+            }
         } catch (Exception e) {
             throw new IOFailure("Error occurred while writing an WARC record"
                     + record, e);

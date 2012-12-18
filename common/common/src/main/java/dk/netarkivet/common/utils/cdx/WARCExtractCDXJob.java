@@ -55,7 +55,7 @@ import dk.netarkivet.common.utils.warc.WARCBatchJob;
 */
 public class WARCExtractCDXJob extends WARCBatchJob {
 
-	/** An encoding for the standard included metadata fields without
+    /** An encoding for the standard included metadata fields without
      * checksum.*/
     private static final String[] STD_FIELDS_EXCL_CHECKSUM = {
             "A", "e", "b", "m", "n", "g", "v"
@@ -155,31 +155,31 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         ContentType contentType = ContentType.parseContentType(mimeType);
         boolean bResponse = false;
         if (contentType != null) {
-        	if ("application".equals(contentType.contentType)
-        			&& "http".equals(contentType.mediaType)) {
-        		msgType = contentType.getParameter("msgtype");
-        		if ("response".equals(msgType)) {
-        			bResponse = true;
-        		} else if ("request".equals(msgType)) {
-        		}
-        	}
-        	mimeType = contentType.toStringShort();
+            if ("application".equals(contentType.contentType)
+                    && "http".equals(contentType.mediaType)) {
+                msgType = contentType.getParameter("msgtype");
+                if ("response".equals(msgType)) {
+                    bResponse = true;
+                } else if ("request".equals(msgType)) {
+                }
+            }
+            mimeType = contentType.toStringShort();
         }
         ByteCountingPushBackInputStream pbin = new ByteCountingPushBackInputStream(sar, 8192);
         HttpHeader httpResponse = null;
         if (bResponse) {
             try {
-    			httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE,
-    			        pbin, header.getLength(), null);
-    			if (httpResponse != null && httpResponse.contentType != null) {
-    				contentType = ContentType.parseContentType(httpResponse.contentType);
-    		        if (contentType != null) {
-    		        	mimeType = contentType.toStringShort();
-    		        }
-    			}
-    		} catch (IOException e) {
+                httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE,
+                        pbin, header.getLength(), null);
+                if (httpResponse != null && httpResponse.contentType != null) {
+                    contentType = ContentType.parseContentType(httpResponse.contentType);
+                    if (contentType != null) {
+                        mimeType = contentType.toStringShort();
+                    }
+                }
+            } catch (IOException e) {
                 throw new IOFailure("Error reading WARC httpresponse header", e);
-    		}
+            }
         }
         fieldsread.put("m", mimeType);
 
@@ -191,11 +191,11 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         }
 
         if (httpResponse != null) {
-        	try {
-				httpResponse.close();
-			} catch (IOException e) {
+            try {
+                httpResponse.close();
+            } catch (IOException e) {
                 throw new IOFailure("Error closing WARC httpresponse header", e);
-			}
+            }
         }
 
         printFields(fieldsread, os);

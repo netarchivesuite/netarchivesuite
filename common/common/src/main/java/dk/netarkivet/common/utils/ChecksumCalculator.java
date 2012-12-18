@@ -43,22 +43,6 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * Calculates MD5 or SHA1 checksums on files using the built-in Java methods.
  */
 public final class ChecksumCalculator {
-    
-    /**
-     * Get a MessageDigest for a specific algorithm.
-     * @param algorithm a specific MessageDigest algorithm.
-     * @return a MessageDigest for a specific algorithm
-     */
-    private static MessageDigest getMessageDigest(final String algorithm) {
-        MessageDigest messageDigest;
-        try {
-            messageDigest = MessageDigest.getInstance(algorithm);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalState(
-                    "The '" + algorithm + "' algorithm is not available", e);
-        }
-        return messageDigest;
-    }
 
     /**
      * Calculate MD5 for a file.
@@ -146,7 +130,7 @@ public final class ChecksumCalculator {
      * @return The calculated digest as a string.
      */
     private static String calculateDigest(final InputStream instream,
-    		final String algorithm) {
+            final String algorithm) {
         final byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         final MessageDigest messageDigest = getMessageDigest(algorithm);
         messageDigest.reset();
@@ -175,13 +159,29 @@ public final class ChecksumCalculator {
      */
     public static String toHex(final byte[] ba) {
         int baLen = ba.length;
-    	char[] hexchars = new char[baLen * 2];
-    	int cIdx = 0;
+        char[] hexchars = new char[baLen * 2];
+        int cIdx = 0;
         for (int i = 0; i < baLen; ++i) {
             hexchars[cIdx++] = hexdigit[(ba[i] >> 4) & 0x0F];
             hexchars[cIdx++] = hexdigit[ba[i] & 0x0F];
         }
         return new String(hexchars);
+    }
+
+	/**
+     * Get a MessageDigest for a specific algorithm.
+     * @param algorithm a specific MessageDigest algorithm.
+     * @return a MessageDigest for a specific algorithm
+     */
+    private static MessageDigest getMessageDigest(final String algorithm) {
+        MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalState(
+                    "The '" + algorithm + "' algorithm is not available", e);
+        }
+        return messageDigest;
     }
 
 }

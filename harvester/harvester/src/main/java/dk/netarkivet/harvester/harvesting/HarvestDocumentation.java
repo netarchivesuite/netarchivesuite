@@ -335,7 +335,7 @@ public class HarvestDocumentation {
      * @param jobID ID of the job whose directory we're in.
      */
     private static void moveAwayForeignFiles(ArchiveProfile archiveProfile,
-    		File dir, long jobID) {
+            File dir, long jobID) {
         File[] archiveFiles = dir.listFiles(archiveProfile.filename_filter);
         File oldJobsDir = new File(
                 Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
@@ -359,7 +359,7 @@ public class HarvestDocumentation {
                 File arcsDir;
                 if (foundJobID == -1) {
                     arcsDir = new File(unknownJobDir,
-                    		archiveProfile.archive_directory);
+                            archiveProfile.archive_directory);
                 } else {
                     arcsDir = new File(oldJobsDir,
                                 foundJobID + "-lost-files/"

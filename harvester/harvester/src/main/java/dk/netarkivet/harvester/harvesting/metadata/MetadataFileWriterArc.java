@@ -57,9 +57,9 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
      * @return <code>MetadataFileWriter</code> for writing metadata files in ARC
      */
     public static MetadataFileWriter createWriter(File metadataARCFile) {
-    	MetadataFileWriterArc mtfw = new MetadataFileWriterArc();
-    	mtfw.writer = ARCUtils.createARCWriter(metadataARCFile);
-    	return mtfw;
+        MetadataFileWriterArc mtfw = new MetadataFileWriterArc();
+        mtfw.writer = ARCUtils.createARCWriter(metadataARCFile);
+        return mtfw;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     public void write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, byte[] payload) throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream(payload);
-    	writer.write(uri, contentType, hostIP, fetchBeginTimeStamp, payload.length, in);
+        writer.write(uri, contentType, hostIP, fetchBeginTimeStamp, payload.length, in);
     }
 
 }

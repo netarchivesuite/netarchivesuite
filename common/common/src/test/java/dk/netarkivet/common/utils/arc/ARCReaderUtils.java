@@ -155,11 +155,11 @@ public class ARCReaderUtils {
     * @throws IOException
     */
    public static void main(String[] args) throws IOException {
-	   if (args.length != 3){       
-		   System.err.println("To few arguments (3 needed: dest dir, file, excludefilter");
-		   System.exit(1);
-	   }
-	   dumpARC(new File(args[0]), new File(args[1]), args[2]);
+       if (args.length != 3){       
+           System.err.println("To few arguments (3 needed: dest dir, file, excludefilter");
+           System.exit(1);
+       }
+       dumpARC(new File(args[0]), new File(args[1]), args[2]);
    }
    /**
     * Copies the content of an InputStream to an OutputStream.

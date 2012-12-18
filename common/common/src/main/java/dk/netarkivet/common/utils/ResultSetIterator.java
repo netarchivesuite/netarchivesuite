@@ -45,7 +45,7 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
     /** The current Statement that this Result originates from. */
     private final Statement stm;
 
-	/** The current ResultSet that this Iterator operates upon. */
+    /** The current ResultSet that this Iterator operates upon. */
     private final ResultSet res;
 
     /** Temporary storage to hold the object that the Iterator returns. */

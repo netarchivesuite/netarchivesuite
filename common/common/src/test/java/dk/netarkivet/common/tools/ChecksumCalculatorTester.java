@@ -1,7 +1,7 @@
-/* $Id: HarvestDocumentationTester.java 2566 2012-12-05 15:08:14Z svc $
- * $Revision: 2566 $
- * $Date: 2012-12-05 16:08:14 +0100 (Wed, 05 Dec 2012) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and
@@ -45,12 +45,12 @@ public class ChecksumCalculatorTester extends TestCase {
 
     public void testChecksumCalculator() {
         MessageDigest md;
-    	//ByteArrayInputStream instream;
-    	String expectedChecksum;
-    	String checksum;
+        //ByteArrayInputStream instream;
+        String expectedChecksum;
+        String checksum;
 
         try {
-        	SecureRandom random = new SecureRandom();
+            SecureRandom random = new SecureRandom();
             byte[] payload = new byte[8192];
             random.nextBytes(payload);
 
@@ -66,7 +66,7 @@ public class ChecksumCalculatorTester extends TestCase {
             checksum = ChecksumCalculator.calculateSha1(new ByteArrayInputStream(payload));
             Assert.assertEquals(expectedChecksum, checksum);
         } catch (NoSuchAlgorithmException e) {
-        	Assert.fail("Digest error!");
+            Assert.fail("Digest error!");
         }
     }
 
@@ -81,7 +81,7 @@ public class ChecksumCalculatorTester extends TestCase {
      * @return The hexadecimal representation of the given data.
      */
     private static String convertToHex(final byte[] data, int digestLength) {
-    	digestLength *= 2;
+        digestLength *= 2;
         // BigInteger has the required functionality for
         // converting byte arrays to hex
         final String digest = new BigInteger(1, data).toString(RADIX_SIXTEEN);

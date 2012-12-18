@@ -144,32 +144,32 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         boolean bResponse = false;
         boolean bRequest = false;
         if (contentType != null) {
-        	if ("application".equals(contentType.contentType)
-        			&& "http".equals(contentType.mediaType)) {
-        		msgType = contentType.getParameter("msgtype");
-        		if ("response".equals(msgType)) {
-        			bResponse = true;
-        		} else if ("request".equals(msgType)) {
-        			bRequest = true;
-        		}
-        	}
-        	mimeType = contentType.toStringShort();
+            if ("application".equals(contentType.contentType)
+                    && "http".equals(contentType.mediaType)) {
+                msgType = contentType.getParameter("msgtype");
+                if ("response".equals(msgType)) {
+                    bResponse = true;
+                } else if ("request".equals(msgType)) {
+                    bRequest = true;
+                }
+            }
+            mimeType = contentType.toStringShort();
         }
         ByteCountingPushBackInputStream pbin = new ByteCountingPushBackInputStream(record.getInputStream(), 8192);
         HttpHeader httpResponse = null;
         if (bResponse) {
             try {
-    			httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE, 
-    			        pbin, header.getLength(), null);
-    			if (httpResponse != null && httpResponse.contentType != null) {
-    				contentType = ContentType.parseContentType(httpResponse.contentType);
-    		        if (contentType != null) {
-    		        	mimeType = contentType.toStringShort();
-    		        }
-    			}
-    		} catch (IOException e) {
+                httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE, 
+                        pbin, header.getLength(), null);
+                if (httpResponse != null && httpResponse.contentType != null) {
+                    contentType = ContentType.parseContentType(httpResponse.contentType);
+                    if (contentType != null) {
+                        mimeType = contentType.toStringShort();
+                    }
+                }
+            } catch (IOException e) {
                 throw new IOFailure("Error reading httpresponse header", e);
-    		}
+            }
         }
         fieldsread.put("m", mimeType);
 
@@ -181,11 +181,11 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         }
 
         if (httpResponse != null) {
-        	try {
-				httpResponse.close();
-			} catch (IOException e) {
+            try {
+                httpResponse.close();
+            } catch (IOException e) {
                 throw new IOFailure("Error closing httpresponse header", e);
-			}
+            }
         }
 
         printFields(fieldsread, os);

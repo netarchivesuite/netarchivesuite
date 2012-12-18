@@ -35,7 +35,7 @@ import dk.netarkivet.common.utils.FileUtils;
  */
 public class ArchiveProfile {
 
-	/** Archive filename filter. */
+    /** Archive filename filter. */
     public final FilenameFilter filename_filter;
 
     /** Archive filename string pattern. */
@@ -55,29 +55,29 @@ public class ArchiveProfile {
      * @param archive_directory archive directory
      */
     protected ArchiveProfile(FilenameFilter filename_filter,
-			String filename_pattern,
-			Pattern metadataFilenamePattern,
-			String archive_directory) {
-		this.filename_filter = filename_filter;
-		this.filename_pattern = filename_pattern;
-		this.metadataFilenamePattern = metadataFilenamePattern;
-		this.archive_directory = archive_directory;
+            String filename_pattern,
+            Pattern metadataFilenamePattern,
+            String archive_directory) {
+        this.filename_filter = filename_filter;
+        this.filename_pattern = filename_pattern;
+        this.metadataFilenamePattern = metadataFilenamePattern;
+        this.archive_directory = archive_directory;
     }
 
     /** ARC archive profile. */
-	public static final ArchiveProfile ARC_PROFILE = new ArchiveProfile(
-    		FileUtils.ARCS_FILTER,
-    		FileUtils.ARC_PATTERN,
-    		Pattern.compile("([0-9]+)-metadata-([0-9]+).arc"),
-    		Constants.ARCDIRECTORY_NAME
-    		);
+    public static final ArchiveProfile ARC_PROFILE = new ArchiveProfile(
+            FileUtils.ARCS_FILTER,
+            FileUtils.ARC_PATTERN,
+            Pattern.compile("([0-9]+)-metadata-([0-9]+).arc"),
+            Constants.ARCDIRECTORY_NAME
+            );
 
-	/** WARC archive profile. */
-	public static final ArchiveProfile WARC_PROFILE = new ArchiveProfile(
-    		FileUtils.WARCS_FILTER,
-    		FileUtils.WARC_PATTERN,
-    		Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"),
-    		Constants.WARCDIRECTORY_NAME
-    		);
+    /** WARC archive profile. */
+    public static final ArchiveProfile WARC_PROFILE = new ArchiveProfile(
+            FileUtils.WARCS_FILTER,
+            FileUtils.WARC_PATTERN,
+            Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"),
+            Constants.WARCDIRECTORY_NAME
+            );
 
 }

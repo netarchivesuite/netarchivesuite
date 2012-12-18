@@ -56,11 +56,11 @@ public abstract class WARCBatchFilter implements Serializable {
 
     /** A default filter: Accepts on response records. */
     public static final WARCBatchFilter EXCLUDE_NON_RESPONSE_RECORDS = new WARCBatchFilter(
-    		EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME) {
+            EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME) {
             public boolean accept(WARCRecord record) {
                 HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
                 String warcType = recordWrapper.getHeader().getHeaderStringValue("WARC-Type");
-            	return "response".equalsIgnoreCase(warcType);
+                return "response".equalsIgnoreCase(warcType);
             }
         };
 

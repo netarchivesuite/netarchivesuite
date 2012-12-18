@@ -254,7 +254,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
                             os.write(buf, 0, bytesRead);
                         }
                 } catch (IOException e) {
-                	// TODO is getOffset() correct using the IA archiveReader?
+                    // TODO is getOffset() correct using the IA archiveReader?
                     String message = "Error writing body of Archive entry '"
                             + header.getArchiveFile() + "' offset '"
                             + header.getOffset() + "'";

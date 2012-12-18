@@ -46,7 +46,7 @@ import dk.netarkivet.common.utils.cdx.WARCExtractCDXJob;
  */
 public class WARCExtractCDX {
 
-	/**
+    /**
      * Main method. Extracts CDX from all given files and outputs the index
      * on stdout.
      * @param argv A list of (absolute paths to) files to index.

@@ -96,7 +96,7 @@ public class CDXUtils {
      * existing directory, or if cdxFileDirectory is not writable.
      */
     public static void generateCDX(ArchiveProfile archiveProfile,
-    		File archiveFileDirectory, File cdxFileDirectory) throws ArgumentNotValid {
+            File archiveFileDirectory, File cdxFileDirectory) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(archiveProfile,
                 "ArchiveProfile archiveProfile");
         ArgumentNotValid.checkNotNull(archiveFileDirectory,
@@ -126,7 +126,7 @@ public class CDXUtils {
                     + archiveFileDirectory.getAbsolutePath() + "'.");
         } 
         for (File arcfile : filesToProcess) {
-        	File cdxfile = new File(cdxFileDirectory, arcfile.getName()
+            File cdxfile = new File(cdxFileDirectory, arcfile.getName()
                     .replaceFirst(archiveProfile.filename_pattern,
                                   FileUtils.CDX_EXTENSION));
             if (cdxfile.getName().equals(arcfile.getName())) {

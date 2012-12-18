@@ -35,102 +35,102 @@ import java.util.Set;
  */
 public abstract class ArchiveHeaderBase {
 
-	/** Is this record from an ARC file. */
-	public boolean bIsArc;
+    /** Is this record from an ARC file. */
+    public boolean bIsArc;
 
-	/** Is this record from a WARC file. */
-	public boolean bIsWarc;
+    /** Is this record from a WARC file. */
+    public boolean bIsWarc;
 
-	/**
-	 * Return a header value object.
-	 * @param key header key
-	 * @return header value object
-	 */
-	public abstract Object getHeaderValue(String key);
+    /**
+     * Return a header value object.
+     * @param key header key
+     * @return header value object
+     */
+    public abstract Object getHeaderValue(String key);
 
-	/**
-	 * Return a header value string.
-	 * @param key header key
-	 * @return header value string
-	 */
-	public abstract String getHeaderStringValue(String key);
+    /**
+     * Return a header value string.
+     * @param key header key
+     * @return header value string
+     */
+    public abstract String getHeaderStringValue(String key);
 
-	/**
-	 * Return a <code>Set</code> of header keys.
-	 * @return <code>Set</code> of header keys.
-	 */
-	public abstract Set<String> getHeaderFieldKeys();
+    /**
+     * Return a <code>Set</code> of header keys.
+     * @return <code>Set</code> of header keys.
+     */
+    public abstract Set<String> getHeaderFieldKeys();
 
-	/**
-	 * Return a <code>Map</code> of all header key/value pairs.
-	 * @return <code>Map</code> of all header key/value pairs.
-	 */
-	public abstract Map<String, Object> getHeaderFields();
+    /**
+     * Return a <code>Map</code> of all header key/value pairs.
+     * @return <code>Map</code> of all header key/value pairs.
+     */
+    public abstract Map<String, Object> getHeaderFields();
 
-	/**
-	 * Return the header date as a <code>Date</code> object.
-	 * @return header date as a  <code>Date</code> object
-	 */
-	public abstract Date getDate();
+    /**
+     * Return the header date as a <code>Date</code> object.
+     * @return header date as a  <code>Date</code> object
+     */
+    public abstract Date getDate();
 
-	/**
-	 * Return the header date in the ARC string format for use in CDX output.
-	 * @return header date in the ARC string format
-	 */
-	public abstract String getArcDateStr();
+    /**
+     * Return the header date in the ARC string format for use in CDX output.
+     * @return header date in the ARC string format
+     */
+    public abstract String getArcDateStr();
 
-	/**
-	 * Get the record length from the header.
-	 * @return the record length
-	 */
-	public abstract long getLength();
+    /**
+     * Get the record length from the header.
+     * @return the record length
+     */
+    public abstract long getLength();
 
-	/**
-	 * Get the URL from the header.
-	 * @return the URL from the header
-	 */
-	public abstract String getUrl();
+    /**
+     * Get the URL from the header.
+     * @return the URL from the header
+     */
+    public abstract String getUrl();
 
-	/**
-	 * Get the IP-Address from the header.
-	 * @return the IP-Address from the header
-	 */
-	public abstract String getIp();
+    /**
+     * Get the IP-Address from the header.
+     * @return the IP-Address from the header
+     */
+    public abstract String getIp();
 
-	/**
-	 * Get the content-type from the header and not the payload.
-	 * @return the content-type from the header
-	 */
-	public abstract String getMimetype();
+    /**
+     * Get the content-type from the header and not the payload.
+     * @return the content-type from the header
+     */
+    public abstract String getMimetype();
 
-	/**
-	 * Get record version.
-	 * @return record version
-	 */
-	public abstract String getVersion();
+    /**
+     * Get record version.
+     * @return record version
+     */
+    public abstract String getVersion();
 
-	/**
-	 * Get record offset.
-	 * @return record offset
-	 */
-	public abstract long getOffset();
+    /**
+     * Get record offset.
+     * @return record offset
+     */
+    public abstract long getOffset();
 
-	/**
-	 * Return the reader identifier.
-	 * @return reader identifier
-	 */
-	public abstract String getReaderIdentifier();
+    /**
+     * Return the reader identifier.
+     * @return reader identifier
+     */
+    public abstract String getReaderIdentifier();
 
-	/**
-	 * Return the record identifier.
-	 * @return record identifier
-	 */
-	public abstract String getRecordIdentifier();
+    /**
+     * Return the record identifier.
+     * @return record identifier
+     */
+    public abstract String getRecordIdentifier();
 
-	/**
-	 * Return the archive <code>File</code< object.
-	 * @return archive <code>File</code< object
-	 */
-	public abstract File getArchiveFile();
+    /**
+     * Return the archive <code>File</code< object.
+     * @return archive <code>File</code< object
+     */
+    public abstract File getArchiveFile();
 
 }

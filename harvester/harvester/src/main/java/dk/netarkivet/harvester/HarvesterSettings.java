@@ -248,7 +248,7 @@ public class HarvesterSettings {
             "settings.harvester.scheduler.jobtimeouttime";
 
     /**
-	 * <b>settings.harvester.scheduler.jobgenerationperiode</b>: <br>
+     * <b>settings.harvester.scheduler.jobgenerationperiode</b>: <br>
      * The period between checking if new jobs should be generated, in seconds.
      * This is one minute because that's the finest we can define in a harvest
      * definition.

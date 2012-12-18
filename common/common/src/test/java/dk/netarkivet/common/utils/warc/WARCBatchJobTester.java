@@ -158,7 +158,7 @@ public class WARCBatchJobTester extends TestCase {
         Exception[] es = job.getExceptionArray();
         printExceptions(es);
         assertEquals("Should have processed all but one records",
-                TOTAL_RECORDS - 2, processed);		// Minus warcinfo and metadata
+                TOTAL_RECORDS - 2, processed);        // Minus warcinfo and metadata
         assertEquals("Filtered batch should not throw any exceptions",
                 0, es.length);
     }

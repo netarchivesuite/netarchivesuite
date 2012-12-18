@@ -75,25 +75,25 @@ public class HeritrixTemplateTester extends TestCase {
         }
 
         Object[][] orderXmls = {
-        		{"default_orderxml.xml", new Callback() {
-					@Override
-					public void check(File f) {
-					    checkArcValues(f);
-					}
-        		}},
-        		{"default_orderxml_warc.xml", new Callback() {
-        			@Override
-        			public void check(File f) {
-					    checkWarcValues(f);
-        			}
-        		}},
-        		{"default_orderxml_arc_warc.xml", new Callback() {
-        			@Override
-        			public void check(File f) {
-					    checkArcValues(f);
-					    checkWarcValues(f);
-        			}
-        		}}
+                {"default_orderxml.xml", new Callback() {
+                    @Override
+                    public void check(File f) {
+                        checkArcValues(f);
+                    }
+                }},
+                {"default_orderxml_warc.xml", new Callback() {
+                    @Override
+                    public void check(File f) {
+                        checkWarcValues(f);
+                    }
+                }},
+                {"default_orderxml_arc_warc.xml", new Callback() {
+                    @Override
+                    public void check(File f) {
+                        checkArcValues(f);
+                        checkWarcValues(f);
+                    }
+                }}
         };
         for (int i=0; i<orderXmls.length; ++i) {
             checkHeritrixTemplate((String)orderXmls[i][0], (Callback)orderXmls[i][1]);
@@ -104,19 +104,19 @@ public class HeritrixTemplateTester extends TestCase {
         try {
             HeritrixTemplate ht = new HeritrixTemplate(doc, true);
             assertFalse("HeritrixTemplate should be missing a write processor",
-            		ht.isVerified());
+                    ht.isVerified());
         } catch (ArgumentNotValid e) {
             // expected
         }
     }
 
     private interface Callback {
-    	public void check(File f);
+        public void check(File f);
     }
 
     private void checkHeritrixTemplate(String orderXmlFilename,
-    		Callback callback) {
-    	Document doc;
+            Callback callback) {
+        Document doc;
         File f = new File(TestInfo.TOPDATADIR, orderXmlFilename);
         doc = XmlUtils.getXmlDoc(f);
 

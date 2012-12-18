@@ -30,11 +30,11 @@ public class WARCWriterNAS extends WARCWriter {
      * @throws IOException
      */
     public WARCWriterNAS(final AtomicInteger serialNo,
-    		final OutputStream out, final File f,
-    		final boolean cmprs, final String a14DigitDate,
+            final OutputStream out, final File f,
+            final boolean cmprs, final String a14DigitDate,
             final List<String> warcinfoData)
     throws IOException {
-    	super(serialNo, out, f, cmprs, a14DigitDate, warcinfoData);
+        super(serialNo, out, f, cmprs, a14DigitDate, warcinfoData);
     }
 
     /**
@@ -48,7 +48,7 @@ public class WARCWriterNAS extends WARCWriter {
      * @param warcinfoData File metadata for warcinfo record.
      */
     public WARCWriterNAS(final AtomicInteger serialNo,
-    		final List<File> dirs, final String prefix, 
+            final List<File> dirs, final String prefix, 
             final String suffix, final boolean cmprs,
             final long maxSize, final List<String> warcinfoData) {
         super(serialNo, dirs, prefix, suffix, cmprs, maxSize, warcinfoData);
@@ -56,30 +56,30 @@ public class WARCWriterNAS extends WARCWriter {
 
     @Override
     protected void writeRecord(final String type, final String url,
-    		final String create14DigitDate, final String mimetype,
-    		final URI recordId, ANVLRecord xtraHeaders,
+            final String create14DigitDate, final String mimetype,
+            final URI recordId, ANVLRecord xtraHeaders,
             final InputStream contentStream, final long contentLength, boolean enforceLength)
     throws IOException {
-    	if (!TYPES_LIST.contains(type)) {
-    		throw new IllegalArgumentException("Unknown record type: " + type);
-    	}
-    	if (contentLength == 0 &&
+        if (!TYPES_LIST.contains(type)) {
+            throw new IllegalArgumentException("Unknown record type: " + type);
+        }
+        if (contentLength == 0 &&
                 (xtraHeaders == null || xtraHeaders.size() <= 0)) {
-    		throw new IllegalArgumentException("Cannot write record " +
-    		    "of content-length zero and base headers only.");
-    	}
+            throw new IllegalArgumentException("Cannot write record " +
+                "of content-length zero and base headers only.");
+        }
 
-    	String header;
-    	try {
-    		header = createRecordHeader(type, url,
-    				create14DigitDate, mimetype, recordId, xtraHeaders,
-    				contentLength);
+        String header;
+        try {
+            header = createRecordHeader(type, url,
+                    create14DigitDate, mimetype, recordId, xtraHeaders,
+                    contentLength);
 
-    	} catch (IllegalArgumentException e) {
-    		logger.log(Level.SEVERE,"could not write record type: " + type
-    				+ "for URL: " + url, e);
-    		return;
-    	}
+        } catch (IllegalArgumentException e) {
+            logger.log(Level.SEVERE,"could not write record type: " + type
+                    + "for URL: " + url, e);
+            return;
+        }
 
         try {
             preWriteRecordTasks();
@@ -90,7 +90,7 @@ public class WARCWriterNAS extends WARCWriter {
             write(CRLF_BYTES);
 
             if (contentStream != null && contentLength > 0) {
-            	copyFrom(contentStream, contentLength, enforceLength);
+                copyFrom(contentStream, contentLength, enforceLength);
             }
 
             // Write out the two blank lines at end of all records, per spec

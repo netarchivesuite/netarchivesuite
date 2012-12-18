@@ -74,9 +74,9 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
      * @return <code>MetadataFileWriter</code> for writing metadata files in WARC
      */
     public static MetadataFileWriter createWriter(File metadataWarcFile) {
-    	MetadataFileWriterWarc mtfw = new MetadataFileWriterWarc();
-    	mtfw.writer = WARCUtils.createWARCWriter(metadataWarcFile);
-    	return mtfw;
+        MetadataFileWriterWarc mtfw = new MetadataFileWriterWarc();
+        mtfw.writer = WARCUtils.createWARCWriter(metadataWarcFile);
+        return mtfw;
     }
 
     @Override
@@ -171,7 +171,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             namedFields.addLabelValue("WARC-IP-Address", SystemUtils.getLocalIP());
             
             writer.writeResourceRecord(URL, create14DigitDate,
-            		mimetype, recordId, namedFields, in,
+                    mimetype, recordId, namedFields, in,
                     fileToArchive.length());
         } catch (FileNotFoundException e) {
             throw new IOFailure("Unable to open file: "

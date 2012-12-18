@@ -237,7 +237,7 @@ public class IngestableFiles {
             }
             return Arrays.asList(arcsdir.listFiles(FileUtils.ARCS_FILTER));
         } else {
-        	return new LinkedList<File>();
+            return new LinkedList<File>();
         }
     }
     
@@ -268,7 +268,7 @@ public class IngestableFiles {
             }
             return Arrays.asList(warcsdir.listFiles(FileUtils.WARCS_FILTER));
         } else {
-        	return new LinkedList<File>();
+            return new LinkedList<File>();
         }
     }
 

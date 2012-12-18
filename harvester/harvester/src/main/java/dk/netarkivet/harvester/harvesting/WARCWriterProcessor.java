@@ -80,9 +80,9 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
 public class WARCWriterProcessor extends WriterPoolProcessor
 implements CoreAttributeConstants, CrawlStatusListener,
 WriterPoolSettings, FetchStatusCodes, WARCConstants {
-	private static final long serialVersionUID = -2006725968882994351L;
+    private static final long serialVersionUID = -2006725968882994351L;
 
-	private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
     
     public long getDefaultMaxFileSize() {
           return 1000000000L; // 1 SI giga-byte (109 bytes), per WARC appendix A
@@ -169,14 +169,14 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
         e = addElementToDefinition(
                 new SimpleType(ATTR_HARVESTINFO_PATH,
                 "The full file path to the harvest-info.xml produced by each NetarchiveSuite harvest-job" +
-                "The default path is the crawldir/harvestInfo.xml", new String("")           		
-                		));
+                "The default path is the crawldir/harvestInfo.xml", new String("")
+                        ));
         e.setOverrideable(true);
         e.setExpertSetting(false);        
     }
 
     protected void setupPool(final AtomicInteger serialNo) {
-		setPool(new WARCWriterPool(serialNo, this, getPoolMaximumActive(),
+        setPool(new WARCWriterPool(serialNo, this, getPoolMaximumActive(),
             getPoolMaximumWait()));
     }
     
@@ -259,7 +259,7 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
             // Add to the totalBytesWritten the size of the first record
             // in the file, if any.
             setTotalBytesWritten(getTotalBytesWritten() +
-            	(writer.getPosition() - position));
+                (writer.getPosition() - position));
             position = writer.getPosition();
         }
         
@@ -289,8 +289,8 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
             throw e;
         } finally {
             if (writer != null) {
-            	setTotalBytesWritten(getTotalBytesWritten() +
-            	     (writer.getPosition() - position));
+                setTotalBytesWritten(getTotalBytesWritten() +
+                     (writer.getPosition() - position));
                 getPool().returnFile(writer);
             }
         }
@@ -392,7 +392,7 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
                 headers.addLabelValue(HEADER_KEY_TRUNCATED, value);
             }
             rid = writeResponse(w, timestamp, HTTP_RESPONSE_MIMETYPE,
-            	baseid, curi, headers);
+                baseid, curi, headers);
         }
         
         headers = new ANVLRecord(1);
@@ -516,14 +516,14 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
             final ANVLRecord namedFields) 
     throws IOException {
         namedFields.addLabelValue(
-        		HEADER_KEY_PROFILE, PROFILE_REVISIT_NOT_MODIFIED);
+                HEADER_KEY_PROFILE, PROFILE_REVISIT_NOT_MODIFIED);
         // save just enough context to understand basis of not-modified
         if(curi.containsKey(A_HTTP_TRANSACTION)) {
             HttpMethodBase method = 
                 (HttpMethodBase) curi.getObject(A_HTTP_TRANSACTION);
             saveHeader(A_ETAG_HEADER,method,namedFields,HEADER_KEY_ETAG);
             saveHeader(A_LAST_MODIFIED_HEADER,method,namedFields,
-            		HEADER_KEY_LAST_MODIFIED);
+                    HEADER_KEY_LAST_MODIFIED);
         }
         // truncate to zero-length (all necessary info is above)
         namedFields.addLabelValue(HEADER_KEY_TRUNCATED,
@@ -550,14 +550,14 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
      * @param method http operation containing headers
      */
     protected void saveHeader(String origName, HttpMethodBase method, 
-    		ANVLRecord headers, String newName) {
+            ANVLRecord headers, String newName) {
         Header header = method.getResponseHeader(origName);
         if(header!=null) {
             headers.addLabelValue(newName, header.getValue());
         }
     }
 
-	protected URI writeMetadata(final WARCWriter w,
+    protected URI writeMetadata(final WARCWriter w,
             final String timestamp,
             final URI baseid, final CrawlURI curi,
             final ANVLRecord namedFields) 
@@ -571,9 +571,9 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
         if (curi.isSeed()) {
             r.addLabel("seed");
         } else {
-        	if (curi.forceFetch()) {
-        		r.addLabel("force-fetch");
-        	}
+            if (curi.forceFetch()) {
+                r.addLabel("force-fetch");
+            }
             r.addLabelValue("via", curi.flattenVia());
             r.addLabelValue("hopsFromSeed", curi.getPathFromSeed());
             if (curi.containsKey(A_SOURCE_TAG)) {
@@ -692,13 +692,13 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
             // manner
 //            String rawDate = XmlUtils.xpathOrNull(doc,"//meta/date");
 //            if(StringUtils.isNotBlank(rawDate)) {
-//            	Date date;
-//            	try {
-//            		date = ArchiveUtils.parse14DigitDate(rawDate);
-//            		addIfNotBlank(record,"created",ArchiveUtils.getLog14Date(date));
-//            	} catch (ParseException e) {
-//            		logger.log(Level.WARNING,"obtaining warc created date",e);
-//            	}
+//                Date date;
+//                try {
+//                    date = ArchiveUtils.parse14DigitDate(rawDate);
+//                    addIfNotBlank(record,"created",ArchiveUtils.getLog14Date(date));
+//                } catch (ParseException e) {
+//                    logger.log(Level.WARNING,"obtaining warc created date",e);
+//                }
 //            }
 
             addIfNotBlank(record,"description",

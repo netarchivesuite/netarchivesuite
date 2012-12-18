@@ -114,12 +114,12 @@ public abstract class MetadataFileWriter {
         }
         switch (metadataFormat) {
         case MDF_ARC:
-        	return MetadataFileWriterArc.createWriter(metadataArchiveFile);
+            return MetadataFileWriterArc.createWriter(metadataArchiveFile);
         case MDF_WARC:
-        	return MetadataFileWriterWarc.createWriter(metadataArchiveFile);
+            return MetadataFileWriterWarc.createWriter(metadataArchiveFile);
         default:
-        	throw new ArgumentNotValid("Configuration of '" 
-        	        + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
+            throw new ArgumentNotValid("Configuration of '" 
+                    + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
     }
     
@@ -176,7 +176,7 @@ public abstract class MetadataFileWriter {
                 = parentDir.listFiles(filter);
         for (File metadataSourceFile : metadataSourceFiles) {
             //...write its content to the MetadataFileWriter
-        	writeFileTo(metadataSourceFile,
+            writeFileTo(metadataSourceFile,
                     getURIforFileName(metadataSourceFile).toASCIIString(),
                     mimetype);
             //...and delete it afterwards
