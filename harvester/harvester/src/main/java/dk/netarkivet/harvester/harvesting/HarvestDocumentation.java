@@ -196,12 +196,12 @@ public class HarvestDocumentation {
             File arcFilesDir = ingestables.getArcsDir();
             File warcFilesDir = ingestables.getWarcsDir();
             
-            if(arcFilesDir.exists()) {
+            if(arcFilesDir.isDirectory() && FileUtils.hasFiles(arcFilesDir)) {
                 addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.ARC_PROFILE);
                 cdxGenerationSucceeded = true;
             }
-            if (warcFilesDir.exists()) {
-                addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
+            if (warcFilesDir.isDirectory() && FileUtils.hasFiles(warcFilesDir)) {
+                addCDXes(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
                 cdxGenerationSucceeded = true;
             }
             

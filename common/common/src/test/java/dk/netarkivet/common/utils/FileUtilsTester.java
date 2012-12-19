@@ -461,6 +461,30 @@ public class FileUtilsTester extends TestCase{
                 );
     }
     
+    public void testHasFiles() {
+        try {
+            FileUtils.hasFiles(null);
+            fail("Should throw ArgumentNotValid, if File object null");
+        }catch (ArgumentNotValid e){
+            // Expected
+        }
+        File NonDir = new File("DirThatDoesNotExist");
+        try {
+            FileUtils.hasFiles(NonDir);
+            fail("Should throw ArgumentNotValid, if File object is not a directory");
+        }catch (ArgumentNotValid e){
+            // Expected
+        }
+        File ExistingDir = new File("DirThatDoesExist");
+        ExistingDir.mkdirs();
+        assertFalse("Should be false", FileUtils.hasFiles(ExistingDir));
+        File fileInExistingDir = new File(ExistingDir, "newFile");
+        FileUtils.writeBinaryFile(fileInExistingDir, "contents".getBytes());
+        assertTrue("Should now be true", FileUtils.hasFiles(ExistingDir));
+    }
+    
+    
+    
     /**
      *  Unittest that tests the method 
      *  {@link FileUtils#getHumanReadableFileSize(File)}.

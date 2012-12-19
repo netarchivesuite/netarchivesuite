@@ -1433,4 +1433,13 @@ public class FileUtils {
             return decFormat.format(filesize / bytesPerOneGigabyte) + " Gbytes";
         }
     }
+    
+    /**
+     * @param aDir A directory
+     * @return true, if the given directory contains files; else returns false
+     */
+    public static boolean hasFiles(File aDir) {
+        ArgumentNotValid.checkExistsDirectory(aDir, "aDir");
+        return (aDir.listFiles().length > 0);
+    }
 }
