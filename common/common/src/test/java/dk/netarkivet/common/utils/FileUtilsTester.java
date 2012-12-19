@@ -462,6 +462,7 @@ public class FileUtilsTester extends TestCase{
     }
     
     public void testHasFiles() {
+        
         try {
             FileUtils.hasFiles(null);
             fail("Should throw ArgumentNotValid, if File object null");
@@ -475,12 +476,15 @@ public class FileUtilsTester extends TestCase{
         }catch (ArgumentNotValid e){
             // Expected
         }
+        
         File ExistingDir = new File("DirThatDoesExist");
+        FileUtils.removeRecursively(ExistingDir);
         ExistingDir.mkdirs();
         assertFalse("Should be false", FileUtils.hasFiles(ExistingDir));
         File fileInExistingDir = new File(ExistingDir, "newFile");
         FileUtils.writeBinaryFile(fileInExistingDir, "contents".getBytes());
         assertTrue("Should now be true", FileUtils.hasFiles(ExistingDir));
+        FileUtils.removeRecursively(ExistingDir);
     }
     
     
