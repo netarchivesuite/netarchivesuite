@@ -34,8 +34,10 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.harvesting.JobInfo;
@@ -154,9 +156,17 @@ public class PersistentJobData implements JobInfo {
     /** The harvestfilename prefix used by this job set in the Job class. */    
     private static final String HARVEST_FILENAME_PREFIX_KEY =
             ROOT_ELEMENT + ".harvestFilenamePrefix";
-    
+    /** The submitted date of this job. */
     private static final String JOB_SUBMIT_DATE_KEY =
             ROOT_ELEMENT + ".jobSubmitDate";
+    /** The performer of this harvest. */
+    private static final String HARVEST_PERFORMER_KEY =
+            ROOT_ELEMENT + ".performer";
+    
+    /** The audience of this harvest. 
+    private static final String HARVEST_AUDIENCE_KEY =
+            ROOT_ELEMENT + ".performer";
+    */
     
     /** Key in harvestinfo file for the file version. */
     private static final String HARVESTVERSION_KEY = "harvestInfo.version";
@@ -174,7 +184,8 @@ public class PersistentJobData implements JobInfo {
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
         ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
-        HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
+        HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY,
+        HARVEST_PERFORMER_KEY};
     
     /** String array containing all keys contained in old valid version 
      * 0.3 xml.  */
@@ -302,11 +313,14 @@ public class PersistentJobData implements JobInfo {
         }
         // Store the harvestname prefix selected by the used Naming Strategy.
         sx.add(HARVEST_FILENAME_PREFIX_KEY, harvestJob.getHarvestFilenamePrefix());
-        // store the data in WARC Date format
-        
+    
+        // store the submitted date in WARC Date format
         sx.add(JOB_SUBMIT_DATE_KEY, 
                 ArchiveDateConverter.getWarcDateFormat()
                 .format(harvestJob.getSubmittedDate()));
+        
+        sx.add(HARVEST_PERFORMER_KEY, 
+                Settings.get(HarvesterSettings.PERFORMER));
         
         XmlState validationResult = validateHarvestInfo(sx); 
         if (validationResult.getOkState().equals(XmlState.OKSTATE.NOTOK)) {
@@ -527,8 +541,8 @@ public class PersistentJobData implements JobInfo {
     }
     
     
-    /** Helper class for returning the OK-state back to the caller.
-     *
+    /** 
+     * Helper class for returning the OK-state back to the caller.
      */
     protected static class XmlState {
         /** enum for holding OK/NOTOK values. */
@@ -610,5 +624,22 @@ public class PersistentJobData implements JobInfo {
         SimpleXml sx = read(); // reads and validates XML
         return sx.getString(JOB_SUBMIT_DATE_KEY);
     }
+
+    /**
+     * Return the performer information in this xml.
+     * @return the performer information in this xml.
+     * @throws IOFailure if no harvestInfo exists or it is invalid.
+     */
+    public String getPerformer() {
+        SimpleXml sx = read(); // reads and validates XML
+        return sx.getString(HARVEST_PERFORMER_KEY);
+    }
     
+    /* Placeholder for information added by issue NAS-2139
+      
+    public String getAudience() {
+        SimpleXml sx = read(); // reads and validates XML
+        return sx.getString(HARVEST_AUDIENCE_KEY);
+    }
+    */
 }

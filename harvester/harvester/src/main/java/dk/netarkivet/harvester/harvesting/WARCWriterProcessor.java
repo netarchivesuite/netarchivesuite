@@ -757,6 +757,10 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
         record.addLabelValue("harvestInfo.scheduleName", pjd.getScheduleName());
         record.addLabelValue("harvestInfo.harvestFilenamePrefix", pjd.getHarvestFilenamePrefix());
         record.addLabelValue("harvestInfo.jobSubmitDate", pjd.getJobSubmitDate());
+        record.addLabelValue("harvestInfo.performer", pjd.getPerformer());
+        // Placeholder for information added by issue NAS-2139
+        //record.addLabelValue("harvestInfo.audience", pjd.getAudience()); 
+        
        
         // really ugly to return as string, when it may just be merged with 
         // a couple other fields at write time, but changing would require 

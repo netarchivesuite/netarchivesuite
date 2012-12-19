@@ -95,8 +95,6 @@ public class PersistentJobDataTester extends TestCase {
         pjd.write(testJob, new HarvestDefinitionInfo("test", "test", "test"));
 
         PersistentJobData pjdNew = new PersistentJobData(crawldir);
-
-        System.out.println(pjdNew.getJobSubmitDate());
         
         assertEquals("retrieved jobID is not the same as original jobID",
                 testJob.getJobID(), pjdNew.getJobID());
@@ -113,6 +111,7 @@ public class PersistentJobDataTester extends TestCase {
         assertEquals("retrived origHarvestDefinitionID is not the same as original ID",
                 testJob.getOrigHarvestDefinitionID(),
                 pjdNew.getOrigHarvestDefinitionID());
+        assertEquals("The value of the performer should be set", pjdNew.getPerformer(), "undefined");
         
         // cleanup after this unit-test.
         FileUtils.removeRecursively(crawldir);

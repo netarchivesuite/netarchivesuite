@@ -33,6 +33,7 @@ National Library.
 -->
 <settings>
     <harvester>
+        <performer>undefined</performer>
         <aliases>
             <timeout>31536000</timeout>
         </aliases>
