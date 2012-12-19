@@ -720,8 +720,7 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
             logger.log(Level.WARNING,"obtaining warcinfo", e);
         } 
         
-        record.addLabel("#added by NetarchiveSuite " + dk.netarkivet.common.Constants.getVersionString());
-        
+       
         // add fields from harvesInfo.xml version 0.4
         /*
         <harvestInfo>
@@ -737,34 +736,40 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
           <scheduleName>Once_a_week</scheduleName>
           <harvestFilenamePrefix>1-1</harvestFilenamePrefix>
           <jobSubmitDate>Some date</jobSubmitDate>
+          <performer>undefined</performer>
            </harvestInfo>
         */
+        String netarchiveSuiteComment = "#added by NetarchiveSuite " + dk.netarkivet.common.Constants.getVersionString();
+        ANVLRecord recordNAS = new ANVLRecord(7);
         
-        record.addLabelValue("harvestInfo.version", pjd.getVersion());
-        record.addLabelValue("harvestInfo.jobId", "" + pjd.getJobID());
-        record.addLabelValue("harvestInfo.priority", pjd.getJobPriority().name());
-        record.addLabelValue("harvestInfo.harvestNum", "" + pjd.getJobHarvestNum());
-        record.addLabelValue("harvestInfo.origHarvestDefinitionID", 
+        recordNAS.addLabelValue("harvestInfo.version", pjd.getVersion());
+        recordNAS.addLabelValue("harvestInfo.jobId", "" + pjd.getJobID());
+        recordNAS.addLabelValue("harvestInfo.priority", pjd.getJobPriority().name());
+        recordNAS.addLabelValue("harvestInfo.harvestNum", "" + pjd.getJobHarvestNum());
+        recordNAS.addLabelValue("harvestInfo.origHarvestDefinitionID", 
                 "" + pjd.getOrigHarvestDefinitionID());
-        record.addLabelValue("harvestInfo.maxBytesPerDomain", 
+        recordNAS.addLabelValue("harvestInfo.maxBytesPerDomain", 
                 "" + pjd.getMaxBytesPerDomain());
-        record.addLabelValue("harvestInfo.maxObjectsPerDomain", 
+        recordNAS.addLabelValue("harvestInfo.maxObjectsPerDomain", 
                 "" + pjd.getMaxObjectsPerDomain());
-        record.addLabelValue("harvestInfo.orderXMLName", 
+        recordNAS.addLabelValue("harvestInfo.orderXMLName", 
                 pjd.getOrderXMLName());
-        record.addLabelValue("harvestInfo.origHarvestDefinitionName", 
+        recordNAS.addLabelValue("harvestInfo.origHarvestDefinitionName", 
                 pjd.getharvestName());
-        record.addLabelValue("harvestInfo.scheduleName", pjd.getScheduleName());
-        record.addLabelValue("harvestInfo.harvestFilenamePrefix", pjd.getHarvestFilenamePrefix());
-        record.addLabelValue("harvestInfo.jobSubmitDate", pjd.getJobSubmitDate());
-        record.addLabelValue("harvestInfo.performer", pjd.getPerformer());
+        recordNAS.addLabelValue("harvestInfo.scheduleName", pjd.getScheduleName());
+        recordNAS.addLabelValue("harvestInfo.harvestFilenamePrefix", pjd.getHarvestFilenamePrefix());
+        recordNAS.addLabelValue("harvestInfo.jobSubmitDate", pjd.getJobSubmitDate());
+        recordNAS.addLabelValue("harvestInfo.performer", pjd.getPerformer());
+        
+        
         // Placeholder for information added by issue NAS-2139
         //record.addLabelValue("harvestInfo.audience", pjd.getAudience()); 
         
         // really ugly to return as string, when it may just be merged with 
         // a couple other fields at write time, but changing would require 
         // larger refactoring
-        return record.toString();
+        return record.toString() + netarchiveSuiteComment 
+                + "\n" + recordNAS.toString();
     }
 
     protected void addIfNotBlank(ANVLRecord record, String label, String value) {

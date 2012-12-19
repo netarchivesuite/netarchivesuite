@@ -60,6 +60,7 @@ public class HarvestingTesterSuite {
         suite.addTestSuite(OnNSDomainsDecideRuleTester.class);
         suite.addTestSuite(ExtractorOAITest.class);
         suite.addTestSuite(MetadataFileWriterTester.class);
+        suite.addTestSuite(WARCWriterProcessorTester.class);
     }
 
     public static void main(String[] args) {
