@@ -165,7 +165,7 @@ public class PersistentJobData implements JobInfo {
     
     /** The audience of this harvest. 
     private static final String HARVEST_AUDIENCE_KEY =
-            ROOT_ELEMENT + ".performer";
+            ROOT_ELEMENT + ".audience";
     */
     
     /** Key in harvestinfo file for the file version. */

@@ -761,7 +761,6 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
         // Placeholder for information added by issue NAS-2139
         //record.addLabelValue("harvestInfo.audience", pjd.getAudience()); 
         
-       
         // really ugly to return as string, when it may just be merged with 
         // a couple other fields at write time, but changing would require 
         // larger refactoring
