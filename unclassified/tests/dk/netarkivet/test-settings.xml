@@ -33,6 +33,8 @@ National Library.
         <jms>
         	<class>dk.netarkivet.common.distribute.JMSConnectionMockupMQ</class>
         </jms>
+        <!-- getTimeout is here changed from 300 to 2 seconds to reduce running time of our unittests. -->
+        <arcrepositoryClient><getTimeout>2000</getTimeout></arcrepositoryClient>
         <notifications>
             <class>dk.netarkivet.common.utils.PrintNotifications</class>
         </notifications>

@@ -1,7 +1,7 @@
-/*$Id: BitpreserveFileStatusTester.java 1499 2010-07-14 16:59:04Z svc $
-* $Revision: 1499 $
-* $Date: 2010-07-14 18:59:04 +0200 (Wed, 14 Jul 2010) $
-* $Author: svc $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2012 The Royal Danish Library, the Danish State and
@@ -121,17 +121,17 @@ public class ArcRepositoryDatabaseTester extends TestCase {
     /**
      * These are for Get (ArcRepositoryTesterGet)
      */
-    private static final File GET_DIR = new File(
-            "tests/dk/netarkivet/archive/arcrepository/data/get");
+    //private static final File GET_DIR = new File(
+    //        "tests/dk/netarkivet/archive/arcrepository/data/get");
 
-    private static final File GET_ORIGINALS_DIR = new File(GET_DIR, "originals");
+    //private static final File GET_ORIGINALS_DIR = new File(GET_DIR, "originals");
 
-    private static final File GET_WORKING_DIR = new File(GET_DIR, "working");
+    //private static final File GET_WORKING_DIR = new File(GET_DIR, "working");
 
     private static final File GET_BITARCHIVE_DIR = new File(WORKING_DIR,
             "bitarchive1");
 
-    private static final File GET_SERVER_DIR = new File(WORKING_DIR, "server1");
+    //private static final File GET_SERVER_DIR = new File(WORKING_DIR, "server1");
 
     // List of files that can be used in the scripts (content of the ORIGINALS_DIR)
     private static final List<String> GETTABLE_FILES
