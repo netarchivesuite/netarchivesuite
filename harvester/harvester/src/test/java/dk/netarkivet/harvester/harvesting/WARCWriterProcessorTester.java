@@ -59,7 +59,8 @@ public class WARCWriterProcessorTester extends TestCase {
         XmlUtils.writeXmlToFile(doc, TestInfo.ORDER_FOR_TESTING_WARCINFO);
 
         WARCWriterProcessor p = new WARCWriterProcessor("testing");
-        String output = p.getFirstrecordBody(TestInfo.ORDER_FOR_TESTING_WARCINFO);
-        System.out.println(output);
+        p.getFirstrecordBody(TestInfo.ORDER_FOR_TESTING_WARCINFO);
+        //String output = p.getFirstrecordBody(TestInfo.ORDER_FOR_TESTING_WARCINFO);
+        //System.out.println(output);
     }
 }
