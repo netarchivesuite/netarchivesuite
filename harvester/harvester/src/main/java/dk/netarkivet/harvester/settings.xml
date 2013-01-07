@@ -165,7 +165,7 @@ National Library.
             <maxSizeInBrowser>100000000</maxSizeInBrowser>
         </viewerproxy>
         <webinterface>
-            <maxCrawlLogInBrowser>100</maxCrawlLogInBrowser>
+            <maxCrawlLogInBrowser>1000</maxCrawlLogInBrowser>
         </webinterface>
     </harvester>
 </settings>

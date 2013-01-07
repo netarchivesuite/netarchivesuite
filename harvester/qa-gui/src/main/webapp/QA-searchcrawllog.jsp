@@ -80,8 +80,9 @@ domain - the domain to get the log for
                 Integer.MAX_VALUE);
         if (regexp != null && regexp.length() != 0 ) {
             crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
-        } else {
-            crawlLogExtract = Reporting.getCrawlLogForDomainInJob(domain, jobid);
+        } else { // use 'domain' as the regular expression
+        	regexp = ".*" + domain.replaceAll("\\.", "\\\\.") + ".*";
+        	crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
         }
         LineNumberReader reader = new LineNumberReader(new FileReader(crawlLogExtract));
         reader.skip(Long.MAX_VALUE);
