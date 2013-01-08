@@ -70,7 +70,7 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
         this.regexp = regexp;
 
         /**
-        * Two weeks in milliseconds.
+        * One week in milliseconds.
         */
         batchJobTimeout = 7* Constants.ONE_DAY_IN_MILLIES;
     }
@@ -87,7 +87,12 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
     public ArchiveBatchFilter getFilter() {
         return new ArchiveBatchFilter("OnlyCrawlLog") {
             public boolean accept(ArchiveRecordBase record) {
-                return record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
+                String URL = record.getHeader().getUrl(); 
+                if (URL == null) {
+                    return false;
+                } else {
+                    return URL.startsWith(SETUP_URL_FORMAT);
+                }
             }
         };
     }
