@@ -169,6 +169,7 @@ public class JobDispatcherTester extends TestCase {
 
         DoOneCrawlMessage crawlMessage = (DoOneCrawlMessage) 
                 hacoListener.getReceived();
+        assertNotNull("CrawlMessage should not be null", crawlMessage);
         assertEquals("Should have 2 metadata entry, but got "
                 + crawlMessage.getMetadata(), 2, crawlMessage.getMetadata()
                 .size());

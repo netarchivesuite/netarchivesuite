@@ -81,9 +81,9 @@ public class PersistentJobData implements JobInfo {
             super();
             ArgumentNotValid.checkNotNullOrEmpty(
                     origHarvestName, "origHarvestName");
-            ArgumentNotValid.checkNotNull(
+            ArgumentNotValid.checkNotNullOrEmpty(
                     origHarvestDesc, "origHarvestDesc");
-            ArgumentNotValid.checkNotNull(
+            ArgumentNotValid.checkNotNullOrEmpty(
                     scheduleName, "scheduleName");
             this.origHarvestName = origHarvestName;
             this.origHarvestDesc = origHarvestDesc;
@@ -186,6 +186,12 @@ public class PersistentJobData implements JobInfo {
         ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
         HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY,
         HARVEST_PERFORMER_KEY};
+    
+   /**
+    *  Optional keys are HARVEST_DESC_KEY representing harvest comments,
+    * and HARVEST_SCHED_KEY representing the scheduleName behind the harvest, 
+    * only applicable for selective harvests. 
+    */    
     
     /** String array containing all keys contained in old valid version 
      * 0.3 xml.  */
@@ -607,12 +613,17 @@ public class PersistentJobData implements JobInfo {
     
     /**
      * Return the schedulename in this xml.
-     * @return the schedulename in this xml.
+     * @return the schedulename in this xml 
+     * (or "NA", if not applicable for this job)
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
     public String getScheduleName() {
         SimpleXml sx = read(); // reads and validates XML
-        return sx.getString(HARVEST_SCHED_KEY);
+        if (sx.hasKey(HARVEST_SCHED_KEY)) {
+            return sx.getString(HARVEST_SCHED_KEY);    
+        } else {
+            return "NA";
+        }
     }
 
     /**
