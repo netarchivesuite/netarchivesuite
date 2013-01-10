@@ -6,14 +6,9 @@
     <property name="checkstyle.cache.file" value="checkstyleCache"/>
     <additional-data name="protect-config-file" value="true"/>
   </local-check-config>
-  <fileset name="all" enabled="true" check-config-name="Sun Checks" local="false">
+  <fileset name="all" enabled="true" check-config-name="NetarchiveSuite_Checks" local="true">
     <file-match-pattern match-pattern="." include-pattern="true"/>
   </fileset>
-  <filter name="FileTypesFilter" enabled="true">
-    <filter-data value="java"/>
-    <filter-data value="properties"/>
-    <filter-data value="Translations_en.properties"/>
-  </filter>
   <filter name="FilesFromPackage" enabled="true">
     <filter-data value="tests"/>
     <filter-data value="src/dk/netarkivet/archive/Translations_en.properties"/>
