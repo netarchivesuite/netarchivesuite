@@ -72,7 +72,7 @@ public class PersistentJobData implements JobInfo {
          * Builds a harvest definition info object.
          * @param origHarvestName the harvest definition's name
          * @param origHarvestDesc the harvest definition's comments
-         * @param scheduleName the harvest definition's schedule name
+         * @param scheduleName the harvest definition's schedule name (only applicable for selective harvests) 
          */
         public HarvestDefinitionInfo(
                 String origHarvestName,
@@ -83,7 +83,7 @@ public class PersistentJobData implements JobInfo {
                     origHarvestName, "origHarvestName");
             ArgumentNotValid.checkNotNullOrEmpty(
                     origHarvestDesc, "origHarvestDesc");
-            ArgumentNotValid.checkNotNullOrEmpty(
+            ArgumentNotValid.checkNotNull(
                     scheduleName, "scheduleName");
             this.origHarvestName = origHarvestName;
             this.origHarvestDesc = origHarvestDesc;
