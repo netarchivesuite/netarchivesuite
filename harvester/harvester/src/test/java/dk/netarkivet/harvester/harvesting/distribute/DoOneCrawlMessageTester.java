@@ -205,6 +205,43 @@ public class DoOneCrawlMessageTester extends TestCase {
                 equals(docm2.getMetadata().get(0).getURL())) {
             fail("metadata is no longer the same !");
         }
-
     }
+    
+    public void testHarvestDefinitionInfo() {
+        try {
+            new HarvestDefinitionInfo("test", "some comments", "testSchedule");
+        } catch (ArgumentNotValid e) {
+            fail("Should not throw ArgumentNotValid with valid args");
+        }
+        
+        try {
+            new HarvestDefinitionInfo("test", "", "");
+        } catch (ArgumentNotValid e) {
+            fail("Should not throw ArgumentNotValid with valid args");
+        }
+        
+        try {
+            new HarvestDefinitionInfo("test", "Some comments", "");
+        } catch (ArgumentNotValid e) {
+            fail("Should not throw ArgumentNotValid with valid args");
+        }
+        
+        try {
+            new HarvestDefinitionInfo("", "", "");
+            fail("Should throw ArgumentNotValid with empty harvest name");
+        } catch (ArgumentNotValid e) {
+            //
+        }
+        
+        try {
+            new HarvestDefinitionInfo((String) null, (String) null, (String) null);
+            fail("Should throw ArgumentNotValid with null args");
+        } catch (ArgumentNotValid e) {
+            //
+        }
+        
+        
+        
+    }
+    
 }
