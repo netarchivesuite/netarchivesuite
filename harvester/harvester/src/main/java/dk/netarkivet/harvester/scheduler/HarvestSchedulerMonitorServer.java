@@ -118,7 +118,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                                     job.getOrigHarvestDefinitionID(),
                                     job.getJobID()));
 
-                    log.debug(job + " has started crawling.");
+                    log.info("Job #" + job.getJobID() + " has been started by the harvester.");
                     jobDAO.update(job);
                 } else {
                     // Must not change status back to STARTED
