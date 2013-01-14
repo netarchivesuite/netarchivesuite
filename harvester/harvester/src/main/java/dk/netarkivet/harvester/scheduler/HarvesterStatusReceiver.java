@@ -41,7 +41,7 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
  */
 public class HarvesterStatusReceiver extends HarvesterMessageHandler
 implements ComponentLifeCycle {  
-    /** @see #HarvesterStatusReceiver. */
+    /** @see HarvesterStatusReceiver#visit(dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage)  */
     private final JobDispatcher jobDispatcher;
     /** Connection to JMS provider. */
     private final JMSConnection jmsConnection; 
@@ -83,7 +83,7 @@ implements ComponentLifeCycle {
     @Override
     public void visit(HarvesterReadyMessage message) {
         ArgumentNotValid.checkNotNull(message, "message");
-        log.debug("Received ready message: " + message);
+        log.trace("Received ready message from " + message.getApplicationInstanceId());
         jobDispatcher.submitNextNewJob(message.getJobProprity());
     }
 }
