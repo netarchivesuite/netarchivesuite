@@ -422,6 +422,8 @@ public final class Constants {
     static final String[] BUILD_SETTING_FILES = {
         "dk/netarkivet/archive/settings.xml",
         "dk/netarkivet/common/settings.xml",
+ 	"dk/netarkivet/common/distribute/arcrepository/"
+                + "LocalArcRepositoryClientSettings.xml",
         "dk/netarkivet/harvester/settings.xml",
         "dk/netarkivet/monitor/settings.xml",
         "dk/netarkivet/wayback/settings.xml",

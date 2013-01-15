@@ -59,15 +59,25 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * credentials checking or checksum storing!
  */
 public class LocalArcRepositoryClient implements ArcRepositoryClient {
+    /** The default place in classpath where the settings file can be found. */
+    private static String defaultSettingsClasspath
+            = "dk/netarkivet/common/distribute/arcrepository/"
+                + "LocalArcRepositoryClientSettings.xml";
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
+    static {
+        Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
+    }
+    
     /** The logger for this class. */
     private Log log = LogFactory.getLog(getClass());
     /** List of the directories that we store files in. Non-absolute dirs are
      * relative to the current directory. */
     private final List<File> storageDirs = new ArrayList<File>(1);
-    /** If no directories are specified in the settings file, use a single
-     * directory with this name.
-     */
-    private static final String DEFAULT_DIR_NAME = "ArcRepository";
+    
     /** Store the file in the directories designated by this setting. */
     private static final String FILE_DIRS
             = "settings.common.arcrepositoryClient.fileDir";
@@ -79,9 +89,6 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     public LocalArcRepositoryClient() {
         List<String> fileDirs =
                 Arrays.asList(Settings.getAll(FILE_DIRS));
-        if (fileDirs.size() == 0) {
-            fileDirs.add(DEFAULT_DIR_NAME);
-        }
         for (String fileName : fileDirs) {
             File f = new File(fileName);
             FileUtils.createDir(f);

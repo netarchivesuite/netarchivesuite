@@ -75,7 +75,7 @@
         </http>
         <arcrepositoryClient>
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
-        <getTimeout>300000</getTimeout><storeRetries>3</storeRetries><storeTimeout>3600000</storeTimeout></arcrepositoryClient>
+        <fileDir>ArcRepository</fileDir><getTimeout>300000</getTimeout><storeRetries>3</storeRetries><storeTimeout>3600000</storeTimeout></arcrepositoryClient>
         <monitorregistryClient>
             <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
             <reregisterdelay>1</reregisterdelay>
