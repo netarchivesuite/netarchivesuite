@@ -756,10 +756,15 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
                 pjd.getOrderXMLName());
         recordNAS.addLabelValue("harvestInfo.origHarvestDefinitionName", 
                 pjd.getharvestName());
-        recordNAS.addLabelValue("harvestInfo.scheduleName", pjd.getScheduleName());
+        if (pjd.getScheduleName() != null) {
+            recordNAS.addLabelValue("harvestInfo.scheduleName", pjd.getScheduleName());
+        }
         recordNAS.addLabelValue("harvestInfo.harvestFilenamePrefix", pjd.getHarvestFilenamePrefix());
         recordNAS.addLabelValue("harvestInfo.jobSubmitDate", pjd.getJobSubmitDate());
-        recordNAS.addLabelValue("harvestInfo.performer", pjd.getPerformer());
+        if (pjd.getPerformer() != null) {
+            recordNAS.addLabelValue("harvestInfo.performer", pjd.getPerformer());
+        }
+        
         
         
         // Placeholder for information added by issue NAS-2139

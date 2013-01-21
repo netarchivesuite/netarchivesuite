@@ -164,8 +164,6 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
 
             namedFields.addLabelValue(
                     WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
-            namedFields.addLabelValue("WARC-Concurrent-To", 
-                    generateEncapsulatedRecordID(warcInfoUID));
             namedFields.addLabelValue("WARC-Warcinfo-ID", 
                     generateEncapsulatedRecordID(warcInfoUID));
             namedFields.addLabelValue("WARC-IP-Address", SystemUtils.getLocalIP());
@@ -206,8 +204,6 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         ANVLRecord namedFields = new ANVLRecord(3);
         namedFields.addLabelValue(
         WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
-        namedFields.addLabelValue("WARC-Concurrent-To", 
-                generateEncapsulatedRecordID(warcInfoUID));
         namedFields.addLabelValue("WARC-Warcinfo-ID", 
                 generateEncapsulatedRecordID(warcInfoUID));
         namedFields.addLabelValue("WARC-IP-Address", SystemUtils.getLocalIP());

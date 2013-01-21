@@ -609,7 +609,7 @@ public class HarvesterSettings {
     
     /** 
      * <b>settings.harvester.performer</b>: <br>The agent performing these harvests. 
-     * The default is: undefined */
+     * The default is: "" */
     public static String PERFORMER = "settings.harvester.performer";
     
 

@@ -179,13 +179,12 @@ public class PersistentJobData implements JobInfo {
      */
     private static final String OLD_HARVESTVERSION_NUMBER = "0.3";
 
-    /** String array containing all keys contained in valid version 0.4 xml.  */
+    /** String array containing all mandatory keys contained in valid version 0.4 xml.  */
     private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
         ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
-        HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY,
-        HARVEST_PERFORMER_KEY};
+        HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
     
    /**
     *  Optional keys are HARVEST_DESC_KEY representing harvest comments,
@@ -193,7 +192,7 @@ public class PersistentJobData implements JobInfo {
     * only applicable for selective harvests. 
     */    
     
-    /** String array containing all keys contained in old valid version 
+    /** String array containing all mandatory keys contained in old valid version 
      * 0.3 xml.  */
     private static final String[] ALL_KEYS_OLD = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
@@ -324,10 +323,11 @@ public class PersistentJobData implements JobInfo {
         sx.add(JOB_SUBMIT_DATE_KEY, 
                 ArchiveDateConverter.getWarcDateFormat()
                 .format(harvestJob.getSubmittedDate()));
-        
-        sx.add(HARVEST_PERFORMER_KEY, 
+        // if performer set to something different from the empty String
+        if (!Settings.get(HarvesterSettings.PERFORMER).isEmpty()) {
+            sx.add(HARVEST_PERFORMER_KEY, 
                 Settings.get(HarvesterSettings.PERFORMER));
-        
+        }
         XmlState validationResult = validateHarvestInfo(sx); 
         if (validationResult.getOkState().equals(XmlState.OKSTATE.NOTOK)) {
             String msg = "Could not create a valid harvestinfo file for job "
@@ -614,7 +614,7 @@ public class PersistentJobData implements JobInfo {
     /**
      * Return the schedulename in this xml.
      * @return the schedulename in this xml 
-     * (or "NA", if not applicable for this job)
+     * (or null, if undefined for this job)
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
     public String getScheduleName() {
@@ -622,7 +622,7 @@ public class PersistentJobData implements JobInfo {
         if (sx.hasKey(HARVEST_SCHED_KEY)) {
             return sx.getString(HARVEST_SCHED_KEY);    
         } else {
-            return "NA";
+            return null;
         }
     }
 
@@ -638,12 +638,16 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the performer information in this xml.
-     * @return the performer information in this xml.
+     * @return the performer information in this xml or null if value undefined
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
     public String getPerformer() {
         SimpleXml sx = read(); // reads and validates XML
-        return sx.getString(HARVEST_PERFORMER_KEY);
+        if (sx.hasKey(HARVEST_PERFORMER_KEY)) {
+            return sx.getString(HARVEST_PERFORMER_KEY);
+        } else {
+            return null;
+        }
     }
     
     /* Placeholder for information added by issue NAS-2139
