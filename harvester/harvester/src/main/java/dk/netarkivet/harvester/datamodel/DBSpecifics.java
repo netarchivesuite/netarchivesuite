@@ -632,12 +632,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * Migrates the 'jobs' table from version 7 to version 8 consisting of adding
      * the date creationdate with null as default
      */
-    protected void migrateJobsv7tov8() {
-        String[] sqlStatements = {
-                "ALTER TABLE jobs ADD COLUMN creationdate TIMESTAMP DEFAULT NULL"
-        };
-        HarvestDBConnection.updateTable("jobs", 8, sqlStatements);
-    }
+    protected abstract void migrateJobsv7tov8(); 
     
     /**
      * Update all tables in the enum class {@link HarvesterDatabaseTables} to the required

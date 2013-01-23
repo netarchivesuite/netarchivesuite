@@ -324,4 +324,12 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         };
         HarvestDBConnection.updateTable("jobs", 7, sqlStatements);
     }
+    
+    @Override
+    protected void migrateJobsv7tov8() {
+        String[] sqlStatements = {
+                "ALTER TABLE jobs ADD COLUMN creationdate TIMESTAMP DEFAULT NULL"
+        };
+        HarvestDBConnection.updateTable("jobs", 8, sqlStatements);
+    }
 }

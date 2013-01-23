@@ -411,4 +411,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
         };
         HarvestDBConnection.updateTable("domains", 3, sqlStatements);
     }
+    
+    @Override
+    protected void migrateJobsv7tov8() {
+        String[] sqlStatements = {
+                "ALTER TABLE jobs ADD COLUMN creationdate TIMESTAMP DEFAULT NULL"
+        };
+        HarvestDBConnection.updateTable("jobs", 8, sqlStatements);
+    }
+    
 }
