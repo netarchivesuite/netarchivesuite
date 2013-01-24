@@ -350,8 +350,12 @@ public final class IndexRequestServer extends HarvesterMessageHandler
             List<Long> sortedList = new ArrayList<Long>(jobIDs);
             String allIDsString = StringUtils.conjoin("-", sortedList);
             String checksum = MD5.generateMD5(allIDsString.getBytes());
+            log.debug("Waiting to enter the synchronization zone for the indexing job of size " 
+                    + jobIDs.size() + " with checksum '" + checksum + "'");
             // Begin synchronization
-            synchronized (checksum.intern()) { 
+            synchronized (checksum.intern()) {
+                log.debug("The indexing job of size " 
+                        + jobIDs.size() + " with checksum '" + checksum + "' is now in the synchronization zone");
                 Set<Long> foundIDs = handler.cache(jobIDs);
                 irMsg.setFoundJobs(foundIDs);
                 if (foundIDs.equals(jobIDs)) {
@@ -364,7 +368,10 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                         packageResultFiles(irMsg, cacheFile);
                     }
                 } else if (satisfactoryTresholdReached(foundIDs, jobIDs)) {
-
+                    log.info("Data for full index w/ " + jobIDs.size() 
+                            + " jobs not available. Only found data for " + foundIDs.size() 
+                            + " jobs - but satisfactoryTreshold reached, "
+                            + "so assuming presence of all data");
                     // Make sure that the index of the data available is generated
                     Set<Long> theFoundIDs = handler.cache(foundIDs);
                     // TheFoundIDS should be identical to foundIDs
@@ -372,14 +379,14 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                     Set<Long> diffSet = new HashSet<Long>(foundIDs);
                     diffSet.removeAll(theFoundIDs);
                     
-                    
-                    
                     // Make a copy of the index created, and give it the name of
                     // the index cache file wanted.
                     File cacheFileWanted = handler.getCacheFile(jobIDs);
                     File cacheFileCreated = handler.getCacheFile(foundIDs);
 
-                    log.info("Satisfactory threshold reached - copying index '" 
+                    log.info("Satisfactory threshold reached - copying index " 
+                            + (cacheFileCreated.isDirectory()? "dir": "file") 
+                            + " '" 
                             + cacheFileCreated.getAbsolutePath()
                             + "' to full index: " + cacheFileWanted.getAbsolutePath());
                     if (cacheFileCreated.isDirectory()) {
@@ -390,6 +397,10 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                     } else {
                         FileUtils.copyFile(cacheFileCreated, cacheFileWanted);
                     }
+                    log.info("Deleting the temporary index " 
+                            + cacheFileCreated.getAbsolutePath());
+                    FileUtils.removeRecursively(cacheFileCreated);
+                    
                     // Information needed by recipient to store index in local cache
                     irMsg.setFoundJobs(jobIDs); 
                     if (mustReturnIndex) { // return index now.
