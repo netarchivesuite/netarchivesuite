@@ -379,7 +379,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                     Set<Long> diffSet = new HashSet<Long>(foundIDs);
                     diffSet.removeAll(theFoundIDs);
                     
-                    // Make a copy of the index created, and give it the name of
+                    // Make a copy of the index available, and give it the name of
                     // the index cache file wanted.
                     File cacheFileWanted = handler.getCacheFile(jobIDs);
                     File cacheFileCreated = handler.getCacheFile(foundIDs);
@@ -397,9 +397,16 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                     } else {
                         FileUtils.copyFile(cacheFileCreated, cacheFileWanted);
                     }
-                    log.info("Deleting the temporary index " 
-                            + cacheFileCreated.getAbsolutePath());
-                    FileUtils.removeRecursively(cacheFileCreated);
+                    
+                    //TODO This delete-operation commented out, because it is deemed too dangerous,
+                    // as the cachedir represented by cacheFileCreated may still be used
+                    
+                    //log.info("Deleting the temporary index " 
+                    //        + cacheFileCreated.getAbsolutePath());
+                    //FileUtils.removeRecursively(cacheFileCreated);
+                    log.info("We keep the index '" 
+                            + cacheFileCreated.getAbsolutePath()
+                            + "', as we don't know if anybody is using it");
                     
                     // Information needed by recipient to store index in local cache
                     irMsg.setFoundJobs(jobIDs); 
