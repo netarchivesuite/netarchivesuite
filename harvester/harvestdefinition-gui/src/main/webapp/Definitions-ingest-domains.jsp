@@ -111,7 +111,10 @@ the progress of the ingestion.
 <%
         }
         out.flush();
+        // delete temporary file
+        FileUtils.remove(ingestFile);
     }
+    
     %>
 <fmt:message key="ingesting.done"/><br/>
 <%
