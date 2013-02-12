@@ -745,7 +745,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         totalEnqueues,
         sessionBalance,
         lastCost,
-        averageCost,
+        averageCost, // See NAS-2168 Often contains the illegal value 4.9E-324
         lastDequeueTime,
         wakeTime,
         totalSpend,
@@ -808,7 +808,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 String message =
                     "SQL error dropping records for job ID " + jobId
                     + " and filterId " + filterId
-                    + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e);
                 log.warn(message, e);
                 return 0;
             } finally {
@@ -844,7 +844,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                     stm.setDouble(
                             FR_COLUMN.lastCost.rank(), frl.getLastCost());
                     stm.setDouble(
-                            FR_COLUMN.averageCost.rank(), frl.getAverageCost());
+                            FR_COLUMN.averageCost.rank(), 
+                                correctNumericIfIllegalAverageCost(frl.getAverageCost()));
                     stm.setString(
                             FR_COLUMN.lastDequeueTime.rank(),
                             frl.getLastDequeueTime());
@@ -899,6 +900,21 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         }
     }
 
+    /**
+     * Correct the given double if it is equal to 4.9E-324. 
+     * Part of fix for NAS-2168
+     * @param value A given double
+     * @return 0.0 if value is 4.9E-324, otherwise the value as is
+     */
+    private double correctNumericIfIllegalAverageCost(double value) {
+        if (value == 4.9E-324) {
+            log.warn("Found illegal double value '" + 4.9E-324 
+                    + "'. Changed it to 0.0");
+            return 0.0;
+        } else {
+            return value;
+        }
+    }
 
     /**
      * Returns the list of the available frontier report types.
