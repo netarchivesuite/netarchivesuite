@@ -52,6 +52,7 @@ public class ViewerProxyTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ARCArchiveAccessTester.class);
         suite.addTestSuite(CommandResolverTester.class);
+        suite.addTestSuite(CrawlLogLinesMatchingRegexpTester.class);
         suite.addTestSuite(DelegatingControllerTester.class);
         suite.addTestSuite(GetDataResolverTester.class);
         suite.addTestSuite(MissingURIRecorderTester.class);
@@ -60,7 +61,6 @@ public class ViewerProxyTesterSuite {
         suite.addTestSuite(URIObserverTester.class);
         suite.addTestSuite(ViewerProxyTester.class);
         suite.addTestSuite(WebProxyTester.class);
-       
     }
 
     public static void main(String[] args) {
