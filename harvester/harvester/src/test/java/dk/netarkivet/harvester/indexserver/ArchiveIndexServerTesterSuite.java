@@ -54,6 +54,7 @@ public class ArchiveIndexServerTesterSuite {
         suite.addTestSuite(CombiningMultiFileBasedCacheTester.class);
         suite.addTestSuite(CrawlLogIndexCacheTester.class);
         suite.addTestSuite(DedupCrawlLogIndexCacheTester.class);
+        suite.addTestSuite(GetMetadataArchiveBatchJobTester.class);
         suite.addTestSuite(MultiFileBasedCacheTester.class);
         suite.addTestSuite(RawMetadataCacheTester.class);
         suite.addTestSuite(IndexServerTester.class);

@@ -34,6 +34,7 @@ import java.io.File;
 public class TestInfo {
     static final File BASE_DIR = new File("tests/dk/netarkivet/harvester/indexserver/data");
     static final File ORIGINALS_DIR = new File(BASE_DIR, "originals");
+    static final File METADATA_DIR = new File(ORIGINALS_DIR, "metadata");
     static final File WORKING_DIR = new File(BASE_DIR, "working");
     static final File ARCFILES_DIR = new File(WORKING_DIR, "arcfiles");
     static final File CRAWLLOGS_DIR = new File(WORKING_DIR, "crawllogs");
