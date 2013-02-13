@@ -125,7 +125,8 @@ abstract class AbstractJobGenerator implements JobGenerator {
                         + (nextEvent == null ? "Never" : nextEvent.toString()));
             }
         }
-
+        
+        log.info("Finished generating " + jobsMade + " jobs for harvestdefinition # " + harvest.getOid());
         return jobsMade;
     }
 
