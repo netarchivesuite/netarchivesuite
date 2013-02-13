@@ -73,7 +73,8 @@ abstract class AbstractJobGenerator implements JobGenerator {
         Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
 
     @Override
-    public synchronized int generateJobs(HarvestDefinition harvest) {
+    public int generateJobs(HarvestDefinition harvest) {
+        log.info("Generating jobs for harvestdefinition # " + harvest.getOid());
         int jobsMade = 0;
         final Iterator<DomainConfiguration> domainConfigurations =
                 harvest.getDomainConfigurations();
