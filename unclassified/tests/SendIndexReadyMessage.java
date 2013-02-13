@@ -48,7 +48,9 @@ public class SendIndexReadyMessage {
         JMSConnection con = JMSConnectionFactory.getInstance();
         ChannelID to = Channels.getTheSched();
         ChannelID replyTo = Channels.getError();
-        IndexReadyMessage msg = new IndexReadyMessage(harvestId, to, replyTo); 
+        boolean indexisready = true;
+        IndexReadyMessage msg = new IndexReadyMessage(harvestId, indexisready, to, replyTo);
+        
         con.send(msg);
         con.cleanup();
     }

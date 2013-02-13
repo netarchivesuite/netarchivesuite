@@ -41,6 +41,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -331,9 +332,14 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler
         File dest = new File(requestDir, irMsg.getID());
         log.debug("Storing message to " + dest.getAbsolutePath());
         // Writing message to file
-        FileOutputStream fos = new FileOutputStream(dest);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(irMsg);
+        ObjectOutputStream oos = null;
+        try {
+            FileOutputStream fos = new FileOutputStream(dest);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(irMsg);
+        } finally {
+            IOUtils.closeQuietly(oos);
+        }    
     }
 
     /**
@@ -343,23 +349,25 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler
      */
     private IndexRequestMessage restoreMessage(File serializedObject) {        
         Object obj = null;
+        ObjectInputStream ois = null;
         try {
-        // Read the message from disk.
-        FileInputStream fis = new 
-            FileInputStream(serializedObject);
+            // Read the message from disk.
+            FileInputStream fis = new 
+                    FileInputStream(serializedObject);
 
-        ObjectInputStream ois = 
-            new ObjectInputStream(fis);
+            ois = new ObjectInputStream(fis);
 
-        obj = ois.readObject();
+            obj = ois.readObject();
         } catch (ClassNotFoundException e) {
             throw new IllegalState(
                     "Not possible to read the stored message from file '"
-                    + serializedObject.getAbsolutePath() + "':", e);
+                            + serializedObject.getAbsolutePath() + "':", e);
         } catch (IOException e) {
             throw new IOFailure(
                     "Not possible to read the stored message from file '" 
-                    + serializedObject.getAbsolutePath() + "':", e);
+                            + serializedObject.getAbsolutePath() + "':", e);
+        } finally {
+            IOUtils.closeQuietly(ois);
         }
         
         if (obj instanceof IndexRequestMessage){
@@ -442,9 +450,13 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler
                         + irMsg.getReplyTo() + "'.");
                 JMSConnectionFactory.getInstance().reply(irMsg);
             } else {
-               log.info("Sending IndexReadyMessage to Scheduler");
+               log.info("Sending " + state + " IndexReadyMessage to Scheduler");
+               boolean isindexready = true;
+               if (state.equalsIgnoreCase("failed")) {
+                   isindexready = false;
+               }
                IndexReadyMessage irm = new IndexReadyMessage(
-                       irMsg.getHarvestId(), 
+                       irMsg.getHarvestId(), isindexready,
                        irMsg.getReplyTo(),
                        Channels.getTheIndexServer());
                JMSConnectionFactory.getInstance().send(irm);

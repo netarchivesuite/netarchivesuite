@@ -448,9 +448,14 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                         + irMsg.getReplyTo() + "'.");
                 JMSConnectionFactory.getInstance().reply(irMsg);
             } else {
-               log.info("Sending IndexReadyMessage to Scheduler");
+               log.info("Sending " + state + " IndexReadyMessage to Scheduler for harvest "
+                       + irMsg.getHarvestId());
+               boolean isindexready = true;
+               if (state.equalsIgnoreCase("failed")) {
+                   isindexready = false;
+               }
                IndexReadyMessage irm = new IndexReadyMessage(
-                       irMsg.getHarvestId(), 
+                       irMsg.getHarvestId(),isindexready, 
                        irMsg.getReplyTo(),
                        Channels.getTheIndexServer());
                JMSConnectionFactory.getInstance().send(irm);

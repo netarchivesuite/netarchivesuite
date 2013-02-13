@@ -25,6 +25,8 @@
 
 package dk.netarkivet.harvester.scheduler;
 
+import java.util.Date;
+
 import javax.jms.MessageListener;
 
 import org.apache.commons.logging.Log;
@@ -34,6 +36,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
+import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
@@ -254,13 +257,26 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
      * @param msg the message
      */
     private void processIndexReadyMessage(IndexReadyMessage msg) {
-        // Set isindexready to true
+        // Set isindexready to true if Indexisready is true
         Long harvestId = msg.getHarvestId();
+        boolean indexisready = msg.getIndexOK();
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
         if (dao.isSnapshot(harvestId)) {
-            dao.setIndexIsReady(harvestId, true);
-            log.info("Got message from IndexServer, that index is ready for"
+            if (indexisready) {
+                dao.setIndexIsReady(harvestId, true);
+                log.info("Got message from IndexServer, that index is ready for"
                     + " harvest # " + harvestId);
+            } else {
+                log.warn("Got message from IndexServer, that it failed to generate index for"
+                        + " harvest # " + harvestId + ". Deactivating harvest");
+                HarvestDefinition hd = dao.read(harvestId);
+                hd.setActive(false);
+                StringBuilder commentsBuf = new StringBuilder(hd.getComments());
+                commentsBuf.append("\n" + (new Date()) 
+                        + ": Deactivated by s ystem because indexserver failed to generate index");
+                hd.setComments(commentsBuf.toString());
+                dao.update(hd);
+            }
         } else {
             log.debug("Ignoring IndexreadyMesssage sent on behalf on "
                     + "selective harvest w/id " + harvestId);
