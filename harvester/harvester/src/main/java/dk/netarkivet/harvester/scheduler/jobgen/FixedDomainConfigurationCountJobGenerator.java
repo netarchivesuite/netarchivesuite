@@ -98,7 +98,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
         @Override
         public boolean equals(Object obj) {
-            if (!DomainConfigurationKey.class.equals(obj.getClass())) {
+            if (obj == null || !DomainConfigurationKey.class.equals(obj.getClass())) {
                 return false;
             }
             DomainConfigurationKey dc = (DomainConfigurationKey) obj;
@@ -164,7 +164,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     /**
      * @return the singleton instance, builds it if necessary.
      */
-    public static FixedDomainConfigurationCountJobGenerator getInstance() {
+    public synchronized static FixedDomainConfigurationCountJobGenerator getInstance() {
         if (instance == null) {
             instance = new FixedDomainConfigurationCountJobGenerator();
         }
@@ -184,7 +184,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     }
 
     @Override
-    public synchronized int generateJobs(HarvestDefinition harvest) {
+    public int generateJobs(HarvestDefinition harvest) {
         isSnapshotHarvest = harvest.isSnapShot();
         jobsUnderConstruction = new HashMap<DomainConfigurationKey, Job>();
 
