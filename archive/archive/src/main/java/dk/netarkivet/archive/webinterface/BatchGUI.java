@@ -539,7 +539,7 @@ public final class BatchGUI {
         // extract the files for the batchjob. 
         String[] filenames = batchDir.list();
         // use a hash-set to avoid counting both '.err' and '.out' files.
-        Set<String> prefices = new HashSet<String>();
+        Set<String> prefixes = new HashSet<String>();
         
         for(String filename : filenames) {
             // match and put into set.
@@ -548,12 +548,12 @@ public final class BatchGUI {
                     || filename.endsWith(Constants.OUTPUT_FILE_EXTENSION))) {
                 String prefix = filename.split("[.]")[0];
                 // the prefix is not added twice, since it is a hash-set.
-                prefices.add(prefix);
+                prefixes.add(prefix);
             }
         }
         
         // No files => No previous runs.
-        if(prefices.isEmpty()) {
+        if(prefixes.isEmpty()) {
             res.append(I18N.getString(locale, 
                     "batchpage;Batchjob.has.never.been.run", new Object[]{})
                     + "<br/><br/>\n");
@@ -562,7 +562,7 @@ public final class BatchGUI {
         
         // make header of output 
         res.append(I18N.getString(locale, "batchpage;Number.of.runs.0", 
-                prefices.size()) + "<br/>\n");
+                prefixes.size()) + "<br/>\n");
         res.append("<table class=\"selection_table\" cols=\"3\">\n");
         res.append("  <tr>\n");
         res.append("    <th colspan=\"1\">" +I18N.getString(locale, 
@@ -576,30 +576,15 @@ public final class BatchGUI {
         res.append("  </tr>\n");
         
         int i = 0;
-        for(String prefix : prefices) {
+        for(String prefix : prefixes) {
             res.append("  <tr class=" + HTMLUtils.getRowClass(i++) + ">\n");
             
             File outputFile = new File(batchDir, prefix + ".out");
             File errorFile = new File(batchDir, prefix + ".err");
             
-            // Retrieve the timestamp from the file-name.
-            String[] split = prefix.split("[-]");
-            // default, if no timestamp is found.
-            String timestamp = "";
-            if(split.length >= 2) {
-                try {
-                    timestamp = new Date(Long.parseLong(split[1])).toString();
-                } catch(NumberFormatException e) {
-                    log.warn("Could not parse batchjob result file name: " 
-                            + prefix, e);
-                }
-            }
             
-            // initialise if uninitialised.
-            if(timestamp == null || timestamp.isEmpty()) {
-                timestamp = I18N.getString(locale, 
-                        "batchpage;No.valid.timestamp", new Object[]{});
-            }
+            // Retrieve the timestamp from the file-name or "" if not found
+            String timestamp = getTimestamp(prefix, locale);
             
             // insert start-time
             res.append("    <td>" + timestamp + "</td>\n");
@@ -679,6 +664,34 @@ public final class BatchGUI {
         return res.toString();
     }
     
+    /**
+     * Find the timestamp from the given prefix.
+     * @param prefix a given prefix of a filename
+     * @param locale a given locale used for an error-message
+     * @return a timestamp as a string or a message telling that the timestamp 
+     * was not valid
+     */
+    private static String getTimestamp(String prefix, Locale locale) {
+        String[] split = prefix.split("[-]");
+        // default, if no timestamp is found
+        String timestamp = "";
+        if(split.length >= 2) {
+            try {
+                timestamp = new Date(Long.parseLong(split[1])).toString();
+            } catch(NumberFormatException e) {
+                log.warn("Could not parse batchjob result file name: " 
+                        + prefix, e);
+            }
+        }
+        
+        // If no timestamp was identified, write an error-message instead
+        if(timestamp.isEmpty()) {
+            timestamp = I18N.getString(locale, 
+                    "batchpage;No.valid.timestamp", new Object[]{});
+        }
+        return timestamp;
+    }
+
     /**
      * Creates the HTML code for making the radio buttons for choosing which 
      * replica the batchjob will be run upon.

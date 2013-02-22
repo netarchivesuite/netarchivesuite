@@ -447,8 +447,32 @@ public class RunBatch extends ToolRunnerBase {
                     return false;
                 }
             }
-            
             //Check replica argument
+            if (!isReplicaArgumentsValid()) {
+                return false;
+            }
+            
+            //Check output- and errorfile arguments
+            if (!isOutputAndErrorFileArgsValid()) {
+                return false;
+            }
+            
+            // check arguments for the batchjob.
+            String arguments = parms.cmd.getOptionValue(ARGUMENTS_OPTION_KEY);
+            if(arguments != null) {
+                // go through all the arguments and put them into the list.
+                for(String arg : arguments.split(ARGUMENT_SEPARATOR)) {
+                    argumentList.add(arg);
+                }
+            }
+            
+            return true;
+        }
+        
+        /**
+         * @return true, if replica arguments is valid (or not set at all)
+         */
+        private boolean isReplicaArgumentsValid() {
             String repName = parms.cmd.getOptionValue(REPLICA_OPTION_KEY);
             if (repName != null) {
                 // Is the replica known
@@ -470,31 +494,28 @@ public class RunBatch extends ToolRunnerBase {
                     return false;
                 }
             }
-            
+            return true;
+        }
+
+        /**
+         * @return true, if both arguments are valid, otherwise returns false
+         */
+        boolean isOutputAndErrorFileArgsValid(){
             //Check output file argument
             String oFile = parms.cmd.getOptionValue(OUTPUTFILE_OPTION_KEY);
             if (oFile != null && !checkWriteFile(oFile, "Output file")) {
                 return false;
             }
-
-            //Check output file argument
+            
+            //Check error file argument
             String eFile = parms.cmd.getOptionValue(ERRORFILE_OPTION_KEY);
             if (eFile != null && !checkWriteFile(eFile, "Error file")) {
                 return false;
             }
-            
-            // check arguments for the batchjob.
-            String arguments = parms.cmd.getOptionValue(ARGUMENTS_OPTION_KEY);
-            if(arguments != null) {
-                // go through all the arguments and put them into the list.
-                for(String arg : arguments.split(ARGUMENT_SEPARATOR)) {
-                    argumentList.add(arg);
-                }
-            }
-            
             return true;
         }
-
+        
+        
         /**
          * Create the ArcRepositoryClient instance here for reliable execution
          * of close method in tearDown.
