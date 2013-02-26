@@ -46,8 +46,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
@@ -323,14 +323,9 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         if (file == null) {
             throw new IOFailure("Cannot find file '" + fileName + "'");
         }
-        try {
-            if (!MD5.generateMD5onFile(file).equals(checksum)) {
-                throw new PermissionDenied("Wrong checksum for removing file '"
+        if (!ChecksumCalculator.calculateMd5(file).equals(checksum)) {
+            throw new PermissionDenied("Wrong checksum for removing file '"
                                        + fileName + "'");
-            }
-        } catch (IOException e) {
-            throw new IOFailure("Unable to check md5 on file '" + file + "'",
-                                e);
         }
         if (!credentials.equals(Settings.get(CREDENTIALS_SETTING))) {
             throw new PermissionDenied("Wrong credentials for removing file '" 
@@ -384,7 +379,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             for(File dir : storageDirs) {
                 // go through all file and calculate the checksum
                 for(File entry : dir.listFiles()) {
-                    String checksum = MD5.generateMD5onFile(entry);
+                    String checksum = ChecksumCalculator.calculateMd5(entry);
                     String filename = entry.getName();
 
                     checksums.add(ChecksumJob.makeLine(filename, checksum));
@@ -478,13 +473,6 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        
-        try {
-            return MD5.generateMD5onFile(findFile(filename));
-        } catch (IOException e) {
-            log.warn("Unexpected error when generating MD5 on file '" 
-                    + filename + "'. The empty string returned", e);
-            return "";
-        }
+        return ChecksumCalculator.calculateMd5(findFile(filename));
     }
 }

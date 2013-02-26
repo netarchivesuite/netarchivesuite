@@ -32,8 +32,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 
 /**
  * A RemoteFile implementation that just takes a string.
@@ -100,7 +100,7 @@ public class StringRemoteFile implements RemoteFile {
      * @return MD5 checksum
      */
     public String getChecksum() {
-        return MD5.generateMD5(contents.getBytes());
+        return ChecksumCalculator.calculateMd5(contents.getBytes());
     }
 
     /**

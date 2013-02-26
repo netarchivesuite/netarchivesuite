@@ -48,8 +48,8 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.FileAsserts;
@@ -234,7 +234,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
 
         String[] refChecksums = new String[testFiles.length];
         for (int i = 0; i < refChecksums.length; i++) {
-            refChecksums[i] = MD5.generateMD5onFile(testFiles[i]);
+            refChecksums[i] = ChecksumCalculator.calculateMd5(testFiles[i]);
         }
 
 

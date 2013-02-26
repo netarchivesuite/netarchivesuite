@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
@@ -110,12 +110,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
             this.url = null;
         }
         if (useChecksums) {
-            try {
-                this.checksum = MD5.generateMD5onFile(file);
-            } catch (IOException e) {
-                throw new IOFailure("Unable to checksum file '"
-                        + file.getAbsolutePath() + "'", e);
-            }
+            this.checksum = ChecksumCalculator.calculateMd5(file);
         } else {
             this.checksum = null;
         }
@@ -209,12 +204,13 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
             }
             if (useChecksums) {
                 is = new DigestInputStream(
-                        is, MD5.getMessageDigestInstance());
+                        is, ChecksumCalculator.getMessageDigest
+                        (ChecksumCalculator.MD5));
             }
             return new FilterInputStream(is) {
                 public void close() {
                     if (useChecksums) {
-                        String newChecksum = MD5.toHex(((DigestInputStream) in)
+                        String newChecksum = ChecksumCalculator.toHex(((DigestInputStream) in)
                                 .getMessageDigest().digest());
                         if (!newChecksum.equals(checksum)) {
                             throw new IOFailure("Checksum mismatch! Expected '"

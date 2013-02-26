@@ -31,8 +31,8 @@ import java.net.URL;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
@@ -164,7 +164,7 @@ public class HTTPSRemoteFileTester extends TestCase {
         rf = new HTTPSRemoteFileTester.ForceRemoteHTTPSRemoteFile(TestInfo.FILE1,
                                            true, false, true);
         assertEquals("Should get right checksum",
-                     MD5.generateMD5onFile(TestInfo.FILE1), rf.getChecksum());
+                     ChecksumCalculator.calculateMd5(TestInfo.FILE1), rf.getChecksum());
     }
 
     private class ForceRemoteHTTPSRemoteFile extends HTTPSRemoteFile {

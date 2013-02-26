@@ -25,6 +25,19 @@
 
 package dk.netarkivet.viewerproxy;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.archive.io.arc.ARCRecord;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -34,24 +47,13 @@ import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.ProcessUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.harvester.HarvesterSettings;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.archive.io.arc.ARCRecord;
 
 /**
  * This class handles retrieval and merging of index.cdx files for sets of
@@ -116,7 +118,8 @@ public class LocalCDXCache implements JobIndexCache {
             String firstNIDs = StringUtils.conjoin("-", jobIDList.subList(0,
                     MAX_JOB_IDS_IN_FILENAME));
             return new File(CACHE_DIR, PREFIX + firstNIDs + "-"
-                    + MD5.generateMD5(allIDsString.getBytes()) + SUFFIX);
+                    + ChecksumCalculator.calculateMd5(allIDsString.getBytes()) +
+                    SUFFIX);
         } else {
             return new File(CACHE_DIR, PREFIX + allIDsString + SUFFIX);
         }

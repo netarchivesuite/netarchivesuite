@@ -49,9 +49,9 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 
@@ -700,15 +700,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      */
     @Override
     protected String calculateChecksum(File f) throws IOFailure {
-        try {
-            // calculate the MD5 checksum
-            return MD5.generateMD5onFile(f);
-        } catch (IOException e) {
-            // Handle exception during processing of the file.
-            String msg = "Cannot calculate the MD5 checksum on file.";
-            log.warn(msg, e);
-            throw new IOFailure(msg, e);
-        }
+        return ChecksumCalculator.calculateMd5(f);
     }
 
     /**
@@ -721,7 +713,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      */
     @Override
     protected String calculateChecksum(InputStream is) throws IOFailure {
-        return MD5.generateMD5(is);
+        return ChecksumCalculator.calculateMd5(is);
     }
     
     /**

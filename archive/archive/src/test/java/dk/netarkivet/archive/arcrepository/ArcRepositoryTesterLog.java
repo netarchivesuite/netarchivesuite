@@ -38,8 +38,8 @@ import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
@@ -111,8 +111,8 @@ public class ArcRepositoryTesterLog extends TestCase {
         
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(f.getName(), new StoreMessage(
-                Channels.getThisReposClient(), f), MD5.generateMD5onFile(
-                        f));
+                Channels.getThisReposClient(), f), ChecksumCalculator.calculateMd5(
+                f));
         adminData.setState(f.getName(),
                 Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
                 ReplicaStoreState.UPLOAD_COMPLETED);

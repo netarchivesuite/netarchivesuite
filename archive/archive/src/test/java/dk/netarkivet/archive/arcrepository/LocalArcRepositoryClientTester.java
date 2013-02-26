@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestCase;
+
+import dk.netarkivet.archive.distribute.arcrepository.TestInfo;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -44,8 +46,6 @@ import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-
-import dk.netarkivet.archive.distribute.arcrepository.TestInfo;
 
 
 /**
@@ -219,6 +219,6 @@ public class LocalArcRepositoryClientTester extends TestCase {
         assertNotSame("The checksum of test1.arc should have changed.", 
                 csTest1, arcrep.getChecksum("ONE", "test1.arc"));
         assertEquals("test1.arc should have old checksum.", csTest1, 
-                dk.netarkivet.common.utils.MD5.generateMD5onFile(badTest1));
+                dk.netarkivet.common.utils.ChecksumCalculator.calculateMd5(badTest1));
     }
 }

@@ -41,8 +41,8 @@ import java.util.List;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
-
 import junit.framework.TestCase;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
@@ -74,8 +74,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StreamUtils;
@@ -105,12 +105,12 @@ public class ArcRepositoryDatabaseTester extends TestCase {
     private static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
     private static final File WORKING_DIR = new File(TEST_DIR, "working");
     private static final File BITARCHIVE_DIR = new File(WORKING_DIR,
-                                                        "bitarchive1");
+            "bitarchive1");
     private static final File CLOG_DIR = new File(WORKING_DIR,
-                                                  "log/controller");
+            "log/controller");
     private static final File SERVER_DIR = new File(WORKING_DIR, "server1");
     private static final File OUTPUT_FILE = new File(WORKING_DIR,
-                                                     "checksum_output");
+            "checksum_output");
     static BitarchiveServer archiveServer1 = null;
     static ChannelID SERVER_ID1 = null;
     static ChannelID THE_BAMON = null;
@@ -135,21 +135,21 @@ public class ArcRepositoryDatabaseTester extends TestCase {
 
     // List of files that can be used in the scripts (content of the ORIGINALS_DIR)
     private static final List<String> GETTABLE_FILES
-        = Arrays.asList(new String[] {"get1.ARC", "get2.ARC" });
+            = Arrays.asList(new String[] {"get1.ARC", "get2.ARC" });
 
     /**
      * LOG - NO LOG!!!!
      */
-    
+
     /**
      * STORE - NO STORE!!!!
      */
-    
+
     /**
      * STORE CHECKSUM
      */
     private static final File STORE_CHECKSUM_DIR =
-        new File("tests/dk/netarkivet/archive/arcrepository/data/store/originals");
+            new File("tests/dk/netarkivet/archive/arcrepository/data/store/originals");
     private static final String[] STORABLE_FILES = new String[]{
             "NetarchiveSuite-store1.arc", "NetarchiveSuite-store2.arc"};
 
@@ -163,16 +163,16 @@ public class ArcRepositoryDatabaseTester extends TestCase {
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // Database admin test.
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE, 
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE,
                 TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN,
-                     TestInfo.WORKING_DIR.getAbsolutePath());
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
+                TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 PrintNotifications.class.getName());
-        
-        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, 
+
+        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
                 "jdbc:derby:" + TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
                 "");
@@ -181,13 +181,13 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE,
                 "");
         /** Use the class DatabaseAdmin as admin class. */
-        Settings.set(ArchiveSettings.ADMIN_CLASS, 
+        Settings.set(ArchiveSettings.ADMIN_CLASS,
                 dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin.class.getName());
-        
+
         // Batch
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
-                     "dk.netarkivet.common.distribute.TestRemoteFile");
+                "dk.netarkivet.common.distribute.TestRemoteFile");
         FileUtils.createDir(CLOG_DIR);
 
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR.getAbsolutePath());
@@ -202,7 +202,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         testFiles = new File(BITARCHIVE_DIR, "filedir").listFiles(
                 FileUtils.ARCS_FILTER);
     }
-    
+
     @Override
     public void tearDown() throws Exception {
         // BATCH
@@ -212,7 +212,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         archiveServer1.close();
         ReplicaCacheDatabase.getInstance().cleanup();
         FileUtils.removeRecursively(WORKING_DIR);
-        
+
         ArcRepository.getInstance().close();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         // Empty the log file.
@@ -260,18 +260,18 @@ public class ArcRepositoryDatabaseTester extends TestCase {
     /** Test a valid BitarchiveClient is returned. */
     public void testGetReplicaClientFromReplicaName() {
         ArcRepository a = ArcRepository.getInstance();
-        
+
         for (Replica rep : Replica.getKnown()) {
             ReplicaClient rc = a.getReplicaClientFromReplicaId(
                     rep.getId());
             assertNotNull("Should return a valid ReplicaClient", rc);
-            
+
             if(rep.getType() == ReplicaType.BITARCHIVE) {
-                assertTrue("A Bitarchive replica should have BitarchiveClient", 
+                assertTrue("A Bitarchive replica should have BitarchiveClient",
                         rc instanceof BitarchiveClient);
             }
             if(rep.getType() == ReplicaType.CHECKSUM) {
-                assertTrue("A Bitarchive replica should have BitarchiveClient", 
+                assertTrue("A Bitarchive replica should have BitarchiveClient",
                         rc instanceof ChecksumClient);
             }
         }
@@ -296,23 +296,23 @@ public class ArcRepositoryDatabaseTester extends TestCase {
             fail("Should get failure on missing file, not " + result);
         } catch (InvocationTargetException e) {
             assertEquals("Should throw IOFailure",
-                         IOFailure.class, e.getCause().getClass());
+                    IOFailure.class, e.getCause().getClass());
         }
 
         assertEquals("Should get empty output from empty file",
-                     "", callReadChecksum("", "foobar"));
+                "", callReadChecksum("", "foobar"));
 
         assertEquals("Should get empty output from other-file file",
-                     "", callReadChecksum("bazzoon##klaf", "foobar"));
+                "", callReadChecksum("bazzoon##klaf", "foobar"));
 
         assertEquals("Should not match checksum with filename",
-                     "", callReadChecksum("bar##foo", "foo"));
+                "", callReadChecksum("bar##foo", "foo"));
 
         assertEquals("Should get right checksum when matching",
-                     "foo", callReadChecksum("bar##foo", "bar"));
+                "foo", callReadChecksum("bar##foo", "bar"));
 
         assertEquals("Should get right checksum if not on first line",
-                     "bonk", callReadChecksum("bar##baz\nfoo##bonk", "foo"));
+                "bonk", callReadChecksum("bar##baz\nfoo##bonk", "foo"));
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains(
                 "Should have warning about unwanted line",
@@ -323,10 +323,10 @@ public class ArcRepositoryDatabaseTester extends TestCase {
                 TestInfo.LOG_FILE, "Read unexpected line 'foo##bonk");
 
         assertEquals("Should get right checksum if not on last line",
-                     "baz", callReadChecksum("bar##baz\nfoo##bonk", "bar"));
+                "baz", callReadChecksum("bar##baz\nfoo##bonk", "bar"));
 
         assertEquals("Should get right checksum if empty lines",
-                     "bar", callReadChecksum("foo##bar\n\n", "foo"));
+                "bar", callReadChecksum("foo##bar\n\n", "foo"));
 
         // Check that the lines are validated correctly.
         try {
@@ -334,8 +334,8 @@ public class ArcRepositoryDatabaseTester extends TestCase {
             fail("A checksum output file only containing 'barf' should through IllegalState");
         } catch (IllegalState e) {
             assertEquals("Not expected error message!",
-                         "Read checksum line had unexpected format 'barf'",
-                         e.getMessage());
+                    "Read checksum line had unexpected format 'barf'",
+                    e.getMessage());
             // This is expected!
         }
         // Check that a entry may not have two different checksums.
@@ -345,9 +345,9 @@ public class ArcRepositoryDatabaseTester extends TestCase {
                  + "name with different checksums should through IllegalState");
         } catch (IllegalState e) {
             assertEquals("Not expected error message!",
-                         "The arc-file 'foo' was found with two different checksums: "
-                         + "bar and notBar. Last line: 'foo##notBar'.",
-                         e.getMessage());
+                    "The arc-file 'foo' was found with two different checksums: "
+                    + "bar and notBar. Last line: 'foo##notBar'.",
+                    e.getMessage());
             // This is expected!
         }
 
@@ -378,7 +378,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         FileUtils.writeBinaryFile(TestInfo.TMP_FILE, input.getBytes());
         try {
             return (String) readChecksum.invoke(ArcRepository.getInstance(),
-                                                TestInfo.TMP_FILE, arcfilename);
+                    TestInfo.TMP_FILE, arcfilename);
         } catch (InvocationTargetException e) {
             throw e.getCause();
         }
@@ -390,14 +390,14 @@ public class ArcRepositoryDatabaseTester extends TestCase {
      */
     public void testNoOfFilesProcessed() {
         assertTrue("Should have more than zero files in the test directory!",
-                   testFiles.length != 0);
+                testFiles.length != 0);
         ChecksumJob jobTest = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(jobTest,
                 Settings.get(CommonSettings.USE_REPLICA_ID));
         int processed = batchStatus.getNoOfFilesProcessed();
         assertEquals("Number of files processed: " + processed
                      + " does not equal number of given files",
-                     testFiles.length, processed);
+                testFiles.length, processed);
     }
 
     /**
@@ -410,11 +410,11 @@ public class ArcRepositoryDatabaseTester extends TestCase {
                 Settings.get(CommonSettings.USE_REPLICA_ID));
         lbs.getResultFile().copyTo(OUTPUT_FILE);
         assertEquals("No exceptions should have happened", 0,
-                     jobTest.getFilesFailed().size());
+                jobTest.getFilesFailed().size());
         assertEquals("2 files should have been processed", 2,
-                     jobTest.getNoOfFilesProcessed());
+                jobTest.getNoOfFilesProcessed());
         FileAsserts.assertFileNumberOfLines("Output file should have two lines",
-                                            OUTPUT_FILE, 2);
+                OUTPUT_FILE, 2);
     }
 
     /**
@@ -423,8 +423,8 @@ public class ArcRepositoryDatabaseTester extends TestCase {
     public void testNullArgumentsToBatch() {
         try {
             arClient.batch(null,
-                           Settings.get(
-                                   CommonSettings.USE_REPLICA_ID));
+                    Settings.get(
+                            CommonSettings.USE_REPLICA_ID));
             fail("Failed to throw exception on null batch-job argument to Controller.batch()");
         } catch (ArgumentNotValid e) {
             //expected
@@ -437,16 +437,16 @@ public class ArcRepositoryDatabaseTester extends TestCase {
     public void testSequentialRuns() {
         ChecksumJob jobTest = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(jobTest,
-                                                 Settings.get(
-                                                         CommonSettings.USE_REPLICA_ID));
+                Settings.get(
+                        CommonSettings.USE_REPLICA_ID));
         assertEquals("First batch should work",
-                     testFiles.length, batchStatus.getNoOfFilesProcessed());
+                testFiles.length, batchStatus.getNoOfFilesProcessed());
 
         batchStatus = arClient.batch(jobTest,
-                                     Settings.get(
-                                             CommonSettings.USE_REPLICA_ID));
+                Settings.get(
+                        CommonSettings.USE_REPLICA_ID));
         assertEquals("Second batch should work",
-                     testFiles.length, batchStatus.getNoOfFilesProcessed());
+                testFiles.length, batchStatus.getNoOfFilesProcessed());
     }
 
     /**
@@ -460,8 +460,8 @@ public class ArcRepositoryDatabaseTester extends TestCase {
     public void testGeneratedChecksum() throws IOException {
         ChecksumJob checkJob = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(checkJob,
-                                                 Settings.get(
-                                                         CommonSettings.USE_REPLICA_ID));
+                Settings.get(
+                        CommonSettings.USE_REPLICA_ID));
         batchStatus.getResultFile().copyTo(OUTPUT_FILE);
         List<String> jobChecksums = new ArrayList<String>();
 
@@ -480,7 +480,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
 
         String[] refChecksums = new String[testFiles.length];
         for (int i = 0; i < refChecksums.length; i++) {
-            refChecksums[i] = MD5.generateMD5onFile(testFiles[i]);
+            refChecksums[i] = ChecksumCalculator.calculateMd5(testFiles[i]);
         }
 
 
@@ -489,7 +489,6 @@ public class ArcRepositoryDatabaseTester extends TestCase {
                     "The checksums return from checksum job do not contain the reference checksum: "
                     + refChecksums[i], jobChecksums.contains(refChecksums[i]));
         }
-
     }
 
 
@@ -521,10 +520,10 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         //ois.close();
         //Finally, compare their visible states:
         assertEquals("The two jobs should have same number of processed files",
-                     job1.getNoOfFilesProcessed(),
-                     job2.getNoOfFilesProcessed());
+                job1.getNoOfFilesProcessed(),
+                job2.getNoOfFilesProcessed());
         assertEquals("The two jobs should have identical lists of failed files",
-                     job1.getFilesFailed(), job2.getFilesFailed());
+                job1.getFilesFailed(), job2.getFilesFailed());
         assertEquals(
                 "The two jobs should have identical String representations",
                 job1.toString(), job2.toString());
@@ -562,7 +561,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         DummyGetFileMessageReplyServer dServer
                 = new DummyGetFileMessageReplyServer();
         File result = new File(FileUtils.createUniqueTempDir(
-                        WORKING_DIR, "testGetFile"), (String) GETTABLE_FILES.get(1));
+                WORKING_DIR, "testGetFile"), (String) GETTABLE_FILES.get(1));
         Replica replica = Replica.getReplicaFromId(Settings.get(
                 CommonSettings.USE_REPLICA_ID));
         arClient.getFile(GETTABLE_FILES.get(1), replica, result);
@@ -579,7 +578,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
     /**
      * this tests get get()-method for an existing file - getting get File-name
      * out of the BitarchiveRecord.
-     * 
+     *
      * FIXME: This test often blocks on the Hudson CI server. Properly something to do with more restricted
      * permissions (not allow to write to anyfiles outside of the home dir).
      */
@@ -590,19 +589,18 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         new DummyRemoveAndGetFileMessageReplyServer();
         final File bitarchiveFiledir = new File(
                 Settings.get(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR),
-                        "filedir");
-        arClient.removeAndGetFile((String) GETTABLE_FILES.get(1),
-                                Settings.get(
-                                        CommonSettings.USE_REPLICA_ID),
-                                "42",
-                                MD5.generateMD5onFile(
-                                                new File(bitarchiveFiledir,
-                                        (String) GETTABLE_FILES.get(1)))
-                                        );
+                "filedir");
+        arClient.removeAndGetFile(
+                GETTABLE_FILES.get(1),
+                Settings.get(CommonSettings.USE_REPLICA_ID),
+                "42",
+                ChecksumCalculator.calculateMd5(new File(bitarchiveFiledir,
+                        GETTABLE_FILES.get(1)))
+        );
         File copyOfFile = new File(FileUtils.getTempDir(),
-                                   (String) GETTABLE_FILES.get(1));
+                (String) GETTABLE_FILES.get(1));
         assertTrue("Must have copied file to commontempdir",
-                   copyOfFile.exists());
+                copyOfFile.exists());
 
         byte[] buffer = FileUtils.readBinaryFile(copyOfFile);
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance())
@@ -614,7 +612,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
                 .equals(buffer, targetbuffer));
 
         assertEquals("Should have no remote files left on the server",
-                     0, TestRemoteFile.remainingFiles().size());
+                0, TestRemoteFile.remainingFiles().size());
     }
 
     /**
@@ -630,12 +628,12 @@ public class ArcRepositoryDatabaseTester extends TestCase {
             fail("No data in BitarchiveRecord");
         } else {
             // BitarchiveRecord.getData() now returns a InputStream 
-                // instead of a byte[]
+            // instead of a byte[]
             String data = new String(StreamUtils.inputStreamToBytes(bar.getData(),
-                        (int) bar.getLength())).substring(0, 55);
+                    (int) bar.getLength())).substring(0, 55);
             assertEquals("First 55 chars of data should be correct", data,
                     "<?xml version=\"1.0\" "
-                        + "encoding=\"UTF-8\" standalone=\"yes\"?>");
+                    + "encoding=\"UTF-8\" standalone=\"yes\"?>");
         }
     }
 
@@ -647,7 +645,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
             BitarchiveRecord bar = arClient.get((String) GETTABLE_FILES.get(1),
                     (long) 50000000);
             fail("Index out of bounds should throw exception, but " +
-                    "gave " + bar);
+                 "gave " + bar);
         } catch (Exception e) {
             //expected
         }
@@ -702,8 +700,8 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         }
 
         public void onMessage(Message msg) {
-            RemoveAndGetFileMessage netMsg 
-                = (RemoveAndGetFileMessage) JMSConnection.unpack(msg);
+            RemoveAndGetFileMessage netMsg
+                    = (RemoveAndGetFileMessage) JMSConnection.unpack(msg);
             netMsg.setFile(new File(new File(GET_BITARCHIVE_DIR, "filedir"),
                     (String) GETTABLE_FILES.get(1)));
             conn.reply(netMsg);
@@ -739,29 +737,23 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         Admin admin = AdminFactory.getInstance();
         try {
             file = new File(STORE_CHECKSUM_DIR, STORABLE_FILES[0]);
-            try {
-                orgCheckSum = MD5.generateMD5onFile(file);
-                admin.addEntry(file.getName(), new StoreMessage(
-                        Channels.getThisReposClient(), file), MD5.generateMD5onFile(
-                                file));
-                admin.setState(file.getName(),
-                        Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
-                        ReplicaStoreState.UPLOAD_COMPLETED);
-                admin.setState(file.getName(),
-                        Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
-                        ReplicaStoreState.UPLOAD_COMPLETED);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                fail("Unexpected IOException thrown at generateMD5onFile()");
-            }
+            orgCheckSum = ChecksumCalculator.calculateMd5(file);
+            admin.addEntry(file.getName(), new StoreMessage(
+                    Channels.getThisReposClient(), file), ChecksumCalculator.calculateMd5(
+                    file));
+            admin.setState(file.getName(),
+                    Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
+                    ReplicaStoreState.UPLOAD_COMPLETED);
+            admin.setState(file.getName(),
+                    Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
+                    ReplicaStoreState.UPLOAD_COMPLETED);
             //JMSConnection con = JMSConnectionFactory.getInstance();
             StoreMessage msg = new StoreMessage(Channels.getError(), file);
             arcRepos.store(msg.getRemoteFile(), msg);
             UploadWaiting.waitForUpload(file, this);
             String refTableSum = admin.getCheckSum(file.getName());
-            assertEquals("Stored checksum and reference checksum should be equal", 
-                                refTableSum, orgCheckSum);
+            assertEquals("Stored checksum and reference checksum should be equal",
+                    refTableSum, orgCheckSum);
             storedCheckSum = refTableSum;
             // attempting to upload/store the file again:
             msg = new StoreMessage(Channels.getError(), file);
@@ -774,12 +766,12 @@ public class ArcRepositoryDatabaseTester extends TestCase {
             // operation) should be unaffected
             // by this second attempt to store the file:
             assertEquals(
-                        "Stored checksum and reference checksum should be equal", 
-                        refTableSum, storedCheckSum);
+                    "Stored checksum and reference checksum should be equal",
+                    refTableSum, storedCheckSum);
         } catch (IOFailure e) {
             e.printStackTrace();
             fail("Unexpected IOException thrown "
-                        + "while trying to re-upload file: " + e);
+                 + "while trying to re-upload file: " + e);
         }
     }
 }

@@ -31,12 +31,10 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.KeyValuePair;
-import dk.netarkivet.common.utils.MD5;
-import dk.netarkivet.common.utils.batch.BatchLocalFiles;
-import dk.netarkivet.common.utils.batch.ChecksumJob;
+import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -75,7 +73,7 @@ public class ChecksumJobTester extends TestCase {
         for (File inputfile : inputfiles) {
             job.processFile(inputfile, out);
             ourChecksums.put(inputfile.getName(),
-                             MD5.generateMD5onFile(inputfile));
+                             ChecksumCalculator.calculateMd5(inputfile));
         }
         job.finish(out);
 

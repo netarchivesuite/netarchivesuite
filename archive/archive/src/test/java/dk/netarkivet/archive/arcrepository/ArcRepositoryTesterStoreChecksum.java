@@ -44,7 +44,7 @@ import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
@@ -69,9 +69,9 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
      * afterwards.
      */
     private static final String[] STORABLE_FILES
-    	= new String[]{
-    		"NetarchiveSuite-store1.arc", 
-    		"NetarchiveSuite-store2.arc"};
+            = new String[]{
+            "NetarchiveSuite-store1.arc",
+            "NetarchiveSuite-store2.arc"};
 
     ArcRepository arcRepos;
 
@@ -101,17 +101,12 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
      */
     public void testStoreCompletedChecksum() throws IOException {
         File file = new File(ORIGINALS_DIR, STORABLE_FILES[0]);
-        String orgCheckSum = null;
-        try {
-            orgCheckSum = MD5.generateMD5onFile(file);
-        } catch (IOException e) {
-            throw new IOFailure("Unexpected IO Failure: ", e);
-        }
-        
+        String orgCheckSum = ChecksumCalculator.calculateMd5(file);
+
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(file.getName(), new StoreMessage(
-                Channels.getThisReposClient(), file), MD5.generateMD5onFile(
-                        file));
+                Channels.getThisReposClient(), file), ChecksumCalculator.calculateMd5(
+                file));
         adminData.setState(file.getName(),
                 Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
                 ReplicaStoreState.UPLOAD_COMPLETED);
@@ -123,7 +118,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         arcRepos.store(msg.getRemoteFile(), msg);
         UploadWaiting.waitForUpload(file, this);
         String refTableSum = UpdateableAdminData.getUpdateableInstance()
-        	.getCheckSum(file.getName());
+                .getCheckSum(file.getName());
         assertEquals(refTableSum, orgCheckSum);
     }
 
@@ -138,7 +133,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         // the file, i.e. getCheckSum() should return null:
         try {
             UpdateableAdminData.getUpdateableInstance()
-            	.getCheckSum(file.getName());
+                    .getCheckSum(file.getName());
             fail("Should throw UnknownID when getting non-existing checksum");
         } catch (UnknownID e) {
             //Expected
@@ -156,32 +151,27 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         String storedCheckSum = null;
         try {
             file = new File(ORIGINALS_DIR, STORABLE_FILES[0]);
-            try {
-                orgCheckSum = MD5.generateMD5onFile(file);
-                UpdateableAdminData adminData = AdminData.getUpdateableInstance();
-                adminData.addEntry(file.getName(), new StoreMessage(
-                        Channels.getThisReposClient(), file), MD5.generateMD5onFile(
-                                file));
-                adminData.setState(file.getName(),
-                        Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
-                        ReplicaStoreState.UPLOAD_COMPLETED);
-                adminData.setState(file.getName(),
-                        Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
-                        ReplicaStoreState.UPLOAD_COMPLETED);
+            orgCheckSum = ChecksumCalculator.calculateMd5(file);
+            UpdateableAdminData adminData = AdminData.getUpdateableInstance();
+            adminData.addEntry(file.getName(), new StoreMessage(
+                    Channels.getThisReposClient(), file), ChecksumCalculator.calculateMd5(
+                    file));
+            adminData.setState(file.getName(),
+                    Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
+                    ReplicaStoreState.UPLOAD_COMPLETED);
+            adminData.setState(file.getName(),
+                    Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
+                    ReplicaStoreState.UPLOAD_COMPLETED);
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                fail("Unexpected IOException thrown at generateMD5onFile()");
-            }
             //JMSConnection con = JMSConnectionFactory.getInstance();
             StoreMessage msg = new StoreMessage(Channels.getError(), file);
             arcRepos.store(msg.getRemoteFile(), msg);
             UploadWaiting.waitForUpload(file, this);
             String refTableSum = UpdateableAdminData.getUpdateableInstance()
-            	.getCheckSum(file.getName());
+                    .getCheckSum(file.getName());
             assertEquals(
-            			"Stored checksum and reference checksum should be equal", 
-            			refTableSum, orgCheckSum);
+                    "Stored checksum and reference checksum should be equal",
+                    refTableSum, orgCheckSum);
             storedCheckSum = refTableSum;
             // attempting to upload/store the file again:
             msg = new StoreMessage(Channels.getError(), file);
@@ -190,27 +180,27 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
             fail("Should throw an PermissionDenied here!");
         } catch (dk.netarkivet.common.exceptions.PermissionDenied e) {
             String refTableSum = UpdateableAdminData.getUpdateableInstance()
-            	.getCheckSum(file.getName());
+                    .getCheckSum(file.getName());
             // the checksum stored in reference table (during first store
             // operation) should be unaffected
             // by this second attempt to store the file:
             assertEquals(
-            		"Stored checksum and reference checksum should be equal", 
-            		refTableSum, storedCheckSum);
+                    "Stored checksum and reference checksum should be equal",
+                    refTableSum, storedCheckSum);
         } catch (IOFailure e) {
             e.printStackTrace();
             fail("Unexpected IOException thrown "
-            		+ "while trying to re-upload file: " + e);
+                 + "while trying to re-upload file: " + e);
         }
 
     }
 
     /** Check what happens if we're being sent a checksum while uploading.
      * Test for bug #410. */
-    public void testStoreChecksumWhileUploading() 
-    	throws NoSuchMethodException, IllegalAccessException, 
-    	InvocationTargetException, NoSuchFieldException {
-    	
+    public void testStoreChecksumWhileUploading()
+            throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException, NoSuchFieldException {
+
         final String correctChecksum = "correct checksum";
         final String ba1Name = "ba1";
         final String ba2Name = "ba2";
@@ -228,10 +218,10 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
                 new Class[] { String.class, String.class, String.class, String.class, boolean.class });
         m.setAccessible(true);
         m.invoke(arcRepos, new Object[] { arcFileName,
-                                          ba1Name,
-                                          correctChecksum,
-                                          correctChecksum,
-                                          true } );
+                ba1Name,
+                correctChecksum,
+                correctChecksum,
+                true } );
         assertEquals("Should be in state STORE_COMPLETED after correct checksum",
                 ReplicaStoreState.UPLOAD_COMPLETED,
                 ad.getState(arcFileName,  ba1Name));
@@ -242,10 +232,10 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         ad.setState(arcFileName, ba1Name, ReplicaStoreState.UPLOAD_STARTED);
         ad.setState(arcFileName, ba2Name, ReplicaStoreState.DATA_UPLOADED);
         m.invoke(arcRepos, new Object[] { arcFileName,
-                                          ba1Name,
-                                          correctChecksum,
-                                          "wrong checksum",
-                                          true } );
+                ba1Name,
+                correctChecksum,
+                "wrong checksum",
+                true } );
         assertEquals("Should go into UPLOAD_FAILED without outstanding remotefile",
                 ReplicaStoreState.UPLOAD_FAILED,
                 ad.getState(arcFileName, ba1Name));
@@ -268,13 +258,13 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
                 Channels.getTheBamon()));
         // Have to use a real file here, as startUpload will grab the name
         outstandingRemoteFiles.put(arcFileName, new TestRemoteFile(
-        		new File(ORIGINALS_DIR, STORABLE_FILES[1]),
+                new File(ORIGINALS_DIR, STORABLE_FILES[1]),
                 false, false,false));
         m.invoke(arcRepos, new Object[] { arcFileName,
-                                          ba1Name,
-                                          correctChecksum,
-                                          "wrong checksum", 
-                                          true } );
+                ba1Name,
+                correctChecksum,
+                "wrong checksum",
+                true } );
         assertEquals("Wrong checksum should always result in upload failure",
                 ReplicaStoreState.UPLOAD_FAILED,
                 ad.getState(STORABLE_FILES[1], ba1Name));

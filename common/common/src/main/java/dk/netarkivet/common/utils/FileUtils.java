@@ -1009,7 +1009,7 @@ public class FileUtils {
             String firstNIDs = StringUtils.conjoin("-", sorted.subList(
                     0, MAX_IDS_IN_FILENAME));
             fileName = firstNIDs + "-"
-                              + MD5.generateMD5(allIDsString.getBytes())
+                              + ChecksumCalculator.calculateMd5(allIDsString.getBytes())
                               + suffix;
         } else {
             fileName = allIDsString + suffix;

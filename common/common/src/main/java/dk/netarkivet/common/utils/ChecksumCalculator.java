@@ -43,10 +43,12 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * Calculates MD5 or SHA1 checksums on files using the built-in Java methods.
  */
 public final class ChecksumCalculator {
+    public static final String MD5 = "MD5";
+    public static final String SHA1 = "SHA1";
 
     /**
      * Calculate MD5 for a file.
-     * 
+     *
      * @param src The file to calculate MD5 for.
      * @return The MD5 sum of a file as a 32 characters long Hex string.
      */
@@ -62,14 +64,14 @@ public final class ChecksumCalculator {
                 IOUtils.closeQuietly(fileInputStream);
             }
         } catch (FileNotFoundException e) {
-            throw new IOFailure("Could not read file '" 
-                    + src.getAbsolutePath() + "'", e);
+            throw new IOFailure("Could not read file '"
+                                + src.getAbsolutePath() + "'", e);
         }
     }
-    
+
     /**
      * Calculate the SHA-1 DIGEST for a file.
-     * 
+     *
      * @param src The file to calculate SHA-1 for.
      * @return The SHA-1 sum of a file as a 32 characters long Hex string.
      */
@@ -85,25 +87,25 @@ public final class ChecksumCalculator {
                 IOUtils.closeQuietly(fileInputStream);
             }
         } catch (FileNotFoundException e) {
-            throw new IOFailure("Could not read file '" 
-                    + src.getAbsolutePath() + "'", e);
+            throw new IOFailure("Could not read file '"
+                                + src.getAbsolutePath() + "'", e);
         }
     }
-    
-   /**
-    * Calculates an MD5 digest on an InputStream, throwing away the 
-    * data itself. Throws Alert if there is an error reading from the 
-    * stream
-    *
-    * @param instream An <code>InputStream</code> to calculate the MD5 digest on.  
-    * The contents of the stream will be consumed by this call, but the 
-    * stream will not be closed.
-    * @return The calculated MD5 digest as a string.
-    */
+
+    /**
+     * Calculates an MD5 digest on an InputStream, throwing away the
+     * data itself. Throws Alert if there is an error reading from the
+     * stream
+     *
+     * @param instream An <code>InputStream</code> to calculate the MD5 digest on.
+     * The contents of the stream will be consumed by this call, but the
+     * stream will not be closed.
+     * @return The calculated MD5 digest as a string.
+     */
     public static String calculateMd5(final InputStream instream) {
         return calculateDigest(instream, "MD5");
     }
-    
+
     /**
      * Calculates an SHA-1 digest on an InputStream, throwing away the 
      * data itself. Throws Alert if there is an error reading from the 
@@ -119,6 +121,15 @@ public final class ChecksumCalculator {
     }
 
     /**
+     * Generate an MD5 for a byte array.
+     * @param msg The given bytearray
+     * @return the MD5 for a byte array
+     */
+    public static String calculateMd5(final byte[] msg) {
+        return toHex(getMessageDigest("MD5").digest(msg));
+    }
+
+    /**
      * Calculates a digest on an InputStream, throwing away the 
      * data itself. Throws Alert if there is an error reading from the 
      * stream
@@ -130,7 +141,7 @@ public final class ChecksumCalculator {
      * @return The calculated digest as a string.
      */
     private static String calculateDigest(final InputStream instream,
-            final String algorithm) {
+                                          final String algorithm) {
         final byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         final MessageDigest messageDigest = getMessageDigest(algorithm);
         messageDigest.reset();
@@ -141,7 +152,7 @@ public final class ChecksumCalculator {
             }
         } catch (IOException e) {
             throw new IOFailure("Error making a '" + algorithm
-                    + "' digest on the inputstream", e);
+                                + "' digest on the inputstream", e);
         }
         return toHex(messageDigest.digest());
     }
@@ -167,13 +178,12 @@ public final class ChecksumCalculator {
         }
         return new String(hexchars);
     }
-
-	/**
+    /**
      * Get a MessageDigest for a specific algorithm.
      * @param algorithm a specific MessageDigest algorithm.
      * @return a MessageDigest for a specific algorithm
      */
-    private static MessageDigest getMessageDigest(final String algorithm) {
+    public static MessageDigest getMessageDigest(final String algorithm) {
         MessageDigest messageDigest;
         try {
             messageDigest = MessageDigest.getInstance(algorithm);

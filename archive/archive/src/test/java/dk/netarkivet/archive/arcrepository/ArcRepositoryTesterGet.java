@@ -48,8 +48,8 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StreamUtils;
@@ -92,7 +92,7 @@ public class ArcRepositoryTesterGet extends TestCase {
      * ORIGINALS_DIR)
      */
     private static final List<String> GETTABLE_FILES
-    	= Arrays.asList(new String[] {"get1.ARC", "get2.ARC" });
+            = Arrays.asList(new String[] {"get1.ARC", "get2.ARC" });
 
     /** A bitarchive server to communicate with. */
     BitarchiveServer bitArchiveServer;
@@ -164,7 +164,7 @@ public class ArcRepositoryTesterGet extends TestCase {
      * this tests the get()-method for an existing file.
      */
     public void testGetExistingFile() {
-        BitarchiveRecord bar = client.get((String) GETTABLE_FILES.get(1),
+        BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1),
                 (long) 0);
 
         // not really much of a test as we just check for no exception
@@ -183,10 +183,8 @@ public class ArcRepositoryTesterGet extends TestCase {
      */
     public void failingTArcrepositoryGetFile() throws IOException {
         arcRepository.close();
-        DummyGetFileMessageReplyServer dServer
-        	= new DummyGetFileMessageReplyServer();
         File result = new File(FileUtils.createUniqueTempDir(
-        		WORKING_DIR, "testGetFile"), (String) GETTABLE_FILES.get(1));
+                WORKING_DIR, "testGetFile"), GETTABLE_FILES.get(1));
         Replica replica = Replica.getReplicaFromId(Settings.get(
                 CommonSettings.USE_REPLICA_ID));
         client.getFile(GETTABLE_FILES.get(1), replica, result);
@@ -213,31 +211,30 @@ public class ArcRepositoryTesterGet extends TestCase {
         new DummyRemoveAndGetFileMessageReplyServer();
         final File bitarchiveFiledir = new File(
                 Settings.get(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR),
-        		"filedir");
-        client.removeAndGetFile((String) GETTABLE_FILES.get(1),
-                                Settings.get(
-                                        CommonSettings.USE_REPLICA_ID),
-                                "42",
-                                MD5.generateMD5onFile(
-                                		new File(bitarchiveFiledir,
-                                        (String) GETTABLE_FILES.get(1)))
-                                        );
+                "filedir");
+        client.removeAndGetFile(
+                GETTABLE_FILES.get(1),
+                Settings.get(CommonSettings.USE_REPLICA_ID),
+                "42",
+                ChecksumCalculator.calculateMd5(new File(bitarchiveFiledir,
+                        GETTABLE_FILES.get(1)))
+        );
         File copyOfFile = new File(FileUtils.getTempDir(),
-                                   (String) GETTABLE_FILES.get(1));
+                GETTABLE_FILES.get(1));
         assertTrue("Must have copied file to commontempdir",
-                   copyOfFile.exists());
+                copyOfFile.exists());
 
         byte[] buffer = FileUtils.readBinaryFile(copyOfFile);
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance())
                 .waitForConcurrentTasksToFinish();
         assertNotNull("Buffer should not be null", buffer);
         byte targetbuffer[] = FileUtils.readBinaryFile(new File(new File(
-                BITARCHIVE_DIR, "filedir"), (String) GETTABLE_FILES.get(1)));
+                BITARCHIVE_DIR, "filedir"), GETTABLE_FILES.get(1)));
         assertTrue("Received data and uploaded must be equal", Arrays
                 .equals(buffer, targetbuffer));
 
         assertEquals("Should have no remote files left on the server",
-                     0, TestRemoteFile.remainingFiles().size());
+                0, TestRemoteFile.remainingFiles().size());
     }
 
     /**
@@ -246,19 +243,19 @@ public class ArcRepositoryTesterGet extends TestCase {
      * chars !
      */
     public void testGetData() {
-        BitarchiveRecord bar = client.get((String) GETTABLE_FILES.get(1),
+        BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1),
                 (long) 0);
 
         if (bar.getLength() == 0L) {
             fail("No data in BitarchiveRecord");
         } else {
             // BitarchiveRecord.getData() now returns a InputStream 
-        	// instead of a byte[]
+            // instead of a byte[]
             String data = new String(StreamUtils.inputStreamToBytes(bar.getData(),
-            		(int) bar.getLength())).substring(0, 55);
+                    (int) bar.getLength())).substring(0, 55);
             assertEquals("First 55 chars of data should be correct", data,
                     "<?xml version=\"1.0\" "
-            		+ "encoding=\"UTF-8\" standalone=\"yes\"?>");
+                    + "encoding=\"UTF-8\" standalone=\"yes\"?>");
         }
     }
 
@@ -267,10 +264,10 @@ public class ArcRepositoryTesterGet extends TestCase {
      */
     public void testGetIndexOutOfBounds() {
         try {
-            BitarchiveRecord bar = client.get((String) GETTABLE_FILES.get(1),
+            BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1),
                     (long) 50000000);
             fail("Index out of bounds should throw exception, but " +
-                    "gave " + bar);
+                 "gave " + bar);
         } catch (Exception e) {
             //expected
         }
@@ -281,7 +278,7 @@ public class ArcRepositoryTesterGet extends TestCase {
      */
     public void testGetIllegalIndex() {
         try {
-            BitarchiveRecord bar = client.get((String) GETTABLE_FILES.get(1),
+            BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1),
                     (long) 5000);
             fail("Illegal index should return null, not given " + bar);
         } catch (Exception e) {
@@ -325,10 +322,10 @@ public class ArcRepositoryTesterGet extends TestCase {
         }
 
         public void onMessage(Message msg) {
-            RemoveAndGetFileMessage netMsg 
-            	= (RemoveAndGetFileMessage) JMSConnection.unpack(msg);
+            RemoveAndGetFileMessage netMsg
+                    = (RemoveAndGetFileMessage) JMSConnection.unpack(msg);
             netMsg.setFile(new File(new File(BITARCHIVE_DIR, "filedir"),
-                    (String) GETTABLE_FILES.get(1)));
+                    GETTABLE_FILES.get(1)));
             conn.reply(netMsg);
         }
     }

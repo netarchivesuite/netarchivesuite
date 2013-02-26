@@ -49,11 +49,11 @@ import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
@@ -197,7 +197,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
-        adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
+        adminData.addEntry(STORABLE_FILE.getName(), null, ChecksumCalculator.calculateMd5(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
@@ -244,7 +244,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
         assertEquals("Should have expected checksum",
-                     MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
+                     ChecksumCalculator.calculateMd5(STORABLE_FILE), entry.getChecksum());
 
         //Check log for message
         LogUtils.flushLogs(ArcRepository.class.getName());
@@ -373,7 +373,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
         assertEquals("Should have expected checksum",
-                     MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
+                     ChecksumCalculator.calculateMd5(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
                      ReplicaStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
@@ -403,7 +403,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
-        adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
+        adminData.addEntry(STORABLE_FILE.getName(), null, ChecksumCalculator.calculateMd5(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
@@ -448,7 +448,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
         assertEquals("Should have expected checksum",
-                     MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
+                     ChecksumCalculator.calculateMd5(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
                      ReplicaStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
@@ -486,7 +486,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
-        adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
+        adminData.addEntry(STORABLE_FILE.getName(), null, ChecksumCalculator.calculateMd5(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
@@ -525,7 +525,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
         assertEquals("Should have expected checksum",
-                     MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
+                     ChecksumCalculator.calculateMd5(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
                      ReplicaStoreState.DATA_UPLOADED,
                      adminData.getState(STORABLE_FILE.getName(),
@@ -567,7 +567,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
-        adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
+        adminData.addEntry(STORABLE_FILE.getName(), null, ChecksumCalculator.calculateMd5(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
@@ -610,7 +610,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
         assertEquals("Should have expected checksum",
-                     MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
+                     ChecksumCalculator.calculateMd5(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
                      ReplicaStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
@@ -654,7 +654,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
-        adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
+        adminData.addEntry(STORABLE_FILE.getName(), null, ChecksumCalculator.calculateMd5(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
@@ -703,7 +703,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
         assertEquals("Should have expected checksum",
-                     MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
+                     ChecksumCalculator.calculateMd5(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
                      ReplicaStoreState.DATA_UPLOADED,
                      entry.getGeneralStoreState().getState());
@@ -751,7 +751,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisReposClient(), STORABLE_FILE);
         JMSConnectionMockupMQ.updateMsgID(message, "Store-1");
         adminData.addEntry(STORABLE_FILE.getName(), message,
-                           MD5.generateMD5onFile(
+                           ChecksumCalculator.calculateMd5(
                                    STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
@@ -800,7 +800,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
         assertEquals("Should have expected checksum",
-                     MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
+                     ChecksumCalculator.calculateMd5(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
                      ReplicaStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
@@ -834,7 +834,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisReposClient(), STORABLE_FILE);
         JMSConnectionMockupMQ.updateMsgID(message, "Store-1");
         adminData.addEntry(STORABLE_FILE.getName(), message,
-                           MD5.generateMD5onFile(
+                           ChecksumCalculator.calculateMd5(
                                    STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelFromReplicaId(
@@ -894,7 +894,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
         assertEquals("Should have expected checksum",
-                     MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
+                     ChecksumCalculator.calculateMd5(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
                      ReplicaStoreState.UPLOAD_COMPLETED,
                      entry.getGeneralStoreState().getState());
@@ -930,7 +930,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisReposClient(), STORABLE_FILE);
         JMSConnectionMockupMQ.updateMsgID(message, "Store-1");
         adminData.addEntry(STORABLE_FILE.getName(), message,
-                           MD5.generateMD5onFile(
+                           ChecksumCalculator.calculateMd5(
                                    STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
@@ -984,7 +984,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
         assertEquals("Should have expected checksum",
-                     MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
+                     ChecksumCalculator.calculateMd5(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
                      ReplicaStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
@@ -1020,7 +1020,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisReposClient(), STORABLE_FILE);
         JMSConnectionMockupMQ.updateMsgID(message, "Store-1");
         adminData.addEntry(STORABLE_FILE.getName(), message,
-                           MD5.generateMD5onFile(
+                           ChecksumCalculator.calculateMd5(
                                    STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
@@ -1073,7 +1073,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
         assertEquals("Should have expected checksum",
-                     MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
+                     ChecksumCalculator.calculateMd5(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
                      ReplicaStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());

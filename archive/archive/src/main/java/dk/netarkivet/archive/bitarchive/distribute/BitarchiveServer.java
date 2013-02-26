@@ -49,9 +49,9 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
@@ -368,7 +368,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
 
             log.debug("Credentials accepted, now checking the checksum");
 
-            String checksum = MD5.generateMD5onFile(foundFile);
+            String checksum = ChecksumCalculator.calculateMd5(foundFile);
 
             if (!checksum.equals(msg.getCheckSum())) {
                 final String message =

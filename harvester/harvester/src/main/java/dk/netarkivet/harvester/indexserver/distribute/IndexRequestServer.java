@@ -57,9 +57,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -349,7 +349,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
             // one message at the time before the whole process is over
             List<Long> sortedList = new ArrayList<Long>(jobIDs);
             String allIDsString = StringUtils.conjoin("-", sortedList);
-            String checksum = MD5.generateMD5(allIDsString.getBytes());
+            String checksum = ChecksumCalculator.calculateMd5(allIDsString.getBytes());
             log.debug("Waiting to enter the synchronization zone for the indexing job of size " 
                     + jobIDs.size() + " with checksum '" + checksum + "'");
             // Begin synchronization

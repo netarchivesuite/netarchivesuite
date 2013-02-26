@@ -38,7 +38,7 @@ import org.jwat.common.HttpHeader;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
@@ -187,7 +187,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         if (includeChecksum) {
             //InputStream instream = sar; //Note: ARCRecord extends InputStream
             //fieldsread.put("c", MD5.generateMD5(instream));
-            fieldsread.put("c", MD5.generateMD5(pbin));
+            fieldsread.put("c", ChecksumCalculator.calculateMd5(pbin));
         }
 
         if (httpResponse != null) {

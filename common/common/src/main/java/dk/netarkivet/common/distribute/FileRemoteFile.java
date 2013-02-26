@@ -34,11 +34,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.StreamUtils;
 
 /**
@@ -95,11 +94,7 @@ public class FileRemoteFile implements RemoteFile {
 
     @Override
     public String getChecksum() {
-        try {
-            return MD5.generateMD5onFile(dataFile);
-        } catch (IOException e) {
-            throw new IOFailure("Unable to generate checksum: ", e);
-        }
+        return ChecksumCalculator.calculateMd5(dataFile);
     }
 
     @Override

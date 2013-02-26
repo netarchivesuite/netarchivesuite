@@ -80,8 +80,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     
     /** The number of entries between logging in either file list or checksum
      * list. This also controls how often the database connection is renewed 
-     * in methods {@link #addChecksumInformation(List, Replica)} and 
-     * {@link #addFileListInformation(List, Replica)},
+     * in methods {@link #addChecksumInformation(File, Replica)} and
+     * {@link #addFileListInformation(File, Replica)},
      * where the operations can take hours, and seems to leak memory.
      */
     private final int LOGGING_ENTRY_INTERVAL = 1000;

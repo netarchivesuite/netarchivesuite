@@ -37,15 +37,15 @@ import java.util.List;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import junit.framework.TestCase;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TestInfo;
@@ -287,7 +287,8 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
                 "be affected by overwriting testfile", originalContents,
                 testFile2);
         assertEquals("MD5 sum should not be affected",
-                MD5.generateMD5(originalContents.getBytes()), rf.getChecksum());
+                ChecksumCalculator.calculateMd5(originalContents.getBytes()),
+                rf.getChecksum());
         FileAsserts.assertFileContains("Original file should be unchanged",
                 "a simple string", testFile1);
     }

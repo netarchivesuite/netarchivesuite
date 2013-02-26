@@ -34,11 +34,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
 
+import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
-import dk.netarkivet.common.Constants;
 
 
 /** Batch job that extracts information to create a CDX file.
@@ -151,7 +151,7 @@ public class ExtractCDXJob extends ARCBatchJob {
             // sar in an inconsistent state, so it must not be used
             // afterwards.
             InputStream instream = sar; //Note: ARCRecord extends InputStream
-            fieldsread.put("c", MD5.generateMD5(instream));
+            fieldsread.put("c", ChecksumCalculator.calculateMd5(instream));
         }
 
         printFields(fieldsread, os);

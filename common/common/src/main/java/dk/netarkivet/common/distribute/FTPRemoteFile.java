@@ -46,8 +46,8 @@ import org.apache.commons.net.io.CopyStreamException;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
@@ -157,23 +157,12 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             this.ftpUserPassword = Settings.get(CommonSettings.FTP_USER_PASSWORD);
         }
         if (filesize == 0) {
-            try {
-                if (useChecksums) {
-                    checksum = MD5.generateMD5onFile(file);
-                } else {
-                    checksum = null;
-                }
-                ftpFileName = "-";
-            } catch (IOException e) {
-                String msg = "";
-                if (e instanceof CopyStreamException) {
-                    CopyStreamException realException = (CopyStreamException) e;
-                    msg += "(real cause = "
-                        + realException.getIOException() + ")";
-                }
-                throw new IOFailure("I/O trouble generating checksum on file '"
-                                    + file.getAbsolutePath() + "' " + msg, e);
+            if (useChecksums) {
+                checksum = ChecksumCalculator.calculateMd5(file);
+            } else {
+                checksum = null;
             }
+            ftpFileName = "-";
         } else {
             // If the ftpServerName is localhost, it is not going to work across
             // a network.  Warn about this.
@@ -213,7 +202,8 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 logOn();
                 if (useChecksums) {
                     in = new DigestInputStream(in,
-                                               MD5.getMessageDigestInstance());
+                            ChecksumCalculator.getMessageDigest
+                                    (ChecksumCalculator.MD5));
                 }
                 boolean success = false;
                 int tried = 0;
@@ -250,7 +240,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 log.debug("Completed writing the file '" + ftpFileName + "'");
 
                 if (useChecksums) {
-                    checksum = MD5.toHex(
+                    checksum = ChecksumCalculator.toHex(
                             ((DigestInputStream) in).getMessageDigest()
                                     .digest());
                     log.debug(
@@ -343,7 +333,9 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                                     + getFtpErrorMessage());
             }
             if (useChecksums) {
-                in = new DigestInputStream(in, MD5.getMessageDigestInstance());
+                in = new DigestInputStream(in,
+                        ChecksumCalculator.getMessageDigest
+                                (ChecksumCalculator.MD5));
             }
             return new FilterInputStream(in) {
                 public void close() throws IOException {
@@ -351,7 +343,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                         super.close();
                         if (useChecksums) {
                             String newChecksum =
-                                    MD5.toHex(((DigestInputStream) in)
+                                    ChecksumCalculator.toHex(((DigestInputStream) in)
                                             .getMessageDigest().digest());
                             if (!newChecksum.equals(checksum)) {
                                 final String msg = "Checksums of '"
@@ -405,7 +397,8 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
 
             if (useChecksums) {
                 out = new DigestOutputStream(out,
-                        MD5.getMessageDigestInstance());
+                        ChecksumCalculator.getMessageDigest
+                                (ChecksumCalculator.MD5));
             }
             if (!currentFTPClient.retrieveFile(ftpFileName, out)) {
                 final String msg = "Append operation from '"
@@ -415,7 +408,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             }
             out.flush();
             if (useChecksums) {
-                String newChecksum = MD5.toHex(((DigestOutputStream) out)
+                String newChecksum = ChecksumCalculator.toHex(((DigestOutputStream) out)
                         .getMessageDigest().digest());
                 if (checksum != null && !checksum.equals(newChecksum)) {
                     final String msg = "Checksums of '" + ftpFileName

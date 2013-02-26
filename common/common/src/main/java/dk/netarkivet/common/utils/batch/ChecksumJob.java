@@ -36,8 +36,8 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.KeyValuePair;
-import dk.netarkivet.common.utils.MD5;
 
 
 /**
@@ -86,7 +86,7 @@ public class ChecksumJob extends FileBatchJob {
         try {
             os.write((file.getName()
                     + STRING_FILENAME_SEPARATOR
-                    + MD5.generateMD5onFile(file) + "\n").getBytes());
+                    + ChecksumCalculator.calculateMd5(file) + "\n").getBytes());
         } catch (IOException e) {
             log.warn("Checksumming of file " + file.getName()
                     + " failed: ", e);

@@ -27,13 +27,15 @@ package dk.netarkivet.archive.arcrepository;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.*;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -90,7 +92,7 @@ public class TrivialArcRepositoryClientTester extends TestCase {
         File f = File.createTempFile("foo", "bar", FileUtils.getTempDir());
         arcrep.getFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE.getName(), Replica.getReplicaFromId("TWO"), f);
         assertEquals("Should have expected contents back",
-                MD5.generateMD5onFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY),
-                MD5.generateMD5onFile(f));
+                ChecksumCalculator.calculateMd5(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY),
+                ChecksumCalculator.calculateMd5(f));
     }
 }

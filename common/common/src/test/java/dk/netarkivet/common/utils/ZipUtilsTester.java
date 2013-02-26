@@ -138,8 +138,8 @@ public class ZipUtilsTester extends TestCase {
                         originalFile.length(),
                         unpackedFile.length());
                 assertEquals("MD5 should be the same on old and new file",
-                        MD5.generateMD5onFile(originalFile),
-                        MD5.generateMD5onFile(unpackedFile));
+                        ChecksumCalculator.calculateMd5(originalFile),
+                        ChecksumCalculator.calculateMd5(unpackedFile));
             }
             files.remove(s);
         }
