@@ -898,16 +898,20 @@ public class Domain implements Named {
      */
     public void setCrawlerTraps(List<String> regExps, boolean strictMode) {
         ArgumentNotValid.checkNotNull(regExps,
-                                      "List<String> regExps");
+                "List<String> regExps");
         List<String> cleanedListOfCrawlerTraps = new ArrayList<String>();
+        if (log.isTraceEnabled()) {
+            log.trace("Validating and cleaning " + regExps.size() 
+                + " crawlertraps for domain '" + this.domainName + "'");
+        }
         for (String crawlerTrap : regExps) {
-            log.trace("original trap: '" + crawlerTrap + "'");
             String trimmedString = crawlerTrap.trim();
-            log.trace("trimmed  trap: '" + trimmedString + "'");
             if (!(trimmedString.length() == 0)) {
                 cleanedListOfCrawlerTraps.add(crawlerTrap);
             } else {
-                log.trace("Removed empty string from list of crawlertraps");
+                if (log.isTraceEnabled()) {
+                    log.trace("Removed empty string from list of crawlertraps");
+                }
             }
         }
         // Validate regexps
@@ -925,6 +929,10 @@ public class Domain implements Named {
             }
         }
         crawlerTraps = Collections.unmodifiableList(cleanedListOfCrawlerTraps);
+        if (log.isTraceEnabled()) {
+            log.trace("Finished validating and cleaning " + regExps.size() 
+                + " crawlertraps for domain '" + this.domainName + "'");
+        }
     }
 
     /**

@@ -73,22 +73,40 @@ abstract class AbstractJobGenerator implements JobGenerator {
         Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
 
     @Override
-    public synchronized int generateJobs(HarvestDefinition harvest) {
+    public int generateJobs(HarvestDefinition harvest) {
+        log.info("Generating jobs for harvestdefinition # " + harvest.getOid());
         int jobsMade = 0;
         final Iterator<DomainConfiguration> domainConfigurations =
                 harvest.getDomainConfigurations();
-
+        
         while (domainConfigurations.hasNext()) {
+	    int subsetSize = 0;
             List<DomainConfiguration> subset = new ArrayList<DomainConfiguration>();
             while (domainConfigurations.hasNext()
                     && subset.size() < DOMAIN_CONFIG_SUBSET_SIZE) {
                 subset.add(domainConfigurations.next());
             }
+	    subsetSize= subset.size();
+            if (log.isDebugEnabled()) {
+                log.debug("Found " + subsetSize + " domainconfigs to process for harvest # " 
+                        + harvest.getOid());
+            }
+	    
             Collections.sort(
                     subset,
                     getDomainConfigurationSubsetComparator(harvest));
+            if (log.isDebugEnabled()) {
+                log.debug(subsetSize + " domainconfigs now sorted and ready to processing");
+            }
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
+	    if (log.isDebugEnabled()) {
+                log.debug("Processing of the " + subsetSize 
+			  + " domainconfigs for for harvest # " 
+			  + harvest.getOid() + ". Now number of generated jobs is " 
+			  + jobsMade);
+            }
         }
+
         harvest.setNumEvents(harvest.getNumEvents() + 1);
 
         if (!harvest.isSnapShot()) {
@@ -124,7 +142,8 @@ abstract class AbstractJobGenerator implements JobGenerator {
                         + (nextEvent == null ? "Never" : nextEvent.toString()));
             }
         }
-
+        
+        log.info("Finished generating " + jobsMade + " jobs for harvestdefinition # " + harvest.getOid());
         return jobsMade;
     }
 

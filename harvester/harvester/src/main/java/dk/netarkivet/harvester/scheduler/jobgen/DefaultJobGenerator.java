@@ -150,7 +150,8 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             Iterator<DomainConfiguration> domainConfSubset) {
         int jobsMade = 0;
         Job job = null;
-
+        log.debug("Adding domainconfigs with the same order.xml for harvest # " 
+                + harvest.getOid());
         JobDAO dao = JobDAO.getInstance();
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
@@ -162,8 +163,15 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                     dao.create(job);
                 }
                 job = getNewJob(harvest, cfg);
+                if (log.isTraceEnabled()) {
+                    log.trace("Created new job to add configuration " + cfg.getName() + " for domain " + cfg.getDomainName());
+                }
+                
             } else {
                 job.addConfiguration(cfg);
+                if (log.isTraceEnabled()) {
+                    log.trace("Added to job configuration " + cfg.getName() + " for domain " + cfg.getDomainName());
+                }
             }
         }
         if (job != null) {
@@ -172,8 +180,9 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             dao.create(job);
             if (log.isDebugEnabled()) {
                 log.debug("Generated job: '" + job.toString() + "'");
-
-                StringBuilder logMsg
+	    }
+	    if (log.isTraceEnabled()) {
+		StringBuilder logMsg
                         = new StringBuilder("Job configurationsDomain:");
                 for(Map.Entry<String, String> config
                         : job.getDomainConfigurationMap().entrySet()) {
@@ -182,8 +191,12 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                             .append(":")
                             .append(config.getValue());
                 }
-                log.debug(logMsg);
-            }
+                log.trace(logMsg);
+	    }
+            //if (log.isDebugEnabled()) {
+            //    log.debug("Created # " + jobsMade + " jobs for harvest # " 
+            //    + harvest.getOid());
+            //}
         }
         return jobsMade;
     }
