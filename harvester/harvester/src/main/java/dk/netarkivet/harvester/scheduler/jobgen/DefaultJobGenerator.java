@@ -118,7 +118,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
     /**
      * @return the singleton instance, builds it if necessary.
      */
-    public static DefaultJobGenerator getInstance() {
+    public static synchronized DefaultJobGenerator getInstance() {
         if (instance == null) {
             instance = new DefaultJobGenerator();
         }
@@ -160,6 +160,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 if (job != null) {
                     // If we're done with a job, write it out
                     jobsMade++;
+                    editJobOrderXml(job);
                     dao.create(job);
                 }
                 job = getNewJob(harvest, cfg);
@@ -180,23 +181,19 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             dao.create(job);
             if (log.isDebugEnabled()) {
                 log.debug("Generated job: '" + job.toString() + "'");
-	    }
-	    if (log.isTraceEnabled()) {
-		StringBuilder logMsg
-                        = new StringBuilder("Job configurationsDomain:");
+            }
+            if (log.isTraceEnabled()) {
+                StringBuilder logMsg
+                    = new StringBuilder("Job configurationsDomain:");
                 for(Map.Entry<String, String> config
                         : job.getDomainConfigurationMap().entrySet()) {
                     logMsg.append("\n ")
-                            .append(config.getKey())
-                            .append(":")
-                            .append(config.getValue());
+                    .append(config.getKey())
+                    .append(":")
+                    .append(config.getValue());
                 }
                 log.trace(logMsg);
-	    }
-            //if (log.isDebugEnabled()) {
-            //    log.debug("Created # " + jobsMade + " jobs for harvest # " 
-            //    + harvest.getOid());
-            //}
+            }
         }
         return jobsMade;
     }

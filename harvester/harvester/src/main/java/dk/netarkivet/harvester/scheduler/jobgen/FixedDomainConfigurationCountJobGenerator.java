@@ -98,9 +98,13 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null || !DomainConfigurationKey.class.equals(obj.getClass())) {
+            if (!(obj instanceof DomainConfigurationKey)) {
                 return false;
             }
+            if (this == obj) {
+                return true;
+            }
+            
             DomainConfigurationKey dc = (DomainConfigurationKey) obj;
             return orderXmlName.equals(dc.orderXmlName)
                     && maxBytes == dc.maxBytes
@@ -164,7 +168,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     /**
      * @return the singleton instance, builds it if necessary.
      */
-    public synchronized static FixedDomainConfigurationCountJobGenerator getInstance() {
+    public static synchronized FixedDomainConfigurationCountJobGenerator getInstance() {
         if (instance == null) {
             instance = new FixedDomainConfigurationCountJobGenerator();
         }

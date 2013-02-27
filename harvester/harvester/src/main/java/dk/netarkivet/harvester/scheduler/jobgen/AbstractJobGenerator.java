@@ -76,34 +76,32 @@ abstract class AbstractJobGenerator implements JobGenerator {
     public int generateJobs(HarvestDefinition harvest) {
         log.info("Generating jobs for harvestdefinition # " + harvest.getOid());
         int jobsMade = 0;
-        final Iterator<DomainConfiguration> domainConfigurations =
-                harvest.getDomainConfigurations();
-        
+        final Iterator<DomainConfiguration> domainConfigurations = harvest
+                .getDomainConfigurations();
+
         while (domainConfigurations.hasNext()) {
-	    int subsetSize = 0;
+            int subsetSize = 0;
             List<DomainConfiguration> subset = new ArrayList<DomainConfiguration>();
             while (domainConfigurations.hasNext()
                     && subset.size() < DOMAIN_CONFIG_SUBSET_SIZE) {
                 subset.add(domainConfigurations.next());
             }
-	    subsetSize= subset.size();
-            if (log.isDebugEnabled()) {
-                log.debug("Found " + subsetSize + " domainconfigs to process for harvest # " 
-                        + harvest.getOid());
-            }
-	    
-            Collections.sort(
-                    subset,
+            subsetSize = subset.size();
+
+            Collections.sort(subset,
                     getDomainConfigurationSubsetComparator(harvest));
             if (log.isDebugEnabled()) {
-                log.debug(subsetSize + " domainconfigs now sorted and ready to processing");
+                log.debug(subsetSize
+                        + " domainconfigs now ready to processing for harvest # "
+                        + harvest.getOid());
             }
-            jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
-	    if (log.isDebugEnabled()) {
-                log.debug("Processing of the " + subsetSize 
-			  + " domainconfigs for for harvest # " 
-			  + harvest.getOid() + ". Now number of generated jobs is " 
-			  + jobsMade);
+            jobsMade += processDomainConfigurationSubset(harvest,
+                    subset.iterator());
+            if (log.isDebugEnabled()) {
+                log.debug("Finised processing of the " + subsetSize
+                        + " domainconfigs for for harvest # "
+                        + harvest.getOid()
+                        + ". Now number of generated jobs is " + jobsMade);
             }
         }
 
@@ -114,11 +112,12 @@ abstract class AbstractJobGenerator implements JobGenerator {
             Schedule schedule = focused.getSchedule();
             int numEvents = harvest.getNumEvents();
 
-            //Calculate next event
+            // Calculate next event
             Date now = new Date();
-            Date nextEvent = schedule.getNextEvent(focused.getNextDate(), numEvents);
+            Date nextEvent = schedule.getNextEvent(focused.getNextDate(),
+                    numEvents);
 
-            //Refuse to schedule event in the past
+            // Refuse to schedule event in the past
             if (nextEvent != null && nextEvent.before(now)) {
                 int eventsSkipped = 0;
                 while (nextEvent != null && nextEvent.before(now)) {
@@ -129,21 +128,22 @@ abstract class AbstractJobGenerator implements JobGenerator {
                     log.warn("Refusing to schedule harvest definition '"
                             + harvest.getName() + "' in the past. Skipped "
                             + eventsSkipped + " events. Old nextDate was "
-                            + focused.getNextDate()
-                            + " new nextDate is " + nextEvent);
+                            + focused.getNextDate() + " new nextDate is "
+                            + nextEvent);
                 }
             }
 
-            //Set next event
+            // Set next event
             focused.setNextDate(nextEvent);
             if (log.isTraceEnabled()) {
-                log.trace("Next event for harvest definition " + harvest.getName()
-                        + " happens: "
+                log.trace("Next event for harvest definition "
+                        + harvest.getName() + " happens: "
                         + (nextEvent == null ? "Never" : nextEvent.toString()));
             }
         }
-        
-        log.info("Finished generating " + jobsMade + " jobs for harvestdefinition # " + harvest.getOid());
+
+        log.info("Finished generating " + jobsMade
+                + " jobs for harvestdefinition # " + harvest.getOid());
         return jobsMade;
     }
 
