@@ -43,7 +43,9 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * Calculates MD5 or SHA1 checksums on files using the built-in Java methods.
  */
 public final class ChecksumCalculator {
+    /** Defines the MD5 checksum algorithm */
     public static final String MD5 = "MD5";
+    /** Defines the SHA1 checksum algorithm */
     public static final String SHA1 = "SHA1";
 
     /**
@@ -103,7 +105,7 @@ public final class ChecksumCalculator {
      * @return The calculated MD5 digest as a string.
      */
     public static String calculateMd5(final InputStream instream) {
-        return calculateDigest(instream, "MD5");
+        return calculateDigest(instream, MD5);
     }
 
     /**
@@ -117,7 +119,7 @@ public final class ChecksumCalculator {
      * @return The calculated SHA-1 digest as a string.
      */
     public static String calculateSha1(final InputStream instream) {
-        return calculateDigest(instream, "SHA1");
+        return calculateDigest(instream, SHA1);
     }
 
     /**
@@ -126,7 +128,7 @@ public final class ChecksumCalculator {
      * @return the MD5 for a byte array
      */
     public static String calculateMd5(final byte[] msg) {
-        return toHex(getMessageDigest("MD5").digest(msg));
+        return toHex(getMessageDigest(MD5).digest(msg));
     }
 
     /**
