@@ -24,6 +24,13 @@
 */
 package dk.netarkivet.viewerproxy;
 
+import dk.netarkivet.common.arcrepository.TestArcRepositoryClient;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.common.distribute.indexserver.Index;
+import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.testutils.StringAsserts;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,13 +39,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import junit.framework.TestCase;
-
-import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.indexserver.Index;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.StringAsserts;
 
 /**
  * Tests of DelegatingController class.
@@ -97,7 +97,7 @@ public class DelegatingControllerTester extends TestCase {
         Controller c = new DelegatingController(mur, cc, aaa);
         c.startRecordingURIs();
         assertEquals("The mur's start method should be called once",
-                     1, mur.startCounter);
+                1, mur.startCounter);
         assertEquals("No more methods should be called",
                      1, mur.totalCounter);
         assertEquals("No other classes methods should be called",
@@ -275,18 +275,20 @@ public class DelegatingControllerTester extends TestCase {
         }
     }
 
-    public static class TestCDXCache extends LocalCDXCache {
+    public static class TestCDXCache implements JobIndexCache {
         int totalCounter = 0;
         int getJobIndexCount = 0;
         Set<Long> getJobIndexArgument;
-        public TestCDXCache() {
-            super(ArcRepositoryClientFactory.getViewerInstance());
-        }
         public Index<Set<Long>> getIndex(Set<Long> jobIDs) {
             totalCounter++;
             getJobIndexCount++;
             getJobIndexArgument = jobIDs;
             return new Index(new File("/return/data"), jobIDs);
+        }
+
+        @Override
+        public void requestIndex(Set<Long> jobSet, Long harvestId) {
+            //To change body of implemented methods use File | Settings | File Templates.
         }
     }
 
@@ -306,9 +308,9 @@ public class DelegatingControllerTester extends TestCase {
         }
     }
 
-    public static class TestARCRepositoryClient extends JMSArcRepositoryClient {
+    public static class TestARCRepositoryClient extends TestArcRepositoryClient {
         protected TestARCRepositoryClient() {
-            super();
+            super(TestInfo.WORKING_DIR);
             close();
         }
     }

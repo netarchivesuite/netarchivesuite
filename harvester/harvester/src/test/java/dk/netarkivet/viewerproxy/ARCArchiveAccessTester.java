@@ -24,15 +24,8 @@
  */
 package dk.netarkivet.viewerproxy;
 
-import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -44,6 +37,7 @@ import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -59,10 +53,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.LogManager;
-import junit.framework.TestCase;
+
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
+import junit.framework.TestCase;
 
 /**
  * Unit tests for ARCArchiveAccess.  This only tests that we connect the CDX
@@ -74,7 +69,6 @@ public class ARCArchiveAccessTester extends TestCase {
     //Used files:
     private static final File MAIN_PATH = new File(
             "tests/dk/netarkivet/viewerproxy/data/");
-    private static final File LOG_PATH = new File(MAIN_PATH, "tmp");
 
     /**
      * An URL not indexed in CDX_FILE. Initiated in setUp because it can throw
@@ -110,9 +104,6 @@ public class ARCArchiveAccessTester extends TestCase {
     //A web archive controller that always returns null:
     private ArcRepositoryClient nullArcRepos;
 
-    //A real web archive controller
-    private ViewerArcRepositoryClient realArcRepos;
-
     //Our main instance of ARCArchiveAccess:
     private ARCArchiveAccess aaa;
 
@@ -123,9 +114,6 @@ public class ARCArchiveAccessTester extends TestCase {
         WRONG_URL = new URI("http://www.test.dk/hest");
         GIF_URL = new URI(
                 "http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
-
-        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTester.resetChannels();
 
         //We need a controller that doesn't do much more than return a test
         // record:
@@ -141,13 +129,6 @@ public class ARCArchiveAccessTester extends TestCase {
         aaa = new ARCArchiveAccess(fakeArcRepos);
         aaa.setIndex(TestInfo.ZIPPED_INDEX_DIR);
 
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, LOG_PATH.getAbsolutePath());
-        Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, new File(WORKING, "admin-data").getAbsolutePath());
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, LOG_PATH.getAbsolutePath());
-
-        realArcRepos = ArcRepositoryClientFactory.getViewerInstance();
-
         FileInputStream fis
                 = new FileInputStream("tests/dk/netarkivet/testlog.prop");
         LogManager.getLogManager().readConfiguration(fis);
@@ -155,11 +136,7 @@ public class ARCArchiveAccessTester extends TestCase {
     }
 
     public void tearDown() {
-        if (realArcRepos != null) {
-            realArcRepos.close();
-        }
         FileUtils.removeRecursively(WORKING);
-        JMSConnectionMockupMQ.clearTestQueues();
         rs.tearDown();
     }
 
@@ -298,9 +275,9 @@ public class ARCArchiveAccessTester extends TestCase {
      * Fake arc repository client which on get returns a fake record which is
      * ok.
      */
-    private class TestArcRepositoryClient extends JMSArcRepositoryClient {
+    private class TestArcRepositoryClient extends dk.netarkivet.common.arcrepository.TestArcRepositoryClient {
         public TestArcRepositoryClient() {
-            super();
+            super(TestInfo.WORKING_DIR);
         }
 
         /**
@@ -344,9 +321,9 @@ public class ARCArchiveAccessTester extends TestCase {
      * Fake arc repository client which on get returns a fake record which is
      * null.
      */
-    private class NullArcRepositoryClient extends JMSArcRepositoryClient {
+    private class NullArcRepositoryClient extends dk.netarkivet.common.arcrepository.TestArcRepositoryClient {
         public NullArcRepositoryClient() {
-            super();
+            super(TestInfo.WORKING_DIR);
         }
 
         public BitarchiveRecord get(String arcFile, long index) {
