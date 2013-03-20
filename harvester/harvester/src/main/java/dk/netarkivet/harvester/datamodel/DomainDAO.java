@@ -113,6 +113,22 @@ public abstract class DomainDAO implements Iterable<Domain> {
     }
 
     /**
+     * Read a domain from the persistent storage known to exist.
+     *
+     * @param domainName the name of the domain to retrieve
+     * @return the retrieved Domain
+     */
+    public synchronized Domain readKnown(String domainName) {
+        Connection c = HarvestDBConnection.get();
+        try {
+            return readKnown(c, domainName);
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+    
+    
+    /**
      * Read a domain from the persistent storage.
      *
      * @param connection a connection to the harvest definition database.
@@ -120,6 +136,15 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * @return the retrieved Domain
      */
     protected abstract Domain read(Connection connection, String domainName);
+
+    /**
+     * Read a domain from the persistent storage known to exist.
+     *
+     * @param connection a connection to the harvest definition database.
+     * @param domainName the name of the domain to retrieve
+     * @return the retrieved Domain
+     */
+    protected abstract Domain readKnown(Connection connection, String domainName);
 
     /**
      * Check existence of a domain with the given domainName.

@@ -927,12 +927,18 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
-    @Override
+    @Override 
     protected synchronized Domain read(Connection c, String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         if (!exists(domainName)) {
             throw new UnknownID("No domain by the name '" + domainName + "'");
         }
+        return readKnown(c, domainName); 
+    }
+    
+    @Override
+    protected synchronized Domain readKnown(Connection c, String domainName) {
+        ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         Domain result;
         PreparedStatement s = null;
         try {
@@ -1290,7 +1296,7 @@ public class DomainDBDAO extends DomainDAO {
                     + " configurations.maxbytes DESC," + " domains.name");
             return new FilterIterator<String, Domain>(domainNames.iterator()) {
                 public Domain filter(String s) {
-                    return read(s);
+                    return readKnown(s);
                 }
             };
         } finally {

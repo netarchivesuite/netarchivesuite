@@ -78,16 +78,21 @@ abstract class AbstractJobGenerator implements JobGenerator {
         int jobsMade = 0;
         final Iterator<DomainConfiguration> domainConfigurations =
                 harvest.getDomainConfigurations();
-
+        
         while (domainConfigurations.hasNext()) {
             List<DomainConfiguration> subset = new ArrayList<DomainConfiguration>();
             while (domainConfigurations.hasNext()
                     && subset.size() < DOMAIN_CONFIG_SUBSET_SIZE) {
                 subset.add(domainConfigurations.next());
             }
+            
             Collections.sort(
                     subset,
                     getDomainConfigurationSubsetComparator(harvest));
+            if (log.isTraceEnabled()) {
+                log.trace(subset.size() + " domainconfigs now sorted and ready to processing "
+                        + "for harvest #" + harvest.getOid());
+            }
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
         }
         harvest.setNumEvents(harvest.getNumEvents() + 1);
@@ -239,9 +244,9 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * <li>The domain configuration has the same order xml name
      * as the first inserted domain config.</li>
      * </ol>
-     * @param job
-     * @param cfg
-     * @return
+     * @param job a given Job
+     * @param cfg a given DomainConfiguration
+     * @return true, if the given DomainConfiguration can be inserted into the given job
      */
     private boolean checkAddDomainConfInvariant(Job job, DomainConfiguration cfg) {
         ArgumentNotValid.checkNotNull(job, "job");

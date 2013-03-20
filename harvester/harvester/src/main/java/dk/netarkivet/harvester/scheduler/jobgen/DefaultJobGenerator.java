@@ -118,7 +118,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
     /**
      * @return the singleton instance, builds it if necessary.
      */
-    public static DefaultJobGenerator getInstance() {
+    public static synchronized DefaultJobGenerator getInstance() {
         if (instance == null) {
             instance = new DefaultJobGenerator();
         }
@@ -150,7 +150,8 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             Iterator<DomainConfiguration> domainConfSubset) {
         int jobsMade = 0;
         Job job = null;
-
+        log.debug("Adding domainconfigs with the same order.xml for harvest # " 
+                + harvest.getOid());
         JobDAO dao = JobDAO.getInstance();
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
@@ -162,16 +163,25 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                     dao.create(job);
                 }
                 job = getNewJob(harvest, cfg);
+                if (log.isTraceEnabled()) {
+                    log.trace("Created new job for harvest #" + harvest.getOid() + " to add configuration " 
+                            + cfg.getName() + " for domain " + cfg.getDomainName());
+                }
+                
             } else {
                 job.addConfiguration(cfg);
+                if (log.isTraceEnabled()) {
+                    log.trace("Added job configuration " + cfg.getName() + " for domain " + cfg.getDomainName() 
+                            + " to current job for harvest #" +  harvest.getOid());
+                }
             }
         }
         if (job != null) {
             jobsMade++;
             editJobOrderXml(job);
             dao.create(job);
-            if (log.isDebugEnabled()) {
-                log.debug("Generated job: '" + job.toString() + "'");
+            if (log.isTraceEnabled()) {
+                log.trace("Generated job: '" + job.toString() + "'");
 
                 StringBuilder logMsg
                         = new StringBuilder("Job configurationsDomain:");
@@ -183,6 +193,10 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                             .append(config.getValue());
                 }
                 log.debug(logMsg);
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Created # " + jobsMade + " jobs for harvest # " 
+                + harvest.getOid());
             }
         }
         return jobsMade;
