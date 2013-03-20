@@ -44,9 +44,7 @@ public class SparseBitSet extends BitSet {
         super(0);
     }
 
-    /**
-     * @see BitSet#flip(int)
-     */
+    @Override
     public void flip(int bitIndex) {
         if (bitIndex < 0) {
             throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
@@ -58,9 +56,7 @@ public class SparseBitSet extends BitSet {
         }
     }
 
-    /**
-     * @see BitSet#flip(int, int)
-     */
+    @Override
     public void flip(int fromIndex, int toIndex) {
         if (fromIndex < 0) {
             throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
@@ -69,17 +65,15 @@ public class SparseBitSet extends BitSet {
             throw new IndexOutOfBoundsException("toIndex < 0: " + toIndex);
         }
         if (fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex +
-                                                    " > toIndex: " + toIndex);
+            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex 
+                    + " > toIndex: " + toIndex);
         }
         for (int i = fromIndex; i < toIndex; i++) {
             flip(i);
         }
     }
 
-    /**
-     * @see BitSet#set(int)
-     */
+    @Override
     public void set(int bitIndex) {
         if (bitIndex < 0) {
             throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
@@ -87,9 +81,7 @@ public class SparseBitSet extends BitSet {
         setbits.add(bitIndex);
     }
 
-    /**
-     * @see BitSet#set(int, boolean)
-     */
+    @Override
     public void set(int bitIndex, boolean value) {
         if (bitIndex < 0) {
             throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
@@ -101,9 +93,7 @@ public class SparseBitSet extends BitSet {
         }
     }
 
-    /**
-     * @see BitSet#set(int, int)
-     */
+    @Override
     public void set(int fromIndex, int toIndex) {
         if (fromIndex < 0) {
             throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
@@ -112,17 +102,15 @@ public class SparseBitSet extends BitSet {
             throw new IndexOutOfBoundsException("toIndex < 0: " + toIndex);
         }
         if (fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex +
-                                                    " > toIndex: " + toIndex);
+            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex 
+                    + " > toIndex: " + toIndex);
         }
         for (int i = fromIndex; i < toIndex; i++) {
             set(i);
         }
     }
 
-    /**
-     * @see BitSet#set(int, int, boolean)
-     */
+    @Override
     public void set(int fromIndex, int toIndex, boolean value) {
         if (fromIndex < 0) {
             throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
@@ -131,17 +119,15 @@ public class SparseBitSet extends BitSet {
             throw new IndexOutOfBoundsException("toIndex < 0: " + toIndex);
         }
         if (fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex +
-                                                    " > toIndex: " + toIndex);
+            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex 
+                    + " > toIndex: " + toIndex);
         }
         for (int i = fromIndex; i < toIndex; i++) {
             set(i, value);
         }
     }
 
-    /**
-     * @see BitSet#clear(int)
-     */
+    @Override
     public void clear(int bitIndex) {
         if (bitIndex < 0) {
             throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
@@ -149,9 +135,7 @@ public class SparseBitSet extends BitSet {
         setbits.remove(bitIndex);
     }
 
-    /**
-     * @see BitSet#clear(int, int)
-     */
+    @Override
     public void clear(int fromIndex, int toIndex) {
         if (fromIndex < 0) {
             throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
@@ -160,24 +144,20 @@ public class SparseBitSet extends BitSet {
             throw new IndexOutOfBoundsException("toIndex < 0: " + toIndex);
         }
         if (fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex +
-                                                    " > toIndex: " + toIndex);
+            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex 
+                    + " > toIndex: " + toIndex);
         }
         for (int i = fromIndex; i < toIndex; i++) {
             clear(i);
         }
     }
 
-    /**
-     * @see BitSet#clear()
-     */
+    @Override
     public void clear() {
         setbits.clear();
     }
 
-    /**
-     * @see BitSet#get(int)
-     */
+    @Override
     public boolean get(int bitIndex) {
         if (bitIndex < 0) {
             throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
@@ -185,9 +165,7 @@ public class SparseBitSet extends BitSet {
         return setbits.contains(bitIndex);
     }
 
-    /**
-     * @see BitSet#get(int, int)
-     */
+    @Override
     public BitSet get(int fromIndex, int toIndex) {
         if (fromIndex < 0) {
             throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
@@ -196,8 +174,8 @@ public class SparseBitSet extends BitSet {
             throw new IndexOutOfBoundsException("toIndex < 0: " + toIndex);
         }
         if (fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex +
-                                                    " > toIndex: " + toIndex);
+            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex 
+                    + " > toIndex: " + toIndex);
         }
         SparseBitSet bitsubset = new SparseBitSet();
         for (int i : setbits) {
@@ -208,9 +186,7 @@ public class SparseBitSet extends BitSet {
         return bitsubset;
     }
 
-    /**
-     * @see BitSet#nextSetBit(int)
-     */
+    @Override
     public int nextSetBit(int fromIndex) {
         if (fromIndex < 0) {
             throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
@@ -224,9 +200,7 @@ public class SparseBitSet extends BitSet {
         return index;
     }
 
-    /**
-     * @see BitSet#nextClearBit(int)
-     */
+    @Override
     public int nextClearBit(int fromIndex) {
         if (fromIndex < 0) {
             throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
@@ -239,9 +213,7 @@ public class SparseBitSet extends BitSet {
         return Integer.MIN_VALUE;
     }
 
-    /**
-     * @see BitSet#length()
-     */
+    @Override
     public int length() {
         int index = -1;
         for (Integer i : setbits) {
@@ -252,16 +224,12 @@ public class SparseBitSet extends BitSet {
         return index + 1;
     }
 
-    /**
-     * @see BitSet#isEmpty()
-     */
+    @Override
     public boolean isEmpty() {
         return setbits.isEmpty();
     }
 
-    /**
-     * @see BitSet#intersects(BitSet)
-     */
+    @Override
     public boolean intersects(BitSet set) {
         for (Integer index : setbits) {
             if (set.get(index)) {
@@ -272,16 +240,12 @@ public class SparseBitSet extends BitSet {
     }
 
 
-    /**
-     * @see BitSet#cardinality()
-     */
+    @Override
     public int cardinality() {
         return setbits.size();
     }
 
-    /**
-     * @see BitSet#and(BitSet)
-     */
+    @Override
     public void and(BitSet set) {
         Set<Integer> andbits = new HashSet<Integer>();
         for (Integer index : setbits) {
@@ -292,9 +256,7 @@ public class SparseBitSet extends BitSet {
         setbits = andbits;
     }
 
-    /**
-     * @see BitSet#or(BitSet)
-     */
+    @Override
     public void or(BitSet set) {
         Set<Integer> orbits = new HashSet<Integer>(setbits);
         for (int index = set.nextSetBit(0); index != -1;
@@ -304,9 +266,7 @@ public class SparseBitSet extends BitSet {
         setbits = orbits;
     }
 
-    /**
-     * @see BitSet#xor(BitSet)
-     */
+    @Override
     public void xor(BitSet set) {
         Set<Integer> xorbits = new HashSet<Integer>();
         for (Integer index : setbits) {
@@ -323,9 +283,7 @@ public class SparseBitSet extends BitSet {
         setbits = xorbits;
     }
 
-    /**
-     * @see BitSet#andNot(BitSet)
-     */
+    @Override
     public void andNot(BitSet set) {
         Set<Integer> andnotbits = new HashSet<Integer>(setbits);
         for (Integer index : setbits) {
@@ -353,6 +311,7 @@ public class SparseBitSet extends BitSet {
      * same as {@link #length()} for compatibility with
      * {@link BitSet}. The actual space used is a hashset of size
      * {@link #cardinality()}.
+     * @return the same as  {@link #length()}
      */
     public int size() {
         return length();
@@ -376,9 +335,7 @@ public class SparseBitSet extends BitSet {
                && setbits.equals(((SparseBitSet) obj).setbits);
     }
 
-    /**
-     * @see BitSet#clone()
-     */
+    @Override
     public Object clone() {
         super.clone();
         SparseBitSet newSparseBitSet = new SparseBitSet();
@@ -386,9 +343,7 @@ public class SparseBitSet extends BitSet {
         return newSparseBitSet;
     }
 
-    /**
-     * @see BitSet#toString()
-     */
+    @Override
     public String toString() {
         return setbits.toString();
     }
