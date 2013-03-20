@@ -25,12 +25,9 @@ National Library.
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 -->
-<!-- 
-	This file contains the default settings used to initialize
-	the JMSArcRepositoryClient class.
-
-	For documentation of the individual settings, please refer to the javadoc for
-	dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient.java 
+<!-- This file contains the default settings used to initialize the 
+     JMSArcRepositoryClient class. For documentation of the individual settings, please refer to the 
+     javadoc for dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient.java 
 -->
 <settings>
     <common>
