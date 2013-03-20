@@ -24,6 +24,8 @@
 */
 package dk.netarkivet.harvester.tools;
 
+import java.util.Date;
+
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 
 /**
@@ -41,8 +43,8 @@ public class HarvestdatabaseUpdateApplication {
      * @param args no Arg
      */
     public static void main(final String[] args) {
-        System.out.println("Beginning database upgrade");
+        System.out.println("Beginning database upgrade at " + new Date());
         DBSpecifics.getInstance().updateTables();
-        System.out.println("Database upgrade finished");
+        System.out.println("Database upgrade finished at " + new Date());
     }
 }

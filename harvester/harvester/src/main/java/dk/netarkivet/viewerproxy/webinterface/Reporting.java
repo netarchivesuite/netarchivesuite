@@ -60,11 +60,11 @@ public class Reporting {
      */
     private Reporting() {}
 
-    /** The suffix for the data arc/warc files produced by Heritrix */
-    final static String archivefile_suffix = "-.*\\.(w)?arc(\\.gz)?";
+    /** The suffix for the data arc/warc files produced by Heritrix. */
+    static final String archivefile_suffix = "-.*\\.(w)?arc(\\.gz)?";
     
-    /** The suffix for the data arc/warc metadata file created by NetarchiveSuite */
-    final static String metadatafile_suffix = "-metadata-[0-9]+\\.(w)?arc(\\.gz)?";
+    /** The suffix for the data arc/warc metadata file created by NetarchiveSuite. */
+    static final String metadatafile_suffix = "-metadata-[0-9]+\\.(w)?arc(\\.gz)?";
        
     /**
      * Submit a batch job to list all files for a job, and report result in a
