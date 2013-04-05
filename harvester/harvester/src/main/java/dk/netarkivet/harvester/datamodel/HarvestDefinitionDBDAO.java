@@ -941,32 +941,39 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Get all sparse versions of partial harvests for GUI purposes.
+     * Get all sparse versions of partial harvests for GUI purposes ordered by
+     * name.
      * 
      * @return An iterable (possibly empty) of SparsePartialHarvests
      */
-    public Iterable<SparsePartialHarvest> getAllSparsePartialHarvestDefinitions() {
+    public Iterable<SparsePartialHarvest> getSparsePartialHarvestDefinitions(
+            boolean excludeInactive) {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
+        String query = "SELECT harvestdefinitions.harvest_id,"
+                + "       harvestdefinitions.name,"
+                + "       harvestdefinitions.comments,"
+                + "       harvestdefinitions.numevents,"
+                + "       harvestdefinitions.submitted,"
+                + "       harvestdefinitions.isactive,"
+                + "       harvestdefinitions.edition,"
+                + "       schedules.name,"
+                + "       partialharvests.nextdate "
+                + "FROM harvestdefinitions, partialharvests, schedules"
+                + " WHERE harvestdefinitions.harvest_id "
+                + "       = partialharvests.harvest_id"
+                + " AND (harvestdefinitions.isactive " + " = ?"
+                // This linie is duplicated to allow to select both active
+                // and inactive HD's.
+                + " OR harvestdefinitions" +
+                ".isactive " + " = ?)"
+                + "   AND schedules.schedule_id "
+                + "       = partialharvests.schedule_id "
+                + "ORDER BY harvestdefinitions.name";
         try {
-            s = c.prepareStatement("SELECT harvestdefinitions.harvest_id,"
-                    + "       harvestdefinitions.name,"
-                    + "       harvestdefinitions.comments,"
-                    + "       harvestdefinitions.numevents,"
-                    + "       harvestdefinitions.submitted,"
-                    + "       harvestdefinitions.isactive,"
-                    + "       harvestdefinitions.edition,"
-                    + "       schedules.name,"
-                    + "       partialharvests.nextdate "
-                    + "FROM harvestdefinitions, partialharvests, schedules"
-                    + " WHERE harvestdefinitions.harvest_id "
-                    + "       = partialharvests.harvest_id"
-                    + "   AND schedules.schedule_id "
-                    + "       = partialharvests.schedule_id "
-                    + "ORDER BY harvestdefinitions.name");
+            s = DBUtils.prepareStatement(c, query, true, excludeInactive);
             ResultSet res = s.executeQuery();
-            List<SparsePartialHarvest> harvests 
-                = new ArrayList<SparsePartialHarvest>();
+            List<SparsePartialHarvest> harvests = new ArrayList<SparsePartialHarvest>();
             while (res.next()) {
                 SparsePartialHarvest sph = new SparsePartialHarvest(
                         res.getLong(1), res.getString(2), res.getString(3),
@@ -983,7 +990,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }
-    }
+}
 
     /**
      * Get a sparse version of a partial harvest for GUI purposes.

@@ -30,12 +30,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A Data Access Object for harvest definitions.
@@ -205,10 +204,12 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     /**
      * Get all sparse versions of partial harvests for GUI purposes.
      *
+     * @param excludeInactive If true only active harvest definitions are
+     * returned.
      * @return An iterable (possibly empty) of SparsePartialHarvests
      */
     public abstract Iterable<SparsePartialHarvest>
-            getAllSparsePartialHarvestDefinitions();
+           getSparsePartialHarvestDefinitions(boolean excludeInactive);
 
     /**
      * Get a sparse version of a full harvest for GUI purposes.

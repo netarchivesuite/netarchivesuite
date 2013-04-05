@@ -77,13 +77,26 @@ inactive or vice-versa.
 %>
 
 <h3 class="page_heading"><fmt:message key="pagetitle;selective.harvests"/></h3>
-<%
-Iterable<SparsePartialHarvest> isph = dao.getAllSparsePartialHarvestDefinitions();
-if (!isph.iterator().hasNext()) { %>
-   <fmt:message key="harvestdefinition.selective.no.harvestdefinition"/>
-   <p>
+<% boolean showInactiveHDs = Boolean.parseBoolean(request.getParameter(Constants.SHOW_INACTIVE_PARAM));
+   String flipShowHideInactiveLink = "Definitions-selective-harvests.jsp?" + Constants.SHOW_INACTIVE_PARAM
+                                      + "=" + !showInactiveHDs;
+%>
+   <a href="<%=HTMLUtils.escapeHtmlValues(flipShowHideInactiveLink)%>">
+<% if (showInactiveHDs) { %>
+        <fmt:message key="harvestdefinition.selective.hide.inactive"/>
 <% } else { %>
-  <table class="selection_table" cols="6">
+        <fmt:message key="harvestdefinition.selective.show.inactive"/>
+<% } %>
+   </a>
+<%
+    Iterable<SparsePartialHarvest> isph =
+            dao.getSparsePartialHarvestDefinitions(!showInactiveHDs);
+    if (!isph.iterator().hasNext()) { %>
+<p>
+<fmt:message key="harvestdefinition.selective.no.harvestdefinition"/>
+<p>
+        <% } else { %>
+<table class="selection_table" cols="6">
     <tr>
         <th><fmt:message key="harvestdefinition.selective.header.harvestdefinition"/></th>
         <th><fmt:message key="harvestdefinition.selective.header.numberofruns"/></th>

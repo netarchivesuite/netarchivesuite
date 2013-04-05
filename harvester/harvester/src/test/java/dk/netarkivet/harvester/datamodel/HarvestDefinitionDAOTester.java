@@ -516,7 +516,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .getSparsePartialHarvest("Testhøstning");
         assertTrue("Should find a SparsePartialHarvest for harvestname: "
                    + "Tværhøstning", sph != null);
-        assertEquals("Should be the right partial harvest", Long.valueOf(42L), 
+        assertEquals("Should be the right partial harvest", Long.valueOf(42L),
                 sph.getOid());
         assertEquals("Should be the right partial harvest", "Testhøstning",
                      sph.getName());
@@ -536,13 +536,13 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .getSparsePartialHarvest("Fnord"));
     }
 
-    public void testGetAllSparsePartialHarvestDefinitions() throws Exception {
+    public void testGetSparsePartialHarvestDefinitions() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         Iterator<SparsePartialHarvest> it = hddao
-                .getAllSparsePartialHarvestDefinitions().iterator();
+                .getSparsePartialHarvestDefinitions(true).iterator();
         assertTrue("Should return iterator of known partial HDs", it.hasNext());
         SparsePartialHarvest sph = it.next();
-        assertEquals("Should be the right partial harvest", Long.valueOf(42L), 
+        assertEquals("Should be the right partial harvest", Long.valueOf(42L),
                 sph.getOid());
         assertEquals("Should be the right partial harvest", "Testhøstning",
                      sph.getName());
@@ -559,6 +559,18 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertEquals("Should be the right partial harvest", 1129043502426L, sph
                 .getSubmissionDate().getTime());
         assertFalse("Should return no more hds", it.hasNext());
+
+        // Deactivate the harvest and verify the HD isn't listed with inactive
+        // filter enabled
+        hddao.flipActive(sph);
+        assertEquals("Should have returned the inactive HD 42L", Long.valueOf(42L),
+                hddao.getSparsePartialHarvestDefinitions(false).iterator().
+                        next().getOid());
+        it = hddao.getSparsePartialHarvestDefinitions(true).iterator();
+        if (it.hasNext()) {
+            assertEquals("Should not have returned the inactive HD 42L",
+                    Long.valueOf(42L), it.next().getOid());
+        }
     }
 
     public void testGetSparseFullHarvest() throws Exception {
@@ -585,8 +597,8 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .getPreviousHarvestDefinitionOid());
         assertEquals("Should be the right full harvest", "Test dette",
                 sph.getComments());
-        
-        
+
+
         assertNull("Should be null on unknown harvestdefinition", hddao
                 .getSparseFullHarvest("Fnord"));
     }
@@ -597,7 +609,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .getAllSparseFullHarvestDefinitions().iterator();
         assertTrue("Should return iterator of known full HDs", it.hasNext());
         SparseFullHarvest sph = it.next();
-        assertEquals("Should be the right partial harvest", Long.valueOf(43L), 
+        assertEquals("Should be the right partial harvest", Long.valueOf(43L),
                 sph.getOid());
         assertEquals("Should be the right partial harvest", "Tværhøstning",
                      sph.getName());
@@ -664,19 +676,19 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
             // Expected
         }
     }
-    
+
     public void testGetDomains() throws Exception {
-        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();        
+        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         List<String> domains = hddao.getListOfDomainsOfHarvestDefinition(
         		TestInfo.DEFAULT_HARVEST_NAME);
-        assertTrue("List of domains in harvestdefinition '" 
-        		+ TestInfo.DEFAULT_HARVEST_NAME +  "' shouldn't be null", 
+        assertTrue("List of domains in harvestdefinition '"
+        		+ TestInfo.DEFAULT_HARVEST_NAME +  "' shouldn't be null",
         		domains != null);
-        assertTrue("List of domains in harvestdefinition '" 
+        assertTrue("List of domains in harvestdefinition '"
         		+ TestInfo.DEFAULT_HARVEST_NAME +  "' should be 0 but was "
         		+ domains.size(), domains.size() == 0);
     }
-    
+
     /** Test both implementations of the exist function.
      * @throws Exception
      */
@@ -690,47 +702,48 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         String emptyName = "";
         assertTrue("Should exist harvest w/ name " + nameShouldExist,
                      hddao.exists(nameShouldExist));
-        
+
         assertFalse("Should not exist harvest w/ name " + nameShouldNotExist,
                      hddao.exists(nameShouldNotExist));
-        
+
         assertTrue("Should exist harvest w/ id " + harvestexistsid,
         hddao.exists(harvestexistsid));
-        
+
         assertFalse("Should not exist harvest w/ id " + harvestexistsnotid,
-                hddao.exists(harvestexistsnotid)); 
-        
+                hddao.exists(harvestexistsnotid));
+
         try {
             hddao.exists(nullName);
             fail("Should throw ArgumentNotvalid when given null arg");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
+
         try {
             hddao.exists(emptyName);
-            fail("Should throw ArgumentNotvalid when given empty arg");
+
+           fail("Should throw ArgumentNotvalid when given empty arg");
         } catch (ArgumentNotValid e) {
             // Expected
         }
     }
-    
+
     /**
      *  Test the {@link HarvestDefinitionDAO#removeDomainConfiguration(
-     *  PartialHarvest, DomainConfigurationKey)} method.
+     *  Long, SparseDomainConfiguration)} method.
      */
     public void testRemoveDomainConfiguration() {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         long partialharvestId = 42L;
         HarvestDefinition hd = hddao.read(partialharvestId);
         if (!(hd instanceof PartialHarvest)) {
-            fail("harvest w/ id=" + partialharvestId 
+            fail("harvest w/ id=" + partialharvestId
                     + " is not partialHarvest");
         }
         PartialHarvest ph = (PartialHarvest) hd;
         List<DomainConfiguration> configList =
             IteratorUtils.toList(ph.getDomainConfigurations());
-        assertTrue("Should exist domainfigurations, but doesn't", 
+        assertTrue("Should exist domainfigurations, but doesn't",
                 configList.size() > 0);
         int configsize = configList.size();
         DomainConfiguration dc = configList.get(0);
@@ -738,27 +751,27 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         PartialHarvest ph1 = (PartialHarvest) hddao.read(partialharvestId);
         configList =
             IteratorUtils.toList(ph1.getDomainConfigurations());
-        assertTrue("DC should have been removed", 
+        assertTrue("DC should have been removed",
                 configList.size() == configsize - 1);
         }
-        
+
     /**
      *  Test the {@link HarvestDefinitionDAO#updateNextdate(
-     *  PartialHarvest, Date)} method.
+     *  long, java.util.Date)} method.
      */
     public void testUpdateNextDate() {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         long partialharvestId = 42L;
         HarvestDefinition hd = hddao.read(partialharvestId);
         if (!(hd instanceof PartialHarvest)) {
-            fail("harvest w/ id=" + partialharvestId 
+            fail("harvest w/ id=" + partialharvestId
                     + " is not partialHarvest");
         }
         PartialHarvest ph = (PartialHarvest) hd;
         Date now = new Date();
         hddao.updateNextdate(ph.getOid(), now);
         PartialHarvest ph1 = (PartialHarvest) hddao.read(partialharvestId);
-        assertTrue("The date should have been updated in the database", 
+        assertTrue("The date should have been updated in the database",
                 ph1.getNextDate().equals(now));
-        }     
+        }
 }

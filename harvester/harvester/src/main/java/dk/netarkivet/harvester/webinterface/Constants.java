@@ -124,6 +124,8 @@ public class Constants {
 
     public static final String FLIPACTIVE_PARAM = "flipactive";
 
+    public static final String SHOW_INACTIVE_PARAM = "showInactive";
+
     public static final String URLLIST_LIST_PARAM = "urlListList";
 
     public static final String JOB_PARAM = "jobID";
