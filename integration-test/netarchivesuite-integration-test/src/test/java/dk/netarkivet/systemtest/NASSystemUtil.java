@@ -32,7 +32,7 @@ public class NASSystemUtil {
      */
     public static Application[] getApplications() {
         return new Application[] {
-                new Application("KB-TEST-BAR-013", "BitarchiveServer", null,
+                new Application("KB-TEST-BAR-015", "BitarchiveServer", null,
                         null, "KBN"),
                 new Application("KB-TEST-BAR-014", "BitarchiveServer",
                         "BitApp_1", null, "KBN"),
@@ -56,11 +56,11 @@ public class NASSystemUtil {
                         "HarvestJobManagerApplication", null, null, "KBN"),
                 new Application("kb-test-adm-001", "GUIWebServer", null, null,
                         "KBN"),
-                new Application("kb-test-har-001", "HarvestControllerServer",
+                new Application("kb-test-har-003", "HarvestControllerServer",
                         "kblow001", "LOWPRIORITY", "KBN"),
-                new Application("kb-test-har-002", "HarvestControllerServer",
+                new Application("kb-test-har-004", "HarvestControllerServer",
                         "kbhigh", "HIGHPRIORITY", "KBN"),
-                new Application("kb-test-har-002", "HarvestControllerServer",
+                new Application("kb-test-har-004", "HarvestControllerServer",
                         "kblow002", "LOWPRIORITY", "KBN"),
                 new Application("sb-test-bar-001", "BitarchiveServer", null,
                         null, "SBN"),
