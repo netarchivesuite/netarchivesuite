@@ -332,7 +332,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @return String with description of parameters.
          */
         public String listParameters() {
-            return "[-w|a]jobID";
+            return "[-a|w] jobID";
         }
     }
 }

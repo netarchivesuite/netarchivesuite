@@ -480,8 +480,8 @@
                 <maxStm>0</maxStm>
                 <maxStmPerConn>0</maxStmPerConn>
                 <idleConnTestPeriod>0</idleConnTestPeriod>
-                <idleConnTestQuery/>
-                <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
+                <idleConnTestQuery>SELECT COUNT(*) FROM schedules</idleConnTestQuery>
+                <idleConnTestOnCheckin>true</idleConnTestOnCheckin>
             </pool>
         </database>
         <repository>
