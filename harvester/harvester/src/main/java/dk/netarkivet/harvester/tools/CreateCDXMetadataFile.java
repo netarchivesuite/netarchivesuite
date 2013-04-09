@@ -26,14 +26,16 @@
 package dk.netarkivet.harvester.tools;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 
-import org.archive.io.arc.ARCWriter;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -47,24 +49,30 @@ import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
-import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 
 /**
  * This tool creates a CDX metadata file for a given jobID by running a
  * batch job on the bitarchive and processing the results to give a metadata
- * file.
+ * file. Use option -w to select WARC output, and -a to select ARC output:
+ * If no option available, then warc mode is selected
  *
- * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile jobId
+ * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -w jobId
+ * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -a jobId 
+ * 
  *
  */
 public class CreateCDXMetadataFile extends ToolRunnerBase {
+    
+    public static final String ARCMODE = "arc";
+    public static final String WARCMODE = "warc";
+    
     /** Main method.  Creates and runs the tool object responsible for
      * batching over the bitarchive and creating a metadata file for a job.
      *
@@ -86,13 +94,18 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
      */
     private static class CreateCDXMetadataFileTool
             implements SimpleCmdlineTool {
+        /** Write output mode. Is it arc or warc mode. */
+        private boolean isWarcOutputMode;
+        /** Which jobId to process. */
+        private long jobId;
+        
         /** The connection to the arc repository. */
         private ViewerArcRepositoryClient arcrep;
-        /** The file pattern that matches an ARC file name without the jobID.
+        /** The file pattern that matches an ARC or WARC file name without the jobID.
          * If combined with a jobID, this will match filenames like
          * 42-117-20051212141240-00001-sb-test-har-001.statsbiblioteket.dk.arc
          */
-        private static final String REMAINING_ARC_FILE_PATTERN =
+        private static final String REMAINING_ARCHIVE_FILE_PATTERN =
                 "-\\d+-\\d+-\\d+-.*";
 
         /** Check that a valid jobID were given.  This does not check whether
@@ -101,26 +114,44 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @param args The args given on the command line.
          * @return True if the args are legal.
          */
-        public boolean checkArgs(String... args) {
-            if (args.length < 1) {
-                System.err.println("Missing jobID argument");
-                return false;
-            }
-            if (args.length > 1) {
-                System.err.println("Too many arguments: '"
-                        + StringUtils.conjoin("', '", Arrays.asList(args))
-                        + "'");
-                return false;
-            }
+        public boolean checkArgs(String... args) { 
+            Options options = new Options();
+            options.addOption("a", false, "write an metadata ARC file");
+            options.addOption("w", false, "write an metadata WARC file");
+            
+            CommandLineParser parser = new PosixParser();
             try {
-                if (Long.parseLong(args[0]) < 1) {
-                    System.err.println("" + args[0]
+                CommandLine cl = parser.parse(options, args);
+                if (cl.hasOption('a') && cl.hasOption('w')) {
+                    System.err.println("Option 'a' and option 'w' cannot be used at the same time");
+                    return false;
+                }
+                if (cl.hasOption('a')) {
+                    this.isWarcOutputMode = false;
+                } else { // default mode is 'warc' : don't need to check for option -w
+                    this.isWarcOutputMode = true;
+                }
+            } catch (ParseException e) {
+                System.err.println("Unable to parse arguments: " + e);
+                return false;
+            }
+            
+            if (args.length < 1) {
+                System.err.println("Missing arguments");
+                return false;
+            }
+            
+            // Assume that last argument is the jobId
+            int jobIdIndex = args.length - 1;
+            try {
+                if (Long.parseLong(args[jobIdIndex]) < 1) {
+                    System.err.println("" + args[jobIdIndex]
                             + " is not a valid job ID");
                     return false;
                 }
                 return true;
             } catch (NumberFormatException e) {
-                System.err.println("'" + args[0] + "' is not a valid job ID");
+                System.err.println("'" + args[jobIdIndex] + "' is not a valid job ID"); 
                 return false;
             }
         }
@@ -151,13 +182,18 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         /** The workhorse method of this tool: Runs the batch job,
          * copies the result, then turns the result into a proper
          * metadata file.
+         * This method assumes that the args have already been read 
+         * by the checkArgs method, and thus jobId has been parsed, 
+         * and the isWarcOutputMode established
          *
          * @param args Arguments given on the command line.
          */
         public void run(String... args) {
-            long jobID = Long.parseLong(args[0]);
-            FileBatchJob job = new ExtractCDXJob();
-            job.processOnlyFilesMatching(jobID + REMAINING_ARC_FILE_PATTERN);
+            long jobID = this.jobId;
+            FileBatchJob job = new ArchiveExtractCDXJob();
+            Settings.set(HarvesterSettings.METADATA_FORMAT, (isWarcOutputMode)? "warc": "arc");
+            
+            job.processOnlyFilesMatching(jobID + REMAINING_ARCHIVE_FILE_PATTERN);
             BatchStatus status = arcrep.batch(
                     job, Settings.get(CommonSettings.USE_REPLICA_ID));
             if (status.hasResultFile()) {
@@ -180,12 +216,13 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         }
 
         /** Turns a raw CDX file for the given jobID into a metadatafile
-         * containing the CDX lines in one ARC entry per ARC file indexed.
+         * containing the CDX lines in one archive record per each ARC or WARC file indexed.
          * The output is put into a file called &lt;jobID&gt;-metadata-1.arc.
          *
          * @param resultFile The CDX file returned by a ExtractCDXJob for the
          * given jobID.
          * @param jobID The jobID we work on.
+         * @param warcmode write the data to a WARC metadata file or not.
          * @throws IOException If an I/O error occurs, or the resultFile
          * does not exist
          */
@@ -193,10 +230,13 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                 throws IOException {
             BufferedReader reader
                     = new BufferedReader(new FileReader(resultFile));
+            
+            File outputFile = new File(MetadataFileWriter.getMetadataArchiveFileName(
+                    Long.toString(jobID)));
+            
             try {
-                ARCWriter writer = ARCUtils.createARCWriter(
-                        new File(MetadataFileWriter.getMetadataArchiveFileName(
-                                        Long.toString(jobID))));
+                MetadataFileWriter writer = MetadataFileWriter.createWriter(
+                        outputFile);
                 try {
                     String line;
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -268,22 +308,20 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * entry.
          * @throws IOFailure if the write fails for any reason
          */
-        private void writeCDXEntry(ARCWriter writer,
+        private void writeCDXEntry(MetadataFileWriter writer,
                                    FileUtils.FilenameParser parser,
                                    byte[] bytes)
                 throws IOFailure {
             try {
-                ByteArrayInputStream bais
-                        = new ByteArrayInputStream(bytes);
                 writer.write(HarvestDocumentation.getCDXURI(
                         parser.getHarvestID(), parser.getJobID(),
                         parser.getTimeStamp(), parser.getSerialNo()).toString(),
                         Constants.CDX_MIME_TYPE,
                         SystemUtils.getLocalIP(),
                         System.currentTimeMillis(),
-                        bytes.length, bais);
+                        bytes);
             } catch (IOException e) {
-                throw new IOFailure("Failed to write ARC entry with CDX lines "
+                throw new IOFailure("Failed to write ARC/WARC entry with CDX lines "
                         + "for " + parser.getFilename(), e);
             }
         }
@@ -294,7 +332,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @return String with description of parameters.
          */
         public String listParameters() {
-            return "jobID";
+            return "[-w|a]jobID";
         }
     }
 }

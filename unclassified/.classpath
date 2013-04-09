@@ -5,7 +5,7 @@
 	<classpathentry kind="lib" path="lib/db/derbyclient-10.8.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/db/derbytools-10.8.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/charting/jfreechart-1.0.13.jar"/>
-	<classpathentry kind="lib" path="lib/commons-cli-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-net-3.0.1.jar"/>
