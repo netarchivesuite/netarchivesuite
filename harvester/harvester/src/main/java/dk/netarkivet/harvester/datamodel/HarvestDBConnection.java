@@ -106,8 +106,9 @@ public final class HarvestDBConnection {
                     dbSpec.updateTables();
                 }
             }
-            
-            return dataSource.getConnection();
+
+            final Connection connection = dataSource.getConnection();
+            return connection;
         } catch (SQLException e) {
             final String message = "Can't connect to database with DBurl: '"
                 + jdbcUrl + "' using driver '"
@@ -285,6 +286,7 @@ public final class HarvestDBConnection {
         // Configure idle connection testing
         int testPeriod =
             Settings.getInt(CommonSettings.DB_POOL_IDLE_CONN_TEST_PERIOD);
+        //TODO This looks odd. Why is checkin testing inside this if statement?
         if (testPeriod > 0) {
             dataSource.setIdleConnectionTestPeriod(testPeriod);
             dataSource.setTestConnectionOnCheckin(
@@ -302,6 +304,8 @@ public final class HarvestDBConnection {
                 Settings.getInt(CommonSettings.DB_POOL_MAX_STM));
         dataSource.setMaxStatementsPerConnection(
                 Settings.getInt(CommonSettings.DB_POOL_MAX_STM_PER_CONN));
+
+        dataSource.setTestConnectionOnCheckout(true);
 
         if (log.isInfoEnabled()) {
             String msg = 

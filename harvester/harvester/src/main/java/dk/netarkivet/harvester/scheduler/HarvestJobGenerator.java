@@ -104,7 +104,11 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
 
         @Override
         public synchronized void run() {
-            generateJobs(new Date());
+            try {
+                generateJobs(new Date());
+            } catch (Exception e) {
+                log.info("Exception caught at fault barrier while generating jobs.", e);
+            }
         }
 
         /**
