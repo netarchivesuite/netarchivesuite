@@ -120,6 +120,15 @@
     </repository>
   </repositories>
 
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
 
     <!-- Hacking resources to allow for ant based convention of
@@ -180,7 +189,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.2.2</version>
+          <version>2.4</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>

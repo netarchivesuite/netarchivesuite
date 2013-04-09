@@ -77,7 +77,15 @@ inactive or vice-versa.
 %>
 
 <h3 class="page_heading"><fmt:message key="pagetitle;selective.harvests"/></h3>
-<% boolean showInactiveHDs = Boolean.parseBoolean(request.getParameter(Constants.SHOW_INACTIVE_PARAM));
+<% String showInactiveDefinitionsParam = request.getParameter(Constants.SHOW_INACTIVE_PARAM);
+  boolean showInactiveHDs;
+   if (showInactiveDefinitionsParam == null ||
+       showInactiveDefinitionsParam.equals("") ||
+       showInactiveDefinitionsParam.equals("true")) {
+     showInactiveHDs = true;
+   } else {
+      showInactiveHDs = false;
+   }
    String flipShowHideInactiveLink = "Definitions-selective-harvests.jsp?" + Constants.SHOW_INACTIVE_PARAM
                                       + "=" + !showInactiveHDs;
 %>

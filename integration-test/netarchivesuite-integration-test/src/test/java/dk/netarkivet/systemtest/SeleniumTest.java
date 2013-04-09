@@ -23,21 +23,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package dk.netarkivet.systemtest;
+
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JFrame;
+
+import com.thoughtworks.selenium.Selenium;
+import dk.netarkivet.systemtest.page.PageHelper;
 import org.apache.commons.io.FileUtils;
+import org.jaccept.gui.ComponentTestFrame;
 import org.jaccept.structure.ExtendedTestCase;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-
-import com.thoughtworks.selenium.Selenium;
+import org.testng.annotations.BeforeSuite;
 
 /**
  * The super class for all Selenium based system tests.
@@ -45,11 +50,11 @@ import com.thoughtworks.selenium.Selenium;
 public abstract class SeleniumTest extends ExtendedTestCase {
     protected TestEnvironmentManager environmentManager;
     protected final TestLogger log = new TestLogger(getClass());
-    protected static FirefoxDriver driver;
+    protected static WebDriver driver;
     protected static Selenium selenium;
     protected String baseUrl;
 
-    @BeforeTest (alwaysRun=true)
+    @BeforeSuite(alwaysRun=true)
     public void setupTest() {
         environmentManager = new TestEnvironmentManager(getTestX(), 8071);
         startTestSystem();
@@ -82,12 +87,13 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         driver = new FirefoxDriver();
         baseUrl = "http://kb-test-adm-001.kb.dk:" + environmentManager.getPort();
         selenium = new WebDriverBackedSelenium(driver, baseUrl);
+        PageHelper.initialize(driver, baseUrl);
         
         int numberOfSecondsToWaiting = 0;
         int maxNumberOfSecondsToWait = 60;
         System.out.print("Waiting for GUI to start");
         while (numberOfSecondsToWaiting++ < maxNumberOfSecondsToWait) {
-            driver.get(baseUrl + "/HarvestDefinition/");
+            PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
             if (selenium.isTextPresent("Definitions")) {
                 System.out.println();
                 return;
@@ -105,6 +111,17 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     @AfterTest (alwaysRun=true)
     public void stopSelenium() {
         selenium.stop();
+    }
+
+    // Experimental, use at own risk.
+    @BeforeSuite (alwaysRun = true)
+    public void startTestGUI() {
+        if (System.getProperty("enableTestGUI", "false").equals("true") ) {
+            JFrame hmi = new ComponentTestFrame();
+            hmi.pack();
+            hmi.setVisible(true);
+            hmi.toFront();
+        }
     }
 
     /**

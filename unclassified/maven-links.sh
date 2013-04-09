@@ -24,6 +24,8 @@ ln -s $WORKING_DIR/src/is $M2_BUILD_HOME/netarchivesuite-harvester/src/main/java
 ln -s $WORKING_DIR/src/dk/netarkivet/viewerproxy $M2_BUILD_HOME/netarchivesuite-harvester/src/main/java/dk/netarkivet
 ln -s $WORKING_DIR/tests/dk/netarkivet/viewerproxy $M2_BUILD_HOME/netarchivesuite-harvester/src/test/java/dk/netarkivet
 
+ln -s $WORKING_DIR/webpages $M2_BUILD_HOME/netarchivesuite-harvester/src/main/webapp/
+
 # Archive module
 ln -s $WORKING_DIR/src/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/main/java/dk/netarkivet
 ln -s $WORKING_DIR/tests/dk/netarkivet/archive $M2_BUILD_HOME/netarchivesuite-archive/src/test/java/dk/netarkivet
@@ -41,13 +43,13 @@ ln -s $WORKING_DIR/src/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-deplo
 ln -s $WORKING_DIR/tests/dk/netarkivet/deploy $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet
 ln -s $WORKING_DIR/tests/dk/netarkivet/externalsoftware $M2_BUILD_HOME/netarchivesuite-deploy/src/test/java/dk/netarkivet
 
-## Create test resource links
-ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-common/tests
-ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-archive/tests
-ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-harvester/tests
-ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-monitor/tests
-ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-wayback/tests
-ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-deploy/tests
+## Create test resource links (disabled, recursive linking)
+#ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-common/tests
+#ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-archive/tests
+#ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-harvester/tests
+#ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-monitor/tests
+#ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-wayback/tests
+#ln -s $WORKING_DIR/tests $M2_BUILD_HOME/netarchivesuite-deploy/tests
 
 cd $WORKING_DIR
 }

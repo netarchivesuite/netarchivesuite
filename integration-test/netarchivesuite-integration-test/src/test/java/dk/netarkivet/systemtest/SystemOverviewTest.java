@@ -27,6 +27,9 @@ package dk.netarkivet.systemtest;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import dk.netarkivet.systemtest.page.PageHelper;
+import dk.netarkivet.systemtest.page.PageHelper.MenuPages;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
@@ -41,10 +44,8 @@ public class SystemOverviewTest extends SeleniumTest {
     @Test (groups = {"guitest","functest"})
     public void generalTest() throws Exception {
         addDescription("Test specification: http://netarchive.dk/suite/It23JMXMailCheck");
-        addStep("Goto the HarvestDefinition page", "");
-        driver.get(baseUrl + "/HarvestDefinition/");
-        addStep("Click the 'Systemstate link' in the left menu", "The system state page is displayed");
-        driver.findElement(By.linkText("Systemstate")).click();
+        addStep("Goto the Systemstate page", "");
+        PageHelper.gotoPage(MenuPages.OverviewOfTheSystemState);
         // We need to click the 'Instance id' link to differentiate between
         // instances of the same application running on the same machine
         addStep("Click the 'Instance id' link (We need to do this to differentiate between "
