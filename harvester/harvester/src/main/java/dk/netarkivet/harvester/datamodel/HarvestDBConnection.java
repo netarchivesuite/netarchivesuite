@@ -286,7 +286,7 @@ public final class HarvestDBConnection {
         // Configure idle connection testing
         int testPeriod =
             Settings.getInt(CommonSettings.DB_POOL_IDLE_CONN_TEST_PERIOD);
-        //TODO This looks odd. Why is checkin testing inside this if statement?
+        //TODO This looks odd. Why is checkin-testing inside this if statement?
         if (testPeriod > 0) {
             dataSource.setIdleConnectionTestPeriod(testPeriod);
             dataSource.setTestConnectionOnCheckin(
@@ -305,7 +305,10 @@ public final class HarvestDBConnection {
         dataSource.setMaxStatementsPerConnection(
                 Settings.getInt(CommonSettings.DB_POOL_MAX_STM_PER_CONN));
 
-        dataSource.setTestConnectionOnCheckout(true);
+        //dataSource.setTestConnectionOnCheckout(true);
+        //dataSource.setBreakAfterAcquireFailure(false);
+        //dataSource.setAcquireRetryAttempts(10000);
+        //dataSource.setAcquireRetryDelay(10);
 
         if (log.isInfoEnabled()) {
             String msg = 
