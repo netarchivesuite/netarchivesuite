@@ -45,13 +45,15 @@ public class ChannelIDTester extends TestCase {
         Settings.set(CommonSettings.APPLICATION_NAME,
                 "dk.netarkivet.archive.indexserver.IndexServerApplication");
         Settings.set(CommonSettings.APPLICATION_INSTANCE_ID, "XXX");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "HIGHPRIORITY");
     }
 
     /**
      * Test that each channel is equal only to itself.
      */
     public void testChannelIdentity(){
-        JobPriority priority = JobPriority.valueOf(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
+        JobPriority priority = JobPriority.valueOf(
+                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
         ChannelID harvestJobChannel = JobChannelUtil.getChannel(priority);
         ChannelID[] channelArray =
          {Channels.getAllBa(), harvestJobChannel, Channels.getAnyBa(),

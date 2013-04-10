@@ -36,6 +36,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -262,20 +263,22 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
         boolean indexisready = msg.getIndexOK();
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
         if (dao.isSnapshot(harvestId)) {
+            dao.setIndexIsReady(harvestId, indexisready);
             if (indexisready) {
-                dao.setIndexIsReady(harvestId, true);
-                log.info("Got message from IndexServer, that index is ready for"
+                log.info("Got message from the IndexServer, that the index is ready for"
                     + " harvest # " + harvestId);
             } else {
-                log.warn("Got message from IndexServer, that it failed to generate index for"
-                        + " harvest # " + harvestId + ". Deactivating harvest");
+                String errMsg = "Got message from IndexServer, that it failed to generate index for"
+                        + " harvest # " + harvestId + ". Deactivating harvest";
+                log.warn(errMsg);
                 HarvestDefinition hd = dao.read(harvestId);
                 hd.setActive(false);
                 StringBuilder commentsBuf = new StringBuilder(hd.getComments());
                 commentsBuf.append("\n" + (new Date()) 
-                        + ": Deactivated by s ystem because indexserver failed to generate index");
+                        + ": Deactivated by the system because indexserver failed to generate index");
                 hd.setComments(commentsBuf.toString());
                 dao.update(hd);
+                NotificationsFactory.getInstance().errorEvent(errMsg);
             }
         } else {
             log.debug("Ignoring IndexreadyMesssage sent on behalf on "
