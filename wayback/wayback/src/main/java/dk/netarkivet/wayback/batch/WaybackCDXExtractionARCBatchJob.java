@@ -110,7 +110,7 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
             csr = aToSAdapter.adapt(record);
         } catch (Exception e) {
             log.info(e);
-            //throw new IOFailure("Error in batch job", e);
+            return;
         }
         try {
             if (csr != null) {
