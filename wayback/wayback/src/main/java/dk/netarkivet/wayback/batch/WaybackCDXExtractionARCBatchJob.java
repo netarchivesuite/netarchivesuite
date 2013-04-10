@@ -109,8 +109,8 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
         try {
             csr = aToSAdapter.adapt(record);
         } catch (Exception e) {
-            log.warn(e);
-            throw new IOFailure("Error in batch job", e);
+            log.info(e);
+            //throw new IOFailure("Error in batch job", e);
         }
         try {
             if (csr != null) {
@@ -118,12 +118,12 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
                 os.write("\n".getBytes());
             } else {
                 String message = "Could not parse '" + record.getHeaderString() + "'";
-                log.warn(message);
-                throw new IOFailure(message);
+                log.info(message);
+                //throw new IOFailure(message);
             }
         } catch (Exception e) {
-            log.warn(e);
-            throw new IOFailure("Error in batch job", e);
+            log.info(e);
+            //throw new IOFailure("Error in batch job", e);
         }
     }
 
