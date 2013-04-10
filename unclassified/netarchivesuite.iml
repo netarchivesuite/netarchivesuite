@@ -103,15 +103,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="commons-cli-1.0.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/commons-cli-1.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="commons-fileupload-1.2.1.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/commons-fileupload-1.2.1.jar!/" />
@@ -660,6 +651,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/wayback-dependencies/ia-web-commons-1.0-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-cli-1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

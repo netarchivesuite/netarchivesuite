@@ -155,7 +155,8 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
             throws ResourceNotAvailableException, IOException {
         String cdxLine = "netarkivet.dk/ 20090706131100 http://netarkivet.dk/ text/html 302 3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ http://netarkivet.dk/index-da.php 3311 arcfile_withredirects.arc";
         NetarchiveResourceStore store = new NetarchiveResourceStore();
-        CaptureSearchResult csr = CDXLineToSearchResultAdapter.doAdapt(cdxLine);
+        CaptureSearchResult csr = (new CDXLineToSearchResultAdapter()).adapt(
+                cdxLine);
         ArcResource resource = (ArcResource) store.retrieveResource(csr);
         assertNotNull("Should have a resource", resource);
         assertTrue(resource.getRecordLength()>0);
@@ -171,7 +172,7 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
             throws ResourceNotAvailableException, IOException {
         String cdxLine = "ing.dk/ 20090706131100 http://ing.dk/ text/html 200 Z3UM6JX4FCO6VMVTPM6VBNJPN5D6QLO3 - 3619 arcfile_withredirects.arc";
         NetarchiveResourceStore store = new NetarchiveResourceStore();
-        CaptureSearchResult csr = CDXLineToSearchResultAdapter.doAdapt(cdxLine);
+        CaptureSearchResult csr = (new CDXLineToSearchResultAdapter()).adapt(cdxLine);
         ArcResource resource = (ArcResource) store.retrieveResource(csr);
         assertNotNull("Should have a resource", resource);
         assertTrue(resource.getRecordLength()>0);
