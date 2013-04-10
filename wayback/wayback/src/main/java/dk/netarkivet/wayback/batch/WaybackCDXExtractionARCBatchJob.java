@@ -35,6 +35,7 @@ import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResultAdapter;
 
@@ -109,18 +110,21 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
             csr = aToSAdapter.adapt(record);
         } catch (Exception e) {
             log.warn(e);
+            throw new IOFailure("Error in batch job", e);
         }
         try {
             if (csr != null) {
                 os.write(srToCDXAdapter.adapt(csr).getBytes());
                 os.write("\n".getBytes());
+            } else {
+                String message = "Could not parse '" + record.getHeaderString() + "'";
+                log.warn(message);
+                throw new IOFailure(message);
             }
-        } catch (IOException e) {
-            throw new IOFailure("Write error in batch job", e);
         } catch (Exception e) {
             log.warn(e);
+            throw new IOFailure("Error in batch job", e);
         }
-
     }
 
     /**
