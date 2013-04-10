@@ -87,23 +87,8 @@ public class GetMetadataArchiveBatchJobTester extends TestCase {
         blf.run(job, os);
         //System.out.println(job.getNoOfFilesProcessed());
         
-        /*
-         for (Exception e: job.getExceptionArray()) {
-         
-            System.out.println(e);
-            e.printStackTrace();
-         }
-        */
-        
-        if (job.getFilesFailed().size() > 0) {
-            fail("Expected no files to fail, but " + job.getFilesFailed().size()
-                    + " failed");
-        }
-        /*
-        for (Exception e: job.getExceptionArray()) {
-            System.out.println(e);
-            e.printStackTrace();
-        } */
+        assertEquals("Expected no files to fail, but " + job.getFilesFailed().size()
+                + " failed", 0, job.getFilesFailed().size());
         
         job = new GetMetadataArchiveBatchJob(
                 CdxUrlpattern, xCDXMimepattern);
@@ -113,16 +98,7 @@ public class GetMetadataArchiveBatchJobTester extends TestCase {
         blf.run(job, os1);
         
         //System.out.println(job.getNoOfFilesProcessed());
-        
-        if (job.getFilesFailed().size() > 0) {
-            fail("Expected no files to fail, but " + job.getFilesFailed().size()
-                    + " failed");
-        }
-        /*
-        for (Exception e: job.getExceptionArray()) {
-            System.out.println(e);
-            e.printStackTrace();
-        } 
-        */
+        assertEquals("Expected no files to fail, but " + job.getFilesFailed().size()
+                + " failed", 0, job.getFilesFailed().size());
     }
 }

@@ -82,10 +82,9 @@ public class CrawlLogLinesMatchingRegexpTester extends TestCase {
         OutputStream os2 = new FileOutputStream("tmp1");
         blf.run(cJob, os2);
         //System.out.println(cJob.getNoOfFilesProcessed());
-        if (cJob.getFilesFailed().size() > 0) {
-            fail("Expected no files to fail, but " + cJob.getFilesFailed().size()
-                    + " failed");
-        }
+        assertEquals("Expected no files to fail, but " + cJob.getFilesFailed().size()
+                    + " failed", 0, cJob.getFilesFailed().size());
+        
         for (ExceptionOccurrence e: cJob.getExceptions()) {
             System.out.println(e.getException());
         }
