@@ -917,6 +917,8 @@ public class WindowsMachine extends Machine {
                 //   Loop
                 vbsPrint.println(ScriptConstants.MULTI_SPACE_2
                         + ScriptConstants.VB_LOOP);
+                // Removing the bit that writes to stderr
+                /*
                 //   Do While oExec.StdErr.AtEndOfStream <> True
                 vbsPrint.println(ScriptConstants.MULTI_SPACE_2
                         + ScriptConstants.VB_DO_WHILE
@@ -942,7 +944,7 @@ public class WindowsMachine extends Machine {
                         + ScriptConstants.VB_LOOP);
                 // Loop
                 vbsPrint.println(ScriptConstants.VB_LOOP);
-
+                */
             } finally {
                 // close file
                 vbsPrint.close();
