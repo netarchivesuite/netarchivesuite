@@ -942,9 +942,9 @@ public class WindowsMachine extends Machine {
                 //   Loop
                 vbsPrint.println(ScriptConstants.MULTI_SPACE_2
                         + ScriptConstants.VB_LOOP);
+                        */
                 // Loop
                 vbsPrint.println(ScriptConstants.VB_LOOP);
-                */
             } finally {
                 // close file
                 vbsPrint.close();
