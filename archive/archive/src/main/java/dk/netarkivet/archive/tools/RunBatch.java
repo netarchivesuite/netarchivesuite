@@ -500,7 +500,7 @@ public class RunBatch extends ToolRunnerBase {
         /**
          * @return true, if both arguments are valid, otherwise returns false
          */
-        boolean isOutputAndErrorFileArgsValid(){
+        private boolean isOutputAndErrorFileArgsValid(){
             //Check output file argument
             String oFile = parms.cmd.getOptionValue(OUTPUTFILE_OPTION_KEY);
             if (oFile != null && !checkWriteFile(oFile, "Output file")) {
@@ -569,7 +569,6 @@ public class RunBatch extends ToolRunnerBase {
                 for (int i = 0; i < jarNames.length; i++) {
                     jarFiles[i] = new File(jarNames[i]);
                 }
-
                 job = new LoadableJarBatchJob(className, 
                         argumentList, jarFiles);
             }

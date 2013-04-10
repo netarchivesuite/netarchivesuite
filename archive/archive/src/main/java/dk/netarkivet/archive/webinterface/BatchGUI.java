@@ -582,7 +582,6 @@ public final class BatchGUI {
             File outputFile = new File(batchDir, prefix + ".out");
             File errorFile = new File(batchDir, prefix + ".err");
             
-            
             // Retrieve the timestamp from the file-name or "" if not found
             String timestamp = getTimestamp(prefix, locale);
             
@@ -659,8 +658,7 @@ public final class BatchGUI {
             // end row 
             res.append("  </tr>\n");
         }
-        res.append("</table>\n");
-        
+        res.append("</table>\n");      
         return res.toString();
     }
     
