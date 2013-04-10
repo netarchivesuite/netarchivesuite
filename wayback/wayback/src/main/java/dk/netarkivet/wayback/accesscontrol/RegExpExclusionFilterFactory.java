@@ -33,9 +33,9 @@ import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.util.iterator.CloseableIterator;
 import org.archive.wayback.accesscontrol.ExclusionFilterFactory;
 import org.archive.wayback.resourceindex.filters.ExclusionFilter;
-import org.archive.wayback.util.CloseableIterator;
 import org.archive.wayback.util.flatfile.FlatFile;
 
 /**
