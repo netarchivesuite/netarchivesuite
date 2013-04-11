@@ -164,10 +164,11 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
     public void testRetrieveRedirectStrangeLine()
             throws ResourceNotAvailableException, IOException {
-        String cdxLine ="http://www.jv.dk/modules/textads/click.php?adid=158&bookingid=183 80.63.11.70 20130317213407 text/html 520" ;
+        String cdxLine = "http://www.jv.dk/modules/textads/click.php?adid=158&bookingid=183 80.63.11.70 20130317213407 text/html 520" ;
         NetarchiveResourceStore store = new NetarchiveResourceStore();
         CDXLineToSearchResultAdapter cdxAdapter = new CDXLineToSearchResultAdapter();
         CaptureSearchResult csr = cdxAdapter.adapt(cdxLine);
+        assertNotNull("Should have a non-null CaptureSearchResult", csr);
         ArcResource resource = (ArcResource) store.retrieveResource(csr);
         assertNotNull("Should have a resource", resource);
         assertTrue(resource.getRecordLength()>0);
@@ -178,9 +179,6 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
         String contents = baos.toString("UTF-8");
         assertNotNull(contents);
     }
-
-
-
 
     public void testRetrieveResource()
             throws ResourceNotAvailableException, IOException {
