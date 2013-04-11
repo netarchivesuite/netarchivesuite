@@ -105,25 +105,29 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
      */
     @Override
     public void processRecord(ARCRecord record, OutputStream os) {
-       CaptureSearchResult csr = null;
+        CaptureSearchResult csr = null;
+        log.debug("Entered " + this.getClass().getName() + " for '" + record.getHeaderString() + "'");
         try {
+            log.debug("Adapting Record '" + record.getHeader() + "'");
             csr = aToSAdapter.adapt(record);
+            log.debug("Adapted Record '" + record.getHeader() + "' to '" + csr + "'");
         } catch (Exception e) {
             log.info(e);
             return;
         }
         try {
             if (csr != null) {
-                os.write(srToCDXAdapter.adapt(csr).getBytes());
+                log.debug("Adapting Search Result'" + csr + "'");
+                String cdx = srToCDXAdapter.adapt(csr);
+                os.write(cdx.getBytes());
                 os.write("\n".getBytes());
+                log.debug("Adapted Search Result '" + csr + "' + to '" + cdx + "'");
             } else {
                 String message = "Could not parse '" + record.getHeaderString() + "'";
                 log.info(message);
-                //throw new IOFailure(message);
             }
         } catch (Exception e) {
             log.info(e);
-            //throw new IOFailure("Error in batch job", e);
         }
     }
 

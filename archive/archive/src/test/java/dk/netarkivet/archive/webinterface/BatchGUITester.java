@@ -173,6 +173,26 @@ public class BatchGUITester extends TestCase {
           public Locale getLocale() {
               return new Locale("en");
           }
+
+          @Override
+          public int getRemotePort() {
+              return 0;  //To change body of implemented methods use File | Settings | File Templates.
+          }
+
+          @Override
+          public String getLocalName() {
+              return null;  //To change body of implemented methods use File | Settings | File Templates.
+          }
+
+          @Override
+          public String getLocalAddr() {
+              return null;  //To change body of implemented methods use File | Settings | File Templates.
+          }
+
+          @Override
+          public int getLocalPort() {
+              return 0;  //To change body of implemented methods use File | Settings | File Templates.
+          }
       };
       Locale l = new Locale("en");
       JspWriterMockup out = new JspWriterMockup();
@@ -200,7 +220,27 @@ public class BatchGUITester extends TestCase {
            public Locale getLocale() {
                return new Locale("en");
            }
-       };
+
+            @Override
+            public int getRemotePort() {
+                return 0;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public String getLocalName() {
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public String getLocalAddr() {
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public int getLocalPort() {
+                return 0;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        };
        request.setupAddParameter(Constants.FILETYPE_PARAMETER, BatchFileType.Metadata.toString());
        request.setupAddParameter(Constants.JOB_ID_PARAMETER, "1234567890");
        request.setupAddParameter(Constants.BATCHJOB_PARAMETER, 

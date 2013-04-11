@@ -269,6 +269,9 @@ public class Bitarchive {
             throw new IOFailure("Failed to create temporary file for batch "
                     + job, e);
         }
+        log.info("Finished batch job on bitarchive application with id '"
+                       + bitarchiveAppId + "': '" + job.getClass().getName()
+                       + "', on filename-pattern: '" + job.getFilenamePattern() + "' + with result: " + returnStatus);
         log.info("Finished batch job " + job.getClass().getName()
                  + " with result: " + returnStatus);
         return returnStatus;
