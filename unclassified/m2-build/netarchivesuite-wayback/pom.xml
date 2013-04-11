@@ -28,7 +28,12 @@
     <dependency>
       <groupId>org.archive.wayback</groupId>
       <artifactId>wayback-core</artifactId>
-      <version>1.6.0</version>
+      <version>1.8.0-20130411</version>
+    </dependency>
+    <dependency>
+      <groupId>org.archive</groupId>
+      <artifactId>ia-web-commons</artifactId>
+      <version>1.0-20130411</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
