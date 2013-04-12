@@ -162,24 +162,6 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
         assertNotNull(contents);
     }
 
-    public void testRetrieveRedirectStrangeLine()
-            throws ResourceNotAvailableException, IOException {
-        String cdxLine = "http://www.jv.dk/modules/textads/click.php?adid=158&bookingid=183 80.63.11.70 20130317213407 text/html 520" ;
-        NetarchiveResourceStore store = new NetarchiveResourceStore();
-        CDXLineToSearchResultAdapter cdxAdapter = new CDXLineToSearchResultAdapter();
-        CaptureSearchResult csr = cdxAdapter.adapt(cdxLine);
-        assertNotNull("Should have a non-null CaptureSearchResult", csr);
-        ArcResource resource = (ArcResource) store.retrieveResource(csr);
-        assertNotNull("Should have a resource", resource);
-        assertTrue(resource.getRecordLength()>0);
-        assertFalse(resource.getHttpHeaders().isEmpty());
-        assertEquals(302, resource.getStatusCode());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        resource.getArcRecord().dump(baos);
-        String contents = baos.toString("UTF-8");
-        assertNotNull(contents);
-    }
-
     public void testRetrieveResource()
             throws ResourceNotAvailableException, IOException {
         String cdxLine = "ing.dk/ 20090706131100 http://ing.dk/ text/html 200 Z3UM6JX4FCO6VMVTPM6VBNJPN5D6QLO3 - 3619 arcfile_withredirects.arc";

@@ -35,6 +35,11 @@ import dk.netarkivet.common.utils.ApplicationUtils;
  */
 public final class BitarchiveApplication {
 
+    /**
+     * Private constructor. Not for initialisation.
+     */
+    private BitarchiveApplication(){}
+
    /**
     * Runs the BitarchiveApplication. Settings are read from
     * config files
