@@ -26,11 +26,13 @@
 package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 
+import dk.netarkivet.common.utils.LoggingOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -156,6 +158,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      */
     private BitarchiveServer()
             throws UnknownID, PermissionDenied {
+        System.setOut(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.INFO, log, "StdOut: ")));
+        System.setErr(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.WARN, log, "StdErr: ")));
         boolean listening = false; // are we listening to queue ANY_BA
         File serverdir = FileUtils.getTempDir();
         if (!serverdir.exists()) {

@@ -28,19 +28,13 @@ package dk.netarkivet.archive.bitarchive;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.utils.ApplicationUtils;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 /**
  * This class is used to start the BitArchive application.
  *
+ *
  */
 public final class BitarchiveApplication {
-    /**
-     * Constructor.
-     */
-    private BitarchiveApplication() {}
-    
+
    /**
     * Runs the BitarchiveApplication. Settings are read from
     * config files
@@ -49,16 +43,6 @@ public final class BitarchiveApplication {
     * @param args an empty array
     */
    public static void main(String[] args) {
-       System.setOut(new PrintStream(new OutputStream() {
-                       public void write(int b) {
-                           //DO NOTHING
-                       }
-                   }));
-       System.setErr(new PrintStream(new OutputStream() {
-           public void write(int b) {
-               //DO NOTHING
-           }
-       }));
-       ApplicationUtils.startApp(BitarchiveServer.class, args);
+      ApplicationUtils.startApp(BitarchiveServer.class, args);
    }
 }
