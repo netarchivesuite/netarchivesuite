@@ -45,7 +45,6 @@ import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.StringAsserts;
@@ -253,28 +252,28 @@ public class FileUtilsTester extends TestCase{
         assertFalse("Temp file should disappear at close", f.exists());
     }
 
-    /** Test that the FilenameParser gives the right things.
-     * Checks bug #709 */
-    public void testFilenameParser() {
-        // See HeritrixLauncer.getCrawlID for what we define of the filename
-        File arcFile1 =
-                new File("26-8-20050619145044-00018-kb-prod-har-001.kb.dk.arc");
-        FileUtils.FilenameParser parser1 = new FileUtils.FilenameParser(arcFile1);
-        assertEquals("Should have right jobId", "26", parser1.getJobID());
-        assertEquals("Should have right harvestId", "8", parser1.getHarvestID());
-        assertEquals("Should have right timestamp",
-                "20050619145044", parser1.getTimeStamp());
-        assertEquals("Should have right serial#", "00018", parser1.getSerialNo());
-
-        File arcFile2 =
-                new File("26--20050619145044-00018-kb-prod-har-001.kb.dk.arc");
-        try {
-            new FileUtils.FilenameParser(arcFile2);
-            fail("Should throw UnknownID");
-        } catch (UnknownID e) {
-            // expected
-        }
-    }
+//    /** Test that the FilenameParser gives the right things.
+//     * Checks bug #709 */
+//    public void testFilenameParser() {
+//        // See HeritrixLauncer.getCrawlID for what we define of the filename
+//        File arcFile1 =
+//                new File("26-8-20050619145044-00018-kb-prod-har-001.kb.dk.arc");
+//        FileUtils.FilenameParser parser1 = new FileUtils.FilenameParser(arcFile1);
+//        assertEquals("Should have right jobId", "26", parser1.getJobID());
+//        assertEquals("Should have right harvestId", "8", parser1.getHarvestID());
+//        assertEquals("Should have right timestamp",
+//                "20050619145044", parser1.getTimeStamp());
+//        assertEquals("Should have right serial#", "00018", parser1.getSerialNo());
+//
+//        File arcFile2 =
+//                new File("26--20050619145044-00018-kb-prod-har-001.kb.dk.arc");
+//        try {
+//            new FileUtils.FilenameParser(arcFile2);
+//            fail("Should throw UnknownID");
+//        } catch (UnknownID e) {
+//            // expected
+//        }
+//    }
 
     /**
      * Tests that the new makeValidFile method behaves as designed. It must either

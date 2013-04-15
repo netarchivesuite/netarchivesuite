@@ -36,9 +36,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
+import dk.netarkivet.harvester.harvesting.ArchiveFilenameParser;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 
 /**
@@ -202,7 +203,9 @@ public abstract class MetadataFileWriter {
      */
     private static URI getURIforFileName(File cdx)
         throws UnknownID {
-        FilenameParser parser = new FilenameParser(cdx);
+        ArchiveFilenameParser parser = 
+                ArchiveFileNamingFactory.getInstance()
+                    .getArchiveFilenameParser(cdx);
         return HarvestDocumentation.getCDXURI(
                 parser.getHarvestID(),
                 parser.getJobID(),

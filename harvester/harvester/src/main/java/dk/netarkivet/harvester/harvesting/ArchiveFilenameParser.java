@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:       $Id: LegacyNamingConvention.java 2462 2012-08-21 16:07:43Z svc $
+ * Revision:   $Revision: 2462 $
+ * Author:     $Author: svc $
+ * Date:       $Date: 2012-08-21 18:07:43 +0200 (Tue, 21 Aug 2012) $
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and
@@ -24,29 +24,32 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import java.io.File;
-
-import dk.netarkivet.harvester.datamodel.Job;
-
-/**
- * Interface for a class that implement archiveFileNaming. This is only used to override
- * the 'prefix' property of the ARC/WARCWriterprocessors. 
- */
-public interface ArchiveFileNaming {
-
-    /**
-     * Make a prefix to be used by Heritrix. It is optional what information 
-     * from the harvestjob if any is going to be part of the prefix.
-     * 
-     * @param job the harvestJob
-     * @return a prefix to be used by Heritrix
-     */
-    String getPrefix(Job job);
+public abstract class ArchiveFilenameParser {
     
-    /**
-     * @param archiveFile
-     * @return 
-     */
-    ArchiveFilenameParser getArchiveFilenameParser(File archiveFile);
+    /** @return the harvestID. */
+    public abstract String getHarvestID();
     
+    /** 
+     * Get the job ID.
+     * @return the Job ID.
+     */
+    public abstract String getJobID();
+    
+    /** 
+     * Get the timestamp.
+     * @return the timestamp.
+     */
+    public abstract String getTimeStamp();
+    
+    /** 
+     * Get the serial number.
+     * @return the serial number.
+     */
+    public abstract String getSerialNo();
+    
+    /** 
+     * Get the filename.
+     * @return the filename.
+     */
+    public abstract String getFilename();
 }

@@ -54,6 +54,8 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
+import dk.netarkivet.harvester.harvesting.ArchiveFilenameParser;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 
@@ -241,7 +243,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                     String line;
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     String lastFilename = null;
-                    FileUtils.FilenameParser parser = null;
+                    ArchiveFilenameParser parser = null;
                     while ((line = reader.readLine()) != null) {
                         // parse filename out of line
                         parser = parseLine(line, jobID);
@@ -280,11 +282,12 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * of the ARC file as mentioned in the given CDX line, or null if
          * the filename didn't match the job we're working on.
          */
-        private FileUtils.FilenameParser parseLine(String line, long jobID) {
+        private ArchiveFilenameParser parseLine(String line, long jobID) {
             try {
                 String filename = new CDXRecord(line).getArcfile();
-                FileUtils.FilenameParser filenameParser =
-                        new FileUtils.FilenameParser(new File(filename));
+                ArchiveFilenameParser filenameParser = 
+                        ArchiveFileNamingFactory.getInstance()
+                            .getArchiveFilenameParser(new File(filename));
                 if (!filenameParser.getJobID().equals(Long.toString(jobID))) {
                     System.err.println("Found entry for job "
                             + filenameParser.getJobID() + " while looking for "
@@ -309,7 +312,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @throws IOFailure if the write fails for any reason
          */
         private void writeCDXEntry(MetadataFileWriter writer,
-                                   FileUtils.FilenameParser parser,
+                                   ArchiveFilenameParser parser,
                                    byte[] bytes)
                 throws IOFailure {
             try {

@@ -48,7 +48,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.archive.ArchiveProfile;
@@ -345,7 +344,9 @@ public class HarvestDocumentation {
         for (File arcFile : archiveFiles) {
             long foundJobID = -1;
             try {
-                FileUtils.FilenameParser parser = new FilenameParser(arcFile);
+                ArchiveFilenameParser parser = 
+                        ArchiveFileNamingFactory.getInstance()
+                            .getArchiveFilenameParser(arcFile);
                 foundJobID = Long.parseLong(parser.getJobID());
             } catch (UnknownID e) {
                 // Non-Heritrix-generated ARC file
