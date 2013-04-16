@@ -126,6 +126,10 @@ public class Constants {
 
     public static final String SHOW_INACTIVE_PARAM = "showInactive";
 
+    public static final String SHOW_UNUSED_CONFIGURATIONS_PARAM = "showUnusedConfigurations";
+
+    public static final String SHOW_UNUSED_SEEDS_PARAM = "showUnusedSeeds";
+
     public static final String URLLIST_LIST_PARAM = "urlListList";
 
     public static final String JOB_PARAM = "jobID";

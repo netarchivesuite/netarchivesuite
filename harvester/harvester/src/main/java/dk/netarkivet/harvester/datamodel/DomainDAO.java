@@ -344,4 +344,16 @@ public abstract class DomainDAO implements Iterable<Domain> {
     * @return List of domain names matching the glob, sorted by name.
     */
    public abstract List<String> getDomains(String glob, String searchField);
+
+    /**
+     * Read the used configurations name + seedslists for the domain. Note that even
+     * though a list of <code>DomainConfiguration</code> object are returned,
+     * only the name + seeds lists are set.
+     *
+     * A used configuration is the default configuration + configurations used
+     * in a harvest definition.
+     *
+     * @param domainID The domain to find the configurations  for.
+     */
+    public abstract List<Long> findUsedConfigurations(Long domainID);
 }

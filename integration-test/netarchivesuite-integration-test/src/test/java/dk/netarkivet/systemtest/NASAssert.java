@@ -35,7 +35,7 @@ public class NASAssert extends Assert {
      * @param expectedSet
      * @param resultSet
      */
-  public static void assertEquals(Set<Object> expectedSet, Set<Object> resultSet) {
+  public static void assertEquals(Set expectedSet, Set resultSet) {
     Set<Object> disjunctInExpectedSet = new HashSet<Object>(expectedSet);
     disjunctInExpectedSet.removeAll(resultSet);
 

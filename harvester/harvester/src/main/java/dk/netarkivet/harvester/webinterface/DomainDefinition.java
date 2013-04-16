@@ -25,15 +25,10 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -41,14 +36,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
-import dk.netarkivet.harvester.datamodel.Domain;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
+import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.datamodel.extendedfield.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Utility class for handling update of domain from the domain jsp page.
@@ -357,6 +348,39 @@ public class DomainDefinition {
                 + HTMLUtils.escapeHtmlValues(domain)
                 + "</a>";
     }
+
+    public static String createDomainUrlWithFlippedShowConfigurations(ServletRequest request) {
+        boolean showUnusedConfigurationsParam = Boolean.parseBoolean(request.getParameter(
+                Constants.SHOW_UNUSED_CONFIGURATIONS_PARAM));
+        boolean showUnusedSeedsParam = Boolean.parseBoolean(request.getParameter(
+                Constants.SHOW_UNUSED_SEEDS_PARAM));
+        StringBuilder urlBuilder =
+                new StringBuilder("/HarvestDefinition/Definitions-edit-domain.jsp?");
+        urlBuilder.append(Constants.DOMAIN_PARAM + "="
+                + HTMLUtils.encode(request.getParameter(Constants.DOMAIN_PARAM)));
+        urlBuilder.append("&" + Constants.SHOW_UNUSED_CONFIGURATIONS_PARAM  +
+                "=" + Boolean.toString(!showUnusedConfigurationsParam));
+        urlBuilder.append("&" + Constants.SHOW_UNUSED_SEEDS_PARAM  +
+                "=" + Boolean.toString(showUnusedSeedsParam));
+        return urlBuilder.toString();
+    }
+
+
+    public static String createDomainUrlWithFlippedShowSeeds(ServletRequest request) {
+        boolean showUnusedConfigurationsParam = Boolean.parseBoolean(request.getParameter(
+                Constants.SHOW_UNUSED_CONFIGURATIONS_PARAM));
+        boolean showUnusedSeedsParam = Boolean.parseBoolean(request.getParameter(
+                Constants.SHOW_UNUSED_SEEDS_PARAM));
+        StringBuilder urlBuilder =
+                new StringBuilder("/HarvestDefinition/Definitions-edit-domain.jsp?");
+        urlBuilder.append(Constants.DOMAIN_PARAM + "="
+                + HTMLUtils.encode(request.getParameter(Constants.DOMAIN_PARAM)));
+        urlBuilder.append("&" + Constants.SHOW_UNUSED_CONFIGURATIONS_PARAM  +
+                "=" + Boolean.toString(showUnusedConfigurationsParam));
+        urlBuilder.append("&" + Constants.SHOW_UNUSED_SEEDS_PARAM  +
+                "=" + Boolean.toString(!showUnusedSeedsParam));
+        return urlBuilder.toString();
+    }
     
     /**
      * Search for domains matching the following criteria.
@@ -385,5 +409,54 @@ public class DomainDefinition {
         log.debug("SearchQuery '" + searchQuery + "', searchType: " +  searchType);
         resultSet = DomainDAO.getInstance().getDomains(searchQuery, searchType);
         return resultSet;
+    }
+
+
+    /**
+     * Returns the list of domains configuration which are either used in a
+     * concrete harvest or is a 'default configuration'.
+     *
+     * The list is sorted alphabetically by name according to the supplied local.
+     *
+     * @param domain The domain to find the used configurations for.
+     * @param locale The locale to base the sorting on
+     * @return A sorted list of used configurations for the supplied domain.
+     */
+    public static List<DomainConfiguration> getUsedConfiguration(
+            Domain domain, Locale locale) {
+        List<Long> usedConfigurationIDs =
+                DomainDAO.getInstance().findUsedConfigurations(domain.getID());
+        List<DomainConfiguration> usedConfigurations = new LinkedList<DomainConfiguration>();
+
+        for (DomainConfiguration configuration:domain.getAllConfigurationsAsSortedList(locale)) {
+            if (usedConfigurationIDs.contains(new Long(configuration.getID())) ||
+                configuration.getID() == domain.getDefaultConfiguration().getID()) {
+                usedConfigurations.add(configuration);
+            }
+        }
+
+        NamedUtils.sortNamedObjectList(locale, usedConfigurations);
+        return usedConfigurations;
+    }
+
+    /**
+     * Returnes the seedslist associated with the supplied configurations.
+     * @param configurations The configurations to find seedlist for
+     * @return The seedlists used in the supplied configurations.
+     */
+    public static List<SeedList> getSeedLists(
+            List<DomainConfiguration> configurations) {
+        List<SeedList> seedsLists = new LinkedList<SeedList>();
+        for (DomainConfiguration configuration:configurations) {
+            Iterator<SeedList> seedListIterator = configuration.getSeedLists();
+            while (seedListIterator.hasNext()) {
+            SeedList seedList = seedListIterator.next();
+                if (!seedsLists.contains(seedList)) {
+                    seedsLists.add(seedList);
+                }
+            }
+        }
+
+        return seedsLists;
     }
 }

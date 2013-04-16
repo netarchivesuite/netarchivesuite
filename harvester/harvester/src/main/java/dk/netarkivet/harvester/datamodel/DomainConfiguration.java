@@ -527,10 +527,10 @@ public class DomainConfiguration implements Named {
         }
     }
 
-    /** Get the ID of this configuration.  Only for use by DBDAO
+    /** Get the ID of this configuration.
      * @return the ID of this configuration
      */
-    long getID() {
+    public long getID() {
         return id;
     }
 

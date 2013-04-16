@@ -1081,6 +1081,35 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
+    @Override
+    public List<Long> findUsedConfigurations(Long domainID) {
+        Connection connection = HarvestDBConnection.get();
+        try {
+            List<Long> usedConfigurations =
+                    new LinkedList<Long>();
+
+            PreparedStatement readUsedConfigurations = connection.prepareStatement(
+                    " SELECT configurations.config_id, configurations.name" +
+                    " FROM configurations " +
+                    " JOIN harvest_configs USING (config_id) " +
+                    " JOIN harvestdefinitions USING (harvest_id) " +
+                    " WHERE configurations.domain_id = ?");
+            readUsedConfigurations.setLong(1, domainID);
+            ResultSet res = readUsedConfigurations.executeQuery();
+            while (res.next()) {
+                usedConfigurations.add(res.getLong(1));
+            }
+            readUsedConfigurations.close();
+
+            return usedConfigurations;
+        } catch (SQLException e) {
+            throw new IOFailure("SQL Error while reading configuration + " +
+                    "seeds lists", e);
+        } finally {
+            HarvestDBConnection.release(connection);
+        }
+    }
+
     /**
      * Read owner info entries for the domain.
      * @param c 

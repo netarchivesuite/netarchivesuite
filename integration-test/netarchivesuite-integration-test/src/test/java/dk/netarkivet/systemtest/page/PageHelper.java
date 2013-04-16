@@ -30,8 +30,7 @@ import org.openqa.selenium.WebDriver;
 public class PageHelper {
     private static WebDriver driver;
     private static String baseUrl;
-    private static Map<MenuPages, String> pageMapping =
-            new HashMap<MenuPages, String>();
+    private static Map<MenuPages, String> pageMapping = new HashMap<MenuPages, String>();
 
     public static enum MenuPages {
         SelectiveHarvests,
@@ -102,5 +101,9 @@ public class PageHelper {
     public static void initialize(WebDriver theDriver, String theBaseUrl) {
         driver = theDriver;
         baseUrl = theBaseUrl;
+    }
+
+    public static WebDriver getWebDriver() {
+        return driver;
     }
 }

@@ -20,7 +20,13 @@ Date:        $Date$
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  --%>
-
+<%@ page
+        import="
+        java.util.Map,
+        dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
+        dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
+        dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes,
+        dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue" %>
 <%
     ExtendedFieldDAO extdao = ExtendedFieldDAO.getInstance();
     List<ExtendedField> extlist = extdao.getAll(extendedFieldType);

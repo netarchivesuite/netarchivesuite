@@ -28,9 +28,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class Harvests {
+public class HarvestWebTestHelper {
     public static void createSelectiveHarvest(
-            WebDriver driver, String name, String comments, String[] domains) {
+            String name, String comments, String[] domains) {
+        WebDriver driver = PageHelper.getWebDriver();
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
         driver.findElement(By.linkText("Create new selective harvest definition")).click();
 
@@ -54,14 +55,13 @@ public class Harvests {
     /**
      * Creates a selective harvest without comments for the default domain.
      */
-    public static void createSelectiveHarvest(
-            WebDriver driver, String name) {
-        createSelectiveHarvest(driver, name, null, new String[] {"netarkivet.dk"});
+    public static void createSelectiveHarvest(String name) {
+        createSelectiveHarvest(name, null, new String[] {"netarkivet.dk"});
     }
 
-    public static void activateHarvest(WebDriver driver, String name) {
+    public static void activateHarvest(String name) {
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
-        WebElement table = driver.findElement(By.className("selection_table"));
+        WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
         for (WebElement webElement:tr_collection) {
             if (webElement.getText().contains(name)) {
