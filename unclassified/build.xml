@@ -212,7 +212,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             description="Compile all production classes, and copy properties to class dir">
         <!-- ensure output dir exists -->
         <mkdir dir="${classdir}"/>
-        <javac source="1.5" srcdir="${srcdir}" destdir="${classdir}" debug="on"
+        <javac source="1.5" target="1.5" srcdir="${srcdir}" destdir="${classdir}" debug="on"
                encoding="UTF-8">
             <classpath refid="jars.path"/>
         </javac>
@@ -228,7 +228,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
     <target name="compiletests" depends="compile"
             description="Compile all test and production classes">
-        <javac source="1.5" srcdir="${testdir}" destdir="${classdir}" debug="on"
+        <javac source="1.5" target="1.5" srcdir="${testdir}" destdir="${classdir}" debug="on"
                encoding="UTF-8">
             <classpath refid="unittest.jars.path"/>
         </javac>
@@ -505,7 +505,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             description="Print a line of any referenced classes that are not in the classpath after generating jars">
         <delete dir="${depcheckdir}" failonerror="no"/>
         <mkdir dir="${depcheckdir}"/>
-        <javac source="1.5" destdir="${depcheckdir}" srcdir="tests">
+        <javac source="1.5" target="1.5" destdir="${depcheckdir}" srcdir="tests">
             <filename name="dk/netarkivet/common/tools/ClassDependencies.java"/>
         </javac>
         <chmod perm="0700" file="tests/dk/netarkivet/jmxremote.password"/>
