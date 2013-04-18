@@ -111,6 +111,7 @@ public class PageHelper {
     }
 
     public static void clickLink(String linkText) {
+        TestEventManager.getInstance().addStimuli("Clicking '" + linkText + "' link.");
         driver.findElement(By.linkText(linkText)).click();
     }
 
