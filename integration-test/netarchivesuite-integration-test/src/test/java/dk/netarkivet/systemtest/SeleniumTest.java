@@ -27,13 +27,11 @@ package dk.netarkivet.systemtest;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.JFrame;
-
 import com.thoughtworks.selenium.Selenium;
 import dk.netarkivet.systemtest.page.PageHelper;
 import org.apache.commons.io.FileUtils;
-import org.jaccept.gui.ComponentTestFrame;
 import org.jaccept.structure.ExtendedTestCase;
+import org.jaccept.testreport.ReportGenerator;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -49,6 +47,7 @@ import org.testng.annotations.BeforeSuite;
  */
 public abstract class SeleniumTest extends ExtendedTestCase {
     protected TestEnvironmentManager environmentManager;
+    private static ReportGenerator reportGenerator;
     protected final TestLogger log = new TestLogger(getClass());
     protected static WebDriver driver;
     protected static Selenium selenium;
@@ -113,14 +112,12 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         selenium.stop();
     }
 
-    // Experimental, use at own risk.
     @BeforeSuite (alwaysRun = true)
-    public void startTestGUI() {
-        if (System.getProperty("enableTestGUI", "false").equals("true") ) {
-            JFrame hmi = new ComponentTestFrame();
-            hmi.pack();
-            hmi.setVisible(true);
-            hmi.toFront();
+    public void startReportGenerator() {
+        if (System.getProperty("enableTestReport", "false").equals("true") ) {
+            reportGenerator = new ReportGenerator();
+            reportGenerator.projectStarted("Bitrepository test");
+            //ToBeFinished
         }
     }
 

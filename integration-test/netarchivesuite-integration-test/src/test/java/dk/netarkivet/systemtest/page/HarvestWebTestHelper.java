@@ -69,4 +69,15 @@ public class HarvestWebTestHelper {
             }
         }
     }
+
+    public static void deactivateHarvest(String name) {
+        PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
+        WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
+        List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
+        for (WebElement webElement:tr_collection) {
+            if (webElement.getText().contains(name)) {
+                webElement.findElement(By.linkText("Deactivate")).click();
+            }
+        }
+    }
 }

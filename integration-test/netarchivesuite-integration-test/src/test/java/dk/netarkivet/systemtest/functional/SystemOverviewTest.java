@@ -22,12 +22,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.systemtest;
+package dk.netarkivet.systemtest.functional;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import dk.netarkivet.systemtest.Application;
+import dk.netarkivet.systemtest.NASAssert;
+import dk.netarkivet.systemtest.NASSystemUtil;
+import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.PageHelper.MenuPages;
 import org.openqa.selenium.By;

@@ -351,9 +351,9 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * only the name + seeds lists are set.
      *
      * A used configuration is the default configuration + configurations used
-     * in a harvest definition.
+     * in a active harvest definition.
      *
-     * @param domainID The domain to find the configurations  for.
+     * @param domainID The domain to find the configurations for.
      */
     public abstract List<Long> findUsedConfigurations(Long domainID);
 }

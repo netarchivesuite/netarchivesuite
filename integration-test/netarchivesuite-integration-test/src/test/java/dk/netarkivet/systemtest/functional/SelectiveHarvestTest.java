@@ -22,13 +22,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.systemtest;
+package dk.netarkivet.systemtest.functional;
 
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import dk.netarkivet.systemtest.NASAssert;
+import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.HarvestWebTestHelper;
 import org.openqa.selenium.By;
 import org.testng.annotations.BeforeMethod;

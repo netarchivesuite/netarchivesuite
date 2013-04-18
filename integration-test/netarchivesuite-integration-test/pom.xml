@@ -54,12 +54,6 @@
     </dependency>
     <dependency>
       <groupId>org.jaccept</groupId>
-      <artifactId>jaccept-core</artifactId>
-      <version>0.3</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jaccept</groupId>
       <artifactId>jaccept-gui</artifactId>
       <version>0.3</version>
       <scope>test</scope>
@@ -102,6 +96,14 @@
             <configuration>
               <skip>false</skip>
               <groups>functest</groups>
+              <properties>
+                <property>
+                  <name>listener</name>
+                  <value>
+                    org.jaccept.TestNGListerner
+                  </value>
+                </property>
+              </properties>
             </configuration>
           </execution>
         </executions>

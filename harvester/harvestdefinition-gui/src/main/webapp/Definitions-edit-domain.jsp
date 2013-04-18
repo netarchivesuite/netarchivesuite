@@ -185,10 +185,10 @@ Display all the form information for this domain
   %>
   <a href="<%=DomainDefinition.createDomainUrlWithFlippedShowConfigurations(request)%>">
     <% if (showUnusedConfigurations) { %>
-    <fmt:message key="domain.configurations.hideinactive"/> <%
+    <fmt:message key="domain.configurations.hideunused"/> <%
         shownDomainConfigurations = domain.getAllConfigurationsAsSortedList(loc);
     } else { %>
-    <fmt:message key="domain.configurations.showinactive"/>
+    <fmt:message key="domain.configurations.showunused"/>
     <%
         shownDomainConfigurations = usedDomainConfigurations;
       } %>
@@ -250,11 +250,11 @@ Display all the form information for this domain
   %>
    <a href="<%=DomainDefinition.createDomainUrlWithFlippedShowSeeds(request)%>">
     <% if (showUnusedSeeds) { %>
-    <fmt:message key="domain.seeds.hideinactive"/>
+    <fmt:message key="domain.seeds.hideunused"/>
     <%
       shownSeedsLists = domain.getAllSeedListsAsSortedList(loc);
     } else { %>
-    <fmt:message key="domain.seeds.showinactive"/>
+    <fmt:message key="domain.seeds.showunused"/>
     <%
         shownSeedsLists = DomainDefinition.getSeedLists(usedDomainConfigurations);
       } %>

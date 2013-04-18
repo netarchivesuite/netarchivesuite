@@ -25,6 +25,8 @@ package dk.netarkivet.systemtest.page;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jaccept.TestEventManager;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class PageHelper {
@@ -95,7 +97,21 @@ public class PageHelper {
                     "and baseurl hasn't been set.");
         }
         String pageUrl = pageMapping.get(page);
+        TestEventManager.getInstance().addStimuli("Loading " + pageUrl);
         driver.get(baseUrl + "/" + pageUrl);
+    }
+
+    /**
+     * Load the page relative to the base ur.
+     * @param subURL
+     */
+    public static void gotoSubPage(String subURL) {
+        TestEventManager.getInstance().addStimuli("Loading " + subURL);
+        driver.get(baseUrl + "/" + subURL);
+    }
+
+    public static void clickLink(String linkText) {
+        driver.findElement(By.linkText(linkText)).click();
     }
 
     public static void initialize(WebDriver theDriver, String theBaseUrl) {

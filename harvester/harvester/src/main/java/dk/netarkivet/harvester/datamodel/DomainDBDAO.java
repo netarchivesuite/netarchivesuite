@@ -1093,8 +1093,10 @@ public class DomainDBDAO extends DomainDAO {
                     " FROM configurations " +
                     " JOIN harvest_configs USING (config_id) " +
                     " JOIN harvestdefinitions USING (harvest_id) " +
-                    " WHERE configurations.domain_id = ?");
+                    " WHERE configurations.domain_id = ? " +
+                            "AND harvestdefinitions.isactive = ?");
             readUsedConfigurations.setLong(1, domainID);
+            readUsedConfigurations.setBoolean(2, true);
             ResultSet res = readUsedConfigurations.executeQuery();
             while (res.next()) {
                 usedConfigurations.add(res.getLong(1));
