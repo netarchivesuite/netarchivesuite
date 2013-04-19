@@ -30,15 +30,16 @@ package dk.netarkivet.common.utils;
  * System.err.
  */
 public class PrintNotifications extends Notifications {
+ 
     /**
-     * Reacts to a notification by printing the notifiaction to
+     * Reacts to a notification by printing the notification to
      * System.err.
      *
      * @param message The error message to print.
      * @param e       The exception to print, if not null.
      */
-    public void errorEvent(String message, Throwable e) {
-        System.err.println(message);
+    public void notify(String message, NotificationType eventType, Throwable e) {
+        System.err.println("[" + eventType + "]:" + message);
         if (e != null) {
             e.printStackTrace(System.err);
         }

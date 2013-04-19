@@ -57,6 +57,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
+import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
@@ -746,8 +747,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                                 + "' has unidentical duplicates: '" + firstVal 
                                 + "' and '" + output.get(i) + "'.";
                         log.error(errorString);
-                        NotificationsFactory.getInstance().errorEvent(
-                                errorString);
+                        NotificationsFactory.getInstance().notify(
+                                errorString, NotificationType.WARNING);
                     } else {
                         log.debug("Replica '" + msg.getReplicaId() 
                                 + "' has identical duplicates: '"

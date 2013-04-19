@@ -47,6 +47,7 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
@@ -1164,7 +1165,7 @@ public final class ReplicaCacheHelpers {
                     + retrieveFilenameForFileId(fileId, con)
                     + "' is missing in all replicas";
             log.warn(errorMsg);
-            NotificationsFactory.getInstance().errorEvent(errorMsg);
+            NotificationsFactory.getInstance().notify(errorMsg, NotificationType.WARNING);
 
             return;
         }
@@ -1219,7 +1220,7 @@ public final class ReplicaCacheHelpers {
             log.error(errMsg);
 
             // send a notification
-            NotificationsFactory.getInstance().errorEvent(errMsg);
+            NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
 
             // set all replicafileinfo entries to unknown
             for (ReplicaFileInfo rfi : rfis) {

@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
+import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -139,7 +140,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                         log.debug(errMsg);
                         } else { // Log at level WARN, and send a notification, if it is time
                             log.warn(errMsg);
-                            NotificationsFactory.getInstance().errorEvent(errMsg);
+                            NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
                         }
                     }
                     continue;
@@ -183,7 +184,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                                     + "harvestdefinition has been deactivated!";
                                 log.warn(errMsg, e);
                                 NotificationsFactory.getInstance().
-                                errorEvent(errMsg, e);
+                                notify(errMsg, NotificationType.ERROR, e);
                             } catch (Exception e1) {
                                 String errMsg = "Exception while scheduling"
                                     + "harvestdefinition #" + id + "("
@@ -193,7 +194,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                                 log.warn(errMsg, e);
                                 log.warn("Unable to deactivate", e1);
                                 NotificationsFactory.getInstance().
-                                errorEvent(errMsg, e);
+                                notify(errMsg, NotificationType.ERROR, e);
                             }
                         } finally {
                             harvestDefinitionsBeingScheduled.

@@ -46,6 +46,7 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
@@ -501,7 +502,7 @@ implements CleanupIF {
             String pausedMessage = "Not enough available diskspace. Only "
                     + availableSpace + " bytes available. Harvester is paused.";
             log.warn(pausedMessage);
-            NotificationsFactory.getInstance().errorEvent(pausedMessage);
+            NotificationsFactory.getInstance().notify(pausedMessage, NotificationType.ERROR);
         }
     }
 
@@ -607,9 +608,9 @@ implements CleanupIF {
             log.warn(msg, e);
             errorMessage.append(e.getMessage()).append("\n");
             // send a mail about this problem
-            NotificationsFactory.getInstance().errorEvent(msg
+            NotificationsFactory.getInstance().notify(msg
                     + ". Errors accumulated during the postprocessing: "
-                    + errorMessage.toString(), e);
+                    + errorMessage.toString(), NotificationType.ERROR, e);
         } finally {
             // Send a done or failed message back to harvest scheduler
             // FindBugs claims a load of known null value here, but that
@@ -728,7 +729,7 @@ implements CleanupIF {
             } catch (Throwable e) {
                 String msg = "Fatal error while operating job '" + job + "'";
                 log.fatal(msg, e);
-                NotificationsFactory.getInstance().errorEvent(msg, e);
+                NotificationsFactory.getInstance().notify(msg, NotificationType.ERROR, e);
             } finally {
                 log.info(ENDCRAWL_MESSAGE + " " + job.getJobID());
                 // process serverdir for files not yet uploaded.

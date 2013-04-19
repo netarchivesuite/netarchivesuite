@@ -210,10 +210,11 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
             myOut.close();
             System.setOut(origStdout);
         } 
-        final String expectedOutput = "[errorNotification] Not creating jobs "
+        final String expectedOutput = "[WARNING-Notification] Not creating jobs "
                 + "for harvestdefinition #44 (Hele time) " 
                 + "as the previous scheduling is still running\n";
-        assertTrue("A notification should have been sent", 
+        assertTrue("The excepted notification should have been sent, but received instead: " 
+                + myOut.toString(), 
                 myOut.toString().equals(expectedOutput));
     }
         

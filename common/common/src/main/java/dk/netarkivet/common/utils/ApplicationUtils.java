@@ -87,7 +87,7 @@ public abstract class ApplicationUtils {
         System.out.println(s);
         t.printStackTrace();
         log.fatal(s, t);
-        NotificationsFactory.getInstance().errorEvent(s, t);
+        NotificationsFactory.getInstance().notify(s, NotificationType.ERROR, t);
     }
 
     /**

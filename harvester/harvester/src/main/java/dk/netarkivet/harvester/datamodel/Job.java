@@ -62,6 +62,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
+import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
@@ -724,7 +725,8 @@ public class Job implements Serializable, JobInfo {
             String errorMsg = "Start time (" + actualStart
             + ") is after end time: " + actualStop;
             log.error(errorMsg);
-            NotificationsFactory.getInstance().errorEvent(errorMsg);
+            NotificationsFactory.getInstance().notify(errorMsg, 
+                    NotificationType.ERROR);
         }
         this.actualStart = (Date) actualStart.clone();
     }
@@ -741,13 +743,13 @@ public class Job implements Serializable, JobInfo {
         if (actualStart == null) {
             String warnMsg = "Value of actualStart is null";
             log.warn(warnMsg);
-            NotificationsFactory.getInstance().errorEvent(warnMsg);
+            NotificationsFactory.getInstance().notify(warnMsg, NotificationType.WARNING);
         }
         if (actualStart != null && actualStop.before(actualStart)) {
             String errorMsg = "End time (" + actualStop
             + ") is before start time: " + actualStart;
             log.error(errorMsg);
-            NotificationsFactory.getInstance().errorEvent(errorMsg);
+            NotificationsFactory.getInstance().notify(errorMsg, NotificationType.WARNING);
         }
         this.actualStop = (Date) actualStop.clone();
     }

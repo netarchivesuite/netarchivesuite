@@ -56,6 +56,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
@@ -330,7 +331,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         String errMsg = "Could not store '" + file.getPath() + "' after "
                         + storeRetries + " attempts. Giving up.\n" + messages;
         log.warn(errMsg);
-        NotificationsFactory.getInstance().errorEvent(errMsg);
+        NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR);
         throw new IOFailure(errMsg);
     }
 
@@ -446,7 +447,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                      + "' replica '" + replicaId + "' to state "
                      + newval;
         log.warn(msg);
-        NotificationsFactory.getInstance().errorEvent(msg);
+        NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
         AdminDataMessage aMsg =
                 new AdminDataMessage(fileName, replicaId, newval);
         // We only need to know that a reply to our message has arrived. 
@@ -468,7 +469,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         String msg = "Requesting update of admin data for file '" + filename
                      + "' to checksum '" + checksum;
         log.warn(msg);
-        NotificationsFactory.getInstance().errorEvent(msg);
+        NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
         AdminDataMessage aMsg = new AdminDataMessage(filename, checksum);
         // We only need to know that a reply to our message has arrived. 
         // The replyMessage is thrown away, because it does not contain 
@@ -506,7 +507,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                      + "' with checksum '"
                      + checksum + "' from bitarchive '" + bitarchiveId + "'";
         log.warn(msg);
-        NotificationsFactory.getInstance().errorEvent(msg);
+        NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
         RemoveAndGetFileMessage aMsg =
                 new RemoveAndGetFileMessage(Channels.getTheRepos(), 
                         Channels.getThisReposClient(), fileName, bitarchiveId,

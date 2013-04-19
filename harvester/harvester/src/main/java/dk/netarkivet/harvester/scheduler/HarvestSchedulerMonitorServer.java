@@ -36,6 +36,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
+import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -278,7 +279,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                         + ": Deactivated by the system because indexserver failed to generate index");
                 hd.setComments(commentsBuf.toString());
                 dao.update(hd);
-                NotificationsFactory.getInstance().errorEvent(errMsg);
+                NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR);
             }
         } else {
             log.debug("Ignoring IndexreadyMesssage sent on behalf on "

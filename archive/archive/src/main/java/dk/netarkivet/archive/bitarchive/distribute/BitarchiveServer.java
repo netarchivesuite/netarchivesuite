@@ -54,6 +54,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
@@ -345,7 +346,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
         String mesg = "Request to move file '" + msg.getFileName()
                       + "' with checksum '" + msg.getCheckSum() + "' to attic";
         log.warn(mesg);
-        NotificationsFactory.getInstance().errorEvent(mesg);
+        NotificationsFactory.getInstance().notify(mesg, NotificationType.INFO);
 
         File foundFile = ba.getFile(msg.getFileName());
         // Only send an reply if the file was found

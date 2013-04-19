@@ -458,12 +458,12 @@ implements HeritrixController {
                         + "Exiting harvest controller. "
                         + "Make sure you kill the runaway Heritrix "
                         + "before you restart.");
-                NotificationsFactory.getInstance().errorEvent(
+                NotificationsFactory.getInstance().notify(
                         "Heritrix process of " + this
                                 + " not dead after destroy. "
                                 + "Exiting harvest controller. "
                                 + "Make sure you kill the runaway Heritrix "
-                                + "before you restart.");
+                                + "before you restart.", NotificationType.ERROR);
                 System.exit(1);
             }
         }

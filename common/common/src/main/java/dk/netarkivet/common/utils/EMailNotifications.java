@@ -70,20 +70,36 @@ public class EMailNotifications extends Notifications {
     /** The email sender of the errors. */
     private static final String MAIL_SENDER = Settings.get(
             MAIL_SENDER_SETTING);
+    
+    /** Subject prefix for notifications by mail. */
+    private static String SUBJECT_PREFIX = "NetarchiveSuite ";
+    
     /** The error logger we notify about error messages on. */
     private Log log = LogFactory.getLog(getClass());
 
-    /** Sends an error message notification including an exception.
+    /** Sends a notification including an exception.
      *
-     * @param message The error message to notify about.
+     * @param message The message to notify about.
      * @param e The exception to notify about.
      */
-    public void errorEvent(String message, Throwable e) {
+    public void notify(String message, NotificationType eventType, Throwable e) {
         if (message == null) {
             message = "";
         }
+        sendMailNotifications(message, eventType, e);
+    }
+
+    /**
+     * Send mailNotications. Can be either error or a warning notification. 
+     * @param message The message body itself
+     * @param e An exception (can be null)
+     * @param isError Is this an error or a warning notification
+     */
+    private void sendMailNotifications(String message, NotificationType eventType, Throwable e){
+        String subjectPrefix = SUBJECT_PREFIX + eventType + ": ";
+        
         // Subject is a specified string + first line of error message
-        String subject = "Netarkivet error: " + message.split("\n")[0];
+        String subject =  subjectPrefix + message.split("\n")[0];
 
         // Body consists of four parts.
         StringBuffer body = new StringBuffer();
@@ -118,11 +134,14 @@ public class EMailNotifications extends Notifications {
                                  body.toString());
 
             //Log as error
-            log.error("Mailing netarkivet error: " + message, e);
+            
+            log.error("Mailing " + subjectPrefix + message, e);
         } catch (Exception e1) {
             // On trouble: Log and print it to system out, it's the best we can
             // do!
-            String msg = "Could not send email on error notification:\n"
+            
+            String msg = "Could not send email on " 
+            + eventType.toString().toLowerCase()+ " notification:\n"
                          + body.toString() + "\n";
             System.err.println(msg);
             e1.printStackTrace(System.err);

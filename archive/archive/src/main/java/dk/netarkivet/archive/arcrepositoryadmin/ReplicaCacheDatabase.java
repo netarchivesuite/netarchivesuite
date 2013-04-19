@@ -59,6 +59,7 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
+import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.TimeUtils;
@@ -886,7 +887,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                                 + filename + "' with the checksums '" + lastChecksum
                                 + "' and '" + checksum + "'. First instance used.";
                         log.error(errMsg);
-                        NotificationsFactory.getInstance().errorEvent(errMsg);
+                        NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
                     } else {
                         // log about duplicate identical
                         log.debug("Duplicates of the file '" + filename + "' found "
@@ -1327,8 +1328,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         }
 
         // Notify the administrator about that no proper bitarchive was found.
-        NotificationsFactory.getInstance().errorEvent("No bitarchive replica "
-                + "was found which contains the file '" + filename + "'.");
+        NotificationsFactory.getInstance().notify("No bitarchive replica "
+                + "was found which contains the file '" + filename + "'.", NotificationType.WARNING);
 
         // If no bitarchive exists that contains the file with a OK checksum_status.
         // then return null.
@@ -1388,8 +1389,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         }
 
         // Notify the administrator about that no proper bitarchive was found.
-        NotificationsFactory.getInstance().errorEvent("No bitarchive replica "
-                + "was found which contains the file '" + filename + "'.");
+        NotificationsFactory.getInstance().notify("No bitarchive replica "
+                + "was found which contains the file '" + filename + "'.", 
+                NotificationType.WARNING);
 
         // If no bitarchive exists that contains the file with a OK checksum_status.
         // then return null.

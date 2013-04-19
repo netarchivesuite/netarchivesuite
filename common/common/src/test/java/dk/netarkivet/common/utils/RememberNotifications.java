@@ -29,8 +29,8 @@ package dk.netarkivet.common.utils;
  * Mockup that simply remembers its last calls in two public fields.
  *
  */
-
 public class RememberNotifications extends Notifications {
+    public NotificationType type;
     public String message;
     public Throwable e;
 
@@ -48,14 +48,15 @@ public class RememberNotifications extends Notifications {
     /**
      * Remember the variables, and print a message to stdout.
      *
-     * @param errorMessage The error message to remember.
+     * @param message The message to remember.
+     * @param eventType The type of notification event
      * @param exception The exception to remember.
      */
-    public void errorEvent(String errorMessage, Throwable exception) {
-        this.message = errorMessage;
+    public void notify(String message, NotificationType eventType, Throwable exception) {
+        this.message = message;
         this.e = exception;
-        System.out.println("[errorNotification] "
-                + errorMessage);
+        System.out.println("[" + eventType + "-Notification] "
+                + message);
         if (exception != null) {
             exception.printStackTrace(System.out);
         }

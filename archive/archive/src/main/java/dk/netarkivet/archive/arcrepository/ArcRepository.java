@@ -63,6 +63,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
@@ -1032,7 +1033,7 @@ public class ArcRepository implements CleanupIF {
         }
         // log the message.
         log.warn(message);
-        NotificationsFactory.getInstance().errorEvent(message);
+        NotificationsFactory.getInstance().notify(message, NotificationType.WARNING);
 
         if (msg.isChangeStoreState()) {
             String replicaChannelName = Replica.getReplicaFromId(
@@ -1073,7 +1074,7 @@ public class ArcRepository implements CleanupIF {
                 + "' with checksum '" + msg.getCheckSum() + "' from: '" 
                 + msg.getReplicaId() + "'";
         log.warn(errMsg);
-        NotificationsFactory.getInstance().errorEvent(errMsg);
+        NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
         ReplicaClient rc = getReplicaClientFromReplicaId(msg
                 .getReplicaId());
         rc.sendRemoveAndGetFileMessage(msg);
