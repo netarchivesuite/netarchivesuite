@@ -64,8 +64,8 @@ public class Channels {
     private static final String MONITOR_CHANNEL_PREFIX = "MONITOR";
 
     /**
-     * Prefix for the channel used to send {@link dk.netarkivet.harvester.harvesting.
-     * distribute.CrawlProgressMessage}s.
+     * Prefix for the channel used to send
+     * {@link dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage}s.
      */
     private static final String HARVEST_MONITOR_CHANNEL_PREFIX = "HARVESTMON";
 
@@ -567,7 +567,7 @@ public class Channels {
             ChannelID.QUEUE);
 
 
-    /** Return the queue for the monitor registry.
+    /** Return the topic for the monitor registry.
      *
      * @return the <code>ChannelID</code> object for the queue.
      */
@@ -580,7 +580,7 @@ public class Channels {
             ChannelID.COMMON,
             ChannelID.NO_IP,
             ChannelID.NO_APPLINST_ID,
-            ChannelID.QUEUE);
+            ChannelID.TOPIC);
 
    /** Return the queue for the harvest monitor registry.
    *
