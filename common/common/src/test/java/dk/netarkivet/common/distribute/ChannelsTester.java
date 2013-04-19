@@ -150,7 +150,6 @@ public class ChannelsTester extends TestCase {
                 Channels.getAnyLowpriorityHaco(),
                 Channels.getTheRepos(),
                 Channels.getTheIndexServer(),
-                Channels.getTheMonitorServer(),
                 Channels.getError(),
                 Channels.getTheSched(),
                 Channels.getThisIndexClient(),
@@ -165,6 +164,7 @@ public class ChannelsTester extends TestCase {
 
         ChannelID[]topics = new ChannelID[]{
                 Channels.getAllBa(),
+                Channels.getTheMonitorServer(),
                 Channels.getHarvesterStatusChannel()                
         };
         
