@@ -112,15 +112,6 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         selenium.stop();
     }
 
-    @BeforeSuite (alwaysRun = true)
-    public void startReportGenerator() {
-        if (System.getProperty("enableTestReport", "false").equals("true") ) {
-            reportGenerator = new ReportGenerator();
-            reportGenerator.projectStarted("Bitrepository test");
-            //ToBeFinished
-        }
-    }
-
     /**
      * Identifies the test on the test system. More concrete this value will be
      * used for the test environment variable.

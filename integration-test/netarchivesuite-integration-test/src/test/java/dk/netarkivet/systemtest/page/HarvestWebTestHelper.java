@@ -1,25 +1,27 @@
-/*
- * #%L
- * Bitrepository Integrity Service
- * %%
- * Copyright (C) 2010 - 2012 The State and University Library, The Royal Library and The State Archives, Denmark
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
- * published by the Free Software Foundation, either version 2.1 of the 
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
+/* File:            $Id$
+ * Revision:        $Revision$
+ * Author:          $Author$
+ * Date:            $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU General Lesser Public 
- * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/lgpl-2.1.html>.
- * #L%
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 package dk.netarkivet.systemtest.page;
 
 import java.util.List;
@@ -28,6 +30,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+/**
+ * Provides functionality for commonly used test access to domain web content.
+ *
+ * Will also log webpage interactions.
+ */
 public class HarvestWebTestHelper {
     public static void createSelectiveHarvest(
             String name, String comments, String[] domains) {

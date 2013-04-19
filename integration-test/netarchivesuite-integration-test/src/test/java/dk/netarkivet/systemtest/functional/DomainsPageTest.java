@@ -1,7 +1,7 @@
-/* File:            $Id: SystemOverviewTest.java 2382 2012-06-20 12:42:56Z mss $
- * Revision:        $Revision: 2382 $
- * Author:          $Author: mss $
- * Date:            $Date: 2012-06-20 14:42:56 +0200 (Ons, 20 Jun 2012) $
+/* File:            $Id$
+ * Revision:        $Revision$
+ * Author:          $Author$
+ * Date:            $Date$
  *
  * The Netarchive Suite - Software to domain and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and

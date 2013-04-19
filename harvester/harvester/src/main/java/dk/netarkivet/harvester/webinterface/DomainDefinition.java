@@ -25,7 +25,11 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
@@ -36,8 +40,17 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
-import dk.netarkivet.harvester.datamodel.*;
-import dk.netarkivet.harvester.datamodel.extendedfield.*;
+import dk.netarkivet.harvester.datamodel.Domain;
+import dk.netarkivet.harvester.datamodel.DomainConfiguration;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.NamedUtils;
+import dk.netarkivet.harvester.datamodel.SeedList;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -349,6 +362,12 @@ public class DomainDefinition {
                 + "</a>";
     }
 
+    /**
+     * Creates a url based on the supplied request where all the parameters are the same, except
+     * the <code>ShowUnusedConfigurations</code> boolean, which is flipped.
+     * @param request The original 'create domain' request to based the new url on.
+     * @return The new url with the <code>ShowUnusedConfigurations</code> boolean switched.
+     */
     public static String createDomainUrlWithFlippedShowConfigurations(ServletRequest request) {
         boolean showUnusedConfigurationsParam = Boolean.parseBoolean(request.getParameter(
                 Constants.SHOW_UNUSED_CONFIGURATIONS_PARAM));
@@ -365,7 +384,12 @@ public class DomainDefinition {
         return urlBuilder.toString();
     }
 
-
+    /**
+     * Creates a url based on the supplied request where all the parameters are the same, except
+     * the <code>ShowUnusedSeedLists</code> boolean, which is flipped.
+     * @param request The original 'create domain' request to based the new url on.
+     * @return The new url with the <code>ShowUnusedSeedLists</code> boolean switched.
+     */
     public static String createDomainUrlWithFlippedShowSeeds(ServletRequest request) {
         boolean showUnusedConfigurationsParam = Boolean.parseBoolean(request.getParameter(
                 Constants.SHOW_UNUSED_CONFIGURATIONS_PARAM));
@@ -413,10 +437,10 @@ public class DomainDefinition {
 
 
     /**
-     * Returns the list of domains configuration which are either used in a
+     * Returns the list of domain configurations which are either used in a
      * concrete harvest or is a 'default configuration'.
      *
-     * The list is sorted alphabetically by name according to the supplied local.
+     * The list is sorted alphabetically by name according to the supplied locale.
      *
      * @param domain The domain to find the used configurations for.
      * @param locale The locale to base the sorting on
@@ -440,9 +464,9 @@ public class DomainDefinition {
     }
 
     /**
-     * Returnes the seedslist associated with the supplied configurations.
-     * @param configurations The configurations to find seedlist for
-     * @return The seedlists used in the supplied configurations.
+     * Returnes the seed lists associated with the supplied configurations.
+     * @param configurations The configurations to find seed lists for
+     * @return The seed lists used in the supplied configurations.
      */
     public static List<SeedList> getSeedLists(
             List<DomainConfiguration> configurations) {

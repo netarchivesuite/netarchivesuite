@@ -538,8 +538,9 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
     public void testGetSparsePartialHarvestDefinitions() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+        boolean excludeInactive = true;
         Iterator<SparsePartialHarvest> it = hddao
-                .getSparsePartialHarvestDefinitions(true).iterator();
+                .getSparsePartialHarvestDefinitions(excludeInactive).iterator();
         assertTrue("Should return iterator of known partial HDs", it.hasNext());
         SparsePartialHarvest sph = it.next();
         assertEquals("Should be the right partial harvest", Long.valueOf(42L),
@@ -563,8 +564,9 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         // Deactivate the harvest and verify the HD isn't listed with inactive
         // filter enabled
         hddao.flipActive(sph);
+        excludeInactive = false;
         assertEquals("Should have returned the inactive HD 42L", Long.valueOf(42L),
-                hddao.getSparsePartialHarvestDefinitions(false).iterator().
+                hddao.getSparsePartialHarvestDefinitions(excludeInactive).iterator().
                         next().getOid());
         it = hddao.getSparsePartialHarvestDefinitions(true).iterator();
         if (it.hasNext()) {

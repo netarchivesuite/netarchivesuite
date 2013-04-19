@@ -126,8 +126,8 @@ public abstract class DomainDAO implements Iterable<Domain> {
             HarvestDBConnection.release(c);
         }
     }
-    
-    
+
+
     /**
      * Read a domain from the persistent storage.
      *
@@ -160,7 +160,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
      *
      * @param domain the domain to update
      * @throws ArgumentNotValid if domain is null
-     * @throws UnknownID        if the Domain domain has not been added 
+     * @throws UnknownID        if the Domain domain has not been added
      * previously to persistent storage.
      */
     public abstract void update(Domain domain);
@@ -236,7 +236,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * request.  If this method returns false, deletion will however
      * definitely not be allowed.
      * @param config the given configuration
-     * @return true if the he given configuration can be deleted, 
+     * @return true if the he given configuration can be deleted,
      * false otherwise
      */
     public abstract boolean mayDelete(DomainConfiguration config);
@@ -294,8 +294,8 @@ public abstract class DomainDAO implements Iterable<Domain> {
      */
     public abstract HarvestInfo getDomainJobInfo(
             Job job, String domainName, String configName);
-    
-    
+
+
     /** Get a list of info about harvests performed on a given domain.
      *
      * Note that harvest info from before the DB DAOs are unreliable, as
@@ -306,7 +306,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * @param latestFirst true if histories are to be returned sorted with the
      * most recent harvests first, false if they are to be sorted with the
      * oldest harvests first.
-     * @return List of DomainHarvestInfo objects with information on that 
+     * @return List of DomainHarvestInfo objects with information on that
      * domain.
      *
      */
@@ -314,19 +314,19 @@ public abstract class DomainDAO implements Iterable<Domain> {
             String domainName, boolean latestFirst);
 
     /**
-     * Get the DomainConfiguration given a specific domainName and a 
+     * Get the DomainConfiguration given a specific domainName and a
      * configurationName.
      * @param domainName The name of a domain
      * @param configName The name of a configuration for this domain
      * @return the DomainConfiguration, if the specified configuration exists;
-     * otherwise throws UnknownID 
+     * otherwise throws UnknownID
      */
     public abstract DomainConfiguration getDomainConfiguration(
             String domainName, String configName);
-    
+
     /**
      * Get the domainHistory for a specific domain.
-     * 
+     *
      * @param domainName
      *            A name of a specific domain.
      * @return the domainHistory for a specific domain.
@@ -340,7 +340,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
     * given string must match the entire domain name.
     *
     * @param glob A domain name with * and ? wildcards
-    * @param searchField The field in the Domain table to search  
+    * @param searchField The field in the Domain table to search
     * @return List of domain names matching the glob, sorted by name.
     */
    public abstract List<String> getDomains(String glob, String searchField);
@@ -354,6 +354,7 @@ public abstract class DomainDAO implements Iterable<Domain> {
      * in a active harvest definition.
      *
      * @param domainID The domain to find the configurations for.
+     * @return The list of ID for the used configurations.
      */
     public abstract List<Long> findUsedConfigurations(Long domainID);
 }

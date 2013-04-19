@@ -77,10 +77,11 @@ inactive or vice-versa.
 %>
 
 <h3 class="page_heading"><fmt:message key="pagetitle;selective.harvests"/></h3>
+
 <% String showInactiveDefinitionsParam = request.getParameter(Constants.SHOW_INACTIVE_PARAM);
-  boolean showInactiveHDs;
-   if (showInactiveDefinitionsParam == null ||
-       showInactiveDefinitionsParam.equals("") ||
+  boolean showInactiveHDs; // Default is 'true'.
+  if (showInactiveDefinitionsParam == null ||
+       showInactiveDefinitionsParam.isEmpty() ||
        showInactiveDefinitionsParam.equals("true")) {
      showInactiveHDs = true;
    } else {

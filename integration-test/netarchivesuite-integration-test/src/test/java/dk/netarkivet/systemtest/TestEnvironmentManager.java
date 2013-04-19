@@ -1,3 +1,27 @@
+/* File:            $Id$
+ * Revision:        $Revision$
+ * Author:          $Author$
+ * Date:            $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package dk.netarkivet.systemtest;
 
 import java.io.BufferedReader;
@@ -13,6 +37,9 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
+/**
+ * Provides utilites for performing deployment related commands in the test environment.
+ */
 public class TestEnvironmentManager {
     protected final TestLogger log = new TestLogger(getClass());
     private final String TESTX;
@@ -82,8 +109,8 @@ public class TestEnvironmentManager {
     
     /**
      * Run the command the in the TESTX dir. This is the normal way of separating diffrent test run in parallel. 
-     * @param server
-     * @param remoteCommand
+     * @param server The server to run the command on.
+     * @param remoteCommand The command to run on the remote server.
      */
     public void runTestXCommand(String server, String remoteCommand) throws Exception {
         String testXRemoteCommand = "cd " + getTESTX() + ";" + remoteCommand;
@@ -185,10 +212,10 @@ public class TestEnvironmentManager {
 
                 String s;
                 while ((s = inReader.readLine()) != null) {
-                    if (!s.trim().equals("")) log.debug("ssh: " + s);
+                    if (!s.trim().isEmpty()) log.debug("ssh: " + s);
                 }
                 while ((s = errReader.readLine()) != null) {
-                    if (!s.trim().equals("")) log.warn("ssh error: " + s);
+                    if (!s.trim().isEmpty()) log.warn("ssh error: " + s);
                 }
             } catch (InterruptedException ie) {
             }
@@ -224,8 +251,7 @@ public class TestEnvironmentManager {
         }
 
         /**
-         * Return the remote command as a bash command string.
-         * @return
+         * @return the remote command as a bash command string.
          */
         public String commandAsString() {
             return sshTunneling + quotes + environmentSetup + command + quotes;
@@ -275,8 +301,7 @@ public class TestEnvironmentManager {
     /**
      * Setup public/private key authentication for JSch. The following attributes are used: <ul>
      * 
-     * @param jsch
-     * @throws Exception
+     * @param jsch The JSch instance to configure.
      */
     private void setupJSchIdentity(JSch jsch) throws Exception {
         String userHome =  System.getProperty("user.home");
