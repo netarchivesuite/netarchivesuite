@@ -168,9 +168,17 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                         try {
                             JobGenerator jobGen = JobGeneratorFactory.getInstance();
                             int jobsMade = jobGen.generateJobs(harvestDefinition);
-                            log.info("Created " + jobsMade
+                            if (jobsMade > 0) {
+                                log.info("Created " + jobsMade
                                     + " jobs for harvest definition ("
                                     + harvestDefinition.getName() + ")");
+                            } else {
+                                String msg = "No jobs created for harvest definition '"
+                                        + harvestDefinition.getName() + "'. Probable cause: "
+                                        + "harvest tries to continue harvest that is already finished "; 
+                                log.warn(msg);
+                                NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
+                            }
                             haDefinitionDAO.update(harvestDefinition);
                         } catch (Throwable e) {
                             try {
