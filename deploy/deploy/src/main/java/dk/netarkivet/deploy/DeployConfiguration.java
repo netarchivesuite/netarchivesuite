@@ -33,6 +33,7 @@ import java.util.List;
 import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
@@ -172,14 +173,14 @@ public class DeployConfiguration {
      * </ol>
      */
     private void copyNetarchiveSuiteFile() {
+        // initialise the new file. This should have the same name 
+        // as the original file, but be placed in the output directory.
+        File newNetarchiveSuiteFile = new File(outputDir, 
+                netarchiveSuiteFile.getName());
         try {
-            // initialise the new file. This should have the same name 
-            // as the original file, but be placed in the output directory.
-            File newNetarchiveSuiteFile = new File(outputDir, 
-                    netarchiveSuiteFile.getName());
-
+            
             // check first scenario
-            if(newNetarchiveSuiteFile.getCanonicalPath().equals(
+            if (newNetarchiveSuiteFile.getCanonicalPath().equals(
                     netarchiveSuiteFile.getCanonicalPath())) {
                 // thus first scenario is true, and nothing should be done.
                 return;
@@ -187,7 +188,7 @@ public class DeployConfiguration {
 
             // If the file exists = second scenario, and thus issue warning and
             // delete file before the given netarchiveSuiteFile is copied.
-            if(newNetarchiveSuiteFile.exists()) { 
+            if (newNetarchiveSuiteFile.exists()) { 
                 // issue warning
                 System.out.println(Constants.MSG_WARN_ZIPFILE_ALREADY_EXISTS
                         + newNetarchiveSuiteFile.getCanonicalPath());
@@ -197,10 +198,18 @@ public class DeployConfiguration {
             // copy the file.
             FileUtils.copyFile(netarchiveSuiteFile, newNetarchiveSuiteFile);
         } catch (IOException e) {
-            // handle exceptions
+            // handle IOExceptions
             System.out.println(Constants.MSG_ERROR_ZIP_CANNONICAL_PATH 
                     + netarchiveSuiteFile.getAbsolutePath());
             e.printStackTrace();
+            System.exit(1);
+        } catch (IOFailure e1) {
+            // handle a IOFailure, can only be thrown by FileUtils.copyFile
+            System.out.println("Unable to copy file '" 
+                    + netarchiveSuiteFile.getAbsolutePath() 
+                    + "' to the destination '" 
+                    + newNetarchiveSuiteFile.getAbsolutePath() + "'.");
+            e1.printStackTrace();
             System.exit(1);
         }
     }
