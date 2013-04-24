@@ -69,3 +69,5 @@ Bit\ Preservation.level=SEVERE
 History.level=SEVERE
 QA.level=SEVERE
 Status.level=SEVERE
+# Reduce noise from the JMSbroker client (NAS-2039)
+com.sun.messaging.jmq.jmsclient.AckQueue.level=SEVERE
