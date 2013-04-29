@@ -24,29 +24,14 @@
 */
 package dk.netarkivet.harvester.tools;
 
-import javax.jms.Message;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
-
-import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
-import dk.netarkivet.common.distribute.RemoteFile;
-import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.StringAsserts;
-import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
@@ -57,7 +42,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Tests of the tool to create metadata files.
  */
 public class CreateCDXMetadataFileTester extends TestCase {
-    private static String CONTENT = "This is a test message";
+    //private static String CONTENT = "This is a test message";
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams();
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
