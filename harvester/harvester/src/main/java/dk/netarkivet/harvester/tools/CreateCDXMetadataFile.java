@@ -224,7 +224,6 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @param resultFile The CDX file returned by a ExtractCDXJob for the
          * given jobID.
          * @param jobID The jobID we work on.
-         * @param warcmode write the data to a WARC metadata file or not.
          * @throws IOException If an I/O error occurs, or the resultFile
          * does not exist
          */
