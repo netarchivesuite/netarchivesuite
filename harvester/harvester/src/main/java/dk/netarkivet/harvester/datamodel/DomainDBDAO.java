@@ -957,7 +957,7 @@ public class DomainDBDAO extends DomainDAO {
                 final String message = "Error reading existing domain '"
                         + domainName + "' due to database inconsistency. " 
                         + "Note that this should never happen. Please ask your database admin to check " 
-                        + "your 'domains' and 'configurations' tablesfor any inconsistencies.";
+                        + "your 'domains' and 'configurations' tables for any inconsistencies.";
                 log.warn(message);
                 throw new IOFailure(message);
             }
