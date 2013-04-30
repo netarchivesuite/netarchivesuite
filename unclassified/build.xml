@@ -96,7 +96,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     mail-dependencies/mail-1.4.jar
     libidn-0.5.9.jar
     lucene-core-3.6.0.jar
-    wayback-core-1.8.0-SNAPSHOT.jar
+    wayback-core-1.8.0-netarchivesuite-20130403.jar
     jwat-common-0.9.1.jar
     wayback-dependencies/htmlparser-1.6.jar
     wayback-dependencies/ia-web-commons-1.0-SNAPSHOT.jar
@@ -145,7 +145,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="mail-dependencies/mail-1.4.jar"/>
                 <include name="libidn-0.5.9.jar"/>
                 <include name="lucene-core-3.6.0.jar"/>
-                <include name="wayback-core-1.8.0-SNAPSHOT.jar"/>
+                <include name="wayback-core-1.8.0-netarchivesuite-20130403.jar"/>
 		        <include name="jwat-common-0.9.1.jar"/>
                 <include name="twitter4j-core-2.2.6.jar"/>
                 <include name="hibernate/antlr-2.7.6.jar"/>
