@@ -336,7 +336,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
                      DomainDefinition.makeDomainLink(domainName));
 
         try {
-            DomainDefinition.makeDomainLink(null);
+            DomainDefinition.makeDomainLink((String)null);
             fail("Should die on null domain Name");
         } catch (ArgumentNotValid e) {
             // expected

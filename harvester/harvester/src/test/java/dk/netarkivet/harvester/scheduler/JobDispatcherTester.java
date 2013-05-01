@@ -278,7 +278,7 @@ public class JobDispatcherTester extends TestCase {
      */
     public void testNullJob() {
         try {
-            jobDispatcher.doOneCrawl(null, "test", "test", "test", 
+            jobDispatcher.doOneCrawl((Job)null, "test", "test", "test", 
                     new ArrayList<MetadataEntry>());
             fail("Should throw ArgumentNotValid on NULL job");
         } catch (ArgumentNotValid e) {

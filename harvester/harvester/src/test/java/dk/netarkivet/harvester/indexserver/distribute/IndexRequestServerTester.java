@@ -40,6 +40,7 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.harvester.indexserver.FileBasedCache;
 import dk.netarkivet.harvester.indexserver.MockupMultiFileBasedCache;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer;
@@ -302,7 +303,7 @@ public class IndexRequestServerTester extends TestCase {
     public void testSetHandler() throws InterruptedException {
         server = IndexRequestServer.getInstance();
         try {
-            server.setHandler(RequestType.CDX, null);
+            server.setHandler(RequestType.CDX, (FileBasedCache<Set<Long>>)null);
             fail("should have thrown exception on null value.");
         } catch (ArgumentNotValid e) {
             //expected

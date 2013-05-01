@@ -25,16 +25,10 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import dk.netarkivet.common.webinterface.JspTestCase;
-import dk.netarkivet.testutils.StringAsserts;
-import org.apache.jasper.JasperException;
-import org.xml.sax.SAXException;
-
-import javax.servlet.ServletException;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.net.MalformedURLException;
-
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.jasper.JasperException;
+import dk.netarkivet.common.webinterface.JspTestCase;
 
 /**
  * Unit-test for the JSP page History/Harveststatus-perdomain.jsp.

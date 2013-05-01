@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.jsp.PageContext;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
@@ -127,7 +129,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         //null context
         try {
-            HarvestStatus.processRequest(null, I18N);
+            HarvestStatus.processRequest((PageContext)null, I18N);
             fail("Should have thrown ANV on null parameter.");
         } catch (ArgumentNotValid e) {
             //Expected

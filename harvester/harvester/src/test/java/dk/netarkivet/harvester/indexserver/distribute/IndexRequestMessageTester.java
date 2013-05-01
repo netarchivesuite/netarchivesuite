@@ -79,7 +79,7 @@ public class IndexRequestMessageTester extends TestCase {
      */
     public void testIndexRequestMessage() throws Exception {
         try {
-            new IndexRequestMessage(null, JOB_SET, null);
+            new IndexRequestMessage((RequestType)null, JOB_SET, null);
             fail("Should throw argument not valid");
         } catch (ArgumentNotValid e) {
             assertTrue("Should be right exception",
