@@ -35,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecordHeader;
-import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.archive.wayback.ResourceStore;
