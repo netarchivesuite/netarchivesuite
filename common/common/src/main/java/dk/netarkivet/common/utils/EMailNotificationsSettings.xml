@@ -36,6 +36,7 @@ National Library.
     	<notifications>
             <receiver>root@localhost</receiver>
             <sender>root@localhost</sender>
+            <subjectPrefix>NetarchiveSuite</subjectPrefix>
         </notifications>
     </common>
 </settings>

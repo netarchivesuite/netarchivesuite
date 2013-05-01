@@ -312,12 +312,13 @@ implements CleanupIF {
             if (PersistentJobData.existsIn(oldCrawlDir)) {
                 // Assume that crawl had not ended at this point so
                 // job must be marked as failed
-                log.warn("Found old unprocessed job data in dir '"
+                final String msg = "Found old unprocessed job data in dir '"
                         + oldCrawlDir.getAbsolutePath()
                         + "'. Crawl probably interrupted by "
                         + "shutdown of HarvestController. "
-                        + "Processing data.");
-                //TODO Does such an unexpected job warrant an email?
+                        + "Processing data.";
+                log.warn(msg);
+                NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
                 processHarvestInfoFile(oldCrawlDir,
                         new IOFailure("Crawl probably interrupted by "
                                 + "shutdown of HarvestController"));
@@ -501,7 +502,7 @@ implements CleanupIF {
         } else {
             String pausedMessage = "Not enough available diskspace. Only "
                     + availableSpace + " bytes available. Harvester is paused.";
-            log.warn(pausedMessage);
+            log.error(pausedMessage);
             NotificationsFactory.getInstance().notify(pausedMessage, NotificationType.ERROR);
         }
     }

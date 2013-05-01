@@ -345,7 +345,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
         ArgumentNotValid.checkNotNull(msg, "RemoveAndGetFileMessage msg");
         String mesg = "Request to move file '" + msg.getFileName()
                       + "' with checksum '" + msg.getCheckSum() + "' to attic";
-        log.warn(mesg);
+        log.info(mesg);
         NotificationsFactory.getInstance().notify(mesg, NotificationType.INFO);
 
         File foundFile = ba.getFile(msg.getFileName());

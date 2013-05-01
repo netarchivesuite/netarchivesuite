@@ -886,7 +886,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                         String errMsg = "Unidentical duplicates of file '"
                                 + filename + "' with the checksums '" + lastChecksum
                                 + "' and '" + checksum + "'. First instance used.";
-                        log.error(errMsg);
+                        log.warn(errMsg);
                         NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
                     } else {
                         // log about duplicate identical
@@ -1348,7 +1348,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * in a bitarchive.
      * @param badReplica The Replica which has a bad copy of the given file
      * @return A bitarchive which contains a valid version of the file, or null
-     * if no such bitarchive exists.
+     * if no such bitarchive exists (in which case, a notification is sent)
      * @throws ArgumentNotValid If the replica is null or the filename is either
      * null or the empty string.
      */
@@ -1387,14 +1387,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         } finally {
             ArchiveDBConnection.release(con);
         }
-
-        // Notify the administrator about that no proper bitarchive was found.
-        NotificationsFactory.getInstance().notify("No bitarchive replica "
-                + "was found which contains the file '" + filename + "'.", 
-                NotificationType.WARNING);
-
-        // If no bitarchive exists that contains the file with a OK checksum_status.
-        // then return null.
+        // Notify the administrator about that no proper bitarchive was found, and log the incidence
+        final String msg = "No bitarchive replica "
+                + "was found which contains the file '" + filename + "'.";
+        log.warn(msg);
+        NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
+        
         return null;
     }
 

@@ -1217,7 +1217,7 @@ public final class ReplicaCacheHelpers {
             String errMsg = "There is no winner of the votes between "
                     + "the replicas for the checksum of file '"
                     + retrieveFilenameForFileId(fileId, con) + "'.";
-            log.error(errMsg);
+            log.warn(errMsg);
 
             // send a notification
             NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);

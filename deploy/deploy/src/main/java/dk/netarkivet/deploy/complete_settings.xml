@@ -90,7 +90,7 @@
         <processTimeout>5000</processTimeout>
         <notifications>
             <class>dk.netarkivet.common.utils.EMailNotifications</class>
-        <receiver>root@localhost</receiver><sender>root@localhost</sender></notifications>
+        <receiver>root@localhost</receiver><sender>root@localhost</sender><subjectPrefix>NetarchiveSuite</subjectPrefix></notifications>
         <freespaceprovider>
             <class>dk.netarkivet.common.utils.DefaultFreeSpaceProvider</class>
         <dir>/home/netarchivesuite/freespace</dir></freespaceprovider>

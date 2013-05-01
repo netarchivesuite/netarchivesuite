@@ -330,7 +330,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         }
         String errMsg = "Could not store '" + file.getPath() + "' after "
                         + storeRetries + " attempts. Giving up.\n" + messages;
-        log.warn(errMsg);
+        log.error(errMsg);
         NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR);
         throw new IOFailure(errMsg);
     }

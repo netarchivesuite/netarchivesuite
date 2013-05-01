@@ -31,9 +31,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Handles serious errors by sending email.
+ * Delivers NetarchiveSuite notifications by email.
  */
-
 public class EMailNotifications extends Notifications {
     
     /** The default place in classpath where the settings file can be found. */
@@ -63,6 +62,13 @@ public class EMailNotifications extends Notifications {
      * bounces). */
     public static String MAIL_SENDER_SETTING
             = "settings.common.notifications.sender";
+    /** 
+     * <b>settings.common.notifications.subjectPrefix</b>: <br>
+     * The subject prefix for the mail-notifications. 
+     */
+    public static String MAIL_SUBJECTPREFIX_SETTING 
+            = "settings.common.notifications.subjectPrefix";
+    
     
     /** The email receiver of the errors. */
     private static final String MAIL_RECEIVER = Settings.get(
@@ -72,7 +78,8 @@ public class EMailNotifications extends Notifications {
             MAIL_SENDER_SETTING);
     
     /** Subject prefix for notifications by mail. */
-    private static String SUBJECT_PREFIX = "NetarchiveSuite ";
+    private static String SUBJECT_PREFIX = Settings.get(
+            MAIL_SUBJECTPREFIX_SETTING);
     
     /** The error logger we notify about error messages on. */
     private Log log = LogFactory.getLog(getClass());
@@ -80,6 +87,7 @@ public class EMailNotifications extends Notifications {
     /** Sends a notification including an exception.
      *
      * @param message The message to notify about.
+     * @param eventType The type of notification
      * @param e The exception to notify about.
      */
     public void notify(String message, NotificationType eventType, Throwable e) {
@@ -90,10 +98,10 @@ public class EMailNotifications extends Notifications {
     }
 
     /**
-     * Send mailNotications. Can be either error or a warning notification. 
+     * Send mailNotications. 
      * @param message The message body itself
+     * @param eventType Type of notification
      * @param e An exception (can be null)
-     * @param isError Is this an error or a warning notification
      */
     private void sendMailNotifications(String message, NotificationType eventType, Throwable e){
         String subjectPrefix = SUBJECT_PREFIX + eventType + ": ";

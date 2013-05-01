@@ -746,7 +746,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                         String errorString = "Replica '" + msg.getReplicaId() 
                                 + "' has unidentical duplicates: '" + firstVal 
                                 + "' and '" + output.get(i) + "'.";
-                        log.error(errorString);
+                        log.warn(errorString);
                         NotificationsFactory.getInstance().notify(
                                 errorString, NotificationType.WARNING);
                     } else {

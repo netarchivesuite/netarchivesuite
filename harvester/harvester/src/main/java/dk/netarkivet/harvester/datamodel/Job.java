@@ -748,7 +748,7 @@ public class Job implements Serializable, JobInfo {
         if (actualStart != null && actualStop.before(actualStart)) {
             String errorMsg = "End time (" + actualStop
             + ") is before start time: " + actualStart;
-            log.error(errorMsg);
+            log.warn(errorMsg);
             NotificationsFactory.getInstance().notify(errorMsg, NotificationType.WARNING);
         }
         this.actualStop = (Date) actualStop.clone();
