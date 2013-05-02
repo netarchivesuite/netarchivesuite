@@ -203,9 +203,7 @@ public abstract class MetadataFileWriter {
      */
     private static URI getURIforFileName(File cdx)
         throws UnknownID {
-        ArchiveFilenameParser parser = 
-                ArchiveFileNamingFactory.getInstance()
-                    .getArchiveFilenameParser(cdx);
+        ArchiveFilenameParser parser = ArchiveFileNamingFactory.getInstance().getArchiveFilenameParser(cdx);
         return HarvestDocumentation.getCDXURI(
                 parser.getHarvestID(),
                 parser.getJobID(),

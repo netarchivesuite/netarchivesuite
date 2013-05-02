@@ -44,8 +44,10 @@ public interface ArchiveFileNaming {
     String getPrefix(Job job);
     
     /**
-     * @param archiveFile
-     * @return 
+     * Get a ArchiveFilenameParser for the given archiveFile. 
+     * Used for testing, if the file is part of the harvest being postprocessed.
+     * @param archiveFile A given archiveFile produced by Heritrix
+     * @return a ArchiveFilenameParser for the given archiveFile. 
      */
     ArchiveFilenameParser getArchiveFilenameParser(File archiveFile);
     

@@ -65,13 +65,13 @@ public class LegacyNamingConvention implements ArchiveFileNaming {
         private static final Pattern FILE_NAME_PATTERN =
             Pattern.compile("(\\d+)\\-(\\d+)\\-(\\d+)\\-(\\d+)\\-.*");
 
-        /** pattern group containing the Job ID. */
+        /** Pattern group containing the Job ID. */
         private static final int JOB_ID = 1;
-        /** pattern group containing the harvest ID. */
+        /** Pattern group containing the harvest ID. */
         private static final int HARVEST_ID = 2;
-        /** pattern group containing the timestamp. */
+        /** Pattern group containing the timestamp. */
         private static final int TIME_STAMP = 3;
-        /** pattern group containing the serial number. */
+        /** Pattern group containing the serial number. */
         private static final int SERIAL_NO = 4;
 
         /** Field containing the parsed harvest ID. */

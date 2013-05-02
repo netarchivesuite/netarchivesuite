@@ -1,7 +1,7 @@
-/* File:       $Id: LegacyNamingConvention.java 2657 2013-04-15 15:56:33Z svc $
- * Revision:   $Revision: 2657 $
- * Author:     $Author: svc $
- * Date:       $Date: 2013-04-15 17:56:33 +0200 (Mon, 15 Apr 2013) $
+/* File:       $Id$
+ * Revision:   $Revision$
+ * Author:     $Author$
+ * Date:       $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and
@@ -55,10 +55,10 @@ public class CollectionPrefixNamingConvention implements ArchiveFileNaming {
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
-    
+    /** The setting for the collectionName. */
     private static String COLLECTION_SETTING = "settings.harvester.harvesting.heritrix"
             + ".archiveNaming.collectionName";
-    
+    /** The name of the collection embedded in the names. */
     private static String CollectionName = Settings.get(COLLECTION_SETTING);
     
     
@@ -87,13 +87,13 @@ public class CollectionPrefixNamingConvention implements ArchiveFileNaming {
             Pattern.compile(Pattern.quote(CollectionName) +
                     "\\-(\\d+)\\-(\\d+)\\-(\\d+)\\-(\\d+)\\-.*");
 
-        /** pattern group containing the Job ID. */
+        /** Pattern group containing the Job ID. */
         private static final int JOB_ID = 1;
-        /** pattern group containing the harvest ID. */
+        /** Pattern group containing the harvest ID. */
         private static final int HARVEST_ID = 2;
-        /** pattern group containing the timestamp. */
+        /** Pattern group containing the timestamp. */
         private static final int TIME_STAMP = 3;
-        /** pattern group containing the serial number. */
+        /** Pattern group containing the serial number. */
         private static final int SERIAL_NO = 4;
 
         /** Field containing the parsed harvest ID. */
