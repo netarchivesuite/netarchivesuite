@@ -104,7 +104,7 @@ public class EMailNotifications extends Notifications {
      * @param e An exception (can be null)
      */
     private void sendMailNotifications(String message, NotificationType eventType, Throwable e){
-        String subjectPrefix = SUBJECT_PREFIX + eventType + ": ";
+        String subjectPrefix = SUBJECT_PREFIX + "-" + eventType + ": ";
         
         // Subject is a specified string + first line of error message
         String subject =  subjectPrefix + message.split("\n")[0];
