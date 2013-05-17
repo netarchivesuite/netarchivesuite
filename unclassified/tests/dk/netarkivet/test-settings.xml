@@ -138,7 +138,9 @@ National Library.
                 <indexingtimeout>172800</indexingtimeout>
         </indexserver>
     </harvester>
-    <wayback><resourcestore>
+    
+    <wayback><hibernate><showSql>false</showSql></hibernate>
+    <resourcestore>
     	<cachedir>./tests/commontempdir/cachedir</cachedir>
     </resourcestore>
     </wayback>
