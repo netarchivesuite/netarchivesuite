@@ -321,7 +321,7 @@ public class MySQLSpecifics extends DBSpecifics {
 
     @Override
     protected void migrateDomainsv2tov3() {
-        String[] sqlStatements = {"ALTER TABLE domain MODIFY crawlertraps LONGTEXT "};
+        String[] sqlStatements = {"ALTER TABLE domains MODIFY crawlertraps LONGTEXT "};
         HarvestDBConnection.updateTable("domains", 3, sqlStatements);
     }
 

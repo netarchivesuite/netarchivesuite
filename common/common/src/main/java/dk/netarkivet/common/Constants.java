@@ -86,7 +86,7 @@ public final class Constants {
     /** Minor version number. */
     public static final int MINORVERSION = 0;
     /** Patch version number. */
-    public static final int PATCHVERSION = 1;
+    public static final int PATCHVERSION = 2;
     /** Current status of code. */
     private static final CodeStatus BUILDSTATUS = CodeStatus.RELEASE;
 
