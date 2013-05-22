@@ -146,11 +146,13 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             // Assume that last argument is the jobId
             int jobIdIndex = args.length - 1;
             try {
-                if (Long.parseLong(args[jobIdIndex]) < 1) {
+                this.jobId = Long.parseLong(args[jobIdIndex]); 
+                if (this.jobId < 1) {
                     System.err.println("" + args[jobIdIndex]
                             + " is not a valid job ID");
                     return false;
                 }
+                 
                 return true;
             } catch (NumberFormatException e) {
                 System.err.println("'" + args[jobIdIndex] + "' is not a valid job ID"); 
