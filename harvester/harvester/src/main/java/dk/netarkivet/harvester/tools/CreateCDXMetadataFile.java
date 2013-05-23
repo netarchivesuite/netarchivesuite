@@ -193,20 +193,24 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @param args Arguments given on the command line.
          */
         public void run(String... args) {
-            long jobID = this.jobId;
+            final long jobID = this.jobId;
             FileBatchJob job = new ArchiveExtractCDXJob();
             Settings.set(HarvesterSettings.METADATA_FORMAT, (isWarcOutputMode)? "warc": "arc");
+            final String filePattern = jobID + REMAINING_ARCHIVE_FILE_PATTERN;
             
+            System.out.println("Creating cdx-" + ((isWarcOutputMode)? "warcfile": "arcfile")  
+            + " from file matching pattern: " + filePattern);
             job.processOnlyFilesMatching(jobID + REMAINING_ARCHIVE_FILE_PATTERN);
             BatchStatus status = arcrep.batch(
                     job, Settings.get(CommonSettings.USE_REPLICA_ID));
             if (status.hasResultFile()) {
+                System.out.println("Got results from archive. Processing data");
                 File resultFile = null;
                 try {
                     resultFile = File.createTempFile("extract-batch", ".cdx",
                             FileUtils.getTempDir());
                     resultFile.deleteOnExit();
-                    status.copyResults(resultFile);
+                    status.copyResults(resultFile);                    
                     arcifyResultFile(resultFile, jobID);
                 } catch (IOException e) {
                     throw new IOFailure("Error getting results for job "
@@ -216,6 +220,8 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                         FileUtils.remove(resultFile);
                     }
                 }
+            } else {
+                System.err.println("Got new results from archive. Program ending now");
             }
         }
 
@@ -236,7 +242,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             
             File outputFile = new File(MetadataFileWriter.getMetadataArchiveFileName(
                     Long.toString(jobID)));
-            
+            System.out.println("Writing cdx to file '" + outputFile.getAbsolutePath() + "'.");
             try {
                 MetadataFileWriter writer = MetadataFileWriter.createWriter(
                         outputFile);
