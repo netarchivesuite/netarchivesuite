@@ -67,6 +67,7 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.ArchiveFileNaming;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
 import dk.netarkivet.harvester.harvesting.JobInfo;
 import dk.netarkivet.harvester.scheduler.jobgen.JobGenerator;
@@ -1434,7 +1435,12 @@ public class Job implements Serializable, JobInfo {
 
     @Override
     public String getHarvestFilenamePrefix() {
-        return ArchiveFileNamingFactory.getInstance().getPrefix(this);
+        ArchiveFileNaming naming = ArchiveFileNamingFactory.getInstance();
+        log.debug("Using the ArchiveFileNaming class '" 
+                + naming.getClass().getName() + "'.");
+        final String prefix = naming.getPrefix(this);
+        log.debug("The harvestPrefix of this job is: " + prefix); 
+        return prefix;
     }
 
     /**
