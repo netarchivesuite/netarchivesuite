@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.warc.WARCConstants;
@@ -177,6 +178,8 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         } catch (IOException e) {
             throw new IOFailure("Epic IO fail while writing to WARC file: "
                     + fileToArchive.getPath(), e);
+        } finally {
+            IOUtils.closeQuietly(in);
         }
         return true;
     }

@@ -27,7 +27,12 @@ package dk.netarkivet.harvester.harvesting;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.archive.util.anvl.ANVLRecord;
 
 import junit.framework.Assert;
@@ -113,5 +118,37 @@ public class MetadataFileWriterTester extends TestCase {
             mfwa.writeFileTo(f, "metadata://netarkivet.dk/crawl/logs/" + f.getName(), "text/plain");
         }
     }
-
+    
+    /** 
+     * This is not run automatically, as this takes a long time to complete (15 seconds).
+     * 
+     * @throws IOException
+     */
+    public void notestMetadataFileWriterWarcMassiveLoadTest() throws IOException {
+        //TODO verify content of produced warc-file to ensure that all is OK
+        File metafile = new File("metadata.warc");
+        MetadataFileWriter mdfw = MetadataFileWriterWarc.createWriter(metafile);
+        ((MetadataFileWriterWarc) mdfw).insertInfoRecord(new ANVLRecord());
+        // Create 5000 small files
+        String contentPart = "blablabla";
+        String someText = StringUtils.repeat(contentPart, 5000);
+        List textArray = new ArrayList<String>();
+        textArray.add(someText);
+        Set<File> files = new HashSet<File>();
+        for (int i=0; i < 10000; i++) {
+            File f = File.createTempFile("metadata", "cdx");
+            FileUtils.writeCollectionToFile(f, textArray);
+            files.add(f);
+        }
+        System.out.println("Finished writing files");
+        int count = 0;
+        for (File f: files) {
+            mdfw.writeFileTo(f, "http://netarkivet/ressource-" + count, "text/plain");
+            f.delete();
+            count++;
+        }
+        metafile.delete();
+        System.out.println("Finished adding files to warc");
+        
+    }
 }

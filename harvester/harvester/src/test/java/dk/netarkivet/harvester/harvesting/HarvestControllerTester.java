@@ -133,8 +133,8 @@ public class HarvestControllerTester extends TestCase {
         Job j = TestInfo.getJob();
         j.setJobID(1L);
         // Check whether job 1 is valid
-        assertTrue("j.getSeedList should be non-empty",
-                j.getSeedListAsString() != "");
+        assertFalse("j.getSeedList should be non-empty",
+                j.getSeedListAsString().isEmpty());
         assertTrue("j.getOrderXMLdoc() must have a content",
                 j.getOrderXMLdoc().hasContent());
 
