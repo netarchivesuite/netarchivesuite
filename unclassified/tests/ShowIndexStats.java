@@ -46,7 +46,7 @@ public class ShowIndexStats {
         FSDirectory luceneDir = FSDirectory.open(new File(path));
         IndexReader r = IndexReader.open(luceneDir);
         System.out.println("Number of docs in index: " +  r.numDocs());
-        System.out.println("Version: " + r.getVersion());
+        //System.out.println("Version: " + r.getVersion());
         luceneDir.close();
         r.close();
     }

@@ -24,8 +24,11 @@
 */
 package dk.netarkivet.harvester.indexserver;
 
+import is.hi.bok.deduplicator.DigestIndexer;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,15 +38,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.QueryParser;
+
+import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermRangeFilter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.util.BytesRef;
 
 import dk.netarkivet.common.utils.AllDocsCollector;
 import dk.netarkivet.common.utils.FileUtils;
@@ -123,41 +129,65 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
             }
         }
         
-        Directory luceneDirectory = new MMapDirectory(unzipDir);
+        Directory luceneDirectory = new MMapDirectory(unzipDir);     
+        IndexReader reader = DirectoryReader.open(luceneDirectory);
         
-        
-        IndexReader reader = IndexReader.open(luceneDirectory);
-        System.out.println("doc-count: " + reader.maxDoc());
+        //System.out.println("doc-count: " + reader.maxDoc());
         IndexSearcher index = new IndexSearcher(reader);
         //QueryParser queryParser = new QueryParser("url", 
         //        new WhitespaceAnalyzer(dk.netarkivet.common.constants.LUCENE_VERSION));
-        QueryParser queryParser = new QueryParser(dk.netarkivet.common.Constants.LUCENE_VERSION, "url", 
-                new WhitespaceAnalyzer(dk.netarkivet.common.Constants.LUCENE_VERSION));
-        Query q = queryParser.parse("http\\://www.kb.dk*");
+        //QueryParser queryParser = new QueryParser(dk.netarkivet.common.Constants.LUCENE_VERSION, "url", 
+        //        new WhitespaceAnalyzer(dk.netarkivet.common.Constants.LUCENE_VERSION));
+        //Query q = queryParser.parse("http\\://www.kb.dk*");
         
-        AllDocsCollector collector = new AllDocsCollector();
-        index.search(q, collector);
-        List<ScoreDoc> hits = collector.getHits();
+        
         
         // Crawl log 1 has five entries for www.kb.dk, but two are robots
         // and /, which the indexer ignores, leaving 3
         // Crawl log 4 has five entries for www.kb.dk
         
         //System.out.println("Found hits: " + hits.size());
-        for (ScoreDoc hit : hits) {
-            int docID = hit.doc;
-            Document doc = index.doc(docID);
-            
-            String url = doc.get("url");
-            String origin = doc.get("origin");
-
-            assertEquals("Should have correct origin for url " + url,
-                    origins.get(url), origin);
-            // Ensure that each occurs only once.
-            origins.remove(url);
-        }
+//        for (ScoreDoc hit : hits) {
+//            int docID = hit.doc;
+//            Document doc = index.doc(docID);
+//            
+//            String url = doc.get("url");
+//            String origin = doc.get("origin");
+//            System.out.println("url,origin = " + url + ", " + origin);
+//        }
+        
+        verifySearchResult(origins, index);
+        
         assertTrue("Should have found all origins, but have still " + origins.size() + " left: " 
                 + origins, origins.isEmpty());
+    }
+    
+    private void verifySearchResult(Map<String,String> origins, IndexSearcher index) throws IOException {
+        Set<String> urls = new HashSet<String>(origins.keySet());
+        
+        for (String urlValue: urls) {
+            BytesRef uriRef = new BytesRef(urlValue);
+            Query q = new ConstantScoreQuery(new TermRangeFilter(
+                DigestIndexer.FIELD_URL, uriRef, uriRef, true, true));
+            AllDocsCollector collector = new AllDocsCollector();
+            index.search(q, collector);
+            List<ScoreDoc> hits = collector.getHits();
+            for (ScoreDoc hit : hits) {
+                int docID = hit.doc;
+                Document doc = index.doc(docID);
+                String url = doc.get("url");
+                String origin = doc.get("origin");
+                assertEquals("Should have correct origin for url " + url,
+                    origins.get(url), origin);
+                // Ensure that each occurs only once.
+                String removedValue = origins.remove(url);
+                if (removedValue == null) {
+                    //System.out.println("'" + url + "' not found in origins map");
+                } else {
+                    //System.out.println("'" + url + "' was found in origins map");
+                }
+            }
+        }
     }
 
     public void testGetSortedCDX() throws Exception {

@@ -41,6 +41,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermRangeFilter;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -117,8 +118,8 @@ public class ARCLookup {
         }
         try {
             // IndexReader.open is deprecated in Lucene 4.0
-            //luceneReader = org.apache.lucene.index.DirectoryReader.open(FSDirectory.open(indexDir));
-            luceneReader = IndexReader.open(FSDirectory.open(indexDir));
+            luceneReader = org.apache.lucene.index.DirectoryReader.open(FSDirectory.open(indexDir));
+            //luceneReader = IndexReader.open(FSDirectory.open(indexDir));
             luceneSearcher = new IndexSearcher(luceneReader);
         } catch (IOException e) {
             throw new IOFailure("Unable to find/open index " + indexDir, e);
@@ -226,9 +227,10 @@ public class ARCLookup {
         // or RangeFilter would imply.
         //Query query = new ConstantScoreQuery(new SparseRangeFilter(
         //        DigestIndexer.FIELD_URL, uri, uri, true, true));
+        BytesRef uriRef = new BytesRef(uri.getBytes()); // Should we decide which charset?
         
         Query query = new ConstantScoreQuery(new TermRangeFilter(
-                DigestIndexer.FIELD_URL, uri, uri, true, true));
+                DigestIndexer.FIELD_URL, uriRef, uriRef, true, true));
         
         try {
             AllDocsCollector allResultsCollector = new AllDocsCollector();

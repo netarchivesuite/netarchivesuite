@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.ScoreDoc;
@@ -44,6 +45,7 @@ import org.apache.lucene.search.TermRangeFilter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 import org.archive.crawler.datamodel.CoreAttributeConstants;
 import org.archive.crawler.datamodel.CrawlOrder;
 import org.archive.crawler.datamodel.CrawlURI;
@@ -369,7 +371,7 @@ implements AdaptiveRevisitAttributeConstants{
             // Reduce chunksize to avoid OOM to half the size of the default (=100 MB)
             int chunksize = indexDir.getReadChunkSize();
             indexDir.setReadChunkSize(chunksize / 2);
-            IndexReader reader = IndexReader.open(indexDir);
+            IndexReader reader = DirectoryReader.open(indexDir);
             index = new IndexSearcher(reader);
         } catch (Exception e) {
             logger.log(Level.SEVERE,"Unable to find/open index.",e);
@@ -608,7 +610,6 @@ implements AdaptiveRevisitAttributeConstants{
         try {
             Query query = queryField(DigestIndexer.FIELD_URL,
                 curi.toString());
-            //TopDocs topdocs = index.search(query, Integer.MAX_VALUE);
             AllDocsCollector collectAllCollector = new AllDocsCollector();
             index.search(query, collectAllCollector);
             
@@ -698,6 +699,7 @@ implements AdaptiveRevisitAttributeConstants{
         if (digest != null) {
             currentDigest = Base32.encode((byte[])digest);
         }
+        // FIXME currentDigest == null will result in NPE. 
         Query query = queryField(DigestIndexer.FIELD_DIGEST, currentDigest);
         try {
             AllDocsCollector collectAllCollector = new AllDocsCollector();
@@ -1016,19 +1018,12 @@ implements AdaptiveRevisitAttributeConstants{
      */
     protected Query queryField(String fieldName, String value) {
         Query query = null;
-// TODO: Find out if a Sparse version is relevant for TermRangeFilter 
-// The below code was obsoleted by the move from Lucene 2.0 to Lucene 3.6        
-//        if(useSparseRangeFilter){
-//        	query = new ConstantScoreQuery(
-//                new SparseRangeFilter(fieldName, value, value, true, true));
-//        } else {
-//        	query = new ConstantScoreQuery(
-//                new RangeFilter(fieldName, value, value, true, true);//);
-//        }
         
         /** alternate solution. */
+        BytesRef valueRef = new BytesRef(value.getBytes());
         query = new ConstantScoreQuery(
-              new TermRangeFilter(fieldName, value, value, true, true));
+                new TermRangeFilter(fieldName, valueRef, valueRef, true, true));
+                      
         /** The most clean solution, but it seems also memory demanding */
         //query = new ConstantScoreQuery(new FieldCacheTermsFilter(fieldName,
         //        value));

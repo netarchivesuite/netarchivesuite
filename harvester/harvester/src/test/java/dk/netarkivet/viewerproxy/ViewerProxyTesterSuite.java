@@ -50,7 +50,8 @@ public class ViewerProxyTesterSuite {
      * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(ARCArchiveAccessTester.class);
+        //FIXME cf. NAS-2202
+        //suite.addTestSuite(ARCArchiveAccessTester.class);
         suite.addTestSuite(CommandResolverTester.class);
         suite.addTestSuite(CrawlLogLinesMatchingRegexpTester.class);
         suite.addTestSuite(DelegatingControllerTester.class);
@@ -59,7 +60,8 @@ public class ViewerProxyTesterSuite {
         suite.addTestSuite(NotifyingURIResolverTester.class);
         suite.addTestSuite(UnknownCommandResolverTester.class);
         suite.addTestSuite(URIObserverTester.class);
-        suite.addTestSuite(ViewerProxyTester.class);
+	//FIXME cf. NAS-2202
+        //suite.addTestSuite(ViewerProxyTester.class);
         suite.addTestSuite(WebProxyTester.class);
     }
 

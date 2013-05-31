@@ -39,9 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.LogManager;
 
-import dk.netarkivet.common.distribute.arcrepository.*;
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
@@ -53,6 +53,10 @@ import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -87,13 +91,15 @@ public class ARCLookupTester extends TestCase {
         ChannelsTester.resetChannels();
 
         //Although we also need some real data
-        FileUtils.removeRecursively(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
-        TestFileUtils.copyDirectoryNonCVS(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR, dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
-        FileUtils.createDir(new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "viewerproxy"));
+        File WORKING_DIR = dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR;
+        
+        FileUtils.removeRecursively(WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR, WORKING_DIR);
+        FileUtils.createDir(new File(WORKING_DIR, "viewerproxy"));
 
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_PATH.getAbsolutePath());
         Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "admin-data").getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, new File(WORKING_DIR, "admin-data").getAbsolutePath());
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_PATH.getAbsolutePath());
 
         // This is "real" in the sense that it returns records from a bitarchive-

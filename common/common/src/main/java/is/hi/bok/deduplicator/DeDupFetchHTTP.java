@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import org.apache.commons.httpclient.HttpConnection;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -39,6 +40,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermRangeFilter;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.fetcher.FetchHTTP;
 import org.archive.crawler.frontier.AdaptiveRevisitAttributeConstants;
@@ -333,21 +335,11 @@ implements AdaptiveRevisitAttributeConstants {
     protected Document lookup(CrawlURI curi) {
         try{
             Query query = null;
-//TODO: Find out if a Sparse version is relevant for TermRangeFilter            
-// The below code was obsoleted by the move from Lucene 2.0 to Lucene 3.6   
-//            if(useSparseRangeFilter){
-//            	query = new ConstantScoreQuery(new SparseRangeFilter(
-//                    DigestIndexer.FIELD_URL,curi.toString(),curi.toString(),
-//                    true,true));
-//            } else {
-//            	query = new ConstantScoreQuery(new RangeFilter(
-//                        DigestIndexer.FIELD_URL,curi.toString(),curi.toString(),
-//                        true,true));
-//            }
-            
+
             /** The least memory demanding query. */
+            BytesRef curiStringRef = new BytesRef(curi.toString().getBytes());
             query = new ConstantScoreQuery(
-                  new TermRangeFilter(DigestIndexer.FIELD_URL, curi.toString(), curi.toString(), true, true));
+                  new TermRangeFilter(DigestIndexer.FIELD_URL, curiStringRef, curiStringRef, true, true));
             
             /** The preferred solution, but it seems also more memory demanding */
             //query = new ConstantScoreQuery(new FieldCacheTermsFilter(fieldName,
@@ -403,8 +395,7 @@ implements AdaptiveRevisitAttributeConstants {
             // Reduce chunksize to avoid OOM to half the size of the default (=100 MB)
             int chunksize = indexDir.getReadChunkSize();
             indexDir.setReadChunkSize(chunksize / 2);
-            //IndexReader reader = DirectoryReader.open(indexDir); // Lucene 4.0 operation
-            IndexReader reader = IndexReader.open(indexDir);
+            IndexReader reader = DirectoryReader.open(indexDir);
             index = new IndexSearcher(reader);
         } catch (Exception e) {
             logger.log(Level.SEVERE,"Unable to find/open index.",e);

@@ -30,9 +30,11 @@ import java.util.List;
 
 import org.apache.commons.cli.Option;
 
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
@@ -52,6 +54,7 @@ import dk.netarkivet.common.Constants;
  * This class also defines string constants for the lucene field names.
  *
  * @author Kristinn Sigur&eth;sson
+ * @author Søren Vejrup Carlsen
  * 
  */
 public class DigestIndexer {
@@ -148,14 +151,9 @@ public class DigestIndexer {
         }
 
         // Set up the index writer
-        
-        // indexwriter in 4.0
-        // IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, 
-        // new org.apache.lucene.analysis.core.WhitespaceAnalyzer(Version.LUCENE_40));
-        
         IndexWriterConfig config = new IndexWriterConfig(Constants.LUCENE_VERSION, 
                 new WhitespaceAnalyzer(Constants.LUCENE_VERSION));
-
+        // TODO Possibly change the default MergePolicy, see NAS-2119
         if (!addToExistingIndex) {
             config.setOpenMode(OpenMode.CREATE);
         } else {
@@ -238,62 +236,8 @@ public class DigestIndexer {
                     System.out.println("Indexed " + count + " - Last URL "
                             + "from " + item.getTimestamp());
                 }
-                Document doc = new Document();
-
-                // Add URL to index.
-                doc.add(new Field(
-                        FIELD_URL,
-                        item.getURL(),
-                        Field.Store.YES,
-                        (indexURL ? Field.Index.NOT_ANALYZED : Field.Index.NO)
-                        ));
-                if(equivalent){
-                    doc.add(new Field(
-                            FIELD_URL_NORMALIZED,
-                            stripURL(item.getURL()),
-                            Field.Store.YES,
-                            (indexURL ? 
-                                    Field.Index.NOT_ANALYZED : Field.Index.NO)
-                    ));
-                }
-
-                // Add digest to index
-                doc.add(new Field(
-                        FIELD_DIGEST,
-                        item.getContentDigest(),
-                        Field.Store.YES,
-                        (indexDigest ? 
-                                Field.Index.NOT_ANALYZED : Field.Index.NO)
-                        ));
-                    
-                if(timestamp){
-                    doc.add(new Field(
-                            FIELD_TIMESTAMP,
-                            item.getTimestamp(),
-                            Field.Store.YES,
-                            Field.Index.NO
-                            ));
-                }
-                if(etag && item.getEtag()!= null){
-                    doc.add(new Field(
-                            FIELD_ETAG,
-                            item.getEtag(),
-                            Field.Store.YES,
-                            Field.Index.NO
-                            ));
-                }
-                if(defaultOrigin != null){
-                    String tmp = item.getOrigin();
-                    if(tmp == null){
-                        tmp = defaultOrigin;
-                    }
-                    doc.add(new Field(
-                            FIELD_ORIGIN,
-                            tmp,
-                            Field.Store.YES,
-                            Field.Index.NO
-                            ));
-                }
+                
+                Document doc = createDocument(item, defaultOrigin);
                 index.addDocument(doc);
                 // needed with new IndexWriter (see line 144)
                 //index.commit();
@@ -307,6 +251,60 @@ public class DigestIndexer {
                     + skipped + ")");
         }
         return count;
+    }
+    
+
+    /**
+     * 
+     * @param item
+     * @param defaultOrigin
+     * @return
+     */
+    private Document createDocument(CrawlDataItem item, String defaultOrigin) {
+        Document doc = new Document();
+        
+        FieldType storedNotIndexed = new FieldType(StringField.TYPE_STORED);
+        storedNotIndexed.setIndexed(false);
+        
+        FieldType storedNotAnalyzed = new FieldType(StringField.TYPE_STORED);
+        storedNotAnalyzed.setOmitNorms(false);
+        
+        
+        // Add URL to index.
+        if (indexURL) {
+            doc.add(new Field(FIELD_URL, item.getURL(), storedNotAnalyzed));
+            if (equivalent) {
+                doc.add(new Field(FIELD_URL_NORMALIZED, stripURL(item.getURL()), storedNotAnalyzed));
+                }
+            } else {
+                doc.add(new Field(FIELD_URL, item.getURL(), storedNotIndexed));
+                if (equivalent) {
+                    doc.add(new Field(FIELD_URL_NORMALIZED, stripURL(item.getURL()), storedNotIndexed));
+                }
+            }
+            
+            // Add digest to index
+            if (indexDigest) {
+                doc.add(new Field(FIELD_DIGEST, item.getContentDigest(), storedNotAnalyzed));
+            } else {
+                doc.add(new Field(FIELD_DIGEST, item.getContentDigest(), storedNotIndexed));
+            }
+            // Add timestamp to index
+            if(timestamp){
+                doc.add(new Field(FIELD_TIMESTAMP, item.getTimestamp(), storedNotIndexed));
+            }
+            // Add etag to index
+            if(etag && item.getEtag()!= null){
+                doc.add(new Field(FIELD_ETAG, item.getEtag(), storedNotIndexed));
+            }
+            if(defaultOrigin != null){
+                String tmp = item.getOrigin();
+                if(tmp == null){
+                    tmp = defaultOrigin;
+                }
+                doc.add(new Field(FIELD_ORIGIN, tmp, storedNotIndexed));
+            }
+        return doc;
     }
     
     /**
