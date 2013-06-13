@@ -103,6 +103,7 @@
             <passwordFile>conf/jmxremote.password</passwordFile>
             <accessFile>conf/jmxremote.access</accessFile>
             <timeout>120</timeout>
+            <resolveLocalhostName>true</resolveLocalhostName>
         </jmx>
         <webinterface> <!-- Settings for the web GUI -->
             <language>

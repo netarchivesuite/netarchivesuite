@@ -224,6 +224,14 @@ public class CommonSettings {
      * How many seconds we will wait before giving up on a JMX connection. */
     public static String JMX_TIMEOUT
             = "settings.common.jmx.timeout";
+    
+    /**
+     * <b>settings.common.jmx.resolveLocalhostName</b>: <br>
+     * If true, will attempt to resolve the canonical name of localhost, otherwise forces 'localhost'.
+     * Default value is 'true'.
+     */
+    public static String JMX_RESOLVE_LOCALHOSTNAME = "settings.common.jmx.resolveLocalhostName";    
+    
 
     /**
      * <b>settings.common.webinterface</b>: <br>

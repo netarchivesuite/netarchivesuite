@@ -68,6 +68,13 @@ public class MBeanConnectorCreator {
 
     private static final String ENVIRONMENT_PASSWORD_FILE_PROPERTY
             = "jmx.remote.x.password.file";
+    
+    /**
+     * @see CommonSettings#JMX_RESOLVE_LOCALHOSTNAME
+     */
+    private static final boolean RESOLVE_LOCALHOST = 
+    		Settings.getBoolean(CommonSettings.JMX_RESOLVE_LOCALHOSTNAME);
+    
     private static final Log log = LogFactory.getLog(
             MBeanConnectorCreator.class);
 
@@ -94,7 +101,8 @@ public class MBeanConnectorCreator {
                 // registry created above, and listen for rmi callbacks on the
                 // RMI port of this machine, exposing the mbeanserver with the
                 // name "jmxrmi".
-                String canonicalHostName = SystemUtils.getLocalHostName();
+                String canonicalHostName = 
+                		RESOLVE_LOCALHOST ? SystemUtils.getLocalHostName() : SystemUtils.LOCALHOST;
                 JMXServiceURL url = new JMXServiceURL(
                         MessageFormat.format(
                                 SERVICE_JMX_RMI_URL,
