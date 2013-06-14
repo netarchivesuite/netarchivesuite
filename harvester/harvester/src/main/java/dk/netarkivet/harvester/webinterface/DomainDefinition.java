@@ -250,9 +250,9 @@ public class DomainDefinition {
                 if (trap.trim().length() > 0) {
                     trapList.add(trap);
                 }
-            }
-            domain.setCrawlerTraps(trapList, true);
+            }            
         }
+        domain.setCrawlerTraps(trapList, true);
 
         //Update alias information
 
