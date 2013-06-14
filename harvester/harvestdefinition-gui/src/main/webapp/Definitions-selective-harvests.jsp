@@ -30,13 +30,16 @@ Parameters:
 flipactive=<definitionName>
 If set, the harvest-definition with the given name is changed from active to
 inactive or vice-versa.
---%><%@ page import="dk.netarkivet.common.utils.I18n,
+--%>
+<%@page import="org.hibernate.usertype.UserCollectionType"%>
+<%@ page import="dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
                  dk.netarkivet.harvester.datamodel.HarvestDefinition,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
-                 dk.netarkivet.harvester.webinterface.Constants"
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.archive.webinterface.CookieUtils"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -71,14 +74,15 @@ inactive or vice-versa.
 	        dao.flipActive(hd);
             response.sendRedirect("Definitions-selective-harvests.jsp");
             return;
-        }
+        }        
     }
     HTMLUtils.generateHeader(pageContext);
 %>
 
 <h3 class="page_heading"><fmt:message key="pagetitle;selective.harvests"/></h3>
 
-<% String showInactiveDefinitionsParam = request.getParameter(Constants.SHOW_INACTIVE_PARAM);
+<% String showInactiveDefinitionsParam = 
+CookieUtils.getParameterValue(request, Constants.SHOW_INACTIVE_PARAM);
   boolean showInactiveHDs; // Default is 'true'.
   if (showInactiveDefinitionsParam == null ||
        showInactiveDefinitionsParam.isEmpty() ||
@@ -89,6 +93,7 @@ inactive or vice-versa.
    }
    String flipShowHideInactiveLink = "Definitions-selective-harvests.jsp?" + Constants.SHOW_INACTIVE_PARAM
                                       + "=" + !showInactiveHDs;
+   CookieUtils.setCookie(response, Constants.SHOW_INACTIVE_PARAM, Boolean.toString(showInactiveHDs));
 %>
    <a href="<%=HTMLUtils.escapeHtmlValues(flipShowHideInactiveLink)%>">
 <% if (showInactiveHDs) { %>
