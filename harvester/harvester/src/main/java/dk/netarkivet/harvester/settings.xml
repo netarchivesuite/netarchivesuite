@@ -74,6 +74,7 @@ National Library.
                     <!-- Only used by FixedDomainConfigurationCountJobGenerator -->
                     <fixedDomainCountSnapshot>0</fixedDomainCountSnapshot>
                     <fixedDomainCountFocused>0</fixedDomainCountFocused>
+                    <excludeDomainsWithZeroBudget>false</excludeDomainsWithZeroBudget>
                 </config>
             </jobGen>
         </scheduler>

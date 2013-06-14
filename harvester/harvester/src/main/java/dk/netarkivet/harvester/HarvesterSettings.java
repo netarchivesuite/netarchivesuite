@@ -214,6 +214,7 @@ public class HarvesterSettings {
      * If the job generator is {@link FixedDomainConfigurationCountJobGenerator},
      * then this parameter toggles whether or not domain configurations with a budget of zero
      * (byte or objects) should be excluded from jobs.
+     * The default value is 'false'.
      */
     public static String JOBGEN_FIXED_CONFIG_COUNT_EXCLUDE_ZERO_BUDGET
             = "settings.harvester.scheduler.jobGen.config.excludeDomainsWithZeroBudget";
