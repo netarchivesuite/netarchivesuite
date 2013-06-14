@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -137,6 +140,12 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
      */
     private static long CONFIG_COUNT_SNAPSHOT = Settings.getLong(
             HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+    
+    /**
+     * Constant : exclude {@link DomainConfiguration}s with a budget of zero (bytes or objects).
+     */
+    private static boolean EXCLUDE_ZERO_BUDGET = Settings.getBoolean(
+            HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_EXCLUDE_ZERO_BUDGET);
 
     /**
      * The singleton instance.
@@ -160,6 +169,9 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
      * The job DAO instance (singleton).
      */
     private JobDAO dao = JobDAO.getInstance();
+    
+    /** Logger for this class. */
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * @return the singleton instance, builds it if necessary.
@@ -217,6 +229,15 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
         int jobsComplete = 0;
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
+            
+            // Should we exclude a configuration with a budget of zero?
+            if (EXCLUDE_ZERO_BUDGET
+            		&& (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
+            	log.info("Domain configuration " + cfg.getID() + "'" + cfg.getDomainName() + "'" 
+            			+ " excluded  (zero budget)");
+            	continue;
+            }
+            
             DomainConfigurationKey domainConfigKey = new DomainConfigurationKey(cfg);
             Job match = jobsUnderConstruction.get(domainConfigKey);
             if (match == null) {
