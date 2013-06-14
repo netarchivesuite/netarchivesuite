@@ -25,10 +25,6 @@
 
 package dk.netarkivet.common.management;
 
-import javax.management.MBeanServer;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
@@ -36,6 +32,11 @@ import java.rmi.registry.LocateRegistry;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.management.MBeanServer;
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,12 +70,6 @@ public class MBeanConnectorCreator {
     private static final String ENVIRONMENT_PASSWORD_FILE_PROPERTY
             = "jmx.remote.x.password.file";
     
-    /**
-     * @see CommonSettings#JMX_RESOLVE_LOCALHOSTNAME
-     */
-    private static final boolean RESOLVE_LOCALHOST = 
-    		Settings.getBoolean(CommonSettings.JMX_RESOLVE_LOCALHOSTNAME);
-    
     private static final Log log = LogFactory.getLog(
             MBeanConnectorCreator.class);
 
@@ -101,8 +96,7 @@ public class MBeanConnectorCreator {
                 // registry created above, and listen for rmi callbacks on the
                 // RMI port of this machine, exposing the mbeanserver with the
                 // name "jmxrmi".
-                String canonicalHostName = 
-                		RESOLVE_LOCALHOST ? SystemUtils.getLocalHostName() : SystemUtils.LOCALHOST;
+                String canonicalHostName = SystemUtils.getLocalHostName();
                 JMXServiceURL url = new JMXServiceURL(
                         MessageFormat.format(
                                 SERVICE_JMX_RMI_URL,

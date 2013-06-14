@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /** Miscellanous utilities for getting system resources. */
@@ -44,6 +47,8 @@ public class SystemUtils {
     /** Name of standard Java property containing class path.  Why these names
      * aren't actually defined as constants anywhere eludes me. */
     private static final String CLASS_PATH_PROPERTY = "java.class.path";
+    
+    private static final Log log = LogFactory.getLog(SystemUtils.class);
 
     /**
      * Looks up the IP number of the local host.
@@ -72,7 +77,11 @@ public class SystemUtils {
     public static String getLocalHostName() {
         String hostname = LOCALHOST;
         try {
-            hostname = InetAddress.getLocalHost().getCanonicalHostName();
+        	InetAddress localhost = InetAddress.getLocalHost();
+        	String localhostName = localhost.getCanonicalHostName();
+        	String localhostIp = localhost.getHostAddress();
+        	log.info("[getLocalHostName] Resolved: " + localhostName + " (" + localhostIp + ")");
+        	return localhostName;
         } catch (UnknownHostException e) {
             // If no interfaces, use default;
         }
