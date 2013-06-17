@@ -581,41 +581,58 @@ public class Job implements Serializable, JobInfo {
      * @param crawlerTraps A list of crawler trap regular expressions to add
      * to this job.
      */
-    private void editOrderXMLAddCrawlerTraps(String elementName,
+    @SuppressWarnings("unchecked")
+	private void editOrderXMLAddCrawlerTraps(String elementName,
                                              List<String> crawlerTraps) {
         if (crawlerTraps.size() == 0) {
             return;
         }
 
-        //Get the node to update
-        String rulesMapXpath = HeritrixTemplate.DECIDERULES_MAP_XPATH;
-        Node rulesMapNode
-                = orderXMLdoc.selectSingleNode(rulesMapXpath);
+        // Get the node to update
+        // If there is an acceptIfPrerequisite decideRule in the template, crawler traps should be
+        // placed before (cf. issue NAS-2205)
+        // If no such rule exists then we append the crawler traps as to the existing decideRuleds.
+        
+        Node rulesMapNode = orderXMLdoc.selectSingleNode(HeritrixTemplate.DECIDERULES_MAP_XPATH);
         if (rulesMapNode == null || !(rulesMapNode instanceof Element)) {
             throw new IllegalState(
                     "Unable to update order.xml document."
                     + "It does not have the right form to add"
                     + "crawler trap deciderules.");
         }
+        
         Element rulesMap = (Element) rulesMapNode;
-
-        //Add all regexps in the list to a single MatchesListRegExpDecideRule
-        //which is appended to the rulesMapNode.
-        Element deciderule = rulesMap.addElement("newObject");
-        deciderule.addAttribute("name", elementName);
-        deciderule.addAttribute("class",
+        
+        // Create the root node and append it top existing rules
+        Element decideRule = rulesMap.addElement("newObject");
+        
+        // If an acceptiIfPrerequisite node exists, detach and insert before it
+        Node acceptIfPrerequisiteNode = orderXMLdoc.selectSingleNode(
+        		HeritrixTemplate.DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
+        if (acceptIfPrerequisiteNode != null) {
+           List<Node> elements = rulesMap.elements();
+           int insertPosition = elements.indexOf(acceptIfPrerequisiteNode);
+           decideRule.detach();
+           elements.add(insertPosition, decideRule);
+        } else {
+        	rulesMap.elements().size();
+        }
+        
+        // Add all regexps in the list to a single MatchesListRegExpDecideRule        
+        decideRule.addAttribute("name", elementName);
+        decideRule.addAttribute("class",
                 MatchesListRegExpDecideRule.class.getName()
             );
 
-        Element decision = deciderule.addElement("string");
+        Element decision = decideRule.addElement("string");
         decision.addAttribute("name", "decision");
         decision.addText("REJECT");
 
-        Element listlogic = deciderule.addElement("string");
+        Element listlogic = decideRule.addElement("string");
         listlogic.addAttribute("name", "list-logic");
         listlogic.addText("OR");
 
-        Element regexpList = deciderule.addElement("stringList");
+        Element regexpList = decideRule.addElement("stringList");
         regexpList.addAttribute("name", "regexp-list");
         for (String trap : crawlerTraps) {
                 regexpList.addElement("string").addText(trap);

@@ -76,6 +76,12 @@ public class HeritrixTemplate {
         "/crawl-order/controller/newObject"
         + "/newObject[@name='decide-rules']"
         + "/map[@name='rules']";
+    /** Xpath needed by Job.editOrderXML_crawlerTraps(). */
+    public static final String DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH =
+        "/crawl-order/controller/newObject"
+        + "/newObject[@name='decide-rules']"
+        + "/map[@name='rules']/newObject[@class="
+        + "'org.archive.crawler.deciderules.PrerequisiteAcceptDecideRule']";
 
     /** Xpath checked by Heritrix for correct user-agent field in requests. */
     public static final String HERITRIX_USER_AGENT_XPATH =
