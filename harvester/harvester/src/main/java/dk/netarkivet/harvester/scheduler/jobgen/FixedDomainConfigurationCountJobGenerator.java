@@ -233,8 +233,10 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
             // Should we exclude a configuration with a budget of zero?
             if (EXCLUDE_ZERO_BUDGET
             		&& (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
-            	log.info("Domain configuration " + cfg.getID() + "'" + cfg.getDomainName() + "'" 
-            			+ " excluded  (zero budget)");
+            	log.info("[JobGen] Config '" + cfg.getName() + "' for '" + cfg.getDomainName() + "'" 
+            			+ " excluded (0"
+            			+ (cfg.getMaxBytes() == 0 ? " bytes" : " objects")
+            			+ ")");
             	continue;
             }
             
