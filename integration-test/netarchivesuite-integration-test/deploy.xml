@@ -1,25 +1,25 @@
 <project name="NetarchiveSuite-Deployment">
 
-    <target name="package" description="Create the package to deploy to the test system" depends="getSubversionRevision">    	
-		<ant antfile="${basedir}/../build.xml" dir="${basedir}/.." target="releasezipball" />
-        <echo>Packaging revision: ${svn.Revision}</echo>
-		<move file="${basedir}/../NetarchiveSuite.zip" tofile="target/deploy/NetarchiveSuite-${svn.Revision}.zip" /> 
-    </target>
-    
-    <target name="deploy2test" description="Copies the zip file to the test server" depends="getSubversionRevision">
-        <!-- Requires that a private/public key login has been enabled for this account -->      
-		<scp file="target/deploy/NetarchiveSuite-${svn.Revision}.zip" 
-		     toDir="test@kb-prod-udv-001.kb.dk:~/release_software_dist/releases"
-       		 keyfile="${user.home}/.ssh/id_rsa" /> 
-    </target>
-    
-    <target name="getSubversionRevision">
-        <exec executable="svn" output="target/svn.properties">
-            <arg value="info"/>
-        </exec>
-        <property prefix="svn" file="target/svn.properties"/>
-    </target>
-    
-    
+  <target name="package" description="Create the package to deploy to the test system" depends="getSubversionRevision">
+    <ant antfile="${basedir}/../build.xml" dir="${basedir}/.." target="releasezipball" />
+    <echo>Packaging revision: ${svn.Revision}</echo>
+    <move file="${basedir}/../NetarchiveSuite.zip" tofile="target/deploy/NetarchiveSuite-${svn.Revision}.zip" />
+  </target>
+
+  <target name="deploy2test" description="Copies the zip file to the test server" depends="getSubversionRevision">
+    <!-- Requires that a private/public key login has been enabled for this account -->
+    <scp file="target/deploy/NetarchiveSuite-${svn.Revision}.zip"
+         toDir="test@kb-prod-udv-001.kb.dk:~/release_software_dist/releases"
+         keyfile="${user.home}/.ssh/id_rsa" />
+  </target>
+
+  <target name="getSubversionRevision">
+    <exec executable="svn" output="target/svn.properties">
+      <arg value="info"/>
+    </exec>
+    <property prefix="svn" file="target/svn.properties"/>
+  </target>
+
+
 </project>
 

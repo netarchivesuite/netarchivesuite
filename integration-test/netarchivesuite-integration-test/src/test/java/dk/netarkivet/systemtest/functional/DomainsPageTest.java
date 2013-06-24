@@ -24,12 +24,6 @@
  */
 package dk.netarkivet.systemtest.functional;
 
-import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
@@ -39,6 +33,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import static dk.netarkivet.systemtest.page.DomainWebTestHelper.*;
 
@@ -61,6 +61,7 @@ public class DomainsPageTest extends SeleniumTest {
         addStep("Click the 'Create domain' link in the left menu under the " +
                 "'Definitions' section",
                 "The domain creation page should load");
+        driver.findElement(By.linkText("Definitions")).click();
         driver.findElement(By.linkText("Create Domain")).click();
         NASAssert.assertTrue(driver.getPageSource().contains(
                 "Enter the domain or list of domains to be created"),
@@ -75,7 +76,7 @@ public class DomainsPageTest extends SeleniumTest {
                 "Domain page not loaded correctly");
 
         addStep("Goto the 'Find domain' page and search for the newly added domain",
-                "The doamin should be found");
+                "The domain should be found");
         PageHelper.gotoPage(PageHelper.MenuPages.FindDomains);
         driver.findElement(By.name("DOMAIN_QUERY_STRING")).sendKeys(domain1ID);
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
@@ -128,7 +129,7 @@ public class DomainsPageTest extends SeleniumTest {
 
         addStep("Click the 'Show unused configurations' link again, set the second configuration as " +
                 "default configuration and click save. " ,
-                "Only the second configuration should be, as the 'Hide unused configurations filer has been reset " +
+                "Only the second configuration should be, as the 'Hide unused configurations' filter has been reset " +
                         "after the save.");
         PageHelper.clickLink(SHOW_UNUSED_CONFIGURATIONS_LINK);
         configurationRows = readConfigurationTableRows();

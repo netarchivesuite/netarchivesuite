@@ -34,7 +34,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.0.7</version>
+      <version>1.0.13</version>
     </dependency>
     <!-- Hook up the other loggers to use SLF4J -->
     <dependency>
@@ -60,19 +60,19 @@
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>6.8</version>
+        <artifactId>testng</artifactId>
+      <version>6.8.5</version>
     </dependency>
     <dependency>
       <groupId>com.jcraft</groupId>
       <artifactId>jsch</artifactId>
-      <version>0.1.49</version>
+      <version>0.1.50</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
-      <version>2.31.0</version>
+      <version>2.32.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -117,7 +117,6 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <properties>
@@ -159,7 +158,7 @@
               <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant-jsch</artifactId>
-                <version>1.8.4</version>
+                <version>1.9.1</version>
               </dependency>
             </dependencies>
           </plugin>
@@ -177,6 +176,6 @@
     </profile>
   </profiles>
   <properties>
-  <slf4j.version>1.6.4</slf4j.version>
+  <slf4j.version>1.7.5</slf4j.version>
   </properties>
 </project>

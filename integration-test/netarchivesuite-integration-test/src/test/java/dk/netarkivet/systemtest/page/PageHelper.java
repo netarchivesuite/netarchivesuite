@@ -24,12 +24,12 @@
  */
 package dk.netarkivet.systemtest.page;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PageHelper {
     private static WebDriver driver;
@@ -37,6 +37,7 @@ public class PageHelper {
     private static Map<MenuPages, String> pageMapping = new HashMap<MenuPages, String>();
 
     public static enum MenuPages {
+        Frontpage,
         SelectiveHarvests,
         SnapshotHarvests,
         Schedules,
@@ -57,6 +58,8 @@ public class PageHelper {
     }
 
     static {
+        pageMapping.put(MenuPages.Frontpage,
+                "HarvestDefinition");
         pageMapping.put(MenuPages.SelectiveHarvests,
                 "HarvestDefinition/Definitions-selective-harvests.jsp");
         pageMapping.put(MenuPages.SnapshotHarvests,

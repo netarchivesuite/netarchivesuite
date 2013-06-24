@@ -24,9 +24,6 @@
  */
 package dk.netarkivet.systemtest;
 
-import java.io.File;
-import java.io.IOException;
-
 import com.thoughtworks.selenium.Selenium;
 import dk.netarkivet.systemtest.page.PageHelper;
 import org.apache.commons.io.FileUtils;
@@ -41,6 +38,9 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeSuite;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * The super class for all Selenium based system tests.
@@ -90,9 +90,9 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         
         int numberOfSecondsToWaiting = 0;
         int maxNumberOfSecondsToWait = 60;
-        System.out.print("Waiting for GUI to start");
+        System.out.println("Waiting for GUI to start");
         while (numberOfSecondsToWaiting++ < maxNumberOfSecondsToWait) {
-            PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
+            PageHelper.gotoPage(PageHelper.MenuPages.Frontpage);
             if (selenium.isTextPresent("Definitions")) {
                 System.out.println();
                 return;
