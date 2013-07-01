@@ -56,8 +56,9 @@ public class SystemOverviewTest extends SeleniumTest {
                         + "instances of the same application running on the same machine)",
                 "Verify that the the expected applications are running as they should.");
         driver.findElement(By.linkText("Instance id")).click();
-        int numberOfRows = selenium.getXpathCount(
-                "//table[@id='system_state_table']/tbody/tr").intValue();
+        int numberOfRows = driver.findElements(
+                By.xpath("//table[@id='system_state_table']/tbody/tr")
+        ).size();
         Set<Application> expectedApplicationSet = new HashSet<Application>(
                 Arrays.asList(NASSystemUtil.getApplications()));
         Set<Application> displayedApplicationSet = new HashSet<Application>();

@@ -63,6 +63,7 @@ public class DomainsPageTest extends SeleniumTest {
                 "The domain creation page should load");
         driver.findElement(By.linkText("Definitions")).click();
         driver.findElement(By.linkText("Create Domain")).click();
+        driver.findElement(By.cssSelector("input[type=\"submit\"]"));
         NASAssert.assertTrue(driver.getPageSource().contains(
                 "Enter the domain or list of domains to be created"),
                 "Domain creation page not loaded correctly");

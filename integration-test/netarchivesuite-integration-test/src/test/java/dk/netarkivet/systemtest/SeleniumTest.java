@@ -41,6 +41,7 @@ import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The super class for all Selenium based system tests.
@@ -84,6 +85,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     
     private void initialiseSelenium() {
         driver = new FirefoxDriver();
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         baseUrl = "http://kb-test-adm-001.kb.dk:" + environmentManager.getPort();
         selenium = new WebDriverBackedSelenium(driver, baseUrl);
         PageHelper.initialize(driver, baseUrl);
@@ -103,7 +105,11 @@ public abstract class SeleniumTest extends ExtendedTestCase {
                 Thread.sleep(1000);
             } catch (InterruptedException ie) {
             }
-        } 
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ie) {
+        }
         throw new RuntimeException("Failed to load GUI");
     }
     
