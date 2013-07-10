@@ -22,20 +22,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.systemtest;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.apache.commons.io.IOUtils;
+package dk.netarkivet.systemtest.environment;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+import dk.netarkivet.systemtest.TestLogger;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
 
 /**
  * Provides utilites for performing deployment related commands in the test environment.
@@ -104,7 +100,7 @@ public class TestEnvironmentManager {
      * @param commandTimeout The timeout for the command.
      */
     public void runCommand(String remoteCommand, int commandTimeout) throws Exception {
-        runCommand(null, remoteCommand, 1000);
+        runCommand(null, remoteCommand, commandTimeout);
     }
     
     /**
@@ -220,6 +216,21 @@ public class TestEnvironmentManager {
             } catch (InterruptedException ie) {
             }
         }
+    }
+
+
+    /**
+     * Escape ',', '\' and &.
+     * Runs as TestX command
+     */
+    public void replaceStringInFile(String server, String file, String stringToReplace, String newString)
+            throws Exception {
+        runTestXCommand(server,
+                "sed -i.original 's" + "," +
+                        stringToReplace + "," +
+                        newString + "," +
+                        "g' " +
+                        file);
     }
 
     private class RemoteCommand {

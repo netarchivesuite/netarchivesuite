@@ -29,8 +29,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import dk.netarkivet.systemtest.TestEnvironment;
-import dk.netarkivet.systemtest.TestEnvironmentManager;
+import dk.netarkivet.systemtest.environment.TestEnvironment;
+import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
 
 /**
  * Test specification: https://sbforge.org/display/NAS/TEST+7.
@@ -110,7 +110,7 @@ public class StressTest extends ExtendedTestCase {
 
     private void enableHarvestDatabaseUpgrade() throws Exception {
         addStep("Enabling database upgrade.", "");
-        replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER,
+        environmentManager.replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER,
                 "conf/settings_GUIApplication.xml",
                 "<dir>harvestDatabase/fullhddb</dir>",
                 "<dir>harvestDatabase/fullhddb;upgrade=true</dir>");
@@ -182,19 +182,5 @@ public class StressTest extends ExtendedTestCase {
         
         environmentManager.runCommandWithoutQuotes(envDef+
                 "");
-    }
-    
-    /**
-     * Escape ',', '\' and &.
-     * Runs as TestX command
-     */
-    private void replaceStringInFile(String server, String file, String stringToReplace, String newString) 
-            throws Exception {
-        environmentManager.runTestXCommand(server,
-                "sed -i.original 's" + "," +
-                        stringToReplace + "," +
-                        newString + "," +
-                        "g' " +
-                        file);     
     }
 }

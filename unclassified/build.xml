@@ -403,6 +403,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </zip>
     </target>
 
+  <target name="deployzipball" depends="jarfiles,warfiles"
+          description="Build a binary package with all files needed to run the system">
+    <!-- Make a copy of the necessary derby-classes without the version information
+           so we can launch derby as a server.
+     -->
+    <copy file="lib/db/derby-10.8.2.2.jar" toFile="lib/db/derby.jar"/>
+    <copy file="lib/db/derbynet-10.8.2.2.jar" toFile="lib/db/derbynet.jar"/>
+    <zip basedir="." destfile="NetarchiveSuite.zip">
+      <include name="conf/**"/>
+      <include name="archivedatabasedir/**"/>
+      <include name="harvestdefinitionbasedir/**"/>
+      <include name="lib/**"/>
+      <include name="log"/>
+      <include name="modules/**"/>
+      <zipfileset dir="." includes="scripts/**" excludes="scripts/**/*.sh"/>
+      <!-- Add .sh scripts with executable bit set -->
+      <zipfileset dir="." includes="scripts/**/*.sh" filemode="755"/>
+      <include name="webpages/*.war"/>
+      <include name="derby.properties"/>
+    </zip>
+  </target>
+
     <target name="commonjar" depends="compileclean"
             description="Build a jar file with the dk.netarkivet.common package with all required libs in the manifest class path">
         <jar destfile="lib/dk.netarkivet.common.jar" basedir="${classdir}" update="no">

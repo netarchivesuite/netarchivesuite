@@ -1,4 +1,4 @@
-package dk.netarkivet.systemtest;
+package dk.netarkivet.systemtest.environment;
 
 public interface TestEnvironment {
     public static final String DEPLOYMENT_SERVER = "kb-prod-udv-001.kb.dk";

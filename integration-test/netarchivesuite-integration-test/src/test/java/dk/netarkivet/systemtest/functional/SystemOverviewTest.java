@@ -26,6 +26,7 @@ package dk.netarkivet.systemtest.functional;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import dk.netarkivet.systemtest.Application;
@@ -35,6 +36,7 @@ import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.PageHelper.MenuPages;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
 /**
@@ -56,29 +58,26 @@ public class SystemOverviewTest extends SeleniumTest {
                         + "instances of the same application running on the same machine)",
                 "Verify that the the expected applications are running as they should.");
         driver.findElement(By.linkText("Instance id")).click();
-        int numberOfRows = driver.findElements(
-                By.xpath("//table[@id='system_state_table']/tbody/tr")
-        ).size();
+        PageHelper.waitForPageToLoad();
         Set<Application> expectedApplicationSet = new HashSet<Application>(
                 Arrays.asList(NASSystemUtil.getApplications()));
         Set<Application> displayedApplicationSet = new HashSet<Application>();
+        Thread.sleep(5000);
+        WebElement table = PageHelper.getWebDriver().findElement(By.id("system_state_table"));
+        List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
+        for (int rowCounter = 1; rowCounter < tr_collection.size(); rowCounter++) {
+            WebElement row = tr_collection.get(rowCounter);
+            List<WebElement> rowCells = row.findElements(By.xpath("td"));
+            String machine = rowCells.get(0).getText();
+            String application = rowCells.get(1).getText();
+            String instance_Id = rowCells.get(2).getText();
+            String priority = rowCells.get(3).getText();
+            String replica = rowCells.get(4).getText();
+            log.debug("Checking row " + rowCounter + ", value is: " + machine + ": " + application);
 
-        for (int rowCounter = 1; rowCounter < numberOfRows; rowCounter++) {
-            log.debug("Checking row " + rowCounter + ", value is: "
-                    + selenium.getTable("system_state_table." + rowCounter
-                          + ".0") + ": "
-                    + selenium.getTable("system_state_table." + rowCounter
-                                    + ".1"));
-
-            displayedApplicationSet.add(new Application(selenium
-                    .getTable("system_state_table." + rowCounter + (".0")),
-                    selenium.getTable("system_state_table." + rowCounter
-                            + (".1")), selenium.getTable("system_state_table."
-                            + rowCounter + (".2")), selenium
-                            .getTable("system_state_table." + rowCounter
-                                    + (".3")), selenium
-                            .getTable("system_state_table." + rowCounter
-                                    + (".4"))));
+            displayedApplicationSet.add(new Application(
+                    machine, application, instance_Id, priority,replica
+            ));
         }
 
         NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);

@@ -24,11 +24,11 @@
  */
 package dk.netarkivet.systemtest.page;
 
-import java.util.Arrays;
-
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+
+import java.util.Arrays;
 
 /**
  * Provides functionality for  commonly used test access to domain web content.
@@ -38,7 +38,6 @@ import org.openqa.selenium.WebDriver;
 public class DomainWebTestHelper {
     public static final String SHOW_UNUSED_CONFIGURATIONS_LINK = "Show unused configurations";
     public static final String HIDE_UNUSED_CONFIGURATIONS_LINK = "Hide unused configurations";
-    public static final String NEW_CONFIGURATION = "New configuration";
     public static final String SHOW_UNUSED_SEED_LISTS_LINK = "Show unused seed lists";
     public static final String HIDE_UNUSED_SEED_LISTS_LINK = "Hide unused seed lists";
     public static final String NEW_SEED_LIST = "New seed list";
@@ -58,16 +57,6 @@ public class DomainWebTestHelper {
 
     public static void editDomain(String domainName) {
         PageHelper.gotoSubPage("HarvestDefinition/Definitions-edit-domain.jsp?name=" + domainName);
-    }
-
-    public static void createConfiguration(String domainName, String configurationName) {
-        TestEventManager.getInstance().addStimuli("Creating configuration" + configurationName);
-        WebDriver driver = PageHelper.getWebDriver();
-        editDomain(domainName);
-
-        driver.findElement(By.linkText(NEW_CONFIGURATION)).click();
-        driver.findElement(By.name("configName")).sendKeys(configurationName);
-        driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
     }
 
     public static void createSeedList(String domainName, String seedListName, String[] seeds) {

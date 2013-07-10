@@ -24,52 +24,61 @@
  */
 package dk.netarkivet.systemtest;
 
-import com.thoughtworks.selenium.Selenium;
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
 import dk.netarkivet.systemtest.page.PageHelper;
+import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 import org.apache.commons.io.FileUtils;
 import org.jaccept.structure.ExtendedTestCase;
 import org.jaccept.testreport.ReportGenerator;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * The super class for all Selenium based system tests.
  */
 public abstract class SeleniumTest extends ExtendedTestCase {
-    protected TestEnvironmentManager environmentManager;
+    protected static TestEnvironmentManager environmentManager;
+    protected static ApplicationManager applicationManager;
     private static ReportGenerator reportGenerator;
     protected final TestLogger log = new TestLogger(getClass());
     protected static WebDriver driver;
-    protected static Selenium selenium;
-    protected String baseUrl;
+    protected static String baseUrl;
 
     @BeforeSuite(alwaysRun=true)
     public void setupTest() {
         environmentManager = new TestEnvironmentManager(getTestX(), 8071);
-        startTestSystem();
+        applicationManager = new ApplicationManager(environmentManager);
+
+        deployTestSystem();
         initialiseSelenium();
+        setupFixture();
     }
     
     /**
-     * Start the full test system. May be used to start 
+     * Start the test system, either the full system including restting of settings/DB, or just reploy of individual
+     * component code.
      */
-    private void startTestSystem() {
+    private void deployTestSystem() {
         if (System.getProperty("systemtest.deploy", "false").equals("true")) {
             try {
                 environmentManager.runCommandWithoutQuotes(getStartupScript());
             } catch (Exception e) {
                 throw new RuntimeException("Failed to start test system", e);
+            }
+        } else {
+            if (System.getProperty("systemtest.redeploy.gui", "false").equals("true")) {
+                applicationManager.redeployGUI();
             }
         }
     }
@@ -87,35 +96,23 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         baseUrl = "http://kb-test-adm-001.kb.dk:" + environmentManager.getPort();
-        selenium = new WebDriverBackedSelenium(driver, baseUrl);
         PageHelper.initialize(driver, baseUrl);
-        
-        int numberOfSecondsToWaiting = 0;
-        int maxNumberOfSecondsToWait = 60;
-        System.out.println("Waiting for GUI to start");
-        while (numberOfSecondsToWaiting++ < maxNumberOfSecondsToWait) {
-            PageHelper.gotoPage(PageHelper.MenuPages.Frontpage);
-            if (selenium.isTextPresent("Definitions")) {
-                System.out.println();
-                return;
-            } else {
-                System.out.print(".");
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ie) {
-            }
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ie) {
-        }
-        throw new RuntimeException("Failed to load GUI");
+        applicationManager.waitForGUIToStart(60);
+
+    }
+
+    private void setupFixture() {
+        HarvestUtils.minimizeDefaultHarvest();
     }
     
-    @AfterTest (alwaysRun=true)
-    public void stopSelenium() {
-        selenium.stop();
+    @AfterSuite(alwaysRun=true)
+    public void shutdown() {
+        try {
+        SelectiveHarvestPageHelper.deactivateAllHarvests();
+            driver.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -126,6 +123,14 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      */
     protected String getTestX() {
         return "SystemTest";
+    }
+
+    @BeforeSuite (alwaysRun = true)
+    public void startReportGenerator() {
+        if (System.getProperty("enableTestReport", "false").equals("true") ) {
+            reportGenerator = new ReportGenerator();
+            reportGenerator.projectStarted("Bitrepository test");
+        }
     }
 
     @AfterMethod

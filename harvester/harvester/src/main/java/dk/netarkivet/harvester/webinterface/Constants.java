@@ -76,6 +76,11 @@ public class Constants {
 
     public static final String COLUMN_PARAM = "column";
 
+    public static final String SORT_FIELD_PARAM = "sort_field";
+    public static final String SORT_ORDER_PARAM = "sort_order";
+    public static final String SORT_ORDER_ASC = "asc";
+    public static final String SORT_ORDER_DESC = "desc";
+
     public static final String FROM_FILE_PARAM = "fromFile";
 
     public static final String DOMAINLIST_PARAM = "domainlist";

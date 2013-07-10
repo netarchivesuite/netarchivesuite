@@ -303,15 +303,15 @@ public abstract class DomainDAO implements Iterable<Domain> {
      *
      *
      * @param domainName Domain to get info for.
-     * @param latestFirst true if histories are to be returned sorted with the
-     * most recent harvests first, false if they are to be sorted with the
-     * oldest harvests first.
+     * @param orderBy The column attribute to order by.
+     * @param asc true if the results should be ordered according to the natural order,
+     *            false if they are to be sorted in reverse.
      * @return List of DomainHarvestInfo objects with information on that
      * domain.
      *
      */
-    public abstract List<DomainHarvestInfo> getDomainHarvestInfo(
-            String domainName, boolean latestFirst);
+    public abstract List<DomainHarvestInfo> listDomainHarvestInfo(
+            String domainName, String orderBy, boolean asc);
 
     /**
      * Get the DomainConfiguration given a specific domainName and a

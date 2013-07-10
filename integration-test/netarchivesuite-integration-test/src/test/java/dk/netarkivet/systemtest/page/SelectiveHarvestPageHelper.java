@@ -26,6 +26,7 @@ package dk.netarkivet.systemtest.page;
 
 import java.util.List;
 
+import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -35,9 +36,10 @@ import org.openqa.selenium.WebElement;
  *
  * Will also log webpage interactions.
  */
-public class HarvestWebTestHelper {
+public class SelectiveHarvestPageHelper {
     public static void createSelectiveHarvest(
             String name, String comments, String[] domains) {
+        TestEventManager.getInstance().addStimuli("Creating harvest " + name);
         WebDriver driver = PageHelper.getWebDriver();
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
         driver.findElement(By.linkText("Create new selective harvest definition")).click();
@@ -67,17 +69,23 @@ public class HarvestWebTestHelper {
     }
 
     public static void activateHarvest(String name) {
+        TestEventManager.getInstance().addStimuli("Activating harvest " + name);
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
+        if (PageHelper.getWebDriver().getPageSource().contains("Show inactive harvest definitions")) {
+            PageHelper.getWebDriver().findElement(By.linkText("Show inactive harvest definitions")).click();
+        }
         WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
         for (WebElement webElement:tr_collection) {
             if (webElement.getText().contains(name)) {
                 webElement.findElement(By.linkText("Activate")).click();
+                break;
             }
         }
     }
 
     public static void deactivateHarvest(String name) {
+        TestEventManager.getInstance().addStimuli("Deactivating harvest " + name);
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
         WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
@@ -87,4 +95,22 @@ public class HarvestWebTestHelper {
             }
         }
     }
+
+    public static void deactivateAllHarvests() {
+        TestEventManager.getInstance().addStimuli("Deactivating all harvests");
+        PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
+        if (PageHelper.getWebDriver().getPageSource().contains("Hide inactive harvest definitions")) {
+            PageHelper.getWebDriver().findElement(By.linkText("Hide inactive harvest definitions")).click();
+        }
+        while (!PageHelper.getWebDriver().getPageSource().contains("No selective harvests defined")) {
+            // Ensure page is loaded
+            PageHelper.getWebDriver().findElement(By.linkText("Create new selective harvest definition"));
+            WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
+            List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
+            TestEventManager.getInstance().addStimuli("Deactivating harvest: " +
+                    tr_collection.get(1).findElements(By.xpath("td")).get(0).getText());
+            tr_collection.get(1).findElement(By.linkText("Deactivate")).click();
+        }
+    }
+
 }

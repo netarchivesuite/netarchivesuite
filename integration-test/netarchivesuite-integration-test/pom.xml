@@ -5,7 +5,7 @@
   <parent>
     <groupId>dk.netarchivesuite</groupId>
     <artifactId>netarchivesuite</artifactId>
-    <version>4.1-SNAPSHOT</version>
+    <version>4.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>netarchivesuite-integration-test</artifactId>
@@ -133,47 +133,89 @@
       </build>
     </profile>
     <profile>
-      <id>deploy2test</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.7</version>
-            <executions>
-              <execution>
-                <phase>pre-integration-test</phase>
-                <configuration>
-                  <target>
-                    <property name="build.compiler" value="extJavac" />
-                    <ant antfile="deploy.xml" target="package" />
-                    <ant antfile="deploy.xml" target="deploy2test" />
-                  </target>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant-jsch</artifactId>
-                <version>1.9.1</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <systemPropertyVariables>
-               <systemtest.deploy>true</systemtest.deploy>
-              </systemPropertyVariables>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+    <id>deploy2test</id>
+    <build>
+      <plugins>
+        <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.7</version>
+          <executions>
+            <execution>
+              <phase>pre-integration-test</phase>
+              <configuration>
+                <target>
+                  <property name="build.compiler" value="extJavac" />
+                  <ant antfile="deploy.xml" target="package" />
+                  <ant antfile="deploy.xml" target="deploy2test" />
+                </target>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.ant</groupId>
+              <artifactId>ant-jsch</artifactId>
+              <version>1.9.1</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <systemPropertyVariables>
+              <systemtest.deploy>true</systemtest.deploy>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+    <profile>
+    <id>redeployGUI</id>
+    <build>
+      <plugins>
+        <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.7</version>
+          <executions>
+            <execution>
+              <phase>pre-integration-test</phase>
+              <configuration>
+                <target>
+                  <property name="build.compiler" value="extJavac" />
+                  <ant antfile="deploy.xml" target="package" />
+                  <ant antfile="deploy.xml" target="deploy2test" />
+                </target>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.ant</groupId>
+              <artifactId>ant-jsch</artifactId>
+              <version>1.9.1</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <systemPropertyVariables>
+              <systemtest.redeploy.gui>true</systemtest.redeploy.gui>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
   </profiles>
   <properties>
   <slf4j.version>1.7.5</slf4j.version>

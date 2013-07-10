@@ -29,18 +29,22 @@ itself.
 With parameter domainName, it performs a search.  Name can be a glob pattern
 (using ? and * only) or a single domain.  If domains are found, they are
 displayed, if no domains are found a message is shown.
---%><%@ page import="javax.servlet.RequestDispatcher,
-                 java.util.List,
+--%><%@ page import="java.util.List,
+                 java.util.Set,
+                 javax.servlet.RequestDispatcher,
                  dk.netarkivet.common.CommonSettings,
-                 dk.netarkivet.common.utils.Settings,
                  dk.netarkivet.common.utils.I18n,
+                 dk.netarkivet.common.utils.Settings,
+                 dk.netarkivet.common.utils.TableSort,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
-                 dk.netarkivet.harvester.datamodel.DomainHarvestInfo,
-                 dk.netarkivet.harvester.webinterface.Constants,
-                 dk.netarkivet.harvester.webinterface.HarvestStatus"
+                 dk.netarkivet.harvester.datamodel.DomainHarvestInfo"
          pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%>
+<%@ page import="dk.netarkivet.harvester.webinterface.Constants" %>
+<%@ page import="dk.netarkivet.harvester.webinterface.HarvestHistoryTableHelper" %>
+<%@ page import="dk.netarkivet.harvester.webinterface.HarvestStatus" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"
 />
@@ -54,21 +58,19 @@ displayed, if no domains are found a message is shown.
     long pageSize = Long.parseLong(Settings.get(
             CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
 
-    String startPagePost=request.getParameter(Constants.START_PAGE_PARAMETER);
-
-    if(startPagePost == null){
-        startPagePost = "1";
-    }
-
     String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
     if (searchParam == null ) searchParam = "";
     searchParam = HTMLUtils.encode(searchParam);
 
-    String orderParam = request.getParameter(Constants.IS_NEWEST_FIRST);
-    boolean newestFirst = true;
-    if ((Constants.FALSE).equals(orderParam)) {
-        newestFirst = false;
-    }
+  String sortField=request.getParameter(Constants.SORT_FIELD_PARAM);
+  if  (sortField == null) {
+    sortField = HarvestHistoryTableHelper.START_TIME_FIELD;
+  }
+  String sortOrder = request.getParameter(Constants.SORT_ORDER_PARAM);
+  if  (sortOrder == null) {
+    sortOrder = Constants.SORT_ORDER_ASC;
+  }
+  String domainName=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
 %>
 <%!
     private static final I18n I18N = new I18n(
@@ -76,7 +78,6 @@ displayed, if no domains are found a message is shown.
 %>
 <%
     HTMLUtils.setUTF8(request);
-    String domainName = request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
     if (domainName != null && domainName.length() > 0) {
         //Domain name parameter given
         domainName = domainName.trim();
@@ -97,11 +98,9 @@ displayed, if no domains are found a message is shown.
 
 <form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
 
-<input type="hidden"
-       name="<%= Constants.START_PAGE_PARAMETER%>"
-       value="<%=startPagePost%>"/>
-<input type="hidden" name="<%=Constants.IS_NEWEST_FIRST%>" 
-	value="<%=newestFirst ? Constants.TRUE : Constants.FALSE%>" />
+  <input type="hidden"
+         name="<%= Constants.START_PAGE_PARAMETER%>"
+         value="<%=startPage%>"/>
 </form>
 
 <%
@@ -207,37 +206,35 @@ hidden fields are set as url parameters by the javascript.
 
 <input type="hidden"
        name="<%= Constants.START_PAGE_PARAMETER%>"
-       value="<%=startPagePost%>"/>
-    <input type="hidden" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=newestFirst ? Constants.TRUE : Constants.FALSE%>"/>
-</form>
+       value="<%=startPage%>"/></form>
 
 <%
-    List<DomainHarvestInfo> hiList =
-        DomainDAO.getInstance().getDomainHarvestInfo(domainName, newestFirst);
-    long totalResultsCount = hiList.size();
-    long actualPageSize = (pageSize == 0 ?
-        totalResultsCount : pageSize);
+  List<DomainHarvestInfo> hiList =
+        DomainDAO.getInstance().listDomainHarvestInfo(
+        domainName, sortField, sortOrder.equals(Constants.SORT_ORDER_ASC) ? true :false );
 
-    long startPageIndex = Long.parseLong(startPage);
-    long startIndex = 0;
-    long endIndex = 0;
+  long totalResultsCount = hiList.size();
+  long actualPageSize = (pageSize == 0 ?
+          totalResultsCount : pageSize);
 
-    if (totalResultsCount > 0) {
-        startIndex = ((startPageIndex - 1) * actualPageSize);
-        endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
-    } else {
-      	// Avoid bug NAS-1927. 
-        // Dont's show "Search results: 0, displaying results 1 to 0"
-        // but "Search results: 0, displaying results 0 to 0"
-        startIndex = -1;
-    }
-    
-    boolean prevLinkActive = HarvestStatus.isPreviousLinkActive(
-    		pageSize, totalResultsCount, startIndex);
+  long startPageIndex = Long.parseLong(startPage);
+  long startIndex = 0;
+  long endIndex = 0;
 
-    boolean nextLinkActive = HarvestStatus.isNextLinkActive(
-    		pageSize, totalResultsCount, endIndex);    
+  if (totalResultsCount > 0) {
+    startIndex = ((startPageIndex - 1) * actualPageSize);
+    endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
+  } else {
+    // Avoid bug NAS-1927.
+    // Dont's show "Search results: 0, displaying results 1 to 0"
+    // but "Search results: 0, displaying results 0 to 0"
+    startIndex = -1;
+  }
 
+  boolean prevLinkActive = HarvestStatus.isPreviousLinkActive(
+          pageSize, totalResultsCount, startIndex);
+  boolean nextLinkActive = HarvestStatus.isNextLinkActive(
+          pageSize, totalResultsCount, endIndex);
 %>
             <fmt:message key="status.results.displayed">
                 <fmt:param><%=totalResultsCount%></fmt:param>
@@ -286,28 +283,101 @@ hidden fields are set as url parameters by the javascript.
                     HTMLUtils.escapeHtmlValues(domainName)%></a></fmt:param>
                 </fmt:message>
             </h3>
-            <% hiList
-                    = DomainDAO.getInstance().getDomainHarvestInfo(domainName,
-                                                                   newestFirst);
+            <%
             if (hiList == null || hiList.size() == 0) {// No history
             %><p><fmt:message key="domain.0.was.never.harvested">
                   <fmt:param value="<%=domainName%>"/>
             </fmt:message></p><%
             } else {//print history
 %>
-            <table class="selection_table">
-            <tr>
-                <th><fmt:message key="table.job.harvestname"/></th>
-                <th><fmt:message key="table.job.harvestnumber"/></th>
-                <th><fmt:message key="table.job.jobid"/></th>
-                <th><fmt:message key="table.job.domainconfigurations.configuration"/></th>
-                <th><fmt:message key="table.job.starttime"/></th>
-                <th><fmt:message key="table.job.stoptime"/></th>
-                <th><fmt:message key="table.job.domainconfigurations.bytesharvested"/></th>
-                <th><fmt:message key="table.job.domainconfigurations.documentsharvested"/></th>
-                <th><fmt:message key="table.job.domainconfigurations.stopreason"/></th>
-            </tr>
-<%
+<table class="selection_table"><%
+  HarvestHistoryTableHelper helper = new HarvestHistoryTableHelper(sortField, sortOrder);
+
+  String sortBaseLink="Harveststatus-perdomain.jsp?"
+        + Constants.DOMAIN_SEARCH_PARAM + "=" + HTMLUtils.encode(domainName) + "&";
+%>
+  <tr>
+  <th class="harvestHeader">
+    <a href="<%=sortBaseLink + Constants.SORT_ORDER_PARAM + "=" +
+         helper.getOrderAfterClick(HarvestHistoryTableHelper.HARVEST_NAME_FIELD) + "&" +
+       Constants.SORT_FIELD_PARAM + "=" +
+         HarvestHistoryTableHelper.HARVEST_NAME_FIELD %>">
+      <fmt:message key="table.job.harvestname"/>
+      <%=helper.getOrderArrow(HarvestHistoryTableHelper.HARVEST_NAME_FIELD)%>
+    </a>
+  </th>
+  <th class="harvestHeader">
+    <a href="<%=sortBaseLink + Constants.SORT_ORDER_PARAM + "=" +
+         helper.getOrderAfterClick(HarvestHistoryTableHelper.HARVEST_NUMBER_FIELD) + "&" +
+       Constants.SORT_FIELD_PARAM + "=" +HarvestHistoryTableHelper.HARVEST_NUMBER_FIELD %>">
+      <fmt:message key="table.job.harvestnumber"/>
+      <%=helper.getOrderArrow(HarvestHistoryTableHelper.HARVEST_NUMBER_FIELD)%>
+    </a>
+  </th>
+  <th class="harvestHeader">
+    <a href="<%=sortBaseLink + Constants.SORT_ORDER_PARAM + "=" +
+         helper.getOrderAfterClick(HarvestHistoryTableHelper.JOB_ID_FIELD) + "&" +
+       Constants.SORT_FIELD_PARAM + "=" +HarvestHistoryTableHelper.JOB_ID_FIELD %>">
+      <fmt:message key="table.job.jobid"/>
+      <%=helper.getOrderArrow(HarvestHistoryTableHelper.JOB_ID_FIELD)%>
+    </a>
+  </th>
+
+  <th class="harvestHeader">
+    <a href="<%=sortBaseLink + Constants.SORT_ORDER_PARAM + "=" +
+         helper.getOrderAfterClick(HarvestHistoryTableHelper.CONFIGURATION_NAME_FIELD) + "&" +
+       Constants.SORT_FIELD_PARAM + "=" +HarvestHistoryTableHelper.CONFIGURATION_NAME_FIELD %>">
+      <fmt:message key="table.job.domainconfigurations.configuration"/>
+      <%=helper.getOrderArrow(HarvestHistoryTableHelper.CONFIGURATION_NAME_FIELD)%>
+    </a>
+  </th>
+
+    <th class="harvestHeader">
+      <a href="<%=sortBaseLink + Constants.SORT_ORDER_PARAM + "=" +
+         helper.getOrderAfterClick(HarvestHistoryTableHelper.START_TIME_FIELD) + "&" +
+       Constants.SORT_FIELD_PARAM + "=" +HarvestHistoryTableHelper.START_TIME_FIELD %>">
+        <fmt:message key="table.job.starttime"/>
+        <%=helper.getOrderArrow(HarvestHistoryTableHelper.START_TIME_FIELD)%>
+      </a>
+    </th>
+
+    <th class="harvestHeader">
+      <a href="<%=sortBaseLink + Constants.SORT_ORDER_PARAM + "=" +
+         helper.getOrderAfterClick(HarvestHistoryTableHelper.STOP_TIME_FIELD) + "&" +
+       Constants.SORT_FIELD_PARAM + "=" +HarvestHistoryTableHelper.STOP_TIME_FIELD %>">
+        <fmt:message key="table.job.stoptime"/>
+        <%=helper.getOrderArrow(HarvestHistoryTableHelper.STOP_TIME_FIELD)%>
+      </a>
+    </th>
+
+    <th class="harvestHeader">
+      <a href="<%=sortBaseLink + Constants.SORT_ORDER_PARAM + "=" +
+         helper.getOrderAfterClick(HarvestHistoryTableHelper.BYTES_HARVESTED_FIELD) + "&" +
+       Constants.SORT_FIELD_PARAM + "=" +HarvestHistoryTableHelper.BYTES_HARVESTED_FIELD %>">
+        <fmt:message key="table.job.domainconfigurations.bytesharvested"/>
+        <%=helper.getOrderArrow(HarvestHistoryTableHelper.BYTES_HARVESTED_FIELD)%>
+      </a>
+    </th>
+
+    <th class="harvestHeader">
+      <a href="<%=sortBaseLink + Constants.SORT_ORDER_PARAM + "=" +
+         helper.getOrderAfterClick(HarvestHistoryTableHelper.DOCUMENTS_HARVESTED_FIELD) + "&" +
+       Constants.SORT_FIELD_PARAM + "=" +HarvestHistoryTableHelper.DOCUMENTS_HARVESTED_FIELD %>">
+        <fmt:message key="table.job.domainconfigurations.documentsharvested"/>
+        <%=helper.getOrderArrow(HarvestHistoryTableHelper.DOCUMENTS_HARVESTED_FIELD)%>
+      </a>
+    </th>
+
+    <th class="harvestHeader">
+      <a href="<%=sortBaseLink + Constants.SORT_ORDER_PARAM + "=" +
+         helper.getOrderAfterClick(HarvestHistoryTableHelper.STOPPED_DUE_TO_FIELD) + "&" +
+       Constants.SORT_FIELD_PARAM + "=" +HarvestHistoryTableHelper.STOPPED_DUE_TO_FIELD %>">
+        <fmt:message key="table.job.domainconfigurations.stopreason"/>
+        <%=helper.getOrderArrow(HarvestHistoryTableHelper.STOPPED_DUE_TO_FIELD)%>
+      </a>
+    </th>
+  </tr>
+ <%
                 int rowCount = 0;
 
                 for (DomainHarvestInfo hi : hiList.subList((int)startIndex,

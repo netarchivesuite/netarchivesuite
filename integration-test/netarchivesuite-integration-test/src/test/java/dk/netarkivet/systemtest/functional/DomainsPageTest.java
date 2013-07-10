@@ -24,8 +24,15 @@
  */
 package dk.netarkivet.systemtest.functional;
 
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.SeleniumTest;
+import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import org.openqa.selenium.By;
@@ -33,12 +40,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 import static dk.netarkivet.systemtest.page.DomainWebTestHelper.*;
 
@@ -106,7 +107,7 @@ public class DomainsPageTest extends SeleniumTest {
         addStep("Create a new configuration",
                 "The configuration should not be listed initially as the configuration is hidden by the unused filter");
         String configuration1ID = createConfigurationID();
-        DomainWebTestHelper.createConfiguration(domain1ID, configuration1ID);
+        DomainConfigurationPageHelper.createConfiguration(domain1ID, configuration1ID);
         NASAssert.assertEquals(1, configurationRows.size(), "More than one configuration listed after second " +
                 "configuration was created. Should have been hidden by unused filter");
 

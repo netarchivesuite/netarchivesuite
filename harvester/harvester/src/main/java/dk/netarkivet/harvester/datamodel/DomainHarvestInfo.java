@@ -184,4 +184,21 @@ public class DomainHarvestInfo {
     public StopReason getStopReason() {
         return reason;
     }
+
+    @Override
+    public String toString() {
+        return "DomainHarvestInfo{" +
+                "domainName='" + domainName + '\'' +
+                ", jobID=" + jobID +
+                ", harvestID=" + harvestID +
+                ", harvestNum=" + harvestNum +
+                ", harvestName='" + harvestName + '\'' +
+                ", configName='" + configName + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", bytesDownloaded=" + bytesDownloaded +
+                ", docsDownloaded=" + docsDownloaded +
+                ", reason=" + reason +
+                '}';
+    }
 }

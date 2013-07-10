@@ -97,10 +97,7 @@ public class PageHelper {
     }
 
     public static void gotoPage(MenuPages page) {
-        if (driver == null || baseUrl == null) {
-            throw new IllegalStateException("Failed to goto page, webdriver " +
-                    "and baseurl hasn't been set.");
-        }
+        checkInitialization();
         String pageUrl = pageMapping.get(page);
         TestEventManager.getInstance().addStimuli("Loading " + pageUrl);
         driver.get(baseUrl + "/" + pageUrl);
@@ -111,11 +108,22 @@ public class PageHelper {
      * @param subURL
      */
     public static void gotoSubPage(String subURL) {
+        checkInitialization();
         TestEventManager.getInstance().addStimuli("Loading " + subURL);
         driver.get(baseUrl + "/" + subURL);
     }
 
+    /**
+     * Load the page relative to the base url. Doesn't log the page reload
+     * @param subURL
+     */
+    public static void reloadSubPage(String subURL) {
+        checkInitialization();
+        driver.get(baseUrl + "/" + subURL);
+    }
+
     public static void clickLink(String linkText) {
+        checkInitialization();
         TestEventManager.getInstance().addStimuli("Clicking '" + linkText + "' link.");
         driver.findElement(By.linkText(linkText)).click();
     }
@@ -123,9 +131,26 @@ public class PageHelper {
     public static void initialize(WebDriver theDriver, String theBaseUrl) {
         driver = theDriver;
         baseUrl = theBaseUrl;
+        checkInitialization();
     }
 
     public static WebDriver getWebDriver() {
+        checkInitialization();
         return driver;
+    }
+
+    /**
+     * In case of button clicks causing page loads this function should be called to ensure the new page is finished
+     * loading before the test is continued.
+     */
+    public static void waitForPageToLoad() {
+        driver.findElement(By.className("systeminfo"));
+    }
+
+    private static void checkInitialization() {
+        if (driver == null || baseUrl == null) {
+            throw new IllegalStateException("Failed to goto page, webdriver " +
+                    "and baseurl hasn't been set.");
+        }
     }
 }

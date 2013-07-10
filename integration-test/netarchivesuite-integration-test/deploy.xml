@@ -1,7 +1,7 @@
 <project name="NetarchiveSuite-Deployment">
 
   <target name="package" description="Create the package to deploy to the test system" depends="getSubversionRevision">
-    <ant antfile="${basedir}/../build.xml" dir="${basedir}/.." target="releasezipball" />
+    <ant antfile="${basedir}/../build.xml" dir="${basedir}/.." target="deployzipball" />
     <echo>Packaging revision: ${svn.Revision}</echo>
     <move file="${basedir}/../NetarchiveSuite.zip" tofile="target/deploy/NetarchiveSuite-${svn.Revision}.zip" />
   </target>
@@ -19,7 +19,5 @@
     </exec>
     <property prefix="svn" file="target/svn.properties"/>
   </target>
-
-
 </project>
 
