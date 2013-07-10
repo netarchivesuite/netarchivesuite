@@ -533,15 +533,14 @@ public class DomainDBDAOTester extends DataModelTestCase {
             HarvestDBConnection.release(c);
         }
         DomainDAO dao = DomainDAO.getInstance();
-        List<DomainHarvestInfo> hinfos = dao.getDomainHarvestInfo(theDomainName,
-                                                                  true);
+        List<DomainHarvestInfo> hinfos = dao.listDomainHarvestInfo(theDomainName,
+                "startdate", true);
         Date d0 = hinfos.get(0).getStartDate();
         Date d1 = hinfos.get(1).getStartDate();
 
         assertTrue("Should have dates in inverse start order not '" + d0 + "," + d1 +  "'" , d0.after(d1) );
 
-        hinfos = dao.getDomainHarvestInfo(theDomainName,
-                                                                  false);
+        hinfos = dao.listDomainHarvestInfo(theDomainName, "startdate", false);
         d0 = hinfos.get(0).getStartDate();
         d1 = hinfos.get(1).getStartDate();
 
