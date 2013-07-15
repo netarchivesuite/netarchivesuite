@@ -106,7 +106,12 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
     private final long LIM_MAX_TOTAL_SIZE
             = Long.parseLong(Settings.get(
                     HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE));
-
+    /**
+     * Constant : exclude {@link DomainConfiguration}s with a budget of zero (bytes or objects).
+     */
+    private final boolean EXCLUDE_ZERO_BUDGET = Settings.getBoolean(
+            HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_EXCLUDE_ZERO_BUDGET);
+    
     /**
      * Singleton instance.
      */
@@ -155,6 +160,14 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         JobDAO dao = JobDAO.getInstance();
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
+            if (EXCLUDE_ZERO_BUDGET 
+                        && (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
+                    log.info("Config '" + cfg.getName() + "' for '" + cfg.getDomainName() + "'" 
+                            + " excluded (0"
+                            + (cfg.getMaxBytes() == 0 ? " bytes" : " objects")
+                            + ")");
+                    continue;
+            }
             // Do we need to create a new Job or is the current job ok
             if ((job == null) || (!canAccept(job, cfg))) {
                 if (job != null) {
