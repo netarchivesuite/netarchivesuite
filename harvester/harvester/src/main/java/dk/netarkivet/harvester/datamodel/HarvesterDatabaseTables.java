@@ -163,7 +163,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about harvestdefinitions. */
     HARVESTDEFINITIONS {
         static final String NAME = "harvestdefinitions";
-        static final int REQUIRED_VERSION = 2;
+        static final int REQUIRED_VERSION = 3;
        
         @Override
         public int getRequiredVersion() {
@@ -253,7 +253,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about jobs. */
     JOBS {
         static final String NAME = "jobs";
-        static final int REQUIRED_VERSION = 8;
+        static final int REQUIRED_VERSION = 9;
        
         @Override
         public int getRequiredVersion() {

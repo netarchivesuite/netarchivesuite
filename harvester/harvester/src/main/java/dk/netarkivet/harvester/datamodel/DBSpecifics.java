@@ -169,12 +169,38 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             upgradeExtendedFieldTypeTable(currentVersion, toVersion);
         } else if (tableName.equals(HarvesterDatabaseTables.DOMAINS.getTablename())) {
             upgradeDomainsTable(currentVersion, toVersion);
+        } else if (tableName.equals(HarvesterDatabaseTables.HARVESTDEFINITIONS.getTablename())) {
+            upgradeHarvestdefinitionsTable(currentVersion, toVersion);
             // Add new if else when other tables need to be upgraded
         } else {
             throw new NotImplementedException(
                     "No method exists for migrating table '" + tableName
                     + "' to version " + toVersion);
         }
+    }
+
+    private void upgradeHarvestdefinitionsTable(int currentVersion,
+            int toVersion) {
+        if (currentVersion < 2) {
+            throw new IllegalState("Database is in an illegalState: "
+                    + "The current version " + currentVersion
+                    + " of table '" + HarvesterDatabaseTables.HARVESTDEFINITIONS.getTablename() 
+                    + "' is not acceptable. The current table version is less than open source version 2. "
+                    + "Probably a wrong entry in the schemaversions table");
+        }
+        if (currentVersion == 2 && toVersion >= 3) {
+            migrateHarvestdefinitionsv2tov3();
+            currentVersion = 3;
+        }
+        // insert new migrations here
+        if (currentVersion != HarvesterDatabaseTables.HARVESTDEFINITIONS.getRequiredVersion()) {
+            throw new NotImplementedException(
+                    "No method exists for migrating table '"
+                    + HarvesterDatabaseTables.HARVESTDEFINITIONS.getTablename()
+                    + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }    
+        
     }
 
     private void upgradeExtendedFieldTypeTable(int currentVersion, int toVersion) {
@@ -367,6 +393,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         if (currentVersion == 7 && toVersion >= 8) {
             migrateJobsv7tov8();
             currentVersion = 8;
+        }
+        if (currentVersion == 8 && toVersion >= 9) {
+            migrateJobsv8tov9();
+            currentVersion = 9;
         }
         // future updates of the jobs table are inserted here
         if (currentVersion == HarvesterDatabaseTables.JOBS.getRequiredVersion() 
@@ -624,15 +654,27 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     
     /**
      * Migrates the 'jobs' table from version 6 to version 7 consisting of adding
-     * the bigint fieldcontinuationof with null as default
+     * the bigint fieldcontinuationof with null as default.
      */
     protected abstract void migrateJobsv6tov7();
 
     /**
      * Migrates the 'jobs' table from version 7 to version 8 consisting of adding
-     * the date creationdate with null as default
+     * the date creationdate with null as default.
      */
     protected abstract void migrateJobsv7tov8(); 
+    
+    /**
+     * Migrates the 'jobs' table from version 8 to version 9 consisting of adding
+     * the string harvestname_prefix with null as default.
+     */
+    protected abstract void migrateJobsv8tov9();
+    
+    /**
+     * Migrates the 'harvestdefinitions' table from version 2 to version 3 consisting of adding
+     * the string audience with null as default.
+     */
+    protected abstract void migrateHarvestdefinitionsv2tov3();
     
     /**
      * Update all tables in the enum class {@link HarvesterDatabaseTables} to the required

@@ -46,6 +46,4 @@ public class DerbyServerSpecifics extends DerbySpecifics {
     public String getDriverClassName() {
         return "org.apache.derby.jdbc.ClientDriver";
     }
-
-
 }

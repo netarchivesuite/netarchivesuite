@@ -332,4 +332,20 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         };
         HarvestDBConnection.updateTable("jobs", 8, sqlStatements);
     }
+
+    @Override
+    protected void migrateJobsv8tov9() {
+        String[] sqlStatements = {
+                "ALTER TABLE jobs ADD COLUMN harvestname_prefix VARCHAR(100) DEFAULT NULL"
+        };
+        HarvestDBConnection.updateTable("jobs", 9, sqlStatements);   
+    }
+    
+    @Override
+    protected void migrateHarvestdefinitionsv2tov3() {
+        String[] sqlStatements = {
+                "ALTER TABLE harvestdefinitions ADD COLUMN audience VARCHAR(100) DEFAULT NULL"
+        };
+        HarvestDBConnection.updateTable("harvestdefinitions", 3, sqlStatements);
+    }
 }
