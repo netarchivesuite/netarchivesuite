@@ -131,9 +131,9 @@ public class JobDBDAO extends JobDAO {
                     + "forcemaxbytes, forcemaxrunningtime, orderxml, "
                     + "orderxmldoc, seedlist, "
                     + "harvest_num, startdate, enddate, submitteddate, creationdate, "
-                    + "num_configs, edition, resubmitted_as_job) "
+                    + "num_configs, edition, resubmitted_as_job, harvestname_prefix) "
                     + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
-                    + "?, ?, ?, ? )");
+                    + "?, ?, ?, ?, ? )");
 
 
             statement.setLong(1, job.getJobID());
@@ -164,7 +164,7 @@ public class JobDBDAO extends JobDAO {
             long initialEdition = 1;
             statement.setLong(17, initialEdition);
             DBUtils.setLongMaybeNull(statement, 18, job.getResubmittedAsJob());
-
+            statement.setString(19, job.getHarvestFilenamePrefix());
             statement.executeUpdate();
             createJobConfigsEntries(connection, job);
             connection.commit();
@@ -334,7 +334,7 @@ public class JobDBDAO extends JobDAO {
                     + "upload_error_details = ?, startdate = ?,"
                     + "enddate = ?, num_configs = ?, edition = ?, "
                     + "submitteddate = ?, creationdate = ?,"
-                    + "resubmitted_as_job = ?"
+                    + "resubmitted_as_job = ?, harvestname_prefix = ?"
                     + " WHERE job_id = ? AND edition = ?");
             statement.setLong(1, job.getOrigHarvestDefinitionID());
             statement.setInt(2, job.getStatus().ordinal());
@@ -375,9 +375,9 @@ public class JobDBDAO extends JobDAO {
             DBUtils.setDateMaybeNull(statement, 19, job.getSubmittedDate());
             DBUtils.setDateMaybeNull(statement, 20, job.getCreationDate());
             DBUtils.setLongMaybeNull(statement, 21, job.getResubmittedAsJob());
-
-            statement.setLong(22, job.getJobID());
-            statement.setLong(23, job.getEdition());
+            statement.setString(22, job.getHarvestFilenamePrefix());    
+            statement.setLong(23, job.getJobID());
+            statement.setLong(24, job.getEdition());
             final int rows = statement.executeUpdate();
             if (rows == 0) {
                 String message = "Edition " + job.getEdition()
@@ -441,7 +441,7 @@ public class JobDBDAO extends JobDAO {
                                    + "harvest_errors, harvest_error_details, "
                                    + "upload_errors, upload_error_details, "
                                    + "startdate, enddate, submitteddate, creationdate, "
-                                   + "edition, resubmitted_as_job, continuationof "
+                                   + "edition, resubmitted_as_job, continuationof, harvestname_prefix "
                                    + "FROM jobs WHERE job_id = ?");
             statement.setLong(1, jobID);
             ResultSet result = statement.executeQuery();
@@ -483,6 +483,7 @@ public class JobDBDAO extends JobDAO {
             Long edition = result.getLong(19);
             Long resubmittedAsJob = DBUtils.getLongMaybeNull(result, 20);
             Long continuationOfJob = DBUtils.getLongMaybeNull(result, 21);
+            String harvestnamePrefix = result.getString(22);
             statement.close();
             // IDs should match up in a natural join
             // The following if-block is an attempt to fix Bug 1856, an
@@ -541,6 +542,13 @@ public class JobDBDAO extends JobDAO {
             if (resubmittedAsJob != null) {
                 job.setResubmittedAsJob(resubmittedAsJob);
             }
+            if (harvestnamePrefix != null) {
+                job.setDefaultHarvestNamePrefix();
+            } else {
+                job.setHarvestFilenamePrefix(harvestnamePrefix);
+            }
+            
+            
             return job;
         } catch (SQLException e) {
             String message = "SQL error reading job " + jobID + " in database"
