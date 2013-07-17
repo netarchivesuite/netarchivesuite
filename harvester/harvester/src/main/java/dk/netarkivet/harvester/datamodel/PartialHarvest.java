@@ -84,11 +84,13 @@ public class PartialHarvest extends HarvestDefinition {
      * @param schedule             the harvest definition schedule
      * @param harvestDefName       the name of the harvest definition
      * @param comments             comments
+     * @param audience             The intended audience for this harvest (could be null)
      */
     public PartialHarvest(List<DomainConfiguration> domainConfigurations,
                           Schedule schedule,
                           String harvestDefName,
-                          String comments) {
+                          String comments,
+                          String audience) {
 
         ArgumentNotValid.checkNotNull(schedule, "schedule");
         ScheduleDAO.getInstance().read(schedule.getName());
@@ -104,7 +106,9 @@ public class PartialHarvest extends HarvestDefinition {
         this.harvestDefName = harvestDefName;
         this.comments = comments;
         this.nextDate = schedule.getFirstEvent(new Date());
+        this.audience = audience; 
     }
+    
 
     /**
      * Returns the schedule defined for this harvest definition.

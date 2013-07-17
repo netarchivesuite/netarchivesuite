@@ -255,7 +255,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
         return HarvestDefinition.createPartialHarvest(webDomainConfigs,
                                                       schedule, "Election 2005",
-                                                      "Event harvest");
+                                                      "Event harvest", "Alle");
     }
 
     /**
@@ -317,7 +317,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         // Check that you cannot update a non-existing HD.
         HarvestDefinition newhd = new PartialHarvest(TestInfo
                 .getAllDefaultConfigurations(), TestInfo.getDefaultSchedule(),
-                                                "notfound", "");
+                                                "notfound", "", "Everybody");
         try {
             dao.update(newhd);
             fail("Should not allow update of non-existing HD");
@@ -361,7 +361,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 dcs,
                 sdao.read("DefaultSchedule"),
                 "RunInfo",
-                "");
+                "", "Everybody");
         newHd.setActive(false); // Can't have it doing stuff behind our backs
         hddao.create(newHd);
 

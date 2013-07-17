@@ -45,6 +45,9 @@ import dk.netarkivet.common.utils.Named;
 public abstract class HarvestDefinition implements Named {
     protected Long oid;
     protected String harvestDefName;
+    /** The intended audience for the harvest. */
+    protected String audience;
+    
     /**
      * The time this harvest definition was first written.
      */
@@ -83,12 +86,14 @@ public abstract class HarvestDefinition implements Named {
             List<DomainConfiguration> domainConfigurations,
             Schedule schedule,
             String harvestDefName,
-            String comments) {
+            String comments, 
+            String audience) {
 
         return new PartialHarvest(domainConfigurations,
                                   schedule,
                                   harvestDefName,
-                                  comments);
+                                  comments, 
+                                  audience);
     }
 
     /**
@@ -333,5 +338,12 @@ public abstract class HarvestDefinition implements Named {
      * @return how many bytes to harvest per domain
      */
     public abstract long getMaxBytes();
-
+    
+    /** 
+     * @return the intended audience for this harvest.
+     */
+    public String getAudience() {
+        return this.audience;
+    }
+    
 }

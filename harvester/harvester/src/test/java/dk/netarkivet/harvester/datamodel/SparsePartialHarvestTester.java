@@ -45,7 +45,8 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
     public void setUp() throws Exception {
         super.setUp();
         Schedule sched = ScheduleDAO.getInstance().read("DefaultSchedule");
-        harvest = new PartialHarvest(new ArrayList<DomainConfiguration>(), sched, harvestName, "");
+        harvest = new PartialHarvest(new ArrayList<DomainConfiguration>(), sched, harvestName, "",
+                "Everybody");
         HarvestDefinitionDAO.getInstance().create(harvest);
     }
 
@@ -67,7 +68,8 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
                 harvest.isActive,
                 harvest.getEdition(),
                 harvest.getSchedule().getName(),
-                harvest.getNextDate());
+                harvest.getNextDate(),
+                harvest.getAudience());
             assertEquals("Should have same oid",harvest.getOid(), sph.getOid());
      }
 

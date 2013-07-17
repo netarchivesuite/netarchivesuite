@@ -183,6 +183,7 @@ public final class SelectiveHarvestUtil {
         }
 
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
+        String audience = request.getParameter(Constants.AUDIENCE_PARAM);
 
         List<DomainConfiguration> dc
                 = getDomainConfigurations(request.getParameterMap());
@@ -200,7 +201,7 @@ public final class SelectiveHarvestUtil {
                 throw new ForwardedToErrorPage("A harvest definition "
                         + "called '" + name + "' already exists");
             }
-            PartialHarvest hdd = new PartialHarvest(dc, sched, name, comments);
+            PartialHarvest hdd = new PartialHarvest(dc, sched, name, comments, audience);
             hdd.setActive(false);
             hddao.create(hdd);
             return hdd;

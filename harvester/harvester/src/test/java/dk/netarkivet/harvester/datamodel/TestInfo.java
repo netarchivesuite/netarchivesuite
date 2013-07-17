@@ -186,6 +186,7 @@ public class TestInfo {
     public static final String CRAWLER_TRAPS_01 = "crawler_traps_01.txt";
     public static final String CRAWLER_TRAPS_02 = "crawler_traps_02.txt";
     public static final String CRAWLER_TRAPS_03 = "crawler_traps_03.txt";
+    public static final String DEFAULT_HARVEST_AUDIENCE = "everybody";
 
     /**
      * Load resources needed by unit tests.
@@ -348,7 +349,7 @@ public class TestInfo {
         configs.add(createConfig("dr.dk", "fuld_dybde", 4445));
 
         return HarvestDefinition.createPartialHarvest(configs, schedule,
-                "SameOrderXml", "All configs. use the same order.xml");
+                "SameOrderXml", "All configs. use the same order.xml", DEFAULT_HARVEST_AUDIENCE);
     }
 
     /**
@@ -372,7 +373,8 @@ public class TestInfo {
         configs.add(createConfig("dr.dk", "fuld_dybde", 1112));
 
         return HarvestDefinition.createPartialHarvest(configs, schedule,
-                "DifferentOrderXml", "Different order.xml are used");
+                "DifferentOrderXml", "Different order.xml are used",
+                TestInfo.DEFAULT_HARVEST_COMMENT);
     }
 
 

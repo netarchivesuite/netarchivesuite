@@ -172,7 +172,7 @@ public class SchedulerDatabaseBuilder {
         
         PartialHarvest ph =  
             PartialHarvest.createPartialHarvest(dcs, s2,
-                    "Testhøstning", "No Comments");
+                    "Testhøstning", "No Comments", "Everybody");
         ph.setActive(true);
         
         HarvestDefinitionDAO hdd = HarvestDefinitionDAO.getInstance();

@@ -81,8 +81,9 @@ public class SeedListTester extends DataModelTestCase {
 
         ScheduleDAO scheduledao = ScheduleDAO.getInstance();
         Schedule schedule = scheduledao.read("DefaultSchedule");
-
-        return HarvestDefinition.createPartialHarvest(webDomainConfigs, schedule, harvestName, harvestName);
+        String harvestComments = "Some comments";
+        return HarvestDefinition.createPartialHarvest(webDomainConfigs, 
+                schedule, harvestName, harvestComments, "Everybody");
     }
     
     /**

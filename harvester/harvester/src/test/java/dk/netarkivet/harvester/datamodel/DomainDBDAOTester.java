@@ -199,7 +199,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
                     ScheduleDAO sDao = ScheduleDAO.getInstance();
                     sDao.create(schedule);
                     PartialHarvest ph = HarvestDefinition.createPartialHarvest(
-                            dcs, schedule, "testme", "here");
+                            dcs, schedule, "testme", "here", "alle");
                     dao.create(ph);
                     for (int i = 0; i < maxLoop; i++) {
                         ph.setComments("foo" + i);

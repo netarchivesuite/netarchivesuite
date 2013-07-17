@@ -51,7 +51,8 @@ public class PartialHarvestTester extends DataModelTestCase {
     public void setUp() throws Exception {
         super.setUp();
         Schedule sched = ScheduleDAO.getInstance().read("DefaultSchedule");
-        harvest = new PartialHarvest(new ArrayList<DomainConfiguration>(), sched, harvestName, "");
+        harvest = new PartialHarvest(new ArrayList<DomainConfiguration>(), sched, harvestName, "", 
+                "Everybody");
     }
 
     public void tearDown() throws Exception {

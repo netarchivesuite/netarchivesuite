@@ -72,6 +72,8 @@ public class SparsePartialHarvest implements Named {
      * Next date to run.
      */
     private final Date nextDate;
+    
+    private String audience;
 
     /**
      * Create new instance of SparsePartialHarvest.
@@ -86,6 +88,7 @@ public class SparsePartialHarvest implements Named {
      *                  Fullharvest definition.
      * @param schedule  name of schedule for this harvest.
      * @param nextDate  next time this harvest will run (null for never).
+     * @param audience  The intended audience
      * @throws ArgumentNotValid if oid, name or comments, or schedule is null,
      *                          or name or schedule is empty.
      */
@@ -93,7 +96,7 @@ public class SparsePartialHarvest implements Named {
                                 int numEvents,
                                 Date submissionDate, boolean active,
                                 long edition, String schedule,
-                                Date nextDate) {
+                                Date nextDate, String audience) {
         ArgumentNotValid.checkNotNull(oid, "Long oid");
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(comments, "comments");
@@ -107,6 +110,7 @@ public class SparsePartialHarvest implements Named {
         this.edition = edition;
         this.scheduleName = schedule;
         this.nextDate = nextDate;
+        this.audience = audience;
     }
 
 
@@ -195,6 +199,10 @@ public class SparsePartialHarvest implements Named {
      */
     public Long getOid() {
         return oid;
+    }
+    
+    public String getAudience() {
+        return audience;
     }
 }
 

@@ -107,13 +107,13 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         HarvestDefinition hd1 = HarvestDefinition.createPartialHarvest(
                 cfgs,
                 sdao.read("Hver hele time"),
-                "Hele time", noComments);
+                "Hele time", noComments, "EveryBody");
         hd1.setSubmissionDate(new Date());
         hddao.create(hd1);
         HarvestDefinition hd2 = HarvestDefinition.createPartialHarvest(
                 cfgs,
                 sdao.read("Hver nat kl 4.00"),
-                "Kl. 4", noComments);
+                "Kl. 4", noComments, "EveryBody");
         hd2.setSubmissionDate(new Date());
         hddao.create(hd2);
         generateJobs(now);
@@ -171,7 +171,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         HarvestDefinition hd1 = HarvestDefinition.createPartialHarvest(
                 cfgs,
                 sdao.read("Hver hele time"),
-                "Hele time", "");
+                "Hele time", "", "EveryBody");
         hd1.setSubmissionDate(now);
         hddao.create(hd1);
         hddao.updateNextdate(((PartialHarvest) hd1).getOid(), yesterday);

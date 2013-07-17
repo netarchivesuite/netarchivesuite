@@ -133,8 +133,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             connection.setAutoCommit(false);
             s = connection.prepareStatement("INSERT INTO harvestdefinitions "
                     + "( harvest_id, name, comments, numevents, submitted,"
-                    + "  isactive, edition ) "
-                    + "VALUES ( ?, ?, ?, ?, ?, ?, ? )");
+                    + "  isactive, edition, audience ) "
+                    + "VALUES ( ?, ?, ?, ?, ?, ?, ?,? )");
             s.setLong(1, id);
             DBUtils.setName(s, 2, harvestDefinition, Constants.MAX_NAME_SIZE);
             DBUtils.setComments(s, 3, harvestDefinition,
@@ -146,6 +146,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.setBoolean(6, harvestDefinition.getActive());
             final int edition = 1;
             s.setLong(7, edition);
+            s.setString(8, harvestDefinition.getAudience());
             s.executeUpdate();
             s.close();
             if (harvestDefinition instanceof FullHarvest) {
@@ -310,7 +311,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s = c.prepareStatement(
                     "SELECT name, comments, numevents, submitted, "
                     + "previoushd, maxobjects, maxbytes, "
-                    + "maxjobrunningtime, isindexready, isactive, edition "
+                    + "maxjobrunningtime, isindexready, isactive, edition, audience "
                     + "FROM harvestdefinitions, fullharvests "
                     + "WHERE harvestdefinitions.harvest_id = ?"
                     + "  AND harvestdefinitions.harvest_id "
@@ -343,6 +344,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 fh.setActive(res.getBoolean(10));
                 fh.setOid(harvestDefinitionID);
                 fh.setEdition(res.getLong(11));
+                fh.setAudience(res.getString(12));
+                
                 // We found a FullHarvest object, just return it.
                 log.debug("Returned FullHarvest object w/ id "
                         + harvestDefinitionID);
@@ -356,6 +359,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "       harvestdefinitions.submitted,"
                     + "       harvestdefinitions.isactive,"
                     + "       harvestdefinitions.edition,"
+                    + "       harvestdefinitions.audience,"
                     + "       schedules.name,"
                     + "       partialharvests.nextdate "
                     + "FROM harvestdefinitions, partialharvests, schedules"
@@ -378,8 +382,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         .getTime());
                 final boolean active = res.getBoolean(5);
                 final long edition = res.getLong(6);
-                final String scheduleName = res.getString(7);
-                final Date nextDate = DBUtils.getDateMaybeNull(res, 8);
+                final String audience = res.getString(7);
+                final String scheduleName = res.getString(8);
+                final Date nextDate = DBUtils.getDateMaybeNull(res, 9);
                 s.close();
                 // Found partial harvest -- have to find configurations.
                 // To avoid holding on to the readlock while getting domains,
@@ -413,7 +418,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         .read(scheduleName);
 
                 PartialHarvest ph = new PartialHarvest(configurations,
-                        schedule, name, comments);
+                        schedule, name, comments, audience);
 
                 ph.setNumEvents(numEvents);
                 ph.setSubmissionDate(submissionDate);
@@ -460,7 +465,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             c.setAutoCommit(false);
             s = c.prepareStatement("UPDATE harvestdefinitions SET "
                     + "name = ?, " + "comments = ?, " + "numevents = ?, "
-                    + "submitted = ?," + "isactive = ?," + "edition = ? "
+                    + "submitted = ?," + "isactive = ?," + "edition = ?, audience = ? "
                     + "WHERE harvest_id = ? AND edition = ?");
             DBUtils.setName(s, 1, hd, Constants.MAX_NAME_SIZE);
             DBUtils.setComments(s, 2, hd, Constants.MAX_COMMENT_SIZE);
@@ -469,8 +474,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.setBoolean(5, hd.getActive());
             long nextEdition = hd.getEdition() + 1;
             s.setLong(6, nextEdition);
-            s.setLong(7, hd.getOid());
-            s.setLong(8, hd.getEdition());
+            s.setString(7, hd.getAudience());
+            s.setLong(8, hd.getOid());
+            s.setLong(9, hd.getEdition());
+            
             int rows = s.executeUpdate();
             // Since the HD exists, no rows indicates bad edition
             if (rows == 0) {
@@ -566,7 +573,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             c.setAutoCommit(false);
             s = c.prepareStatement("UPDATE harvestdefinitions SET "
                     + "name = ?, " + "comments = ?, " + "numevents = ?, "
-                    + "submitted = ?," + "isactive = ?," + "edition = ? "
+                    + "submitted = ?," + "isactive = ?," + "edition = ?, audience = ? "
                     + "WHERE harvest_id = ? AND edition = ?");
             DBUtils.setName(s, 1, harvestDefinition, Constants.MAX_NAME_SIZE);
             DBUtils.setComments(s, 2, harvestDefinition,
@@ -577,8 +584,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.setBoolean(5, !harvestDefinition.isActive());
             long nextEdition = harvestDefinition.getEdition() + 1;
             s.setLong(6, nextEdition);
-            s.setLong(7, harvestDefinition.getOid());
-            s.setLong(8, harvestDefinition.getEdition());
+            s.setString(7, harvestDefinition.getAudience());
+            s.setLong(8, harvestDefinition.getOid());
+            s.setLong(9, harvestDefinition.getEdition());
             int rows = s.executeUpdate();
             // Since the HD exists, no rows indicates bad edition
             if (rows == 0) {
@@ -958,7 +966,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 + "       harvestdefinitions.isactive,"
                 + "       harvestdefinitions.edition,"
                 + "       schedules.name,"
-                + "       partialharvests.nextdate "
+                + "       partialharvests.nextdate, "
+                + "       harvestdefinitions.audience "
                 + "FROM harvestdefinitions, partialharvests, schedules"
                 + " WHERE harvestdefinitions.harvest_id "
                 + "       = partialharvests.harvest_id"
@@ -979,7 +988,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         res.getLong(1), res.getString(2), res.getString(3),
                         res.getInt(4), new Date(res.getTimestamp(5).getTime()),
                         res.getBoolean(6), res.getLong(7), res.getString(8),
-                        DBUtils.getDateMaybeNull(res, 9));
+                        DBUtils.getDateMaybeNull(res, 9), res.getString(10));
                 harvests.add(sph);
             }
             return harvests;
@@ -1014,7 +1023,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "       harvestdefinitions.isactive,"
                     + "       harvestdefinitions.edition,"
                     + "       schedules.name,"
-                    + "       partialharvests.nextdate "
+                    + "       partialharvests.nextdate, "
+                    + "       harvestdefinitions.audience "
                     + "FROM harvestdefinitions, partialharvests, schedules"
                     + " WHERE harvestdefinitions.name = ?"
                     + "   AND harvestdefinitions.harvest_id "
@@ -1028,7 +1038,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         res.getString(2), res.getInt(3), new Date(res
                                 .getTimestamp(4).getTime()), res.getBoolean(5),
                         res.getLong(6), res.getString(7),
-                        DBUtils.getDateMaybeNull(res, 8));
+                        DBUtils.getDateMaybeNull(res, 8),
+                        res.getString(9));
             } else {
                 return null;
             }

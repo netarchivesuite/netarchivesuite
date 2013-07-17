@@ -102,6 +102,8 @@ public class Constants {
     public static final String SAVE_PARAM = "save";
 
     public static final String COMMENTS_PARAM = "comments";
+    
+    public static final String AUDIENCE_PARAM = "audience";
 
     public static final String NEXTDATE_PARAM = "nextdate";
 

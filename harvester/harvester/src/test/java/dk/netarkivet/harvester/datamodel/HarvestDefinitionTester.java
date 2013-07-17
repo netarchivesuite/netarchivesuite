@@ -97,7 +97,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
             HarvestDefinition.createPartialHarvest(
                     null, schedule,
                     TestInfo.DEFAULT_HARVEST_NAME,
-                    TestInfo.DEFAULT_HARVEST_COMMENT);
+                    TestInfo.DEFAULT_HARVEST_COMMENT,
+                    TestInfo.DEFAULT_HARVEST_AUDIENCE);
             fail("List of domainConfigurations must not be null");
         } catch (ArgumentNotValid e) {
             // expected
@@ -117,7 +118,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
             HarvestDefinition.createPartialHarvest(
                     domainConfigs, null,
                     TestInfo.DEFAULT_HARVEST_NAME,
-                    TestInfo.DEFAULT_HARVEST_COMMENT);
+                    TestInfo.DEFAULT_HARVEST_COMMENT,
+                    TestInfo.DEFAULT_HARVEST_AUDIENCE);
             fail("Null not a valid argument");
         } catch (ArgumentNotValid e) {
             // expected
@@ -130,7 +132,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
             HarvestDefinition.createPartialHarvest(
                     domainConfigs, unknownSchedule,
                     TestInfo.DEFAULT_HARVEST_NAME,
-                    TestInfo.DEFAULT_HARVEST_COMMENT);
+                    TestInfo.DEFAULT_HARVEST_COMMENT,
+                    TestInfo.DEFAULT_HARVEST_AUDIENCE);
             fail("Unknown schedule");
         } catch (UnknownID e) {
             // expected
@@ -141,7 +144,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
             HarvestDefinition.createPartialHarvest(
                     domainConfigs, schedule,
                     null,
-                    TestInfo.DEFAULT_HARVEST_COMMENT);
+                    TestInfo.DEFAULT_HARVEST_COMMENT,
+                    TestInfo.DEFAULT_HARVEST_AUDIENCE);
             fail("Null not a valid harvest definition name");
         } catch (ArgumentNotValid e) {
             // expected
@@ -151,7 +155,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
             HarvestDefinition.createPartialHarvest(
                     domainConfigs, schedule,
                     "",
-                    TestInfo.DEFAULT_HARVEST_COMMENT);
+                    TestInfo.DEFAULT_HARVEST_COMMENT,
+                    TestInfo.DEFAULT_HARVEST_AUDIENCE);
             fail("Empty string not a valid harvest definition name");
         } catch (ArgumentNotValid e) {
             // expected
@@ -161,7 +166,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         try {
             HarvestDefinition.createPartialHarvest(
                     domainConfigs, schedule,
-                    TestInfo.DEFAULT_HARVEST_NAME, null);
+                    TestInfo.DEFAULT_HARVEST_NAME, null,
+                    TestInfo.DEFAULT_HARVEST_AUDIENCE);
             fail("Null not a valid harvest definition comment");
         } catch (ArgumentNotValid e) {
             // expected
@@ -184,7 +190,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, schedule,
                         TestInfo.DEFAULT_HARVEST_NAME,
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
         try {
             harvestDef.setNextDate(null);
         } catch (ArgumentNotValid e) {
@@ -204,7 +211,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, schedule,
                         TestInfo.DEFAULT_HARVEST_NAME,
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
         try {
             harvestDef.setNumEvents(-1);
             fail("Expected exception on negative numEvents");
@@ -256,7 +264,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, schedule,
                         TestInfo.DEFAULT_HARVEST_NAME,
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
 
         assertNotNull("A valid harvest definition expected", harvestDef);
 
@@ -330,7 +339,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, schedule,
                         TestInfo.DEFAULT_HARVEST_NAME,
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
 
         //Create two new DomainConfigurations
         DomainConfiguration cfg2 = TestInfo.getConfig(d, "config2");
@@ -367,7 +377,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, schedule,
                         TestInfo.DEFAULT_HARVEST_NAME,
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
 
         //Create two new DomainConfigurations
         DomainConfiguration cfg2 = TestInfo.getConfig(d, "config2");
@@ -405,7 +416,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, schedule,
                         TestInfo.DEFAULT_HARVEST_NAME,
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
         Calendar cal = new GregorianCalendar(2005, Calendar.FEBRUARY, 21,
                                              12, 0, 0);
         Date testDate = cal.getTime();
@@ -488,14 +500,16 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, sched0,
                         TestInfo.DEFAULT_HARVEST_NAME + "1",
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
         harvestDef0.setSubmissionDate(new Date());
 
         PartialHarvest harvestDef1
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, sched1,
                         TestInfo.DEFAULT_HARVEST_NAME + "2",
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
         //Hack - the schedule has already timed out at this point, but we want
         //there to be one event, so we force the first date to be set.
         harvestDef1.setNextDate(new Date());
@@ -505,7 +519,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, sched2,
                         TestInfo.DEFAULT_HARVEST_NAME + "3",
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
         harvestDef2.setSubmissionDate(new Date());
 
         dao.create(harvestDef0);
@@ -557,7 +572,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         List<DomainConfiguration> dc = Collections.singletonList(
                 defaultDomain.getDefaultConfiguration());
         PartialHarvest hd = HarvestDefinition.createPartialHarvest(
-                dc, hourlySchedule, "hd", "");
+                dc, hourlySchedule, "hd", "",  TestInfo.DEFAULT_HARVEST_AUDIENCE);
         hd.setNextDate(threeHoursAgo.getTime());
         hd.setSubmissionDate(new Date());
         HarvestDefinitionDAO.getInstance().create(hd);
@@ -593,7 +608,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         List<DomainConfiguration> dc = Collections.singletonList(
                 TestInfo.getDefaultDomain().getDefaultConfiguration());
         PartialHarvest hd = HarvestDefinition.createPartialHarvest(
-                dc, hourlySchedule, "hd", "");
+                dc, hourlySchedule, "hd", "", TestInfo.DEFAULT_HARVEST_AUDIENCE);
         hd.setNextDate(threeHoursAgo.getTime());
         hd.setSubmissionDate(new Date());
         HarvestDefinitionDAO.getInstance().create(hd);
@@ -609,7 +624,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         hd.setActive(false);
         assertFalse("Inactive definition expected (default value)",
                 hd.getActive());
-        assertFalse("Inactive defintions shoud NOT be run", hd.runNow(now));
+        assertFalse("Inactive defintions should NOT be run", hd.runNow(now));
 
     }
 
@@ -632,7 +647,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, schedule,
                         TestInfo.DEFAULT_HARVEST_NAME,
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
 
         harvestDef.setNextDate(new Date());
         harvestDef.setNumEvents(99);
@@ -1032,7 +1048,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                 = HarvestDefinition.createPartialHarvest(
                         domainConfigs, schedule,
                         TestInfo.DEFAULT_HARVEST_NAME,
-                        TestInfo.DEFAULT_HARVEST_COMMENT);
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
 
         assertTrue("Initially a definition is assumed active "
                 + "- to be backward compatible", harvestDef.getActive());
