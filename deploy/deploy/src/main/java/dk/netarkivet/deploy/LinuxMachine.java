@@ -690,7 +690,7 @@ public class LinuxMachine extends Machine {
         StringBuilder res = new StringBuilder();
         // get all the classpaths
         for(Element cp : app.getMachineParameters().getClassPaths()) {
-            res.append(getInstallDirPath() + Constants.SLASH + cp.getText() 
+            res.append(getInstallDirPath() + Constants.SLASH + cp.getText().trim() 
                     + Constants.COLON);
         }
         return res.toString();
@@ -1809,7 +1809,7 @@ public class LinuxMachine extends Machine {
         StringBuilder res = new StringBuilder();
         // get all the classpaths 
         for(Element cp : machineParameters.getClassPaths()) {
-            res.append(getInstallDirPath() + Constants.SLASH + cp.getText() 
+            res.append(getInstallDirPath() + Constants.SLASH + cp.getText().trim() 
                 + Constants.COLON);
         }
         return res.toString();

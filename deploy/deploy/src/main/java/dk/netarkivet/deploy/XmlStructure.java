@@ -185,7 +185,7 @@ public class XmlStructure {
         Element e = getSubChild(name);
         if(e != null) {
             if(e.isTextOnly()) {
-                return e.getText();
+                return e.getText().trim();
             } else {
                 log.debug("Element is not text. The entire XML-branch "
                         + "is returned.");
@@ -209,7 +209,7 @@ public class XmlStructure {
         ArgumentNotValid.checkNotNull(path, "String ...name");
         Element e = getSubChild(path);
         if(e != null && e.isTextOnly()) {
-            return e.getText();
+            return e.getText().trim();
         } else {
             log.debug("Element is not text. Null returned.");
             return null;
@@ -240,7 +240,7 @@ public class XmlStructure {
         // extract the value of the elements to an array.
         String[] res = new String[elemList.size()];
         for(int i = 0; i < elemList.size(); i++) {
-            res[i] = elemList.get(i).getText();
+            res[i] = elemList.get(i).getText().trim();
         }
 
         return res;
@@ -304,7 +304,7 @@ public class XmlStructure {
                     Element curE = curElems.get(0);
                     // if leaf overwrite value, otherwise repeat for branches. 
                     if(curE.isTextOnly()) {
-                        curE.setText(e.getText());
+                        curE.setText(e.getText().trim()); // TODO Is this necessary
                     } else {
                         overWriting(curE, e);
                     }

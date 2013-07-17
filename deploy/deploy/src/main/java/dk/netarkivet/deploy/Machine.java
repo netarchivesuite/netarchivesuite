@@ -154,7 +154,7 @@ public abstract class Machine {
         Attribute at = machineRoot.attribute(
                 Constants.MACHINE_NAME_ATTRIBUTE);
         if(at != null) {
-            name = at.getText();
+            name = at.getText().trim();
         } else {
             throw new IllegalState("A Machine instance has no name!");
         }
@@ -712,7 +712,7 @@ public abstract class Machine {
      * @return The access through SSH to the machine
      */
     protected String machineUserLogin() {
-        return machineParameters.getMachineUserName().getStringValue()
+        return machineParameters.getMachineUserName().getStringValue().trim()
                 + Constants.AT + name;
     }
 

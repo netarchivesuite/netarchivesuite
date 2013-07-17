@@ -220,7 +220,7 @@ public class CreateTestInstance {
                 Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
         // append the environment name as sub directory to these leafs.
         for(Element el : elems) {
-            StringBuilder content = new StringBuilder(el.getText());
+            StringBuilder content = new StringBuilder(el.getText().trim());
             // check if windows format has been used (if the index of the 
             // windows directory separator is different from -1).
             if(content.indexOf(Constants.BACKSLASH) > -1) {

@@ -145,7 +145,7 @@ public class PhysicalLocation {
         Attribute at = physLocRoot.attribute(
                 Constants.PHYSICAL_LOCATION_NAME_ATTRIBUTE);
         if(at != null) {
-            name = at.getText();
+            name = at.getText().trim();
             // insert the name in settings.
             String xmlName = XmlStructure.pathAndContentToXML(name, 
                     Constants.COMPLETE_THIS_PHYSICAL_LOCATION_LEAF);
@@ -167,7 +167,7 @@ public class PhysicalLocation {
         machines = new ArrayList<Machine>();
         List<Element> le = physLocRoot.elements(Constants.DEPLOY_MACHINE);
         for(Element e : le) {
-            String os = e.attributeValue(
+            String os = getTrimmedAttributeValue(e, 
                     Constants.MACHINE_OPERATING_SYSTEM_ATTRIBUTE);
             // only a windows machine, if the 'os' attribute exists and
             // equals (not case-sensitive) 'windows'. Else linux machine
@@ -184,6 +184,10 @@ public class PhysicalLocation {
                         resetDirectory, jarFolder));
             }
         }
+    }
+    
+    private String getTrimmedAttributeValue(Element e, String attributeName) {
+        return e.attributeValue(attributeName).trim();
     }
 
     /**

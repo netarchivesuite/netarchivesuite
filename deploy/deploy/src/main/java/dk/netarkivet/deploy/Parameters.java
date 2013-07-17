@@ -188,7 +188,7 @@ public class Parameters {
         StringBuilder res = new StringBuilder();
         // apply the java options
         for(Element e : javaOptions) {
-            res.append(e.getText());
+            res.append(e.getText().trim());
             res.append(Constants.SPACE);
         }
         return res.toString();
@@ -202,7 +202,7 @@ public class Parameters {
      */
     public String getInstallDirValue() {
         if(installDir != null) {
-            return installDir.getText();
+            return installDir.getText().trim();
         } else {
             return "";
         }
@@ -216,7 +216,7 @@ public class Parameters {
      */
     public String getHarvestDatabaseDirValue() {
         if(hdDatabaseDir != null) {
-            return hdDatabaseDir.getText();
+            return hdDatabaseDir.getText().trim();
         } else {
             return "";
         }
@@ -230,7 +230,7 @@ public class Parameters {
      */
     public String getArchiveDatabaseDirValue() {
         if(arcDatabaseDir != null) {
-            return arcDatabaseDir.getText();
+            return arcDatabaseDir.getText().trim();
         } else {
             return "";
         }

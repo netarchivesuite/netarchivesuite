@@ -223,7 +223,7 @@ public class WindowsMachine extends Machine {
         res.append(Constants.JMX_PASSWORD_FILE_NAME + Constants.SPACE 
                 + ScriptConstants.SLASH_P + Constants.SPACE 
                 + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
-        res.append(machineParameters.getMachineUserName().getText());
+        res.append(machineParameters.getMachineUserName().getText().trim());
         res.append(ScriptConstants.COLON_F + Constants.SEMICOLON
                 + Constants.SPACE + ScriptConstants.FI + Constants.SEMICOLON);
         res.append(Constants.NEWLINE);
@@ -256,7 +256,7 @@ public class WindowsMachine extends Machine {
         res.append(Constants.JMX_ACCESS_FILE_NAME + Constants.SPACE 
                 + ScriptConstants.SLASH_P + Constants.SPACE 
                 + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
-        res.append(machineParameters.getMachineUserName().getText());
+        res.append(machineParameters.getMachineUserName().getText().trim());
         res.append(ScriptConstants.COLON_F + Constants.SEMICOLON
                 + Constants.SPACE + ScriptConstants.FI + Constants.SEMICOLON);
         res.append(Constants.NEWLINE);
@@ -1412,7 +1412,7 @@ public class WindowsMachine extends Machine {
         res.append(Constants.SPACE 
                 + ScriptConstants.SLASH_P + Constants.SPACE 
                 + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
-        res.append(machineParameters.getMachineUserName().getText());
+        res.append(machineParameters.getMachineUserName().getText().trim());
         res.append(ScriptConstants.COLON_R + Constants.QUOTE_MARK);
         res.append(Constants.NEWLINE);
 
@@ -1431,7 +1431,7 @@ public class WindowsMachine extends Machine {
         res.append(Constants.SPACE 
                 + ScriptConstants.SLASH_P + Constants.SPACE 
                 + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
-        res.append(machineParameters.getMachineUserName().getText());
+        res.append(machineParameters.getMachineUserName().getText().trim());
         res.append(ScriptConstants.COLON_R + Constants.QUOTE_MARK);
         res.append(Constants.NEWLINE);
 

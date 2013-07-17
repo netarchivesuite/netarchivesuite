@@ -103,7 +103,7 @@ public class Application {
             if(at != null) {
                 // the name is actually the classpath, so the specific class is
                 // set as the name. It is the last element in the classpath.
-                nameWithNamePath = at.getText();
+                nameWithNamePath = at.getText().trim();
                 // the classpath is is separated by '.'
                 String[] stlist = nameWithNamePath.split(
                         Constants.REGEX_DOT_CHARACTER);
@@ -129,8 +129,8 @@ public class Application {
             // look for the optional application instance id
             Element elem = settings.getSubChild(
                     Constants.SETTINGS_APPLICATION_INSTANCE_ID_LEAF);
-            if(elem != null && !elem.getText().isEmpty()) {
-                applicationInstanceId = elem.getText();
+            if(elem != null && !elem.getText().trim().isEmpty()) {
+                applicationInstanceId = elem.getText().trim();
             } 
         } catch(Exception e) {
             String msg = "Application variables not extractable."; 
