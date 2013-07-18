@@ -162,11 +162,9 @@ public class PersistentJobData implements JobInfo {
     /** The performer of this harvest. */
     private static final String HARVEST_PERFORMER_KEY =
             ROOT_ELEMENT + ".performer";
-    
-    /** The audience of this harvest. 
+    /** The audience of this harvest. */
     private static final String HARVEST_AUDIENCE_KEY =
             ROOT_ELEMENT + ".audience";
-    */
     
     /** Key in harvestinfo file for the file version. */
     private static final String HARVESTVERSION_KEY = "harvestInfo.version";
@@ -328,6 +326,8 @@ public class PersistentJobData implements JobInfo {
             sx.add(HARVEST_PERFORMER_KEY, 
                 Settings.get(HarvesterSettings.PERFORMER));
         }
+        sx.add(HARVEST_AUDIENCE_KEY, harvestJob.getHarvestAudience());
+        
         XmlState validationResult = validateHarvestInfo(sx); 
         if (validationResult.getOkState().equals(XmlState.OKSTATE.NOTOK)) {
             String msg = "Could not create a valid harvestinfo file for job "
@@ -649,12 +649,17 @@ public class PersistentJobData implements JobInfo {
             return null;
         }
     }
-    
-    /* Placeholder for information added by issue NAS-2139
-      
-    public String getAudience() {
-        SimpleXml sx = read(); // reads and validates XML
-        return sx.getString(HARVEST_AUDIENCE_KEY);
-    }
-    */
+    /**
+     * Return the audience information in this xml.
+     * @return the audience information in this xml or null if value undefined
+     * @throws IOFailure if no harvestInfo exists or it is invalid.
+     */
+	public String getAudience() {
+		SimpleXml sx = read(); // reads and validates XML
+        if (sx.hasKey(HARVEST_AUDIENCE_KEY)) {
+            return sx.getString(HARVEST_AUDIENCE_KEY);
+        } else {
+            return null;
+        }
+	}
 }
