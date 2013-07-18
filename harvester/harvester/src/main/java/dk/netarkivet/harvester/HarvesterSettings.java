@@ -604,7 +604,7 @@ public class HarvesterSettings {
 
     /**
      * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the harvested data.
-     * default: arc (alternative: warc) 
+     * default: warc (alternative: arc) 
      */
     public static String HERITRIX_ARCHIVE_FORMAT =
             "settings.harvester.harvesting.heritrix.archiveFormat";
@@ -616,6 +616,43 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_ARCHIVE_NAMING_CLASS =
             "settings.harvester.harvesting.heritrix.archiveNaming.class";
+    
+    /**
+     * <b>settings.harvester.harvesting.heritrix.warc.skipIdenticalDigests</b>
+     * Represents the 'skip-identical-digests' setting in the Heritrix WARCWriterProcessor.
+     * The default is false.
+     */
+    public static String HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS = 
+    		"settings.harvester.harvesting.heritrix.warc.skipIdenticalDigests";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.warc.writeRequests</b>
+     * Represents the 'write-requests' setting in the Heritrix WARCWriterProcessor.
+     * The default is true
+     */
+    public static String HERITRIX_WARC_WRITE_REQUESTS = 
+    		"settings.harvester.harvesting.heritrix.warc.writeRequests";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.warc.writeMetadata</b>
+     * Represents the 'write-metadata' setting in the Heritrix WARCWriterProcessor.
+     * The default is false.
+     */
+    public static String HERITRIX_WARC_WRITE_METADATA = 
+    		"settings.harvester.harvesting.heritrix.warc.writeMetadata";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.warc.writeRevisitForIdenticalDigests</b>
+     * Represents the 'write-revisit-for-identical-digests' setting in the Heritrix WARCWriterProcessor.
+     * The default is false.
+     */
+    public static String HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS = 
+    		"settings.harvester.harvesting.heritrix.warc.writeRevisitForIdenticalDigests";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.warc.writeRevisitForNotModified</b>
+     * Represents the 'write-revisit-for-not-modified' setting in the Heritrix WARCWriterProcessor.
+     * The default is true.
+     */
+    public static String HERITRIX_WARC_REVISIT_FOR_NOT_MODIFIED = 
+    		"settings.harvester.harvesting.heritrix.warc.writeRevisitForNotModified";    
+    
     
     /** 
      * <b>settings.harvester.performer</b>: <br>The agent performing these harvests. 
