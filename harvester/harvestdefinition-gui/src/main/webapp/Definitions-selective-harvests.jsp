@@ -39,7 +39,7 @@ inactive or vice-versa.
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
                  dk.netarkivet.harvester.webinterface.Constants,
-                 dk.netarkivet.archive.webinterface.CookieUtils"
+                 dk.netarkivet.harvester.webinterface.CookieUtils"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
