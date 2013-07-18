@@ -92,6 +92,7 @@ public class PersistentJobDataTester extends TestCase {
         Job testJob = TestInfo.getJob();
         testJob.setJobID(42L);
         testJob.setSubmittedDate(new Date());
+        testJob.setHarvestAudience("Default Audience");
         pjd.write(testJob, new HarvestDefinitionInfo("test", "test", "test"));
 
         PersistentJobData pjdNew = new PersistentJobData(crawldir);

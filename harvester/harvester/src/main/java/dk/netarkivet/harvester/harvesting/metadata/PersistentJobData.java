@@ -326,7 +326,10 @@ public class PersistentJobData implements JobInfo {
             sx.add(HARVEST_PERFORMER_KEY, 
                 Settings.get(HarvesterSettings.PERFORMER));
         }
-        sx.add(HARVEST_AUDIENCE_KEY, harvestJob.getHarvestAudience());
+        if (harvestJob.getHarvestAudience() != null 
+        			&& !harvestJob.getHarvestAudience().isEmpty()) {
+        	sx.add(HARVEST_AUDIENCE_KEY, harvestJob.getHarvestAudience());
+        }
         
         XmlState validationResult = validateHarvestInfo(sx); 
         if (validationResult.getOkState().equals(XmlState.OKSTATE.NOTOK)) {

@@ -1530,4 +1530,9 @@ public class Job implements Serializable, JobInfo {
     public String getHarvestAudience() {
 		return harvestAudience;
 	}
+    
+    /** @param the harvestaudience. */
+    public void setHarvestAudience(String theAudience) {
+		this.harvestAudience = theAudience;
+	}
 }
