@@ -31,8 +31,8 @@ flipactive=<definitionName>
 If set, the harvest-definition with the given name is changed from active to
 inactive or vice-versa.
 --%>
-<%@page import="org.hibernate.usertype.UserCollectionType"%>
-<%@ page import="dk.netarkivet.common.utils.I18n,
+<%@ page import="org.hibernate.usertype.UserCollectionType,
+                 dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
                  dk.netarkivet.harvester.datamodel.HarvestDefinition,
