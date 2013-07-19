@@ -187,7 +187,8 @@ public class PhysicalLocation {
     }
     
     private String getTrimmedAttributeValue(Element e, String attributeName) {
-        return e.attributeValue(attributeName).trim();
+    	String value = e.attributeValue(attributeName); 
+        return (value != null ? value.trim() : null);
     }
 
     /**
