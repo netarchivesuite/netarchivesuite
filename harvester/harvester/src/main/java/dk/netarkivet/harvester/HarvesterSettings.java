@@ -650,7 +650,7 @@ public class HarvesterSettings {
      * Represents the 'write-revisit-for-not-modified' setting in the Heritrix WARCWriterProcessor.
      * The default is true.
      */
-    public static String HERITRIX_WARC_REVISIT_FOR_NOT_MODIFIED = 
+    public static String HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED = 
     		"settings.harvester.harvesting.heritrix.warc.writeRevisitForNotModified";    
     
     

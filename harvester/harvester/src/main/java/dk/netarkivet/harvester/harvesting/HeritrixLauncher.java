@@ -59,58 +59,11 @@ public abstract class HeritrixLauncher {
     protected static final int CRAWL_CONTROL_WAIT_PERIOD 
         = Settings.getInt(HarvesterSettings.CRAWL_LOOP_WAIT_TIME);
 
-    //Attributes regarding deduplication.
-
-    /** Xpath for the deduplicator index directory node in order.xml 
-     * documents. */
-    static final String DEDUPLICATOR_INDEX_LOCATION_XPATH
-            = HeritrixTemplate.DEDUPLICATOR_XPATH
-              + "/string[@name='index-location']";
-
-    /**
-     * Xpath for the boolean telling if the deduplicator is enabled in order.xml
-     * documents.
-     */
-    static final String DEDUPLICATOR_ENABLED
-            = HeritrixTemplate.DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
-
+    
     /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
     
-    /** Xpath for the 'disk-path' in the order.xml . */
-    private static final String DISK_PATH_XPATH =
-            "//crawl-order/controller"
-            + "/string[@name='disk-path']";
-    /** Xpath for the arcfile 'prefix' in the order.xml . */
-    private static final String ARCHIVEFILE_PREFIX_XPATH =
-            "//crawl-order/controller"
-            + "/map[@name='write-processors']"
-            + "/newObject/string[@name='prefix']";
-    /** Xpath for the ARCs dir in the order.xml. */
-    private static final String ARCSDIR_XPATH =
-            "//crawl-order/controller"
-            + "/map[@name='write-processors']"
-            + "/newObject[@name='Archiver']/stringList[@name='path']/string";
-    /** Xpath for the WARCs dir in the order.xml. */
-    private static final String WARCSDIR_XPATH =
-            "//crawl-order/controller"
-            + "/map[@name='write-processors']"
-            + "/newObject[@name='WARCArchiver']/stringList[@name='path']/string";
-    /** Xpath for the 'seedsfile' in the order.xml. */
-    private static final String SEEDS_FILE_XPATH =
-            "//crawl-order/controller"
-            + "/newObject[@name='scope']"
-            + "/string[@name='seedsfile']";
-    private static final String ARCS_ENABLED_XPATH =
-            "//crawl-order/controller"
-            + "/map[@name='write-processors']"
-            + "/newObject[@name='Archiver']/boolean[@name='enabled']";
-    /** Xpath for the WARCs dir in the order.xml. */
-    private static final String WARCS_ENABLED_XPATH =
-            "//crawl-order/controller"
-            + "/map[@name='write-processors']"
-            + "/newObject[@name='WARCArchiver']/boolean[@name='enabled']";
-
+    
     /**
      * Private HeritrixLauncher constructor. Sets up the HeritrixLauncher from
      * the given order file and seedsfile.
@@ -181,12 +134,12 @@ public abstract class HeritrixLauncher {
      */
     public void setupOrderfile() throws IOFailure {
         Document doc = XmlUtils.getXmlDoc(files.getOrderXmlFile());
-        XmlUtils.setNode(doc, DISK_PATH_XPATH,
+        XmlUtils.setNode(doc, HeritrixTemplate.DISK_PATH_XPATH,
                          files.getCrawlDir().getAbsolutePath());
 
-        XmlUtils.setNodes(doc, ARCHIVEFILE_PREFIX_XPATH, files.getArchiveFilePrefix());
+        XmlUtils.setNodes(doc, HeritrixTemplate.ARCHIVEFILE_PREFIX_XPATH, files.getArchiveFilePrefix());
 
-        XmlUtils.setNode(doc, SEEDS_FILE_XPATH,
+        XmlUtils.setNode(doc, HeritrixTemplate.SEEDS_FILE_XPATH,
                          files.getSeedsTxtFile().getAbsolutePath());
 
         String archiveFormat = Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT);
@@ -208,31 +161,52 @@ public abstract class HeritrixLauncher {
         
         if (arcMode) {
             // enable ARC writing in Heritrix and disable WARC writing if needed.
-            if (doc.selectSingleNode(ARCSDIR_XPATH) != null 
-                    && doc.selectSingleNode(ARCS_ENABLED_XPATH) != null) {
-                XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
-                XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, "true");
-                if (doc.selectSingleNode(WARCS_ENABLED_XPATH) != null) {
-                    XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, "false");
+            if (doc.selectSingleNode(HeritrixTemplate.ARCSDIR_XPATH) != null 
+                    && doc.selectSingleNode(HeritrixTemplate.ARCS_ENABLED_XPATH) != null) {
+                XmlUtils.setNode(doc, HeritrixTemplate.ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
+                XmlUtils.setNode(doc, HeritrixTemplate.ARCS_ENABLED_XPATH, "true");
+                if (doc.selectSingleNode(HeritrixTemplate.WARCS_ENABLED_XPATH) != null) {
+                    XmlUtils.setNode(doc, HeritrixTemplate.WARCS_ENABLED_XPATH, "false");
                 }
             } else {
                 throw new IllegalState("Unable to choose ARC as Heritrix archive format because "
                        + " one of the following xpaths are invalid in the given order.xml: " 
-                        + ARCSDIR_XPATH + "," +  ARCS_ENABLED_XPATH);
+                        + HeritrixTemplate.ARCSDIR_XPATH + "," +  HeritrixTemplate.ARCS_ENABLED_XPATH);
             }
         } else if (warcMode) { // WARCmode
             // enable ARC writing in Heritrix and disable WARC writing if needed.
-            if (doc.selectSingleNode(WARCSDIR_XPATH) != null 
-                    && doc.selectSingleNode(WARCS_ENABLED_XPATH) != null) {
-                XmlUtils.setNode(doc, WARCSDIR_XPATH, Constants.WARCDIRECTORY_NAME);
-                XmlUtils.setNode(doc, WARCS_ENABLED_XPATH, "true");
-                if (doc.selectSingleNode(ARCS_ENABLED_XPATH) != null) {
-                    XmlUtils.setNode(doc, ARCS_ENABLED_XPATH, "false");
+            if (doc.selectSingleNode(HeritrixTemplate.WARCSDIR_XPATH) != null 
+                    && doc.selectSingleNode(HeritrixTemplate.WARCS_ENABLED_XPATH) != null) {
+                XmlUtils.setNode(doc, HeritrixTemplate.WARCSDIR_XPATH, Constants.WARCDIRECTORY_NAME);
+                XmlUtils.setNode(doc, HeritrixTemplate.WARCS_ENABLED_XPATH, "true");
+                if (doc.selectSingleNode(HeritrixTemplate.ARCS_ENABLED_XPATH) != null) {
+                    XmlUtils.setNode(doc, HeritrixTemplate.ARCS_ENABLED_XPATH, "false");
                 }
+                
+                // Update the WARCWriterProcessorSettings with settings values
+                setIfFound(doc, HeritrixTemplate.WARCS_SKIP_IDENTICAL_DIGESTS_XPATH,
+                		HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS, 
+                		Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS));
+                
+                setIfFound(doc, HeritrixTemplate.WARCS_WRITE_METADATA_XPATH,
+                		HarvesterSettings.HERITRIX_WARC_WRITE_METADATA, 
+                		Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA));
+                
+                setIfFound(doc, HeritrixTemplate.WARCS_WRITE_REQUESTS_XPATH,
+                		HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS, 
+                		Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS));
+                
+                setIfFound(doc, HeritrixTemplate.WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH,
+                		HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS, 
+                		Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS));  
+                setIfFound(doc, HeritrixTemplate.WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH,
+                		HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED, 
+                		Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED));
+                
             } else {
                 throw new IllegalState("Unable to choose WARC as Heritrix archive format because "
                        + " one of the following xpaths are invalid in the given order.xml: " 
-                        + WARCSDIR_XPATH + "," +  WARCS_ENABLED_XPATH);
+                        + HeritrixTemplate.WARCSDIR_XPATH + "," +  HeritrixTemplate.WARCS_ENABLED_XPATH);
             }
             
         } else {
@@ -241,13 +215,23 @@ public abstract class HeritrixLauncher {
         }
 
         if (isDeduplicationEnabledInTemplate(doc)) {
-            XmlUtils.setNode(doc, DEDUPLICATOR_INDEX_LOCATION_XPATH,
+            XmlUtils.setNode(doc, HeritrixTemplate.DEDUPLICATOR_INDEX_LOCATION_XPATH,
                              files.getIndexDir().getAbsolutePath());
         }
 
         files.writeOrderXml(doc);
     }
 
+    private void setIfFound(Document doc, String Xpath, String param, String value) {
+    	if (doc.selectSingleNode(Xpath) != null) {
+        	XmlUtils.setNode(doc, Xpath, value);
+        } else {
+        	log.warn("Could not replace setting value of '" + param 
+        			+ "' in template. Xpath not found: " + Xpath);
+        }
+    }
+    
+    
     /**
      * Return true if the given order.xml file has deduplication enabled.
      *
@@ -257,7 +241,7 @@ public abstract class HeritrixLauncher {
      */
     public static boolean isDeduplicationEnabledInTemplate(Document doc) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
-        Node xpathNode = doc.selectSingleNode(DEDUPLICATOR_ENABLED);
+        Node xpathNode = doc.selectSingleNode(HeritrixTemplate.DEDUPLICATOR_ENABLED);
         return xpathNode != null
                && xpathNode.getText().trim().equals("true");
 

@@ -112,7 +112,7 @@ National Library.
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
                 <javaOpts></javaOpts>
-                <archiveFormat>arc</archiveFormat>
+                <archiveFormat>warc</archiveFormat>
                 <archiveNaming>
                     <class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
                 </archiveNaming>
@@ -149,7 +149,7 @@ National Library.
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
                 <generateArcFilesReport>true</generateArcFilesReport>
-                <metadataFormat>arc</metadataFormat>
+                <metadataFormat>warc</metadataFormat>
             </metadata>
         </harvesting>
         <indexserver>

@@ -412,10 +412,10 @@ public class HeritrixLauncherTester extends TestCase {
         XmlAsserts.assertNodeWithXpath(
                 doc, HeritrixTemplate.DEDUPLICATOR_XPATH);
         XmlAsserts.assertNodeWithXpath(
-                doc, HeritrixLauncher.DEDUPLICATOR_INDEX_LOCATION_XPATH);
+                doc, HeritrixTemplate.DEDUPLICATOR_INDEX_LOCATION_XPATH);
         XmlAsserts.assertNodeTextInXpath(
                 "Should have set index to right directory",
-                doc, HeritrixLauncher.DEDUPLICATOR_INDEX_LOCATION_XPATH,
+                doc, HeritrixTemplate.DEDUPLICATOR_INDEX_LOCATION_XPATH,
                 dummyLuceneIndex.getAbsolutePath());
     }
 

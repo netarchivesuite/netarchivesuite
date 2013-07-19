@@ -120,7 +120,74 @@ public class HeritrixTemplate {
     public static final String WARC_ARCHIVER_PATH_XPATH =
             "/crawl-order/controller/map[@name='write-processors']/"
             + "newObject[@name='WARCArchiver']/stringList[@name='path']/string";
+    
+    /** Xpath for the deduplicator index directory node in order.xml 
+     * documents. */
+    public static final String DEDUPLICATOR_INDEX_LOCATION_XPATH
+            = HeritrixTemplate.DEDUPLICATOR_XPATH
+              + "/string[@name='index-location']";
 
+    /**
+     * Xpath for the boolean telling if the deduplicator is enabled in order.xml
+     * documents.
+     */
+    public static final String DEDUPLICATOR_ENABLED
+            = HeritrixTemplate.DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
+
+    
+    /** Xpath for the 'disk-path' in the order.xml . */
+    public static final String DISK_PATH_XPATH =
+            "//crawl-order/controller"
+            + "/string[@name='disk-path']";
+    /** Xpath for the arcfile 'prefix' in the order.xml . */
+    public static final String ARCHIVEFILE_PREFIX_XPATH =
+            "//crawl-order/controller"
+            + "/map[@name='write-processors']"
+            + "/newObject/string[@name='prefix']";
+    /** Xpath for the ARCs dir in the order.xml. */
+    public static final String ARCSDIR_XPATH =
+            "//crawl-order/controller"
+            + "/map[@name='write-processors']"
+            + "/newObject[@name='Archiver']/stringList[@name='path']/string";
+    
+    private static final String WARCWRITERPROCESSOR_XPATH = 
+    "//crawl-order/controller"
+    + "/map[@name='write-processors']"
+    + "/newObject[@name='WARCArchiver']";
+    
+    private static final String ARCWRITERPROCESSOR_XPATH = 
+    	    "//crawl-order/controller"
+    	    + "/map[@name='write-processors']"
+    	    + "/newObject[@name='Archiver']";
+    
+    /** Xpath for the WARCs dir in the order.xml. */
+    public static final String WARCSDIR_XPATH =
+    		WARCWRITERPROCESSOR_XPATH + "/stringList[@name='path']/string";
+    
+    /** Xpath for the 'seedsfile' in the order.xml. */
+    public static final String SEEDS_FILE_XPATH =
+            "//crawl-order/controller"
+            + "/newObject[@name='scope']"
+            + "/string[@name='seedsfile']";
+    
+    public static final String ARCS_ENABLED_XPATH =
+    		ARCWRITERPROCESSOR_XPATH + "/boolean[@name='enabled']";
+    
+    /** Xpath for the WARCs dir in the order.xml. */
+    public static final String WARCS_ENABLED_XPATH =
+    		WARCWRITERPROCESSOR_XPATH + "/boolean[@name='enabled']";
+
+    public static final String WARCS_WRITE_REQUESTS_XPATH =
+    		WARCWRITERPROCESSOR_XPATH + "/boolean[@name='write-requests']";
+    public static final String WARCS_WRITE_METADATA_XPATH =
+    		WARCWRITERPROCESSOR_XPATH + "/boolean[@name='write-metadata']";
+    public static final String WARCS_SKIP_IDENTICAL_DIGESTS_XPATH =
+    		WARCWRITERPROCESSOR_XPATH + "/boolean[@name='skip-identical-digests']";
+    public static final String WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH =
+    		WARCWRITERPROCESSOR_XPATH + "/boolean[@name='write-revisit-for-identical-digests']";
+    public static final String WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH =
+    		WARCWRITERPROCESSOR_XPATH + "/boolean[@name='write-revisit-for-not-modified']";
+    
     /** Map from required xpaths to a regular expression describing
      * legal content for the path text. */
     private static final Map<String, Pattern> requiredXpaths
