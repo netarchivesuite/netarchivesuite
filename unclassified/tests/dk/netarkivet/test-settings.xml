@@ -128,7 +128,12 @@ National Library.
      		<heritrix>
      			<jmxUsername>controlRole</jmxUsername>
      			<jmxPassword>R_D</jmxPassword>
+     			<archiveFormat>arc</archiveFormat>
      		</heritrix>
+     		<metadata>
+                <metadataFormat>arc</metadataFormat>
+            </metadata>
+     		
      	</harvesting>
      <indexserver>
                 <maxclients>4</maxclients>
