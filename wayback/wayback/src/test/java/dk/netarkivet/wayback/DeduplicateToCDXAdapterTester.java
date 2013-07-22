@@ -50,12 +50,18 @@ public class DeduplicateToCDXAdapterTester extends TestCase {
             + "https://wiki.statsbiblioteket.dk/wiki/summa/css/screen.css image/png #016 "
             + "20090525130000915+76 sha1:AXH2IFNXC4MUT26SRHRJZHGR3FDAJDNR - duplicate:\"1-1-20090513141823-00008-"
             + "sb-test-har-001.statsbiblioteket.dk.arc,22962264\",content-size:9969";
+    public static final String DEDUP_CRAWL_STRING2 =
+    "2011-05-11T16:41:49.968Z 200 50436 http://webtv.metropol.dk/swf/webtv_promohorizontal.swf LLX "
+    + "http://www.sporten.dk/sport/fodbold application/x-shockwave-flash #008 20110511164149870+61 "
+    + "sha1:KBHBHEUCX5CN7KB3P2ZVBHGCCIFJNIWH - le:IOException@ExtractorSWF,duplicate:"
+    +"\"118657-119-20110428163750-00001-kb-prod-har-004.kb.dk.arc,69676377\",content-size:50842";
+    
     @Override
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                 TestInfo.WORKING_DIR);
-        System.out.println(DEDUP_CRAWL_STRING);
+        //System.out.println(DEDUP_CRAWL_STRING);
     }
     
     @Override
@@ -77,6 +83,13 @@ public class DeduplicateToCDXAdapterTester extends TestCase {
         assertEquals("Should get the arcfilename back out of the cdx line",
                 "1-1-20090513141823-00008-sb-test-har-001.statsbiblioteket.dk.arc",result.getFile());
         assertEquals("Should get the right http code out of the cdx line","200",result.getHttpCode());
+        
+        String cdx_line2 = adapter.adaptLine(DEDUP_CRAWL_STRING2);
+        CaptureSearchResult result2 = adapter2.adapt(cdx_line2);
+        assertEquals("Should get the arcfilename back out of the cdx line",
+                "118657-119-20110428163750-00001-kb-prod-har-004.kb.dk.arc",result2.getFile());
+        assertEquals("Should get the right http code out of the cdx line","200",result2.getHttpCode());
+        
     }
 
     public void testAdaptStream() throws IOException {

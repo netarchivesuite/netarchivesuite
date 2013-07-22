@@ -115,6 +115,17 @@ public class DeduplicateToCDXAdapter implements
                 String digest = crawlElements[9].replaceAll("sha1:", "");
                 result.append(digest).append(" - ");
                 String duplicateRecord = crawlElements[11];
+                if (!duplicateRecord.startsWith(DUPLICATE_MATCHING_STRING)) {
+                    // Probably an Exception starting with "le:" is injected before the 
+                    // DUPLICATE_MATCHING_STRING, Try splitting on duplicate:
+                    String[] parts = duplicateRecord.split(DUPLICATE_MATCHING_STRING);
+                    if (parts.length == 2) { 
+                        String newDuplicateRecord = DUPLICATE_MATCHING_STRING + parts[1];
+                        log.warn("Duplicate-record changed from '" + duplicateRecord + "' to '"
+                               + newDuplicateRecord + "'");
+                        duplicateRecord = newDuplicateRecord;
+                    }
+                }
                 Matcher m = duplicateRecordPattern.matcher(duplicateRecord);
                 if (m.matches()) {
                     String arcfile = m.group(1);
