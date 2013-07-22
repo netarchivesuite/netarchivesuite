@@ -115,7 +115,7 @@ public class HeritrixLauncherTester extends TestCase {
         // If deduplicationMode != NO_DEDUPLICATION
         // write the zipped index to the indexdir inside the crawldir
         if (orderXml.exists() && orderXml.length() > 0 &&    
-            HeritrixLauncher.isDeduplicationEnabledInTemplate(XmlUtils.getXmlDoc(orderXml))) {
+            HeritrixTemplate.isDeduplicationEnabledInTemplate(XmlUtils.getXmlDoc(orderXml))) {
             assertNotNull("Must have a non-null index when deduplication is enabled",
                           indexDir);
             files.setIndexDir(indexDir);
@@ -388,13 +388,13 @@ public class HeritrixLauncherTester extends TestCase {
         HeritrixLauncher hl = getHeritrixLauncher(
                 TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, 
                 null);
-        hl.setupOrderfile();
+        hl.setupOrderfile(hl.getHeritrixFiles());
 
         File orderFile = new File (TestInfo.HERITRIX_TEMP_DIR, "order.xml");
         Document doc = XmlUtils.getXmlDoc(orderFile);
         /* check, that deduplicator is not enabled in the order */
         assertFalse("Should not have deduplication enabled",
-                    HeritrixLauncher.isDeduplicationEnabledInTemplate(doc));
+                    HeritrixTemplate.isDeduplicationEnabledInTemplate(doc));
 
         /**
          * Check the DeduplicationType.DEDUPLICATION_USING_THE_DEDUPLICATOR
@@ -403,12 +403,12 @@ public class HeritrixLauncherTester extends TestCase {
 
         hl = getHeritrixLauncher(TestInfo.DEDUP_ORDER_FILE,
                                  dummyLuceneIndex);
-        hl.setupOrderfile();
+        hl.setupOrderfile(hl.getHeritrixFiles());
 
         // check, that the deduplicator is present in the order
         doc = XmlUtils.getXmlDoc(orderFile);
         assertTrue("Should have deduplication enabled",
-                   HeritrixLauncher.isDeduplicationEnabledInTemplate(doc));
+                   HeritrixTemplate.isDeduplicationEnabledInTemplate(doc));
         XmlAsserts.assertNodeWithXpath(
                 doc, HeritrixTemplate.DEDUPLICATOR_XPATH);
         XmlAsserts.assertNodeWithXpath(

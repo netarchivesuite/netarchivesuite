@@ -116,6 +116,8 @@ public final class Constants {
     public static final String GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME =
             "dk.netarkivet.global_crawler_traps";
     
+    public static final long BYTES_PER_HERITRIX_BYTELIMIT_UNIT = 1024;
+    
     /** Uncallable constructor. */
     private Constants() { }
 

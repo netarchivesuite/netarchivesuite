@@ -51,15 +51,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Node;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.NotificationType;
@@ -241,10 +237,9 @@ public class Job implements Serializable, JobInfo {
      * Is set using an ArchiveFileNaming class when the jobID is available.
      */
     private String harvestnamePrefix;
-    /** This variable is the same as harvestdefinitions.audience field. */
+    
+    /** This variable is right now the same as harvestdefinitions.audience field. */
     private String harvestAudience;
-
-	private static final int BYTES_PER_HERITRIX_BYTELIMIT_UNIT = 1024;
 
     /**
      * Package private constructor for common initialisation.
@@ -327,12 +322,26 @@ public class Job implements Serializable, JobInfo {
         // The seedlist, configuration map, and max/min limits are changed
         // as result of this method-call.
         addConfiguration(cfg);
-        addGlobalCrawlerTraps();
+        addGlobalCrawlerTraps(orderXMLdoc);
         
         // Set MaxJobrunningTime for this job
         setMaxJobRunningTime(forceMaxJobRunningTime);
-        
+        setArchiveFormatInTemplate(Settings.get(
+                HarvesterSettings.HERITRIX_ARCHIVE_FORMAT));
         status = JobStatus.NEW;
+    }
+    
+    /** 
+     * Update the order template according to the chosen archive format (arc/warc). 
+     **/
+    private void setArchiveFormatInTemplate(String archiveFormat) {
+        if (!underConstruction) {
+            final String msg = "Cannot modify job "
+                    + this + " as it is no longer under construction";
+            log.debug(msg);
+            throw new IllegalState(msg);
+        }
+        HeritrixTemplate.editOrderXML_ArchiveFormat(orderXMLdoc, archiveFormat);
     }
 
     /** Create a new Job object from basic information storable in the DAO.
@@ -435,10 +444,11 @@ public class Job implements Serializable, JobInfo {
      *  Reads a list of all active global crawler trap expressions from the
      * database and adds them to the crawl template for this job.
      */
-    private void addGlobalCrawlerTraps() {
+    private void addGlobalCrawlerTraps(Document orderXmlDoc) {
         GlobalCrawlerTrapListDAO dao =
                 GlobalCrawlerTrapListDAO.getInstance();
-        editOrderXMLAddCrawlerTraps(Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
+        HeritrixTemplate.editOrderXMLAddCrawlerTraps(
+                orderXmlDoc, Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
                                     dao.getAllActiveTrapExpressions());
     }
 
@@ -538,7 +548,7 @@ public class Job implements Serializable, JobInfo {
             }
         }
 
-        editOrderXMLAddPerDomainCrawlerTraps(cfg);
+        HeritrixTemplate.editOrderXMLAddPerDomainCrawlerTraps(orderXMLdoc, cfg);
 
         //TODO update limits in settings files - see also bug 269
 
@@ -554,98 +564,7 @@ public class Job implements Serializable, JobInfo {
 
         assert (maxCountObjects >= minCountObjects) : "basic invariant";
     }
-
-    /** Updates this jobs order.xml to include a MatchesListRegExpDecideRule
-     *  for each crawlertrap associated with for the given DomainConfiguration.
-     *
-     * The added nodes have the form
-     *
-     * <newObject name="domain.dk"
-     *      class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule">
-     *       <string name="decision">REJECT</string>
-     *       <string name="list-logic">OR</string>
-     *       <stringList name="regexp-list">
-     *          <string>theFirstRegexp</string>
-     *          <string>theSecondRegexp</string>
-     *       </stringList> 
-     *     </newObject>
-     *
-     * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
-     * @throws IllegalState
-     *          If unable to update order.xml due to wrong order.xml format
-     */
-    private void editOrderXMLAddPerDomainCrawlerTraps(DomainConfiguration cfg) {
-        //Get the regexps to exclude
-        List<String> crawlerTraps = cfg.getCrawlertraps();
-        String elementName = cfg.getDomainName();
-        editOrderXMLAddCrawlerTraps(elementName, crawlerTraps);
-    }
-
-    /**
-     * Method to add a list of crawler traps with a given element name. It is
-     * used both to add per-domain traps and global traps.
-     * @param elementName The name of the added element.
-     * @param crawlerTraps A list of crawler trap regular expressions to add
-     * to this job.
-     */
-    @SuppressWarnings("unchecked")
-	private void editOrderXMLAddCrawlerTraps(String elementName,
-                                             List<String> crawlerTraps) {
-        if (crawlerTraps.size() == 0) {
-            return;
-        }
-
-        // Get the node to update
-        // If there is an acceptIfPrerequisite decideRule in the template, crawler traps should be
-        // placed before (cf. issue NAS-2205)
-        // If no such rule exists then we append the crawler traps as to the existing decideRuleds.
-        
-        Node rulesMapNode = orderXMLdoc.selectSingleNode(HeritrixTemplate.DECIDERULES_MAP_XPATH);
-        if (rulesMapNode == null || !(rulesMapNode instanceof Element)) {
-            throw new IllegalState(
-                    "Unable to update order.xml document."
-                    + "It does not have the right form to add"
-                    + "crawler trap deciderules.");
-        }
-        
-        Element rulesMap = (Element) rulesMapNode;
-        
-        // Create the root node and append it top existing rules
-        Element decideRule = rulesMap.addElement("newObject");
-        
-        // If an acceptiIfPrerequisite node exists, detach and insert before it
-        Node acceptIfPrerequisiteNode = orderXMLdoc.selectSingleNode(
-        		HeritrixTemplate.DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
-        if (acceptIfPrerequisiteNode != null) {
-           List<Node> elements = rulesMap.elements();
-           int insertPosition = elements.indexOf(acceptIfPrerequisiteNode);
-           decideRule.detach();
-           elements.add(insertPosition, decideRule);
-        } else {
-        	rulesMap.elements().size();
-        }
-        
-        // Add all regexps in the list to a single MatchesListRegExpDecideRule        
-        decideRule.addAttribute("name", elementName);
-        decideRule.addAttribute("class",
-                MatchesListRegExpDecideRule.class.getName()
-            );
-
-        Element decision = decideRule.addElement("string");
-        decision.addAttribute("name", "decision");
-        decision.addText("REJECT");
-
-        Element listlogic = decideRule.addElement("string");
-        listlogic.addAttribute("name", "list-logic");
-        listlogic.addText("OR");
-
-        Element regexpList = decideRule.addElement("stringList");
-        regexpList.addAttribute("name", "regexp-list");
-        for (String trap : crawlerTraps) {
-                regexpList.addElement("string").addText(trap);
-        }
-    }
-
+    
     /**
      * Get the name of the order XML file used by this Job.
      *
@@ -925,7 +844,9 @@ public class Job implements Serializable, JobInfo {
         if ((this.status == JobStatus.NEW
                 || this.status == JobStatus.RESUBMITTED)
                 && newStatus == JobStatus.SUBMITTED) {
-            editOrderXML_configureQuotaEnforcer();
+            HeritrixTemplate.editOrderXML_configureQuotaEnforcer(orderXMLdoc, 
+                    maxObjectsIsSetByQuotaEnforcer, forceMaxBytesPerDomain, 
+                    forceMaxObjectsPerDomain);
         }
 
         if (this.status == JobStatus.SUBMITTED
@@ -1034,7 +955,8 @@ public class Job implements Serializable, JobInfo {
             throw new IllegalState(msg);
         }
         this.forceMaxObjectsPerDomain = maxObjectsPerDomain;
-        editOrderXML_maxObjectsPerDomain(maxObjectsPerDomain);
+        HeritrixTemplate.editOrderXML_maxObjectsPerDomain(
+                orderXMLdoc, maxObjectsPerDomain, maxObjectsIsSetByQuotaEnforcer);
 
         if (0L == maxObjectsPerDomain && 0L != forceMaxBytesPerDomain) {
             setMaxBytesPerDomain(0L);
@@ -1054,7 +976,7 @@ public class Job implements Serializable, JobInfo {
             throw new IllegalState(msg);
         }
         this.forceMaxBytesPerDomain = maxBytesPerDomain;
-        editOrderXML_maxBytesPerDomain(maxBytesPerDomain);
+        HeritrixTemplate.editOrderXML_maxBytesPerDomain(orderXMLdoc, maxBytesPerDomain);
 
         if (0L == maxBytesPerDomain && 0L != forceMaxObjectsPerDomain) {
             setMaxObjectsPerDomain(0L);
@@ -1074,7 +996,7 @@ public class Job implements Serializable, JobInfo {
             throw new IllegalState(msg);
         }
         this.forceMaxRunningTime = maxJobRunningTime;
-        editOrderXML_maxJobRunningTime(maxJobRunningTime);
+        HeritrixTemplate.editOrderXML_maxJobRunningTime(orderXMLdoc, maxJobRunningTime);
     }
     
     /**
@@ -1083,151 +1005,7 @@ public class Job implements Serializable, JobInfo {
     public long getMaxJobRunningTime() {
         return forceMaxRunningTime;
     }
-    
-
-    /**
-     * Auxiliary method to modify the orderXMLdoc Document
-     * with respect to setting the maximum number of objects to be retrieved
-     * per domain.
-     * This method updates 'group-max-fetch-success' element of the 
-     * QuotaEnforcer pre-fetch processor node
-     * (org.archive.crawler.frontier.BdbFrontier)
-     * with the value of the argument forceMaxObjectsPerDomain
-     *
-     * @param forceMaxObjectsPerDomain
-     *           The maximum number of objects to retrieve per domain, or 0
-     *           for no limit.
-     * @throws PermissionDenied
-     *           If unable to replace the frontier node of
-     *           the orderXMLdoc Document
-     * @throws IOFailure
-     *           If the group-max-fetch-success element is not found in the orderXml.
-     * TODO The group-max-fetch-success check should also be performed in
-     * TemplateDAO.create, TemplateDAO.update
-     */
-    private void editOrderXML_maxObjectsPerDomain(
-            long forceMaxObjectsPerDomain) {
-
-        String xpath = (maxObjectsIsSetByQuotaEnforcer ?
-                HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH :
-                    HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
-
-        Node orderXmlNode = orderXMLdoc.selectSingleNode(xpath);
-        if (orderXmlNode != null) {
-            orderXmlNode.setText(
-                    String.valueOf(forceMaxObjectsPerDomain));
-        } else {
-            throw new IOFailure(
-                    "Unable to locate " +  xpath + " element in order.xml: "
-                    + orderXMLdoc.asXML());
-        }
-    }
-
-    /**
-     * Auxiliary method to modify the orderXMLdoc Document
-     * with respect to setting the maximum number of bytes to retrieve
-     * per domain. This method updates 'group-max-all-kb' element of
-     * the 'QuotaEnforcer' node,
-     * which again is a subelement of 'pre-fetch-processors' node.
-     * with the value of the argument forceMaxBytesPerDomain
-     *
-     * @param forceMaxBytesPerDomain
-     *      The maximum number of byte to retrieve per domain,
-     *      or -1 for no limit.
-     *      Note that the number is divided by 1024 before being inserted into
-     *      the orderXml, as Heritrix expects KB.
-     * @throws PermissionDenied
-     *      If unable to replace the QuotaEnforcer node of the
-     *      orderXMLdoc Document
-     * @throws IOFailure
-     *      If the group-max-all-kb element cannot be found.
-     * TODO This group-max-all-kb check also be performed in
-     * TemplateDAO.create, TemplateDAO.update
-     */
-    private void editOrderXML_maxBytesPerDomain(long forceMaxBytesPerDomain) {
-        // get and set the group-max-all-kb Node of the orderXMLdoc:
-        String xpath = HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
-        Node groupMaxSuccessKbNode = orderXMLdoc.selectSingleNode(xpath);
-        if (groupMaxSuccessKbNode != null) {
-            if (forceMaxBytesPerDomain == 0) {
-                groupMaxSuccessKbNode.setText("0");
-            } else if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
-                // Divide by 1024 since Heritrix uses KB rather than bytes,
-                // and add 1 to avoid to low limit due to rounding.
-                groupMaxSuccessKbNode.setText(
-                        Long.toString((forceMaxBytesPerDomain
-                                       / BYTES_PER_HERITRIX_BYTELIMIT_UNIT)
-                                      + 1)
-                );
-            } else {
-                groupMaxSuccessKbNode.setText(
-                        String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY));
-            }
-        } else {
-            throw new IOFailure(
-                    "Unable to locate QuotaEnforcer object in order.xml: "
-                    + orderXMLdoc.asXML());
-        }
-    }
-    
-    /**
-     * @param maxJobRunningTime Force the job to end after maxJobRunningTime
-     */
-    private void editOrderXML_maxJobRunningTime(long maxJobRunningTime) {
-        // get and set the "max-time-sec" node of the orderXMLdoc
-        String xpath = HeritrixTemplate.MAXTIMESEC_PATH_XPATH;
-        Node groupMaxTimeSecNode = orderXMLdoc.selectSingleNode(xpath);
-        if (groupMaxTimeSecNode != null) {
-            String currentMaxTimeSec = groupMaxTimeSecNode.getText();
-            groupMaxTimeSecNode.setText(Long.toString(maxJobRunningTime));
-            log.trace("Value of groupMaxTimeSecNode changed from " 
-                    + currentMaxTimeSec + " to " + maxJobRunningTime);
-        } else {
-            throw new IOFailure(
-                    "Unable to locate xpath '" + xpath + "' in the order.xml: "
-                    + orderXMLdoc.asXML());
-        }
-    }
-
-    /**
-     * Activates or deactivate the quota-enforcer, depending on budget definition.
-     * Object limit can be defined either by using the queue-total-budget property or
-     * the quota enforcer, as per{@link #maxObjectsIsSetByQuotaEnforcer}'s value.
-     * So quota enforcer is set as follows:
-     * <ul>
-     * <li>Object limit is not set by quota enforcer, disabled only if there is no byte limit.</li>
-     * <li>Object limit is set by quota enforcer, so it should be enabled whether
-     * a byte or object limit is set.</li>
-     * </ul>
-     */
-    private void editOrderXML_configureQuotaEnforcer() {
-
-        boolean quotaEnabled = true;
-
-        if (!maxObjectsIsSetByQuotaEnforcer) {
-            // Object limit is not set by quota enforcer, so it should be disabled only
-            // if there is no byte limit.
-            quotaEnabled = forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
-
-        } else {
-            // Object limit is set by quota enforcer, so it should be enabled whether
-            // a byte or object limit is set.
-            quotaEnabled =
-                    forceMaxObjectsPerDomain != Constants.HERITRIX_MAXOBJECTS_INFINITY
-                || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
-        }
-
-        String xpath = HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
-        Node qeNode = orderXMLdoc.selectSingleNode(xpath);
-        if (qeNode != null) {
-            qeNode.setText(Boolean.toString(quotaEnabled));
-        } else {
-            throw new IOFailure(
-                    "Unable to locate " +  xpath
-                    + " element in order.xml: " + orderXMLdoc.asXML());
-        }
-    }
-
+  
     /**
      * Get the priority of this job.
      *

@@ -157,7 +157,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
      * </ol>
      */
     public void doCrawl() throws IOFailure {
-        setupOrderfile();
+        setupOrderfile(getHeritrixFiles());
         heritrixController = new BnfHeritrixController(getHeritrixFiles());
 
         PeriodicTaskExecutor exec = null;

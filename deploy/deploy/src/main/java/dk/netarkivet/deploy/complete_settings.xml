@@ -607,10 +607,16 @@
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
                 <javaOpts/>
-                <archiveFormat>arc</archiveFormat>
+                <archiveFormat>warc</archiveFormat>
                 <archiveNaming>
                     <class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
                 </archiveNaming>
+                <warc><skipIdenticalDigests>false</skipIdenticalDigests>
+					<writeRequests>false</writeRequests>
+					<writeMetadata>false</writeMetadata>
+					<writeRevisitForIdenticalDigests>false</writeRevisitForIdenticalDigests>
+					<writeRevisitForNotModified>false</writeRevisitForNotModified>
+                </warc>
             </heritrix>
             <frontier>
                 <!-- 10 minutes -->
@@ -638,7 +644,7 @@
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
                 <generateArcFilesReport>true</generateArcFilesReport>
-                <metadataFormat>arc</metadataFormat>
+                <metadataFormat>warc</metadataFormat>
             </metadata>
         </harvesting>
         <indexserver>

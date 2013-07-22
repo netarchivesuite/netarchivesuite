@@ -292,4 +292,15 @@ public class HeritrixTemplateTester extends TestCase {
 //        String after = a.asXML();
 //        System.out.println(TestFileUtils.getDifferences(before, after));
 //    }
+    
+    public void testEditOrderXML_ArchiveFormat() {
+        File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
+        Document a = XmlUtils.getXmlDoc(f);
+        HeritrixTemplate.editOrderXML_ArchiveFormat(a, "arc");
+        File fwarc = new File(TestInfo.TOPDATADIR, "default_orderxml_warc.xml");
+        a = XmlUtils.getXmlDoc(fwarc);
+        HeritrixTemplate.editOrderXML_ArchiveFormat(a, "warc");
+    }
+    
+    
 }

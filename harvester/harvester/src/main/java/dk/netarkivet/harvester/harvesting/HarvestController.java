@@ -59,6 +59,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
@@ -177,7 +178,7 @@ public class HarvestController {
        
         files.writeOrderXml(job.getOrderXMLdoc());
         // Only retrieve index if deduplication is not disabled in the template.
-        if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
+        if (HeritrixTemplate.isDeduplicationEnabledInTemplate(
                 job.getOrderXMLdoc())) {
             log.debug("Deduplication enabled. Fetching deduplication index..");
             files.setIndexDir(fetchDeduplicateIndex(metadataEntries));

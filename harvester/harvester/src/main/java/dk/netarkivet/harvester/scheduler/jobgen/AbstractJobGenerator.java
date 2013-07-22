@@ -214,7 +214,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
         if (DEDUPLICATION_ENABLED) {
            // Check that the Deduplicator element is present in the
            //OrderXMl and enabled. If missing or disabled log a warning
-            if (!HeritrixLauncher.isDeduplicationEnabledInTemplate(doc)) {
+            if (!HeritrixTemplate.isDeduplicationEnabledInTemplate(doc)) {
                 if (log.isWarnEnabled()) {
                     log.warn("Unable to perform deduplication for this job"
                             + " as the required DeDuplicator element is "

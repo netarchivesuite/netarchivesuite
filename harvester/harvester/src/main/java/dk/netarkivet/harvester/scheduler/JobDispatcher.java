@@ -37,6 +37,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobPriority;
@@ -181,7 +182,7 @@ public class JobDispatcher {
             metadata.add(aliasMetadataEntry);
         }
 
-        if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
+        if (HeritrixTemplate.isDeduplicationEnabledInTemplate(
                 job.getOrderXMLdoc())) {
             MetadataEntry duplicateReductionMetadataEntry
             = MetadataEntry.makeDuplicateReductionMetadataEntry(

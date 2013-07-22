@@ -100,7 +100,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
      *                   interrupted
      */
     public void doCrawl() throws IOFailure {
-        setupOrderfile();
+        setupOrderfile(getHeritrixFiles());
         heritrixController = HeritrixControllerFactory
                 .getDefaultHeritrixController(getControllerArguments());
         try {
