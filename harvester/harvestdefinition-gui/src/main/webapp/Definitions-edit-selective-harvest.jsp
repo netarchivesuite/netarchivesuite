@@ -174,6 +174,12 @@ DomainConfigurations are posted as pairs
         }
     %>
 </h4>
+<fmt:message key="prompt;audience"/><br/>
+<input type=\"text\" name=\""
+                      + Constants.HARVEST_PARAM + "\" size=\"60\"/></span>\n");
+<input type="text" size="42" name="<%= Constants.AUDIENCE_PARAM %>"><%=
+    HTMLUtils.escapeHtmlValues(hdd!=null?hdd.getAudience():"")
+%></input>
 
 <fmt:message key="prompt;comments"/><br/>
 <textarea rows="5" cols="42" name="<%= Constants.COMMENTS_PARAM %>"><%=
