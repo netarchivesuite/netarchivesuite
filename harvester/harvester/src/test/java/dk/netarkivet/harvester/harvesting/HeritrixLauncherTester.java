@@ -211,11 +211,14 @@ public class HeritrixLauncherTester extends TestCase {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a order file missing the arcs-path node correctly.
+     * Test that the launcher handles heritrix dying on a order file 
+     * missing the arcs-path node correctly.
      */
+    /*
     public void testStartMissingARCsPathOrderFile() {
         myTesterOfBadOrderfiles(TestInfo.MISSING_ARCS_PATH_ORDER_FILE);
     }
+    */
 
     /**
      * Test that the launcher handles heritrix dying on a order file missing the seedsfile node correctly.
@@ -227,9 +230,10 @@ public class HeritrixLauncherTester extends TestCase {
     /**
      * Test that the launcher handles heritrix dying on a order file missing the seedsfile node correctly.
      */
+    /*
     public void testStartMissingPrefixOrderFile() {
         myTesterOfBadOrderfiles(TestInfo.MISSING_PREFIX_FIELD_ORDER_FILE);
-    }
+    }*/
 
     /**
      * This method is used to test various scenarios with bad order-files.
