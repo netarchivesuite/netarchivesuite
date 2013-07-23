@@ -90,20 +90,22 @@ public class ReportingTester extends TestCase {
 
     public void testGetFilesForJob() throws Exception {
         try {
-            Reporting.getFilesForJob(-1);
+            Reporting.getFilesForJob(-1, "2-1");
             fail("Should fail on negative values");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            Reporting.getFilesForJob(0);
+            Reporting.getFilesForJob(0, "2-1");
             fail("Should fail on zero");
         } catch (ArgumentNotValid e) {
             //Expected
         }
-        CollectionAsserts.assertListEquals("Job 2 chould contain two files", Reporting.getFilesForJob(2), 
+        CollectionAsserts.assertListEquals("Job 2 chould contain two files", 
+        		Reporting.getFilesForJob(2, "2-1"), 
                 "2-1-20080601120000-00000-dev.arc", "2-metadata-1.arc");
-        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty", Reporting.getFilesForJob(4));
+        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty", 
+        		Reporting.getFilesForJob(4, "4-2"));
     }
 
     public void testGetMetdataCDXRecordsForJob() throws Exception {

@@ -49,12 +49,14 @@ jobid - The id of the job to show files for.
 %><%
     HTMLUtils.setUTF8(request);
     int jobid;
-    List<String> lines;
+    String harvestPrefix;
+    List<String> lines; 
     try {
         jobid = HTMLUtils.parseAndCheckInteger(pageContext, 
         										Constants.JOBID_PARAM,
                                                1, Integer.MAX_VALUE);
-        lines = Reporting.getFilesForJob(jobid);
+        harvestPrefix = request.getParameter(Constants.HARVESTPREFIX_PARAM);                              
+        lines = Reporting.getFilesForJob(jobid, harvestPrefix);
     } catch (ForwardedToErrorPage e) {
         return;
     }

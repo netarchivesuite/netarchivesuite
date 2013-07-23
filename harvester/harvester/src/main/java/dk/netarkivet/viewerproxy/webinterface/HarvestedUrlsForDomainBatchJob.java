@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.viewerproxy.reporting;
+package dk.netarkivet.viewerproxy.webinterface;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -104,7 +104,7 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
-        ArgumentNotValid.checkNotNull(record, "ARCRecord record");
+        ArgumentNotValid.checkNotNull(record, "ArchiveRecordBase record");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
         BufferedReader arcreader
                 = new BufferedReader(new InputStreamReader(record.getInputStream()));
@@ -146,7 +146,7 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
 
             }
         } catch (IOException e) {
-            throw new IOFailure("Unable to process arc record", e);
+            throw new IOFailure("Unable to process (w)arc record", e);
         } finally {
             try {
                 arcreader.close(); 

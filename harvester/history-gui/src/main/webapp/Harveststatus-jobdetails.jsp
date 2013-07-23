@@ -268,10 +268,11 @@ and reponse.getLocale use this locale.
 if (SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME)
     && job.getStatus().ordinal() > JobStatus.STARTED.ordinal()) {
     //make links to reports from harvest, extracted from viewerproxy.
+    String harvestprefix = job.getHarvestFilenamePrefix();
 %>
 <h3><fmt:message key="subtitle;reports.for.job"/></h3>
 <p><a href="/QA/QA-getreports.jsp?jobid=<%=jobID%>"><fmt:message key="harvest.reports"/></a></p>
-<p><a href="/QA/QA-getfiles.jsp?jobid=<%=jobID%>"><fmt:message key="harvest.files"/></a></p>
+<p><a href="/QA/QA-getfiles.jsp?jobid=<%=jobID%>&harvestprefix=<%=harvestprefix%>"><fmt:message key="harvest.files"/></a></p>
 
 <!-- search in crawl-logs -->
 <p>

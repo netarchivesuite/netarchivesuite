@@ -48,8 +48,6 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
-import dk.netarkivet.viewerproxy.reporting.CrawlLogLinesMatchingRegexp;
-import dk.netarkivet.viewerproxy.reporting.HarvestedUrlsForDomainBatchJob;
 
 /**
  * Methods for generating the batch results needed by the QA pages. 
@@ -74,10 +72,13 @@ public class Reporting {
      * @throws ArgumentNotValid If jobid is 0 or negative. 
      * @throws IOFailure On trouble generating the file list
      */
-    public static List<String> getFilesForJob(int jobid) {
+    public static List<String> getFilesForJob(int jobid, String harvestprefix) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob fileListJob = new FileListJob();
-        fileListJob.processOnlyFilesMatching(jobid + archivefile_suffix);
+        List<String> acceptedPatterns = new ArrayList<String>();
+        acceptedPatterns.add(jobid + metadatafile_suffix);
+        acceptedPatterns.add(harvestprefix + archivefile_suffix);
+        fileListJob.processOnlyFilesMatching(acceptedPatterns);
         
         File f;
         try {

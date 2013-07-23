@@ -38,7 +38,7 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import dk.netarkivet.viewerproxy.reporting.CrawlLogLinesMatchingRegexp;
+import dk.netarkivet.viewerproxy.webinterface.CrawlLogLinesMatchingRegexp;
 
 /** 
  * Tester for the class CrawlLogLinesMatchingRegexp used in 

@@ -91,18 +91,19 @@ public class ReportingWarcTester extends TestCase {
 
     public void testGetFilesForJob() throws Exception {
         try {
-            Reporting.getFilesForJob(-1);
+            Reporting.getFilesForJob(-1, "2-1");
             fail("Should fail on negative values");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            Reporting.getFilesForJob(0);
+            Reporting.getFilesForJob(0, "2-1");
             fail("Should fail on zero");
         } catch (ArgumentNotValid e) {
             //Expected
         }
-        CollectionAsserts.assertListEquals("Job 2 chould contain two files", Reporting.getFilesForJob(2), 
+        CollectionAsserts.assertListEquals("Job 2 chould contain two files", 
+        		Reporting.getFilesForJob(2, "2-2"), 
                 "2-2-20120903165904-00000-kb-test-har-002.kb.dk.warc", "2-metadata-1.warc");
     }
 
