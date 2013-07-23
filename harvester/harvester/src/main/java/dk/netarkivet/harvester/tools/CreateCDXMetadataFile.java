@@ -60,13 +60,13 @@ import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 
 /**
- * This tool creates a CDX metadata file for a given jobID by running a
+ * This tool creates a CDX metadata file for a given job's harvestPrefix by running a
  * batch job on the bitarchive and processing the results to give a metadata
  * file. Use option -w to select WARC output, and -a to select ARC output:
  * If no option available, then warc mode is selected
  *
- * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -w jobId
- * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -a jobId 
+ * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -w harvestPrefix
+ * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -a harvestPrefix
  * 
  *
  */
@@ -200,7 +200,8 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             
             System.out.println("Creating cdx-" + ((isWarcOutputMode)? "warcfile": "arcfile")  
             + " from file matching pattern: " + filePattern);
-            job.processOnlyFilesMatching(jobID + REMAINING_ARCHIVE_FILE_PATTERN);
+            job.processOnlyFilesMatching(filePattern);
+            
             BatchStatus status = arcrep.batch(
                     job, Settings.get(CommonSettings.USE_REPLICA_ID));
             if (status.hasResultFile()) {
@@ -342,7 +343,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @return String with description of parameters.
          */
         public String listParameters() {
-            return "[-a|w] jobID";
+            return "[-a|w] harvestPrefix";
         }
     }
 }
