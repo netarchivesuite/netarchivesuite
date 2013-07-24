@@ -44,6 +44,7 @@ import dk.netarkivet.common.utils.TimeUtils;
 import static dk.netarkivet.common.CommonSettings.*;
 
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
@@ -101,7 +102,23 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     private static final transient int FTP_DATATIMEOUT
             = Settings.getInt(FTP_DATATIMEOUT_SETTINGS);
 
+    
+    /** The default place in classpath where the settings file can be found. */
+    private static final String DEFAULT_SETTINGS_CLASSPATH
+            = "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml";
 
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
+    static {
+        Settings.addDefaultClasspathSettings(
+                DEFAULT_SETTINGS_CLASSPATH
+        );
+    }
+    
+    
      /**
      * The FTP client object for the current connection.
      */
@@ -214,11 +231,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
             FileUtils.remove(destFile);
             throw new IOFailure("IO trouble transferring file", e);
         } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                 log.warn("Error closing output stream", e);
-            }
+            IOUtils.closeQuietly(fos);
         }
     }
 

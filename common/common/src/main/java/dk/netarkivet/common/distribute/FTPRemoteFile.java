@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
@@ -249,14 +250,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                     checksum = null;
                 }
             } finally {
-                try {
-                    if (in != null) {
-                        in.close();
-                    }
-                } catch (IOException e) {
-                    log.warn("Problem closing inputstream: " + e);
-                    // not a serious bug
-                }
+                IOUtils.closeQuietly(in);
                 logOut();
                 log.debug("Ftp logout");
             }
