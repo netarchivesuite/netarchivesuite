@@ -80,10 +80,11 @@ public class SystemUtils {
         	InetAddress localhost = InetAddress.getLocalHost();
         	String localhostName = localhost.getCanonicalHostName();
         	String localhostIp = localhost.getHostAddress();
-        	log.info("[getLocalHostName] Resolved: " + localhostName + " (" + localhostIp + ")");
+        	log.debug("[getLocalHostName] Resolved: " + localhostName + " (" + localhostIp + ")");
         	return localhostName;
         } catch (UnknownHostException e) {
             // If no interfaces, use default;
+            log.warn("Unable to resolve localhostname. Returning the default '" + LOCALHOST + "'");
         }
         return hostname;
     }
