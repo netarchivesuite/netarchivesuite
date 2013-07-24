@@ -167,6 +167,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         confs.put(Constants.COMMENTS_PARAM, new String[]{"kommentar"});
         confs.put(Constants.SCHEDULE_PARAM, new String[]{"Hver hele time"});
         confs.put(Constants.DOMAINLIST_PARAM, new String[]{"netarkivet.dk"});
+        confs.put(Constants.AUDIENCE_PARAM, new String[]{"unittesters"});
 
         List<String> unknownDomains = new ArrayList<String>();
         List<String> illegalDomains = new ArrayList<String>();
@@ -204,6 +205,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         confs.put(Constants.EDITION_PARAM, new String[]{"1"});
         confs.put(Constants.DOMAIN_IDENTIFIER + "netarkivet.dk",
                 new String[]{"Dansk_netarkiv_fuld_dybde"});
+        confs.put(Constants.AUDIENCE_PARAM, new String[]{"unittesters"});
 
         List<String> unknownDomains = new ArrayList<String>();
         List<String> illegalDomains = new ArrayList<String>();
@@ -246,6 +248,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         confs.put(Constants.EDITION_PARAM, new String[]{"1"});
         confs.put(Constants.DOMAIN_IDENTIFIER + "netarkivet.dk",
                   new String[]{"Engelsk_netarkiv_et_niveau"});
+        confs.put(Constants.AUDIENCE_PARAM, new String[]{"unittesters"});
 
         List<String> unknownDomains = new ArrayList<String>();
         List<String> illegalDomains = new ArrayList<String>();
@@ -291,6 +294,8 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         confs.put(Constants.DOMAINLIST_PARAM, new String[]{""});
         confs.put(Constants.DOMAIN_IDENTIFIER + "netarkivet.dk",
                   new String[]{"Engelsk_netarkiv_et_niveau"});
+        confs.put(Constants.AUDIENCE_PARAM, new String[]{"unittesters"});
+        
         confs.put(Constants.NEXTDATE_PARAM, new String[]{"7/10 2007 12:00"});
         ServletRequest confRequest = dummyRequest(confs);
 

@@ -135,7 +135,7 @@ public class IntegrityTestsHCSJMSException extends TestCase{
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
         JobDispatcher hDisp = new JobDispatcher(con);
-        hDisp.doOneCrawl(j, "test", "test", "test",
+        hDisp.doOneCrawl(j, "test", "test", "test", "unittesters",
                 new ArrayList<MetadataEntry>());
         //Trigger the exception handler - should not try to exit
         qel.onException(new JMSException("Some exception"));

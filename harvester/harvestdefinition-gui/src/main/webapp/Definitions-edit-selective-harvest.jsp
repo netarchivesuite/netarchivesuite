@@ -85,12 +85,15 @@ DomainConfigurations are posted as pairs
                  dk.netarkivet.harvester.datamodel.SparseDomain,
                  dk.netarkivet.harvester.datamodel.SparseDomainConfiguration,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
-                 dk.netarkivet.harvester.webinterface.Constants,dk.netarkivet.harvester.webinterface.SelectiveHarvestUtil"
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.harvester.webinterface.SelectiveHarvestUtil"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!private static final I18n I18N
-            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%><%HTMLUtils.setUTF8(request);
+/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
+<%!private static final I18n I18N
+            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%>
+  	<%HTMLUtils.setUTF8(request);
 
     HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
     // Update all relevant HD data from request, some results are saved in
@@ -174,13 +177,10 @@ DomainConfigurations are posted as pairs
         }
     %>
 </h4>
-<fmt:message key="prompt;audience"/><br/>
-<input type=\"text\" name=\""
-                      + Constants.HARVEST_PARAM + "\" size=\"60\"/></span>\n");
-<input type="text" size="42" name="<%= Constants.AUDIENCE_PARAM %>"><%=
-    HTMLUtils.escapeHtmlValues(hdd!=null?hdd.getAudience():"")
-%></input>
+<fmt:message key="prompt;audience"/>
 
+<input type="text" size="42" name="<%= Constants.AUDIENCE_PARAM %>" value="<%=
+    HTMLUtils.escapeHtmlValues(hdd!=null?hdd.getAudience():"")%>"><br/>
 <fmt:message key="prompt;comments"/><br/>
 <textarea rows="5" cols="42" name="<%= Constants.COMMENTS_PARAM %>"><%=
     HTMLUtils.escapeHtmlValues(hdd!=null?hdd.getComments():"")

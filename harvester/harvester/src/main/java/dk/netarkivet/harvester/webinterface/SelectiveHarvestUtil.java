@@ -170,8 +170,8 @@ public final class SelectiveHarvestUtil {
         String name = request.getParameter(Constants.HARVEST_PARAM);
 
         HTMLUtils.forwardOnMissingParameter(context,
-                Constants.COMMENTS_PARAM, Constants.DOMAINLIST_PARAM);
-
+                Constants.COMMENTS_PARAM, Constants.DOMAINLIST_PARAM, 
+                Constants.AUDIENCE_PARAM);
         String scheduleName
                 = request.getParameter(Constants.SCHEDULE_PARAM);
         Schedule sched = ScheduleDAO.getInstance().read(scheduleName);
@@ -184,7 +184,7 @@ public final class SelectiveHarvestUtil {
 
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
         String audience = request.getParameter(Constants.AUDIENCE_PARAM);
-
+        
         List<DomainConfiguration> dc
                 = getDomainConfigurations(request.getParameterMap());
         addDomainsToConfigurations(dc,
@@ -226,6 +226,7 @@ public final class SelectiveHarvestUtil {
             hdd.setDomainConfigurations(dc);
             hdd.setSchedule(sched);
             hdd.setComments(comments);
+            hdd.setAudience(audience);
             hddao.update(hdd);
             return hdd;
         }

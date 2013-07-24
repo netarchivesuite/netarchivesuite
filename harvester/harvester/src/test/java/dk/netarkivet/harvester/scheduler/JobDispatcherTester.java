@@ -249,7 +249,7 @@ public class JobDispatcherTester extends TestCase {
 
         //send a high priority job
         jobDispatcher.doOneCrawl(TestInfo.getJob(),
-                "test", "test", "test", new ArrayList<MetadataEntry>());
+                "test", "test", "test", "unittesters", new ArrayList<MetadataEntry>());
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
         assertEquals("The HIGHPRIORITY server should have received exactly 1 " +
@@ -263,7 +263,7 @@ public class JobDispatcherTester extends TestCase {
 
         //send a low priority jobList
         jobDispatcher.doOneCrawl(TestInfo.getJobLowPriority(),
-                "test", "test", "test", new ArrayList<MetadataEntry>());
+                "test", "test", "test", "unittesters", new ArrayList<MetadataEntry>());
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
         assertEquals("The HIGHPRIORITY server should have received exactly 0 " +
@@ -278,7 +278,7 @@ public class JobDispatcherTester extends TestCase {
      */
     public void testNullJob() {
         try {
-            jobDispatcher.doOneCrawl((Job)null, "test", "test", "test", 
+            jobDispatcher.doOneCrawl((Job)null, "test", "test", "test", "unittesters",
                     new ArrayList<MetadataEntry>());
             fail("Should throw ArgumentNotValid on NULL job");
         } catch (ArgumentNotValid e) {
@@ -292,7 +292,7 @@ public class JobDispatcherTester extends TestCase {
      */
     public void testLogSendingMessage() throws IOException {
         jobDispatcher.doOneCrawl(TestInfo.getJob(),
-                "test", "test", "test", new ArrayList<MetadataEntry>());
+                "test", "test", "test", "unittesters", new ArrayList<MetadataEntry>());
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
 

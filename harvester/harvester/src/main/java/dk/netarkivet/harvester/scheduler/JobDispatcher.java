@@ -94,6 +94,7 @@ public class JobDispatcher {
 
                 String schedule = "";
                 String hdComments = "";
+                String hdAudience = "";
                 SparseFullHarvest fh = hDao.getSparseFullHarvest(hName);
                 if (fh != null) {
                     hdComments = fh.getComments();
@@ -113,9 +114,10 @@ public class JobDispatcher {
                     schedule = ph.getScheduleName();
 
                     hdComments = ph.getComments();
+                    hdAudience = ph.getAudience();
                 }
 
-                doOneCrawl(jobToSubmit, hName, hdComments, schedule, metadata);
+                doOneCrawl(jobToSubmit, hName, hdComments, schedule, hdAudience, metadata);
 
                 log.info("Job #" + jobToSubmit.getJobID() + " submitted");
 
@@ -205,6 +207,7 @@ public class JobDispatcher {
      * @param origHarvestDesc the harvest definition's description
      * @param origHarvestSchedule the harvest definition schedule name
      * @param metadata pre-harvest metadata to store in arcfile.
+     * @param hdAudience 
      * @throws ArgumentNotValid one of the parameters are null
      * @throws IOFailure if unable to send the doOneCrawl request to a
      * harvestControllerServer
@@ -214,11 +217,14 @@ public class JobDispatcher {
             String origHarvestName,
             String origHarvestDesc,
             String origHarvestSchedule,
+            String origHarvestAudience,
             List<MetadataEntry> metadata)
                     throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
-
+        if (origHarvestAudience != null && !origHarvestAudience.isEmpty()) {
+            job.setHarvestAudience(origHarvestAudience);
+        }
         DoOneCrawlMessage nMsg = new DoOneCrawlMessage(
                 job,
                 JobChannelUtil.getChannel(job.getPriority()),
