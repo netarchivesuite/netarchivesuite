@@ -89,7 +89,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
         System.setOut(new PrintStream(baosOut));
         ByteArrayOutputStream baosErr = new ByteArrayOutputStream();
         System.setErr(new PrintStream(baosErr));
-
+        String usage = CreateCDXMetadataFile.usageString;
         // Check lack of args
         try {
             CreateCDXMetadataFile.main(new String[]{ });
@@ -100,7 +100,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
                     "", baosOut.toString());
             System.err.flush();
             StringAsserts.assertStringContains("Should have usage in stderr",
-                    "Missing arguments\nUsage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile [-a|w] jobID",
+                    "Missing or wrong arguments given",
                     baosErr.toString());
             baosOut.reset();
             baosErr.reset();
@@ -144,7 +144,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
 
         // Check illegal arg: 0
         try {
-            CreateCDXMetadataFile.main(new String[]{ "0"});
+            CreateCDXMetadataFile.main(new String[]{ "--jobID 0 --harvestnamePrefix 0-1"});
             fail("Should System.exit(1) on illegal args");
         } catch (SecurityException e) {
             System.out.flush();
@@ -154,7 +154,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
             StringAsserts.assertStringContains(
                     "Should have usage and errors in stderr",
                     "0 is not a valid job ID\n"
-                            + "Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile [-a|w] jobID",
+                            + "Usage: " + usage, 
                     baosErr.toString());
             baosOut.reset();
             baosErr.reset();
@@ -162,7 +162,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
 
         // Check illegal arg: non-numeral
         try {
-            CreateCDXMetadataFile.main(new String[]{ "foo42bar"});
+            CreateCDXMetadataFile.main(new String[]{ "--jobID foo42bar --harvestnamePrefix 0-1"});
             fail("Should System.exit(1) on illegal args");
         } catch (SecurityException e) {
             System.out.flush();
@@ -182,9 +182,9 @@ public class CreateCDXMetadataFileTester extends TestCase {
     /**
      * FIXME Blocks on Hudson server
      */
-    public void fallingTestRunSingleJob() {
+    public void testRunSingleJob() {
         try {
-            CreateCDXMetadataFile.main(new String[] { "4" });
+            CreateCDXMetadataFile.main(new String[] { "--jobID 4 --harvestnamePrefix 4-1" });
         } catch (SecurityException e) {
             assertEquals("Should have exited normally",
                          0, pse.getExitValue());

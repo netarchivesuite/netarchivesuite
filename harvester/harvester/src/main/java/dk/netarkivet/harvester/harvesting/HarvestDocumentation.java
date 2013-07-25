@@ -81,6 +81,9 @@ public class HarvestDocumentation {
         "/crawl/index/cdx";
     private static final String CDX_URI_VERSION_PARAMETERS =
         "majorversion=1&minorversion=0";
+    private static final String ALTERNATE_CDX_URI_VERSION_PARAMETERS =
+            "majorversion=2&minorversion=0";
+        
     private static final String CDX_URI_HARVEST_ID_PARAMETER_NAME =
         "harvestid";
     private static final String CDX_URI_JOB_ID_PARAMETER_NAME =
@@ -89,6 +92,7 @@ public class HarvestDocumentation {
         "timestamp";
     private static final String CDX_URI_SERIALNO_PARAMETER_NAME =
         "serialno";
+    private static final String CDX_URI_FILENAME_PARAMETER_NAME = "filename";
 
     /**
      * Documents the harvest under the given dir in a packaged metadata arc
@@ -299,7 +303,47 @@ public class HarvestDocumentation {
         }
         return result;
    }
+    
+    /**
+     * Generates a URI identifying CDX info for one harvested ARC file.
+     *
+     * @param jobID The number of the job that generated the ARC file.
+     * @param filename the filename.
+     * 
+     * @return A URI in the proprietary schema "metadata".
+     * @throws ArgumentNotValid if any parameter is null.
+     * @throws UnknownID if something goes terribly wrong in our URI
+     * construction.
+     */
+    public static URI getAlternateCDXURI(
+            long jobID,
+            String filename)
+    throws ArgumentNotValid, UnknownID {
+        ArgumentNotValid.checkNotNull(jobID, "jobID");
+        ArgumentNotValid.checkNotNull(filename, "filename");
+        URI result;
+        try {
+            result =
+                new URI(
+                    CDX_URI_SCHEME,
+                    null, //Don't include user info (e.g. "foo@")
+                    CDX_URI_AUTHORITY_HOST,
+                    -1, //Don't include port no. (e.g. ":8080")
+                    CDX_URI_PATH,
+                    getAlternateCDXURIQuery(jobID, filename),
+                    null); //Don't include fragment (e.g. "#foo")
+        } catch (URISyntaxException e) {
+            throw new UnknownID(
+                    "Failed to generate URI for "
+                    + jobID + ","
+                    + filename + ",",
+                    e);
+        }
+        return result;
+   }
 
+    
+    
     /**
      * Generate the query part of a CDX URI.
      * @param harvestID The number of the harvest that generated the ARC file.
@@ -321,6 +365,26 @@ public class HarvestDocumentation {
         result += "&" + CDX_URI_SERIALNO_PARAMETER_NAME + "=" + serialNumber;
         return result;
     }
+    
+    /**
+     * Generate the query part of a CDX URI. Alternate version
+     * @param jobID The number of the job that generated the ARC file.
+     * @param filename the filename of the arcfile
+     * @return An appropriate list of assigned parameters,
+     * separated by the "&" character.
+     */
+    private static String getAlternateCDXURIQuery(
+            long jobID,
+            String filename
+            ) {
+        String result = ALTERNATE_CDX_URI_VERSION_PARAMETERS;
+        result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
+        result += "&" + CDX_URI_FILENAME_PARAMETER_NAME + "=" + filename;
+        return result;
+    }
+    
+    
+    
 
     /**
      * Iterates over the ARC files in the given dir and moves away files

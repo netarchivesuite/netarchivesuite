@@ -1,7 +1,7 @@
-/* File:       $Id: LegacyNamingConvention.java 2462 2012-08-21 16:07:43Z svc $
- * Revision:   $Revision: 2462 $
- * Author:     $Author: svc $
- * Date:       $Date: 2012-08-21 18:07:43 +0200 (Tue, 21 Aug 2012) $
+/* File:       $Id$
+ * Revision:   $Revision$
+ * Author:     $Author$
+ * Date:       $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and

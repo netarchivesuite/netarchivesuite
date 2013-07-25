@@ -52,7 +52,7 @@ public class UnitTesterSuite {
         HarvesterHarvestingFrontierTesterSuite.addToSuite(suite);
         HarvestingDistributeTesterSuite.addToSuite(suite);
         HarvesterSchedulerTesterSuite.addToSuite(suite);
-        HarvesterToolsTesterSuite.addToSuite(suite);
+        //HarvesterToolsTesterSuite.addToSuite(suite);
         HarvesterWebinterfaceTesterSuite.addToSuite(suite);
     }
 
