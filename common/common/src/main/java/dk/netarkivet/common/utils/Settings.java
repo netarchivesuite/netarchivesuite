@@ -56,10 +56,19 @@ public class Settings {
      * handling multithreaded instances this list must be initialised through
      * the method Collections.synchronizedList().
      */
-    private static final List<SimpleXml> fileSettingsXmlList
-            = Collections.synchronizedList(new ArrayList<SimpleXml>());
-    static {
+    private static final List<SimpleXml> fileSettingsXmlList;
 
+    /**
+     * The objects representing the contents of the default settings xml files
+     * in classpath. For handling multithreaded instances this list must be
+     * initialised through the method Collections.synchronizedList().
+     */
+    private static final List<SimpleXml> defaultClasspathSettingsXmlList;
+    
+    static {
+    	// All static initialization in one place
+    	fileSettingsXmlList = Collections.synchronizedList(new ArrayList<SimpleXml>());
+    	defaultClasspathSettingsXmlList = Collections.synchronizedList(new ArrayList<SimpleXml>());    	
         // Perform an initial loading of the settings.
         reload();
     }
@@ -67,15 +76,7 @@ public class Settings {
     /** Logger for this class. */
     private static final Log log
             = LogFactory.getLog(Settings.class.getName());
-
-
-    /**
-     * The objects representing the contents of the default settings xml files
-     * in classpath. For handling multithreaded instances this list must be
-     * initialised through the method Collections.synchronizedList().
-     */
-    private static final List<SimpleXml> defaultClasspathSettingsXmlList
-            = Collections.synchronizedList(new ArrayList<SimpleXml>());
+    
     /**
      * This system property specifies alternative position(s) to look for
      * settings files. If more files are specified, they should be separated by
