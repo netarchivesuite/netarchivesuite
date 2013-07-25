@@ -56,13 +56,15 @@ public class XmlStructure {
      * Create an instance of this data-structure from an XML file.
      * 
      * @param f The XML file 
+     * @param encoding the encoding to use to read the file
      */
-    public XmlStructure(File f) {
+    public XmlStructure(File f, final String encoding) {
         ArgumentNotValid.checkNotNull(f, "File f");
+        ArgumentNotValid.checkNotNullOrEmpty(encoding, "String encoding");
         ArgumentNotValid.checkTrue(f.exists(), "File f : " + f.getName() 
                 + " does not exist!");
         // get into 'document' format
-        Document doc = loadDocument(f);
+        Document doc = loadDocument(f, encoding);
         // get root node
         root = doc.getRootElement();
     }
@@ -92,12 +94,14 @@ public class XmlStructure {
      * Loading the file into the document data structure.
      * 
      * @param f The XML file to be loaded.
+     * @param encoding the encoding to use to read the file
      * @return The XML file loaded into the document data structure
      * @throws IOFailure If the file was not correctly read
      */
-    private Document loadDocument(File f) throws IOFailure {
+    private Document loadDocument(File f, final String encoding) throws IOFailure {
         ArgumentNotValid.checkNotNull(f, "File f");
         SAXReader reader = new SAXReader();
+        reader.setEncoding(encoding);
         if (!f.canRead()) {
             String msg = "Could not read file: '" + f.getAbsolutePath() + "'";
             log.debug(msg);

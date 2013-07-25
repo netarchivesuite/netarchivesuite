@@ -421,7 +421,7 @@ public class WindowsMachine extends Machine {
                 Constants.SCRIPT_NAME_KILL_ALL + scriptExtension);
         try {
             // Initialise script
-            PrintWriter killPrinter = new PrintWriter(killAllScript);
+            PrintWriter killPrinter = new PrintWriter(killAllScript, getTargetEncoding());
             try {
                 killPrinter.println(ScriptConstants.ECHO_KILL_ALL_APPS
                         + Constants.COLON + Constants.SPACE 
@@ -469,7 +469,7 @@ public class WindowsMachine extends Machine {
                 Constants.SCRIPT_NAME_START_ALL + scriptExtension);
         try {
             // Initialise script
-            PrintWriter startPrinter = new PrintWriter(startAllScript);
+            PrintWriter startPrinter = new PrintWriter(startAllScript, getTargetEncoding());
             try {
                 startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS
                         + Constants.COLON + Constants.SPACE 
@@ -563,7 +563,7 @@ public class WindowsMachine extends Machine {
             File appKillPsScript = new File(directory, killPsName);
             try {
                 // make print writer for writing to file
-                PrintWriter appPrint = new PrintWriter(appKillScript);
+                PrintWriter appPrint = new PrintWriter(appKillScript, getTargetEncoding());
                 try {
                     // initiate variables
                     String tmpRunApp = Constants
@@ -622,7 +622,7 @@ public class WindowsMachine extends Machine {
                     appPrint.close();
                 }
                 // Printer for making the kill process file.
-                PrintWriter appPsPrint = new PrintWriter(appKillPsScript);
+                PrintWriter appPsPrint = new PrintWriter(appKillPsScript, getTargetEncoding());
                 try {
                     // write dummy line in kill script.
                     appPsPrint.println("ECHO Not started!");
@@ -715,7 +715,7 @@ public class WindowsMachine extends Machine {
                 + scriptExtension);
         try {
             // make print writer for writing to file
-            PrintWriter appPrint = new PrintWriter(appStartScript);
+            PrintWriter appPrint = new PrintWriter(appStartScript, getTargetEncoding());
             try {
                 // initiate variables
                 String id = app.getIdentification();
@@ -820,7 +820,7 @@ public class WindowsMachine extends Machine {
         try {
             // make print writer for writing to file
             PrintWriter vbsPrint = new PrintWriter(
-                    appStartSupportScript);
+                    appStartSupportScript, getTargetEncoding());
             try {
                 // initiate variables
                 String id = app.getIdentification();
@@ -1234,7 +1234,7 @@ public class WindowsMachine extends Machine {
                 getMakeDirectoryName());
         try {
             // make print writer for writing to file
-            PrintWriter dirPrint = new PrintWriter(dirScript);
+            PrintWriter dirPrint = new PrintWriter(dirScript, getTargetEncoding());
             try {
                 // go to correct directory
                 dirPrint.print(ScriptConstants.CD + Constants.SPACE);
@@ -1465,7 +1465,7 @@ public class WindowsMachine extends Machine {
                     Constants.SCRIPT_NAME_RESTART + scriptExtension);
             
             // make print writer for writing to file
-            PrintWriter restartPrint = new PrintWriter(restartScript);
+            PrintWriter restartPrint = new PrintWriter(restartScript, getTargetEncoding());
             try {
                 restartPrint.println(ScriptConstants.CD + Constants.SPACE
                         + Constants.QUOTE_MARK + getConfDirPath()
@@ -1515,7 +1515,7 @@ public class WindowsMachine extends Machine {
                     Constants.SCRIPT_NAME_WAIT + Constants.EXTENSION_VBS_FILES);
             
             // make print writer for writing to file
-            PrintWriter waitPrint = new PrintWriter(waitScript);
+            PrintWriter waitPrint = new PrintWriter(waitScript, getTargetEncoding());
             try {
                 // Create the wait script.
                 waitPrint.print(ScriptConstants.VB_WRITE_WAIT

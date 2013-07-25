@@ -28,6 +28,7 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.dom4j.Element;
@@ -77,7 +78,7 @@ public class CreateTestInstance {
         ArgumentNotValid.checkNotNull(configSource, "File configSource");
         
         source = configSource;
-        deployConfiguration = new XmlStructure(source);
+        deployConfiguration = new XmlStructure(source, Charset.defaultCharset().name());
         
         offsetPaths = new OffsetSystem[0];
         offsetVal = ""; 

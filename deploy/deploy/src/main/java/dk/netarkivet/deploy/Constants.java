@@ -122,7 +122,11 @@ public final class Constants {
     /** The path to name in a machine instance.*/
     static final String MACHINE_NAME_ATTRIBUTE = "name";
     /** The path to the operating system variable.*/
-    static final String MACHINE_OPERATING_SYSTEM_ATTRIBUTE = "os";
+    static final String MACHINE_OPERATING_SYSTEM_ATTRIBUTE = "os";    
+    /** The path to the machine encoding.*/
+    static final String MACHINE_ENCODING_ATTRIBUTE = "encoding";
+    /** Default machine encoding, if not defined. Currently UTF-8.*/
+    static final String MACHINE_ENCODING_DEFAULT = "UTF-8";
 
     // Attribute values
     /** The operating system attribute for windows.*/
@@ -469,6 +473,8 @@ public final class Constants {
     public static final String ARG_ARC_DB = "A";
     /** For installing external libraries through deploy.*/
     public static final String ARG_JAR_FOLDER = "J";
+    /** Encoding to use for source files.*/
+    public static final String ARG_SOURCE_ENCODING = "sourceEncoding";
     
     // Argument values
     /** The long yes argument.*/

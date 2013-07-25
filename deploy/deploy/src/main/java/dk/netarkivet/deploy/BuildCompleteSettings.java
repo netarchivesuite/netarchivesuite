@@ -28,6 +28,7 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -80,7 +81,7 @@ public final class BuildCompleteSettings {
         for (String path : Constants.BUILD_SETTING_FILES) {
             File tmpFile = FileUtils.getResourceFileFromClassPath(path);
             if (settings == null) {
-                settings = new XmlStructure(tmpFile);
+                settings = new XmlStructure(tmpFile, Charset.defaultCharset().name());
             } else {
                 Element elem = retrieveXmlSettingsTree(tmpFile);
                 if (elem != null) {

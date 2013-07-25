@@ -28,6 +28,7 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,6 +60,11 @@ public class Application {
      * (optional, used when two application has same name).
      */
     private String applicationInstanceId;
+    
+    /**
+     * The encoding to use when writing files.
+     */
+    private final String targetEncoding;
 
     /**
      * A application is the program to be run on a machine.
@@ -66,13 +72,19 @@ public class Application {
      * @param subTreeRoot The root of this instance in the XML document.
      * @param parentSettings The setting inherited by the parent.
      * @param param The machine parameters inherited by the parent.
+     * @param targetEncoding the encoding to use when writing files.
      */
-    public Application(Element subTreeRoot, XmlStructure parentSettings, 
-            Parameters param) {
+    public Application(
+    		Element subTreeRoot, 
+    		XmlStructure parentSettings, 
+            Parameters param,
+            String targetEncoding) {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element e");
         ArgumentNotValid.checkNotNull(parentSettings, 
                 "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
+        ArgumentNotValid.checkNotNullOrEmpty(targetEncoding, "targetEncoding");
+        this.targetEncoding = targetEncoding;
         settings = new XmlStructure(parentSettings.getRoot());
         applicationRoot = subTreeRoot;
         machineParameters = new Parameters(param);
@@ -179,7 +191,7 @@ public class Application {
                 + Constants.EXTENSION_XML_FILES);
         try {
             // initiate writer
-            PrintWriter pw = new PrintWriter(settingsFile);
+            PrintWriter pw = new PrintWriter(settingsFile, targetEncoding);
             try {
                 // Extract the XML content of the branch for this application
                 pw.println(settings.getXML());
@@ -190,7 +202,11 @@ public class Application {
             String errMsg = "Cannot create settings file for an application.";
             log.debug(errMsg, e);
             throw new IOFailure(errMsg, e);
-        }
+        } catch (UnsupportedEncodingException e) {
+        	String errMsg = "Unsupported encoding '" + targetEncoding + "'";
+            log.debug(errMsg, e);
+            throw new IOFailure(errMsg, e);
+		}
     }
 
     /**

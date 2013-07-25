@@ -307,7 +307,7 @@ public class LinuxMachine extends Machine {
                 Constants.SCRIPT_NAME_KILL_ALL + scriptExtension);
         try {
             // Initialise script
-            PrintWriter killPrinter = new PrintWriter(killAllScript);
+            PrintWriter killPrinter = new PrintWriter(killAllScript, getTargetEncoding());
             try {
                 killPrinter.println(ScriptConstants.ECHO_KILL_ALL_APPS
                         + Constants.COLON + Constants.SPACE 
@@ -375,7 +375,7 @@ public class LinuxMachine extends Machine {
                 Constants.SCRIPT_NAME_START_ALL + scriptExtension);
         try {
             // Initialise script
-            PrintWriter startPrinter = new PrintWriter(startAllScript);
+            PrintWriter startPrinter = new PrintWriter(startAllScript, getTargetEncoding());
             try {
                 startPrinter.println(ScriptConstants.BIN_BASH_COMMENT);
                 startPrinter.println(ScriptConstants.CD + Constants.SPACE
@@ -458,7 +458,7 @@ public class LinuxMachine extends Machine {
                     + scriptExtension);
             try {
                 // make print writer for writing to file
-                PrintWriter appPrint = new PrintWriter(appKillScript);
+                PrintWriter appPrint = new PrintWriter(appKillScript, getTargetEncoding());
                 try {
                     // echo Killing linux application.
                     appPrint.println(ScriptConstants.ECHO_KILL_LINUX_APPLICATION
@@ -612,7 +612,7 @@ public class LinuxMachine extends Machine {
                     + scriptExtension);
             try {
                 // make print writer for writing to file
-                PrintWriter appPrint = new PrintWriter(appStartScript);
+                PrintWriter appPrint = new PrintWriter(appStartScript, getTargetEncoding());
                 try {
                     // #!/bin/bash
                     appPrint.println(ScriptConstants.ECHO_START_LINUX_APP
@@ -1177,7 +1177,7 @@ public class LinuxMachine extends Machine {
                     Constants.SCRIPT_NAME_RESTART + scriptExtension);
             
             // make print writer for writing to file
-            PrintWriter restartPrint = new PrintWriter(restartScript);
+            PrintWriter restartPrint = new PrintWriter(restartScript, getTargetEncoding());
             try {
                 // init, go to directory
                 restartPrint.println(ScriptConstants.BIN_BASH_COMMENT);
@@ -1245,7 +1245,7 @@ public class LinuxMachine extends Machine {
                     Constants.SETTINGS_ARCHIVE_DATABASE_PORT);
             
             // make print writer for writing to file
-            PrintWriter startDBPrint = new PrintWriter(startArcDBScript);
+            PrintWriter startDBPrint = new PrintWriter(startArcDBScript, getTargetEncoding());
             try {
                 // - #!/bin/bash
                 startDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
@@ -1377,7 +1377,7 @@ public class LinuxMachine extends Machine {
                     Constants.SETTINGS_ARCHIVE_DATABASE_PORT);
             
             // make print writer for writing to file
-            PrintWriter killDBPrint = new PrintWriter(killArcDBScript);
+            PrintWriter killDBPrint = new PrintWriter(killArcDBScript, getTargetEncoding());
             try {
                 // - #!/bin/bash
                 killDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
@@ -1493,7 +1493,7 @@ public class LinuxMachine extends Machine {
                     Constants.SETTINGS_HARVEST_DATABASE_PORT);
             
             // make print writer for writing to file
-            PrintWriter startDBPrint = new PrintWriter(startHarvestDBScript);
+            PrintWriter startDBPrint = new PrintWriter(startHarvestDBScript, getTargetEncoding());
             try {
                 // - #!/bin/bash
                 startDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
@@ -1638,7 +1638,7 @@ public class LinuxMachine extends Machine {
                     Constants.SETTINGS_HARVEST_DATABASE_PORT);
             
             // make print writer for writing to file
-            PrintWriter killDBPrint = new PrintWriter(killHarvestDBScript);
+            PrintWriter killDBPrint = new PrintWriter(killHarvestDBScript, getTargetEncoding());
             try {
                 // - #!/bin/bash
                 killDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
@@ -1760,12 +1760,13 @@ public class LinuxMachine extends Machine {
             File updateHarvestDBSettingsFile = new File(dir, 
                     Constants.SETTINGS_PREFIX + Constants.SCRIPT_NAME_HARVEST_DB_UPDATE +
                     Constants.EXTENSION_XML_FILES);
-            PrintWriter updateDBSettings = new PrintWriter(updateHarvestDBSettingsFile);
+            PrintWriter updateDBSettings = 
+            		new PrintWriter(updateHarvestDBSettingsFile, getTargetEncoding());
             updateDBSettings.println(settings.getXML());
             updateDBSettings.close();
             
             // make print writer for writing to file
-            PrintWriter updateDBPrint = new PrintWriter(updateHarvestDBScript);
+            PrintWriter updateDBPrint = new PrintWriter(updateHarvestDBScript, getTargetEncoding());
             try {
                 // - #!/bin/bash
                 updateDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);

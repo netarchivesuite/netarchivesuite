@@ -81,6 +81,8 @@ public abstract class Machine {
     protected boolean resetTempDir;
     /** The folder containing the external jar library files.*/
     protected File jarFolder;
+    /** The encoding to use when writing files. */
+    protected String targetEncoding;
 
     /**
      * A machine is referring to an actual computer at a physical location, 
@@ -127,6 +129,17 @@ public abstract class Machine {
         arcDatabaseFile = archiveDbFileName;
         resetTempDir = resetDir;
         jarFolder = externalJarFolder;
+        
+        // Retrieve machine encoding
+        targetEncoding = machineRoot.attributeValue(Constants.MACHINE_ENCODING_ATTRIBUTE);
+        String msgTail = "";
+        if (targetEncoding == null || targetEncoding.isEmpty()) {
+        	targetEncoding = Constants.MACHINE_ENCODING_DEFAULT;
+        	msgTail = " (defaulted)";
+        }
+        System.out.println("Machine '" 
+        		+ machineRoot.attributeValue(Constants.MACHINE_NAME_ATTRIBUTE) 
+        		+"' configured with encoding '" + targetEncoding + "'" + msgTail);
 
         // retrieve the specific settings for this instance 
         Element tmpSet = machineRoot.element(
@@ -170,7 +183,7 @@ public abstract class Machine {
         List<Element> le = machineRoot.elements(
                 Constants.DEPLOY_APPLICATION_NAME);
         for(Element e : le) {
-            applications.add(new Application(e, settings, machineParameters));
+            applications.add(new Application(e, settings, machineParameters, targetEncoding));
         }
     }
 
@@ -279,7 +292,7 @@ public abstract class Machine {
                 Constants.SECURITY_POLICY_FILE_NAME);
         try {
             // init writer
-            PrintWriter secPrinter = new PrintWriter(secPolFile);
+            PrintWriter secPrinter = new PrintWriter(secPolFile, getTargetEncoding());
             try {
                 // read the inherited security policy file.
                 String prop = FileUtils.readFile(inheritedSecurityPolicyFile);
@@ -358,7 +371,7 @@ public abstract class Machine {
                     + Constants.LOG_PROP_APPLICATION_SUFFIX);
             try {
                 // init writer
-                PrintWriter logPrinter = new PrintWriter(logProp);
+                PrintWriter logPrinter = new PrintWriter(logProp, getTargetEncoding());
                 
                 try {
                     // read the inherited log property file.
@@ -406,7 +419,7 @@ public abstract class Machine {
         File jmxFile = new File(directory, Constants.JMX_PASSWORD_FILE_NAME);
         try {
             // init writer
-            PrintWriter jw = new PrintWriter(jmxFile);
+            PrintWriter jw = new PrintWriter(jmxFile, getTargetEncoding());
             try {
                 // Write the header of the jmxremote.password file.
                 jw.print(ScriptConstants.JMXREMOTE_PASSWORD_HEADER);
@@ -442,7 +455,7 @@ public abstract class Machine {
         File jmxFile = new File(directory, Constants.JMX_ACCESS_FILE_NAME);
         try {
             // init writer
-            PrintWriter jw = new PrintWriter(jmxFile);
+            PrintWriter jw = new PrintWriter(jmxFile, getTargetEncoding());
             try {
                 // Write the header of the jmxremote.password file.
                 jw.print(ScriptConstants.JMXREMOTE_ACCESS_HEADER);
@@ -957,5 +970,9 @@ public abstract class Machine {
      * @param machineDirectory a given MachineDirectory.
      */
     protected abstract void createHarvestDatabaseUpdateScript(File machineDirectory);
+
+	protected String getTargetEncoding() {
+		return targetEncoding;
+	}
     
 }

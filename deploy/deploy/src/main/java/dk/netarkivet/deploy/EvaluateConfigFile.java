@@ -58,12 +58,13 @@ public class EvaluateConfigFile {
      * Only initialises the config file and settings list.
      * 
      * @param deployConfigFile The file to evaluate.
+     * @param encoding the encoding to use to read from file
      */
-    public EvaluateConfigFile(File deployConfigFile) {
+    public EvaluateConfigFile(File deployConfigFile, String encoding) {
         ArgumentNotValid.checkNotNull(deployConfigFile, 
                 "File deployConfigFile");
         initLoadDefaultSettings();
-        root = new XmlStructure(deployConfigFile);
+        root = new XmlStructure(deployConfigFile, encoding);
     }
     
     /**

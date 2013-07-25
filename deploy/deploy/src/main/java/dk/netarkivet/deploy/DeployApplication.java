@@ -27,6 +27,7 @@ package dk.netarkivet.deploy;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -164,6 +165,18 @@ public final class DeployApplication {
             // Retrieves the jar-folder name.
             String jarFolderName = ap.getCommandLine().getOptionValue(
                     Constants.ARG_JAR_FOLDER);
+            
+            // Retrieves the source encoding.
+            // If not specified get system default
+            String sourceEncoding = ap.getCommandLine().getOptionValue(
+                    Constants.ARG_SOURCE_ENCODING);
+            String msgTail = "";
+            if (sourceEncoding == null || sourceEncoding.isEmpty()) {
+            	sourceEncoding = Charset.defaultCharset().name();
+            	msgTail = " (defaulted)";
+            }
+            System.out.println("Will read source files using encoding '" + sourceEncoding + "'"
+            		+ msgTail);
 
             // check deployConfigFileName and retrieve the corresponding file
             initConfigFile(deployConfigFileName);
@@ -187,7 +200,7 @@ public final class DeployApplication {
             initReset(resetArgument);
             
             // evaluates the config file
-            initEvaluate(evaluateArgument);
+            initEvaluate(evaluateArgument, sourceEncoding);
             
             // check the archive database
             initArchiveDatabase(arcDbFileName);
@@ -205,7 +218,8 @@ public final class DeployApplication {
                     dbFile,
                     arcDbFile,
                     resetDirectory,
-                    externalJarFolder); 
+                    externalJarFolder,
+                    sourceEncoding); 
 
             // Write the scripts, directories and everything
             deployConfig.write();
@@ -420,15 +434,16 @@ public final class DeployApplication {
      * deployConfigFile. 
      * 
      * @param evaluateArgument The argument for evaluation.
+     * @param encoding the encoding to use to read from the input file
      */
-    public static void initEvaluate(String evaluateArgument) {
+    public static void initEvaluate(String evaluateArgument, String encoding) {
         // check if argument is given and it is acknowledgement ('y' or 'yes')
         if((evaluateArgument != null) && (!evaluateArgument.isEmpty()) 
                 && (evaluateArgument.equalsIgnoreCase(Constants.YES_SHORT)
                     || evaluateArgument.equalsIgnoreCase(Constants.YES_LONG))) {
             // if yes, then evaluate config file
             EvaluateConfigFile evf = 
-                new EvaluateConfigFile(deployConfigFile);
+                new EvaluateConfigFile(deployConfigFile, encoding);
             evf.evaluate();
         }
     }
@@ -586,6 +601,8 @@ public final class DeployApplication {
             options.addOption(Constants.ARG_JAR_FOLDER, 
                     HAS_ARG, "[OPTIONAL] Installing the external jar library "
                     + "files within the given folder.");
+            options.addOption(Constants.ARG_SOURCE_ENCODING, 
+                    HAS_ARG, "[OPTIONAL] Encoding to use for source files.");
         }
 
         /**

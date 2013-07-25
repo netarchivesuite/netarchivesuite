@@ -81,6 +81,7 @@ public class DeployConfiguration {
      * @param resetDir Whether the temporary directory should be reset.
      * @param externalJarFolder The folder containing the external jar 
      * library files.
+     * @param sourceEncoding the encoding to use to read input files
      * @throws ArgumentNotValid If one of the following arguments is null:
      * deployConfigFileName netarchiveSuiteFileName, secPolicyFileName,
      * logPropFileName.
@@ -88,7 +89,8 @@ public class DeployConfiguration {
     public DeployConfiguration(File deployConfigFileName, 
             File netarchiveSuiteFileName,  File secPolicyFileName, 
             File logPropFileName, String outputDirName, File dbFileName, 
-            File arcdbFileName, boolean resetDir, File externalJarFolder) 
+            File arcdbFileName, boolean resetDir, File externalJarFolder,
+            String sourceEncoding) 
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(
                 deployConfigFileName, "No config file");
@@ -109,7 +111,7 @@ public class DeployConfiguration {
         jarFolder = externalJarFolder;
 
         // get configuration tree, settings and parameters
-        config = new XmlStructure(deployConfigFile);
+        config = new XmlStructure(deployConfigFile, sourceEncoding);
         settings = new XmlStructure(
                 config.getChild(Constants.COMPLETE_SETTINGS_BRANCH));
         machineParam = new Parameters(config);
