@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests"/>
-	<classpathentry kind="lib" path="lib/db/derbyclient-10.8.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/db/derbytools-10.8.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/db/derbyclient-10.10.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/db/derbytools-10.10.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/charting/jfreechart-1.0.13.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.1.jar"/>
@@ -13,8 +13,8 @@
 	<classpathentry kind="lib" path="lib/heritrix/lib/heritrix-1.14.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.2.jar"/>
-	<classpathentry kind="lib" path="lib/db/derby-10.8.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/db/derbynet-10.8.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/db/derby-10.10.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/db/derbynet-10.10.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/charting/jcommon-1.0.16.jar"/>
 	<classpathentry kind="lib" path="lib/sunjms-lib/imq-4.4u1.jar"/>
 	<classpathentry kind="lib" path="lib/sunjms-lib/jms-4.4u1.jar"/>
@@ -62,13 +62,13 @@
 	<classpathentry kind="lib" path="lib/jetty-dependencies/slf4j-jcl-1.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/mail-dependencies/mail-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/libidn-0.5.9.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-core-4.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-4.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/jwat-common-0.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/twitter4j-core-2.2.6.jar"/>
 	<classpathentry kind="lib" path="lib/wayback-dependencies/htmlparser-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/wayback-dependencies/ia-web-commons-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/wayback-core-1.8.0-netarchivesuite-20130403.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-analyzers-common-4.3.0.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-queryparser-4.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-analyzers-common-4.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-queryparser-4.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

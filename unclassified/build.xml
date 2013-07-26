@@ -43,9 +43,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 	</tstamp>
 
     <property name="jarclasspath" value="
-    db/derby-10.8.2.2.jar
-    db/derbyclient-10.8.2.2.jar
-    db/derbytools-10.8.2.2.jar
+    db/derby-10.10.1.1.jar
+    db/derbyclient-10.10.1.1.jar
+    db/derbytools-10.10.1.1.jar
     db/postgresql-9.2-1002.jdbc4.jar
     db/mysql-connector-java-5.1.13-bin.jar
     charting/jcommon-1.0.16.jar
@@ -95,9 +95,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     twitter4j-core-2.2.6.jar
     mail-dependencies/mail-1.4.jar
     libidn-0.5.9.jar
-    lucene-core-4.3.0.jar
-    lucene-analyzers-common-4.3.0.jar
-    lucene-queryparser-4.3.0.jar
+    lucene-core-4.4.0.jar
+    lucene-analyzers-common-4.4.0.jar
+    lucene-queryparser-4.4.0.jar
     wayback-core-1.8.0-netarchivesuite-20130403.jar
     jwat-common-0.9.1.jar
     wayback-dependencies/htmlparser-1.6.jar
@@ -109,9 +109,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <pathelement path="${classdir}"/>
         <fileset dir="lib">
             <patternset id="jars.path.set">
-                <include name="db/derby-10.8.2.2.jar"/>
-            	<include name="db/derbyclient-10.8.2.2.jar"/>
-            	<include name="db/derbytools-10.8.2.2.jar"/>
+                <include name="db/derby-10.10.1.1.jar"/>
+            	<include name="db/derbyclient-10.10.1.1.jar"/>
+            	<include name="db/derbytools-10.10.1.1.jar"/>
             	<include name="db/postgresql-9.2-1002.jdbc4.jar"/>
             	<include name="db/mysql-connector-java-5.1.13-bin.jar"/>
                 <include name="charting/jcommon-1.0.16.jar"/>
@@ -146,9 +146,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="sunjms-lib/jms-4.4u1.jar"/>
                 <include name="mail-dependencies/mail-1.4.jar"/>
                 <include name="libidn-0.5.9.jar"/>
-                <include name="lucene-core-4.3.0.jar"/>
-                <include name="lucene-queryparser-4.3.0.jar"/>
-                <include name="lucene-analyzers-common-4.3.0.jar"/>
+                <include name="lucene-core-4.4.0.jar"/>
+                <include name="lucene-queryparser-4.4.0.jar"/>
+                <include name="lucene-analyzers-common-4.4.0.jar"/>
 
                 <include name="wayback-core-1.8.0-netarchivesuite-20130403.jar"/>
 		<include name="jwat-common-0.9.1.jar"/>
@@ -382,8 +382,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
      <!-- Make a copy of the necessary derby-classes without the version information
             so we can launch derby as a server. 
       -->
-     <copy file="lib/db/derby-10.8.2.2.jar" toFile="lib/db/derby.jar"/>
-     <copy file="lib/db/derbynet-10.8.2.2.jar" toFile="lib/db/derbynet.jar"/> 
+     <copy file="lib/db/derby-10.10.1.1.jar" toFile="lib/db/derby.jar"/>
+     <copy file="lib/db/derbynet-10.10.1.1.jar" toFile="lib/db/derbynet.jar"/> 
      <zip basedir="." destfile="NetarchiveSuite.zip">
             <include name="docs/apidocs/**"/>
             <include name="conf/**"/>

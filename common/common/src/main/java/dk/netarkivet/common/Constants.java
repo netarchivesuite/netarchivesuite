@@ -180,7 +180,7 @@ public final class Constants {
     public static final String ALL_PATTERN = ".*";
     
     /** Lucene version used by this release of NetarchiveSuite. */
-    public static final Version LUCENE_VERSION = Version.LUCENE_43;
+    public static final Version LUCENE_VERSION = Version.LUCENE_44;
     
     /** The current website for the NetarchiveSuite project. */
     public static final String PROJECT_WEBSITE = "https://sbforge.org/display/NAS";
