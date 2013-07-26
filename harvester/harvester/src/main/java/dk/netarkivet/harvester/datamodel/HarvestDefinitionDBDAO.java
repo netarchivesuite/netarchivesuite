@@ -147,7 +147,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             final int edition = 1;
             s.setLong(7, edition);
             s.setString(8, harvestDefinition.getAudience());
-            log.info("Inserting audience: " + harvestDefinition.getAudience());
             s.executeUpdate();
             s.close();
             if (harvestDefinition instanceof FullHarvest) {
