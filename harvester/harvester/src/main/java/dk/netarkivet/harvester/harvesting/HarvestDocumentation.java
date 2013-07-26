@@ -270,6 +270,7 @@ public class HarvestDocumentation {
      * @throws ArgumentNotValid if any parameter is null.
      * @throws UnknownID if something goes terribly wrong in our URI
      * construction.
+     * @deprecated Should use the {@link HarvestDocumentation#getAlternateCDXURI(long, String)
      */
     public static URI getCDXURI(
             String harvestID,
@@ -352,6 +353,7 @@ public class HarvestDocumentation {
      * @param serialNumber The serial no. in the name of the ARC file.
      * @return An appropriate list of assigned parameters,
      * separated by the "&" character.
+     * @deprecated Should use instead {@link HarvestDocumentation#getAlternateCDXURIQuery(long, String)
      */
     private static String getCDXURIQuery(
             String harvestID,

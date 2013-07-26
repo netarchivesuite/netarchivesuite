@@ -177,6 +177,7 @@ public abstract class MetadataFileWriter {
                 = parentDir.listFiles(filter);
         for (File metadataSourceFile : metadataSourceFiles) {
             //...write its content to the MetadataFileWriter
+            log.debug("Inserting the file '" + metadataSourceFile.getAbsolutePath() + "'");
             writeFileTo(metadataSourceFile,
                     getURIforFileName(metadataSourceFile).toASCIIString(),
                     mimetype);
@@ -200,9 +201,11 @@ public abstract class MetadataFileWriter {
      * file's content in Netarkivet.
      * @throws UnknownID if something goes terribly wrong in the CDX URI
      * construction.
+     * @deprecated Should move to use the {@link HarvestDocumentation#getAlternateCDXURI(long, String)}
      */
     private static URI getURIforFileName(File cdx)
         throws UnknownID {
+        
         ArchiveFilenameParser parser = ArchiveFileNamingFactory.getInstance().getArchiveFilenameParser(cdx);
         return HarvestDocumentation.getCDXURI(
                 parser.getHarvestID(),
