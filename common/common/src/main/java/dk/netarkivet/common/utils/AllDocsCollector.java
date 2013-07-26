@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.lucene.index.AtomicReaderContext;
-import org.apache.lucene.index.IndexReader;
+
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Scorer;
@@ -47,10 +47,6 @@ public class AllDocsCollector extends Collector {
     public void setScorer(Scorer scorer) { 
         this.scorer = scorer; 
     } 
-//    @Override
-//    public void setNextReader(IndexReader reader, int docBase) { 
-//        this.docBase = docBase; 
-//    }
     @Override
     public void collect(int doc) throws IOException { 
         docs.add(

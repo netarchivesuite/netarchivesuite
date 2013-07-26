@@ -72,10 +72,8 @@ public class InputStreamUtils {
         throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         int ch;
-        int counter = 0;
         while ((ch = inputStream.read()) >= 0) {
             buf.write(ch);
-            counter++;
             if (ch == '\n') {
                 break;
             }
