@@ -28,8 +28,6 @@ package dk.netarkivet.wayback.indexer;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import dk.netarkivet.common.exceptions.IllegalState;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

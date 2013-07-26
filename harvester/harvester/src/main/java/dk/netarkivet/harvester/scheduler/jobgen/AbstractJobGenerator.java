@@ -46,7 +46,6 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
-import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 
 /**
  * A base class for {@link JobGenerator} implementations.

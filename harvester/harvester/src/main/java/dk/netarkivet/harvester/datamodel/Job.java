@@ -1309,7 +1309,10 @@ public class Job implements Serializable, JobInfo {
 		return harvestAudience;
 	}
     
-    /** @param the harvestaudience. */
+    /** 
+     * Set the harvest audience for this job. Taken from the harvestdefinition 
+     * that generated this job.
+     * @param theAudience the harvestaudience. */
     public void setHarvestAudience(String theAudience) {
 		this.harvestAudience = theAudience;
 	}

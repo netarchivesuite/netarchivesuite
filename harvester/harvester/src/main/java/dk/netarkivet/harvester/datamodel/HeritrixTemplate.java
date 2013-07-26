@@ -456,10 +456,10 @@ public class HeritrixTemplate {
      }
      
      /**
-      *  Make sure that Heritrix will archive its data in the chosen archiveFormat.
-      * @param orderXML 
-      * @param archiveFormat
-      * @param log The logger.
+      * Make sure that Heritrix will archive its data in the chosen archiveFormat.
+      * @param orderXML the specific heritrix template to modify.
+      * @param archiveFormat the chosen archiveformat ('arc' or 'warc' supported)
+      * Throws ArgumentNotValid If the chosen archiveFormat is not supported.
       */
      public static void editOrderXML_ArchiveFormat(Document orderXML, String archiveFormat) {
 
@@ -611,13 +611,17 @@ public class HeritrixTemplate {
      /**
       * Activates or deactivate the quota-enforcer, depending on budget definition.
       * Object limit can be defined either by using the queue-total-budget property or
-      * the quota enforcer, as per{@link #maxObjectsIsSetByQuotaEnforcer}'s value.
+      * the quota enforcer. Which is chosen is set by the argument maxObjectsIsSetByQuotaEnforcer}'s value.
       * So quota enforcer is set as follows:
       * <ul>
       * <li>Object limit is not set by quota enforcer, disabled only if there is no byte limit.</li>
       * <li>Object limit is set by quota enforcer, so it should be enabled whether
       * a byte or object limit is set.</li>
       * </ul>
+      * @param orderXMLdoc the template to modify
+      * @param maxObjectsIsSetByQuotaEnforcer Decides whether the maxObjectsIsSetByQuotaEnforcer or not. 
+      * @param forceMaxBytesPerDomain The number of max bytes per domain enforced (can be no limit)
+      * @param forceMaxObjectsPerDomain The number of max objects per domain enforced (can be no limit)
       */
      public static void editOrderXML_configureQuotaEnforcer(Document orderXMLdoc, 
              boolean maxObjectsIsSetByQuotaEnforcer, long forceMaxBytesPerDomain, 

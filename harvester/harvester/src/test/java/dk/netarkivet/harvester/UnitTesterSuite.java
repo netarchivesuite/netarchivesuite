@@ -36,7 +36,6 @@ import dk.netarkivet.harvester.harvesting.HarvestingTesterSuite;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestingDistributeTesterSuite;
 import dk.netarkivet.harvester.harvesting.frontier.HarvesterHarvestingFrontierTesterSuite;
 import dk.netarkivet.harvester.scheduler.HarvesterSchedulerTesterSuite;
-import dk.netarkivet.harvester.tools.HarvesterToolsTesterSuite;
 import dk.netarkivet.harvester.webinterface.HarvesterWebinterfaceTesterSuite;
 
 /**

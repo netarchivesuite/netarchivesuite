@@ -24,7 +24,6 @@
 
 package dk.netarkivet.wayback.batch;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
@@ -34,8 +33,6 @@ import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResultAdapter;
 

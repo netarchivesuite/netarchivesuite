@@ -46,9 +46,9 @@ import org.archive.util.UriUtils;
  * Processes Javascript files for strings that are likely to be
  * crawlable URIs.
  *
- * @contributor gojomo
- * @contributor szznax
- *
+ * contributor gojomo
+ * contributor szznax
+ * contributor svc
  */
 public class ExtractorJS extends Extractor implements CoreAttributeConstants {
 

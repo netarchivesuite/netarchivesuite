@@ -1,12 +1,33 @@
+/* File:        $Id: WaybackCDXExtractionARCBatchJob.java 2651 2013-04-11 11:37:33Z csr $
+ * Revision:    $Revision: 2651 $
+ * Author:      $Author: csr $
+ * Date:        $Date: 2013-04-11 13:37:33 +0200 (Thu, 11 Apr 2013) $
+ *
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
 package dk.netarkivet.common.utils.batch;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.LoadableFileBatchJob;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 import java.io.BufferedReader;
@@ -17,13 +38,7 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.Date;
 
-/**
- * Created with IntelliJ IDEA.
- * User: csr
- * Date: 10/9/12
- * Time: 2:48 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class DatedFileListJobTester extends TestCase {
       MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
