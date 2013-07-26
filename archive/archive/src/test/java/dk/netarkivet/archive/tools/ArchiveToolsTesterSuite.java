@@ -49,8 +49,7 @@ public class ArchiveToolsTesterSuite {
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(GetFileTester.class);
-        // FIXME cf. NAS-2202 
-        //suite.addTestSuite(GetRecordTester.class);
+        suite.addTestSuite(GetRecordTester.class);
         suite.addTestSuite(ReestablishAdminDatabaseTester.class);
         suite.addTestSuite(RunBatchTester.class);
         suite.addTestSuite(UploadTester.class);

@@ -52,8 +52,7 @@ public class CommonDistributeArcrepositoryTesterSuite {
      */
     public static void addToSuite(TestSuite suite) {
         // Sorted in alphabetical order
-	// FIXME cf. NAS-2202
-        //suite.addTestSuite(ARCLookupTester.class);
+        suite.addTestSuite(ARCLookupTester.class);
         suite.addTestSuite(BatchStatusTester.class);
         suite.addTestSuite(BitarchiveRecordTester.class);
         suite.addTestSuite(LocalArcRepositoryClientTester.class);

@@ -66,7 +66,7 @@ import junit.framework.TestCase;
  */
 public class ARCArchiveAccessTester extends TestCase {
 
-    //Used files:
+    //Unused files:
     private static final File MAIN_PATH = new File(
             "tests/dk/netarkivet/viewerproxy/data/");
 

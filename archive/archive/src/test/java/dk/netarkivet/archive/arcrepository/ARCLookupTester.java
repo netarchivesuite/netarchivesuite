@@ -123,7 +123,8 @@ public class ARCLookupTester extends TestCase {
         if (arcReader != null) {
             arcReader.close();
         }
-        FileUtils.removeRecursively(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
+        FileUtils.removeRecursively(
+                dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
         JMSConnectionMockupMQ.clearTestQueues();
         rs.tearDown();
         super.tearDown();
