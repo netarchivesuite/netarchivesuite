@@ -55,6 +55,7 @@ import org.archive.crawler.settings.SimpleType;
 import org.archive.crawler.settings.Type;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.Base32;
+import org.jfree.util.Log;
 
 import dk.netarkivet.common.utils.AllDocsCollector;
 
@@ -690,7 +691,7 @@ implements AdaptiveRevisitAttributeConstants{
      *                      must be non null and the method will increment
      *                      appropriate counters on it.
      * @return The result of the lookup (a Lucene document). If a duplicate is
-     *         not found null is returned.
+     *         not found null is returned. 
      */
     protected Document lookupByDigest(CrawlURI curi, Statistics currHostStats) {
         Document duplicate = null; 
@@ -698,8 +699,11 @@ implements AdaptiveRevisitAttributeConstants{
         Object digest = curi.getContentDigest();
         if (digest != null) {
             currentDigest = Base32.encode((byte[])digest);
+        } else {
+            Log.warn("Digest received from CrawlURI is null. Null Document returned");
+            return null;
         }
-        // FIXME currentDigest == null will result in NPE. 
+ 
         Query query = queryField(DigestIndexer.FIELD_DIGEST, currentDigest);
         try {
             AllDocsCollector collectAllCollector = new AllDocsCollector();
