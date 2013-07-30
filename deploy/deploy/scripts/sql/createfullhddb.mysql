@@ -56,7 +56,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'config_seedlists', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'harvestdefinitions', 2);
+    values ( 'harvestdefinitions', 3);
 insert into schemaversions ( tablename, version )
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version )
@@ -68,7 +68,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'jobs', 7);
+    values ( 'jobs', 8);
 insert into schemaversions ( tablename, version )
     values ( 'job_configs', 1);
 insert into schemaversions (tablename, version )
@@ -201,7 +201,8 @@ create table harvestdefinitions (
      numevents int not null,
      submitted datetime not null,
      isactive int not null,
-     edition bigint not null
+     edition bigint not null,
+     audience varchar(100)
 );
 
 create index harvestdefinitionssubmitdate on harvestdefinitions (submitted);
@@ -306,13 +307,15 @@ create table jobs (
     harvest_error_details varchar(10000),
     upload_errors varchar(300),
     upload_error_details varchar(10000),
+    creationdate timestamp,
     startdate datetime,
     enddate datetime,
     submitteddate datetime,
     resubmitted_as_job bigint,
     num_configs int not null default 0,
     edition bigint not null,
-    continuationof bigint
+    continuationof bigint,
+    harvestname_prefix varchar(100)
 );
 
 create index jobstatus on jobs(status);

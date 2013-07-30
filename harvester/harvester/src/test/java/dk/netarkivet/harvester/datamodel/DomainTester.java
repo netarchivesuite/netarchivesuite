@@ -80,19 +80,17 @@ public class DomainTester extends DataModelTestCase {
         
         extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Boolean", "", ExtendedFieldDataTypes.BOOLEAN, true, 1, "true", "");
         extDAO.create(extField);
-        
-    	
+        	
         ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
         extField = extDAO2.read(Long.valueOf(1));
         assertEquals(extField.getExtendedFieldID().longValue(), 1);
         extField = extDAO2.read(Long.valueOf(2));
         assertEquals(extField.getExtendedFieldID().longValue(), 2);
         
-        // FIXME does not work, because of changes in Domain.getDefaultDomain() method
-        // See NAS-1925
-        // Domain d =  Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
-        //assertEquals(d.getExtendedFieldValue(new Long(1)).getContent(), "defaultvalue");
-        //assertEquals(d.getExtendedFieldValue(new Long(2)).getBooleanValue(), true);
+        //FIXME these tests fails. should be fixed
+        //Domain d =  Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
+        //assertEquals("defaultvalue", d.getExtendedFieldValue(new Long(1)).getContent());
+        //assertEquals(true, d.getExtendedFieldValue(new Long(2)).getBooleanValue());
     }
     
     /**

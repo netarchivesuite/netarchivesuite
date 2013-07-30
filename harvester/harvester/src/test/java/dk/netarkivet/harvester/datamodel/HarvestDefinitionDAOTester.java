@@ -64,10 +64,8 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
         /* Test with PartialHarvest */
         PartialHarvest harvestDef = makePartialHarvestInstance();
-        harvestDef.setSubmissionDate(new Date(1000 * (System
-                .currentTimeMillis() / 1000)));
-        harvestDef.setNextDate(new Date(
-                1000 * (System.currentTimeMillis() / 1000)));
+        harvestDef.setSubmissionDate(getSystemDate());
+        harvestDef.setNextDate(getSystemDate());
         harvestDef.setNumEvents(7);
         hdDAO.create(harvestDef);
 
@@ -99,16 +97,14 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 "Full Harvest 1", "Test of full harvest", null, 2000,
                 Constants.DEFAULT_MAX_BYTES,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
-        fHD1.setSubmissionDate(new Date(
-                1000 * (System.currentTimeMillis() / 1000)));
+        fHD1.setSubmissionDate(getSystemDate());
         fHD1.setNumEvents(7);
         hdDAO.create(fHD1);
 
         FullHarvest fHD2 = HarvestDefinition.createFullHarvest(
                 "Full Harvest 2", "Test of full harvest", fHD1.getOid(), 2000,
                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
-        fHD2.setSubmissionDate(new Date(
-                1000 * (System.currentTimeMillis() / 1000)));
+        fHD2.setSubmissionDate(getSystemDate());
         fHD2.setNumEvents(7);
         hdDAO.create(fHD2);
 
@@ -131,7 +127,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .getPreviousHarvestDefinition(), fHD2_2
                 .getPreviousHarvestDefinition());
     }
-
+    
     /**
      * Verify that updating an already modified harvestdefinition throws an
      * exception.
@@ -141,8 +137,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
         // create the definition
         HarvestDefinition harvestDef = makePartialHarvestInstance();
-        harvestDef.setSubmissionDate(new Date(1000 * (System
-                .currentTimeMillis() / 1000)));
+        harvestDef.setSubmissionDate(getSystemDate());
         hdDAO.create(harvestDef);
 
         // load 2 instances of the definition
@@ -223,8 +218,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
 
         HarvestDefinition harvestDef = makePartialHarvestInstance();
-        harvestDef.setSubmissionDate(new Date(1000 * (System
-                .currentTimeMillis() / 1000)));
+        harvestDef.setSubmissionDate(getSystemDate());
         hdDAO.create(harvestDef);
 
         Iterator<HarvestDefinition> i = hdDAO.getAllHarvestDefinitions();
@@ -255,7 +249,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
         return HarvestDefinition.createPartialHarvest(webDomainConfigs,
                                                       schedule, "Election 2005",
-                                                      "Event harvest", "Alle");
+                                                      "Event harvest", "Everybody");
     }
 
     /**
@@ -776,4 +770,13 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertTrue("The date should have been updated in the database",
                 ph1.getNextDate().equals(now));
         }
+    /**
+     * Helper method to simplify the setting of a date from System time.
+     * @return
+     */
+    public static Date getSystemDate() {
+        return new Date(1000 * (System
+                .currentTimeMillis() / 1000));
+    }
+    
 }

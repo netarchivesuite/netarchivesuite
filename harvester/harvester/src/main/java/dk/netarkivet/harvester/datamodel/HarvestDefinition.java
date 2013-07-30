@@ -346,6 +346,10 @@ public abstract class HarvestDefinition implements Named {
         return this.audience;
     }
     
+    /**
+     * Set the audience.
+     * @param audience the audience.
+     */
     public void setAudience(String audience) {
         this.audience = audience;
     }

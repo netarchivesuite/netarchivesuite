@@ -72,8 +72,6 @@ public class DomainDBDAOTester extends DataModelTestCase {
 
     /**
      *  Unittest for extended Fields.
-     *  FIXME disabled because tests requires functionality removed from 
-     *  Domain.getDefaultDomain (NAS-1925)
      */
     public void testExtendedFields() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
@@ -199,7 +197,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
                     ScheduleDAO sDao = ScheduleDAO.getInstance();
                     sDao.create(schedule);
                     PartialHarvest ph = HarvestDefinition.createPartialHarvest(
-                            dcs, schedule, "testme", "here", "alle");
+                            dcs, schedule, "testme", "here", "Everybody");
                     dao.create(ph);
                     for (int i = 0; i < maxLoop; i++) {
                         ph.setComments("foo" + i);

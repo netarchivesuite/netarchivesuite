@@ -350,8 +350,4 @@ public class FullHarvest extends HarvestDefinition {
    public void setIndexReady(boolean isIndexReady) {
        this.indexReady = isIndexReady;
    }
-   
-   public void setAudience(String intendedAudience) {
-       this.audience = intendedAudience;
-   }
 }

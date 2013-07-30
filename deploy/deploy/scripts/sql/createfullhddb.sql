@@ -70,7 +70,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'config_seedlists', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'harvestdefinitions', 2);
+    values ( 'harvestdefinitions', 3);
 insert into schemaversions ( tablename, version )
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version )
@@ -82,7 +82,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'jobs', 8);
+    values ( 'jobs', 9);
 insert into schemaversions ( tablename, version )
     values ( 'job_configs', 1);
 insert into schemaversions (tablename, version )
@@ -293,8 +293,9 @@ create table harvestdefinitions (
                                   --  created
     isactive int not null,      -- Indicates whether the harvest is activated
                                 --  and will be run at the scheduled time
-    edition bigint not null     -- Marker for optimistic locking by web
-                                --  interface
+    edition bigint not null,     -- Marker for optimistic locking by web
+                                 --  interface
+    audience varchar(100)
 );
 
 create index harvestdefinitionssubmitdate on harvestdefinitions (submitted);
@@ -447,8 +448,9 @@ create table jobs (
                                          --  job, autocreated for optimization
                                          --  purposes
     edition bigint not null,   -- Marker for optimistic locking by web interface
-    continuationof bigint      -- if not null this job tries to continue where this job left of
-    						   -- using the Heritrix recoverlog 										
+    continuationof bigint,      -- if not null this job tries to continue where this job left of
+                                -- using the Heritrix recoverlog
+    harvestname_prefix varchar(100) 									
 );
 
 create index jobstatus on jobs(status);

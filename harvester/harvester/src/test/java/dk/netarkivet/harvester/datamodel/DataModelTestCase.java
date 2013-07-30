@@ -148,7 +148,7 @@ public class DataModelTestCase extends TestCase {
                                                new HourlyFrequency(1),
                                                "MySched", "No comments");
         ScheduleDAO.getInstance().create(sched);
-        PartialHarvest hd1 = new PartialHarvest(list, sched, "HD#1", "No comments", "Alle");
+        PartialHarvest hd1 = new PartialHarvest(list, sched, "HD#1", "No comments", "Everybody");
         hddao.create(hd1);
         FullHarvest hd2 = new FullHarvest("HD#2", "No comments", null,
                                           Constants.DEFAULT_MAX_OBJECTS,

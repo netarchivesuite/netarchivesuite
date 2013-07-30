@@ -62,7 +62,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'config_seedlists', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'harvestdefinitions', 2);
+    VALUES ( 'harvestdefinitions', 3);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'partialharvests', 1);
 INSERT INTO schemaversions ( tablename, version )
@@ -74,7 +74,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'ordertemplates', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'jobs', 8);
+    VALUES ( 'jobs', 9);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'job_configs', 1);
 INSERT INTO schemaversions (tablename, version )
@@ -256,7 +256,8 @@ CREATE TABLE harvestdefinitions (
      numevents int NOT NULL,
      submitted timestamp NOT NULL,
      isactive bool NOT NULL,
-     edition bigint NOT NULL
+     edition bigint NOT NULL,
+     audience varchar(100)
 );
 
 CREATE INDEX harvestdefinitionssubmitdate on harvestdefinitions (submitted) TABLESPACE tsindex;
@@ -368,7 +369,8 @@ CREATE TABLE jobs (
     resubmitted_as_job bigint,
     num_configs int NOT NULL default 0,
     edition bigint NOT NULL,
-    continuationof bigint
+    continuationof bigint,
+    harvestname_prefix varchar(100)	
 );
 
 CREATE INDEX jobstatus on jobs(status) TABLESPACE tsindex;
