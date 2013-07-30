@@ -408,8 +408,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <!-- Make a copy of the necessary derby-classes without the version information
            so we can launch derby as a server.
      -->
-    <copy file="lib/db/derby-10.8.2.2.jar" toFile="lib/db/derby.jar"/>
-    <copy file="lib/db/derbynet-10.8.2.2.jar" toFile="lib/db/derbynet.jar"/>
+    <copy file="lib/db/derby-10.10.1.1.jar" toFile="lib/db/derby.jar"/>
+    <copy file="lib/db/derbynet-10.10.1.1.jar" toFile="lib/db/derbynet.jar"/>
     <zip basedir="." destfile="NetarchiveSuite.zip">
       <include name="conf/**"/>
       <include name="archivedatabasedir/**"/>
