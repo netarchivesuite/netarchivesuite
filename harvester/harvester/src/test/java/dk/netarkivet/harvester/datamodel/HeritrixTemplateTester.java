@@ -34,7 +34,6 @@ import org.dom4j.Node;
 
 import java.io.File;
 import java.util.List;
-//import dk.netarkivet.testutils.TestFileUtils;
 
 /** Testclass for class HeritrixTemplate. */
 public class HeritrixTemplateTester extends TestCase {
@@ -269,7 +268,6 @@ public class HeritrixTemplateTester extends TestCase {
     }
     
     public void testForDecidingScope() {
-        
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
         Document doc = XmlUtils.getXmlDoc(f);        
         String xpath = "/crawl-order/controller/newObject[@name='scope']"
@@ -280,18 +278,7 @@ public class HeritrixTemplateTester extends TestCase {
         HeritrixTemplate ht = new HeritrixTemplate(doc);
         assertTrue("Order not verified", ht.isVerified());
     }
-    
-//    public void testRemovalOfDeduplicator() {
-//        File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
-//        Document a = XmlUtils.getXmlDoc(f);
-//        String before = a.asXML();
-//        Node xpathNode = a.selectSingleNode(
-//                HeritrixTemplate.DEDUPLICATOR_XPATH);
-//        assertTrue("Deduplicator should be there", xpathNode != null);
-//        xpathNode.detach();
-//        String after = a.asXML();
-//        System.out.println(TestFileUtils.getDifferences(before, after));
-//    }
+  
     
     public void testEditOrderXML_ArchiveFormat() {
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
@@ -301,6 +288,5 @@ public class HeritrixTemplateTester extends TestCase {
         a = XmlUtils.getXmlDoc(fwarc);
         HeritrixTemplate.editOrderXML_ArchiveFormat(a, "warc");
     }
-    
     
 }
