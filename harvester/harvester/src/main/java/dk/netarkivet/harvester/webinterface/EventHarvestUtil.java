@@ -181,13 +181,13 @@ public final class EventHarvestUtil {
                         .Constants.DEFAULT_MAX_BYTES);
             }
             
-            if (maxbytesString == null){
+            if (maxobjectsString == null){
                 maxObjects = (int) dk.netarkivet.harvester.datamodel
                     .Constants.DEFAULT_MAX_OBJECTS;
             } else {
                 Locale loc = HTMLUtils.getLocaleObject(context);
                 long maxObjectsL = HTMLUtils.parseLong(
-                        loc, maxbytesString,  Constants.MAX_OBJECTS_PARAM, 
+                        loc, maxobjectsString,  Constants.MAX_OBJECTS_PARAM, 
                         dk.netarkivet.harvester.datamodel
                         .Constants.DEFAULT_MAX_OBJECTS);
                 maxObjects = (int) maxObjectsL;
