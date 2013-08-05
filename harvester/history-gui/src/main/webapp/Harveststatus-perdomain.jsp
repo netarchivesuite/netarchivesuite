@@ -76,7 +76,7 @@ displayed, if no domains are found a message is shown.
         if (helper.isPreviousPageAvailable()) {
       %>
       <a
-              href="javascript:previousPage(<%=helper.generateParameterStringForPaging(false)%>);">
+              href="javascript:previousPage(<%=helper.generateParameterStringForPaging()%>);">
         <fmt:message key="status.results.displayed.prevPage"/>
       </a>
       <%
@@ -92,7 +92,7 @@ displayed, if no domains are found a message is shown.
         if (helper.isNextPageAvailable()) {
       %>
       <a
-              href="javascript:nextPage(<%=helper.generateParameterStringForPaging(true)%>);">
+              href="javascript:nextPage(<%=helper.generateParameterStringForPaging()%>);">
         <fmt:message key="status.results.displayed.nextPage"/>
       </a>
       <%

@@ -56,7 +56,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         HarvestUtils.ensureNumberOfHarvestsForDefaultDomain(2);
 
         addStep("Click the 'Harvest name' header link",
-                "The headers should now be sorted alphabetically according to harvest name.");
+                "The table should now be sorted alphabetically according to harvest name.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.HARVEST_NAME_HEADER);
         PageHelper.waitForPageToLoad();
@@ -66,7 +66,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         assertColumnIsSorted(0, false);
 
         addStep("Click the 'Run number' header link",
-                "The headers should now be sorted alphabetically according to" +
+                "The table should now be sorted alphabetically according to" +
                         " run number.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.RUN_NUMBER_HEADER);
@@ -77,7 +77,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         assertColumnIsSorted(1, false);
 
         addStep("Click the 'Run ID' header link",
-                "The headers should now be sorted alphabetically according to" +
+                "The table should now be sorted alphabetically according to" +
                         " run ID.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.RUN_ID_HEADER);
@@ -88,7 +88,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         assertColumnIsSorted(2, false);
 
         addStep("Click the 'Configuration' header link",
-                "The headers should now be sorted alphabetically according to" +
+                "The table should now be sorted alphabetically according to" +
                         " Configuration.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.CONFIGURATION_HEADER);
@@ -99,7 +99,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         assertColumnIsSorted(3, false);
 
         addStep("Click the 'Start time' header link",
-                "The headers should now be sorted alphabetically according to" +
+                "The table should now be sorted alphabetically according to" +
                         " Start time.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.START_TIME_HEADER);
@@ -110,7 +110,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         assertColumnIsSorted(4, false);
 
         addStep("Click the 'End time' header link",
-                "The headers should now be sorted alphabetically according to" +
+                "The table should now be sorted alphabetically according to" +
                         " end time.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
@@ -121,7 +121,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         assertColumnIsSorted(5, false);
 
         addStep("Click the 'Bytes Harvested' header link",
-                "The headers should now be sorted alphabetically according to 'Bytes Harvested'.");
+                "The table should now be sorted alphabetically according to 'Bytes Harvested'.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.BYTES_HARVESTED_HEADER);
         PageHelper.waitForPageToLoad();
@@ -130,9 +130,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         PageHelper.waitForPageToLoad();
         assertColumnIsSorted(6, false);
 
-
         addStep("Click the 'Documents Harvested' header link",
-                "The headers should now be sorted alphabetically according to 'Documents Harvested'.");
+                "The table should now be sorted alphabetically according to 'Documents Harvested'.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.DOCUMENTS_HARVESTED_HEADER);
         PageHelper.waitForPageToLoad();
@@ -141,9 +140,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         PageHelper.waitForPageToLoad();
         assertColumnIsSorted(7, false);
 
-
         addStep("Click the 'Stopped due to' header link",
-                "The headers should now be sorted alphabetically according to 'Stopped due to'.");
+                "The table should now be sorted alphabetically according to 'Stopped due to'.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.STOPPED_DUE_TO_HEADER);
         PageHelper.waitForPageToLoad();
@@ -151,11 +149,12 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         PageHelper.clickLink(HarvestHistoryPageHelper.STOPPED_DUE_TO_HEADER);
         PageHelper.waitForPageToLoad();
         assertColumnIsSorted(8, false);
-
     }
 
     @Test(groups = {"guitest","functest", "slow"})
     public void historyTablePagingTest() throws Exception {
+        addDescription("Testes that the paging functionality works correctly " +
+                "for the harvest history");
         addStep("Ensure that at least harvests have finished for the default domain","");
         HarvestUtils.ensureNumberOfHarvestsForDefaultDomain(3);
         List<HarvestHistoryPageHelper.HarvestHistoryEntry> harvestHistory = HarvestHistoryPageHelper.readHarvestHistory();
@@ -194,10 +193,92 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         }
 
         addStep("Click the previous link until the previous link disappears.",
-                "All the pages should have been listed, 2 at a time backwords.");
+                "All the pages should have been listed, " +
+                        "2 at a time backwards.");
         for (int pageNumber = numberOfPages; pageNumber >= 1;pageNumber--) {
             List<WebElement> rows =
                 PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));
+            rows.remove(0); //Skip headers
+            for (int rowNumber = rows.size()-1; rowNumber >= 0 ; rowNumber--) {
+                WebElement row = rows.get(rowNumber);
+                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row), harvestHistory.get(--harvestCounter));
+            }
+            boolean firstPage = pageNumber == 1;
+            if (!firstPage) {
+                driver.findElement(By.linkText("previous")).click();
+                PageHelper.waitForPageToLoad();
+            } else {
+                assertEquals("Not all harvests where found in the pages.", harvestCounter, 0);
+                assertTrue(driver.findElements(By.linkText("previous")).isEmpty());
+            }
+        }
+    }
+
+    @Test(groups = {"guitest","functest", "slow"})
+    public void historySortedTablePagingTest() throws Exception {
+        addDescription("Tests that sorting is maintained when paging through " +
+                "the harvest history");
+        addStep("Ensure that at least harvests have finished for the default domain","");
+        HarvestUtils.ensureNumberOfHarvestsForDefaultDomain(3);
+
+        addStep("Click the 'End time' header link twice",
+                "The table should now be sorted descending according to" +
+                        " End time. Remember the full list");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
+        PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
+        PageHelper.waitForPageToLoad();
+        List<HarvestHistoryPageHelper.HarvestHistoryEntry> harvestHistory =
+                HarvestHistoryPageHelper.readHarvestHistory();
+        int PAGE_SIZE = 2;
+        setHarvestStatusPageSize(PAGE_SIZE);
+
+        addStep("Set the page size to " + PAGE_SIZE,"");
+
+        addStep("Goto the harvest history for the default domain",
+                "Only 2 harvests should be listed and the next link should be enabled.");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        assertEquals("Didn't find the expected 2 harvests on the first page",
+                PageHelper.getWebDriver().findElements(By.xpath(
+                        "//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
+
+        addStep("Click the 'End time' header link twice",
+                "The table should now be againsorted descending according to" +
+                        " End time.");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
+        PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
+        PageHelper.waitForPageToLoad();
+
+        addStep("Click the next link until the next link disappears",
+                "All the pages should have been listed, " +
+                        "in the same order as when the full list was show.");
+        int harvestCounter = 0;
+        int numberOfPages = (int)Math.ceil(harvestHistory.size()/PAGE_SIZE);
+        for (int pageNumber = 1; pageNumber <= numberOfPages ; pageNumber++) {
+            List<WebElement> rows =
+                    PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));
+            rows.remove(0); //Skip headers
+            for (int rowNumber = 0; rowNumber < rows.size() ; rowNumber++) {
+                WebElement row = rows.get(rowNumber);
+                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row), harvestHistory.get(harvestCounter++));
+            }
+            boolean lastPage = pageNumber == numberOfPages;
+            if (!lastPage) {
+                driver.findElement(By.linkText("next")).click();
+                PageHelper.waitForPageToLoad();
+            } else {
+                assertEquals("Not all harvests were found in the pages.", harvestCounter, harvestHistory.size());
+                assertTrue(driver.findElements(By.linkText("next")).isEmpty());
+            }
+        }
+
+        addStep("Click the previous link until the previous link disappears.",
+                "All the pages should have been listed, " +
+                        "2 at a time backwards.");
+        for (int pageNumber = numberOfPages; pageNumber >= 1;pageNumber--) {
+            List<WebElement> rows =
+                    PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));
             rows.remove(0); //Skip headers
             for (int rowNumber = rows.size()-1; rowNumber >= 0 ; rowNumber--) {
                 WebElement row = rows.get(rowNumber);

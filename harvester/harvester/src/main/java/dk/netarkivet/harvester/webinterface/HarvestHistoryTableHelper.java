@@ -157,30 +157,16 @@ public class HarvestHistoryTableHelper {
     }
 
     /**
-     * Generates the parmater string fot the the javascripting next/previous
-     * link functionality
-     * @param isNextPage Will generate the parameters for a next link i
-     * <code>true</code>, else a previous link will be generate.
-     * @return
+     * Generates the parameter string fot the the javascripting next/previous
+     * link functionality.
      */
-    public String generateParameterStringForPaging(boolean isNextPage) {
-        StringBuilder linkPageStartIndex = new StringBuilder(
-                "'" + Constants.START_PAGE_PARAMETER + "',");
-        if (isNextPage) {
-            linkPageStartIndex.append("'" + (startIndex + currentPageSize) +
-                    "'");
-        } else {
-            linkPageStartIndex.append("'" + (startIndex - currentPageSize) +
-                    "'");
-        }
+    public String generateParameterStringForPaging() {
         return "'" + Constants.DOMAIN_SEARCH_PARAM + "'," +
                "'" + domainName + "'," +
                "'" + Constants.SORT_FIELD_PARAM + "'," +
                "'" + sortField + "'," +
-               "'" + Constants.SORT_ORDER_ASC + "'," +
-               "'" + sortOrder + "'"
-                //+ linkPageStartIndex
-                ;
+               "'" + Constants.SORT_ORDER_PARAM + "'," +
+               "'" + sortOrder + "'";
     }
 
     /**
