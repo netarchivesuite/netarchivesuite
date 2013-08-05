@@ -131,8 +131,7 @@ displayed, if no domains are found a message is shown.
          helper.getOrderAfterClick(HarvestHistoryTableHelper.HARVEST_NAME_FIELD) + "&" +
        Constants.SORT_FIELD_PARAM + "=" +
          HarvestHistoryTableHelper.HARVEST_NAME_FIELD %>">
-      <fmt:message key="table.job.harvestname"/>
-      <%=helper.getOrderArrow(HarvestHistoryTableHelper.HARVEST_NAME_FIELD)%>
+      <fmt:message key="table.job.harvestname"/><%=helper.getOrderArrow(HarvestHistoryTableHelper.HARVEST_NAME_FIELD)%>
     </a>
   </th>
   <th class="harvestHeader">

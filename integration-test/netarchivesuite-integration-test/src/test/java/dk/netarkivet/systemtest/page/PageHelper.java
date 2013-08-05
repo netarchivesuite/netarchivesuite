@@ -125,7 +125,7 @@ public class PageHelper {
     public static void clickLink(String linkText) {
         checkInitialization();
         TestEventManager.getInstance().addStimuli("Clicking '" + linkText + "' link.");
-        driver.findElement(By.linkText(linkText)).click();
+        driver.findElement(By.partialLinkText(linkText)).click();
     }
 
     public static void initialize(WebDriver theDriver, String theBaseUrl) {

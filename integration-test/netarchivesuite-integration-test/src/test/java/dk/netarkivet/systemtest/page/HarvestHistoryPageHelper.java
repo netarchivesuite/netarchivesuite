@@ -35,7 +35,7 @@ public class HarvestHistoryPageHelper {
 
     public static final String HARVEST_NAME_HEADER = "Harvest name";
     public static final String RUN_NUMBER_HEADER = "Run number";
-    public static final String RUN_ID_HEADER = "Run ID";
+    public static final String RUN_ID_HEADER = "Job ID";
     public static final String CONFIGURATION_HEADER = "Configuration";
     public static final String START_TIME_HEADER = "Start time";
     public static final String END_TIME_HEADER = "End time";

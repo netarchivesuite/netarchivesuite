@@ -47,7 +47,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
     public void setup(Method method) {
     }
 
-    //@Test(groups = {"guitest","functest", "slow"})
+    @Test(groups = {"guitest","functest", "slow"})
     public void sortableHistoryTableTest() throws Exception {
         addDescription("Tests that the jobs listed on the 'Harvest History' page for a domain are" +
                 "sortable by clicking on the .");
@@ -59,9 +59,99 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
                 "The headers should now be sorted alphabetically according to harvest name.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.HARVEST_NAME_HEADER);
-        //assertColumnIsSorted(0, true);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(0, true);
         PageHelper.clickLink(HarvestHistoryPageHelper.HARVEST_NAME_HEADER);
-        //assertColumnIsSorted(0, false);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(0, false);
+
+        addStep("Click the 'Run number' header link",
+                "The headers should now be sorted alphabetically according to" +
+                        " run number.");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        PageHelper.clickLink(HarvestHistoryPageHelper.RUN_NUMBER_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(1, true);
+        PageHelper.clickLink(HarvestHistoryPageHelper.RUN_NUMBER_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(1, false);
+
+        addStep("Click the 'Run ID' header link",
+                "The headers should now be sorted alphabetically according to" +
+                        " run ID.");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        PageHelper.clickLink(HarvestHistoryPageHelper.RUN_ID_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(2, true);
+        PageHelper.clickLink(HarvestHistoryPageHelper.RUN_ID_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(2, false);
+
+        addStep("Click the 'Configuration' header link",
+                "The headers should now be sorted alphabetically according to" +
+                        " Configuration.");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        PageHelper.clickLink(HarvestHistoryPageHelper.CONFIGURATION_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(3, true);
+        PageHelper.clickLink(HarvestHistoryPageHelper.CONFIGURATION_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(3, false);
+
+        addStep("Click the 'Start time' header link",
+                "The headers should now be sorted alphabetically according to" +
+                        " Start time.");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        PageHelper.clickLink(HarvestHistoryPageHelper.START_TIME_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(4, true);
+        PageHelper.clickLink(HarvestHistoryPageHelper.START_TIME_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(4, false);
+
+        addStep("Click the 'End time' header link",
+                "The headers should now be sorted alphabetically according to" +
+                        " end time.");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(5, true);
+        PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(5, false);
+
+        addStep("Click the 'Bytes Harvested' header link",
+                "The headers should now be sorted alphabetically according to 'Bytes Harvested'.");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        PageHelper.clickLink(HarvestHistoryPageHelper.BYTES_HARVESTED_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(6, true);
+        PageHelper.clickLink(HarvestHistoryPageHelper.BYTES_HARVESTED_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(6, false);
+
+
+        addStep("Click the 'Documents Harvested' header link",
+                "The headers should now be sorted alphabetically according to 'Documents Harvested'.");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        PageHelper.clickLink(HarvestHistoryPageHelper.DOCUMENTS_HARVESTED_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(7, true);
+        PageHelper.clickLink(HarvestHistoryPageHelper.DOCUMENTS_HARVESTED_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(7, false);
+
+
+        addStep("Click the 'Stopped due to' header link",
+                "The headers should now be sorted alphabetically according to 'Stopped due to'.");
+        HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
+        PageHelper.clickLink(HarvestHistoryPageHelper.STOPPED_DUE_TO_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(8, true);
+        PageHelper.clickLink(HarvestHistoryPageHelper.STOPPED_DUE_TO_HEADER);
+        PageHelper.waitForPageToLoad();
+        assertColumnIsSorted(8, false);
+
     }
 
     @Test(groups = {"guitest","functest", "slow"})
@@ -152,6 +242,27 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
             applicationManager.waitForGUIToStart(10);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void assertColumnIsSorted(int column, boolean ascending) {
+        List<WebElement> rows = PageHelper.getWebDriver().findElements(By.xpath(
+                "//table[@class='selection_table']/tbody/tr[position()>1]"));
+        String previousValue = null;
+        for (WebElement rowElement:rows) {
+            List<WebElement> rowCells = rowElement.findElements(By.xpath("td"));
+            String value = rowCells.get(column).getText();
+            if (previousValue != null) {
+                if (ascending) {
+                    assertTrue(value.compareTo(previousValue) <= 0,
+                            value + " should be listed after " + previousValue +
+                                    " for ascending");
+                } else {
+                    assertTrue(value.compareTo(previousValue) >= 0,
+                            value + " should be listed after " + previousValue +
+                                    " for descending");
+                }
+            }
         }
     }
 }
