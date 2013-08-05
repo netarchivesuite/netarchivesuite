@@ -129,7 +129,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     public void startReportGenerator() {
         if (System.getProperty("enableTestReport", "false").equals("true") ) {
             reportGenerator = new ReportGenerator();
-            reportGenerator.projectStarted("Bitrepository test");
+            reportGenerator.projectStarted("NetarchiveSuite test");
         }
     }
 

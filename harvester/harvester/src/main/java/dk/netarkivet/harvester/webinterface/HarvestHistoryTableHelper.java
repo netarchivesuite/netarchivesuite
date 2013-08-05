@@ -24,11 +24,16 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.List;
+
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.DomainHarvestInfo;
 
 /**
- * Used to manage the sort of tables in the domain harvest history screen.
+ * Used to manage the model used in the domain harvest history page.
  * See Harveststatus-perdomain.jsp.
  */
 public class HarvestHistoryTableHelper {
@@ -49,36 +54,163 @@ public class HarvestHistoryTableHelper {
     private final String sortField;
     private final String sortOrder;
 
-    /** The log. */
-    private static final Log log = LogFactory.getLog(HarvestHistoryTableHelper.class);
+    private final String domainName;
+    private final int pageIndex;
+    private final long definedPageSize;
+    private final long currentPageSize;
+    private long startIndex;
 
-    public HarvestHistoryTableHelper(String sortField, String sortOrder) {
-        this.sortField = sortField;
-        this.sortOrder = sortOrder;
+    private long endIndex;
+    private List<DomainHarvestInfo> harvestInfoList;
+
+    public HarvestHistoryTableHelper(
+            String domainNameParameter,
+            String sortFieldParameter,
+            String sortOrderParameter,
+            String pageIndexParameter) {
+        ArgumentNotValid.checkNotNull(domainNameParameter, "domainName");
+        domainName = domainNameParameter;
+        if (sortFieldParameter != null) {
+            sortField = sortFieldParameter;
+        } else {
+            sortField = HarvestHistoryTableHelper.START_TIME_FIELD;
+        }
+        if (sortOrderParameter != null) {
+            sortOrder = sortOrderParameter;
+        } else {
+            sortOrder = Constants.SORT_ORDER_ASC;
+        }
+        if (pageIndexParameter != null) {
+            pageIndex = Integer.parseInt(pageIndexParameter);
+        } else {
+            pageIndex = 1;
+        }
+        harvestInfoList = DomainDAO.getInstance().listDomainHarvestInfo(
+                domainName, sortField,
+                sortOrder.equals(Constants.SORT_ORDER_ASC) ? true :false );
+
+        definedPageSize = Settings.getLong(
+                CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE);
+        currentPageSize = (definedPageSize == 0 ? harvestInfoList.size() :
+                definedPageSize);
+        if (harvestInfoList.size() > 0) {
+            startIndex = ((pageIndex - 1) * currentPageSize);
+            endIndex = Math.min(startIndex + currentPageSize,
+                    getNumberOfResults());
+        } else {
+            // Dont's show "Search results: 0, displaying results 1 to 0"
+            // but "Search results: 0, displaying results 0 to 0"
+            startIndex = -1;
+            endIndex = 0;
+        }
+    }
+
+    /**
+     * Return the list of DomainHarvestInfos for the current page.
+     * @return
+     */
+    public List<DomainHarvestInfo> listCurrentPageHarvestHistory() {
+        return harvestInfoList.subList((int)startIndex,(int)endIndex);
+    }
+
+    /**
+     * Return the index of the first result on the current page. The result
+     * is the full list of <code>DomainHarvestInfo</code> objects for this
+     * domain for the selected  sorting.
+     */
+    public long getStartIndex() {
+        return startIndex;
+    }
+
+    /**
+     * Return the index of the last result on the current page. The result
+     * is the full list of <code>DomainHarvestInfo</code> objects for this
+     * domain for the selected  sorting.
+     */
+    public long getEndIndex() {
+        return endIndex;
+    }
+
+    /**
+     * @return The index of the current page.
+     */
+    public int getPageIndex() {
+        return pageIndex;
+    }
+
+    /**
+     * The total number of <code>DomainHarvestInfo</code> objects in the db for
+     * this domain.
+     */
+    public long getNumberOfResults() {
+        return harvestInfoList.size();
+    }
+
+    public boolean isNextPageAvailable() {
+        return HarvestStatus.isNextLinkActive(
+                currentPageSize, getNumberOfResults(), endIndex);
+    }
+
+    public boolean isPreviousPageAvailable() {
+        return HarvestStatus.isPreviousLinkActive(
+                currentPageSize, getNumberOfResults(), startIndex);
+    }
+
+    /**
+     * Generates the parmater string fot the the javascripting next/previous
+     * link functionality
+     * @param isNextPage Will generate the parameters for a next link i
+     * <code>true</code>, else a previous link will be generate.
+     * @return
+     */
+    public String generateParameterStringForPaging(boolean isNextPage) {
+        StringBuilder linkPageStartIndex = new StringBuilder(
+                "'" + Constants.START_PAGE_PARAMETER + "',");
+        if (isNextPage) {
+            linkPageStartIndex.append("'" + (startIndex + currentPageSize) +
+                    "'");
+        } else {
+            linkPageStartIndex.append("'" + (startIndex - currentPageSize) +
+                    "'");
+        }
+        return "'" + Constants.DOMAIN_SEARCH_PARAM + "'," +
+               "'" + domainName + "'," +
+               "'" + Constants.SORT_FIELD_PARAM + "'," +
+               "'" + sortField + "'," +
+               "'" + Constants.SORT_ORDER_ASC + "'," +
+               "'" + sortOrder + "'"
+                //+ linkPageStartIndex
+                ;
     }
 
     /**
      * Calculates the sort order arrow for the headers of a sortable table
      * @param sortField The sort field to find a arrow for.
-     * @return The relevant arrow for the indicated field. Will be the reverse if the sorting is already
+     * @return The relevant arrow for the indicated field. Will be the reverse
+     * if the sorting is already
      * on this field else an empty string will be returned
      */
     public String getOrderArrow(String sortField) {
+        ArgumentNotValid.checkNotNull(sortField, "sortField");
         if (sortField.equals(this.sortField)) {
-            return sortOrder.equals(Constants.SORT_ORDER_ASC) ? INC_SORT_ARROW : DEC_SORT_ARROW;
+            return sortOrder.equals(Constants.SORT_ORDER_ASC) ?
+                    INC_SORT_ARROW : DEC_SORT_ARROW;
         }
         return NO_SORT_ARROW;
     }
 
     /**
-     * Calculates the reverse sort order for this file. If the field isen't used for ordering,
+     * Calculates the reverse sort order for this file. If the field isn't used
+     * for ordering,
      * Constants.SORT_ORDER_ASC is returned.
-     * @param sortField The sort field to find a new order for for.
+     * @param sortField The sort field to find a new order for.
      * @return The relevant asc/desc string.
      */
     public String getOrderAfterClick(String sortField) {
+        ArgumentNotValid.checkNotNull(sortField, "sortField");
         if (sortField.equals(this.sortField)) {
-            return sortOrder.equals(Constants.SORT_ORDER_ASC) ? Constants.SORT_ORDER_DESC : Constants.SORT_ORDER_ASC;
+            return sortOrder.equals(Constants.SORT_ORDER_ASC) ?
+                    Constants.SORT_ORDER_DESC : Constants.SORT_ORDER_ASC;
         }
         return Constants.SORT_ORDER_ASC;
     }

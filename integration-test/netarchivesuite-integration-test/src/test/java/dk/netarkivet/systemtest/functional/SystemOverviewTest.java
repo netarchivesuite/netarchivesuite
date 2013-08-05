@@ -34,10 +34,11 @@ import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.NASSystemUtil;
 import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.PageHelper;
-import dk.netarkivet.systemtest.page.PageHelper.MenuPages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.fail;
 
 /**
  * Test specification: http://netarchive.dk/suite/TEST1 .
@@ -50,8 +51,28 @@ public class SystemOverviewTest extends SeleniumTest {
     @Test (groups = {"guitest","functest"})
     public void generalTest() throws Exception {
         addDescription("Test specification: http://netarchive.dk/suite/It23JMXMailCheck");
-        addStep("Goto the Systemstate page", "");
-        PageHelper.gotoPage(MenuPages.OverviewOfTheSystemState);
+        Set<Application> expectedApplicationSet = new HashSet<Application>(
+                Arrays.asList(NASSystemUtil.getApplications()));
+        int numberOfApps = expectedApplicationSet.size();
+        int MAX_SECONDS_TO_WAIT = 120;
+        int WAIT_INTERVAL = 10;
+        addStep("Goto the Systemstate page and wait for the extected number of applications to appear.", expectedApplicationSet.size() +
+                " should appear within " + MAX_SECONDS_TO_WAIT);
+        for (int waitedSeconds = 0; waitedSeconds <= MAX_SECONDS_TO_WAIT; waitedSeconds = waitedSeconds + WAIT_INTERVAL) {
+            PageHelper.reloadSubPage("Status/Monitor-JMXsummary.jsp");
+            int numberOfAppsInOverview = retrieveSystemOverviewRows().size();
+            log.debug(retrieveSystemOverviewRows().size() + "/" + numberOfApps + " apps appeared " +
+                    "in " + waitedSeconds + " seconds");
+            if (numberOfAppsInOverview >= numberOfApps) {
+                break;
+            }
+            if (waitedSeconds == MAX_SECONDS_TO_WAIT) {
+                fail("Only " + numberOfAppsInOverview + " appeared in " + waitedSeconds + " seconds, expected " +
+                        numberOfApps);
+            }
+            Thread.sleep(WAIT_INTERVAL*1000);
+        }
+
         // We need to click the 'Instance id' link to differentiate between
         // instances of the same application running on the same machine
         addStep("Click the 'Instance id' link (We need to do this to differentiate between "
@@ -59,14 +80,12 @@ public class SystemOverviewTest extends SeleniumTest {
                 "Verify that the the expected applications are running as they should.");
         driver.findElement(By.linkText("Instance id")).click();
         PageHelper.waitForPageToLoad();
-        Set<Application> expectedApplicationSet = new HashSet<Application>(
-                Arrays.asList(NASSystemUtil.getApplications()));
         Set<Application> displayedApplicationSet = new HashSet<Application>();
         Thread.sleep(5000);
         WebElement table = PageHelper.getWebDriver().findElement(By.id("system_state_table"));
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
-        for (int rowCounter = 1; rowCounter < tr_collection.size(); rowCounter++) {
-            WebElement row = tr_collection.get(rowCounter);
+        int rowCounter = 1;
+        for (WebElement row:retrieveSystemOverviewRows()) {
             List<WebElement> rowCells = row.findElements(By.xpath("td"));
             String machine = rowCells.get(0).getText();
             String application = rowCells.get(1).getText();
@@ -74,12 +93,23 @@ public class SystemOverviewTest extends SeleniumTest {
             String priority = rowCells.get(3).getText();
             String replica = rowCells.get(4).getText();
             log.debug("Checking row " + rowCounter + ", value is: " + machine + ": " + application);
-
+            rowCounter++;
             displayedApplicationSet.add(new Application(
                     machine, application, instance_Id, priority,replica
             ));
         }
 
         NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);
+    }
+
+    /**
+     * Reads and return the rows of the system overview table excluding the headers.
+     * @return
+     */
+    private List<WebElement> retrieveSystemOverviewRows() {
+        WebElement table = PageHelper.getWebDriver().findElement(By.id("system_state_table"));
+        List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
+        tr_collection.remove(0);
+        return tr_collection;
     }
 }

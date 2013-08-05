@@ -29,273 +29,102 @@ itself.
 With parameter domainName, it performs a search.  Name can be a glob pattern
 (using ? and * only) or a single domain.  If domains are found, they are
 displayed, if no domains are found a message is shown.
---%><%@ page import="java.util.List,
-                 java.util.Set,
-                 javax.servlet.RequestDispatcher,
-                 dk.netarkivet.common.CommonSettings,
-                 dk.netarkivet.common.utils.I18n,
-                 dk.netarkivet.common.utils.Settings,
-                 dk.netarkivet.common.utils.TableSort,
+--%>
+<%@ page import="
+                 java.util.List,
                  dk.netarkivet.common.webinterface.HTMLUtils,
-                 dk.netarkivet.harvester.datamodel.DomainDAO,
-                 dk.netarkivet.harvester.datamodel.DomainHarvestInfo"
+                 dk.netarkivet.harvester.datamodel.DomainHarvestInfo,
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.harvester.webinterface.HarvestHistoryTableHelper"
          pageEncoding="UTF-8"
-%>
-<%@ page import="dk.netarkivet.harvester.webinterface.Constants" %>
-<%@ page import="dk.netarkivet.harvester.webinterface.HarvestHistoryTableHelper" %>
-<%@ page import="dk.netarkivet.harvester.webinterface.HarvestStatus" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"
 />
 
 <%
-    String startPage=request.getParameter(Constants.START_PAGE_PARAMETER);
+  String domainName = request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
+  HarvestHistoryTableHelper helper = new HarvestHistoryTableHelper(
+          domainName,
+          request.getParameter(Constants.SORT_FIELD_PARAM),
+          request.getParameter(Constants.SORT_ORDER_PARAM),
+          request.getParameter(Constants.START_PAGE_PARAMETER)
+  );
 
-    if(startPage == null){
-        startPage = "1";
-    }
-    long pageSize = Long.parseLong(Settings.get(
-            CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE));
-
-    String searchParam=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
-    if (searchParam == null ) searchParam = "";
-    searchParam = HTMLUtils.encode(searchParam);
-
-  String sortField=request.getParameter(Constants.SORT_FIELD_PARAM);
-  if  (sortField == null) {
-    sortField = HarvestHistoryTableHelper.START_TIME_FIELD;
-  }
-  String sortOrder = request.getParameter(Constants.SORT_ORDER_PARAM);
-  if  (sortOrder == null) {
-    sortOrder = Constants.SORT_ORDER_ASC;
-  }
-  String domainName=request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
+  HTMLUtils.setUTF8(request);
+  HTMLUtils.generateHeader(pageContext, "navigateWithThreeParameters.js");
 %>
-<%!
-    private static final I18n I18N = new I18n(
-            dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-%>
-<%
-    HTMLUtils.setUTF8(request);
-    if (domainName != null && domainName.length() > 0) {
-        //Domain name parameter given
-        domainName = domainName.trim();
-        if (domainName.contains("?") || domainName.contains("*")) {
-            //Wildcard search
-            List<String> matchingDomains = DomainDAO.getInstance().getDomains(
-                    domainName);
-            if (matchingDomains.isEmpty()) {//No matching domains
-                //Wildcard search with no matches
-                HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                        "errormsg;no.matching.domains.for.0", domainName);
-                return;
-            } else {
-                //Wildcard search with matches, display them
-                // Include navigate.js
-                HTMLUtils.generateHeader(pageContext, "navigate.js");
-%>
-
+  <!--
+  This hidden form is triggered by the next-page / previous-page links but is not actually submitted. Rather the
+  hidden fields are set as url parameters by the javascript.
+  -->
 <form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
-
   <input type="hidden"
          name="<%= Constants.START_PAGE_PARAMETER%>"
-         value="<%=startPage%>"/>
+         value="<%=helper.getPageIndex()%>"/>
 </form>
 
-<%
-    long totalResultsCount = matchingDomains.size();
-    long actualPageSize = (pageSize == 0 ?
-        totalResultsCount : pageSize);
+<fmt:message key="status.results.displayed">
+  <fmt:param><%=helper.getNumberOfResults()%></fmt:param>
+  <fmt:param><%=helper.getStartIndex()+1%></fmt:param>
+  <fmt:param><%=helper.getEndIndex()%></fmt:param>
+</fmt:message>
+<p style="text-align: right">
+  <fmt:message key="status.results.displayed.pagination">
+    <fmt:param>
+      <%
+        if (helper.isPreviousPageAvailable()) {
+      %>
+      <a
+              href="javascript:previousPage(<%=helper.generateParameterStringForPaging(false)%>);">
+        <fmt:message key="status.results.displayed.prevPage"/>
+      </a>
+      <%
+      } else {
+      %>
+      <fmt:message key="status.results.displayed.prevPage"/>
+      <%
+        }
+      %>
+    </fmt:param>
+    <fmt:param>
+      <%
+        if (helper.isNextPageAvailable()) {
+      %>
+      <a
+              href="javascript:nextPage(<%=helper.generateParameterStringForPaging(true)%>);">
+        <fmt:message key="status.results.displayed.nextPage"/>
+      </a>
+      <%
+      } else {
+      %>
+      <fmt:message key="status.results.displayed.nextPage"/>
+      <%
+        }
+      %>
+    </fmt:param>
+  </fmt:message>
+</p>
 
-    long startPageIndex = Long.parseLong(startPage);
-    long startIndex = 0;
-    long endIndex = 0;
-
-    if (totalResultsCount > 0) {
-        startIndex = ((startPageIndex - 1) * actualPageSize);
-        endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
-    } else {
-        // Avoid bug NAS-1927. 
-        // Dont's show "Search results: 0, displaying results 1 to 0"
-        // but "Search results: 0, displaying results 0 to 0"
-       	startIndex = -1;    	
-    }
-
-    boolean prevLinkActive = HarvestStatus.isPreviousLinkActive(
-    		pageSize, totalResultsCount, startIndex);
-
-    boolean nextLinkActive = HarvestStatus.isNextLinkActive(
-    		pageSize, totalResultsCount, endIndex);
-
-%>
-                <h3 class="page_heading">
-                <fmt:message key="searching.for.0.gave.1.hits">
-                    <fmt:param value="<%=domainName%>"/>
-                    <fmt:param value="<%=matchingDomains.size()%>"/>
-                </fmt:message>
-                </h3>
-
-                <fmt:message key="status.results.displayed">
-                    <fmt:param><%=totalResultsCount%></fmt:param>
-                    <fmt:param><%=startIndex+1%></fmt:param>
-                    <fmt:param><%=endIndex%></fmt:param>
-                </fmt:message>
-
-                <p style="text-align: right">
-                    <fmt:message key="status.results.displayed.pagination">
-                        <fmt:param>
-                        <%
-                        if (prevLinkActive) {
-                        %>
-                            <a href="javascript:previousPage('<%=Constants.DOMAIN_SEARCH_PARAM%>','<%=searchParam%>');">
-                                <fmt:message key="status.results.displayed.prevPage"/>
-                            </a>
-                        <%
-                        } else {
-                        %>
-                            <fmt:message key="status.results.displayed.prevPage"/>
-                        <%
-                        }
-                        %>
-                        </fmt:param>
-                        <fmt:param>
-                        <%
-                        if (nextLinkActive) {
-                        %>
-                            <a href="javascript:nextPage('<%=Constants.DOMAIN_SEARCH_PARAM%>','<%=searchParam%>');">
-                                <fmt:message key="status.results.displayed.nextPage"/>
-                            </a>
-                        <%
-                        } else {
-                        %>
-                            <fmt:message key="status.results.displayed.nextPage"/>
-                        <%
-                        }
-                        %>
-                        </fmt:param>
-                    </fmt:message>
-                </p>
-
-                <%
-                List<String> matchingDomainsSubList=matchingDomains.
-                subList((int)startIndex,(int)endIndex);
-
-                for (String domainS : matchingDomainsSubList) {
-                    String encodedDomain = HTMLUtils.encode(domainS);
-                    %>
-                    <a href="Harveststatus-perdomain.jsp?<%=
-                      Constants.DOMAIN_SEARCH_PARAM%>=<%=
-                      HTMLUtils.escapeHtmlValues(encodedDomain)%>"><%=
-                      HTMLUtils.escapeHtmlValues(domainS)%>
-                    </a><br/>
-<%
-                }
-            }
-        } else if (DomainDAO.getInstance().exists(domainName)) {
-            //Specified and found domain name
-            // Include navigate.js
-            HTMLUtils.generateHeader(pageContext, "navigate.js");
-%>
-
-<!--
-This hidden form is triggered by the next-page / previous-page links but is not actually submitted. Rather the
-hidden fields are set as url parameters by the javascript.
--->
-<form method="post" name="filtersForm" action="Harveststatus-perdomain.jsp">
-
-<input type="hidden"
-       name="<%= Constants.START_PAGE_PARAMETER%>"
-       value="<%=startPage%>"/></form>
-
-<%
-  List<DomainHarvestInfo> hiList =
-        DomainDAO.getInstance().listDomainHarvestInfo(
-        domainName, sortField, sortOrder.equals(Constants.SORT_ORDER_ASC) ? true :false );
-
-  long totalResultsCount = hiList.size();
-  long actualPageSize = (pageSize == 0 ?
-          totalResultsCount : pageSize);
-
-  long startPageIndex = Long.parseLong(startPage);
-  long startIndex = 0;
-  long endIndex = 0;
-
-  if (totalResultsCount > 0) {
-    startIndex = ((startPageIndex - 1) * actualPageSize);
-    endIndex = Math.min(startIndex + actualPageSize , totalResultsCount);
-  } else {
-    // Avoid bug NAS-1927.
-    // Dont's show "Search results: 0, displaying results 1 to 0"
-    // but "Search results: 0, displaying results 0 to 0"
-    startIndex = -1;
-  }
-
-  boolean prevLinkActive = HarvestStatus.isPreviousLinkActive(
-          pageSize, totalResultsCount, startIndex);
-  boolean nextLinkActive = HarvestStatus.isNextLinkActive(
-          pageSize, totalResultsCount, endIndex);
-%>
-            <fmt:message key="status.results.displayed">
-                <fmt:param><%=totalResultsCount%></fmt:param>
-                <fmt:param><%=startIndex+1%></fmt:param>
-                <fmt:param><%=endIndex%></fmt:param>
-            </fmt:message>
-            <p style="text-align: right">
-                <fmt:message key="status.results.displayed.pagination">
-                    <fmt:param>
-                    <%
-                     if (prevLinkActive) {
-                    %>
-                        <a href="javascript:previousPage('<%=Constants.DOMAIN_SEARCH_PARAM%>','<%=searchParam%>');">
-                            <fmt:message key="status.results.displayed.prevPage"/>
-                        </a>
-                    <%
-                    } else {
-                    %>
-                        <fmt:message key="status.results.displayed.prevPage"/>
-                    <%
-                    }
-                    %>
-                    </fmt:param>
-                    <fmt:param>
-                    <%
-                    if (nextLinkActive) {
-                    %>
-                        <a href="javascript:nextPage('<%=Constants.DOMAIN_SEARCH_PARAM%>','<%=searchParam%>');">
-                            <fmt:message key="status.results.displayed.nextPage"/>
-                        </a>
-                    <%
-                    } else {
-                    %>
-                        <fmt:message key="status.results.displayed.nextPage"/>
-                    <%
-                    }
-                    %>
-                    </fmt:param>
-                </fmt:message>
-            </p>
-
-            <h3 class="page_heading">
-            <fmt:message key="harvest.history.for.0">
-                <fmt:param><a href="/HarvestDefinition/Definitions-edit-domain.jsp?<%=
+<h3 class="page_heading">
+  <fmt:message key="harvest.history.for.0">
+    <fmt:param><a href="/HarvestDefinition/Definitions-edit-domain.jsp?<%=
                     Constants.DOMAIN_PARAM%>=<%=HTMLUtils.encode(domainName)%>"><%=
-                    HTMLUtils.escapeHtmlValues(domainName)%></a></fmt:param>
-                </fmt:message>
-            </h3>
-            <%
-            if (hiList == null || hiList.size() == 0) {// No history
-            %><p><fmt:message key="domain.0.was.never.harvested">
-                  <fmt:param value="<%=domainName%>"/>
-            </fmt:message></p><%
-            } else {//print history
+    HTMLUtils.escapeHtmlValues(domainName)%></a></fmt:param>
+  </fmt:message>
+</h3>
+<%
+  if (helper.getNumberOfResults() == 0) { // No history
+%><p><fmt:message key="domain.0.was.never.harvested">
+  <fmt:param value="<%=domainName%>"/>
+</fmt:message></p><%
+} else {
 %>
-<table class="selection_table"><%
-  HarvestHistoryTableHelper helper = new HarvestHistoryTableHelper(sortField, sortOrder);
-
+<table class="selection_table">
+  <%
   String sortBaseLink="Harveststatus-perdomain.jsp?"
         + Constants.DOMAIN_SEARCH_PARAM + "=" + HTMLUtils.encode(domainName) + "&";
-%>
+  %>
   <tr>
   <th class="harvestHeader">
     <a href="<%=sortBaseLink + Constants.SORT_ORDER_PARAM + "=" +
@@ -378,108 +207,55 @@ hidden fields are set as url parameters by the javascript.
     </th>
   </tr>
  <%
-                int rowCount = 0;
-
-                for (DomainHarvestInfo hi : hiList.subList((int)startIndex,
-                        (int)endIndex)) {
-                    String harvestLink = "Harveststatus-perhd.jsp?"
-                            + Constants.HARVEST_PARAM + "="
-                            + HTMLUtils.encode(hi.getHarvestName());
-                    String jobLink = "Harveststatus-jobdetails.jsp?jobID="
-                            + hi.getJobID();
-                    %>
-                <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
-                	<!-- td for the harvestname -->
-                    <td><a href="<%=HTMLUtils.escapeHtmlValues(harvestLink)%>">
-                        <%=HTMLUtils.escapeHtmlValues(hi.getHarvestName())%>
-                    </a></td>
-                    <!-- td for the harvestnumber -->
-                    <td><%=dk.netarkivet.harvester.webinterface
-                                .HarvestStatus
-                                .makeHarvestRunLink(hi.getHarvestID(),
-                                                    hi.getHarvestNum())%>
-                        </td>
-                        <!-- td for the Jobid -->
-                        <td><%
-                            if (hi.getJobID() == 0) {
-                                %>-<%
-                            } else {
-                                %><a href="<%=
-                                    HTMLUtils.escapeHtmlValues(jobLink)%>">
-                                    <%=hi.getJobID()%>
-                                </a><%
-                            }
-                        %>
-                        </td>
-                        <td><%=HTMLUtils.escapeHtmlValues(hi.getConfigName())%>
-                        </td>
-                        <td><fmt:formatDate type="both"
-                            value="<%=hi.getStartDate()%>"/></td>
-                        <td><fmt:formatDate type="both"
-                            value="<%=hi.getEndDate()%>"/></td>
-                        <td><fmt:formatNumber
-                            value="<%=hi.getBytesDownloaded()%>"/></td>
-                        <td><fmt:formatNumber
-                            value="<%=hi.getDocsDownloaded()%>"/></td>
-                        <td><%
-                            if (hi.getStopReason() == null) {
-                                %>-<%
-                            } else {
-                               %><%=hi.getStopReason().
-                               getLocalizedString(response.getLocale())%><%
-                            }
-                        %>
-                        </td>
-                    </tr>
-                    <%
-                }
-            }
-            %>
-            </table>
-            <%
-        } else {
-            //Specified domain name, but not found
-            String message = I18N.getString(response.getLocale(),
-                                            "errormsg;unknown.domain.0",
-                                            domainName);
-            request.setAttribute("message", message);
-            RequestDispatcher rd = pageContext.getServletContext()
-                    .getRequestDispatcher("/message.jsp");
-            rd.forward(request, response);
-            return;
-        }
+   int rowCount = 0;
+   for (DomainHarvestInfo hi :
+           helper.listCurrentPageHarvestHistory()) {
+     String harvestLink = "Harveststatus-perhd.jsp?"
+             + Constants.HARVEST_PARAM + "="
+             + HTMLUtils.encode(hi.getHarvestName());
+     String jobLink = "Harveststatus-jobdetails.jsp?jobID="
+             + hi.getJobID();
+ %>
+  <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
+    <td><a href="<%=HTMLUtils.escapeHtmlValues(harvestLink)%>">
+      <%=HTMLUtils.escapeHtmlValues(hi.getHarvestName())%>
+    </a></td>
+    <td><%=dk.netarkivet.harvester.webinterface
+            .HarvestStatus
+            .makeHarvestRunLink(hi.getHarvestID(), hi.getHarvestNum())%>
+    </td>
+    <td><%
+      if (hi.getJobID() == 0) {
+    %>-<%
     } else {
-       //No search or domain name given, so show the search formular to the user
-       HTMLUtils.generateHeader(pageContext);
-        %>
-        <h3 class="page_heading">
-            <fmt:message key="find.all.jobs.for.this.domain"/>
-        </h3>
-<form method="get" action="Harveststatus-perdomain.jsp">
-    <table>
-        <tr>
-            <td><fmt:message key="prompt;enter.name.of.domain"/></td>
-            <td><span id="focusElement">
-                    <input name="<%=Constants.DOMAIN_SEARCH_PARAM%>"
-                           size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>"/>
-                    </span>
-            </td>
-            <td><input type="submit" value=
-                    "<fmt:message key="search"/>"/></td>
-        </tr>
-        <tr>
-            <td><fmt:message key="prompt;newest.first"/>&nbsp;
-                <input type="radio" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=Constants.TRUE%>" checked="checked"/>
-                <fmt:message key="prompt;oldest.first"/>&nbsp;
-                <input type="radio" name="<%=Constants.IS_NEWEST_FIRST%>" value="<%=Constants.FALSE%>"/>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2"><fmt:message key="may.use.wildcards"/></td>
-        </tr>
-    </table>
-</form>
-<%
+    %><a href="<%=HTMLUtils.escapeHtmlValues(jobLink)%>">
+      <%=hi.getJobID()%>
+    </a><%
+      }
+    %>
+    </td>
+    <td><%=HTMLUtils.escapeHtmlValues(hi.getConfigName())%>
+    </td>
+    <td><fmt:formatDate type="both" value="<%=hi.getStartDate()%>"/></td>
+    <td><fmt:formatDate type="both" value="<%=hi.getEndDate()%>"/></td>
+    <td><fmt:formatNumber value="<%=hi.getBytesDownloaded()%>"/></td>
+    <td><fmt:formatNumber value="<%=hi.getDocsDownloaded()%>"/></td>
+    <td><%
+      if (hi.getStopReason() == null) {
+    %>-<%
+    } else {
+    %>
+      <%=hi.getStopReason().getLocalizedString(response.getLocale())%>
+      <%
+      }
+    %>
+    </td>
+  </tr>
+  <%
+      }
     }
-    HTMLUtils.generateFooter(out);
+  %>
+</table>
+<%
+  HTMLUtils.generateFooter(out);
 %>

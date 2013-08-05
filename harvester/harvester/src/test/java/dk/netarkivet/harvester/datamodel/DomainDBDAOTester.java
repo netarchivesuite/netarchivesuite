@@ -38,9 +38,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.dom4j.Document;
-import org.dom4j.Node;
-
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
@@ -52,6 +49,8 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
+import org.dom4j.Document;
+import org.dom4j.Node;
 
 /**
  * Unit tests for the class dk.netarkivet.harvester.datamodel.DomainDBDAO.
@@ -78,14 +77,14 @@ public class DomainDBDAOTester extends DataModelTestCase {
         ExtendedField extField = new ExtendedField(null, 
                 (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "defaultvalue", "");
         extDAO.create(extField);
-    	
+
         ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
         extField = extDAO2.read(Long.valueOf(1));
         
         assertEquals(1, extField.getExtendedFieldID().longValue());
 
         Domain d =  Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
-    	
+
         DomainDAO dao = DomainDAO.getInstance();
         dao.create(d);
 
@@ -532,13 +531,13 @@ public class DomainDBDAOTester extends DataModelTestCase {
         }
         DomainDAO dao = DomainDAO.getInstance();
         List<DomainHarvestInfo> hinfos = dao.listDomainHarvestInfo(theDomainName,
-                "startdate", false); // changed from true to false
+                "startdate", false);
         Date d0 = hinfos.get(0).getStartDate();
         Date d1 = hinfos.get(1).getStartDate();
 
         assertTrue("Should have dates in inverse start order not '" + d0 + "," + d1 +  "'" , d0.after(d1) );
 
-        hinfos = dao.listDomainHarvestInfo(theDomainName, "startdate", true); // changed from false to true
+        hinfos = dao.listDomainHarvestInfo(theDomainName, "startdate", true);
         d0 = hinfos.get(0).getStartDate();
         d1 = hinfos.get(1).getStartDate();
 

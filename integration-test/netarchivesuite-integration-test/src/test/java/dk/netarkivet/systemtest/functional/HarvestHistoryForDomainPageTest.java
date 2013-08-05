@@ -74,12 +74,12 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
 
         addStep("Set the page size to " + PAGE_SIZE,"");
 
-        addStep("Goto the harvest history for the default domain", "Only 2 harvests should be listed and the next link " +
-                "should be enabled.");
+        addStep("Goto the harvest history for the default domain",
+                "Only 2 harvests should be listed and the next link should be enabled.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         assertEquals("Didn't find the expected 2 harvests on the first page",
                 PageHelper.getWebDriver().findElements(By.xpath(
-                "//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
+                        "//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
 
         addStep("Click the next link until the next link disappears",
                 "All the pages should have been listed, 2 at a time");
@@ -98,13 +98,13 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
                 driver.findElement(By.linkText("next")).click();
                 PageHelper.waitForPageToLoad();
             } else {
-                assertEquals("Not all harvests where found in the pages.", harvestCounter, harvestHistory.size());
+                assertEquals("Not all harvests were found in the pages.", harvestCounter, harvestHistory.size());
                 assertTrue(driver.findElements(By.linkText("next")).isEmpty());
             }
         }
 
-        addStep("Click the previous link until the previous link disappears",
-                "All the pages should have been listed, 2 at a time backwords");
+        addStep("Click the previous link until the previous link disappears.",
+                "All the pages should have been listed, 2 at a time backwords.");
         for (int pageNumber = numberOfPages; pageNumber >= 1;pageNumber--) {
             List<WebElement> rows =
                 PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));
