@@ -106,15 +106,14 @@ public class HarvestHistoryTableHelper {
     }
 
     /**
-     * Return the list of DomainHarvestInfos for the current page.
-     * @return
+     * @return Return the list of DomainHarvestInfos for the current page.
      */
     public List<DomainHarvestInfo> listCurrentPageHarvestHistory() {
         return harvestInfoList.subList((int)startIndex,(int)endIndex);
     }
 
     /**
-     * Return the index of the first result on the current page. The result
+     * @return  the index of the first result on the current page. The result
      * is the full list of <code>DomainHarvestInfo</code> objects for this
      * domain for the selected  sorting.
      */
@@ -123,7 +122,7 @@ public class HarvestHistoryTableHelper {
     }
 
     /**
-     * Return the index of the last result on the current page. The result
+     * @return the index of the last result on the current page. The result
      * is the full list of <code>DomainHarvestInfo</code> objects for this
      * domain for the selected  sorting.
      */
@@ -139,26 +138,34 @@ public class HarvestHistoryTableHelper {
     }
 
     /**
-     * The total number of <code>DomainHarvestInfo</code> objects in the db for
-     * this domain.
+     * @return The total number of <code>DomainHarvestInfo</code> objects in
+     * the db for this domain.
      */
     public long getNumberOfResults() {
         return harvestInfoList.size();
     }
 
+    /**
+     * @return <code>true</code> if the next page is available,
+     * else <code>false</code>
+     */
     public boolean isNextPageAvailable() {
         return HarvestStatus.isNextLinkActive(
                 currentPageSize, getNumberOfResults(), endIndex);
     }
 
+    /**
+     * @return <code>true</code> if the previous page is available,
+     * else <code>false</code>
+     */
     public boolean isPreviousPageAvailable() {
         return HarvestStatus.isPreviousLinkActive(
                 currentPageSize, getNumberOfResults(), startIndex);
     }
 
     /**
-     * Generates the parameter string fot the the javascripting next/previous
-     * link functionality.
+     * @return A string representing the parameters for the javascripting
+     * next/previous link functionality.
      */
     public String generateParameterStringForPaging() {
         return "'" + Constants.DOMAIN_SEARCH_PARAM + "'," +

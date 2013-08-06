@@ -104,7 +104,7 @@ public class SystemOverviewTest extends SeleniumTest {
 
     /**
      * Reads and return the rows of the system overview table excluding the headers.
-     * @return
+     * @return The rows of the system overview table.
      */
     private List<WebElement> retrieveSystemOverviewRows() {
         WebElement table = PageHelper.getWebDriver().findElement(By.id("system_state_table"));
