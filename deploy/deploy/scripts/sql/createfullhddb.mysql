@@ -68,7 +68,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'jobs', 8);
+    values ( 'jobs', 9);
 insert into schemaversions ( tablename, version )
     values ( 'job_configs', 1);
 insert into schemaversions (tablename, version )
