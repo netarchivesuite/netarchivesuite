@@ -76,10 +76,12 @@ public class IndexerQueue {
      * queue.
      */
     public synchronized void populate() {
-        log.info("Populating indexing queue from object store.");
         List<ArchiveFile> files = (new ArchiveFileDAO())
                 .getFilesAwaitingIndexing();
-        log.info("Will now add '" + files.size() + "' unindexed files to queue (if they are not already queued).");
+        if (!files.isEmpty()) {
+            log.info("Will now add '" + files.size() 
+                    + "' unindexed files from object store to queue (if they are not already queued).");
+        }
         for (ArchiveFile file: files) {
             if (!queue.contains(file)) {
                 log.info("Adding file '" + file.getFilename()
