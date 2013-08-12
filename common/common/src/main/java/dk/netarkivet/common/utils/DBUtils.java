@@ -717,7 +717,8 @@ public final class DBUtils {
     /**
      * Method to perform a rollback of complex DB updates.  If no commit has
      * been performed, this will undo the entire transaction, otherwise
-     * nothing will happen.  This should be called in a finally block with
+     * nothing will happen. If autoCommit is true then no action is taken.
+     * This method should be called in a finally block with
      * no DB updates after the last commit.
      * Thus exceptions while closing are ignored, but logged as warnings.
      *
@@ -728,15 +729,17 @@ public final class DBUtils {
      * @param o The Object being acted upon by this action
      */
     public static void rollbackIfNeeded(Connection c,
-                                 String action, Object o) {
+                                        String action, Object o) {
         ArgumentNotValid.checkNotNull(c, "Connection c");
         try {
-            c.rollback();
-            c.setAutoCommit(true);
+            if (!c.getAutoCommit()) {
+                c.rollback();
+                c.setAutoCommit(true);
+            }
         } catch (SQLException e) {
             log.warn("SQL error doing rollback after " + action + " " + o + "\n"
-                     + ExceptionUtils.getSQLExceptionCause(e),
-                     e);
+                    + ExceptionUtils.getSQLExceptionCause(e),
+                    e);
             // Can't throw here, we want the real exception
         }
     }
