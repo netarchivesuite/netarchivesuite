@@ -71,15 +71,17 @@ import dk.netarkivet.harvester.indexserver.IndexRequestServerInterface;
  *
  * This class contains a singleton that handles requesting an index over JMS.
  *
- * This class will always return the same lucene index based on the list of job identifiers 
- * in the file regardless of what kind of index the client is requesting.
- * 
+ * This has two modes. 1) Given a file with a list of jobIDs, it will always return 
+ * the same lucene index based on the list of job identifiers in the file regardless 
+ * of what kind of index the client is requesting.
+ * 2) if setting "settings.harvester.indexserver.alwaysSetIsIndexReadyToFalse" is true
+ * it will always return the IndexRequestMessage with isindexready set to false.
  */
 public final class TestIndexRequestServer extends HarvesterMessageHandler
         implements CleanupIF, IndexRequestServerInterface {
     
     /** The default place in classpath where the settings file can be found. */
-    private static String defaultSettingsClasspath = "dk/netarkivet/archive/"
+    private static String defaultSettingsClasspath = "dk/netarkivet/harvester/"
         + "indexserver/distribute/TestIndexRequestServerSettings.xml";
 
     /*
@@ -94,12 +96,19 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler
     }
     
     /** 
-     * <b>settings.archive.indexserver.fileContainingJobsForTestindex<b>:
+     * <b>settings.harvester.indexserver.fileContainingJobsForTestindex<b>:
      * The file containing the list of jobids that the test index uses as 
      * data. The default name of the file is "jobids.txt"
      */
     public static String JOBS_FOR_TESTINDEX 
-        = "settings.archive.indexserver.indexrequestserver.fileContainingJobsForTestindex";
+        = "settings.harvester.indexserver.indexrequestserver.fileContainingJobsForTestindex";
+    /** 
+     * <b>settings.archive.indexserver.alwaysSetIsIndexReadyToFalse<b>:
+     * The default: false.
+     * If set to true, the IndexRequestMessage returned has always isindexready = false.
+     */
+    public static String ALWAYS_SET_ISINDEX_READY_TO_FALSE
+            = "settings.harvester.indexserver.indexrequestserver.alwaysSetIsIndexReadyToFalse";
     
     /** The class logger. */
     private static Log log = LogFactory.getLog(TestIndexRequestServer.class);
@@ -127,6 +136,8 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler
      */
     private File jobsForDefaultIndex; 
     
+    private boolean alwaysReturnFalseMode = false;
+    
     /** The set of Jobs ids used for the default index. */
     private Set<Long> defaultIDs;
     
@@ -145,6 +156,13 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler
                 HarvesterSettings.INDEXSERVER_INDEXING_REQUESTDIR);
         listeningInterval = Settings.getLong(
                 HarvesterSettings.INDEXSERVER_INDEXING_LISTENING_INTERVAL);
+        
+        alwaysReturnFalseMode = Settings.getBoolean(ALWAYS_SET_ISINDEX_READY_TO_FALSE);
+        if (alwaysReturnFalseMode) {
+            log.info("alwaysSetIsIndexReadyToFalse is true");
+        } else {
+            log.info("alwaysSetIsIndexReadyToFalse is false");
+        }
         
         jobsForDefaultIndex = Settings.getFile(JOBS_FOR_TESTINDEX);
         
@@ -453,6 +471,10 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler
                log.info("Sending " + state + " IndexReadyMessage to Scheduler");
                boolean isindexready = true;
                if (state.equalsIgnoreCase("failed")) {
+                   isindexready = false;
+               }
+               if (alwaysReturnFalseMode) {
+                   log.info("Setting isindexready = false in return message");
                    isindexready = false;
                }
                IndexReadyMessage irm = new IndexReadyMessage(

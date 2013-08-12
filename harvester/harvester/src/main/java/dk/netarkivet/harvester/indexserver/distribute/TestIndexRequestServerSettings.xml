@@ -32,11 +32,12 @@ National Library.
 	for dk.netarkivet.archive.indexserver.distribute.TestIndexRequestServer.java 
 -->
 <settings>
-    <archive>
+    <harvester>
         <indexserver>
         	<indexrequestserver>
         		<fileContainingJobsForTestindex>jobids.txt</fileContainingJobsForTestindex>	
+        		<alwaysSetIsIndexReadyToFalse>false</alwaysSetIsIndexReadyToFalse>
         	</indexrequestserver>
         </indexserver>
-    </archive>
+    </harvester>
 </settings>
