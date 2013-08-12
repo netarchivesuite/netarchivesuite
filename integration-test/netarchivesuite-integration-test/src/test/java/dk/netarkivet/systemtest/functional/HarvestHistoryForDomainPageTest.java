@@ -173,7 +173,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         addStep("Click the next link until the next link disappears",
                 "All the pages should have been listed, 2 at a time");
         int harvestCounter = 0;
-        int numberOfPages = (int)Math.ceil(harvestHistory.size()/PAGE_SIZE);
+        int numberOfPages = (int)Math.ceil((float)harvestHistory.size()/PAGE_SIZE);
         for (int pageNumber = 1; pageNumber <= numberOfPages ; pageNumber++) {
             List<WebElement> rows =
                     PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));
@@ -254,7 +254,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
                 "All the pages should have been listed, " +
                         "in the same order as when the full list was show.");
         int harvestCounter = 0;
-        int numberOfPages = (int)Math.ceil(harvestHistory.size()/PAGE_SIZE);
+        int numberOfPages = (int)Math.ceil((float)harvestHistory.size()/PAGE_SIZE);
         for (int pageNumber = 1; pageNumber <= numberOfPages ; pageNumber++) {
             List<WebElement> rows =
                     PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));

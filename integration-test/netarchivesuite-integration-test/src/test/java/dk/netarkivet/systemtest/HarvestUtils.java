@@ -84,7 +84,7 @@ public class HarvestUtils {
             System.out.print(".");
             PageHelper.reloadSubPage(
                     "History/Harveststatus-perdomain.jsp?domainName=" + DEFAULT_DOMAIN);
-            for (String harvest:unfinishedHarvests) {
+            for (String harvest:unfinishedHarvests.toArray(new String [unfinishedHarvests.size()])) {
                 if (PageHelper.getWebDriver().getPageSource().contains(harvest)) {
                     System.out.println(harvest + " finished");
                     unfinishedHarvests.remove(harvest);
