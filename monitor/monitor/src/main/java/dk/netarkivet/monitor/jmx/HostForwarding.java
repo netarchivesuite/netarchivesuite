@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -447,7 +448,7 @@ public class HostForwarding<T> {
                        + "'";
             } catch (Exception e) {
                 //Still unable to connect. Oh well.
-                return "Unable to proxy JMX beans on host '"
+                return "[" + new Date() + "] Unable to proxy JMX beans on host '"
                        + hostEntry.getName() + ":" + hostEntry.getJmxPort()
                        + "', last seen active at '"
                        + hostEntry.getTime() + "'\n"
