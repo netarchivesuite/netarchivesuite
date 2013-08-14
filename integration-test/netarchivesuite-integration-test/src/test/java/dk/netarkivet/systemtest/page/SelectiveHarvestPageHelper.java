@@ -26,6 +26,7 @@ package dk.netarkivet.systemtest.page;
 
 import java.util.List;
 
+import dk.netarkivet.systemtest.HarvestUtils;
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -65,7 +66,7 @@ public class SelectiveHarvestPageHelper {
      * Creates a selective harvest without comments for the default domain.
      */
     public static void createSelectiveHarvest(String name) {
-        createSelectiveHarvest(name, null, new String[] {"netarkivet.dk"});
+        createSelectiveHarvest(name, null, new String[] {HarvestUtils.DEFAULT_DOMAIN});
     }
 
     public static void activateHarvest(String name) {
