@@ -34,7 +34,7 @@ import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 
 public class HarvestUtils {
-    public static String DEFAULT_DOMAIN = "netarkivet.dk";
+    public static String DEFAULT_DOMAIN = "pligtaflevering.dk";
     public static final int MAX_MINUTES_TO_WAIT_FOR_HARVEST = 60;
 
     /**
@@ -92,8 +92,8 @@ public class HarvestUtils {
             }
             try { Thread.sleep(60000); } catch (InterruptedException e) {}
             if (++minutesWaitingForHarvest > MAX_MINUTES_TO_WAIT_FOR_HARVEST) {
-                throw new RuntimeException("The harvests " + unfinishedHarvests + " took to long to finish, " +
-                        "aborting");
+                throw new RuntimeException("The harvests " + unfinishedHarvests + " took to long (more that " +
+                        MAX_MINUTES_TO_WAIT_FOR_HARVEST + ") to finish, " + "aborting");
             }
         }
         System.out.println("All harvests finished in " + (System.currentTimeMillis() - starttime)/1000 +" seconds");
