@@ -46,6 +46,7 @@ import org.archive.io.arc.ARCRecordMetaData;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveProfile;
@@ -63,9 +64,17 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class HarvestDocumentationTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 
+    private JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID), TestInfo.HARVEST_ID);
+    private HeritrixFiles Okfiles = new HeritrixFiles(TestInfo.WORKING_DIR, harvestJob);
+    private IngestableFiles OkIngestables = null;
+    private HeritrixFiles filesWithNonexistingDir = new HeritrixFiles(new File("foodoesnotexist"), harvestJob);
+    private HeritrixFiles filesWithExistingFileInsteadOfDir = new HeritrixFiles(TestInfo.ORDER_FILE, harvestJob);
+   
     public void setUp() {
         rs.setUp();
         FileUtils.createDir(TestInfo.WORKING_DIR);
+        OkIngestables = new IngestableFiles(Okfiles);
+        
     }
 
     public void tearDown() {
@@ -108,16 +117,16 @@ public class HarvestDocumentationTester extends TestCase {
         metadatadir.mkdir();
         MetadataEntry.storeMetadataToDisk(l, metadatadir);
         
+        JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID), 117L);
         
-        HarvestDocumentation.documentHarvest(TestInfo.WORKING_DIR,
-                                             TestInfo.JOB_ID,
-                                             TestInfo.HARVEST_ID
-        );
+        HeritrixFiles files = new HeritrixFiles(TestInfo.WORKING_DIR, harvestJob);
+        IngestableFiles inf = new IngestableFiles(files);
+        
+        HarvestDocumentation.documentHarvest(inf);
              
         //Verify that the new file exists.
         MetadataFileWriter.getMetadataArchiveFileName(TestInfo.ARC_JOB_ID);
-        IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,
-                                                  Long.parseLong(TestInfo.ARC_JOB_ID));
+        
         List<File> fs = inf.getMetadataArcFiles();
         assertEquals("Should have created exactly one file ", 1, fs.size());
         File f = fs.get(0);
@@ -133,17 +142,20 @@ public class HarvestDocumentationTester extends TestCase {
                 TestInfo.ARC_JOB_ID,
                 TestInfo.FST_ARC_TIME,
                 TestInfo.FST_ARC_SERIAL).toASCIIString());
-        cdxURISet.add(HarvestDocumentation.getCDXURI(
+         cdxURISet.add(HarvestDocumentation.getCDXURI(
                 TestInfo.ARC_HARVEST_ID,
                 TestInfo.ARC_JOB_ID,
                 TestInfo.SND_ARC_TIME,
                 TestInfo.SND_ARC_SERIAL).toASCIIString());
+        
         String aliasFound = null;
         while (it.hasNext()) {
             ARCRecord record = (ARCRecord) it.next();
             ARCRecordMetaData meta = record.getMetaData();
             //System.out.println("Url: " + meta.getUrl());
+            //System.out.println("mimetype: " + meta.getMimetype());
             if (meta.getMimetype().equals("application/x-cdx")) {
+                
                 assertTrue("Bad URI in metadata: " + meta.getUrl(),
                            cdxURISet.contains(meta.getUrl()));
                 cdxURISet.remove(meta.getUrl());
@@ -153,7 +165,7 @@ public class HarvestDocumentationTester extends TestCase {
                 aliasFound = ARCTestUtils.readARCRecord(record);
             }
         }
-        assertTrue("Metadata should contain CDX records: " + cdxURISet,
+        assertTrue("Metadata should not contain CDX records: " + cdxURISet,
                    cdxURISet.isEmpty());
         assertNotNull("Should have found some alias information", aliasFound);
         assertEquals("Should have found the right alias metadata",
@@ -168,19 +180,17 @@ public class HarvestDocumentationTester extends TestCase {
      */
     public void testDocumentHarvestExceptionalCases() {
         try {//Dir does not exist
-            HarvestDocumentation.documentHarvest(new File("foodoesnotexist"),
-                                                 TestInfo.JOB_ID,
-                                                 TestInfo.HARVEST_ID);
+            IngestableFiles ingestablesWithNonexistingCrawlDir = new IngestableFiles(filesWithNonexistingDir);
+            HarvestDocumentation.documentHarvest(ingestablesWithNonexistingCrawlDir);
             fail("Should have thrown IOFailure");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {//Dir is not a dir
-            HarvestDocumentation.documentHarvest(TestInfo.ORDER_FILE,
-                                                 TestInfo.JOB_ID,
-                                                 TestInfo.HARVEST_ID);
-            fail("Should have thrown IOFailure");
-        } catch (ArgumentNotValid e) {
+            IngestableFiles ingestablesWithFileAsCrawlDir = new IngestableFiles(filesWithExistingFileInsteadOfDir);
+            HarvestDocumentation.documentHarvest(ingestablesWithFileAsCrawlDir);
+            fail("Should have thrown PermissionDenied exception");
+        } catch (PermissionDenied e) {
             //Expected
         }
         //the ARC files in dir do not share harvestID and jobID
@@ -190,18 +200,22 @@ public class HarvestDocumentationTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.METADATA_TEST_DIR_INCONSISTENT,
                 arcsDir);
-        HarvestDocumentation.documentHarvest(TestInfo.WORKING_DIR,
-                                             TestInfo.JOB_ID,
-                                             TestInfo.HARVEST_ID);
+        //  JobInfo for harvestId 117
+        JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID), 117L);
+        HeritrixFiles files117 = new HeritrixFiles(TestInfo.WORKING_DIR, harvestJob);
+        OkIngestables = new IngestableFiles(files117);
+        
+        HarvestDocumentation.documentHarvest(OkIngestables);
         List<File> arcFiles = Arrays.asList(
                 arcsDir.listFiles(FileUtils.ARCS_FILTER));
         assertEquals("Should have exactly 1 ARC file (no metadata here)",
                      1, arcFiles.size());
-        assertEquals("Should only have consistently named arc file left",
+        //System.out.println(Okfiles.getArchiveFilePrefix());
+        assertEquals("Should only have consistently named arc file left. Expected " + TestInfo.ARC_FILE_0.getName() 
+                + " but got " + arcFiles.get(0).getName(),
                      TestInfo.ARC_FILE_0.getName(), arcFiles.get(0).getName());
 
-        List<File> metadataFiles = new IngestableFiles(TestInfo.WORKING_DIR,
-                                                       TestInfo.JOB_ID).getMetadataArcFiles();
+        List<File> metadataFiles = OkIngestables.getMetadataArcFiles();
         File metadataDir = new File(TestInfo.WORKING_DIR, "metadata");
         File target1 = new File(
                 metadataDir, MetadataFileWriter.getMetadataArchiveFileName(
@@ -401,7 +415,7 @@ public class HarvestDocumentationTester extends TestCase {
     public void testMoveAwayForeignFiles() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestDocumentation.class,
                                                  "moveAwayForeignFiles",
-                                                 ArchiveProfile.class, File.class, Long.TYPE);
+                                                 ArchiveProfile.class, File.class, IngestableFiles.class);
         // Set oldjobs place to a different name to check use of setting.
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR,
                      new File(TestInfo.WORKING_DIR,
@@ -415,7 +429,13 @@ public class HarvestDocumentationTester extends TestCase {
         FileUtils.copyFile(new File(TestInfo.METADATA_TEST_DIR,
                                     "arcs/not-an-arc-file.txt"),
                            new File(arcsDir, "43-metadata-1.arc"));
-        m.invoke(null, ArchiveProfile.ARC_PROFILE, arcsDir, 42);
+        
+    //  JobInfo for harvestId 117
+        JobInfo harvestJob = new JobInfoTestImpl(42L, 117L);
+        HeritrixFiles files117 = new HeritrixFiles(TestInfo.WORKING_DIR, harvestJob);
+        OkIngestables = new IngestableFiles(files117);
+        
+        m.invoke(null, ArchiveProfile.ARC_PROFILE, arcsDir, OkIngestables);
         // Check that one file got moved.
         LogUtils.flushLogs(HarvestDocumentation.class.getName());
         FileAsserts.assertFileContains("Should have found foreign files",
@@ -425,9 +445,16 @@ public class HarvestDocumentationTester extends TestCase {
                 = "43-117-20051212141241-00000-sb-test-har-001.statsbiblioteket.dk.arc";
         String goodFile
                 = "42-117-20051212141240-00000-sb-test-har-001.statsbiblioteket.dk.arc";
-        File oldJobsDir43 = new File(TestInfo.WORKING_DIR, "oddjobs/"
-                                                           + 43
-                                                           + "-lost-files/arcs/");
+        System.out.println("Locating lost-files directory");
+        File oddjobsDir = new File(TestInfo.WORKING_DIR, "oddjobs");
+        File[] oddDirs = oddjobsDir.listFiles();
+        assertTrue(oddDirs.length == 1);
+        for (File oddDir : oddDirs) {
+            System.out.println(oddDir.getAbsolutePath());
+        }
+        File oldJobsDir43 = oddDirs[0];
+        assertTrue("Lostfiles dir should begin with 'lostfiles-'", oldJobsDir43.getName().startsWith("lost-files"));
+        
         File movedFile = new File(oldJobsDir43, badFile);
         assertTrue("Moved file " + movedFile + " should exist",
                    movedFile.exists());
@@ -442,6 +469,7 @@ public class HarvestDocumentationTester extends TestCase {
                                  "/" + goodFile);
         assertTrue("Good file " + keptFile + " should not have moved",
                    keptFile.exists());
+        /*
         File badMetadataFile = new File(TestInfo.WORKING_DIR,
                                         Constants.ARCDIRECTORY_NAME +
                                         "/43-metadata-1.arc");
@@ -452,6 +480,7 @@ public class HarvestDocumentationTester extends TestCase {
         assertTrue(
                 "Metadata file " + movedMetadataFile + " should be in oldjobs",
                 movedMetadataFile.exists());
+                */
     }
 
     /**
@@ -470,14 +499,17 @@ public class HarvestDocumentationTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.METADATA_TEST_DIR,
                 TestInfo.WORKING_DIR);
-        IngestableFiles ingestableFiles = new IngestableFiles(
-                TestInfo.WORKING_DIR,
-                TestInfo.JOB_ID);
-
+        //IngestableFiles ingestableFiles = new IngestableFiles(
+        //        TestInfo.WORKING_DIR,
+        //        TestInfo.JOB_ID);
+        IngestableFiles ingestableFiles = OkIngestables;
+  
+        
         // Test 1:we generate a metadata-file, if it does not exist
-        HarvestDocumentation.documentHarvest(TestInfo.WORKING_DIR,
-                                             TestInfo.JOB_ID,
-                                             TestInfo.HARVEST_ID);
+        //HarvestDocumentation.documentHarvest(TestInfo.WORKING_DIR,
+        //                                     TestInfo.JOB_ID,
+        //                                     TestInfo.HARVEST_ID);
+        HarvestDocumentation.documentHarvest(ingestableFiles);
         assertTrue("MetadataFile should exist now",
                    ingestableFiles.isMetadataReady());
         String fileContent = FileUtils.readFile(
@@ -486,9 +518,7 @@ public class HarvestDocumentationTester extends TestCase {
         // test 2: Don't generate metadata-arc file, it already exists
         // but issue a warning instead.
 
-        HarvestDocumentation.documentHarvest(TestInfo.WORKING_DIR,
-                                             TestInfo.JOB_ID,
-                                             TestInfo.HARVEST_ID);
+        HarvestDocumentation.documentHarvest(OkIngestables);
         FileUtils.remove(new File(arcsDir,
                                   "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc"));
         LogUtils.flushLogs(HarvestDocumentation.class.getName());
@@ -526,13 +556,10 @@ public class HarvestDocumentationTester extends TestCase {
                 TestInfo.CRAWLDIR_ORIGINALS_DIR,
                 TestInfo.WORKING_DIR);
 
-        HarvestDocumentation.documentHarvest(TestInfo.WORKING_DIR,
-                                             TestInfo.JOB_ID,
-                                             TestInfo.HARVEST_ID);
+        HarvestDocumentation.documentHarvest(OkIngestables);
 
         // Ensure that now exists arc-file containing <jobid>-metadata-1.arc
-        IngestableFiles iF = new IngestableFiles(TestInfo.WORKING_DIR,
-                                                 TestInfo.JOB_ID);
+        IngestableFiles iF = OkIngestables;
         assertFalse("MetadataARC should have generated by now",
                     iF.getMetadataArcFiles().isEmpty());
 

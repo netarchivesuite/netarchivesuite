@@ -225,12 +225,14 @@ public class DataModelTestCase extends TestCase {
     private static Job getNewNetarkivetJob(HarvestDefinition hd,
             Map<String, String> dcmap, JobPriority priority,
             Document defaultOrderXmlDocument, int harvestNum) {
-        return new Job(hd.getOid(), dcmap, priority,
+        Job j = new Job(hd.getOid(), dcmap, priority,
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME,
                 JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", harvestNum, null);
+       j.setDefaultHarvestNamePrefix();
+        return j;
     }
 
     public static void addHarvestDefinitionToDatabaseWithId(long id) throws SQLException {

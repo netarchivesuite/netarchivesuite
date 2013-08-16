@@ -35,8 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.util.anvl.ANVLRecord;
@@ -120,16 +118,21 @@ public class HarvestDocumentation {
      *   - reading ARC files or temporary files fails
      *   - writing a file to arcFilesDir fails
      */
-    public static void documentHarvest(File crawlDir, long jobID,
-            long harvestID) throws IOFailure {
-        ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
-        ArgumentNotValid.checkNotNegative(jobID, "jobID");
-        ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
-        ArgumentNotValid.checkExistsDirectory(crawlDir, "crawlDir");
+    public static void documentHarvest(IngestableFiles ingestables) throws IOFailure {
+        ArgumentNotValid.checkNotNull(ingestables, "ingestables");
+        //ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
+        //ArgumentNotValid.checkNotNegative(jobID, "jobID");
+        //ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
+        //ArgumentNotValid.checkExistsDirectory(crawlDir, "crawlDir");
+        
+        
+        File crawlDir = ingestables.getCrawlDir();
+        Long jobID = ingestables.getJobId();
+        Long harvestID = ingestables.getHarvestID();
+        
         // Prepare metadata-arcfile for ingestion of metadata, and enumerate
         // items to ingest.
-        IngestableFiles ingestables = new IngestableFiles(crawlDir, jobID);
-
+        
         // If metadata-arcfile already exists, we are done
         // See bug 722
         if (ingestables.isMetadataReady()) {
@@ -200,6 +203,7 @@ public class HarvestDocumentation {
             File warcFilesDir = ingestables.getWarcsDir();
             
             if(arcFilesDir.isDirectory() && FileUtils.hasFiles(arcFilesDir)) {
+                System.out.println("Documenting arcfiles in dir " + arcFilesDir.getAbsolutePath());
                 addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.ARC_PROFILE);
                 cdxGenerationSucceeded = true;
             }
@@ -235,7 +239,7 @@ public class HarvestDocumentation {
     
     private static void addCDXes(IngestableFiles files, File archiveDir, MetadataFileWriter writer, 
             ArchiveProfile profile) {
-        moveAwayForeignFiles(profile, archiveDir, files.getJobId());
+        moveAwayForeignFiles(profile, archiveDir, files);
         File cdxFilesDir = FileUtils.createUniqueTempDir(files.getTmpMetadataDir(), "cdx");
         CDXUtils.generateCDX(profile, archiveDir, cdxFilesDir);
         writer.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
@@ -383,68 +387,46 @@ public class HarvestDocumentation {
         result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
         result += "&" + CDX_URI_FILENAME_PARAMETER_NAME + "=" + filename;
         return result;
-    }
-    
-    
-    
+    }    
 
     /**
-     * Iterates over the ARC files in the given dir and moves away files
-     * that do not belong to the given job.  Files whose jobid we can parse
-     * will be moved to a directory under oldjobs named with that jobid,
-     * otherwise they will go into a directory under oldjobs named with a
-     * timestamp.
+     * Iterates over the (W)ARC files in the given dir and moves away files
+     * that do not belong to the given job into a "lost-files" directory under oldjobs 
+     * named with a timestamp.
      *
      * @param archiveProfile archive profile including filters, patterns, etc.
-     * @param dir A directory containing one or more ARC files.
-     * @param jobID ID of the job whose directory we're in.
+     * @param dir A directory containing one or more (W)ARC files.
+     * @param files Information about the files produced by heritrix (jobId and harvestnamePrefix)
      */
     private static void moveAwayForeignFiles(ArchiveProfile archiveProfile,
-            File dir, long jobID) {
+            File dir, IngestableFiles files) {
         File[] archiveFiles = dir.listFiles(archiveProfile.filename_filter);
         File oldJobsDir = new File(
                 Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
-        File unknownJobDir = new File(oldJobsDir,
+        File lostfilesDir = new File(oldJobsDir,
                 "lost-files-" + new Date().getTime());
         List<File> movedFiles = new ArrayList<File>();
-        for (File arcFile : archiveFiles) {
-            long foundJobID = -1;
-            try {
-                ArchiveFilenameParser parser = 
-                        ArchiveFileNamingFactory.getInstance()
-                            .getArchiveFilenameParser(arcFile);
-                foundJobID = Long.parseLong(parser.getJobID());
-            } catch (UnknownID e) {
-                // Non-Heritrix-generated ARC file
-                Matcher matcher =
-                    archiveProfile.metadataFilenamePattern.matcher(arcFile.getName());
-                if (matcher.matches()) {
-                    foundJobID = Long.parseLong(matcher.group(1));
-                }
-            }
-            if (foundJobID != jobID) {
-                File arcsDir;
-                if (foundJobID == -1) {
-                    arcsDir = new File(unknownJobDir,
-                            archiveProfile.archive_directory);
-                } else {
-                    arcsDir = new File(oldJobsDir,
-                                foundJobID + "-lost-files/"
-                                + archiveProfile.archive_directory);
-                }
+        log.info("Looking for files not having harvestprefix '" + files.getHarvestnamePrefix() + "'");
+        for (File archiveFile : archiveFiles) {
+            if (!(archiveFile.getName().startsWith(files.getHarvestnamePrefix()))) {
+                // move unidentified file to lostfiles directory
+                System.out.println("removing unidentified file " + archiveFile.getAbsolutePath());
                 try {
-                    FileUtils.createDir(arcsDir);
-                    File moveTo = new File(arcsDir, arcFile.getName());
-                    arcFile.renameTo(moveTo);
-                    movedFiles.add(moveTo);
-                } catch (PermissionDenied e) {
+                    if (!lostfilesDir.exists()) {
+                        FileUtils.createDir(lostfilesDir);
+                        File moveTo = new File(lostfilesDir, archiveFile.getName());
+                        archiveFile.renameTo(moveTo);
+                        movedFiles.add(moveTo);
+                    }
+                }  catch (PermissionDenied e) {
                     log.warn("Not allowed to make oldjobs dir '"
-                             + arcsDir.getAbsolutePath() + "'", e);
+                            + lostfilesDir.getAbsolutePath() + "'", e);
                 }
+                
             }
         }
         if (!movedFiles.isEmpty()) {
-            log.warn("Found files not belonging to job " + jobID
+            log.warn("Found files not belonging to job " + files.getJobId()
                     + ", the following files have been stored for later: "
                     + movedFiles);
         }

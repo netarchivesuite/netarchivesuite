@@ -69,25 +69,33 @@ public class IngestableFiles {
     /** Whether we've had an error in metadata generation. */
     private boolean error = false;
 
+    private String harvestnamePrefix;
+
+    private Long harvestId;
+
     /**
      * Constructor for this class.
-     * @param crawlDir directory, where all files for the harvestjob
-     *                 (including metadataFile) are
-     * @param jobID ID for the given harvestjob
+     * HeritrixFiles contains information about crawlDir, jobId, and harvestnameprefix
+     * for a specific finished harvestjob.
+     * @param files An instance of HeritrixFiles
      * @throws ArgumentNotValid if null-arguments are given;
      *                          if jobID < 1;
      *                          if crawlDir does not exist
      */
-    public IngestableFiles(File crawlDir, long jobID) {
-        ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
-        ArgumentNotValid.checkPositive(jobID, "jobID");
+    public IngestableFiles(HeritrixFiles files) {
+        ArgumentNotValid.checkNotNull(files, "files");
+        ArgumentNotValid.checkNotNull(files.getCrawlDir(), "crawlDir");
+        ArgumentNotValid.checkPositive(files.getJobID(), "jobID");
+        ArgumentNotValid.checkNotNullOrEmpty(files.getArchiveFilePrefix(), "harvestnamePrefix");
+        this.crawlDir = files.getCrawlDir();
         if (!crawlDir.exists()) {
             throw new ArgumentNotValid("The given crawlDir ("
                     + crawlDir.getAbsolutePath()
                     + ") does not exist");
         }
-        this.jobId = jobID;
-        this.crawlDir = crawlDir;
+        this.jobId = files.getJobID();
+        this.harvestnamePrefix = files.getArchiveFilePrefix();
+        this.harvestId = files.getHarvestID();
         // Create subdir 'metadata' if not already exists.
         FileUtils.createDir(getMetadataDir());
         // Create/scratch subdir 'tmp-meta'
@@ -332,6 +340,30 @@ public class IngestableFiles {
     public long getJobId() {
         return this.jobId;
     }
+    
+    
+    /**
+     * @return the harvestID of the harvest job being processed.
+     */
+    public long getHarvestID() {
+        return this.harvestId;
+    }
+    
+    /**
+     * 
+     * @return the harvestnamePrefix of the harvest job being processed.
+     */
+    public String getHarvestnamePrefix() {
+        return this.harvestnamePrefix;
+    }
+    
+    /**
+     * @return the crawlDir of the harvest job being processed.
+     */
+    public File getCrawlDir() {
+        return this.crawlDir;
+    }
+    
 }
 
 

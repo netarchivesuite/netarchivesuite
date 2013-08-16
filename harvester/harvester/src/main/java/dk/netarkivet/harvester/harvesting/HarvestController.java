@@ -346,13 +346,12 @@ public class HarvestController {
                 "StringBuilder errorMessage");
         ArgumentNotValid.checkNotNull(failedFiles, "List<File> failedFiles");
         long jobID = files.getJobID();
-        long harvestID = files.getHarvestID();
-        File crawlDir = files.getCrawlDir();
         try {
-            IngestableFiles inf = new IngestableFiles(crawlDir, jobID);
+            IngestableFiles inf = new IngestableFiles(files);
+            
             inf.closeOpenFiles(WAIT_FOR_HERITRIX_TIMEOUT_SECS);
             // Create a metadata ARC file
-            HarvestDocumentation.documentHarvest(crawlDir, jobID, harvestID);
+            HarvestDocumentation.documentHarvest(inf);
             // Upload all files
 
             // Check, if arcsdir or warcsdir is empty

@@ -37,9 +37,20 @@ import java.util.Date;
 
 public class IngestableFilesTester extends TestCase {
     private static final String MSG = "This a test message from IngestableFilesTester";
-
+    
+    /* variables used by all tests */
+    private Long testJobId = 1L;
+    private Long testHarvestId = 2L;
+    private Long badJobId = -33L;
+    private JobInfo acceptableJobInfoForJobOne = new JobInfoTestImpl(testJobId, testHarvestId);
+    private JobInfo acceptableJobInfoForJobTwo = new JobInfoTestImpl(2L, testHarvestId);
+    private JobInfo acceptableJobInfoForJob42 = new JobInfoTestImpl(TestInfo.JOB_ID, testHarvestId);
+    private JobInfo unacceptableJobInfo = new JobInfoTestImpl(badJobId, testHarvestId);
+    private File existingDir = TestInfo.WORKING_DIR;
+    private File nonexistingDir = new File(TestInfo.WORKING_DIR, "doesnotexist");
+    
     private MoveTestFiles mtf =
-        new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR,TestInfo.WORKING_DIR);
+        new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
     public void setUp() {
         mtf.setUp();
@@ -54,15 +65,19 @@ public class IngestableFilesTester extends TestCase {
      * Verify that constructing with nonexisting crawldir or negative jobID fails.
      */
     public void testConstructor() {
-        new IngestableFiles(TestInfo.WORKING_DIR,1);
+        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        new IngestableFiles(OkFiles);
+        HeritrixFiles NotOkFiles = new HeritrixFiles(nonexistingDir, acceptableJobInfoForJobOne);
+        HeritrixFiles NotOkFilesWithBadJobId = new HeritrixFiles(existingDir, unacceptableJobInfo);
+            
         try {
-            new IngestableFiles(new File(TestInfo.WORKING_DIR,"doesnotexist"),1);
+            new IngestableFiles(NotOkFiles);
             fail("IngestableFiles should reject a nonexisting crawldir");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            new IngestableFiles(TestInfo.WORKING_DIR,-33);
+            new IngestableFiles(NotOkFilesWithBadJobId);
             fail("IngestableFiles should reject a negativ jobID");
         } catch (ArgumentNotValid e) {
             //Expected
@@ -79,7 +94,8 @@ public class IngestableFilesTester extends TestCase {
      * Note that rediscovery of metadata is tested in another method.
      */
     public void testGetSetMetadataReady() {
-        IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR, 1);
+        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        IngestableFiles inf = new IngestableFiles(OkFiles);
         assertFalse("isMetadataReady() should return false before metadata has been generated",
                 inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false before metadata has been generated",
@@ -96,8 +112,8 @@ public class IngestableFilesTester extends TestCase {
                 inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false after metadata has been generated",
                 inf.isMetadataFailed());
-
-        inf = new IngestableFiles(TestInfo.WORKING_DIR, 2);
+        HeritrixFiles OkFilesTwo = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobTwo);
+        inf = new IngestableFiles(OkFilesTwo);
         assertFalse("isMetadataReady() should return false before metadata has been generated",
                 inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false before metadata has been generated",
@@ -121,7 +137,9 @@ public class IngestableFilesTester extends TestCase {
      *  - metadata IS ready and getMetadataArcWriter is called
      */
     public void testDisallowedActions() {
-        IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR, 1);
+        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        IngestableFiles inf = new IngestableFiles(OkFiles);
+        
         assertCannotGetMetadata(inf);
         
         MetadataFileWriter aw = inf.getMetadataWriter();
@@ -141,8 +159,9 @@ public class IngestableFilesTester extends TestCase {
         } catch (Throwable e) {
             //Expected
         }
-
-        inf = new IngestableFiles(TestInfo.WORKING_DIR, 2);
+        HeritrixFiles OkFilesTwo = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobTwo);
+        inf = new IngestableFiles(OkFilesTwo);
+        
         assertCannotGetMetadata(inf);
         aw = inf.getMetadataWriter();
         assertCannotGetMetadata(inf);
@@ -181,12 +200,14 @@ public class IngestableFilesTester extends TestCase {
      */
     public void testMetadataRediscovery() throws FileNotFoundException, IOException {
         //Original crawl: write some metadata
-        IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,1);
+        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        IngestableFiles inf = new IngestableFiles(OkFiles);
+
         MetadataFileWriter aw = inf.getMetadataWriter();
         writeOneRecord(aw);
         inf.setMetadataGenerationSucceeded(true);
         //Now forget about old state:
-        inf = new IngestableFiles(TestInfo.WORKING_DIR,1);
+        inf = new IngestableFiles(OkFiles);
         //Everything should be well:
         assertTrue("Should rediscover old metadata",inf.isMetadataReady());
         boolean found = false;
@@ -203,7 +224,8 @@ public class IngestableFilesTester extends TestCase {
      * Verify that a non-null ArcWriter is returned.
      */
     public void testGetMetadataArcWriter() {
-        IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,1);
+        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        IngestableFiles inf = new IngestableFiles(OkFiles);
         MetadataFileWriter aw = inf.getMetadataWriter();
         writeOneRecord(aw);
     }
@@ -213,7 +235,8 @@ public class IngestableFilesTester extends TestCase {
      * is contained in one the returned files.
      */
     public void testGetMetadataFiles() throws FileNotFoundException, IOException {
-        IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,1);
+        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        IngestableFiles inf = new IngestableFiles(OkFiles);
         MetadataFileWriter aw = inf.getMetadataWriter();
         writeOneRecord(aw);
         inf.setMetadataGenerationSucceeded(true);
@@ -228,7 +251,8 @@ public class IngestableFilesTester extends TestCase {
     }
 
     public void testMetadataFailure() {
-        IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,1);
+        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        IngestableFiles inf = new IngestableFiles(OkFiles);
         inf.setMetadataGenerationSucceeded(false);
         try {
             inf.getMetadataArcFiles();
@@ -269,8 +293,10 @@ public class IngestableFilesTester extends TestCase {
                     + "' should exist before calling closeOpenFiles()",
                     nonOpenFile.exists());
         }
-        IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,
-                TestInfo.JOB_ID);
+        
+        HeritrixFiles OkFiles42 = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJob42);
+        IngestableFiles inf = new IngestableFiles(OkFiles42);
+        
         inf.closeOpenFiles(0);
         for (File openFile1 : openFiles) {
             assertFalse("Open file '" + openFile1

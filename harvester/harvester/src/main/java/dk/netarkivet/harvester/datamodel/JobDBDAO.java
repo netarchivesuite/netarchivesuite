@@ -534,7 +534,6 @@ public class JobDBDAO extends JobDAO {
                 job.setCreationDate(creationDate);
             }
 
-
             job.configsChanged = false;
             job.setJobID(jobID);
             job.setEdition(edition);
@@ -543,11 +542,10 @@ public class JobDBDAO extends JobDAO {
                 job.setResubmittedAsJob(resubmittedAsJob);
             }
             if (harvestnamePrefix != null) {
-                job.setDefaultHarvestNamePrefix();
-            } else {
                 job.setHarvestFilenamePrefix(harvestnamePrefix);
+            } else {
+                job.setDefaultHarvestNamePrefix();
             }
-            
             
             return job;
         } catch (SQLException e) {
@@ -991,8 +989,7 @@ public class JobDBDAO extends JobDAO {
             if (currentJobStatus == JobStatus.FAILED) {
                 continuationOf = oldJobID;
             } 
-            DBUtils.setLongMaybeNull(statement, 4, continuationOf);
-
+            DBUtils.setLongMaybeNull(statement, 4, continuationOf); 
             statement.setLong(5, oldJobID);
 
             statement.executeUpdate();
@@ -1025,6 +1022,12 @@ public class JobDBDAO extends JobDAO {
             DBUtils.rollbackIfNeeded(connection, "resubmit job", oldJobID);
             HarvestDBConnection.release(connection);
         }
+        // This is done to make sure that the new job has the correct harvestnamePrefix
+        // This can only be done by instantiating the whole object, and updating it.
+        JobDAO dao = getInstance();
+        Job newJob = dao.read(newJobID);
+        dao.update(newJob);
+        
         log.info("Job # " + oldJobID + " successfully as job # " + newJobID);
         return newJobID;
     }

@@ -138,7 +138,26 @@ public class JobDAOTester extends DataModelTestCase {
         		" DomainConfigurationMap of original Job",
                      job.getDomainConfigurationMap(),
                      readJob.getDomainConfigurationMap());
-
+       
+        assertEquals("harvestnamePrefix of read Job should equal" +
+                " harvestnamePrefix of original Job",
+                     job.getHarvestFilenamePrefix(),
+                     readJob.getHarvestFilenamePrefix());
+        
+        String defaultNamePrefix = "2-5678";
+        assertEquals("harvestnamePrefix of read Job should equal" +
+                " '2-5678'", defaultNamePrefix, 
+                     readJob.getHarvestFilenamePrefix());
+        readJob = dao.read(job.getJobID());
+        
+        String harvestnamePrefix = "netarkivet-collection";
+        readJob.setHarvestFilenamePrefix(harvestnamePrefix);
+        dao.update(readJob);
+        readJob = dao.read(job.getJobID());
+        assertEquals("harvestname_prefix should be 'netarkivet-collection' but was' " 
+        + readJob.getHarvestFilenamePrefix(), harvestnamePrefix, readJob.getHarvestFilenamePrefix()); 
+        
+        
         // Job.getSettingsXMLfiles() is probably obsolete
         // No decided if we need Job.getActualStart() and Job.getActualStop()
         //- but we probably do (at least nice to have)
@@ -844,8 +863,10 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Should have new status",
                      JobStatus.NEW, newJob1.getStatus());
         assertEquals("Should have new edition",
-                1L, newJob1.getEdition());
+                2L, newJob1.getEdition());
         assertEquals("Should have new ID", newID, newJob1.getJobID());
+        assertNotSame("The harvestnamePrefixes should not be the same", oldJob1.getHarvestFilenamePrefix(), 
+                newJob1.getHarvestFilenamePrefix());
     }
 
     public static void changeStatus(long jobID, JobStatus newStatus) {
@@ -873,7 +894,7 @@ public class JobDAOTester extends DataModelTestCase {
      // Assume 1st job has id=2, and Last job has id 15
         createTestJobs(2L, 15L);
         JobDAO dao = JobDAO.getInstance();
-
+        
         for (long i = 1; i < 16; i++) {
             Job oldJob = dao.read(i);
             if (oldJob.getStatus() != JobStatus.SUBMITTED &&

@@ -45,7 +45,10 @@ import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
+import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.IngestableFiles;
+import dk.netarkivet.harvester.harvesting.JobInfo;
+import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
 
@@ -509,9 +512,12 @@ public class HarvestControllerServerTester extends TestCase {
                 Job.class, List.class, File.class);
         writePreharvestMetadata.invoke(hc, job, meta, crawlDir);
         //Write final metadata file - should copy the preharvest metadata
-        HarvestDocumentation.documentHarvest(crawlDir,jobId, job.getOrigHarvestDefinitionID());
+        JobInfo jobInfo = new JobInfoTestImpl(jobId, job.getOrigHarvestDefinitionID());
+        HeritrixFiles files = new HeritrixFiles(crawlDir, jobInfo);
+        IngestableFiles inf = new IngestableFiles(files);
+        HarvestDocumentation.documentHarvest(inf);
         //Verify that metadata file has been generated
-        IngestableFiles inf = new IngestableFiles(crawlDir,jobId);
+        //IngestableFiles inf = new IngestableFiles(files);
         assertTrue("documentHarvest() should have generated final metadata",
                 inf.isMetadataReady());
         assertEquals("Expected just one metadata arc file",
