@@ -32,6 +32,7 @@ import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -165,7 +166,7 @@ public class JMXStatusEntry implements StatusEntry {
             String logMessage = (String)
                     mBeanServer.getAttribute(mBeanName, JMXLogMessageAttribute);
             if (logMessage == null) {
-                return HTMLUtils.escapeHtmlValues(
+                return HTMLUtils.escapeHtmlValues(getLogDate() +
                         I18N.getString(
                                 l,
                                 "errormsg;remote.host.returned.null.log.record")
@@ -174,7 +175,7 @@ public class JMXStatusEntry implements StatusEntry {
                 return logMessage;
             }
         } catch (RuntimeMBeanException e) {
-            return HTMLUtils.escapeHtmlValues(
+            return HTMLUtils.escapeHtmlValues(getLogDate() +
                     I18N.getString(
                             l, "errormsg;jmx.error.while.getting.log.record")
                     + "\n"
@@ -183,11 +184,15 @@ public class JMXStatusEntry implements StatusEntry {
                     + "\n"
                     + ExceptionUtils.getStackTrace(e));
         } catch (Exception e) {
-            return HTMLUtils.escapeHtmlValues(
+            return HTMLUtils.escapeHtmlValues(getLogDate() +
                     I18N.getString(
                             l, "errormsg;remote.jmx.bean.generated.exception")
                     + "\n" + ExceptionUtils.getStackTrace(e));
         }
+    }
+
+    private String getLogDate() {
+        return "[" + new Date() + "] ";
     }
 
     /**
