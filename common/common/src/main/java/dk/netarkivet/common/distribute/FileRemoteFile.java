@@ -101,7 +101,7 @@ public class FileRemoteFile implements RemoteFile {
     public void cleanup() {
         boolean deleted = dataFile.delete();
         if (!deleted) {
-            System.out.println("Unable to delete file '"
+            log.warn("Unable to delete file '"
                     + dataFile.getAbsolutePath() + "'");
         }
     }
