@@ -31,7 +31,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
@@ -59,7 +61,7 @@ public class Reporting {
     private Reporting() {}
 
     /** The suffix for the data arc/warc files produced by Heritrix. */
-    static final String archivefile_suffix = "-.*\\.(w)?arc(\\.gz)?";
+    static final String archivefile_suffix = ".*\\.(w)?arc(\\.gz)?";
     
     /** The suffix for the data arc/warc metadata file created by NetarchiveSuite. */
     static final String metadatafile_suffix = "-metadata-[0-9]+\\.(w)?arc(\\.gz)?";
@@ -68,6 +70,7 @@ public class Reporting {
      * Submit a batch job to list all files for a job, and report result in a
      * sorted list.
      * @param jobid The job to get files for.
+     * @param harvestprefix The harvestprefix for the files produced by heritrix
      * @return A sorted list of files.
      * @throws ArgumentNotValid If jobid is 0 or negative. 
      * @throws IOFailure On trouble generating the file list
@@ -95,6 +98,10 @@ public class Reporting {
         List<String> lines = new ArrayList<String>(
                 FileUtils.readListFromFile(f));
         FileUtils.remove(f);
+        Set<String> linesAsSet = new HashSet<String>();
+        linesAsSet.addAll(lines);
+        lines = new ArrayList<String>();
+        lines.addAll(linesAsSet);
         Collections.sort(lines);
         return lines;
     }
