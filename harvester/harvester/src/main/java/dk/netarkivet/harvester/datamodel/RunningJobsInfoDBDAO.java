@@ -778,16 +778,16 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      * Store frontier report data to the persistent storage.
      * @param report the report to store
      * @param filterId the id of the filter that produced the report
+     * @param jobId The ID of the job responsible for this report
      * @return the update count
      */
     public int storeFrontierReport(
             String filterId,
-            InMemoryFrontierReport report) {
+            InMemoryFrontierReport report,
+            Long jobId) {
         ArgumentNotValid.checkNotNull(report, "report");
-
-        String jobName = report.getJobName();
-        long jobId = Long.parseLong(jobName.substring(0, jobName.indexOf("-")));
-
+        ArgumentNotValid.checkNotNull(jobId, "jobId");
+        
         Connection c = HarvestDBConnection.get();
         PreparedStatement stm = null;
         try {

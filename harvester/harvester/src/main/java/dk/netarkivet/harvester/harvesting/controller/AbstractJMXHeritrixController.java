@@ -501,4 +501,9 @@ implements HeritrixController {
                 + dedupPart + " and "
                 + FileUtils.countLines(files.getSeedsTxtFile()) + " seeds";
     }
+    
+    public HeritrixFiles getFiles() {
+        return this.files;
+    }
+    
 }

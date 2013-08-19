@@ -214,7 +214,8 @@ implements MessageListener, CleanupIF {
 
         int insertCount = RunningJobsInfoDAO.getInstance().storeFrontierReport(
                 msg.getFilterId(),
-                msg.getReport());
+                msg.getReport(),
+                msg.getJobID());
         if (LOG.isInfoEnabled() && insertCount > 0) {
             LOG.info("Stored frontier report " + msg.getReport().getJobName()
                     + "-" + msg.getFilterId()

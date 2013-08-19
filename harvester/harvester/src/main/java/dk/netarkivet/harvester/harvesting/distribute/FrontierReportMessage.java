@@ -46,6 +46,9 @@ public class FrontierReportMessage extends HarvesterMessage {
      * The report.
      */
     private InMemoryFrontierReport report;
+    
+    /** The ID of the job, this message represents. */
+    private Long jobID;
 
     /**
      * Builds a frontier report wrapper message.
@@ -54,10 +57,12 @@ public class FrontierReportMessage extends HarvesterMessage {
      */
     public FrontierReportMessage(
             FrontierReportFilter filter,
-            InMemoryFrontierReport report) {
+            InMemoryFrontierReport report,
+            Long jobID) {
         super(HarvestMonitor.HARVEST_MONITOR_CHANNEL_ID, Channels.getError());
         this.filterId = filter.getFilterId();
         this.report = report;
+        this.jobID = jobID;
     }
 
     @Override
@@ -77,6 +82,10 @@ public class FrontierReportMessage extends HarvesterMessage {
      */
     public InMemoryFrontierReport getReport() {
         return report;
+    }
+    
+    public Long getJobID() {
+        return jobID;
     }
 
 }

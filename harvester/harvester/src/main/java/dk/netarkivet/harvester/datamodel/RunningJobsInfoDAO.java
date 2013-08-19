@@ -126,10 +126,11 @@ public abstract class RunningJobsInfoDAO {
      * Store frontier report data to the persistent storage.
      * @param report the report to store
      * @param filterId the id of the filter that produced the report
+     * @param jobId The ID of the harvestjob responsible for this report
      * @return the update count
      */
     public abstract int storeFrontierReport(
-            String filterId, InMemoryFrontierReport report);
+            String filterId, InMemoryFrontierReport report, Long jobId);
 
     /**
      * Returns the list of the available frontier report types.

@@ -141,9 +141,9 @@ public class FrontierReportAnalyzer implements Runnable {
                             : StringUtils.formatDuration(
                                 elapsed / TimeUtils.SECOND_IN_MILLIS))
                     + ".");
-
+            Long jobId = heritrixController.getFiles().getJobID();
             JMSConnectionFactory.getInstance().send(
-                    new FrontierReportMessage(filter, filtered));
+                    new FrontierReportMessage(filter, filtered, jobId));
         }
 
         ffr.dispose();
