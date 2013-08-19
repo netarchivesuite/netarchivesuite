@@ -105,9 +105,8 @@ public class HarvestDocumentation {
      * TODO This method may be a good place to copy deduplicate information from the
      * crawl log to the cdx file.
      *
-     * @param crawlDir The directory the crawl was performed in
-     * @param jobID the ID of the job for this harvest
-     * @param harvestID the ID of the harvestdefinition which created this job.
+     *@param ingestables Information about the finished crawl (crawldir, jobId, harvestID).
+     * 
      * @throws ArgumentNotValid if crawlDir is null or does not exist, or if
      * jobID or harvestID is negative.
      * @throws IOFailure if
