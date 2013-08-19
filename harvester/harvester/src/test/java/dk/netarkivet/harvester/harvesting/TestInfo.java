@@ -176,6 +176,11 @@ public class TestInfo {
     public static final File WARCPROCESSORFILES_DIR = new File(BASEDIR, 
             "warcprocessortestdata");
 
+    public static final String FST_FILENAME = //"42-117-20051212141241-00000-sb-test-har-001.statsbiblioteket.dk.arc";
+                                               "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc";
+    public static final String SND_FILENAME = //"42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc";
+                                                "42-117-20051212141240-00000-sb-test-har-001.statsbiblioteket.dk.arc";
+
     /** Get a simple job with high priority.
      *  @return a simple job with high priority
      */

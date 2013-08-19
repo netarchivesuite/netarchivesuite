@@ -24,8 +24,6 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import java.io.File;
-
 import dk.netarkivet.harvester.datamodel.Job;
 
 /**
@@ -41,14 +39,5 @@ public interface ArchiveFileNaming {
      * @param job the harvestJob
      * @return a prefix to be used by Heritrix
      */
-    String getPrefix(Job job);
-    
-    /**
-     * Get a ArchiveFilenameParser for the given archiveFile. 
-     * Used for testing, if the file is part of the harvest being postprocessed.
-     * @param archiveFile A given archiveFile produced by Heritrix
-     * @return a ArchiveFilenameParser for the given archiveFile. 
-     */
-    ArchiveFilenameParser getArchiveFilenameParser(File archiveFile);
-    
+    String getPrefix(Job job);    
 }

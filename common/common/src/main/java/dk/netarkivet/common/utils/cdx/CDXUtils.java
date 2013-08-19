@@ -86,7 +86,7 @@ public class CDXUtils {
      * Exceptions creating any cdx file are logged at level WARNING but
      * otherwise ignored.
      * CDX files are named as the ARC/WARC files except ".(w)arc" or
-     * ".(w)arc.gz" is replaced with ".cdx"
+     * ".(w)arc.gz" is extended with ".cdx"
      *
      * @param archiveProfile archive profile including filters, patterns, etc.
      * @param archiveFileDirectory A directory with archive files to generate
@@ -127,15 +127,7 @@ public class CDXUtils {
         } 
         for (File arcfile : filesToProcess) {
             File cdxfile = new File(cdxFileDirectory, arcfile.getName()
-                    .replaceFirst(archiveProfile.filename_pattern,
-                                  FileUtils.CDX_EXTENSION));
-            if (cdxfile.getName().equals(arcfile.getName())) {
-                // If for some reason the file is not renamed (should never
-                // happen), simply add the .cdx extension to avoid overwriting
-                // existing file
-                cdxfile = new File(cdxFileDirectory,
-                                   cdxfile.getName() + FileUtils.CDX_EXTENSION);
-            }
+                    + FileUtils.CDX_EXTENSION);
             try {
                 OutputStream cdxstream = null;
                 try {

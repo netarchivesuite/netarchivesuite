@@ -34,13 +34,13 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
-import dk.netarkivet.harvester.harvesting.ArchiveFilenameParser;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
+import dk.netarkivet.harvester.harvesting.IngestableFiles;
 
 /**
  * Abstract base class for Metadata file writer.
@@ -171,7 +171,7 @@ public abstract class MetadataFileWriter {
      * @param filter filter describing which files to accept and which to ignore
      * @param mimetype The content-type to write along with the files in the metadata output
      */
-    public void insertFiles(File parentDir, FilenameFilter filter, String mimetype) {
+    public void insertFiles(File parentDir, FilenameFilter filter, String mimetype, IngestableFiles files) {
         //For each metadata source file in the parentDir that matches the filter ..
         File[] metadataSourceFiles
                 = parentDir.listFiles(filter);
@@ -179,7 +179,7 @@ public abstract class MetadataFileWriter {
             //...write its content to the MetadataFileWriter
             log.debug("Inserting the file '" + metadataSourceFile.getAbsolutePath() + "'");
             writeFileTo(metadataSourceFile,
-                    getURIforFileName(metadataSourceFile).toASCIIString(),
+                    getURIforFileName(metadataSourceFile, files).toASCIIString(),
                     mimetype);
             //...and delete it afterwards
             try {
@@ -200,19 +200,22 @@ public abstract class MetadataFileWriter {
      * @return A URI appropriate for identifying the
      * file's content in Netarkivet.
      * @throws UnknownID if something goes terribly wrong in the CDX URI
-     * construction.
-     * @deprecated Should move to use the {@link HarvestDocumentation#getAlternateCDXURI(long, String)}
+     * construction
      */
-    private static URI getURIforFileName(File cdx)
+    private static URI getURIforFileName(File cdx, IngestableFiles files)
         throws UnknownID {
-        
-        ArchiveFilenameParser parser = ArchiveFileNamingFactory.getInstance().getArchiveFilenameParser(cdx);
+        String extensionToRemove = FileUtils.CDX_EXTENSION;
+        String filename = cdx.getName();
+        if (!filename.endsWith(extensionToRemove)){
+            throw new IllegalState("Filename '" + cdx.getAbsolutePath() + "' has unexpected extension");
+        }
+        int suffix_index = cdx.getName().indexOf(extensionToRemove);
+        filename = filename.substring(0, suffix_index);
         return HarvestDocumentation.getCDXURI(
-                parser.getHarvestID(),
-                parser.getJobID(),
-                parser.getTimeStamp(),
-                parser.getSerialNo());
-    }
+                "" + files.getHarvestID(),
+                "" + files.getJobId(),
+                filename);
+        }
 
     /**
      * Reset the metadata format. Should only be used by a unittest.

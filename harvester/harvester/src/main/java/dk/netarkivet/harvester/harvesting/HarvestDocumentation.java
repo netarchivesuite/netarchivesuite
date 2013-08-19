@@ -78,20 +78,16 @@ public class HarvestDocumentation {
     private static final String CDX_URI_PATH =
         "/crawl/index/cdx";
     private static final String CDX_URI_VERSION_PARAMETERS =
-        "majorversion=1&minorversion=0";
+        "majorversion=2&minorversion=0";
     private static final String ALTERNATE_CDX_URI_VERSION_PARAMETERS =
-            "majorversion=2&minorversion=0";
+            "majorversion=3&minorversion=0";
         
     private static final String CDX_URI_HARVEST_ID_PARAMETER_NAME =
         "harvestid";
     private static final String CDX_URI_JOB_ID_PARAMETER_NAME =
         "jobid";
-    private static final String CDX_URI_TIMESTAMP_PARAMETER_NAME =
-        "timestamp";
-    private static final String CDX_URI_SERIALNO_PARAMETER_NAME =
-        "serialno";
     private static final String CDX_URI_FILENAME_PARAMETER_NAME = "filename";
-
+    
     /**
      * Documents the harvest under the given dir in a packaged metadata arc
      * file in a directory 'metadata' under the current dir.
@@ -120,11 +116,6 @@ public class HarvestDocumentation {
      */
     public static void documentHarvest(IngestableFiles ingestables) throws IOFailure {
         ArgumentNotValid.checkNotNull(ingestables, "ingestables");
-        //ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
-        //ArgumentNotValid.checkNotNegative(jobID, "jobID");
-        //ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
-        //ArgumentNotValid.checkExistsDirectory(crawlDir, "crawlDir");
-        
         
         File crawlDir = ingestables.getCrawlDir();
         Long jobID = ingestables.getJobId();
@@ -203,7 +194,6 @@ public class HarvestDocumentation {
             File warcFilesDir = ingestables.getWarcsDir();
             
             if(arcFilesDir.isDirectory() && FileUtils.hasFiles(arcFilesDir)) {
-                System.out.println("Documenting arcfiles in dir " + arcFilesDir.getAbsolutePath());
                 addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.ARC_PROFILE);
                 cdxGenerationSucceeded = true;
             }
@@ -242,7 +232,7 @@ public class HarvestDocumentation {
         moveAwayForeignFiles(profile, archiveDir, files);
         File cdxFilesDir = FileUtils.createUniqueTempDir(files.getTmpMetadataDir(), "cdx");
         CDXUtils.generateCDX(profile, archiveDir, cdxFilesDir);
-        writer.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE);
+        writer.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE, files);
     }
     
     
@@ -264,28 +254,24 @@ public class HarvestDocumentation {
     }
 
     /**
-     * Generates a URI identifying CDX info for one harvested ARC file.
-     * In Netarkivet, all of the parameters below are in the ARC file's name.
-     * @param harvestID The number of the harvest that generated the ARC file.
-     * @param jobID The number of the job that generated the ARC file.
-     * @param timeStamp The timestamp in the name of the ARC file.
-     * @param serialNumber The serial no. in the name of the ARC file.
+     * Generates a URI identifying CDX info for one harvested (W)ARC file.
+     * In Netarkivet, all of the parameters below are in the (W)ARC file's name.
+     * @param harvestID The number of the harvest that generated the (W)ARC file.
+     * @param jobID The number of the job that generated the (W)ARC file.
+     * @param filename The name of the ARC or WARC file behind the cdx-data  
      * @return A URI in the proprietary schema "metadata".
      * @throws ArgumentNotValid if any parameter is null.
      * @throws UnknownID if something goes terribly wrong in our URI
      * construction.
-     * @deprecated Should use the {@link HarvestDocumentation#getAlternateCDXURI(long, String)}
      */
     public static URI getCDXURI(
             String harvestID,
             String jobID,
-            String timeStamp,
-            String serialNumber)
+            String filename)
     throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
         ArgumentNotValid.checkNotNull(jobID, "jobID");
-        ArgumentNotValid.checkNotNull(timeStamp, "timeStamp");
-        ArgumentNotValid.checkNotNull(serialNumber, "serialNumber");
+        ArgumentNotValid.checkNotNull(filename, "filename");
         URI result;
         try {
             result =
@@ -295,16 +281,14 @@ public class HarvestDocumentation {
                     CDX_URI_AUTHORITY_HOST,
                     -1, //Don't include port no. (e.g. ":8080")
                     CDX_URI_PATH,
-                    getCDXURIQuery(harvestID, jobID, timeStamp, serialNumber),
+                    getCDXURIQuery(harvestID, jobID, filename),
                     null); //Don't include fragment (e.g. "#foo")
         } catch (URISyntaxException e) {
             throw new UnknownID(
                     "Failed to generate URI for "
                     + harvestID + ","
                     + jobID + ","
-                    + timeStamp + ","
-                    + serialNumber + ",",
-                    e);
+                    + filename + ",", e);
         }
         return result;
    }
@@ -357,18 +341,16 @@ public class HarvestDocumentation {
      * @param serialNumber The serial no. in the name of the ARC file.
      * @return An appropriate list of assigned parameters,
      * separated by the "&" character.
-     * @deprecated Should use instead {@link HarvestDocumentation#getAlternateCDXURIQuery(long, String)}
      */
     private static String getCDXURIQuery(
             String harvestID,
             String jobID,
-            String timeStamp,
-            String serialNumber) {
+            String filename) {
         String result = CDX_URI_VERSION_PARAMETERS;
         result += "&" + CDX_URI_HARVEST_ID_PARAMETER_NAME + "=" + harvestID;
         result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
-        result += "&" + CDX_URI_TIMESTAMP_PARAMETER_NAME + "=" + timeStamp;
-        result += "&" + CDX_URI_SERIALNO_PARAMETER_NAME + "=" + serialNumber;
+        result += "&" + CDX_URI_FILENAME_PARAMETER_NAME + "=" + filename;
+        
         return result;
     }
     

@@ -140,14 +140,16 @@ public class HarvestDocumentationTester extends TestCase {
         cdxURISet.add(HarvestDocumentation.getCDXURI(
                 TestInfo.ARC_HARVEST_ID,
                 TestInfo.ARC_JOB_ID,
-                TestInfo.FST_ARC_TIME,
-                TestInfo.FST_ARC_SERIAL).toASCIIString());
+                TestInfo.FST_FILENAME).toASCIIString());
          cdxURISet.add(HarvestDocumentation.getCDXURI(
                 TestInfo.ARC_HARVEST_ID,
                 TestInfo.ARC_JOB_ID,
-                TestInfo.SND_ARC_TIME,
-                TestInfo.SND_ARC_SERIAL).toASCIIString());
+                TestInfo.SND_FILENAME).toASCIIString());
         
+        //for (String cdxUri: cdxURISet) {
+        //    System.out.println("cdxURI: " + cdxUri);
+        //}
+         
         String aliasFound = null;
         while (it.hasNext()) {
             ARCRecord record = (ARCRecord) it.next();
@@ -155,7 +157,7 @@ public class HarvestDocumentationTester extends TestCase {
             //System.out.println("Url: " + meta.getUrl());
             //System.out.println("mimetype: " + meta.getMimetype());
             if (meta.getMimetype().equals("application/x-cdx")) {
-                
+                //System.out.println("Cdxuri: " + meta.getUrl());
                 assertTrue("Bad URI in metadata: " + meta.getUrl(),
                            cdxURISet.contains(meta.getUrl()));
                 cdxURISet.remove(meta.getUrl());
@@ -261,34 +263,31 @@ public class HarvestDocumentationTester extends TestCase {
     public void testGetCDXURI() {
         String harv = "42";
         String job = "7";
-        String time = "99999999999999";
-        String serial = "000000001";
+        //String time = "99999999999999";
+        //String serial = "000000001";
+        String filename = "7-42-mymachine.mydomain-001.arc";
         try {
-            HarvestDocumentation.getCDXURI(null, job, time, serial);
+            HarvestDocumentation.getCDXURI(null, job, filename);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            HarvestDocumentation.getCDXURI(harv, null, time, serial);
+            HarvestDocumentation.getCDXURI(harv, null, filename);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            HarvestDocumentation.getCDXURI(harv, job, null, serial);
+            HarvestDocumentation.getCDXURI(harv, job, null);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
             //Expected
         }
-        try {
-            HarvestDocumentation.getCDXURI(harv, job, time, null);
-            fail("Should have thrown ArgumentNotValid");
-        } catch (ArgumentNotValid e) {
-            //Expected
-        }
+        
+        
         String uri = HarvestDocumentation
-                .getCDXURI(harv, job, time, serial).toString();
+                .getCDXURI(harv, job, filename).toString();
         String prefix = "metadata://netarkivet.dk/crawl/index/cdx?";
         assertTrue(
                 "Should name the CDX URI following the official pattern - was "
@@ -300,12 +299,9 @@ public class HarvestDocumentationTester extends TestCase {
         assertTrue("CDX URI should contain jobID - was "
                    + uri,
                    uri.contains(job));
-        assertTrue("CDX URI should contain timestamp - was "
+        assertTrue("CDX URI should contain filename - was "
                    + uri,
-                   uri.contains(time));
-        assertTrue("CDX URI should contain serial no - was "
-                   + uri,
-                   uri.contains(serial));
+                   uri.contains(filename));
     }
 
     /**
@@ -398,9 +394,7 @@ public class HarvestDocumentationTester extends TestCase {
                      originalFiles.length, generatedFiles.length);
         for (File original : originalFiles) {
             File cdxfile = new File(TestInfo.CDX_WORKING_DIR,
-                                    original.getName().replaceFirst(
-                                            "\\.arc(\\.gz)?$",
-                                            ".cdx"));
+                                    original.getName() + FileUtils.CDX_EXTENSION);
             assertTrue("Should be a cdx file with correct name for '"
                        + original + "'", cdxfile.isFile());
             OutputStream content = new ByteArrayOutputStream();
