@@ -46,9 +46,8 @@ Please find the domain harvest history by:
   <li> Going to the
 <a href="/HarvestDefinition/Definitions-find-domains.jsp">Find Domain(s)
 </a> page.
-    <li>Find the relevant domain.
-    <li>click the 'Show historical harvest information' found at the bottom at the page'.
-
+    <li>Search for the domain.
+    <li>click the 'History' link for the domain in the result list'.
   </ol>
 <%
   HTMLUtils.generateFooter(out);
