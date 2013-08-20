@@ -37,19 +37,17 @@ The search-system are now able to search in different fields of the 'domain' tab
  - crawlertraps
  On the todo list are aliases, seeds. domainconfigurations, 
 
---%><%@page import="dk.netarkivet.harvester.webinterface.DomainSearchType,
-				dk.netarkivet.harvester.webinterface.DomainDefinition,
-				javax.servlet.RequestDispatcher,
-                 java.util.List, java.util.Set,
-                 dk.netarkivet.common.CommonSettings,
-                 dk.netarkivet.common.utils.Settings,
-                 dk.netarkivet.common.utils.DomainUtils,
-                 dk.netarkivet.common.utils.I18n,
-                 dk.netarkivet.common.webinterface.HTMLUtils,
-                 dk.netarkivet.harvester.datamodel.DomainDAO,
-                 dk.netarkivet.harvester.webinterface.Constants"
+--%><%@page import="java.util.List,
+				dk.netarkivet.common.CommonSettings,
+				dk.netarkivet.common.utils.I18n,
+                 dk.netarkivet.common.utils.Settings, dk.netarkivet.common.webinterface.HTMLUtils,
+                 dk.netarkivet.common.webinterface.SiteSection,
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.harvester.webinterface.DomainDefinition,
+                 dk.netarkivet.harvester.webinterface.DomainSearchType"
          pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
 
@@ -179,18 +177,49 @@ The search-system are now able to search in different fields of the 'domain' tab
                     <input type="hidden" name="START_PAGE_INDEX" value="<%=startPagePost%>"/>
                 </form>
 
+
 <%
-                List<String> matchingDomainsSubList = matchingDomains.
-                                      subList((int)startIndex,(int)endIndex);
+  List<String> matchingDomainsSubList = matchingDomains.
+          subList((int)startIndex,(int)endIndex);
+  int rowCount = 0;
+  if (matchingDomainsSubList.size() > 0) {
+  %>
+<table class="selection_table">
+<tr>
+  <th><fmt:message key="domain"/></th>
+  <th><fmt:message key="harvestdefinition.linktext.historical"/></th>
+</tr>
+
+<%
                 for (String domainS : matchingDomainsSubList) {
                     String encodedDomain = HTMLUtils.encode(domainS);
                     %>
+<tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
+  <td>
                    <a href="Definitions-edit-domain.jsp?<%=
                       Constants.DOMAIN_PARAM%>=<%=
                       HTMLUtils.escapeHtmlValues(encodedDomain)%>"><%=
                       HTMLUtils.escapeHtmlValues(domainS)%>
-                    </a><br/>
+                    </a>
+
+</td>
 <%
+  if (SiteSection.isDeployed("History")) {
+    String historyLink = "/History/Harveststatus-perdomain.jsp?domainName="
+            + HTMLUtils.encode(domainS);
+%>
+<td><a href="<%=HTMLUtils.escapeHtmlValues(historyLink)%>">
+  <fmt:message key="harvestdefinition.linktext.historical"/></a>
+</td>
+<% } %>
+</tr>
+
+<%
+                    }
+%>
+</table>
+<%
+
                 }
                 HTMLUtils.generateFooter(out);
                 return;
