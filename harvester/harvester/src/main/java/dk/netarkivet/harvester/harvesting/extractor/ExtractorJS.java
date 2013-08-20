@@ -78,7 +78,7 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
     private static final long serialVersionUID = -2231962381454717720L;
 
     private static Logger LOGGER =
-        Logger.getLogger("org.archive.crawler.extractor.ExtractorJS");
+        Logger.getLogger("dk.netarkivet.harvester.harvesting.extractor.ExtractorJS");
 
     // finds whitespace-free strings in Javascript
     // (areas between paired ' or " characters, possibly backslash-quoted
@@ -225,7 +225,7 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
      */
     public String report() {
         StringBuffer ret = new StringBuffer();
-        ret.append("Processor: org.archive.crawler.extractor.ExtractorJS\n");
+        ret.append("Processor: dk.netarkivet.harvester.harvesting.extractor.ExtractorJS\n");
         ret.append("  Function:          Link extraction on JavaScript code\n");
         ret.append("  CrawlURIs handled: " + numberOfCURIsHandled + "\n");
         ret.append("  Links extracted:   " + numberOfLinksExtracted + "\n\n");
