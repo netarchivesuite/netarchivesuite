@@ -341,7 +341,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
             Set<Long> jobIDs = irMsg.getRequestedJobs();
             
             log.info("Request received for an index of type '" + type
-                     + "' for the  " + jobIDs.size() 
+                     + "' for the " + jobIDs.size() 
                      + " jobs [" + StringUtils.conjoin(",", jobIDs) + "]");
             FileBasedCache<Set<Long>> handler = handlers.get(type);
             
@@ -361,7 +361,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                 if (foundIDs.equals(jobIDs)) {
                     log.info("Retrieved successfully index of type '" + type
                             + "' for the " + jobIDs.size() 
-                            + "jobs [" + StringUtils.conjoin(",", jobIDs)
+                            + " jobs [" + StringUtils.conjoin(",", jobIDs)
                             + "]");
                     File cacheFile = handler.getCacheFile(jobIDs);
                     if (mustReturnIndex) { // return index now! 

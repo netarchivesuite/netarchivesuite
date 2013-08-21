@@ -39,6 +39,7 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.archive.util.anvl.ANVLRecord;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -59,6 +60,7 @@ import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
 
 /**
  * This tool creates a CDX metadata file for a given job's jobID and harvestPrefix by running a
@@ -209,8 +211,10 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         public void tearDown() {
             if (arcrep != null) {
                 arcrep.close();
+                if (arcrep.getClass().getName().equals("dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient")) {
+                    JMSConnectionFactory.getInstance().cleanup();
+                }
             }
-            JMSConnectionFactory.getInstance().cleanup();
         }
 
         /** The workhorse method of this tool: Runs the batch job,
@@ -276,29 +280,31 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                     Long.toString(jobID)));
             System.out.println("Writing cdx to file '" + outputFile.getAbsolutePath() + "'.");
             try {
-                MetadataFileWriter writer = MetadataFileWriter.createWriter(
-                        outputFile);
+                MetadataFileWriter writer = MetadataFileWriter.createWriter(outputFile);
+                if (writer instanceof MetadataFileWriterWarc) {
+                    insertWarcInfo((MetadataFileWriterWarc) writer, jobID);
+                }
                 try {
                     String line;
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     String lastFilename = null;
                     String newFilename = null;
-                    //ArchiveFilenameParser parser = null;
+  
                     while ((line = reader.readLine()) != null) {
                         // parse filename out of line
                         newFilename = parseLine(line, harvestnamePrefix);
                         if (newFilename == null) { // Bad line, try the next
                             continue;
                         }
-                        if (!newFilename.equals(lastFilename)) {
+                        if (lastFilename != null && !newFilename.equals(lastFilename)) {
                             // When we reach the end of a block of lines from
-                            // one ARC file, we write those as a single entry.
+                            // one ARC/WARC file, we write those as a single entry.
                             writeCDXEntry(writer, newFilename, baos.toByteArray());
                             baos.reset();
-                            lastFilename = newFilename;
                         }
                         baos.write(line.getBytes());
                         baos.write("\n".getBytes());
+                        lastFilename = newFilename;
                     }
                     if (newFilename != null) {
                         writeCDXEntry(writer, newFilename, baos.toByteArray());
@@ -310,6 +316,19 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                 reader.close();
             }
         }
+        private void insertWarcInfo(MetadataFileWriterWarc writer, Long jobID) {
+            ANVLRecord infoPayload = new ANVLRecord(3);
+            infoPayload.addLabelValue("software", "NetarchiveSuite/" 
+                    + dk.netarkivet.common.Constants.getVersionString() 
+                    + "/" + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
+            infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
+            infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());
+            infoPayload.addLabelValue("conformsTo", 
+                    "http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf");
+            infoPayload.addLabelValue("isPartOf", "" + jobID); 
+            writer.insertInfoRecord(infoPayload);
+        }
+        
 
         /** Utility method to parse out the parts of a CDX line.
          * If a different jobID is found in the CDX line than we're given,
