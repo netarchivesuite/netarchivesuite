@@ -573,7 +573,7 @@ public class HarvesterSettings {
      * is a boolean flag that enables/disables the generation of an ARC files report.
      * Default value is 'true'.
      *
-     * @see HarvestDocumentation#documentHarvest(java.io.File, long, long)
+     * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
      */
     public static String METADATA_GENERATE_ARCFILES_REPORT =
             "settings.harvester.harvesting.metadata.generateArcFilesReport";
