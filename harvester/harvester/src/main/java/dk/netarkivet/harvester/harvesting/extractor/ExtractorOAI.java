@@ -65,11 +65,14 @@ import org.archive.util.TextUtils;
 public class ExtractorOAI extends Extractor {
 
     /**
-     * Regular expression matching the resumptionToken.
+     * Regular expressions matching the resumptionToken.
      */
     private static final String RESUMPTION_TOKEN_MATCH
         = "(?i)<resumptionToken>\\s*(.*)\\s*</resumptionToken>";
-
+    
+    private static final String RESUMPTION_TOKEN_MATCH_2
+    = "(?i)<resumptionToken\\s*cursor=\"[0-9]+\"\\s*completeListSize=\"[0-9]+\">\\s*(.*)\\s*</resumptionToken>";
+    
      /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
 
@@ -115,7 +118,7 @@ public class ExtractorOAI extends Extractor {
         }
         try {
             String query = curi.getUURI().getQuery();
-            if (!query.contains("verb=ListRecords")) { //Not an OAI-PMH document
+            if (query == null || !query.contains("verb=ListRecords")) { //Not an OAI-PMH document
                 return;
             }
         } catch (URIException e) {
@@ -159,9 +162,16 @@ public class ExtractorOAI extends Extractor {
      */
     public boolean processXml(CrawlURI curi, CharSequence cs) {
         Matcher m = TextUtils.getMatcher(RESUMPTION_TOKEN_MATCH, cs);
+        Matcher mPure = TextUtils.getMatcher(RESUMPTION_TOKEN_MATCH_2, cs);
+        boolean matchesPure = mPure.find(); 
         boolean matches = m.find();
+        String token = null;
         if (matches) {
-            String token = m.group(1);
+            token = m.group(1);
+        } else if (matchesPure) {
+            token = mPure.group(1);
+        }
+        if (token != null) {
             UURI oldUri = curi.getUURI();
             try {
                 final String newQueryPart = "verb=ListRecords&resumptionToken="
@@ -178,7 +188,8 @@ public class ExtractorOAI extends Extractor {
             }
         }
         TextUtils.recycleMatcher(m);
-        return matches;
+        TextUtils.recycleMatcher(mPure);
+        return matches || matchesPure;
     }
 
     /**
@@ -188,8 +199,8 @@ public class ExtractorOAI extends Extractor {
     @Override
     public String report() {
         StringBuffer ret = new StringBuffer();
-        ret.append("Processor: org.archive.crawler.extractor.ExtractorHTML\n");
-        ret.append("  Function:          Link extraction on HTML documents\n");
+        ret.append("Processor: dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI\n");
+        ret.append("  Function:          Link extraction as part of OAI harvesting\n");
         ret.append("  CrawlURIs handled: " + this.numberOfCURIsHandled + "\n");
         ret.append("  Links extracted:   " + this.numberOfLinksExtracted
                 + "\n\n");
