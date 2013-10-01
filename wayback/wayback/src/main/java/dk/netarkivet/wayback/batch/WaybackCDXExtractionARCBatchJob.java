@@ -34,6 +34,7 @@ import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResultAdapter;
 
 /**
@@ -136,4 +137,10 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
         log.info("Finishing the " + this.getClass().getName());
         //No cleanup required
     }
+    
+    @Override
+    public ARCBatchFilter getFilter() {
+        return ARCBatchFilter.EXCLUDE_FILE_HEADERS;
+    }
+    
 }
