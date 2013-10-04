@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-package dk.netarkivet.wayback;
+package dk.netarkivet.wayback.batch;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,6 +36,7 @@ import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapter;
 import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapterInterface;
 

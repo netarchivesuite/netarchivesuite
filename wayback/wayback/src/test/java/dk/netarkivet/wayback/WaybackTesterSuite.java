@@ -25,6 +25,9 @@ package dk.netarkivet.wayback;
 
 import dk.netarkivet.wayback.aggregator.AggregationWorkerTest;
 import dk.netarkivet.wayback.aggregator.IndexAggregatorTest;
+import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapterTester;
+import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJobTester;
+import dk.netarkivet.wayback.batch.WaybackCDXExtractionArcAndWarcBatchJobTester;
 import dk.netarkivet.wayback.indexer.ArchiveFileDAOTester;
 import dk.netarkivet.wayback.indexer.ArchiveFileTester;
 import dk.netarkivet.wayback.indexer.FileNameHarvesterTester;
