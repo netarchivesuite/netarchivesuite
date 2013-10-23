@@ -38,6 +38,7 @@ import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobPriority;
 
 /**
  * Job generator implementation. Generates jobs with a fixed number of domain
@@ -160,12 +161,6 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     private Map<DomainConfigurationKey, Job> jobsUnderConstruction;
 
     /**
-     * True if the {@link HarvestDefinition} being processed is a full harvest,
-     * false otherwise.
-     */
-    private boolean isSnapshotHarvest;
-
-    /**
      * The job DAO instance (singleton).
      */
     private JobDAO dao = JobDAO.getInstance();
@@ -191,13 +186,13 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
+    	boolean isSnapshotJob = JobPriority.LOWPRIORITY.equals(job.getPriority());
         return job.getDomainConfigurationMap().size() <
-                (isSnapshotHarvest ? CONFIG_COUNT_SNAPSHOT : CONFIG_COUNT_FOCUSED);
+                (isSnapshotJob ? CONFIG_COUNT_SNAPSHOT : CONFIG_COUNT_FOCUSED);
     }
 
     @Override
     public int generateJobs(HarvestDefinition harvest) {
-        isSnapshotHarvest = harvest.isSnapShot();
         jobsUnderConstruction = new HashMap<DomainConfigurationKey, Job>();
 
         try {
