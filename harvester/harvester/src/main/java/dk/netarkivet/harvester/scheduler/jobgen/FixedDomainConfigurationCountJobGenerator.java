@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -116,6 +117,19 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
             return orderXmlName + ":" + maxObjects + ":" + maxBytes;
         }
     }
+    
+    /**
+     * Simple marker class to improve code readability.
+     * 
+     * Maps jobs currently being filled, for a given harvest definition, with domain 
+     * configurations by harvest template name. These jobs keep getting new 
+     * configurations until no more configurations are left to process or the 
+     * configured size has been reached.
+     */
+    @SuppressWarnings("serial")
+	private class HarvestJobGenerationState extends HashMap<DomainConfigurationKey,Job> {
+    	
+    }
 
     /**
      * Compare two configurations in alphabetical order of their name.
@@ -158,7 +172,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
      * name. These jobs keep getting new configurations until no more configurations are
      * left to process or the configured size has been reached.
      */
-    private Map<DomainConfigurationKey, Job> jobsUnderConstruction;
+    private Map<Long, HarvestJobGenerationState> state;
 
     /**
      * The job DAO instance (singleton).
@@ -167,6 +181,10 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass());
+    
+    private FixedDomainConfigurationCountJobGenerator() {
+    	this.state = new HashMap<Long, HarvestJobGenerationState>();
+    }
 
     /**
      * @return the singleton instance, builds it if necessary.
@@ -193,7 +211,8 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
     @Override
     public int generateJobs(HarvestDefinition harvest) {
-        jobsUnderConstruction = new HashMap<DomainConfigurationKey, Job>();
+        
+    	HarvestJobGenerationState jobsUnderConstruction = getStateForHarvest(harvest);
 
         try {
             int jobsComplete = super.generateJobs(harvest);
@@ -213,7 +232,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
             return jobsComplete;
         } finally {
-            jobsUnderConstruction.clear(); // make sure to free resources
+            dropStateForHarvest(harvest);
         }
     }
 
@@ -221,6 +240,8 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     protected int processDomainConfigurationSubset(
             HarvestDefinition harvest,
             Iterator<DomainConfiguration> domainConfSubset) {
+    	
+    	HarvestJobGenerationState jobsUnderConstruction = getExistingStateForHarvest(harvest);
         int jobsComplete = 0;
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
@@ -265,11 +286,44 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
      * @return the {@link Job} instance
      */
     private Job initNewJob(HarvestDefinition harvest, DomainConfiguration cfg) {
+    	HarvestJobGenerationState jobsUnderConstruction = getExistingStateForHarvest(harvest);
         Job job = getNewJob(harvest, cfg);
         jobsUnderConstruction.put(new DomainConfigurationKey(cfg), job);
         return job;
     }
+    
+    private synchronized HarvestJobGenerationState getStateForHarvest(
+    		final HarvestDefinition harvest,
+    		final boolean failIfNotExists) {
+    	
+    	long harvestId = harvest.getOid();
+    	HarvestJobGenerationState harvestState = this.state.get(harvestId);
+    	if (harvestState == null) {
+    		if (failIfNotExists) {
+    			throw new NoSuchElementException(
+    					"No job generation state for harvest " + harvestId);
+    		}
+    		harvestState = new HarvestJobGenerationState();
+    		this.state.put(harvestId, harvestState);
+    	}
+    	
+    	return harvestState;
+    }
+    
+    private HarvestJobGenerationState getStateForHarvest(final HarvestDefinition harvest) {
+    	return getStateForHarvest(harvest, false);
+    }
+    
+    private HarvestJobGenerationState getExistingStateForHarvest(final HarvestDefinition harvest) {
+    	return getStateForHarvest(harvest, true);
+    }
+    
+    private synchronized void dropStateForHarvest(final HarvestDefinition harvest) {
+    	long harvestId = harvest.getOid();
+    	HarvestJobGenerationState harvestState = this.state.remove(harvestId);
+    	if (harvestState == null) {
+    		throw new NoSuchElementException("No job generation state for harvest " + harvestId);
+    	}
+    }
 
 }
-
-
