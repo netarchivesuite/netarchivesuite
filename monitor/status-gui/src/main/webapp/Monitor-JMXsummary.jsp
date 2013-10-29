@@ -156,19 +156,19 @@ will not appear here.
                 JMXSummaryUtils.JMXHttpportProperty, currentLocale)%>
         </th>
         <%
-            }
-            if (JMXSummaryUtils.showColumn(starredRequest,
-                                           JMXSummaryUtils.JMXHarvestPriorityProperty)) {
+        	}
+                    if (JMXSummaryUtils.showColumn(starredRequest,
+                                                   JMXSummaryUtils.JMXHarvestChannelProperty)) {
         %>
         <th><fmt:message
-                key="tablefield;priority"/> <%=JMXSummaryUtils.generateShowLink(
+                key="tablefield;channel"/> <%=JMXSummaryUtils.generateShowLink(
                 starredRequest,
-                JMXSummaryUtils.JMXHarvestPriorityProperty, currentLocale)%>
+                JMXSummaryUtils.JMXHarvestChannelProperty, currentLocale)%>
         </th>
         <%
-            }
-            if (JMXSummaryUtils.showColumn(starredRequest,
-                                           JMXSummaryUtils.JMXArchiveReplicaNameProperty)) {
+        	}
+                    if (JMXSummaryUtils.showColumn(starredRequest,
+                                                   JMXSummaryUtils.JMXArchiveReplicaNameProperty)) {
         %>
         <th><fmt:message
                 key="tablefield;replicaname"/> <%=JMXSummaryUtils.generateShowLink(
@@ -176,7 +176,7 @@ will not appear here.
                 JMXSummaryUtils.JMXArchiveReplicaNameProperty, currentLocale)%>
         </th>
         <%
-            }
+        	}
         %>
         <th><fmt:message
                 key="tablefield;index"/> <%=JMXSummaryUtils.generateShowAllLink(
@@ -185,8 +185,8 @@ will not appear here.
         </th>
         <th><fmt:message key="tablefield;logmessage"/></th>
         <%
-            if (JMXSummaryUtils.showColumn(starredRequest,
-                                           JMXSummaryUtils.JMXRemoveApplication)) {
+        	if (JMXSummaryUtils.showColumn(starredRequest,
+                                                   JMXSummaryUtils.JMXRemoveApplication)) {
         %>
         <th><fmt:message
                 key="tablefield;removeapplication"/> <%=JMXSummaryUtils.generateShowLink(
@@ -194,17 +194,17 @@ will not appear here.
                 JMXSummaryUtils.JMXRemoveApplication, currentLocale)%>
         </th>
         <%
-            }
+        	}
         %>
     </tr>
     <%
-        for (StatusEntry entry : result) {
-            if (entry.getLogMessage(response.getLocale()).trim().length() > 0) {
+    	for (StatusEntry entry : result) {
+                if (entry.getLogMessage(response.getLocale()).trim().length() > 0) {
     %>
     <tr>
         <%
-        if (JMXSummaryUtils.showColumn(starredRequest,
-                                       JMXSummaryUtils.JMXPhysLocationProperty)) {
+        	if (JMXSummaryUtils.showColumn(starredRequest,
+                                               JMXSummaryUtils.JMXPhysLocationProperty)) {
         %>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
                                             JMXSummaryUtils.JMXPhysLocationProperty,
@@ -213,9 +213,9 @@ will not appear here.
                                                     entry.getPhysicalLocation()))%>
         </td>
         <%
-            }
-            if (JMXSummaryUtils.showColumn(starredRequest,
-                                           JMXSummaryUtils.JMXMachineNameProperty)) {
+        	}
+                    if (JMXSummaryUtils.showColumn(starredRequest,
+                                                   JMXSummaryUtils.JMXMachineNameProperty)) {
         %>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
                                             JMXSummaryUtils.JMXMachineNameProperty,
@@ -225,9 +225,9 @@ will not appear here.
                                                             entry.getMachineName())))%>
         </td>
         <%
-            }
-            if (JMXSummaryUtils.showColumn(starredRequest,
-                                           JMXSummaryUtils.JMXApplicationNameProperty)) {
+        	}
+                    if (JMXSummaryUtils.showColumn(starredRequest,
+                                                   JMXSummaryUtils.JMXApplicationNameProperty)) {
         %>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
                                             JMXSummaryUtils.JMXApplicationNameProperty,
@@ -237,9 +237,9 @@ will not appear here.
                                                             entry.getApplicationName())))%>
         </td>
         <%
-            }
-            if (JMXSummaryUtils.showColumn(starredRequest,
-                                           JMXSummaryUtils.JMXApplicationInstIdProperty)) {
+        	}
+                    if (JMXSummaryUtils.showColumn(starredRequest,
+                                                   JMXSummaryUtils.JMXApplicationInstIdProperty)) {
         %>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
                                             JMXSummaryUtils.JMXApplicationInstIdProperty,
@@ -248,9 +248,9 @@ will not appear here.
                                                     entry.getApplicationInstanceID()))%>
         </td>
         <%
-            }
-            if (JMXSummaryUtils.showColumn(starredRequest,
-                                           JMXSummaryUtils.JMXHttpportProperty)) {
+        	}
+                    if (JMXSummaryUtils.showColumn(starredRequest,
+                                                   JMXSummaryUtils.JMXHttpportProperty)) {
         %>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
                                             JMXSummaryUtils.JMXHttpportProperty,
@@ -259,12 +259,12 @@ will not appear here.
                                                     entry.getHTTPPort()))%>
         </td>
         <%
-            }
-            if (JMXSummaryUtils.showColumn(starredRequest,
-                                           JMXSummaryUtils.JMXHarvestPriorityProperty)) {
+        	}
+                    if (JMXSummaryUtils.showColumn(starredRequest,
+                                                   JMXSummaryUtils.JMXHarvestChannelProperty)) {
         %>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                                            JMXSummaryUtils.JMXHarvestPriorityProperty,
+                                            JMXSummaryUtils.JMXHarvestChannelProperty,
                                             entry.getHarvestPriority(),
                                             HTMLUtils.escapeHtmlValues(
                                                     entry.getHarvestPriority()))%>

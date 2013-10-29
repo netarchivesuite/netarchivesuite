@@ -230,7 +230,7 @@ National Library.
                     </common>
                     <harvester>
                         <harvesting>
-                            <queuePriority>LOWPRIORITY</queuePriority>
+                            <channel>LOWPRIORITY</channel>
                             <heritrix>
                                 <guiPort>8190</guiPort> 
                                 <jmxPort>8191</jmxPort>
@@ -257,7 +257,7 @@ National Library.
                     </common>
                     <harvester>
                         <harvesting>
-                            <queuePriority>HIGHPRIORITY</queuePriority>
+                            <channel>HIGHPRIORITY</channel>
                             <heritrix>
                                 <guiPort>8192</guiPort> 
                                 <jmxPort>8193</jmxPort>

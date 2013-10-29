@@ -74,6 +74,11 @@ public class SparsePartialHarvest implements Named {
     private final Date nextDate;
     
     private String audience;
+    
+    /**
+     * The id of the associated harvest channel, or null if the default one is to be used. 
+     */
+    private Long channelId;
 
     /**
      * Create new instance of SparsePartialHarvest.
@@ -89,6 +94,7 @@ public class SparsePartialHarvest implements Named {
      * @param schedule  name of schedule for this harvest.
      * @param nextDate  next time this harvest will run (null for never).
      * @param audience  The intended audience
+     * @param channelId the channel id, or null for the default one
      * @throws ArgumentNotValid if oid, name or comments, or schedule is null,
      *                          or name or schedule is empty.
      */
@@ -96,7 +102,8 @@ public class SparsePartialHarvest implements Named {
                                 int numEvents,
                                 Date submissionDate, boolean active,
                                 long edition, String schedule,
-                                Date nextDate, String audience) {
+                                Date nextDate, String audience,
+                                Long channelId) {
         ArgumentNotValid.checkNotNull(oid, "Long oid");
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(comments, "comments");
@@ -111,6 +118,7 @@ public class SparsePartialHarvest implements Named {
         this.scheduleName = schedule;
         this.nextDate = nextDate;
         this.audience = audience;
+        this.channelId = channelId;
     }
 
 
@@ -204,6 +212,11 @@ public class SparsePartialHarvest implements Named {
     public String getAudience() {
         return audience;
     }
+
+
+	protected Long getChannelId() {
+		return channelId;
+	}
 }
 
 

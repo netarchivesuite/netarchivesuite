@@ -33,8 +33,8 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
-import dk.netarkivet.harvester.scheduler.jobgen.FixedDomainConfigurationCountJobGenerator;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
+import dk.netarkivet.harvester.scheduler.jobgen.FixedDomainConfigurationCountJobGenerator;
 
 /** Settings specific to the harvester module of NetarchiveSuite. */
 public class HarvesterSettings {
@@ -293,16 +293,15 @@ public class HarvesterSettings {
             = "settings.harvester.harvesting.oldjobsDir";
 
     /**
-     * <b>settings.harvester.harvesting.queuePriority</b>: <br> Pool to take
-     * jobs from. There are two pools to choose from, labelled "HIGHPRIORITY"
-     * (pool for selective harvest jobs), and "LOWPRIORITY" (pool for snapshot
-     * harvest jobs) respectively.
+     * <b>settings.harvester.harvesting.channel</b>: <br> Harvest channel to take
+     * jobs from. This is the default channel assigned to the harvest controller.
+     * @see HarvestChannel.
      *
      * NOTE: this one is also used in SingleMBeanObject parsing information to
      * System state
      */
-    public static String HARVEST_CONTROLLER_PRIORITY
-            = "settings.harvester.harvesting.queuePriority";
+    public static String HARVEST_CONTROLLER_CHANNEL
+            = "settings.harvester.harvesting.channel";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.inactivityTimeout</b>: <br> The

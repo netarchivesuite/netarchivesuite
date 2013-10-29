@@ -163,7 +163,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about harvestdefinitions. */
     HARVESTDEFINITIONS {
         static final String NAME = "harvestdefinitions";
-        static final int REQUIRED_VERSION = 3;
+        static final int REQUIRED_VERSION = 4;
        
         @Override
         public int getRequiredVersion() {
@@ -253,7 +253,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about jobs. */
     JOBS {
         static final String NAME = "jobs";
-        static final int REQUIRED_VERSION = 9;
+        static final int REQUIRED_VERSION = 10;
        
         @Override
         public int getRequiredVersion() {
@@ -388,6 +388,21 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about extended field types. */
     EXTENDEDFIELDTYPE {
         static final String NAME = "extendedfieldtype";
+        static final int REQUIRED_VERSION = 1;
+       
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** Harvest channels.  */
+    HARVESTCHANNELS {
+        static final String NAME = "harvestchannel";
         static final int REQUIRED_VERSION = 1;
        
         @Override

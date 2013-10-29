@@ -36,6 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 
 /**
  * This singleton class is in charge of giving out the correct channels.
@@ -51,10 +52,6 @@ public class Channels {
     private static final String THEBAMON_CHANNEL_PREFIX = "THE_BAMON";
     private static final String THESCHED_CHANNEL_PREFIX = "THE_SCHED";
     private static final String THEREPOS_CHANNEL_PREFIX = "THE_REPOS";
-    private static final String ANYLOWHACO_CHANNEL_PREFIX
-        = "ANY_LOWPRIORITY_HACO";
-    private static final String ANYHIGHHACO_CHANNEL_PREFIX
-        = "ANY_HIGHPRIORITY_HACO";
     private static final String THISREPOSCLIENT_CHANNEL_PREFIX
         = "THIS_REPOS_CLIENT";
     private static final String ERROR_CHANNEL_PREFIX = "ERROR";
@@ -199,34 +196,6 @@ public class Channels {
     private final ChannelID THE_SCHED = new ChannelID(THESCHED_CHANNEL_PREFIX,
             ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
-
-    /**
-     * Returns the queue which is used by the scheduler to send doOneCrawl to
-     * Harvest Controllers of high priority (selective harvests).
-     *
-     * @return That channel (queue)
-     */
-    public static ChannelID getAnyHighpriorityHaco() {
-        return getInstance().ANY_HIGHPRIORITY_HACO;
-    }
-
-    /**
-     * Returns the queue which is used by the scheduler to send doOneCrawl to
-     * Harvest Controllers of low priority (snapshot harvests).
-     *
-     * @return That channel (queue)
-     */
-    public static ChannelID getAnyLowpriorityHaco() {
-        return getInstance().ANY_LOWPRIORITY_HACO;
-    }
-
-    private final ChannelID ANY_LOWPRIORITY_HACO = new ChannelID(
-            ANYLOWHACO_CHANNEL_PREFIX, ChannelID.COMMON, ChannelID.NO_IP,
-            ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
-
-    private final ChannelID ANY_HIGHPRIORITY_HACO = new ChannelID(
-            ANYHIGHHACO_CHANNEL_PREFIX, ChannelID.COMMON, ChannelID.NO_IP,
-            ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Returns the one-per-client queue on which client receives replies from
@@ -611,7 +580,98 @@ public class Channels {
           ChannelID.NO_IP,
           ChannelID.NO_APPLINST_ID,
           ChannelID.TOPIC);
+  
+  /**
+	 * Prefix for the channels used to send 
+	 * @{link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest}s
+	 * and 
+	 * @{link {@link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse}}s
+	 */
+	private static final String HARVEST_CHANNEL_VALIDITY_PREFIX = "HCHAN_VAL_";
+	
+	private final ChannelID HARVEST_CHANNEL_VALIDITY_REQUEST = new ChannelID(
+			HARVEST_CHANNEL_VALIDITY_PREFIX + "REQ",
+			ChannelID.COMMON,
+			ChannelID.NO_IP,
+			ChannelID.NO_APPLINST_ID,
+			ChannelID.QUEUE);
+	
+	/** 
+	 * Return the queue for sending
+	 * @{link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest}s.
+	 * 
+	 * @return the <code>ChannelID</code> object for the queue.
+	 */
+	public static ChannelID getHarvestChannelValidityRequestChannel() {
+		return getInstance().HARVEST_CHANNEL_VALIDITY_REQUEST;
+	}
+	
+	/**
+	 * Prefix for channels related to harvest channel validity messages.
+	 */
+	private final ChannelID HARVEST_CHANNEL_VALIDITY_RESPONSE = new ChannelID(
+			HARVEST_CHANNEL_VALIDITY_PREFIX + "RESP",
+			ChannelID.COMMON,
+			ChannelID.NO_IP,
+			ChannelID.NO_APPLINST_ID,
+			ChannelID.QUEUE);
+	
+	/** 
+	 * Return the queue for sending
+	 * @{link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse}s.
+	 * 
+	 * @return the <code>ChannelID</code> object for the queue.
+	 */
+	public static ChannelID getHarvestChannelValidityResponseChannel() {
+		return getInstance().HARVEST_CHANNEL_VALIDITY_RESPONSE;
+	}
 
+	/**
+	 * The prefix for channels handling snapshot harvest jobs.
+	 */
+	private static final String JOB_SNAPSHOT_CHANNEL_PREFIX = "JOB_SNAPSHOT";
+	
+	/**
+	 * The prefix for channels handling focused harvest jobs.
+	 */
+	private static final String JOB_PARTIAL_CHANNEL_PREFIX = "JOB_PARTIAL";
+	
+	/**
+     * Returns the queue which is used by the scheduler to send doOneCrawl to
+     * Harvest Controllers listening on the given harvest channel.
+     *
+     * @return That channel (queue)
+     */
+	public static ChannelID getHarvestJobChannelId(HarvestChannel harvestChannel) {
+		String prefix = (harvestChannel.isSnapShot() 
+				? JOB_SNAPSHOT_CHANNEL_PREFIX : JOB_PARTIAL_CHANNEL_PREFIX)
+				+ "_" + harvestChannel.getName().toUpperCase();
+		return new ChannelID(
+				prefix, 
+				ChannelID.COMMON, 
+				ChannelID.NO_IP,
+				ChannelID.NO_APPLINST_ID, 
+				ChannelID.QUEUE);
+	}	
+	
+	/**
+     * Returns the queue which is used by the scheduler to send doOneCrawl to
+     * Harvest Controllers listening on the given harvest channel.
+     *
+     * @return That channel (queue)
+     */
+	public static ChannelID getHarvestJobChannelId(String harvestChannelName, boolean isSnapshot) {
+		String prefix = (isSnapshot
+				? JOB_SNAPSHOT_CHANNEL_PREFIX : JOB_PARTIAL_CHANNEL_PREFIX)
+				+ "_" + harvestChannelName.toUpperCase();
+		return new ChannelID(
+				prefix, 
+				ChannelID.COMMON, 
+				ChannelID.NO_IP,
+				ChannelID.NO_APPLINST_ID, 
+				ChannelID.QUEUE);
+	}
+	
     /**
      * Reset the instance to re-read the settings. Only for use in tests.
      */

@@ -102,6 +102,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     jwat-common-0.9.1.jar
     wayback-dependencies/htmlparser-1.6.jar
     wayback-dependencies/ia-web-commons-1.0-SNAPSHOT.jar
+    gagawa-1.0.1.jar
     "/>
     <property name="toolclasspath" value="${jarclasspath} "/>
     <property name="build.classes.excludes" value="overview.html,*/doc-files/,*/diagram-files/,/package.html"/>
@@ -169,6 +170,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="hibernate/slf4j-log4j12-1.5.2.jar"/>
             	<include name="wayback-dependencies/htmlparser-1.6.jar"/>
                 <include name="wayback-dependencies/ia-web-commons-1.0-SNAPSHOT.jar"/>
+            	
+            	<include name="gagawa-1.0.1.jar"/>
             </patternset>
         </fileset>
     </path>
@@ -295,6 +298,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             description="Compile all war files">
         <!-- make the WAR-files -->
         <war destfile="${webpages}/HarvestDefinition.war" basedir="${webpages}/HarvestDefinition" update="no" webxml="${webpages}/HarvestDefinition/WEB-INF/web.xml">
+            <include name="**/*"/>
+            <exclude name="WEB-INF/web.xml"/>
+            <webinf dir="lib/taglibs">
+                <include name="*.tld"/>
+            </webinf>
+        </war>
+    	<war destfile="${webpages}/HarvestPlanning.war" basedir="${webpages}/HarvestPlanning" update="no" webxml="${webpages}/HarvestPlanning/WEB-INF/web.xml">
             <include name="**/*"/>
             <exclude name="WEB-INF/web.xml"/>
             <webinf dir="lib/taglibs">

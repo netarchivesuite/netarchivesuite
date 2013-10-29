@@ -68,9 +68,9 @@ public class JMXSummaryUtils {
     /** JMX property for the HTTP port. */
     public static final String JMXHttpportProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_HTTP_PORT;
-    /** JMX property for the harvest priority. */
-    public static final String JMXHarvestPriorityProperty = 
-        dk.netarkivet.common.management.Constants.PRIORITY_KEY_PRIORITY;
+    /** JMX property for the harvest channel. */
+    public static final String JMXHarvestChannelProperty = 
+        dk.netarkivet.common.management.Constants.PRIORITY_KEY_CHANNEL;
     /** JMX property for the replica name.*/
     public static final String JMXArchiveReplicaNameProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_REPLICANAME;
@@ -99,7 +99,7 @@ public class JMXSummaryUtils {
         JMXApplicationNameProperty,
         JMXApplicationInstIdProperty,
         JMXHttpportProperty,
-        JMXHarvestPriorityProperty,
+        JMXHarvestChannelProperty,
         JMXArchiveReplicaNameProperty,
         JMXIndexProperty};
     /** Status/Monitor-JMXsummary.jsp. */

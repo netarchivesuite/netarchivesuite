@@ -78,6 +78,11 @@ public class SparseFullHarvest {
      * The ID for the harvestdefinition, this FullHarvest is based upon.
      */
     private Long previousHarvestDefinitionOid;
+    
+    /**
+     * The id of the associated harvest channel, or null if the default one is to be used. 
+     */
+    private Long channelId;
 
     /**
      * Create new instance of SparseFullHarvest.
@@ -95,6 +100,7 @@ public class SparseFullHarvest {
      * @param previousFullHarvest This id of the harvestDefinition used to
      *                            create this Fullharvest definition. May be
      *                            null for none
+     * @param channelId the channel id, or null for the default one
      * @throws ArgumentNotValid if oid, name or comments is null, or name is
      *                          empty.
      */
@@ -105,7 +111,8 @@ public class SparseFullHarvest {
                              long edition, long maxCountObjects,
                              long maxBytes,
                              long maxJobRunningTime,
-                             Long previousFullHarvest) {
+                             Long previousFullHarvest,
+                             Long channelId) {
         ArgumentNotValid.checkNotNull(oid, "oid");
         ArgumentNotValid.checkNotNullOrEmpty(harvestDefName, "harvestDefName");
         ArgumentNotValid.checkNotNull(comments, "comments");
@@ -120,6 +127,7 @@ public class SparseFullHarvest {
         this.maxBytes = maxBytes;
         this.maxJobRunningTime = maxJobRunningTime;
         this.previousHarvestDefinitionOid = previousFullHarvest;
+        this.channelId = channelId;
     }
 
     /**
@@ -216,4 +224,8 @@ public class SparseFullHarvest {
     public long getEdition() {
         return edition;
     }
+
+	protected Long getChannelId() {
+		return channelId;
+	}
 }

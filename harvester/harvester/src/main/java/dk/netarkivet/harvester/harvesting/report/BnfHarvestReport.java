@@ -43,7 +43,6 @@ import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.HarvestInfo;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.SparseFullHarvest;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
@@ -92,7 +91,7 @@ public class BnfHarvestReport extends AbstractHarvestReport {
 
         // First find if it's a full harvest job,
         // and if so get actual byte and object limits.
-        if (JobPriority.LOWPRIORITY.equals(job.getPriority())) {
+        if (job.isSnapshot()) {
             HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
             String harvestName =
                 dao.getHarvestName(job.getOrigHarvestDefinitionID());

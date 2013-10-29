@@ -26,7 +26,7 @@ package dk.netarkivet.harvester.scheduler;
 
 import junit.framework.TestCase;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.harvester.datamodel.JobPriority;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
@@ -47,24 +47,25 @@ public class HarvesterStatusReceiverTest extends TestCase  {
     }
     
     protected class MockJobDispatcher extends JobDispatcher {
-        private JobPriority receivedPriority;
+        private String receivedChannelName;
         
         public MockJobDispatcher() {
             super(jms.getJMSConnection());
         }
 
         @Override
-        protected void submitNextNewJob(JobPriority priority) {
-            receivedPriority = priority;
+        protected void submitNextNewJob(HarvestChannel hChan) {
+            receivedChannelName = hChan.getName();
         }
     }
     
     public void testStatusReception() {
+    	HarvestChannel highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
         HarvesterReadyMessage statusmessage = 
-                new HarvesterReadyMessage("Test", JobPriority.HIGHPRIORITY);
+                new HarvesterReadyMessage("Test", highChan.getName());
         receiver.onMessage(
                 JMSConnectionMockupMQ.getObjectMessage(statusmessage));
-        assertEquals(JobPriority.HIGHPRIORITY, JobDispatcher.receivedPriority);
+        assertEquals(highChan.getName(), JobDispatcher.receivedChannelName);
     }
     
     public void testInvalidMessageType() {

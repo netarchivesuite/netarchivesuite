@@ -24,25 +24,6 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.*;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ.TestObjectMessage;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.RememberNotifications;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.*;
-import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
-import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
-import dk.netarkivet.harvester.webinterface.DomainDefinition;
-import dk.netarkivet.testutils.StringAsserts;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.MockupJMS;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
-
-import javax.jms.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -56,6 +37,46 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogManager;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.Queue;
+import javax.jms.QueueBrowser;
+import javax.jms.QueueReceiver;
+import javax.jms.QueueSession;
+
+import junit.framework.TestCase;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.ChannelID;
+import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ.TestObjectMessage;
+import dk.netarkivet.common.distribute.NetarkivetMessage;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
+import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
+import dk.netarkivet.harvester.datamodel.Domain;
+import dk.netarkivet.harvester.datamodel.DomainConfiguration;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
+import dk.netarkivet.harvester.webinterface.DomainDefinition;
+import dk.netarkivet.testutils.StringAsserts;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.MockupJMS;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+
 /**
  * Test JobDispatcher class.
  */
@@ -65,6 +86,9 @@ public class JobDispatcherTester extends TestCase {
 
     ReloadSettings reloadSettings = new ReloadSettings();
     MockupJMS jms = new MockupJMS();
+    
+    HarvestChannel highChan;
+    HarvestChannel lowChan;
 
     public JobDispatcherTester(String sTestName) {
         super(sTestName);
@@ -91,7 +115,8 @@ public class JobDispatcherTester extends TestCase {
 
         HarvestDefinitionDAO.getInstance();
         jobDispatcher = new JobDispatcher(jms.getJMSConnection());
-
+        highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
+        lowChan = new HarvestChannel("LOWPRIORITY", "", true, true);
     }
 
     /**
@@ -116,10 +141,10 @@ public class JobDispatcherTester extends TestCase {
      */
     public void testSubmitNewJobs() throws Exception {
 
-        createMessageReceiver(JobPriority.HIGHPRIORITY).receiveNoWait();
+        createMessageReceiver(highChan).receiveNoWait();
 
         Job job = createJob();
-        jobDispatcher.submitNextNewJob(JobPriority.HIGHPRIORITY);
+        jobDispatcher.submitNextNewJob(highChan);
         Job rereadJob = JobDAO.getInstance().read(job.getJobID());
         assertEquals("Good job should have been scheduled",
                 JobStatus.SUBMITTED, rereadJob.getStatus());
@@ -136,7 +161,7 @@ public class JobDispatcherTester extends TestCase {
         TestMessageListener hacoListener = new TestMessageListener();
 
         jms.getJMSConnection().setListener(
-                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY),
+                Channels.getHarvestJobChannelId(highChan),
                 hacoListener);
 
         // Create the following domains:
@@ -161,11 +186,11 @@ public class JobDispatcherTester extends TestCase {
 
         // Make a job from dr.dk and kb.dk
         DataModelTestCase.addHarvestDefinitionToDatabaseWithId(5678L);
-        Job job = Job.createJob(5678L, dc1, 0);
+        Job job = Job.createJob(5678L, highChan, dc1, 0);
         job.addConfiguration(dc2);
         JobDAO.getInstance().create(job);
 
-        jobDispatcher.submitNextNewJob(JobPriority.HIGHPRIORITY);
+        jobDispatcher.submitNextNewJob(highChan);
 
         DoOneCrawlMessage crawlMessage = (DoOneCrawlMessage) 
                 hacoListener.getReceived();
@@ -194,8 +219,7 @@ public class JobDispatcherTester extends TestCase {
      */
     public void testSubmitNewJobsMakesDuplicateReductionInfo()
     throws Exception {
-        QueueReceiver messageReceiver =
-            createMessageReceiver(JobPriority.LOWPRIORITY);
+        QueueReceiver messageReceiver = createMessageReceiver(lowChan);
 
         // Make some jobs to submit
         // Assume 1st jobId is 2, and lastId is 15
@@ -204,13 +228,13 @@ public class JobDispatcherTester extends TestCase {
         // Submit all the jobs, and hold on to the last one
         DoOneCrawlMessage crawlMessage = null;
         int counter = 0;
-        jobDispatcher.submitNextNewJob(JobPriority.LOWPRIORITY);
-        while (countQueueMessages(JobPriority.LOWPRIORITY) > 0) {
+        jobDispatcher.submitNextNewJob(lowChan);
+        while (countQueueMessages(lowChan) > 0) {
             counter++;
             TestObjectMessage testObjectMessage = ((TestObjectMessage)
                     messageReceiver.receiveNoWait());
             crawlMessage = (DoOneCrawlMessage)testObjectMessage.getObject();
-            jobDispatcher.submitNextNewJob(JobPriority.LOWPRIORITY);
+            jobDispatcher.submitNextNewJob(lowChan);
         }
         // Check result
         assertEquals("Should have received all low priority messages", 8,
@@ -239,17 +263,17 @@ public class JobDispatcherTester extends TestCase {
         DoOneCrawlMessageListener highPriorityListener =
             new DoOneCrawlMessageListener();
         JMSConnectionFactory.getInstance().setListener(
-                JobChannelUtil.getChannel(JobPriority.HIGHPRIORITY),
+        		Channels.getHarvestJobChannelId(highChan),
                 highPriorityListener);
 
         DoOneCrawlMessageListener lowPriorityListener =
             new DoOneCrawlMessageListener();
-        JMSConnectionFactory.getInstance().setListener(JobChannelUtil.
-                getChannel(JobPriority.LOWPRIORITY), lowPriorityListener);
+        JMSConnectionFactory.getInstance().setListener(
+        		Channels.getHarvestJobChannelId(lowChan), lowPriorityListener);
 
         //send a high priority job
         jobDispatcher.doOneCrawl(TestInfo.getJob(),
-                "test", "test", "test", "unittesters", new ArrayList<MetadataEntry>());
+                "test", "test", "test", highChan, "unittesters", new ArrayList<MetadataEntry>());
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
         assertEquals("The HIGHPRIORITY server should have received exactly 1 " +
@@ -263,7 +287,7 @@ public class JobDispatcherTester extends TestCase {
 
         //send a low priority jobList
         jobDispatcher.doOneCrawl(TestInfo.getJobLowPriority(),
-                "test", "test", "test", "unittesters", new ArrayList<MetadataEntry>());
+                "test", "test", "test", lowChan, "unittesters", new ArrayList<MetadataEntry>());
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
         assertEquals("The HIGHPRIORITY server should have received exactly 0 " +
@@ -278,7 +302,8 @@ public class JobDispatcherTester extends TestCase {
      */
     public void testNullJob() {
         try {
-            jobDispatcher.doOneCrawl((Job)null, "test", "test", "test", "unittesters",
+            jobDispatcher.doOneCrawl((Job)null, "test", "test", "test", highChan,
+            		"unittesters",
                     new ArrayList<MetadataEntry>());
             fail("Should throw ArgumentNotValid on NULL job");
         } catch (ArgumentNotValid e) {
@@ -292,7 +317,7 @@ public class JobDispatcherTester extends TestCase {
      */
     public void testLogSendingMessage() throws IOException {
         jobDispatcher.doOneCrawl(TestInfo.getJob(),
-                "test", "test", "test", "unittesters", new ArrayList<MetadataEntry>());
+                "test", "test", "test", highChan, "unittesters", new ArrayList<MetadataEntry>());
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
 
@@ -365,7 +390,7 @@ public class JobDispatcherTester extends TestCase {
         final JobDAO jdao = JobDAO.getInstance();
 
         final Long harvestID = 1L;
-        Job newJob = Job.createJob(harvestID, cfg, 1);
+        Job newJob = Job.createJob(harvestID, highChan, cfg, 1);
         newJob.setStatus(status);
         jdao.create(newJob);
         jdao.getAllJobIds(status);
@@ -386,19 +411,17 @@ public class JobDispatcherTester extends TestCase {
      * @return
      * @throws JMSException
      */
-    private QueueReceiver createMessageReceiver(JobPriority priority)
+    private QueueReceiver createMessageReceiver(HarvestChannel channel)
     throws JMSException {
         QueueSession qSession =
             JMSConnectionMockupMQ.getInstance().getQueueSession();
-        ChannelID channelId =
-            JobChannelUtil.getChannel(priority);
+        ChannelID channelId = Channels.getHarvestJobChannelId(channel);
         Queue queue = qSession.createQueue(channelId.getName());
         return qSession.createReceiver(queue);
     }
 
-    private int countQueueMessages(JobPriority priority) throws JMSException {
-        ChannelID channelId =
-            JobChannelUtil.getChannel(priority);
+    private int countQueueMessages(HarvestChannel channel) throws JMSException {
+    	ChannelID channelId = Channels.getHarvestJobChannelId(channel);
         QueueBrowser qBrowser =
             JMSConnectionMockupMQ.getInstance().createQueueBrowser(channelId);
         Enumeration<?> messageEnumeration = qBrowser.getEnumeration();

@@ -129,6 +129,10 @@
                 <webapplication>webpages/HarvestDefinition.war</webapplication>
             </siteSection>
             <siteSection>
+                <class>dk.netarkivet.harvester.webinterface.HarvestPlanningSiteSection</class>
+                <webapplication>webpages/HarvestPlanning.war</webapplication>
+            </siteSection>
+            <siteSection>
                 <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
                 <webapplication>webpages/History.war</webapplication>
             </siteSection>
@@ -583,7 +587,7 @@
             <!-- Default is 400000000 bytes (~400 Mbytes). -->
             <minSpaceLeft>400000000</minSpaceLeft>
             <oldjobsDir>oldjobs</oldjobsDir>
-            <queuePriority/>
+            <channel/>
             <sendReadyInterval>30</sendReadyInterval>
             <sendReadyDelay>300</sendReadyDelay>
             <continuationFromHeritrixRecoverlogEnabled>false</continuationFromHeritrixRecoverlogEnabled>

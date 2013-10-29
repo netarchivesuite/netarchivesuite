@@ -127,19 +127,19 @@ public class JobDBDAO extends JobDAO {
             connection.setAutoCommit(false);
             statement = connection.prepareStatement(
                     "INSERT INTO jobs "
-                    + "(job_id, harvest_id, status, priority, forcemaxcount, "
+                    + "(job_id, harvest_id, status, channel, forcemaxcount, "
                     + "forcemaxbytes, forcemaxrunningtime, orderxml, "
                     + "orderxmldoc, seedlist, "
                     + "harvest_num, startdate, enddate, submitteddate, creationdate, "
-                    + "num_configs, edition, resubmitted_as_job, harvestname_prefix) "
+                    + "num_configs, edition, resubmitted_as_job, harvestname_prefix, snapshot) "
                     + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
-                    + "?, ?, ?, ?, ? )");
+                    + "?, ?, ?, ?, ?, ?)");
 
 
             statement.setLong(1, job.getJobID());
             statement.setLong(2, job.getOrigHarvestDefinitionID());
             statement.setInt(3, job.getStatus().ordinal());
-            statement.setInt(4, job.getPriority().ordinal());
+            statement.setString(4, job.getChannel());
             statement.setLong(5, job.getForceMaxObjectsPerDomain());
             statement.setLong(6, job.getMaxBytesPerDomain());
             statement.setLong(7, job.getMaxJobRunningTime());
@@ -165,6 +165,7 @@ public class JobDBDAO extends JobDAO {
             statement.setLong(17, initialEdition);
             DBUtils.setLongMaybeNull(statement, 18, job.getResubmittedAsJob());
             statement.setString(19, job.getHarvestFilenamePrefix());
+            statement.setBoolean(20, job.isSnapshot());
             statement.executeUpdate();
             createJobConfigsEntries(connection, job);
             connection.commit();
@@ -324,7 +325,7 @@ public class JobDBDAO extends JobDAO {
             connection.setAutoCommit(false);
             statement = connection.prepareStatement(
                     "UPDATE jobs SET "
-                    + "harvest_id = ?, status = ?, priority = ?, "
+                    + "harvest_id = ?, status = ?, channel = ?, "
                     + "forcemaxcount = ?, forcemaxbytes = ?, "
                     + "forcemaxrunningtime = ?,"
                     + "orderxml = ?, "
@@ -333,12 +334,13 @@ public class JobDBDAO extends JobDAO {
                     + "harvest_error_details = ?, upload_errors = ?, "
                     + "upload_error_details = ?, startdate = ?,"
                     + "enddate = ?, num_configs = ?, edition = ?, "
-                    + "submitteddate = ?, creationdate = ?,"
-                    + "resubmitted_as_job = ?, harvestname_prefix = ?"
+                    + "submitteddate = ?, creationdate = ?, "
+                    + "resubmitted_as_job = ?, harvestname_prefix = ?,"
+                    + "snapshot = ?"
                     + " WHERE job_id = ? AND edition = ?");
             statement.setLong(1, job.getOrigHarvestDefinitionID());
             statement.setInt(2, job.getStatus().ordinal());
-            statement.setInt(3, job.getPriority().ordinal());
+            statement.setString(3, job.getChannel());
             statement.setLong(4, job.getForceMaxObjectsPerDomain());
             statement.setLong(5, job.getMaxBytesPerDomain());
             statement.setLong(6, job.getMaxJobRunningTime());
@@ -375,9 +377,10 @@ public class JobDBDAO extends JobDAO {
             DBUtils.setDateMaybeNull(statement, 19, job.getSubmittedDate());
             DBUtils.setDateMaybeNull(statement, 20, job.getCreationDate());
             DBUtils.setLongMaybeNull(statement, 21, job.getResubmittedAsJob());
-            statement.setString(22, job.getHarvestFilenamePrefix());    
-            statement.setLong(23, job.getJobID());
-            statement.setLong(24, job.getEdition());
+            statement.setString(22, job.getHarvestFilenamePrefix());
+            statement.setBoolean(23, job.isSnapshot());
+            statement.setLong(24, job.getJobID());
+            statement.setLong(25, job.getEdition());
             final int rows = statement.executeUpdate();
             if (rows == 0) {
                 String message = "Edition " + job.getEdition()
@@ -434,21 +437,21 @@ public class JobDBDAO extends JobDAO {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement("SELECT "
-                                   + "harvest_id, status, priority, "
+                                   + "harvest_id, status, channel, "
                                    + "forcemaxcount, forcemaxbytes, "
                                    + "forcemaxrunningtime, orderxml, "
                                    + "orderxmldoc, seedlist, harvest_num,"
                                    + "harvest_errors, harvest_error_details, "
                                    + "upload_errors, upload_error_details, "
                                    + "startdate, enddate, submitteddate, creationdate, "
-                                   + "edition, resubmitted_as_job, continuationof, harvestname_prefix "
+                                   + "edition, resubmitted_as_job, continuationof, harvestname_prefix, snapshot "
                                    + "FROM jobs WHERE job_id = ?");
             statement.setLong(1, jobID);
             ResultSet result = statement.executeQuery();
             result.next();
             long harvestID = result.getLong(1);
             JobStatus status = JobStatus.fromOrdinal(result.getInt(2));
-            JobPriority pri = JobPriority.fromOrdinal(result.getInt(3));
+            String channel = result.getString(3);
             long forceMaxCount = result.getLong(4);
             long forceMaxBytes = result.getLong(5);
             long forceMaxRunningTime = result.getLong(6);
@@ -484,6 +487,7 @@ public class JobDBDAO extends JobDAO {
             Long resubmittedAsJob = DBUtils.getLongMaybeNull(result, 20);
             Long continuationOfJob = DBUtils.getLongMaybeNull(result, 21);
             String harvestnamePrefix = result.getString(22);
+            boolean snapshot = result.getBoolean(23);
             statement.close();
             // IDs should match up in a natural join
             // The following if-block is an attempt to fix Bug 1856, an
@@ -512,7 +516,7 @@ public class JobDBDAO extends JobDAO {
                 configurationMap.put(domainName, configName);
             }
             final Job job = new Job(harvestID, configurationMap,
-                    pri, forceMaxCount, forceMaxBytes, forceMaxRunningTime,
+                    channel, snapshot, forceMaxCount, forceMaxBytes, forceMaxRunningTime,
                     status, orderxml,
                     orderXMLdoc, seedlist, harvestNum, continuationOfJob);
             job.appendHarvestErrors(harvestErrors);
@@ -534,6 +538,7 @@ public class JobDBDAO extends JobDAO {
                 job.setCreationDate(creationDate);
             }
 
+
             job.configsChanged = false;
             job.setJobID(jobID);
             job.setEdition(edition);
@@ -542,10 +547,11 @@ public class JobDBDAO extends JobDAO {
                 job.setResubmittedAsJob(resubmittedAsJob);
             }
             if (harvestnamePrefix != null) {
-                job.setHarvestFilenamePrefix(harvestnamePrefix);
-            } else {
                 job.setDefaultHarvestNamePrefix();
+            } else {
+                job.setHarvestFilenamePrefix(harvestnamePrefix);
             }
+            
             
             return job;
         } catch (SQLException e) {
@@ -636,16 +642,16 @@ public class JobDBDAO extends JobDAO {
    @Override
    public Iterator<Long> getAllJobIds(
            JobStatus status,
-           JobPriority priority) {
+           HarvestChannel channel) {
        ArgumentNotValid.checkNotNull(status, "JobStatus status");
-       ArgumentNotValid.checkNotNull(priority, "JobPriority priority");
+       ArgumentNotValid.checkNotNull(channel, "Channel");
 
        Connection c = HarvestDBConnection.get();
        try {
            List<Long> idList = DBUtils.selectLongList(
                    c,
-                   "SELECT job_id FROM jobs WHERE status = ? AND priority = ? "
-                   + "ORDER BY job_id", status.ordinal(), priority.ordinal());
+                   "SELECT job_id FROM jobs WHERE status = ? AND channel = ? "
+                   + "ORDER BY job_id", status.ordinal(), channel.getName());
            return idList.iterator();
        } finally {
            HarvestDBConnection.release(c);
@@ -989,7 +995,8 @@ public class JobDBDAO extends JobDAO {
             if (currentJobStatus == JobStatus.FAILED) {
                 continuationOf = oldJobID;
             } 
-            DBUtils.setLongMaybeNull(statement, 4, continuationOf); 
+            DBUtils.setLongMaybeNull(statement, 4, continuationOf);
+
             statement.setLong(5, oldJobID);
 
             statement.executeUpdate();
@@ -1022,12 +1029,6 @@ public class JobDBDAO extends JobDAO {
             DBUtils.rollbackIfNeeded(connection, "resubmit job", oldJobID);
             HarvestDBConnection.release(connection);
         }
-        // This is done to make sure that the new job has the correct harvestnamePrefix
-        // This can only be done by instantiating the whole object, and updating it.
-        JobDAO dao = getInstance();
-        Job newJob = dao.read(newJobID);
-        dao.update(newJob);
-        
         log.info("Job # " + oldJobID + " successfully as job # " + newJobID);
         return newJobID;
     }

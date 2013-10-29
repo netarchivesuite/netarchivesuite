@@ -37,8 +37,8 @@ import org.dom4j.Document;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -108,12 +108,13 @@ public class TestInfo {
      */
     static Job getJob() {
         try {
+        	HarvestChannel highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
-                    Job.class, Long.class, Map.class, JobPriority.class, Long.TYPE,
+                    Job.class, Long.class, Map.class, HarvestChannel.class, Long.TYPE,
                     Long.TYPE, Long.TYPE, JobStatus.class, String.class, Document.class,
                     String.class, Integer.TYPE, Long.class);
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 JobPriority.HIGHPRIORITY, -1L, -1L, 0L,
+                                 highChan, -1L, -1L, 0L,
                                  JobStatus.NEW, "default_orderxml",
                                  XmlUtils.getXmlDoc(ORDER_FILE),
                                  "www.netarkivet.dk", 1, null);
@@ -127,13 +128,14 @@ public class TestInfo {
      */
     static Job getJobLowPriority() {
         try {
+        	HarvestChannel lowChan = new HarvestChannel("LOWPRIORITY", "", false, true);
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
-                    Job.class, Long.class, Map.class, JobPriority.class, 
+                    Job.class, Long.class, Map.class, HarvestChannel.class, 
                     Long.TYPE, Long.TYPE, Long.TYPE, 
                     JobStatus.class, String.class, Document.class,
                     String.class, Integer.TYPE, Long.class);
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 JobPriority.LOWPRIORITY, -1L, -1L, 0L,
+                                 lowChan, -1L, -1L, 0L,
                                  JobStatus.NEW, "default_template",
                                  XmlUtils.getXmlDoc(ORDER_FILE),
                                  "www.netarkivet.dk", 1, null);

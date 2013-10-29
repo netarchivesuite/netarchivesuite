@@ -24,6 +24,21 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.LogManager;
+
+import javax.jms.JMSException;
+import javax.jms.ObjectMessage;
+
+import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -40,8 +55,8 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
@@ -51,7 +66,6 @@ import dk.netarkivet.harvester.harvesting.JobInfo;
 import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
-
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
@@ -61,20 +75,6 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
-
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.LogManager;
 
 /**
  * Test HarvestControllerServer.
@@ -124,8 +124,7 @@ public class HarvestControllerServerTester extends TestCase {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR,
                      TestInfo.WORKING_DIR.getAbsolutePath() + "/oldjobs");
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY,
-                JobPriority.HIGHPRIORITY.toString());
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, "HIGHPRIORITY");
         Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
                 "dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient");
     }
@@ -186,9 +185,9 @@ public class HarvestControllerServerTester extends TestCase {
         } catch (Exception e) {
             //expected
         }
-        JobPriority priority = JobPriority.valueOf(
-                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
-        ChannelID channel = JobChannelUtil.getChannel(priority);
+        String channelName = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
+        ChannelID channel = Channels.getHarvestJobChannelId(
+        		HarvestChannelDAO.getInstance().getByName(channelName));
         assertEquals("Should have no listeners to the HACO queue",
                      0, ((JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance()).getListeners(channel).size());
@@ -295,10 +294,10 @@ public class HarvestControllerServerTester extends TestCase {
         theJob = TestInfo.getJob();
         theJob.setStatus(JobStatus.DONE);
         theJob.setJobID(Long.valueOf(42L));
-        JobPriority priority = JobPriority.valueOf(
-                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
+        String channel = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
         NetarkivetMessage naMsg = new DoOneCrawlMessage(
-                theJob, JobChannelUtil.getChannel(priority),
+                theJob, 
+                Channels.getHarvestJobChannelId(HarvestChannelDAO.getInstance().getByName(channel)),
                 new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
         JMSConnectionMockupMQ.updateMsgID(naMsg, "id1");

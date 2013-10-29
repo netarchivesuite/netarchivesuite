@@ -27,7 +27,6 @@ package dk.netarkivet.harvester.harvesting.distribute;
 import java.io.Serializable;
 
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
@@ -42,9 +41,9 @@ extends HarvesterMessage
 implements Serializable {
 
     /**
-     * The priority of jobs crawled by the sender.
+     * The name of the channel of jobs crawled by the sender.
      */
-    private final JobPriority jobProprity;
+    private final String harvestChannelName;
 
     /**
      * The sender's application instance ID.
@@ -54,30 +53,27 @@ implements Serializable {
 
     /**
      * Builds a new message.
-     * @param jobPriority the priority of jobs crawled by the sender.
+     * @param harvestChannelName the channel of jobs crawled by the sender.
      * @param applicationInstanceId the sender's application instance ID.
      */
     public HarvesterReadyMessage(
             String applicationInstanceId,
-            JobPriority jobPriority) {
+            String harvestChannelName) {
         super(Channels.getHarvesterStatusChannel(), Channels.getError());
         this.applicationInstanceId = applicationInstanceId;
-        this.jobProprity = jobPriority;
+        this.harvestChannelName = harvestChannelName;
     }
 
     @Override
     public void accept(HarvesterMessageVisitor v) {
         v.visit(this);
     }
+    
+    public String getHarvestChannelName() {
+		return harvestChannelName;
+	}
 
-    /**
-     * @return the priority of jobs crawled by the sender.
-     */
-    public JobPriority getJobProprity() {
-        return jobProprity;
-    }
-
-    /**
+	/**
      * @return the application instance ID.
      */
     public String getApplicationInstanceId() {

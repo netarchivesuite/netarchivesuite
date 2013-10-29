@@ -71,7 +71,6 @@ public class HarvesterDataModelTesterSuite {
         suite.addTestSuite(JobDAOTester.class);
         suite.addTestSuite(JobStatusTester.class);
         suite.addTestSuite(JobTester.class);
-        suite.addTestSuite(JobPriorityTester.class);
         suite.addTestSuite(MonthlyFrequencyTester.class);
         suite.addTestSuite(MySQLSpecificsTester.class);
         suite.addTestSuite(NumberUtilsTester.class);

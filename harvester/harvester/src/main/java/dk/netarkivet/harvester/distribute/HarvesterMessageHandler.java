@@ -39,6 +39,8 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
+import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest;
+import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
@@ -195,6 +197,27 @@ public abstract class HarvesterMessageHandler
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
-    
+
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg a {@link HarvestChannelValidityRequest}
+     */
+	@Override
+	public void visit(HarvestChannelValidityRequest msg) {
+		ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);		
+	}
+	
+	/**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg a {@link HarvestChannelValidityResponse}
+     */
+	@Override
+	public void visit(HarvestChannelValidityResponse msg) {
+		ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);		
+	}
     
 }

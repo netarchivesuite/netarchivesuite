@@ -100,7 +100,7 @@ public class PersistentJobDataTester extends TestCase {
         assertEquals("retrieved jobID is not the same as original jobID",
                 testJob.getJobID(), pjdNew.getJobID());
         assertEquals("retrieved jobpriority is not the same as original job priority",
-                testJob.getPriority(), pjdNew.getJobPriority());
+                testJob.getChannel(), pjdNew.getChannel());
         assertEquals("retrived maxBytesPerDomain is not the same as original job maxBytesPerDomain",
                 testJob.getMaxBytesPerDomain(), pjdNew.getMaxBytesPerDomain());
         assertEquals("retrived maxObjectsPerDomain is not the same as original job maxObjectsPerDomain",

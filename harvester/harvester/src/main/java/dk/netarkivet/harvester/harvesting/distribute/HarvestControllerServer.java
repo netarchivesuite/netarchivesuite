@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.ChannelID;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -53,7 +54,6 @@ import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy;
@@ -147,12 +147,16 @@ implements CleanupIF {
             "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
 
     /**
-     * The priority of jobs processed by this instance.
+     * The CHANNEL of jobs processed by this instance.
      */
-    private static final JobPriority JOB_PRIORITY =
-            JobPriority.valueOf(
-                    Settings.get(
-                            HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
+    private static final String CHANNEL = 
+    		Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
+
+    /**
+     * The JMS channel on which to listen for {@link HarvestChannelValidityResponse}s.
+     */
+    public static final ChannelID HARVEST_CHAN_VALID_RESP_ID =
+    		Channels.getHarvestChannelValidityResponseChannel();
 
     /** The JMSConnection to use. */
     private JMSConnection jmsConnection;
@@ -163,7 +167,7 @@ implements CleanupIF {
     private final HarvestController controller;
 
     /** Jobs are fetched from this queue. */ 
-    private final ChannelID jobChannel;
+    private ChannelID jobChannel;
 
     /** Min. space required to start a job. */
     private final long minSpaceRequired;
@@ -191,6 +195,8 @@ implements CleanupIF {
      */
     private HarvestControllerServer() throws IOFailure {
         log.info(STARTING_MESSAGE);
+ 
+        log.info("Bound to harvest channel '" + CHANNEL + "'");
 
         // Make sure serverdir (where active crawl-dirs live) and oldJobsDir
         // (where old crawl dirs are stored) exist.
@@ -234,6 +240,10 @@ implements CleanupIF {
         // client.
         // Channel ANY_xxxPRIORIRY_HACO is used for listening for jobs, and
         // registered below.
+        
+        // Register for listening to harvest channel validity responses
+        JMSConnectionFactory.getInstance().setListener(HARVEST_CHAN_VALID_RESP_ID, this);
+        
         jmsConnection = JMSConnectionFactory.getInstance();
         log.debug("Obtained JMS connection.");
 
@@ -242,14 +252,10 @@ implements CleanupIF {
         // If any unprocessed jobs are left on the server, process them now
         processOldJobs();
 
-        // Environment and connections are now ready for processing of messages
-        jobChannel = JobChannelUtil.getChannel(JOB_PRIORITY);
-        // Only listen for harvester jobs if enough available space
-        beginListeningIfSpaceAvailable();
-
-        // Notify the harvest dispatcher that we are ready
-        startAcceptingJobs();
-        status.startSending();
+        // Ask if the channel this harvester is assigned to is valid
+        jmsConnection.send(new HarvestChannelValidityRequest(HarvestControllerServer.CHANNEL));
+        log.info("Requested to check the validity of harvest channel '" 
+        		+ HarvestControllerServer.CHANNEL + "'");
     }
 
     /**
@@ -290,7 +296,10 @@ implements CleanupIF {
             controller.cleanup();
         }
         if (jmsConnection != null) {
-            jmsConnection.removeListener(jobChannel, this);
+            jmsConnection.removeListener(HARVEST_CHAN_VALID_RESP_ID, this);
+            if (jobChannel != null) {
+            	jmsConnection.removeListener(jobChannel, this);
+            }
         }
 
         // Stop the sending of status messages
@@ -487,7 +496,7 @@ implements CleanupIF {
      *
      */
     private void removeListener() {
-        log.debug("Removing listener on channel '" + jobChannel + "'");
+        log.debug("Removing listener on CHANNEL '" + jobChannel + "'");
         jmsConnection.removeListener(jobChannel, this);
     }
 
@@ -562,8 +571,36 @@ implements CleanupIF {
         onDoOneCrawl(msg);
     }
 
+	@Override
+	public void visit(HarvestChannelValidityResponse msg) {
+		
+		String channelName = msg.getHarvestChannelName();
+		if (!CHANNEL.equals(channelName)) {
+			// This message is not intended for us, send it back to the channel
+			jmsConnection.resend(msg, msg.getTo());
+			return;
+		}
+		
+		if (!msg.isValid()) {
+			log.error("Received message stating that channel '" + channelName 
+					+ "' is invalid. Will stop.");
+			close();
+			return;
+		}
+		
+		log.info("Received message stating that channel '" + channelName + "' is valid.");
+		// Environment and connections are now ready for processing of messages        
+        jobChannel = Channels.getHarvestJobChannelId(channelName, msg.isSnapshot());
+        
+        // Only listen for harvester jobs if enough available space
+        beginListeningIfSpaceAvailable();
 
-    /**
+        // Notify the harvest dispatcher that we are ready
+        startAcceptingJobs();
+        status.startSending();
+	}
+
+	/**
      * Processes an existing harvestInfoFile:</br>
      * 1. Retrieve jobID, and crawlDir from the harvestInfoFile
      *      using class PersistentJobData</br>
@@ -859,7 +896,7 @@ implements CleanupIF {
             if (!running) {
             jmsConnection.send(new HarvesterReadyMessage(
                     applicationInstanceId + " on " + physicalServerName,
-                    HarvestControllerServer.JOB_PRIORITY));
+                    HarvestControllerServer.CHANNEL));
             }
         }            
     }

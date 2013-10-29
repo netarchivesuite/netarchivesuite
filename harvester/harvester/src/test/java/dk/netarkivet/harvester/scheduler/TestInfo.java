@@ -36,8 +36,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.testutils.ReflectUtils;
 
@@ -83,6 +83,7 @@ public class TestInfo {
             throw new IOFailure(e.getMessage());
         }
         return Job.createJob(0L,
+        		new HarvestChannel("test", "", false, true),
                 DomainDAO.getInstance()
                 .read("netarkivet.dk")
                 .getConfiguration("Engelsk_netarkiv_et_niveau"), 0);
@@ -94,12 +95,13 @@ public class TestInfo {
      */
     static Job getJobLowPriority() {
         try {
+        	HarvestChannel lowChan = new HarvestChannel("LOWPRIORITY", "", true, true);
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
-                    Job.class, Long.class, Map.class, JobPriority.class, Long.TYPE,
+                    Job.class, Long.class, Map.class, HarvestChannel.class, Long.TYPE,
                     Long.TYPE, Long.TYPE, JobStatus.class, String.class, 
                     Document.class, String.class, Integer.TYPE, Long.class);
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 JobPriority.LOWPRIORITY, -1L, -1L, 0L,
+                                 lowChan, -1L, -1L, 0L,
                                  JobStatus.NEW, "default_template",
                                  XmlUtils.getXmlDoc(ORDER_FILE),
                                  "www.netarkivet.dk", 1, null);

@@ -296,7 +296,7 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <queuePriority>LOWPRIORITY</queuePriority> <!-- on http port-->
+                            <channel>LOWPRIORITY</channel> <!-- on http port-->
                             <heritrix>
                                 <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
@@ -328,7 +328,7 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <queuePriority>LOWPRIORITY</queuePriority>
+                            <channel>LOWPRIORITY</channel>
                             <heritrix>
                                 <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
@@ -353,7 +353,7 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <queuePriority>HIGHPRIORITY</queuePriority> 
+                            <channel>HIGHPRIORITY</channel> 
                             <heritrix>
                                 <guiPort>8113</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8093) -->
@@ -462,7 +462,7 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <queuePriority>HIGHPRIORITY</queuePriority>
+                            <channel>HIGHPRIORITY</channel>
                             <heritrix>
                                 <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->

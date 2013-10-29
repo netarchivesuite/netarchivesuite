@@ -73,6 +73,11 @@ public abstract class HarvestDefinition implements Named {
     protected int numEvents;
 
     /**
+     * The id of the associated harvest channel, or null if the default one is to be used. 
+     */
+    protected Long channelId;
+    
+    /**
      * Create new instance of a PartialHavest configured according
      * to the properties of the supplied DomainConfiguration.
      *
@@ -353,5 +358,13 @@ public abstract class HarvestDefinition implements Named {
     public void setAudience(String audience) {
         this.audience = audience;
     }
+
+	protected Long getChannelId() {
+		return channelId;
+	}
+
+	protected void setChannelId(Long channelId) {
+		this.channelId = channelId;
+	}
     
 }

@@ -70,7 +70,7 @@
         <!-- harvester.harvesting.serverDir is set below -->            
     <harvester>
                         <harvesting>
-                            <queuePriority>HIGHPRIORITY</queuePriority>
+                            <channel>HIGHPRIORITY</channel>
                             <heritrix>
                                 <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->

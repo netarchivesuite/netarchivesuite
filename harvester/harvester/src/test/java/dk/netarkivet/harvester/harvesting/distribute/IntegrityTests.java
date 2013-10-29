@@ -174,7 +174,8 @@ public class IntegrityTests extends DataModelTestCase {
     //8) Waits for message on the sched, indicating doOneCrawl ended
     //9) Checks that we listen for jobs again
     public void testListenersAddedAndRemoved() throws IOException {
-        ChannelID hacoQueue = Channels.getAnyHighpriorityHaco();
+        ChannelID hacoQueue = Channels.getHarvestJobChannelId(
+        		new HarvestChannel("test", "", false, true));
 
         //Listener that waits for a message, notifies us, and then waits for
         //notification before continuing.
@@ -220,7 +221,9 @@ public class IntegrityTests extends DataModelTestCase {
         // to be uploaded.
         synchronized(listenerDummy) {
             //Send the job
-            jobDispatcher.doOneCrawl(j, "test", "test", "test", "unittesters",
+            jobDispatcher.doOneCrawl(j, "test", "test", "test",
+            		new HarvestChannel("test", "", false, true),
+            		"unittesters",
                     new ArrayList<MetadataEntry>());
 
             //wait until we know files are uploaded
@@ -334,7 +337,8 @@ public class IntegrityTests extends DataModelTestCase {
         //Submit the job
         //TODO ensure, that we have some alias-metadata to produce here
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
-        jobDispatcher.doOneCrawl(j, "test", "test", "test", "unittesters", metadata);
+        jobDispatcher.doOneCrawl(j, "test", "test", "test", 
+        		new HarvestChannel("test", "", false, true), "unittesters", metadata);
         //Note: Since this returns, we need to wait for replymessage
         synchronized(listener) {
             while (listener.messages.size() < 2) {

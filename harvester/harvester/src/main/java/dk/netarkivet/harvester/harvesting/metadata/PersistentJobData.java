@@ -39,7 +39,6 @@ import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.harvesting.JobInfo;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.XmlState.OKSTATE;
 
@@ -137,8 +136,11 @@ public class PersistentJobData implements JobInfo {
     /** Key in harvestinfo file for the harvestID of the job. */
     private static final String ORIGHARVESTDEFINITIONID_KEY = ROOT_ELEMENT
                         + ".origHarvestDefinitionID";
-    /** Key in harvestinfo file for the priority of the job. */
-    private static final String PRIORITY_KEY = ROOT_ELEMENT + ".priority";
+    /** Key in harvestinfo file for the harvest channel of the job. */
+    private static final String CHANNEL_KEY = ROOT_ELEMENT + ".channel";
+    
+    /** Key in harvestinfo file for job type (snapshot or partial). */
+    private static final String SNAPSHOT_KEY = ROOT_ELEMENT + ".snapshot";
 
     /** Key in harvestinfo file for the original harvest definition name. */
     private static final String HARVEST_NAME_KEY =
@@ -181,7 +183,7 @@ public class PersistentJobData implements JobInfo {
     private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
-        ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
+        ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY, HARVESTVERSION_KEY,
         HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
     
    /**
@@ -195,7 +197,7 @@ public class PersistentJobData implements JobInfo {
     private static final String[] ALL_KEYS_OLD = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
-        ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTVERSION_KEY,
+        ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY, HARVESTVERSION_KEY,
         HARVEST_NAME_KEY};
         
     /** The logger to use. */
@@ -291,7 +293,8 @@ public class PersistentJobData implements JobInfo {
         SimpleXml sx = new SimpleXml(ROOT_ELEMENT);
         sx.add(HARVESTVERSION_KEY, HARVESTVERSION_NUMBER);
         sx.add(JOBID_KEY, harvestJob.getJobID().toString());
-        sx.add(PRIORITY_KEY, harvestJob.getPriority().toString());
+        sx.add(CHANNEL_KEY, harvestJob.getChannel());
+        sx.add(SNAPSHOT_KEY, Boolean.toString(harvestJob.isSnapshot()));
         sx.add(HARVESTNUM_KEY,
                 Integer.toString(harvestJob.getHarvestNum()));
         sx.add(ORIGHARVESTDEFINITIONID_KEY,
@@ -388,7 +391,7 @@ public class PersistentJobData implements JobInfo {
         }
 
         // Verify, that the job priority element is not the empty String
-        if (sx.getString(PRIORITY_KEY).isEmpty()) {
+        if (sx.getString(CHANNEL_KEY).isEmpty()) {
             final String errMsg = "The priority of the job is undefined";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
@@ -473,13 +476,23 @@ public class PersistentJobData implements JobInfo {
     }
 
     /**
-     * Return the job priority.
-     * @return the job priority
+     * Return the job's harvest channel name.
+     * @return the job's harvest channel name
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
-    public JobPriority getJobPriority() {
+    public String getChannel() {
         SimpleXml sx = read(); // reads and validates XML
-        return JobPriority.valueOf(sx.getString(PRIORITY_KEY));
+        return sx.getString(CHANNEL_KEY);
+    }
+    
+    /**
+     * Return whether the job belongs to a snapshot harvest.
+     * @return true if the job belongs to a snapshot harvest, false if it belongs to a partial one.
+     * @throws IOFailure if no harvestInfo exists or it is invalid.
+     */
+    public boolean isSnapshot() {
+        SimpleXml sx = read(); // reads and validates XML
+        return Boolean.parseBoolean(sx.getString(SNAPSHOT_KEY));
     }
 
     /**

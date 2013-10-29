@@ -967,7 +967,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 + "       harvestdefinitions.edition,"
                 + "       schedules.name,"
                 + "       partialharvests.nextdate, "
-                + "       harvestdefinitions.audience "
+                + "       harvestdefinitions.audience, "
+                + "       harvestdefinitions.channel_id "
                 + "FROM harvestdefinitions, partialharvests, schedules"
                 + " WHERE harvestdefinitions.harvest_id "
                 + "       = partialharvests.harvest_id"
@@ -988,7 +989,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         res.getLong(1), res.getString(2), res.getString(3),
                         res.getInt(4), new Date(res.getTimestamp(5).getTime()),
                         res.getBoolean(6), res.getLong(7), res.getString(8),
-                        DBUtils.getDateMaybeNull(res, 9), res.getString(10));
+                        DBUtils.getDateMaybeNull(res, 9), res.getString(10), 
+                        DBUtils.getLongMaybeNull(res, 11));
                 harvests.add(sph);
             }
             return harvests;
@@ -1024,7 +1026,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "       harvestdefinitions.edition,"
                     + "       schedules.name,"
                     + "       partialharvests.nextdate, "
-                    + "       harvestdefinitions.audience "
+                    + "       harvestdefinitions.audience, "
+                    + "       harvestdefinitions.channel_id "
                     + "FROM harvestdefinitions, partialharvests, schedules"
                     + " WHERE harvestdefinitions.name = ?"
                     + "   AND harvestdefinitions.harvest_id "
@@ -1039,7 +1042,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                                 .getTimestamp(4).getTime()), res.getBoolean(5),
                         res.getLong(6), res.getString(7),
                         DBUtils.getDateMaybeNull(res, 8),
-                        res.getString(9));
+                        res.getString(9),
+                        DBUtils.getLongMaybeNull(res, 10));
             } else {
                 return null;
             }
@@ -1066,11 +1070,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "       harvestdefinitions.comments,"
                     + "       harvestdefinitions.numevents,"
                     + "       harvestdefinitions.isactive,"
-                    + "       harvestdefinitions.edition,"
+                    + "       harvestdefinitions.edition,"                    
                     + "       fullharvests.maxobjects,"
                     + "       fullharvests.maxbytes,"
                     + "       fullharvests.maxjobrunningtime,"
-                    + "       fullharvests.previoushd "
+                    + "       fullharvests.previoushd, "
+                    + "       harvestdefinitions.channel_id "
                     + "FROM harvestdefinitions, fullharvests"
                     + " WHERE harvestdefinitions.harvest_id "
                     + "       = fullharvests.harvest_id");
@@ -1082,7 +1087,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         res.getString(2), res.getString(3), res.getInt(4),
                         res.getBoolean(5), res.getLong(6), res.getLong(7),
                         res.getLong(8), res.getLong(9),
-                        DBUtils.getLongMaybeNull(res, 10));
+                        DBUtils.getLongMaybeNull(res, 10),
+                        DBUtils.getLongMaybeNull(res, 11));
                 harvests.add(sfh);
             }
             return harvests;
@@ -1210,7 +1216,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "       fullharvests.maxobjects,"
                     + "       fullharvests.maxbytes,"
                     + "       fullharvests.maxjobrunningtime,"
-                    + "       fullharvests.previoushd "
+                    + "       fullharvests.previoushd, "
+                    + "       harvestdefinitions.channel_id "
                     + "FROM harvestdefinitions, fullharvests"
                     + " WHERE harvestdefinitions.name = ?"
                     + "   AND harvestdefinitions.harvest_id "
@@ -1221,7 +1228,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 return new SparseFullHarvest(res.getLong(1), harvestName,
                         res.getString(2), res.getInt(3), res.getBoolean(4),
                         res.getLong(5), res.getLong(6), res.getLong(7),
-                        res.getLong(8), DBUtils.getLongMaybeNull(res, 9));
+                        res.getLong(8), DBUtils.getLongMaybeNull(res, 9),
+                        DBUtils.getLongMaybeNull(res, 10));
             } else {
                 return null;
             }
@@ -1577,4 +1585,31 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             HarvestDBConnection.release(connection);
         }
     }
+
+	@Override
+	public void mapToHarvestChannel(
+			long harvestDefinitionId,
+			HarvestChannel channel) {
+		ArgumentNotValid.checkNotNull(channel, "HarvestChannel channel");
+
+        Connection connection = HarvestDBConnection.get();
+        PreparedStatement s = null;
+        try {
+            s = connection.prepareStatement("UPDATE harvestdefinitions "
+                    + "SET channel_id=? WHERE harvest_id=?");
+            s.setLong(1, channel.getId());
+            s.setLong(2, harvestDefinitionId);
+            if (s.executeUpdate() != 1) {
+            	throw new IOFailure("Could not map harvest channel " + channel.getId()
+            			+ " to harvest definition " + harvestDefinitionId);
+            }
+            s.close();            
+        } catch (SQLException e) {
+            log.warn("Exception thrown while mapping to harvest channel: "
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            HarvestDBConnection.release(connection);
+        }
+		
+	}
 }

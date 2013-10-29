@@ -52,7 +52,7 @@ public class SingleMBeanObjectTester extends TestCase {
                     + Constants.PRIORITY_KEY_HTTP_PORT + "=1234,"
                     + Constants.PRIORITY_KEY_APPLICATIONNAME + "=TestApp1,"
                     + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "=XX,"
-                    + Constants.PRIORITY_KEY_PRIORITY + "=high,"
+                    + Constants.PRIORITY_KEY_CHANNEL + "=high,"
                     + Constants.PRIORITY_KEY_REPLICANAME + "=" + "BarOne");
         } catch (MalformedObjectNameException e) {
             System.out.println(e);

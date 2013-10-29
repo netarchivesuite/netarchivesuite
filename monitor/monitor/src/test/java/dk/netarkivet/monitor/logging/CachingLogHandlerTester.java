@@ -72,7 +72,7 @@ public class CachingLogHandlerTester extends TestCase {
         Settings.set(CommonSettings.APPLICATION_NAME, "TestApp1");
         Settings.set(MonitorSettings.LOGGING_HISTORY_SIZE, Integer.toString(LOG_HISTORY_SIZE));
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "8076");
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "HIGHPRIORITY");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, "HIGHPRIORITY");
         Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
     }
 
@@ -368,7 +368,7 @@ public class CachingLogHandlerTester extends TestCase {
                               + Constants.PRIORITY_KEY_HTTP_PORT + "="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
                               + "," + Constants.PRIORITY_KEY_REPLICANAME + "=BarOne,"
-                              + Constants.PRIORITY_KEY_PRIORITY + "=HIGHPRIORITY"
+                              + Constants.PRIORITY_KEY_CHANNEL + "=HIGHPRIORITY"
                               + "," + Constants.PRIORITY_KEY_APPLICATIONNAME + "="
                               + Settings.get(CommonSettings.APPLICATION_NAME)
                               + "," + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "="

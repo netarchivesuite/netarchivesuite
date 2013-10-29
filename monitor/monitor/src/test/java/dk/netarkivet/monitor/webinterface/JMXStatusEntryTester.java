@@ -43,7 +43,7 @@ public class JMXStatusEntryTester extends TestCase {
         properties.put(JMXSummaryUtils.JMXApplicationNameProperty, "SH");
         properties.put(JMXSummaryUtils.JMXApplicationInstIdProperty, "XX");
         properties.put(JMXSummaryUtils.JMXHttpportProperty, "8081");
-        properties.put(JMXSummaryUtils.JMXHarvestPriorityProperty, "HIGHPRIORITY");
+        properties.put(JMXSummaryUtils.JMXHarvestChannelProperty, "HIGHPRIORITY");
         properties.put(JMXSummaryUtils.JMXArchiveReplicaNameProperty, "ReplicaOne");
         properties.put(JMXSummaryUtils.JMXIndexProperty, "1");
     }

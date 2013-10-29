@@ -30,6 +30,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -145,9 +146,11 @@ public class ChannelsTester extends TestCase {
      */
     public void testIsTopic() {
         ChannelID[]queues = new ChannelID[]{
-                Channels.getAnyHighpriorityHaco(),
+                Channels.getHarvestJobChannelId(
+                		new HarvestChannel("HIGHPRIORITY", "", false, true)),
                 Channels.getAnyBa(),
-                Channels.getAnyLowpriorityHaco(),
+                Channels.getHarvestJobChannelId(
+                		new HarvestChannel("LOWPRIORITY", "", true, true)),
                 Channels.getTheRepos(),
                 Channels.getTheIndexServer(),
                 Channels.getError(),

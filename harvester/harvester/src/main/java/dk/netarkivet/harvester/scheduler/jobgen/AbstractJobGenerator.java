@@ -41,6 +41,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -59,7 +61,7 @@ import dk.netarkivet.harvester.datamodel.Schedule;
 abstract class AbstractJobGenerator implements JobGenerator {
 
     /** Logger for this class. */
-    private Log log = LogFactory.getLog(getClass());
+    private static Log log = LogFactory.getLog(AbstractJobGenerator.class);
 
     /**
      * How many domain configurations to process in one go.
@@ -69,7 +71,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
 
     /** Is deduplication enabled or disabled. **/
     private final boolean DEDUPLICATION_ENABLED =
-        Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
+        Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);  
 
     @Override
     public int generateJobs(HarvestDefinition harvest) {
@@ -141,16 +143,24 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * @return an instance of {@link Job}
      */
     public static Job getNewJob(HarvestDefinition harvest, DomainConfiguration cfg) {
+    	HarvestChannelDAO harvestChannelDao = HarvestChannelDAO.getInstance();
+    	HarvestChannel channel = harvestChannelDao.getChannelForHarvestDefinition(harvest.getOid());
+    	if (channel == null) {
+    		log.info("No channel mapping registered for harvest id " + harvest.getOid()
+    				+ ", will use default.");
+    		channel = harvestChannelDao.getDefaultChannel(harvest.isSnapShot());
+    	}
         if (harvest.isSnapShot()) {
-            return Job.createSnapShotJob(
+        	return Job.createSnapShotJob(
                     harvest.getOid(),
+                    channel,
                     cfg,
                     harvest.getMaxCountObjects(),
                     harvest.getMaxBytes(),
                     ((FullHarvest) harvest).getMaxJobRunningTime(),
                     harvest.getNumEvents());
         }
-        return Job.createJob(harvest.getOid(), cfg, harvest.getNumEvents());
+        return Job.createJob(harvest.getOid(), channel, cfg, harvest.getNumEvents());
     }
 
     /**

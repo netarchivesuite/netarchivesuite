@@ -100,9 +100,14 @@ public class Job implements Serializable, JobInfo {
      */
     private JobStatus status;
     /**
-     * The priority of this job.
+     * The name of the {@link HarvestChannel} on which this job will be posted.
      */
-    private JobPriority priority;
+    private String channel;
+    
+    /**
+     * Whether the job belongs to a snpshot or partial harvest.
+     */
+    private boolean isSnapshot; 
     /**
      * Overrides the individual configurations maximum setting for objects
      * retrieved from a domain when set to a positive value.
@@ -246,7 +251,7 @@ public class Job implements Serializable, JobInfo {
      *
      * @param harvestID                the id of the harvestdefinition
      * @param cfg                      the configuration to base the Job on
-     * @param priority                 the priority of the job
+     * @param channel                  the channel on which the job will be submitted.
      * @param forceMaxObjectsPerDomain the maximum number of objects harvested
      *                                 from a domain, overrides individual
      *                                 configuration settings. 
@@ -260,14 +265,15 @@ public class Job implements Serializable, JobInfo {
      *                          invalid, or if any limit < -1
      * @throws UnknownID        If the priority is invalid.
      */
-    Job(Long harvestID, DomainConfiguration cfg, JobPriority priority,
+    Job(Long harvestID, DomainConfiguration cfg, 
+    	HarvestChannel channel,
         long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
         long forceMaxJobRunningTime,
         int harvestNum) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
         ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
-        ArgumentNotValid.checkNotNull(priority, "priority");
+        ArgumentNotValid.checkNotNull(channel, "channel");
 
         if (forceMaxObjectsPerDomain < -1) {
             String msg
@@ -300,7 +306,8 @@ public class Job implements Serializable, JobInfo {
         orderXMLdoc = TemplateDAO.getInstance().read(
                 cfg.getOrderXmlName()).getTemplate();
 
-        this.priority = priority;
+        this.channel = channel.getName();
+        this.isSnapshot = channel.isSnapShot();
 
         long maxObjects = NumberUtils.minInf(
                 forceMaxObjectsPerDomain, cfg.getMaxObjects());        
@@ -348,7 +355,8 @@ public class Job implements Serializable, JobInfo {
      *
      * @param harvestID                the id of the harvestdefinition
      * @param configurations           the configurations to base the Job on
-     * @param priority                 the priority of the job
+     * @param channel                  the name of the channel on which the job will be submitted.
+     * @param snapshot                 whether the job belongs to a snapshot harvest
      * @param forceMaxObjectsPerDomain the maximum number of objects harvested
      *                                 from a domain, overrides individual
      *                                 configuration settings. 0 means no limit.
@@ -363,7 +371,8 @@ public class Job implements Serializable, JobInfo {
      * @param harvestNum               the run number of the harvest definition
      */
     Job(Long harvestID, Map<String, String> configurations,
-            JobPriority priority,
+            String channel,
+            boolean snapshot,
             long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
             long forceMaxJobRunningTime,
             JobStatus status,
@@ -372,8 +381,8 @@ public class Job implements Serializable, JobInfo {
             Long continuationOf) {
         origHarvestDefinitionID = harvestID;
         domainConfigurationMap = configurations;
-        this.priority = priority;
-
+        this.channel = channel;
+        this.isSnapshot = snapshot;
         this.forceMaxBytesPerDomain = forceMaxBytesPerDomain;
         this.forceMaxObjectsPerDomain = forceMaxObjectsPerDomain;
         this.forceMaxRunningTime = forceMaxJobRunningTime;
@@ -391,15 +400,19 @@ public class Job implements Serializable, JobInfo {
      * properties of the supplied DomainConfiguration.
      *
      * @param harvestID the id of the harvestdefinition
+     * @param channel the {@link HarvestChannel}
      * @param cfg       the configuration to base the Job on
      * @param harvestNum Which run of the harvest definition this is.
      * @return newly created Job.
      * @throws ArgumentNotValid if cfg is null or harvestID is invalid
      */
-    public static Job createJob(Long harvestID, DomainConfiguration cfg,
+    public static Job createJob(
+    		Long harvestID,
+    		HarvestChannel channel,
+    		DomainConfiguration cfg,
             int harvestNum) {
         // Use -1 to indicate no limits for max objects and max bytes.
-        return new Job(harvestID, cfg, JobPriority.HIGHPRIORITY,
+        return new Job(harvestID, cfg, channel,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY,
                 Constants.HERITRIX_MAXBYTES_INFINITY, 
                 Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, harvestNum);
@@ -414,6 +427,7 @@ public class Job implements Serializable, JobInfo {
      * configuration settings, that are overridden.
      *
      * @param harvestID           the id of the harvestdefinition
+     * @param channel             the channel for the job
      * @param cfg                 the configuration to base the Job on
      * @param maxObjectsPerDomain the maximum number of objects to harvest from
      *                            a domain, overrides individual configuration
@@ -430,12 +444,15 @@ public class Job implements Serializable, JobInfo {
      * @return SnapShotJob
      * @throws ArgumentNotValid if cfg is null or harvestID is invalid
      */
-    public static Job createSnapShotJob(Long harvestID, DomainConfiguration cfg,
-                                        long maxObjectsPerDomain,
-                                        long maxBytesPerDomain, 
-                                        long maxJobRunningTime, int harvestNum)
-            throws ArgumentNotValid {
-        return new Job(harvestID, cfg, JobPriority.LOWPRIORITY,
+    public static Job createSnapShotJob(
+    		Long harvestID,
+    		HarvestChannel channel,
+    		DomainConfiguration cfg,
+    		long maxObjectsPerDomain,
+    		long maxBytesPerDomain, 
+    		long maxJobRunningTime, int harvestNum)
+    				throws ArgumentNotValid {
+        return new Job(harvestID, cfg, channel,
                 maxObjectsPerDomain, maxBytesPerDomain, 
                 maxJobRunningTime, harvestNum);
     }
@@ -911,6 +928,38 @@ public class Job implements Serializable, JobInfo {
     }
     
     /**
+     * Returns the associated {@link HarvestChannel} name.
+     */
+    public String getChannel() {
+		return channel;
+	}
+
+    /**
+     * Sets the associated {@link HarvestChannel} name.
+     * @param channel the channel name
+     */
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
+	/**
+	 * Returns true if the job belongs to a snapshot harvest,
+	 * false if it belongs to a focused harvest.
+	 */
+	public boolean isSnapshot() {
+		return isSnapshot;
+	}
+
+	/**
+	 * Sets whether job belongs to a snapshot or focused harvest.
+	 * @param isSnapshot true if the job belongs to a snapshot harvest,
+	 * false if it belongs to a focused harvest.
+	 */
+	public void setSnapshot(boolean isSnapshot) {
+		this.isSnapshot = isSnapshot;
+	}
+
+	/**
      * toString method for the Job class.
      * @see Object#toString()
      * @return a human readable string representing this object.
@@ -920,7 +969,8 @@ public class Job implements Serializable, JobInfo {
             "Job " + getJobID()
             + " (state = " + getStatus()
             + ", HD = " + getOrigHarvestDefinitionID()
-            + ", priority = " + getPriority()
+            + ", channel = " + getChannel()
+            + ", snapshot = " + isSnapshot()
             + ", forcemaxcount = " + getForceMaxObjectsPerDomain()
             + ", forcemaxbytes = " + getMaxBytesPerDomain()
             + ", forcemaxrunningtime = " + forceMaxRunningTime
@@ -1006,16 +1056,6 @@ public class Job implements Serializable, JobInfo {
         return forceMaxRunningTime;
     }
   
-    /**
-     * Get the priority of this job.
-     *
-     * @return The priority. The return values can only be one of
-     *         the priorities defined above: LOWPRIORITY and HIGHPRIORITY
-     */
-    public JobPriority getPriority() {
-        return priority;
-    }
-
     /**
      * Invoke default method for deserializing object, and reinitialise the
      * logger.

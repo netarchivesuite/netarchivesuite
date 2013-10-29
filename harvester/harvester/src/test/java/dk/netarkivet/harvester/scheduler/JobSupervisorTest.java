@@ -99,8 +99,9 @@ public class JobSupervisorTest extends TestCase  {
                 .getInstance().exists(harvestID));
         // Create 6 jobs - with start time minus 60*60*24*7 +1
         // (one week plus one second)
+        HarvestChannel testChan = new HarvestChannel("test", "", false, true);
         for (int i = 0; i < 6; i++) {
-            Job newJob = Job.createJob(harvestID, cfg, 1);
+            Job newJob = Job.createJob(harvestID, testChan, cfg, 1);
             newJob.setActualStart(new Date((new Date()).getTime()
                     - (604801 * 1000)));
             newJob.setStatus(JobStatus.STARTED);
@@ -108,7 +109,7 @@ public class JobSupervisorTest extends TestCase  {
         }
         // Create 6 new jobs with now
         for (int i = 0; i < 6; i++) {
-            Job newJob = Job.createJob(harvestID, cfg, 1);
+            Job newJob = Job.createJob(harvestID, testChan, cfg, 1);
             newJob.setActualStart(new Date());
             newJob.setStatus(JobStatus.STARTED);
             jdao.create(newJob);
@@ -173,7 +174,8 @@ public class JobSupervisorTest extends TestCase  {
         // Create 7 jobs, one in each JobStatus:
         // (NEW, SUBMITTED, STARTED, DONE, FAILED, FAILED_REJECTED, RESUBMITTED)
         for (JobStatus status : JobStatus.values()) {
-            Job newJob = Job.createJob(harvestID, cfg, 1);
+            Job newJob = Job.createJob(harvestID, 
+            		new HarvestChannel("test", "", false, true), cfg, 1);
             newJob.setStatus(status);
             jdao.create(newJob);
         }

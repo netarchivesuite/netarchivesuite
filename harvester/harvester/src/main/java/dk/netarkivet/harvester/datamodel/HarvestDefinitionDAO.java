@@ -316,4 +316,12 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      */
     public abstract void resetDomainConfigurations(PartialHarvest hdd,
             List<DomainConfiguration> dcList);
+    
+    /**
+     * Maps a harvest definition to a harvest channel.
+     * @param harvestDefinitionId the harvest definition id
+     * @param channel the harvest channel
+     */
+    public abstract void mapToHarvestChannel(long harvestDefinitionId, HarvestChannel channel);
+    
 }

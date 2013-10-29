@@ -30,11 +30,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.print.attribute.standard.JobPriority;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.testutils.ReflectUtils;
 
@@ -52,8 +54,9 @@ public class TestInfo {
                 Job.class, Long.class, Map.class, JobPriority.class, Long.TYPE,
                 Long.TYPE, Long.TYPE, JobStatus.class, String.class, Document.class,
                 String.class, Integer.TYPE, Long.class);
+        HarvestChannel lowChan = new HarvestChannel("LOWPRIORITY", "", true, true);
         return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                             JobPriority.LOWPRIORITY, -1L, -1L, 0L,
+                             lowChan, -1L, -1L, 0L,
                              JobStatus.STARTED, "default_template",
                              DocumentFactory.getInstance().createDocument(),
                              "http://sbforge.org", 1, null);

@@ -62,7 +62,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'config_seedlists', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'harvestdefinitions', 3);
+    VALUES ( 'harvestdefinitions', 4);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'partialharvests', 1);
 INSERT INTO schemaversions ( tablename, version )
@@ -95,6 +95,8 @@ INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'extendedfieldvalue', 1);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'extendedfieldhistoryvalue', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'harvestchannel', 1);
 
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE schemaversions TO netarchivesuite;
@@ -257,10 +259,12 @@ CREATE TABLE harvestdefinitions (
      submitted timestamp NOT NULL,
      isactive bool NOT NULL,
      edition bigint NOT NULL,
+     channel_id bigint,
      audience varchar(100)
 );
 
 CREATE INDEX harvestdefinitionssubmitdate on harvestdefinitions (submitted) TABLESPACE tsindex;
+CREATE INDEX harvestdefinitionscategoryid on harvestdefinitions (category_id) TABLESPACE tsindex;
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvestdefinitions TO netarchivesuite;
 
@@ -350,7 +354,8 @@ CREATE TABLE jobs (
     job_id bigint NOT NULL PRIMARY KEY,
     harvest_id bigint NOT NULL,
     status int NOT NULL,
-    priority int NOT NULL,
+    channel varchar(300),
+    snapshot bool NOT NULL,
     forcemaxbytes bigint NOT NULL default -1,
     forcemaxcount bigint,
     forcemaxrunningtime bigint NOT NULL DEFAULT 0,
@@ -576,3 +581,23 @@ INSERT INTO extendedfieldtype (extendedfieldtype_id, name)
     VALUES (1, 'domains');
 INSERT INTO extendedfieldtype (extendedfieldtype_id, name)
     VALUES (2, 'harvestdefinitions');
+
+-- *****************************************************************************
+-- Area: Harvest channels
+-- *****************************************************************************
+
+CREATE TABLE harvestchannel (
+    id bigint NOT NULL PRIMARY KEY,
+    name varchar(300) NOT NULL UNIQUE,
+    snapshot bool NOT NULL,
+    isdefault bool NOT NULL,
+    comments varchar(30000)
+);
+
+CREATE SEQUENCE harvestchannel_id_seq OWNED BY harvestchannel.id;
+ALTER TABLE harvestchannel ALTER COLUMN id SET DEFAULT NEXTVAL('harvestchannel_id_seq');
+
+CREATE INDEX harvestchannelnameid on harvestchannel(name) TABLESPACE tsindex;
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvestchannel TO netarchivesuite;
+GRANT USAGE ON SEQUENCE harvestchannel_id_seq TO netarchivesuite;

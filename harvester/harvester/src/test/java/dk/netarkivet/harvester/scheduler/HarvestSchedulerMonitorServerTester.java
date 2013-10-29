@@ -571,7 +571,10 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         //A job from that harvest
         Domain dom = DomainDAO.getInstance().read("kb.dk");
         DomainConfiguration conf = dom.getDefaultConfiguration();
-        Job job = Job.createSnapShotJob(snapshot.getOid(), conf,
+        Job job = Job.createSnapShotJob(
+        		snapshot.getOid(),
+        		new HarvestChannel("test", "", true, true),
+        		conf,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY,
                 Constants.HERITRIX_MAXBYTES_INFINITY, 
                 Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY,
@@ -635,7 +638,10 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest (note: conf is the dr.dk config)
-        job = Job.createSnapShotJob(snapshot.getOid(), conf,
+        job = Job.createSnapShotJob(
+        		snapshot.getOid(),
+        		new HarvestChannel("test", "", true, true),
+        		conf,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY, 10L, 
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         job.setStatus(JobStatus.STARTED);

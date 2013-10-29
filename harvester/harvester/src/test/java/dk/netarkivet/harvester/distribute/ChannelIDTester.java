@@ -29,8 +29,7 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.JobPriority;
-import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
+import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -45,16 +44,17 @@ public class ChannelIDTester extends TestCase {
         Settings.set(CommonSettings.APPLICATION_NAME,
                 "dk.netarkivet.archive.indexserver.IndexServerApplication");
         Settings.set(CommonSettings.APPLICATION_INSTANCE_ID, "XXX");
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "HIGHPRIORITY");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, "HIGHPRIORITY");
     }
 
     /**
      * Test that each channel is equal only to itself.
      */
     public void testChannelIdentity(){
-        JobPriority priority = JobPriority.valueOf(
-                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
-        ChannelID harvestJobChannel = JobChannelUtil.getChannel(priority);
+    	String defaultChannel =  
+    			Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
+        ChannelID harvestJobChannel = Channels.getHarvestJobChannelId(
+        		HarvestChannelDAO.getInstance().getByName(defaultChannel));
         ChannelID[] channelArray =
          {Channels.getAllBa(), harvestJobChannel, Channels.getAnyBa(),
           Channels.getError(), Channels.getTheRepos(), Channels.getTheBamon(),

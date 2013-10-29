@@ -125,7 +125,7 @@
     <harvesting>
       <serverDir>server</serverDir>
       <oldjobsDir>oldjobs</oldjobsDir>
-      <queuePriority>HIGHPRIORITY</queuePriority>
+      <channel>HIGHPRIORITY</channel>
       <heritrix>
         <noresponseTimeout>1800</noresponseTimeout>
         <inactivityTimeout>1800</inactivityTimeout>

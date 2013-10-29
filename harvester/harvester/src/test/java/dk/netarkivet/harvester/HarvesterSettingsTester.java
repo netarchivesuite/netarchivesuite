@@ -50,10 +50,10 @@ public class HarvesterSettingsTester extends TestCase {
      * and ChannelIDTester.
      */
     public void testHarvestControllerPrioritySettingUnchanged() {
-       assertEquals("The 'HarvesterSettings.HARVEST_CONTROLLER_PRIORITY' "
+       assertEquals("The 'HarvesterSettings.HARVEST_CONTROLLER_CHANNEL' "
                + "setting has changed. Please update " 
                + "SingleMBeanObjectTester#Setup method",
-               HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, 
+               HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, 
                "settings.harvester.harvesting.queuePriority"); 
     }
     

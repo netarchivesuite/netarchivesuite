@@ -141,15 +141,15 @@ public abstract class JobDAO implements Iterable<Job> {
 
     /**
      * Return a list of all job_id's representing jobs with the given status
-     * and priority.
+     * and channel.
      *
      * @param status A given status
-     * @param priority A given priority
+     * @param channel A given {@link HarvestChannel}
      * @return A list of all job_id's representing jobs with given status
-     * and priority.
+     * and channel.
      */
     public abstract Iterator<Long> getAllJobIds(JobStatus status,
-            JobPriority priority);
+            HarvestChannel channel);
 
     /**
      * Return a list of all jobs .

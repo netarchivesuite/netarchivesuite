@@ -39,7 +39,6 @@ import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 
 /**
  * Job generator implementation. Generates jobs with a fixed number of domain
@@ -204,9 +203,8 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
-    	boolean isSnapshotJob = JobPriority.LOWPRIORITY.equals(job.getPriority());
-        return job.getDomainConfigurationMap().size() <
-                (isSnapshotJob ? CONFIG_COUNT_SNAPSHOT : CONFIG_COUNT_FOCUSED);
+    	return job.getDomainConfigurationMap().size() <
+                (job.isSnapshot() ? CONFIG_COUNT_SNAPSHOT : CONFIG_COUNT_FOCUSED);
     }
 
     @Override

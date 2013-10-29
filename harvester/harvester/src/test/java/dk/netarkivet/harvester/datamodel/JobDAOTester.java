@@ -24,6 +24,21 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Document;
+import org.dom4j.Node;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -35,13 +50,6 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.harvester.webinterface.HarvestStatusTester;
-import org.dom4j.Document;
-import org.dom4j.Node;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.*;
 
 /**
  * Unit tests for the JobDAO class.
@@ -50,6 +58,9 @@ public class JobDAOTester extends DataModelTestCase {
 
     /** We start out with one job in status DONE. */
     private static final int INITIAL_JOB_COUNT = 1;
+    
+    private HarvestChannel highChan;
+    private HarvestChannel lowChan;
 
     public JobDAOTester(String s) {
         super(s);
@@ -57,6 +68,8 @@ public class JobDAOTester extends DataModelTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
+        lowChan = new HarvestChannel("LOWPRIORITY", "", true, true);
         HarvestDAOUtils.resetDAOs();
     }
 
@@ -91,7 +104,7 @@ public class JobDAOTester extends DataModelTestCase {
         JobDAO dao = JobDAO.getInstance();
         DomainConfiguration dc = TestInfo.getDRConfiguration();
         addHarvestDefinitionToDatabaseWithId(TestInfo.HARVESTID);
-        Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
+        Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
 
         dao.create(job);
 
@@ -175,7 +188,7 @@ public class JobDAOTester extends DataModelTestCase {
 
         /* Create Job to update. */
         DomainConfiguration dc = TestInfo.getDRConfiguration();
-        Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
+        Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
         try {
             dao.create(job);
             fail("Should throw UnknownID given job with unknown HarvestID");
@@ -195,7 +208,7 @@ public class JobDAOTester extends DataModelTestCase {
         /* Create Job to update */
         DomainConfiguration dc = TestInfo.getDRConfiguration();
         addHarvestDefinitionToDatabaseWithId(TestInfo.HARVESTID);
-        Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
+        Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
         dao.create(job);
 
         try {
@@ -207,7 +220,7 @@ public class JobDAOTester extends DataModelTestCase {
 
         try {
             Long unknownID = new Long(42424242);
-            Job jobUknownID = Job.createJob(TestInfo.HARVESTID, dc, 0);
+            Job jobUknownID = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
             jobUknownID.setJobID(unknownID);
             dao.update(jobUknownID);
             fail("Failed to throw Unknown ID exception on jobID " + unknownID);
@@ -278,7 +291,7 @@ public class JobDAOTester extends DataModelTestCase {
         /* Create Job to update */
         addHarvestDefinitionToDatabaseWithId(TestInfo.HARVESTID);
         DomainConfiguration dc = TestInfo.getDRConfiguration();
-        Job job = Job.createSnapShotJob(TestInfo.HARVESTID, dc,
+        Job job = Job.createSnapShotJob(TestInfo.HARVESTID, highChan, dc,
                 TestInfo.MAX_OBJECTS_PER_DOMAIN, -1L,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         dao.create(job);
@@ -348,7 +361,7 @@ public class JobDAOTester extends DataModelTestCase {
         int num_jobs = 5;
         List<Job> jobs = new ArrayList<Job>(num_jobs);
         for (int i = 0; i < num_jobs; i++) {
-            Job j = Job.createJob(Long.valueOf(42), cfg, 0);
+            Job j = Job.createJob(Long.valueOf(42), highChan, cfg, 0);
             jdao.create(j);
             jobs.add(j);
         }
@@ -373,14 +386,14 @@ public class JobDAOTester extends DataModelTestCase {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
         addHarvestDefinitionToDatabaseWithId(1);
-        Job job0 = Job.createJob(Long.valueOf(1), d.getDefaultConfiguration(), 0);
-        assertEquals("A new job should have high priority",
-                JobPriority.HIGHPRIORITY, job0.getPriority());
-        Job job1 = Job.createSnapShotJob(Long.valueOf(1L), d
+        Job job0 = Job.createJob(Long.valueOf(1), highChan, d.getDefaultConfiguration(), 0);
+        assertEquals("The channel should be named highpriority",
+                "HIGHPRIORITY", job0.getChannel());
+        Job job1 = Job.createSnapShotJob(Long.valueOf(1L), lowChan, d
                 .getDefaultConfiguration(), 2000L, -1L,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
-        assertEquals("A new job should have low priority",
-                JobPriority.LOWPRIORITY, job1.getPriority());
+        assertEquals("The channel should be named lowpriority",
+                "LOWPRIORITY", job1.getChannel());
 
         //save them
         JobDAO jobDAO = JobDAO.getInstance();
@@ -392,12 +405,12 @@ public class JobDAOTester extends DataModelTestCase {
         Job job3 = jobDAO.read(job1.getJobID());
 
         //check the priorities
-        assertEquals("Jobs should preserve priority", job0.getPriority(),
-                     job2.getPriority());
+        assertEquals("Jobs should preserve priority", job0.getChannel(),
+                     job2.getChannel());
 
         //check the priorities
-        assertEquals("Jobs should preserve priority", job1.getPriority(),
-                     job3.getPriority());
+        assertEquals("Jobs should preserve priority", job1.getChannel(),
+                     job3.getChannel());
     }
 
     /**
@@ -408,15 +421,15 @@ public class JobDAOTester extends DataModelTestCase {
         JobDAO jobDAO = JobDAO.getInstance();
 
         Iterator<Long> idsForNewHighPriorityJobs =
-            jobDAO.getAllJobIds(JobStatus.NEW, JobPriority.HIGHPRIORITY);
+            jobDAO.getAllJobIds(JobStatus.NEW, highChan);
         assertTrue("Initiel size of jobs with jobstatus " + JobStatus.NEW +
-                " and JobPriority " + JobPriority.HIGHPRIORITY +
+                " and channel HIGHPRIORITY" +
                 " larger than zero", !idsForNewHighPriorityJobs.hasNext());
 
         Iterator<Long> idsForNewLowPriorityJobs =
-            jobDAO.getAllJobIds(JobStatus.NEW, JobPriority.LOWPRIORITY);
+            jobDAO.getAllJobIds(JobStatus.NEW, lowChan);
         assertTrue("Initiel size of jobs with jobstatus " + JobStatus.NEW +
-                " and JobPriority " + JobPriority.LOWPRIORITY +
+                " and channel LOWPRIORITY" +
                 " larger than zero", !idsForNewLowPriorityJobs.hasNext());
 
         // Create a high and a low priority job
@@ -424,32 +437,34 @@ public class JobDAOTester extends DataModelTestCase {
         DomainDAO.getInstance().create(d);
         addHarvestDefinitionToDatabaseWithId(1);
         Job jobHighPriorityID = Job.createJob(Long.valueOf(1),
+        		highChan,
                 d.getDefaultConfiguration(), 0);
         Job jobLowPriorityID = Job.createSnapShotJob(Long.valueOf(1),
+        		lowChan,
                 d.getDefaultConfiguration(), 2000L, -1L,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         jobDAO.create(jobHighPriorityID);
         jobDAO.create(jobLowPriorityID);
 
         idsForNewHighPriorityJobs =
-            jobDAO.getAllJobIds(JobStatus.NEW, JobPriority.HIGHPRIORITY);
+            jobDAO.getAllJobIds(JobStatus.NEW, highChan);
         assertTrue("No job with jobstatus " + JobStatus.NEW +
-                " and JobPriority " + JobPriority.HIGHPRIORITY +
+                " and channel HIGHPRIORITY" +
                 " returned after creating job",
                 idsForNewHighPriorityJobs.hasNext());
         Job jobHighPriority = jobDAO.read(idsForNewHighPriorityJobs.next());
         assertEquals("Job should have high priority",
-                jobHighPriorityID.getPriority(), jobHighPriority.getPriority());
+                jobHighPriorityID.getChannel(), jobHighPriority.getChannel());
 
         idsForNewLowPriorityJobs =
-            jobDAO.getAllJobIds(JobStatus.NEW, JobPriority.LOWPRIORITY);
+            jobDAO.getAllJobIds(JobStatus.NEW, lowChan);
         assertTrue("No job with jobstatus " + JobStatus.NEW +
-                " and JobPriority " + JobPriority.LOWPRIORITY +
+                " and channel LOWPRIORITY" +
                 " returned after creating job", jobDAO.getAllJobIds(JobStatus.NEW,
-                        JobPriority.LOWPRIORITY).hasNext());
+                        lowChan).hasNext());
         Job jobLowPriority = jobDAO.read(idsForNewLowPriorityJobs.next());
         assertEquals("Job should have low priority",
-                jobLowPriorityID.getPriority(), jobLowPriority.getPriority());
+                jobLowPriorityID.getChannel(), jobLowPriority.getChannel());
     }
 
     private void setJobStatus(List<Job> jobs, int i, JobStatus status) {
@@ -463,7 +478,7 @@ public class JobDAOTester extends DataModelTestCase {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
         addHarvestDefinitionToDatabaseWithId(1);
-        Job j = Job.createJob(Long.valueOf(1), d.getDefaultConfiguration(), 0);
+        Job j = Job.createJob(Long.valueOf(1), highChan, d.getDefaultConfiguration(), 0);
         JobDAO dao = JobDAO.getInstance();
         dao.create(j);
         Job j2 = dao.read(j.getJobID());
@@ -519,7 +534,7 @@ public class JobDAOTester extends DataModelTestCase {
         d.addConfiguration(dc);
         d.setDefaultConfiguration(dc.getName());
         ddao.create(d);
-        Job j2 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1L,
+        Job j2 = new Job(43L, dc, highChan, 0L, -1L,
         		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 3);
         dao.create(j2);
         j2.appendUploadErrors("Bad stuff");
@@ -594,15 +609,15 @@ public class JobDAOTester extends DataModelTestCase {
         d.addConfiguration(dc);
         d.setDefaultConfiguration(dc.getName());
         ddao.create(d);
-        Job j2 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1L,
+        Job j2 = new Job(43L, dc, highChan, 0L, -1L,
         		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 3);
         dao.create(j2);
 
-        Job j3 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1L,
+        Job j3 = new Job(43L, dc, highChan, 0L, -1L,
         		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 4);
         dao.create(j3);
 
-        Job j4 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1L,
+        Job j4 = new Job(43L, dc, highChan, 0L, -1L,
         		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 4);
         dao.create(j4);
 
@@ -665,7 +680,7 @@ public class JobDAOTester extends DataModelTestCase {
         Domain d = ddao.read("netarkivet.dk");
         DomainConfiguration dc = d.getDefaultConfiguration();
         Date startDate = new Date();
-        Job newJob1 = new Job(42L, dc, JobPriority.HIGHPRIORITY, 10L, -1L,
+        Job newJob1 = new Job(42L, dc, highChan, 10L, -1L,
         		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 2);
         newJob1.setStatus(JobStatus.SUBMITTED);
         jdao.create(newJob1);
@@ -852,8 +867,8 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Should have same original harvest id",
                 oldJob1.getOrigHarvestDefinitionID(),
                 newJob1.getOrigHarvestDefinitionID());
-        assertEquals("Should have same priority",
-                oldJob1.getPriority(), newJob1.getPriority());
+        assertEquals("Should have same channel",
+                oldJob1.getChannel(), newJob1.getChannel());
         assertEquals("Should have same seedlist",
                 oldJob1.getSeedListAsString(), newJob1.getSeedListAsString());
         assertEquals("Should have same settingsxml docs",

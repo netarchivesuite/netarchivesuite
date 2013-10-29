@@ -122,11 +122,11 @@ public class JMXStatusEntry implements StatusEntry {
 
     /**
      * @return the harvest priority designated by the key {@link
-     *         JMXSummaryUtils#JMXHarvestPriorityProperty}
+     *         JMXSummaryUtils#JMXHarvestChannelProperty}
      */
     public String getHarvestPriority() {
         return mBeanName.getKeyProperty(
-                JMXSummaryUtils.JMXHarvestPriorityProperty);
+                JMXSummaryUtils.JMXHarvestChannelProperty);
     }
 
     /**

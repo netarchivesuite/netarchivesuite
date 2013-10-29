@@ -40,6 +40,7 @@ import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobDAOTester;
@@ -53,6 +54,8 @@ import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+    
+    private HarvestChannel testChan;
 
     public HarvestStatusTester(String s) {
         super(s);
@@ -60,6 +63,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        testChan = new HarvestChannel("test", "", false, true);
     }
 
     public void tearDown() throws Exception {
@@ -81,7 +85,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     public void testRejectFailedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
         DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
-        Job job = Job.createJob(420L, DomainDAO.getInstance().read(
+        Job job = Job.createJob(420L, testChan, DomainDAO.getInstance().read(
                 "netarkivet.dk").getDefaultConfiguration(), 0);
         jobDAO.create(job);
         job.setStatus(JobStatus.FAILED);
@@ -101,7 +105,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     public void testUnrejectRejectedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
         DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
-        Job job = Job.createJob(420L, DomainDAO.getInstance().read(
+        Job job = Job.createJob(420L, testChan, DomainDAO.getInstance().read(
                 "netarkivet.dk").getDefaultConfiguration(), 0);
         jobDAO.create(job);
         job.setStatus(JobStatus.FAILED_REJECTED);
@@ -121,7 +125,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         
         JobDAO jobDAO = JobDBDAO.getInstance();
         DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
-        Job job = Job.createJob(420L, DomainDAO.getInstance().read(
+        Job job = Job.createJob(420L, testChan, DomainDAO.getInstance().read(
                 "netarkivet.dk").getDefaultConfiguration(), 0);
         jobDAO.create(job);
 

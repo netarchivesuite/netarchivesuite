@@ -552,7 +552,7 @@
                  because it wasn't attempted uploaded. -->
             <oldjobsDir>oldjobs</oldjobsDir>
             <!-- Pool to take jobs from -->
-            <queuePriority>HIGHPRIORITY</queuePriority>
+            <channel>HIGHPRIORITY</channel>
             <!-- When to stop Heritrix, timeouts in ms. -->
             <heritrix>
                 <!-- The timeout setting for aborting a crawl based on

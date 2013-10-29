@@ -35,8 +35,8 @@ import java.util.Map;
 import org.dom4j.Document;
 
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
@@ -187,13 +187,14 @@ public class TestInfo {
     static Job getJob() {
         Document d = XmlUtils.getXmlDoc(ONE_LEVEL_ORDER_FILE);
         try {
+        	HarvestChannel highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
-                    Job.class, Long.class, Map.class, JobPriority.class, Long.TYPE,
+                    Job.class, Long.class, Map.class, HarvestChannel.class, Long.TYPE,
                     Long.TYPE, Long.TYPE, JobStatus.class, String.class, 
                     Document.class, String.class, Integer.TYPE, Long.class);
             String seedList = "www.netarkivet.dk";
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 JobPriority.HIGHPRIORITY, -1L, -1L, 0L,
+                                 highChan, -1L, -1L, 0L,
                                  JobStatus.STARTED, "OneLevel-order", d,
                                  seedList, 1, null);
         } catch (Exception e) {

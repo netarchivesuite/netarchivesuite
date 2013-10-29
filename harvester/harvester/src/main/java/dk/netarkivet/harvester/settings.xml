@@ -90,7 +90,7 @@ National Library.
             <!-- Default is 400000000 bytes (~400 Mbytes). -->
             <minSpaceLeft>400000000</minSpaceLeft>
             <oldjobsDir>oldjobs</oldjobsDir>
-            <queuePriority></queuePriority>
+            <channel></channel>
             <sendReadyInterval>30</sendReadyInterval>
             <sendReadyDelay>300</sendReadyDelay>
             <continuationFromHeritrixRecoverlogEnabled>false</continuationFromHeritrixRecoverlogEnabled>

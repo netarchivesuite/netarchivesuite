@@ -82,10 +82,10 @@ public class SingleMBeanObject<I> {
     // FIXME Following environment constant are defined here in order to avoid
     //refering to independent modules - the environment values are only
     //used if defined
-    //Note that HARVESTER_HARVEST_CONTROLLER_PRIORITY should be identical to
+    //Note that HARVESTER_HARVEST_CONTROLLER_CHANNEL should be identical to
     //HarvesterSettings.HARVESTER_HARVEST_CONTROLLER_PRIORITY   
-    private static String HARVESTER_HARVEST_CONTROLLER_PRIORITY
-            = "settings.harvester.harvesting.queuePriority";
+    private static String HARVESTER_HARVEST_CONTROLLER_CHANNEL
+            = "settings.harvester.harvesting.channel";
 
     /**
      * Create a single mbean object. This will fill out nameProperties with
@@ -124,11 +124,11 @@ public class SingleMBeanObject<I> {
                            Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         try {
             String val;
-            val = Settings.get(HARVESTER_HARVEST_CONTROLLER_PRIORITY);
-            nameProperties.put(Constants.PRIORITY_KEY_PRIORITY, val);
+            val = Settings.get(HARVESTER_HARVEST_CONTROLLER_CHANNEL);
+            nameProperties.put(Constants.PRIORITY_KEY_CHANNEL, val);
         } catch (UnknownID e) {
-            nameProperties.put(Constants.PRIORITY_KEY_PRIORITY, "");
-            log.trace("PRIORITY_KEY_PRIORITY set to empty string");
+            nameProperties.put(Constants.PRIORITY_KEY_CHANNEL, "");
+            log.trace("PRIORITY_KEY_CHANNEL set to empty string");
         }
         try {
             String val = Replica.getReplicaFromId(Settings.get(
