@@ -130,10 +130,6 @@
                 <webapplication>webpages/HarvestDefinition.war</webapplication>
             </siteSection>
             <siteSection>
-                <class>dk.netarkivet.harvester.webinterface.HarvestPlanningSiteSection</class>
-                <webapplication>webpages/HarvestPlanning.war</webapplication>
-            </siteSection>
-            <siteSection>
                 <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
                 <webapplication>webpages/History.war</webapplication>
             </siteSection>

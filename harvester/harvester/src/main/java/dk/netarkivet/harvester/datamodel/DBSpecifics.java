@@ -171,6 +171,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             upgradeDomainsTable(currentVersion, toVersion);
         } else if (tableName.equals(HarvesterDatabaseTables.HARVESTDEFINITIONS.getTablename())) {
             upgradeHarvestdefinitionsTable(currentVersion, toVersion);
+        } else if (tableName.equals(HarvesterDatabaseTables.HARVESTCHANNELS.getTablename())) {
+            upgradeHarvestchannelTable(currentVersion, toVersion);
             // Add new if else when other tables need to be upgraded
         } else {
             throw new NotImplementedException(
@@ -191,6 +193,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         if (currentVersion == 2 && toVersion >= 3) {
             migrateHarvestdefinitionsv2tov3();
             currentVersion = 3;
+        }
+        if (currentVersion == 3 && toVersion >= 4) {
+            migrateHarvestdefinitionsv3tov4();
+            currentVersion = 4;
         }
         // insert new migrations here
         if (currentVersion != HarvesterDatabaseTables.HARVESTDEFINITIONS.getRequiredVersion()) {
@@ -398,6 +404,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             migrateJobsv8tov9();
             currentVersion = 9;
         }
+        if (currentVersion == 9 && toVersion >= 10) {
+            migrateJobsv9tov10();
+            currentVersion = 10;
+        }
         // future updates of the jobs table are inserted here
         if (currentVersion == HarvesterDatabaseTables.JOBS.getRequiredVersion() 
                 && toVersion >= HarvesterDatabaseTables.JOBS.getRequiredVersion() + 1) {
@@ -510,6 +520,20 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
 
     }
+    
+    /** Migrate the harvestchannel table.
+     * 
+     * @param currentVersion the current version of the harvestchannel table
+     * @param toVersion the required version of the harvestchannel table
+     */
+    private void upgradeHarvestchannelTable(int currentVersion, int toVersion) {
+        if (currentVersion == 0 && toVersion >= 1) {
+            createHarvestChannelTable();
+            currentVersion = 1;
+        }
+    }
+
+    protected abstract void createHarvestChannelTable();
 
     /**
      * Migrates the 'jobs' table from version 3 to version 4 consisting of a
@@ -675,6 +699,18 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * the string audience with null as default.
      */
     protected abstract void migrateHarvestdefinitionsv2tov3();
+    
+    /**
+     * Migrates the 'harvestdefinitions' table from version 3 to version 4 consisting of adding
+     * the bigint channel_id field.
+     */
+    protected abstract void migrateHarvestdefinitionsv3tov4();
+    
+    /**
+     * Migrates the 'jobs' table from version 9 to version 10 consisting of adding
+     * the channel (varchar 300) and a 'snapshot'
+     */
+    protected abstract void migrateJobsv9tov10();
     
     /**
      * Update all tables in the enum class {@link HarvesterDatabaseTables} to the required

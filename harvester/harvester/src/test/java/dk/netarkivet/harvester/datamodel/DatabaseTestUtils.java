@@ -93,7 +93,7 @@ public class DatabaseTestUtils {
         } catch (Exception e) {
             throw new IOFailure("Can't register driver", e);
         }
-        dburi = "jdbc:derby:" + dbfile;
+        dburi = "jdbc:derby:" + dbfile + ";upgrade=true";
         return DriverManager.getConnection(dburi);
         //return HarvestDBConnection.get();
             /*
@@ -147,7 +147,7 @@ public class DatabaseTestUtils {
         } catch (Exception e) {
             throw new IOFailure("Can't register driver", e);
         }
-        dburi = "jdbc:derby:" + dbfile;
+        dburi = "jdbc:derby:" + dbfile + ";upgrade=true";
         return DriverManager.getConnection(dburi);
         //return HarvestDBConnection.get();
             /*

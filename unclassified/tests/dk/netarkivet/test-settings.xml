@@ -58,7 +58,7 @@ National Library.
         <tempDir>./tests/commontempdir</tempDir>
         <database>
             <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
-            <baseUrl>jdbc:derby:harvestdefinitionbasedir/fullhddb</baseUrl>
+            <baseUrl>jdbc:derby:harvestdefinitionbasedir/fullhddb;upgrade=true</baseUrl>
             <machine></machine>
             <port></port>
             <dir></dir>

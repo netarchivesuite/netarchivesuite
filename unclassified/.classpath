@@ -12,7 +12,7 @@
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/heritrix/lib/heritrix-1.14.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/junit-3.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/junit-3.8.2.jar" sourcepath="/home/svc/.m2/repository/junit/junit/3.8.2/junit-3.8.2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/db/derby-10.10.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/db/derbynet-10.10.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/charting/jcommon-1.0.16.jar"/>
@@ -70,5 +70,6 @@
 	<classpathentry kind="lib" path="lib/wayback-core-1.8.0-netarchivesuite-20130403.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-analyzers-common-4.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-queryparser-4.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/gagawa-1.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

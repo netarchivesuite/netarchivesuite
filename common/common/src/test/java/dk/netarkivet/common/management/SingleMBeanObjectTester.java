@@ -70,7 +70,7 @@ public class SingleMBeanObjectTester extends TestCase {
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "1234");
         Settings.set(CommonSettings.THIS_PHYSICAL_LOCATION, "NO");
         Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
-        Settings.set("settings.harvester.harvesting.queuePriority", "high");
+        Settings.set("settings.harvester.harvesting.channel", "high"); // Will this work
         platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
     }
 

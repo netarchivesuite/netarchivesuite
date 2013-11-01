@@ -436,4 +436,36 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("harvestdefinitions", 3, sqlStatements);
     }
     
+    @Override
+    protected void migrateHarvestdefinitionsv3tov4() {
+        String[] sqlStatements = {
+                "ALTER TABLE harvestdefinitions ADD COLUMN channel_id BIGINT DEFAULT NULL"
+        };
+        HarvestDBConnection.updateTable("harvestdefinitions", 4, sqlStatements);
+    } 
+    
+    @Override
+    protected void migrateJobsv9tov10() {
+        String[] sqlStatements = {
+                "ALTER TABLE jobs ADD COLUMN channel VARCHAR(300) DEFAULT NULL",
+                "ALTER TABLE jobs ADD COLUMN snapshot BOOLEAN",
+                "UPDATE jobs SET channel = 'lowpriority' WHERE priority=0",
+                "UPDATE jobs SET channel = 'highpriority' WHERE priority=1",
+                "UPDATE jobs SET snapshot = true WHERE priority=0",
+                "ALTER TABLE jobs DROP COLUMN priority"
+        };
+        HarvestDBConnection.updateTable("jobs", 10, sqlStatements);   
+    }
+    
+    @Override
+    public void createHarvestChannelTable() {
+        String createStatement = "CREATE TABLE harvestchannel ("
+            + "id BIGINT NOT NULL PRIMARY KEY, "
+            + "name VARCHAR(300) NOT NULL UNIQUE,"
+            + "snapshot BOOLEAN NOT NULL,"
+            + "isdefault BOOLEAN NOT NULL,"
+            + "comments VARCHAR(30000)"
+            + ")";
+        HarvestDBConnection.updateTable("harvestchannel", 1, createStatement);
+    }  
 }

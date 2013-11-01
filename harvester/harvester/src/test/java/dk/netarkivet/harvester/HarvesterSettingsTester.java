@@ -54,7 +54,7 @@ public class HarvesterSettingsTester extends TestCase {
                + "setting has changed. Please update " 
                + "SingleMBeanObjectTester#Setup method",
                HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, 
-               "settings.harvester.harvesting.queuePriority"); 
+               "settings.harvester.harvesting.channel"); 
     }
     
 }
