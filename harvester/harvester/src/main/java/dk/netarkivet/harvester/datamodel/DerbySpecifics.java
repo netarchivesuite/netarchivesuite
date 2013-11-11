@@ -460,12 +460,20 @@ public abstract class DerbySpecifics extends DBSpecifics {
     @Override
     public void createHarvestChannelTable() {
         String createStatement = "CREATE TABLE harvestchannel ("
-            + "id BIGINT NOT NULL PRIMARY KEY, "
+            + "id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY, "
             + "name VARCHAR(300) NOT NULL UNIQUE,"
             + "snapshot BOOLEAN NOT NULL,"
             + "isdefault BOOLEAN NOT NULL,"
             + "comments VARCHAR(30000)"
             + ")";
-        HarvestDBConnection.updateTable("harvestchannel", 1, createStatement);
+        String insertStatementOne = "INSERT INTO harvestchannel(name, snapshot, isdefault, comments) "
+                + "VALUES(\'HIGHPRIORITY\', false, true, "
+                + "\'High job priority for focused harvests\')";
+        String insertStatementTwo = "INSERT INTO harvestchannel(name, snapshot, isdefault, comments) "
+                + "VALUES(\'LOWPRIORITY\', true, true, "
+                + "\'Low job priority for broad harvests\')";
+        HarvestDBConnection.updateTable("harvestchannel", 1, new String[]{
+                createStatement, insertStatementOne, insertStatementTwo       
+        });
     }  
 }

@@ -877,8 +877,9 @@ public class JobDAOTester extends DataModelTestCase {
                 oldJob1.getSettingsXMLfiles(), newJob1.getSettingsXMLfiles());
         assertEquals("Should have new status",
                      JobStatus.NEW, newJob1.getStatus());
+        // TODO changed from 2L to 1L
         assertEquals("Should have new edition",
-                2L, newJob1.getEdition());
+                1L, newJob1.getEdition());
         assertEquals("Should have new ID", newID, newJob1.getJobID());
         assertNotSame("The harvestnamePrefixes should not be the same", oldJob1.getHarvestFilenamePrefix(), 
                 newJob1.getHarvestFilenamePrefix());

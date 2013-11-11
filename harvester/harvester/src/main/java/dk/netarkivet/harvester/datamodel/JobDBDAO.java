@@ -977,11 +977,11 @@ public class JobDBDAO extends JobDAO {
             connection.setAutoCommit(false);
             
             statement = connection.prepareStatement("INSERT INTO jobs "
-                                   + " (job_id, harvest_id, priority, status,"
+                                   + " (job_id, harvest_id, channel, snapshot, status,"
                                    + "  forcemaxcount, forcemaxbytes, orderxml,"
                                    + "  orderxmldoc, seedlist, harvest_num,"
                                    + "  num_configs, edition, continuationof) "
-                                   + " SELECT ?, harvest_id, priority, ?,"
+                                   + " SELECT ?, harvest_id, channel, snapshot, ?,"
                                    + "  forcemaxcount, forcemaxbytes, orderxml,"
                                    + "  orderxmldoc, seedlist, harvest_num,"
                                    + " num_configs, ?, ?"
