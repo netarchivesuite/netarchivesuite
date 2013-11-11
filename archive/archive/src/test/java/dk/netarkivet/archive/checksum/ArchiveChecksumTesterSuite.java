@@ -45,6 +45,7 @@ public class ArchiveChecksumTesterSuite {
 
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(FileChecksumArchiveTester.class);
+        suite.addTestSuite(DatabaseChecksumTester.class);
     }
 
     public static void main(String args[]) {

@@ -666,6 +666,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * @return The checksum of a record, or null if it was not found.
      * @throws ArgumentNotValid If the filename is not valid (null or empty).
      */
+    @Override
     public String getChecksum(String filename) throws ArgumentNotValid {
         // validate the argument
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
@@ -683,6 +684,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * be determined.
      * @return Whether an entry with the filename was found.
      */
+    @Override
     public boolean hasEntry(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 

@@ -38,7 +38,6 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * one of the following: <br>
  * - <b>FileChecksumArchive</b> where the archive is placed in a single file. 
  * <br>
- * <b><i>TODO</i></b><br>
  * - <b>DatabaseChecksumArchive</b> where the archive is placed in a 
  * database. <br>
  * 
