@@ -34,7 +34,7 @@ import java.util.Iterator;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.NetarkivetException;
+import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
@@ -62,11 +62,7 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 			HarvestDBConnection.release(connection);
 		}
 
-		if (!defaultChannelExists(false)) {
-			throw new IllegalState("No default harvest channel defined for snapshot jobs!");
-		}
-
-		if (!defaultChannelExists(true)) {
+		if (!defaultFocusedChannelExists()) {
 			throw new IllegalState("No default harvest channel defined for focused jobs!");
 		}
 	}
@@ -96,6 +92,11 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 	@Override
 	public HarvestChannel getByName(final String name) 
 			throws ArgumentNotValid, UnknownID {
+		
+		if (HarvestChannel.SNAPSHOT.getName().equals(name)) {
+			return HarvestChannel.SNAPSHOT;
+		}
+		
 		ArgumentNotValid.checkNotNullOrEmpty(name, "name");
 		Connection connection = HarvestDBConnection.get();
 		try {
@@ -116,58 +117,61 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 	}
 
 	@Override
-	public void create(final HarvestChannel harvestCat) throws IOFailure {
+	public void create(final HarvestChannel harvestChan) {
+		if (HarvestChannel.SNAPSHOT.equals(harvestChan)) {
+			throw new PermissionDenied("Cannot store SNAPSHOT channel!");
+		}
 		Connection connection = HarvestDBConnection.get();
 		try {
 			PreparedStatement stm = connection.prepareStatement(
-					"INSERT INTO harvestchannel(name, comments, snapshot, isdefault) "
-					+ "VALUES (?,?,?,?)");
-			stm.setString(1, harvestCat.getName());
-			stm.setString(2, harvestCat.getComments());
-			stm.setBoolean(3, harvestCat.isSnapShot());
-			stm.setBoolean(4, harvestCat.isDefault());
+					"INSERT INTO harvestchannel(name, comments, isdefault) "
+					+ "VALUES (?,?,?)");
+			stm.setString(1, harvestChan.getName());
+			stm.setString(2, harvestChan.getComments());
+			stm.setBoolean(4, harvestChan.isDefault());
 			if (stm.executeUpdate() < 1) {
 				throw new IOFailure(
-						"Failed to create harvestchannel '" + harvestCat.getName() + "'");
+						"Failed to create harvestchannel '" + harvestChan.getName() + "'");
 			}
 		} catch (SQLException e) {
 			throw new IOFailure(
-					"Failed to create harvestchannel '" + harvestCat.getName() + "'", e);
+					"Failed to create harvestchannel '" + harvestChan.getName() + "'", e);
 		} finally {
 			HarvestDBConnection.release(connection);
 		}
 	}
 
 	@Override
-	public void update(HarvestChannel harvestCat) {
+	public void update(HarvestChannel harvestChan) {		
+		if (HarvestChannel.SNAPSHOT.equals(harvestChan)) {
+			throw new PermissionDenied("Cannot update SNAPSHOT channel!");
+		}
 		Connection connection = HarvestDBConnection.get();
 		try {
 			PreparedStatement stm = connection.prepareStatement(
-					"UPDATE harvestchannel SET name=?, comments=?, snapshot=?"
-							+ " WHERE id=?");
-			stm.setString(1, harvestCat.getName());
-			stm.setString(2, harvestCat.getComments());
-			stm.setBoolean(3, harvestCat.isSnapShot());
-			stm.setLong(3, harvestCat.getId());
+					"UPDATE harvestchannel SET name=?, comments=? WHERE id=?");
+			stm.setString(1, harvestChan.getName());
+			stm.setString(2, harvestChan.getComments());
+			stm.setLong(3, harvestChan.getId());
 			if (stm.executeUpdate() < 1) {
 				throw new IOFailure(
-						"Failed to update harvestchannel with id " + harvestCat.getId());
+						"Failed to update harvestchannel with id " + harvestChan.getId());
 			}
 		} catch (SQLException e) {
 			throw new IOFailure(
-					"Failed to update harvestchannel with id " + harvestCat.getId(), e);
+					"Failed to update harvestchannel with id " + harvestChan.getId(), e);
 		} finally {
 			HarvestDBConnection.release(connection);
 		}
-	}
-
-	@Override
-	public void delete(HarvestChannel jobCat) throws NetarkivetException {
-		throw new RuntimeException("Not implemented!");
 	}
 
 	@Override
 	public Iterator<HarvestChannel> iterator() {
+		return getAll(true);
+	}
+
+	@Override
+	public Iterator<HarvestChannel> getAll(final boolean includeSnapshot) {
 		Connection connection = HarvestDBConnection.get();
 		try {
 			PreparedStatement stm = connection.prepareStatement(
@@ -179,33 +183,11 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 						rs.getLong("id"), 
 						rs.getString("name"),
 						rs.getString("comments"),
-						rs.getBoolean("snapshot"),
 						rs.getBoolean("isdefault")));
 			}            
-			return cats.iterator();
-		} catch (SQLException e) {
-			throw new IOFailure("Failed to get all harvest channels", e);
-		} finally {
-			HarvestDBConnection.release(connection);
-		}
-	}
-	
-	@Override
-	public Iterator<HarvestChannel> getAll() {
-		Connection connection = HarvestDBConnection.get();
-		try {
-			PreparedStatement stm = connection.prepareStatement(
-					"SELECT * FROM harvestchannel ORDER BY snapshot, name");
-			ResultSet rs = stm.executeQuery();
-			ArrayList<HarvestChannel> cats = new ArrayList<HarvestChannel>();
-			while (rs.next()) {
-				cats.add(new HarvestChannel(
-						rs.getLong("id"), 
-						rs.getString("name"),
-						rs.getString("comments"),
-						rs.getBoolean("snapshot"),
-						rs.getBoolean("isdefault")));
-			}            
+			if (includeSnapshot) {
+				cats.add(HarvestChannel.SNAPSHOT);
+			}
 			return cats.iterator();
 		} catch (SQLException e) {
 			throw new IOFailure("Failed to get harvest channels", e);
@@ -215,42 +197,16 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 	}
 
 	@Override
-	public Iterator<HarvestChannel> getAll(final boolean isSnapshot) {
+	public boolean defaultFocusedChannelExists() {
 		Connection connection = HarvestDBConnection.get();
 		try {
 			PreparedStatement stm = connection.prepareStatement(
-					"SELECT * FROM harvestchannel WHERE snapshot=? ORDER BY name");
-			stm.setBoolean(1, isSnapshot);
-			ResultSet rs = stm.executeQuery();
-			ArrayList<HarvestChannel> cats = new ArrayList<HarvestChannel>();
-			while (rs.next()) {
-				cats.add(new HarvestChannel(
-						rs.getLong("id"), 
-						rs.getString("name"),
-						rs.getString("comments"),
-						rs.getBoolean("snapshot"),
-						rs.getBoolean("isdefault")));
-			}            
-			return cats.iterator();
-		} catch (SQLException e) {
-			throw new IOFailure("Failed to get harvest channels with snapshot=" + isSnapshot, e);
-		} finally {
-			HarvestDBConnection.release(connection);
-		}
-	}
-
-	@Override
-	public boolean defaultChannelExists(boolean snapshot) {
-		Connection connection = HarvestDBConnection.get();
-		try {
-			PreparedStatement stm = connection.prepareStatement(
-					"SELECT * FROM harvestchannel WHERE snapshot=? AND isdefault=true");
-			stm.setBoolean(1, snapshot);
+					"SELECT * FROM harvestchannel WHERE isdefault=true");
 			ResultSet rs = stm.executeQuery();
 			return rs.next();
 		} catch (SQLException e) {
 			throw new IOFailure(
-					"Failed to get default harvest channel for snapshot=" + snapshot, e);
+					"Failed to get default harvest channel for focused jobs", e);
 		} finally {
 			HarvestDBConnection.release(connection);
 		}
@@ -258,11 +214,13 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 	
 	@Override
 	public HarvestChannel getDefaultChannel(boolean snapshot) {
+		if (snapshot) {
+			return HarvestChannel.SNAPSHOT;
+		}
 		Connection connection = HarvestDBConnection.get();
 		try {
 			PreparedStatement stm = connection.prepareStatement(
-					"SELECT * FROM harvestchannel WHERE snapshot=? AND isdefault=true");
-			stm.setBoolean(1, snapshot);
+					"SELECT * FROM harvestchannel WHERE isdefault=true");
 			ResultSet rs = stm.executeQuery();
 			if (!rs.next()) {
 				throw new IOFailure("No default harvest channel for snapshot=" + snapshot);
@@ -301,7 +259,6 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 				rs.getLong("id"), 
 				rs.getString("name"),
 				rs.getString("comments"),
-				rs.getBoolean("snapshot"),
 				rs.getBoolean("isdefault"));
 	}
 

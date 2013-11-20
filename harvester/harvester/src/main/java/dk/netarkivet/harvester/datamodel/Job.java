@@ -307,7 +307,7 @@ public class Job implements Serializable, JobInfo {
                 cfg.getOrderXmlName()).getTemplate();
 
         this.channel = channel.getName();
-        this.isSnapshot = channel.isSnapShot();
+        this.isSnapshot = channel.isSnapshot();
 
         long maxObjects = NumberUtils.minInf(
                 forceMaxObjectsPerDomain, cfg.getMaxObjects());        

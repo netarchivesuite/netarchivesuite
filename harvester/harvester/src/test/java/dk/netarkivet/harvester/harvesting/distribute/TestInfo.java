@@ -108,13 +108,13 @@ public class TestInfo {
      */
     static Job getJob() {
         try {
-        	HarvestChannel highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
+        	HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
                     Job.class, Long.class, Map.class, String.class, Boolean.TYPE, Long.TYPE,
                     Long.TYPE, Long.TYPE, JobStatus.class, String.class, Document.class,
                     String.class, Integer.TYPE, Long.class);
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 highChan.getName(), highChan.isSnapShot(), -1L, -1L, 0L,
+                                 highChan.getName(), highChan.isSnapshot(), -1L, -1L, 0L,
                                  JobStatus.NEW, "default_orderxml",
                                  XmlUtils.getXmlDoc(ORDER_FILE),
                                  "www.netarkivet.dk", 1, null);
@@ -128,7 +128,7 @@ public class TestInfo {
      */
     static Job getJobLowPriority() {
         try {
-        	HarvestChannel lowChan = new HarvestChannel("LOWPRIORITY", "", false, true);
+        	HarvestChannel lowChan = HarvestChannel.SNAPSHOT;
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
                     Job.class, Long.class, Map.class, HarvestChannel.class, 
                     Long.TYPE, Long.TYPE, Long.TYPE, 

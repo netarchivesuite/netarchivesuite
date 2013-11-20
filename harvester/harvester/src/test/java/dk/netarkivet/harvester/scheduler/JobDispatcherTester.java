@@ -115,8 +115,8 @@ public class JobDispatcherTester extends TestCase {
 
         HarvestDefinitionDAO.getInstance();
         jobDispatcher = new JobDispatcher(jms.getJMSConnection());
-        highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
-        lowChan = new HarvestChannel("LOWPRIORITY", "", true, true);
+        highChan = new HarvestChannel("FOCUSED", "", true);
+        lowChan = HarvestChannel.SNAPSHOT;
     }
 
     /**

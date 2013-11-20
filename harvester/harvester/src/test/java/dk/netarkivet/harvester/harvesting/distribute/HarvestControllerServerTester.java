@@ -124,7 +124,7 @@ public class HarvestControllerServerTester extends TestCase {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR,
                      TestInfo.WORKING_DIR.getAbsolutePath() + "/oldjobs");
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, "HIGHPRIORITY");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, "FOCUSED");
         Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
                 "dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient");
     }

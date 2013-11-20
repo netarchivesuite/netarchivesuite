@@ -83,7 +83,7 @@ public class TestInfo {
             throw new IOFailure(e.getMessage());
         }
         return Job.createJob(0L,
-        		new HarvestChannel("test", "", false, true),
+        		new HarvestChannel("test", "", true),
                 DomainDAO.getInstance()
                 .read("netarkivet.dk")
                 .getConfiguration("Engelsk_netarkiv_et_niveau"), 0);
@@ -95,7 +95,7 @@ public class TestInfo {
      */
     static Job getJobLowPriority() {
         try {
-        	HarvestChannel lowChan = new HarvestChannel("LOWPRIORITY", "", true, true);
+        	HarvestChannel lowChan = HarvestChannel.SNAPSHOT;
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
                     Job.class, Long.class, Map.class, HarvestChannel.class, Long.TYPE,
                     Long.TYPE, Long.TYPE, JobStatus.class, String.class, 

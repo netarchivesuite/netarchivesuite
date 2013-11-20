@@ -187,14 +187,14 @@ public class TestInfo {
     static Job getJob() {
         Document d = XmlUtils.getXmlDoc(ONE_LEVEL_ORDER_FILE);
         try {
-        	HarvestChannel highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
+        	HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
                     Job.class, Long.class, Map.class, String.class, Boolean.TYPE, 
                     Long.TYPE, Long.TYPE, Long.TYPE, JobStatus.class, String.class, 
                     Document.class, String.class, Integer.TYPE, Long.class);
             String seedList = "www.netarkivet.dk";
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 highChan.getName(), highChan.isSnapShot(), -1L, -1L, 0L,
+                                 highChan.getName(), highChan.isSnapshot(), -1L, -1L, 0L,
                                  JobStatus.STARTED, "OneLevel-order", d,
                                  seedList, 1, (Long) null);
         } catch (Exception e) {

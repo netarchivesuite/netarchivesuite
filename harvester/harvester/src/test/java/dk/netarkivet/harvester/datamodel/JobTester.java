@@ -88,8 +88,8 @@ public class JobTester extends DataModelTestCase {
                 CommonSettings.NOTIFICATIONS_CLASS, 
                 RememberNotifications.class.getName());
         Settings.set(HarvesterSettings.SPLIT_BY_OBJECTLIMIT, "false");
-        highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
-        lowChan = new HarvestChannel("LOWPRIORITY", "", true, true);
+        highChan = new HarvestChannel("FOCUSED", "", true);
+        lowChan = HarvestChannel.SNAPSHOT;
     }
 
     public void tearDown() throws Exception {
@@ -540,7 +540,7 @@ public class JobTester extends DataModelTestCase {
         DomainDAO.getInstance().create(d);
         Job job0 = Job.createJob(Long.valueOf(1L), highChan, d.getDefaultConfiguration(), 0);
         assertEquals("Job should have channel HIGHPRIORITY",
-        		"HIGHPRIORITY",
+        		"FOCUSED",
                 job0.getChannel());
         Job job1 = Job.createSnapShotJob(Long.valueOf(1),
         		lowChan,
@@ -799,7 +799,7 @@ public class JobTester extends DataModelTestCase {
                      j.getHarvestNum());
         assertEquals("Job should have harvest id set", Long.valueOf(42L),
                      j.getOrigHarvestDefinitionID());
-        assertEquals("Job should have right prio", "HIGHPRIORITY",
+        assertEquals("Job should have right prio", "FOCUSED",
                      j.getChannel());
         assertEquals("Job should have configuration object limit", 
                 dc.getMaxObjects(),

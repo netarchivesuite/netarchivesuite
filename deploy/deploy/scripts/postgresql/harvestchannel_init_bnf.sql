@@ -15,14 +15,11 @@
 
 SET search_path TO netarchivesuite;
 
-INSERT INTO harvestchannel(name, snapshot, isdefault, comments) 
-    VALUES ('URGENT', false, false, 'Urgent jobs');
+INSERT INTO harvestchannel(name, isdefault, comments) 
+    VALUES ('URGENT', false, 'Urgent jobs');
     
-INSERT INTO harvestchannel(name, snapshot, isdefault, comments) 
-    VALUES ('PRESS', false, false, 'Daily press jobs');
+INSERT INTO harvestchannel(name, isdefault, comments) 
+    VALUES ('PRESSE', false, 'Daily press jobs');
     
-INSERT INTO harvestchannel(name, snapshot, isdefault, comments) 
-    VALUES ('FOCUSED', false, true, 'Various focused jobs');
-    
-INSERT INTO harvestchannel(name, snapshot, isdefault, comments) 
-    VALUES ('BROAD', true, true, 'Broad harvest');
+INSERT INTO harvestchannel(name, isdefault, comments) 
+    VALUES ('CIBLEE', true, 'Various focused jobs');

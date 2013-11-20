@@ -55,8 +55,8 @@ public class IntegrityTestSuite extends TestCase {
     /**
      * We need two arbitrary (but different) queues for testing send and reply.
      */
-    private static final ChannelID sendQ = Channels.getHarvestJobChannelId(
-    		new HarvestChannel("LOWPRIORITY", "", true, true));
+    private static final ChannelID sendQ = 
+    		Channels.getHarvestJobChannelId(HarvestChannel.SNAPSHOT);
 
     private static final ChannelID replyQ = Channels.getTheSched();
 

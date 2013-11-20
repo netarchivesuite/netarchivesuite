@@ -63,7 +63,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        testChan = new HarvestChannel("test", "", false, true);
+        testChan = new HarvestChannel("test", "", true);
     }
 
     public void tearDown() throws Exception {

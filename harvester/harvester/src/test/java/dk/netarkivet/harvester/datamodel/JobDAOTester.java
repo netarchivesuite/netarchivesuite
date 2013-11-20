@@ -68,8 +68,8 @@ public class JobDAOTester extends DataModelTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
-        lowChan = new HarvestChannel("LOWPRIORITY", "", true, true);
+        highChan = new HarvestChannel("FOCUSED", "", true);
+        lowChan = HarvestChannel.SNAPSHOT;
         HarvestDAOUtils.resetDAOs();
     }
 
@@ -388,7 +388,7 @@ public class JobDAOTester extends DataModelTestCase {
         addHarvestDefinitionToDatabaseWithId(1);
         Job job0 = Job.createJob(Long.valueOf(1), highChan, d.getDefaultConfiguration(), 0);
         assertEquals("The channel should be named highpriority",
-                "HIGHPRIORITY", job0.getChannel());
+                "FOCUSED", job0.getChannel());
         Job job1 = Job.createSnapShotJob(Long.valueOf(1L), lowChan, d
                 .getDefaultConfiguration(), 2000L, -1L,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);

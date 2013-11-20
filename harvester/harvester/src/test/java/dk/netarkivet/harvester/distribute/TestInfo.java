@@ -51,9 +51,9 @@ public class TestInfo {
                 Job.class, Long.class, Map.class, String.class, Boolean.TYPE, 
                 Long.TYPE,Long.TYPE, Long.TYPE, JobStatus.class, String.class, Document.class,
                 String.class, Integer.TYPE, Long.class);
-        HarvestChannel lowChan = new HarvestChannel("LOWPRIORITY", "", true, true);
+        HarvestChannel lowChan = HarvestChannel.SNAPSHOT;
         return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                             lowChan.getName(), lowChan.isSnapShot(), -1L, -1L, 0L,
+                             lowChan.getName(), true, -1L, -1L, 0L,
                              JobStatus.STARTED, "default_template",
                              DocumentFactory.getInstance().createDocument(),
                              "http://sbforge.org", 1, null);

@@ -111,7 +111,7 @@ implements ComponentLifeCycle {
     	boolean isValid = true;
     	try {
     		HarvestChannel chan = dao.getByName(channelName);
-    		isSnapshot = chan.isSnapShot();
+    		isSnapshot = chan.isSnapshot();
     	} catch (UnknownID e) {
     		isValid = false;
     	}

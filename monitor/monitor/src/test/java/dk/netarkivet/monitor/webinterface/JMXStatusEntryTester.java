@@ -43,7 +43,7 @@ public class JMXStatusEntryTester extends TestCase {
         properties.put(JMXSummaryUtils.JMXApplicationNameProperty, "SH");
         properties.put(JMXSummaryUtils.JMXApplicationInstIdProperty, "XX");
         properties.put(JMXSummaryUtils.JMXHttpportProperty, "8081");
-        properties.put(JMXSummaryUtils.JMXHarvestChannelProperty, "HIGHPRIORITY");
+        properties.put(JMXSummaryUtils.JMXHarvestChannelProperty, "FOCUSED");
         properties.put(JMXSummaryUtils.JMXArchiveReplicaNameProperty, "ReplicaOne");
         properties.put(JMXSummaryUtils.JMXIndexProperty, "1");
     }
@@ -58,7 +58,7 @@ public class JMXStatusEntryTester extends TestCase {
         assertTrue(entry.getIndex().equals("1"));
         assertTrue(entry.getPhysicalLocation().equals("EAST"));
         assertTrue(entry.getArchiveReplicaName().equals("ReplicaOne"));
-        assertTrue(entry.getHarvestPriority().equals("HIGHPRIORITY"));
+        assertTrue(entry.getHarvestPriority().equals("FOCUSED"));
     }
     
     public void testGetLogmessage() throws Exception {

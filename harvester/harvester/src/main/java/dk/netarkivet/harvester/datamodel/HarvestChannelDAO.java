@@ -28,7 +28,6 @@ import java.util.Iterator;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
@@ -89,45 +88,29 @@ public abstract class HarvestChannelDAO implements Iterable<HarvestChannel> {
 	
 	/**
 	 * Creates a {@link HarvestChannel} object in the storage backend. 
-	 * @param jobCat the {@link HarvestChannel} object
+	 * @param harvestChannel the {@link HarvestChannel} object
 	 */
-	public abstract void create(HarvestChannel jobCat) throws IOFailure;
+	public abstract void create(HarvestChannel harvestChannel) throws IOFailure;
 	
 	/**
 	 * Updates a {@link HarvestChannel} object in the storage backend. 
-	 * @param jobCat the {@link HarvestChannel} object
+	 * @param harvestChannel the {@link HarvestChannel} object
 	 */
-	public abstract void update(HarvestChannel jobCat) throws IOFailure;
-	
-	/**
-	 * Deletes a {@link HarvestChannel} object in the storage backend. 
-	 * @param jobCat the {@link HarvestChannel} object
-	 * @throws NetarkivetException if the job category is still referenced 
-	 * by a {@link HarvestDefinition}.
-	 */
-	public abstract void delete(HarvestChannel jobCat)
-			throws NetarkivetException;
-	
-	/**
-	 * Returns harvest channels by type.
-	 * @param snapshot if true, fecth only snapshot types, otherwise broad types.
-	 * @return an iterator on {@link HarvestChannel}.
-	 */
-	public abstract Iterator<HarvestChannel> getAll(boolean isSnapshot);
+	public abstract void update(HarvestChannel harvestChannel) throws IOFailure;
 	
 	/**
 	 * Returns harvest channels by type, sorted first by type 
 	 * (focused first, then broad) and then by name.
+	 * @param includeSnapshot if true, returns the single snapshot channel in the iterator.
 	 * @return an iterator on {@link HarvestChannel}.
 	 */
-	public abstract Iterator<HarvestChannel> getAll();
+	public abstract Iterator<HarvestChannel> getAll(boolean includeSnapshot);
 	
 	/**
-	 * Returns true if a default channel exists for the given type of job (snapshot or focused).
-	 * @param snapshot type of job
+	 * Returns true if a default channel exists for focused jobs.
 	 * @return true if a match is found, false otherwise.
 	 */
-	public abstract boolean defaultChannelExists(boolean snapshot);
+	public abstract boolean defaultFocusedChannelExists();
 	
 	/**
 	 * Returns the default {@link HarvestChannel} for the given type of harvest.

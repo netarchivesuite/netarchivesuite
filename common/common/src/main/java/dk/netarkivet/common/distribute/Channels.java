@@ -643,7 +643,7 @@ public class Channels {
      * @return That channel (queue)
      */
 	public static ChannelID getHarvestJobChannelId(HarvestChannel harvestChannel) {
-		String prefix = (harvestChannel.isSnapShot() 
+		String prefix = (harvestChannel.isSnapshot() 
 				? JOB_SNAPSHOT_CHANNEL_PREFIX : JOB_PARTIAL_CHANNEL_PREFIX)
 				+ "_" + harvestChannel.getName().toUpperCase();
 		return new ChannelID(

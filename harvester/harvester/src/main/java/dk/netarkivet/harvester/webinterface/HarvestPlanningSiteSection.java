@@ -49,8 +49,8 @@ public class HarvestPlanningSiteSection extends SiteSection {
     public HarvestPlanningSiteSection() {
         super("sitesection;harvestplanning", "HarvestPlanning", PAGES_VISIBLE_IN_MENU,
               new String[][]{
-                      {"edit-harvest-channels", "pagetitle;edit.harvest.channels"},
-                      {"edit-harvest-mappings", "pagetitle;edit.harvest.mappings"}
+        		      {"edit-harvest-mappings", "pagetitle;edit.harvest.mappings"},
+                      {"edit-harvest-channels", "pagetitle;edit.harvest.channels"}                      
                       // The pages listed below are not visible in the left menu
               }, "HarvestPlanning",
                  dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);

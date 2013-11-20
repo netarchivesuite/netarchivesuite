@@ -60,7 +60,7 @@ public class HarvesterStatusReceiverTest extends TestCase  {
     }
     
     public void testStatusReception() {
-    	HarvestChannel highChan = new HarvestChannel("HIGHPRIORITY", "", false, true);
+    	HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
         HarvesterReadyMessage statusmessage = 
                 new HarvesterReadyMessage("Test", highChan.getName());
         receiver.onMessage(

@@ -15,8 +15,5 @@
 
 SET search_path TO netarchivesuite;
 
-INSERT INTO harvestchannel(name, snapshot, isdefault, comments) 
-    VALUES ('HIGHPRIORITY', false, true, 'High job priority for focused harvests');
-    
-INSERT INTO harvestchannel(name, snapshot, comments) 
-    VALUES ('LOWPRIORITY', true, true, 'Low job priority for broad harvests');
+INSERT INTO harvestchannel(name, isdefault, comments) 
+    VALUES ('FOCUSED', true, 'Channel for focused harvests');

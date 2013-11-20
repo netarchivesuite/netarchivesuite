@@ -78,23 +78,28 @@ Additionally it allows the user to map harvests to channels.
 
 <%
     HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
-    Iterator<HarvestChannel> chanIter = dao.getAll();
+    Iterator<HarvestChannel> chanIter = dao.getAll(true);
     while (chanIter.hasNext()) {
     	HarvestChannel channel = chanIter.next();
-    	String typeKey = (channel.isSnapShot() 
-    			? "harvest.channel.type.focused"
-    					: "harvest.channel.type.broad");
+    	String typeKey = (channel.isSnapshot() 
+    			? "harvest.channel.type.broad"
+    					: "harvest.channel.type.focused");
     	String channelName = channel.getName(); 
     	if (channel.isDefault()) {
     			channelName = "<b>" + channelName + "</b>";
     	}
+    	
+    	String channelComments = channel.getComments();
+    	if (channel.isSnapshot()) {
+			channelComments = HarvestChannel.getSnapshotDescription(pageContext);
+		}
     	
 %>
 
 <tr>
     <td><%= channelName %></td>
     <td><fmt:message key="<%= typeKey %>"/></td>
-    <td><%=channel.getComments()%></td>
+    <td><%=channelComments%></td>
 </tr>
 
 <%  } %>
@@ -122,9 +127,8 @@ Additionally it allows the user to map harvests to channels.
             </tr>
             <tr>
                 <td><fmt:message key="harvest.channel.type"/></td>
-                <td><select id="<%=HarvestChannelAction.SNAPSHOT%>" name="<%=HarvestChannelAction.SNAPSHOT%>">
+                <td><select disabled id="<%=HarvestChannelAction.SNAPSHOT%>" name="<%=HarvestChannelAction.SNAPSHOT%>">
                     <option name="focused" value="false"><fmt:message key="harvest.channel.type.focused"/></option>
-                    <option name="broad" value="true"><fmt:message key="harvest.channel.type.broad"/></option>
                 </select></td>
             </tr>
             <tr>

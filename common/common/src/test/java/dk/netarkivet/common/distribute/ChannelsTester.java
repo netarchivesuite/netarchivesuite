@@ -147,10 +147,9 @@ public class ChannelsTester extends TestCase {
     public void testIsTopic() {
         ChannelID[]queues = new ChannelID[]{
                 Channels.getHarvestJobChannelId(
-                		new HarvestChannel("HIGHPRIORITY", "", false, true)),
+                		new HarvestChannel("FOCUSED", "", true)),
                 Channels.getAnyBa(),
-                Channels.getHarvestJobChannelId(
-                		new HarvestChannel("LOWPRIORITY", "", true, true)),
+                Channels.getHarvestJobChannelId(HarvestChannel.SNAPSHOT),
                 Channels.getTheRepos(),
                 Channels.getTheIndexServer(),
                 Channels.getError(),

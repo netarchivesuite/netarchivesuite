@@ -44,7 +44,7 @@ public class ChannelIDTester extends TestCase {
         Settings.set(CommonSettings.APPLICATION_NAME,
                 "dk.netarkivet.archive.indexserver.IndexServerApplication");
         Settings.set(CommonSettings.APPLICATION_INSTANCE_ID, "XXX");
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, "HIGHPRIORITY");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, "FOCUSED");
     }
 
     /**

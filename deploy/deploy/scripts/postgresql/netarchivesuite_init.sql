@@ -589,7 +589,6 @@ INSERT INTO extendedfieldtype (extendedfieldtype_id, name)
 CREATE TABLE harvestchannel (
     id bigint NOT NULL PRIMARY KEY,
     name varchar(300) NOT NULL UNIQUE,
-    snapshot bool NOT NULL,
     isdefault bool NOT NULL,
     comments varchar(30000)
 );
