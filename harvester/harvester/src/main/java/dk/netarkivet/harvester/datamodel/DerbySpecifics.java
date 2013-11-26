@@ -449,8 +449,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
         String[] sqlStatements = {
                 "ALTER TABLE jobs ADD COLUMN channel VARCHAR(300) DEFAULT NULL",
                 "ALTER TABLE jobs ADD COLUMN snapshot BOOLEAN",
-                "UPDATE jobs SET channel = 'lowpriority' WHERE priority=0",
-                "UPDATE jobs SET channel = 'highpriority' WHERE priority=1",
+                "UPDATE jobs SET channel = 'snapshot' WHERE priority=0",
+                "UPDATE jobs SET channel = 'focused' WHERE priority=1",
                 "UPDATE jobs SET snapshot = true WHERE priority=0",
                 "ALTER TABLE jobs DROP COLUMN priority"
         };
@@ -462,18 +462,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
         String createStatement = "CREATE TABLE harvestchannel ("
             + "id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY, "
             + "name VARCHAR(300) NOT NULL UNIQUE,"
-            + "snapshot BOOLEAN NOT NULL,"
-            + "isdefault BOOLEAN NOT NULL,"
-            + "comments VARCHAR(30000)"
+            + "comments VARCHAR(30000),"
+            + "isdefault BOOLEAN NOT NULL"
             + ")";
-        String insertStatementOne = "INSERT INTO harvestchannel(name, snapshot, isdefault, comments) "
-                + "VALUES(\'HIGHPRIORITY\', false, true, "
-                + "\'High job priority for focused harvests\')";
-        String insertStatementTwo = "INSERT INTO harvestchannel(name, snapshot, isdefault, comments) "
-                + "VALUES(\'LOWPRIORITY\', true, true, "
-                + "\'Low job priority for broad harvests\')";
+        String insertStatementOne = "INSERT INTO harvestchannel(name, isdefault, comments) "
+                + "VALUES(\'FOCUSED\', true, \'Channel for focused harvests\')";
         HarvestDBConnection.updateTable("harvestchannel", 1, new String[]{
-                createStatement, insertStatementOne, insertStatementTwo       
+                createStatement, insertStatementOne   
         });
     }  
 }

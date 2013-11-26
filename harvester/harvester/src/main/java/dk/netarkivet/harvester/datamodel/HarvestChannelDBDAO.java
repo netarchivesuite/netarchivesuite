@@ -128,7 +128,7 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 					+ "VALUES (?,?,?)");
 			stm.setString(1, harvestChan.getName());
 			stm.setString(2, harvestChan.getComments());
-			stm.setBoolean(4, harvestChan.isDefault());
+			stm.setBoolean(3, harvestChan.isDefault());
 			if (stm.executeUpdate() < 1) {
 				throw new IOFailure(
 						"Failed to create harvestchannel '" + harvestChan.getName() + "'");

@@ -539,15 +539,15 @@ public class JobTester extends DataModelTestCase {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
         Job job0 = Job.createJob(Long.valueOf(1L), highChan, d.getDefaultConfiguration(), 0);
-        assertEquals("Job should have channel HIGHPRIORITY",
+        assertEquals("Job should have channel " + "FOCUSED",
         		"FOCUSED",
                 job0.getChannel());
         Job job1 = Job.createSnapShotJob(Long.valueOf(1),
         		lowChan,
                 d.getDefaultConfiguration(), 2000L, -1L, 
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
-        assertEquals("Job should have channel LOWPRIORITY",
-        		"LOWPRIORITY",
+        assertEquals("Job should have channel " + lowChan.getName(),
+        		lowChan.getName(),
                 job1.getChannel());
     }
 

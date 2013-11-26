@@ -538,7 +538,6 @@ public class JobDBDAO extends JobDAO {
                 job.setCreationDate(creationDate);
             }
 
-
             job.configsChanged = false;
             job.setJobID(jobID);
             job.setEdition(edition);
@@ -546,7 +545,7 @@ public class JobDBDAO extends JobDAO {
             if (resubmittedAsJob != null) {
                 job.setResubmittedAsJob(resubmittedAsJob);
             }
-            if (harvestnamePrefix != null) {
+            if (harvestnamePrefix == null) {
                 job.setDefaultHarvestNamePrefix();
             } else {
                 job.setHarvestFilenamePrefix(harvestnamePrefix);

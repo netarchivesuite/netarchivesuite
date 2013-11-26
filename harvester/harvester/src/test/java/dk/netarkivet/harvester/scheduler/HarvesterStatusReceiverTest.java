@@ -55,6 +55,7 @@ public class HarvesterStatusReceiverTest extends TestCase  {
 
         @Override
         protected void submitNextNewJob(HarvestChannel hChan) {
+            System.out.println("Within mockJobDispatcher");
             receivedChannelName = hChan.getName();
         }
     }
@@ -63,6 +64,7 @@ public class HarvesterStatusReceiverTest extends TestCase  {
     	HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
         HarvesterReadyMessage statusmessage = 
                 new HarvesterReadyMessage("Test", highChan.getName());
+        //System.out.println(highChan.getName());
         receiver.onMessage(
                 JMSConnectionMockupMQ.getObjectMessage(statusmessage));
         assertEquals(highChan.getName(), JobDispatcher.receivedChannelName);

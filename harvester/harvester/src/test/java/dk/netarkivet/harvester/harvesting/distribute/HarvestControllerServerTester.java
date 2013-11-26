@@ -48,6 +48,7 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -55,6 +56,7 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -88,6 +90,9 @@ public class HarvestControllerServerTester extends TestCase {
     /** The message to write to log when stopping the server. */
     private static final String CLOSE_MESSAGE = "Closing HarvestControllerServer.";
 
+    private static final HarvestChannel focusedHarvestChannel 
+        = new HarvestChannel("FOCUSED", "Channel for focused harvests", true);
+    
     HarvestControllerServer hcs;
 
     /* variables only used by the two harvestInfo test-methods */
@@ -186,8 +191,15 @@ public class HarvestControllerServerTester extends TestCase {
             //expected
         }
         String channelName = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
+        HarvestChannelDAO hcaDAO = HarvestChannelDAO.getInstance();
+        try {
+            hcaDAO.getByName(channelName);
+        } catch (UnknownID e) {
+            hcaDAO.create(focusedHarvestChannel);
+        }
+        
         ChannelID channel = Channels.getHarvestJobChannelId(
-        		HarvestChannelDAO.getInstance().getByName(channelName));
+        		hcaDAO.getByName(channelName));
         assertEquals("Should have no listeners to the HACO queue",
                      0, ((JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance()).getListeners(channel).size());

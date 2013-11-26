@@ -1278,7 +1278,9 @@ public class Job implements Serializable, JobInfo {
     @Override
     public String getHarvestFilenamePrefix() {
         if (this.harvestnamePrefix == null) {
-            this.setDefaultHarvestNamePrefix();
+            log.warn("HarvestnamePrefix not yet set for job " + this.jobID 
+                + ". Set it by using the naming scheme. This should only happen for old jobs being read");
+            setDefaultHarvestNamePrefix();
         }
         return this.harvestnamePrefix;
     }
@@ -1332,10 +1334,8 @@ public class Job implements Serializable, JobInfo {
     public long getTotalCountObjects() {
         return totalCountObjects;
     }
-
-    public void setDefaultHarvestNamePrefix() {
-        log.info("HarvestnamePrefix not yet set for job " + this.jobID 
-                + ". Set it by using the naming scheme");
+    
+    void setDefaultHarvestNamePrefix() {
         ArchiveFileNaming naming = ArchiveFileNamingFactory.getInstance();
         log.debug("Applying the default ArchiveFileNaming class '" 
                 + naming.getClass().getName() + "'.");
