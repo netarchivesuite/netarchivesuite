@@ -41,6 +41,7 @@ import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobUtils;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
@@ -111,7 +112,8 @@ public class HarvesterMessageHandlerTester extends TestCase {
                    NoSuchMethodException,
                    InvocationTargetException,
                    InstantiationException {
-        Job job = TestInfo.getJob();
+        
+        Job job = JobUtils.getSnapshotJobWithSbforgeAsSeed();
         try {
             tmh.visit(new DoOneCrawlMessage(job, Channels.getTheRepos(),
                     new HarvestDefinitionInfo("test", "test", "test"),

@@ -89,26 +89,6 @@ public class TestInfo {
                 .getConfiguration("Engelsk_netarkiv_et_niveau"), 0);
     }
     
-
-    /** Get a simple job with low priority
-     * @return a simple job with low priority
-     */
-    static Job getJobLowPriority() {
-        try {
-        	HarvestChannel lowChan = HarvestChannel.SNAPSHOT;
-            Constructor<Job> c = ReflectUtils.getPrivateConstructor(
-                    Job.class, Long.class, Map.class, HarvestChannel.class, Long.TYPE,
-                    Long.TYPE, Long.TYPE, JobStatus.class, String.class, 
-                    Document.class, String.class, Integer.TYPE, Long.class);
-            return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 lowChan, -1L, -1L, 0L,
-                                 JobStatus.NEW, "default_template",
-                                 XmlUtils.getXmlDoc(ORDER_FILE),
-                                 "www.netarkivet.dk", 1, null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
 
 

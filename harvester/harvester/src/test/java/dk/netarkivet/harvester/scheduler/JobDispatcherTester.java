@@ -69,6 +69,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobUtils;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
@@ -286,7 +287,7 @@ public class JobDispatcherTester extends TestCase {
         lowPriorityListener.messages = new ArrayList<DoOneCrawlMessage>();
 
         //send a low priority jobList
-        jobDispatcher.doOneCrawl(TestInfo.getJobLowPriority(),
+        jobDispatcher.doOneCrawl(JobUtils.getJobLowPriority(TestInfo.ORDER_FILE),
                 "test", "test", "test", lowChan, "unittesters", new ArrayList<MetadataEntry>());
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
@@ -385,8 +386,13 @@ public class JobDispatcherTester extends TestCase {
     private Job createJob(JobStatus status) {
         Iterator<Domain> domainsIterator =
             DomainDAO.getInstance().getAllDomains();
-        DomainConfiguration cfg =
-            domainsIterator.next().getDefaultConfiguration();
+        
+        DomainConfiguration cfg = null;
+        if (domainsIterator.hasNext()) {
+            cfg = domainsIterator.next().getDefaultConfiguration();
+        } else {
+            fail("No DomainConfiguration found");
+        }
         final JobDAO jdao = JobDAO.getInstance();
 
         final Long harvestID = 1L;

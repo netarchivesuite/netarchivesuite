@@ -55,7 +55,7 @@ public class TestInfo {
     private static final File FUTURE_BASEDIR = new File("tests/dk/netarkivet/harvester/data");
     private static final File TEMPLATES_DIR = new File(FUTURE_BASEDIR, "originals/order_templates");
 
-    private static final File ONE_LEVEL_ORDER_FILE = new File(TEMPLATES_DIR, "OneLevel-order.xml");
+    public static final File ONE_LEVEL_ORDER_FILE = new File(TEMPLATES_DIR, "OneLevel-order.xml");
 
     static final File ORIGINALS_DIR = new File(BASEDIR, "originals");
 
@@ -181,24 +181,4 @@ public class TestInfo {
     public static final String SND_FILENAME = //"42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc";
                                                 "42-117-20051212141240-00000-sb-test-har-001.statsbiblioteket.dk.arc";
 
-    /** Get a simple job with high priority.
-     *  @return a simple job with high priority
-     */
-    static Job getJob() {
-        Document d = XmlUtils.getXmlDoc(ONE_LEVEL_ORDER_FILE);
-        try {
-        	HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
-            Constructor<Job> c = ReflectUtils.getPrivateConstructor(
-                    Job.class, Long.class, Map.class, String.class, Boolean.TYPE, 
-                    Long.TYPE, Long.TYPE, Long.TYPE, JobStatus.class, String.class, 
-                    Document.class, String.class, Integer.TYPE, Long.class);
-            String seedList = "www.netarkivet.dk";
-            return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 highChan.getName(), highChan.isSnapshot(), -1L, -1L, 0L,
-                                 JobStatus.STARTED, "OneLevel-order", d,
-                                 seedList, 1, (Long) null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

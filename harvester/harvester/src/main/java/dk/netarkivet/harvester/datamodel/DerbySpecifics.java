@@ -451,7 +451,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 "ALTER TABLE jobs ADD COLUMN snapshot BOOLEAN",
                 "UPDATE jobs SET channel = 'snapshot' WHERE priority=0",
                 "UPDATE jobs SET channel = 'focused' WHERE priority=1",
-                "UPDATE jobs SET snapshot = true WHERE priority=0",
+                "UPDATE jobs SET snapshot = 'true' WHERE priority=0",
+                "UPDATE jobs SET snapshot = 'false' WHERE priority=1",
                 "ALTER TABLE jobs DROP COLUMN priority"
         };
         HarvestDBConnection.updateTable("jobs", 10, sqlStatements);   
