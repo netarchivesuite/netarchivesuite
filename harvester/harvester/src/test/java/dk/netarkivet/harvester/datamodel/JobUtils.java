@@ -37,7 +37,7 @@ public class JobUtils {
     /** Get a simple job with high priority.
      *  @return a simple job with high priority
      */
-    public static Job getHighPriorityJob(File ONE_LEVEL_ORDER_FILE) {
+    public static Job getHighPriorityJob(File ONE_LEVEL_ORDER_FILE, JobStatus jobstate, String templateName) {
         Document d = XmlUtils.getXmlDoc(ONE_LEVEL_ORDER_FILE);
         try {
             HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
@@ -48,8 +48,7 @@ public class JobUtils {
             String seedList = "www.netarkivet.dk";
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
                                  highChan.getName(), highChan.isSnapshot(), -1L, -1L, 0L,
-                                 JobStatus.STARTED, "OneLevel-order", d,
-                                 seedList, 1, (Long) null);
+                                 jobstate, templateName, d, seedList, 1, (Long) null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

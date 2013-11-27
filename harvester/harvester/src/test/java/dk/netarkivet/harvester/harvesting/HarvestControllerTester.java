@@ -34,6 +34,7 @@ import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobUtils;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
@@ -131,7 +132,7 @@ public class HarvestControllerTester extends TestCase {
         // Check that harvest info file, seed.txt and order.xml are written,
         // and that the returned HeritrixFiles points to the given places.
 
-        Job j = JobUtils.getHighPriorityJob(TestInfo.ONE_LEVEL_ORDER_FILE);
+        Job j = JobUtils.getHighPriorityJob(TestInfo.ONE_LEVEL_ORDER_FILE, JobStatus.STARTED, "default_template");
         j.setJobID(1L);
         // Check whether job 1 is valid
         assertFalse("j.getSeedList should be non-empty",

@@ -40,6 +40,7 @@ import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobUtils;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.testutils.ReflectUtils;
 
@@ -107,41 +108,9 @@ public class TestInfo {
      *  @return a simple job with high priority
      */
     static Job getJob() {
-        try {
-        	HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
-            Constructor<Job> c = ReflectUtils.getPrivateConstructor(
-                    Job.class, Long.class, Map.class, String.class, Boolean.TYPE, Long.TYPE,
-                    Long.TYPE, Long.TYPE, JobStatus.class, String.class, Document.class,
-                    String.class, Integer.TYPE, Long.class);
-            return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 highChan.getName(), highChan.isSnapshot(), -1L, -1L, 0L,
-                                 JobStatus.NEW, "default_orderxml",
-                                 XmlUtils.getXmlDoc(ORDER_FILE),
-                                 "www.netarkivet.dk", 1, null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return JobUtils.getHighPriorityJob(ORDER_FILE, JobStatus.NEW, "default_orderxml");
     }
 
-    /** Get a simple job with low priority
-     * @return a simple job with low priority
-     */
-    static Job getJobLowPriority() {
-        try {
-        	HarvestChannel lowChan = HarvestChannel.SNAPSHOT;
-            Constructor<Job> c = ReflectUtils.getPrivateConstructor(
-                    Job.class, Long.class, Map.class, HarvestChannel.class, 
-                    Long.TYPE, Long.TYPE, Long.TYPE, 
-                    JobStatus.class, String.class, Document.class,
-                    String.class, Integer.TYPE, Long.class);
-            return c.newInstance(42L, Collections.<String, String>emptyMap(),
-                                 lowChan, -1L, -1L, 0L,
-                                 JobStatus.NEW, "default_template",
-                                 XmlUtils.getXmlDoc(ORDER_FILE),
-                                 "www.netarkivet.dk", 1, null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    
 
 }
