@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <harvestInfo>
-  <version>0.3</version>
+  <version>0.5</version>
   <jobId>1</jobId>
-  <priority>HIGHPRIORITY</priority>
+  <channel>FOCUSED></channel>
+  <snapshot>false</snapshot>
   <harvestNum>0</harvestNum>
   <origHarvestDefinitionID>2</origHarvestDefinitionID>
   <maxBytesPerDomain>500000000</maxBytesPerDomain>
@@ -10,4 +11,6 @@
   <orderXMLName>default_orderxml</orderXMLName>
   <origHarvestDefinitionName>netarkivet</origHarvestDefinitionName>
   <scheduleName>Once_a_week</scheduleName>
+  <harvestFilenamePrefix>1-2</harvestFilenamePrefix>
+  <jobSubmitDate>2012-12-13T16:49:49Z</jobSubmitDate>
 </harvestInfo>

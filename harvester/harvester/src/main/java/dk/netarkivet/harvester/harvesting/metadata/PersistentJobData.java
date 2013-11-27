@@ -138,7 +138,8 @@ public class PersistentJobData implements JobInfo {
                         + ".origHarvestDefinitionID";
     /** Key in harvestinfo file for the harvest channel of the job. */
     private static final String CHANNEL_KEY = ROOT_ELEMENT + ".channel";
-    
+
+    private static final String PRIORITY_KEY = ROOT_ELEMENT + ".priority";
     /** Key in harvestinfo file for job type (snapshot or partial). */
     private static final String SNAPSHOT_KEY = ROOT_ELEMENT + ".snapshot";
 
@@ -169,21 +170,21 @@ public class PersistentJobData implements JobInfo {
             ROOT_ELEMENT + ".audience";
     
     /** Key in harvestinfo file for the file version. */
-    private static final String HARVESTVERSION_KEY = "harvestInfo.version";
+    private static final String HARVESTINFO_VERSION_KEY = "harvestInfo.version";
     /** Value for current version number. */
-    private static final String HARVESTVERSION_NUMBER = "0.4";
+    private static final String HARVESTINFO_VERSION_NUMBER = "0.5";
     
-    /** Also support for version 0.3 of harvestInfo xml. 
-     * In the previous format the field harvestNamePrefix
-     * did not exist.
+    /** Also support for version 0.4 of harvestInfo xml. 
+     * In the previous format the channel and snapshot keys were absent. Instead there was
+     * the priority key.
      */
-    private static final String OLD_HARVESTVERSION_NUMBER = "0.3";
+    private static final String OLD_HARVESTINFO_VERSION_NUMBER = "0.4";
 
-    /** String array containing all mandatory keys contained in valid version 0.4 xml.  */
+    /** String array containing all mandatory keys contained in valid version 0.5 xml.  */
     private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
-        ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY, HARVESTVERSION_KEY,
+        ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY, SNAPSHOT_KEY, HARVESTINFO_VERSION_KEY,
         HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
     
    /**
@@ -193,12 +194,12 @@ public class PersistentJobData implements JobInfo {
     */    
     
     /** String array containing all mandatory keys contained in old valid version 
-     * 0.3 xml.  */
+     * 0.4 xml.  */
     private static final String[] ALL_KEYS_OLD = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
-        ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY, HARVESTVERSION_KEY,
-        HARVEST_NAME_KEY};
+        ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTINFO_VERSION_KEY,
+        HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
         
     /** The logger to use. */
     private static final Log log
@@ -291,7 +292,7 @@ public class PersistentJobData implements JobInfo {
         }
 
         SimpleXml sx = new SimpleXml(ROOT_ELEMENT);
-        sx.add(HARVESTVERSION_KEY, HARVESTVERSION_NUMBER);
+        sx.add(HARVESTINFO_VERSION_KEY, HARVESTINFO_VERSION_NUMBER);
         sx.add(JOBID_KEY, harvestJob.getJobID().toString());
         sx.add(CHANNEL_KEY, harvestJob.getChannel());
         sx.add(SNAPSHOT_KEY, Boolean.toString(harvestJob.isSnapshot()));
@@ -353,17 +354,17 @@ public class PersistentJobData implements JobInfo {
      */
     private static XmlState validateHarvestInfo(SimpleXml sx) {      
         final String version;
-        if (sx.hasKey(HARVESTVERSION_KEY)) {
-            version = sx.getString(HARVESTVERSION_KEY);
+        if (sx.hasKey(HARVESTINFO_VERSION_KEY)) {
+            version = sx.getString(HARVESTINFO_VERSION_KEY);
         } else {
             final String errMsg = "Missing version information"; 
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
         
         final String[] keysToCheck;
-        if (version.equals(HARVESTVERSION_NUMBER)) {
+        if (version.equals(HARVESTINFO_VERSION_NUMBER)) {
             keysToCheck = ALL_KEYS;
-        } else if (version.equals(OLD_HARVESTVERSION_NUMBER)) {
+        } else if (version.equals(OLD_HARVESTINFO_VERSION_NUMBER)) {
             keysToCheck = ALL_KEYS_OLD;
         } else {
             final String errMsg = "Invalid version: " + version; 
@@ -390,11 +391,27 @@ public class PersistentJobData implements JobInfo {
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
 
-        // Verify, that the job priority element is not the empty String
-        if (sx.getString(CHANNEL_KEY).isEmpty()) {
-            final String errMsg = "The priority of the job is undefined";
+        // Verify, that the job channel and snapshot elements are not the empty String (version 0.5+)
+        if (version.equals(HARVESTINFO_VERSION_NUMBER) && sx.getString(CHANNEL_KEY).isEmpty() 
+                && sx.getString(SNAPSHOT_KEY).isEmpty() ) {
+            final String errMsg = "The channel and/or the snapshot value of the job is undefined";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
+        
+        if (version.equals(OLD_HARVESTINFO_VERSION_NUMBER) && sx.getString(PRIORITY_KEY).isEmpty()) {
+            final String errMsg = "The priority value of the job is undefined";
+            return new XmlState(OKSTATE.NOTOK, errMsg);
+        }
+        
+        
+        // Verify, that the job channel element is not the empty String
+        if (version.equals(HARVESTINFO_VERSION_NUMBER) && sx.getString(CHANNEL_KEY).isEmpty() 
+                && sx.getString(SNAPSHOT_KEY).isEmpty() ) {
+            final String errMsg = "The channel and/or the snapshot value of the job is undefined";
+            return new XmlState(OKSTATE.NOTOK, errMsg);
+        }
+        
+        
 
         // Verify, that the ORDERXMLNAME element is not the empty String
         if (sx.getString(ORDERXMLNAME_KEY).isEmpty()) {
@@ -559,7 +576,7 @@ public class PersistentJobData implements JobInfo {
      */
     public String getVersion() {
         SimpleXml sx = read(); // reads and validates XML
-        return sx.getString(HARVESTVERSION_KEY);
+        return sx.getString(HARVESTINFO_VERSION_KEY);
     }
     
     

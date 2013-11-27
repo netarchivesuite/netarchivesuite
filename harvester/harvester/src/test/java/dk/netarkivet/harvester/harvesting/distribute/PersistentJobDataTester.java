@@ -118,15 +118,15 @@ public class PersistentJobDataTester extends TestCase {
         FileUtils.removeRecursively(crawldir);
     }
         
-    /** Test reading the version 0.3 harvestInfo.xml. */
-    public void testReadVersion0_3() {
-        File hiVersion03 = new File(TestInfo.DATA_DIR, "harvestInfo-0.3.xml");
+    /** Test reading the version 0.5 harvestInfo.xml. The newest */
+    public void testReadVersion0_5() {
+        File hiVersion03 = new File(TestInfo.DATA_DIR, "harvestInfo-0.5.xml");
         FileUtils.copyFile(hiVersion03, new File(crawldir, TestInfo.HarvestInfofilename));
         PersistentJobData pjd = new PersistentJobData(crawldir);
         pjd.getVersion();
     }
     
-    /** Test reading the most recent version 0.3 harvestInfo.xml. */
+    /** Test reading the 0.4 harvestInfo.xml. */
     public void testReadVersion0_4() {
         File hiVersion03 = new File(TestInfo.DATA_DIR, "harvestInfo-0.4.xml");
         FileUtils.copyFile(hiVersion03, new File(crawldir, TestInfo.HarvestInfofilename));

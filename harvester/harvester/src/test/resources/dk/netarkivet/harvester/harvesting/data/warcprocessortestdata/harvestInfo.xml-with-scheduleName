@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <harvestInfo>
-  <version>0.4</version>
+  <version>0.5</version>
   <jobId>1</jobId>
-  <priority>HIGHPRIORITY</priority>
+  <channel>FOCUSED</channel>
+  <snapshot>false</snapshot>
   <harvestNum>0</harvestNum>
   <origHarvestDefinitionID>1</origHarvestDefinitionID>
   <maxBytesPerDomain>500000000</maxBytesPerDomain>

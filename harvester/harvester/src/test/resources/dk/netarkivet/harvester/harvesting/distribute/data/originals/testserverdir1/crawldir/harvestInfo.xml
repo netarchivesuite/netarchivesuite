@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <harvestInfo>
-  <version>0.3</version>
+  <version>0.4</version>
   <jobId>42</jobId>
   <dataPath>tests/dk/netarkivet/distribute/harvestscheduler/data/working/testserverdir1/crawldir</dataPath>
   <harvestNum>1</harvestNum>
@@ -12,5 +12,7 @@
   <origHarvestDefinitionID>1</origHarvestDefinitionID>
   <origHarvestDefinitionName>test</origHarvestDefinitionName>
   <origHarvestDefinitionComments>test comments</origHarvestDefinitionComments>
+  <harvestFilenamePrefix>1-1</harvestFilenamePrefix>
+  <jobSubmitDate></jobSubmitDate>
   <scheduleName></scheduleName>
 </harvestInfo>
