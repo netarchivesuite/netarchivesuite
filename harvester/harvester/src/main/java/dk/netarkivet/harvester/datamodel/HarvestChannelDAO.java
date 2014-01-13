@@ -31,27 +31,27 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Abstract class for the DAO handling the persistence of {@link HarvestChannel} 
+ * Abstract class for the DAO handling the persistence of {@link HarvestChannel}
  * instances.
- * 
+ *
  * @author ngiraud
  *
  */
 public abstract class HarvestChannelDAO implements Iterable<HarvestChannel> {
-	
-	/**
-	 * The singleton instance
-	 */
-	private static HarvestChannelDAO instance;
 
-	/**
-	 * Default empty constructor
-	 */
-	HarvestChannelDAO() {
-		
-	}
-	
-	/**
+    /**
+     * The singleton instance
+     */
+    private static HarvestChannelDAO instance;
+
+    /**
+     * Default empty constructor
+     */
+    HarvestChannelDAO() {
+
+    }
+
+    /**
      * Gets the {@link HarvestChannelDAO} singleton.
      *
      * @return the {@link HarvestChannelDAO} singleton
@@ -63,68 +63,68 @@ public abstract class HarvestChannelDAO implements Iterable<HarvestChannel> {
         return instance;
     }
 
-	@Override
-	public abstract Iterator<HarvestChannel> iterator();
-	
-	/**
-	 * Retrieves a {@link HarvestChannel} by its UID.
-	 * @param id the UID to look for
-	 * @return the corresponding instance
-	 * @throws ArgumentNotValid if not ID is supplied
-	 * @throws UnknownID if the ID is not present in the persistent storage.
-	 */
-	public abstract HarvestChannel getById(long id)
-			throws ArgumentNotValid, UnknownID;
-	
-	/**
-	 * Retrieves a {@link HarvestChannel} by its unique name.
-	 * @param name the name to look for
-	 * @return the corresponding instance
-	 * @throws ArgumentNotValid if not name is supplied
-	 * @throws UnknownID if the name is not present in the persistent storage.
-	 */
-	public abstract HarvestChannel getByName(String name)
-			throws ArgumentNotValid, UnknownID;
-	
-	/**
-	 * Creates a {@link HarvestChannel} object in the storage backend. 
-	 * @param harvestChannel the {@link HarvestChannel} object
-	 */
-	public abstract void create(HarvestChannel harvestChannel) throws IOFailure;
-	
-	/**
-	 * Updates a {@link HarvestChannel} object in the storage backend. 
-	 * @param harvestChannel the {@link HarvestChannel} object
-	 */
-	public abstract void update(HarvestChannel harvestChannel) throws IOFailure;
-	
-	/**
-	 * Returns harvest channels by type, sorted first by type 
-	 * (focused first, then broad) and then by name.
-	 * @param includeSnapshot if true, returns the single snapshot channel in the iterator.
-	 * @return an iterator on {@link HarvestChannel}.
-	 */
-	public abstract Iterator<HarvestChannel> getAll(boolean includeSnapshot);
-	
-	/**
-	 * Returns true if a default channel exists for focused jobs.
-	 * @return true if a match is found, false otherwise.
-	 */
-	public abstract boolean defaultFocusedChannelExists();
-	
-	/**
-	 * Returns the default {@link HarvestChannel} for the given type of harvest.
-	 * @param snapshot snapshot or partial harvest
-	 * @return the default {@link HarvestChannel}
-	 */
-	public abstract HarvestChannel getDefaultChannel(boolean snapshot);
-	
-	/**
-	 * Returns the {@link HarvestChannel} mapped to the given {@link HarvestDefinition} id.
-	 * If no mapping was explicitly defined, returns null.
-	 * @param harvestDefinitionId the {@link HarvestDefinition} id to look for
-	 * @return the mapped {@link HarvestChannel} id or null
-	 */
-	public abstract HarvestChannel getChannelForHarvestDefinition(long harvestDefinitionId);
+    @Override
+    public abstract Iterator<HarvestChannel> iterator();
+
+    /**
+     * Retrieves a {@link HarvestChannel} by its UID.
+     * @param id the UID to look for
+     * @return the corresponding instance
+     * @throws ArgumentNotValid if not ID is supplied
+     * @throws UnknownID if the ID is not present in the persistent storage.
+     */
+    public abstract HarvestChannel getById(long id)
+            throws ArgumentNotValid, UnknownID;
+
+    /**
+     * Retrieves a {@link HarvestChannel} by its unique name.
+     * @param name the name to look for
+     * @return the corresponding instance
+     * @throws ArgumentNotValid if not name is supplied
+     * @throws UnknownID if the name is not present in the persistent storage.
+     */
+    public abstract HarvestChannel getByName(String name)
+            throws ArgumentNotValid, UnknownID;
+
+    /**
+     * Creates a {@link HarvestChannel} object in the storage backend.
+     * @param harvestChannel the {@link HarvestChannel} object
+     */
+    public abstract void create(HarvestChannel harvestChannel) throws IOFailure;
+
+    /**
+     * Updates a {@link HarvestChannel} object in the storage backend.
+     * @param harvestChannel the {@link HarvestChannel} object
+     */
+    public abstract void update(HarvestChannel harvestChannel) throws IOFailure;
+
+    /**
+     * Returns harvest channels by type, sorted first by type
+     * (focused first, then broad) and then by name.
+     * @param includeSnapshot if true, returns the single snapshot channel in the iterator.
+     * @return an iterator on {@link HarvestChannel}.
+     */
+    public abstract Iterator<HarvestChannel> getAll(boolean includeSnapshot);
+
+    /**
+     * Returns true if a default channel exists for focused jobs.
+     * @return true if a match is found, false otherwise.
+     */
+    public abstract boolean defaultFocusedChannelExists();
+
+    /**
+     * Returns the default {@link HarvestChannel} for the given type of harvest.
+     * @param snapshot snapshot or partial harvest
+     * @return the default {@link HarvestChannel}
+     */
+    public abstract HarvestChannel getDefaultChannel(boolean snapshot);
+
+    /**
+     * Returns the {@link HarvestChannel} mapped to the given {@link HarvestDefinition} id.
+     * If no mapping was explicitly defined, returns null.
+     * @param harvestDefinitionId the {@link HarvestDefinition} id to look for
+     * @return the mapped {@link HarvestChannel} id or null
+     */
+    public abstract HarvestChannel getChannelForHarvestDefinition(long harvestDefinitionId);
 
 }

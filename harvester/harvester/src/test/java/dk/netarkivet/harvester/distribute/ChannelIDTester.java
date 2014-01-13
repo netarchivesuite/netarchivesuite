@@ -51,10 +51,10 @@ public class ChannelIDTester extends TestCase {
      * Test that each channel is equal only to itself.
      */
     public void testChannelIdentity(){
-    	String defaultChannel =  
-    			Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
-        ChannelID harvestJobChannel = Channels.getHarvestJobChannelId(
-        		HarvestChannelDAO.getInstance().getByName(defaultChannel));
+    	String defaultChannel =
+                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
+        ChannelID harvestJobChannel = HarvesterChannels.getHarvestJobChannelId(
+                HarvestChannelDAO.getInstance().getByName(defaultChannel));
         ChannelID[] channelArray =
          {Channels.getAllBa(), harvestJobChannel, Channels.getAnyBa(),
           Channels.getError(), Channels.getTheRepos(), Channels.getTheBamon(),

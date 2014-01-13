@@ -36,7 +36,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.HarvestChannel;
 
 /**
  * This singleton class is in charge of giving out the correct channels.
@@ -44,33 +43,21 @@ import dk.netarkivet.harvester.datamodel.HarvestChannel;
 
 public class Channels {
 
-   /**
-    * Channel type prefixes for the current set of channels.
-    */
+    /**
+     * Channel type prefixes for the current set of channels.
+     */
     private static final String ALLBA_CHANNEL_PREFIX = "ALL_BA";
     private static final String ANYBA_CHANNEL_PREFIX = "ANY_BA";
     private static final String THEBAMON_CHANNEL_PREFIX = "THE_BAMON";
     private static final String THESCHED_CHANNEL_PREFIX = "THE_SCHED";
     private static final String THEREPOS_CHANNEL_PREFIX = "THE_REPOS";
     private static final String THISREPOSCLIENT_CHANNEL_PREFIX
-        = "THIS_REPOS_CLIENT";
+            = "THIS_REPOS_CLIENT";
     private static final String ERROR_CHANNEL_PREFIX = "ERROR";
     private static final String INDEXSERVER_CHANNEL_PREFIX = "INDEX_SERVER";
     private static final String THISINDEXCLIENT_CHANNEL_PREFIX
-        = "THIS_INDEX_CLIENT";
+            = "THIS_INDEX_CLIENT";
     private static final String MONITOR_CHANNEL_PREFIX = "MONITOR";
-
-    /**
-     * Prefix for the channel used to send
-     * {@link dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage}s.
-     */
-    private static final String HARVEST_MONITOR_CHANNEL_PREFIX = "HARVESTMON";
-
-    /**
-     * Prefix for the channel used to sending HarvesterReadyMessages.
-     */
-    private static final String 
-    HARVESTER_STATUS_CHANNEL_PREFIX = "HARVESTER_STATUS";
 
     private static final String THECR_CHANNEL_PREFIX = "THE_CR";
 
@@ -161,7 +148,7 @@ public class Channels {
             // issue an error, if the use replica could not be found.
             throw new ArgumentNotValid(
                     "The useReplica '" + useReplica + "' was not found in the "
-                    + "list of replicas: '" + replicas + "'.");
+                            + "list of replicas: '" + replicas + "'.");
         }
 
         // set the channels for the useReplica
@@ -235,7 +222,7 @@ public class Channels {
     }
 
     private final ChannelID[] THE_BAMON_ARRAY =
-        new ChannelID[replicas.size()];
+            new ChannelID[replicas.size()];
 
     /**
      * Returns the queue for sending messages to bitarchive monitors.
@@ -275,7 +262,7 @@ public class Channels {
 
     /** The array containing the 'THE_CR' channels.*/
     private final ChannelID[] THE_CR_ARRAY
-        = new ChannelID[replicas.size()];
+            = new ChannelID[replicas.size()];
 
     /**
      * Method for retrieving the 'THE_CR' channel for this replica.
@@ -314,7 +301,7 @@ public class Channels {
      * the list of ALL_BA for all archives (i.e. archive replicas).
      */
     private final ChannelID[] ALL_BA_ARRAY
-        = new ChannelID[replicas.size()];
+            = new ChannelID[replicas.size()];
 
     /**
      * Returns the topic that all bitarchive machines on this replica
@@ -354,7 +341,7 @@ public class Channels {
      * following is the list of ANY_BA for all archives.
      */
     private final ChannelID[] ANY_BA_ARRAY
-        = new ChannelID[replicas.size()];
+            = new ChannelID[replicas.size()];
 
     /**
      * Returns the channel where exactly one of all the bitarchive machines at
@@ -426,10 +413,10 @@ public class Channels {
         for (ChannelID cr : crs) {
             if (cr != null
                     && cr.getName().equals(
-                            Settings.get(CommonSettings.ENVIRONMENT_NAME)
-                                    + CHANNEL_PART_SEPARATOR + replicaId
-                                    + CHANNEL_PART_SEPARATOR
-                                    + THECR_CHANNEL_PREFIX)) {
+                    Settings.get(CommonSettings.ENVIRONMENT_NAME)
+                            + CHANNEL_PART_SEPARATOR + replicaId
+                            + CHANNEL_PART_SEPARATOR
+                            + THECR_CHANNEL_PREFIX)) {
                 return cr;
             }
         }
@@ -480,7 +467,7 @@ public class Channels {
             String replicaId) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         return Replica.getReplicaFromId(replicaId)
-            .getIdentificationChannel().getName();
+                .getIdentificationChannel().getName();
     }
 
     /**
@@ -544,134 +531,13 @@ public class Channels {
         return getInstance().THE_MONITOR_SERVER;
     }
 
-   private final ChannelID THE_MONITOR_SERVER = new ChannelID(
+    private final ChannelID THE_MONITOR_SERVER = new ChannelID(
             MONITOR_CHANNEL_PREFIX,
             ChannelID.COMMON,
             ChannelID.NO_IP,
             ChannelID.NO_APPLINST_ID,
             ChannelID.TOPIC);
 
-   /** Return the queue for the harvest monitor registry.
-   *
-   * @return the <code>ChannelID</code> object for the queue.
-   */
-  public static ChannelID getHarvestMonitorChannel() {
-      return getInstance().HARVEST_MONITOR;
-  }
-
-  private final ChannelID HARVEST_MONITOR = new ChannelID(
-          HARVEST_MONITOR_CHANNEL_PREFIX,
-          ChannelID.COMMON,
-          ChannelID.NO_IP,
-          ChannelID.NO_APPLINST_ID,
-          ChannelID.QUEUE);
-
-  /** 
-   * @return the <code>ChannelID</code> object for the topic used by the 
-   * harvesters to call in ready for new jobs.
-   */
-  public static ChannelID getHarvesterStatusChannel() {
-      return getInstance().HARVESTER_STATUS;
-  }
-
-  private final ChannelID HARVESTER_STATUS = new ChannelID(
-          HARVESTER_STATUS_CHANNEL_PREFIX,
-          ChannelID.COMMON,
-          ChannelID.NO_IP,
-          ChannelID.NO_APPLINST_ID,
-          ChannelID.TOPIC);
-  
-  /**
-	 * Prefix for the channels used to send 
-	 * @{link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest}s
-	 * and 
-	 * @{link {@link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse}}s
-	 */
-	private static final String HARVEST_CHANNEL_VALIDITY_PREFIX = "HCHAN_VAL_";
-	
-	private final ChannelID HARVEST_CHANNEL_VALIDITY_REQUEST = new ChannelID(
-			HARVEST_CHANNEL_VALIDITY_PREFIX + "REQ",
-			ChannelID.COMMON,
-			ChannelID.NO_IP,
-			ChannelID.NO_APPLINST_ID,
-			ChannelID.QUEUE);
-	
-	/** 
-	 * Return the queue for sending
-	 * @{link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest}s.
-	 * 
-	 * @return the <code>ChannelID</code> object for the queue.
-	 */
-	public static ChannelID getHarvestChannelValidityRequestChannel() {
-		return getInstance().HARVEST_CHANNEL_VALIDITY_REQUEST;
-	}
-	
-	/**
-	 * Prefix for channels related to harvest channel validity messages.
-	 */
-	private final ChannelID HARVEST_CHANNEL_VALIDITY_RESPONSE = new ChannelID(
-			HARVEST_CHANNEL_VALIDITY_PREFIX + "RESP",
-			ChannelID.COMMON,
-			ChannelID.NO_IP,
-			ChannelID.NO_APPLINST_ID,
-			ChannelID.QUEUE);
-	
-	/** 
-	 * Return the queue for sending
-	 * @{link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse}s.
-	 * 
-	 * @return the <code>ChannelID</code> object for the queue.
-	 */
-	public static ChannelID getHarvestChannelValidityResponseChannel() {
-		return getInstance().HARVEST_CHANNEL_VALIDITY_RESPONSE;
-	}
-
-	/**
-	 * The prefix for channels handling snapshot harvest jobs.
-	 */
-	private static final String JOB_SNAPSHOT_CHANNEL_PREFIX = "JOB_SNAPSHOT";
-	
-	/**
-	 * The prefix for channels handling focused harvest jobs.
-	 */
-	private static final String JOB_PARTIAL_CHANNEL_PREFIX = "JOB_PARTIAL";
-	
-	/**
-     * Returns the queue which is used by the scheduler to send doOneCrawl to
-     * Harvest Controllers listening on the given harvest channel.
-     *
-     * @return That channel (queue)
-     */
-	public static ChannelID getHarvestJobChannelId(HarvestChannel harvestChannel) {
-		String prefix = (harvestChannel.isSnapshot() 
-				? JOB_SNAPSHOT_CHANNEL_PREFIX : JOB_PARTIAL_CHANNEL_PREFIX)
-				+ "_" + harvestChannel.getName().toUpperCase();
-		return new ChannelID(
-				prefix, 
-				ChannelID.COMMON, 
-				ChannelID.NO_IP,
-				ChannelID.NO_APPLINST_ID, 
-				ChannelID.QUEUE);
-	}	
-	
-	/**
-     * Returns the queue which is used by the scheduler to send doOneCrawl to
-     * Harvest Controllers listening on the given harvest channel.
-     *
-     * @return That channel (queue)
-     */
-	public static ChannelID getHarvestJobChannelId(String harvestChannelName, boolean isSnapshot) {
-		String prefix = (isSnapshot
-				? JOB_SNAPSHOT_CHANNEL_PREFIX : JOB_PARTIAL_CHANNEL_PREFIX)
-				+ "_" + harvestChannelName.toUpperCase();
-		return new ChannelID(
-				prefix, 
-				ChannelID.COMMON, 
-				ChannelID.NO_IP,
-				ChannelID.NO_APPLINST_ID, 
-				ChannelID.QUEUE);
-	}
-	
     /**
      * Reset the instance to re-read the settings. Only for use in tests.
      */

@@ -38,6 +38,7 @@ import java.util.logging.LogManager;
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -198,8 +199,8 @@ public class HarvestControllerServerTester extends TestCase {
             hcaDAO.create(focusedHarvestChannel);
         }
         
-        ChannelID channel = Channels.getHarvestJobChannelId(
-        		hcaDAO.getByName(channelName));
+        ChannelID channel = HarvesterChannels.getHarvestJobChannelId(
+                hcaDAO.getByName(channelName));
         assertEquals("Should have no listeners to the HACO queue",
                      0, ((JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance()).getListeners(channel).size());
@@ -308,8 +309,9 @@ public class HarvestControllerServerTester extends TestCase {
         theJob.setJobID(Long.valueOf(42L));
         String channel = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
         NetarkivetMessage naMsg = new DoOneCrawlMessage(
-                theJob, 
-                Channels.getHarvestJobChannelId(HarvestChannelDAO.getInstance().getByName(channel)),
+                theJob,
+                HarvesterChannels.getHarvestJobChannelId(
+                        HarvestChannelDAO.getInstance().getByName(channel)),
                 new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
         JMSConnectionMockupMQ.updateMsgID(naMsg, "id1");

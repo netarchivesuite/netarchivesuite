@@ -24,29 +24,26 @@
  */
 package dk.netarkivet.common.distribute;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.QueueBrowser;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import junit.framework.TestCase;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.QueueBrowser;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
 
 /**
  * Tests JMSConnection, the class that handles all JMS operations for Netarkivet.
@@ -55,8 +52,7 @@ public class IntegrityTestSuite extends TestCase {
     /**
      * We need two arbitrary (but different) queues for testing send and reply.
      */
-    private static final ChannelID sendQ = 
-    		Channels.getHarvestJobChannelId(HarvestChannel.SNAPSHOT);
+    private static final ChannelID sendQ = Channels.getAnyBa();
 
     private static final ChannelID replyQ = Channels.getTheSched();
 

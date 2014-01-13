@@ -27,6 +27,7 @@ package dk.netarkivet.harvester.harvesting.distribute;
 import java.io.Serializable;
 
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
@@ -37,8 +38,8 @@ import dk.netarkivet.harvester.scheduler.JobDispatcher;
  * it whether it is available for processing a job or already processing one.
  */
 public class HarvesterReadyMessage
-extends HarvesterMessage
-implements Serializable {
+        extends HarvesterMessage
+        implements Serializable {
 
     /**
      * The name of the channel of jobs crawled by the sender.
@@ -59,7 +60,7 @@ implements Serializable {
     public HarvesterReadyMessage(
             String applicationInstanceId,
             String harvestChannelName) {
-        super(Channels.getHarvesterStatusChannel(), Channels.getError());
+        super(HarvesterChannels.getHarvesterStatusChannel(), Channels.getError());
         this.applicationInstanceId = applicationInstanceId;
         this.harvestChannelName = harvestChannelName;
     }
@@ -68,12 +69,12 @@ implements Serializable {
     public void accept(HarvesterMessageVisitor v) {
         v.visit(this);
     }
-    
-    public String getHarvestChannelName() {
-		return harvestChannelName;
-	}
 
-	/**
+    public String getHarvestChannelName() {
+        return harvestChannelName;
+    }
+
+    /**
      * @return the application instance ID.
      */
     public String getApplicationInstanceId() {

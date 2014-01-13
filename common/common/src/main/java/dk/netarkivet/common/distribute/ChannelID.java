@@ -67,13 +67,13 @@ public class ChannelID implements Serializable {
      * Constants to make the semantics of parameters to our name constructors
      * more explicit.
      */
-    static final String COMMON = "COMMON";
-    static final boolean INCLUDE_IP = true;
-    static final boolean NO_IP = false;
-    static final boolean INCLUDE_APPLINST_ID = true;
-    static final boolean NO_APPLINST_ID = false;
-    static final boolean TOPIC = true;
-    static final boolean QUEUE = false;
+    public static final String COMMON = "COMMON";
+    public static final boolean INCLUDE_IP = true;
+    public static final boolean NO_IP = false;
+    public static final boolean INCLUDE_APPLINST_ID = true;
+    public static final boolean NO_APPLINST_ID = false;
+    public static final boolean TOPIC = true;
+    public static final boolean QUEUE = false;
     /**
      * A ChannelID is identified by its name.
      * It has one bit of state information: is it a queue or a topic?
@@ -95,7 +95,7 @@ public class ChannelID implements Serializable {
     * @param isTopic Whether the Channel is a Topic or a Queue.
     * @throws UnknownID if looking up the local IP number failed.
     */
-    ChannelID(String appPref, String replicaId, boolean useNodeId,
+    public ChannelID(String appPref, String replicaId, boolean useNodeId,
         boolean useAppInstId, boolean isTopic) {
         this.name = constructName(
                 appPref, replicaId, useNodeId, useAppInstId, isTopic);

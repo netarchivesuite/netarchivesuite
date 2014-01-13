@@ -26,6 +26,7 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.scheduler.HarvesterStatusReceiver;
@@ -38,60 +39,60 @@ import dk.netarkivet.harvester.scheduler.HarvesterStatusReceiver;
  *
  */
 public class HarvestChannelValidityResponse extends HarvesterMessage {
-	
-	/**
-	 * The harvest channel name.
-	 */
-	private final String harvestChannelName;
-	
-	/**
-	 * If true, the name matches an existing {@link HarvestChannel}.
-	 */
-	private final boolean isValid;
-	
-	/**
-	 * Whether the matching {@link HarvestChannel} handles snapshot or focused harvests.
-	 * Meaningless if {@link #isValid} is false. 
-	 */
-	private final boolean isSnapshot;
 
-	/**
-	 * Constructor from fields.
-	 */
-	public HarvestChannelValidityResponse(
-			final String harvestChannelName, 
-			final boolean isValid, 
-			final boolean isSnapshot) {
-		super(Channels.getHarvestChannelValidityResponseChannel(), Channels.getError());
-		this.harvestChannelName = harvestChannelName;
-		this.isValid = isValid;
-		this.isSnapshot = isSnapshot;
-	}
+    /**
+     * The harvest channel name.
+     */
+    private final String harvestChannelName;
 
-	@Override
-	public void accept(HarvesterMessageVisitor v) {
-		v.visit(this);
-	}
+    /**
+     * If true, the name matches an existing {@link HarvestChannel}.
+     */
+    private final boolean isValid;
 
-	/**
-	 * @return the harvestChannelName
-	 */
-	public final String getHarvestChannelName() {
-		return harvestChannelName;
-	}
+    /**
+     * Whether the matching {@link HarvestChannel} handles snapshot or focused harvests.
+     * Meaningless if {@link #isValid} is false.
+     */
+    private final boolean isSnapshot;
 
-	/**
-	 * @return the isValid
-	 */
-	public final boolean isValid() {
-		return isValid;
-	}
+    /**
+     * Constructor from fields.
+     */
+    public HarvestChannelValidityResponse(
+            final String harvestChannelName,
+            final boolean isValid,
+            final boolean isSnapshot) {
+        super(HarvesterChannels.getHarvestChannelValidityResponseChannel(), Channels.getError());
+        this.harvestChannelName = harvestChannelName;
+        this.isValid = isValid;
+        this.isSnapshot = isSnapshot;
+    }
 
-	/**
-	 * @return the isSnapshot
-	 */
-	public final boolean isSnapshot() {
-		return isSnapshot;
-	}
+    @Override
+    public void accept(HarvesterMessageVisitor v) {
+        v.visit(this);
+    }
+
+    /**
+     * @return the harvestChannelName
+     */
+    public final String getHarvestChannelName() {
+        return harvestChannelName;
+    }
+
+    /**
+     * @return the isValid
+     */
+    public final boolean isValid() {
+        return isValid;
+    }
+
+    /**
+     * @return the isSnapshot
+     */
+    public final boolean isSnapshot() {
+        return isSnapshot;
+    }
 
 }

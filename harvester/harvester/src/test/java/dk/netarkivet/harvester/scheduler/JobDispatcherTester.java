@@ -36,7 +36,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogManager;
-
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -45,10 +44,8 @@ import javax.jms.QueueBrowser;
 import javax.jms.QueueReceiver;
 import javax.jms.QueueSession;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -70,6 +67,7 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobUtils;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
@@ -77,6 +75,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
 
 /**
  * Test JobDispatcher class.
@@ -162,7 +161,7 @@ public class JobDispatcherTester extends TestCase {
         TestMessageListener hacoListener = new TestMessageListener();
 
         jms.getJMSConnection().setListener(
-                Channels.getHarvestJobChannelId(highChan),
+                HarvesterChannels.getHarvestJobChannelId(highChan),
                 hacoListener);
 
         // Create the following domains:
@@ -264,13 +263,13 @@ public class JobDispatcherTester extends TestCase {
         DoOneCrawlMessageListener highPriorityListener =
             new DoOneCrawlMessageListener();
         JMSConnectionFactory.getInstance().setListener(
-        		Channels.getHarvestJobChannelId(highChan),
+                HarvesterChannels.getHarvestJobChannelId(highChan),
                 highPriorityListener);
 
         DoOneCrawlMessageListener lowPriorityListener =
             new DoOneCrawlMessageListener();
         JMSConnectionFactory.getInstance().setListener(
-        		Channels.getHarvestJobChannelId(lowChan), lowPriorityListener);
+                HarvesterChannels.getHarvestJobChannelId(lowChan), lowPriorityListener);
 
         //send a high priority job
         jobDispatcher.doOneCrawl(TestInfo.getJob(),
@@ -278,9 +277,9 @@ public class JobDispatcherTester extends TestCase {
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
         assertEquals("The HIGHPRIORITY server should have received exactly 1 " +
-        		"message", 1, highPriorityListener.messages.size());
+                "message", 1, highPriorityListener.messages.size());
         assertEquals("The LOWPRIORITY server should have received exactly 0 " +
-        		"messages", 0, lowPriorityListener.messages.size());
+                "messages", 0, lowPriorityListener.messages.size());
 
         //reset messages
         highPriorityListener.messages = new ArrayList<DoOneCrawlMessage>();
@@ -292,9 +291,9 @@ public class JobDispatcherTester extends TestCase {
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).
         waitForConcurrentTasksToFinish();
         assertEquals("The HIGHPRIORITY server should have received exactly 0 " +
-        		"message", 0, highPriorityListener.messages.size());
+                "message", 0, highPriorityListener.messages.size());
         assertEquals("The LOWPRIORITY server should have received exactly 1 " +
-        		"messages", 1, lowPriorityListener.messages.size());
+                "messages", 1, lowPriorityListener.messages.size());
     }
 
     /**
@@ -304,7 +303,7 @@ public class JobDispatcherTester extends TestCase {
     public void testNullJob() {
         try {
             jobDispatcher.doOneCrawl((Job)null, "test", "test", "test", highChan,
-            		"unittesters",
+                    "unittesters",
                     new ArrayList<MetadataEntry>());
             fail("Should throw ArgumentNotValid on NULL job");
         } catch (ArgumentNotValid e) {
@@ -421,13 +420,13 @@ public class JobDispatcherTester extends TestCase {
     throws JMSException {
         QueueSession qSession =
             JMSConnectionMockupMQ.getInstance().getQueueSession();
-        ChannelID channelId = Channels.getHarvestJobChannelId(channel);
+        ChannelID channelId = HarvesterChannels.getHarvestJobChannelId(channel);
         Queue queue = qSession.createQueue(channelId.getName());
         return qSession.createReceiver(queue);
     }
 
     private int countQueueMessages(HarvestChannel channel) throws JMSException {
-    	ChannelID channelId = Channels.getHarvestJobChannelId(channel);
+    	ChannelID channelId = HarvesterChannels.getHarvestJobChannelId(channel);
         QueueBrowser qBrowser =
             JMSConnectionMockupMQ.getInstance().createQueueBrowser(channelId);
         Enumeration<?> messageEnumeration = qBrowser.getEnumeration();

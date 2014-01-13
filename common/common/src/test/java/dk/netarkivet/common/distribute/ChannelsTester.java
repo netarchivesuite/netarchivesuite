@@ -24,15 +24,13 @@
 */
 package dk.netarkivet.common.distribute;
 
-import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
 
 /**
  * Unittests of the class dk.netarkivet.common.distribute.Channels.
@@ -146,16 +144,12 @@ public class ChannelsTester extends TestCase {
      */
     public void testIsTopic() {
         ChannelID[]queues = new ChannelID[]{
-                Channels.getHarvestJobChannelId(
-                		new HarvestChannel("FOCUSED", "", true)),
                 Channels.getAnyBa(),
-                Channels.getHarvestJobChannelId(HarvestChannel.SNAPSHOT),
                 Channels.getTheRepos(),
                 Channels.getTheIndexServer(),
                 Channels.getError(),
                 Channels.getTheSched(),
                 Channels.getThisIndexClient(),
-                Channels.getHarvestMonitorChannel()
         };
         for (ChannelID queue : queues) {
            String queueName = queue.getName();
@@ -167,7 +161,6 @@ public class ChannelsTester extends TestCase {
         ChannelID[]topics = new ChannelID[]{
                 Channels.getAllBa(),
                 Channels.getTheMonitorServer(),
-                Channels.getHarvesterStatusChannel()                
         };
         
         for (ChannelID topic : topics) {

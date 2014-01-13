@@ -29,10 +29,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -45,9 +41,12 @@ import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.SparseFullHarvest;
 import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class handles dispatching of Harvest jobs to the Harvesters.
@@ -71,7 +70,7 @@ public class JobDispatcher {
      * Submit the next new job (the one with the lowest ID) with the given
      * priority, and updates the internal counter as needed. If no jobs are 
      * ready for the given priority, nothing is done
-     * @param priority the job priority
+     * @param channel the Channel to use for the job.
      */
     protected void submitNextNewJob(HarvestChannel channel) {
         Job jobToSubmit = prepareNextJobForSubmission(channel);
@@ -81,8 +80,8 @@ public class JobDispatcher {
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Submitting new " + channel.getName() + " job" 
-                		+ jobToSubmit.getJobID());
+                log.debug("Submitting new " + channel.getName() + " job"
+                        + jobToSubmit.getJobID());
             }
             try {
                 List<MetadataEntry> metadata = createMetadata(jobToSubmit);
@@ -208,7 +207,7 @@ public class JobDispatcher {
      * @param origHarvestSchedule the harvest definition schedule name
      * @param channel the channel to which the job should be sent
      * @param metadata pre-harvest metadata to store in arcfile.
-     * @param hdAudience 
+     * @param origHarvestAudience
      * @throws ArgumentNotValid one of the parameters are null
      * @throws IOFailure if unable to send the doOneCrawl request to a
      * harvestControllerServer
@@ -229,7 +228,7 @@ public class JobDispatcher {
         }
         DoOneCrawlMessage nMsg = new DoOneCrawlMessage(
                 job,
-                Channels.getHarvestJobChannelId(channel),
+                HarvesterChannels.getHarvestJobChannelId(channel),
                 new HarvestDefinitionInfo(
                         origHarvestName, origHarvestDesc, origHarvestSchedule),
                         metadata);

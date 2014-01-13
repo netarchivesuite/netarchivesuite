@@ -24,20 +24,19 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Handles the reception of status messages from the harvesters. Will call the 
@@ -45,19 +44,19 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
  * received.
  */
 public class HarvesterStatusReceiver extends HarvesterMessageHandler
-implements ComponentLifeCycle {  
+        implements ComponentLifeCycle {
     /** @see HarvesterStatusReceiver#visit(dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage)  */
     private final JobDispatcher jobDispatcher;
     /** Connection to JMS provider. */
-    private final JMSConnection jmsConnection; 
+    private final JMSConnection jmsConnection;
     /** The logger to use.    */
-    private final Log log = LogFactory.getLog(getClass());   
-    
+    private final Log log = LogFactory.getLog(getClass());
+
     /**
      * The DAO handling {@link HarvestChannel}s
      */
     private final HarvestChannelDAO harvestChannelDao = HarvestChannelDAO.getInstance();
-    
+
     /**
      * @param jobDispatcher The <code>JobDispatcher</code> to delegate the 
      * dispatching of new jobs to, when a 'Ready for job' event is received.
@@ -76,50 +75,50 @@ implements ComponentLifeCycle {
     @Override
     public void start() {
         jmsConnection.setListener(
-                Channels.getHarvesterStatusChannel(), this);
+                HarvesterChannels.getHarvesterStatusChannel(), this);
         jmsConnection.setListener(
-                Channels.getHarvestChannelValidityRequestChannel(), this);
+                HarvesterChannels.getHarvestChannelValidityRequestChannel(), this);
     }
 
     @Override
     public void shutdown() {
         jmsConnection.removeListener(
-                Channels.getHarvesterStatusChannel(), this);
+                HarvesterChannels.getHarvesterStatusChannel(), this);
     }
-   
-     /** 
-      * Tells the dispatcher that it may dispatch a new job.
-      * @param message The message containing the relevant harvester information.
-      * 
+
+    /**
+     * Tells the dispatcher that it may dispatch a new job.
+     * @param message The message containing the relevant harvester information.
+     *
      */
     @Override
     public void visit(HarvesterReadyMessage message) {
         ArgumentNotValid.checkNotNull(message, "message");
-        log.trace("Received ready message from " + message.getApplicationInstanceId());        
+        log.trace("Received ready message from " + message.getApplicationInstanceId());
         HarvestChannel channel = harvestChannelDao.getByName(message.getHarvestChannelName());
         jobDispatcher.submitNextNewJob(channel);
     }
-    
+
     @Override
-	public void visit(HarvestChannelValidityRequest msg) {
-    	ArgumentNotValid.checkNotNull(msg, "msg");
-    	
-    	String channelName = msg.getHarvestChannelName();
-    	HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
-    	
-    	boolean isSnapshot = true;
-    	boolean isValid = true;
-    	try {
-    		HarvestChannel chan = dao.getByName(channelName);
-    		isSnapshot = chan.isSnapshot();
-    	} catch (UnknownID e) {
-    		isValid = false;
-    	}
-    
-    	// Send the reply
-    	jmsConnection.send(new HarvestChannelValidityResponse(channelName, isValid, isSnapshot));
-    	log.info("Sent a message to notify that harvest channel '" + channelName + "' is "
-    			+ (isValid ? "valid." :  "invalid."));
+    public void visit(HarvestChannelValidityRequest msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+
+        String channelName = msg.getHarvestChannelName();
+        HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
+
+        boolean isSnapshot = true;
+        boolean isValid = true;
+        try {
+            HarvestChannel chan = dao.getByName(channelName);
+            isSnapshot = chan.isSnapshot();
+        } catch (UnknownID e) {
+            isValid = false;
+        }
+
+        // Send the reply
+        jmsConnection.send(new HarvestChannelValidityResponse(channelName, isValid, isSnapshot));
+        log.info("Sent a message to notify that harvest channel '" + channelName + "' is "
+                + (isValid ? "valid." :  "invalid."));
     }
 
 }
