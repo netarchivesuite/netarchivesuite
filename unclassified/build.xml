@@ -304,7 +304,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="*.tld"/>
             </webinf>
         </war>
-    	<war destfile="${webpages}/HarvestPlanning.war" basedir="${webpages}/HarvestPlanning" update="no" webxml="${webpages}/HarvestPlanning/WEB-INF/web.xml">
+    	<war destfile="${webpages}/HarvestChannel.war" basedir="${webpages}/HarvestChannel" update="no" webxml="${webpages}/HarvestChannel/WEB-INF/web.xml">
             <include name="**/*"/>
             <exclude name="WEB-INF/web.xml"/>
             <webinf dir="lib/taglibs">

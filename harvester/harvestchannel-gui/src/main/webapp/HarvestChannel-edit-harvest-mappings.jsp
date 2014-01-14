@@ -1,5 +1,5 @@
 <%--
-File:       $Id: HarvestPlanning-edit-harvest-mappings.jsp 2254 2012-02-09 07:28:35Z mss $
+File:       $Id: HarvestChannel-edit-harvest-mappings.jsp 2254 2012-02-09 07:28:35Z mss $
 Revision:   $Revision: 2254 $
 Author:     $Author: mss $
 Date:       $Date: 2012-02-09 08:28:35 +0100 (Thu, 09 Feb 2012) $
@@ -65,9 +65,13 @@ Additionally it allows the user to map harvests to channels.
 <script type="text/javascript">
 
 var lastHarvestId = -1;
+var lastLinkTdContents;
+var lastChannel;
 
 function onClickEditChannel(harvestId, isSnapshot) {
 	lastHarvestId = harvestId
+	lastLinkTdContents = $("#linkTd" + lastHarvestId).children()[0];
+	lastChannel = $("#formTd" + lastHarvestId).text();
 	$.post("mapHarvestToChannel",
 	       {harvestId : harvestId, snapshot : isSnapshot},
 	       onClickEditChannelCallback);
@@ -82,6 +86,16 @@ function onClickEditChannelCallback(result) {
 	linkTd.empty();
 }
 
+function onClickCancelEditChannel() {
+    var editTd = $("#formTd" + lastHarvestId);
+    editTd.empty();
+    editTd.text(lastChannel);
+    
+    var linkTd = $("#linkTd" + lastHarvestId);
+    linkTd.empty();
+    linkTd.append(lastLinkTdContents);
+}
+
 </script>
 
 <h3 class="page_heading"><fmt:message key="edit.harvest.channels.mapping.list"/></h3>
@@ -90,7 +104,7 @@ function onClickEditChannelCallback(result) {
 
   boolean showInactiveHDs = Boolean.parseBoolean(
 		  CookieUtils.getParameterValue(request, Constants.SHOW_INACTIVE_PARAM));
-   String flipShowHideInactiveLink = "HarvestPlanning-edit-harvest-mappings.jsp?" 
+   String flipShowHideInactiveLink = "HarvestChannel-edit-harvest-mappings.jsp?" 
 		    + Constants.SHOW_INACTIVE_PARAM
 		    + "=" + !showInactiveHDs;
    CookieUtils.setCookie(
@@ -163,10 +177,7 @@ function onClickEditChannelCallback(result) {
         <td><%=Constants.NoNextDate %></td>
         <td>&nbsp;</td>
         <td id="formTd<%=fh.getOid()%>"><%=chan.getName()%></td>
-        <td id="linkTd<%=fh.getOid()%>">
-        <a href="#" onClick="onClickEditChannel(<%=fh.getOid()%>, true)">
-        <fmt:message key="edit.harvest.mappings.edit.link"/>
-        </a></td>
+        <td id="linkTd<%=fh.getOid()%>">&nbsp;</td>
     </tr>
 <%
     }

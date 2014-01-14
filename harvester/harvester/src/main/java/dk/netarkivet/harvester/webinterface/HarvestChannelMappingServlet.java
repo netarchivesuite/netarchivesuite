@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hp.gagawa.java.elements.A;
 import com.hp.gagawa.java.elements.Form;
 import com.hp.gagawa.java.elements.Input;
 import com.hp.gagawa.java.elements.Option;
@@ -64,7 +65,7 @@ public class HarvestChannelMappingServlet extends HttpServlet {
 		long harvestId = Long.parseLong(req.getParameter(Param.harvestId.name()));
 		boolean snapshot = Boolean.parseBoolean(req.getParameter(Param.snapshot.name()));
 		
-		Form selectChannelForm = new Form("./HarvestPlanning-edit-harvest-mappings.jsp");
+		Form selectChannelForm = new Form("./HarvestChannel-edit-harvest-mappings.jsp");
     	selectChannelForm.setMethod("post");
     	
     	Input hiddenAction = new Input();
@@ -113,6 +114,14 @@ public class HarvestChannelMappingServlet extends HttpServlet {
     			resp.getLocale(), 
     			"edit.harvest.mappings.dialog.submit"));
     	selectChannelForm.appendChild(submit);
+    	
+    	A cancelLink = new A();
+    	cancelLink.setHref("#");
+    	cancelLink.appendText(I18N.getString(
+    			resp.getLocale(), 
+    			"edit.harvest.mappings.dialog.cancel"));
+    	cancelLink.setAttribute("onClick", "onClickCancelEditChannel()");
+    	selectChannelForm.appendChild(cancelLink);
     	
     	resp.setContentType("text/html");
         resp.setHeader("Cache-Control", "no-cache");

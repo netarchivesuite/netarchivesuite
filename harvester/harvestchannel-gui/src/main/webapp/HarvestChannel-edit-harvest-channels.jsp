@@ -1,5 +1,5 @@
 <%--
-File:       $Id: HarvestPlanning-edit-harvest-channels.jsp 2254 2012-02-09 07:28:35Z mss $
+File:       $Id: HarvestChannel-edit-harvest-channels.jsp 2254 2012-02-09 07:28:35Z mss $
 Revision:   $Revision: 2254 $
 Author:     $Author: mss $
 Date:       $Date: 2012-02-09 08:28:35 +0100 (Thu, 09 Feb 2012) $
@@ -72,7 +72,7 @@ Additionally it allows the user to map harvests to channels.
 <table class="selection_table" cols="3">
     <tr>
         <th><fmt:message key="harvest.channel.name"/></th>
-        <th><fmt:message key="harvest.channel.type"/></th>
+        <th><fmt:message key="harvest.type"/></th>
         <th><fmt:message key="harvest.channel.comments"/></th>
     </tr>
 
@@ -112,10 +112,10 @@ Additionally it allows the user to map harvests to channels.
    String hideLinkId = "hideHarvestChannelForm";
 %>
 <a id="<%= showLinkId %>" onclick="show_block('<%=formId%>');show_inline('<%=hideLinkId%>');hide('<%=showLinkId%>');"><fmt:message key="edit.harvest.channels.show.create.dialog"/> </a>
-<a id="<%= hideLinkId %>" style="display:none;" onclick="hide('<%=formId%>');hide('<%=hideLinkId%>');show_inline('<%=showLinkId%>');"><fmt:message key="hide"/> </a>
+<a id="<%= hideLinkId %>" style="display:none;" onclick="hide('<%=formId%>');hide('<%=hideLinkId%>');show_inline('<%=showLinkId%>');"><fmt:message key="edit.harvest.channel.hide"/> </a>
 <div id="<%= formId %>" style="display:none;">
     <form method="post" 
-          action="./HarvestPlanning-edit-harvest-channels.jsp">
+          action="./HarvestChannel-edit-harvest-channels.jsp">
           <input type="hidden" 
                  id="<%=HarvestChannelAction.ACTION%>" 
                  name="<%=HarvestChannelAction.ACTION%>" 

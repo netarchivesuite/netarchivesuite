@@ -135,7 +135,7 @@ and reponse.getLocale use this locale.
     </tr>
     <tr>
         <td><%=job.getJobID()%></td>
-        <td><%=job.getPriority().getLocalizedString(response.getLocale())%>
+        <td><%=job.getChannel()%>
         </td>
         <td><%=harvestnameTdContents %></td>
         <td><%=dk.netarkivet.harvester.webinterface.HarvestStatus

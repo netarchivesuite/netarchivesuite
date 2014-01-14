@@ -33,6 +33,7 @@ National Library.
 -->
 <settings>
     <harvester>
+    	<snapshotChannelId>SNAPSHOT</snapshotChannelId>
         <performer></performer>
         <aliases>
             <timeout>31536000</timeout>

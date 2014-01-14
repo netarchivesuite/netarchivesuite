@@ -1,4 +1,4 @@
-/* File:        $Id: HarvestPlanningSiteSection.java 2251 2012-02-08 13:03:03Z mss $
+/* File:        $Id: HarvestChannelSiteSection.java 2251 2012-02-08 13:03:03Z mss $
  * Revision:    $Revision: 2251 $
  * Author:      $Author: mss $
  * Date:        $Date: 2012-02-08 14:03:03 +0100 (Wed, 08 Feb 2012) $
@@ -37,7 +37,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 /**
  * Site section that creates the menu for harvest channel and mappings.
  */
-public class HarvestPlanningSiteSection extends SiteSection {
+public class HarvestChannelSiteSection extends SiteSection {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
     /** number of pages visible in the left menu. */
@@ -46,13 +46,13 @@ public class HarvestPlanningSiteSection extends SiteSection {
     /**
      * Create a new definition SiteSection object.
      */
-    public HarvestPlanningSiteSection() {
-        super("sitesection;harvestplanning", "HarvestPlanning", PAGES_VISIBLE_IN_MENU,
+    public HarvestChannelSiteSection() {
+        super("sitesection;HarvestChannel", "HarvestChannel", PAGES_VISIBLE_IN_MENU,
               new String[][]{
         		      {"edit-harvest-mappings", "pagetitle;edit.harvest.mappings"},
                       {"edit-harvest-channels", "pagetitle;edit.harvest.channels"}                      
                       // The pages listed below are not visible in the left menu
-              }, "HarvestPlanning",
+              }, "HarvestChannel",
                  dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     }
 

@@ -89,12 +89,14 @@ public abstract class HarvestChannelAction {
             		ArgumentNotValid.checkNotNullOrEmpty(name, "harvest channel name");
             		HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
             		dao.create(new HarvestChannel(name, request.getParameter(COMMENTS), false));
+            		break;
             	case mapHarvestToChannel:
             		long harvestId = Long.parseLong(request.getParameter(HARVEST_ID));
             		long channelId = Long.parseLong(request.getParameter(CHANNEL_ID));
             		HarvestChannelDAO hcDao = HarvestChannelDAO.getInstance();
             		HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
             		hdDao.mapToHarvestChannel(harvestId, hcDao.getById(channelId));
+            		break;
             	default: 
             }
         } catch (Throwable e) {

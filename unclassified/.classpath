@@ -28,7 +28,7 @@
 	<classpathentry kind="lib" path="lib/heritrix-dependencies/mg4j-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/heritrix/lib/dnsjava-2.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/heritrix/lib/javaswf-CVS-SNAPSHOT-1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-7-oracle"/>
 	<classpathentry kind="lib" path="lib/heritrix-dependencies/je-3.3.82.jar"/>
 	<classpathentry kind="lib" path="tests/lib/httpunit-dependencies/nekohtml-0.9.4.jar"/>
 	<classpathentry kind="lib" path="tests/lib/httpunit-dependencies/xercesImpl.jar"/>

@@ -28,6 +28,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -61,8 +64,6 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This class responds to JMS doOneCrawl messages from the HarvestScheduler and
@@ -570,25 +571,31 @@ public class HarvestControllerServer
         onDoOneCrawl(msg);
     }
 
-    @Override
-    public void visit(HarvestChannelValidityResponse msg) {
-
-        String channelName = msg.getHarvestChannelName();
-        if (!CHANNEL.equals(channelName)) {
-            // This message is not intended for us, send it back to the channel
-            jmsConnection.resend(msg, msg.getTo());
-            return;
-        }
-
-        if (!msg.isValid()) {
-            log.error("Received message stating that channel '" + channelName
-                    + "' is invalid. Will stop.");
-            close();
-            return;
-        }
-
-        log.info("Received message stating that channel '" + channelName + "' is valid.");
-        // Environment and connections are now ready for processing of messages
+	@Override
+	public void visit(HarvestChannelValidityResponse msg) {
+		
+		// If we have already started or the message notifies for another channel,
+		// resend it.
+		String channelName = msg.getHarvestChannelName();
+		if (status.isChannelValid() || !CHANNEL.equals(channelName)) {
+			// Controller has already started
+			jmsConnection.resend(msg, msg.getTo());
+			if (log.isDebugEnabled()) {
+				log.debug("Resending harvest channel validity message for channel '"
+						+ channelName + "'");
+			}
+			return;
+		}
+		
+		if (!msg.isValid()) {
+			log.error("Received message stating that channel '" + channelName 
+					+ "' is invalid. Will stop.");
+			close();
+			return;
+		}
+		
+		log.info("Received message stating that channel '" + channelName + "' is valid.");
+		// Environment and connections are now ready for processing of messages        
         jobChannel = HarvesterChannels.getHarvestJobChannelId(channelName, msg.isSnapshot());
 
         // Only listen for harvester jobs if enough available space
@@ -834,6 +841,8 @@ public class HarvestControllerServer
     private class CrawlStatus {
         /** The status. */
         private boolean running = false;
+        
+        private boolean channelIsValid = false;
 
         /** Handles the periodic sending of status messages. */
         private PeriodicTaskExecutor statusTransmitter;
@@ -859,9 +868,17 @@ public class HarvestControllerServer
         }
 
         /**
+		 * @return the channelIsValid
+		 */
+		protected final boolean isChannelValid() {
+			return channelIsValid;
+		}
+
+		/**
          * Starts the sending of status messages.
          */
         public void startSending() {
+        	this.channelIsValid = true;
             statusTransmitter = new PeriodicTaskExecutor(
                     "HarvesterStatus",
                     new Runnable() {

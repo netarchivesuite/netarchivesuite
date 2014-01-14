@@ -129,8 +129,8 @@
                 <webapplication>webpages/HarvestDefinition.war</webapplication>
             </siteSection>
             <siteSection>
-                <class>dk.netarkivet.harvester.webinterface.HarvestPlanningSiteSection</class>
-                <webapplication>webpages/HarvestPlanning.war</webapplication>
+                <class>dk.netarkivet.harvester.webinterface.HarvestChannelSiteSection</class>
+                <webapplication>webpages/HarvestChannel.war</webapplication>
             </siteSection>
             <siteSection>
                 <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>

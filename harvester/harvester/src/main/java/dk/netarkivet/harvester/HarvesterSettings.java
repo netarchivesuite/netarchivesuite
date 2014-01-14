@@ -351,6 +351,14 @@ public class HarvesterSettings {
      */
     public static String HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE =
         "settings.harvester.monitor.displayedHistorySize";
+    
+    /**
+     * <b>settings.harvester.snapshotChannelId</b>: <br> ID of the unique harvest channel for 
+     * broad crawls.
+     * @see HarvestChannel.
+     */
+    public static String SNAPSHOT_HARVEST_CHANNEL_ID
+            = "settings.harvester.snapshotChannelId";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>
