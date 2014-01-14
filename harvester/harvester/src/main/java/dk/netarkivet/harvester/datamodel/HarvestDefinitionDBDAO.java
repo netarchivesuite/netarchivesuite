@@ -1525,6 +1525,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection connection = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
+        	connection.setAutoCommit(false);
             s = connection.prepareStatement("UPDATE partialharvests SET "
                     + "nextdate = ? " + "WHERE harvest_id = ?");
             DBUtils.setDateMaybeNull(s, 1, nextdate);
