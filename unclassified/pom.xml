@@ -127,8 +127,12 @@
       <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+    </dependency>
   </dependencies>
-
   <build>
 
     <!-- Hacking resources to allow for ant based convention of

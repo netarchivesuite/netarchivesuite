@@ -19,6 +19,7 @@
 	<classpathentry kind="lib" path="lib/sunjms-lib/imq-4.4u1.jar"/>
 	<classpathentry kind="lib" path="lib/sunjms-lib/jms-4.4u1.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jakarta-oro-2.0.8.jar"/>
+	<classpathentry kind="lib" path="tests/lib/mockito-all-1.9.5.jar"/>
 	<classpathentry kind="lib" path="tests/lib/mockobjects-core-0.09.jar"/>
 	<classpathentry kind="lib" path="tests/lib/mockobjects-jdk1.4-0.09.jar"/>
 	<classpathentry kind="lib" path="tests/lib/mockobjects-jdk1.4-j2ee1.3-0.09.jar"/>
