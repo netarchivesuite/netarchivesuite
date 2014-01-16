@@ -183,8 +183,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <fileset dir="tests/lib">
             <include name="httpunit-1.6.jar"/>
             <include name="httpunit-dependencies/nekohtml-0.9.4.jar"/>
-            <include name="mockito-core-1.9.5.jar"/>
-            <include name="mockobjects-all-0.09.jar"/>
+            <include name="mockito-all-1.9.5.jar"/>
+            <include name="mockobjects-core-0.09.jar"/>
             <include name="mockobjects-jdk1.4-0.09.jar"/>
             <include name="mockobjects-jdk1.4-j2ee1.3-0.09.jar"/>
         </fileset>
