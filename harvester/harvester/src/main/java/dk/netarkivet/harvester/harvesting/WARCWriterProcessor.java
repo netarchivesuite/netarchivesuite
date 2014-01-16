@@ -745,7 +745,6 @@ WriterPoolSettings, FetchStatusCodes, WARCConstants {
         recordNAS.addLabelValue("harvestInfo.version", pjd.getVersion());
         recordNAS.addLabelValue("harvestInfo.jobId", "" + pjd.getJobID());
         recordNAS.addLabelValue("harvestInfo.channel", pjd.getChannel());
-        recordNAS.addLabelValue("harvestInfo.snapshot", Boolean.toString(pjd.isSnapshot()));
         recordNAS.addLabelValue("harvestInfo.harvestNum", "" + pjd.getJobHarvestNum());
         recordNAS.addLabelValue("harvestInfo.origHarvestDefinitionID", 
                 "" + pjd.getOrigHarvestDefinitionID());

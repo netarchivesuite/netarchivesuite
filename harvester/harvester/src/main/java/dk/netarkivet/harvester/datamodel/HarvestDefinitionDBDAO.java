@@ -359,9 +359,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "       harvestdefinitions.submitted,"
                     + "       harvestdefinitions.isactive,"
                     + "       harvestdefinitions.edition,"
-                    + "       harvestdefinitions.audience,"
+                    + "       harvestdefinitions.audience,"                    
                     + "       schedules.name,"
-                    + "       partialharvests.nextdate "
+                    + "       partialharvests.nextdate, "
+                    + "       harvestdefinitions.channel_id "
                     + "FROM harvestdefinitions, partialharvests, schedules"
                     + " WHERE harvestdefinitions.harvest_id = ?"
                     + "   AND harvestdefinitions.harvest_id "
@@ -385,6 +386,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 final String audience = res.getString(7);
                 final String scheduleName = res.getString(8);
                 final Date nextDate = DBUtils.getDateMaybeNull(res, 9);
+                final Long channelId = DBUtils.getLongMaybeNull(res, 10);
                 s.close();
                 // Found partial harvest -- have to find configurations.
                 // To avoid holding on to the readlock while getting domains,
@@ -426,6 +428,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 ph.setEdition(edition);
                 ph.setNextDate(nextDate);
                 ph.setOid(harvestDefinitionID);
+                if (channelId != null) {
+                	ph.setChannelId(channelId);
+                }
                 return ph;
             } else {
                 throw new IllegalState("No entries in fullharvests or "

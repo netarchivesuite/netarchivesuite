@@ -56,6 +56,8 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
      * The DAO handling {@link HarvestChannel}s
      */
     private final HarvestChannelDAO harvestChannelDao = HarvestChannelDAO.getInstance();
+    
+    private final HarvestChannelRegistry harvestChannelRegistry;
 
     /**
      * @param jobDispatcher The <code>JobDispatcher</code> to delegate the 
@@ -65,11 +67,13 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
      */
     public HarvesterStatusReceiver(
             JobDispatcher jobDispatcher,
-            JMSConnection jmsConnection) {
+            JMSConnection jmsConnection,
+            HarvestChannelRegistry harvestChannelRegistry) {
         ArgumentNotValid.checkNotNull(jobDispatcher, "jobDispatcher");
         ArgumentNotValid.checkNotNull(jmsConnection, "jmsConnection");
         this.jobDispatcher = jobDispatcher;
         this.jmsConnection = jmsConnection;
+        this.harvestChannelRegistry = harvestChannelRegistry;
     }
 
     @Override
@@ -115,6 +119,10 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
             isValid = false;
         }
 
+        if (isValid) {
+        	harvestChannelRegistry.register(channelName);
+        }
+        
         // Send the reply
         jmsConnection.send(new HarvestChannelValidityResponse(channelName, isValid, isSnapshot));
         log.info("Sent a message to notify that harvest channel '" + channelName + "' is "

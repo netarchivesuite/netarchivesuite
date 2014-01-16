@@ -35,6 +35,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
  * the harvests defined in the database. <p>
  */
 public class HarvestJobManager extends LifeCycleComponent {
+	
     private final JMSConnection jmsConnection;
 
     /**
@@ -45,9 +46,11 @@ public class HarvestJobManager extends LifeCycleComponent {
         jmsConnection = JMSConnectionFactory.getInstance();       
         JobDispatcher jobDispather = new JobDispatcher(jmsConnection);
         
-        addChild(new HarvesterStatusReceiver(jobDispather, jmsConnection));
+        HarvestChannelRegistry harvestChannelRegistry = new HarvestChannelRegistry();
         
-        addChild(new HarvestJobGenerator());
+        addChild(new HarvesterStatusReceiver(jobDispather, jmsConnection, harvestChannelRegistry));
+        
+        addChild(new HarvestJobGenerator(jobDispather, harvestChannelRegistry));
         
         addChild(new HarvestSchedulerMonitorServer());
         

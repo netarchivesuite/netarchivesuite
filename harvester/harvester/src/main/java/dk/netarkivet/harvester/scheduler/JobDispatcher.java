@@ -29,6 +29,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -45,8 +48,6 @@ import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This class handles dispatching of Harvest jobs to the Harvesters.
@@ -223,6 +224,7 @@ public class JobDispatcher {
                     throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
+        
         if (origHarvestAudience != null && !origHarvestAudience.isEmpty()) {
             job.setHarvestAudience(origHarvestAudience);
         }
@@ -237,4 +239,5 @@ public class JobDispatcher {
         }
         jmsConnection.send(nMsg);
     }
+    
 }

@@ -41,6 +41,8 @@ import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.scheduler.jobgen.JobGenerator;
@@ -78,15 +80,27 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     /** The HarvestDefinitionDAO used by the HarvestJobGenerator. */
     private static final HarvestDefinitionDAO haDefinitionDAO =
         HarvestDefinitionDAO.getInstance();
+    
+    /** The {@link JobDispatcher} that keeps track of registered {@link HarvestChannel}s */
+    private final JobDispatcher jobDispatcher;
+    
+    private final HarvestChannelRegistry harvestChannelRegistry;
+    
+    public HarvestJobGenerator(
+    		final JobDispatcher jobDispatcher,
+    		final HarvestChannelRegistry harvestChannelRegistry) {
+		this.jobDispatcher = jobDispatcher;
+		this.harvestChannelRegistry = harvestChannelRegistry;
+	}
 
-    /**
+	/**
      * Starts the job generation scheduler.
      */
     @Override
     public void start() {
         genExec = new PeriodicTaskExecutor(
                 "JobGeneratorTask",
-                new JobGeneratorTask(),
+                new JobGeneratorTask(harvestChannelRegistry),
                 0,
                 Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD));
     }
@@ -102,8 +116,14 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
      * Contains the functionality for the individual JobGenerations.
      */
     static class JobGeneratorTask implements Runnable {
+    	
+    	private final HarvestChannelRegistry harvestChannelRegistry;
 
-        @Override
+        public JobGeneratorTask(HarvestChannelRegistry harvestChannelRegistry) {
+			this.harvestChannelRegistry = harvestChannelRegistry;
+		}
+
+		@Override
         public synchronized void run() {
             try {
                 generateJobs(new Date());
@@ -121,10 +141,13 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
          * current time, but during testing we need to simulated other
          * points-in-time
          */
-        static void generateJobs(Date timeToGenerateJobsFor) {
+        void generateJobs(Date timeToGenerateJobsFor) {
             final Iterable<Long> readyHarvestDefinitions =
                 haDefinitionDAO.getReadyHarvestDefinitions(
                         timeToGenerateJobsFor);
+            
+            HarvestChannelDAO hChanDao = HarvestChannelDAO.getInstance();
+            
             for (final Long id : readyHarvestDefinitions) {
                 // Make every HD run in its own thread, but at most once.
                 if (harvestDefinitionsBeingScheduled.contains(id)) {
@@ -148,6 +171,22 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 
                 final HarvestDefinition harvestDefinition =
                     haDefinitionDAO.read(id);
+                
+                if (!harvestDefinition.isSnapShot()) {
+                	Long chanId = harvestDefinition.getChannelId();
+                	
+                	HarvestChannel chan = (chanId == null ?
+                			hChanDao.getDefaultChannel(false) : hChanDao.getById(chanId));
+                	
+                	String channelName = chan.getName();
+                	if (!harvestChannelRegistry.isRegistered(channelName)) {
+                		log.info("Harvest channel '" + channelName + "' has not yet been registered"
+                				+ " by any harvester, hence harvest definition '"
+                				+ harvestDefinition.getName() + "' (" + id 
+                				+ ") cannot be processed by the job generator for now.");
+                		continue;
+                	}
+                }
 
                 harvestDefinitionsBeingScheduled.add(id);
                 schedulingStartedMap.put(id, System.currentTimeMillis());

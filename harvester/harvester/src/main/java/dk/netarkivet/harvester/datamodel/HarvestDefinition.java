@@ -359,7 +359,7 @@ public abstract class HarvestDefinition implements Named {
         this.audience = audience;
     }
 
-	protected Long getChannelId() {
+	public Long getChannelId() {
 		return channelId;
 	}
 

@@ -43,7 +43,7 @@ public class HarvesterStatusReceiverTest extends TestCase  {
         jms.setUp();
         JobDispatcher = new MockJobDispatcher();
         receiver = new HarvesterStatusReceiver(
-                JobDispatcher, jms.getJMSConnection());
+                JobDispatcher, jms.getJMSConnection(), new HarvestChannelRegistry());
     }
     
     protected class MockJobDispatcher extends JobDispatcher {

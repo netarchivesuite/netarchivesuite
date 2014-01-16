@@ -140,8 +140,6 @@ public class PersistentJobData implements JobInfo {
     private static final String CHANNEL_KEY = ROOT_ELEMENT + ".channel";
 
     private static final String PRIORITY_KEY = ROOT_ELEMENT + ".priority";
-    /** Key in harvestinfo file for job type (snapshot or partial). */
-    private static final String SNAPSHOT_KEY = ROOT_ELEMENT + ".snapshot";
 
     /** Key in harvestinfo file for the original harvest definition name. */
     private static final String HARVEST_NAME_KEY =
@@ -184,7 +182,7 @@ public class PersistentJobData implements JobInfo {
     private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY, 
         MAXBYTESPERDOMAIN_KEY,
         MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
-        ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY, SNAPSHOT_KEY, HARVESTINFO_VERSION_KEY,
+        ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY, HARVESTINFO_VERSION_KEY,
         HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
     
    /**
@@ -295,7 +293,6 @@ public class PersistentJobData implements JobInfo {
         sx.add(HARVESTINFO_VERSION_KEY, HARVESTINFO_VERSION_NUMBER);
         sx.add(JOBID_KEY, harvestJob.getJobID().toString());
         sx.add(CHANNEL_KEY, harvestJob.getChannel());
-        sx.add(SNAPSHOT_KEY, Boolean.toString(harvestJob.isSnapshot()));
         sx.add(HARVESTNUM_KEY,
                 Integer.toString(harvestJob.getHarvestNum()));
         sx.add(ORIGHARVESTDEFINITIONID_KEY,
@@ -392,8 +389,7 @@ public class PersistentJobData implements JobInfo {
         }
 
         // Verify, that the job channel and snapshot elements are not the empty String (version 0.5+)
-        if (version.equals(HARVESTINFO_VERSION_NUMBER) && sx.getString(CHANNEL_KEY).isEmpty() 
-                && sx.getString(SNAPSHOT_KEY).isEmpty() ) {
+        if (version.equals(HARVESTINFO_VERSION_NUMBER) && sx.getString(CHANNEL_KEY).isEmpty()) {
             final String errMsg = "The channel and/or the snapshot value of the job is undefined";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
@@ -405,8 +401,7 @@ public class PersistentJobData implements JobInfo {
         
         
         // Verify, that the job channel element is not the empty String
-        if (version.equals(HARVESTINFO_VERSION_NUMBER) && sx.getString(CHANNEL_KEY).isEmpty() 
-                && sx.getString(SNAPSHOT_KEY).isEmpty() ) {
+        if (version.equals(HARVESTINFO_VERSION_NUMBER) && sx.getString(CHANNEL_KEY).isEmpty()) {
             final String errMsg = "The channel and/or the snapshot value of the job is undefined";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
@@ -500,16 +495,6 @@ public class PersistentJobData implements JobInfo {
     public String getChannel() {
         SimpleXml sx = read(); // reads and validates XML
         return sx.getString(CHANNEL_KEY);
-    }
-    
-    /**
-     * Return whether the job belongs to a snapshot harvest.
-     * @return true if the job belongs to a snapshot harvest, false if it belongs to a partial one.
-     * @throws IOFailure if no harvestInfo exists or it is invalid.
-     */
-    public boolean isSnapshot() {
-        SimpleXml sx = read(); // reads and validates XML
-        return Boolean.parseBoolean(sx.getString(SNAPSHOT_KEY));
     }
 
     /**
