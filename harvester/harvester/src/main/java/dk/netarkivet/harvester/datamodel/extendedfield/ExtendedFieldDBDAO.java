@@ -85,14 +85,24 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
                     + "INSERT INTO extendedfield "
                     + "            (extendedfield_id, "
                     + "             extendedfieldtype_id, "
-                    + "             name, " + "             format, "
-                    + "             defaultvalue, " + "             options, "
-                    + "             datatype, " + "             mandatory, "
-                    + "             sequencenr) " + "VALUES      (?, "
-                    + "             ?, " + "             ?, "
-                    + "             ?, " + "             ?, "
-                    + "             ?, " + "             ?, "
-                    + "             ?, " + "             ?) ");
+                    + "             name, " 
+                    + "             format, "
+                    + "             defaultvalue, " 
+                    + "             options, "
+                    + "             datatype, " 
+                    + "             mandatory, "
+                    + "             sequencenr, " 
+                    + "             maxlen) " 
+                    + "VALUES      (?, "
+                    + "             ?, " 
+                    + "             ?, "
+                    + "             ?, " 
+                    + "             ?, "
+                    + "             ?, " 
+                    + "             ?, "
+                    + "             ?, " 
+                    + "             ?, " 
+                    + "             ?) ");
 
             statement.setLong(1, aExtendedField.getExtendedFieldID());
             statement.setLong(2, aExtendedField.getExtendedFieldTypeID());
@@ -106,6 +116,9 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             // and not a boolean (NAS-2127)
             statement.setInt(8, aExtendedField.isMandatory()? 1: 0); 
             statement.setInt(9, aExtendedField.getSequencenr());
+            statement.setInt(10, aExtendedField.getMaxlen());
+            //TODO
+            log.debug(statement.toString());
 
             statement.executeUpdate();
             connection.commit();
@@ -190,11 +203,17 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             connection.setAutoCommit(false);
 
             statement = connection.prepareStatement(""
-                    + "UPDATE extendedfield " + "SET    extendedfield_id = ?, "
-                    + "       extendedfieldtype_id = ?, " + "       name = ?, "
-                    + "       format = ?, " + "       defaultvalue = ?, "
-                    + "       options = ?, " + "       datatype = ?, "
-                    + "       mandatory = ?, " + "       sequencenr = ? "
+                    + "UPDATE extendedfield " 
+            		+ "SET    extendedfield_id = ?, "
+                    + "       extendedfieldtype_id = ?, " 
+            		+ "       name = ?, "
+                    + "       format = ?, " 
+            		+ "       defaultvalue = ?, "
+                    + "       options = ?, " 
+            		+ "       datatype = ?, "
+                    + "       mandatory = ?, " 
+            		+ "       sequencenr = ?, "
+            		+ "       maxlen = ? "
                     + "WHERE  extendedfield_id = ? ");
 
             statement.setLong(1, aExtendedField.getExtendedFieldID());
@@ -209,9 +228,14 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             // and not a boolean (NAS-2127)
             statement.setInt(8, aExtendedField.isMandatory()? 1: 0);
             statement.setInt(9, aExtendedField.getSequencenr());
-            statement.setLong(10, aExtendedField.getExtendedFieldID());
+            statement.setInt(10, aExtendedField.getMaxlen());
+            statement.setLong(11, aExtendedField.getExtendedFieldID());
+
+            //TODO
+            log.debug(statement.toString());
 
             statement.executeUpdate();
+            
             connection.commit();
         } catch (SQLException e) {
             String message = "SQL error updating extendedfield "
@@ -255,10 +279,15 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement(""
-                    + "SELECT extendedfieldtype_id, " + "       name, "
-                    + "       format, " + "       defaultvalue, "
-                    + "       options, " + "       datatype, "
-                    + "       mandatory, " + "       sequencenr "
+                    + "SELECT extendedfieldtype_id, " 
+            		+ "       name, "
+                    + "       format, " 
+            		+ "       defaultvalue, "
+                    + "       options, " 
+            		+ "       datatype, "
+                    + "       mandatory, " 
+            		+ "       sequencenr, "
+            		+ "       maxlen "
                     + "FROM   extendedfield " 
                     + "WHERE  extendedfield_id = ? ");
 
@@ -275,10 +304,11 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             //TODO maybe this cast is not necessary
             boolean mandatory = (result.getInt(7) != 0); 
             int sequencenr = result.getInt(8);
+            int maxlen = result.getInt(9);
 
             extendedField = new ExtendedField(aExtendedfieldId,
                     extendedfieldtypeId, name, format, datatype, mandatory,
-                    sequencenr, defaultvalue, options);
+                    sequencenr, defaultvalue, options, maxlen);
 
             return extendedField;
         } catch (SQLException e) {

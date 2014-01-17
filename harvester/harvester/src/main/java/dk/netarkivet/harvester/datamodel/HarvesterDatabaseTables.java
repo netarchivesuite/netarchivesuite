@@ -358,7 +358,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about extended fields. */
     EXTENDEDFIELD {
         static final String NAME = "extendedfield";
-        static final int REQUIRED_VERSION = 1;
+        static final int REQUIRED_VERSION = 2;
        
         @Override
         public int getRequiredVersion() {
@@ -373,7 +373,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about extended field values. */
     EXTENDEDFIELDVALUE {
         static final String NAME = "extendedfieldvalue";
-        static final int REQUIRED_VERSION = 1;
+        static final int REQUIRED_VERSION = 2;
        
         @Override
         public int getRequiredVersion() {

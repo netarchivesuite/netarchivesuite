@@ -36,6 +36,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
 import junit.framework.TestCase;
+
 import org.dom4j.Document;
 
 import java.io.File;
@@ -101,6 +102,8 @@ public class DataModelTestCase extends TestCase {
 
 		assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL),
 				derbyDBUrl);
+		
+		DBSpecifics.getInstance().updateTables();
 	}
 
 	public void tearDown() throws Exception {

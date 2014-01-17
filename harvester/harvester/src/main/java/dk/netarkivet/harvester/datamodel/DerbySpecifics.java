@@ -471,5 +471,29 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("harvestchannel", 1, new String[]{
                 createStatement, insertStatementOne   
         });
-    }  
+    }
+    
+    /**
+     * Migrates the 'ExtendedFieldTable' from version 1 to version 2 consisting of adding
+     * the maxlen field
+     */
+    protected void migrateExtendedFieldTableV1toV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE extendedfield ADD COLUMN maxlen INT",
+                "ALTER TABLE extendedfield ALTER options SET DATA TYPE VARCHAR(1000)"
+        };
+        HarvestDBConnection.updateTable("extendedfield", 2, sqlStatements);   
+    }
+
+    /**
+     * Migrates the 'ExtendedFieldValueTable' from version 1 to version 2 changing the maxlen of content to 30000
+     */
+    protected  void migrateExtendedFieldTableValueV1toV2() {
+    	
+        String[] sqlStatements = {
+        		"ALTER TABLE extendedfieldvalue ALTER content SET DATA TYPE VARCHAR(30000)",
+        		"ALTER TABLE extendedfieldvalue ALTER content NOT NULL"
+        };
+        HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
+    }
 }

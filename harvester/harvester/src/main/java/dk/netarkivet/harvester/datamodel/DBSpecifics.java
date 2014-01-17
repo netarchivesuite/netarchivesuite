@@ -229,6 +229,11 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             createExtendedFieldValueTable();
             currentVersion = 1;
         }
+        if (currentVersion == 1 && toVersion >= 2) {
+            migrateExtendedFieldTableValueV1toV2();
+            currentVersion = 2;
+        }
+        
         if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELDVALUE.getRequiredVersion()) {
             throw new NotImplementedException(
                     "No method exists for migrating table '"
@@ -242,6 +247,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         if (currentVersion == 0 && toVersion == 1) {
             createExtendedFieldTable();
             currentVersion = 1;
+        }
+        if (currentVersion == 1 && toVersion >= 2) {
+            migrateExtendedFieldTableV1toV2();
+            currentVersion = 2;
         }
         if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELD.getRequiredVersion()) {
             throw new NotImplementedException(
@@ -711,6 +720,17 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * the channel (varchar 300) and a 'snapshot'
      */
     protected abstract void migrateJobsv9tov10();
+
+    /**
+     * Migrates the 'ExtendedFieldTable' from version 1 to version 2 consisting of adding
+     * the maxlen field
+     */
+    protected abstract void migrateExtendedFieldTableV1toV2();
+
+    /**
+     * Migrates the 'ExtendedFieldValueTable' from version 1 to version 2 changing the maxlen of content to 30000
+     */
+    protected abstract void migrateExtendedFieldTableValueV1toV2();
     
     /**
      * Update all tables in the enum class {@link HarvesterDatabaseTables} to the required

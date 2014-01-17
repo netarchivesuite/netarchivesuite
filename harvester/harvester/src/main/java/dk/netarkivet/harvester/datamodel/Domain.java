@@ -41,6 +41,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -48,8 +49,16 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
+import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 
 
 /**
@@ -206,6 +215,7 @@ public class Domain implements Named {
                 HarvesterSettings.DOMAIN_CONFIG_MAXRATE)));
 
         myDomain.addConfiguration(cfg);
+        myDomain.addExtendedFieldValues();
 
         return myDomain;
     }
@@ -1098,4 +1108,24 @@ public class Domain implements Named {
                 this.getHistory());
     }
     
+    /**
+     * Adds Defaultvalues for all extended fields of this entity.
+     * @param d the domain to which to add the values
+     */
+    public void addExtendedFieldValues() {
+        ExtendedFieldDAO extendedFieldDAO = ExtendedFieldDAO.getInstance();
+        List<ExtendedField> list = extendedFieldDAO
+                .getAll(ExtendedFieldTypes.DOMAIN);
+
+        Iterator<ExtendedField> it = list.iterator();
+        while (it.hasNext()) {
+            ExtendedField ef = it.next();
+
+            ExtendedFieldValue efv = new ExtendedFieldValue();
+            efv.setContent(ef.getDefaultValue());
+            efv.setExtendedFieldID(ef.getExtendedFieldID());
+
+            getExtendedFieldValues().add(efv);
+        }
+    }
 }

@@ -42,8 +42,10 @@ public class ExtendedFieldDataTypes {
     public static final int NOTE = 5;
     /** The datatype SELECT. */
     public static final int SELECT = 6;
+    /** The datatype JSCALENDAR. */
+    public static final int JSCALENDAR = 7;
     /** Min datatype value. */
     public static final int MIN_DATATYPE_VALUE = 1;
     /** Max datatype value. */
-    public static final int MAX_DATATYPE_VALUE = 6;
+    public static final int MAX_DATATYPE_VALUE = 7;
 }

@@ -27,6 +27,9 @@ package dk.netarkivet.harvester.datamodel.extendedfield;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 
@@ -34,7 +37,8 @@ import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
  * This class represents one Extended Field.
  */
 public class ExtendedField implements Serializable {
-    
+    private final Log log = LogFactory.getLog(getClass());
+
     /** persistent id of this extended field. */
     private Long extendedFieldID;
     /** The Id of the Reference to which the extended field belongs. */
@@ -52,6 +56,8 @@ public class ExtendedField implements Serializable {
     private boolean mandatory;
     /** sequencenr to sort fields. */
     private int sequencenr = 1;
+    /** maxlen of extended Field. */
+    private int maxlen = ExtendedFieldConstants.MAXLEN_EXTF_NAME;
     
     /** default value for this field. */
     private String defaultValue;
@@ -191,6 +197,21 @@ public class ExtendedField implements Serializable {
     public String getOptions() {
         return options;
     }
+
+    /**
+     * @return the max length of the extendedField
+     */
+    public int getMaxlen() {
+        return maxlen;
+    }
+    /**
+     * Set the maxlen of this extendedField.
+     * @param aMaxlen for this extendedfield
+     */
+    public void setMaxlen(int aMaxlen) {
+        maxlen = aMaxlen;
+    }
+    
     
     /**
      * Set the options of the extendedField.
@@ -229,11 +250,12 @@ public class ExtendedField implements Serializable {
      * @param aSequenceNr The sequencenr of the extendedfield
      * @param aDefaultValue The default value of the extendedfield
      * @param aOptions The options of the extendedfield
+     * @param aMaxlen The maxlen of the extendedfield
      */
     public ExtendedField(Long aExtendedFieldID, Long aExtendedFieldTypeID,
             String aName, String aFormattingPattern, int aDatatype,
             boolean aMandatory, int aSequenceNr, String aDefaultValue,
-            String aOptions) {
+            String aOptions, int aMaxlen) {
         extendedFieldID = aExtendedFieldID;
         extendedFieldTypeID = aExtendedFieldTypeID;
         name = aName;
@@ -243,6 +265,9 @@ public class ExtendedField implements Serializable {
         sequencenr = aSequenceNr;
         defaultValue = aDefaultValue;
         options = aOptions;
+        maxlen = aMaxlen;
+        
+        log.debug(toString());
     }
     
     /**
@@ -259,5 +284,32 @@ public class ExtendedField implements Serializable {
         return ExtendedFieldConstants.EXTF_PREFIX + getExtendedFieldID() + "_"
                 + getDatatype();
     }
+    
+    public String toString() {
+    	return "" 
+    			+ "extendedFieldID:[" +  extendedFieldID 
+    			+ "]\n"
+    			+ "extendedFieldTypeID:[" +  extendedFieldTypeID 
+    			+ "]\n"
+    			+ "name:[" +  name 
+    			+ "]\n"
+    			+ "formattingPattern:[" +  formattingPattern 
+    			+ "]\n"
+    			+ "datatype:[" +  datatype 
+    			+ "]\n"
+    			+ "mandatory:[" +  mandatory 
+    			+ "]\n"
+    			+ "sequencenr:[" +  sequencenr 
+    			+ "]\n"
+    			+ "defaultValue:[" +  defaultValue 
+    			+ "]\n"
+    			+ "options:[" +  options 
+    			+ "]\n"
+    			+ "maxlen:[" +  maxlen 
+    			+ "]\n";
+    			
+    	
+    }
+    
 
 }

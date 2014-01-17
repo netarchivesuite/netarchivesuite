@@ -54,6 +54,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
+import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 import dk.netarkivet.testutils.CollectionAsserts;
 
 
@@ -75,10 +76,10 @@ public class DomainTester extends DataModelTestCase {
      */
     public void testExtendedFields() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
-        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", ExtendedFieldDataTypes.STRING, true, 1, "defaultvalue", "");
+        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", ExtendedFieldDataTypes.STRING, true, 1, "defaultvalue", "", ExtendedFieldConstants.MAXLEN_EXTF_NAME);
         extDAO.create(extField);
         
-        extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Boolean", "", ExtendedFieldDataTypes.BOOLEAN, true, 1, "true", "");
+        extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Boolean", "", ExtendedFieldDataTypes.BOOLEAN, true, 1, "true", "", ExtendedFieldConstants.MAXLEN_EXTF_BOOLEAN);
         extDAO.create(extField);
         	
         ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
@@ -87,10 +88,22 @@ public class DomainTester extends DataModelTestCase {
         extField = extDAO2.read(Long.valueOf(2));
         assertEquals(extField.getExtendedFieldID().longValue(), 2);
         
-        //FIXME these tests fails. should be fixed
-        //Domain d =  Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
-        //assertEquals("defaultvalue", d.getExtendedFieldValue(new Long(1)).getContent());
-        //assertEquals(true, d.getExtendedFieldValue(new Long(2)).getBooleanValue());
+        Domain d =  Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
+        assertEquals("defaultvalue", d.getExtendedFieldValue(new Long(1)).getContent());
+        assertEquals(true, d.getExtendedFieldValue(new Long(2)).getBooleanValue());
+    }
+
+    public void testExtendedFields2() {
+        ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
+        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "0000", ExtendedFieldDataTypes.NUMBER, false, 1, "", "", ExtendedFieldConstants.MAXLEN_EXTF_NAME);
+        extDAO.create(extField);
+        
+        ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
+        extField = extDAO2.read(Long.valueOf(1));
+        assertEquals(extField.getExtendedFieldID().longValue(), 1);
+        
+        Domain d =  Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
+        assertEquals("", d.getExtendedFieldValue(new Long(1)).getContent());
     }
     
     /**

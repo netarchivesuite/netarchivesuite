@@ -49,7 +49,7 @@ public class ExtendedFieldTester extends DataModelTestCase {
     
     public void testCreateReadUpdateDelete() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
-        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "a", "b");
+        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "a", "b", 50);
         extDAO.create(extField);
 
         ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
@@ -64,6 +64,7 @@ public class ExtendedFieldTester extends DataModelTestCase {
         assertEquals(extField.getSequencenr(), 1);
         assertEquals(extField.getDefaultValue(), "a");
         assertEquals(extField.getOptions(), "b");
+        assertEquals(extField.getMaxlen(), 50);
         
         ExtendedFieldDAO extDAO3 = ExtendedFieldDBDAO.getInstance();
         extField.setExtendedFieldTypeID((long)ExtendedFieldTypes.HARVESTDEFINITION);
@@ -74,7 +75,7 @@ public class ExtendedFieldTester extends DataModelTestCase {
         extField.setSequencenr(2);
         extField.setDefaultValue("c");
         extField.setOptions("d");
-        
+        extField.setMaxlen(55);
         
         extDAO3.update(extField);
 
@@ -90,6 +91,7 @@ public class ExtendedFieldTester extends DataModelTestCase {
         assertEquals(extField.getSequencenr(), 2);
         assertEquals(extField.getDefaultValue(), "c");
         assertEquals(extField.getOptions(), "d");
+        assertEquals(extField.getMaxlen(), 55);
 
         ExtendedFieldDAO extDAO5 = ExtendedFieldDBDAO.getInstance();
         List<ExtendedField> list = extDAO5.getAll(2);
@@ -104,6 +106,7 @@ public class ExtendedFieldTester extends DataModelTestCase {
         assertEquals(list.get(0).getSequencenr(), extField.getSequencenr());
         assertEquals(list.get(0).getDefaultValue(), extField.getDefaultValue());
         assertEquals(list.get(0).getOptions(), extField.getOptions());
+        assertEquals(list.get(0).getMaxlen(), extField.getMaxlen());
         
         ExtendedFieldDAO extDAO6 = ExtendedFieldDBDAO.getInstance();
         assertEquals(extDAO6.exists(extField.getExtendedFieldID()), true);

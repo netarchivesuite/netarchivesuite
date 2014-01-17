@@ -55,6 +55,10 @@ public class ExtendedFieldDefaultValuesTester extends TestCase {
     	
     	e = new ExtendedFieldDefaultValue("12:08", "hh:mm a", ExtendedFieldDataTypes.TIMESTAMP);
     	assertFalse(e.isValid());
+    	
+    	e = new ExtendedFieldDefaultValue("12:03", "dd/MM/yyyy", ExtendedFieldDataTypes.JSCALENDAR);
+    	assertFalse(e.isValid());
+    	
     }
     
     public void testValid() {
@@ -87,5 +91,29 @@ public class ExtendedFieldDefaultValuesTester extends TestCase {
     	// this is also valid, because not the whole string will be used for parsing!
     	e = new ExtendedFieldDefaultValue("12:08:00", "hh:mm", ExtendedFieldDataTypes.TIMESTAMP);
     	assertTrue(e.isValid());
+    	
+    	e = new ExtendedFieldDefaultValue("12/03/2000", "dd/MM/yyyy", ExtendedFieldDataTypes.JSCALENDAR);
+    	assertTrue(e.isValid());
     }
+    
+    public void testValuesForDB() {
+    	ExtendedFieldDefaultValue e = null;
+    	String val;
+    	
+        e = new ExtendedFieldDefaultValue("0012", "0000", ExtendedFieldDataTypes.NUMBER);
+        val = e.getDBValue();
+        assertEquals(val, "12.0");
+        
+        e = new ExtendedFieldDefaultValue("00:01", "hh:mm", ExtendedFieldDataTypes.TIMESTAMP);
+        val = e.getDBValue();
+        assertEquals(val, "60000");
+
+        e = new ExtendedFieldDefaultValue("12/03/2000", "dd/MM/yyyy", ExtendedFieldDataTypes.JSCALENDAR);
+        val = e.getDBValue();
+        assertEquals(val, "952819200000");
+        
+        
+    }
+    
+    
 }

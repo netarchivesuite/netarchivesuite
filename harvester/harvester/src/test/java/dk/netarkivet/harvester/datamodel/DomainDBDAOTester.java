@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
@@ -49,6 +48,8 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
+import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
+
 import org.dom4j.Document;
 import org.dom4j.Node;
 
@@ -75,7 +76,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     public void testExtendedFields() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
         ExtendedField extField = new ExtendedField(null, 
-                (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "defaultvalue", "");
+                (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "defaultvalue", "", ExtendedFieldConstants.MAXLEN_EXTF_NAME);
         extDAO.create(extField);
 
         ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
@@ -100,7 +101,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals(Long.valueOf(1), efv.getExtendedFieldID());
         
         extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, 
-                "Test2", "12345", 1, true, 2, "defaultvalue2", "");
+                "Test2", "12345", 1, true, 2, "defaultvalue2", "", ExtendedFieldConstants.MAXLEN_EXTF_BOOLEAN);
         extDAO.create(extField);
         
         d = dao.read(TestInfo.DOMAIN_NAME);

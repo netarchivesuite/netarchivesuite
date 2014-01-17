@@ -20,6 +20,13 @@ Date:        $Date$
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  --%>
+<%@page import="java.util.TimeZone"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.util.GregorianCalendar"%>
+<%@page import="java.util.List"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.text.DecimalFormat"%>
+<%@page import="dk.netarkivet.harvester.webinterface.ExtendedFieldConstants"%>
 <%@ page
         import="
         java.util.Map,
@@ -38,6 +45,8 @@ Date:        $Date$
         String fieldname = field.getJspFieldname();
         
         ExtendedFieldValue fieldValue = domain.getExtendedFieldValue(field.getExtendedFieldID());
+        
+        int maxlen = field.getMaxlen();
 
         %>
         <%=field.getName() %>:
@@ -47,18 +56,55 @@ Date:        $Date$
             case ExtendedFieldDataTypes.STRING:
             case ExtendedFieldDataTypes.NUMBER:
             case ExtendedFieldDataTypes.TIMESTAMP:
+            case ExtendedFieldDataTypes.JSCALENDAR:
+            	String pattern = "";
+            	if (field.getFormattingPattern() != null) {
+                    pattern = field.getFormattingPattern();
+            	}
+            	
+            	String content = fieldValue.getContent();
+            	if (field.getFormattingPattern() != null && field.getFormattingPattern().length() > 0 && 
+            		fieldValue.getContent() != null && fieldValue.getContent().length() > 0) {
+            		pattern = field.getFormattingPattern();
+            		
+                    if (ExtendedFieldDataTypes.NUMBER == field.getDatatype()) {
+                        content = new DecimalFormat(pattern).format(Double.valueOf(fieldValue.getContent()));
+                    }
+                    else if (ExtendedFieldDataTypes.TIMESTAMP == field.getDatatype() || ExtendedFieldDataTypes.JSCALENDAR == field.getDatatype()) {
+                        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+                        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        content = sdf.format(new Date(Long.parseLong(fieldValue.getContent())));
+                    }
+            	}
+            	
                 %>
-                <input name="<%=fieldname %>" size="50" type="text" value="<%=fieldValue.getContent()%>"/>
+                <input name="<%=fieldname %>" id="<%=fieldname %>" size="50" type="text" maxlength="<%=maxlen %>" value="<%=content%>"
+                <%
+                if (ExtendedFieldDataTypes.JSCALENDAR == field.getDatatype()) {
+                	String jsPattern = "";
+                	//TODO Possbile Pattern need to go to Settings.xml -> modify also in Definitions-edit-extendedfield.jsp
+                	if ("dd/MM/yyyy".equals(field.getFormattingPattern())) {
+                		jsPattern = "%d/%m/%Y";
+                	}
+                	else {
+                        jsPattern = "%d/%m/%Y %H:%M";
+                	}
+                    %>
+                    onclick="setupExtendedFieldCalendar('<%=fieldname %>', '<%=jsPattern %>');"
+                    <% 
+                }
+                %>
+                /><small><%=pattern %></small>
                 <%
                 break;
             case ExtendedFieldDataTypes.BOOLEAN:
                 %>
-                <input name="<%=fieldname %>" type="checkbox" value="true" <%= (fieldValue.getBooleanValue()) ? checkedAttribute : "" %> />
+                <input name="<%=fieldname %>" type="checkbox" value="<%=ExtendedFieldConstants.TRUE %>" <%= (fieldValue.getBooleanValue()) ? checkedAttribute : "" %> />
                 <%
                 break;
             case ExtendedFieldDataTypes.NOTE:
                 %>
-                <textarea name="<%=fieldname %>" rows="5" cols="50"><%=fieldValue.getContent()%></textarea>
+                <textarea name="<%=fieldname %>" rows="5" cols="50" maxlength="<%=maxlen %>"><%=fieldValue.getContent()%></textarea>
                 <%
                 break;
             case ExtendedFieldDataTypes.SELECT:

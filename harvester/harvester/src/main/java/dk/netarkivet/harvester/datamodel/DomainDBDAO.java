@@ -203,7 +203,6 @@ public class DomainDBDAO extends DomainDAO {
                 insertOwnerInfo(connection, d, doi);
             }
             
-            addExtendedFieldValues(d);
             saveExtendedFieldValues(connection, d);            
             
             connection.commit();
@@ -1648,27 +1647,6 @@ public class DomainDBDAO extends DomainDAO {
            HarvestDBConnection.release(c);
        }
    }
-    
-    /**
-     * Adds Defaultvalues for all extended fields of this entity.
-     * @param d the domain to which to add the values
-     */
-    private void addExtendedFieldValues(Domain d) {
-        ExtendedFieldDAO extendedFieldDAO = ExtendedFieldDAO.getInstance();
-        List<ExtendedField> list = extendedFieldDAO
-                .getAll(ExtendedFieldTypes.DOMAIN);
-
-        Iterator<ExtendedField> it = list.iterator();
-        while (it.hasNext()) {
-            ExtendedField ef = it.next();
-
-            ExtendedFieldValue efv = new ExtendedFieldValue();
-            efv.setContent(ef.getDefaultValue());
-            efv.setExtendedFieldID(ef.getExtendedFieldID());
-
-            d.getExtendedFieldValues().add(efv);
-        }
-    }
     
     /**
      * Saves all extended Field values for a Domain in the Database.

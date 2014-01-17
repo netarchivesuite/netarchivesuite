@@ -76,10 +76,8 @@ public final class ExtendedFieldDefinition {
         Long extendedFieldTypeID = HTMLUtils.parseOptionalLong(context,
                 ExtendedFieldConstants.EXTF_TYPE_ID, null);
 
-        HTMLUtils.forwardOnEmptyParameter(context, 
-                ExtendedFieldConstants.EXTF_NAME);
-        String name = request.getParameter(
-                ExtendedFieldConstants.EXTF_NAME).trim();
+        HTMLUtils.forwardOnEmptyParameter(context, ExtendedFieldConstants.EXTF_NAME);
+        String name = request.getParameter(ExtendedFieldConstants.EXTF_NAME).trim();
         int datatype = HTMLUtils.parseAndCheckInteger(context, 
                 ExtendedFieldConstants.EXTF_DATATYPE,
                 ExtendedFieldDataTypes.MIN_DATATYPE_VALUE, 
@@ -89,14 +87,13 @@ public final class ExtendedFieldDefinition {
         boolean mandatory = false;
 
         String[] checkboxValues = null;
-        checkboxValues = request.getParameterValues(
-                ExtendedFieldConstants.EXTF_MANDATORY);
+        checkboxValues = request.getParameterValues(ExtendedFieldConstants.EXTF_MANDATORY);
         if (checkboxValues != null) {
             mandatory = true;
         }
-
-        int sequencenr = HTMLUtils.parseAndCheckInteger(context,
-                ExtendedFieldConstants.EXTF_SEQUENCENR, 1, Integer.MAX_VALUE);
+        
+        int maxlen = HTMLUtils.parseAndCheckInteger(context, ExtendedFieldConstants.EXTF_MAXLEN, ExtendedFieldConstants.MAXLEN_EXTF_BOOLEAN, ExtendedFieldConstants.MAXLEN_EXTF_CONTENT);
+        int sequencenr = HTMLUtils.parseAndCheckInteger(context, ExtendedFieldConstants.EXTF_SEQUENCENR, 1, Integer.MAX_VALUE);
 
         String options = "";
         ExtendedFieldOptions efo = null;
@@ -110,28 +107,42 @@ public final class ExtendedFieldDefinition {
                 if (efo.isValid()) {
                     options = efo.getOptionsString();
                 } else {
-                    throw new ForwardedToErrorPage(
-                            "errormsg;extendedfields.options.invalid");
+                    throw new ForwardedToErrorPage("errormsg;extendedfields.options.invalid");
                 }
             }
         }
 
         String defaultvalue = "";
-        defaultvalue = request.getParameter(
-                ExtendedFieldConstants.EXTF_DEFAULTVALUE);
+        if (datatype == ExtendedFieldDataTypes.NOTE) {
+            defaultvalue = request.getParameter(ExtendedFieldConstants.EXTF_DEFAULTVALUE_TEXTAREA);
+        }
+        else if (datatype == ExtendedFieldDataTypes.BOOLEAN) {
+            checkboxValues = request.getParameterValues(ExtendedFieldConstants.EXTF_DEFAULTVALUE_CHECKBOX);
+            if (checkboxValues != null) {
+            	defaultvalue = ExtendedFieldConstants.TRUE;
+            }
+        }
+        else {
+            defaultvalue = request.getParameter(ExtendedFieldConstants.EXTF_DEFAULTVALUE_TEXTFIELD);
+        }
+        
+        
         if (defaultvalue == null || defaultvalue.length() == 0) {
             defaultvalue = "";
         }
 
         if (mandatory && defaultvalue.length() == 0) {
-            throw new ForwardedToErrorPage(
-                    "errormsg;extendedfields.defaultvalue.empty");
+            throw new ForwardedToErrorPage("errormsg;extendedfields.defaultvalue.empty");
         }
 
         String format = "";
-        if (datatype == ExtendedFieldDataTypes.NUMBER
-                || datatype == ExtendedFieldDataTypes.TIMESTAMP) {
-            format = request.getParameter(ExtendedFieldConstants.EXTF_FORMAT);
+        if (datatype == ExtendedFieldDataTypes.NUMBER || datatype == ExtendedFieldDataTypes.TIMESTAMP || datatype == ExtendedFieldDataTypes.JSCALENDAR) {
+        	if (datatype == ExtendedFieldDataTypes.JSCALENDAR) {
+                format = request.getParameter(ExtendedFieldConstants.EXTF_FORMAT_JSCALENDAR);
+        	}
+        	else {
+                format = request.getParameter(ExtendedFieldConstants.EXTF_FORMAT);
+        	}
             if (format == null || format.length() == 0) {
                 format = "";
             } else {
@@ -145,38 +156,50 @@ public final class ExtendedFieldDefinition {
                         aFormat = new SimpleDateFormat(format);
                     }
                 } catch (IllegalArgumentException e) {
-                    throw new ForwardedToErrorPage(
-                            "errormsg;extendedfields.pattern.invalid");
+                    throw new ForwardedToErrorPage("errormsg;extendedfields.pattern.invalid");
                 }
 
-                try {
-                    aFormat.parseObject(defaultvalue);
-                } catch (ParseException e) {
-                    throw new ForwardedToErrorPage(
-                            "errormsg;extendedfields.value."
-                            + "does.not.match.pattern");
+                if (defaultvalue != null && defaultvalue.length() > 0) {
+                    try {
+                        aFormat.parseObject(defaultvalue);
+                    } catch (ParseException e) {
+                        throw new ForwardedToErrorPage("errormsg;extendedfields.value." + "does.not.match.pattern");
+                    }
                 }
             }
         }
 
         if (defaultvalue.length() > 0) {
-            ExtendedFieldDefaultValue efd = new ExtendedFieldDefaultValue(
-                    defaultvalue, format, datatype);
+            ExtendedFieldDefaultValue efd = new ExtendedFieldDefaultValue(defaultvalue, format, datatype);
             if (!efd.isValid()) {
                 throw new ForwardedToErrorPage(
                         "errormsg;extendedfields.defaultvalue.invalid");
             }
 
-            if (datatype == ExtendedFieldDataTypes.SELECT && efo != null
-                    && !efo.isKeyValid(defaultvalue)) {
+            if (datatype == ExtendedFieldDataTypes.SELECT && efo != null  && !efo.isKeyValid(defaultvalue)) {
                 throw new ForwardedToErrorPage(
                         "errormsg;extendedfields.defaultvalue.invalid");
             }
         }
 
-        ExtendedField extendedField = new ExtendedField(extendedFieldID,
-                extendedFieldTypeID, name, format, datatype, mandatory,
-                sequencenr, defaultvalue, options);
+        String maxlenStr = "";
+        maxlenStr = request.getParameter(ExtendedFieldConstants.EXTF_MAXLEN);
+        if (maxlenStr == null || maxlenStr.length() == 0) {
+        	try {
+                maxlen = Integer.valueOf(maxlenStr);
+        	}
+        	catch(NumberFormatException e) {
+                throw new ForwardedToErrorPage("errormsg;extendedfields.maxlen.invalid");
+        	}
+        }
+
+        if (mandatory && defaultvalue.length() == 0) {
+            throw new ForwardedToErrorPage(
+                    "errormsg;extendedfields.defaultvalue.empty");
+        }
+        
+        ExtendedField extendedField = new ExtendedField(extendedFieldID, extendedFieldTypeID, name, format, datatype, mandatory,
+                										sequencenr, defaultvalue, options, maxlen);
         updateExtendedField(extendedField);
 
         return extendedField;

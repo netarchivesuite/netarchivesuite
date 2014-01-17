@@ -174,9 +174,9 @@ public class DomainDefinition {
             case ExtendedFieldDataTypes.BOOLEAN:
                 String[] parb = request.getParameterValues(parameterName);
                 if (parb != null && parb.length > 0) {
-                    value = "true";
+                    value = ExtendedFieldConstants.TRUE;
                 } else {
-                    value = "false";
+                    value = ExtendedFieldConstants.FALSE;
                 }
                 break;
             case ExtendedFieldDataTypes.SELECT:
@@ -207,14 +207,12 @@ public class DomainDefinition {
                     }
                 }
 
-                ExtendedFieldDefaultValue def = new ExtendedFieldDefaultValue(
-                        value, ef.getFormattingPattern(), ef.getDatatype());
+                ExtendedFieldDefaultValue def = new ExtendedFieldDefaultValue(value, ef.getFormattingPattern(), ef.getDatatype());
                 if (!def.isValid()) {
-                    HTMLUtils.forwardWithRawErrorMessage(context, i18n,
-                            "errormsg;extendedfields.value.invalid");
-                    throw new ForwardedToErrorPage(
-                            "errormsg;extendedfields.value.invalid");
+                    HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;extendedfields.value.invalid");
+                    throw new ForwardedToErrorPage("errormsg;extendedfields.value.invalid");
                 }
+                value = def.getDBValue();
                 break;
             }
 

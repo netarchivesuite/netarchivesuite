@@ -106,10 +106,21 @@ update: if non-empty, the method DomainDefinition.processRequest is called
     String aliasesString = "&nbsp;" + StringUtils.conjoin(
     	",&nbsp;", aliasLinks);
 
-    HTMLUtils.generateHeader(
-            pageContext);
-%>
+    // Include JS files for the calendar
 
+    String lang = HTMLUtils.getLocale(request);
+    if (lang.length() >= 2) {
+        lang = lang.substring(0, 2);
+    }
+
+    HTMLUtils.generateHeader(
+            pageContext,
+            "./jscalendar/calendar.js",
+            "./jscalendar/lang/calendar-" + lang + ".js",
+            "./jscalendar/calendar-setup.js");%>
+
+<jsp:include page="calendar-scripts.jsp"/>
+    
 <%--
 Display all the form information for this domain
 --%>

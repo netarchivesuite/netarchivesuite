@@ -460,9 +460,34 @@ public class MySQLSpecifics extends DBSpecifics {
                 + "name VARCHAR(300) NOT NULL UNIQUE,"
                 + "snapshot BOOL NOT NULL,"
                 + "isdefault BOOL NOT NULL,"
-                + "comments VARCHAR(30000)"
+//                + "comments VARCHAR(30000)"
+                + "comments TEXT"
+                
                 + ")";
         HarvestDBConnection.updateTable("harvestchannel", 1, createStatement);
     }
-    
+
+    /**
+     * Migrates the 'ExtendedFieldTable' from version 1 to version 2 consisting of adding
+     * the maxlen field
+     */
+    protected void migrateExtendedFieldTableV1toV2() {
+        String[] sqlStatements = {
+                "ALTER TABLE extendedfield ADD COLUMN maxlen INT",
+                "ALTER TABLE extendedfield MODIFY options TEXT"
+        		
+        };
+        HarvestDBConnection.updateTable("extendedfield", 2, sqlStatements);   
+    }
+
+    /**
+     * Migrates the 'ExtendedFieldValueTable' from version 1 to version 2 changing the maxlen of content to 30000
+     */
+    protected  void migrateExtendedFieldTableValueV1toV2() {
+        String[] sqlStatements = {
+//        		"ALTER TABLE extendedfieldvalue MODIFY content VARCHAR(30000) NOT NULL"
+        		"ALTER TABLE extendedfieldvalue MODIFY content TEXT NOT NULL"
+        };
+        HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
+    }
 }

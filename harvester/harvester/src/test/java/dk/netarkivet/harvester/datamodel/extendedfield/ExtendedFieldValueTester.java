@@ -33,6 +33,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
+import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 
 public class ExtendedFieldValueTester  extends DataModelTestCase {
 
@@ -52,7 +53,7 @@ public class ExtendedFieldValueTester  extends DataModelTestCase {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
         ExtendedField extField = new ExtendedField(null, 
                 (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, 
-                "a", "b");
+                "a", "b", ExtendedFieldConstants.MAXLEN_EXTF_NAME);
         extDAO.create(extField);
 
         ExtendedFieldValueDAO extValDAO = ExtendedFieldValueDBDAO.getInstance();
@@ -78,5 +79,5 @@ public class ExtendedFieldValueTester  extends DataModelTestCase {
         assertEquals(extFieldVal.getExtendedFieldID().longValue(), 1);
         assertEquals(extFieldVal.getInstanceID(), Long.valueOf(100));
         assertEquals(extFieldVal.getContent(), "bar");
-    }   
+    }
 }

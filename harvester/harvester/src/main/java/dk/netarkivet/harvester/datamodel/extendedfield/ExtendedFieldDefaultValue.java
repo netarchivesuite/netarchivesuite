@@ -28,6 +28,7 @@ package dk.netarkivet.harvester.datamodel.extendedfield;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
@@ -90,7 +91,17 @@ public class ExtendedFieldDefaultValue {
             }
             break;
         case ExtendedFieldDataTypes.NUMBER:
-            if (format != null && format.length() > 0) {
+        	if (value == null || value.length() == 0) {	// no value no format check
+        		isValid = true;
+        		break;
+        	}
+        	
+            if (format != null) {
+            	if (format.length() == 0) {
+            		isValid = true;
+            		break;
+            	}
+            	
                 DecimalFormat decimalFormat = new DecimalFormat(format);
                 try {
                     decimalFormat.parse(value);
@@ -99,11 +110,22 @@ public class ExtendedFieldDefaultValue {
                     log.debug("Invalid NUMBER: " + value);
                 }
             } else {
-                log.debug("Invalid NUMBER: " + value);
+                isValid = true;
             }
             break;
         case ExtendedFieldDataTypes.TIMESTAMP:
-            if (format != null && format.length() > 0) {
+        case ExtendedFieldDataTypes.JSCALENDAR:
+        	if (value == null || value.length() == 0) { // no value no format check
+        		isValid = true;
+        		break;
+        	}
+        	
+            if (format != null) {
+            	if (format.length() == 0) {
+            		isValid = true;
+            		break;
+            	}
+            	
                 SimpleDateFormat dateFormat = new SimpleDateFormat(format);
                 try {
                     dateFormat.parse(value);
@@ -112,7 +134,7 @@ public class ExtendedFieldDefaultValue {
                     log.debug("Invalid TIMESTAMP: " + value);
                 }
             } else {
-                log.debug("Invalid TIMESTAMP: " + value);
+                isValid = true;
             }
             break;
         case ExtendedFieldDataTypes.NOTE:
@@ -159,4 +181,34 @@ public class ExtendedFieldDefaultValue {
     public boolean isValid() {
         return valid;
     }
+    
+    /**
+     * @return String, the DB-Value of the a Value 
+     */
+    public String getDBValue() {
+    	// only if datatype is Timestamp, JSCalendar or Number. Otherwise DB-Value = Value
+    	if (value != null && value.length() > 0) {
+    		if (ExtendedFieldDataTypes.TIMESTAMP == datatype || ExtendedFieldDataTypes.JSCALENDAR == datatype) {
+            	try {
+            		// the Milliseconds from 1.1.1970 will be stored as String
+            		SimpleDateFormat sdf = new SimpleDateFormat(format);
+            		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    	            return String.valueOf(sdf.parse(value).getTime());
+                } catch (ParseException e) {
+                    log.debug("Invalid TIMESTAMP: " + value);
+                }
+    		}
+    		else if (ExtendedFieldDataTypes.NUMBER == datatype) {
+            	try {
+            		// a Double Value will be stored String
+    	            return String.valueOf(new DecimalFormat(format).parse(value).doubleValue());
+                } catch (ParseException e) {
+                    log.debug("Invalid NUMBER: " + value);
+                }
+    		} 
+    	}
+        
+        return value;
+    }
+    
 }

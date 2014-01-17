@@ -133,6 +133,21 @@ This page contains javascript supporting calendar handling.
         });
     }
 
+    /**
+     * Attach the calendar to a extended Field with 
+     */
+     function setupExtendedFieldCalendar(fieldname, jsformat){
+         Calendar.setup({
+             inputField     :    fieldname,     // id of the input field
+             ifFormat       :    jsformat,      // format of the input field
+             showsTime      :    true,          // will display a time selector
+             singleClick    :    true,          // single-click mode
+             step           :    1,             // show all years in drop-down
+                    // boxes (instead of every other year as default)
+             firstDay       :    1              // first day is monday
+         });
+     }
+    
     function updateTime(select) {
         saveScheduleValues(select.form);
 
