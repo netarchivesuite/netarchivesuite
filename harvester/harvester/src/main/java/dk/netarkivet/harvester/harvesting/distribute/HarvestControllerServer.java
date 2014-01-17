@@ -200,8 +200,7 @@ public class HarvestControllerServer
 
         // Make sure serverdir (where active crawl-dirs live) and oldJobsDir
         // (where old crawl dirs are stored) exist.
-        serverDir = new File(Settings
-                .get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
+        serverDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
         ApplicationUtils.dirMustExist(serverDir);
         log.info("Serverdir: '" + serverDir + "'");
         minSpaceRequired = Settings
@@ -241,9 +240,6 @@ public class HarvestControllerServer
         // Channel ANY_xxxPRIORIRY_HACO is used for listening for jobs, and
         // registered below.
 
-        // Register for listening to harvest channel validity responses
-        JMSConnectionFactory.getInstance().setListener(HARVEST_CHAN_VALID_RESP_ID, this);
-
         jmsConnection = JMSConnectionFactory.getInstance();
         log.debug("Obtained JMS connection.");
 
@@ -252,6 +248,9 @@ public class HarvestControllerServer
         // If any unprocessed jobs are left on the server, process them now
         processOldJobs();
 
+        // Register for listening to harvest channel validity responses
+        JMSConnectionFactory.getInstance().setListener(HARVEST_CHAN_VALID_RESP_ID, this);
+        
         // Ask if the channel this harvester is assigned to is valid
         jmsConnection.send(new HarvestChannelValidityRequest(HarvestControllerServer.CHANNEL));
         log.info("Requested to check the validity of harvest channel '"
