@@ -26,12 +26,14 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -189,11 +191,34 @@ class ArcFilesReportGenerator {
 
             out.println("[ARCFILE] [Opened] [Closed] [Size]");
 
+            HashSet<String> arcFilesFromHeritrixOut = new HashSet<String>(); 
             for (Map.Entry<String, ArcFilesReportGenerator.ArcFileStatus> entry
                     : reportContents.entrySet()) {
                 String arcFileName = entry.getKey();
+                arcFilesFromHeritrixOut.add(arcFileName);
                 ArcFileStatus afs = entry.getValue();
                 out.println(arcFileName + " " + afs.toString());
+            }
+            
+            // Inspect the contents of the local ARC folder
+            
+            //TODO check if this value is configurable
+            File localArcFolder = new File(crawlDir, "arcs");
+            if (localArcFolder.exists() && localArcFolder.isDirectory()) {
+            	File[] localArcs = localArcFolder.listFiles(new FileFilter() {					
+					@Override
+					public boolean accept(File f) {
+						return f.isFile() && f.getName().contains(".arc");
+					}
+				});
+            	for (File f : localArcs) {
+            		String arcFileName = f.getName();
+            		if (!arcFilesFromHeritrixOut.contains(arcFileName)) {
+            			ArcFileStatus afs = new ArcFileStatus();
+            			afs.setSize(f.length());
+            			out.println(arcFileName + " " + afs.toString());
+            		}
+            	}
             }
 
             out.close();
