@@ -453,14 +453,14 @@ public class HarvestDocumentation {
         }   
         // Generate an arcfiles-report.txt if configured to do so.
         boolean genArcFilesReport = Settings.getBoolean(
-                HarvesterSettings.METADATA_GENERATE_ARCFILES_REPORT);
+                HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
             log.debug("Creating an arcfiles-report.txt");
-            files.add(new MetadataFile(new ArcFilesReportGenerator(crawlDir)
+            files.add(new MetadataFile(new ArchiveFilesReportGenerator(crawlDir)
                     .generateReport(), harvestID, jobID, heritrixVersion));
         } else {
             log.debug("Creation of the arcfiles-report.txt has been disabled"
-                    + "by the setting '" + HarvesterSettings.METADATA_GENERATE_ARCFILES_REPORT
+                    + "by the setting '" + HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT
                     + "'!");
         }
         

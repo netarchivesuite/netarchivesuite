@@ -38,11 +38,11 @@ import junit.framework.TestCase;
  * @author ngiraud
  *
  */
-public class ArcFilesReportGeneratorTest extends TestCase {
+public class ArchiveFilesReportGeneratorTest extends TestCase {
 
 	public final void testPatterns() throws ParseException {
 
-		Object[] params = ArcFilesReportGenerator.ARC_OPEN_FORMAT.parse(
+		Object[] params = ArchiveFilesReportGenerator.FILE_OPEN_FORMAT.parse(
 				"2010-07-20 16:12:53.698 INFO thread-14 org.archive.io.WriterPoolMember.createFile() Opened /somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000.arc.gz.open"
 		);
 		assertEquals(
@@ -55,7 +55,7 @@ public class ArcFilesReportGeneratorTest extends TestCase {
 				"/somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000.arc.gz",
 				(String) params[2]);
 
-		params = ArcFilesReportGenerator.ARC_CLOSE_FORMAT.parse(
+		params = ArchiveFilesReportGenerator.FILE_CLOSE_FORMAT.parse(
 				"2010-07-20 16:14:31.792 INFO thread-29 org.archive.io.WriterPoolMember.close() Closed /somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000-bnf_test.arc.gz, size 162928");
 		assertEquals(
 				"2010-07-20 16:14:31.792",
@@ -78,7 +78,7 @@ public class ArcFilesReportGeneratorTest extends TestCase {
 			File crawlDir = new File(
 					TestInfo.BASEDIR,
 					"arcFilesReport" + File.separator + "crawldir");
-			ArcFilesReportGenerator gen = new ArcFilesReportGenerator(crawlDir);
+			ArchiveFilesReportGenerator gen = new ArchiveFilesReportGenerator(crawlDir);
 
 			File expectedReport = new File(TestInfo.BASEDIR,
 					"arcFilesReport" + File.separator

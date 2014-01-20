@@ -639,7 +639,7 @@
                 <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
-                <generateArcFilesReport>true</generateArcFilesReport>
+                <generateArchiveFilesReport>true</generateArchiveFilesReport>
                 <metadataFormat>arc</metadataFormat>
             </metadata>
         </harvesting>

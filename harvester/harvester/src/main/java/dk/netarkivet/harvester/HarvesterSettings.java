@@ -576,14 +576,14 @@ public class HarvesterSettings {
             "settings.harvester.harvesting.metadata.logFilePattern";
 
     /**
-     * <b>settings.harvester.harvesting.metadata.generateArcFilesReport</b> This setting
-     * is a boolean flag that enables/disables the generation of an ARC files report.
+     * <b>settings.harvester.harvesting.metadata.generateArchiveFilesReport</b> This setting
+     * is a boolean flag that enables/disables the generation of an ARC/WARC files report.
      * Default value is 'true'.
      *
      * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
      */
-    public static String METADATA_GENERATE_ARCFILES_REPORT =
-            "settings.harvester.harvesting.metadata.generateArcFilesReport";
+    public static String METADATA_GENERATE_ARCHIVE_FILES_REPORT =
+            "settings.harvester.harvesting.metadata.generateArchiveFilesReport";
 
     /**
      * <b>settings.harvester.aliases.timeout</b> The amount of time in seconds before 
