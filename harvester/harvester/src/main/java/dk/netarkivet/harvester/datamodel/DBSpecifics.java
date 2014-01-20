@@ -210,7 +210,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     }
 
     private void upgradeExtendedFieldTypeTable(int currentVersion, int toVersion) {
-        if (currentVersion == 0 && toVersion == 1) {
+        if (currentVersion == 0 && toVersion >= 1) {
             createExtendedFieldTypeTable();
             currentVersion = 1;
         }
@@ -225,7 +225,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     private void upgradeExtendedFieldValueTable(int currentVersion,
             int toVersion) {
-        if (currentVersion == 0 && toVersion == 1) {
+        if (currentVersion == 0 && toVersion >= 1) {
             createExtendedFieldValueTable();
             currentVersion = 1;
         }
@@ -244,7 +244,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     }
 
     private void upgradeExtendedFieldTable(int currentVersion, int toVersion) {
-        if (currentVersion == 0 && toVersion == 1) {
+        if (currentVersion == 0 && toVersion >= 1) {
             createExtendedFieldTable();
             currentVersion = 1;
         }

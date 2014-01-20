@@ -29,6 +29,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
+import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
@@ -66,6 +67,7 @@ public class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
                                             + "/fullhddb");
         DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
                                   HARVEST_DEFINITION_BASEDIR);
+        DBSpecifics.getInstance().updateTables();
     }
 
     public void tearDown() throws Exception {
