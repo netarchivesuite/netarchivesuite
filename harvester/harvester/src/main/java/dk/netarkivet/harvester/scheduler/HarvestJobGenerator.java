@@ -81,19 +81,15 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     private static final HarvestDefinitionDAO haDefinitionDAO =
         HarvestDefinitionDAO.getInstance();
     
-    /** The {@link JobDispatcher} that keeps track of registered {@link HarvestChannel}s */
-    private final JobDispatcher jobDispatcher;
-    
     private final HarvestChannelRegistry harvestChannelRegistry;
     
     public HarvestJobGenerator(
-    		final JobDispatcher jobDispatcher,
-    		final HarvestChannelRegistry harvestChannelRegistry) {
-		this.jobDispatcher = jobDispatcher;
-		this.harvestChannelRegistry = harvestChannelRegistry;
-	}
+            final JobDispatcher jobDispatcher,
+            final HarvestChannelRegistry harvestChannelRegistry) {
+        this.harvestChannelRegistry = harvestChannelRegistry;
+    }
 
-	/**
+    /**
      * Starts the job generation scheduler.
      */
     @Override
@@ -116,14 +112,14 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
      * Contains the functionality for the individual JobGenerations.
      */
     static class JobGeneratorTask implements Runnable {
-    	
-    	private final HarvestChannelRegistry harvestChannelRegistry;
+
+        private final HarvestChannelRegistry harvestChannelRegistry;
 
         public JobGeneratorTask(HarvestChannelRegistry harvestChannelRegistry) {
-			this.harvestChannelRegistry = harvestChannelRegistry;
-		}
+            this.harvestChannelRegistry = harvestChannelRegistry;
+        }
 
-		@Override
+        @Override
         public synchronized void run() {
             try {
                 generateJobs(new Date());
@@ -171,21 +167,21 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 
                 final HarvestDefinition harvestDefinition =
                     haDefinitionDAO.read(id);
-                
+
                 if (!harvestDefinition.isSnapShot()) {
-                	Long chanId = harvestDefinition.getChannelId();
-                	
-                	HarvestChannel chan = (chanId == null ?
-                			hChanDao.getDefaultChannel(false) : hChanDao.getById(chanId));
-                	
-                	String channelName = chan.getName();
-                	if (!harvestChannelRegistry.isRegistered(channelName)) {
-                		log.info("Harvest channel '" + channelName + "' has not yet been registered"
-                				+ " by any harvester, hence harvest definition '"
-                				+ harvestDefinition.getName() + "' (" + id 
-                				+ ") cannot be processed by the job generator for now.");
-                		continue;
-                	}
+                    Long chanId = harvestDefinition.getChannelId();
+
+                    HarvestChannel chan = (chanId == null ?
+                            hChanDao.getDefaultChannel(false) : hChanDao.getById(chanId));
+
+                    String channelName = chan.getName();
+                    if (!harvestChannelRegistry.isRegistered(channelName)) {
+                        log.info("Harvest channel '" + channelName + "' has not yet been registered"
+                                + " by any harvester, hence harvest definition '"
+                                + harvestDefinition.getName() + "' (" + id
+                                + ") cannot be processed by the job generator for now.");
+                        continue;
+                    }
                 }
 
                 harvestDefinitionsBeingScheduled.add(id);

@@ -286,29 +286,29 @@ public class ExtendedField implements Serializable {
     }
     
     public String toString() {
-    	return "" 
-    			+ "extendedFieldID:[" +  extendedFieldID 
-    			+ "]\n"
-    			+ "extendedFieldTypeID:[" +  extendedFieldTypeID 
-    			+ "]\n"
-    			+ "name:[" +  name 
-    			+ "]\n"
-    			+ "formattingPattern:[" +  formattingPattern 
-    			+ "]\n"
-    			+ "datatype:[" +  datatype 
-    			+ "]\n"
-    			+ "mandatory:[" +  mandatory 
-    			+ "]\n"
-    			+ "sequencenr:[" +  sequencenr 
-    			+ "]\n"
-    			+ "defaultValue:[" +  defaultValue 
-    			+ "]\n"
-    			+ "options:[" +  options 
-    			+ "]\n"
-    			+ "maxlen:[" +  maxlen 
-    			+ "]\n";
-    			
-    	
+        return ""
+                + "extendedFieldID:[" +  extendedFieldID
+                + "]\n"
+                + "extendedFieldTypeID:[" +  extendedFieldTypeID
+                + "]\n"
+                + "name:[" +  name
+                + "]\n"
+                + "formattingPattern:[" +  formattingPattern
+                + "]\n"
+                + "datatype:[" +  datatype
+                + "]\n"
+                + "mandatory:[" +  mandatory
+                + "]\n"
+                + "sequencenr:[" +  sequencenr
+                + "]\n"
+                + "defaultValue:[" +  defaultValue
+                + "]\n"
+                + "options:[" +  options
+                + "]\n"
+                + "maxlen:[" +  maxlen
+                + "]\n";
+
+
     }
     
 

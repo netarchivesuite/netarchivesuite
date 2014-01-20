@@ -25,11 +25,11 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.jsp.PageContext;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.jsp.PageContext;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.DomainUtils;
@@ -67,13 +67,16 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     public void testExtendedFields() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
         // id 1
-        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "defaultvalue", "");
+        ExtendedField extField = new ExtendedField(
+                null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "defaultvalue", "",
+                ExtendedFieldConstants.MAXLEN_EXTF_BOOLEAN);
         extDAO.create(extField);
         
         // id 2
-        extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Boolean", "", 1, true, 1, "true", "");
+        extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Boolean", "", 1, true, 1, "true", "",
+                ExtendedFieldConstants.MAXLEN_EXTF_BOOLEAN);
         extDAO.create(extField);
-    	
+
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         parameterMap.put(Constants.UPDATE_PARAM, new String[]{"1"});

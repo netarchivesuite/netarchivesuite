@@ -223,9 +223,10 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
      *
      * @throws Exception
      */
-    static void generateJobs(Date time)
+    void generateJobs(Date time)
     throws Exception {
-        JobGeneratorTask.generateJobs(time);
+        JobGeneratorTask jobGeneratorTask = new JobGeneratorTask(new HarvestChannelRegistry());
+        jobGeneratorTask.generateJobs(time);
         waitForJobGeneration();
     }
 
