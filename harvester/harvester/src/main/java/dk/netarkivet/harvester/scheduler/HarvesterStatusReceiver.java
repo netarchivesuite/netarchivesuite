@@ -55,8 +55,8 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
     /**
      * The DAO handling {@link HarvestChannel}s
      */
-    private final HarvestChannelDAO harvestChannelDao = HarvestChannelDAO.getInstance();
-    
+    private final HarvestChannelDAO harvestChannelDao;
+
     private final HarvestChannelRegistry harvestChannelRegistry;
 
     /**
@@ -68,11 +68,14 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
     public HarvesterStatusReceiver(
             JobDispatcher jobDispatcher,
             JMSConnection jmsConnection,
+            HarvestChannelDAO harvestChannelDao,
             HarvestChannelRegistry harvestChannelRegistry) {
         ArgumentNotValid.checkNotNull(jobDispatcher, "jobDispatcher");
         ArgumentNotValid.checkNotNull(jmsConnection, "jmsConnection");
+        ArgumentNotValid.checkNotNull(harvestChannelDao, "harvestChannelDao");
         this.jobDispatcher = jobDispatcher;
         this.jmsConnection = jmsConnection;
+        this.harvestChannelDao = harvestChannelDao;
         this.harvestChannelRegistry = harvestChannelRegistry;
     }
 
@@ -108,12 +111,11 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         String channelName = msg.getHarvestChannelName();
-        HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
 
         boolean isSnapshot = true;
         boolean isValid = true;
         try {
-            HarvestChannel chan = dao.getByName(channelName);
+            HarvestChannel chan = harvestChannelDao.getByName(channelName);
             isSnapshot = chan.isSnapshot();
         } catch (UnknownID e) {
             isValid = false;
@@ -122,7 +124,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
         if (isValid) {
         	harvestChannelRegistry.register(channelName);
         }
-        
+
         // Send the reply
         jmsConnection.send(new HarvestChannelValidityResponse(channelName, isValid, isSnapshot));
         log.info("Sent a message to notify that harvest channel '" + channelName + "' is "

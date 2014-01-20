@@ -57,14 +57,21 @@ public class JobDispatcher {
     private final Log log = LogFactory.getLog(getClass());
     /** Connection to JMS provider. */
     private final JMSConnection jmsConnection;
+    private final HarvestDefinitionDAO harvestDefinitionDAO;
+    private final JobDAO jobDao;
     
     /**
      * @param jmsConnection The JMS connection to use.
+     * @param hDao The HarvestDefinitionDAO to use.
      */
-    public JobDispatcher(JMSConnection jmsConnection) {
+    public JobDispatcher(JMSConnection jmsConnection, HarvestDefinitionDAO hDao, JobDAO jobDao) {
         log.info("Creating JobDispatcher");
         ArgumentNotValid.checkNotNull(jmsConnection, "jmsConnection");
+        ArgumentNotValid.checkNotNull(hDao, "hDao");
+        ArgumentNotValid.checkNotNull(jobDao, "jobDao");
         this.jmsConnection = jmsConnection;
+        this.harvestDefinitionDAO = hDao;
+        this.jobDao = jobDao;
     }
 
     /**
@@ -88,19 +95,18 @@ public class JobDispatcher {
                 List<MetadataEntry> metadata = createMetadata(jobToSubmit);
                 
                 // Extract documentary information about the harvest
-                HarvestDefinitionDAO hDao = HarvestDefinitionDAO.getInstance();
-                String hName = hDao.getHarvestName(
+                String hName = harvestDefinitionDAO.getHarvestName(
                         jobToSubmit.getOrigHarvestDefinitionID());
 
                 String schedule = "";
                 String hdComments = "";
                 String hdAudience = "";
-                SparseFullHarvest fh = hDao.getSparseFullHarvest(hName);
+                SparseFullHarvest fh = harvestDefinitionDAO.getSparseFullHarvest(hName);
                 if (fh != null) {
                     hdComments = fh.getComments();
                 } else {
                     SparsePartialHarvest ph =
-                            hDao.getSparsePartialHarvest(hName);
+                            harvestDefinitionDAO.getSparsePartialHarvest(hName);
 
                     if (ph == null) {
                         throw new ArgumentNotValid("No harvest definition "
@@ -131,7 +137,7 @@ public class JobDispatcher {
                     jobToSubmit.appendHarvestErrors(message);
                     jobToSubmit.appendHarvestErrorDetails(
                             ExceptionUtils.getStackTrace(e));
-                    JobDAO.getInstance().update(jobToSubmit);
+                    jobDao.update(jobToSubmit);
                 }
             }
         }
@@ -147,7 +153,6 @@ public class JobDispatcher {
      * @return A job ready to be submitted.
      */
     private synchronized Job prepareNextJobForSubmission(HarvestChannel channel) {
-        JobDAO jobDao = JobDAO.getInstance();
         Iterator<Long> jobsToSubmit = 
                 jobDao.getAllJobIds(JobStatus.NEW, channel);
         if (!jobsToSubmit.hasNext()) {
@@ -170,7 +175,6 @@ public class JobDispatcher {
      * @param job The job to create meta data for.
      */
     private List<MetadataEntry> createMetadata(Job job) {
-        final JobDAO dao = JobDAO.getInstance();
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
         MetadataEntry aliasMetadataEntry =
                 MetadataEntry.makeAliasMetadataEntry(
@@ -188,7 +192,7 @@ public class JobDispatcher {
                 job.getOrderXMLdoc())) {
             MetadataEntry duplicateReductionMetadataEntry
             = MetadataEntry.makeDuplicateReductionMetadataEntry(
-                    dao.getJobIDsForDuplicateReduction(job.getJobID()),
+                    jobDao.getJobIDsForDuplicateReduction(job.getJobID()),
                     job.getOrigHarvestDefinitionID(),
                     job.getHarvestNum(),
                     job.getJobID()

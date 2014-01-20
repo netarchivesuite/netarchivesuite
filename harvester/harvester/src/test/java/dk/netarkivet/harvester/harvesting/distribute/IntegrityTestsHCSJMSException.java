@@ -25,6 +25,16 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.security.Permission;
+import java.util.ArrayList;
+import java.util.logging.LogManager;
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
+import javax.jms.QueueConnection;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -33,23 +43,19 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import junit.framework.TestCase;
-
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.QueueConnection;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.security.Permission;
-import java.util.ArrayList;
-import java.util.logging.LogManager;
 
 /**
  * An integrity test that tests for how the HarvestControllerClient reacts
@@ -134,9 +140,8 @@ public class IntegrityTestsHCSJMSException extends TestCase{
                 j.getOrigHarvestDefinitionID());
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
-        JobDispatcher hDisp = new JobDispatcher(con);
-        hDisp.doOneCrawl(j, "test", "test", "test", 
-        		new HarvestChannel("test", "", true), "unittesters",
+        JobDispatcher hDisp = new JobDispatcher(con, HarvestDefinitionDAO.getInstance(), JobDAO.getInstance());
+        hDisp.doOneCrawl(j, "test", "test", "test", new HarvestChannel("test", "", true), "unittesters",
                 new ArrayList<MetadataEntry>());
         //Trigger the exception handler - should not try to exit
         qel.onException(new JMSException("Some exception"));

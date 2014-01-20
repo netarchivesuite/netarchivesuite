@@ -24,56 +24,42 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
+import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import junit.framework.TestCase;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
-import dk.netarkivet.testutils.preconfigured.MockupJMS;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class HarvesterStatusReceiverTest extends TestCase  {
-    private ReloadSettings reloadSettings = new ReloadSettings();
-    private MockJobDispatcher JobDispatcher;
+    private JobDispatcher jobDispatcher;
     private HarvesterStatusReceiver receiver;
-    MockupJMS jms = new MockupJMS();
+    private JMSConnection jmsConnection;
+    private HarvestChannelDAO harvestChannelDao;
     
     public void setUp() throws Exception {
-        reloadSettings.setUp();
-        jms.setUp();
-        JobDispatcher = new MockJobDispatcher();
-        receiver = new HarvesterStatusReceiver(
-                JobDispatcher, jms.getJMSConnection(), new HarvestChannelRegistry());
-    }
-    
-    protected class MockJobDispatcher extends JobDispatcher {
-        private String receivedChannelName;
-        
-        public MockJobDispatcher() {
-            super(jms.getJMSConnection());
-        }
-
-        @Override
-        protected void submitNextNewJob(HarvestChannel hChan) {
-            System.out.println("Within mockJobDispatcher");
-            receivedChannelName = hChan.getName();
-        }
+        jobDispatcher = mock(JobDispatcher.class);
+        jmsConnection = mock(JMSConnection.class);
+        harvestChannelDao = mock(HarvestChannelDAO.class);
+        receiver = new HarvesterStatusReceiver(jobDispatcher, jmsConnection, harvestChannelDao, new HarvestChannelRegistry());
     }
     
     public void testStatusReception() {
-    	HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
-        HarvesterReadyMessage statusmessage = 
+        HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
+        HarvesterReadyMessage readyMessage =
                 new HarvesterReadyMessage("Test", highChan.getName());
-        System.out.println(statusmessage.getHarvestChannelName());
-        receiver.onMessage(
-                JMSConnectionMockupMQ.getObjectMessage(statusmessage));
-        assertEquals(highChan.getName(), JobDispatcher.receivedChannelName);
+        when(harvestChannelDao.getByName(highChan.getName())).thenReturn(highChan);
+        receiver.onMessage(JMSConnectionMockupMQ.getObjectMessage(readyMessage));
+        verify(jobDispatcher).submitNextNewJob(highChan);
     }
     
     public void testInvalidMessageType() {
-        CrawlProgressMessage statusmessage = 
-                new CrawlProgressMessage(1,1);
-        receiver.onMessage(
-                JMSConnectionMockupMQ.getObjectMessage(statusmessage));
+        CrawlProgressMessage statusmessage =  new CrawlProgressMessage(1,1);
+        receiver.onMessage( JMSConnectionMockupMQ.getObjectMessage(statusmessage));
     }
 }

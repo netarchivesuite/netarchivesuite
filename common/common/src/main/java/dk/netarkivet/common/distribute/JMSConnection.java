@@ -24,6 +24,11 @@
  */
 package dk.netarkivet.common.distribute;
 
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -38,14 +43,6 @@ import javax.jms.Queue;
 import javax.jms.QueueBrowser;
 import javax.jms.QueueSession;
 import javax.jms.Session;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -55,6 +52,8 @@ import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Handles the communication with a JMS broker. Note on Thread-safety: the
@@ -207,7 +206,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     }
 
     /**
-     * Submit an object to the destination queue. This method cannot be
+     * Submit an object to the destination queue. This method shouldn't be
      * overridden. Override the method sendMessage to change functionality.
      *
      * @param msg The NetarkivetMessage to send to the destination queue (null
@@ -216,7 +215,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws ArgumentNotValid if nMsg is null.
      * @throws IOFailure        if the operation failed.
      */
-    public final void send(NetarkivetMessage msg) {
+    public void send(NetarkivetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         log.trace("Sending message (" + msg.toString() + ") to " + msg.getTo());
         sendMessage(msg, msg.getTo());

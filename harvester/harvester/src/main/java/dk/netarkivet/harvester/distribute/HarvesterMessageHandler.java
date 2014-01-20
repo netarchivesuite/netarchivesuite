@@ -78,14 +78,7 @@ public abstract class HarvesterMessageHandler
         log.trace("Message received:\n" + msg.toString());
         try {
             NetarkivetMessage unpackedMsg = JMSConnection.unpack(msg);
-            if (unpackedMsg instanceof HarvesterMessage) {
-                ((HarvesterMessage) unpackedMsg).accept(this);
-            } else {
-                ((IndexReadyMessage) unpackedMsg).accept(this);
-            }
-            //((HarvesterMessage) ).accept(this);
-        } catch (ClassCastException e) {
-            log.warn("Invalid message type", e);
+            ((HarvesterMessage)unpackedMsg).accept(this);
         } catch (Throwable e) {
             log.warn("Error processing message '" + msg + "'", e);
         }
@@ -137,7 +130,7 @@ public abstract class HarvesterMessageHandler
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
-    
+
     /**
      * This method should be overridden and implemented by a sub class if
      * message handling is wanted.
@@ -185,7 +178,7 @@ public abstract class HarvesterMessageHandler
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
-    
+
     /**
      * This method should be overridden and implemented by a sub class if
      * message handling is wanted.
@@ -203,21 +196,21 @@ public abstract class HarvesterMessageHandler
      * message handling is wanted.
      * @param msg a {@link HarvestChannelValidityRequest}
      */
-	@Override
-	public void visit(HarvestChannelValidityRequest msg) {
-		ArgumentNotValid.checkNotNull(msg, "msg");
-        deny(msg);		
-	}
-	
-	/**
+    @Override
+    public void visit(HarvestChannelValidityRequest msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+
+    /**
      * This method should be overridden and implemented by a sub class if
      * message handling is wanted.
      * @param msg a {@link HarvestChannelValidityResponse}
      */
-	@Override
-	public void visit(HarvestChannelValidityResponse msg) {
-		ArgumentNotValid.checkNotNull(msg, "msg");
-        deny(msg);		
-	}
-    
+    @Override
+    public void visit(HarvestChannelValidityResponse msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+
 }

@@ -38,7 +38,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ZipUtils;
-import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.testutils.ReflectUtils;
 
 /**
@@ -178,9 +177,8 @@ public class DatabaseTestUtils {
     /** Drop access to the database that's currently taken.
      * @throws SQLException
      */
-    public static void dropDatabase() throws SQLException,
-    										NoSuchFieldException,
-                                            IllegalAccessException{
+    public static void dropDatabase()
+            throws SQLException, NoSuchFieldException, IllegalAccessException{
         try {
             final String shutdownUri = dburi + ";shutdown=true";
             DriverManager.getConnection(shutdownUri);

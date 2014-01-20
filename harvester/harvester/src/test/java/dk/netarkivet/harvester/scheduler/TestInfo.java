@@ -25,21 +25,13 @@
 package dk.netarkivet.harvester.scheduler;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Map;
-
-import org.dom4j.Document;
 
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Contains test information about all scheduler test data.
@@ -82,8 +74,7 @@ public class TestInfo {
         } catch (SQLException e) {
             throw new IOFailure(e.getMessage());
         }
-        return Job.createJob(0L,
-        		new HarvestChannel("test", "", true),
+        return Job.createJob(0L, new HarvestChannel("test", "", true),
                 DomainDAO.getInstance()
                 .read("netarkivet.dk")
                 .getConfiguration("Engelsk_netarkiv_et_niveau"), 0);
