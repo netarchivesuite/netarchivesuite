@@ -90,9 +90,9 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'extendedfieldtype', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'extendedfield', 1);
+    VALUES ( 'extendedfield', 2);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'extendedfieldvalue', 1);
+    VALUES ( 'extendedfieldvalue', 2);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'extendedfieldhistoryvalue', 1);
 INSERT INTO schemaversions ( tablename, version )
@@ -600,3 +600,8 @@ CREATE INDEX harvestchannelnameid on harvestchannel(name) TABLESPACE tsindex;
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvestchannel TO netarchivesuite;
 GRANT USAGE ON SEQUENCE harvestchannel_id_seq TO netarchivesuite;
+
+ALTER TABLE extendedfield ADD COLUMN maxlen INT;
+ALTER TABLE extendedfield ALTER options VARCHAR(1000);
+
+ALTER TABLE extendedfieldvalue ALTER content VARCHAR(30000) NOT NULL;
