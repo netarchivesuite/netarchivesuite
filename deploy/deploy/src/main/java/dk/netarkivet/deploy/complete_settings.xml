@@ -528,7 +528,7 @@
         <applicationName>NA</applicationName>
         <applicationInstanceId/>
     </common><harvester>
-        <snapshotChannelId>SNAPSHOT</snapshotChannelId>	
+    	<snapshotChannelId>SNAPSHOT</snapshotChannelId>
         <performer/>
         <aliases>
             <timeout>31536000</timeout>

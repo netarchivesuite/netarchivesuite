@@ -64,7 +64,7 @@ public class JobDispatcherTester extends TestCase {
     private HarvestChannel SELECTIVE_HARVEST_CHANNEL = new HarvestChannel("FOCUSED", "", true);
     private final ArgumentCaptor<DoOneCrawlMessage> crawlMessageCaptor =
             ArgumentCaptor.forClass(DoOneCrawlMessage.class);
-    private Job jobMock = createJob();
+    private Job jobMock = createJob(1);
     private SparsePartialHarvest harvest = createDefaultSparsePartialHarvest();
 
 
@@ -83,7 +83,7 @@ public class JobDispatcherTester extends TestCase {
      * Simple test of new job submitting.
      */
     public void testSubmitNewJobs() throws DocumentException {
-        prepareDefaultMockAnswers();
+        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
 
         jobDispatcher.submitNextNewJob(SELECTIVE_HARVEST_CHANNEL);
 
@@ -102,7 +102,7 @@ public class JobDispatcherTester extends TestCase {
      * Test that runNewJobs generates correct alias information for the job.s
      */
     public void testSubmitNewJobsMakesAliasInfo() throws SQLException {
-        prepareDefaultMockAnswers();
+        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
         String originalDomain = "netarkiv.dk";
         String aliasDomain = "netatarkivalias.dk";
         when(jobMock.getJobAliasInfo()).thenReturn(Arrays.asList(new AliasInfo[] {
@@ -121,7 +121,7 @@ public class JobDispatcherTester extends TestCase {
      * Test that runNewJobs makes correct duplication reduction information.
      */
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws DocumentException {
-        prepareDefaultMockAnswers();
+        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
         Document doc = OrderXmlBuilder.create().enableDeduplication().getOrderXml();
         when(jobMock.getOrderXMLdoc()).thenReturn(doc);
         List<Long> jobIDsForDuplicateReduction = Arrays.asList(new Long[]{1L});
@@ -156,7 +156,25 @@ public class JobDispatcherTester extends TestCase {
      * Uses MessageTestHandler()
      */
     public void testSendingToCorrectQueue() {
+        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
 
+        jobDispatcher.submitNextNewJob(SELECTIVE_HARVEST_CHANNEL);
+        verify(jmsConnection).send(crawlMessageCaptor.capture());
+        assertTrue(jobMock == crawlMessageCaptor.getValue().getJob());
+        assertEquals(
+                HarvesterChannels.getHarvestJobChannelId(SELECTIVE_HARVEST_CHANNEL),
+                crawlMessageCaptor.getValue().getTo());
+        reset(jmsConnection);
+
+        Job snapshotJob = createJob(2);
+        prepareDefaultMockAnswers(HarvestChannel.SNAPSHOT, snapshotJob);
+        jobDispatcher.submitNextNewJob(HarvestChannel.SNAPSHOT);
+        verify(jmsConnection).send(crawlMessageCaptor.capture());
+        assertTrue(snapshotJob == crawlMessageCaptor.getValue().getJob());
+
+        assertEquals(
+                HarvesterChannels.getHarvestJobChannelId(HarvestChannel.SNAPSHOT),
+                crawlMessageCaptor.getValue().getTo());
     }
 
     /**
@@ -181,18 +199,18 @@ public class JobDispatcherTester extends TestCase {
         return harvest;
     }
 
-    private Job createJob() {
+    private Job createJob(long jobID) {
         Job job = mock(Job.class);
-        when(job.getJobID()).thenReturn(1L);
+        when(job.getJobID()).thenReturn(jobID);
         when(job.getOrigHarvestDefinitionID()).thenReturn(9L);
         when(job.getOrderXMLdoc()).thenReturn(new DefaultDocument());
         return job;
     }
 
-    private void prepareDefaultMockAnswers() {
-        Iterator<Long> jobIDIterator = Arrays.asList(new Long[]{jobMock.getJobID()}).iterator();
-        when(jobDAO.getAllJobIds(JobStatus.NEW, SELECTIVE_HARVEST_CHANNEL)).thenReturn(jobIDIterator);
-        when(jobDAO.read(jobMock.getJobID())).thenReturn(jobMock);
+    private void prepareDefaultMockAnswers(HarvestChannel channel, Job job) {
+        Iterator<Long> jobIDIterator = Arrays.asList(new Long[]{job.getJobID()}).iterator();
+        when(jobDAO.getAllJobIds(JobStatus.NEW, channel)).thenReturn(jobIDIterator);
+        when(jobDAO.read(job.getJobID())).thenReturn(job);
         when(harvestDefinitionDAO.getHarvestName(harvest.getOid())).thenReturn(harvest.getName());
         when(harvestDefinitionDAO.getSparsePartialHarvest(harvest.getName())).thenReturn(harvest);
     }

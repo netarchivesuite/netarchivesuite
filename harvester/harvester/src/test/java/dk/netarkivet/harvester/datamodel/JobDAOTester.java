@@ -81,8 +81,8 @@ public class JobDAOTester extends DataModelTestCase {
     public void testGetCountJobs() throws Exception {
         JobDAO dao = JobDAO.getInstance();
         assertEquals("Must have " + INITIAL_JOB_COUNT + " jobs from the" +
-        		" beginning",
-                     INITIAL_JOB_COUNT, dao.getCountJobs());
+                " beginning",
+                INITIAL_JOB_COUNT, dao.getCountJobs());
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
         HarvestDefinition hd = hdDao.read(Long.valueOf(42));
         DefaultJobGenerator jobGen = new DefaultJobGenerator();

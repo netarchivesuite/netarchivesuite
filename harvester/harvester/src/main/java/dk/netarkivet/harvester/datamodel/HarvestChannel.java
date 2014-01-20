@@ -59,47 +59,47 @@ import dk.netarkivet.harvester.harvesting.HarvestController;
  */
 @SuppressWarnings("serial")
 public class HarvestChannel implements Serializable {
-	
-	/**
-	 * The unique {@link HarvestChannel} for snapshot harvests.
-	 */
-	public static final HarvestChannel SNAPSHOT = new HarvestChannel();
-	
-	/**
-	 * Defines acceptable channel names: at least one word character (see {@link Pattern}).
-	 */
-	public static final String ACCEPTABLE_NAME_PATTERN = "^\\w+$";
-	
-	/**
-	 * The unique numeric id.
-	 */
-	private long id;
-	
-	/**
-	 * The unique name of the channel. Accepts only alpha numeric characters.
-	 * @see #ACCEPTABLE_NAME_PATTERN
-	 * @see #isAcceptableName(String)
-	 */
-	private String name;
-	
-	/**
-	 * Comments.
-	 */
-	private String comments;
-	
-	/**
-	 * Whether this channel is the default one for the given type (snapshot or focused). 
-	 */
-	private boolean isDefault;
-	
-	/**
-	 * Used to build the {@link #SNAPSHOT} singleton only.
-	 */
-	private HarvestChannel() {
-		this.name = Settings.get(HarvesterSettings.SNAPSHOT_HARVEST_CHANNEL_ID);
-		this.comments = "";
-		this.isDefault = true;
-	}
+
+    /**
+     * The unique {@link HarvestChannel} for snapshot harvests.
+     */
+    public static final HarvestChannel SNAPSHOT = new HarvestChannel();
+
+    /**
+     * Defines acceptable channel names: at least one word character (see {@link Pattern}).
+     */
+    public static final String ACCEPTABLE_NAME_PATTERN = "^\\w+$";
+
+    /**
+     * The unique numeric id.
+     */
+    private long id;
+
+    /**
+     * The unique name of the channel. Accepts only alpha numeric characters.
+     * @see #ACCEPTABLE_NAME_PATTERN
+     * @see #isAcceptableName(String)
+     */
+    private String name;
+
+    /**
+     * Comments.
+     */
+    private String comments;
+
+    /**
+     * Whether this channel is the default one for the given type (snapshot or focused).
+     */
+    private boolean isDefault;
+
+    /**
+     * Used to build the {@link #SNAPSHOT} singleton only.
+     */
+    private HarvestChannel() {
+        this.name = Settings.get(HarvesterSettings.SNAPSHOT_HARVEST_CHANNEL_ID);
+        this.comments = "";
+        this.isDefault = true;
+    }
 
     /**
      * Constructor from name and comments
