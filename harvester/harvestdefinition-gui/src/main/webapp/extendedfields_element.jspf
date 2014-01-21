@@ -47,9 +47,13 @@ Date:        $Date$
         ExtendedFieldValue fieldValue = domain.getExtendedFieldValue(field.getExtendedFieldID());
         
         int maxlen = field.getMaxlen();
+        String mandatoryStr = "";
+        if (field.isMandatory()) {
+        	mandatoryStr = "*";
+        }
 
         %>
-        <%=field.getName() %>:
+        <%=mandatoryStr %><%=field.getName() %>:
         <%
         
         switch(field.getDatatype()) {
@@ -90,11 +94,17 @@ Date:        $Date$
                         jsPattern = "%d/%m/%Y %H:%M";
                 	}
                     %>
-                    onclick="setupExtendedFieldCalendar('<%=fieldname %>', '<%=jsPattern %>');"
+                    onclick="setupExtendedFieldCalendar('<%=fieldname %>', '<%=jsPattern %>')";/><img src="calendar16x16.png" width="16" height="16"/>
                     <% 
                 }
+                else {
+                	%>
+                	/>
+                	<%
+                	
+                }
                 %>
-                /><small><%=pattern %></small>
+                <small><%=pattern %></small>
                 <%
                 break;
             case ExtendedFieldDataTypes.BOOLEAN:

@@ -1122,7 +1122,7 @@ public class Domain implements Named {
             ExtendedField ef = it.next();
 
             ExtendedFieldValue efv = new ExtendedFieldValue();
-            efv.setContent(ef.getDefaultValue());
+            efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef.getDatatype()).getDBValue());
             efv.setExtendedFieldID(ef.getExtendedFieldID());
 
             getExtendedFieldValues().add(efv);

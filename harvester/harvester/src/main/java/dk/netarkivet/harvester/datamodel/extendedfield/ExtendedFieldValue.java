@@ -148,4 +148,16 @@ public class ExtendedFieldValue {
         return false;
     }
 
+    public String toString() {
+        return ""
+                + "extendedFieldValueID:[" +  extendedFieldValueID
+                + "]\n"
+                + "extendedFieldID:[" +  extendedFieldID
+                + "]\n"
+                + "content:[" +  content
+                + "]\n"
+                + "instanceID:[" +  instanceID
+                + "]\n";
+    }
+    
 }
