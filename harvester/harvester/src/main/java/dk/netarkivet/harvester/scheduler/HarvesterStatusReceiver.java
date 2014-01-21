@@ -109,6 +109,12 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
     @Override
     public void visit(HarvestChannelValidityRequest msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
+        
+        String harvesterInstanceId = msg.getInstanceId();
+        
+        // First remove any reference to this instanceId
+        // This is done in case a Harvester has been unexpectedly shut down
+        harvestChannelRegistry.unregisterHarvester(harvesterInstanceId);
 
         String channelName = msg.getHarvestChannelName();
 
@@ -122,7 +128,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
         }
 
         if (isValid) {
-        	harvestChannelRegistry.register(channelName);
+        	harvestChannelRegistry.register(channelName, harvesterInstanceId);
         }
 
         // Send the reply

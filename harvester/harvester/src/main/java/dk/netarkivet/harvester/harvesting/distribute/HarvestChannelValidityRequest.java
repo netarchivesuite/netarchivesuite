@@ -50,10 +50,15 @@ public class HarvestChannelValidityRequest extends HarvesterMessage {
      * The harvest channel name to check.
      */
     private final String harvestChannelName;
+    
+    private final String instanceId;
 
-    public HarvestChannelValidityRequest(final String harvestChannelName) {
+    public HarvestChannelValidityRequest(
+    		final String harvestChannelName,
+    		final String instanceId) {
         super(HarvesterChannels.getHarvestChannelValidityRequestChannel(), Channels.getError());
         this.harvestChannelName = harvestChannelName;
+        this.instanceId = instanceId;
     }
 
     @Override
@@ -67,5 +72,12 @@ public class HarvestChannelValidityRequest extends HarvesterMessage {
     public final String getHarvestChannelName() {
         return harvestChannelName;
     }
+
+	/**
+	 * @return the instanceId
+	 */
+	public final String getInstanceId() {
+		return instanceId;
+	}
 
 }

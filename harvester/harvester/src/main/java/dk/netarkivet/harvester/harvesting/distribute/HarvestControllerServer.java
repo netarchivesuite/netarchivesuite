@@ -252,7 +252,9 @@ public class HarvestControllerServer
         JMSConnectionFactory.getInstance().setListener(HARVEST_CHAN_VALID_RESP_ID, this);
         
         // Ask if the channel this harvester is assigned to is valid
-        jmsConnection.send(new HarvestChannelValidityRequest(HarvestControllerServer.CHANNEL));
+        jmsConnection.send(new HarvestChannelValidityRequest(
+        		HarvestControllerServer.CHANNEL,
+        		applicationInstanceId));
         log.info("Requested to check the validity of harvest channel '"
                 + HarvestControllerServer.CHANNEL + "'");
     }
