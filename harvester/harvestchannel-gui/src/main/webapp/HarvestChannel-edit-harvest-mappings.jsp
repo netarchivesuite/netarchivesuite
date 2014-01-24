@@ -123,7 +123,6 @@ function onClickCancelEditChannel() {
 <table class="selection_table" cols="5">
     <tr>
         <th width="30%"><fmt:message key="harvestdefinition.selective.header.harvestdefinition"/></th>
-        <th><fmt:message key="harvest.type"/></th>
         <th width="15%"><fmt:message key="harvestdefinition.selective.header.nextrun"/></th>
         <th><fmt:message key="harvestdefinition.selective.header.status"/></th>
         <th width="20%"><fmt:message key="harvest.channel"/></th>
@@ -134,6 +133,7 @@ function onClickCancelEditChannel() {
     Iterator<SparsePartialHarvest> phIter = 
         harvestDao.getSparsePartialHarvestDefinitions(!showInactiveHDs).iterator();
     HarvestChannel defaultFocused = channelDao.getDefaultChannel(false);
+    int rowCount = 0;
     while (phIter.hasNext()) {
     	SparsePartialHarvest ph = phIter.next();
     	HarvestChannel chan = channelDao.getChannelForHarvestDefinition(ph.getOid());  
@@ -143,9 +143,8 @@ function onClickCancelEditChannel() {
     	String isActive = I18N.getString(response.getLocale(),
                 ph.isActive() ? "active" : "inactive");
 %>
-    <tr>
+    <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
         <td><%=HTMLUtils.escapeHtmlValues(ph.getName())%></td>
-        <td><fmt:message key="harvest.channel.type.focused"/></td>
         <td>
         <% // Only output the date, if the HarvestDefinition is active
         if (ph.isActive()) { %>
@@ -158,26 +157,6 @@ function onClickCancelEditChannel() {
         <a href="#" onClick="onClickEditChannel(<%=ph.getOid()%>, false)">
         <fmt:message key="edit.harvest.mappings.edit.link"/>
         </a></td>
-    </tr>
-<%
-    }
-    Iterator<SparseFullHarvest> fhIter = 
-        harvestDao.getAllSparseFullHarvestDefinitions().iterator();
-    HarvestChannel defaultBroad = channelDao.getDefaultChannel(true); 
-    while (fhIter.hasNext()) {
-        SparseFullHarvest fh = fhIter.next();
-        HarvestChannel chan = channelDao.getChannelForHarvestDefinition(fh.getOid());
-        if (chan == null) {
-            chan = defaultBroad;
-        }
-%>
-    <tr>
-        <td><%=HTMLUtils.escapeHtmlValues(fh.getName())%></td>
-        <td><fmt:message key="harvest.channel.type.broad"/></td>
-        <td><%=Constants.NoNextDate %></td>
-        <td>&nbsp;</td>
-        <td id="formTd<%=fh.getOid()%>"><%=chan.getName()%></td>
-        <td id="linkTd<%=fh.getOid()%>">&nbsp;</td>
     </tr>
 <%
     }

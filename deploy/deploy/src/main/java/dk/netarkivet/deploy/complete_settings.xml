@@ -571,6 +571,7 @@
                     <fixedDomainCountSnapshot>0</fixedDomainCountSnapshot>
                     <fixedDomainCountFocused>0</fixedDomainCountFocused>
                     <excludeDomainsWithZeroBudget>false</excludeDomainsWithZeroBudget>
+                    <postponeUnregisteredChannel>true</postponeUnregisteredChannel>
                 </config>
             </jobGen>
         </scheduler>

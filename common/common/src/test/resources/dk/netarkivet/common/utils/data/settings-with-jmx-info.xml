@@ -147,6 +147,7 @@
               <errorFactorBestGuess>20</errorFactorBestGuess>
               <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
               <maxDomainSize>5000</maxDomainSize>
+              <postponeUnregisteredChannel>true</postponeUnregisteredChannel>
           </config>
       </jobGen>
     </scheduler>

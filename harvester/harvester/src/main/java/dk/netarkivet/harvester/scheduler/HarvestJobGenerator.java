@@ -77,6 +77,12 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     /** The executor used to schedule the generator jobs. */
     private PeriodicTaskExecutor genExec;
     
+    /**
+     * @see HarvesterSettings#JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL
+     */
+    private static final boolean postponeUnregisteredChannel = Settings.getBoolean(
+    		HarvesterSettings.JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL);
+    
     /** The HarvestDefinitionDAO used by the HarvestJobGenerator. */
     private static final HarvestDefinitionDAO haDefinitionDAO =
         HarvestDefinitionDAO.getInstance();
@@ -175,7 +181,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             hChanDao.getDefaultChannel(false) : hChanDao.getById(chanId));
 
                     String channelName = chan.getName();
-                    if (!harvestChannelRegistry.isRegistered(channelName)) {
+                    if (postponeUnregisteredChannel 
+                    		&& !harvestChannelRegistry.isRegistered(channelName)) {
                         log.info("Harvest channel '" + channelName + "' has not yet been registered"
                                 + " by any harvester, hence harvest definition '"
                                 + harvestDefinition.getName() + "' (" + id

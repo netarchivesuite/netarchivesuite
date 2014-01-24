@@ -79,6 +79,7 @@ Additionally it allows the user to map harvests to channels.
 <%
     HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
     Iterator<HarvestChannel> chanIter = dao.getAll(true);
+    int rowCOunt = 0;
     while (chanIter.hasNext()) {
     	HarvestChannel channel = chanIter.next();
     	String typeKey = (channel.isSnapshot() 
@@ -96,7 +97,7 @@ Additionally it allows the user to map harvests to channels.
     	
 %>
 
-<tr>
+<tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
     <td><%= channelName %></td>
     <td><fmt:message key="<%= typeKey %>"/></td>
     <td><%=channelComments%></td>
@@ -124,13 +125,7 @@ Additionally it allows the user to map harvests to channels.
             <tr>
                 <td><fmt:message key="harvest.channel.name"/></td>
                 <td><input id="<%=HarvestChannelAction.CHANNEL_NAME%>" name="<%=HarvestChannelAction.CHANNEL_NAME%>" value=""/></td>
-            </tr>
-            <tr>
-                <td><fmt:message key="harvest.channel.type"/></td>
-                <td><select disabled id="<%=HarvestChannelAction.SNAPSHOT%>" name="<%=HarvestChannelAction.SNAPSHOT%>">
-                    <option name="focused" value="false"><fmt:message key="harvest.channel.type.focused"/></option>
-                </select></td>
-            </tr>
+            </tr>            
             <tr>
                 <td><fmt:message key="harvest.channel.comments"/></td>
                 <td><textarea cols="30" rows="4" id="<%=HarvestChannelAction.COMMENTS%>" name="<%=HarvestChannelAction.COMMENTS%>"></textarea></td>

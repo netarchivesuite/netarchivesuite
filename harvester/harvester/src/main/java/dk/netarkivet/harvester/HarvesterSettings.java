@@ -218,6 +218,15 @@ public class HarvesterSettings {
      */
     public static String JOBGEN_FIXED_CONFIG_COUNT_EXCLUDE_ZERO_BUDGET
             = "settings.harvester.scheduler.jobGen.config.excludeDomainsWithZeroBudget";
+    
+    /**
+     * <b>settings.harvester.scheduler.jobGen.config.postponeUnregisteredChannel</b>: <br>
+     * If this property is true, then the job generator will postpone job generation for harvest 
+     * definitions that are mapped to a harvest channel not registered to at least one harvester.
+     * The default value is 'true'.
+     */
+    public static String JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL
+            = "settings.harvester.scheduler.jobGen.config.postponeUnregisteredChannel";
 
     /**
      * <b>settings.harvester.scheduler.jobGen.class</b>: <br>
