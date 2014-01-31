@@ -86,7 +86,8 @@ DomainConfigurations are posted as pairs
                  dk.netarkivet.harvester.datamodel.SparseDomainConfiguration,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
                  dk.netarkivet.harvester.webinterface.Constants,
-                 dk.netarkivet.harvester.webinterface.SelectiveHarvestUtil"
+                 dk.netarkivet.harvester.webinterface.SelectiveHarvestUtil,
+                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -254,6 +255,19 @@ function submitNextDate() {
         onclick="submitNextDate();">
 <fmt:message key="harvestdefinition.schedule.edit.setNextDate"/>
 </button>
+
+<br/>
+
+<%
+ExtendableEntity extendableEntity = hdd;
+int extendedFieldType = ExtendedFieldTypes.HARVESTDEFINITION;
+%>
+
+<%@ include file="extendedfields_element.jspf" %>
+
+
+
+
 <%
 }
 

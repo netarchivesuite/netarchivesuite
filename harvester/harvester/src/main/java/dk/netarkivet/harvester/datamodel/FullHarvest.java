@@ -103,6 +103,7 @@ public class FullHarvest extends HarvestDefinition {
         this.maxBytes = maxBytes;
         this.maxJobRunningTime = maxJobRunningTime;
         this.indexReady = isIndexReady;
+        this.addExtendedFieldValues();
     }
 
     /**

@@ -30,6 +30,8 @@ Date:        $Date$
 <%@ page
         import="
         java.util.Map,
+        java.util.Iterator,
+        dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity,
         dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
         dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
         dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes,
@@ -44,7 +46,7 @@ Date:        $Date$
     for (ExtendedField field : extlist) {
         String fieldname = field.getJspFieldname();
         
-        ExtendedFieldValue fieldValue = domain.getExtendedFieldValue(field.getExtendedFieldID());
+        ExtendedFieldValue fieldValue = extendableEntity.getExtendedFieldValue(field.getExtendedFieldID());
         
         int maxlen = field.getMaxlen();
         String mandatoryStr = "";

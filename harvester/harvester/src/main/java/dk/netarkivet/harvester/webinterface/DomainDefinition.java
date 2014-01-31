@@ -161,66 +161,9 @@ public class DomainDefinition {
 
         boolean renewAlias = aliasRenew.equals("yes");
         
-        ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
-        Iterator<ExtendedField> it 
-            = extdao.getAll(ExtendedFieldTypes.DOMAIN).iterator();
+        ExtendedFieldValueDefinition.processRequest(context, i18n, domain, ExtendedFieldTypes.DOMAIN);
         
-        while (it.hasNext()) {
-            String value = "";
-
-            ExtendedField ef = it.next();
-            String parameterName = ef.getJspFieldname();
-            switch (ef.getDatatype()) {
-            case ExtendedFieldDataTypes.BOOLEAN:
-                String[] parb = request.getParameterValues(parameterName);
-                if (parb != null && parb.length > 0) {
-                    value = ExtendedFieldConstants.TRUE;
-                } else {
-                    value = ExtendedFieldConstants.FALSE;
-                }
-                break;
-            case ExtendedFieldDataTypes.SELECT:
-                String[] pars = request.getParameterValues(parameterName);
-                if (pars != null && pars.length > 0) {
-                    value = pars[0];
-                } else {
-                    value = "";
-                }
-
-                break;
-            default:
-                value = request.getParameter(parameterName);
-                if (ef.isMandatory()) {
-                    if (value == null) {
-                        value = ef.getDefaultValue();
-                    }
-
-                    if (value == null || value.length() == 0) {
-                        HTMLUtils.forwardWithErrorMessage(
-                                context,
-                                i18n,
-                                "errormsg;extendedfields.field.0.is.empty."
-                                + "but.mandatory",
-                                ef.getName());
-                        throw new ForwardedToErrorPage("Mandatory field "
-                                + ef.getName() + " is empty.");
-                    }
-                }
-
-                ExtendedFieldDefaultValue def = new ExtendedFieldDefaultValue(value, ef.getFormattingPattern(), ef.getDatatype());
-                if (!def.isValid()) {
-                    HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;extendedfields.value.invalid");
-                    throw new ForwardedToErrorPage("errormsg;extendedfields.value.invalid");
-                }
-                value = def.getDBValue();
-                break;
-            }
-
-            domain.updateExtendedFieldValue(ef.getExtendedFieldID(), value);
-        }
-        
-        updateDomain(domain, defaultConf, crawlertraps, comments, alias,
-                renewAlias);
+        updateDomain(domain, defaultConf, crawlertraps, comments, alias, renewAlias);
     }
 
     /**

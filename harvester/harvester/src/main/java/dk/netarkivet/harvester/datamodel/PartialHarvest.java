@@ -107,6 +107,7 @@ public class PartialHarvest extends HarvestDefinition {
         this.comments = comments;
         this.nextDate = schedule.getFirstEvent(new Date());
         this.audience = audience; 
+        this.addExtendedFieldValues();
     }
     
 

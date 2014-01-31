@@ -36,12 +36,15 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.testutils.CollectionAsserts;
 
@@ -1237,6 +1240,48 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         assertEquals("Second order template with low byte limit and low "
                      + "expectation expected",
                      cfg3, list.get(5));
+    }
+    
+    public void testEquals() {
+        PartialHarvest harvestDef1 = 
+        		HarvestDefinition.createPartialHarvest(null, schedule,
+					                TestInfo.DEFAULT_HARVEST_NAME,
+					                TestInfo.DEFAULT_HARVEST_COMMENT,
+					                TestInfo.DEFAULT_HARVEST_AUDIENCE);
+
+        PartialHarvest harvestDef2 = 
+        		HarvestDefinition.createPartialHarvest(null, schedule,
+					                TestInfo.DEFAULT_HARVEST_NAME,
+					                TestInfo.DEFAULT_HARVEST_COMMENT,
+					                TestInfo.DEFAULT_HARVEST_AUDIENCE);
+        
+        assertTrue(harvestDef1.equals(harvestDef2));
+        
+        ExtendedFieldValue efv1 = new ExtendedFieldValue(1L, (long)ExtendedFieldTypes.HARVESTDEFINITION, 1L, "foo");
+        ExtendedFieldValue efv2 = new ExtendedFieldValue(2L, (long)ExtendedFieldTypes.HARVESTDEFINITION, 1L, "bar");
+        
+        harvestDef1.addExtendedFieldValues();
+        harvestDef2.addExtendedFieldValues();
+        
+        assertTrue(harvestDef1.equals(harvestDef2));
+        
+        Vector<ExtendedFieldValue> efvlist1 = new Vector<ExtendedFieldValue>();
+        Vector<ExtendedFieldValue> efvlist2 = new Vector<ExtendedFieldValue>();
+        
+        harvestDef1.setExtendedFieldValues(efvlist1);
+        harvestDef2.setExtendedFieldValues(efvlist2);
+
+        assertTrue(harvestDef1.equals(harvestDef2));
+        
+        efvlist1.add(efv1);
+        efvlist2.add(efv1);
+        
+        assertTrue(harvestDef1.equals(harvestDef2));
+        
+        efvlist2 = new Vector<ExtendedFieldValue>();
+        efvlist2.add(efv2);
+        
+        assertFalse(harvestDef1.equals(harvestDef2));
     }
 
     private int generateJobs(HarvestDefinition hd) {

@@ -58,6 +58,13 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 
 /**
@@ -106,6 +113,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.HARVESTDEFINITIONS);
             HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.PARTIALHARVESTS);
             HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.HARVESTCONFIGS);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDTYPE);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELD);
+            HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELDVALUE);
         } finally {
             HarvestDBConnection.release(connection);
         }
@@ -188,10 +198,15 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 throw new ArgumentNotValid(message);
             }
             connection.commit();
+            
             // Now that we have committed, set new data on object.
             harvestDefinition.setSubmissionDate(submissiondate);
             harvestDefinition.setEdition(edition);
             harvestDefinition.setOid(id);
+
+            // saving after receiving id
+            saveExtendedFieldValues(connection, harvestDefinition);            
+            
             return id;
         } catch (SQLException e) {
             String message = "SQL error creating harvest definition "
@@ -346,6 +361,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 fh.setEdition(res.getLong(11));
                 fh.setAudience(res.getString(12));
                 
+                readExtendedFieldValues(fh);
+
                 // We found a FullHarvest object, just return it.
                 log.debug("Returned FullHarvest object w/ id "
                         + harvestDefinitionID);
@@ -431,6 +448,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 if (channelId != null) {
                 	ph.setChannelId(channelId);
                 }
+                
+                readExtendedFieldValues(ph);
+                
                 return ph;
             } else {
                 throw new IllegalState("No entries in fullharvests or "
@@ -537,6 +557,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 log.warn(message);
                 throw new ArgumentNotValid(message);
             }
+            saveExtendedFieldValues(c, hd);
+            
             c.commit();
             hd.setEdition(nextEdition);
         } catch (SQLException e) {
@@ -1042,13 +1064,15 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
             if (res.next()) {
-                return new SparsePartialHarvest(res.getLong(1), harvestName,
+            	SparsePartialHarvest sph = new SparsePartialHarvest(res.getLong(1), harvestName,
                         res.getString(2), res.getInt(3), new Date(res
                                 .getTimestamp(4).getTime()), res.getBoolean(5),
                         res.getLong(6), res.getString(7),
                         DBUtils.getDateMaybeNull(res, 8),
                         res.getString(9),
                         DBUtils.getLongMaybeNull(res, 10));
+            	sph.setExtendedFieldValues(getExtendedFieldValues(sph.getOid()));
+            	return sph;
             } else {
                 return null;
             }
@@ -1230,11 +1254,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
             if (res.next()) {
-                return new SparseFullHarvest(res.getLong(1), harvestName,
+            	SparseFullHarvest sfh = new SparseFullHarvest(res.getLong(1), harvestName,
                         res.getString(2), res.getInt(3), res.getBoolean(4),
                         res.getLong(5), res.getLong(6), res.getLong(7),
                         res.getLong(8), DBUtils.getLongMaybeNull(res, 9),
                         DBUtils.getLongMaybeNull(res, 10));
+            	
+            	sfh.setExtendedFieldValues(getExtendedFieldValues(sfh.getOid()));
+            	return sfh;
             } else {
                 return null;
             }
@@ -1618,4 +1645,77 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
 		
 	}
+	
+    /**
+     * Saves all extended Field values for a HarvestDefinition in the Database.
+     * @param c Connection to Database
+     * @param h HarvestDefinition where loaded extended Field Values will be set
+     * 
+     * @throws SQLException
+     *             If database errors occur.
+     */
+    private void saveExtendedFieldValues(Connection c, HarvestDefinition h)
+            throws SQLException {
+        List<ExtendedFieldValue> list = h.getExtendedFieldValues();
+        for (int i = 0; i < list.size(); i++) {
+            ExtendedFieldValue efv = list.get(i);
+            efv.setInstanceID(h.getOid());
+
+            ExtendedFieldValueDBDAO dao 
+                = (ExtendedFieldValueDBDAO) ExtendedFieldValueDAO.getInstance();
+            if (efv.getExtendedFieldValueID() != null) {
+                dao.update(c, efv, false);
+            } else {
+                dao.create(c, efv, false);
+            }
+        }
+    }
+
+    
+    /**
+     * Reads all extended Field values from the database for a HarvestDefinition.
+     * @param h HarvestDefinition where loaded extended Field Values will be set
+     * 
+     * @throws SQLException
+     *             If database errors occur.
+     * 
+     */
+    private void readExtendedFieldValues(HarvestDefinition h) throws SQLException {
+    	h.setExtendedFieldValues(getExtendedFieldValues(h.getOid()));
+    }
+
+    /**
+     * Reads all extended Field values from the database for a HarvestDefinitionOid.
+     * @param h HarvestDefinition where loaded extended Field Values will be set
+     * @return a list of ExtendedFieldValues belonging to the given harvest oid
+     * 
+     * @throws SQLException
+     *             If database errors occur.
+     * 
+     */
+    private List<ExtendedFieldValue> getExtendedFieldValues(Long aOid) throws SQLException {
+        List<ExtendedFieldValue> extendedFieldValues = new ArrayList<ExtendedFieldValue>();
+        
+        ExtendedFieldDAO dao = ExtendedFieldDAO.getInstance();
+        List<ExtendedField> list = dao.getAll(ExtendedFieldTypes.HARVESTDEFINITION);
+
+        for (int i = 0; i < list.size(); i++) {
+            ExtendedField ef = list.get(i);
+
+            ExtendedFieldValueDAO dao2 = ExtendedFieldValueDAO.getInstance();
+            ExtendedFieldValue efv = dao2.read(ef.getExtendedFieldID(), aOid);
+            
+            if (efv == null) {
+                efv = new ExtendedFieldValue();
+                efv.setExtendedFieldID(ef.getExtendedFieldID());
+                efv.setInstanceID(aOid);
+                efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef.getDatatype()).getDBValue());
+            }
+
+            extendedFieldValues.add(efv);
+        }
+        
+        return extendedFieldValues;
+    }
+    
 }

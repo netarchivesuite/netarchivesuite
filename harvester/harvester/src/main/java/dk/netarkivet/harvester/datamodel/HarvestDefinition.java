@@ -30,6 +30,10 @@ import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Named;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldType;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 
 /**
  * This abstract class models the general properties of a harvest definition,
@@ -42,7 +46,7 @@ import dk.netarkivet.common.utils.Named;
  * Methods exist to generate jobs from this harvest definition.
  *
  */
-public abstract class HarvestDefinition implements Named {
+public abstract class HarvestDefinition extends ExtendableEntity implements Named {
     protected Long oid;
     protected String harvestDefName;
     /** The intended audience for the harvest. */
@@ -298,7 +302,33 @@ public abstract class HarvestDefinition implements Named {
             return false;
         if (oid != null ? !oid.equals(harvestDefinition.oid)
                 : harvestDefinition.oid != null) return false;
+        
+        if ((extendedFieldValues == null && harvestDefinition.getExtendedFieldValues() != null) || 
+        	(extendedFieldValues != null && harvestDefinition.getExtendedFieldValues() == null)) {
+        	return false;
+        }
 
+        if (extendedFieldValues != null && harvestDefinition.getExtendedFieldValues() != null) {
+        	if (extendedFieldValues.size() != harvestDefinition.getExtendedFieldValues().size()) {
+        		return false;
+        	}
+        	
+        	for (int i = 0; i < extendedFieldValues.size(); i++) {
+        		ExtendedFieldValue e1 = extendedFieldValues.get(i);
+        		ExtendedFieldValue e2 = harvestDefinition.getExtendedFieldValues().get(i);
+        		
+        		if ((e1 == null && e2 != null) || (e1 != null && e2 == null)) {
+        			return false;
+        		}
+        		
+        		if (e1 != null && e2 != null) {
+        			if (!e1.equals(e2)) {
+        				return false;
+        			}
+        		}
+        	}
+        }
+        
         return true;
     }
 
@@ -366,5 +396,13 @@ public abstract class HarvestDefinition implements Named {
 	protected void setChannelId(Long channelId) {
 		this.channelId = channelId;
 	}
-    
+
+    /**
+     * All derived classes allow ExtendedFields from Type ExtendedFieldTypes.HARVESTDEFINITION  
+     *
+     * @return ExtendedFieldTypes.HARVESTDEFINITION
+     */
+    protected int getExtendedFieldType() {
+    	return ExtendedFieldTypes.HARVESTDEFINITION;
+    }
 }

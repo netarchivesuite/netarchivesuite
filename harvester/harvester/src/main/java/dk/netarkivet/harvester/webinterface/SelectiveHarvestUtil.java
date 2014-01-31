@@ -27,6 +27,7 @@ package dk.netarkivet.harvester.webinterface;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -47,6 +48,7 @@ import dk.netarkivet.harvester.datamodel.Schedule;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.SparseDomainConfiguration;
 import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 
 /**
  * This class contains the methods for updating data for selective harvests.
@@ -117,10 +119,13 @@ public final class SelectiveHarvestUtil {
             deleteConfig(context, i18n, deleteConfig);
             return;
         }
-        
+
         PartialHarvest hdd = updateHarvestDefinition(context, i18n,
                 unknownDomains, illegalDomains);
 
+        ExtendedFieldValueDefinition.processRequest(context, i18n, hdd, ExtendedFieldTypes.HARVESTDEFINITION);
+        HarvestDefinitionDAO.getInstance().update(hdd);
+        
         boolean changed = false;
 
         //If the override date is set, parse it and set the override date.
@@ -149,6 +154,7 @@ public final class SelectiveHarvestUtil {
         if (changed) {
             HarvestDefinitionDAO.getInstance().update(hdd);
         }
+        
     }
 
     /**

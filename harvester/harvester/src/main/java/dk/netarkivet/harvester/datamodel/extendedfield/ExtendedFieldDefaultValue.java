@@ -186,6 +186,11 @@ public class ExtendedFieldDefaultValue {
      * @return String, the DB-Value of the a Value 
      */
     public String getDBValue() {
+    	// prevent that any null value fills content column of extendedFieldValue
+    	if (value == null) {
+    		value = "";
+    	}
+    	
     	// only if datatype is Timestamp, JSCalendar or Number. Otherwise DB-Value = Value
     	if (value != null && value.length() > 0) {
     		if (ExtendedFieldDataTypes.TIMESTAMP == datatype || ExtendedFieldDataTypes.JSCALENDAR == datatype) {

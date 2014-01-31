@@ -56,6 +56,7 @@ import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
@@ -1696,7 +1697,7 @@ public class DomainDBDAO extends DomainDAO {
                 efv = new ExtendedFieldValue();
                 efv.setExtendedFieldID(ef.getExtendedFieldID());
                 efv.setInstanceID(d.getID());
-                efv.setContent(ef.getDefaultValue());
+                efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef.getDatatype()).getDBValue());
             }
 
             d.addExtendedFieldValue(efv);

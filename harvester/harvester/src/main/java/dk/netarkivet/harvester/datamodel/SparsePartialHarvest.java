@@ -28,6 +28,8 @@ import java.util.Date;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Named;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 
 /**
  * Sparse version of PartialHarvest to be used for GUI purposes only.
@@ -35,7 +37,7 @@ import dk.netarkivet.common.utils.Named;
  *
  * @see PartialHarvest
  */
-public class SparsePartialHarvest implements Named {
+public class SparsePartialHarvest extends ExtendableEntity implements Named {
     /**
      * ID of this harvest.
      */
@@ -217,6 +219,12 @@ public class SparsePartialHarvest implements Named {
 	protected Long getChannelId() {
 		return channelId;
 	}
+
+
+	@Override
+    protected int getExtendedFieldType() {
+    	return ExtendedFieldTypes.HARVESTDEFINITION;
+    }
 }
 
 

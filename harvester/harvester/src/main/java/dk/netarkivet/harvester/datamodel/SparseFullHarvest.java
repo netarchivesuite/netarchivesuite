@@ -25,6 +25,8 @@
 package dk.netarkivet.harvester.datamodel;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 
 /**
  * Sparse version of FullHarvest to be used for GUI purposes only. Immutable.
@@ -32,7 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  * @see FullHarvest
  */
-public class SparseFullHarvest {
+public class SparseFullHarvest extends ExtendableEntity {
     /**
      * ID of this harvest.
      */
@@ -228,4 +230,9 @@ public class SparseFullHarvest {
 	protected Long getChannelId() {
 		return channelId;
 	}
+	
+	@Override
+    protected int getExtendedFieldType() {
+    	return ExtendedFieldTypes.HARVESTDEFINITION;
+    }
 }

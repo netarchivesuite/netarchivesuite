@@ -37,7 +37,8 @@ update: if non-empty, the method DomainDefinition.processRequest is called
         crawlertraps: String (possibly empty) of crawlertraps for this domain
         comments: Comments (possibly empty) on this domain
         alias: If non-empty, domain that this domain is an alias of.
---%><%@ page import="java.util.Date,
+--%><%@page import="dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity"%>
+<%@ page import="java.util.Date,
                  java.util.Iterator,
                  java.util.List,
                  java.util.Locale,
@@ -174,6 +175,7 @@ Display all the form information for this domain
     <br/>
 
     <%
+    ExtendableEntity extendableEntity = domain;
     int extendedFieldType = ExtendedFieldTypes.DOMAIN;
     %>
     
