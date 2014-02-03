@@ -253,8 +253,8 @@ public class HarvestControllerServer
         
         // Ask if the channel this harvester is assigned to is valid
         jmsConnection.send(new HarvesterRegistrationRequest(
-        		HarvestControllerServer.CHANNEL,
-        		applicationInstanceId));
+                HarvestControllerServer.CHANNEL,
+                applicationInstanceId));
         log.info("Requested to check the validity of harvest channel '"
                 + HarvestControllerServer.CHANNEL + "'");
     }

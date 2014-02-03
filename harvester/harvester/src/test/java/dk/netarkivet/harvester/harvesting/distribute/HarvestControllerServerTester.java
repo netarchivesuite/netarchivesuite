@@ -129,7 +129,7 @@ public class HarvestControllerServerTester extends TestCase {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR,
-                     TestInfo.WORKING_DIR.getAbsolutePath() + "/oldjobs");
+                TestInfo.WORKING_DIR.getAbsolutePath() + "/oldjobs");
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, "FOCUSED");
         Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
                 "dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient");
@@ -183,7 +183,7 @@ public class HarvestControllerServerTester extends TestCase {
     /** Test that if the harvestcontrollerserver cannot start, the HACO listener
      * will not be added
      */
-    public void testFailingArcRepositoryClient() {
+    public void testNoListerAddedOnFailure() {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, "");
         try {
             hcs = HarvestControllerServer.getInstance();
@@ -191,19 +191,9 @@ public class HarvestControllerServerTester extends TestCase {
         } catch (Exception e) {
             //expected
         }
-        String channelName = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
-        HarvestChannelDAO hcaDAO = HarvestChannelDAO.getInstance();
-        try {
-            hcaDAO.getByName(channelName);
-        } catch (UnknownID e) {
-            hcaDAO.create(focusedHarvestChannel);
-        }
-        
-        ChannelID channel = HarvesterChannels.getHarvestJobChannelId(
-                hcaDAO.getByName(channelName));
-        assertEquals("Should have no listeners to the HACO queue",
-                     0, ((JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance()).getListeners(channel).size());
+        assertEquals("Should have no listeners to the HACO queue", 0,
+               ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).getListeners(
+                        HarvestControllerServer.HARVEST_CHAN_VALID_RESP_ID).size());
     }
 
     /**
@@ -310,8 +300,7 @@ public class HarvestControllerServerTester extends TestCase {
         String channel = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
         NetarkivetMessage naMsg = new DoOneCrawlMessage(
                 theJob,
-                HarvesterChannels.getHarvestJobChannelId(
-                        HarvestChannelDAO.getInstance().getByName(channel)),
+                HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("FOCUSED", "", true)),
                 new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
         JMSConnectionMockupMQ.updateMsgID(naMsg, "id1");
@@ -327,24 +316,6 @@ public class HarvestControllerServerTester extends TestCase {
                 .getStatusCode();
         assertTrue("Should have sent a STATUS_FAILED message",
                 code0 == JobStatus.FAILED || code1 == JobStatus.FAILED);
-    }
-
-    public void harvestInfoSetup() {
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
-                .getAbsolutePath());
-        hcs = HarvestControllerServer.getInstance();
-        // TODO check that new clean Haco does not send any CrawlStatusMessages
-        theJob = TestInfo.getJob();
-        theJob.setJobID(Long.valueOf(42L)); // Hack: because j.getJobID() == null
-
-        jobTempDir = new File(TestInfo.SERVER_DIR, "jobTempDir");
-        if (!jobTempDir.mkdir()) {
-            fail("Unable to create dir: " + jobTempDir.getAbsolutePath());
-        }
-        /* Use if need for better testdata arises */
-        // Long harvestId = new Long((long) Math.random() * 100.0D);
-        // DomainConfiguration cfg
-        // Job aJob = Job.createJob(harvestID, DomainConfiguration cfg)
     }
 
     /**
@@ -426,7 +397,7 @@ public class HarvestControllerServerTester extends TestCase {
     /**
      * Tests processing of leftover jobs in the case where some uploads fail.
      */
-    public void falingtTestProcessHarvestInfoFileFails() {
+    public void fallingTestProcessHarvestInfoFileFails() {
         CrawlStatusMessage crawlStatusMessage =
             testProcessingOfLeftoverJobs(
                     TestInfo.LEFTOVER_CRAWLDIR_2,
