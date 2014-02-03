@@ -37,16 +37,6 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * The rest of ChannelID is tested in dk.netarkivet.common.distribute.ChannelIDTester
  */
 public class ChannelIDTester extends TestCase {
-    ReloadSettings rs = new ReloadSettings();
-   
-    public void setUp() {
-        rs.setUp();
-        Settings.set(CommonSettings.APPLICATION_NAME,
-                "dk.netarkivet.archive.indexserver.IndexServerApplication");
-        Settings.set(CommonSettings.APPLICATION_INSTANCE_ID, "XXX");
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, "FOCUSED");
-    }
-
     /**
      * Test that each channel is equal only to itself.
      */
