@@ -302,31 +302,31 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
             return false;
         if (oid != null ? !oid.equals(harvestDefinition.oid)
                 : harvestDefinition.oid != null) return false;
-        
-        if ((extendedFieldValues == null && harvestDefinition.getExtendedFieldValues() != null) || 
-        	(extendedFieldValues != null && harvestDefinition.getExtendedFieldValues() == null)) {
-        	return false;
+
+        if ((extendedFieldValues == null && harvestDefinition.getExtendedFieldValues() != null) ||
+                (extendedFieldValues != null && harvestDefinition.getExtendedFieldValues() == null)) {
+            return false;
         }
 
         if (extendedFieldValues != null && harvestDefinition.getExtendedFieldValues() != null) {
-        	if (extendedFieldValues.size() != harvestDefinition.getExtendedFieldValues().size()) {
-        		return false;
-        	}
-        	
-        	for (int i = 0; i < extendedFieldValues.size(); i++) {
-        		ExtendedFieldValue e1 = extendedFieldValues.get(i);
-        		ExtendedFieldValue e2 = harvestDefinition.getExtendedFieldValues().get(i);
-        		
-        		if ((e1 == null && e2 != null) || (e1 != null && e2 == null)) {
-        			return false;
-        		}
-        		
-        		if (e1 != null && e2 != null) {
-        			if (!e1.equals(e2)) {
-        				return false;
-        			}
-        		}
-        	}
+            if (extendedFieldValues.size() != harvestDefinition.getExtendedFieldValues().size()) {
+                return false;
+            }
+
+            for (int i = 0; i < extendedFieldValues.size(); i++) {
+                ExtendedFieldValue e1 = extendedFieldValues.get(i);
+                ExtendedFieldValue e2 = harvestDefinition.getExtendedFieldValues().get(i);
+
+                if ((e1 == null && e2 != null) || (e1 != null && e2 == null)) {
+                    return false;
+                }
+
+                if (e1 != null && e2 != null) {
+                    if (!e1.equals(e2)) {
+                        return false;
+                    }
+                }
+            }
         }
         
         return true;

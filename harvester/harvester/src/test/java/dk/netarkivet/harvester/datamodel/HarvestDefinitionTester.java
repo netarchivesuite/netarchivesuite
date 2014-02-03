@@ -1282,6 +1282,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         
         efvlist2 = new Vector<ExtendedFieldValue>();
         efvlist2.add(efv2);
+        harvestDef2.setExtendedFieldValues(efvlist2);
         
         assertFalse(harvestDef1.equals(harvestDef2));
     }
