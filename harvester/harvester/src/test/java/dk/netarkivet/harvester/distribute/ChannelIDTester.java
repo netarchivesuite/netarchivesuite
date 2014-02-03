@@ -23,13 +23,13 @@
  */
 package dk.netarkivet.harvester.distribute;
 
+import dk.netarkivet.harvester.datamodel.*;
 import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -51,10 +51,8 @@ public class ChannelIDTester extends TestCase {
      * Test that each channel is equal only to itself.
      */
     public void testChannelIdentity(){
-    	String defaultChannel =
-                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
         ChannelID harvestJobChannel = HarvesterChannels.getHarvestJobChannelId(
-                HarvestChannelDAO.getInstance().getByName(defaultChannel));
+                new HarvestChannel("FOCUSED", "", true));
         ChannelID[] channelArray =
          {Channels.getAllBa(), harvestJobChannel, Channels.getAnyBa(),
           Channels.getError(), Channels.getTheRepos(), Channels.getTheBamon(),
