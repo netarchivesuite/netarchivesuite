@@ -53,14 +53,6 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         super(s);
     }
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     /**
      * Test Extended Fields
      */

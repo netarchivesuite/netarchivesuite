@@ -1241,20 +1241,22 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                      + "expectation expected",
                      cfg3, list.get(5));
     }
-    
-    public void testEquals() {
-        PartialHarvest harvestDef1 = 
-        		HarvestDefinition.createPartialHarvest(null, schedule,
-					                TestInfo.DEFAULT_HARVEST_NAME,
-					                TestInfo.DEFAULT_HARVEST_COMMENT,
-					                TestInfo.DEFAULT_HARVEST_AUDIENCE);
 
-        PartialHarvest harvestDef2 = 
-        		HarvestDefinition.createPartialHarvest(null, schedule,
-					                TestInfo.DEFAULT_HARVEST_NAME,
-					                TestInfo.DEFAULT_HARVEST_COMMENT,
-					                TestInfo.DEFAULT_HARVEST_AUDIENCE);
-        
+    public void testEquals() {
+        PartialHarvest harvestDef1 =
+                HarvestDefinition.createPartialHarvest(
+                        Arrays.asList(new DomainConfiguration[] {}), schedule,
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
+
+        PartialHarvest harvestDef2 =
+                HarvestDefinition.createPartialHarvest(
+                        Arrays.asList(new DomainConfiguration[] {}), schedule,
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        TestInfo.DEFAULT_HARVEST_AUDIENCE);
+
         assertTrue(harvestDef1.equals(harvestDef2));
         
         ExtendedFieldValue efv1 = new ExtendedFieldValue(1L, (long)ExtendedFieldTypes.HARVESTDEFINITION, 1L, "foo");
