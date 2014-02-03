@@ -33,6 +33,10 @@ public class HarvestChannelRegistry {
 			final String channelName,
 			final String harvesterInstanceId) {
 		
+		// First remove any reference to this instanceId
+        // This is done in case a Harvester has been unexpectedly shut down and restarted
+        clearHarvester(harvesterInstanceId);
+		
 		Set<String> instanceIds = harvesterChannelRegistry.get(channelName);
 		if (instanceIds == null) {
 			instanceIds = new TreeSet<String>();
@@ -64,7 +68,7 @@ public class HarvestChannelRegistry {
 	 * Clears any registration data for a given harvester instance id.
 	 * @param harvesterInstanceId a harvester instance id
 	 */
-	public final void unregisterHarvester(final String harvesterInstanceId) {
+	private void clearHarvester(final String harvesterInstanceId) {
 		ArrayList<String> keysToRemove = new ArrayList<String>();
 		for (String channel : harvesterChannelRegistry.keySet())  {
 			Set<String> instanceIds = harvesterChannelRegistry.get(channel);

@@ -41,93 +41,104 @@ import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.webinterface.HarvestChannelAction.ActionType;
 
 /**
- * This class process an Ajax call from the UI to generate a form that allows to map
- * a harvest to a channel.
- *
+ * This class process an Ajax call from the UI to generate a form that allows to
+ * map a harvest to a channel.
+ * 
  */
 public class HarvestChannelMappingServlet extends HttpServlet {
-	
+
 	private static final I18n I18N = new I18n(
 			dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-	
+
+	/**
+	 * Enumarate HTTP request parameter names.
+	 *
+	 */
 	public static enum Param {
+		/**
+		 * harvest id.
+		 */
 		harvestId,
+		/**
+		 * Harvest type.
+		 */
 		snapshot,
+		/**
+		 * Current harvest channel name.
+		 */
 		currentChannelId
 	}
 
 	@Override
-	protected void doPost(
-			HttpServletRequest req, 
-			HttpServletResponse resp)
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
-		long harvestId = Long.parseLong(req.getParameter(Param.harvestId.name()));
-		boolean snapshot = Boolean.parseBoolean(req.getParameter(Param.snapshot.name()));
-		
-		Form selectChannelForm = new Form("./HarvestChannel-edit-harvest-mappings.jsp");
-    	selectChannelForm.setMethod("post");
-    	
-    	Input hiddenAction = new Input();
-    	hiddenAction.setType("hidden");
-    	hiddenAction.setId(HarvestChannelAction.ACTION);
-    	hiddenAction.setName(HarvestChannelAction.ACTION);
-    	hiddenAction.setValue(ActionType.mapHarvestToChannel.name());
-    	selectChannelForm.appendChild(hiddenAction);
-    	
-    	Input hiddenHarvestId = new Input();
-    	hiddenHarvestId.setType("hidden");
-    	hiddenHarvestId.setId(HarvestChannelAction.HARVEST_ID);
-    	hiddenHarvestId.setName(HarvestChannelAction.HARVEST_ID);
-    	hiddenHarvestId.setValue(Long.toString(harvestId));
-    	selectChannelForm.appendChild(hiddenHarvestId);
-    	
-    	Select selectChannel = new Select();
-    	selectChannel.setId(HarvestChannelAction.CHANNEL_ID);
-    	selectChannel.setName(HarvestChannelAction.CHANNEL_ID);
-    	
-    	HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
-    	
-    	HarvestChannel mappedChan = dao.getChannelForHarvestDefinition(harvestId);
-    	if (mappedChan == null) {
-    		mappedChan = dao.getDefaultChannel(snapshot);
-    	}
-    	long mappedChanId = mappedChan.getId();
-    	
-    	Iterator<HarvestChannel> chans = dao.getAll(snapshot);
-    	while (chans.hasNext()) {
-    		HarvestChannel chan = chans.next();
-    		Option opt = new Option();
-    		long id = chan.getId();
-    		opt.setValue(Long.toString(id));
-    		opt.appendText(chan.getName());
-    		if (id == mappedChanId) {
-    			opt.setSelected("selected");
-    		}
-    		selectChannel.appendChild(opt);
-    	}    	
-    	selectChannelForm.appendChild(selectChannel);
-    	
-    	Input submit = new Input();
-    	submit.setType("submit");
-    	submit.setValue(I18N.getString(
-    			resp.getLocale(), 
-    			"edit.harvest.mappings.dialog.submit"));
-    	selectChannelForm.appendChild(submit);
-    	
-    	A cancelLink = new A();
-    	cancelLink.setHref("#");
-    	cancelLink.appendText(I18N.getString(
-    			resp.getLocale(), 
-    			"edit.harvest.mappings.dialog.cancel"));
-    	cancelLink.setAttribute("onClick", "onClickCancelEditChannel()");
-    	selectChannelForm.appendChild(cancelLink);
-    	
-    	resp.setContentType("text/html");
-        resp.setHeader("Cache-Control", "no-cache");
-    	resp.getWriter().write(selectChannelForm.write());		
-	}
 
-	
+		long harvestId = Long
+				.parseLong(req.getParameter(Param.harvestId.name()));
+		boolean snapshot = Boolean.parseBoolean(req.getParameter(Param.snapshot
+				.name()));
+
+		Form selectChannelForm = new Form(
+				"./HarvestChannel-edit-harvest-mappings.jsp");
+		selectChannelForm.setMethod("post");
+
+		Input hiddenAction = new Input();
+		hiddenAction.setType("hidden");
+		hiddenAction.setId(HarvestChannelAction.ACTION);
+		hiddenAction.setName(HarvestChannelAction.ACTION);
+		hiddenAction.setValue(ActionType.mapHarvestToChannel.name());
+		selectChannelForm.appendChild(hiddenAction);
+
+		Input hiddenHarvestId = new Input();
+		hiddenHarvestId.setType("hidden");
+		hiddenHarvestId.setId(HarvestChannelAction.HARVEST_ID);
+		hiddenHarvestId.setName(HarvestChannelAction.HARVEST_ID);
+		hiddenHarvestId.setValue(Long.toString(harvestId));
+		selectChannelForm.appendChild(hiddenHarvestId);
+
+		Select selectChannel = new Select();
+		selectChannel.setId(HarvestChannelAction.CHANNEL_ID);
+		selectChannel.setName(HarvestChannelAction.CHANNEL_ID);
+
+		HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
+
+		HarvestChannel mappedChan = dao
+				.getChannelForHarvestDefinition(harvestId);
+		if (mappedChan == null) {
+			mappedChan = dao.getDefaultChannel(snapshot);
+		}
+		long mappedChanId = mappedChan.getId();
+
+		Iterator<HarvestChannel> chans = dao.getAll(snapshot);
+		while (chans.hasNext()) {
+			HarvestChannel chan = chans.next();
+			Option opt = new Option();
+			long id = chan.getId();
+			opt.setValue(Long.toString(id));
+			opt.appendText(chan.getName());
+			if (id == mappedChanId) {
+				opt.setSelected("selected");
+			}
+			selectChannel.appendChild(opt);
+		}
+		selectChannelForm.appendChild(selectChannel);
+
+		Input submit = new Input();
+		submit.setType("submit");
+		submit.setValue(I18N.getString(resp.getLocale(),
+				"edit.harvest.mappings.dialog.submit"));
+		selectChannelForm.appendChild(submit);
+
+		A cancelLink = new A();
+		cancelLink.setHref("#");
+		cancelLink.appendText(I18N.getString(resp.getLocale(),
+				"edit.harvest.mappings.dialog.cancel"));
+		cancelLink.setAttribute("onClick", "onClickCancelEditChannel()");
+		selectChannelForm.appendChild(cancelLink);
+
+		resp.setContentType("text/html");
+		resp.setHeader("Cache-Control", "no-cache");
+		resp.getWriter().write(selectChannelForm.write());
+	}
 
 }

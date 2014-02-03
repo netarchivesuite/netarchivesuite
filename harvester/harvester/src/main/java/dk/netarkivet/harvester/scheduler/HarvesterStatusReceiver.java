@@ -110,12 +110,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
     public void visit(HarvesterRegistrationRequest msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         
-        String harvesterInstanceId = msg.getInstanceId();
-        
-        // First remove any reference to this instanceId
-        // This is done in case a Harvester has been unexpectedly shut down and restarted
-        harvestChannelRegistry.unregisterHarvester(harvesterInstanceId);
-
+        String harvesterInstanceId = msg.getInstanceId();        
         String channelName = msg.getHarvestChannelName();
 
         boolean isSnapshot = true;

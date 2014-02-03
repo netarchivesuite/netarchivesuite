@@ -89,8 +89,7 @@ public class DefinitionsSiteSection extends SiteSection {
     }
 
     /**
-     * Initialise the site section. This forces migration of all DAOs, validates
-     * that a default order.xml template exists.
+     * Initialise the site section.
      *
      * @throws UnknownID If the default order.xml does not exist.
      */

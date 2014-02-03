@@ -37,11 +37,8 @@ import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 
 /**
- * Abstract class representing an action to take on the collection of global
- * crawler traps.
- *
+ * Abstract class representing web UI action for harvest channels.
  */
-
 public abstract class HarvestChannelAction {
 	
 	public static enum ActionType {
@@ -61,11 +58,11 @@ public abstract class HarvestChannelAction {
 
     /**
      * This method processes the request to determine which action it
-     * corresponds to and passes the request along accordingly. If it
-     * is a multipart post then it is passed along to a create-or-update
-     * instance. Otherwise if no action is specified, none is taken.
-     * Otherwise the request is passed on to a specific concrete instance
-     * of this class for further processing.
+     * corresponds to and passes the request along accordingly. Available actions are:
+     * <ul>
+     * <li>create harvest channel</li>
+     * <li>map harvest definition to channel</li>
+     * </ul>
      *
      * @param context the original servlet context of the request.
      * @param i18n the internationalisation to be used.
@@ -86,7 +83,7 @@ public abstract class HarvestChannelAction {
             switch (ActionType.valueOf(action)) {
             	case createHarvestChannel:
             		String name = request.getParameter(CHANNEL_NAME);
-            		ArgumentNotValid.checkNotNullOrEmpty(name, "harvest channel name");
+            		HTMLUtils.forwardOnEmptyParameter(context, name, "harvest channel name");
             		HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
             		dao.create(new HarvestChannel(name, request.getParameter(COMMENTS), false));
             		break;

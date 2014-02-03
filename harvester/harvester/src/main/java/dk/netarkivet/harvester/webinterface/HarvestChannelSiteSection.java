@@ -38,37 +38,38 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
  * Site section that creates the menu for harvest channel and mappings.
  */
 public class HarvestChannelSiteSection extends SiteSection {
-    /** Logger for this class. */
-    private Log log = LogFactory.getLog(getClass().getName());
-    /** number of pages visible in the left menu. */
-    private static final int PAGES_VISIBLE_IN_MENU = 2;
-    
-    /**
-     * Create a new definition SiteSection object.
-     */
-    public HarvestChannelSiteSection() {
-        super("sitesection;HarvestChannel", "HarvestChannel", PAGES_VISIBLE_IN_MENU,
-              new String[][]{
-        		      {"edit-harvest-mappings", "pagetitle;edit.harvest.mappings"},
-                      {"edit-harvest-channels", "pagetitle;edit.harvest.channels"}                      
-                      // The pages listed below are not visible in the left menu
-              }, "HarvestChannel",
-                 dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-    }
+	/** Logger for this class. */
+	private Log log = LogFactory.getLog(getClass().getName());
+	/** number of pages visible in the left menu. */
+	private static final int PAGES_VISIBLE_IN_MENU = 2;
 
-    /**
-     * Initialise the site section. This forces migration of all DAOs, validates
-     * that a default order.xml template exists.
-     *
-     * @throws UnknownID If the default order.xml does not exist.
-     */
-    public void initialize() {
-        HarvestDefinitionDAO.getInstance();
-        HarvestChannelDAO.getInstance();
-    }
-    
-    /** Release DB resources. */
-    public void close() {
-        HarvestDBConnection.cleanup();
-    }
+	/**
+	 * Create a new definition SiteSection object.
+	 */
+	public HarvestChannelSiteSection() {
+		super("sitesection;HarvestChannel", "HarvestChannel",
+				PAGES_VISIBLE_IN_MENU,
+				new String[][] {
+				{ "edit-harvest-mappings", "pagetitle;edit.harvest.mappings" },
+				{ "edit-harvest-channels", "pagetitle;edit.harvest.channels" }
+				// The pages listed below are not visible in the left menu
+		}, "HarvestChannel",
+		dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+	}
+
+	/**
+	 * Initialise the site section.
+	 * 
+	 * @throws UnknownID
+	 *             If the default order.xml does not exist.
+	 */
+	public void initialize() {
+		HarvestDefinitionDAO.getInstance();
+		HarvestChannelDAO.getInstance();
+	}
+
+	/** Release DB resources. */
+	public void close() {
+		HarvestDBConnection.cleanup();
+	}
 }
