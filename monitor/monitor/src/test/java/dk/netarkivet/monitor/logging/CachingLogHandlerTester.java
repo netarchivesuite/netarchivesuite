@@ -116,13 +116,6 @@ public class CachingLogHandlerTester extends TestCase {
         assertEquals(LOG_HISTORY_SIZE + " new MBeans should be registered.",
                      LOG_HISTORY_SIZE, after - before);
 
-        Set<ObjectName> names = mBeanServer.queryNames(null, null);
-        for (ObjectName currentName : names) {
-            System.out.println(currentName);
-        }
-        //assertTrue(names.size() == 42);
-        
-        
         //Check 42 mbeans of this type
         assertEquals("Should have " + LOG_HISTORY_SIZE
                     + " mbeans matching object name '" + name + "'",
@@ -170,63 +163,36 @@ public class CachingLogHandlerTester extends TestCase {
     public void testPublish() throws Exception {
         cachingLogHandler = new CachingLogHandler();
 
-        //Get logrecord at index 0
         String logRecord0 = getLogRecordAtIndex(0, mBeanServer);
-        //Get logrecord at index 1
         String logRecord1 = getLogRecordAtIndex(1, mBeanServer);
+        assertEquals("Should have no log record yet","", logRecord0);
 
-        //Check no content yet at index 0
-        assertEquals("Should have no log record yet",
-                     "", logRecord0);
-
-        //publish a log record
-        cachingLogHandler.publish(
-                generateLogRecord(Level.WARNING, 1));
-
-        //Get logrecord at index 0
+        cachingLogHandler.publish(generateLogRecord(Level.WARNING, 1));
         logRecord0 = getLogRecordAtIndex(0, mBeanServer);
-        //Check content at index 0
         assertLogRecordLogged(logRecord0, 1, "WARNING");
 
-        //publish a new log record
-        cachingLogHandler.publish(
-                generateLogRecord(Level.INFO, 2));
-
-        //Get logrecord at index 0
+        cachingLogHandler.publish(generateLogRecord(Level.INFO, 2));
         logRecord0 = getLogRecordAtIndex(0, mBeanServer);
-        //Get logrecord at index 1
         logRecord1 = getLogRecordAtIndex(1, mBeanServer);
-        //Check new content at index 0
         assertLogRecordLogged(logRecord0, 2, "INFO");
-        //Check old content at index 1
         assertLogRecordLogged(logRecord1, 1, "WARNING");
 
-        //publish null
         cachingLogHandler.publish(null);
-
-        //Get logrecord at index 0
         logRecord0 = getLogRecordAtIndex(0, mBeanServer);
-        //Get logrecord at index 1
         logRecord1 = getLogRecordAtIndex(1, mBeanServer);
-        //Check no new content at index 0
         assertLogRecordLogged(logRecord0, 2, "INFO");
-        //Check no new content at index 1
         assertLogRecordLogged(logRecord1, 1, "WARNING");
 
         //Publish 42 log records, with numbers from 42 to 83
         for (int i = LOG_HISTORY_SIZE; i < 2 * LOG_HISTORY_SIZE; i++) {
-            //publish a new log record
             cachingLogHandler.publish(generateLogRecord(Level.FINE, i));
         }
 
         //Check all 42 MBeans
         for (int i = 0; i < LOG_HISTORY_SIZE; i++) {
-            //Get logrecord at index i
-            String logRecordI
-                    = getLogRecordAtIndex(i, mBeanServer);
+            String logRecordI = getLogRecordAtIndex(i, mBeanServer);
             //Check content (starting at 83 going down to 42)
-            assertLogRecordLogged(logRecordI,
-                                  2 * LOG_HISTORY_SIZE - 1 - i, "FINE");
+            assertLogRecordLogged(logRecordI, 2 * LOG_HISTORY_SIZE - 1 - i, "FINE");
         }
     }
 
@@ -279,19 +245,10 @@ public class CachingLogHandlerTester extends TestCase {
      * @param number    The number in the log record message.
      * @param level     The logging level of the log record.
      */
-    private static void assertLogRecordLogged(
-            String logRecord,
-            int number,
-            String level) {
-        StringAsserts.assertStringContains(
-                "Should contain the log message",
-                generateLogMessage(number), logRecord);
-        StringAsserts.assertStringContains(
-                "Should contain the logging level",
-                level, logRecord);
-        StringAsserts.assertStringContains(
-                "Should contain the stack top",
-                METHOD_NAME, logRecord);
+    private static void assertLogRecordLogged(String logRecord, int number, String level) {
+        StringAsserts.assertStringContains("Should contain the log message", generateLogMessage(number), logRecord);
+        StringAsserts.assertStringContains("Should contain the logging level", level, logRecord);
+        StringAsserts.assertStringContains("Should contain the stack top", METHOD_NAME, logRecord);
     }
 
     /**
@@ -329,25 +286,13 @@ public class CachingLogHandlerTester extends TestCase {
         //Check no mbeans of this type
         assertEquals("Should have 0 mbeans matching object name",
                      0, mBeanServer.queryMBeans(name, null).size());
-
     }
 
     /**
      * Finds mbean at log index given.
-     *
-     * @param index       The index to find the log record at.
-     * @param mBeanServer The mbean server to find it at.
-     * @return A CachingLogRecordMBean.
-     * @throws MalformedObjectNameException
-     * @throws InstanceNotFoundException
-     * @throws JMException
      */
-    private static String getLogRecordAtIndex(
-            int index,
-            MBeanServer mBeanServer) throws JMException {
-                    
-        return (String) mBeanServer.getAttribute(getObjectName(index),
-                                                 "RecordString");
+    private static String getLogRecordAtIndex(int index, MBeanServer mBeanServer) throws JMException {
+        return (String) mBeanServer.getAttribute(getObjectName(index), "RecordString");
     }
 
     /**
@@ -368,7 +313,7 @@ public class CachingLogHandlerTester extends TestCase {
                               + Constants.PRIORITY_KEY_HTTP_PORT + "="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
                               + "," + Constants.PRIORITY_KEY_REPLICANAME + "=BarOne,"
-                              + Constants.PRIORITY_KEY_CHANNEL + "=HIGHPRIORITY"
+                              + Constants.PRIORITY_KEY_CHANNEL + "=FOCUSED"
                               + "," + Constants.PRIORITY_KEY_APPLICATIONNAME + "="
                               + Settings.get(CommonSettings.APPLICATION_NAME)
                               + "," + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "="
