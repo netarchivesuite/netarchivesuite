@@ -28,8 +28,8 @@ import java.io.File;
 import java.sql.SQLException;
 
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.harvester.dao.DomainDAO;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.Job;
 

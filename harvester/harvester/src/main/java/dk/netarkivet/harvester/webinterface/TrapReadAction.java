@@ -32,9 +32,9 @@ import java.io.OutputStream;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDAO;
+import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDBDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 
 /**
  * Class to read and return a global crawler trap list to a web request.

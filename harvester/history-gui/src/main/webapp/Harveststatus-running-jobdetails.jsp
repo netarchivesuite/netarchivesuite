@@ -35,14 +35,14 @@ This page displays details about a running job.
     dk.netarkivet.harvester.webinterface.Constants,
     dk.netarkivet.common.webinterface.HTMLUtils,
     dk.netarkivet.common.exceptions.UnknownID,
-    dk.netarkivet.harvester.datamodel.JobDAO,
+    dk.netarkivet.harvester.dao.JobDAO,
     dk.netarkivet.harvester.datamodel.Job,
     dk.netarkivet.harvester.harvesting.frontier.FrontierReportLine,
     dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport,
     dk.netarkivet.common.utils.StringUtils,
     dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor,
     dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo,
-    dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
+    dk.netarkivet.harvester.dao.HarvestDefinitionDAO,
     dk.netarkivet.harvester.webinterface.ExportFrontierReportCsvQuery"
     pageEncoding="UTF-8"%>
 

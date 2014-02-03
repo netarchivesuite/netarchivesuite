@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+
 
 /**
  * Tests for class dk.netarkivet.datamodel.FullHarvest.

@@ -28,10 +28,10 @@ package dk.netarkivet.harvester.scheduler;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
+import dk.netarkivet.harvester.dao.HarvestChannelDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.JobDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.JobDAO;
 
 /**
  * Handles the dispatching of scheduled harvest to the harvest servers based on

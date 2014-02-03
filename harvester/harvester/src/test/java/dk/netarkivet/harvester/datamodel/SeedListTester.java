@@ -29,6 +29,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.ScheduleDAO;
+
 public class SeedListTester extends DataModelTestCase {
     final String HARVESTNAME = "TestHarvest";
     final int TEST = 3;

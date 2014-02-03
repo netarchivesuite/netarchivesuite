@@ -30,16 +30,18 @@ package dk.netarkivet.harvester.tools;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.DBSpecifics;
+import dk.netarkivet.harvester.dao.spec.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import junit.framework.TestCase;
 
 

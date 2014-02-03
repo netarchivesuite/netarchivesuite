@@ -24,17 +24,16 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
-import junit.framework.TestCase;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
-import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import junit.framework.TestCase;
+import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.harvester.dao.HarvestChannelDAO;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 
 public class HarvesterStatusReceiverTest extends TestCase  {
     private JobDispatcher jobDispatcher;

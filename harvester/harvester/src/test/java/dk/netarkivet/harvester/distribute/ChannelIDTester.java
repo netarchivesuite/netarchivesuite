@@ -29,7 +29,7 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
+import dk.netarkivet.harvester.dao.HarvestChannelDAO;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**

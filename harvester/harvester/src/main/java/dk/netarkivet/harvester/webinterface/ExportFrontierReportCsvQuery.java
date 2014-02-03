@@ -35,7 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
-import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
+import dk.netarkivet.harvester.dao.RunningJobsInfoDAO;
 import dk.netarkivet.harvester.harvesting.frontier.FrontierReportCsvExport;
 import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;

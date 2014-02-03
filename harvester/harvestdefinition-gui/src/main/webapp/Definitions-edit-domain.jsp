@@ -49,7 +49,7 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                  dk.netarkivet.harvester.datamodel.AliasInfo,
                  dk.netarkivet.harvester.datamodel.Domain,
                  dk.netarkivet.harvester.datamodel.DomainConfiguration,
-                 dk.netarkivet.harvester.datamodel.DomainDAO,
+                 dk.netarkivet.harvester.dao.DomainDAO,
                  dk.netarkivet.harvester.datamodel.SeedList, 
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.DomainDefinition,

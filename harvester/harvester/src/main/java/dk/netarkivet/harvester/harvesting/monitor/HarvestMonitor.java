@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.jms.MessageListener;
 
 import dk.netarkivet.common.distribute.ChannelID;
@@ -38,9 +39,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.dao.JobDAO;
+import dk.netarkivet.harvester.dao.RunningJobsInfoDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
@@ -50,6 +51,7 @@ import dk.netarkivet.harvester.harvesting.frontier.ExhaustedQueuesFilter;
 import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
 import dk.netarkivet.harvester.harvesting.frontier.RetiredQueuesFilter;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

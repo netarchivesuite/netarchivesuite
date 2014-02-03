@@ -36,8 +36,8 @@ import org.dom4j.io.XMLWriter;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.dao.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
-import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
 /**
  * Utility for maintaining harvest-templates from the commandline.

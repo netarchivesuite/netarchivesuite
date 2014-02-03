@@ -25,7 +25,13 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.dao.DomainDAOTester;
+import dk.netarkivet.harvester.dao.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDBDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAOTester;
+import dk.netarkivet.harvester.dao.JobDAOTester;
+import dk.netarkivet.harvester.dao.ScheduleDAOTester;
+import dk.netarkivet.harvester.dao.TemplateDAOTester;
 
 /**
  * Allows resetting of the HarvestDB DAO's between tests..

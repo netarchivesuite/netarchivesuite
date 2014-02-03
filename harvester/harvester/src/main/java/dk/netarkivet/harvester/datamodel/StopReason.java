@@ -100,7 +100,7 @@ public enum StopReason {
      * 
      * @see StopReason#ordinal()
      */
-    static StopReason getStopReason(final int stopreasonNum) {
+    public static StopReason getStopReason(final int stopreasonNum) {
         switch (stopreasonNum) {
             case 0:
                 return DOWNLOAD_COMPLETE;

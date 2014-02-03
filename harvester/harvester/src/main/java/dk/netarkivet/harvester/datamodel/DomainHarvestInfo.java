@@ -74,7 +74,7 @@ public class DomainHarvestInfo {
      * @param reason The reason why the harvestjob stopped harvesting any more
      * URIs from this domain.
      */
-    DomainHarvestInfo(String domainName, long jobID, String harvestName,
+    public DomainHarvestInfo(String domainName, long jobID, String harvestName,
                       long harvestID, int harvestNum, String configName, 
                       Date startDate, Date endDate, 
                       long bytesDownloaded, long docsDownloaded, 

@@ -24,6 +24,12 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,26 +37,26 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.tools.OrderXmlBuilder;
-import dk.netarkivet.harvester.datamodel.AliasInfo;
-import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
-import dk.netarkivet.harvester.distribute.HarvesterChannels;
-import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import junit.framework.TestCase;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.tree.DefaultDocument;
 import org.mockito.ArgumentCaptor;
 
-import static org.mockito.Mockito.*;
+import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.tools.OrderXmlBuilder;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.JobDAO;
+import dk.netarkivet.harvester.datamodel.AliasInfo;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
+import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 
 /**
  * Test JobDispatcher class.

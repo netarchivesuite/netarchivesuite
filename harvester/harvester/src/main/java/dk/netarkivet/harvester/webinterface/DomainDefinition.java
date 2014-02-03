@@ -40,17 +40,18 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.ExtendedFieldDAO;
+import dk.netarkivet.harvester.dao.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.NamedUtils;
 import dk.netarkivet.harvester.datamodel.SeedList;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

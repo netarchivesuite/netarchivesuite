@@ -31,7 +31,7 @@ Date:        $Date$
         import="
         java.util.Map,
         dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
-        dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
+        dk.netarkivet.harvester.dao.ExtendedFieldDAO,
         dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes,
         dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue" %>
 <%

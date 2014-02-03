@@ -2,10 +2,11 @@ import java.util.Iterator;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
+
 import dk.netarkivet.common.utils.FilterIterator;
+import dk.netarkivet.harvester.dao.DomainDAO;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
 
 
 public class TestSnapShotHarvestDomainConfigRetrieval {

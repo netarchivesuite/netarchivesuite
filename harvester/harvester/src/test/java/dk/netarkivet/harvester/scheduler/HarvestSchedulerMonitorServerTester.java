@@ -33,6 +33,13 @@ import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.DomainDAOTester;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAOTester;
+import dk.netarkivet.harvester.dao.JobDAO;
+import dk.netarkivet.harvester.dao.ScheduleDAOTester;
+import dk.netarkivet.harvester.dao.TemplateDAOTester;
 import dk.netarkivet.harvester.datamodel.*;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
@@ -46,6 +53,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import junit.framework.TestCase;
 
 import javax.jms.JMSException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

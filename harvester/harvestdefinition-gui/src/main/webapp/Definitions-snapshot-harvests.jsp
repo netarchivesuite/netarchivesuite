@@ -33,7 +33,7 @@ flipactive=<harvestDefinition>:
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
-                 dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
+                 dk.netarkivet.harvester.dao.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.SparseFullHarvest,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition"

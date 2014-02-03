@@ -41,7 +41,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -49,16 +48,13 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.ExtendedFieldDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
-import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 
 
 /**
@@ -152,7 +148,7 @@ public class Domain implements Named {
      *                          if the domain does not match the regex for valid
      *                          domains
      */
-    protected Domain(String theDomainName) {
+    public Domain(String theDomainName) {
         ArgumentNotValid.checkNotNullOrEmpty(theDomainName, "theDomainName");
         if (!DomainUtils.isValidDomainName(theDomainName)) {
             throw new ArgumentNotValid("Domain '" + theDomainName
@@ -836,7 +832,7 @@ public class Domain implements Named {
      *
      * @param newId The new ID for this domain.
      */
-    void setID(long newId) {
+    public void setID(long newId) {
         this.id = newId;
     }
 
@@ -846,7 +842,7 @@ public class Domain implements Named {
      *
      * @return true, if this domain has an ID different from null
      */
-    boolean hasID() {
+    public boolean hasID() {
         return id != null;
     }
 
@@ -1022,7 +1018,7 @@ public class Domain implements Named {
      *
      * @throws ArgumentNotValid if the alias info is not for this domain
      */
-    void setAliasInfo(AliasInfo aliasInfo) {
+    public void setAliasInfo(AliasInfo aliasInfo) {
         if (aliasInfo != null && !aliasInfo.getDomain().equals(domainName)) {
             throw new ArgumentNotValid("AliasInfo must be for this domain");
         }
@@ -1122,7 +1118,7 @@ public class Domain implements Named {
             ExtendedField ef = it.next();
 
             ExtendedFieldValue efv = new ExtendedFieldValue();
-            efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef.getDatatype()).getDBValue());
+            efv.setContent(ef.getDefaultValue());
             efv.setExtendedFieldID(ef.getExtendedFieldID());
 
             getExtendedFieldValues().add(efv);

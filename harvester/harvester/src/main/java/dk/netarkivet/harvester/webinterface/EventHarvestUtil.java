@@ -40,9 +40,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
-import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
 /**
  * Contains utility methods for supporting event harvest GUI.

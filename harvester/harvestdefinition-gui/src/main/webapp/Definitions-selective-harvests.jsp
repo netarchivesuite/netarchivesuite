@@ -36,7 +36,7 @@ inactive or vice-versa.
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
                  dk.netarkivet.harvester.datamodel.HarvestDefinition,
-                 dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
+                 dk.netarkivet.harvester.dao.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.CookieUtils"

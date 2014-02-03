@@ -25,6 +25,7 @@
 package dk.netarkivet.harvester.datamodel;
 
 import javax.servlet.jsp.JspWriter;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,6 +43,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.Constants;
+import dk.netarkivet.harvester.dao.DomainDAO;
 
 /**
  * Utility class for ingesting new domains into the database.

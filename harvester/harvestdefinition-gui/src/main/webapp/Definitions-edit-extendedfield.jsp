@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%@page import="
 			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField,
-			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO,
+			dk.netarkivet.harvester.dao.ExtendedFieldDAO,
 			dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes,
 			dk.netarkivet.harvester.webinterface.ExtendedFieldDefinition,
 			dk.netarkivet.harvester.webinterface.ExtendedFieldConstants,

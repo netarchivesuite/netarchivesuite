@@ -34,8 +34,8 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.harvester.dao.DomainDAO;
 import dk.netarkivet.harvester.datamodel.Domain;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.NumberUtils;

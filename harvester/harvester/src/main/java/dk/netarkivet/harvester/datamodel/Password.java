@@ -129,7 +129,7 @@ public final class Password implements Named {
     /** Set the ID of this password.  Only for use by DBDAO.
      * @param newid the new ID of this password
      */
-    void setID(long newid) {
+    public void setID(long newid) {
         this.id = newid;
     }
 

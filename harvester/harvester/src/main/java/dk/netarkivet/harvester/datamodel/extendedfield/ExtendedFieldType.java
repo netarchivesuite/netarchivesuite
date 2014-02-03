@@ -42,7 +42,7 @@ public class ExtendedFieldType implements Serializable {
      * @param aExtendedFieldTypeID The id of this ExtendedFieldType.
      * @param aName The name of this ExtendedFieldType.
      */
-    ExtendedFieldType(Long aExtendedFieldTypeID, String aName) {
+    public ExtendedFieldType(Long aExtendedFieldTypeID, String aName) {
         extendedFieldTypeID = aExtendedFieldTypeID;
         name = aName;
     }

@@ -32,9 +32,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.harvester.dao.HarvestChannelDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 
 /**
  * Abstract class representing an action to take on the collection of global

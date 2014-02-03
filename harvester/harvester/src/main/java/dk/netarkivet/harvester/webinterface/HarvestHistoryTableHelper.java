@@ -29,7 +29,7 @@ import java.util.List;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.dao.DomainDAO;
 import dk.netarkivet.harvester.datamodel.DomainHarvestInfo;
 
 /**

@@ -78,7 +78,7 @@ public class DomainOwnerInfo implements Comparable {
      *
      * @return the ID of this ownerinfo object
      */
-    long getID() {
+    public long getID() {
         return id;
     }
 
@@ -88,7 +88,7 @@ public class DomainOwnerInfo implements Comparable {
      * @param newid
      *            use this id for this ownerinfo
      */
-    void setID(long newid) {
+    public void setID(long newid) {
         this.id = newid;
     }
 
@@ -98,7 +98,7 @@ public class DomainOwnerInfo implements Comparable {
      *
      * @return true, if this ownerinfo-object has an ID
      */
-    boolean hasID() {
+    public boolean hasID() {
         return id != null;
     }
 

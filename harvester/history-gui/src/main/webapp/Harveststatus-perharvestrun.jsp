@@ -31,7 +31,7 @@ This page displays harvest details for one harvest definition run
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
-                 dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
+                 dk.netarkivet.harvester.dao.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.JobStatus,
                  dk.netarkivet.harvester.datamodel.JobStatusInfo,
                  dk.netarkivet.harvester.webinterface.Constants,

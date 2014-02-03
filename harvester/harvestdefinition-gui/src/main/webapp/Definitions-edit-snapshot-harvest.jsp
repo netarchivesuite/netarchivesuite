@@ -54,7 +54,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
-                 dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
+                 dk.netarkivet.harvester.dao.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.SparseFullHarvest, 
                  dk.netarkivet.harvester.webinterface.Constants, 
                  dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition"

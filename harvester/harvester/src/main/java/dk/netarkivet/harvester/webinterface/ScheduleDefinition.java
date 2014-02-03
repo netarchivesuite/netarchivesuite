@@ -27,6 +27,7 @@ package dk.netarkivet.harvester.webinterface;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,12 +36,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.harvester.dao.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.DailyFrequency;
 import dk.netarkivet.harvester.datamodel.Frequency;
 import dk.netarkivet.harvester.datamodel.HourlyFrequency;
 import dk.netarkivet.harvester.datamodel.MonthlyFrequency;
 import dk.netarkivet.harvester.datamodel.Schedule;
-import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 
 /**

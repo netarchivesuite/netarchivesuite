@@ -33,7 +33,7 @@ no parameters.
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.webinterface.Constants,
-                 dk.netarkivet.harvester.datamodel.TemplateDAO"
+                 dk.netarkivet.harvester.dao.TemplateDAO"
           pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"

@@ -1,7 +1,7 @@
-/* File:    $Id: ArchiveArcrepositoryBitPreservationTesterSuite.java 1276 2010-02-18 16:36:45Z jolf $
- * Version: $Revision: 1276 $
- * Date:    $Date: 2010-02-18 17:36:45 +0100 (Thu, 18 Feb 2010) $
- * Author:  $Author: jolf $
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and

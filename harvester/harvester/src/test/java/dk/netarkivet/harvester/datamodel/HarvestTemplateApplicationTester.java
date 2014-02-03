@@ -28,11 +28,13 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.dao.TemplateDAO;
 import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import junit.framework.TestCase;
+
 import org.dom4j.Document;
 
 import java.io.*;

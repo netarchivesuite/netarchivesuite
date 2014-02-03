@@ -50,6 +50,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.ScheduleDAO;
+import dk.netarkivet.harvester.dao.TemplateDAO;
 import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 
 

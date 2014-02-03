@@ -28,8 +28,8 @@ import javax.servlet.jsp.PageContext;
 
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.testutils.StringAsserts;
 
 /** Unit-test for the SnapshotHarvestDefinition class. */

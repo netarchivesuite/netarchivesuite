@@ -43,10 +43,10 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.JobDAO;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 
 /**

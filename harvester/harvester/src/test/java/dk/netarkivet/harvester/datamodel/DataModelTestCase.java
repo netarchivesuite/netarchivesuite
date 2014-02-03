@@ -25,27 +25,40 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.File;
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import junit.framework.TestCase;
+
+import org.dom4j.Document;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.dao.DataModelTestDao;
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.JobDAO;
+import dk.netarkivet.harvester.dao.ParameterMap;
+import dk.netarkivet.harvester.dao.ScheduleDAO;
+import dk.netarkivet.harvester.dao.TemplateDAO;
+import dk.netarkivet.harvester.dao.spec.DBSpecifics;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
-import junit.framework.TestCase;
-
-import org.dom4j.Document;
-
-import java.io.File;
-import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.*;
 
 /**
  * A generic superclass for the harvest definition tests.  This
@@ -60,10 +73,9 @@ public class DataModelTestCase extends TestCase {
 			.getAbsolutePath());
 	ReloadSettings rs = new ReloadSettings();
 	File commonTempdir = new File(TestInfo.TEMPDIR, "commontempdir");
-
-
+	
 	public DataModelTestCase(String s) {
-		super(s);
+		super(s); 
 	}
 
 	//TODO this method is highly derby-specific. Implement a mechanism, e.g. a
@@ -122,7 +134,6 @@ public class DataModelTestCase extends TestCase {
 
 		}
 		HarvestDAOUtils.resetDAOs();
-		HarvestDBConnection.cleanup();
 		rs.tearDown();
 	}
 
@@ -237,37 +248,29 @@ public class DataModelTestCase extends TestCase {
 		return j;
 	}
 
-	public static void addHarvestDefinitionToDatabaseWithId(long id) throws SQLException {
-		Connection con = HarvestDBConnection.get();
-		try {
-			final String sqlInsert = "INSERT INTO harvestdefinitions ("
-					+ "harvest_id, name, comments, numevents, submitted,"
-					+ "isactive,edition)"
-					+ "VALUES(?,?,?,?,?,?,?)";
-			PreparedStatement statement = con.prepareStatement(sqlInsert);
-			statement.setLong(1, id);
-			statement.setString(2, "name"+  id);
-			statement.setString(3, "NoComments");
-			statement.setInt(4, 0);
-			statement.setDate(5, new java.sql.Date(System.currentTimeMillis()));
-			statement.setInt(6,0);
-			statement.setInt(7,1);
-			int rows = statement.executeUpdate();
-			ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
-			statement.close();
-			String addFullharvestInsert = "INSERT INTO fullharvests "
-					+ "( harvest_id, maxobjects, maxbytes, previoushd )"
-					+ "VALUES ( ?, ?, ?, ? )";
-			statement = con.prepareStatement(addFullharvestInsert);
-			statement.setLong(1, id);
-			statement.setLong(2, Constants.DEFAULT_MAX_OBJECTS);
-			statement.setLong(3, Constants.DEFAULT_MAX_BYTES);
-			statement.setNull(4, Types.BIGINT);
-			rows = statement.executeUpdate();
-			ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
-		} finally {
-			HarvestDBConnection.release(con);
-		}
-
+	public static void addHarvestDefinitionToDatabaseWithId(final long id) throws SQLException {
+		DataModelTestDao dao = DataModelTestDao.getInstance();
+		int rows = dao.executeUpdate("INSERT INTO harvestdefinitions ("
+				+ "harvest_id, name, comments, numevents, submitted,"
+				+ "isactive,edition)"
+				+ "VALUES(:harvestId,:name,:comments,:numevents,:submitted,:isActive,:edition)",
+				new ParameterMap(
+						"harvestId", id,
+						"name", "name"+  id,
+						"comments", "NoComments",
+						"numevents", 0,
+						"submitted", new Date(),
+						"isActive", 0,
+						"edition", 1));
+		ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
+		
+		rows = dao.executeUpdate("INSERT INTO fullharvests  (harvest_id, maxobjects, maxbytes,"
+				+ " previoushd) VALUES (:harvestId, :maxObjects, :maxBytes, :previousHd)",
+				new ParameterMap(
+						"harvestId", id,
+						"maxObjects", Constants.DEFAULT_MAX_OBJECTS,
+						"maxBytes", Constants.DEFAULT_MAX_BYTES,
+						"previousHd", null));
+		ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
 	}
 }

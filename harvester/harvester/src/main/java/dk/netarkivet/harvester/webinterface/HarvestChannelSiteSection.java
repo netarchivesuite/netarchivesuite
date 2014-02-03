@@ -30,9 +30,9 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.webinterface.SiteSection;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
+import dk.netarkivet.harvester.dao.HarvestChannelDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 
 /**
  * Site section that creates the menu for harvest channel and mappings.

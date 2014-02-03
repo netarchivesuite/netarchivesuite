@@ -66,9 +66,9 @@ passwordList:
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.Domain,
                  dk.netarkivet.harvester.datamodel.DomainConfiguration,
-                 dk.netarkivet.harvester.datamodel.DomainDAO,
+                 dk.netarkivet.harvester.dao.DomainDAO,
                  dk.netarkivet.harvester.datamodel.SeedList,
-                 dk.netarkivet.harvester.datamodel.TemplateDAO,
+                 dk.netarkivet.harvester.dao.TemplateDAO,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.DomainConfigurationDefinition"
          pageEncoding="UTF-8"

@@ -57,8 +57,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.dao.RunningJobsInfoDAO;
 import dk.netarkivet.harvester.datamodel.NumberUtils;
-import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 
 /**
  * This class implements a generator for an history chart of a running job.

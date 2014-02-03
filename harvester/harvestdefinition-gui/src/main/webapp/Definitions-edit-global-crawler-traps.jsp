@@ -23,7 +23,7 @@ Date:        $Date$
 dk.netarkivet.common.utils.I18n,
 dk.netarkivet.common.webinterface.HTMLUtils,
 dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList,
-dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO,
+dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDAO,
 dk.netarkivet.harvester.webinterface.TrapAction, dk.netarkivet.harvester.webinterface.TrapAction"
          pageEncoding="UTF-8"
         %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"

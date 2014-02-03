@@ -488,7 +488,7 @@ National Library.
                  baseDir and class.-->
             <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
             <!-- The class that handles DB-specific methods -->
-            <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
+            <class>dk.netarkivet.harvester.dao.spec.DerbyServerSpecifics</class>
         </database>
         <repository>
             <!-- When the length record exceeds this number, the contents of the record

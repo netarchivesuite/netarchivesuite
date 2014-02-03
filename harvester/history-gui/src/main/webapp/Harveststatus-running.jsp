@@ -42,7 +42,7 @@ This page displays a list of running jobs.
     dk.netarkivet.common.webinterface.HTMLUtils,
     dk.netarkivet.common.webinterface.SiteSection,
     dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo,
-    dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO,
+    dk.netarkivet.harvester.dao.RunningJobsInfoDAO,
     dk.netarkivet.harvester.webinterface.Constants,
     dk.netarkivet.harvester.webinterface.FindRunningJobQuery,
     dk.netarkivet.common.utils.StringUtils,

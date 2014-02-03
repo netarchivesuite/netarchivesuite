@@ -38,6 +38,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ZipUtils;
+import dk.netarkivet.harvester.dao.spec.DBSpecifics;
 import dk.netarkivet.testutils.ReflectUtils;
 
 /**
@@ -221,6 +222,5 @@ public class DatabaseTestUtils {
     public static void dropHDDB() throws SQLException,
                             NoSuchFieldException, IllegalAccessException {
         dropDatabase();
-        HarvestDBConnection.cleanup();
     }
 }

@@ -43,26 +43,26 @@ public final class Constants {
      * like ftp://, http:// . */
     static final String PROTOCOL_REGEXP = "^[a-zA-Z]+:.*";
     /** Maximum size of name entries in the database. */
-    static final int MAX_NAME_SIZE = 300;
+    public static final int MAX_NAME_SIZE = 300;
     /** Maximum size of comment entries in the database. */
-    static final int MAX_COMMENT_SIZE = 30000;
+    public static final int MAX_COMMENT_SIZE = 30000;
     /** Maximum size of password url entries in the database. */
-    static final int MAX_URL_SIZE = 300;
+    public static final int MAX_URL_SIZE = 300;
     /** Maximum size of password realm entries in the database. */
-    static final int MAX_REALM_NAME_SIZE = 300;
+    public static final int MAX_REALM_NAME_SIZE = 300;
     /** Maximum size of password username entries in the database. */
-    static final int MAX_USER_NAME_SIZE = 20;
+    public static final int MAX_USER_NAME_SIZE = 20;
     /** Maximum size of password entries in the database. */
-    static final int MAX_PASSWORD_SIZE = 40;
+    public static final int MAX_PASSWORD_SIZE = 40;
     /** Maximum size of ownerinfo entries in the database. */
     static final int MAX_OWNERINFO_SIZE = 1000;
     /** Maximum size of seedlist entries in the database. */
-    static final int MAX_SEED_LIST_SIZE = 8 * 1024 * 1024;
+    public static final int MAX_SEED_LIST_SIZE = 8 * 1024 * 1024;
     /** Maximum size of a combined seedlist entry (for a job)
      * in the database. */
-    static final int MAX_COMBINED_SEED_LIST_SIZE = 64 * 1024 * 1024;
+    public static final int MAX_COMBINED_SEED_LIST_SIZE = 64 * 1024 * 1024;
     /** Maximum size of orderxml entries (stringified XML) in the database. */
-     static final int MAX_ORDERXML_SIZE = 64 * 1024 * 1024;
+     public static final int MAX_ORDERXML_SIZE = 64 * 1024 * 1024;
     /** Maximum size of error messages from harvests and uploads. */
     public static final int MAX_ERROR_SIZE = 300;
     /** Maximum size of detailed error messages from harvests and uploads. */

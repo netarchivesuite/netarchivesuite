@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.Constants,
                  dk.netarkivet.harvester.datamodel.HeritrixTemplate,
-                 dk.netarkivet.harvester.datamodel.TemplateDAO"
+                 dk.netarkivet.harvester.dao.TemplateDAO"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"

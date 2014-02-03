@@ -537,7 +537,7 @@ public class DomainConfiguration implements Named {
     /** Set the ID of this configuration.  Only for use by DBDAO
      * @param anId use this id for this configuration
      */
-    void setID(long anId) {
+    public void setID(long anId) {
         this.id = anId;
     }
 

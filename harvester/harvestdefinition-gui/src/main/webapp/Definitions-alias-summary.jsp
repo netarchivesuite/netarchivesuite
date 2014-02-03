@@ -35,7 +35,7 @@ believe they should be checked before renewed.
         dk.netarkivet.common.webinterface.HTMLUtils,
         dk.netarkivet.harvester.Constants,
         dk.netarkivet.harvester.datamodel.AliasInfo,
-        dk.netarkivet.harvester.datamodel.DomainDAO,
+        dk.netarkivet.harvester.dao.DomainDAO,
         dk.netarkivet.harvester.webinterface.DomainDefinition"
     pageEncoding="UTF-8"
 %>

@@ -25,7 +25,7 @@
         <driverclass>org.apache.derby.jdbc.EmbeddedDriver</driverclass>
         <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
         <backupInitHour>3</backupInitHour>
-        <specificsclass>dk.netarkivet.harvester.datamodel.DerbySpecifics</specificsclass>
+        <specificsclass>dk.netarkivet.harvester.dao.spec.DerbySpecifics</specificsclass>
       </database>
       <database/>
     <monitorApplicationName>NA</monitorApplicationName>

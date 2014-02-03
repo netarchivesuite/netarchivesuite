@@ -182,14 +182,14 @@ public class HarvestInfo {
     /** Get the ID of this harvestinfo.  Only for use by DBDAO.
      * @return the ID of this harvestinfo
      */
-    long getID() {
+    public long getID() {
         return id;
     }
 
     /** Set the ID of this harvestinfo.  Only for use by DBDAO
      * @param newid the new ID of this harvestinfo
      */
-    void setID(long newid) {
+    public void setID(long newid) {
         this.id = newid;
     }
 
@@ -197,7 +197,7 @@ public class HarvestInfo {
      * the DBDAO persists it).
      * @return true, if this harvestinfo has an ID set
      */
-    boolean hasID() {
+    public boolean hasID() {
         return id != null;
     }
 

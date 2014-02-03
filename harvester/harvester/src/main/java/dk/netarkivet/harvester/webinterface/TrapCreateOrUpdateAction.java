@@ -41,9 +41,9 @@ import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDAO;
+import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDBDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 
 /**
  * This action processes multipart uploads to either create or update

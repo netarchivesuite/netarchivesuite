@@ -26,7 +26,7 @@
 package dk.netarkivet.harvester.webinterface;
 
 import dk.netarkivet.common.webinterface.SiteSection;
-import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
+import dk.netarkivet.harvester.dao.RunningJobsInfoDAO;
 
 /**
  * Site section that creates the menu for harvest history.

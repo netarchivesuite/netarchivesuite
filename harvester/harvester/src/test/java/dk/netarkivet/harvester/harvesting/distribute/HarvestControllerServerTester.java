@@ -38,7 +38,6 @@ import java.util.logging.LogManager;
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 
-import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -57,10 +56,11 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.dao.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
@@ -200,7 +200,7 @@ public class HarvestControllerServerTester extends TestCase {
         }
         
         ChannelID channel = HarvesterChannels.getHarvestJobChannelId(
-                hcaDAO.getByName(channelName));
+        		hcaDAO.getByName(channelName));
         assertEquals("Should have no listeners to the HACO queue",
                      0, ((JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance()).getListeners(channel).size());
@@ -309,9 +309,9 @@ public class HarvestControllerServerTester extends TestCase {
         theJob.setJobID(Long.valueOf(42L));
         String channel = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
         NetarkivetMessage naMsg = new DoOneCrawlMessage(
-                theJob,
+                theJob, 
                 HarvesterChannels.getHarvestJobChannelId(
-                        HarvestChannelDAO.getInstance().getByName(channel)),
+                		HarvestChannelDAO.getInstance().getByName(channel)),
                 new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
         JMSConnectionMockupMQ.updateMsgID(naMsg, "id1");

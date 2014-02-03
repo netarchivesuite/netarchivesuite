@@ -38,6 +38,7 @@ import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.harvester.dao.DomainDAO;
 import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
 
 /**

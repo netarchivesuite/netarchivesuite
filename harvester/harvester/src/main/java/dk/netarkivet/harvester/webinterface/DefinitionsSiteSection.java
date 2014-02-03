@@ -32,13 +32,12 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.ScheduleDAO;
-import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.JobDAO;
+import dk.netarkivet.harvester.dao.ScheduleDAO;
+import dk.netarkivet.harvester.dao.TemplateDAO;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 
@@ -123,6 +122,6 @@ public class DefinitionsSiteSection extends SiteSection {
     
     /** Release DB resources. */
     public void close() {
-        HarvestDBConnection.cleanup();
+        
     }
 }

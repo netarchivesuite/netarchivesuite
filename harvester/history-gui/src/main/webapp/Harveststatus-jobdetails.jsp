@@ -37,11 +37,11 @@ and reponse.getLocale use this locale.
                  dk.netarkivet.common.utils.StringUtils,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
-                 dk.netarkivet.harvester.datamodel.DomainDAO,
-                 dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
+                 dk.netarkivet.harvester.dao.DomainDAO,
+                 dk.netarkivet.harvester.dao.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.HarvestInfo,
                  dk.netarkivet.harvester.datamodel.Job,
-                 dk.netarkivet.harvester.datamodel.JobDAO,
+                 dk.netarkivet.harvester.dao.JobDAO,
                  dk.netarkivet.harvester.datamodel.JobStatus,
                  dk.netarkivet.harvester.webinterface.Constants"
          pageEncoding="UTF-8"

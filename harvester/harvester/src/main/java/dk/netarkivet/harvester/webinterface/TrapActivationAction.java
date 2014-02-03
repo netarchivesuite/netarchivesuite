@@ -26,9 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDAO;
+import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDBDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 
 /**
  * Action class for changing the activation status of a crawler trap list.

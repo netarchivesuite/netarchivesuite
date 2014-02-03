@@ -26,10 +26,10 @@ package dk.netarkivet.harvester.datamodel.extendedfield;
 
 import java.util.List;
 
+import dk.netarkivet.harvester.dao.ExtendedFieldTypeDAO;
+import dk.netarkivet.harvester.dao.ExtendedFieldTypeDBDAO;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldType;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 
 

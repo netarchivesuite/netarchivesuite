@@ -30,6 +30,10 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.ScheduleDAO;
+import dk.netarkivet.harvester.dao.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.*;
 import dk.netarkivet.testutils.TestFileUtils;
 

@@ -76,7 +76,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
      *
      * @param name A name of a domain
      */
-    void addSubdomain(String name) {
+    public void addSubdomain(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         if (tldName.equals(IP_ADDRESS_NAME)) {
             ArgumentNotValid.checkTrue(
@@ -151,7 +151,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     * @param maxLevel maximum level for TLD (can't be 0).
     * @return The TLD of the domain, or a special placeholder for IP addresses.
     */
-   static String getMultiLevelTLD(String domain, int maxLevel) {
+   public static String getMultiLevelTLD(String domain, int maxLevel) {
        ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
        ArgumentNotValid .checkPositive(maxLevel, "max level must be equal to 1" 
                +" or more");
@@ -176,7 +176,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     * @param domain A domain
     * @return TLD level of the domain 1 for IP addresses
     */
-   static int getTLDLevel(String domain) {
+   public static int getTLDLevel(String domain) {
          if (dk.netarkivet.common.Constants.IP_KEY_REGEXP.matcher(domain)
                                                                .matches()) {
               return 1;

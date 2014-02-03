@@ -25,14 +25,14 @@
 
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
+import dk.netarkivet.harvester.dao.ExtendedFieldDAO;
+import dk.netarkivet.harvester.dao.ExtendedFieldDBDAO;
+import dk.netarkivet.harvester.dao.ExtendedFieldValueDAO;
+import dk.netarkivet.harvester.dao.ExtendedFieldValueDBDAO;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
 import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 
 public class ExtendedFieldValueTester  extends DataModelTestCase {

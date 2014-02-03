@@ -28,8 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
-                 dk.netarkivet.harvester.datamodel.TemplateDAO, 
-                 dk.netarkivet.harvester.datamodel.JobDAO,
+                 dk.netarkivet.harvester.dao.TemplateDAO, 
+                 dk.netarkivet.harvester.dao.JobDAO,
                  dk.netarkivet.harvester.datamodel.Job,
                  dk.netarkivet.harvester.webinterface.Constants"
           pageEncoding="UTF-8"

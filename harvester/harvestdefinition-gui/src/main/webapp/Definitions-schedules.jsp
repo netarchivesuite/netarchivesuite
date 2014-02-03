@@ -30,7 +30,7 @@ parameters.
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.Constants,
                  dk.netarkivet.harvester.datamodel.Schedule,
-                 dk.netarkivet.harvester.datamodel.ScheduleDAO"
+                 dk.netarkivet.harvester.dao.ScheduleDAO"
     pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"

@@ -123,7 +123,7 @@
                 </archive>
                 <common>
                     <database>
-                        <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
+                        <class>dk.netarkivet.harvester.dao.spec.DerbyServerSpecifics</class>
                         <baseUrl>jdbc:derby</baseUrl>
                         <machine>localhost</machine>
                         <port>8118</port>

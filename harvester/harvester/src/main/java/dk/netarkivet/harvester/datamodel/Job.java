@@ -63,6 +63,9 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDAO;
+import dk.netarkivet.harvester.dao.TemplateDAO;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNaming;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
 import dk.netarkivet.harvester.harvesting.JobInfo;
@@ -179,7 +182,7 @@ public class Job implements Serializable, JobInfo {
      * to avoid updating the config list.  The DAO can set it to false after
      * saving configurations.
      */
-    boolean configsChanged = false;
+    private boolean configsChanged = false;
 
 
     //Intermediate fields, non-persistent and only used while building objects
@@ -370,7 +373,7 @@ public class Job implements Serializable, JobInfo {
      * @param seedlist                 the combined seedlist from all configs.
      * @param harvestNum               the run number of the harvest definition
      */
-    Job(Long harvestID, Map<String, String> configurations,
+    public Job(Long harvestID, Map<String, String> configurations,
             String channel,
             boolean snapshot,
             long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
@@ -624,6 +627,20 @@ public class Job implements Serializable, JobInfo {
     }
 
     /**
+	 * @return the configsChanged
+	 */
+	public final boolean isConfigsChanged() {
+		return configsChanged;
+	}
+
+	/**
+	 * @param configsChanged the configsChanged to set
+	 */
+	public final void setConfigsChanged(boolean configsChanged) {
+		this.configsChanged = configsChanged;
+	}
+
+	/**
      * Get a list of Heritrix settings.xml files.
      * Note that these files have nothing to do with NetarchiveSuite settings 
      * files. They are files that supplement the Heritrix order.xml files,
@@ -914,7 +931,7 @@ public class Job implements Serializable, JobInfo {
      *
      * @return The edition number
      */
-    long getEdition() {
+    public long getEdition() {
         return edition;
     }
 
@@ -923,7 +940,7 @@ public class Job implements Serializable, JobInfo {
      *
      * @param edition the new edition number
      */
-    void setEdition(long edition) {
+    public void setEdition(long edition) {
         this.edition = edition;
     }
     
@@ -1335,7 +1352,7 @@ public class Job implements Serializable, JobInfo {
         return totalCountObjects;
     }
     
-    void setDefaultHarvestNamePrefix() {
+    public void setDefaultHarvestNamePrefix() {
         ArchiveFileNaming naming = ArchiveFileNamingFactory.getInstance();
         log.debug("Applying the default ArchiveFileNaming class '" 
                 + naming.getClass().getName() + "'.");

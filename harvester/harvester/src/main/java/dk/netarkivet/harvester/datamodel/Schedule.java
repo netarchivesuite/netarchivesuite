@@ -245,7 +245,7 @@ public abstract class Schedule implements Serializable, Named {
     /** Set the ID of this schedule.  Only for use by DBDAO
      * @param id the new ID of this schedule
      */
-    void setID(long id) {
+    public void setID(long id) {
         this.id = id;
     }
 

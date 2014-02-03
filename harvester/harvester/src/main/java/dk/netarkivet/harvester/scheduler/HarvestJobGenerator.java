@@ -41,10 +41,10 @@ import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.dao.HarvestChannelDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.scheduler.jobgen.JobGenerator;
 import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
 

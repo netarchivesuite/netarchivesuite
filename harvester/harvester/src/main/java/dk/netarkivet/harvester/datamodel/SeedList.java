@@ -186,7 +186,7 @@ public class SeedList implements Serializable, Named {
     /** Set the ID of this seedlist.  Only for use by DBDAO
      * @param newID the new ID of this seedlist
      */
-    void setID(long newID) {
+    public void setID(long newID) {
         this.id = newID;
     }
 

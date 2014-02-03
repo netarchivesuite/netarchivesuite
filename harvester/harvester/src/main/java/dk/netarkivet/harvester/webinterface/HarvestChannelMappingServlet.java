@@ -36,8 +36,8 @@ import com.hp.gagawa.java.elements.Option;
 import com.hp.gagawa.java.elements.Select;
 
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.harvester.dao.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.webinterface.HarvestChannelAction.ActionType;
 
 /**

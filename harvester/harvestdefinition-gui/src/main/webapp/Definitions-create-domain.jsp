@@ -37,7 +37,7 @@ Parameters:
                  java.util.HashSet,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
-                 dk.netarkivet.harvester.datamodel.DomainDAO,
+                 dk.netarkivet.harvester.dao.DomainDAO,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.DomainDefinition"
           pageEncoding="UTF-8"

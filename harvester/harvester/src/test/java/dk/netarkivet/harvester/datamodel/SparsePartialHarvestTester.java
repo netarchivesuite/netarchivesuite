@@ -30,6 +30,10 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.ArrayList;
 
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDBDAO;
+import dk.netarkivet.harvester.dao.ScheduleDAO;
+
 
 
 public class SparsePartialHarvestTester extends DataModelTestCase {

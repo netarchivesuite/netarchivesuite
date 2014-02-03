@@ -37,7 +37,7 @@ Parameters:
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.Domain,
-                 dk.netarkivet.harvester.datamodel.DomainDAO,
+                 dk.netarkivet.harvester.dao.DomainDAO,
                  dk.netarkivet.harvester.datamodel.SeedList,
                  dk.netarkivet.harvester.webinterface.Constants, dk.netarkivet.harvester.webinterface.DomainSeedsDefinition"
          pageEncoding="UTF-8"

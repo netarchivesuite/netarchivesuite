@@ -45,7 +45,7 @@ public class GlobalCrawlerTrapList {
     /**
      * The unique id of this collection of crawler traps.
      */
-    private int id;
+    private long id;
 
     /**
      * The list of traps. Each item is a regular expression matching url's to
@@ -97,7 +97,7 @@ public class GlobalCrawlerTrapList {
      * @param isActive flag indicating whether this list is isActive.
      * @throws ArgumentNotValid if the name is empty or null.
      */
-    protected GlobalCrawlerTrapList(int id, List<String> traps, String name,
+    public GlobalCrawlerTrapList(long id, List<String> traps, String name,
                                     String description, boolean isActive) throws
                                                              ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
@@ -171,7 +171,7 @@ public class GlobalCrawlerTrapList {
      * Get the id of this list.
      * @return the id.
      */
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -179,7 +179,7 @@ public class GlobalCrawlerTrapList {
      * Set the id of this list.
      * @param id the id.
      */
-    protected void setId(int id) {
+    protected void setId(long id) {
         this.id = id;
     }
 
@@ -266,7 +266,7 @@ public class GlobalCrawlerTrapList {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = new Long(id).intValue();
         result = 31 * result + (traps != null ? traps.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode()

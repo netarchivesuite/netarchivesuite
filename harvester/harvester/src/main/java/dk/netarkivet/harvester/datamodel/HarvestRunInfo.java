@@ -56,7 +56,7 @@ public class HarvestRunInfo {
      * @param harvestName the name of the harvest job
      * @param runNr the run number of this harvest job
      */
-    HarvestRunInfo(long harvestID, String harvestName, int runNr) {
+    public HarvestRunInfo(long harvestID, String harvestName, int runNr) {
         this.harvestID = harvestID;
         this.harvestName = harvestName;
         this.runNr = runNr;

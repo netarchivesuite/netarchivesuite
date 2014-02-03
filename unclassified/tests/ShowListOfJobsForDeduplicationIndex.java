@@ -24,7 +24,8 @@
  */
 
 import java.util.Set;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
 
 
 public class ShowListOfJobsForDeduplicationIndex {

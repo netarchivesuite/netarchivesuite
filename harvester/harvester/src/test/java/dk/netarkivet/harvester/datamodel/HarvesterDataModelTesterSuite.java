@@ -27,7 +27,18 @@ package dk.netarkivet.harvester.datamodel;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-
+import dk.netarkivet.harvester.dao.DomainDAOTester;
+import dk.netarkivet.harvester.dao.DomainDBDAOTester;
+import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDBDAOTester;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAOTester;
+import dk.netarkivet.harvester.dao.JobDAOTester;
+import dk.netarkivet.harvester.dao.RunningJobsInfoDAOTester;
+import dk.netarkivet.harvester.dao.ScheduleDAOTester;
+import dk.netarkivet.harvester.dao.ScheduleDBDAOTester;
+import dk.netarkivet.harvester.dao.TemplateDAOTester;
+import dk.netarkivet.harvester.dao.TemplateDAOTesterAlternate;
+import dk.netarkivet.harvester.dao.spec.DerbySpecificsTester;
+import dk.netarkivet.harvester.dao.spec.MySQLSpecificsTester;
 import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
 
 /**

@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         dk.netarkivet.common.utils.I18n,
         dk.netarkivet.common.webinterface.HTMLUtils,
         dk.netarkivet.harvester.Constants,
-        dk.netarkivet.harvester.datamodel.DomainDAO,
+        dk.netarkivet.harvester.dao.DomainDAO,
         dk.netarkivet.harvester.datamodel.TLDInfo"
     pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"

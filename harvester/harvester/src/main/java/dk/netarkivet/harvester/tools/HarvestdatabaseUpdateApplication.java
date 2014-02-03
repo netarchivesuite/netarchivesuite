@@ -26,7 +26,7 @@ package dk.netarkivet.harvester.tools;
 
 import java.util.Date;
 
-import dk.netarkivet.harvester.datamodel.DBSpecifics;
+import dk.netarkivet.harvester.dao.spec.DBSpecifics;
 
 /**
  * Utility for updating the harvestdatabase. This makes sure that all tables
@@ -37,7 +37,7 @@ public class HarvestdatabaseUpdateApplication {
     /**
      * The main method of the HarvestdatabaseUpdateApplication.
      * Updates all tables in the enum class 
-     * {@link dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables}
+     * {@link dk.netarkivet.harvester.dao.HarvesterDatabaseTables}
      * to the required version. There is no attempt to undo the update.
      *
      * @param args no Arg

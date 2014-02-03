@@ -31,9 +31,9 @@ import java.util.TreeSet;
 import javax.servlet.ServletRequest;
 
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.dao.DomainDAO;
+import dk.netarkivet.harvester.dao.JobDAO;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 

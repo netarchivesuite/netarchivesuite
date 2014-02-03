@@ -9,7 +9,7 @@ import java.util.Set;
 
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
 
 
 public class FindDomainsForCrawllogExtraction {

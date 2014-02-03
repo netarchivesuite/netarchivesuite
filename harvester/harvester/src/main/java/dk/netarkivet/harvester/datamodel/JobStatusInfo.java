@@ -84,7 +84,7 @@ public class JobStatusInfo {
      * @param resubmittedAsJobWithID The id of the job this job was resubmitted
      *  as (possibly null)
      */
-    JobStatusInfo(long jobID, JobStatus status,
+    public JobStatusInfo(long jobID, JobStatus status,
                   long harvestDefinitionID, String harvestDefinition,
                   int harvestNum, String harvestErrors, String uploadErrors,
                   String orderXMLname, int domainCount, Date submittedDate,

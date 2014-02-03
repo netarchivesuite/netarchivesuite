@@ -33,6 +33,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.LogManager;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
@@ -49,13 +50,12 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.dao.JobDAO;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
@@ -126,7 +126,6 @@ public class IntegrityTests extends DataModelTestCase {
                 RememberNotifications.class.getName());
         
         hs = HarvestControllerServer.getInstance();
-        jobDispatcher = new JobDispatcher(con, HarvestDefinitionDAO.getInstance(), JobDAO.getInstance());
 
         // Ensure that System.exit() is caught.
         sm = System.getSecurityManager();
