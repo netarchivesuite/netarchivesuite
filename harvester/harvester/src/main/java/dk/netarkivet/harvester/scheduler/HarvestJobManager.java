@@ -59,7 +59,7 @@ public class HarvestJobManager extends LifeCycleComponent {
                 HarvestChannelDAO.getInstance(),
                 harvestChannelRegistry));
         
-        addChild(new HarvestJobGenerator(jobDispather, harvestChannelRegistry));
+        addChild(new HarvestJobGenerator(harvestChannelRegistry));
         
         addChild(new HarvestSchedulerMonitorServer());
         

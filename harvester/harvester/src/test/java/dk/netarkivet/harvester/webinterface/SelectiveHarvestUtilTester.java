@@ -60,14 +60,6 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         super(s);
     }
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     /**
      * Verify that the correct domain configurations are created.
      * This test handles the normal usage.

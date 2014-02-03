@@ -46,6 +46,7 @@ import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -128,8 +129,8 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         assertEquals("Should get jobs for both new defs after a day", 2, jobs1
                 .size());
         // Check that the right HD's came in
-        Job j1 = (Job) jobs1.get(0);
-        Job j2 = (Job) jobs1.get(1);
+        Job j1 = jobs1.get(0);
+        Job j2 = jobs1.get(1);
         assertTrue("Neither job must be for HD 42", j1
                 .getOrigHarvestDefinitionID() != hd.getOid() &&
                 j2.getOrigHarvestDefinitionID()
@@ -225,7 +226,9 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
      */
     void generateJobs(Date time)
     throws Exception {
-        JobGeneratorTask jobGeneratorTask = new JobGeneratorTask(new HarvestChannelRegistry());
+        HarvestChannelRegistry harvestChannelRegistry = new HarvestChannelRegistry();
+        harvestChannelRegistry.register("FOCUSED","");
+        JobGeneratorTask jobGeneratorTask = new JobGeneratorTask(harvestChannelRegistry);
         jobGeneratorTask.generateJobs(time);
         waitForJobGeneration();
     }

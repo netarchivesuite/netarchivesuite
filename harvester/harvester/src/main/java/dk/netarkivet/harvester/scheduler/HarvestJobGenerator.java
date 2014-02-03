@@ -81,7 +81,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
      * @see HarvesterSettings#JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL
      */
     private static final boolean postponeUnregisteredChannel = Settings.getBoolean(
-    		HarvesterSettings.JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL);
+            HarvesterSettings.JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL);
     
     /** The HarvestDefinitionDAO used by the HarvestJobGenerator. */
     private static final HarvestDefinitionDAO haDefinitionDAO =
@@ -90,7 +90,6 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     private final HarvestChannelRegistry harvestChannelRegistry;
     
     public HarvestJobGenerator(
-            final JobDispatcher jobDispatcher,
             final HarvestChannelRegistry harvestChannelRegistry) {
         this.harvestChannelRegistry = harvestChannelRegistry;
     }
@@ -182,7 +181,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
 
                     String channelName = chan.getName();
                     if (postponeUnregisteredChannel 
-                    		&& !harvestChannelRegistry.isRegistered(channelName)) {
+                            && !harvestChannelRegistry.isRegistered(channelName)) {
                         log.info("Harvest channel '" + channelName + "' has not yet been registered"
                                 + " by any harvester, hence harvest definition '"
                                 + harvestDefinition.getName() + "' (" + id
@@ -288,10 +287,5 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 }
             }
         }
-    }
-
-    //Hack, used by test
-    static void clearGeneratingJobs() {
-        harvestDefinitionsBeingScheduled.clear();
     }
 }
