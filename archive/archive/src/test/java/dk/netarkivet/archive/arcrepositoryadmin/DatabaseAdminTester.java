@@ -87,11 +87,7 @@ public class DatabaseAdminTester extends TestCase {
         mtf.tearDown();
         rs.tearDown();
     }
-    
-    public void testSingleton() {
-        ClassAsserts.assertSingleton(DatabaseAdmin.class);
-    }
-    
+
     public void testArcRepositoryCalls() {
         DatabaseAdmin da = DatabaseAdmin.getInstance();
         
