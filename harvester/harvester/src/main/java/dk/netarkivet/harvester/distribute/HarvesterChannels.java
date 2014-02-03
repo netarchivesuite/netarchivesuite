@@ -95,9 +95,9 @@ public class HarvesterChannels {
 
     /**
      * Prefix for the channels used to send
-     * @{link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest}s
+     * @{link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}s
      * and
-     * @{link {@link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse}}s
+     * @{link {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}}s
      */
     private static final String HARVEST_CHANNEL_VALIDITY_PREFIX = "HCHAN_VAL_";
 
@@ -110,11 +110,11 @@ public class HarvesterChannels {
 
     /**
      * Return the queue for sending
-     * @{link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest}s.
+     * @{link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}s.
      *
      * @return the <code>ChannelID</code> object for the queue.
      */
-    public static ChannelID getHarvestChannelValidityRequestChannel() {
+    public static ChannelID getHarvesterRegistrationRequestChannel() {
         return getInstance().HARVEST_CHANNEL_VALIDITY_REQUEST;
     }
 
@@ -130,11 +130,11 @@ public class HarvesterChannels {
 
     /**
      * Return the queue for sending
-     * @{link dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse}s.
+     * @{link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}s.
      *
      * @return the <code>ChannelID</code> object for the queue.
      */
-    public static ChannelID getHarvestChannelValidityResponseChannel() {
+    public static ChannelID getHarvesterRegistrationResponseChannel() {
         return getInstance().HARVEST_CHANNEL_VALIDITY_RESPONSE;
     }
 

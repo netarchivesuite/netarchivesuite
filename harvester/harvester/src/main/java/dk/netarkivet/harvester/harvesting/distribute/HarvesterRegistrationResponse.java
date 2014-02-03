@@ -1,4 +1,4 @@
-/* File:       $Id: HarvestChannelValidityResponse.java 2251 2012-02-08 13:03:03Z mss $
+/* File:       $Id: HarvesterRegistrationResponse.java 2251 2012-02-08 13:03:03Z mss $
  * Revision:   $Revision: 2251 $
  * Author:     $Author: mss $
  * Date:       $Date: 2012-02-08 14:03:03 +0100 (Wed, 08 Feb 2012) $
@@ -33,12 +33,12 @@ import dk.netarkivet.harvester.scheduler.HarvesterStatusReceiver;
 
 /**
  * Message sent by the {@link HarvesterStatusReceiver} after processing a
- * {@link HarvestChannelValidityRequest} message. It notifies crawlers
+ * {@link HarvesterRegistrationRequest} message. It notifies crawlers
  * whether a given harvest channel effectively matches a {@link HarvestChannel}
  * defined in the harvest database.
  *
  */
-public class HarvestChannelValidityResponse extends HarvesterMessage {
+public class HarvesterRegistrationResponse extends HarvesterMessage {
 
     /**
      * The harvest channel name.
@@ -58,12 +58,16 @@ public class HarvestChannelValidityResponse extends HarvesterMessage {
 
     /**
      * Constructor from fields.
+     * @param harvestChannelName the harvest channel name
+     * @param isValid whether the given name denotes an existing channel
+     * @param isSnapshot true if the channel accepts snapshot harvest, false for partial.
+     *
      */
-    public HarvestChannelValidityResponse(
+    public HarvesterRegistrationResponse(
             final String harvestChannelName,
             final boolean isValid,
             final boolean isSnapshot) {
-        super(HarvesterChannels.getHarvestChannelValidityResponseChannel(), Channels.getError());
+        super(HarvesterChannels.getHarvesterRegistrationResponseChannel(), Channels.getError());
         this.harvestChannelName = harvestChannelName;
         this.isValid = isValid;
         this.isSnapshot = isSnapshot;

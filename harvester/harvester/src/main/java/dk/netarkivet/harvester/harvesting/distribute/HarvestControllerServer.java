@@ -153,10 +153,10 @@ public class HarvestControllerServer
             Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
 
     /**
-     * The JMS channel on which to listen for {@link HarvestChannelValidityResponse}s.
+     * The JMS channel on which to listen for {@link HarvesterRegistrationResponse}s.
      */
     public static final ChannelID HARVEST_CHAN_VALID_RESP_ID =
-            HarvesterChannels.getHarvestChannelValidityResponseChannel();
+            HarvesterChannels.getHarvesterRegistrationResponseChannel();
 
     /** The JMSConnection to use. */
     private JMSConnection jmsConnection;
@@ -252,7 +252,7 @@ public class HarvestControllerServer
         JMSConnectionFactory.getInstance().setListener(HARVEST_CHAN_VALID_RESP_ID, this);
         
         // Ask if the channel this harvester is assigned to is valid
-        jmsConnection.send(new HarvestChannelValidityRequest(
+        jmsConnection.send(new HarvesterRegistrationRequest(
         		HarvestControllerServer.CHANNEL,
         		applicationInstanceId));
         log.info("Requested to check the validity of harvest channel '"
@@ -573,7 +573,7 @@ public class HarvestControllerServer
     }
 
 	@Override
-	public void visit(HarvestChannelValidityResponse msg) {
+	public void visit(HarvesterRegistrationResponse msg) {
 		
 		// If we have already started or the message notifies for another channel,
 		// resend it.

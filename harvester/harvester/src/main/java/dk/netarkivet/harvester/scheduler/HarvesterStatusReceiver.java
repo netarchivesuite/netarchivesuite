@@ -32,8 +32,8 @@ import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
-import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest;
-import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -84,7 +84,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
         jmsConnection.setListener(
                 HarvesterChannels.getHarvesterStatusChannel(), this);
         jmsConnection.setListener(
-                HarvesterChannels.getHarvestChannelValidityRequestChannel(), this);
+                HarvesterChannels.getHarvesterRegistrationRequestChannel(), this);
     }
 
     @Override
@@ -107,13 +107,13 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
     }
 
     @Override
-    public void visit(HarvestChannelValidityRequest msg) {
+    public void visit(HarvesterRegistrationRequest msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         
         String harvesterInstanceId = msg.getInstanceId();
         
         // First remove any reference to this instanceId
-        // This is done in case a Harvester has been unexpectedly shut down
+        // This is done in case a Harvester has been unexpectedly shut down and restarted
         harvestChannelRegistry.unregisterHarvester(harvesterInstanceId);
 
         String channelName = msg.getHarvestChannelName();
@@ -132,7 +132,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler
         }
 
         // Send the reply
-        jmsConnection.send(new HarvestChannelValidityResponse(channelName, isValid, isSnapshot));
+        jmsConnection.send(new HarvesterRegistrationResponse(channelName, isValid, isSnapshot));
         log.info("Sent a message to notify that harvest channel '" + channelName + "' is "
                 + (isValid ? "valid." :  "invalid."));
     }

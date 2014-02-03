@@ -38,6 +38,9 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
+ * Implementation class for the DAO handling the persistence of {@link HarvestChannel}
+ * instances.
+ *
  * @author ngiraud
  *
  */
@@ -47,9 +50,7 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
      * Create a new HarvestChannelDAO implemented using database.
      * This constructor also tries to upgrade the jobs and jobs_configs tables
      * in the current database.
-     * throws and {@link IllegalState} exception, if it is impossible to
-     * make the necessary updates.
-     * Also throws an {@link IllegalState} exception, if default channels are missing in the DB.
+     * Throws an {@link IllegalState} exception, if default channels are missing in the DB.
      */
     protected HarvestChannelDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -70,7 +71,6 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
     @Override
     public HarvestChannel getById(final long id)
             throws ArgumentNotValid, UnknownID {
-        ArgumentNotValid.checkNotNull(id, "harvestchannel id");
         Connection connection = HarvestDBConnection.get();
         try {
             PreparedStatement stm = connection.prepareStatement(
@@ -93,11 +93,12 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
     public HarvestChannel getByName(final String name)
             throws ArgumentNotValid, UnknownID {
 
+    	ArgumentNotValid.checkNotNullOrEmpty(name, "name");
+    	
         if (HarvestChannel.SNAPSHOT.getName().equals(name)) {
             return HarvestChannel.SNAPSHOT;
         }
 
-        ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         Connection connection = HarvestDBConnection.get();
         try {
             PreparedStatement stm = connection.prepareStatement(
@@ -118,6 +119,8 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 
     @Override
     public void create(final HarvestChannel harvestChan) {
+    	ArgumentNotValid.checkNotNull(harvestChan, "HarvestChannel harvestChan");
+    	
         if (HarvestChannel.SNAPSHOT.equals(harvestChan)) {
             throw new PermissionDenied("Cannot store SNAPSHOT channel!");
         }
@@ -143,6 +146,8 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 
     @Override
     public void update(HarvestChannel harvestChan) {
+    	ArgumentNotValid.checkNotNull(harvestChan, "HarvestChannel harvestChan");
+    	
         if (HarvestChannel.SNAPSHOT.equals(harvestChan)) {
             throw new PermissionDenied("Cannot update SNAPSHOT channel!");
         }

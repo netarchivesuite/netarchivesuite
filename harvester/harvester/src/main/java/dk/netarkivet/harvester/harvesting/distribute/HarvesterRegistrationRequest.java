@@ -1,4 +1,4 @@
-/* File:       $Id: HarvestChannelValidityRequest.java 2251 2012-02-08 13:03:03Z mss $
+/* File:       $Id: HarvesterRegistrationRequest.java 2251 2012-02-08 13:03:03Z mss $
  * Revision:   $Revision: 2251 $
  * Author:     $Author: mss $
  * Date:       $Date: 2012-02-08 14:03:03 +0100 (Wed, 08 Feb 2012) $
@@ -39,12 +39,12 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
  * the {@link HarvestMonitor}, which checks if the channel name matches a channel defined in 
  * the harvest database.
  *
- * In reply a {@link HarvestChannelValidityResponse} is sent back.
+ * In reply a {@link HarvesterRegistrationResponse} is sent back.
  *
  * @author ngiraud
  *
  */
-public class HarvestChannelValidityRequest extends HarvesterMessage {
+public class HarvesterRegistrationRequest extends HarvesterMessage {
 
     /**
      * The harvest channel name to check.
@@ -53,10 +53,10 @@ public class HarvestChannelValidityRequest extends HarvesterMessage {
     
     private final String instanceId;
 
-    public HarvestChannelValidityRequest(
+    public HarvesterRegistrationRequest(
     		final String harvestChannelName,
     		final String instanceId) {
-        super(HarvesterChannels.getHarvestChannelValidityRequestChannel(), Channels.getError());
+        super(HarvesterChannels.getHarvesterRegistrationRequestChannel(), Channels.getError());
         this.harvestChannelName = harvestChannelName;
         this.instanceId = instanceId;
     }

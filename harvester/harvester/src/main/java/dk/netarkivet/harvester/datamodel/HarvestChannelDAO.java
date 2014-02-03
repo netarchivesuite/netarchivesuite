@@ -108,7 +108,7 @@ public abstract class HarvestChannelDAO implements Iterable<HarvestChannel> {
 
     /**
      * Returns true if a default channel exists for focused jobs.
-     * @return true if a match is found, false otherwise.
+     * @return true if a default channel exists for focused jobs, false otherwise.
      */
     public abstract boolean defaultFocusedChannelExists();
 

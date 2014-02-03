@@ -29,8 +29,8 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
-import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest;
-import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
@@ -101,12 +101,12 @@ public interface HarvesterMessageVisitor {
     *
     * @param msg A received message.
     */
-    void visit(HarvestChannelValidityRequest msg);
+    void visit(HarvesterRegistrationRequest msg);
     
     /** This method should be overridden to handle the receipt of a message.
     *
     * @param msg A received message.
     */
-    void visit(HarvestChannelValidityResponse msg);
+    void visit(HarvesterRegistrationResponse msg);
     
 }

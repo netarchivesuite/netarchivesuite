@@ -14,10 +14,10 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.harvesting.HarvestController;
-import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest;
 
 /**
- * Keeps track of the number of {@link HarvestChannelValidityRequest}s that have been
+ * Keeps track of the number of {@link HarvesterRegistrationRequest}s that have been
  * received per channel, which allows to know if a {@link HarvestController}s are
  * registered to a given {@link HarvestChannel}. 
  */

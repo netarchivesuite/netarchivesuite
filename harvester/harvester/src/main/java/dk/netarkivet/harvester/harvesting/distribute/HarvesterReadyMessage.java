@@ -70,6 +70,9 @@ public class HarvesterReadyMessage
         v.visit(this);
     }
 
+    /**
+     * @return the associated harvest channel name
+     */
     public String getHarvestChannelName() {
         return harvestChannelName;
     }

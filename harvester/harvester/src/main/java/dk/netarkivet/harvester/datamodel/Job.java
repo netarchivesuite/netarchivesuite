@@ -105,7 +105,7 @@ public class Job implements Serializable, JobInfo {
     private String channel;
     
     /**
-     * Whether the job belongs to a snpshot or partial harvest.
+     * Whether the job belongs to a snapshot or partial harvest.
      */
     private boolean isSnapshot; 
     /**
@@ -928,7 +928,7 @@ public class Job implements Serializable, JobInfo {
     }
     
     /**
-     * Returns the associated {@link HarvestChannel} name.
+     * @return the associated {@link HarvestChannel} name.
      */
     public String getChannel() {
 		return channel;
@@ -943,7 +943,7 @@ public class Job implements Serializable, JobInfo {
 	}
 
 	/**
-	 * Returns true if the job belongs to a snapshot harvest,
+	 * @return true if the job belongs to a snapshot harvest,
 	 * false if it belongs to a focused harvest.
 	 */
 	public boolean isSnapshot() {

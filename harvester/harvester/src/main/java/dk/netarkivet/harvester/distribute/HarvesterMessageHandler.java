@@ -39,8 +39,8 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
-import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityRequest;
-import dk.netarkivet.harvester.harvesting.distribute.HarvestChannelValidityResponse;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest;
+import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
@@ -194,10 +194,10 @@ public abstract class HarvesterMessageHandler
     /**
      * This method should be overridden and implemented by a sub class if
      * message handling is wanted.
-     * @param msg a {@link HarvestChannelValidityRequest}
+     * @param msg a {@link HarvesterRegistrationRequest}
      */
     @Override
-    public void visit(HarvestChannelValidityRequest msg) {
+    public void visit(HarvesterRegistrationRequest msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
@@ -205,10 +205,10 @@ public abstract class HarvesterMessageHandler
     /**
      * This method should be overridden and implemented by a sub class if
      * message handling is wanted.
-     * @param msg a {@link HarvestChannelValidityResponse}
+     * @param msg a {@link HarvesterRegistrationResponse}
      */
     @Override
-    public void visit(HarvestChannelValidityResponse msg) {
+    public void visit(HarvesterRegistrationResponse msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
