@@ -51,7 +51,7 @@ public class ArchiveArcrepositoryBitPreservationTesterSuite {
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ChecksumJobTester.class);
-        //suite.addTestSuite(DatabaseBasedActiveBitPreservationTester.class); Failing
+        //suite.addTestSuite(DatabaseBasedActiveBitPreservationTester.class); Failing, see https://sbforge.org/jira/browse/NAS-2264
         suite.addTestSuite(DatabasePreservationStateTester.class);
         suite.addTestSuite(FileBasedActiveBitPreservationTester.class);
         suite.addTestSuite(FileListJobTester.class);
