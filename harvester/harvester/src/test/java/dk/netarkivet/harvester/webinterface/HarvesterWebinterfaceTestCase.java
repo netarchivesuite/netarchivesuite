@@ -25,18 +25,17 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.io.File;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDBDAO;
-import dk.netarkivet.harvester.dao.spec.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
-import java.io.File;
 
 /**
  * A TestCase subclass specifically tailored to test webinterface classes,
@@ -67,7 +66,6 @@ public class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
                                             + "/fullhddb");
         DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
                                   HARVEST_DEFINITION_BASEDIR);
-        DBSpecifics.getInstance().updateTables();
     }
 
     public void tearDown() throws Exception {

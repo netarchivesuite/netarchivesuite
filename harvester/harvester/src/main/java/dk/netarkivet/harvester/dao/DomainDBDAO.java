@@ -30,7 +30,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -485,23 +484,6 @@ public class DomainDBDAO extends DomainDAO {
 	 */
 	protected DomainDBDAO() {
 		super();
-	}
-
-	@Override
-	protected Collection<HarvesterDatabaseTables> getRequiredTables() {
-		ArrayList<HarvesterDatabaseTables> tables = new ArrayList<HarvesterDatabaseTables>();
-		tables.add(HarvesterDatabaseTables.CONFIGURATIONS);
-		tables.add(HarvesterDatabaseTables.DOMAINS);
-		tables.add(HarvesterDatabaseTables.CONFIGPASSWORDS);
-		tables.add(HarvesterDatabaseTables.CONFIGSEEDLISTS);
-		tables.add(HarvesterDatabaseTables.SEEDLISTS);
-		tables.add(HarvesterDatabaseTables.PASSWORDS);
-		tables.add(HarvesterDatabaseTables.OWNERINFO);
-		tables.add(HarvesterDatabaseTables.HISTORYINFO);
-		tables.add(HarvesterDatabaseTables.EXTENDEDFIELDTYPE);
-		tables.add(HarvesterDatabaseTables.EXTENDEDFIELD);
-		tables.add(HarvesterDatabaseTables.EXTENDEDFIELDVALUE);
-		return tables;
 	}
 
 	@Override

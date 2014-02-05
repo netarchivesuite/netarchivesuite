@@ -30,7 +30,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -84,14 +83,6 @@ public class JobDBDAO extends JobDAO {
 	 */
 	protected JobDBDAO() {
 		super();
-	}
-
-	@Override
-	protected Collection<HarvesterDatabaseTables> getRequiredTables() {
-		ArrayList<HarvesterDatabaseTables> tables = new ArrayList<HarvesterDatabaseTables>();
-		tables.add(HarvesterDatabaseTables.JOBS);
-		tables.add(HarvesterDatabaseTables.JOBCONFIGS);
-		return tables;
 	}
 
 	/**

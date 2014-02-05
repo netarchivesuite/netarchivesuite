@@ -25,7 +25,6 @@ package dk.netarkivet.harvester.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -74,14 +73,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     protected GlobalCrawlerTrapListDBDAO() {
     	super();
     }
-
-	@Override
-	protected Collection<HarvesterDatabaseTables> getRequiredTables() {
-		ArrayList<HarvesterDatabaseTables> tables = new ArrayList<HarvesterDatabaseTables>();
-		tables.add(HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS);
-		tables.add(HarvesterDatabaseTables.GLOBALCRAWLERTRAPLISTS);
-		return tables;
-	}
 
     /**
      * Returns a list of either all active or all inactive trap lists.

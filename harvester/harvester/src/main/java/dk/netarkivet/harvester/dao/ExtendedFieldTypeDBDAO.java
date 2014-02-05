@@ -27,8 +27,6 @@ package dk.netarkivet.harvester.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,15 +42,6 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldType;
  * for creating and accessing extended fields in persistent storage.
  */
 public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
-    
-    @Override
-	protected Collection<HarvesterDatabaseTables> getRequiredTables() {
-		ArrayList<HarvesterDatabaseTables> tables = new ArrayList<HarvesterDatabaseTables>();
-		tables.add(HarvesterDatabaseTables.EXTENDEDFIELDTYPE);
-		tables.add(HarvesterDatabaseTables.EXTENDEDFIELD);
-		tables.add(HarvesterDatabaseTables.EXTENDEDFIELDVALUE);
-		return tables;
-	}
 
     @Override
     public boolean exists(Long extendedfieldtypeId) {

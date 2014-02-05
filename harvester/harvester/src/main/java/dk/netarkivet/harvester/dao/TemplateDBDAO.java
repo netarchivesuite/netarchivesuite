@@ -30,8 +30,6 @@ import java.io.StringReader;
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 
 import org.dom4j.Document;
@@ -57,11 +55,6 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
  */
 
 public class TemplateDBDAO extends TemplateDAO {
-
-	@Override
-	protected Collection<HarvesterDatabaseTables> getRequiredTables() {
-		return Collections.singletonList(HarvesterDatabaseTables.ORDERTEMPLATES);
-	}
 
 	/**
 	 * Read an XML order file for the named order XML.

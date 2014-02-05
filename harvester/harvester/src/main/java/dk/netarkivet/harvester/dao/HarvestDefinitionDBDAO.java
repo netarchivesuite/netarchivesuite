@@ -30,7 +30,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -211,16 +210,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 	/** Create a new HarvestDefinitionDAO using database. */
 	HarvestDefinitionDBDAO() {
 		super();
-	}
-
-	@Override
-	protected Collection<HarvesterDatabaseTables> getRequiredTables() {
-		ArrayList<HarvesterDatabaseTables> tables = new ArrayList<HarvesterDatabaseTables>();
-		tables.add(HarvesterDatabaseTables.FULLHARVESTS);
-		tables.add(HarvesterDatabaseTables.HARVESTDEFINITIONS);
-		tables.add(HarvesterDatabaseTables.PARTIALHARVESTS);
-		tables.add(HarvesterDatabaseTables.HARVESTCONFIGS);
-		return tables;
 	}
 
 	/**

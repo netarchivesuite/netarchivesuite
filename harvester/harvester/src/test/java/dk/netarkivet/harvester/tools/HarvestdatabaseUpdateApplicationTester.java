@@ -27,22 +27,20 @@ package dk.netarkivet.harvester.tools;
  * Tests of the tool to create metadata files.
  */
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.utils.RememberNotifications;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.dao.spec.DBSpecifics;
-import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
-import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
-import dk.netarkivet.harvester.datamodel.TestInfo;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import junit.framework.TestCase;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
+import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
+import dk.netarkivet.harvester.datamodel.TestInfo;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
 
 
 public class HarvestdatabaseUpdateApplicationTester extends TestCase {
@@ -70,7 +68,6 @@ public class HarvestdatabaseUpdateApplicationTester extends TestCase {
      */
     public void testUpdateFull() throws Exception {
         setupDatabase("fullhddb");
-        DBSpecifics.getInstance().updateTables();
     }
 
     /**
@@ -78,7 +75,6 @@ public class HarvestdatabaseUpdateApplicationTester extends TestCase {
      */
     public void testUpdateEmpty() throws Exception {
         setupDatabase("emptyhddb");
-        DBSpecifics.getInstance().updateTables();
     }
 
     private void setupDatabase(String dataFile) throws IOException, SQLException, IllegalAccessException {

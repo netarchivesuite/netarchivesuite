@@ -154,7 +154,7 @@ public final class HarvestDatabase {
 		// this is only done for embedded database!
 		// For external databases, use the HarvestdatabaseUpdateApplication tool
 		if (dbSpec instanceof DerbyEmbeddedSpecifics) {
-			dbSpec.updateTables();
+			
 		}
 
 		if (log.isInfoEnabled()) {

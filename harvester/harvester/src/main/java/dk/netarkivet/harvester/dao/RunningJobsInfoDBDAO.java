@@ -27,7 +27,6 @@ package dk.netarkivet.harvester.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -119,15 +118,6 @@ implements ResultSetExtractor<List<StartedJobInfo>> {
 	private static final long HISTORY_SAMPLE_RATE =
 			1000 * Settings.getLong(
 					HarvesterSettings.HARVEST_MONITOR_HISTORY_SAMPLE_RATE);
-
-	@Override
-	protected Collection<HarvesterDatabaseTables> getRequiredTables() {
-		ArrayList<HarvesterDatabaseTables> tables = new ArrayList<HarvesterDatabaseTables>();
-		tables.add(HarvesterDatabaseTables.RUNNINGJOBSHISTORY);
-		tables.add(HarvesterDatabaseTables.RUNNINGJOBSMONITOR);
-		tables.add(HarvesterDatabaseTables.FRONTIERREPORTMONITOR);
-		return tables;
-	}
 
 	@Override
 	public List<StartedJobInfo> extractData(ResultSet rs)

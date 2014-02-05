@@ -26,8 +26,6 @@ package dk.netarkivet.harvester.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -78,11 +76,6 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 		if (!defaultFocusedChannelExists()) {
 			throw new IllegalState("No default harvest channel defined for focused jobs!");
 		}
-	}
-
-	@Override
-	protected Collection<HarvesterDatabaseTables> getRequiredTables() {
-		return Collections.singletonList(HarvesterDatabaseTables.HARVESTCHANNELS);
 	}
 
 	@Override

@@ -27,8 +27,6 @@ package dk.netarkivet.harvester.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,14 +46,6 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
 
 	/** The logger for this class. */
 	private final Log log = LogFactory.getLog(getClass());
-
-	@Override
-	protected Collection<HarvesterDatabaseTables> getRequiredTables() {
-		ArrayList<HarvesterDatabaseTables> tables = new ArrayList<HarvesterDatabaseTables>();
-		tables.add(HarvesterDatabaseTables.EXTENDEDFIELD);
-		tables.add(HarvesterDatabaseTables.EXTENDEDFIELDVALUE);
-		return tables;
-	}
 
 	@Override
 	public synchronized void create(ExtendedField extendedField) {

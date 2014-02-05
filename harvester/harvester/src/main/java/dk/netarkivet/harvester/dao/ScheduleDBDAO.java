@@ -27,8 +27,6 @@ package dk.netarkivet.harvester.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -61,11 +59,6 @@ public class ScheduleDBDAO extends ScheduleDAO {
 
 	/** The logger. */
 	private final Log log = LogFactory.getLog(getClass());
-
-	@Override
-	protected Collection<HarvesterDatabaseTables> getRequiredTables() {
-		return Collections.singletonList(HarvesterDatabaseTables.SCHEDULES);
-	}
 
 	/**
 	 * Create a new schedule.

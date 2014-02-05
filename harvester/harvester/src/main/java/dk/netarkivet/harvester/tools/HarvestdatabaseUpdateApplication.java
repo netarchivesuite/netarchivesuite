@@ -26,8 +26,6 @@ package dk.netarkivet.harvester.tools;
 
 import java.util.Date;
 
-import dk.netarkivet.harvester.dao.spec.DBSpecifics;
-
 /**
  * Utility for updating the harvestdatabase. This makes sure that all tables
  * are upgraded to the version required by the NetarchiveSuite.
@@ -44,7 +42,7 @@ public class HarvestdatabaseUpdateApplication {
      */
     public static void main(final String[] args) {
         System.out.println("Beginning database upgrade at " + new Date());
-        DBSpecifics.getInstance().updateTables();
+        // TODO maybe some call to psql process?
         System.out.println("Database upgrade finished at " + new Date());
     }
 }

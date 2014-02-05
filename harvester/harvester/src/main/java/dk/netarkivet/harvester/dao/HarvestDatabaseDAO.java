@@ -29,8 +29,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +48,6 @@ import org.springframework.transaction.TransactionStatus;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Named;
@@ -179,30 +176,9 @@ public abstract class HarvestDatabaseDAO {
 	 * Checks that required tables have the expected versions.
 	 */
 	protected HarvestDatabaseDAO() {
-		this.template = HarvestDatabase.getInstance().newTemplate(); 
-		for (HarvesterDatabaseTables table : getRequiredTables()) {
-			String tableName = table.getTablename();
-			Integer actualVersion = template.query(
-					"SELECT version FROM schemaversions WHERE tablename=:name",					
-					Collections.singletonMap("name", tableName),
-					new IntResultExtractor());
-			if (actualVersion == null) {
-				log.warn("As yet unknown tablename '" + tableName 
-						+ "' in table schemaversions. The table"
-						+ " should be automatically created in the database"
-						+ " when it is first needed.");
-			}
-			if (actualVersion != table.getRequiredVersion()) {
-				String message = "Wrong table version for '" + table.getTablename()
-						+ "': Should be " + table.getRequiredVersion()
-						+ ", but is " + actualVersion;
-				throw new IllegalState(message);
-			}
-		}
+		this.template = HarvestDatabase.getInstance().newTemplate();
 	}
 
-	protected abstract Collection<HarvesterDatabaseTables> getRequiredTables();
-	
 	public String getMaxLengthStringValue(
 			final Object o,
 			final String valueKey, 
