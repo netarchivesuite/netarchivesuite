@@ -93,7 +93,7 @@ class ArchiveFilesReportGenerator {
      */
     static class ArchiveFileStatus {
 
-        private static final String NOT_AVAILABLE = "?";
+        private static final String NOT_AVAILABLE = "-1";
 
         String openedDate = NOT_AVAILABLE;
         String closedDate = NOT_AVAILABLE;
