@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.archive.arcrepositoryadmin.DBUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
 

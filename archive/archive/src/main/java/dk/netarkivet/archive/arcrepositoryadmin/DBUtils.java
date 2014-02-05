@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.common.utils;
+package dk.netarkivet.archive.arcrepositoryadmin;
 
 import java.io.StringReader;
 import java.sql.Connection;
@@ -49,6 +49,10 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.common.utils.Named;
+import dk.netarkivet.common.utils.ResultSetIterator;
+import dk.netarkivet.common.utils.StringUtils;
 
 /**
  * Various database related utilities.

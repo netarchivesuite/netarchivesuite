@@ -26,9 +26,9 @@ package dk.netarkivet.harvester.dao;
 
 import java.sql.Connection;
 
+import dk.netarkivet.archive.arcrepositoryadmin.DBUtils;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.DBUtils;
 
 /**
  *  Enum class defining the tables of the Harvester database and the 
@@ -421,24 +421,4 @@ public enum HarvesterDatabaseTables {
     /** @return name of database table. */
     public abstract String getTablename();
     
-    /** Check that a database table has the required version.
-    *
-    * NB: the provided connection is not closed.
-    * @param connection connection to the database.
-    * @param table The table to check up against required version
-    * @throws IllegalState if the version isn't as required.
-    */
-   public static void checkVersion(Connection connection,
-                                        HarvesterDatabaseTables table) {
-       ArgumentNotValid.checkNotNull(connection, "Connection connection");
-       ArgumentNotValid.checkNotNull(table, "HarvesterDatabaseTables table");
-       
-       int actualVersion = DBUtils.getTableVersion(connection, table.getTablename());
-       if (actualVersion != table.getRequiredVersion()) {
-           String message = "Wrong table version for '" + table.getTablename()
-                   + "': Should be " + table.getRequiredVersion()
-                   + ", but is " + actualVersion;
-           throw new IllegalState(message);
-       }
-   }
 }
