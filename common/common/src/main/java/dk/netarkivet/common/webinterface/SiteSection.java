@@ -216,10 +216,6 @@ public abstract class SiteSection {
      * Meant to be overridden by subclasses. */
     public abstract void initialize();
 
-    /** Called when webserver shuts down.
-     * Meant to be overridden by subclasses. */
-    public abstract void close();
-
     /**
      * The list of sections of the website.  Each section has a number of pages,
      * as defined in the sitesection classes read from settings. These handle
@@ -256,11 +252,6 @@ public abstract class SiteSection {
      * list of site sections.
      */
     public static synchronized void cleanup() {
-        if (sections != null) {
-            for (SiteSection section : sections) {
-                section.close();
-            }
-        }
         sections = null;
 
     }

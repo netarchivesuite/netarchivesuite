@@ -34,7 +34,6 @@ public class StatusSiteSectionTester extends TestCase {
         SiteSection s = new StatusSiteSection();
         try {
             s.initialize();
-            s.close();
         } catch (Exception e) {
             fail("Should not throw exception: " + e);
         }

@@ -268,7 +268,7 @@ public class Job implements Serializable, JobInfo {
      *                          invalid, or if any limit < -1
      * @throws UnknownID        If the priority is invalid.
      */
-    Job(Long harvestID, DomainConfiguration cfg, 
+    public Job(Long harvestID, DomainConfiguration cfg, 
     	HarvestChannel channel,
         long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
         long forceMaxJobRunningTime,

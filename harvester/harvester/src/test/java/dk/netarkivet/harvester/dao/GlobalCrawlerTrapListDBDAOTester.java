@@ -24,17 +24,13 @@ package dk.netarkivet.harvester.dao;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Set;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDAO;
-import dk.netarkivet.harvester.dao.GlobalCrawlerTrapListDBDAO;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList;
-import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 
 
@@ -79,15 +75,9 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         assertEquals("Should get a unique instance (object identity) of dao.",
                      dao1, dao2);
         // Check that the tables exist
-        Connection con = HarvestDBConnection.get();
-        try {
-            con.prepareStatement("SELECT * from global_crawler_trap_lists")
-            .execute();
-            con.prepareStatement("SELECT * from global_crawler_trap_expressions")
-            .execute();
-        } finally {
-            HarvestDBConnection.release(con);
-        }
+        DataModelTestDao dao = DataModelTestDao.getInstance();
+        dao.executeUpdate("SELECT * from global_crawler_trap_lists");
+        dao.executeUpdate("SELECT * from global_crawler_trap_expressions");
     }
 
      public void testCreate() {

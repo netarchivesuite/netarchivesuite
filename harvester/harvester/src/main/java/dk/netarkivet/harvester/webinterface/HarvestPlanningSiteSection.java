@@ -32,7 +32,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.harvester.dao.HarvestChannelDAO;
 import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 
 /**
  * Site section that creates the menu for harvest channel and mappings.
@@ -65,10 +64,5 @@ public class HarvestPlanningSiteSection extends SiteSection {
     public void initialize() {
         HarvestDefinitionDAO.getInstance();
         HarvestChannelDAO.getInstance();
-    }
-    
-    /** Release DB resources. */
-    public void close() {
-        HarvestDBConnection.cleanup();
     }
 }

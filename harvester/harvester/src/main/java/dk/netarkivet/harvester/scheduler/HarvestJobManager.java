@@ -31,7 +31,6 @@ import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 import dk.netarkivet.harvester.dao.HarvestChannelDAO;
 import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.dao.JobDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 
 /**
  * Handles the dispatching of scheduled harvest to the harvest servers based on
@@ -64,13 +63,5 @@ public class HarvestJobManager extends LifeCycleComponent {
         addChild(new HarvestSchedulerMonitorServer());
         
         addChild(new JobSupervisor());
-    }
-
-    @Override
-    public void shutdown() {
-        super.shutdown();
-
-        // Release DB resources
-        HarvestDBConnection.cleanup();
     }
 }

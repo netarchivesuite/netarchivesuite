@@ -24,8 +24,6 @@
 */
 package dk.netarkivet.harvester.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +36,7 @@ import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.Node;
+import org.springframework.dao.DataAccessException;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -47,17 +46,12 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.dao.DomainDAO;
-import dk.netarkivet.harvester.dao.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.dao.JobDAO;
-import dk.netarkivet.harvester.dao.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
-import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -902,19 +896,16 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     public static void changeStatus(long jobID, JobStatus newStatus) {
-        PreparedStatement s = null;
-        Connection c = HarvestDBConnection.get();
+        DataModelTestDao dao = DataModelTestDao.getInstance();
         try {
-            s = c.prepareStatement("update jobs set status=? where job_id=?");
-            s.setLong(1, newStatus.ordinal());
-            s.setLong(2, jobID);
-            s.executeUpdate();
-        } catch (SQLException e) {
+        	dao.executeUpdate("update jobs set status=:status where job_id=:id",
+        			new ParameterMap(
+        					"status", newStatus.ordinal(),
+        					"id", jobID));
+        } catch (final DataAccessException e) {
             String message = "SQL error changing job state for job with id="
                 + jobID + " in database";
             throw new IOFailure(message, e);
-        } finally {
-            HarvestDBConnection.release(c);
         }
     }
 
