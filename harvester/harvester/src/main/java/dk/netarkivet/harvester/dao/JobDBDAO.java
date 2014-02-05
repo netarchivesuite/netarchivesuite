@@ -970,7 +970,9 @@ public class JobDBDAO extends JobDAO {
 				"prefix", job.getHarvestFilenamePrefix(),
 				"snapshot", job.isSnapshot(),
 				"errors", job.getHarvestErrors(),
-				"errorDetails", job.getHarvestErrorDetails());
+				"errorDetails", job.getHarvestErrorDetails(),
+				"uploadErrors", job.getUploadErrors(),
+				"uploadErrorDetails", job.getUploadErrorDetails());
 	}
 	
 	private Map<String, String> getDomainConfigurationMap(final long jobId) {
