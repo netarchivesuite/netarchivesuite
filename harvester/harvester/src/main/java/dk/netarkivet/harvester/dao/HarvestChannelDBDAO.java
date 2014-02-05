@@ -162,13 +162,7 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 	}
 	
 	@Override
-	public HarvestChannel getChannelForHarvestDefinition(final long harvestDefinitionId) {
-		
-		// Do we have a snapshot harvest here?
-		if (HarvestDefinitionDAO.getInstance().isSnapshot(harvestDefinitionId))  {
-			return HarvestChannel.SNAPSHOT;
-		}
-		
+	public HarvestChannel getChannelForHarvestDefinition(final long harvestDefinitionId) {		
 		return query(
 				"SELECT * FROM harvestchannel C, harvestdefinitions D"
 				+ " WHERE D.channel_id=C.id AND D.harvest_id=:id",

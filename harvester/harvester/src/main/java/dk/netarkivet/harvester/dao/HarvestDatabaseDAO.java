@@ -262,7 +262,7 @@ public abstract class HarvestDatabaseDAO {
 	 * @param paramMap the parameter map
 	 * @return an integer value
 	 */
-	public int queryIntValue(
+	public Integer queryIntValue(
 			final String paramSql, 
 			final ParameterMap paramMap) {
 		return query(paramSql, paramMap, new IntResultExtractor());
@@ -273,7 +273,7 @@ public abstract class HarvestDatabaseDAO {
 	 * @param sql the SQL request
 	 * @return an integer value
 	 */
-	public int queryIntValue(final String sql) {
+	public Integer queryIntValue(final String sql) {
 		return queryIntValue(sql, ParameterMap.EMPTY);
 	}
 	
@@ -283,7 +283,7 @@ public abstract class HarvestDatabaseDAO {
 	 * @param paramMap the parameter map
 	 * @return a long value
 	 */
-	public long queryLongValue(
+	public Long queryLongValue(
 			final String paramSql, 
 			final ParameterMap paramMap) {
 		return query(paramSql, paramMap, new LongResultExtractor());
@@ -294,7 +294,7 @@ public abstract class HarvestDatabaseDAO {
 	 * @param sql the SQL request
 	 * @return a long value
 	 */
-	public long queryLongValue(final String sql) {
+	public Long queryLongValue(final String sql) {
 		return queryLongValue(sql, ParameterMap.EMPTY);
 	}
 	
