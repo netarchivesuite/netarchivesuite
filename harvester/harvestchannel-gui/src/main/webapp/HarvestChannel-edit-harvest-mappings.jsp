@@ -37,8 +37,8 @@ Additionally it allows the user to map harvests to channels.
 <%@page import="dk.netarkivet.harvester.datamodel.HarvestChannel"%>
 <%@page import="dk.netarkivet.harvester.datamodel.SparsePartialHarvest"%>
 <%@page import="java.util.Iterator"%>
-<%@page import="dk.netarkivet.harvester.datamodel.HarvestChannelDAO"%>
-<%@page import="dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO"%>
+<%@page import="dk.netarkivet.harvester.dao.HarvestChannelDAO"%>
+<%@page import="dk.netarkivet.harvester.dao.HarvestDefinitionDAO"%>
 <%@page import="dk.netarkivet.harvester.datamodel.HarvestDefinition"%>
 <%@page import="dk.netarkivet.harvester.webinterface.HarvestChannelAction"%>
 <%@page import="dk.netarkivet.common.utils.I18n"%>

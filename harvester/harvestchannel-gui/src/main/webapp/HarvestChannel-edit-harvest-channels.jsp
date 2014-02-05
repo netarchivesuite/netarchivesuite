@@ -32,11 +32,11 @@ Additionally it allows the user to map harvests to channels.
 
 <%-- Java imports --%>
 <%@page import="dk.netarkivet.harvester.datamodel.HarvestDefinition"%>
-<%@page import="dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO"%>
+<%@page import="dk.netarkivet.harvester.dao.HarvestDefinitionDAO"%>
 <%@page import="dk.netarkivet.harvester.webinterface.HarvestChannelAction"%>
 <%@page import="dk.netarkivet.harvester.datamodel.HarvestChannel"%>
 <%@page import="java.util.Iterator"%>
-<%@page import="dk.netarkivet.harvester.datamodel.HarvestChannelDAO"%>
+<%@page import="dk.netarkivet.harvester.dao.HarvestChannelDAO"%>
 <%@page import="dk.netarkivet.common.utils.I18n"%>
 <%@page import="dk.netarkivet.common.webinterface.HTMLUtils"%>
 <%@page pageEncoding="UTF-8" %>
