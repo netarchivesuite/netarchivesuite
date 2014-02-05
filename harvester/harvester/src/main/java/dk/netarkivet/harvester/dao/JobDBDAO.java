@@ -444,7 +444,7 @@ public class JobDBDAO extends JobDAO {
 		ArgumentNotValid.checkNotNull(channel, "Channel");
 		List<Long> idList = queryLongList(
 				"SELECT job_id FROM jobs WHERE status=:status AND channel=:channel"
-				+ "ORDER BY job_id", 
+				+ " ORDER BY job_id", 
 				new ParameterMap(
 						"status", status.ordinal(), 
 						"channel", channel.getName()));
@@ -942,19 +942,19 @@ public class JobDBDAO extends JobDAO {
 				"status", job.getStatus().ordinal(),
 				"channel", job.getChannel(),
 				"forceMaxCount", job.getForceMaxObjectsPerDomain(),
-				"forceMxBytes", job.getForceMaxBytesPerDomain(),
+				"forceMaxBytes", job.getForceMaxBytesPerDomain(),
 				"forceMaxTime", job.getMaxJobRunningTime(),
-				"orderXml", getMaxLengthStringValue(
+				"orderXmlName", getMaxLengthStringValue(
 						job, 
 						"order.xml name", 
 						job.getOrderXMLName(), 
 						Constants.MAX_NAME_SIZE),
-				"orderXMlDoc", getMaxLengthTextValue(
+				"orderXmlDoc", getMaxLengthTextValue(
 						job, 
 						"order.xml contents", 
 						job.getOrderXMLdoc().asXML(), 
 						Constants.MAX_ORDERXML_SIZE),
-				"seedList", getMaxLengthTextValue(
+				"seeds", getMaxLengthTextValue(
 						job, 
 						"order.xml contents", 
 						job.getSeedListAsString(), 
@@ -968,7 +968,9 @@ public class JobDBDAO extends JobDAO {
 				"edition", initialEdition,
 				"resubmitId", job.getResubmittedAsJob(),
 				"prefix", job.getHarvestFilenamePrefix(),
-				"snapshot", job.isSnapshot());
+				"snapshot", job.isSnapshot(),
+				"errors", job.getHarvestErrors(),
+				"errorDetails", job.getHarvestErrorDetails());
 	}
 	
 	private Map<String, String> getDomainConfigurationMap(final long jobId) {
@@ -977,7 +979,7 @@ public class JobDBDAO extends JobDAO {
 				+ " FROM domains, configurations, job_configs"
 				+ " WHERE job_configs.job_id=:id"
 				+ "  AND job_configs.config_id=configurations.config_id"
-				+ "  AND domains.domain_i =configurations.domain_id";
+				+ "  AND domains.domain_id =configurations.domain_id";
 		if (Settings.get(CommonSettings.DB_SPECIFICS_CLASS).
 				contains(CommonSettings.DB_IS_DERBY_IF_CONTAINS)) {
 			domainStatement += " WITH UR";
@@ -1019,9 +1021,9 @@ public class JobDBDAO extends JobDAO {
 					rs.getLong("harvest_id"), 
 					rs.getString("name"), 
 					rs.getInt("harvest_num"),
-					rs.getString("harvest_errors"), 
-					rs.getString("harvest_error_details"),
+					rs.getString("harvest_errors"),
 					rs.getString("upload_errors"), 
+					rs.getString("orderxml"),
 					rs.getInt("num_configs"),
 					getDateKeepNull(rs, "submitteddate"),
 					getDateKeepNull(rs, "creationdate"),

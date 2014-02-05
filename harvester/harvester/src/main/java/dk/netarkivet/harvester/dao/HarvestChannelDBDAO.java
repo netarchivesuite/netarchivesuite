@@ -90,7 +90,12 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 	@Override
 	public HarvestChannel getByName(final String name) 
 			throws ArgumentNotValid, UnknownID {
-		ArgumentNotValid.checkNotNullOrEmpty(name, "name");
+ArgumentNotValid.checkNotNullOrEmpty(name, "name");
+    	
+        if (HarvestChannel.SNAPSHOT.getName().equals(name)) {
+            return HarvestChannel.SNAPSHOT;
+        }
+        
 		return query(
 				"SELECT * FROM harvestchannel WHERE name=:name",
 				new ParameterMap("name", name),
@@ -192,7 +197,8 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
 		return new ParameterMap(
 				"id", chan.getId(),
 				"name", getStorableName(chan),
-				"isDefault", chan.isDefault());
+				"isDefault", chan.isDefault(),
+				"comments", chan.getComments());
 	}
 
 }
