@@ -161,7 +161,14 @@ class ArchiveFilesReportGenerator {
     /**
      * The name of the report file. It will be generated in the crawl directory.
      */
-    public static final String REPORT_FILE_NAME = "archivefiles-report.txt";
+    public static final String REPORT_FILE_NAME = 
+    		Settings.get(HarvesterSettings.METADATA_ARCHIVE_FILES_REPORT_NAME);
+    
+    /**
+     * The header line of the report file.
+     */
+    public static final String REPORT_FILE_HEADER = 
+    		Settings.get(HarvesterSettings.METADATA_ARCHIVE_FILES_REPORT_HEADER);
 
     /**
      * The Heritrix crawl directory.
@@ -194,7 +201,7 @@ class ArchiveFilesReportGenerator {
             }
             PrintWriter out = new PrintWriter(reportFile);
 
-            out.println("[ARCHIVEFILE] [Opened] [Closed] [Size]");
+            out.println(REPORT_FILE_HEADER);
 
             HashSet<String> arcFilesFromHeritrixOut = new HashSet<String>(); 
             for (Map.Entry<String, ArchiveFilesReportGenerator.ArchiveFileStatus> entry

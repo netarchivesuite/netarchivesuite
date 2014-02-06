@@ -640,7 +640,11 @@
                 <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
-                <generateArchiveFilesReport>true</generateArchiveFilesReport>
+                <archiveFilesReport>
+                	<generate>true</generate>
+                	<fileName>archivefiles-report.txt</fileName>
+                	<fileHeader>[ARCHIVEFILE] [Opened] [Closed] [Size]</fileHeader>
+                </archiveFilesReport>
                 <metadataFormat>arc</metadataFormat>
             </metadata>
         </harvesting>

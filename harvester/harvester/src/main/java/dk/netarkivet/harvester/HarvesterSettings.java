@@ -592,7 +592,29 @@ public class HarvesterSettings {
      * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
      */
     public static String METADATA_GENERATE_ARCHIVE_FILES_REPORT =
-            "settings.harvester.harvesting.metadata.generateArchiveFilesReport";
+            "settings.harvester.harvesting.metadata.archiveFilesReport.generate";
+    
+    /**
+     * <b>settings.harvester.harvesting.metadata.archiveFilesReportName</b> 
+     * If {@link #METADATA_GENERATE_ARCHIVE_FILES_REPORT} is set to true, sets the name of the 
+     * generated report file.
+     * Default value is 'archivefiles-report.txt'.
+     *
+     * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
+     */
+    public static String METADATA_ARCHIVE_FILES_REPORT_NAME =
+            "settings.harvester.harvesting.metadata.archiveFilesReport.fileName";
+    
+    /**
+     * <b>settings.harvester.harvesting.metadata.archiveFilesReportName</b> 
+     * If {@link #METADATA_GENERATE_ARCHIVE_FILES_REPORT} is set to true, sets the header of the 
+     * generated report file. This setting should generally be left to its default value, 
+     * which is '[ARCHIVEFILE] [Opened] [Closed] [Size]'.
+     *
+     * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
+     */
+    public static String METADATA_ARCHIVE_FILES_REPORT_HEADER =
+            "settings.harvester.harvesting.metadata.archiveFilesReport.fileHeader";
 
     /**
      * <b>settings.harvester.aliases.timeout</b> The amount of time in seconds before 

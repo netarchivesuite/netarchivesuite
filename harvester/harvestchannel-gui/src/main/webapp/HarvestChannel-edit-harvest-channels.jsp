@@ -79,7 +79,7 @@ Additionally it allows the user to map harvests to channels.
 <%
     HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
     Iterator<HarvestChannel> chanIter = dao.getAll(true);
-    int rowCOunt = 0;
+    int rowCount = 0;
     while (chanIter.hasNext()) {
     	HarvestChannel channel = chanIter.next();
     	String typeKey = (channel.isSnapshot() 
