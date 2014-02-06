@@ -198,7 +198,7 @@ implements ResultSetExtractor<List<StartedJobInfo>> {
 				HM_COLUMN.processedDocsPerSec.name(), startedJobInfo.getProcessedDocsPerSec(),
 				HM_COLUMN.activeToeCount.name(), startedJobInfo.getActiveToeCount(),
 				HM_COLUMN.status.name(), startedJobInfo.getStatus().ordinal(),
-				HM_COLUMN.tstamp.name(), startedJobInfo.getTimestamp().getTime());
+				HM_COLUMN.tstamp.name(), startedJobInfo.getTimestamp());
 
 		executeUpdate(sql.toString(), params);
 

@@ -130,8 +130,8 @@ public class JobDBDAO extends JobDAO {
 						+ ", forcemaxbytes, forcemaxrunningtime, orderxml, orderxmldoc, seedlist"
 						+ ", harvest_num, startdate, enddate, submitteddate, creationdate"
 						+ ", num_configs, edition, resubmitted_as_job, harvestname_prefix, snapshot)"
-						+ " VALUES (:jobId,:harvestId,:status,:channel,:forceMaxCount,:forceMxBytes"
-						+ ",:forceMaxTime,:orderXml,:orderXMlDoc,:seedList,:harvestNum"
+						+ " VALUES (:jobId,:harvestId,:status,:channel,:forceMaxCount,:forceMaxBytes"
+						+ ",:forceMaxTime,:orderXmlName,:orderXmlDoc,:seeds,:harvestNum"
 						+ ",:startDate,:endDate,:submitted,:created,:numConfigs,:edition,:resubmitId"
 						+ ",:prefix,:snapshot)",
 						getParameterMap(job, initialEdition));
@@ -255,7 +255,7 @@ public class JobDBDAO extends JobDAO {
 						+ ", orderxmldoc=:orderXmlDoc, seedlist=:seeds, harvest_num=:harvestNum"
 						+ ", harvest_errors=:errors, harvest_error_details=:errorDetails"
 						+ ", upload_errors=:uploadErrors, upload_error_details=:uploadErrorDetails"
-						+ ", startdate=:starDate, enddate=:endDate, num_configs=:numConfigs"
+						+ ", startdate=:startDate, enddate=:endDate, num_configs=:numConfigs"
 						+ ", edition=:nextEdition, submitteddate=:submitted, creationdate=:created"
 						+ ", resubmitted_as_job=:resubmitId, harvestname_prefix=:prefix"
 						+ ", snapshot=:snapshot"
