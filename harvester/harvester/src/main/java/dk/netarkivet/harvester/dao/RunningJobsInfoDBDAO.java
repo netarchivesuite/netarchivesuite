@@ -453,7 +453,7 @@ implements ResultSetExtractor<List<StartedJobInfo>> {
 	}
 	
 	@SuppressWarnings("unused")
-	private synchronized int doRemoveInfoForJob(long jobId) {
+	private synchronized int doRemoveInfoForJob(Long jobId) {
 		int deleteCount = 0;
 		
 		ParameterMap pJobId = new ParameterMap("id", jobId);
@@ -542,7 +542,7 @@ implements ResultSetExtractor<List<StartedJobInfo>> {
 			pmaps.add(new ParameterMap( 
 					FR_COLUMN.jobId.name(), jobId,
 					FR_COLUMN.filterId.name(), filterId,
-					FR_COLUMN.tstamp.name(), report.getTimestamp(),
+					FR_COLUMN.tstamp.name(), new Date(report.getTimestamp()),
 					FR_COLUMN.domainName.name(), frl.getDomainName(),
 					FR_COLUMN.currentSize.name(), frl.getCurrentSize(),
 					FR_COLUMN.totalEnqueues.name(), frl.getTotalEnqueues(),
