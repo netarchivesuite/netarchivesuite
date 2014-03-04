@@ -385,8 +385,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     protected void migrateExtendedFieldTableV1toV2() {
         String[] sqlStatements = {
                 "ALTER TABLE extendedfield ADD COLUMN maxlen INT",
-                "ALTER TABLE extendedfield ALTER options VARCHAR(1000)"
-                
+                "ALTER TABLE extendedfield ALTER COLUMN options TYPE VARCHAR(1000)"
         };
         HarvestDBConnection.updateTable("extendedfield", 2, sqlStatements);   
     }
@@ -397,7 +396,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     protected  void migrateExtendedFieldTableValueV1toV2() {
     	
         String[] sqlStatements = {
-        		"ALTER TABLE extendedfieldvalue ALTER content VARCHAR(30000) NOT NULL"
+        		"ALTER TABLE extendedfieldvalue ALTER COLUMN content TYPE VARCHAR(30000), ALTER COLUMN content SET NOT NULL"
         };
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
     }
