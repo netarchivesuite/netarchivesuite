@@ -89,8 +89,16 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
         return new ArchiveBatchFilter("OnlyCrawlLog") {
             @Override
             public boolean accept(ArchiveRecordBase record) {
-                return record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
-            }
+                // All ARC records have a URL, but the WarcInfo records doesn't 
+                if (record.bIsWarc){
+                    // In the WARC file the warc-info hasn't a URL. the other
+                    // records in the metadata file have that.
+                   return (record.getHeader().getUrl() != null 
+                           && record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT));
+                } else {
+                   return record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
+                }
+            }            
         };
     }
 
