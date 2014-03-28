@@ -114,12 +114,15 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
         ArgumentNotValid.checkNotNull(record, "ArchiveRecordBase record");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
+        log.info("looking for crawl-log lines for domain: " + domain);
+        
         BufferedReader arcreader
                 = new BufferedReader(new InputStreamReader(record.getInputStream()));
+        String line = null;
         try {
-            for(String line = arcreader.readLine(); line != null;
+            for(line = arcreader.readLine(); line != null;
                 line = arcreader.readLine()) {
-
+                
                 // Parse a single crawl-log line into parts
                 // The parts are here separated by white space.
                 // part 4 of the crawl-line is the url component
@@ -136,18 +139,14 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
                 //    this URL belongs to the domain in question
                 // B. If it has a Discovery URL (6th component) and 
                 //    this URL belongs to the domain in question
-                if (parts.length > 3 && DomainUtils.domainNameFromHostname(
-                        new FixedUURI(parts[URL_PART_INDEX], 
-                                true).getReferencedHost()).equals(domain)) {
+                if (parts.length > 3 && getDomainFromUrlPart(
+                        parts[URL_PART_INDEX]).equals(domain)) {
                     os.write(line.getBytes("UTF-8"));
                     os.write('\n');
 
                 } else if (parts.length > 5 && !parts[5].equals("-")
-                        && DomainUtils.domainNameFromHostname(
-                                new FixedUURI(
-                                        parts[DISCOVERY_URL_PART_INDEX],
-                                        true).getReferencedHost()).equals(
-                                                domain)) {
+                        && getDomainFromUrlPart(parts[DISCOVERY_URL_PART_INDEX])
+                            .equals(domain)) {
                     os.write(line.getBytes("UTF-8"));
                     os.write('\n');
                 }
@@ -155,6 +154,9 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
             }
         } catch (IOException e) {
             throw new IOFailure("Unable to process (w)arc record", e);
+        } catch (Throwable e1) {
+              e1.printStackTrace();
+              System.out.println("caused by line '" + line + "'");
         } finally {
             try {
                 arcreader.close(); 
@@ -164,6 +166,27 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
         }
     }
 
+    /**
+     * Return domain from urlpart, if feasibly. Return empty string otherwise.
+     * @param urlpart One of the URL part of the crawllog-line.
+     * @return domain from urlpart, if feasibly. Return empty string otherwise
+     */
+    private String getDomainFromUrlPart(String urlpart) {
+        String domain = null;
+        try {
+            domain = DomainUtils.domainNameFromHostname(
+                new FixedUURI(urlpart, true).getReferencedHost());
+        } catch (Exception e){
+            log.warn("Unable to extract a domain name from the url ' " + urlpart 
+                    + "' due to exception", e);
+        }
+        if (domain == null) {
+            domain = "";
+        }
+        return domain;
+    }
+    
+    
     /**
      * Does nothing, no finishing is needed.
      * @param os Not used.
