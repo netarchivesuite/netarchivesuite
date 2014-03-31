@@ -35,8 +35,7 @@ import dk.netarkivet.harvester.datamodel.HarvestChannel;
 public class HarvesterChannels {
 
     /**
-     * Prefix for the channel used to send
-     * {@link dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage}s.
+     * Prefix for the channel used to send CrawlProgressMessages.
      */
     private static final String HARVEST_MONITOR_CHANNEL_PREFIX = "HARVESTMON";
 
@@ -95,9 +94,9 @@ public class HarvesterChannels {
 
     /**
      * Prefix for the channels used to send
-     * @{link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}s
+     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}s
      * and
-     * @{link {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}}s
+     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}s
      */
     private static final String HARVEST_CHANNEL_VALIDITY_PREFIX = "HCHAN_VAL_";
 
@@ -110,7 +109,7 @@ public class HarvesterChannels {
 
     /**
      * Return the queue for sending
-     * @{link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}s.
+     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}s.
      *
      * @return the <code>ChannelID</code> object for the queue.
      */
@@ -130,7 +129,7 @@ public class HarvesterChannels {
 
     /**
      * Return the queue for sending
-     * @{link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}s.
+     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}s.
      *
      * @return the <code>ChannelID</code> object for the queue.
      */

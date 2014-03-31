@@ -1,7 +1,7 @@
-/* File:        $Id: HarvestChannelDAO.java 2712 2013-06-17 14:43:52Z ngiraud $
- * Revision:    $Revision: 2712 $
- * Author:      $Author: ngiraud $
- * Date:        $Date: 2013-06-17 16:43:52 +0200 (Mon, 17 Jun 2013) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and

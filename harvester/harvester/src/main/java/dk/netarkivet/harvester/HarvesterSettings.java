@@ -304,7 +304,7 @@ public class HarvesterSettings {
     /**
      * <b>settings.harvester.harvesting.channel</b>: <br> Harvest channel to take
      * jobs from. This is the default channel assigned to the harvest controller.
-     * @see HarvestChannel.
+     * @see dk.netarkivet.harvester.datamodel.HarvestChannel
      *
      * NOTE: this one is also used in SingleMBeanObject parsing information to
      * System state
@@ -364,7 +364,7 @@ public class HarvesterSettings {
     /**
      * <b>settings.harvester.snapshotChannelId</b>: <br> ID of the unique harvest channel for 
      * broad crawls.
-     * @see HarvestChannel.
+     * @see dk.netarkivet.harvester.datamodel.HarvestChannel
      */
     public static String SNAPSHOT_HARVEST_CHANNEL_ID
             = "settings.harvester.snapshotChannelId";
