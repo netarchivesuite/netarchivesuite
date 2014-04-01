@@ -391,14 +391,15 @@ public class HarvestDocumentation {
         for (File archiveFile : archiveFiles) {
             if (!(archiveFile.getName().startsWith(files.getHarvestnamePrefix()))) {
                 // move unidentified file to lostfiles directory
-                System.out.println("removing unidentified file " + archiveFile.getAbsolutePath());
+                log.info("removing unidentified file " + archiveFile.getAbsolutePath());
                 try {
                     if (!lostfilesDir.exists()) {
                         FileUtils.createDir(lostfilesDir);
-                        File moveTo = new File(lostfilesDir, archiveFile.getName());
+                    }
+                        File moveTo = new File(lostfilesDir,
+                                               archiveFile.getName());
                         archiveFile.renameTo(moveTo);
                         movedFiles.add(moveTo);
-                    }
                 }  catch (PermissionDenied e) {
                     log.warn("Not allowed to make oldjobs dir '"
                             + lostfilesDir.getAbsolutePath() + "'", e);

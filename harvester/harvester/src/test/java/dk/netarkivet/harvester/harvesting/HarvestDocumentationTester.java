@@ -405,7 +405,14 @@ public class HarvestDocumentationTester extends TestCase {
         }
 
     }
-    
+
+    /**
+     * Test that any files not part of the current harvest are moved away to
+     * the oldjobsdir during postprocessing. This test includes a check for
+     * issue https://sbforge.org/jira/browse/NAS-2270 which resulted in at
+     * most one old file being movied away.
+     * @throws Exception
+     */
     public void testMoveAwayForeignFiles() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestDocumentation.class,
                                                  "moveAwayForeignFiles",
@@ -458,12 +465,13 @@ public class HarvestDocumentationTester extends TestCase {
         assertFalse(
                 "Moved file " + goneFile + " should have gone from crawldir",
                 goneFile.exists());
+
         File keptFile = new File(TestInfo.WORKING_DIR,
                                  Constants.ARCDIRECTORY_NAME +
                                  "/" + goodFile);
         assertTrue("Good file " + keptFile + " should not have moved",
                    keptFile.exists());
-        /*
+
         File badMetadataFile = new File(TestInfo.WORKING_DIR,
                                         Constants.ARCDIRECTORY_NAME +
                                         "/43-metadata-1.arc");
@@ -474,7 +482,7 @@ public class HarvestDocumentationTester extends TestCase {
         assertTrue(
                 "Metadata file " + movedMetadataFile + " should be in oldjobs",
                 movedMetadataFile.exists());
-                */
+
     }
 
     /**
