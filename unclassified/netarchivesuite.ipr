@@ -11,18 +11,6 @@
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="false" />
   </component>
-  <component name="CheckStyle-IDEA">
-    <option name="configuration">
-      <map>
-        <entry key="active-configuration" value="FILE:/home/csr/projects/netarchivesuite/.checkstyle:" />
-        <entry key="check-test-classes" value="false" />
-        <entry key="location-0" value="CLASSPATH:/sun_checks.xml:The default CheckStyle rules." />
-        <entry key="location-1" value="FILE:/home/csr/projects/netarchivesuite/.checkstyle:" />
-        <entry key="location-2" value="FILE:/home/csr/projects/netarchivesuite/NetarchiveSuite_checks.xml:" />
-        <entry key="thirdparty-classpath" value="" />
-      </map>
-    </option>
-  </component>
   <component name="ClearCaseSharedConfig">
     <option name="myUseUcmModel" value="true" />
   </component>
@@ -716,8 +704,6 @@
           <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
           <option name="ALIGN_MULTILINE_THROWS_LIST" value="true" />
           <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
-          <option name="ALIGN_MULTILINE_PARENTHESIZED_EXPRESSION" value="true" />
-          <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
           <option name="CALL_PARAMETERS_WRAP" value="1" />
           <option name="METHOD_PARAMETERS_WRAP" value="1" />
           <option name="EXTENDS_LIST_WRAP" value="1" />
@@ -725,17 +711,11 @@
           <option name="EXTENDS_KEYWORD_WRAP" value="1" />
           <option name="THROWS_KEYWORD_WRAP" value="1" />
           <option name="BINARY_OPERATION_WRAP" value="1" />
-          <option name="BINARY_OPERATION_SIGN_ON_NEXT_LINE" value="true" />
           <option name="TERNARY_OPERATION_WRAP" value="1" />
-          <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
           <option name="FOR_STATEMENT_WRAP" value="1" />
-          <option name="ARRAY_INITIALIZER_WRAP" value="1" />
           <option name="ASSIGNMENT_WRAP" value="1" />
-          <option name="PLACE_ASSIGNMENT_SIGN_ON_NEXT_LINE" value="true" />
-          <option name="WRAP_COMMENTS" value="true" />
           <option name="ASSERT_STATEMENT_WRAP" value="1" />
           <option name="IF_BRACE_FORCE" value="3" />
-          <option name="DOWHILE_BRACE_FORCE" value="3" />
           <option name="WHILE_BRACE_FORCE" value="3" />
           <option name="FOR_BRACE_FORCE" value="3" />
           <option name="PARENT_SETTINGS_INSTALLED" value="true" />
