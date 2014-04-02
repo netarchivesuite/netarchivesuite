@@ -4,13 +4,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sleepycat.bind.EntryBinding;
+import com.sleepycat.bind.serial.SerialBinding;
+import com.sleepycat.bind.serial.StoredClassCatalog;
 import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -20,6 +22,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.Transaction;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.tools.LoadDatabaseChecksumArchive;
@@ -34,7 +37,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
- * ChecksumArchive persisted with a Berkeley DB JE Database.
+ * A ChecksumArchive persisted with a Berkeley DB JE Database.
  * Migrating from the {@link FileChecksumArchive} to the DatabaseChecksumArchive is 
  * done with the {@link LoadDatabaseChecksumArchive} tool.
  */
@@ -43,7 +46,8 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
     /**
      * The logger used by this class.
      */
-    private static Log log = LogFactory.getLog(FileChecksumArchive.class);
+    private static Log log = LogFactory.getLog(DatabaseChecksumArchive.class);
+    
     /** The singleton instance of this class. */
     private static DatabaseChecksumArchive instance;
     /** The basedir for the database itself. */
@@ -54,8 +58,20 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
     private static final String DATABASE_NAME = "CHECKSUM";
     /** The Database environment. */
     private Environment env;
-    /** The Database itself */
+    /** The Checksum Database itself */
     private Database checksumDB;
+    
+    /** The Database to store class information. */
+    private Database classDB;
+    /** The name of the class database. */
+    private static final String CLASS_DATABASE_NAME = "CLASS";
+    
+    /** The Berkeley DB binder for the data object and keyObject in our database, 
+    * i.e. Url and Long, respectively. 
+    **/
+    private EntryBinding objectBinding;
+    private EntryBinding keyBinding;
+    
     /** The minSpaceLeft value. */
     private long minSpaceLeft;
     
@@ -135,7 +151,7 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
         if (!homeDirectory.isDirectory()) {
             homeDirectory.mkdirs();
         }
-        log.info("Opening DB-environment in: " + homeDirectory.getAbsolutePath());
+        log.info("Opening ChecksumDB-environment in: " + homeDirectory.getAbsolutePath());
 
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setTransactional(true);
@@ -145,8 +161,17 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
         dbConfig.setTransactional(true);
         dbConfig.setAllowCreate(true);
         
+        Transaction nullTransaction = null;
         env = new Environment(homeDirectory, envConfig);
-        checksumDB = env.openDatabase(null, DATABASE_NAME, dbConfig);
+        checksumDB = env.openDatabase(nullTransaction, DATABASE_NAME, dbConfig);
+        // Open the database that stores your class information.
+        
+        classDB = env.openDatabase(nullTransaction, CLASS_DATABASE_NAME, dbConfig);
+        StoredClassCatalog classCatalog = new StoredClassCatalog(classDB);
+        
+        // Create the binding
+        objectBinding = new SerialBinding(classCatalog, String.class);
+        keyBinding = new SerialBinding(classCatalog, String.class);
     }
 
     @Override
@@ -264,35 +289,29 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
 
     @Override
     public String getChecksum(String filename) {
-        byte[] keyBytes = null;
-        try {
-            keyBytes = filename.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalState("Unexpected '" 
-                    + UnsupportedEncodingException.class.getName()
-                    + "' exception: " + e);
-        }
-        DatabaseEntry key = new DatabaseEntry(keyBytes);
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        DatabaseEntry theKey = new DatabaseEntry();
+        DatabaseEntry theData = new DatabaseEntry(); 
+        
+        Transaction nullTransaction = null;
+        LockMode nullLockMode = null;
+        DatabaseEntry key = new DatabaseEntry();
+        keyBinding.objectToEntry(filename, key);
         DatabaseEntry data = new DatabaseEntry();
 
         OperationStatus status = null;
         try {
-            status = checksumDB.get(null, key, data, null);
+            status = checksumDB.get(nullTransaction, key, data, nullLockMode);
         } catch (DatabaseException e) {
-            throw new IllegalState("Unexpected '" 
-                    + DatabaseException.class.getName() 
-                    + "' exception: " + e);
+            throw new IOFailure(
+                    "Could not retrieve a checksum for the filename '" + filename + "'", e);
         }
+        
         String resultChecksum = null;
         if (status == OperationStatus.SUCCESS) {
-          try {
-            resultChecksum = new String(data.getData(), "UTF-8");
-          } catch (UnsupportedEncodingException e) {
-              throw new IllegalState("Unexpected '" 
-                      + UnsupportedEncodingException.class.getName()
-                      + "' exception: " + e);
-          }
+            resultChecksum = (String) objectBinding.entryToObject(data);
         }
+        
         return resultChecksum;
     }
 
@@ -302,13 +321,14 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
     }
 
     @Override
-    public void upload(RemoteFile file, String filename) {
+    public synchronized void upload(RemoteFile file, String filename) {
         ArgumentNotValid.checkNotNull(file, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
         InputStream input = null;
 
         try {
+            log.debug("Commencing ");
             input = file.getInputStream();
             String newChecksum = calculateChecksum(input);
             if (hasEntry(filename)) {
@@ -338,23 +358,25 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
 
     }
     
+    /**
+     * Update the database with a new filename and its checksum.
+     * @param filename A given filename
+     * @param checksum The related checksum
+     */
     public void put(String filename, String checksum) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
 
-        DatabaseEntry theKey = null;
-        DatabaseEntry theData = null;
-        try {
-            theKey = new DatabaseEntry(filename.getBytes("UTF-8"));
-            theData = new DatabaseEntry(checksum.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new ArgumentNotValid(e.toString());
-        }
+        DatabaseEntry theKey = new DatabaseEntry();
+        DatabaseEntry theData = new DatabaseEntry(); 
+        keyBinding.objectToEntry(filename, theKey);
+        objectBinding.objectToEntry(checksum, theData);
+        Transaction nullTransaction = null;
 
         try {
-            checksumDB.put(null, theKey, theData);
+            checksumDB.put(nullTransaction, theKey, theData);
         } catch (DatabaseException e) {
-           throw new IOFailure("Database exception occuring during ingest", e);
+                throw new IOFailure("Database exception occuring during ingest", e);
         }
     }  
     
@@ -372,7 +394,7 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
     public File getArchiveAsFile() {
         File tempFile = null;
         try {
-            tempFile = File.createTempFile("tmp", "tmp", 
+            tempFile = File.createTempFile("allFilenamesAndChecksums", "tmp", 
                     FileUtils.getTempDir());
             dumpDatabaseToFile(tempFile, false);
         } catch (IOException e) {
@@ -434,7 +456,7 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
     public File getAllFilenames()  {
         File tempFile = null;
         try {
-            tempFile = File.createTempFile("tmp", "tmp", 
+            tempFile = File.createTempFile("allFilenames", "tmp", 
                     FileUtils.getTempDir());
         } catch (IOException e) {
             throw new IOFailure(e.toString());
