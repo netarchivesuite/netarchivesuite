@@ -65,12 +65,18 @@ import org.archive.util.TextUtils;
 public class ExtractorOAI extends Extractor {
 
     /**
-     * Regular expressions matching the resumptionToken.
+     * Regular expression matching the simple resumptionToken like this.
+     * <resumptionToken>oai_dc/421315/56151148/100/0/292/x/x/x</resumptionToken>
      */
-    private static final String RESUMPTION_TOKEN_MATCH
+    public static final String SIMPLE_RESUMPTION_TOKEN_MATCH
         = "(?i)<resumptionToken>\\s*(.*)\\s*</resumptionToken>";
     
-    private static final String RESUMPTION_TOKEN_MATCH_2
+    /**
+     * Regular expression matching the extended resumptionToken with attributes like this.
+     * <resumptionToken cursor="0" completeListSize="421315">oai_dc/421315/56151148/100/0/292/x/x/x</resumptionToken>
+     * This is seen in OAI targets used by PURE.
+     */
+    public static final String EXTENDED_RESUMPTION_TOKEN_MATCH
     = "(?i)<resumptionToken\\s*cursor=\"[0-9]+\"\\s*completeListSize=\"[0-9]+\">\\s*(.*)\\s*</resumptionToken>";
     
      /** The class logger. */
@@ -161,8 +167,8 @@ public class ExtractorOAI extends Extractor {
      * @return true iff a resumptionToken is found and a link added.
      */
     public boolean processXml(CrawlURI curi, CharSequence cs) {
-        Matcher m = TextUtils.getMatcher(RESUMPTION_TOKEN_MATCH, cs);
-        Matcher mPure = TextUtils.getMatcher(RESUMPTION_TOKEN_MATCH_2, cs);
+        Matcher m = TextUtils.getMatcher(SIMPLE_RESUMPTION_TOKEN_MATCH, cs);
+        Matcher mPure = TextUtils.getMatcher(EXTENDED_RESUMPTION_TOKEN_MATCH, cs);
         boolean matchesPure = mPure.find(); 
         boolean matches = m.find();
         String token = null;
