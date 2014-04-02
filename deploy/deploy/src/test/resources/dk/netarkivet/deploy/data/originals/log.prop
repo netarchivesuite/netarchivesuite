@@ -18,6 +18,7 @@ java.util.logging.ConsoleHandler.level=WARNING
 dk.netarkivet.monitor.logging.CachingLogHandler.formatter=java.util.logging.SimpleFormatter
 dk.netarkivet.monitor.logging.CachingLogHandler.level=INFO
 
+
 #define logging levels
 org.level=WARNING
 org.archive.level=WARNING
