@@ -55,14 +55,7 @@ public class DerbySpecificsTester extends DataModelTestCase {
         
     }
 
-
-
-    /**
-     * FIXME Broken by connection code refactoring 
-     * https://sbforge.org/jira/browse/NAS-1924
-     * Prefixed with "failing" to disable test.
-     */
-    public void failingtestGetTemporaryTable() throws SQLException {
+    public void testGetTemporaryTable() throws SQLException {
         Connection c = HarvestDBConnection.get();
 
         try {
