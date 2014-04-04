@@ -92,7 +92,7 @@ public class HarvestControllerServerTester extends TestCase {
     private static final String CLOSE_MESSAGE = "Closing HarvestControllerServer.";
 
     private static final HarvestChannel focusedHarvestChannel 
-        = new HarvestChannel("FOCUSED", "Channel for focused harvests", true);
+        = new HarvestChannel("FOCUSED", false, true, "Channel for focused harvests");
     
     HarvestControllerServer hcs;
 
@@ -300,7 +300,7 @@ public class HarvestControllerServerTester extends TestCase {
         String channel = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
         NetarkivetMessage naMsg = new DoOneCrawlMessage(
                 theJob,
-                HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("FOCUSED", "", true)),
+                HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("FOCUSED", false, true, "")),
                 new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
         JMSConnectionMockupMQ.updateMsgID(naMsg, "id1");

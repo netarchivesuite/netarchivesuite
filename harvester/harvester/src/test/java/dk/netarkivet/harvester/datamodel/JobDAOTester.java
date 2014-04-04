@@ -58,7 +58,7 @@ public class JobDAOTester extends DataModelTestCase {
 
     /** We start out with one job in status DONE. */
     private static final int INITIAL_JOB_COUNT = 1;
-    
+
     private HarvestChannel highChan;
     private HarvestChannel lowChan;
 
@@ -68,8 +68,8 @@ public class JobDAOTester extends DataModelTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        highChan = new HarvestChannel("FOCUSED", "", true);
-        lowChan = HarvestChannel.SNAPSHOT;
+        highChan = new HarvestChannel("FOCUSED", false, true, "");
+        lowChan = new HarvestChannel("SNAPSHOT", true, true, "");
         HarvestDAOUtils.resetDAOs();
     }
 
@@ -151,26 +151,26 @@ public class JobDAOTester extends DataModelTestCase {
         		" DomainConfigurationMap of original Job",
                      job.getDomainConfigurationMap(),
                      readJob.getDomainConfigurationMap());
-       
+
         assertEquals("harvestnamePrefix of read Job should equal" +
                 " harvestnamePrefix of original Job",
                      job.getHarvestFilenamePrefix(),
                      readJob.getHarvestFilenamePrefix());
-        
+
         String defaultNamePrefix = "2-5678";
         assertEquals("harvestnamePrefix of read Job should equal" +
-                " '2-5678'", defaultNamePrefix, 
+                " '2-5678'", defaultNamePrefix,
                      readJob.getHarvestFilenamePrefix());
         readJob = dao.read(job.getJobID());
-        
+
         final String harvestnamePrefix = "netarkivet-collection";
         readJob.setHarvestFilenamePrefix(harvestnamePrefix);
         dao.update(readJob);
         readJob = dao.read(job.getJobID());
-        assertEquals("harvestname_prefix should be 'netarkivet-collection' but was' " 
-        + readJob.getHarvestFilenamePrefix(), harvestnamePrefix, readJob.getHarvestFilenamePrefix()); 
-        
-        
+        assertEquals("harvestname_prefix should be 'netarkivet-collection' but was' "
+        + readJob.getHarvestFilenamePrefix(), harvestnamePrefix, readJob.getHarvestFilenamePrefix());
+
+
         // Job.getSettingsXMLfiles() is probably obsolete
         // No decided if we need Job.getActualStart() and Job.getActualStop()
         //- but we probably do (at least nice to have)
@@ -276,7 +276,7 @@ public class JobDAOTester extends DataModelTestCase {
                 "The DomainConfigurationMap of the retrieved job does not " +
                 "match that of the original job - domainConfiguration name "
                         + anotherConfiguration.getName() + " not found",
-                domainConfigurationMap.get(anotherConfiguration.getDomainName()), 
+                domainConfigurationMap.get(anotherConfiguration.getDomainName()),
                 		anotherConfiguration.getName());
     }
 
@@ -881,7 +881,7 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Should have new edition",
                 1L, newJob1.getEdition());
         assertEquals("Should have new ID", newID, newJob1.getJobID());
-        /* assertNotSame("The harvestnamePrefixes should not be the same", oldJob1.getHarvestFilenamePrefix(), 
+        /* assertNotSame("The harvestnamePrefixes should not be the same", oldJob1.getHarvestFilenamePrefix(),
                 newJob1.getHarvestFilenamePrefix()); */
     }
 
@@ -910,7 +910,7 @@ public class JobDAOTester extends DataModelTestCase {
      // Assume 1st job has id=2, and Last job has id 15
         createTestJobs(2L, 15L);
         JobDAO dao = JobDAO.getInstance();
-        
+
         for (long i = 1; i < 16; i++) {
             Job oldJob = dao.read(i);
             if (oldJob.getStatus() != JobStatus.SUBMITTED &&

@@ -454,6 +454,7 @@
             <tld>vi</tld>
             <tld>vn</tld>
             <tld>vu</tld>
+            <tld>wien</tld>
             <tld>wf</tld>
             <tld>ws</tld>
             <tld>ye</tld>
@@ -528,7 +529,7 @@
         <applicationName>NA</applicationName>
         <applicationInstanceId/>
     </common><harvester>
-    	<snapshotChannelId>SNAPSHOT</snapshotChannelId>
+    	<!-- snapshotChannelId>SNAPSHOT</snapshotChannelId -->
         <performer/>
         <aliases>
             <timeout>31536000</timeout>

@@ -187,7 +187,7 @@ public class IntegrityTests extends DataModelTestCase {
     //9) Checks that we listen for jobs again
     public void testListenersAddedAndRemoved() throws IOException {
         ChannelID hacoQueue = HarvesterChannels.getHarvestJobChannelId(
-                new HarvestChannel("test", "", true));
+                new HarvestChannel("test", false, true, ""));
 
         //Listener that waits for a message, notifies us, and then waits for
         //notification before continuing.
@@ -234,7 +234,7 @@ public class IntegrityTests extends DataModelTestCase {
         synchronized(listenerDummy) {
             //Send the job
             jobDispatcher.doOneCrawl(j, "test", "test", "test",
-                    new HarvestChannel("test", "", true),
+                    new HarvestChannel("test", false, true, ""),
                     "unittesters",
                     new ArrayList<MetadataEntry>());
 
@@ -350,7 +350,7 @@ public class IntegrityTests extends DataModelTestCase {
         //TODO ensure, that we have some alias-metadata to produce here
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
         jobDispatcher.doOneCrawl(j, "test", "test", "test", 
-        		new HarvestChannel("test", "", true), "unittesters", metadata);
+        		new HarvestChannel("test", false, true, ""), "unittesters", metadata);
         //Note: Since this returns, we need to wait for replymessage
         synchronized(listener) {
             while (listener.messages.size() < 2) {

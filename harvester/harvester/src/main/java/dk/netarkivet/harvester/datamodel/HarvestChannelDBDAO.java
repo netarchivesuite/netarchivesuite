@@ -63,10 +63,25 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
             HarvestDBConnection.release(connection);
         }
 
+        /*
+        String defaultSnapshotChannelName = Settings.get(HarvesterSettings.SNAPSHOT_HARVEST_CHANNEL_ID);
+        if (defaultSnapshotChannelName != null && defaultSnapshotChannelName.length() > 0) {
+        	HarvestChannel harvestChannel = lookupName(defaultSnapshotChannelName);
+        	if (harvestChannel == null) {
+        		harvestChannel = new HarvestChannel(defaultSnapshotChannelName,
+        				true, true, "Default channel for focused harvest.");
+        		create(harvestChannel);
+        	}
+        }
+        */
+
         if (!defaultFocusedChannelExists()) {
             throw new IllegalState("No default harvest channel defined for focused jobs!");
         }
     }
+
+    private static final String get_by_id_sql = 
+    		"SELECT * FROM harvestchannel WHERE id=?";
 
     @Override
     public HarvestChannel getById(final long id)
@@ -74,13 +89,12 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
         Connection connection = HarvestDBConnection.get();
         try {
             PreparedStatement stm = connection.prepareStatement(
-                    "SELECT * FROM harvestchannel WHERE id=?");
+            		get_by_id_sql);
             stm.setLong(1, id);
             ResultSet rs = stm.executeQuery();
             if (!rs.next()) {
                 throw new UnknownID("No harvestchannel with id " + id);
             }
-
             return buildFromResultSet(rs);
         } catch (SQLException e) {
             throw new UnknownID("Failed to get harvestchannel with id " + id, e);
@@ -89,20 +103,22 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
         }
     }
 
+    private static final String get_by_name_sql = 
+    		"SELECT * FROM harvestchannel WHERE name=?";
+
     @Override
     public HarvestChannel getByName(final String name)
             throws ArgumentNotValid, UnknownID {
-
     	ArgumentNotValid.checkNotNullOrEmpty(name, "name");
-    	
+    	/*
         if (HarvestChannel.SNAPSHOT.getName().equals(name)) {
             return HarvestChannel.SNAPSHOT;
         }
-
+        */
         Connection connection = HarvestDBConnection.get();
         try {
             PreparedStatement stm = connection.prepareStatement(
-                    "SELECT * FROM harvestchannel WHERE name=?");
+            		get_by_name_sql);
             stm.setString(1, name);
             ResultSet rs = stm.executeQuery();
             if (!rs.next()) {
@@ -117,21 +133,49 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
         }
     }
 
+    /*
+    private HarvestChannel lookupName(final String name)
+            throws ArgumentNotValid, UnknownID {
+    	ArgumentNotValid.checkNotNullOrEmpty(name, "name");
+    	HarvestChannel harvestChannel = null;
+    	Connection connection = HarvestDBConnection.get();
+        try {
+            PreparedStatement stm = connection.prepareStatement(
+            		get_by_name_sql);
+            stm.setString(1, name);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+            	harvestChannel = buildFromResultSet(rs);
+            }
+        } catch (SQLException e) {
+            throw new UnknownID("Failed to get harvestchannel with name '" + name + "'", e);
+        } finally {
+            HarvestDBConnection.release(connection);
+        }
+        return harvestChannel;
+    }
+    */
+
+    private static final String create_sql = 
+    		"INSERT INTO harvestchannel(name, snapshot, isdefault, comments) "
+    		+ "VALUES (?, ?, ?, ?)";
+
     @Override
     public void create(final HarvestChannel harvestChan) {
     	ArgumentNotValid.checkNotNull(harvestChan, "HarvestChannel harvestChan");
-    	
+    	/*
         if (HarvestChannel.SNAPSHOT.equals(harvestChan)) {
             throw new PermissionDenied("Cannot store SNAPSHOT channel!");
         }
+        */
         Connection connection = HarvestDBConnection.get();
         try {
             PreparedStatement stm = connection.prepareStatement(
-                    "INSERT INTO harvestchannel(name, comments, isdefault) "
-                            + "VALUES (?,?,?)");
+            		create_sql);
             stm.setString(1, harvestChan.getName());
-            stm.setString(2, harvestChan.getComments());
+            stm.setBoolean(2, harvestChan.isSnapshot());
             stm.setBoolean(3, harvestChan.isDefault());
+            stm.setString(4, harvestChan.getComments());
             if (stm.executeUpdate() < 1) {
                 throw new IOFailure(
                         "Failed to create harvestchannel '" + harvestChan.getName() + "'");
@@ -144,21 +188,24 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
         }
     }
 
+    private static final String update_sql = 
+    		"UPDATE harvestchannel SET name=?, isDefault=?, comments=? WHERE id=?";
+
     @Override
     public void update(HarvestChannel harvestChan) {
     	ArgumentNotValid.checkNotNull(harvestChan, "HarvestChannel harvestChan");
-    	
-        if (HarvestChannel.SNAPSHOT.equals(harvestChan)) {
+        if (harvestChan.isSnapshot()) {
             throw new PermissionDenied("Cannot update SNAPSHOT channel!");
         }
         Connection connection = HarvestDBConnection.get();
         try {
             PreparedStatement stm = connection.prepareStatement(
-                    "UPDATE harvestchannel SET name=?, comments=? WHERE id=?");
+            		update_sql);
             stm.setString(1, harvestChan.getName());
-            stm.setString(2, harvestChan.getComments());
-            stm.setLong(3, harvestChan.getId());
-            if (stm.executeUpdate() < 1) {
+            stm.setBoolean(2, harvestChan.isDefault());
+            stm.setString(3, harvestChan.getComments());
+            stm.setLong(4, harvestChan.getId());
+            if (stm.executeUpdate() != 1) {
                 throw new IOFailure(
                         "Failed to update harvestchannel with id " + harvestChan.getId());
             }
@@ -175,25 +222,29 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
         return getAll(true);
     }
 
+    private static final String get_all_sql = 
+    		"SELECT * FROM harvestchannel ORDER BY name";
+
     @Override
     public Iterator<HarvestChannel> getAll(final boolean includeSnapshot) {
         Connection connection = HarvestDBConnection.get();
         try {
             PreparedStatement stm = connection.prepareStatement(
-                    "SELECT * FROM harvestchannel ORDER BY name");
+            		get_all_sql);
             ResultSet rs = stm.executeQuery();
-            ArrayList<HarvestChannel> cats = new ArrayList<HarvestChannel>();
+            ArrayList<HarvestChannel> channelList = new ArrayList<HarvestChannel>();
             while (rs.next()) {
-                cats.add(new HarvestChannel(
-                        rs.getLong("id"),
-                        rs.getString("name"),
-                        rs.getString("comments"),
-                        rs.getBoolean("isdefault")));
+            	boolean isSnapshot = rs.getBoolean("snapshot");
+            	if (!isSnapshot || includeSnapshot) {
+                    channelList.add(new HarvestChannel(
+                            rs.getLong("id"),
+                            rs.getString("name"),
+                            rs.getBoolean("snapshot"),
+                            rs.getBoolean("isdefault"),
+                            rs.getString("comments")));
+            	}
             }
-            if (includeSnapshot) {
-                cats.add(HarvestChannel.SNAPSHOT);
-            }
-            return cats.iterator();
+            return channelList.iterator();
         } catch (SQLException e) {
             throw new IOFailure("Failed to get harvest channels", e);
         } finally {
@@ -201,12 +252,15 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
         }
     }
 
+    private static final String get_default_focused_channel_exists_sql = 
+    		"SELECT * FROM harvestchannel WHERE snapshot = true AND isdefault=true";
+
     @Override
     public boolean defaultFocusedChannelExists() {
         Connection connection = HarvestDBConnection.get();
         try {
             PreparedStatement stm = connection.prepareStatement(
-                    "SELECT * FROM harvestchannel WHERE isdefault=true");
+            		get_default_focused_channel_exists_sql);
             ResultSet rs = stm.executeQuery();
             return rs.next();
         } catch (SQLException e) {
@@ -217,26 +271,34 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
         }
     }
 
+    private static final String get_default_channel_sql = 
+    		"SELECT * FROM harvestchannel WHERE snapshot = ? AND isdefault=true";
+
     @Override
-    public HarvestChannel getDefaultChannel(boolean snapshot) {
-        if (snapshot) {
-            return HarvestChannel.SNAPSHOT;
-        }
+    public HarvestChannel getDefaultChannel(boolean isSnapshot) {
         Connection connection = HarvestDBConnection.get();
         try {
-            PreparedStatement stm = connection.prepareStatement(
-                    "SELECT * FROM harvestchannel WHERE isdefault=true");
+            PreparedStatement stm = connection.prepareStatement(get_default_channel_sql);
+            stm.setBoolean(1, isSnapshot);
             ResultSet rs = stm.executeQuery();
             if (!rs.next()) {
-                throw new IOFailure("No default harvest channel for snapshot=" + snapshot);
+                throw new IOFailure("No default harvest channel for snapshot=" + isSnapshot);
             }
             return buildFromResultSet(rs);
         } catch (SQLException e) {
             throw new IOFailure(
-                    "Failed to get default harvest channel for snapshot=" + snapshot, e);
+                    "Failed to get default harvest channel for snapshot=" + isSnapshot, e);
         } finally {
             HarvestDBConnection.release(connection);
         }
+    }
+
+    private static final String get_channel_for_hd_sql;
+
+    static {
+    	get_channel_for_hd_sql = 
+    			"SELECT * FROM harvestchannel C, harvestdefinitions D "
+    			+ "WHERE D.channel_id=C.id AND D.harvest_id=?";
     }
 
     @Override
@@ -244,8 +306,7 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
         Connection connection = HarvestDBConnection.get();
         try {
             PreparedStatement stm = connection.prepareStatement(
-                    "SELECT * FROM harvestchannel C, harvestdefinitions D "
-                            + "WHERE D.channel_id=C.id AND D.harvest_id=?");
+            		get_channel_for_hd_sql);
             stm.setLong(1, harvestDefinitionId);
             ResultSet rs = stm.executeQuery();
             if (!rs.next()) {
@@ -263,8 +324,9 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
         return new HarvestChannel(
                 rs.getLong("id"),
                 rs.getString("name"),
-                rs.getString("comments"),
-                rs.getBoolean("isdefault"));
+                rs.getBoolean("snapshot"),
+                rs.getBoolean("isdefault"),
+                rs.getString("comments"));
     }
 
 }

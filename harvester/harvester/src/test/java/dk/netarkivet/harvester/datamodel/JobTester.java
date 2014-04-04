@@ -88,8 +88,8 @@ public class JobTester extends DataModelTestCase {
                 CommonSettings.NOTIFICATIONS_CLASS, 
                 RememberNotifications.class.getName());
         Settings.set(HarvesterSettings.SPLIT_BY_OBJECTLIMIT, "false");
-        highChan = new HarvestChannel("FOCUSED", "", true);
-        lowChan = HarvestChannel.SNAPSHOT;
+        highChan = new HarvestChannel("FOCUSED", false, true, "");
+        lowChan = new HarvestChannel("SNAPSHOT", true, true, "");
     }
 
     public void tearDown() throws Exception {

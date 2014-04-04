@@ -42,7 +42,7 @@ public class ChannelIDTester extends TestCase {
      */
     public void testChannelIdentity(){
         ChannelID harvestJobChannel = HarvesterChannels.getHarvestJobChannelId(
-                new HarvestChannel("FOCUSED", "", true));
+                new HarvestChannel("FOCUSED", false, true, ""));
         ChannelID[] channelArray =
          {Channels.getAllBa(), harvestJobChannel, Channels.getAnyBa(),
           Channels.getError(), Channels.getTheRepos(), Channels.getTheBamon(),

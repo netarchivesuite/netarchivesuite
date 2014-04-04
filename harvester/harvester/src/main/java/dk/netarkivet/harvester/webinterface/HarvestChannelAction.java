@@ -85,7 +85,7 @@ public abstract class HarvestChannelAction {
             		String name = request.getParameter(CHANNEL_NAME);
             		HTMLUtils.forwardOnEmptyParameter(context, name, "harvest channel name");
             		HarvestChannelDAO dao = HarvestChannelDAO.getInstance();
-            		dao.create(new HarvestChannel(name, request.getParameter(COMMENTS), false));
+            		dao.create(new HarvestChannel(name, false, false, request.getParameter(COMMENTS)));
             		break;
             	case mapHarvestToChannel:
             		long harvestId = Long.parseLong(request.getParameter(HARVEST_ID));

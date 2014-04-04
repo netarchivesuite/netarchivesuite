@@ -74,7 +74,7 @@ public class TestInfo {
         } catch (SQLException e) {
             throw new IOFailure(e.getMessage());
         }
-        return Job.createJob(0L, new HarvestChannel("test", "", true),
+        return Job.createJob(0L, new HarvestChannel("test", false, true, ""),
                 DomainDAO.getInstance()
                 .read("netarkivet.dk")
                 .getConfiguration("Engelsk_netarkiv_et_niveau"), 0);

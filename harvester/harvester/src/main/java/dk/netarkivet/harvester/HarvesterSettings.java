@@ -366,8 +366,10 @@ public class HarvesterSettings {
      * broad crawls.
      * @see dk.netarkivet.harvester.datamodel.HarvestChannel
      */
+    /*
     public static String SNAPSHOT_HARVEST_CHANNEL_ID
             = "settings.harvester.snapshotChannelId";
+     */
 
     /**
      * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>

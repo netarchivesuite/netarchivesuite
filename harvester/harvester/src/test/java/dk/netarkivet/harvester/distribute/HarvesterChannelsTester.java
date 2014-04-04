@@ -41,8 +41,9 @@ public class HarvesterChannelsTester extends TestCase {
     public void testIsTopic() {
         ChannelID[]queues = new ChannelID[]{
                 HarvesterChannels.getHarvestJobChannelId(
-                        new HarvestChannel("FOCUSED", "", true)),
-                HarvesterChannels.getHarvestJobChannelId(HarvestChannel.SNAPSHOT),
+                        new HarvestChannel("FOCUSED", false, true, "")),
+                HarvesterChannels.getHarvestJobChannelId(
+                		new HarvestChannel("SNAPSHOT", true, true, "")),
                 HarvesterChannels.getHarvestMonitorChannel()
         };
         for (ChannelID queue : queues) {
@@ -55,7 +56,7 @@ public class HarvesterChannelsTester extends TestCase {
         ChannelID[]topics = new ChannelID[]{
                 HarvesterChannels.getHarvesterStatusChannel()
         };
-        
+
         for (ChannelID topic : topics) {
             String topicName = topic.getName();
             assertTrue(topicName + " is a topic",

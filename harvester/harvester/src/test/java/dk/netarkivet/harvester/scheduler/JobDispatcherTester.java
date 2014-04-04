@@ -61,7 +61,7 @@ public class JobDispatcherTester extends TestCase {
     private HarvestDefinitionDAO harvestDefinitionDAO;
     private JobDAO jobDAO;
     private JMSConnection jmsConnection;
-    private HarvestChannel SELECTIVE_HARVEST_CHANNEL = new HarvestChannel("FOCUSED", "", true);
+    private HarvestChannel SELECTIVE_HARVEST_CHANNEL = new HarvestChannel("FOCUSED", false, true, "");
     private final ArgumentCaptor<DoOneCrawlMessage> crawlMessageCaptor =
             ArgumentCaptor.forClass(DoOneCrawlMessage.class);
     private Job jobMock = createJob(1);
@@ -151,6 +151,8 @@ public class JobDispatcherTester extends TestCase {
                 metadataEntry.getData()));
     }
 
+    private static final HarvestChannel SNAPSHOT = new HarvestChannel("SNAPSHOT", true, true, "");
+
     /**
      * Test sending + check that we send a message
      * Uses MessageTestHandler()
@@ -167,13 +169,13 @@ public class JobDispatcherTester extends TestCase {
         reset(jmsConnection);
 
         Job snapshotJob = createJob(2);
-        prepareDefaultMockAnswers(HarvestChannel.SNAPSHOT, snapshotJob);
-        jobDispatcher.submitNextNewJob(HarvestChannel.SNAPSHOT);
+        prepareDefaultMockAnswers(SNAPSHOT, snapshotJob);
+        jobDispatcher.submitNextNewJob(SNAPSHOT);
         verify(jmsConnection).send(crawlMessageCaptor.capture());
         assertTrue(snapshotJob == crawlMessageCaptor.getValue().getJob());
 
         assertEquals(
-                HarvesterChannels.getHarvestJobChannelId(HarvestChannel.SNAPSHOT),
+                HarvesterChannels.getHarvestJobChannelId(SNAPSHOT),
                 crawlMessageCaptor.getValue().getTo());
     }
 

@@ -19,7 +19,7 @@ public class JobUtils {
      */
     public static Job getJobLowPriority(File ORDER_FILE) {
         try {
-            HarvestChannel lowChan = HarvestChannel.SNAPSHOT;
+            HarvestChannel lowChan = new HarvestChannel("SNAPSHOT", true, true, "");
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
                     Job.class, Long.class, Map.class, String.class, Boolean.TYPE, 
                     Long.TYPE, Long.TYPE, Long.TYPE, JobStatus.class, String.class, 
@@ -40,7 +40,7 @@ public class JobUtils {
     public static Job getHighPriorityJob(File ONE_LEVEL_ORDER_FILE, JobStatus jobstate, String templateName) {
         Document d = XmlUtils.getXmlDoc(ONE_LEVEL_ORDER_FILE);
         try {
-            HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
+            HarvestChannel highChan = new HarvestChannel("FOCUSED", false, true, "");
             Constructor<Job> c = ReflectUtils.getPrivateConstructor(
                     Job.class, Long.class, Map.class, String.class, Boolean.TYPE, 
                     Long.TYPE, Long.TYPE, Long.TYPE, JobStatus.class, String.class, 
@@ -62,7 +62,7 @@ public class JobUtils {
                 Job.class, Long.class, Map.class, String.class, Boolean.TYPE, 
                 Long.TYPE,Long.TYPE, Long.TYPE, JobStatus.class, String.class, Document.class,
                 String.class, Integer.TYPE, Long.class);
-        HarvestChannel lowChan = HarvestChannel.SNAPSHOT;
+        HarvestChannel lowChan = new HarvestChannel("SNAPSHOT", true, true, "");
         return c.newInstance(42L, Collections.<String, String>emptyMap(),
                 lowChan.getName(), lowChan.isSnapshot(), -1L, -1L, 0L,
                 JobStatus.STARTED, "default_template",

@@ -50,7 +50,7 @@ public class HarvesterStatusReceiverTest extends TestCase  {
     }
     
     public void testStatusReception() {
-        HarvestChannel highChan = new HarvestChannel("FOCUSED", "", true);
+        HarvestChannel highChan = new HarvestChannel("FOCUSED", false, true, "");
         HarvesterReadyMessage readyMessage =
                 new HarvesterReadyMessage("Test", highChan.getName());
         when(harvestChannelDao.getByName(highChan.getName())).thenReturn(highChan);
