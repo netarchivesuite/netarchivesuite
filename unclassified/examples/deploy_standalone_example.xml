@@ -226,7 +226,7 @@ National Library.
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>LOWPRIORITY</channel>
+                            <channel>SNAPSHOT</channel>
                             <heritrix>
                                 <guiPort>8190</guiPort> 
                                 <jmxPort>8191</jmxPort>
@@ -253,7 +253,7 @@ National Library.
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>HIGHPRIORITY</channel>
+                            <channel>FOCUSED</channel>
                             <heritrix>
                                 <guiPort>8192</guiPort> 
                                 <jmxPort>8193</jmxPort>
