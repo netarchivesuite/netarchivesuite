@@ -1,3 +1,27 @@
+/* File:       $Id: ArchiveFilenameParser.java 2748 2013-07-25 16:38:46Z svc $
+ * Revision:   $Revision: 2748 $
+ * Author:     $Author: svc $
+ * Date:       $Date: 2013-07-25 18:38:46 +0200 (Thu, 25 Jul 2013) $
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * University Library, the National Library of France and the Austrian
+ * National Library.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package dk.netarkivet.archive.checksum;
 
 import java.io.File;
@@ -290,8 +314,6 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
     @Override
     public String getChecksum(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        DatabaseEntry theKey = new DatabaseEntry();
-        DatabaseEntry theData = new DatabaseEntry(); 
         
         Transaction nullTransaction = null;
         LockMode nullLockMode = null;
