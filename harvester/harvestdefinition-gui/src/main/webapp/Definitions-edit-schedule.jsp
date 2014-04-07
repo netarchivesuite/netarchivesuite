@@ -58,7 +58,7 @@ Parameters:
      * endHarvestTime: a date/time field in format DD/MM YYYY hh:mm. Must be
      *                   set if continue="beginning"
      * numberOfHarvests: int > 0. Must be set if continue="numberOfHarvests"
---%><%@ page import="java.text.SimpleDateFormat,java.util.Date,dk.netarkivet.common.exceptions.ForwardedToErrorPage,dk.netarkivet.common.utils.I18n,dk.netarkivet.common.webinterface.HTMLUtils,dk.netarkivet.harvester.Constants,dk.netarkivet.harvester.datamodel.DailyFrequency,dk.netarkivet.harvester.datamodel.Frequency,dk.netarkivet.harvester.datamodel.HourlyFrequency,dk.netarkivet.harvester.datamodel.MonthlyFrequency,dk.netarkivet.harvester.datamodel.RepeatingSchedule,dk.netarkivet.harvester.datamodel.Schedule,dk.netarkivet.harvester.datamodel.ScheduleDAO,dk.netarkivet.harvester.datamodel.TimedSchedule,dk.netarkivet.harvester.datamodel.WeeklyFrequency,dk.netarkivet.harvester.webinterface.ScheduleDefinition"
+--%><%@ page import="java.text.SimpleDateFormat,java.util.Date,dk.netarkivet.common.exceptions.ForwardedToErrorPage,dk.netarkivet.common.utils.I18n,dk.netarkivet.common.webinterface.HTMLUtils,dk.netarkivet.harvester.Constants,dk.netarkivet.harvester.datamodel.DailyFrequency,dk.netarkivet.harvester.datamodel.Frequency,dk.netarkivet.harvester.datamodel.HourlyFrequency,dk.netarkivet.harvester.datamodel.MonthlyFrequency,dk.netarkivet.harvester.datamodel.RepeatingSchedule,dk.netarkivet.harvester.datamodel.Schedule,dk.netarkivet.harvester.datamodel.ScheduleDAO,dk.netarkivet.harvester.datamodel.TimedSchedule,dk.netarkivet.harvester.datamodel.WeeklyFrequency,dk.netarkivet.harvester.webinterface.ScheduleDefinition, dk.netarkivet.harvester.datamodel.MinuteFrequency"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -156,6 +156,10 @@ Parameters:
             <%
                 String sel = " selected=\"selected\" ";
             %>
+            <option value="minutes" <%if (oldFrequency != null) {
+                            out.print((oldFrequency instanceof MinuteFrequency) ? sel : "");
+                        }%> ><fmt:message key="harvestdefinition.schedule.edit.minutes"/>
+                        </option>
             <option value="hours" <%if (oldFrequency != null) {
                 out.print((oldFrequency instanceof HourlyFrequency) ? sel : "");
             }%> ><fmt:message key="harvestdefinition.schedule.edit.hours"/>
@@ -191,7 +195,7 @@ Parameters:
                value="whenever" <%=ch1%>/><fmt:message key="harvestdefinition.schedule.edit.anytime"/>
     </td>
     </tr>
-    <tr><td></td>
+    <tr id="atimerow"><td></td>
     <td><input type="radio" name="harvestTime" value="aTime"
                id="atime" <%=ch2%> /><span id="puttimehere"/>
     </td>

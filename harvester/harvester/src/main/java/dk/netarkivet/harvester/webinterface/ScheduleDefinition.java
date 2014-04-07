@@ -38,6 +38,7 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.DailyFrequency;
 import dk.netarkivet.harvester.datamodel.Frequency;
 import dk.netarkivet.harvester.datamodel.HourlyFrequency;
+import dk.netarkivet.harvester.datamodel.MinuteFrequency;
 import dk.netarkivet.harvester.datamodel.MonthlyFrequency;
 import dk.netarkivet.harvester.datamodel.Schedule;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
@@ -299,7 +300,7 @@ public final class ScheduleDefinition {
         HTMLUtils.forwardOnEmptyParameter(context,
                 TIMESPAN_PARAMETER, HARVEST_TIME_PARAMETER);
         HTMLUtils.forwardOnIllegalParameter(context, TIMESPAN_PARAMETER,
-                "days", "hours", "weeks", "months");
+                "days", "hours", "weeks", "months", "minutes");
         HTMLUtils.forwardOnIllegalParameter(context, HARVEST_TIME_PARAMETER,
                 "whenever", "aTime");
         ServletRequest request = context.getRequest();
@@ -312,11 +313,13 @@ public final class ScheduleDefinition {
                 return new DailyFrequency(frequency);
             } else if (timespan.equals("weeks")) {
                 return new WeeklyFrequency(frequency);
-            } else {
+            } else if (timespan.equals("minutes")) {
+                return new MinuteFrequency(frequency);
+            }
+            else {
                 return new MonthlyFrequency(frequency);
             }
         }
-
         int frequencyMinutes;
         int frequencyHours = 0;
         int frequencyDay = 0;
@@ -343,7 +346,10 @@ public final class ScheduleDefinition {
         } else if (timespan.equals("weeks")) {
             return new WeeklyFrequency(frequency,  frequencyDay,
                     frequencyHours, frequencyMinutes);
-        } else {
+        } else if (timespan.equals("minutes")) {
+            return new MinuteFrequency(frequency);
+        }
+        else {
             return new MonthlyFrequency(frequency, frequencyDate,
                     frequencyHours, frequencyMinutes);
         }

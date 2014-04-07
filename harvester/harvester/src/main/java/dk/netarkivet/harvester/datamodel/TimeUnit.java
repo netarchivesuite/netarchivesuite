@@ -58,7 +58,11 @@ public enum TimeUnit {
      * "on hour" and "on day of month" will be set, i.e. "on day of week" 
      * is unused.
      **/
-    MONTHLY;
+    MONTHLY,
+    /**
+     *
+     */
+    MINUTE;
 
     /**
      * Helper method that gives a proper object from e.g. a DB-stored value.
@@ -74,6 +78,7 @@ public enum TimeUnit {
             case 2: return DAILY;
             case 3: return WEEKLY;
             case 4: return MONTHLY;
+            case 5: return MINUTE;
             default: throw new ArgumentNotValid("Invalid time unit " + tu);
         }
     } 

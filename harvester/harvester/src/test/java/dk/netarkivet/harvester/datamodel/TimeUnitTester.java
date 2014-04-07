@@ -41,6 +41,7 @@ public class TimeUnitTester extends TestCase {
         assertEquals(TimeUnit.DAILY, TimeUnit.fromOrdinal(2));
         assertEquals(TimeUnit.WEEKLY, TimeUnit.fromOrdinal(3));
         assertEquals(TimeUnit.MONTHLY, TimeUnit.fromOrdinal(4));
+        assertEquals(TimeUnit.MINUTE, TimeUnit.fromOrdinal(5));
         try {
             TimeUnit.fromOrdinal(0);
             fail("Should throw ArgumentNotValid when giving arg 0");
@@ -48,7 +49,7 @@ public class TimeUnitTester extends TestCase {
             // Expected
         }
         try {
-            TimeUnit.fromOrdinal(5);
+            TimeUnit.fromOrdinal(6);
             fail("Should throw ArgumentNotValid when giving arg 5");
         } catch (ArgumentNotValid e) {
             // Expected

@@ -245,6 +245,9 @@ public abstract class Frequency {
                             hour, minute);
                 }
                 break;
+            case MINUTE:
+                freq = new MinuteFrequency(numtimeunits);
+                break;
             default:
                 throw new NotImplementedException(
                         "We don't know how to make a Frequency for timeunit "

@@ -152,6 +152,8 @@ This page contains javascript supporting calendar handling.
         saveScheduleValues(select.form);
 
         spanElement = document.getElementById('puttimehere');
+        atimerowElement = document.getElementById('atimerow');
+        atimerowElement.style.visibility='visible';
 
         var freq_type;
         for(i=0; i<select.options.length; i++) {
@@ -168,6 +170,9 @@ This page contains javascript supporting calendar handling.
             spanElement.innerHTML = '<fmt:message key="at.0.1.every.2"><fmt:param><input type=\"text\" size=\"2\" name=\"frequency_hours\" id=\"frequency_hours\" onchange=\"check(\'atime\');\"/></fmt:param><fmt:param><input type=\"text\" size=\"2\" name=\"frequency_minutes\" id=\"frequency_minutes\" onchange=\"check(\'atime\');\"/></fmt:param><fmt:param><select name="frequency_day" id="frequency_day" onchange="check(\'atime\');"><option value=\"2\"><fmt:message key="monday"/></option><option value=\"3\"><fmt:message key="tuesday"/></option><option value=\"4\"><fmt:message key="wednesday"/></option><option value=\"5\"><fmt:message key="thursday"/></option><option value=\"6\"><fmt:message key="friday"/></option><option value=\"7\"><fmt:message key="saturday"/></option><option value=\"1\"><fmt:message key="sunday"/></option></select></fmt:param></fmt:message>';
         } else if (freq_type == 'months') {
             spanElement.innerHTML = '<fmt:message key="at.0.1.on.2"><fmt:param><input type=\"text\" size=\"2\" name=\"frequency_hours\" id=\"frequency_hours\" onchange=\"check(\'atime\');\"/></fmt:param><fmt:param><input type=\"text\" size=\"2\" name=\"frequency_minutes\" id=\"frequency_minutes\" onchange=\"check(\'atime\');\"/></fmt:param><fmt:param><input type="text" size="2" name="frequency_date" id="frequency_date" onchange="check(\'atime\');\"></fmt:param></fmt:message>';
+        } else if (freq_type == 'minutes') {
+            atimerowElement.style.visibility='hidden';
+            spanElement.innerHTML = '';
         }
         restoreScheduleValues(select.form);
     }

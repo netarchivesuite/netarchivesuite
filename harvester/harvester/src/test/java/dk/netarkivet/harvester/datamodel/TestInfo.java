@@ -128,6 +128,7 @@ public class TestInfo {
             null, new DailyFrequency(1), HEREANDNOW_SCHEDULE_NAME, TESTSCHEDULE_COMMENTS);
 
     private static final Frequency TWO_HOURLY_FREQUENCY = new HourlyFrequency(2, 42);
+    private static final Frequency FIVE_MINUTE_FREQUENCY = new MinuteFrequency(5);
     public static final String TESTSCHEDULE_HOURLY_NAME = "Two hours";
     public static Schedule TESTSCHEDULE_HOURLY = Schedule.getInstance(START_DATE, END_DATE,
             TWO_HOURLY_FREQUENCY, TESTSCHEDULE_HOURLY_NAME, TESTSCHEDULE_COMMENTS);
@@ -144,6 +145,7 @@ public class TestInfo {
     public static final String TESTSCHEDULE_MONTHLY_NAME = "Quarterly";
     public static Schedule TESTSCHEDULE_MONTHLY = Schedule.getInstance(null, NUM_REPEATS,
             MONTHLY_FREQUENCY, TESTSCHEDULE_MONTHLY_NAME, TESTSCHEDULE_COMMENTS);
+    public static Schedule TESTSCHEDULE_MINUTES = Schedule.getInstance(null, null, FIVE_MINUTE_FREQUENCY, "5minutes", "hello world");
 
     public static final String DOMAIN_NAME = "bt.dk";
     public static final String CONFIGURATION_NAME = "Deep";

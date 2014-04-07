@@ -107,6 +107,11 @@ public class ScheduleDAOTester extends DataModelTestCase {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_MONTHLY);
     }
 
+    /** Test schedule with minute-based frequency */
+    public void testNormalUsageMinutes() {
+        doTestNormalUsage(TestInfo.TESTSCHEDULE_MINUTES);
+    }
+
     /**
      * Verify that basic exceptions works:
      * Get an instance of a ScheduleDAO
