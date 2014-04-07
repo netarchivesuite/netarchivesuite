@@ -112,11 +112,13 @@ public final class ReplicaCacheHelpers {
             // and insert the variables for the entry to the replica table.
             statement = con.prepareStatement(
                     "INSERT INTO replica "
-                    + "(replica_id, replica_name, replica_type) "
-                    + "VALUES ( ?, ?, ?)");
+                        + "(replica_id, replica_name, replica_type) "
+                        + "(SELECT ?,?,? from replica WHERE replica_id=? HAVING count(*) = 0)"
+            );
             statement.setString(1, rep.getId());
             statement.setString(2, rep.getName());
             statement.setInt(3, rep.getType().ordinal());
+            statement.setString(4, rep.getId());
 
             // execute the SQL statement
             statement.executeUpdate();

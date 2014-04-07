@@ -178,11 +178,6 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 // does not exist in the database and must be added.
                 log.info("Inserting replica '" + rep.toString()
                         + "' in database.");
-                try {
-                    connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
-                } catch (SQLException e) {
-                    throw new IOFailure("Could not set required transaction isolation level.", e);
-                }
                 ReplicaCacheHelpers.insertReplicaIntoDB(rep, connection);
             } else {
                 // Otherwise it already exists in the DB.
