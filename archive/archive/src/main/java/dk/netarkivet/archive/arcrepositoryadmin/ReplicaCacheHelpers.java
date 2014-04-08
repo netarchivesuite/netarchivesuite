@@ -119,9 +119,9 @@ public final class ReplicaCacheHelpers {
             statement.setString(2, rep.getName());
             statement.setInt(3, rep.getType().ordinal());
             statement.setString(4, rep.getId());
-
-            // execute the SQL statement
-            statement.executeUpdate();
+            log.debug("Executing insert, conditional on " + rep.getId() + " not already existing in the database.");
+            int result = statement.executeUpdate();
+            log.debug("Insert statement for " + rep.getId() + " returned " + result);
             con.commit();
         } catch (SQLException e) {
             throw new IOFailure("Cannot add replica '" + rep
