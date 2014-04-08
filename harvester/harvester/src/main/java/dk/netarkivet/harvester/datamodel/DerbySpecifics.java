@@ -463,13 +463,16 @@ public abstract class DerbySpecifics extends DBSpecifics {
         String createStatement = "CREATE TABLE harvestchannel ("
             + "id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY, "
             + "name VARCHAR(300) NOT NULL UNIQUE,"
-            + "comments VARCHAR(30000),"
-            + "isdefault BOOLEAN NOT NULL"
+            + "issnapshot BOOLEAN NOT NULL,"
+            + "isdefault BOOLEAN NOT NULL,"
+            + "comments VARCHAR(30000)"
             + ")";
-        String insertStatementOne = "INSERT INTO harvestchannel(name, isdefault, comments) "
-                + "VALUES(\'FOCUSED\', true, \'Channel for focused harvests\')";
+        String insertStatementOne = "INSERT INTO harvestchannel(name, issnapshot, isdefault, comments) "
+                + "VALUES(\'SNAPSHOT\', true, true, \'Channel for snapshot harvests\')";
+        String insertStatementTwo = "INSERT INTO harvestchannel(name, issnapshot, isdefault, comments) "
+                + "VALUES(\'FOCUSED\', false, true, \'Channel for focused harvests\')";
         HarvestDBConnection.updateTable("harvestchannel", 1, new String[]{
-                createStatement, insertStatementOne   
+                createStatement, insertStatementOne, insertStatementTwo   
         });
     }
     

@@ -157,7 +157,7 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
     */
 
     private static final String create_sql = 
-    		"INSERT INTO harvestchannel(name, snapshot, isdefault, comments) "
+    		"INSERT INTO harvestchannel(name, issnapshot, isdefault, comments) "
     		+ "VALUES (?, ?, ?, ?)";
 
     @Override
@@ -239,7 +239,7 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
                     channelList.add(new HarvestChannel(
                             rs.getLong("id"),
                             rs.getString("name"),
-                            rs.getBoolean("snapshot"),
+                            rs.getBoolean("issnapshot"),
                             rs.getBoolean("isdefault"),
                             rs.getString("comments")));
             	}
@@ -253,7 +253,7 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
     }
 
     private static final String get_default_focused_channel_exists_sql = 
-    		"SELECT * FROM harvestchannel WHERE snapshot = true AND isdefault=true";
+    		"SELECT * FROM harvestchannel WHERE issnapshot = true AND isdefault=true";
 
     @Override
     public boolean defaultFocusedChannelExists() {
@@ -272,7 +272,7 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
     }
 
     private static final String get_default_channel_sql = 
-    		"SELECT * FROM harvestchannel WHERE snapshot = ? AND isdefault=true";
+    		"SELECT * FROM harvestchannel WHERE issnapshot = ? AND isdefault=true";
 
     @Override
     public HarvestChannel getDefaultChannel(boolean isSnapshot) {
@@ -324,7 +324,7 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
         return new HarvestChannel(
                 rs.getLong("id"),
                 rs.getString("name"),
-                rs.getBoolean("snapshot"),
+                rs.getBoolean("issnapshot"),
                 rs.getBoolean("isdefault"),
                 rs.getString("comments"));
     }
