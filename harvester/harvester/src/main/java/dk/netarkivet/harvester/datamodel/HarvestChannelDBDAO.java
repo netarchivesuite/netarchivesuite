@@ -234,12 +234,12 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
             ResultSet rs = stm.executeQuery();
             ArrayList<HarvestChannel> channelList = new ArrayList<HarvestChannel>();
             while (rs.next()) {
-            	boolean isSnapshot = rs.getBoolean("snapshot");
+            	boolean isSnapshot = rs.getBoolean("issnapshot");
             	if (!isSnapshot || includeSnapshot) {
                     channelList.add(new HarvestChannel(
                             rs.getLong("id"),
                             rs.getString("name"),
-                            rs.getBoolean("issnapshot"),
+                            isSnapshot,
                             rs.getBoolean("isdefault"),
                             rs.getString("comments")));
             	}

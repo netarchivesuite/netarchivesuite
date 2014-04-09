@@ -107,6 +107,10 @@ National Library.
                 <webapplication>webpages/History.war</webapplication>
             </siteSection>
             <siteSection>
+                <class>dk.netarkivet.harvester.webinterface.HarvestChannelSiteSection</class>
+                <webapplication>webpages/HarvestChannel.war</webapplication>
+            </siteSection>
+            <siteSection>
                 <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
                 <webapplication>webpages/BitPreservation.war</webapplication>
             </siteSection>
