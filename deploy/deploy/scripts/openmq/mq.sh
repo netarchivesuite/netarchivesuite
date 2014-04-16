@@ -20,10 +20,10 @@ installMQ()
 
       echo "Customizing broker configuration."
       updateConfig
-      startBroker
     else
       echo "Openmq already installed."
     fi
+    startBroker
 }
 
 updateConfig()
@@ -39,16 +39,28 @@ updateConfig()
 
 startBroker()
 {
-    $INSTALLDIR/mq/bin/imqbrokerd &
-    sleep 3
-    echo Broker started
+    if pgrep -f "com.sun.messaging.jmq.jmsserver.Broker" >/dev/null 2>&1
+        then
+            echo "Broker is already running."
+        else
+            echo "Starting broker"
+            $INSTALLDIR/mq/bin/imqbrokerd &
+            sleep 3
+            echo "Broker started"
+        fi
 }
 
 stopBroker()
 {
-    pkill -f "com.sun.messaging.jmq.jmsserver.Broker"
-    sleep 3
-    echo Broker stopped
+    if pgrep -f "com.sun.messaging.jmq.jmsserver.Broker" >/dev/null 2>&1
+        then
+            echo "Stopping broker"
+            pkill -f "com.sun.messaging.jmq.jmsserver.Broker"
+            sleep 3
+            echo "Broker stopped"
+        else
+            echo "Broker is not running"
+    fi
 }
 
 case $1 in
@@ -66,7 +78,7 @@ case $1 in
         then
             echo "Broker is running."
         else
-            echo "Broker is stopped."
+            echo "Broker is not running."
         fi
         ;;
     *)
