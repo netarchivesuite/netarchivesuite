@@ -271,15 +271,6 @@
       <facet-type id="web" />
     </autodetection-disabled>
   </component>
-  <component name="HudsonMonitorComponent">
-    <option name="authenticationRequired" value="true" />
-    <option name="password" value="Zentril.2" />
-    <option name="refreshInterval" value="1" />
-    <option name="serverAddress" value="hudson.sbforge.org" />
-    <option name="timeOutTextField" value="30" />
-    <option name="username" value="mss" />
-    <option name="viewName" value="" />
-  </component>
   <component name="IdProvider" IDEtalkID="D36C6F163E695DAE3A55BA4FA982A0F9" />
   <component name="InspectionProjectProfileManager">
     <profiles>
