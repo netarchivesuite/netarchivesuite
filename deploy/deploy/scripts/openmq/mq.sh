@@ -12,6 +12,7 @@ installMQ()
       cd $INSTALLDIR
       wget http://download.java.net/mq/open-mq/4.5.2/latest/openmq4_5_2-binary-Linux_X86.zip
       unzip openmq4*.zip
+      cd -
 
       echo "Initial start of broker to create configurations."
       startBroker
