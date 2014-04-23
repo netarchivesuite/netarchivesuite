@@ -243,8 +243,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
                         "//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
 
         addStep("Click the 'End time' header link twice",
-                "The table should now be againsorted descending according to" +
-                        " End time.");
+                "The table should now again be sorted descending according to End time.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
         PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);

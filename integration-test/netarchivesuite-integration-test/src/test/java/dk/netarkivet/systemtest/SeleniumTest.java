@@ -57,7 +57,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
 
     @BeforeSuite(alwaysRun=true)
     public void setupTest() {
-        environmentManager = new TestEnvironmentManager(getTestX(), 8071);
+        environmentManager = new TestEnvironmentManager(getTestX(), "http://kb-test-adm-001.kb.dk", 8071);
         applicationManager = new ApplicationManager(environmentManager);
 
         deployTestSystem();
@@ -66,7 +66,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     }
     
     /**
-     * Start the test system, either the full system including restting of settings/DB, or just reploy of individual
+     * Start the test system, either the full system including resetting of settings/DB, or just reploy of individual
      * component code.
      */
     private void deployTestSystem() {
@@ -95,7 +95,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     private void initialiseSelenium() {
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        baseUrl = "http://kb-test-adm-001.kb.dk:" + environmentManager.getPort();
+        baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         applicationManager.waitForGUIToStart(60);
 
@@ -108,7 +108,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     @AfterSuite(alwaysRun=true)
     public void shutdown() {
         try {
-        SelectiveHarvestPageHelper.deactivateAllHarvests();
+            SelectiveHarvestPageHelper.deactivateAllHarvests();
             driver.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,8 +118,6 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     /**
      * Identifies the test on the test system. More concrete this value will be
      * used for the test environment variable.
-     * 
-     * @return
      */
     protected String getTestX() {
         return "SystemTest";

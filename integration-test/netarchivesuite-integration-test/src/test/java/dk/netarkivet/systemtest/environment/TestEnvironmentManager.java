@@ -24,14 +24,19 @@
  */
 package dk.netarkivet.systemtest.environment;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import dk.netarkivet.systemtest.TestLogger;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import dk.netarkivet.systemtest.TestLogger;
 import org.apache.commons.io.IOUtils;
-
-import java.io.*;
 
 /**
  * Provides utilites for performing deployment related commands in the test environment.
@@ -39,7 +44,8 @@ import java.io.*;
 public class TestEnvironmentManager {
     protected final TestLogger log = new TestLogger(getClass());
     private final String TESTX;
-    private final String PORT;
+    private final String GUI_HOST;
+    private final String GUI_PORT;
     private final String TIMESTAMP;
     private final String MAILRECEIVERS;
 
@@ -47,24 +53,31 @@ public class TestEnvironmentManager {
      * The following environment definitions are used <ul>
      * <ul>
      * <li>TIMESTAMP = svn revision
-     * <li>PORT = systemtest.port property or 8071 if undefined
+     * <li>GUI_PORT = systemtest.port property or 8071 if undefined
      * <li>MAILRECEIVERS = systemtest.mailreceivers property
      * <li>TESTX = The supplied test name
      * </ul>
      * @param testX Defines the test name this test should be run under in the test system.
      */
-    public TestEnvironmentManager(String testX, int port) {
+    public TestEnvironmentManager(String testX, String host, int port) {
         TESTX = testX;
-        PORT = System.getProperty("systemtest.port", Integer.toString(port));
+        GUI_HOST = System.getProperty("systemtest.host", host);
+        GUI_PORT = System.getProperty("systemtest.port", Integer.toString(port));
         TIMESTAMP = lookupRevisionValue();
         MAILRECEIVERS = System.getProperty("systemtest.mailrecievers");
     }
+    /**
+     * @return The host the gui is run on.
+     */
+    public String getGuiHost() {
+        return GUI_HOST;
+    }
 
     /**
-     * @return The port the web is run on.
+     * @return The port the web gui is run on.
      */
-    public String getPort() {
-        return PORT;
+    public String getGuiPort() {
+        return GUI_PORT;
     }
     
     /**
@@ -247,7 +260,7 @@ public class TestEnvironmentManager {
             }
             
             String setTimestampCommand = "export TIMESTAMP=" + TIMESTAMP;
-            String setPortCommand = "export PORT=" + PORT;
+            String setPortCommand = "export GUI_PORT=" + GUI_PORT;
             String setMailReceiversCommand = "export MAILRECEIVERS="+ MAILRECEIVERS;
             String setTestCommand = "export TESTX=" + TESTX;
             String setPathCommand = "source /etc/bashrc;source /etc/profile;source ~/.bash_profile";
@@ -297,13 +310,17 @@ public class TestEnvironmentManager {
             File dir = new File("deploy");
             String[] children = dir.list();
             int testXValueStart = "NetarchiveSuite-".length();
-            for (String fileName : children) {
-                int zipPrefixPos = fileName.indexOf(".zip");
-                if (fileName.contains("NetarchiveSuite-")
+            if (children != null) {
+                for (String fileName : children) {
+                    int zipPrefixPos = fileName.indexOf(".zip");
+                    if (fileName.contains("NetarchiveSuite-")
                         && zipPrefixPos > testXValueStart) {
-                    revisionValue = fileName.substring(testXValueStart,
-                            zipPrefixPos);
+                        revisionValue = fileName.substring(testXValueStart,
+                                                           zipPrefixPos);
+                    }
                 }
+            } else {
+                log.warn("No revision number found, null timestamp will be used");
             }
         }
         return revisionValue;

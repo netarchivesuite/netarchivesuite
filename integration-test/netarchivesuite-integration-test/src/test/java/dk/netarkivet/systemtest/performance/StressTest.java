@@ -24,13 +24,13 @@
  */
 package dk.netarkivet.systemtest.performance;
 
+import dk.netarkivet.systemtest.environment.TestEnvironment;
+import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
+
 import org.jaccept.structure.ExtendedTestCase;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import dk.netarkivet.systemtest.environment.TestEnvironment;
-import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
 
 /**
  * Test specification: https://sbforge.org/display/NAS/TEST+7.
@@ -49,7 +49,7 @@ public class StressTest extends ExtendedTestCase {
 
     @BeforeTest (alwaysRun=true)
     public void setupTest() {
-        environmentManager = new TestEnvironmentManager("Stresstest", 8072);
+        environmentManager = new TestEnvironmentManager(null, "Stresstest", 8072);
     }
 
     @BeforeClass
