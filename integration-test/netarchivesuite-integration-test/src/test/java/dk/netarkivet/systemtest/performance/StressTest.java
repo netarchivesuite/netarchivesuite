@@ -24,18 +24,19 @@
  */
 package dk.netarkivet.systemtest.performance;
 
-import dk.netarkivet.systemtest.environment.TestEnvironment;
-import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
-
 import org.jaccept.structure.ExtendedTestCase;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import dk.netarkivet.systemtest.environment.TestEnvironment;
+import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
+
 /**
  * Test specification: https://sbforge.org/display/NAS/TEST+7.
  */
 public class StressTest extends ExtendedTestCase {
+    public static final String TESTNAME = "Stresstest";
     /** Handles the bash command functionality in the test environment. */
     protected TestEnvironmentManager environmentManager;
 
@@ -49,27 +50,32 @@ public class StressTest extends ExtendedTestCase {
 
     @BeforeTest (alwaysRun=true)
     public void setupTest() {
-        environmentManager = new TestEnvironmentManager(null, "Stresstest", 8072);
+        environmentManager = new TestEnvironmentManager(TESTNAME, null, 8072);
     }
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-        shutdownPreviousTest();
+        /*shutdownPreviousTest();
         fetchProductionData();
-        deployComponents();
-        updateDatabasesWithProdData();
-        enableHarvestDatabaseUpgrade();
+        deployComponents(); */
+        replaceDatabasesWithProd(true);
+        /*enableHarvestDatabaseUpgrade();*/
         upgradeHarvestDatabase();
-        generateDatabaseSchemas();
-        compareDatabaseSchemas();
+        /*generateDatabaseSchemas();
+        compareDatabaseSchemas();*/
         startTestSystem();
     }
 
     private void shutdownPreviousTest()  throws Exception{
         addStep("Shutting down any previously running test.", "");
-        // We call install_test.sh prior to this to ensure all the stresstest dirs exist on all servers.
-        environmentManager.runCommand("install_test.sh");
         environmentManager.runCommand("stop_test.sh");
+        environmentManager.runCommand("cleanup_all_test.sh");
+        environmentManager.runCommand("prepare_test.sh deploy_config_dedup_disabled.xml");
+    }
+
+    private void startTestSystem() throws Exception {
+        addStep("Starting Test", "");
+        environmentManager.runCommand("start_test.sh");
     }
 
     /**
@@ -77,11 +83,11 @@ public class StressTest extends ExtendedTestCase {
      */
     private void fetchProductionData() throws Exception {
         addStep("Copying production databases to the relevant test servers.", "");
-        environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -rf /tmp/fullhddb");
-        environmentManager.runCommand(TestEnvironment.ARCHIVE_ADMIN_SERVER, "rm -rf /tmp/adminDB");
+/*        environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -rf /tmp/prod_admindb.tar");
+        environmentManager.runCommand(TestEnvironment.ARCHIVE_ADMIN_SERVER, "rm -rf /tmp/prod_harvestdb.tar");
         environmentManager.runCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf /tmp/CS");
-        environmentManager.runCommand("scp -r /home/test/prod-backup/adminDB test@kb-test-adm-001.kb.dk:/tmp");
-        environmentManager.runCommand("scp -r /home/test/prod-backup/fullhddb test@kb-test-adm-001.kb.dk:/tmp", 3000);
+        environmentManager.runCommand("scp -r /home/test/prod-backup/pg_prod_harvestdb.tar test@kb-test-adm-001.kb.dk:/tmp");
+        environmentManager.runCommand("scp -r /home/test/prod-backup/pg_prod_admindb.tar test@kb-test-adm-001.kb.dk:/tmp");*/
         environmentManager.runCommand("scp -r /home/test/prod-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
     }
 
@@ -90,23 +96,56 @@ public class StressTest extends ExtendedTestCase {
         environmentManager.runCommand("install_test.sh");
     }
 
-    private void updateDatabasesWithProdData() throws Exception {
-        addStep("Updating test databases with production data", "");
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, 
-                "rm -rf harvestDatabase/fullhddb");
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, 
-                "ln -s /tmp/fullhddb harvestDatabase/fullhddb");
+    /**
+     * When nodata is true, restore schema only PLUS the ordertemplates table in the harvestdb.
+     * @param nodata
+     * @throws Exception
+     */
+    private void replaceDatabasesWithProd(boolean nodata) throws Exception {
+        addStep("Replacing default test databases with prod data", "");
+        if (nodata) {
+            addStep("Restoring admin data schema", "");
 
-        environmentManager.runTestXCommand(TestEnvironment.ARCHIVE_ADMIN_SERVER, 
-                "rm -rf adminDB");
-        environmentManager.runTestXCommand(TestEnvironment.ARCHIVE_ADMIN_SERVER, 
-                "ln -s /tmp/adminDB adminDB");
+            String dropAdminDB = "psql -U test -c 'drop database if exists stresstest_admindb'";
+            String createAdmintDB = "psql -U test -c 'create database stresstest_admindb'";
+            String createRelationsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -s --schema public /tmp/pg_prod_admindb.tar";
+            String populateSchemaversionsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -t schemaversions -t --clean --schema public /tmp/pg_prod_admindb.tar";
 
-        environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, 
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, dropAdminDB);
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createAdmintDB);
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsAdminDB);
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaversionsAdminDB);
+
+            addStep("Restoring harvestdb schema", "");
+
+            String dropHarvestDB = "psql -U test -c 'drop database if exists stresstest_harvestdb'";
+            String createHarvestDB = "psql -U test -c 'create database stresstest_harvestdb'";
+            String createRelationsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -s --schema public /tmp/pg_prod_harvestdb.tar";
+            String populateSchemaVersionsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schemaversions --clean --schema public /tmp/pg_prod_harvestdb.tar";
+            String populateOrdertemplatesHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t ordertemplates --clean --schema public /tmp/pg_prod_harvestdb.tar";
+
+
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, dropHarvestDB);
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createHarvestDB);
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsHarvestDB);
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaVersionsHarvestDB);
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateOrdertemplatesHarvestDB);
+
+        } else {
+            addStep("Ingesting prod admin data", "");
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_admindb --clean --no-owner --schema public /tmp/pg_prod_admindb.tar");
+            addStep("Ingesting prod harvest data", "");
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_harvestdb --clean --no-owner --schema public /tmp/pg_prod_harvestdb.tar");
+        }
+        addStep("Replacing checksum database with prod data", "");
+        environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER,
                 "rm -rf CS");
-        environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, 
+        environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER,
                 "ln -s /tmp/CS CS");
     }
+
 
     private void enableHarvestDatabaseUpgrade() throws Exception {
         addStep("Enabling database upgrade.", "");
@@ -117,9 +156,7 @@ public class StressTest extends ExtendedTestCase {
     }
 
     private void upgradeHarvestDatabase() throws Exception {
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, 
-                "cd conf;bash start_external_harvest_database.sh");
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, 
+        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                 "export CLASSPATH=" +
                         "./lib/dk.netarkivet.harvester.jar:" +
                         "./lib/dk.netarkivet.archive.jar:" +
@@ -129,20 +166,20 @@ public class StressTest extends ExtendedTestCase {
                         "-Djava.util.logging.config.file=./conf/log_GUIApplication.prop " +
                         "-Djava.security.manager -Djava.security.policy=./conf/security.policy " +
                         "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication " +
-                "< /dev/null > start_harvestdatabaseUpdateApplication.log 2>&1 conf/kill_external_harvest_database.sh");
+                        "< /dev/null > start_harvestdatabaseUpdateApplication.log 2>&1 conf/kill_external_harvest_database.sh");
     }
 
     private void generateDatabaseSchemas() throws Exception {
         environmentManager.runCommandWithoutQuotes("rm -rf /home/test/schemas");
         environmentManager.runCommandWithoutQuotes("mkdir /home/test/schemas");
         String envDef = "cd /home/test/schemas;" +
-                "export LIBDIR=/home/test/release_software_dist/" + environmentManager.getTESTX() + "/lib/db;" + 
+                "export LIBDIR=/home/test/release_software_dist/" + environmentManager.getTESTX() + "/lib/db;" +
                 "export CLASSPATH=$LIBDIR/derby.jar:$LIBDIR/derbytools-10.8.2.2.jar;";
         //Generate schema for production database
         environmentManager.runCommandWithoutQuotes(envDef+
                 "java org.apache.derby.tools.dblook " +
                 "-d 'jdbc:derby:/home/test/prod-backup/fullhddb;upgrade=true' " +
-                "-o /home/test/schemas/proddbs_schema.txt");    
+                "-o /home/test/schemas/proddbs_schema.txt");
         //Generate schema for test database
         environmentManager.runCommandWithoutQuotes(envDef+
                 "jar xvf /home/test/release_software_dist/" + environmentManager.getTESTX() + "/settings/fullhddb.jar");
@@ -152,7 +189,7 @@ public class StressTest extends ExtendedTestCase {
                 "rm -rf fullhddb; rm -rf META-INF");
         //Generate schema for bundled database
         environmentManager.runCommandWithoutQuotes(envDef+
-                "jar xvf /home/test/release_software_dist/" + environmentManager.getTESTX() + 
+                "jar xvf /home/test/release_software_dist/" + environmentManager.getTESTX() +
                 "/harvestdefinitionbasedir/fullhddb.jar");
         environmentManager.runCommandWithoutQuotes(envDef+
                 "java org.apache.derby.tools.dblook -d 'jdbc:derby:fullhddb;upgrade=true' -o bundleddbs_schema.txt");
@@ -162,7 +199,7 @@ public class StressTest extends ExtendedTestCase {
 
     private void compareDatabaseSchemas() throws Exception {
         String envDef = "cd /home/test/schemas;";
-        
+
         //Sort the schemas and remove uninteresting lines
         environmentManager.runCommandWithoutQuotes(envDef+
                 "grep -v INDEX proddbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > proddbs_schema.txt.sort");
@@ -177,10 +214,5 @@ public class StressTest extends ExtendedTestCase {
                 "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff", new int[]{0,1});
     }
 
-    private void startTestSystem() throws Exception {
-        String envDef = "cd /home/test/release_software_dist/" + environmentManager.getTESTX();
-        
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "");
-    }
+
 }

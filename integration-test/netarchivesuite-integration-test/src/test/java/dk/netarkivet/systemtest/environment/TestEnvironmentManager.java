@@ -139,7 +139,11 @@ public class TestEnvironmentManager {
      */
     public void runCommand(String server, String command, int commandTimeout) 
             throws Exception {
-        runCommand(server, command, commandTimeout, "\"");
+        if (server == null) {
+            runCommand(null, command, commandTimeout, "");
+        } else {
+            runCommand(server, command, commandTimeout, "\"");
+        }
     }
     
     public void runCommandWithoutQuotes(String command) throws Exception {
@@ -264,12 +268,11 @@ public class TestEnvironmentManager {
             String setMailReceiversCommand = "export MAILRECEIVERS="+ MAILRECEIVERS;
             String setTestCommand = "export TESTX=" + TESTX;
             String setPathCommand = "source /etc/bashrc;source /etc/profile;source ~/.bash_profile";
-            
+
             environmentSetup =
                     setPathCommand + ";" + setTimestampCommand + ";"
                     + setPortCommand + ";" + setMailReceiversCommand + ";"
                     + setTestCommand + ";";
-
             this.command = command;
             this.quotes = quotes;
         }

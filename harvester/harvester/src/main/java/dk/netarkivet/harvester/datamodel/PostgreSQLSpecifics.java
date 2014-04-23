@@ -371,7 +371,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         String createStatement = "CREATE TABLE harvestchannel ("
                 + "id BIGINT NOT NULL PRIMARY KEY, "
                 + "name VARCHAR(300) NOT NULL UNIQUE,"
-                + "snapshot BOOL NOT NULL,"
+                + "issnapshot BOOL NOT NULL,"
                 + "isdefault BOOL NOT NULL,"
                 + "comments VARCHAR(30000)"
                 + ")";
