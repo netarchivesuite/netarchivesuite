@@ -264,7 +264,7 @@ public class TestEnvironmentManager {
             }
             
             String setTimestampCommand = "export TIMESTAMP=" + TIMESTAMP;
-            String setPortCommand = "export GUI_PORT=" + GUI_PORT;
+            String setPortCommand = "export PORT=" + GUI_PORT;
             String setMailReceiversCommand = "export MAILRECEIVERS="+ MAILRECEIVERS;
             String setTestCommand = "export TESTX=" + TESTX;
             String setPathCommand = "source /etc/bashrc;source /etc/profile;source ~/.bash_profile";
