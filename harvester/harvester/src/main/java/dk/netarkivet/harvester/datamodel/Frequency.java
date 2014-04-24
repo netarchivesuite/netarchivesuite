@@ -245,7 +245,7 @@ public abstract class Frequency {
                             hour, minute);
                 }
                 break;
-            case MINUTE:
+            case MINUTE:   //Minute frequencies are always "anytime"
                 freq = new MinuteFrequency(numtimeunits);
                 break;
             default:

@@ -288,7 +288,7 @@ public final class ScheduleDefinition {
 
     /**
      * Returns a frequency object specifying whether the harvest is
-     * to be hourly, daily, weekly, or monthly and how often it is to be
+     * to be minute, hourly, daily, weekly, or monthly and how often it is to be
      * run.
      * @param context Web context of the request
      * @param i18n I18N information

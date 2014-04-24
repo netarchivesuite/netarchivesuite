@@ -161,7 +161,7 @@ Parameters:
                         }%> ><fmt:message key="harvestdefinition.schedule.edit.minutes"/>
                         </option>
             <option value="hours" <%if (oldFrequency != null) {
-                out.print((oldFrequency instanceof HourlyFrequency) ? sel : "");
+                out.print((oldFrequency instanceof HourlyFrequency || newSchedule) ? sel : "");
             }%> ><fmt:message key="harvestdefinition.schedule.edit.hours"/>
             </option>
             <option value="days" <%if (oldFrequency != null) {

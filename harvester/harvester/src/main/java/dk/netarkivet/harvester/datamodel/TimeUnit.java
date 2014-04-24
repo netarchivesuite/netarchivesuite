@@ -60,7 +60,8 @@ public enum TimeUnit {
      **/
     MONTHLY,
     /**
-     *
+     * For minute time units, it doesn't make sense to use any additional
+     * constraints: "on minute", "on hour", "on day of month" or "on day of week"
      */
     MINUTE;
 

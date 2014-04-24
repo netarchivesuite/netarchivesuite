@@ -7,9 +7,12 @@ import java.util.GregorianCalendar;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Class which alllows specification of a schedule with a frequency measured in
+ * Allows specification of a schedule with a frequency measured in
  * minutes. This is an "anyTime" frequency, meaning that only the frequency of
  * of the scheduling is specified, without any constraint on the actual walltime.
+ * (This is because the additional constraints don't make sense for minute frequencies.
+ * E.g. you can have a frequency "Every day at 6pm" but how would you complete
+ * "Every 17 minutes at ???"?)
  */
 public class MinuteFrequency extends Frequency {
 
@@ -40,7 +43,7 @@ public class MinuteFrequency extends Frequency {
     }
 
     /**
-     * As this is an "anyTime" frequeny, this method just returns its
+     * As this is an "anyTime" frequency, this method just returns its
      * argument (so long as it is not null).
      * @param startTime The earliest time the event can happen.
      * @return the startTime for the first event of this frequency.
