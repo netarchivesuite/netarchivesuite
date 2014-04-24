@@ -157,11 +157,11 @@ Parameters:
                 String sel = " selected=\"selected\" ";
             %>
             <option value="minutes" <%if (oldFrequency != null) {
-                            out.print((oldFrequency instanceof MinuteFrequency) ? sel : "");
-                        }%> ><fmt:message key="harvestdefinition.schedule.edit.minutes"/>
-                        </option>
-            <option value="hours" <%if (oldFrequency != null) {
-                out.print((oldFrequency instanceof HourlyFrequency || newSchedule) ? sel : "");
+                out.print((oldFrequency instanceof MinuteFrequency) ? sel : "");
+            }%> ><fmt:message key="harvestdefinition.schedule.edit.minutes"/>
+            </option>
+            <option value="hours" <%if (oldFrequency != null || newSchedule) {
+                out.print((newSchedule || oldFrequency instanceof HourlyFrequency) ? sel : "");
             }%> ><fmt:message key="harvestdefinition.schedule.edit.hours"/>
             </option>
             <option value="days" <%if (oldFrequency != null) {
