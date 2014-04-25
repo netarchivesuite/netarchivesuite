@@ -854,11 +854,11 @@
             <SvnBranchConfiguration>
               <option name="branchUrls">
                 <list>
-                  <option value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/branches" />
-                  <option value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/tags" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/branches" />
+                  <option value="https://sbforge.org/svn/netarchivesuite/tags" />
                 </list>
               </option>
-              <option name="trunkUrl" value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/trunk" />
+              <option name="trunkUrl" value="https://sbforge.org/svn/netarchivesuite/trunk" />
             </SvnBranchConfiguration>
           </value>
         </entry>
