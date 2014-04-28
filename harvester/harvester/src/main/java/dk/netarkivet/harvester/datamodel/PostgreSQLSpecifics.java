@@ -362,6 +362,11 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         String[] sqlStatements = {
                 "ALTER TABLE jobs ADD COLUMN channel VARCHAR(300) DEFAULT NULL",
                 "ALTER TABLE jobs ADD COLUMN snapshot BOOL",
+                "UPDATE jobs SET channel = 'LOWPRIORITY' WHERE priority=0;",
+                "UPDATE jobs SET channel = 'HIGHPRIORITY' WHERE priority=1",
+                "UPDATE jobs SET snapshot = true WHERE priority=0",
+                "UPDATE jobs SET snapshot = false WHERE priority=1",
+                "ALTER TABLE jobs DROP COLUMN priority"
         };
         HarvestDBConnection.updateTable("jobs", 10, sqlStatements);   
     }
@@ -375,8 +380,18 @@ public class PostgreSQLSpecifics extends DBSpecifics {
                 + "isdefault BOOL NOT NULL,"
                 + "comments VARCHAR(30000)"
                 + ")";
-        HarvestDBConnection.updateTable("harvestchannel", 1, createStatement);
-    }    
+        String[] sqlStatements = {
+                createStatement,
+                "CREATE SEQUENCE harvestchannel_id_seq OWNED BY harvestchannel.id",
+                "ALTER TABLE harvestchannel ALTER COLUMN id SET DEFAULT NEXTVAL('harvestchannel_id_seq')",
+                "CREATE INDEX harvestchannelnameid on harvestchannel(name) TABLESPACE tsindex",
+                "INSERT INTO harvestchannel(name, issnapshot, isdefault, comments) " +
+                        " VALUES ('LOWPRIORITY', true, true, 'Channel for snapshot harvests')",
+                "INSERT INTO harvestchannel(name, issnapshot, isdefault, comments) " +
+                        "    VALUES ('HIGHPRIORITY', false, true, 'Channel for selective harvests')"
+        };
+        HarvestDBConnection.updateTable("harvestchannel", 1, sqlStatements);
+    }
     
     /**
      * Migrates the 'ExtendedFieldTable' from version 1 to version 2 consisting of adding

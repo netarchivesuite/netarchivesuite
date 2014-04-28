@@ -33,7 +33,7 @@
     <appender-ref ref="STDOUT" />
   </root>
   
-  <logger name="dk.netarkivet" level="INFO" additivity="false">
+  <logger name="dk.netarkivet" level="DEBUG" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
 </configuration>

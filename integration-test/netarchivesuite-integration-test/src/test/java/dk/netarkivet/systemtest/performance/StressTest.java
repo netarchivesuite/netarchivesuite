@@ -55,11 +55,10 @@ public class StressTest extends ExtendedTestCase {
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-        /*shutdownPreviousTest();
+        shutdownPreviousTest();
         fetchProductionData();
-        deployComponents(); */
-        replaceDatabasesWithProd(true);
-        /*enableHarvestDatabaseUpgrade();*/
+        deployComponents();
+        replaceDatabasesWithProd(false);
         upgradeHarvestDatabase();
         /*generateDatabaseSchemas();
         compareDatabaseSchemas();*/
@@ -83,11 +82,11 @@ public class StressTest extends ExtendedTestCase {
      */
     private void fetchProductionData() throws Exception {
         addStep("Copying production databases to the relevant test servers.", "");
-/*        environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -rf /tmp/prod_admindb.tar");
-        environmentManager.runCommand(TestEnvironment.ARCHIVE_ADMIN_SERVER, "rm -rf /tmp/prod_harvestdb.tar");
+        environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -rf /tmp/prod_admindb.out");
+        environmentManager.runCommand(TestEnvironment.ARCHIVE_ADMIN_SERVER, "rm -rf /tmp/prod_harvestdb.dump.out");
         environmentManager.runCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf /tmp/CS");
-        environmentManager.runCommand("scp -r /home/test/prod-backup/pg_prod_harvestdb.tar test@kb-test-adm-001.kb.dk:/tmp");
-        environmentManager.runCommand("scp -r /home/test/prod-backup/pg_prod_admindb.tar test@kb-test-adm-001.kb.dk:/tmp");*/
+        environmentManager.runCommand("scp -r /home/test/prod-backup/prod_admindb.out test@kb-test-adm-001.kb.dk:/tmp");
+        environmentManager.runCommand("scp -r /home/test/prod-backup/prod_harvestdb.dump.out test@kb-test-adm-001.kb.dk:/tmp");
         environmentManager.runCommand("scp -r /home/test/prod-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
     }
 
@@ -102,42 +101,37 @@ public class StressTest extends ExtendedTestCase {
      * @throws Exception
      */
     private void replaceDatabasesWithProd(boolean nodata) throws Exception {
+        String dropAdminDB = "psql -U test -c 'drop database if exists stresstest_admindb'";
+        String createAdminDB = "psql -U test -c 'create database stresstest_admindb'";
+        String dropHarvestDB = "psql -U test -c 'drop database if exists stresstest_harvestdb'";
+        String createHarvestDB = "psql -U test -c 'create database stresstest_harvestdb'";
+        addStep("Cleaning out harvest database", "");
+        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, dropHarvestDB);
+        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createHarvestDB);
+        addStep("Cleaning out admin database", "");
+        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, dropAdminDB);
+        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createAdminDB);
         addStep("Replacing default test databases with prod data", "");
         if (nodata) {
             addStep("Restoring admin data schema", "");
-
-            String dropAdminDB = "psql -U test -c 'drop database if exists stresstest_admindb'";
-            String createAdmintDB = "psql -U test -c 'create database stresstest_admindb'";
-            String createRelationsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -s --schema public /tmp/pg_prod_admindb.tar";
-            String populateSchemaversionsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -t schemaversions -t --clean --schema public /tmp/pg_prod_admindb.tar";
-
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, dropAdminDB);
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createAdmintDB);
+            String createRelationsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -s --schema public /tmp/prod_admindb.out";
+            String populateSchemaversionsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -t schemaversions -t --clean --schema public /tmp/prod_admindb.out";
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsAdminDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaversionsAdminDB);
-
             addStep("Restoring harvestdb schema", "");
-
-            String dropHarvestDB = "psql -U test -c 'drop database if exists stresstest_harvestdb'";
-            String createHarvestDB = "psql -U test -c 'create database stresstest_harvestdb'";
-            String createRelationsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -s --schema public /tmp/pg_prod_harvestdb.tar";
-            String populateSchemaVersionsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schemaversions --clean --schema public /tmp/pg_prod_harvestdb.tar";
-            String populateOrdertemplatesHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t ordertemplates --clean --schema public /tmp/pg_prod_harvestdb.tar";
-
-
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, dropHarvestDB);
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createHarvestDB);
+            String createRelationsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -s --schema public /tmp/prod_harvestdb.dump.out";
+            String populateSchemaVersionsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schemaversions --clean --schema public /tmp/prod_harvestdb.dump.out";
+            String populateOrdertemplatesHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t ordertemplates --clean --schema public /tmp/prod_harvestdb.dump.out";
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsHarvestDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaVersionsHarvestDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateOrdertemplatesHarvestDB);
 
         } else {
-            addStep("Ingesting prod admin data", "");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_admindb --clean --no-owner --schema public /tmp/pg_prod_admindb.tar");
+                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_admindb --clean --no-owner --schema public /tmp/prod_admindb.out");
             addStep("Ingesting prod harvest data", "");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_harvestdb --clean --no-owner --schema public /tmp/pg_prod_harvestdb.tar");
+                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_harvestdb --clean --no-owner --schema public /tmp/prod_harvestdb.dump.out");
         }
         addStep("Replacing checksum database with prod data", "");
         environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER,
@@ -166,7 +160,7 @@ public class StressTest extends ExtendedTestCase {
                         "-Djava.util.logging.config.file=./conf/log_GUIApplication.prop " +
                         "-Djava.security.manager -Djava.security.policy=./conf/security.policy " +
                         "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication " +
-                        "< /dev/null > start_harvestdatabaseUpdateApplication.log 2>&1 conf/kill_external_harvest_database.sh");
+                        "< /dev/null > start_harvestdatabaseUpdateApplication.log 2>&1 ");
     }
 
     private void generateDatabaseSchemas() throws Exception {
@@ -193,7 +187,7 @@ public class StressTest extends ExtendedTestCase {
                 "/harvestdefinitionbasedir/fullhddb.jar");
         environmentManager.runCommandWithoutQuotes(envDef+
                 "java org.apache.derby.tools.dblook -d 'jdbc:derby:fullhddb;upgrade=true' -o bundleddbs_schema.txt");
-        environmentManager.runCommandWithoutQuotes(envDef+
+        environmentManager.runCommandWithoutQuotes(envDef +
                 "rm -rf fullhddb; rm -rf META-INF");
     }
 
