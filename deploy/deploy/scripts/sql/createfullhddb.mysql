@@ -82,10 +82,6 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'frontierreportmonitor', 1);
 
-INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'harvestchannel', 1);
-
-
 # *****************************************************************************
 # Area: Domains
 # *****************************************************************************

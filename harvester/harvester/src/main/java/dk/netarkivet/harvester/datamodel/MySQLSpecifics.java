@@ -449,6 +449,11 @@ public class MySQLSpecifics extends DBSpecifics {
         String[] sqlStatements = {
                 "ALTER TABLE jobs ADD COLUMN channel VARCHAR(300) DEFAULT NULL",
                 "ALTER TABLE jobs ADD COLUMN snapshot BOOL",
+                "UPDATE jobs SET channel = 'snapshot' WHERE priority=0",
+                "UPDATE jobs SET channel = 'focused' WHERE priority=1",
+                "UPDATE jobs SET snapshot = true WHERE priority=0",
+                "UPDATE jobs SET snapshot = false WHERE priority=1",
+                "ALTER TABLE jobs DROP COLUMN priority"
         };
         HarvestDBConnection.updateTable("jobs", 10, sqlStatements);   
     }
@@ -457,14 +462,20 @@ public class MySQLSpecifics extends DBSpecifics {
     protected void createHarvestChannelTable() {
         String createStatement = "CREATE TABLE harvestchannel ("
                 + "id BIGINT NOT NULL PRIMARY KEY, "
-                + "name VARCHAR(300) NOT NULL UNIQUE,"
-                + "snapshot BOOL NOT NULL,"
+                + "name VARCHAR(250) NOT NULL UNIQUE,"
+                + "issnapshot BOOL NOT NULL,"
                 + "isdefault BOOL NOT NULL,"
 //                + "comments VARCHAR(30000)"
                 + "comments TEXT"
-                
                 + ")";
-        HarvestDBConnection.updateTable("harvestchannel", 1, createStatement);
+        
+        String insertStatementOne = "INSERT INTO harvestchannel(id, name, issnapshot, isdefault, comments) "
+                + "VALUES(1, \'SNAPSHOT\', true, true, \'Channel for snapshot harvests\')";
+        String insertStatementTwo = "INSERT INTO harvestchannel(id, name, issnapshot, isdefault, comments) "
+                + "VALUES(2, \'FOCUSED\', false, true, \'Channel for focused harvests\')";
+        HarvestDBConnection.updateTable("harvestchannel", 1, new String[]{
+                createStatement, insertStatementOne, insertStatementTwo   
+        });
     }
 
     /**
