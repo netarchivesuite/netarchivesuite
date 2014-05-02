@@ -68,7 +68,7 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
  * and if an 'admin.data' file exists, then it will be loaded and put into the
  * archive file.
  */
-public final class FileChecksumArchive extends ChecksumArchive {
+public final class FileChecksumArchive implements ChecksumArchive {
     /**
      * The character sequence for separating the filename from the checksum.
      */
@@ -701,7 +701,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * the MD5-checksum.
      */
     @Override
-    protected String calculateChecksum(File f) throws IOFailure {
+    public String calculateChecksum(File f) throws IOFailure {
         return ChecksumCalculator.calculateMd5(f);
     }
 
@@ -714,7 +714,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * MD5 checksum.
      */
     @Override
-    protected String calculateChecksum(InputStream is) throws IOFailure {
+    public String calculateChecksum(InputStream is) throws IOFailure {
         return ChecksumCalculator.calculateMd5(is);
     }
     

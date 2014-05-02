@@ -65,7 +65,7 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
  * Migrating from the {@link FileChecksumArchive} to the DatabaseChecksumArchive is 
  * done with the {@link LoadDatabaseChecksumArchive} tool.
  */
-public class DatabaseChecksumArchive extends ChecksumArchive {
+public class DatabaseChecksumArchive implements ChecksumArchive {
     
     /**
      * The logger used by this class.
@@ -403,12 +403,12 @@ public class DatabaseChecksumArchive extends ChecksumArchive {
     }  
     
     @Override
-    protected String calculateChecksum(File f) {
+    public String calculateChecksum(File f) {
         return ChecksumCalculator.calculateMd5(f);
     }
 
     @Override
-    protected String calculateChecksum(InputStream is) {
+    public String calculateChecksum(InputStream is) {
         return ChecksumCalculator.calculateMd5(is);
     }
 

@@ -57,6 +57,7 @@ National Library.
             <baseDir>checksum</baseDir>
             <!-- The default value amount of 1 MBytes. -->
             <minSpaceLeft>1000000</minSpaceLeft>
+            <archive><class>dk.netarkivet.archive.checksum.FileChecksumArchive</class></archive>
         </checksum>
         <bitpreservation>
             <baseDir>bitpreservation</baseDir>

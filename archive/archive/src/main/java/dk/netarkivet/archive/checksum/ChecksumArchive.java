@@ -43,19 +43,14 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * 
  * @see dk.netarkivet.archive.checksum.FileChecksumArchive
  */
-public abstract class ChecksumArchive {
-    
-    /**
-     * Constructor.
-     */
-    protected ChecksumArchive() { }
+public interface ChecksumArchive {   
     
     /**
      * Method for checking whether there is enough space left on the hard drive.
      * 
      * @return Whether there is enough space left on the hard drive.
      */
-    public abstract boolean hasEnoughSpace();
+    public boolean hasEnoughSpace();
     
     /**
      * Method for removing a bad entry from the archive.
@@ -72,7 +67,7 @@ public abstract class ChecksumArchive {
      * @throws IllegalState If no such entry exists to be corrected, or if the 
      * entry has a different checksum than expected.
      */
-    public abstract File correct(String filename, File correctFile) 
+    public File correct(String filename, File correctFile) 
             throws IOFailure, ArgumentNotValid, IllegalState;
     
     /**
@@ -82,7 +77,7 @@ public abstract class ChecksumArchive {
      * checksum should be retrieved.
      * @return The checksum of a record, or null if it was not found.
      */
-    public abstract String getChecksum(String filename);
+    public String getChecksum(String filename);
     
     /**
      * Method for checking whether an entry exists within the archive.
@@ -91,7 +86,7 @@ public abstract class ChecksumArchive {
      * be determined.
      * @return Whether an entry with the filename was found.
      */
-    public abstract boolean hasEntry(String filename);
+    public boolean hasEntry(String filename);
     
     /**
      * Method for uploading a new file to the archive.
@@ -101,7 +96,7 @@ public abstract class ChecksumArchive {
      * @param arcfile The remote file to be uploaded.
      * @param filename The name of the file.
      */
-    public abstract void upload(RemoteFile arcfile, String filename);
+    public void upload(RemoteFile arcfile, String filename);
     
     /**
      * Method for calculating the checksum of a specific file.
@@ -109,7 +104,7 @@ public abstract class ChecksumArchive {
      * @param f The file to calculate the checksum from.
      * @return The checksum of the file.
      */
-    protected abstract String calculateChecksum(File f);
+    public String calculateChecksum(File f);
     
     /**
      * Method for calculating the checksum when the file is received in the 
@@ -117,7 +112,7 @@ public abstract class ChecksumArchive {
      * @param is The input stream to calculate the checksum from.
      * @return The checksum of the inputstream.
      */
-    protected abstract String calculateChecksum(InputStream is);
+    public String calculateChecksum(InputStream is);
     
     /**
      * Method for retrieving the archive as a temporary file containing the 
@@ -125,7 +120,7 @@ public abstract class ChecksumArchive {
      * 
      * @return A temporary checksum file.
      */
-    public abstract File getArchiveAsFile();
+    public File getArchiveAsFile();
     
     /**
      * Method for retrieving the names of all the files within the archive as
@@ -134,11 +129,11 @@ public abstract class ChecksumArchive {
      * @return A temporary file containing the list of all the filenames.
      * This file has one filename per line.
      */
-    public abstract File getAllFilenames();
+    public File getAllFilenames();
     
     /**
      * Method for cleaning up when closing down.
      */
-    public abstract void cleanup();
+    public void cleanup();
     
 }

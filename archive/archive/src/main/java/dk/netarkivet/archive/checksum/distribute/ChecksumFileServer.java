@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.ChecksumArchive;
-import dk.netarkivet.archive.checksum.FileChecksumArchive;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -100,8 +99,8 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
         // log that this instance is been invoked.
         log.info("Initialising the ChecksumFileServer.");
         
-        // get the instance of the checksum.
-        cs = FileChecksumArchive.getInstance();
+        // get the instance of the checksum archive
+        cs = ChecksumArchiveFactory.getInstance();
         
         // initialise the JMSConnection.
         jmsCon = JMSConnectionFactory.getInstance();

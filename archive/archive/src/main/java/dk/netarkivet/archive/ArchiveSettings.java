@@ -352,6 +352,13 @@ public class ArchiveSettings {
             = "settings.archive.checksum.minSpaceLeft";
     
     /**
+     * <b>settings.archive.checksum.class</b>
+     * This decides how to store the checksums, in file, og BDB database.
+     * By default, it is stored in a file
+     */
+    public static String CHECKSUM_ARCHIVE_CLASS 
+        = "settings.archive.checksum.archive.class";
+    /**
      * <b>settings.archive.bitarchive.singleChecksumTimeout</b>: <br>
      * The path to the settings for the maximum time usage for the calculation
      * of the checksum for a single file. Used to set a timelimit to the 
