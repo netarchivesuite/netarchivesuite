@@ -99,11 +99,14 @@ insert into schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'extendedfieldtype', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'extendedfield', 1);
+    VALUES ( 'extendedfield', 2);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'extendedfieldvalue', 1);
+    VALUES ( 'extendedfieldvalue', 2);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'extendedfieldhistoryvalue', 1);
+
+INSERT INTO schemaversions ( tablename, version )
+VALUES ( 'harvestchannel', 1);
 
 --***************************************************************************--
 -- Area: Domains
@@ -295,7 +298,8 @@ create table harvestdefinitions (
                                 --  and will be run at the scheduled time
     edition bigint not null,     -- Marker for optimistic locking by web
                                  --  interface
-    audience varchar(100)
+    audience varchar(100),
+    channel_id BIGINT
 );
 
 create index harvestdefinitionssubmitdate on harvestdefinitions (submitted);
@@ -310,7 +314,7 @@ create table fullharvests (
     maxbytes bigint default -1, -- Maximum number of bytes to harvest per domain
     maxjobrunningtime bigint default 0, -- maximum snapshot running time
                                        -- (0 means no limit)
-    isindexready int not null default 0, -- 0 means not ready, 1 means ready 
+    isindexready int not null default 0 -- 0 means not ready, 1 means ready
 );
 
 -------------------------------------------------------------------------------
@@ -407,8 +411,6 @@ create table jobs (
                                         --  produced the job
     status int not null,                -- Job status where valid values are
                                         --  defined in JobStatus.java
-    priority int not null,              -- Job priority here valid values are
-                                        --  defined in JobPriority.java
     forcemaxbytes bigint not null default -1, -- Max byte count that overrides
                                               --  the maxbytes value in the
                                               --  harvest definition
@@ -450,7 +452,9 @@ create table jobs (
     edition bigint not null,   -- Marker for optimistic locking by web interface
     continuationof bigint,      -- if not null this job tries to continue where this job left of
                                 -- using the Heritrix recoverlog
-    harvestname_prefix varchar(100) 									
+    harvestname_prefix varchar(100),
+    channel varchar(300),
+    snapshot BOOLEAN NOT NULL
 );
 
 create index jobstatus on jobs(status);
@@ -606,12 +610,13 @@ create table extendedfield (
     datatype int not null,
     mandatory int NOT NULL,
     historize int,
-    sequencenr int
+    sequencenr int,
+    maxlen int
 );
 
 create table extendedfieldvalue (
     extendedfieldvalue_id bigint not null primary key,
-    content VARCHAR(50) not null,
+    content VARCHAR(30000) not null,
     extendedfield_id bigint NOT NULL,
     instance_id bigint NOT NULL
 );
@@ -620,3 +625,16 @@ INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
     VALUES ( 1, 'domains');
 INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
     VALUES ( 2, 'harvestdefinitions');
+
+CREATE TABLE harvestchannel (
+  id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR(300) NOT NULL UNIQUE,
+  issnapshot BOOLEAN NOT NULL,
+  isdefault BOOLEAN NOT NULL,
+  comments VARCHAR(30000)
+);
+-- Insert default definition for snapshot and selective harvests.
+INSERT INTO harvestchannel(name, issnapshot, isdefault, comments)
+    VALUES('SNAPSHOT', true, true, 'Channel for snapshot harvests');
+INSERT INTO harvestchannel(name, issnapshot, isdefault, comments)
+    VALUES('FOCUSED', false, true, 'Channel for focused harvests');

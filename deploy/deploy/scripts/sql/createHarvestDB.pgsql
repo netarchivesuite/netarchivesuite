@@ -52,7 +52,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'config_seedlists', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'harvestdefinitions', 3);
+    VALUES ( 'harvestdefinitions', 4);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'partialharvests', 1);
 INSERT INTO schemaversions ( tablename, version )
@@ -77,6 +77,16 @@ INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'runningjobsmonitor', 2);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'frontierreportmonitor', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldtype', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfield', 2);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldvalue', 2);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldhistoryvalue', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'harvestchannel', 1);
 
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE schemaversions TO netarchivesuite;
@@ -500,6 +510,8 @@ CREATE TABLE frontierReportMonitor (
      CONSTRAINT pkFrontierReportLines UNIQUE (jobId, filterId, domainName)
 );
 
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE frontierReportMonitor TO netarchivesuite;
+
 create table extendedfieldtype (
     extendedfieldtype_id bigint not null primary key,
     name VARCHAR(50) not null
@@ -524,17 +536,22 @@ create table extendedfieldvalue (
     content VARCHAR(100) not null
 );
 
-INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'extendedfieldtype', 1);
-INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'extendedfield', 1);
-INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'extendedfieldvalue', 1);
-
 INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
     VALUES ( 1, 'domains');
 INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
     VALUES ( 2, 'harvestdefinitions');
 
+CREATE TABLE harvestchannel (
+    id bigint NOT NULL PRIMARY KEY,
+    name varchar(300) NOT NULL UNIQUE,
+    isdefault bool NOT NULL,
+    comments varchar(30000)
+);
 
-GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE frontierReportMonitor TO netarchivesuite;
+CREATE SEQUENCE harvestchannel_id_seq OWNED BY harvestchannel.id;
+ALTER TABLE harvestchannel ALTER COLUMN id SET DEFAULT NEXTVAL('harvestchannel_id_seq');
+
+CREATE INDEX harvestchannelnameid on harvestchannel(name) TABLESPACE tsindex;
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvestchannel TO netarchivesuite;
+GRANT USAGE ON SEQUENCE harvestchannel_id_seq TO netarchivesuite;
