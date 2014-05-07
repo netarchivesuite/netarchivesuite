@@ -49,7 +49,7 @@ public class DefinitionsSiteSection extends SiteSection {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
     /** number of pages visible in the left menu. */
-    private static final int PAGES_VISIBLE_IN_MENU = 11;
+    private static final int PAGES_VISIBLE_IN_MENU = 10;
     
     /**
      * Create a new definition SiteSection object.
