@@ -127,7 +127,7 @@ public class ReportingWarcTester extends TestCase {
      * Tests the method getCrawlLogForDomainInJob.
      * This unit-test also implicitly tests the class HarvestedUrlsForDomainBatchJob
      * @throws Exception
-     * FIXME related to bug NAS-2266
+     * Now works again after resolving bug NAS-2266
      */
     public void testGetCrawlLogForDomainInJob() throws Exception {
         int jobId = 2;
@@ -142,9 +142,19 @@ public class ReportingWarcTester extends TestCase {
 
         assertTrue("Should have found a result, but found none", lines.size() > 0);
         StringAsserts.assertStringContains("First line should be dns", "dns:", lines.get(0));
-        StringAsserts.assertStringContains("Last line should be www.netarkivet.dk", 
-                "www.netarkivet.dk", lines.get(lines.size() - 1));
-        assertEquals("Should have 126 lines (2 dns, 1 netarchive.dk, 121 netarkivet.dk, and 2 www.netarkivet.dk)", 126, lines.size());
+        
+        StringAsserts.assertStringContains("Last line should be netarkivet.dk", 
+                "netarkivet.dk", lines.get(lines.size() - 1));
+        assertEquals("Should have 161 lines", 161, lines.size());
+        
+        assertEquals("Should have 161 lines", 161, lines.size());
+        jobId=1;
+        file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk", jobId);
+        lines = FileUtils.readListFromFile(file);
+        assertTrue("Should have found a result, but found none", lines.size() > 0);
+        StringAsserts.assertStringContains("Last line should be netarkivet.dk", 
+                "netarkivet.dk", lines.get(lines.size() - 1));
+        assertEquals("Should have 302 lines", 302, lines.size());
     }
 
 }
