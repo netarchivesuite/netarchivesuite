@@ -28,10 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import dk.netarkivet.systemtest.environment.ApplicationManager;
-import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
-import dk.netarkivet.systemtest.page.PageHelper;
-import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 import org.apache.commons.io.FileUtils;
 import org.jaccept.structure.ExtendedTestCase;
 import org.jaccept.testreport.ReportGenerator;
@@ -43,6 +39,11 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
+
+import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
+import dk.netarkivet.systemtest.page.PageHelper;
+import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
 /**
  * The super class for all Selenium based system tests.
@@ -121,14 +122,6 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      */
     protected String getTestX() {
         return "SystemTest";
-    }
-
-    @BeforeSuite (alwaysRun = true)
-    public void startReportGenerator() {
-        if (System.getProperty("enableTestReport", "false").equals("true") ) {
-            reportGenerator = new ReportGenerator();
-            reportGenerator.projectStarted("NetarchiveSuite test");
-        }
     }
 
     @AfterMethod
