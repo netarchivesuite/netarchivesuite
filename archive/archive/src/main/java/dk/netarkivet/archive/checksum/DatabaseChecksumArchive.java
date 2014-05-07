@@ -350,7 +350,6 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         InputStream input = null;
 
         try {
-            log.debug("Commencing ");
             input = file.getInputStream();
             String newChecksum = calculateChecksum(input);
             if (hasEntry(filename)) {
