@@ -127,24 +127,24 @@ public class ReportingWarcTester extends TestCase {
      * Tests the method getCrawlLogForDomainInJob.
      * This unit-test also implicitly tests the class HarvestedUrlsForDomainBatchJob
      * @throws Exception
-     * FIXME related to bug 
+     * FIXME related to bug NAS-2266
      */
-    public void tesGetCrawlLogForDomainInJob() throws Exception {
+    public void testGetCrawlLogForDomainInJob() throws Exception {
         int jobId = 2;
         // Find the crawl-log lines for domain netarkivet.dk in metadata file for job 2
         File file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk", jobId);
         List<String> lines = FileUtils.readListFromFile(file);
-        int count=0;
+        /*int count=0;
         for (String line: lines) {
             count++;
-            System.out.println("Line #" + count + ": " + line);
-        }
-         
+            //System.out.println("Line #" + count + ": " + line);
+        }*/
+
         assertTrue("Should have found a result, but found none", lines.size() > 0);
         StringAsserts.assertStringContains("First line should be dns", "dns:", lines.get(0));
         StringAsserts.assertStringContains("Last line should be www.netarkivet.dk", 
                 "www.netarkivet.dk", lines.get(lines.size() - 1));
         assertEquals("Should have 126 lines (2 dns, 1 netarchive.dk, 121 netarkivet.dk, and 2 www.netarkivet.dk)", 126, lines.size());
-          }
+    }
 
 }
