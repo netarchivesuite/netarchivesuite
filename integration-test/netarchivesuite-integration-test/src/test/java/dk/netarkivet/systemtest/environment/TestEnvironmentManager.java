@@ -169,6 +169,7 @@ public class TestEnvironmentManager {
     public void runCommand(String server, String command, int commandTimeout, String quotes, int[] positiveExitCodes) 
             throws Exception {
         RemoteCommand remoteCommand = new RemoteCommand(server, command, quotes);
+
         log.info("Running JSch command: " + remoteCommand);
         
         
@@ -262,8 +263,11 @@ public class TestEnvironmentManager {
             }  else {
                 sshTunneling = "";
             }
-            
-            String setTimestampCommand = "export TIMESTAMP=" + TIMESTAMP;
+
+            String setTimestampCommand = "true";
+            if (TIMESTAMP != null) {
+                setTimestampCommand = "export TIMESTAMP=" + TIMESTAMP;
+            }
             String setPortCommand = "export PORT=" + GUI_PORT;
             String setMailReceiversCommand = "export MAILRECEIVERS="+ MAILRECEIVERS;
             String setTestCommand = "export TESTX=" + TESTX;

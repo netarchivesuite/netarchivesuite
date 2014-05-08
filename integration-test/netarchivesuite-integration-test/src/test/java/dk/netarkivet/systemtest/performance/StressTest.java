@@ -40,57 +40,49 @@ public class StressTest extends ExtendedTestCase {
     /** Handles the bash command functionality in the test environment. */
     protected TestEnvironmentManager environmentManager;
 
-    /**
-     * Test specification: http://netarchive.dk/suite/It23JMXMailCheck .
-     */
-    @Test (groups = {"stresstest"})
-    public void generalTest() throws Exception {
-        addDescription("Test specification: https://sbforge.org/display/NAS/TEST+7");
-    }
-
     @BeforeTest (alwaysRun=true)
-    public void setupTest() {
+    protected void setupTest() {
         environmentManager = new TestEnvironmentManager(TESTNAME, null, 8072);
     }
 
-    @BeforeClass
-    public void setupTestEnvironment() throws Exception {
-        shutdownPreviousTest();
-        fetchProductionData();
-        deployComponents();
-        replaceDatabasesWithProd(false);
-        upgradeHarvestDatabase();
-        /*generateDatabaseSchemas();
-        compareDatabaseSchemas();*/
-        startTestSystem();
-    }
-
-    private void shutdownPreviousTest()  throws Exception{
-        addStep("Shutting down any previously running test.", "");
+    protected void shutdownPreviousTest()  throws Exception{
+        addFixture("Shutting down any previously running test.");
         environmentManager.runCommand("stop_test.sh");
+        addFixture("Cleaning up old test.");
         environmentManager.runCommand("cleanup_all_test.sh");
-        environmentManager.runCommand("prepare_test.sh deploy_config_dedup_disabled.xml");
+        addFixture("Preparing deploy");
+        environmentManager.runCommand("prepare_test.sh deploy_config_stresstest.xml");
     }
 
-    private void startTestSystem() throws Exception {
-        addStep("Starting Test", "");
+    protected void startTestSystem() throws Exception {
+        addFixture("Starting Test");
         environmentManager.runCommand("start_test.sh");
     }
+
+    protected void shutdownTest()  throws Exception{
+        addFixture("Shutting down the test.");
+        environmentManager.runCommand("stop_test.sh");
+        environmentManager.runCommand("cleanup_all_test.sh");
+    }
+
 
     /**
      * Copying production databases to the relevant test servers.
      */
-    private void fetchProductionData() throws Exception {
-        addStep("Copying production databases to the relevant test servers.", "");
+    protected void fetchProductionData() throws Exception {
+        addFixture("Copying production databases to the relevant test servers.");
         environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -rf /tmp/prod_admindb.out");
         environmentManager.runCommand(TestEnvironment.ARCHIVE_ADMIN_SERVER, "rm -rf /tmp/prod_harvestdb.dump.out");
         environmentManager.runCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf /tmp/CS");
+        addFixture("Copying admin db.");
         environmentManager.runCommand("scp -r /home/test/prod-backup/prod_admindb.out test@kb-test-adm-001.kb.dk:/tmp");
+        addFixture("Copying harvest db");
         environmentManager.runCommand("scp -r /home/test/prod-backup/prod_harvestdb.dump.out test@kb-test-adm-001.kb.dk:/tmp");
+        addFixture("Copying checksum db");
         environmentManager.runCommand("scp -r /home/test/prod-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
     }
 
-    private void deployComponents() throws Exception {
+    protected void deployComponents() throws Exception {
         addStep("Installing components.", "");
         environmentManager.runCommand("install_test.sh");
     }
@@ -100,40 +92,42 @@ public class StressTest extends ExtendedTestCase {
      * @param nodata
      * @throws Exception
      */
-    private void replaceDatabasesWithProd(boolean nodata) throws Exception {
+    protected void replaceDatabasesWithProd(boolean nodata) throws Exception {
         String dropAdminDB = "psql -U test -c 'drop database if exists stresstest_admindb'";
         String createAdminDB = "psql -U test -c 'create database stresstest_admindb'";
         String dropHarvestDB = "psql -U test -c 'drop database if exists stresstest_harvestdb'";
         String createHarvestDB = "psql -U test -c 'create database stresstest_harvestdb'";
-        addStep("Cleaning out harvest database", "");
+        addFixture("Cleaning out harvest database");
         environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, dropHarvestDB);
         environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createHarvestDB);
-        addStep("Cleaning out admin database", "");
+        addFixture("Cleaning out admin database");
         environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, dropAdminDB);
         environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createAdminDB);
-        addStep("Replacing default test databases with prod data", "");
+        addFixture("Populating empty databases.");
         if (nodata) {
-            addStep("Restoring admin data schema", "");
+            addFixture("Restoring admin data schema");
             String createRelationsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -s --schema public /tmp/prod_admindb.out";
             String populateSchemaversionsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -t schemaversions -t --clean --schema public /tmp/prod_admindb.out";
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsAdminDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaversionsAdminDB);
-            addStep("Restoring harvestdb schema", "");
+            addFixture("Restoring harvestdb schema");
             String createRelationsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -s --schema public /tmp/prod_harvestdb.dump.out";
             String populateSchemaVersionsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schemaversions --clean --schema public /tmp/prod_harvestdb.dump.out";
             String populateOrdertemplatesHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t ordertemplates --clean --schema public /tmp/prod_harvestdb.dump.out";
+            String populateSchedulesDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schedules --clean --schema public /tmp/prod_harvestdb.dump.out";
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsHarvestDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaVersionsHarvestDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateOrdertemplatesHarvestDB);
-
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchedulesDB);
         } else {
+            addFixture("Ingesting full production admindb backup.");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_admindb --clean --no-owner --schema public /tmp/prod_admindb.out");
-            addStep("Ingesting prod harvest data", "");
+                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_admindb  --no-owner --schema public /tmp/prod_admindb.out");
+            addFixture("Ingesting full production harvestdb backup");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_harvestdb --clean --no-owner --schema public /tmp/prod_harvestdb.dump.out");
+                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_harvestdb  --no-owner --schema public /tmp/prod_harvestdb.dump.out");
         }
-        addStep("Replacing checksum database with prod data", "");
+        addFixture("Replacing checksum database with prod data");
         environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER,
                 "rm -rf CS");
         environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER,
@@ -141,7 +135,7 @@ public class StressTest extends ExtendedTestCase {
     }
 
 
-    private void enableHarvestDatabaseUpgrade() throws Exception {
+    protected void enableHarvestDatabaseUpgrade() throws Exception {
         addStep("Enabling database upgrade.", "");
         environmentManager.replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER,
                 "conf/settings_GUIApplication.xml",
@@ -149,7 +143,7 @@ public class StressTest extends ExtendedTestCase {
                 "<dir>harvestDatabase/fullhddb;upgrade=true</dir>");
     }
 
-    private void upgradeHarvestDatabase() throws Exception {
+    protected void upgradeHarvestDatabase() throws Exception {
         environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                 "export CLASSPATH=" +
                         "./lib/dk.netarkivet.harvester.jar:" +
