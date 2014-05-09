@@ -151,6 +151,9 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         assertColumnIsSorted(8, false);
     }
 
+
+
+
     @Test(groups = {"guitest","functest", "slow"})
     public void historyTablePagingTest() throws Exception {
         addDescription("Testes that the paging functionality works correctly " +

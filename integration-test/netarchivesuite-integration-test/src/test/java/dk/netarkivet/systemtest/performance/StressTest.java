@@ -37,12 +37,15 @@ import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
  */
 public class StressTest extends ExtendedTestCase {
     public static final String TESTNAME = "Stresstest";
+
+
+
     /** Handles the bash command functionality in the test environment. */
     protected TestEnvironmentManager environmentManager;
 
     @BeforeTest (alwaysRun=true)
     protected void setupTest() {
-        environmentManager = new TestEnvironmentManager(TESTNAME, null, 8072);
+        environmentManager = new TestEnvironmentManager(TESTNAME, null, 8073);
     }
 
     protected void shutdownPreviousTest()  throws Exception{

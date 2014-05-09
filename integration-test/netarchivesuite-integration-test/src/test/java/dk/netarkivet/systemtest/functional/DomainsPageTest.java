@@ -36,6 +36,7 @@ import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeMethod;
@@ -91,15 +92,18 @@ public class DomainsPageTest extends SeleniumTest {
     @Test(groups = {"guitest","functest"})
     public void usedConfigurationFilteringTest() {
         addDescription("Tests configurations are filtered correctly when " +
-                "using the 'Show/Hide unused configuration' filter.");
+                        "using the 'Show/Hide unused configuration' filter.");
+        usedConfigurationsTest(driver, createDomainID());
+    }
+
+    public void usedConfigurationsTest(WebDriver driver, String domain1ID) {
         addStep("Create a new domain",
                 "The edit domain page should be loaded with only the default " +
                 "config show. The configurations filter state should be that " +
                         "unused configurations are hidden, eg. the filter link " +
                         "text should 'Show unused configurations.");
-        String domain1ID = createDomainID();
         DomainWebTestHelper.createDomain(new String[]{domain1ID});
-        List<WebElement> configurationRows = readConfigurationTableRows();
+        List<WebElement> configurationRows = readConfigurationTableRows(driver);
         NASAssert.assertEquals(1, configurationRows.size(), "More than one configuration listed in the new domain");
         NASAssert.assertTrue(configurationRows.get(0).getText().contains("defaultconfig"),
                 "Didn't find the defaultconfig as the only configuration");
@@ -114,7 +118,7 @@ public class DomainsPageTest extends SeleniumTest {
         addStep("Click the 'Show unused configurations' link" ,
                 "The new configuration should appear in the configuration list as the second element.");
         PageHelper.clickLink(SHOW_UNUSED_CONFIGURATIONS_LINK);
-        configurationRows = readConfigurationTableRows();
+        configurationRows = readConfigurationTableRows(driver);
         NASAssert.assertEquals(2, configurationRows.size(), "The second configuration didn't appear in the list after " +
                 "clicking the 'Show unused configurations' link.");
         NASAssert.assertTrue(configurationRows.get(1).getText().contains(configuration1ID),
@@ -123,7 +127,7 @@ public class DomainsPageTest extends SeleniumTest {
         addStep("Click the 'Hide unused configurations' link" ,
                 "The new configuration should disappear from the configuration list.");
         PageHelper.clickLink(HIDE_UNUSED_CONFIGURATIONS_LINK);
-        configurationRows = readConfigurationTableRows();
+        configurationRows = readConfigurationTableRows(driver);
         NASAssert.assertEquals(1, configurationRows.size(), "More than one configuration listed after second " +
                 "configuration was created. Should have been hidden by unused filter");
         NASAssert.assertTrue(configurationRows.get(0).getText().contains("defaultconfig"),
@@ -134,11 +138,11 @@ public class DomainsPageTest extends SeleniumTest {
                 "Only the second configuration should be, as the 'Hide unused configurations' filter has been reset " +
                         "after the save.");
         PageHelper.clickLink(SHOW_UNUSED_CONFIGURATIONS_LINK);
-        configurationRows = readConfigurationTableRows();
+        configurationRows = readConfigurationTableRows(driver);
         configurationRows.get(1).findElement(By.name("default")).click();
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
 
-        configurationRows = readConfigurationTableRows();
+        configurationRows = readConfigurationTableRows(driver);
         NASAssert.assertEquals(1, configurationRows.size(), "More than one configuration shown after switching default.");
         NASAssert.assertTrue(configurationRows.get(0).getText().contains(configuration1ID),
                 "Didn't find the new configuration in the full configuration list.");
@@ -168,7 +172,7 @@ public class DomainsPageTest extends SeleniumTest {
                         "text should 'Show unused seed lists.");
         String domain1ID = createDomainID();
         DomainWebTestHelper.createDomain(new String[]{domain1ID});
-        List<WebElement> seedListRows = readSeedListTableRows();
+        List<WebElement> seedListRows = readSeedListTableRows(driver);
         NASAssert.assertEquals(1, seedListRows.size(), "More than one seed list listed in the new domain");
         NASAssert.assertTrue(seedListRows.get(0).getText().contains("defaultseeds"),
                 "Didn't find the defaultseeds as the only seed list");
@@ -183,7 +187,7 @@ public class DomainsPageTest extends SeleniumTest {
         addStep("Click the 'Show unused seed list' link",
                 "The new seed list should appear in the seed list list as the second element.");
         PageHelper.clickLink(SHOW_UNUSED_SEED_LISTS_LINK);
-        seedListRows = readSeedListTableRows();
+        seedListRows = readSeedListTableRows(driver);
         NASAssert.assertEquals(2, seedListRows.size(), "The second seed list didn't appear in the list after " +
                 "clicking the 'Show unused seed lists' link.");
         NASAssert.assertTrue(seedListRows.get(1).getText().contains(seedList1ID),
@@ -192,7 +196,7 @@ public class DomainsPageTest extends SeleniumTest {
         addStep("Click the 'Hide unused seed lists' link" ,
                 "The new seed list should disappear from the seed list list.");
         PageHelper.clickLink(HIDE_UNUSED_SEED_LISTS_LINK);
-        seedListRows = readSeedListTableRows();
+        seedListRows = readSeedListTableRows(driver);
         NASAssert.assertEquals(1, seedListRows.size(), "More than one seed list listed after second " +
                 "seed list was created. Should have been hidden by unused filter");
         NASAssert.assertTrue(seedListRows.get(0).getText().contains("defaultseeds"),
@@ -200,23 +204,23 @@ public class DomainsPageTest extends SeleniumTest {
 
         addStep("Add the new seed list to the default config (which is a used config)",
                 "The seed list should now be listed");
-        List<WebElement> configurationRows = readConfigurationTableRows();
+        List<WebElement> configurationRows = readConfigurationTableRows(driver);
         configurationRows.get(0).findElement(By.linkText("Edit")).click();
         Select seedListSelect = new Select(driver.findElement(By.name("urlListList")));
         seedListSelect.selectByVisibleText(seedList1ID);
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
-        seedListRows = readSeedListTableRows();
+        seedListRows = readSeedListTableRows(driver);
         NASAssert.assertEquals(2, seedListRows.size(), "The second seed list didn't appear in the list after " +
                 "it was added to the defaultconfig.");
 
         addStep("Remove the default seed list from the default configuration",
                 "Only the new seed list should now be listed");
-        configurationRows = readConfigurationTableRows();
+        configurationRows = readConfigurationTableRows(driver);
         configurationRows.get(0).findElement(By.linkText("Edit")).click();
         seedListSelect = new Select(driver.findElement(By.name("urlListList")));
         seedListSelect.deselectByVisibleText("defaultseeds");
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
-        seedListRows = readSeedListTableRows();
+        seedListRows = readSeedListTableRows(driver);
         NASAssert.assertEquals(1, seedListRows.size(), "The default seed list still showing  in the list after " +
                 "it was removed from the defaultconfig.");
         NASAssert.assertFalse(seedListRows.get(0).getText().contains("defaultseeds"),
@@ -236,13 +240,13 @@ public class DomainsPageTest extends SeleniumTest {
         return domainIDForTest + "-seedlist-" + domainCounter++ + ".dk";
     }
 
-    private List<WebElement> readConfigurationTableRows() {
+    private List<WebElement> readConfigurationTableRows(WebDriver driver) {
         List<WebElement> seedListTableRows =
                 driver.findElements(By.className("selection_table")).get(0).findElements(By.className("row0"));
         return seedListTableRows;
     }
 
-    private List<WebElement> readSeedListTableRows() {
+    private List<WebElement> readSeedListTableRows(WebDriver driver) {
         List<WebElement> seedListTableRows =
                 driver.findElements(By.className("selection_table")).get(1).findElements(By.className("row0"));
         return seedListTableRows;

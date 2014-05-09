@@ -12,6 +12,7 @@ import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -29,6 +30,10 @@ public class ExtendedFieldTest extends SeleniumTest {
     @Test(groups = {"guitest","functest"})
     public void extendedDomainStringFieldTest() throws Exception {
         addDescription("Tests that String type extended fields works correctly on domains.");
+        extendedDomainStringFieldTest(driver, extendedIDForTest);
+    }
+
+    public void extendedDomainStringFieldTest(WebDriver driver, String extendedIDForTest) throws Exception {
         addStep("Create a new String type field (name:" + extendedIDForTest + ") for domains",
                 "");
         PageHelper.gotoPage(PageHelper.MenuPages.ExtendedFields);
@@ -48,11 +53,13 @@ public class ExtendedFieldTest extends SeleniumTest {
         NASAssert.assertTrue(driver.getPageSource().contains(extendedIDForTest));
 
         addStep("Fill out the new extended field with a value and save the "
-                + "updated domain",
+                        + "updated domain",
                 "");
 
 
         addStep("Reopen the domain",
                 "The new extended field should contain the newly defined value");
     }
+
+
 }
