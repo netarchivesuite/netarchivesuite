@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class DatabaseFullMigrationTest extends StressTest {
 
-    @Test
+    @Test(groups = {"guitest","functest"})
     public void dbFullMigrationTest() throws Exception {
         addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
         doStuff();

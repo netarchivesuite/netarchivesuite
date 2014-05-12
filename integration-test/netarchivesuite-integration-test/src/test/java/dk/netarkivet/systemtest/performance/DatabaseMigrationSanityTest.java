@@ -23,15 +23,15 @@ public class DatabaseMigrationSanityTest extends StressTest {
      * Basic sanity test that the current production database can be consistently upgraded with the latest NAS
      * software. This test is designed to be cheap to run so it can easily be tested on any snapshot.
      */
-    @Test
+    @Test(groups = {"functest"})
     public void dbMigrationSanityTest() throws Exception {
         addDescription("Test that database schema ingest from production produces a functional NAS system.");
+        doStuff();
     }
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-        boolean justdostuff = false;
-        if (!justdostuff) {
+        if (true) {
             shutdownPreviousTest();
             fetchProductionData();
             deployComponents();
@@ -41,8 +41,10 @@ public class DatabaseMigrationSanityTest extends StressTest {
             copyTestfiles();
             uploadFiles();
         }
-        doStuff();
-        if (!justdostuff) {
+    }
+
+    public void teardownTestEnvironment() throws Exception {
+        if (true) {
             shutdownTest();
         }
     }
