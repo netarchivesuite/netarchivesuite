@@ -1,0 +1,16 @@
+<?xml version="1.0"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>berkeleydb</groupId>
+  <artifactId>je</artifactId>
+  <name>Berkeley DB Java Edition</name>
+  <version>3.3.82</version>
+  <description>Berkeley DB Java Edition is a high performance, transactional storage engine written entirely in Java.</description>
+
+  <url>http://www.oracle.com/database/berkeley-db/index.html</url>
+  <licenses>
+    <license>
+      <name>The Berkeley DB Java Edition License</name>
+      <url>http://www.oracle.com/technology/software/products/berkeley-db/htdocs/jeoslicense.html</url>
+    </license>
+  </licenses>
+</project>

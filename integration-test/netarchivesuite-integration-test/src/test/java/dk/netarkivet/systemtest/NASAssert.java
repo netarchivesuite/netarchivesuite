@@ -30,12 +30,14 @@ import org.testng.Assert;
 
 public class NASAssert extends Assert {
 
+	// FIXME: http://stackoverflow.com/q/2313229/53897
+	
     /**
      * Improved assert method for set, which prints the difference between the two sets.
      * @param expectedSet
      * @param resultSet
      */
-  public static void assertEquals(Set expectedSet, Set resultSet) {
+  public static void assertEquals(Set<?> expectedSet, Set<?> resultSet) {
     Set<Object> disjunctInExpectedSet = new HashSet<Object>(expectedSet);
     disjunctInExpectedSet.removeAll(resultSet);
 
