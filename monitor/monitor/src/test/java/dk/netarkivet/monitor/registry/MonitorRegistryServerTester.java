@@ -29,7 +29,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
 import dk.netarkivet.monitor.registry.distribute.MonitorRegistryServer;
 import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;

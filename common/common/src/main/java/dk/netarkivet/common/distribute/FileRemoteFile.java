@@ -46,6 +46,7 @@ import dk.netarkivet.common.utils.StreamUtils;
  * you now, that recipient is a local process.
  * The file is deleted during cleanup.
  */
+@SuppressWarnings({ "serial"})
 public class FileRemoteFile implements RemoteFile {
     /** The logger for this class. */
     private Log log = LogFactory.getLog(getClass());

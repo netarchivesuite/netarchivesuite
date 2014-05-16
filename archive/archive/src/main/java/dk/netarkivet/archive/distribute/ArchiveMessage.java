@@ -36,6 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  * @see NetarkivetMessage
  */
+@SuppressWarnings({ "serial"})
 public abstract class ArchiveMessage extends NetarkivetMessage {
     /**
      * Creates a new ArchiveMessage.

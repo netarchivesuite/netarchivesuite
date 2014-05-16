@@ -52,6 +52,7 @@ import javax.jms.TemporaryTopic;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,6 +77,7 @@ import dk.netarkivet.common.utils.batch.TestJob;
  * A MockUp message queue, that generates a connection and destinations suitable
  * for testing.
  */
+@SuppressWarnings({ "rawtypes", "unused", "serial" })
 public class JMSConnectionMockupMQ extends JMSConnection {
     private static final Log log
             = LogFactory.getLog(JMSConnectionMockupMQ.class); 

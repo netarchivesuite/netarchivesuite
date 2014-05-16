@@ -26,6 +26,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * Unit tests for the class WARCBatchJob.
  */
+@SuppressWarnings({ "serial"})
 public class WARCBatchJobTester extends TestCase {
 
     //Reference to test files:

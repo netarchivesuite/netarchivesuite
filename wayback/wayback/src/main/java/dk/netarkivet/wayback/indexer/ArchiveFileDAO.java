@@ -28,12 +28,14 @@ package dk.netarkivet.wayback.indexer;
 import java.util.List;
 
 import org.hibernate.Session;
+
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
 /**
  * Data Access Object for ArchiveFile instances.
  */
+@SuppressWarnings({ "unchecked"})
 public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String>{
 
     /**

@@ -32,6 +32,7 @@ import java.util.Date;
 /**
  * Job which returns the names of all files in the archive modified after a specific date.
  */
+@SuppressWarnings({ "serial"})
 public class DatedFileListJob extends FileListJob {
 
     private Date since;

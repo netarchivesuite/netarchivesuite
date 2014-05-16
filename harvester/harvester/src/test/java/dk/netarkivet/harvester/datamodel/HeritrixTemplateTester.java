@@ -27,6 +27,7 @@ package dk.netarkivet.harvester.datamodel;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.XmlUtils;
 import junit.framework.TestCase;
+
 import org.archive.crawler.deciderules.DecidingScope;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
@@ -36,6 +37,7 @@ import java.io.File;
 import java.util.List;
 
 /** Testclass for class HeritrixTemplate. */
+@SuppressWarnings({ "unchecked"})
 public class HeritrixTemplateTester extends TestCase {
 
     protected void setUp() throws Exception {

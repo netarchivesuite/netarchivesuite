@@ -27,6 +27,7 @@ import com.sleepycat.je.DatabaseException;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings({ "unused"})
 public class DatabaseChecksumTester extends TestCase {
 
     /**

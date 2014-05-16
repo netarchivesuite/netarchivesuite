@@ -34,6 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  */
 
+@SuppressWarnings({ "serial"})
 public class RepeatingSchedule extends Schedule {
     /** How many times this schedule should be repeated.*/
     private final int repeats;

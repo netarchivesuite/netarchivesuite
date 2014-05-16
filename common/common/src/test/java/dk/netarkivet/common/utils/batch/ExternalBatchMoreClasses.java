@@ -56,6 +56,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  *    ExternalBatchSeveralClassesWithPackage.jar
  */
 
+@SuppressWarnings({ "serial"})
 public class ExternalBatchMoreClasses extends FileBatchJob {
     protected transient Log log = LogFactory.getLog(getClass().getName());
 

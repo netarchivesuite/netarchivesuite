@@ -36,6 +36,7 @@ import dk.netarkivet.common.utils.Settings;
  * Optimised to transfer 0 byte files inline.
  * Will use one shared certificate for secure communication.
  */
+@SuppressWarnings({ "serial"})
 public class HTTPSRemoteFile extends HTTPRemoteFile {
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH

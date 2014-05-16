@@ -43,6 +43,7 @@ import dk.netarkivet.testutils.LogUtils;
  * especially the ones related to backup of the database.
  *
  */
+@SuppressWarnings({ "unused"})
 public class HarvestDBConnectionTester extends DataModelTestCase {
 
 	private File logfile = new File("tests/testlogs/netarkivtest.log");

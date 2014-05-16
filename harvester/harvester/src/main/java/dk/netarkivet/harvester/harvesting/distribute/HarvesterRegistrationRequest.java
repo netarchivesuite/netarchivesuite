@@ -44,6 +44,7 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
  * @author ngiraud
  *
  */
+@SuppressWarnings({ "serial"})
 public class HarvesterRegistrationRequest extends HarvesterMessage {
 
     /**

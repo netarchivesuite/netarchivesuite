@@ -27,6 +27,7 @@ package dk.netarkivet.common.exceptions;
 /**
  * Access was denied to a resource or credentials were invalid.
  */
+@SuppressWarnings({ "serial"})
 public class PermissionDenied extends NetarkivetException  {
     /**
      * Constructs new PermissionDenied with the specified detail message.

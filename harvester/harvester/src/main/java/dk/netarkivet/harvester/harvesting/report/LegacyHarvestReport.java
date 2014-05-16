@@ -48,6 +48,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
  * Heritrix and presenting the relevant information to clients.
  *
  */
+@SuppressWarnings({ "serial"})
 public class LegacyHarvestReport extends AbstractHarvestReport {
 
     /** The logger for this class. */

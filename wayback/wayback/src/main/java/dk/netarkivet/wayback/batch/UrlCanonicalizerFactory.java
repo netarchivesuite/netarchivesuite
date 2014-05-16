@@ -35,6 +35,8 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonica
 /**
  * A factory for returning a UrlCanonicalizer.
  */
+@SuppressWarnings({ "deprecation"})
+
 public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
 
     private static Log logger = LogFactory.getLog(UrlCanonicalizerFactory.class);

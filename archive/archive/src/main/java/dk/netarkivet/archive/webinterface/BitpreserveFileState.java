@@ -29,6 +29,7 @@ package dk.netarkivet.archive.webinterface;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
@@ -55,6 +56,7 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
  * Class encapsulating methods for handling web requests for
  * ActiveBitPreservation.
  */
+@SuppressWarnings({ "unchecked"})
 public class BitpreserveFileState {
     /** Internationalisation object. */
     private static final I18n I18N

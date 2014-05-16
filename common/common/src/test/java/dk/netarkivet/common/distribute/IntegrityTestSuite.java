@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -528,6 +529,7 @@ public class IntegrityTestSuite extends TestCase {
      * The only added functionality is that toString() outputs a representation
      * of the "entire visible state" of the message.
      */
+    @SuppressWarnings({ "unused", "serial"})
     private static class TestMessage extends NetarkivetMessage {
         String testID;
         public TestMessage(ChannelID sendQ, ChannelID recQ) {

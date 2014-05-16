@@ -38,6 +38,7 @@ import org.hibernate.criterion.Criterion;
  * @param <T> The type of the persistent entity.
  * @param <PK> The type of the primary key for the entity.
  */
+@SuppressWarnings({ "unchecked"})
 public class GenericHibernateDAO<T, PK extends Serializable> implements GenericDAO<T, PK> {
 
     private Class<T> type;
@@ -102,7 +103,6 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
      * @param criterion the criteria to be matched.
      * @return a list of objects matching the criterion.
      */
-    @SuppressWarnings("unchecked")
     protected List<T> findByCriteria(Criterion... criterion) {
         Criteria crit = getSession().createCriteria(type);
         for (Criterion c : criterion) {

@@ -32,6 +32,7 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -40,7 +41,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -54,6 +54,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Tests JMSConnection, the class that handles all JMS operations for
  * Netarkivet.
  */
+@SuppressWarnings({ "unchecked", "rawtypes", "unused", "serial" })
 public class JMSConnectionTester extends TestCase {
 
     private SecurityManager originalSecurityManager;

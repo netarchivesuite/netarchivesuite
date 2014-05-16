@@ -25,6 +25,7 @@ package dk.netarkivet.wayback.indexer;
 
 import java.util.List;
 
+@SuppressWarnings({ "unchecked"})
 public class FileNameHarvesterTester extends IndexerTestCase {
 
 

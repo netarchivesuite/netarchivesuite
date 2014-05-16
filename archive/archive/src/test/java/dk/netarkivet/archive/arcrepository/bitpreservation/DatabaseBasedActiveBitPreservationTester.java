@@ -73,6 +73,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+@SuppressWarnings({ "deprecation", "unused"})
 public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();

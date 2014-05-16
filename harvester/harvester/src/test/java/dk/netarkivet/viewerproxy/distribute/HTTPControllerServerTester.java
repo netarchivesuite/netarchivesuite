@@ -41,7 +41,6 @@ import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
@@ -60,6 +59,7 @@ import dk.netarkivet.viewerproxy.URIResolver;
  * Unit tests for the HTTPControllerServer class. 
  *
  */
+@SuppressWarnings({ "deprecation"})
 public class HTTPControllerServerTester extends TestCase {
     private TestDelegatingController c;
     private TestURIResolver ur;

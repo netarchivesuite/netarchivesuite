@@ -47,6 +47,7 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.XmlState.OK
  * Class PersistentJobData holds information about an ongoing harvest.
  * Presently the information is stored in a XML-file.
  */
+@SuppressWarnings({ "serial"})
 public class PersistentJobData implements JobInfo {
     
     /** Innerclass containing Info about a harvestjob. */

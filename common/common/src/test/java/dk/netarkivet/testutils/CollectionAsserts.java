@@ -31,13 +31,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.utils.Named;
 
 
 /** 
  * Utilities for doing asserts on collections. 
  */
+@SuppressWarnings({ "rawtypes" })
 public class CollectionAsserts {
     
     /** Test that two iterators contain the same objects in the same order.

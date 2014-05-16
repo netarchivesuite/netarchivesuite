@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
@@ -63,6 +62,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /** This class tests the store() method of ArcRepository. */
+@SuppressWarnings({ "deprecation", "unchecked"})
 public class ArcRepositoryTesterStore extends TestCase {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
 

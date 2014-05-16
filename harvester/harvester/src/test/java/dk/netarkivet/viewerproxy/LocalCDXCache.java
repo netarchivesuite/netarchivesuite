@@ -64,6 +64,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
  *
  * @deprecated Use {@link JobIndexCache}-mechanism instead
  */
+@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 public class LocalCDXCache implements JobIndexCache {
     /** Don't put more than this number of job ids in the filename.  Above this
      * number, a checksum of the job ids is generated instead.  This is done

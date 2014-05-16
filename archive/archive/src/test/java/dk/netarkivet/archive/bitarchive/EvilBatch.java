@@ -12,6 +12,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /** This class attempts to do illegal actions.
  */
+@SuppressWarnings({ "serial"})
 public class EvilBatch extends FileBatchJob {
     String location;
     public void initialize(OutputStream os) {

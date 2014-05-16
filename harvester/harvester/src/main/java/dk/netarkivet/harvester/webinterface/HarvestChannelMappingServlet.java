@@ -45,6 +45,7 @@ import dk.netarkivet.harvester.webinterface.HarvestChannelAction.ActionType;
  * map a harvest to a channel.
  * 
  */
+@SuppressWarnings({ "serial"})
 public class HarvestChannelMappingServlet extends HttpServlet {
 
 	private static final I18n I18N = new I18n(

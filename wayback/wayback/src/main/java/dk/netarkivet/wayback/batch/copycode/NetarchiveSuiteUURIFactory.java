@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import gnu.inet.encoding.IDNA;
 import gnu.inet.encoding.IDNAException;
 import it.unimi.dsi.mg4j.util.MutableString;
+
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.archive.net.LaxURLCodec;
@@ -46,6 +47,7 @@ import org.archive.util.TextUtils;
  * jobs without violating our security permissions.
  * 
  */
+@SuppressWarnings({ "serial", "unused"})
 public class NetarchiveSuiteUURIFactory extends UURI {
     private static final long serialVersionUID = -6146295130382209042L;
 

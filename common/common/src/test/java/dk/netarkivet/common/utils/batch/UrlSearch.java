@@ -17,7 +17,7 @@ import dk.netarkivet.common.utils.arc.ARCBatchJob;
  * specific mimetype (both in the shape of a regular expression).
  * The URLs of the digital objects which matches these constrains are returned.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "unused"})
 @Resources(value = {
         @Resource(name="regex", description="The regular expression for the "
             + "urls.", type=java.lang.String.class), 

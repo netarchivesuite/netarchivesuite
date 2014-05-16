@@ -29,6 +29,7 @@ import java.io.Serializable;
 /** Container for the RemoteFile settings used by one app, 
  * so they can be used by another app. 
  */
+@SuppressWarnings({ "serial"})
 public class RemoteFileSettings implements Serializable {
 
     /** server host name. */

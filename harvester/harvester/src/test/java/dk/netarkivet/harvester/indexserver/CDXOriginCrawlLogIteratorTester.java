@@ -35,7 +35,6 @@ import java.util.NoSuchElementException;
 
 import is.hi.bok.deduplicator.CrawlDataItem;
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.indexserver.CDXOriginCrawlLogIterator;
@@ -46,6 +45,7 @@ import dk.netarkivet.testutils.TestFileUtils;
  * Test-class for CDXOriginCrawlLogIterator.
  *
  */
+@SuppressWarnings({ "unused"})
 public class CDXOriginCrawlLogIteratorTester extends TestCase {
 
     /* (non-Javadoc)

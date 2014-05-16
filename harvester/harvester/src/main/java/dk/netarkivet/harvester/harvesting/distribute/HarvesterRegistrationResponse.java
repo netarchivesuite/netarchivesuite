@@ -38,6 +38,7 @@ import dk.netarkivet.harvester.scheduler.HarvesterStatusReceiver;
  * defined in the harvest database.
  *
  */
+@SuppressWarnings({ "serial"})
 public class HarvesterRegistrationResponse extends HarvesterMessage {
 
     /**

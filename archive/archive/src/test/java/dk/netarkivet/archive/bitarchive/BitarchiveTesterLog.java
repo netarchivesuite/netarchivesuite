@@ -40,6 +40,7 @@ import dk.netarkivet.testutils.FileAsserts;
  * Unit test for Bitarchive API
  * The logging of bitarchive opertions is tested
 */
+@SuppressWarnings({ "serial"})
 public class BitarchiveTesterLog extends BitarchiveTestCase {
     private static File EXISTING_ARCHIVE_DIR =
             new File("tests/dk/netarkivet/archive/bitarchive/data/log/existing/");

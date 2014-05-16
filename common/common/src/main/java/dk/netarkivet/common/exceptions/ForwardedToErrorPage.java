@@ -29,6 +29,7 @@ package dk.netarkivet.common.exceptions;
  * This exception indicates that we have forwarded to a JSP error page and
  * thus should stop all processing and just return at the top level JSP.
  */
+@SuppressWarnings({ "serial"})
 public class ForwardedToErrorPage extends NetarkivetException {
     /** Create a new ForwardedToErrorPage exception.
      *

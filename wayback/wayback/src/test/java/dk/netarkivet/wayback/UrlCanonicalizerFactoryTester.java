@@ -24,6 +24,7 @@
 package dk.netarkivet.wayback;
 
 import junit.framework.TestCase;
+
 import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
 
@@ -34,6 +35,7 @@ import dk.netarkivet.wayback.batch.UrlCanonicalizerFactory;
 /**
  *
  */
+@SuppressWarnings({ "deprecation"})
 public class UrlCanonicalizerFactoryTester extends TestCase {
 
     public void testGetDefaultUrlCanonicalizer() {

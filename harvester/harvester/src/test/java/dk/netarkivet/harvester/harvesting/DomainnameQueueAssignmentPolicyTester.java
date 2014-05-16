@@ -27,6 +27,7 @@ package dk.netarkivet.harvester.harvesting;
 import java.io.File;
 
 import junit.framework.TestCase;
+
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.net.UURI;
@@ -38,6 +39,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Tests of the DomainnameQueueAssignmentPolicy.
  */
+@SuppressWarnings({ "serial"})
 public class DomainnameQueueAssignmentPolicyTester extends TestCase {
     /** A key used for the cases when we can't figure out the URI.
      *  This is taken from parent, where it has private access.  Parent returns

@@ -48,6 +48,7 @@ import dk.netarkivet.common.utils.SystemUtils;
  * Optimised to communicate locally, if file is on the same host.
  * Optimised to transfer 0 byte files inline.
  */
+@SuppressWarnings({ "serial"})
 public class HTTPRemoteFile extends AbstractRemoteFile {
     /** The default place in classpath where the settings file can be found. */
     private static String DEFAULT_SETTINGS_CLASSPATH

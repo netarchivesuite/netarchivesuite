@@ -20,6 +20,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 
 
+@SuppressWarnings({ "unused"})
 public class ExtendedFieldValueDefinition {
     private static Log log = LogFactory.getLog(ExtendedFieldValueDefinition.class.getName());
 

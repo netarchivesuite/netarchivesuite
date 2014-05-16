@@ -33,6 +33,7 @@ import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.util.JmxUtils;
@@ -40,6 +41,7 @@ import org.archive.util.JmxUtils;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 import javax.management.remote.JMXConnector;
+
 import java.util.Collection;
 
 /**
@@ -48,6 +50,7 @@ import java.util.Collection;
  * executes exactly one process that runs exactly one crawl job.
  * @deprecated Use the {@link BnfHeritrixController} instead
  */
+@SuppressWarnings({ "unused", "unchecked"})
 public class JMXHeritrixController extends AbstractJMXHeritrixController {
     /** The logger for this class. */
     private static final Log log = LogFactory.getLog(

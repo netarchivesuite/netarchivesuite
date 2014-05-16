@@ -62,6 +62,7 @@ import org.archive.util.TextUtils;
  *      </newObject> 
  * </newObject>
  */
+@SuppressWarnings({ "serial"})
 public class ExtractorOAI extends Extractor {
 
     /**

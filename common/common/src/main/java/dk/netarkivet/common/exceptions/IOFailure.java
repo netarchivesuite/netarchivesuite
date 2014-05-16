@@ -26,6 +26,7 @@ package dk.netarkivet.common.exceptions;
 /**
  * An input/output operation failed.
  */
+@SuppressWarnings({ "serial"})
 public class IOFailure extends NetarkivetException  {
     /**
      * Constructs new IOFailure with the specified detail message.

@@ -36,12 +36,11 @@ import org.archive.io.arc.ARCWriter;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCReader;
 
-
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
-
 import junit.framework.TestCase;
 
+@SuppressWarnings({ "unused"})
 public class Bug901Tester extends TestCase {
 
     private static final int BLOCKSIZE = 32768;

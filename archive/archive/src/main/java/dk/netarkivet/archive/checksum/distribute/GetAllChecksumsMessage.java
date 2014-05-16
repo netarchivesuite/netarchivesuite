@@ -44,6 +44,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * 
  * This is checksum replica alternative to sending a ChecksumBatchJob.
  */
+@SuppressWarnings({ "serial"})
 public class GetAllChecksumsMessage extends ArchiveMessage {
     /** The file containing the output.*/
     private RemoteFile rf;

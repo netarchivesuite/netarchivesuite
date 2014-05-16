@@ -40,6 +40,7 @@ import dk.netarkivet.harvester.scheduler.HarvestSchedulerMonitorServer;
  * monitored anymore, and that any resource used to monitor this job
  * should be freed.
  */
+@SuppressWarnings({ "serial"})
 public class JobEndedMessage extends HarvesterMessage
 implements Serializable {
 

@@ -37,6 +37,7 @@ import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
 import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import junit.framework.TestCase;
+
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.datamodel.CrawlURI;
@@ -67,6 +68,7 @@ import java.util.List;
  * Note that some of these tests require much heap space, so JVM parameter
  * -Xmx512M may be required.
  */
+@SuppressWarnings({ "deprecation", "unused", "unchecked"})
 public class HeritrixLauncherTester extends TestCase {
 
     private MoveTestFiles mtf;
@@ -685,6 +687,7 @@ public class HeritrixLauncherTester extends TestCase {
        /**
         * Dummy frontier used by TestCrawlController
         */
+       @SuppressWarnings("rawtypes")
        class TestFrontier implements Frontier {
 
            public void initialize(CrawlController crawlController)

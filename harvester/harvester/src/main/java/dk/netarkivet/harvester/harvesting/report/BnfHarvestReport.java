@@ -57,6 +57,7 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
  *  QuotaEnforcer anymore and thus simply compares actual document counts to
  *  crawl and configuration budgets.
  */
+@SuppressWarnings({ "serial"})
 public class BnfHarvestReport extends AbstractHarvestReport {
 
     /** The logger for this class. */

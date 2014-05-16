@@ -31,7 +31,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.arcrepository.TestArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
@@ -49,6 +48,7 @@ import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 /**
  * Unit-tests for the GetDataResolver class. 
  */
+@SuppressWarnings({ "unused"})
 public class GetDataResolverTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.WORKING_DIR);

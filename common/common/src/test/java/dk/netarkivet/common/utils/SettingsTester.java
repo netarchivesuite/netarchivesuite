@@ -30,7 +30,6 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.CommonSettings;
@@ -41,6 +40,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Unit tests for the Settings class.
  * 
  */
+@SuppressWarnings({ "rawtypes" })
 public class SettingsTester extends TestCase  {
     ReloadSettings rs = new ReloadSettings(new File(TestInfo.SETTINGSFILENAME));
 

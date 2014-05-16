@@ -39,6 +39,7 @@ import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /** A batch job that extracts metadata. */
+@SuppressWarnings({ "serial"})
 public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
     /** The logger for this class. */
     private final Log log = LogFactory.getLog(getClass());

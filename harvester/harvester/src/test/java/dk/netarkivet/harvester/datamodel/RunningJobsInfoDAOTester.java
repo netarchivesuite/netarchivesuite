@@ -28,6 +28,7 @@ import java.util.Set;
 
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
+@SuppressWarnings({ "unused"})
 public class RunningJobsInfoDAOTester extends DataModelTestCase {
     public RunningJobsInfoDAOTester(String sTestName) {
         super(sTestName);

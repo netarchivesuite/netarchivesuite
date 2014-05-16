@@ -46,6 +46,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Heritrix wrapper implementation of the abstract archive header interface.
  */
+@SuppressWarnings({ "unchecked"})
 public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 
     /** The logger for this class. */

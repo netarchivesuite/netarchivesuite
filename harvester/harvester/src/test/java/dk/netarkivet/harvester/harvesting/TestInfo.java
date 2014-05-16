@@ -45,6 +45,7 @@ import dk.netarkivet.testutils.ReflectUtils;
 /**
  * Testdata for this package.
  */
+@SuppressWarnings("unused")
 public class TestInfo {
 
     static final StopReason DEFAULT_STOPREASON = StopReason.DOWNLOAD_COMPLETE;

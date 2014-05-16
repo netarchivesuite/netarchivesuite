@@ -35,6 +35,7 @@ import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
 /**
  * Test specification: https://sbforge.org/display/NAS/TEST+7.
  */
+@SuppressWarnings("unused")
 public class StressTest extends ExtendedTestCase {
     public static final String TESTNAME = "Stresstest";
 

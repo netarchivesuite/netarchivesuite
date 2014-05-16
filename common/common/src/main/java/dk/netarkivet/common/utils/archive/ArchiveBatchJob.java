@@ -46,6 +46,7 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
  * job runs initialize(), runs processRecord() on each record in each file in
  * the archive, and then runs finish().
  */
+@SuppressWarnings({ "serial"})
 public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
 
     /**

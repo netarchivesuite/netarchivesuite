@@ -44,6 +44,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * The message contains the checksum of the 'bad' entry in the archive, which is
  * only corrected if it actually has this 'bad checksum'.
  */
+@SuppressWarnings({ "serial"})
 public class CorrectMessage extends ArchiveMessage {
     /** The file to replace the current bad entry. */
     private RemoteFile theRemoteFile;

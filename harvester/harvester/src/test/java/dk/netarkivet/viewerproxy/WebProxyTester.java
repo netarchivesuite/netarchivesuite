@@ -30,6 +30,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,6 +51,7 @@ import java.util.logging.LogManager;
 import java.security.Principal;
 
 import junit.framework.TestCase;
+
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -72,6 +74,7 @@ import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 /**
  * Test the WebProxy class.
  */
+@SuppressWarnings({ "rawtypes" })
 public class WebProxyTester extends TestCase {
     private static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
 

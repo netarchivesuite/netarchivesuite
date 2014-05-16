@@ -59,6 +59,7 @@ import dk.netarkivet.common.utils.FileUtils;
  * Only used by HarveststatusPerdomainTester.
  * Is currently not working!
  */
+@SuppressWarnings({ "unused"})
 public class JspTestCase extends TestCase {
     protected static final File WEB_BASE_DIR = new File("webpages/HarvestDefinition");
     public static final File TOP_DATA_DIR =
@@ -140,7 +141,7 @@ public class JspTestCase extends TestCase {
     protected void tearDown() {
         FileUtils.removeRecursively(WORKING_DIR);
     }
-
+    
     private HttpJspBase getCompiledPage(final String webpage)
             throws InstantiationException, IllegalAccessException {
         Class<HttpJspBase> c = compiledPages.get(webpage);

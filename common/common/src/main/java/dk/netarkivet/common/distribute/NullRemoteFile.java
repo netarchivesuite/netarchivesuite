@@ -34,6 +34,7 @@ import java.io.OutputStream;
  * therefore be used in batch jobs for which no output is required.
  *
  */
+@SuppressWarnings({ "serial"})
 public class NullRemoteFile implements RemoteFile {
 
     /**

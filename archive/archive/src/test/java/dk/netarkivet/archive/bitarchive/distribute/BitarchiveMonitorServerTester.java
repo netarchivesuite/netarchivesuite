@@ -86,6 +86,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit tests for the BitarchiveMonitorServer class. 
  */
+@SuppressWarnings({ "unused", "unchecked", "serial"})
 public class BitarchiveMonitorServerTester extends TestCase {
 
     static final ChannelID THE_BAMON = Channels.getTheBamon();
@@ -201,7 +202,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * @return A batch message from THE_PRES with a job that does nothing.
      */
     private BatchMessage noActionBatchMessage(String id) {
-        BatchMessage result =
+		BatchMessage result =
                 new BatchMessage(
                         Channels.getTheBamon(),
                         Channels.getThisReposClient(),

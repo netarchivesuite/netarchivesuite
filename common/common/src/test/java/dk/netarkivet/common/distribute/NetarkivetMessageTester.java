@@ -30,13 +30,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
  * Tests the general class for distributed messages in Netarkivet.
  */
+@SuppressWarnings({ "serial"})
 public class NetarkivetMessageTester extends TestCase {
     private static final ChannelID toQ = Channels.getAnyBa();
     private static final ChannelID replyToQ = Channels.getError();

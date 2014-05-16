@@ -28,6 +28,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -92,6 +93,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
  */
+@SuppressWarnings({ "rawtypes", "unused", "serial" })
 public class JMSArcRepositoryClientTester extends TestCase {
 
     private static final File BASEDIR =

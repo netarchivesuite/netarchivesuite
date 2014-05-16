@@ -39,6 +39,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * which distributes the file to the known bitarchives, and checks the result,
  * and then responds to the sender.
  */
+@SuppressWarnings({ "serial"})
 public class StoreMessage extends ArchiveMessage {
     /** The actual data. */
     private RemoteFile theRemoteFile;

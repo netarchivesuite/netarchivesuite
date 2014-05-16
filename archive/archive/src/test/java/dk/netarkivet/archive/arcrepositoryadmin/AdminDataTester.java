@@ -37,7 +37,6 @@ import java.util.Set;
 import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.CommonSettings;
@@ -59,6 +58,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * This class tests AdminData save/store methods in general.
  */
+@SuppressWarnings({ "deprecation"})
+
 public class AdminDataTester extends TestCase {
 
     /**

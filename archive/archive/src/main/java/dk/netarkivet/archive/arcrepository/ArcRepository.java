@@ -78,6 +78,7 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
  * cannot be executed on checksum replicas. Correction operations are typically 
  * only allowed on one replica.
  */
+@SuppressWarnings({ "deprecation"})
 public class ArcRepository implements CleanupIF {
     /** The log.*/
     private final Log log = LogFactory.getLog(getClass().getName());

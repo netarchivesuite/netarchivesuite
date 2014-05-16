@@ -51,6 +51,7 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
  * The timeout of this job is 7 days.
  * See http://www.archive.org/web/researcher/cdx_file_format.php
  */
+@SuppressWarnings({ "serial", "unused"})
 public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /** An encoding for the standard included metadata fields without

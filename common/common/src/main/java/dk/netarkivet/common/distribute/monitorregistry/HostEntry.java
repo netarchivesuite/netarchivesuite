@@ -32,6 +32,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Helper class to encapsulate information about one remote JmxConnection.
  */
+@SuppressWarnings({ "serial"})
 public class HostEntry implements Serializable {
     /**
      * The name of the remote host.

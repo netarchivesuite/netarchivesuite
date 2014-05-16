@@ -37,6 +37,7 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 /**
  * Common base class for all messages exchanged in the NetarchiveSuite.
  */
+@SuppressWarnings({ "serial"})
 public abstract class NetarkivetMessage implements Serializable {
 
     // contains the error messages when isOk=false

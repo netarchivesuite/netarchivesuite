@@ -70,6 +70,7 @@ import dk.netarkivet.wayback.indexer.IndexerTestCase;
  * This test should be integrated with NetarchiveResourceStoreTester.
  * But since we are not using JUnit4 Parameterized testing is to cumbersome.
  */
+@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
 
     NetarchiveResourceStore netarchiveResourceStore = null;
@@ -270,7 +271,8 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
             conn.removeListener(Channels.getTheRepos(), this);
         }
 
-        public void onMessage(Message msg) {
+        @SuppressWarnings("resource")
+		public void onMessage(Message msg) {
             if (noReply) {
                 return;
             }

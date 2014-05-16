@@ -37,6 +37,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This is checksum replica alternative to sending a ChecksumBatchJob, with
  * a filename limitation.
  */
+@SuppressWarnings({ "serial"})
 public class GetChecksumMessage extends ArchiveMessage {
     /** The name of the arc file to retrieve the checksum from.*/
     private String arcFilename;

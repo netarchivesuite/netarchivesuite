@@ -36,6 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Container for upload request.
  *
  */
+@SuppressWarnings({ "serial"})
 public class UploadMessage extends ArchiveMessage {
     /** the name of the file to upload. */
     private String arcfileName;

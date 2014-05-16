@@ -29,6 +29,8 @@ import java.lang.reflect.Modifier;
 import junit.framework.TestCase;
 
 /** Unittestersuite for the MonitorSettings class. */
+@SuppressWarnings({ "rawtypes" })
+
 public class MonitorSettingsTester extends TestCase {
 
     public void testNoFinalSettingsConstants() {

@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
  * avoid unnecessary reading and copying of data of records
  * not accepted by filter.
  */
+@SuppressWarnings({ "unused", "serial"})
 public abstract class ArchiveBatchFilter implements Serializable {
     /** A default filter: Accepts everything */
     public static final ArchiveBatchFilter NO_FILTER = new ArchiveBatchFilter("NO_FILTER") {

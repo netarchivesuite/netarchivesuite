@@ -15,6 +15,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 /**
  * A simple test of the WARCREADER that is bundled with Heritrix 1.14.4. 
  */
+@SuppressWarnings({ "unused"})
 public class WARCReaderTester extends TestCase {
 
     public static final String ARCHIVE_DIR =

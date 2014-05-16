@@ -31,6 +31,8 @@ import java.util.Date;
 /**
  * This class manages owner information about a domain. Immutable.
  */
+
+@SuppressWarnings({ "rawtypes" })
 public class DomainOwnerInfo implements Comparable {
 
     /** Information about the owner of a domain. */

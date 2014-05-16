@@ -59,6 +59,7 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
  * Base implementation for a harvest report.
  *
  */
+@SuppressWarnings({ "serial"})
 public abstract class AbstractHarvestReport implements HarvestReport {
 
     /**

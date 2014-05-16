@@ -42,6 +42,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Time: 3:09:26 PM
  * </pre>
  */
+@SuppressWarnings({ "serial"})
 public class TestRemoteFile extends HTTPRemoteFile implements RemoteFile {
     public boolean failsOnCopy;
 

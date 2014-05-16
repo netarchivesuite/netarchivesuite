@@ -35,6 +35,7 @@ import org.archive.net.UURI;
  * has number 616: http://webteam.archive.org/jira/browse/HER-616 
  */
 
+@SuppressWarnings({ "serial"})
 public class FixedUURI extends UURI {
     protected FixedUURI() {
         super();

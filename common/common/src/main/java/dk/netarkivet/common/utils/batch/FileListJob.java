@@ -41,6 +41,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * A batch job which returns a list of all files in the bitarchive in which it
  * runs.
  */
+@SuppressWarnings({ "serial"})
 public class FileListJob extends FileBatchJob {
     
     /** The class logger. This variable is re-initialized during 

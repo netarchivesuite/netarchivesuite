@@ -49,6 +49,8 @@ import dk.netarkivet.common.utils.batch.ARCBatchFilter;
  * The timeout of this job is 7 days.
  * See http://www.archive.org/web/researcher/cdx_file_format.php
  */
+
+@SuppressWarnings({ "rawtypes", "serial" })
 public class ExtractCDXJob extends ARCBatchJob {
 
     /** An encoding for the standard included metadata fields without

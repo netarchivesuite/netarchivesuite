@@ -55,6 +55,7 @@ import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class SelectiveHarvestUtilTester extends DataModelTestCase {
     public SelectiveHarvestUtilTester(String s) {
         super(s);

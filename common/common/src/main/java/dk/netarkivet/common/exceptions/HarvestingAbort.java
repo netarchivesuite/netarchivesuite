@@ -27,6 +27,7 @@ package dk.netarkivet.common.exceptions;
 /**
  * This exception is used to signal that harvest is aborted.
  */
+@SuppressWarnings({ "serial"})
 public class HarvestingAbort extends NetarkivetException {
 
     /** Create a new HarvestAbort exception based on an old exception.

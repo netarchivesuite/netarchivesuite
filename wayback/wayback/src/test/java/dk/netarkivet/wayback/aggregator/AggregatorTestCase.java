@@ -34,8 +34,9 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
-
 import junit.framework.TestCase;
+
+@SuppressWarnings({ "unused"})
 
 public class AggregatorTestCase extends TestCase {
     protected static final String testWorkingDirectory = "target"+File.separator+"test-data"+File.separator;

@@ -34,6 +34,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 /**
  * Container for get requests.
  */
+@SuppressWarnings({ "serial"})
 public class GetMessage extends ArchiveMessage {
     /** the arcfile to retrieve an record from.  */
     private String arcfile;

@@ -31,6 +31,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -43,7 +44,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -54,6 +54,8 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** Unit tests for the HTMLUtils utility class. */
+@SuppressWarnings({ "rawtypes", "unused" })
+
 public class HTMLUtilsTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 

@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupIF;
 
@@ -42,13 +41,15 @@ import dk.netarkivet.common.utils.CleanupIF;
  * Class objects.
  * 
  */
+@SuppressWarnings({ "unchecked"})
 public class ClassAsserts {
 
     /**
      * Tests the class has a static factory method getInstance()
      * @param c the class to test
      */
-    public static void assertHasFactoryMethod(Class c) {
+    @SuppressWarnings({ "rawtypes" })
+	public static void assertHasFactoryMethod(Class c) {
         Method m = null;
         try {
             m = c.getDeclaredMethod("getInstance", (Class[]) null);
@@ -110,7 +111,8 @@ public class ClassAsserts {
      * not be included in the test.
      * @throws IllegalAccessException
      */
-    public static void assertEqualsValid(Object o1,
+    @SuppressWarnings("rawtypes")
+	public static void assertEqualsValid(Object o1,
                                          Object o2,
                                          List excludedFields)
             throws IllegalAccessException {

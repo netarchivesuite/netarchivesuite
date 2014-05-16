@@ -29,7 +29,6 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
@@ -39,6 +38,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /** Tests for HTTPSRemoteFile */
 
+@SuppressWarnings({ "serial"})
 public class HTTPSRemoteFileTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);

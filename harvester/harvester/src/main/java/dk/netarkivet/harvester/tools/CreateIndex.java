@@ -49,6 +49,7 @@ import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
  *      --type cdx|dedup|crawllog [jobid]+
  *
  */
+@SuppressWarnings({ "unused"})
 public class CreateIndex {
     /** 
      * Private constructor to avoid instantiation of this class.

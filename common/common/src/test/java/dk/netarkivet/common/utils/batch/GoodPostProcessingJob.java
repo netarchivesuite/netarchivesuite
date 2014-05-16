@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 
+@SuppressWarnings({ "serial"})
 public class GoodPostProcessingJob extends FileBatchJob {
 
     @Override

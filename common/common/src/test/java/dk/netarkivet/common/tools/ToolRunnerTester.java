@@ -25,7 +25,6 @@
 package dk.netarkivet.common.tools;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 
@@ -33,6 +32,7 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
  * Tests the ToolRunner using a mocked up tool, which can be induced to throw
  * exceptions through parameters.
  */
+@SuppressWarnings({ "serial"})
 public class ToolRunnerTester extends TestCase {
 
     private static SimpleCmdlineToolForTest sctfTest

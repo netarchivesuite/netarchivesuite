@@ -40,6 +40,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
    bit archive application later.
  *
  */
+@SuppressWarnings({ "serial"})
 public class HeartBeatMessage extends ArchiveMessage {
 
     /** time when heartbeat occurred. Note that timestamps cannot be compared

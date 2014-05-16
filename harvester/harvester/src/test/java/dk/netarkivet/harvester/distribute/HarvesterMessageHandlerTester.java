@@ -41,11 +41,13 @@ import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import junit.framework.TestCase;
+
 import org.mockito.Mockito;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("unused")
 public class HarvesterMessageHandlerTester extends TestCase {
     private HarvesterMessageHandler harvesterMessageHandlerUT = new TestMessageHandler();
 

@@ -46,6 +46,7 @@ import dk.netarkivet.common.utils.FileUtils;
  * as a File object.
  * The given class will be loaded and used to perform
  * the actions of the FileBatchJob class. */
+@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 public class LoadableFileBatchJob extends FileBatchJob {
     /** The class logger. */
     transient Log log = LogFactory.getLog(this.getClass().getName());

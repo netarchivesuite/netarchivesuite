@@ -42,6 +42,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * in the tree.
  * @param <T> The type of XmlTree
  */
+@SuppressWarnings({ "unchecked"})
 public class XmlTree<T> implements StringTree<T> {
     /** This matches string values that are valid for identifying a field. */
     private static final Pattern LEGAL_FIELD_NAME

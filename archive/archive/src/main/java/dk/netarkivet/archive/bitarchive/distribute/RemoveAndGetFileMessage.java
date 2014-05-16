@@ -42,6 +42,7 @@ import dk.netarkivet.common.utils.FileUtils;
  * Message requesting a file to be removed and returned from a bitarchive.
  * Messages is forwarded through arcrepository, but reponds directly to sender.
  */
+@SuppressWarnings({ "serial"})
 public class RemoveAndGetFileMessage extends ArchiveMessage {
     /**  The file to retrieve. */
     private String fileName;

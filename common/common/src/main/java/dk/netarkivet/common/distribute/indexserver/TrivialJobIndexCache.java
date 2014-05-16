@@ -43,6 +43,7 @@ import dk.netarkivet.common.utils.Settings;
  * the indexes in the right place (in TrivialJobIndexCache under the cache dir).
  *
  */
+@SuppressWarnings({ "unused"})
 public class TrivialJobIndexCache implements JobIndexCache {
     private Log log = LogFactory.getLog(getClass());
     private static final String CACHE_SUBDIR = "TrivialJobIndexCache";

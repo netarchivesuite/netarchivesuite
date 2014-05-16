@@ -53,6 +53,7 @@ import dk.netarkivet.common.utils.warc.WARCBatchJob;
 * The timeout of this job is 7 days.
 * See http://www.archive.org/web/researcher/cdx_file_format.php
 */
+@SuppressWarnings({ "serial"})
 public class WARCExtractCDXJob extends WARCBatchJob {
 
     /** An encoding for the standard included metadata fields without

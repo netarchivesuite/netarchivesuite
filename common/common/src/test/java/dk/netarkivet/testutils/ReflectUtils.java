@@ -87,7 +87,7 @@ public class ReflectUtils {
      * Method for testing the constructor of a utility class (the constructor 
      * should be private).
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
 	public static void testUtilityConstructor(Class c) {
         Constructor[] constructors = c.getConstructors();
         

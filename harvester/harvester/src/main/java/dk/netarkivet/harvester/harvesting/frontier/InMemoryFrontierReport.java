@@ -38,6 +38,7 @@ import java.util.TreeSet;
  * The report lines are sorted according to the natural order defined by
  * {@link FrontierReportLine}, e.g. descending size of the queue.
  */
+@SuppressWarnings({ "serial"})
 public class InMemoryFrontierReport extends AbstractFrontierReport
 implements Serializable {
 

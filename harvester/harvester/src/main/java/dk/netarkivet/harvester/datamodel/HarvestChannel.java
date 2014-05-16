@@ -28,8 +28,6 @@ import java.io.Serializable;
 
 import javax.servlet.jsp.PageContext;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Pattern;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.harvesting.HarvestController;
@@ -64,7 +62,7 @@ public class HarvestChannel implements Serializable {
 	//public static final HarvestChannel SNAPSHOT = new HarvestChannel();
 
 	/**
-	 * Defines acceptable channel names: at least one word character (see {@link Pattern}).
+	 * Defines acceptable channel names: at least one word character.
 	 */
 	public static final String ACCEPTABLE_NAME_PATTERN = "^\\w+$";
 

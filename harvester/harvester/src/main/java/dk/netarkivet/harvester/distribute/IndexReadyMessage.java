@@ -30,6 +30,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /** A message to send from the IndexServer to HarvestJobManager, that the 
  * index required by harvest with a given ID is ready.
  */
+@SuppressWarnings({ "serial"})
 public class IndexReadyMessage extends HarvesterMessage {
 
     /** The ID for a specific harvest. */

@@ -37,6 +37,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  * @see NetarkivetMessage
  */
+@SuppressWarnings({ "serial"})
 public abstract class MonitorMessage extends NetarkivetMessage
         implements Serializable {
     /**

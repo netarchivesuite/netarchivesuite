@@ -30,6 +30,7 @@ import java.io.Serializable;
 /**
  * This class represents one Extended Field Type.
  */
+@SuppressWarnings({ "serial"})
 public class ExtendedFieldType implements Serializable {
     /** The id of this ExtendedFieldType. */
     private Long extendedFieldTypeID;

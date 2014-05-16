@@ -38,6 +38,7 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.naming.ServiceUnavailableException;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -46,6 +47,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.sun.jndi.rmi.registry.RegistryContextFactory;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,8 +57,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Various JMX-related utility functions.
+ * Various JMX-related utility functions.  FIXME: Use generic RegistryContextFactory
+ * instead of Oracle specific.
  */
+@SuppressWarnings("restriction")
 public final class JMXUtils {
     
     /** Private constructor to prevent instantiation. */

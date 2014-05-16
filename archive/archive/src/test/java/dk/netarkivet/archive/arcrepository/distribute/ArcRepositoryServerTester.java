@@ -71,6 +71,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit tests for the class ArcRepositoryServer.
  */
+@SuppressWarnings({ "deprecation"})
 public class ArcRepositoryServerTester extends TestCase {
     /**
      * The test log directories for Controller and AdminData.

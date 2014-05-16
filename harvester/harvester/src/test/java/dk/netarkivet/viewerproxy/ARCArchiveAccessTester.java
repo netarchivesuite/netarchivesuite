@@ -57,6 +57,7 @@ import java.util.logging.LogManager;
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
+
 import junit.framework.TestCase;
 
 /**
@@ -64,6 +65,7 @@ import junit.framework.TestCase;
  * lookup with the ARC files ok, because everything else is just being forwarded
  * and so is (supposed to be) tested elsewhere.
  */
+@SuppressWarnings({ "unused", "unchecked"})
 public class ARCArchiveAccessTester extends TestCase {
 
     //Unused files:

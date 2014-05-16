@@ -45,6 +45,7 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
  * @see HeritrixLauncher#doCrawl()
  *
  */
+@SuppressWarnings({ "serial"})
 public class CrawlProgressMessage extends HarvesterMessage
 implements Serializable {
 

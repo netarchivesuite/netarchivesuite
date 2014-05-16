@@ -127,6 +127,7 @@ import java.util.zip.ZipOutputStream;
  * Copyright (c) 1998 Karl Moss. All Rights Reserved.
  */
 
+@SuppressWarnings({ "rawtypes", "unused" })
 public class ClassDependencies {
     private static final String[] default_exclude = {"java/", "sun/", "javax/", "org/w3c"};
     private String[] m_excludePackageList = default_exclude;

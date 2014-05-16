@@ -31,6 +31,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.wayback.TestInfo;
 
+@SuppressWarnings({ "unchecked"})
 public class IndexerQueueTester extends IndexerTestCase {
 
     @Override

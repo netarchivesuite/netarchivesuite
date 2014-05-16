@@ -32,6 +32,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * A Simple CDXRecordFilter to be extended.
  * It only implements the filtername method.
  */
+@SuppressWarnings({ "serial"})
 public abstract class SimpleCDXRecordFilter implements CDXRecordFilter{
 
     /**

@@ -42,6 +42,7 @@ import dk.netarkivet.testutils.*;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import is.hi.bok.deduplicator.DeDuplicator;
 import junit.framework.TestCase;
+
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.IOUtils;
 import org.archive.io.ArchiveReader;
@@ -80,6 +81,7 @@ import java.util.*;
  * //import dk.netarkivet.common.utils.FixedUURI;
  *
  */
+@SuppressWarnings({ "serial", "unchecked"})
 public class HeritrixTests extends TestCase {
 
     protected final static String WRITE_PROCESSORS_XPATH

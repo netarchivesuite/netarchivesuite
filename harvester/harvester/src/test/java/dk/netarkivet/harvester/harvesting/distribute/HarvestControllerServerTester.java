@@ -42,7 +42,6 @@ import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -82,6 +81,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Test HarvestControllerServer.
  */
+@SuppressWarnings("unused")
 public class HarvestControllerServerTester extends TestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 

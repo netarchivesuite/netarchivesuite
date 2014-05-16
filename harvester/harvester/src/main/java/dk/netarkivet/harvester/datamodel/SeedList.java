@@ -50,6 +50,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * Basically just a list of URL's.
  *
  */
+@SuppressWarnings({ "serial"})
 public class SeedList implements Serializable, Named {
     /** The name of the seedlist. Used for sorting. */
     private String name;

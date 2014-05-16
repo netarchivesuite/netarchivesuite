@@ -40,6 +40,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +55,6 @@ import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -67,6 +67,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * ScheduleDefinitionTester, SnapshotHarvestDefinitionTester but also
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
+@SuppressWarnings({ "rawtypes", "deprecation" })
+
 public class WebinterfaceTestCase extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 

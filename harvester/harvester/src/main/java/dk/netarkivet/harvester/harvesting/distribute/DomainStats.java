@@ -31,6 +31,7 @@ import java.io.Serializable;
 
 /** Tuple class to hold domain harvest statistics for a single domain. */
 
+@SuppressWarnings({ "serial"})
 public class DomainStats implements Serializable {
 
     /** Count of how many objects have been harvested from this domain. */

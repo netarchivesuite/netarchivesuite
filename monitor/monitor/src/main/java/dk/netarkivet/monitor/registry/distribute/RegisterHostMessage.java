@@ -32,6 +32,7 @@ import dk.netarkivet.monitor.distribute.MonitorMessageVisitor;
 
 /** This type of message is sent to the monitor registry server to
  * register the host for remote JMX monitoring.*/
+@SuppressWarnings({ "serial"})
 public class RegisterHostMessage extends MonitorMessage {
     /** The HostEntry to register. */
     HostEntry hostEntry;

@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
@@ -43,6 +42,7 @@ import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** Unit test for BitarchiveMonitorTester */
+@SuppressWarnings({ "rawtypes", "unused" })
 public class BitarchiveMonitorTester extends TestCase {
     private ReloadSettings rs = new ReloadSettings();
 

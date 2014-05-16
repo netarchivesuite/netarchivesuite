@@ -36,6 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  */
 
+@SuppressWarnings({ "serial"})
 public class ARCFilenameCDXRecordFilter extends SimpleCDXRecordFilter {
     private String arcfilenamepattern;
     private Pattern p;

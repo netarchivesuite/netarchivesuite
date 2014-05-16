@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import static dk.netarkivet.testutils.CollectionUtils.list;
@@ -43,6 +42,7 @@ import dk.netarkivet.testutils.Serial;
  *
  */
 
+@SuppressWarnings({ "serial"})
 public class FileBatchJobTester extends TestCase {
 
     /**

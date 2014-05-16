@@ -5,6 +5,7 @@ import dk.netarkivet.systemtest.functional.DomainsPageTest;
 import dk.netarkivet.systemtest.functional.ExtendedFieldTest;
 import dk.netarkivet.systemtest.functional.HarvestHistoryForDomainPageTest;
 import dk.netarkivet.systemtest.page.PageHelper;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by csr on 5/8/14.
  */
+@SuppressWarnings("unused")
 public class DatabaseFullMigrationTest extends StressTest {
 
     @Test(groups = {"guitest","functest"})

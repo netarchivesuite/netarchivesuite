@@ -27,10 +27,10 @@ package dk.netarkivet.common.management;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+
 import java.lang.management.ManagementFactory;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -39,6 +39,7 @@ import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** This class tests the class dk.netarkivet.common.management.SingleMBeanObject. */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SingleMBeanObjectTester extends TestCase {
     private ObjectName name;
     private MBeanServer platformMBeanServer;

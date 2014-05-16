@@ -49,6 +49,7 @@ import dk.netarkivet.common.Constants;
  * The batch job should be restricted to run on metadata files for a specific
  * job only, using the {@link #processOnlyFilesMatching(String)} construct.
  */
+@SuppressWarnings({ "serial"})
 public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
 
     // logger

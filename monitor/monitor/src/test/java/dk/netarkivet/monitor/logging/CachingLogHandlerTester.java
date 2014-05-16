@@ -30,13 +30,13 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+
 import java.lang.management.ManagementFactory;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.management.Constants;
@@ -51,6 +51,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Test behavior of the CachingLogHandler, and its exposure of log records using
  * JMX.
  */
+@SuppressWarnings("unused")
 public class CachingLogHandlerTester extends TestCase {
     private CachingLogHandler cachingLogHandler;
     private MBeanServer mBeanServer;

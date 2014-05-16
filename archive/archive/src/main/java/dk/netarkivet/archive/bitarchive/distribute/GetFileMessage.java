@@ -41,6 +41,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Message requesting a file from a bitarchive. Messages is forwarded through
  * arcrepository, but reponds directly to sender.
  */
+@SuppressWarnings({ "serial"})
 public class GetFileMessage extends ArchiveMessage {
     /** the file to retrieve. */
     private String arcfileName;

@@ -31,6 +31,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Message for telling the bitarchives to terminate a specific batchjob.
  */
+@SuppressWarnings({ "serial"})
 public class BatchTerminationMessage extends NetarkivetMessage {
 
     /** The ID of the batchjob to terminate.*/

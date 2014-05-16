@@ -69,6 +69,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
  * domain owner information. <p> Notice that each configuration references one
  * of the seedlists by name, and possibly one of the Passwords.
  */
+@SuppressWarnings({ "rawtypes" })
 public class Domain extends ExtendableEntity implements Named {
     /** Prefix all domain names with this string. */
     protected static final Log log = LogFactory.getLog(Domain.class);

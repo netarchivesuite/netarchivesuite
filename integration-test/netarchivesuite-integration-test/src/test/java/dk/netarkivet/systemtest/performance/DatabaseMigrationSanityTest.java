@@ -6,6 +6,7 @@ import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,6 +17,7 @@ import org.testng.annotations.Test;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("static-access")
 public class DatabaseMigrationSanityTest extends StressTest {
 
 
@@ -49,7 +51,7 @@ public class DatabaseMigrationSanityTest extends StressTest {
         }
     }
 
-    private void doStuff() throws Exception {
+	private void doStuff() throws Exception {
         WebDriver driver = new FirefoxDriver();
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);

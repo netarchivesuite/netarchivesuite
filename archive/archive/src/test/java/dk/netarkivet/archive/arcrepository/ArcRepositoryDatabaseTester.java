@@ -41,8 +41,8 @@ import java.util.List;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import junit.framework.TestCase;
 
+import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
@@ -88,6 +88,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+@SuppressWarnings({ "unused"})
 public class ArcRepositoryDatabaseTester extends TestCase {
     /** A repeatedly used reflected method, used across method calls. */
     Method readChecksum;

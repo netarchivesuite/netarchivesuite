@@ -63,6 +63,7 @@ import dk.netarkivet.common.utils.Settings;
  * Berkeley DB direct persistence layer to store the report lines, allowing to
  * store the lines partially in memory, and on disk.
  */
+@SuppressWarnings({ "serial"})
 public class FullFrontierReport extends AbstractFrontierReport {
 
     @Persistent

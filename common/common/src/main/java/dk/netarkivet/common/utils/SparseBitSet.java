@@ -31,6 +31,7 @@ import java.util.Set;
 /** A sparse implementation of a BitSet, that does not require memory linear
  * to the largest index. This is done at the cost of performance, but should
  * be fairly efficient on few set bits. */
+@SuppressWarnings({ "serial"})
 public class SparseBitSet extends BitSet {
     /** A set of the indices of bits that are set in this BitSet. */
     private Set<Integer> setbits = new HashSet<Integer>();

@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -45,6 +44,7 @@ import dk.netarkivet.testutils.Serial;
  * To change this template use File | Settings | File Templates.
  *
  */
+@SuppressWarnings({ "serial"})
 public class BatchMessageTester extends TestCase {
     // Need a couple of queues for the constructors for the messages
     private ChannelID q1 = TestInfo.QUEUE_1;

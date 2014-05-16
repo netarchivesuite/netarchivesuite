@@ -32,7 +32,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
@@ -52,6 +51,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit tests for the ArcRepository class.
  */
+@SuppressWarnings({ "deprecation", "unchecked"})
 public class ArcRepositoryTesterStoreChecksum extends TestCase {
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();

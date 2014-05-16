@@ -49,6 +49,7 @@ import dk.netarkivet.harvester.datamodel.AliasInfo;
  * Class used to carry metadata in DoOneCrawl messages, including the URL
  * and mimetype necessary to write the metadata to metadata (W)ARC files.
  */
+@SuppressWarnings({ "serial"})
 public class MetadataEntry implements Serializable {
     /** The URL for this metadataEntry: Used as the unique identifier for this
      *  bit of metadata in the Netarchive.

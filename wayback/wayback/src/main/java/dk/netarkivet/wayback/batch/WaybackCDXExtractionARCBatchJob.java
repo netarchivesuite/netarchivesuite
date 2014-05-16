@@ -32,6 +32,7 @@ import org.archive.io.arc.ARCRecord;
 import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
+
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
@@ -42,6 +43,8 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResu
  * canonicalisation of urls. The returned files are unsorted.
  *
  */
+@SuppressWarnings({ "deprecation", "serial"})
+
 public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
    /**
      * Logger for this class.

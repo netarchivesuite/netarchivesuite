@@ -32,6 +32,7 @@ import java.util.Date;
 
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
+@SuppressWarnings({ "serial"})
 public class TimeoutBatch extends FileBatchJob {
     Date start;
 

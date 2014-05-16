@@ -28,6 +28,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 //import dk.netarkivet.common.utils.MD5;
 
+
 import java.io.IOException;
 //import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,6 +49,7 @@ import org.archive.io.warc.WARCRecord;
  * optionally a checksum.
  * See http://www.archive.org/web/researcher/cdx_file_format.php
  */
+@SuppressWarnings({ "rawtypes", "serial" })
 public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
 
     /** An encoding for the standard included metadata fields without

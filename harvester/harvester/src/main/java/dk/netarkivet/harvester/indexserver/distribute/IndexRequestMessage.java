@@ -50,6 +50,7 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
  * Message for requesting and index from the index server, and for giving back
  * the reply.
  */
+@SuppressWarnings({ "serial"})
 public class IndexRequestMessage extends HarvesterMessage {
     /** The log.*/
     private transient Log log

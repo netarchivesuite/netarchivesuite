@@ -35,6 +35,7 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
  * The message has two different types: changestorestate-type, and
  * changechecksum-type. There is a constructor for each type.
  */
+@SuppressWarnings({ "serial"})
 public class AdminDataMessage extends ArchiveMessage {
 
     /** The filename to be updated in AdminData. */

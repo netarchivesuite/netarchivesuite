@@ -52,6 +52,7 @@ import dk.netarkivet.testutils.CollectionAsserts;
 /**
  * Unit tests for the static methods in the abstract class HarvestDefinition.
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class HarvestDefinitionTester extends DataModelTestCase {
     private Schedule schedule;
 
@@ -1069,7 +1070,6 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * - byte limit second
      * - expected number of objects third.
      */
-    @SuppressWarnings({ "unchecked" })
 	public void testCompareConfigsDesc() throws NoSuchFieldException,
                                                 IllegalAccessException,
                                                 InvocationTargetException,

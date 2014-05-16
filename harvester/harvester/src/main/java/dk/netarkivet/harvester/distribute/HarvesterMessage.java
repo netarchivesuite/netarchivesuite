@@ -35,6 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Common base class for messages exchanged between a harvester server and
  * a harvester client.
  */
+@SuppressWarnings({ "serial"})
 public abstract class HarvesterMessage extends NetarkivetMessage
         implements Serializable {
     /**

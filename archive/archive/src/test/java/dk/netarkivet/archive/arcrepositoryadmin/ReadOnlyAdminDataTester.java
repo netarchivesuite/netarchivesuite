@@ -25,7 +25,6 @@
 package dk.netarkivet.archive.arcrepositoryadmin;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
@@ -36,6 +35,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Unit tests for the class ReadOnlyAdminData.
  */
+@SuppressWarnings({ "deprecation"})
 public class ReadOnlyAdminDataTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 

@@ -38,6 +38,7 @@ import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
  * The class in itself is abstract but contains implementation of several
  * filters.
  */
+@SuppressWarnings({ "serial"})
 public abstract class WARCBatchFilter implements Serializable {
 
     /** The name of the BatchFilter. */

@@ -44,6 +44,7 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class MetadataFileWriterTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
     File logsDir;

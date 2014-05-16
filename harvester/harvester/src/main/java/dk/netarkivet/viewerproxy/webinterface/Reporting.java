@@ -54,6 +54,7 @@ import dk.netarkivet.common.utils.cdx.CDXRecord;
 /**
  * Methods for generating the batch results needed by the QA pages. 
  */
+@SuppressWarnings({ "serial"})
 public class Reporting {
     /**
      * Utility class, do not initialise.

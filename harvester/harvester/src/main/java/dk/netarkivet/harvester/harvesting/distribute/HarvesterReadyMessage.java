@@ -37,6 +37,7 @@ import dk.netarkivet.harvester.scheduler.JobDispatcher;
  * {@link HarvesterReadyMessage}s to the {@link JobDispatcher} to notify
  * it whether it is available for processing a job or already processing one.
  */
+@SuppressWarnings({ "serial"})
 public class HarvesterReadyMessage
         extends HarvesterMessage
         implements Serializable {

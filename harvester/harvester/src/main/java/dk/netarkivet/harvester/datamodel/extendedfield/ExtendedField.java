@@ -36,6 +36,7 @@ import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 /**
  * This class represents one Extended Field.
  */
+@SuppressWarnings({ "serial"})
 public class ExtendedField implements Serializable {
     private final Log log = LogFactory.getLog(getClass());
 

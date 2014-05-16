@@ -41,6 +41,7 @@ import dk.netarkivet.common.utils.FileUtils;
 /**
  * File utilities specific to the test classes.
  */
+@SuppressWarnings({ "unchecked"})
 public class TestFileUtils {
     public static final FilenameFilter NON_CVS_DIRS_FILTER =
             new FilenameFilter() {

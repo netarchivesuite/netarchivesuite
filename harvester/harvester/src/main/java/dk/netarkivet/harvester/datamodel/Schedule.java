@@ -43,6 +43,7 @@ import dk.netarkivet.common.utils.Named;
  * calculate the next events from the previous event time.
  *
  */
+@SuppressWarnings({ "serial"})
 public abstract class Schedule implements Serializable, Named {
     /**Human readable name for the schedule. */
     protected String name;

@@ -43,6 +43,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * org.archive.crawler.deciderules.OnDomainsDecideRule because
  * it uses a different domain definition.  
  */
+@SuppressWarnings({ "serial"})
 public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
     /** This is what SurtPrefixSet.prefixFromPlain returns for

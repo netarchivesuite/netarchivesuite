@@ -26,6 +26,7 @@ package dk.netarkivet.viewerproxy;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -53,6 +54,7 @@ import dk.netarkivet.common.utils.Settings;
  * that the Proxy server builds on.
  *
  */
+@SuppressWarnings({ "deprecation", "unchecked"})
 public class WebProxy extends DefaultHandler
         implements URIResolverHandler {
     /** The URI resolver which handles URI lookups. */

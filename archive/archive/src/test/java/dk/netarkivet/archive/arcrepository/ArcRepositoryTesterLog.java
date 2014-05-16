@@ -32,7 +32,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
@@ -49,6 +48,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit test for webarchive API.
  * The logging of webarchive operations is tested.
  */
+@SuppressWarnings({"deprecation"})
 public class ArcRepositoryTesterLog extends TestCase {
     protected final Logger log = Logger.getLogger(getClass().getName());
 

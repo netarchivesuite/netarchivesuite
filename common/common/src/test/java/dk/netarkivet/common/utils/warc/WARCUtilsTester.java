@@ -24,6 +24,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * Tests for class WARCUtils.
  */
+@SuppressWarnings({ "unused"})
 public class WARCUtilsTester extends TestCase {
 
     private static File OUTFILE_WARC = new File(TestInfo.WORKING_DIR, "outFile.warc");

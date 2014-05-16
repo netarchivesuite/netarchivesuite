@@ -45,6 +45,7 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteWARCRecordToSearchRes
  * canonicalisation of urls. The returned files are unsorted.
  *
  */
+@SuppressWarnings({ "serial"})
 public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
    /**
      * Logger for this class.

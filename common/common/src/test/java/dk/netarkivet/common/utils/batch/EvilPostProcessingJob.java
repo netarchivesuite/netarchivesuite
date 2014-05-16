@@ -28,12 +28,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.utils.FileUtils;
 
+@SuppressWarnings({ "serial"})
 public class EvilPostProcessingJob extends FileBatchJob {
 
     @Override

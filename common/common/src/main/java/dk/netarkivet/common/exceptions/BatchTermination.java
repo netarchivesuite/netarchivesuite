@@ -28,6 +28,7 @@ package dk.netarkivet.common.exceptions;
 /**
  * Exception to tell running batchjobs to terminate.
  */
+@SuppressWarnings({ "serial"})
 public class BatchTermination extends NetarkivetException {
     /**
      * Constructs new BatchTermination exception with the given message.

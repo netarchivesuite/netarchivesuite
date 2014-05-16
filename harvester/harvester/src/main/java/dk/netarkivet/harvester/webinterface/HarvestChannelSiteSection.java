@@ -37,6 +37,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 /**
  * Site section that creates the menu for harvest channel and mappings.
  */
+@SuppressWarnings({ "unused"})
 public class HarvestChannelSiteSection extends SiteSection {
 	/** Logger for this class. */
 	private Log log = LogFactory.getLog(getClass().getName());

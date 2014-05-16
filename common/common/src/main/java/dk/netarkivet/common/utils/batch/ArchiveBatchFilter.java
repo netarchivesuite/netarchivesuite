@@ -37,6 +37,7 @@ import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
  * accept() is given an ArchiveRecord to avoid unnecessary reading and 
  * copying of data of records not accepted by filter.
  */
+@SuppressWarnings({ "serial"})
 public abstract class ArchiveBatchFilter implements Serializable {
 
     /** The name of the BatchFilter. */

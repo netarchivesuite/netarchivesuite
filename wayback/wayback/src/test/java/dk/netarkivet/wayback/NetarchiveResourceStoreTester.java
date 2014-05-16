@@ -25,6 +25,7 @@ package dk.netarkivet.wayback;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,6 +65,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.indexer.IndexerTestCase;
 
 /** Unit test for testNetarchiveResourceStore */
+@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
     NetarchiveResourceStore netarchiveResourceStore = null;
@@ -265,7 +267,8 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
             conn.removeListener(Channels.getTheRepos(), this);
         }
 
-        public void onMessage(Message msg) {
+        @SuppressWarnings("resource")
+		public void onMessage(Message msg) {
             if (noReply) {
                 return;
             }

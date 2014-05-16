@@ -44,6 +44,7 @@ import org.archive.io.arc.ARCRecord;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 
+@SuppressWarnings({ "unused", "serial"})
 public class ExtractCDXJobTester extends TestCase {
     
     //Shared instance of BatchLocalFiles

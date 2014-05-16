@@ -40,6 +40,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Message class used by the bit archive monitor to notify the ArcRepository of
  * a completed batch job.
  */
+@SuppressWarnings({ "serial"})
 public class BatchReplyMessage extends ArchiveMessage {
     /** Number of files processed by the BatchJob. */
     private int noOfFilesProcessed;

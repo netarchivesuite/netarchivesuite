@@ -37,6 +37,7 @@ import dk.netarkivet.common.utils.SystemUtils;
 /**
  * A class for representing the names of JMS queues.
  */
+@SuppressWarnings({ "serial"})
 public class ChannelID implements Serializable {
 
     /**

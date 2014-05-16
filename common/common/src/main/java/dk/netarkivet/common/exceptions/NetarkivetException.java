@@ -28,6 +28,7 @@ package dk.netarkivet.common.exceptions;
  * Base exception for all Netarkivet exceptions.
  * Note that RuntimeException is extended
  */
+@SuppressWarnings({ "serial"})
 public abstract class NetarkivetException extends RuntimeException {
 
   /**

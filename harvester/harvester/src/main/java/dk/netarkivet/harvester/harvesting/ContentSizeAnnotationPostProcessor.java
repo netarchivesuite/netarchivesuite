@@ -36,6 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * for each successfully harvested URI.
  *
  */
+@SuppressWarnings({ "serial"})
 public class ContentSizeAnnotationPostProcessor extends Processor {
 
     /** Prefix associated with annotations made by this processor.*/

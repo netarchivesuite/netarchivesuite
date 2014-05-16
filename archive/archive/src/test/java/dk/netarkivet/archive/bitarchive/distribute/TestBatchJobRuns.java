@@ -33,6 +33,7 @@ import java.io.OutputStream;
 
 import org.archive.io.arc.ARCRecord;
 
+@SuppressWarnings({ "serial"})
 public class TestBatchJobRuns extends ARCBatchJob {
     boolean initialized;
     public int records_processed;

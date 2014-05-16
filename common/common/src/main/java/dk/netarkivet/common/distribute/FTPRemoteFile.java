@@ -58,6 +58,7 @@ import dk.netarkivet.common.utils.TimeUtils;
  *
  * Transfers are done using binary type and passive mode, if available.
  */
+@SuppressWarnings({ "serial"})
 public final class FTPRemoteFile extends AbstractRemoteFile {
 
     /**

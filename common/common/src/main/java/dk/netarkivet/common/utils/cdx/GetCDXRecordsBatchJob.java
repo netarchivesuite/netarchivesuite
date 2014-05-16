@@ -38,6 +38,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Job to get cdx records out of metadata files.
  *
  */
+@SuppressWarnings({ "serial"})
 public class GetCDXRecordsBatchJob extends ARCBatchJob {
     
     /** The URL pattern used to retrieve the CDX-records. */ 

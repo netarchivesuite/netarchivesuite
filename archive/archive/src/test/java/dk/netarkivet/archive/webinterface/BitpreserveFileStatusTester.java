@@ -60,6 +60,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** Unittest for the class dk.netarkivet.archive.webinterface.BitpreserveFileState. */
+@SuppressWarnings({ "deprecation"})
 public class BitpreserveFileStatusTester extends TestCase {
     private static final String GET_INFO_METHOD = "getFilePreservationStatus";
     private static final String ADD_METHOD = "reestablishMissingFile";

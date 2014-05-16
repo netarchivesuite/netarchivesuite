@@ -44,6 +44,7 @@ import dk.netarkivet.common.utils.KeyValuePair;
  * Class responsible for checksumming a list of files.
  *
  */
+@SuppressWarnings({ "serial"})
 public class ChecksumJob extends FileBatchJob {
 
     /** The log.*/

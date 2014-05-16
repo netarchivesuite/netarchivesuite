@@ -42,6 +42,7 @@ import java.io.IOException;
 /**
  * Unittest for the HeritrixControllerFactory class.
  */
+@SuppressWarnings({ "unused"})
 public class HeritrixControllerFactoryTester extends TestCase {
 
     private MoveTestFiles mtf;

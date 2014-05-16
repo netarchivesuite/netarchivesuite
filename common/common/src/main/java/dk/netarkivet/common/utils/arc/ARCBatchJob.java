@@ -50,6 +50,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * job run initialize(), runs processRecord() on each record in each file in
  * the archive, and then runs finish().
  */
+@SuppressWarnings({ "serial"})
 public abstract class ARCBatchJob extends FileBatchJob {
                                 
     /** The total number of records processed. */

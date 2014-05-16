@@ -38,6 +38,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 /** This class is used for loading by LoadableFileBatchJobTester.  The compiled
  * class file should be placed under data/originals.
  * Create the jar file with jar cvf <jarfilename> <names of compiled classes> */
+@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 public class LoadableTestJob extends FileBatchJob {
     String ourName = "me";
 

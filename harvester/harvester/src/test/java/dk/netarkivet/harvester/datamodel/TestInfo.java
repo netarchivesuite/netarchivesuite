@@ -43,6 +43,7 @@ import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
 /**
  * Contains test information about all harvest definition test data.
  */
+@SuppressWarnings({ "unused"})
 public class TestInfo {
     protected static final Logger log = Logger.getLogger(TestInfo.class.getName());
     public static final File TOPDATADIR = new File("./tests/dk/netarkivet/harvester/datamodel/data/");

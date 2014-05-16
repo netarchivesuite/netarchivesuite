@@ -31,7 +31,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -45,6 +44,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Class testing the FTPRemoteFile class.
  */
+@SuppressWarnings({ "unused"})
 public class FTPRemoteFileTester extends TestCase {
     private static final File TESTLOGPROP = new File(
             "tests/dk/netarkivet/testlog.prop");

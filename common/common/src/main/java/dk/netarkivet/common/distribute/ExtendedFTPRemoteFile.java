@@ -43,7 +43,6 @@ import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import static dk.netarkivet.common.CommonSettings.*;
 
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,6 +58,7 @@ import org.archive.io.warc.WARCRecord;
  * instance of FTPRemoteFile when a File is used as input so that behaviour is
  * effectively delegated to that class when required.
  */
+@SuppressWarnings({ "serial"})
 public class ExtendedFTPRemoteFile implements RemoteFile {
 
     /**

@@ -61,6 +61,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  */
 @Persistent
+@SuppressWarnings({ "serial"})
 public class FrontierReportLine
 implements Serializable,
            Comparable<FrontierReportLine>,

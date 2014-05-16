@@ -72,6 +72,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit tests for the BitarchiveServer class.
  */
+@SuppressWarnings({ "unused", "serial"})
 public class BitarchiveServerTester extends TestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 

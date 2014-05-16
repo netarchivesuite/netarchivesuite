@@ -46,6 +46,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import junit.framework.TestCase;
 
 import javax.jms.JMSException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -56,6 +57,7 @@ import java.util.logging.LogManager;
 /**
  * Tests of the class HarvestSchedulerMonitorServer.
  */
+@SuppressWarnings({ "unused"})
 public class HarvestSchedulerMonitorServerTester extends TestCase {
 
 

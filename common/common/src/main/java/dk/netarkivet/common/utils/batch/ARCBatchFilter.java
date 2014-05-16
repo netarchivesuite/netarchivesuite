@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
  * The class in itself is abstract but contains implementation of several
  * filters.
  */
+@SuppressWarnings({ "serial"})
 public abstract class ARCBatchFilter implements Serializable {
     
     /** The name of the BatchFilter. */

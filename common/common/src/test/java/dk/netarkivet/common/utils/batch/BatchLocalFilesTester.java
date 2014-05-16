@@ -33,12 +33,12 @@ import java.util.Set;
 
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-
 import junit.framework.TestCase;
 
 /**
  * Unit test for BatchLocalFiles.
  */
+@SuppressWarnings({ "serial"})
 public class BatchLocalFilesTester extends TestCase {
     //Reference to test files:
     private static final String INPUT_DIR

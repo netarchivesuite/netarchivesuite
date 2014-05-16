@@ -26,6 +26,7 @@ package dk.netarkivet.common.exceptions;
 /**
  * Identifier could not be resolved.
  */
+@SuppressWarnings({ "serial"})
 public class UnknownID extends NetarkivetException  {
   /**
    * Constructs new UnknownID with the specified detail message.

@@ -69,7 +69,7 @@ import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
+@SuppressWarnings({ "deprecation", "unchecked", "static-access"})
 public class ArcRepositoryTester extends TestCase {
     /** A repeatedly used reflected method, used across method calls. */
     Method readChecksum;
@@ -268,7 +268,6 @@ public class ArcRepositoryTester extends TestCase {
      *
      * @throws Exception if exception is thrown
      */
-    @SuppressWarnings("unchecked")
     public void testOnBatchReply() throws Exception {
         ArcRepository a = ArcRepository.getInstance();
         UpdateableAdminData ad = UpdateableAdminData.getUpdateableInstance();

@@ -49,6 +49,7 @@ import dk.netarkivet.common.utils.batch.WARCBatchFilter;
  * job run initialize(), runs processRecord() on each record in each file in
  * the archive, and then runs finish().
  */
+@SuppressWarnings({ "serial"})
 public abstract class WARCBatchJob extends FileBatchJob {
 
     /** The total number of records processed. */

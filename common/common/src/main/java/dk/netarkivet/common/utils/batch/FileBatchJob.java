@@ -49,6 +49,7 @@ import dk.netarkivet.common.utils.StringUtils;
  * a file by calling processFile() and any cleanup is
  * handled by finish().
  */
+@SuppressWarnings({ "serial"})
 public abstract class FileBatchJob implements Serializable {
 
     /** The class log. */

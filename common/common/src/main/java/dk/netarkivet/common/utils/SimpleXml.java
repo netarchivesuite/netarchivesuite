@@ -51,6 +51,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * Utility class to load and save data from/to XML files using a
  * very simple XML format.
  */
+@SuppressWarnings({ "unused", "unchecked"})
 public class SimpleXml {
     protected final Log log = LogFactory.getLog(getClass().getName());
 

@@ -51,6 +51,7 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
  * determined by whether the TRAP_ID is specified in the request.
  *
  */
+@SuppressWarnings({ "unchecked"})
 public class TrapCreateOrUpdateAction extends TrapAction {
 
     /**

@@ -51,6 +51,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -58,6 +59,7 @@ import org.apache.commons.logging.LogFactory;
  * Utility class for handling update of domain from the domain jsp page.
  *
  */
+@SuppressWarnings("unused")
 public class DomainDefinition {
     
     

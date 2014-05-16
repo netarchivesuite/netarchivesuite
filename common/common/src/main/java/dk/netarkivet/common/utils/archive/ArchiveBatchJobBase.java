@@ -35,6 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
+@SuppressWarnings({ "serial"})
 public abstract class ArchiveBatchJobBase extends FileBatchJob {
 
 	/** The total number of records processed. */

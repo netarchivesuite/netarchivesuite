@@ -43,6 +43,7 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
  *
  */
 
+@SuppressWarnings({ "serial"})
 public class CrawlStatusMessage extends HarvesterMessage
         implements Serializable {
     /** the id for the crawlJob, for which this message reports. */

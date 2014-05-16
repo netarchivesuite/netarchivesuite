@@ -60,6 +60,7 @@ import dk.netarkivet.common.utils.warc.WARCUtils;
  *    The record is stored in a RemoteFile.
  *
  */
+@SuppressWarnings({ "serial"})
 public class BitarchiveRecord implements Serializable {
 
     /** The file the data were retrieved from. */

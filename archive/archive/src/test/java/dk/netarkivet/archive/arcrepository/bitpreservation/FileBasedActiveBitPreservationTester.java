@@ -91,6 +91,8 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit test for the class FileBasedActiveBitPreservation.
  */
+@SuppressWarnings({ "unused", "deprecation" })
+
 public class FileBasedActiveBitPreservationTester extends TestCase {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
     private ReloadSettings rs = new ReloadSettings();

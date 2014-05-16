@@ -25,11 +25,12 @@
 package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
-import junit.framework.TestCase;
 
+import junit.framework.TestCase;
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
+@SuppressWarnings({ "unused", "unchecked"})
 public class ByteClassLoaderTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     public ByteClassLoaderTester(String s) {

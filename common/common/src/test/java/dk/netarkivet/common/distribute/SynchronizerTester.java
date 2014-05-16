@@ -26,6 +26,7 @@ package dk.netarkivet.common.distribute;
 
 import java.io.IOException;
 import java.util.Date;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
@@ -33,6 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import junit.framework.TestCase;
 
+@SuppressWarnings({ "serial"})
 public class SynchronizerTester extends TestCase {
     private static final ChannelID toQ = Channels.getAnyBa();
     private static final ChannelID replyToQ = Channels.getError();

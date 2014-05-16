@@ -39,6 +39,7 @@ import org.archive.io.ArchiveRecord;
 /**
  * Factory for creating remote files.
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
     /**
         * A named logger for this class.

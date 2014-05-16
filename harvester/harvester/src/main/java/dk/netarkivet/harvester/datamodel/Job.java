@@ -87,6 +87,7 @@ import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
  * job, as well as the ID of the harvest definition that defined it and names
  * of all the configurations it is based on.
  */
+@SuppressWarnings({ "serial"})
 public class Job implements Serializable, JobInfo {
     private transient Log log = LogFactory.getLog(getClass());
 

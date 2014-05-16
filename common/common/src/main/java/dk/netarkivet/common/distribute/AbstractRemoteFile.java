@@ -50,6 +50,7 @@ import dk.netarkivet.common.utils.TimeUtils;
  * - Add getInstance(File, Boolean, Boolean, Boolean)-method to make the file
  *   work with the factory.
  */
+@SuppressWarnings({ "serial"})
 public abstract class AbstractRemoteFile implements RemoteFile {
     /** The file this is remote file for. */
     protected final File file;

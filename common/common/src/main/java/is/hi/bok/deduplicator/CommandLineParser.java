@@ -39,6 +39,7 @@ import org.apache.commons.cli.UnrecognizedOptionException;
  *
  * @author Kristinn Sigur&eth;sson
  */
+@SuppressWarnings({ "rawtypes", "unused" })
 public class CommandLineParser {
     private static final String USAGE = "Usage: ";
     private static final String NAME = "DigestIndexer";
@@ -50,8 +51,7 @@ public class CommandLineParser {
      * Block default construction.
      *
      */
-    @SuppressWarnings("unused")
-	private CommandLineParser() {
+    private CommandLineParser() {
         super();
     }
 
@@ -210,8 +210,7 @@ public class CommandLineParser {
     /**
      * @return Arguments passed on the command line.
      */
-    @SuppressWarnings("unchecked")
-	public List getCommandLineArguments() {
+    public List getCommandLineArguments() {
         return this.commandLine.getArgList();
     }
 

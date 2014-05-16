@@ -29,6 +29,7 @@ package dk.netarkivet.common.exceptions;
  *
  */
 
+@SuppressWarnings({ "serial"})
 public class NotImplementedException extends NetarkivetException {
     /**
      * Constructs new NotImplementedException with the specified detail message.

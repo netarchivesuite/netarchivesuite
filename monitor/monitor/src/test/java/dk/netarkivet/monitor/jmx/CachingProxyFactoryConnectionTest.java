@@ -30,6 +30,8 @@ import junit.framework.TestCase;
  * Tests the CachingProxyFactoryConnectionFactory class.
  *
  */
+@SuppressWarnings({ "unused"})
+
 public class CachingProxyFactoryConnectionTest extends TestCase {
 
     public CachingProxyFactoryConnectionTest(String arg0) {

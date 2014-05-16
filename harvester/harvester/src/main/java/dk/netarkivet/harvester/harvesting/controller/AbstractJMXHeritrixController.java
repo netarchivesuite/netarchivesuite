@@ -30,6 +30,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.*;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.Heritrix;
@@ -40,6 +41,7 @@ import java.util.*;
 /**
  * Abstract base class for JMX-based Heritrix controllers.
  */
+@SuppressWarnings({ "rawtypes" })
 public abstract class AbstractJMXHeritrixController
 implements HeritrixController {
 

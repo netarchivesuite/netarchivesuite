@@ -25,8 +25,8 @@
 package dk.netarkivet.common.utils.arc;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-
 import junit.framework.TestCase;
+
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
@@ -38,6 +38,7 @@ import java.io.IOException;
 /**
  * A simple test of the ARCREADER that is bundled with Heritrix 1.14.4. 
  */
+@SuppressWarnings({ "unused"})
 public class ARCReaderTester extends TestCase {
     public static final String ARCHIVE_DIR =
             "tests/dk/netarkivet/common/utils/arc/data/input/";

@@ -335,7 +335,7 @@ public class DigestIndexer {
     }
     
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void main(String[] args) throws Exception {
         CommandLineParser clp = 
             new CommandLineParser(args, new PrintWriter(System.out));

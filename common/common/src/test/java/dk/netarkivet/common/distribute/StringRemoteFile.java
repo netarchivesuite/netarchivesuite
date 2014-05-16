@@ -40,6 +40,7 @@ import dk.netarkivet.common.utils.FileUtils;
  *
  */
 
+@SuppressWarnings({ "serial"})
 public class StringRemoteFile implements RemoteFile {
     /** the contents. */
     String contents;

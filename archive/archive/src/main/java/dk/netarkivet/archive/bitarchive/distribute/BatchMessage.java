@@ -45,6 +45,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * The response to this message comes in the form of a BatchReplyMessage
  * placed on the senders queue.
  */
+@SuppressWarnings({ "serial"})
 public class BatchMessage extends ArchiveMessage {
     /** The batch job, this message is sent to initiate. */
     private FileBatchJob job;

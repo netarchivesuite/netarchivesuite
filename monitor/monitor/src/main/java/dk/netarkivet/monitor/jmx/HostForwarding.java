@@ -27,6 +27,7 @@ package dk.netarkivet.monitor.jmx;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -59,6 +60,7 @@ import dk.netarkivet.monitor.registry.MonitorRegistry;
  *
  * @param <T> The type of object exposed through the MBeans.
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class HostForwarding<T> {
 
     /** The log. */

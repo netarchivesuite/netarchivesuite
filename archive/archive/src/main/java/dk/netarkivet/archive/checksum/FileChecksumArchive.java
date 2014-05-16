@@ -68,6 +68,7 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
  * and if an 'admin.data' file exists, then it will be loaded and put into the
  * archive file.
  */
+@SuppressWarnings({ "deprecation"})
 public final class FileChecksumArchive implements ChecksumArchive {
     /**
      * The character sequence for separating the filename from the checksum.

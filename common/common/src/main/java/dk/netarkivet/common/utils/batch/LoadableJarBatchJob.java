@@ -45,6 +45,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * object. The given class will be loaded and used to perform the actions of the
  * FileBatchJob class.
  */
+@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 public class LoadableJarBatchJob extends FileBatchJob {
     /** The FileBatchJob that this LoadableJarBatchJob is a wrapper for. */
     transient FileBatchJob loadedJob;

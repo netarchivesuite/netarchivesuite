@@ -48,6 +48,7 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 /**
  * The super class for all Selenium based system tests.
  */
+@SuppressWarnings({ "unused"})
 public abstract class SeleniumTest extends ExtendedTestCase {
     protected static TestEnvironmentManager environmentManager;
     protected static ApplicationManager applicationManager;

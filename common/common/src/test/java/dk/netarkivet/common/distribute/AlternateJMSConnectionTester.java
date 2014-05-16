@@ -28,13 +28,13 @@ package dk.netarkivet.common.distribute;
  import java.util.Calendar;
 
  import junit.framework.TestCase;
-
- import dk.netarkivet.common.utils.Settings;
- import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Testclass for testing the exceptionhandling in JMSConnection.
  */
+@SuppressWarnings({ "unused", "serial"})
 public class AlternateJMSConnectionTester extends TestCase {
 
     public void errorcodesTest() {
@@ -53,7 +53,7 @@ public class AlternateJMSConnectionTester extends TestCase {
         con.cleanup();
     }
 
-    private static class TestMessage extends NetarkivetMessage {
+	private static class TestMessage extends NetarkivetMessage {
         private String testID;
 
         public TestMessage(ChannelID to, ChannelID replyTo, String testID) {

@@ -37,11 +37,13 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.harvester.HarvesterSettings;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,6 +53,7 @@ import org.apache.commons.logging.LogFactory;
  * you to get metadata, individual files, and individual records.
  *
  */
+@SuppressWarnings({ "serial", "unused"})
 public class GetDataResolver extends CommandResolver {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());

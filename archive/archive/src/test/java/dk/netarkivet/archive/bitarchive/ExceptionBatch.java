@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /** This class throws an exception. */
+@SuppressWarnings({ "serial"})
 public class ExceptionBatch extends FileBatchJob {
     public void initialize(OutputStream os) {
     }

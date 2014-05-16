@@ -47,6 +47,7 @@ import dk.netarkivet.testutils.FileAsserts;
 /**
  * This class tests the bitarchive's batch() method.
  */
+@SuppressWarnings({"serial"})
 public class BitarchiveTesterBatch extends BitarchiveTestCase {
     static final File ORIGINALS_DIR =
             new File(new File(TestInfo.DATA_DIR, "batch"), "originals");
@@ -235,7 +236,8 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
      * 
      * Fails in Hudson
      */
-    public void failingTestIllegalCode() throws IOException {
+    @SuppressWarnings("rawtypes")
+	public void failingTestIllegalCode() throws IOException {
         // reinitialize bitarchive
         Bitarchive.getInstance().close();
         archive = Bitarchive.getInstance();

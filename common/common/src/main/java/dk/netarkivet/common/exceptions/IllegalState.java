@@ -30,6 +30,7 @@ package dk.netarkivet.common.exceptions;
  *
  */
 
+@SuppressWarnings({ "serial"})
 public class IllegalState extends NetarkivetException {
     /**
      * Constructs new IllegalState with the specified detail message and cause.

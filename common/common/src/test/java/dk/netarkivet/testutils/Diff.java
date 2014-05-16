@@ -25,6 +25,7 @@ import java.util.TreeMap;
  * <p>The file FileDiff.java shows an example usage of this class, in an
  * application similar to the Unix "diff" program.</p>
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class Diff
 {
     /**
@@ -55,7 +56,7 @@ public class Diff
     /**
      * The thresholds.
      */
-    private TreeMap thresh;
+	private TreeMap thresh;
 
     /**
      * Constructs the Diff object for the two arrays, using the given comparator.

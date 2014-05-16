@@ -30,7 +30,6 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.testutils.StringAsserts;
@@ -38,6 +37,7 @@ import dk.netarkivet.testutils.StringAsserts;
 /**
  * Unit-tests of the UnknownCommandResolver class.
  */
+@SuppressWarnings({ "unused"})
 public class UnknownCommandResolverTester extends TestCase {
     public UnknownCommandResolverTester(String s) {
         super(s);

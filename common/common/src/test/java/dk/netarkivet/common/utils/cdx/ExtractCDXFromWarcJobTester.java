@@ -51,6 +51,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
  * using a modified ExtractCDXJob class.
  * 
  */
+@SuppressWarnings({ "serial"})
 public class ExtractCDXFromWarcJobTester extends TestCase {
     
     //Shared instance of BatchLocalFiles

@@ -27,13 +27,14 @@ package dk.netarkivet.monitor.jmx;
 import javax.management.remote.JMXServiceURL;
 
 import com.sun.jndi.rmi.registry.RegistryContextFactory;
-import junit.framework.TestCase;
 
+import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.JMXUtils;
 
 
-
+// FIXME: Use generic RegistryContextFactory instead of Oracle specific.
+@SuppressWarnings({"restriction", "unused"})
 public class JMXUtilsTester extends TestCase {
 
     private static final String JNDI_INITIAL_CONTEXT_PROPERTY =

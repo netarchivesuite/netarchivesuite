@@ -41,6 +41,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * The GetAllFilenamesMessage is sent to retrieve all the filenames in a 
  * specific replica. The result is a file in the same format as a FilelistJob.
  */
+@SuppressWarnings({ "serial"})
 public class GetAllFilenamesMessage extends ArchiveMessage {
     /** 
      * The file with the current content, which will be retrieved from the 

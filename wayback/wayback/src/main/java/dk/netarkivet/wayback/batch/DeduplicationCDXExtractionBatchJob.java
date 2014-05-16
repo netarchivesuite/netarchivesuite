@@ -35,6 +35,7 @@ import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
  * metadata arcfile and converts them to cdx records for use in wayback.
  *
  */
+@SuppressWarnings({ "serial"})
 public class DeduplicationCDXExtractionBatchJob extends ArchiveBatchJob {
 
     /**

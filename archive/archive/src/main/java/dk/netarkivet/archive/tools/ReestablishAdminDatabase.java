@@ -40,6 +40,7 @@ import dk.netarkivet.common.tools.ToolRunnerBase;
 /**
  * Method for reestablishing the admin database from a 'admin.data' file. 
  */
+@SuppressWarnings({ "deprecation"})
 public class ReestablishAdminDatabase extends ToolRunnerBase {
     /** The number of instances required for how many lines to ingest into
      * the database between printing out, to tell how far we have come.*/

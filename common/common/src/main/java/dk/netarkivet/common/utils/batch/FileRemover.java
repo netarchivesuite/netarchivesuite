@@ -37,6 +37,7 @@ import java.io.OutputStream;
  * @author ngiraud
  * @author svc
  */
+@SuppressWarnings({ "serial"})
 public class FileRemover extends FileBatchJob {
 
     /**

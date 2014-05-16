@@ -34,6 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  */
 
+@SuppressWarnings({ "serial"})
 public class TimedSchedule extends Schedule {
     /** The day this schedule should end.*/
     private final Date endDate;

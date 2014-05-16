@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchEndedMessage;
@@ -280,6 +279,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
         public TestMessageHandler() {}
     }
 
+    @SuppressWarnings({ "unused", "serial"})
     private static class TestMessage extends ArchiveMessage {
         private String testID;
         public int acceptCalled = 0;

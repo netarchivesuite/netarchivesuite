@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -45,6 +44,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Unit test for Bitarchive API
  * The CTOR method is tested
  */
+@SuppressWarnings({ "unused"})
 public class BitarchiveTesterCTOR extends TestCase {
     private static File PATH_TO_TEST =
             new File("tests/dk/netarkivet/archive/bitarchive/data/ctor");

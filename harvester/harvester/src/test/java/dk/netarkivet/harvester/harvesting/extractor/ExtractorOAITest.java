@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import junit.framework.TestCase;
+
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.extractor.Extractor;
@@ -36,6 +37,7 @@ import org.archive.io.ReplayCharSequence;
 import org.archive.net.UURIFactory;
 import org.archive.util.HttpRecorder;
 
+@SuppressWarnings({ "serial"})
 public class ExtractorOAITest extends TestCase {
 
     public static final String xmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\" \n"

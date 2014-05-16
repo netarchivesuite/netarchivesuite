@@ -34,6 +34,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -45,6 +46,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * Unit tests for the class ARCBatchJob.
  */
+@SuppressWarnings({ "serial"})
 public class ARCBatchJobTester extends TestCase {
     //Reference to test files:
     private static final File ARC_DIR = new File(

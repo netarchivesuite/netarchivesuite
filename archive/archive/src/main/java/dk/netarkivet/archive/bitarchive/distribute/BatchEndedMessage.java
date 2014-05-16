@@ -43,6 +43,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * to a BitarchiveMonitorServer to indicate that that single machine has
  * finished processing a batch job.
  */
+@SuppressWarnings({ "serial"})
 public class BatchEndedMessage extends ArchiveMessage {
     /** The identifier for the bitarchive application, that performed the 
      * batch-job. */

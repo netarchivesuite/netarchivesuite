@@ -25,12 +25,8 @@ package dk.netarkivet.harvester.distribute;
 
 import dk.netarkivet.harvester.datamodel.*;
 import junit.framework.TestCase;
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests the part of ChannelID class that relates to the harvesting module.

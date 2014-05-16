@@ -43,6 +43,7 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefi
  * Container for doOneCrawl request.
  * Contains the crawler job definition.
  */
+@SuppressWarnings({ "serial"})
 public class DoOneCrawlMessage extends HarvesterMessage implements Serializable {
 
     /** the Job to crawl.    */

@@ -43,6 +43,7 @@ import junit.framework.TestCase;
 /**
  * Tests of DelegatingController class.
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class DelegatingControllerTester extends TestCase {
     private TestMissingURIRecorder mur;
     private TestCDXCache cc;

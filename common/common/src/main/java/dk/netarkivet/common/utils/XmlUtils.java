@@ -35,6 +35,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -57,6 +58,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Utilities for handling XML-files.
  *
  */
+@SuppressWarnings({ "unchecked"})
 public class XmlUtils {
 
     private static Log log = LogFactory.getLog(XmlUtils.class.getName());

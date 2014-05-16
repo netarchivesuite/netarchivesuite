@@ -28,6 +28,7 @@ package dk.netarkivet.harvester.webinterface;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -55,6 +56,8 @@ import dk.netarkivet.common.utils.StringUtils;
  *  public Map<String, String[]> getParameterMap()
  *  
  */
+@SuppressWarnings({ "rawtypes" })
+
 class MockupServletRequest implements ServletRequest {
     Map<String, String[]> parameters = new HashMap<String, String[]>();
     Map<String, Object> attributes = new HashMap<String, Object>();

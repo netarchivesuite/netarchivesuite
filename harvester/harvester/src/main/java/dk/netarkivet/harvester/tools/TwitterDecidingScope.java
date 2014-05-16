@@ -31,6 +31,7 @@ import org.archive.crawler.framework.CrawlController;
 import org.archive.crawler.settings.SimpleType;
 import org.archive.crawler.settings.StringList;
 import org.archive.net.UURIFactory;
+
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Query;
@@ -44,6 +45,7 @@ import twitter4j.URLEntity;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanException;
 import javax.management.ReflectionException;
+
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.logging.Level;
@@ -61,6 +63,7 @@ import java.util.logging.Logger;
  * In addition, the number of results to be considered is determined by the parameters "pages" and
  * "twitter_results_per_page".
  */
+@SuppressWarnings({ "deprecation", "serial"})
 public class TwitterDecidingScope extends DecidingScope {
 
     /**

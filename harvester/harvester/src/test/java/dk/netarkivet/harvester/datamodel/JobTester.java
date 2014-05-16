@@ -71,6 +71,7 @@ import dk.netarkivet.testutils.TestFileUtils;
  * Test class for the Job class.
  * 
  */
+@SuppressWarnings({ "unchecked"})
 public class JobTester extends DataModelTestCase {
 	
 	private HarvestChannel highChan;

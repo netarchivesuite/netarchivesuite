@@ -71,6 +71,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Tests of the ARCLookup class.
  */
+@SuppressWarnings({ "unchecked"})
 public class ARCLookupTester extends TestCase {
     private ViewerArcRepositoryClient realArcRepos;
     private static ARCLookup lookup;

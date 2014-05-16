@@ -43,12 +43,12 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.QueryExp;
 import javax.management.ReflectionException;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -59,6 +59,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Unit tests for the JMXUtils class.
  *
  */
+@SuppressWarnings({ "rawtypes", "unchecked"})
+
 public class JMXUtilsTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 
