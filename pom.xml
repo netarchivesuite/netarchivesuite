@@ -14,7 +14,7 @@
   <modules>
     <module>archive/archive</module>
     <module>archive/bitpreservation-gui</module>
-    <module>common/common</module>
+    <module>common</module>
     <module>deploy/deploy</module>
     <module>harvester/harvestchannel-gui</module>
     <module>harvester/harvestdefinition-gui</module>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<arcmetadata xmlns="http://archive.org/arc/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:arc="http://archive.org/arc/1.0/" xsi:schemaLocation="http://archive.org/arc/1.0/ http://www.archive.org/arc/1.0/arc.xsd">
+<arc:software>Heritrix 0.10.0 http://crawler.archive.org</arc:software>
+<arc:hostname>pc770.sb.statsbiblioteket.dk</arc:hostname>
+<arc:ip>130.225.24.181</arc:ip>
+<dcterms:isPartOf>Artikler</dcterms:isPartOf>
+<dc:description>Henter artikler efter pressemeddelelse</dc:description>
+<arc:operator>Lars CLausen</arc:operator>
+<dc:publisher>Statsbiblioteket</dc:publisher>
+<dcterms:audience>Statsbiblioteket</dcterms:audience>
+<dc:date xsi:type="dcterms:W3CDTF">2004-07-12T07:07:43+00:00</dc:date>
+<arc:http-header-user-agent>linux-heritrix/0.10.0 (+http://www.netarkivet.dk)</arc:http-header-user-agent>
+<arc:http-header-from>lc@statsbiblioteket.dk</arc:http-header-from>
+<arc:robots>classic</arc:robots>
+<dc:format>ARC file version 1.1</dc:format>
+<dcterms:conformsTo xsi:type="dcterms:URI">http://www.archive.org/web/researcher/ArcFileFormat.php</dcterms:conformsTo>
+</arcmetadata>

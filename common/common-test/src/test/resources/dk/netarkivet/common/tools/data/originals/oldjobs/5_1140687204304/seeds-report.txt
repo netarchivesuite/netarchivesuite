@@ -1,0 +1,16 @@
+[code] [status] [seed] [redirect]
+404 CRAWLED http://sb-test-net-001.statsbiblioteket.dk/website/testsite/redirect1.php
+404 CRAWLED http://sb-test-net-001.statsbiblioteket.dk/website/testsite/redirect4.html
+302 CRAWLED http://www.netarkivet.dk/ http://netarkivet.dk/
+200 CRAWLED http://www.drive-badmintonklub.dk/
+200 CRAWLED http://www.kaarefc.dk/
+200 CRAWLED http://www.kaareogtrine.dk/
+200 CRAWLED http://www.kb.dk/
+200 CRAWLED http://www.oernhoej.dk/
+200 CRAWLED http://www.pligtaflevering.dk/
+200 CRAWLED http://www.raeder.dk/
+200 CRAWLED http://www.slothchristensen.dk/
+200 CRAWLED http://www.sulnudu.dk/
+200 CRAWLED http://www.sy-jonna.dk/
+200 CRAWLED http://www.trinekc.dk/
+200 CRAWLED http://www.trineogkaare.dk/
