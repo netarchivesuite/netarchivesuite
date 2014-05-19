@@ -65,6 +65,7 @@ import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.SORT_ORDER;
  * The statements to create the tables are now in
  * scripts/sql/createfullhddb.sql
  */
+@SuppressWarnings("resource")
 public class JobDBDAO extends JobDAO {
     /** The logger for this class. */
     private final Log log = LogFactory.getLog(getClass());
@@ -428,7 +429,7 @@ public class JobDBDAO extends JobDAO {
      * @throws UnknownID if the job id does not exist.
      * @throws IOFailure if there was some problem talking to the database.
      */
-    private synchronized Job read(Connection connection, Long jobID) {
+	private synchronized Job read(Connection connection, Long jobID) {
         if (!exists(connection, jobID)) {
             throw new UnknownID("Job id "
                                 + jobID

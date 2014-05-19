@@ -38,7 +38,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -49,6 +48,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * Unit tests for the class ZipUtils.
  */
+@SuppressWarnings("resource")
 public class ZipUtilsTester extends TestCase {
     public ZipUtilsTester(String s) {
         super(s);
@@ -71,7 +71,7 @@ public class ZipUtilsTester extends TestCase {
         assertFalse("Zip file should not exist before", zipFile.exists());
         ZipUtils.zipDirectory(TestInfo.ZIPDIR, zipFile);
         assertTrue("Zip file must exist afterwards", zipFile.exists());
-        ZipFile reader = new ZipFile(zipFile);
+		ZipFile reader = new ZipFile(zipFile);
         Enumeration<? extends ZipEntry> entries = reader.entries();
         while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();

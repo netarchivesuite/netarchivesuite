@@ -47,7 +47,7 @@ import dk.netarkivet.common.utils.StreamUtils;
  * the key to the map is the class name, and the value is the class stored
  * as a byte array.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "resource"})
 public class ByteJarLoader extends ClassLoader implements Serializable {
     /** The log. */
     transient Log log = LogFactory.getLog(this.getClass().getName());
