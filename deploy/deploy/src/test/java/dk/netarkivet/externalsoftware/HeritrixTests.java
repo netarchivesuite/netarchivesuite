@@ -32,7 +32,8 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncherFactory;
-import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
+import dk.netarkivet.harvester.harvesting.JobInfo;
+//import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.controller.AbstractJMXHeritrixController;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
@@ -1039,6 +1040,33 @@ public class HeritrixTests extends TestCase {
        }
        xpath_node.setText(value);
    }
+   
+   class JobInfoTestImpl implements JobInfo {
+
+    private Long jobId;
+    private Long harvestId;
+
+    public JobInfoTestImpl(Long jobId, Long harvestId) {
+        this.jobId = jobId;
+        this.harvestId = harvestId;
+    }
+    
+    @Override
+    public Long getJobID() {
+        return jobId;
+    }
+
+    @Override
+    public Long getOrigHarvestDefinitionID() {
+        return this.harvestId;
+    }
+
+    @Override
+    public String getHarvestFilenamePrefix() {
+        return jobId + "-" + harvestId;
+    }
+    
+}
 }
 
 

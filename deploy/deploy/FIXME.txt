@@ -1,0 +1,10 @@
+The following tests have commented out code to compile without
+generating test-jar files.
+
+DeduplicatorTesterSuite
+FullUnitTesterSuite
+IntegrityTesterSuite
+
+All marked as FIXME
+
+/tra 2014-05-29

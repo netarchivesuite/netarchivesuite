@@ -41,8 +41,8 @@ import dk.netarkivet.archive.checksum.distribute.ArchiveChecksumDistributeTester
 import dk.netarkivet.archive.distribute.ArchiveDistributeTesterSuite;
 import dk.netarkivet.archive.tools.ArchiveToolsTesterSuite;
 import dk.netarkivet.archive.webinterface.ArchiveWebinterfaceTesterSuite;
-import dk.netarkivet.harvester.indexserver.ArchiveIndexServerTesterSuite;
-import dk.netarkivet.harvester.indexserver.distribute.ArchiveIndexserverDistributeTesterSuite;
+//import dk.netarkivet.harvester.indexserver.ArchiveIndexServerTesterSuite;
+//import dk.netarkivet.harvester.indexserver.distribute.ArchiveIndexserverDistributeTesterSuite;
 
 /**
  * This class runs all the archive module unit tests.
@@ -58,8 +58,9 @@ public class UnitTesterSuite {
         ArchiveChecksumTesterSuite.addToSuite(suite);
         ArchiveChecksumDistributeTesterSuite.addToSuite(suite);
         ArchiveDistributeTesterSuite.addToSuite(suite);
-        ArchiveIndexserverDistributeTesterSuite.addToSuite(suite);
-        ArchiveIndexServerTesterSuite.addToSuite(suite);
+// FIXME:  Pulls in whole harvester test suite...  Move it there instead?
+//        ArchiveIndexserverDistributeTesterSuite.addToSuite(suite);
+//        ArchiveIndexServerTesterSuite.addToSuite(suite);
         ArchiveToolsTesterSuite.addToSuite(suite);
         ArchiveWebinterfaceTesterSuite.addToSuite(suite);
         CommonDistributeArcrepositoryTesterSuite.addToSuite(suite);

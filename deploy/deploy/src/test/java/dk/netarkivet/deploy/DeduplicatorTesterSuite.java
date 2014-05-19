@@ -25,12 +25,12 @@
 
 package dk.netarkivet.deploy;
 
-import dk.netarkivet.archive.arcrepository.ARCLookupTester;
+//import dk.netarkivet.archive.arcrepository.ARCLookupTester;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.harvester.indexserver.CDXOriginCrawlLogIteratorTester;
+//import dk.netarkivet.harvester.indexserver.CDXOriginCrawlLogIteratorTester;
 
 /**
  * This class runs all tests of Deduplicator functionality.  Must be run as part
@@ -41,8 +41,9 @@ import dk.netarkivet.harvester.indexserver.CDXOriginCrawlLogIteratorTester;
 
 public class DeduplicatorTesterSuite {
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(CDXOriginCrawlLogIteratorTester.class);
-        suite.addTestSuite(ARCLookupTester.class);
+        // FIXME:  deploy cannot see archiver or harvester test classes.
+//        suite.addTestSuite(CDXOriginCrawlLogIteratorTester.class);
+//        suite.addTestSuite(ARCLookupTester.class);
     }
 
     public static Test suite() {

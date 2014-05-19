@@ -29,7 +29,9 @@
 			<groupId>httpunit</groupId>
 			<artifactId>httpunit</artifactId>
 			<version>1.6</version>
+                        <!--
 			<scope>test</scope>
+                        -->
 			<exclusions>
 				<exclusion>
 					<artifactId>xmlParserAPIs</artifactId>

@@ -38,11 +38,11 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ZipUtils;
-import dk.netarkivet.testutils.ReflectUtils;
+//import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Utilities to allow testing databases.
- *
+ * //FIXME:  Rename without Test as these are not specifically test related.
  */
 public class DatabaseTestUtils {
     
@@ -189,7 +189,12 @@ public class DatabaseTestUtils {
         }
         //connectionPool.clear();
         // null field instance in DBSpecifics.
-        Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
+        
+        // inlined to break test dependency /tra 2014-05-19
+        //Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
+        Field f = DBSpecifics.class.getDeclaredField("instance");
+        f.setAccessible(true);
+ 
         f.set(null, null);
 /*
         for (Thread t: connectionPool.keySet()) {

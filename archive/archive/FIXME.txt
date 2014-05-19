@@ -1,0 +1,11 @@
+The UnitTesterSuite referred to a test in the harvester module which
+pulled in the whole harvester test suite, so it has been disabled 
+for now.
+
+//        ArchiveIndexserverDistributeTesterSuite.addToSuite(suite);
+//        ArchiveIndexServerTesterSuite.addToSuite(suite);
+
+Consider if the test should be run in the harvester module or the 
+test source moved to this module
+
+/tra 2014-05-19

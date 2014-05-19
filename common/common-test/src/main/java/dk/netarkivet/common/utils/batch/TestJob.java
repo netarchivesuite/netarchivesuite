@@ -24,8 +24,6 @@
  */
 package dk.netarkivet.common.utils.batch;
 
-import dk.netarkivet.common.utils.batch.ChecksumJob;
-
 
 @SuppressWarnings({ "serial"})
 public class TestJob extends ChecksumJob {

@@ -24,6 +24,23 @@
 */
 package dk.netarkivet.archive.webinterface;
 
+import com.mockobjects.servlet.MockHttpServletRequest;
+import com.mockobjects.servlet.MockJspWriter;
+import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
+import dk.netarkivet.archive.arcrepository.bitpreservation.PreservationState;
+import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
+import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
+import dk.netarkivet.common.webinterface.WebinterfaceTestCase.TestServletRequest;
+import dk.netarkivet.testutils.CollectionAsserts;
+import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Date;
@@ -34,30 +51,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
-
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
-
 import junit.framework.TestCase;
-
-import com.mockobjects.servlet.MockHttpServletRequest;
-import com.mockobjects.servlet.MockJspWriter;
-
-import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
-import dk.netarkivet.archive.arcrepository.bitpreservation.PreservationState;
-import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.distribute.arcrepository.Replica;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.batch.ChecksumJob;
-import dk.netarkivet.common.webinterface.WebinterfaceTestCase.TestServletRequest;
-import dk.netarkivet.harvester.webinterface.HarvesterWebinterfaceTestCase;
-import dk.netarkivet.testutils.CollectionAsserts;
-import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** Unittest for the class dk.netarkivet.archive.webinterface.BitpreserveFileState. */
 @SuppressWarnings({ "deprecation"})
@@ -161,7 +157,7 @@ public class BitpreserveFileStatusTester extends TestCase {
                 new Vector<String>(args.keySet()).elements());
         Map<String, PreservationState> status =
                 BitpreserveFileState.processMissingRequest(
-                        HarvesterWebinterfaceTestCase.getDummyPageContext(
+                        WebinterfaceTestCase.getDummyPageContext(
                         defaultLocale, request),
                                                            new StringBuilder());
         assertEquals("Should have one call to reestablish",
@@ -182,7 +178,7 @@ public class BitpreserveFileStatusTester extends TestCase {
                                           replicaID1).getName()});
         request.setupGetParameterMap(args);
         status = BitpreserveFileState.processMissingRequest(
-                HarvesterWebinterfaceTestCase.getDummyPageContext(defaultLocale, request), new StringBuilder()
+                WebinterfaceTestCase.getDummyPageContext(defaultLocale, request), new StringBuilder()
         );
         assertEquals("Should have no call to restablish",
                      0, mockabp.getCallCount(ADD_METHOD));
@@ -226,7 +222,7 @@ public class BitpreserveFileStatusTester extends TestCase {
                  new String[]{filename1, filename2, filename1});
         request.setupGetParameterMap(args);
         status = BitpreserveFileState.processMissingRequest(
-                HarvesterWebinterfaceTestCase.getDummyPageContext(defaultLocale, request),
+                WebinterfaceTestCase.getDummyPageContext(defaultLocale, request),
                                                             new StringBuilder()
         );
         assertEquals("Should have two calls to restablish",
@@ -282,7 +278,7 @@ public class BitpreserveFileStatusTester extends TestCase {
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.UPDATE_TYPE_PARAM,
                 new String[]{dk.netarkivet.archive.webinterface.Constants.FIND_MISSING_FILES_OPTION});
         
-        BitpreserveFileState.processUpdateRequest(HarvesterWebinterfaceTestCase.getDummyPageContext(l, request));
+        BitpreserveFileState.processUpdateRequest(WebinterfaceTestCase.getDummyPageContext(l, request));
 
         // TODO something here to avoid the failure!!
 

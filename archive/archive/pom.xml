@@ -21,6 +21,13 @@
 
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>common-test</artifactId>
+      <version>5.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
       <artifactId>harvester</artifactId>
       <version>5.0-SNAPSHOT</version>
       <scope>test</scope>
@@ -46,4 +53,18 @@
     </dependency>
 
   </dependencies>
+  
+   <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
