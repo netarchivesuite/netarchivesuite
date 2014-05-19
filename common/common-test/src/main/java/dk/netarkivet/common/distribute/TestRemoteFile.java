@@ -24,6 +24,8 @@
  */
 package dk.netarkivet.common.distribute;
 
+import dk.netarkivet.common.distribute.HTTPRemoteFile;
+import dk.netarkivet.common.distribute.RemoteFile;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.HashSet;

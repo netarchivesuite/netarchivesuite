@@ -33,6 +33,7 @@ import dk.netarkivet.common.utils.Settings;
 public class MockupJMS implements TestConfigurationIF {
     private String originalClass;
 
+    @Override
     public void setUp() {
         originalClass = Settings.get(CommonSettings.JMS_BROKER_CLASS);
         Settings.set(CommonSettings.JMS_BROKER_CLASS, JMSConnectionMockupMQ.class.getName());
@@ -40,6 +41,7 @@ public class MockupJMS implements TestConfigurationIF {
         JMSConnectionMockupMQ.clearTestQueues();
     }
 
+    @Override
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
         try {
