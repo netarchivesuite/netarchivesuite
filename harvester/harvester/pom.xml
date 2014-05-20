@@ -18,7 +18,7 @@
       <artifactId>common</artifactId>
       <version>5.0-SNAPSHOT</version>
     </dependency>
-    
+
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>
       <artifactId>common-test</artifactId>
@@ -88,5 +88,74 @@
       <version>0.09</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>commons-pool</groupId>
+      <artifactId>commons-pool</artifactId>
+      <version>1.6</version>
+    </dependency>
+
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>1.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>it.unimi.dsi</groupId>
+      <artifactId>mg4j</artifactId>
+      <version>1.0.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
+      <version>10.10.1.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.10.1.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
+      <version>10.10.1.1</version>
+    </dependency>
+
   </dependencies>
+
+  <build>
+    <testResources>
+      <testResource>
+        <directory>tests</directory>
+      </testResource>
+    </testResources>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.17</version>
+        <configuration>
+          <argLine>
+            -Xmx768m
+            -Dfile.encoding=UTF-8
+            -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
+            -Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger
+            -Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop
+            -Djava.security.manager
+            -Djava.security.policy=tests/dk/netarkivet/ant-test.policy
+            -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
+
+            -Duser.language=en -Duser.country=US -Duser.variant=US
+          </argLine>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
