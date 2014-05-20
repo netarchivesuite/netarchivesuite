@@ -34,10 +34,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -72,6 +72,9 @@ public class FileUtilsTester extends TestCase{
     
     @Override
     public void setUp() {
+        // FIXME: Find proper way to be locale neutral in this test
+        Locale.setDefault(Locale.US);
+        //
         rs.setUp();
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
@@ -347,17 +350,21 @@ public class FileUtilsTester extends TestCase{
                     "foo", e.getMessage());
         }
 
-        String[] prevFiles = checkDir.list();
-        try {
-            FileUtils.createUniqueTempDir(checkDir, "foo/bar");
-            fail("Should not be able to make dir with illegal name");
-        } catch (IOFailure e) {
-            StringAsserts.assertStringContains("Should mention file",
-                    "foo/bar", e.getMessage());
-            CollectionAsserts.assertIteratorEquals("Should not have changed dir contents",
-                    Arrays.asList(prevFiles).iterator(),
-                    Arrays.asList(checkDir.list()).iterator());
-        }
+        /*
+         * "foo/bar" is not illegal in Java 8, which extracts the filename to
+         * use (here "bar").
+         */
+        // String[] prevFiles = checkDir.list();
+        // try {
+        // FileUtils.createUniqueTempDir(checkDir, "foo/bar");
+        // fail("Should not be able to make dir with illegal name");
+        // } catch (IOFailure e) {
+        // StringAsserts.assertStringContains("Should mention file",
+        // "foo/bar", e.getMessage());
+        // CollectionAsserts.assertIteratorEquals("Should not have changed dir contents",
+        // Arrays.asList(prevFiles).iterator(),
+        // Arrays.asList(checkDir.list()).iterator());
+        // }
     }
 
     public void testReadLastLine() throws Exception {

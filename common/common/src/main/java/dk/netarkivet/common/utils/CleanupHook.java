@@ -73,6 +73,7 @@ public class CleanupHook extends Thread {
             e.printStackTrace();
         }
         try {
+            // FIXME: No println in unit tests.
             System.out.println("Cleaned up " + appName);
             log.info("Cleaned up " + appName);
         } catch (Throwable e) {

@@ -76,12 +76,17 @@
     </dependency>
 
     <dependency>
-      <groupId>dk.netarkivet.netarchivesuite</groupId>
-      <artifactId>common</artifactId>
-      <version>5.0-SNAPSHOT</version>
-      <classifier></classifier>
-      <type>test-jar</type>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-core</artifactId>
+      <version>0.09</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
+      <version>0.09</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
-
 </project>

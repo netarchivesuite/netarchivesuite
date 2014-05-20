@@ -127,29 +127,12 @@
       <version>0.9.1</version>
     </dependency>
 
-    <dependency>
-      <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
-      <version>0.09</version>
-    </dependency>
 
     <dependency>
-      <groupId>httpunit</groupId>
-      <artifactId>httpunit</artifactId>
-      <version>1.6</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>xmlParserAPIs</artifactId>
-          <groupId>xerces</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jtidy</artifactId>
-          <groupId>jtidy</groupId>
-        </exclusion>
-      </exclusions>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.3</version>
     </dependency>
-
 
     <dependency>
       <groupId>berkeleydb</groupId>

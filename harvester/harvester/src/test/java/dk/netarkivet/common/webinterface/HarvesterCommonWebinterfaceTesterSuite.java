@@ -1,7 +1,7 @@
-/* File:    $Id$
- * Version: $Revision$
- * Date:    $Date$
- * Author:  $Author$
+/* File:    $Id: UnitTesterSuite.java 1338 2010-03-17 15:27:53Z svc $
+ * Version: $Revision: 1338 $
+ * Date:    $Date: 2010-03-17 16:27:53 +0100 (Wed, 17 Mar 2010) $
+ * Author:  $Author: svc $
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2012 The Royal Danish Library, the Danish State and
@@ -23,46 +23,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.deploy;
+package dk.netarkivet.common.webinterface;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.common.CleanupSuite;
-
-/**
- * This class runs the deploy unit tests. Maven runs the unit tests for the
- * other modules.
- */
-public class FullUnitTesterSuite {
-    public static void addToSuite(TestSuite suite) {
-
-
-//        dk.netarkivet.common.UnitTesterSuite.addToSuite(suite);
-//        dk.netarkivet.harvester.UnitTesterSuite.addToSuite(suite);
-//        dk.netarkivet.archive.UnitTesterSuite.addToSuite(suite);
-//        dk.netarkivet.viewerproxy.UnitTesterSuite.addToSuite(suite);
-//        dk.netarkivet.monitor.UnitTesterSuite.addToSuite(suite);
-//        dk.netarkivet.wayback.UnitTesterSuite.addToSuite(suite);
-        dk.netarkivet.deploy.UnitTesterSuite.addToSuite(suite);
-        /*
-         * Dummy testersuite to cleanup after the tests.
-         */
-        CleanupSuite.addToSuite(suite);
-    }
-
+public class HarvesterCommonWebinterfaceTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(FullUnitTesterSuite.class.getName());
-
+        suite = new TestSuite(HarvesterCommonWebinterfaceTesterSuite.class.getName());
         addToSuite(suite);
-
         return suite;
     }
 
-    public static void main(String[] args) {
-        String[] args2 = {"-noloading", FullUnitTesterSuite.class.getName()};
+    public static void addToSuite(TestSuite suite) {
+        suite.addTestSuite(HTMLUtilsTester.class);
+        // suite.addTestSuite(SiteSectionTester.class);
+        suite.addTestSuite(GUIWebServerTester.class);
+    }
+
+    public static void main(String args[]) {
+        String args2[] = {"-noloading", HarvesterCommonWebinterfaceTesterSuite.class.getName()};
+
         TestRunner.main(args2);
     }
+
 }

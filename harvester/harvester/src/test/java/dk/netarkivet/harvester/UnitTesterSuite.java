@@ -28,7 +28,7 @@ package dk.netarkivet.harvester;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-
+import dk.netarkivet.common.webinterface.HarvesterCommonWebinterfaceTesterSuite;
 import dk.netarkivet.harvester.datamodel.HarvesterDataModelTesterSuite;
 import dk.netarkivet.harvester.datamodel.extendedfield.HarvesterDataModelExtendedfieldTesterSuite;
 import dk.netarkivet.harvester.distribute.HarvesterDistributeTesterSuite;
@@ -53,6 +53,8 @@ public class UnitTesterSuite {
         HarvesterSchedulerTesterSuite.addToSuite(suite);
         //HarvesterToolsTesterSuite.addToSuite(suite);
         HarvesterWebinterfaceTesterSuite.addToSuite(suite);
+
+        HarvesterCommonWebinterfaceTesterSuite.addToSuite(suite);
     }
 
     public static Test suite() {
