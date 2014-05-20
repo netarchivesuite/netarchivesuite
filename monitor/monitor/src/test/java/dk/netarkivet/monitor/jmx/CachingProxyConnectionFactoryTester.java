@@ -107,12 +107,10 @@ public class CachingProxyConnectionFactoryTester extends TestCase {
                                                   String password) {
         return new JMXProxyConnection() {
             public <T> T createProxy(ObjectName name, Class<T> intf) {
-                //TODO: implement method
                 throw new NotImplementedException("Not implemented");
             }
 
             public Set<ObjectName> query(String query) {
-                //TODO: implement method
                 throw new NotImplementedException("Not implemented");
             }
 

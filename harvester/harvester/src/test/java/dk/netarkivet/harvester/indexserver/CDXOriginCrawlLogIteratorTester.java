@@ -52,7 +52,6 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
      * @see junit.framework.TestCase#setUp()
      */
     protected void setUp() throws Exception {
-        // TODO Auto-generated method stub
         super.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                 TestInfo.WORKING_DIR);
@@ -64,7 +63,6 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
      */
     protected void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        // TODO Auto-generated method stub
         super.tearDown();
     }
 

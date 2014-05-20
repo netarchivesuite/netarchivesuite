@@ -160,7 +160,6 @@ test any project code
                 MBeanException,
                 NotCompliantMBeanException,
                 IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -172,7 +171,6 @@ test any project code
                                                                  NotCompliantMBeanException,
                                                                  InstanceNotFoundException,
                                                                  IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -181,7 +179,6 @@ test any project code
         throws ReflectionException, InstanceAlreadyExistsException,
                MBeanException,
                NotCompliantMBeanException, IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -194,7 +191,6 @@ test any project code
                                                               NotCompliantMBeanException,
                                                               InstanceNotFoundException,
                                                               IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -202,39 +198,32 @@ test any project code
                                                      InstanceNotFoundException,
                                                      MBeanRegistrationException,
                                                      IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public ObjectInstance getObjectInstance(ObjectName name)
         throws InstanceNotFoundException, IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public Set queryMBeans(ObjectName name, QueryExp query) throws IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public Set queryNames(ObjectName name, QueryExp query) throws IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public boolean isRegistered(ObjectName name) throws IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public Integer getMBeanCount() throws IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public AttributeList getAttributes(ObjectName name, String[] attributes)
         throws InstanceNotFoundException, ReflectionException, IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -245,14 +234,12 @@ test any project code
                                                                        MBeanException,
                                                                        ReflectionException,
                                                                        IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public AttributeList setAttributes(ObjectName name,
                                            AttributeList attributes)
         throws InstanceNotFoundException, ReflectionException, IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -261,17 +248,14 @@ test any project code
                                                         MBeanException,
                                                         ReflectionException,
                                                         IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public String getDefaultDomain() throws IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public String[] getDomains() throws IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -280,7 +264,6 @@ test any project code
                                             NotificationFilter filter,
                                             Object handback)
         throws InstanceNotFoundException, IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -288,14 +271,12 @@ test any project code
                                             NotificationFilter filter,
                                             Object handback)
         throws InstanceNotFoundException, IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public void removeNotificationListener(ObjectName name, ObjectName listener)
         throws InstanceNotFoundException, ListenerNotFoundException,
                IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -305,7 +286,6 @@ test any project code
                                                                 InstanceNotFoundException,
                                                                 ListenerNotFoundException,
                                                                 IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -315,7 +295,6 @@ test any project code
                 InstanceNotFoundException,
                 ListenerNotFoundException,
                 IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -326,7 +305,6 @@ test any project code
                                                                 InstanceNotFoundException,
                                                                 ListenerNotFoundException,
                                                                 IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -335,13 +313,11 @@ test any project code
                                                        IntrospectionException,
                                                        ReflectionException,
                                                        IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public boolean isInstanceOf(ObjectName name, String className)
         throws InstanceNotFoundException, IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
     }

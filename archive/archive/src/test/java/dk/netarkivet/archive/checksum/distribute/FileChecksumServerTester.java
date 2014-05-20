@@ -68,7 +68,7 @@ public class FileChecksumServerTester extends TestCase {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // ??
 
-	FileUtils.copyDirectory(TestInfo.ORIGINAL_DIR, TestInfo.WORK_DIR);
+        FileUtils.copyDirectory(TestInfo.ORIGINAL_DIR, TestInfo.WORK_DIR);
 	
         // Set the test settings.
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.BASE_FILE_DIR.getAbsolutePath());
@@ -86,7 +86,6 @@ public class FileChecksumServerTester extends TestCase {
 	    fw.flush();
 	    fw.close();
 	} catch (IOException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 	
