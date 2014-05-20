@@ -23,41 +23,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.monitor;
+package dk.netarkivet.common.utils;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-import dk.netarkivet.common.utils.MonitorCommonUtilsTesterSuite;
-import dk.netarkivet.monitor.jmx.MonitorJMXTesterSuite;
-import dk.netarkivet.monitor.logging.MonitorLoggingTesterSuite;
-import dk.netarkivet.monitor.registry.MonitorRegistryTesterSuite;
-import dk.netarkivet.monitor.webinterface.MonitorWebinterfaceTesterSuite;
 
 /**
- * This class runs all the monitor module unit tests.
+ * Sweet suite of utility tests.
+ *
  */
-public class UnitTesterSuite {
-    public static void addToSuite(TestSuite suite) {
-        MonitorTesterSuite.addToSuite(suite);
-        MonitorLoggingTesterSuite.addToSuite(suite);
-        MonitorJMXTesterSuite.addToSuite(suite);
-        MonitorRegistryTesterSuite.addToSuite(suite);
-        MonitorWebinterfaceTesterSuite.addToSuite(suite);
-        MonitorCommonUtilsTesterSuite.addToSuite(suite);
-    }
-
+public class MonitorCommonUtilsTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(UnitTesterSuite.class.getName());
-
+        suite = new TestSuite(MonitorCommonUtilsTesterSuite.class.getName());
         addToSuite(suite);
-
         return suite;
     }
 
+    public static void addToSuite(TestSuite suite) {
+        suite.addTestSuite(ApplicationUtilsTester.class);
+    }
+
     public static void main(String[] args) {
-        String[] args2 = {"-noloading", UnitTesterSuite.class.getName()};
+        String[] args2 = {"-noloading", MonitorCommonUtilsTesterSuite.class.getName()};
+
         TestRunner.main(args2);
     }
 }

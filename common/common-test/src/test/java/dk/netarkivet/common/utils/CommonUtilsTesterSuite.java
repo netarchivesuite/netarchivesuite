@@ -42,7 +42,9 @@ public class CommonUtilsTesterSuite {
     }
 
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(ApplicationUtilsTester.class);
+        // Moved to "monitor"
+        // suite.addTestSuite(ApplicationUtilsTester.class);
+
         suite.addTestSuite(DiscardingOutputStreamTester.class);
         suite.addTestSuite(ExceptionUtilsTester.class);
         suite.addTestSuite(FileArrayIteratorTester.class);

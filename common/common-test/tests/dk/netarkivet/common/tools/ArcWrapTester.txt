@@ -64,7 +64,7 @@ public class ArcWrapTester extends TestCase {
         mtf.tearDown();
     }
     public void testMain() throws IOException {
-        String pathname = "tests/dk/netarkivet/common/tools/ArcWrapTester.txt";
+        String pathname = "tests/dk/netarkivet/common/tools/ArcWrapTester.java";
         File storeFile = new File(pathname);
         assertTrue(pathname + " exists()?", storeFile.exists());
         String mime = "text/plain";

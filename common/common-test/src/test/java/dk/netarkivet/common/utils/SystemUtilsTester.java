@@ -83,8 +83,10 @@ public class SystemUtilsTester extends TestCase {
                 "jaxen-.*\\.jar$",
                 "jetty-.*\\.jar$",
                 "junit-.*\\.jar$",
-                "libidn-.*\\.jar$",
-                "lucene-core-.*\\.jar$"} ) {
+        // Removed as not used in common.
+        // "libidn-.*\\.jar$",
+        // "lucene-core-.*\\.jar$"
+        }) {
             Matcher m = Pattern.compile(jar).matcher("");
             for (String path : classpath) {
                 if (m.reset(path).find()) {
