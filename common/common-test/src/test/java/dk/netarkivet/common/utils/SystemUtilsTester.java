@@ -26,8 +26,9 @@ package dk.netarkivet.common.utils;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.testutils.CollectionAsserts;
-
+import junit.framework.Assert;
 import junit.framework.TestCase;
+
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -51,19 +52,24 @@ public class SystemUtilsTester extends TestCase {
                    parts.length >= 4);
     }
 
-    /**
-     * Tests getting hostname. This is nearly impossible, but we _can_ check
-     * that an IP address is not returned, and that it at least does not throw
-     * an exception.
-     *
-     * @throws Exception
-     */
+	/**
+	 * 
+	 * Tests getting hostname. This is nearly impossible, but we _can_ check
+	 * that an IP address is not returned (note: IP number comparison disabled
+	 * as the method invoked uses getCanonicalHostname which does a reverse DNS
+	 * lookup which does not return a name but the IP-number if the number is
+	 * not in DNS (which frequently is the case for residential networks behind
+	 * a NAT-router), and that it at least does not throw an exception.
+	 * 
+	 * @throws Exception
+	 */
     public void testGetLocalHostName() throws Exception {
         String result = SystemUtils.getLocalHostName();
-        assertFalse("Should not be an IPv4 address",
-                    Constants.IP_KEY_REGEXP.matcher(result).matches());
-        assertFalse("Should not be an IPv6 address",
-                    Constants.IPv6_KEY_REGEXP.matcher(result).matches());
+        //assertFalse("Should not be an IPv4 address: " + result,
+        //            Constants.IP_KEY_REGEXP.matcher(result).matches());
+        //assertFalse("Should not be an IPv6 address: " + result,
+        //            Constants.IPv6_KEY_REGEXP.matcher(result).matches());
+        Assert.assertTrue("hostname not empty string", result.length()>0);
     }
 
     public void testGetCurrentClasspath() throws Exception {

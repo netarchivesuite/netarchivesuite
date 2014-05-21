@@ -306,14 +306,17 @@ public class SynchronizerTester extends TestCase {
 
         // Check if a message have been received and its
         // the correct message.
+        
+        //FIXME:  Fails intermittently on Mac on home network.
         assertNotNull("A reply should have been received", sr.getReceived());
+        
         assertEquals("The reply message should correspond to the request " +
                      "message", msg, sr.getReceived());
     }
 
     /**
      * Tests that a timed-out synchronizer returns null.
-     * Disabled, failes occasionally in Jenkins.
+     * Disabled, fails occasionally in Jenkins.
      */
     public void failingFestTimeout() throws Exception {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
