@@ -12,6 +12,11 @@
   <artifactId>harvester</artifactId>
   <packaging>jar</packaging>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <test>dk.netarkivet.harvester.UnitTesterSuite</test>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>
@@ -25,6 +30,16 @@
       <version>5.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+
+<!-- 
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>archive</artifactId>
+      <version>5.0-SNAPSHOT</version>
+      <scope>runtime</scope>
+    </dependency>
+ -->
+
 
     <dependency>
       <groupId>junit</groupId>

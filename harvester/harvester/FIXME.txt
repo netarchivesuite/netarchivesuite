@@ -1,0 +1,17 @@
+Unit tests pass iff using the Eclipse launcher adding the monitor and archive project
+to the default build path
+
+(For some reason m2e complains about circular dependency even when using 
+runtime scope - this might be a reportable bug).
+
+Also the AbstractJMXHeritrixLauncher uses deep knowledge of the
+jars in the underlying filesystem to adjust the CLASSPATH environment
+variable before launching the Heritrix process.  As this is
+radically changing that test has been disabled for now.
+(https://sbforge.org/jira/browse/NAS-2317)
+
+Also the tests are VERY liberal with their usage of the filesystem.
+(https://sbforge.org/jira/browse/NAS-2315)
+
+/tra 2014-05-22
+ 
