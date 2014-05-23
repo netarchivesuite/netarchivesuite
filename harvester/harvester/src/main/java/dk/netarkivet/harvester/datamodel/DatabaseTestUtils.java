@@ -92,7 +92,8 @@ public class DatabaseTestUtils {
         } catch (Exception e) {
             throw new IOFailure("Can't register driver", e);
         }
-        dburi = "jdbc:derby:" + dbfile + ";upgrade=true";
+        // Do _not_ upgrade silently making tests slow, but fail loudly.
+        dburi = "jdbc:derby:" + dbfile;// + ";upgrade=true";
         return DriverManager.getConnection(dburi);
         //return HarvestDBConnection.get();
             /*
@@ -226,6 +227,7 @@ public class DatabaseTestUtils {
     public static void dropHDDB() throws SQLException,
                             NoSuchFieldException, IllegalAccessException {
         dropDatabase();
+        log.info("dropHDDB() 1");
         HarvestDBConnection.cleanup();
     }
 }

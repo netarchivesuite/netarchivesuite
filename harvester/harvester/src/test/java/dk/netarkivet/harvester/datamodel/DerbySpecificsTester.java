@@ -28,6 +28,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.utils.DBUtils;
 
 /**
@@ -35,17 +38,25 @@ import dk.netarkivet.common.utils.DBUtils;
  * Unit test testing the DerbySpecifics class.
  *
  */
+
 public class DerbySpecificsTester extends DataModelTestCase {
+
+    Logger log = LoggerFactory.getLogger(this.getClass());
+
     public DerbySpecificsTester(String s) {
         super(s);
     }
 
     public void setUp() throws Exception {
+        log.info("setup() init");
         super.setUp();
+        log.info("setup() done");
     }
 
     public void tearDown() throws Exception {
+        log.info("tearDown() init");
         super.tearDown();
+        log.info("tearDown() done");
     }
     
     /**

@@ -38,6 +38,8 @@ import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
 import junit.framework.TestCase;
 
 import org.dom4j.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -52,6 +54,8 @@ import java.util.*;
  * sets up the various DAOs etc.
  */
 public class DataModelTestCase extends TestCase {
+
+    Logger log = LoggerFactory.getLogger(this.getClass());
 
 	SetSystemProperty derbyLog
 	= new SetSystemProperty(
@@ -70,29 +74,35 @@ public class DataModelTestCase extends TestCase {
 	//command-line system parameter, to switch between derby and MySQL for
 	//unit tests.
 	public void setUp() throws Exception {
+        // log.info("setup() 1");
 		super.setUp();
-		rs.setUp();
+        // log.info("setup() 2");
+        rs.setUp();
+        // log.info("setup() 3");
 		FileUtils.removeRecursively(TestInfo.TEMPDIR);
+        // log.info("setup() 4");
 		assertFalse("Tempdir '" +  TestInfo.TEMPDIR.getAbsolutePath()
 				+  "' exists ", TestInfo.TEMPDIR.exists());
 		TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-
+        // log.info("setup() 5");
 		derbyLog.setUp();
+        // log.info("setup() 6");
 		String derbyDBUrl = "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath()
 				+ "/fullhddb;upgrade=true";
 		Settings.set(CommonSettings.DB_BASE_URL, derbyDBUrl);
 		Settings.set(CommonSettings.DB_MACHINE, "");
 		Settings.set(CommonSettings.DB_PORT, "");
 		Settings.set(CommonSettings.DB_DIR, "");
-
+        // log.info("setup() 7");
 		commonTempdir.mkdir();
+        // log.info("setup() 8");
 		Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
 				commonTempdir.getAbsolutePath());
 
 		Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
 				RememberNotifications.class.getName());
 		HarvestDAOUtils.resetDAOs();
-
+        log.info("setup() 9");
 		Connection c = DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
 				TestInfo.TEMPDIR);
 		if (c == null) {
@@ -102,17 +112,22 @@ public class DataModelTestCase extends TestCase {
 
 		assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL),
 				derbyDBUrl);
-		
+        log.info("setup() 10");
 		DBSpecifics.getInstance().updateTables();
+        log.info("setup() 11");
 	}
 
 	public void tearDown() throws Exception {
+        log.info("tearDown() 1");
 		super.tearDown();
+        log.info("tearDown() 2");
 		DatabaseTestUtils.dropHDDB();
 		// null field instance in DBSpecifics.
 		Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
 		f.set(null, null);
 		derbyLog.tearDown();
+        log.info("tearDown() 3");
+
 		//don't work on windows derby.log seem to be locked
 		try{
 			FileUtils.removeRecursively(TestInfo.TEMPDIR);
@@ -121,9 +136,17 @@ public class DataModelTestCase extends TestCase {
 		{
 
 		}
+        log.info("tearDown() 4");
+
 		HarvestDAOUtils.resetDAOs();
+        log.info("tearDown() 5");
+
 		HarvestDBConnection.cleanup();
+        log.info("tearDown() 6");
+
 		rs.tearDown();
+        log.info("tearDown() 7");
+
 	}
 
 	/** Creates the following jobs and hds:

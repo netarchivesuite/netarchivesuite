@@ -38,8 +38,15 @@
       <version>5.0-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
- -->
 
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>monitor</artifactId>
+      <version>5.0-SNAPSHOT</version>
+      <scope>runtime</scope>
+    </dependency>
+ -->
+ 
 
     <dependency>
       <groupId>junit</groupId>
@@ -139,6 +146,13 @@
       <groupId>org.apache.derby</groupId>
       <artifactId>derbytools</artifactId>
       <version>10.10.1.1</version>
+    </dependency>
+    
+    <dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-simple</artifactId>
+    <version>1.4.2</version>
+    <optional>true</optional>
     </dependency>
 
   </dependencies>
