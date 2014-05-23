@@ -102,7 +102,8 @@ public class DataModelTestCase extends TestCase {
 		Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
 				RememberNotifications.class.getName());
 		HarvestDAOUtils.resetDAOs();
-        log.info("setup() 9");
+        log.info("setup() DatabaseTestUtils.getHDDB " + TestInfo.DBFILE
+                + "  fullhddb " + TestInfo.TEMPDIR);
 		Connection c = DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
 				TestInfo.TEMPDIR);
 		if (c == null) {
@@ -112,21 +113,22 @@ public class DataModelTestCase extends TestCase {
 
 		assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL),
 				derbyDBUrl);
-        log.info("setup() 10");
+        log.info("setup() DBSpecifics.getInstance().updateTables()");
 		DBSpecifics.getInstance().updateTables();
-        log.info("setup() 11");
+        log.info("setup() done");
 	}
 
 	public void tearDown() throws Exception {
-        log.info("tearDown() 1");
+        log.info("tearDown() super.tearDown()");
 		super.tearDown();
-        log.info("tearDown() 2");
+        log.info("tearDown() DatabaseTestUtils.dropHDDB()");
 		DatabaseTestUtils.dropHDDB();
 		// null field instance in DBSpecifics.
 		Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
 		f.set(null, null);
+        log.info("tearDown() derbyLog.tearDown()");
 		derbyLog.tearDown();
-        log.info("tearDown() 3");
+        log.info("tearDown() FileUtils.removeRecursively");
 
 		//don't work on windows derby.log seem to be locked
 		try{
@@ -136,16 +138,16 @@ public class DataModelTestCase extends TestCase {
 		{
 
 		}
-        log.info("tearDown() 4");
+        log.info("tearDown() HarvestDAOUtils.resetDAOs()");
 
 		HarvestDAOUtils.resetDAOs();
-        log.info("tearDown() 5");
+        log.info("tearDown() HarvestDBConnection.cleanup()");
 
 		HarvestDBConnection.cleanup();
-        log.info("tearDown() 6");
+        log.info("tearDown() rs.tearDown()");
 
 		rs.tearDown();
-        log.info("tearDown() 7");
+        log.info("tearDown() done");
 
 	}
 
