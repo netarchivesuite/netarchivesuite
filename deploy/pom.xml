@@ -18,5 +18,6 @@
   <modules>
     <module>deploy</module>
     <module>releasezipball</module>
+    <module>deploy-test</module>
   </modules>
 </project>

@@ -13,6 +13,7 @@
 
   <modules>
     <module>archive/archive</module>
+    <module>archive/archive-test</module>
     <module>archive/bitpreservation-gui</module>
     <module>common</module>
     <module>deploy</module>
@@ -24,8 +25,10 @@
     <module>harvester/qa-gui</module>
     <module>integration-test/netarchivesuite-integration-test</module>
     <module>monitor/monitor</module>
+    <module>monitor/monitor-test</module>
     <module>monitor/status-gui</module>
     <module>wayback/wayback</module>
+    <module>wayback/wayback-test</module>
   </modules>
 
   <build>

@@ -1,64 +1,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>dk.netarkivet.netarchivesuite</groupId>
-    <artifactId>parent</artifactId>
-    <version>5.0-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
-  </parent>
+	<parent>
+		<groupId>dk.netarkivet.netarchivesuite</groupId>
+		<artifactId>parent</artifactId>
+		<version>5.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
 
-  <artifactId>archive</artifactId>
-  <packaging>jar</packaging>
+	<artifactId>archive</artifactId>
+	<packaging>jar</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>dk.netarkivet.netarchivesuite</groupId>
-      <artifactId>common</artifactId>
-      <version>5.0-SNAPSHOT</version>
-    </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>dk.netarkivet.netarchivesuite</groupId>
+			<artifactId>common</artifactId>
+			<version>5.0-SNAPSHOT</version>
+		</dependency>
 
-    <dependency>
-      <groupId>dk.netarkivet.netarchivesuite</groupId>
-      <artifactId>common-test</artifactId>
-      <version>5.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>dk.netarkivet.netarchivesuite</groupId>
+			<artifactId>harvester</artifactId>
+			<version>5.0-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>dk.netarkivet.netarchivesuite</groupId>
-      <artifactId>harvester</artifactId>
-      <version>5.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>3.3.0.SP1</version>
+		</dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.2</version>
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-c3p0</artifactId>
-      <version>3.3.0.SP1</version>
-    </dependency>
 
-    <dependency>
-      <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-core</artifactId>
-      <version>0.09</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
-      <version>0.09</version>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
+	</dependencies>
 </project>
