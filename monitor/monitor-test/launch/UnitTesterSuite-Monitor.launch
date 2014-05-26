@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.junit.launchconfig">
+<stringAttribute key="bad_container_name" value="/dk.netarkivet.netarchivesuite.monitor-test/lauc"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/dk.netarkivet.netarchivesuite.monitor-test/src/test/java/dk/netarkivet/monitor/UnitTesterSuite.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
+<booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
+<stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
+<stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit3"/>
+<stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.m2e.launchconfig.classpathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="dk.netarkivet.monitor.UnitTesterSuite"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="dk.netarkivet.netarchivesuite.monitor-test"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx768m&#10;            -Dfile.encoding=UTF-8&#10;            -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml&#10;            -Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger&#10;            -Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop&#10;            -Djava.security.manager&#10;            -Djava.security.policy=tests/dk/netarkivet/ant-test.policy&#10;            -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy&#10;&#10;            -Duser.language=en -Duser.country=US -Duser.variant=US"/>
+</launchConfiguration>

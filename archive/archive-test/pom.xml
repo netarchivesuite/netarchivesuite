@@ -64,6 +64,12 @@
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>1.1</version>
+      <scope>test</scope>
+    </dependency>
 	</dependencies>
 
 	<build>
@@ -86,8 +92,8 @@
 						-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
 						-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger
 						-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop
-						-Djava.security.manager
-						-Djava.security.policy=tests/dk/netarkivet/ant-test.policy
+						-DXjava.security.manager
+						-DXjava.security.policy=tests/dk/netarkivet/ant-test.policy
 						-Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
 
 						-Duser.language=en -Duser.country=US -Duser.variant=US
