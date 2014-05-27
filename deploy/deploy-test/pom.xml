@@ -1,103 +1,117 @@
 <?xml version="1.0"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>dk.netarkivet.netarchivesuite</groupId>
-		<artifactId>deploy-pom</artifactId>
-		<version>5.0-SNAPSHOT</version>
-	</parent>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dk.netarkivet.netarchivesuite</groupId>
+    <artifactId>deploy-pom</artifactId>
+    <version>5.0-SNAPSHOT</version>
+  </parent>
 
-	<artifactId>deploy-test</artifactId>
+  <artifactId>deploy-test</artifactId>
 
-	<name>deploy-test</name>
+  <name>deploy-test</name>
 
-	<properties>
-		<test>dk.netarkivet.deploy.UnitTesterSuite</test>
-	</properties>
-	
+  <properties>
+    <test>dk.netarkivet.deploy.UnitTesterSuite</test>
+  </properties>
+  
+  <dependencies>
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>deploy</artifactId>
+      <version>5.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>common</artifactId>
+      <version>5.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>archive</artifactId>
+      <version>5.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>harvester</artifactId>
+      <version>5.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>monitor</artifactId>
+      <version>5.0-SNAPSHOT</version>
+    </dependency>
+    <!--
+         Test dependencies.
+      -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-core</artifactId>
+      <version>0.09</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
+      <version>0.09</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>1.1</version>
+      <scope>test</scope>
+    </dependency>
+    <!--
+         Ugly test dependencies.
+      -->
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>common-test</artifactId>
+      <version>5.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>wayback</artifactId>
+      <version>5.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-	<dependencies>
-		<dependency>
-			<groupId>dk.netarkivet.netarchivesuite</groupId>
-			<artifactId>deploy</artifactId>
-			<version>5.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>dk.netarkivet.netarchivesuite</groupId>
-			<artifactId>common</artifactId>
-			<version>5.0-SNAPSHOT</version>
-		</dependency>
+  <build>
+    <testResources>
+      <testResource>
+        <directory>tests</directory>
+      </testResource>
+    </testResources>
 
-		<dependency>
-			<groupId>dk.netarkivet.netarchivesuite</groupId>
-			<artifactId>common-test</artifactId>
-			<version>5.0-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>dk.netarkivet.netarchivesuite</groupId>
-			<artifactId>archive</artifactId>
-			<version>5.0-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>dk.netarkivet.netarchivesuite</groupId>
-			<artifactId>harvester</artifactId>
-			<version>5.0-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>dk.netarkivet.netarchivesuite</groupId>
-			<artifactId>monitor</artifactId>
-			<version>5.0-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>dk.netarkivet.netarchivesuite</groupId>
-			<artifactId>wayback</artifactId>
-			<version>5.0-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<testResources>
-			<testResource>
-				<directory>tests</directory>
-			</testResource>
-		</testResources>
-
-		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.17</version>
-				<configuration>
-					<argLine>
-						-Xmx768m
-						-Dfile.encoding=UTF-8
-						-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
-						-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger
-						-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop
-						-Djava.security.manager
-						-Djava.security.policy=tests/dk/netarkivet/ant-test.policy
-						-Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
-
-						-Duser.language=en -Duser.country=US -Duser.variant=US
-					</argLine>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.17</version>
+        <configuration>
+          <argLine>
+            -Xmx768m
+            -Dfile.encoding=UTF-8
+            -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
+            -Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger
+            -Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop
+            -Djava.security.manager
+            -Djava.security.policy=tests/dk/netarkivet/ant-test.policy
+            -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
+            -Duser.language=en -Duser.country=US -Duser.variant=US
+          </argLine>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

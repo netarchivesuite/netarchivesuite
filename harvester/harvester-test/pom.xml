@@ -1,5 +1,6 @@
+<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -22,102 +23,96 @@
   <dependencies>
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>
-      <artifactId>harvester</artifactId>
-      <version>5.0-SNAPSHOT</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>dk.netarkivet.netarchivesuite</groupId>
       <artifactId>common</artifactId>
       <version>5.0-SNAPSHOT</version>
     </dependency>
-
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>
-      <artifactId>common-test</artifactId>
+      <artifactId>harvester</artifactId>
       <version>5.0-SNAPSHOT</version>
     </dependency>
-
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>
       <artifactId>archive</artifactId>
       <version>5.0-SNAPSHOT</version>
-      <scope>runtime</scope>
     </dependency>
-
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>
       <artifactId>monitor</artifactId>
       <version>5.0-SNAPSHOT</version>
-      <scope>runtime</scope>
     </dependency>
-
-
-
-
-
-
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
- 
-    <dependency>
-      <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-core</artifactId>
-      <version>0.09</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
-      <version>0.09</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>jaxen</groupId>
-      <artifactId>jaxen</artifactId>
-      <version>1.1</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>it.unimi.dsi</groupId>
       <artifactId>mg4j</artifactId>
       <version>1.0.1</version>
       <scope>test</scope>
     </dependency>
- 
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derbyclient</artifactId>
       <version>10.10.1.1</version>
       <scope>test</scope>
     </dependency>
- 
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
       <version>10.10.1.1</version>
       <scope>test</scope>
     </dependency>
- 
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derbytools</artifactId>
       <version>10.10.1.1</version>
     </dependency>
-    
+    <!--
+         Optional
+      -->
     <dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-simple</artifactId>
-    <version>1.4.2</version>
-    <optional>true</optional>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.4.2</version>
+      <optional>true</optional>
+    </dependency>
+    <!--
+         Test dependencies.
+      -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-core</artifactId>
+      <version>0.09</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
+      <version>0.09</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>1.1</version>
+      <scope>test</scope>
+    </dependency>
+    <!--
+         Ugly test dependencies.
+      -->
+    <dependency>
+      <groupId>dk.netarkivet.netarchivesuite</groupId>
+      <artifactId>common-test</artifactId>
+      <version>5.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
@@ -129,7 +124,6 @@
     </testResources>
 
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -144,7 +138,6 @@
             -Djava.security.manager
             -Djava.security.policy=tests/dk/netarkivet/ant-test.policy
             -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
-
             -Duser.language=en -Duser.country=US -Duser.variant=US
           </argLine>
         </configuration>

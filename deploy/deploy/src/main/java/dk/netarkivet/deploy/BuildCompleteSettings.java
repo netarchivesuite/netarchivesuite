@@ -99,7 +99,7 @@ public final class BuildCompleteSettings {
             fw.append(Constants.NEWLINE);
             fw.close();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to write new settings");
+            throw new RuntimeException("Failed to write new settings", e);
         }
     }
 

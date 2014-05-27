@@ -24,9 +24,12 @@
 */
 package dk.netarkivet.deploy;
 
+import java.io.File;
+import java.net.URL;
+
+import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import junit.framework.TestCase;
 
 public class CompleteSettingsTester extends TestCase {
     @Override
@@ -44,18 +47,17 @@ public class CompleteSettingsTester extends TestCase {
         FileUtils.removeRecursively(TestInfo.TMPDIR);
     }
 
-
-
     /**
      * Rebuilds the file src/dk/netarkivet/deploy/default_settings.xml. Eg.
      * this is not a real test.
      */
 
     public void testCompleteSettings() throws Exception {
-        // ToDo The generation of the complete settings file should be moved
+    	URL url = this.getClass().getClassLoader().getResource("");
+    	File file = new File(url.getFile());
+    	// ToDo The generation of the complete settings file should be moved
         // to the build functionality directly.
-        BuildCompleteSettings.buildCompleteSettings(
-            "src/dk/netarkivet/deploy/complete_settings.xml"
-        );
+    	File settingsFile = new File(file, "dk/netarkivet/deploy/complete_settings.xml");
+    	BuildCompleteSettings.buildCompleteSettings(settingsFile.getPath());
     }
 }
