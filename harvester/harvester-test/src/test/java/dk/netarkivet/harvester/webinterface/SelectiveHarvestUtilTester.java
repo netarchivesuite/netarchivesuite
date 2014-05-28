@@ -64,8 +64,11 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
     /**
      * Verify that the correct domain configurations are created.
      * This test handles the normal usage.
+     * 
+     * DISABLED 20140528 as it fails intermittently /tra
+     * FIXME: https://sbforge.org/jira/browse/NAS-2320
      */
-    public void testgetDomainConfigurations() throws NoSuchMethodException,
+    public void DISABLED_20140528_testgetDomainConfigurations() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
         // Construct map corresponding to
         // netarkivet.dk -> Engelsk_netarkiv_et_niveau

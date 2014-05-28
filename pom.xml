@@ -23,7 +23,9 @@
     <module>harvester/harvester-test</module>
     <module>harvester/history-gui</module>
     <module>harvester/qa-gui</module>
+<!--
     <module>integration-test/netarchivesuite-integration-test</module>
+-->
     <module>monitor/monitor</module>
     <module>monitor/monitor-test</module>
     <module>monitor/status-gui</module>
