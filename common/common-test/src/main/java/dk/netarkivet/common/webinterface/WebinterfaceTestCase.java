@@ -25,6 +25,19 @@
 
 package dk.netarkivet.common.webinterface;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import javax.el.ELContext;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
@@ -40,19 +53,6 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -103,38 +103,31 @@ public class WebinterfaceTestCase extends TestCase {
         }
 
         public Object getAttribute(String string) {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public Enumeration getAttributeNames() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public String getCharacterEncoding() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public void setCharacterEncoding(String string)
                 throws UnsupportedEncodingException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public int getContentLength() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public String getContentType() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public ServletInputStream getInputStream() throws IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -147,7 +140,6 @@ public class WebinterfaceTestCase extends TestCase {
         }
 
         public Enumeration getParameterNames() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -160,37 +152,30 @@ public class WebinterfaceTestCase extends TestCase {
         }
 
         public String getProtocol() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public String getScheme() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public String getServerName() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public int getServerPort() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public BufferedReader getReader() throws IOException {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public String getRemoteAddr() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public String getRemoteHost() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
@@ -199,52 +184,42 @@ public class WebinterfaceTestCase extends TestCase {
         }
 
         public void removeAttribute(String string) {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public Locale getLocale() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public Enumeration getLocales() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public boolean isSecure() {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public RequestDispatcher getRequestDispatcher(String string) {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public String getRealPath(String string) {
-            //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
         public int getRemotePort() {
-            // TODO Auto-generated method stub
             return 0;
         }
 
         public String getLocalName() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         public String getLocalAddr() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         public int getLocalPort() {
-            // TODO Auto-generated method stub
             return 0;
         }
     }

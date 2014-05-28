@@ -1,107 +1,147 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>dk.netarkivet.netarchivesuite</groupId>
-    <artifactId>parent</artifactId>
-    <version>5.0-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
-  </parent>
+    <parent>
+        <groupId>dk.netarkivet.netarchivesuite</groupId>
+        <artifactId>parent</artifactId>
+        <version>5.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
 
-  <artifactId>wayback</artifactId>
-  <packaging>jar</packaging>
+    <artifactId>wayback</artifactId>
+    <packaging>jar</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>dk.netarkivet.netarchivesuite</groupId>
-      <artifactId>common</artifactId>
-      <version>5.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.archive.wayback</groupId>
-      <artifactId>wayback-core</artifactId>
-      <version>1.8.0-20130411</version>
-    </dependency>
-    <dependency>
-      <groupId>org.archive</groupId>
-      <artifactId>ia-web-commons</artifactId>
-      <version>1.0-20130411</version>
-    </dependency>
-    <dependency>
-      <groupId>org.gnu.inet</groupId>
-      <artifactId>libidn</artifactId>
-      <version>0.6.5</version>
-    </dependency>
-    <dependency>
-      <groupId>it.unimi.dsi</groupId>
-      <artifactId>mg4j</artifactId>
-      <version>1.0.1</version>
-    </dependency>
-    <!--
-         Hibernate
-      -->
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate</artifactId>
-      <version>3.3.0.SP1</version>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>3.3.0.SP1</version>
-    </dependency>
-    <!-- bad version? -->
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
-      <version>3.3.0.ga</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-commons-annotations</artifactId>
-      <version>3.3.0.ga</version>
-    </dependency>
-    <!-- good guess -->
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>ejb3-persistence</artifactId>
-      <version>1.0.2.GA</version>
-    </dependency>
-    <!--
-         Used by hibernate. 
-      -->
-    <dependency>
-      <groupId>javassist</groupId>
-      <artifactId>javassist</artifactId>
-      <version>3.9.0.GA</version>
-    </dependency>
-    <dependency>
-      <groupId>org.htmlparser</groupId>
-      <artifactId>htmlparser</artifactId>
-      <version>1.6</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbyclient</artifactId>
-      <version>10.10.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.10.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbytools</artifactId>
-      <version>10.10.1.1</version>
-    </dependency>
-  </dependencies>
+    <name>Netarchivesuite - wayback</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>dk.netarkivet.netarchivesuite</groupId>
+            <artifactId>common</artifactId>
+            <version>5.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.archive.wayback</groupId>
+            <artifactId>wayback-core</artifactId>
+            <version>1.8.0-20130411</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.archive</groupId>
+            <artifactId>ia-web-commons</artifactId>
+            <version>1.0-20130411</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.gnu.inet</groupId>
+            <artifactId>libidn</artifactId>
+            <version>0.6.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>mg4j</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <!--
+             Hibernate
+          -->
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate</artifactId>
+            <version>3.3.0.SP1</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.3.0.SP1</version>
+        </dependency>
+
+        <!-- bad version? -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+            <version>3.3.0.ga</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-commons-annotations</artifactId>
+            <version>3.3.0.ga</version>
+        </dependency>
+
+        <!-- good guess -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>ejb3-persistence</artifactId>
+            <version>1.0.2.GA</version>
+        </dependency>
+
+        <!--
+             Used by hibernate. 
+          -->
+
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.9.0.GA</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.htmlparser</groupId>
+            <artifactId>htmlparser</artifactId>
+            <version>1.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <version>10.10.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.10.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbytools</artifactId>
+            <version>10.10.1.1</version>
+        </dependency>
+    </dependencies>
+
+<!--
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <inherited>true</inherited>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <forceCreation>true</forceCreation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+-->
 </project>

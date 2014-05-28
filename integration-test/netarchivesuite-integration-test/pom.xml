@@ -1,231 +1,235 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>dk.netarkivet.netarchivesuite</groupId>
-    <artifactId>parent</artifactId>
-    <version>5.0-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
-  </parent>
+    <parent>
+        <groupId>dk.netarkivet.netarchivesuite</groupId>
+        <artifactId>parent</artifactId>
+        <version>5.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
 
-  <artifactId>netarchivesuite-integration-test</artifactId>
-  <name>NetarchiveSuite integration test</name>
-  <description>Contains the automatic NetarchiveSuite system tests</description>
+    <artifactId>netarchivesuite-integration-test</artifactId>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
+    <name>NetarchiveSuite integration test</name>
+    <description>Contains the automatic NetarchiveSuite system tests</description>
 
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.0.13</version>
-    </dependency>
+    <properties>
+        <slf4j.version>1.7.5</slf4j.version>
+    </properties>
 
-    <!-- Hook up the other loggers to use SLF4J -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jul-to-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>log4j-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.13</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
+        <!-- Hook up the other loggers to use SLF4J -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.jaccept</groupId>
-      <artifactId>jaccept-gui</artifactId>
-      <version>0.4</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>6.8.8</version>
-    </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.jcraft</groupId>
-      <artifactId>jsch</artifactId>
-      <version>0.1.50</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.jaccept</groupId>
+            <artifactId>jaccept-gui</artifactId>
+            <version>0.4</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-java</artifactId>
-      <version>2.41.0</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8.8</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-api</artifactId>
-      <version>2.32.0</version>
-    </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.50</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.jaccept</groupId>
-      <artifactId>jaccept-core</artifactId>
-      <version>0.4</version>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>2.41.0</version>
+            <scope>test</scope>
+        </dependency>
 
-  <build>
-    <plugins>
-      <!-- This module only contains integration test -->
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-          <workingDirectory>target/</workingDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <id>surefire-it</id>
-            <phase>integration-test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <skip>false</skip>
-              <groups>functest</groups>
-              <properties>
-                <property>
-                  <name>listener</name>
-                  <value>
-                    org.jaccept.TestNGListerner
-                  </value>
-                </property>
-              </properties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-api</artifactId>
+            <version>2.32.0</version>
+        </dependency>
 
-  <profiles>
-    <profile>
-      <id>generate-testreports</id>
-      <build>
+        <dependency>
+            <groupId>org.jaccept</groupId>
+            <artifactId>jaccept-core</artifactId>
+            <version>0.4</version>
+        </dependency>
+    </dependencies>
+
+    <build>
         <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <properties>
-                <property>
-                  <name>listener</name>
-                  <value>
-                    org.jaccept.TestNGListerner
-                  </value>
-                </property>
-              </properties>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>deploy2test</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.7</version>
-            <executions>
-              <execution>
-                <phase>pre-integration-test</phase>
+            <!-- This module only contains integration test -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                  <target>
-                    <property name="build.compiler" value="extJavac" />
-                    <ant antfile="deploy.xml" target="package" />
-                    <ant antfile="deploy.xml" target="deploy2test" />
-                  </target>
+                    <skip>true</skip>
+                    <workingDirectory>target/</workingDirectory>
                 </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant-jsch</artifactId>
-                <version>1.9.1</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <systemPropertyVariables>
-                <systemtest.deploy>true</systemtest.deploy>
-              </systemPropertyVariables>
-            </configuration>
-          </plugin>
+                <executions>
+                    <execution>
+                        <id>surefire-it</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <skip>false</skip>
+                            <groups>functest</groups>
+                            <properties>
+                                <property>
+                                    <name>listener</name>
+                                    <value>
+                                        org.jaccept.TestNGListerner
+                                    </value>
+                                </property>
+                            </properties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>redeployGUI</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.7</version>
-            <executions>
-              <execution>
-                <phase>pre-integration-test</phase>
-                <configuration>
-                  <target>
-                    <property name="build.compiler" value="extJavac" />
-                    <ant antfile="deploy.xml" target="package" />
-                    <ant antfile="deploy.xml" target="deploy2test" />
-                  </target>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant-jsch</artifactId>
-                <version>1.9.1</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <systemPropertyVariables>
-                <systemtest.redeploy.gui>true</systemtest.redeploy.gui>
-              </systemPropertyVariables>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-  <properties>
-    <slf4j.version>1.7.5</slf4j.version>
-  </properties>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>generate-testreports</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <properties>
+                                <property>
+                                    <name>listener</name>
+                                    <value>
+                                        org.jaccept.TestNGListerner
+                                    </value>
+                                </property>
+                            </properties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>deploy2test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <target>
+                                        <property name="build.compiler" value="extJavac" />
+                                        <ant antfile="deploy.xml" target="package" />
+                                        <ant antfile="deploy.xml" target="deploy2test" />
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-jsch</artifactId>
+                                <version>1.9.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <systemtest.deploy>true</systemtest.deploy>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>redeployGUI</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <target>
+                                        <property name="build.compiler" value="extJavac" />
+                                        <ant antfile="deploy.xml" target="package" />
+                                        <ant antfile="deploy.xml" target="deploy2test" />
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-jsch</artifactId>
+                                <version>1.9.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <systemtest.redeploy.gui>true</systemtest.redeploy.gui>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

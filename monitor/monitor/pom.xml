@@ -1,38 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
          xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>dk.netarkivet.netarchivesuite</groupId>
-    <artifactId>parent</artifactId>
-    <version>5.0-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
-  </parent>
+    <parent>
+        <groupId>dk.netarkivet.netarchivesuite</groupId>
+        <artifactId>parent</artifactId>
+        <version>5.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
 
-  <artifactId>monitor</artifactId>
-  <packaging>jar</packaging>
+    <artifactId>monitor</artifactId>
+    <packaging>jar</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>dk.netarkivet.netarchivesuite</groupId>
-      <artifactId>common</artifactId>
-      <version>5.0-SNAPSHOT</version>
-    </dependency>
+    <name>Netarchivesuite - monitor</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
 <!--
-    <dependency>
-      <groupId>dk.netarkivet.netarchivesuite</groupId>
-      <artifactId>common-test</artifactId>
-      <version>5.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>dk.netarkivet.netarchivesuite</groupId>
-      <artifactId>harvester</artifactId>
-      <version>5.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
+            <type>test-jar</type>
+            <scope>test</scope>
 -->
-  </dependencies>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>common-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>harvester</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+-->
+    </dependencies>
 
+<!--
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <inherited>true</inherited>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <forceCreation>true</forceCreation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+-->
 </project>
