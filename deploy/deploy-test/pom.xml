@@ -20,33 +20,33 @@
     
     <dependencies>
         <dependency>
-            <groupId>dk.netarkivet.netarchivesuite</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>deploy</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>dk.netarkivet.netarchivesuite</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>common</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>dk.netarkivet.netarchivesuite</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>archive</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>dk.netarkivet.netarchivesuite</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>harvester</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>dk.netarkivet.netarchivesuite</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>monitor</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!--
