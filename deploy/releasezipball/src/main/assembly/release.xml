@@ -53,8 +53,28 @@
     <dependencySets>
         <dependencySet>
             <includes>
+                <include>dk.netarkivet.netarchivesuite:*:jar</include>
+            </includes>
+            <outputFileNameMapping>dk.netarkivet.${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <outputDirectory>/lib/</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <includes>
+                <include>org.apache.derby:*:jar</include>
+            </includes>
+            <outputFileNameMapping>dk.netarkivet.${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <outputDirectory>/lib/db/</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <includes>
                 <include>*:jar</include>
             </includes>
+            <!--excludes>
+                <exclude>dk.netarkivet.netarchivesuite:*:jar</exclude>
+                <exclude>org.apache.derby:*:jar</exclude>
+            </excludes-->
             <outputDirectory>/lib/</outputDirectory>
         </dependencySet>
 
