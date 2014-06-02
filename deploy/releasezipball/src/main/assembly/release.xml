@@ -34,6 +34,14 @@
         </fileSet>
 
         <fileSet>
+            <directory>${project.basedir}/../../unclassified/lib/</directory>
+            <includes>
+                <include>heritrix/**</include>
+            </includes>
+            <outputDirectory>/lib/</outputDirectory>
+        </fileSet>
+
+        <fileSet>
             <directory>${project.basedir}/../deploy/</directory>
             <includes>
                 <include>scripts/**</include>
@@ -97,7 +105,8 @@
             <includes>
                 <include>*:war</include>
             </includes>
-            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.build.finalName}.${artifact.extension}</outputFileNameMapping>
+            <!--outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping-->
             <outputDirectory>/webpages/</outputDirectory>
         </dependencySet>
     </dependencySets>
