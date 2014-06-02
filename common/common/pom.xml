@@ -16,7 +16,13 @@
     <name>Netarchivesuite - common</name>
 
     <dependencies>
-        <dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+    </dependency>
+    
+    <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.1</version>
