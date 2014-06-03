@@ -37,7 +37,8 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * @author ngiraud
  *
  */
-public abstract class HarvestChannelDAO implements Iterable<HarvestChannel> {
+public abstract class HarvestChannelDAO implements DAO,
+        Iterable<HarvestChannel> {
 
     /**
      * The singleton instance
