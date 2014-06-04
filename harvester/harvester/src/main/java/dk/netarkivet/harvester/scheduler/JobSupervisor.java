@@ -97,12 +97,11 @@ public class JobSupervisor implements ComponentLifeCycle {
      * Package protected to allow unit testing.
      */
     void rescheduleLeftOverJobs() {
-        final JobDAO dao = JobDAO.getInstance();
-        final Iterator<Long> jobs = dao.getAllJobIds(JobStatus.SUBMITTED);
+        final Iterator<Long> jobs = jobDaoProvider.get().getAllJobIds(JobStatus.SUBMITTED);
         int resubmitcount = 0;
         while (jobs.hasNext()) {
             long oldID = jobs.next();
-            long newID = dao.rescheduleJob(oldID);
+            long newID = jobDaoProvider.get().rescheduleJob(oldID);
             if (log.isInfoEnabled()) {
                 log.info("Resubmitting old job " + oldID + " as " + newID);
             }
