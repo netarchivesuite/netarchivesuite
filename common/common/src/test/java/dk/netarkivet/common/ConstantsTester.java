@@ -1,27 +1,3 @@
-/*$Id$
-* $Revision$
-* $Date$
-* $Author$
-*
-* The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2012 The Royal Danish Library, the Danish State and
- * University Library, the National Library of France and the Austrian
- * National Library.
-*
-* This library is free software; you can redistribute it and/or
-* modify it under the terms of the GNU Lesser General Public
-* License as published by the Free Software Foundation; either
-* version 2.1 of the License, or (at your option) any later version.
-*
-* This library is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-* Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public
-* License along with this library; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 package dk.netarkivet.common;
 
 import java.text.ParseException;
@@ -30,39 +6,42 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import junit.framework.TestCase;
 
 /**
- * Unitests for methods in class dk.netarkivet.common.Constants.
+ * Unit tests for methods in class dk.netarkivet.common.Constants.
  */
-public class ConstantsTester extends TestCase {
-    public ConstantsTester(String s) {
-        super(s);
+public class ConstantsTester {
+
+    @Test
+    public void is_getHeritrixVersionString_sameAsConstant() {
+        Assert.assertEquals("HeritrixVersionString is wrong", "1.14.4",
+                Constants.getHeritrixVersionString());
     }
 
-    public void setUp() {
-    }
+    /**
+     * Try to see if getIsoDateFormatter is thread safe.
+     */
+    @Test
+    public void is_getIsoDateFormatter_threadsafe() throws Exception {
 
-    public void tearDown() {
-    }
-
-    public void testgetHeritrixVersionString() {
-        assertEquals("HeritrixVersionString is wrong",
-                "1.14.4",
-                Constants.getHeritrixVersionString()
-                );
-    }
-
-    public void testGetIsoDateFormatter() throws Exception {
         final String date = "2005-12-24 13:42:07 +0100";
         final Date time = Constants.getIsoDateFormatter().parse(date);
+
         List<Thread> threads = new ArrayList<Thread>();
+
+        // FIXME: What do we actually want to do here?
+
         // This is a latch, so we don't need to synchronize
         final boolean[] failed = new boolean[] { false };
+
         for (int i = 0; i < 30; i++) {
             threads.add(new Thread() {
                 public void run() {
-                    //yield();
+                    // yield();
                     SimpleDateFormat format = Constants.getIsoDateFormatter();
                     for (int tries = 0; tries < 10; tries++) {
                         if (failed[0]) {
@@ -82,7 +61,7 @@ public class ConstantsTester extends TestCase {
                 }
             });
         }
-        for (Thread t: threads) {
+        for (Thread t : threads) {
             t.start();
         }
         WAITLOOP: do {
@@ -90,7 +69,7 @@ public class ConstantsTester extends TestCase {
             if (failed[0]) {
                 break;
             }
-            for (Thread t: threads) {
+            for (Thread t : threads) {
                 if (t.isAlive()) {
                     continue WAITLOOP;
                 }
@@ -98,9 +77,9 @@ public class ConstantsTester extends TestCase {
             // If we get here, no thread was still alive, we can go on.
             break;
         } while (true);
+
         if (failed[0]) {
-            fail("Failed to handle parallel use of SimpleDateFormat");
+            Assert.fail("Failed to handle parallel use of SimpleDateFormat");
         }
     }
-
 }

@@ -36,7 +36,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * Configuration information and seeds are stored as well.
  *
  */
-public abstract class DomainDAO implements Iterable<Domain> {
+public abstract class DomainDAO implements DAO, Iterable<Domain> {
 
     /**
      * The Singleton DomainDAO.

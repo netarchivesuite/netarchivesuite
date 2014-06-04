@@ -38,7 +38,7 @@ import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
  * @see StartedJobInfo
  *
  */
-public abstract class RunningJobsInfoDAO {
+public abstract class RunningJobsInfoDAO implements DAO {
 
     /**
      * The singleton instance of this class.

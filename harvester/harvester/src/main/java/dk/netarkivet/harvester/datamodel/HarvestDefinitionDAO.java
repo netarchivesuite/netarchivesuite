@@ -42,7 +42,8 @@ import org.apache.commons.logging.LogFactory;
  * handles the transformation from harvest definitions to persistent storage.
  *
  */
-public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition> {
+public abstract class HarvestDefinitionDAO implements DAO,
+        Iterable<HarvestDefinition> {
 
     /** The one and only instance of the HarvestDefinitionDAO class to ensure
       * thread-safety.
