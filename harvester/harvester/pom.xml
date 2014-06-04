@@ -95,7 +95,15 @@
             <artifactId>derbytools</artifactId>
             <version>10.10.1.1</version>
         </dependency>
+        
+        <dependency>
+          <groupId>javax.inject</groupId>
+          <artifactId>javax.inject</artifactId>
+          <version>1</version>
+        </dependency>
     </dependencies>
+    
+    
 
 <!--
     <build>
