@@ -1,3 +1,0 @@
-[#urls] [#bytes] [host]
-10 109528 www.bs.dk
-1 55 dns:

@@ -38,7 +38,7 @@ import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 /**
  * Interface for creating and accessing jobs in persistent storage.
  */
-public abstract class JobDAO implements Iterable<Job> {
+public abstract class JobDAO implements DAO, Iterable<Job> {
     /** The database singleton model. */
     private static JobDAO instance;
 

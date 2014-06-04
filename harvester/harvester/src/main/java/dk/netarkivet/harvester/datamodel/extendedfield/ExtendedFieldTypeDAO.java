@@ -26,10 +26,12 @@ package dk.netarkivet.harvester.datamodel.extendedfield;
 
 import java.util.List;
 
+import dk.netarkivet.harvester.datamodel.DAO;
+
 /**
  * Interface for creating and accessing extended fields in persistent storage.
  */
-public abstract class ExtendedFieldTypeDAO {
+public abstract class ExtendedFieldTypeDAO implements DAO {
     /** The database singleton model. */
     protected static ExtendedFieldTypeDAO instance;
 

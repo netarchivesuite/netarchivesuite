@@ -33,7 +33,7 @@ import dk.netarkivet.common.utils.FilterIterator;
  * Implemented as a Singleton
  *
  */
-public abstract class TemplateDAO {
+public abstract class TemplateDAO implements DAO {
     /**
      * The singleton TemplateDAO.
      */

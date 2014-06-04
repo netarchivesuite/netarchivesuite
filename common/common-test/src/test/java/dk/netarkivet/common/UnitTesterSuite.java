@@ -31,7 +31,6 @@ import junit.textui.TestRunner;
 import dk.netarkivet.common.distribute.CommonDistributeTesterSuite;
 import dk.netarkivet.common.distribute.indexserver.CommonDistributeIndexserverTesterSuite;
 import dk.netarkivet.common.exceptions.CommonExceptionsTesterSuite;
-import dk.netarkivet.common.lifecycle.CommonLifecycleTesterSuite;
 import dk.netarkivet.common.management.CommonManagementTesterSuite;
 import dk.netarkivet.common.tools.CommonToolsTesterSuite;
 import dk.netarkivet.common.utils.CommonUtilsTesterSuite;
@@ -50,8 +49,8 @@ public class UnitTesterSuite {
         CommonUtilsWarcTesterSuite.addToSuite(suite);
         CommonUtilsBatchTesterSuite.addToSuite(suite);
         CommonUtilsCdxTesterSuite.addToSuite(suite);
-        CommonsTesterSuite.addToSuite(suite);
-        CommonLifecycleTesterSuite.addToSuite(suite);
+        // CommonsTesterSuite.addToSuite(suite);
+        // CommonLifecycleTesterSuite.addToSuite(suite);
         CommonUtilsTesterSuite.addToSuite(suite);
         CommonDistributeIndexserverTesterSuite.addToSuite(suite);
         CommonDistributeTesterSuite.addToSuite(suite);

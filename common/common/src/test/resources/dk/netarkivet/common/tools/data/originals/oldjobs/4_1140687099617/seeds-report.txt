@@ -1,2 +1,0 @@
-[code] [status] [seed] [redirect]
-200 CRAWLED http://www.bs.dk/
