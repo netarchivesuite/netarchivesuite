@@ -32,7 +32,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * traps.
  *
  */
-public abstract class GlobalCrawlerTrapListDAO {
+public abstract class GlobalCrawlerTrapListDAO implements DAO {
 
     /** The database singleton model. */
     private static GlobalCrawlerTrapListDAO instance;

@@ -1,7 +1,0 @@
-2006-02-23T10:31:49.912Z    -5          - about:blank E http://www.bs.dk/ no-type #002 - - - err=java.lang.NullPointerException
- java.lang.NullPointerException
-	at org.archive.crawler.prefetch.QuotaEnforcer.checkQuotas(QuotaEnforcer.java:240)
-	at org.archive.crawler.prefetch.QuotaEnforcer.innerProcess(QuotaEnforcer.java:222)
-	at org.archive.crawler.framework.Processor.process(Processor.java:103)
-	at org.archive.crawler.framework.ToeThread.processCrawlUri(ToeThread.java:306)
-	at org.archive.crawler.framework.ToeThread.run(ToeThread.java:153)

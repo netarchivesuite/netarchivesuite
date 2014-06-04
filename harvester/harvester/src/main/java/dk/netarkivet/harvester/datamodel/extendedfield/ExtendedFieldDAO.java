@@ -29,11 +29,12 @@ import java.util.List;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.harvester.datamodel.DAO;
 
 /**
  * Interface for creating and accessing extended fields in persistent storage.
  */
-public abstract class ExtendedFieldDAO {
+public abstract class ExtendedFieldDAO implements DAO {
     /** The database singleton model. */
     protected static ExtendedFieldDAO instance;
 

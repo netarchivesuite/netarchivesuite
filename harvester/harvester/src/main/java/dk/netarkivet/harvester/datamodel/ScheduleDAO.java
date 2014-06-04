@@ -36,7 +36,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * A DAO for reading and writing schedules by name.
  *
  */
-public abstract class ScheduleDAO implements Iterable<Schedule> {
+public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
 
     /** The singleton instance. */
     private static ScheduleDAO instance;
