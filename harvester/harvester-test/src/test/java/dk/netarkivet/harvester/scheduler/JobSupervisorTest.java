@@ -24,203 +24,112 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.RememberNotifications;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.*;
-import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.sql.SQLException;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.LogManager;
+import javax.inject.Provider;
+import junit.framework.TestCase;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-public class JobSupervisorTest extends TestCase  {
-    private ReloadSettings reloadSettings = new ReloadSettings();
+public class JobSupervisorTest extends TestCase {
     private JobSupervisor jobSupervisor;
-    
-    public void setUp() throws Exception {
-        reloadSettings.setUp();
-        jobSupervisor = new JobSupervisor();
-        
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        TestInfo.WORKING_DIR.mkdirs();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
-        FileInputStream testLogPropertiesStream = new FileInputStream(
-                TestInfo.TESTLOGPROP);
-        LogManager.getLogManager().readConfiguration(testLogPropertiesStream);
-        testLogPropertiesStream.close();
-        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
-                + TestInfo.WORKING_DIR.getCanonicalPath() + "/fullhddb");
-        DatabaseTestUtils.getHDDB(new File(TestInfo.BASEDIR, "fullhddb.jar"),
-                "fullhddb", TestInfo.WORKING_DIR);
+    private JobDAO jobDaoMock = mock(JobDAO.class);
+    private Provider<JobDAO> jobDAOProvider;
 
-        //HarvestDAOUtils.resetDAOs();
-
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
-
-        HarvestDefinitionDAO.getInstance();
-    }
-    
-    /**
-     * After test is done close test-objects.
-     */
-    public void tearDown() throws SQLException, IllegalAccessException,
-            NoSuchFieldException {
-        DatabaseTestUtils.dropHDDB();
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        HarvestDAOUtils.resetDAOs();
-        reloadSettings.tearDown();
-        //HarvestJobGenerator.clearGeneratingJobs();
+    public void setUp() {
+        jobDAOProvider = new Provider<JobDAO>() {
+            @Override
+            public JobDAO get() {
+                return jobDaoMock;
+            }
+        };
     }
 
-    public void testCleanOldJobs() throws Exception {
-        final DomainDAO dao = DomainDAO.getInstance();
-        Iterator<Domain> domainsIterator = dao.getAllDomains();
-        assertTrue("Should be at least one domain in domains table",
-                domainsIterator.hasNext());
-        DomainConfiguration cfg = domainsIterator.next()
-                .getDefaultConfiguration();
-        final JobDAO jdao = JobDAO.getInstance();
+    public void testCleanOldJobsMultipleJobs() {
+        Long jobTimeoutTime = 1L;
+        jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
 
-        final Long harvestID = 1L;
-        // Verify that harvestDefinition with ID=1L exists
-        assertTrue("harvestDefinition with ID=" + harvestID
-                + " does not exist, but should have", HarvestDefinitionDAO
-                .getInstance().exists(harvestID));
-        // Create 6 jobs - with start time minus 60*60*24*7 +1
-        // (one week plus one second)
-        HarvestChannel testChan = new HarvestChannel("test", false, true, "");
-        for (int i = 0; i < 6; i++) {
-            Job newJob = Job.createJob(harvestID, testChan, cfg, 1);
-            newJob.setActualStart(new Date((new Date()).getTime()
-                    - (604801 * 1000)));
-            newJob.setStatus(JobStatus.STARTED);
-            jdao.create(newJob);
-        }
-        // Create 6 new jobs with now
-        for (int i = 0; i < 6; i++) {
-            Job newJob = Job.createJob(harvestID, testChan, cfg, 1);
-            newJob.setActualStart(new Date());
-            newJob.setStatus(JobStatus.STARTED);
-            jdao.create(newJob);
-        }
-        List<JobStatusInfo> oldInfos = jdao.getStatusInfo(
-                new HarvestStatusQuery()).getJobStatusInfo();
-        // Since initial DB contains one NEW job, we now have one of each
-        // status plus one extra NEW (i.e. 7 jobs).
-        assertEquals("Wrong number of job statuses", oldInfos.size(), 12);
+        List<Long> jobIDs = Arrays.asList(1L, 2L, 3L);
+        when(jobDaoMock.getAllJobIds(JobStatus.STARTED)).thenReturn(jobIDs.iterator());
+        Job pastObsoleteJobMock = mock(Job.class);
+        Job pastActiveMock = mock(Job.class);
+        Job futureActiveMock = mock(Job.class);
+        when(jobDaoMock.read(1L)).thenReturn(pastObsoleteJobMock);
+        when(jobDaoMock.read(2L)).thenReturn(pastActiveMock);
+        when(jobDaoMock.read(3L)).thenReturn(futureActiveMock);
 
-        Iterator<Long> ids = jdao.getAllJobIds(JobStatus.STARTED);
-        int size = 0;
-        while (ids.hasNext()) {
-            ids.next();
-            size++;
-        }
-        assertTrue("There should be 12 jobs with status STARTED, there are "
-                + size, size == 12);
+        Date inTheObsoletePast = new Date(System.currentTimeMillis() - 10000);
+        Date inTheActivePast = new Date(System.currentTimeMillis() - 1);
+        Date inTheActiveFuture = new Date(System.currentTimeMillis() + 10000);
+
+        when(pastObsoleteJobMock.getActualStart()).thenReturn(inTheObsoletePast);
+        when(pastActiveMock.getActualStart()).thenReturn(inTheActivePast);
+        when(futureActiveMock.getActualStart()).thenReturn(inTheActiveFuture);
+
         jobSupervisor.cleanOldJobs();
 
-        // check that we have 6 failed and 6 submitted job after we have stopped
-        // old jobs
-        ids = jdao.getAllJobIds(JobStatus.STARTED);
-        size = 0;
-        while (ids.hasNext()) {
-            ids.next();
-            size++;
-        }
-        assertTrue("There should be 6 jobs with status STARTED, there are "
-                + size, size == 6);
-        ids = jdao.getAllJobIds(JobStatus.FAILED);
-        size = 0;
-        while (ids.hasNext()) {
-            ids.next();
-            size++;
-        }
-        assertTrue("There should be 6 jobs with status FAILED, there are "
-                + size, size == 6);
+        verify(jobDaoMock).getAllJobIds(JobStatus.STARTED);
 
+        verify(jobDaoMock).read(jobIDs.get(0));
+        verify(jobDaoMock).read(jobIDs.get(1));
+        verify(jobDaoMock).read(jobIDs.get(2));
+
+        verify(pastObsoleteJobMock).getActualStart();
+        verify(pastActiveMock).getActualStart();
+        verify(futureActiveMock).getActualStart();
+        verify(pastObsoleteJobMock).setStatus(JobStatus.FAILED);
+        verify(pastObsoleteJobMock).appendHarvestErrors(any(String.class));
+        verifyNoMoreInteractions(pastActiveMock, futureActiveMock);
+
+        verify(jobDaoMock).update(pastObsoleteJobMock);
+        verifyNoMoreInteractions(jobDaoMock);
     }
 
-    /**
-     * Unit test testing the private method rescheduleJob.
-     *
-     * @throws Exception
-     *             if HarvestScheduler throws exception
-     */
-    public void testRescheduleSubmittedJobs() throws Exception {
-        final DomainDAO dao = DomainDAO.getInstance();
-        Iterator<Domain> domainsIterator = dao.getAllDomains();
-        assertTrue("Should be at least one domain in domains table",
-                domainsIterator.hasNext());
-        DomainConfiguration cfg = domainsIterator.next()
-                .getDefaultConfiguration();
-        final JobDAO jdao = JobDAO.getInstance();
+    public void testCleanOldJobsNoJobs() {
+        Long jobTimeoutTime = 1L;
+        jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
 
-        final Long harvestID = 1L;
-        // Verify that harvestDefinition with ID=1L exists
-        assertTrue("harvestDefinition with ID=" + harvestID
-                + " does not exist, but should have", HarvestDefinitionDAO
-                .getInstance().exists(harvestID));
-        // Create 7 jobs, one in each JobStatus:
-        // (NEW, SUBMITTED, STARTED, DONE, FAILED, FAILED_REJECTED, RESUBMITTED)
-        for (JobStatus status : JobStatus.values()) {
-            Job newJob = Job.createJob(harvestID, 
-            		new HarvestChannel("test", false, true, ""), cfg, 1);
-            newJob.setStatus(status);
-            jdao.create(newJob);
-        }
+        List<Long> jobIDs = Arrays.asList(new Long[] {});
+        when(jobDaoMock.getAllJobIds(JobStatus.STARTED)).thenReturn(jobIDs.iterator());
 
-        List<JobStatusInfo> oldInfos = jdao.getStatusInfo(
-                new HarvestStatusQuery()).getJobStatusInfo();
-        // Since initial DB contains one NEW job, we now have one of each
-        // status plus one extra NEW (i.e. 8 jobs).
+        jobSupervisor.cleanOldJobs();
 
-        assertTrue("There should have been 8 jobs now, but there was "
-                + oldInfos.size(), oldInfos.size() == 7);
+        verify(jobDaoMock).getAllJobIds(JobStatus.STARTED);
+        verifyNoMoreInteractions(jobDaoMock);
+    }
+
+    public void testRescheduleMultipleSubmittedJobs() {
+        Long jobTimeoutTime = 1L;
+        jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
+
+        List<Long> jobIDs = Arrays.asList(1L, 3L);
+        when(jobDaoMock.getAllJobIds(JobStatus.SUBMITTED)).thenReturn(jobIDs.iterator());
 
         jobSupervisor.rescheduleLeftOverJobs();
-        List<JobStatusInfo> newInfos = jdao.getStatusInfo(
-                new HarvestStatusQuery()).getJobStatusInfo();
-        // Check that all old jobs are there, with one changed status
-        OLDS: for (JobStatusInfo oldInfo : oldInfos) {
-            for (JobStatusInfo newInfo : newInfos) {
-                if (newInfo.getJobID() == oldInfo.getJobID()) {
-                    if (oldInfo.getStatus() == JobStatus.SUBMITTED) {
-                        assertEquals("SUBMITTED job should be RESUBMITTED",
-                                JobStatus.RESUBMITTED, newInfo.getStatus());
-                    } else {
-                        assertEquals("Non-SUBMITTED job should be unchanged",
-                                oldInfo.getStatus(), newInfo.getStatus());
-                    }
-                    continue OLDS;
-                }
-            }
-            fail("Job " + oldInfo + " has disappeared!");
-        }
 
-        // Check that a new job is there, in status submitted
-        boolean foundNewJob = false;
-        NEWS: for (JobStatusInfo newInfo : newInfos) {
-            for (JobStatusInfo oldInfo : oldInfos) {
-                if (newInfo.getJobID() == oldInfo.getJobID()) {
-                    continue NEWS;
-                }
-            }
-            // This new job was not found in old jobs list.
-            foundNewJob = true;
-            assertEquals("Newly created job should be in status NEW",
-                    JobStatus.NEW, newInfo.getStatus());
-        }
-        assertTrue("Should have found new job", foundNewJob);
+        verify(jobDaoMock).getAllJobIds(JobStatus.SUBMITTED);
+        verify(jobDaoMock).rescheduleJob(jobIDs.get(0));
+        verify(jobDaoMock).rescheduleJob(jobIDs.get(1));
+        verifyNoMoreInteractions(jobDaoMock);
+    }
+
+    public void testRescheduleNoSubmittedJobs() {
+        Long jobTimeoutTime = 1L;
+        jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
+
+        List<Long> jobIDs = Arrays.asList(new Long[] {});
+        when(jobDaoMock.getAllJobIds(JobStatus.SUBMITTED)).thenReturn(jobIDs.iterator());
+
+        jobSupervisor.rescheduleLeftOverJobs();
+
+        verify(jobDaoMock).getAllJobIds(JobStatus.SUBMITTED);
+        verifyNoMoreInteractions(jobDaoMock);
     }
 }
