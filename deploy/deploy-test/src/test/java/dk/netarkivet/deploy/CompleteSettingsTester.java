@@ -54,7 +54,7 @@ public class CompleteSettingsTester extends TestCase {
 
     public void testCompleteSettings() throws Exception {
     	URL url = this.getClass().getClassLoader().getResource("");
-    	File file = new File(url.getFile());
+        File file = new File(url.toURI());
     	// ToDo The generation of the complete settings file should be moved
         // to the build functionality directly.
     	File settingsFile = new File(file, "dk/netarkivet/deploy/complete_settings.xml");
