@@ -25,11 +25,10 @@
  */
 package dk.netarkivet.wayback.aggregator;
 
-import java.io.File;
-
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
+import java.io.File;
 
 public class AggregationWorkerTest extends AggregatorTestCase {
     AggregationWorker worker;
@@ -46,8 +45,10 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * Verifies that a simple aggregation of two unsorted index files behave correctly
      * the first time the aggregator is run. No intermediate index file merging
      * is performed at this time.
+     *
+     * Disabled, see https://sbforge.org/jira/browse/NAS-2326.
      */
-    public void testFirstAggregationRun() {
+    public void disabledTestFirstAggregationRun() {
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name, inputFile2Name});
 
         TestIndex testIndex = new TestIndex();
@@ -64,8 +65,8 @@ public class AggregationWorkerTest extends AggregatorTestCase {
     /**
      * Verifies that a aggregation is run correctly the second time it is run.
      */
-    public void testSecondAggregationRun() {
-        testFirstAggregationRun();
+    public void disabledTestSecondAggregationRun() {
+        disabledTestFirstAggregationRun();
 
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile3Name});
 
@@ -87,8 +88,8 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * exceeded. The old Intermediate Index file should have been removed in this
      * process
      */
-    public void testMaxIntermediateIndexFileLimit() {
-        testFirstAggregationRun();
+    public void disabledTestMaxIntermediateIndexFileLimit() {
+        disabledTestFirstAggregationRun();
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile109KName});
 
         TestIndex testIndex = new TestIndex();
@@ -128,8 +129,8 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * to use this file as the main index file. The old final index file will be
      * renamed to ${finalIndexFileName}.1
      */
-    public void testMaxFinalIndexFileLimit() {
-        testMaxIntermediateIndexFileLimit();
+    public void disabledTestMaxFinalIndexFileLimit() {
+        disabledTestMaxIntermediateIndexFileLimit();
 
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile155KName});
         
