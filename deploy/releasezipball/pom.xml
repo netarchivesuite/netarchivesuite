@@ -143,7 +143,6 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <attach>false</attach>
                             <appendAssemblyId>false</appendAssemblyId>
                             <classifier>prod</classifier>
                             <finalName>${project.artifactId}-${project.version}</finalName>

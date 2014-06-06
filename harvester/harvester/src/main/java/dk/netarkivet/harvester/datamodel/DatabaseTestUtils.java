@@ -86,14 +86,15 @@ public class DatabaseTestUtils {
         // Make sure we're using the right DB in HarvestDBConnection
 
         /* Set DB name */
-        try {
-            String driverName = "org.apache.derby.jdbc.EmbeddedDriver";
-            Class.forName(driverName).newInstance();
-        } catch (Exception e) {
-            throw new IOFailure("Can't register driver", e);
-        }
+//        try {
+//            String driverName = "org.apache.derby.jdbc.EmbeddedDriver";
+//            Class.forName(driverName).newInstance();
+//        } catch (Exception e) {
+//            throw new IOFailure("Can't register driver", e);
+//        }
         // Do _not_ upgrade silently making tests slow, but fail loudly.
-        dburi = "jdbc:derby:" + dbfile;// + ";upgrade=true";
+        
+        dburi = "jdbc:h2:mem:" + dbfile;
         return DriverManager.getConnection(dburi);
         //return HarvestDBConnection.get();
             /*

@@ -55,7 +55,7 @@ import java.util.*;
  */
 public class DataModelTestCase extends TestCase {
 
-    Logger log = LoggerFactory.getLogger(this.getClass());
+    Logger log = LoggerFactory.getLogger(DataModelTestCase.class);
 
 	SetSystemProperty derbyLog
 	= new SetSystemProperty(
