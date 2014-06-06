@@ -3,9 +3,9 @@ package dk.netarkivet.systemtest.performance;
 import dk.netarkivet.systemtest.environment.ApplicationManager;
 import dk.netarkivet.systemtest.functional.DomainsPageTest;
 import dk.netarkivet.systemtest.functional.ExtendedFieldTest;
-import dk.netarkivet.systemtest.functional.HarvestHistoryForDomainPageTest;
 import dk.netarkivet.systemtest.page.PageHelper;
-
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -13,16 +13,10 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-/**
- * Created by csr on 5/8/14.
- */
 @SuppressWarnings("unused")
 public class DatabaseFullMigrationTest extends StressTest {
 
-    @Test(groups = {"guitest","functest"})
+    @Test(groups = {"guitest","performancetest"})
     public void dbFullMigrationTest() throws Exception {
         addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
         doStuff();

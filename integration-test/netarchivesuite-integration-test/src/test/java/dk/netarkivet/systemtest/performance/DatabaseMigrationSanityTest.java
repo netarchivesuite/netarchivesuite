@@ -6,16 +6,14 @@ import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
-
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("static-access")
 public class DatabaseMigrationSanityTest extends StressTest {
@@ -25,7 +23,7 @@ public class DatabaseMigrationSanityTest extends StressTest {
      * Basic sanity test that the current production database can be consistently upgraded with the latest NAS
      * software. This test is designed to be cheap to run so it can easily be tested on any snapshot.
      */
-    @Test(groups = {"functest"})
+    @Test(groups = {"performancetest"})
     public void dbMigrationSanityTest() throws Exception {
         addDescription("Test that database schema ingest from production produces a functional NAS system.");
         doStuff();

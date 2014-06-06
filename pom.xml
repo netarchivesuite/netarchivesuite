@@ -22,9 +22,7 @@
         <module>harvester</module>
         <module>monitor</module>
         <module>wayback</module>
-<!--
-        <module>integration-test/netarchivesuite-integration-test</module>
--->
+        <module>integration-test</module>
     </modules>
 
     <build>

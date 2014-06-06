@@ -4,14 +4,13 @@
 
     <parent>
         <groupId>dk.netarkivet.netarchivesuite</groupId>
-        <artifactId>parent</artifactId>
+        <artifactId>integration-test</artifactId>
         <version>5.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>netarchivesuite-integration-test</artifactId>
 
-    <name>NetarchiveSuite integration test</name>
+    <name>NetarchiveSuite System test</name>
     <description>Contains the automatic NetarchiveSuite system tests</description>
 
     <properties>
@@ -80,7 +79,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-api</artifactId>
-            <version>2.32.0</version>
+            <version>2.42.2</version>
         </dependency>
 
         <dependency>
@@ -92,64 +91,65 @@
 
     <build>
         <plugins>
-            <!-- This module only contains integration test -->
+            <!-- Only run tests if systemTest is active -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
-                    <workingDirectory>target/</workingDirectory>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>surefire-it</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <skip>false</skip>
-                            <groups>functest</groups>
-                            <properties>
-                                <property>
-                                    <name>listener</name>
-                                    <value>
-                                        org.jaccept.TestNGListerner
-                                    </value>
-                                </property>
-                            </properties>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
+
         </plugins>
     </build>
-
     <profiles>
         <profile>
-            <id>generate-testreports</id>
+            <id>systemTest</id>
+            <properties>
+                <deployable.postfix>SystemTest</deployable.postfix>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <properties>
-                                <property>
-                                    <name>listener</name>
-                                    <value>
-                                        org.jaccept.TestNGListerner
-                                    </value>
-                                </property>
-                            </properties>
-                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>surefire-it</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>false</skip>
+                                    <groups>functest</groups>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
-                </plugins>
-            </build>
-        </profile>
 
-        <profile>
-            <id>deploy2test</id>
-            <build>
-                <plugins>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-releasezipball</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>releasezipball</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>zip</type>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                            <destFileName>NetarchiveSuite-${deployable.postfix}.zip</destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version>1.7</version>
@@ -158,8 +158,6 @@
                                 <phase>pre-integration-test</phase>
                                 <configuration>
                                     <target>
-                                        <property name="build.compiler" value="extJavac" />
-                                        <ant antfile="deploy.xml" target="package" />
                                         <ant antfile="deploy.xml" target="deploy2test" />
                                     </target>
                                 </configuration>
@@ -182,49 +180,7 @@
                         <configuration>
                             <systemPropertyVariables>
                                 <systemtest.deploy>true</systemtest.deploy>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>redeployGUI</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution>
-                                <phase>pre-integration-test</phase>
-                                <configuration>
-                                    <target>
-                                        <property name="build.compiler" value="extJavac" />
-                                        <ant antfile="deploy.xml" target="package" />
-                                        <ant antfile="deploy.xml" target="deploy2test" />
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.ant</groupId>
-                                <artifactId>ant-jsch</artifactId>
-                                <version>1.9.1</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <systemtest.redeploy.gui>true</systemtest.redeploy.gui>
+                                <deployable.postfix>${deployable.postfix}</deployable.postfix>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

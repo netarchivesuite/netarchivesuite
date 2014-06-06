@@ -24,10 +24,13 @@
  */
 package dk.netarkivet.systemtest;
 
+import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
+import dk.netarkivet.systemtest.page.PageHelper;
+import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.io.FileUtils;
 import org.jaccept.structure.ExtendedTestCase;
 import org.jaccept.testreport.ReportGenerator;
@@ -39,11 +42,6 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
-
-import dk.netarkivet.systemtest.environment.ApplicationManager;
-import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
-import dk.netarkivet.systemtest.page.PageHelper;
-import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
 /**
  * The super class for all Selenium based system tests.
@@ -109,11 +107,13 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     
     @AfterSuite(alwaysRun=true)
     public void shutdown() {
-        try {
-            SelectiveHarvestPageHelper.deactivateAllHarvests();
-            driver.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (driver != null) {
+            try {
+                SelectiveHarvestPageHelper.deactivateAllHarvests();
+                driver.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -122,7 +122,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      * used for the test environment variable.
      */
     protected String getTestX() {
-        return "SystemTest";
+        return System.getProperty("deployable.postfix","SystemTest");
     }
 
     @AfterMethod

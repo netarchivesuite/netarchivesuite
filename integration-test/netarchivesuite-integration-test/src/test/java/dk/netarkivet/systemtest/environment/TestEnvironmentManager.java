@@ -24,14 +24,12 @@
  */
 package dk.netarkivet.systemtest.environment;
 
+import dk.netarkivet.systemtest.TestLogger;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import dk.netarkivet.systemtest.TestLogger;
-
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -63,7 +61,7 @@ public class TestEnvironmentManager {
         TESTX = testX;
         GUI_HOST = System.getProperty("systemtest.host", host);
         GUI_PORT = System.getProperty("systemtest.port", Integer.toString(port));
-        TIMESTAMP = lookupRevisionValue();
+        TIMESTAMP = testX;
         MAILRECEIVERS = System.getProperty("systemtest.mailrecievers");
     }
     /**
