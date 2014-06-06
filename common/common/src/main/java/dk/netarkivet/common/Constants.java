@@ -82,11 +82,11 @@ public final class Constants {
     //It is QA's responsibility to update the following parameters on all
     // release and codefreeze actions
     /** Major version number. */
-    public static final int MAJORVERSION = 4;
+    public static final int MAJORVERSION = 5;
     /** Minor version number. */
-    public static final int MINORVERSION = 5;
+    public static final int MINORVERSION = 0;
     /** Patch version number. */
-    public static final int PATCHVERSION = 0;
+    public static final String PATCHVERSION = "MILESTONE1";
     /** Current status of code. */
     private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
 
