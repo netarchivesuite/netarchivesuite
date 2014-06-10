@@ -132,6 +132,8 @@
     <!-- See http://stackoverflow.com/a/7838060/53897 -->
 
     <build>
+        <finalName>NetarchiveSuite</finalName>
+
         <plugins>    
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -146,7 +148,7 @@
                             <attach>false</attach>
                             <appendAssemblyId>false</appendAssemblyId>
                             <classifier>prod</classifier>
-                            <finalName>${project.artifactId}-${project.version}</finalName>
+                            <finalName>NetarchiveSuite-${project.version}</finalName>
                             <descriptors>
                                 <descriptor>src/main/assembly/release.xml</descriptor>
                             </descriptors>
