@@ -32,51 +32,36 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.archive.wayback.UrlCanonicalizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Class containing methods for turning duplicate entries in a crawl log into
  * lines in a CDX index file.
  */
-public class DeduplicateToCDXAdapter implements
-                                     DeduplicateToCDXAdapterInterface {
+public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface {
 
-    /**
-     * Logger for this class.
-     */
-    private final Log log = LogFactory.getLog(DeduplicateToCDXAdapter.class);
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(DeduplicateToCDXAdapter.class);
 
-    /**
-     * Define SimpleDateFormat objects for the representation of timestamps
-     * in crawl logs and cdx files respectively.
-     */
+    /** Define SimpleDateFormat objects for the representation of timestamps in crawl logs and cdx files respectively. */
     private static final String crawlDateFormatString = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final String cdxDateFormatString = "yyyyMMddHHmmss";
-    private static final SimpleDateFormat crawlDateFormat
-            = new SimpleDateFormat(crawlDateFormatString);
-    private static final SimpleDateFormat cdxDateFormat
-            = new SimpleDateFormat(cdxDateFormatString);
+    private static final SimpleDateFormat crawlDateFormat = new SimpleDateFormat(crawlDateFormatString);
+    private static final SimpleDateFormat cdxDateFormat = new SimpleDateFormat(cdxDateFormatString);
 
-    /**
-     * Pattern representing the part of a crawl log entry describing a
-     * duplicate record.
-     */
-    private static final String duplicateRecordPatternString
-            = "duplicate:\"(.*),(.*)\",(.*)";
-    private static final Pattern duplicateRecordPattern
-            = Pattern.compile(duplicateRecordPatternString);
+    /** Pattern representing the part of a crawl log entry describing a duplicate record. */
+    private static final String duplicateRecordPatternString = "duplicate:\"(.*),(.*)\",(.*)";
+    private static final Pattern duplicateRecordPattern = Pattern.compile(duplicateRecordPatternString);
 
-    /**
-     * canonicalizer used to canonicalize urls.
-     */
+    /** canonicalizer used to canonicalize urls. */
     UrlCanonicalizer canonicalizer;
 
-    /**
-     * String for identifying crawl-log entries representing duplicates.
-     */
+    /** String for identifying crawl-log entries representing duplicates. */
     private static final String DUPLICATE_MATCHING_STRING = "duplicate:";
 
     /**
@@ -121,8 +106,7 @@ public class DeduplicateToCDXAdapter implements
                     String[] parts = duplicateRecord.split(DUPLICATE_MATCHING_STRING);
                     if (parts.length == 2) { 
                         String newDuplicateRecord = DUPLICATE_MATCHING_STRING + parts[1];
-                        log.warn("Duplicate-record changed from '" + duplicateRecord + "' to '"
-                               + newDuplicateRecord + "'");
+                        log.warn("Duplicate-record changed from '{}' to '{}'", duplicateRecord, newDuplicateRecord);
                         duplicateRecord = newDuplicateRecord;
                     }
                 }
@@ -139,8 +123,7 @@ public class DeduplicateToCDXAdapter implements
                 }
                 return result.toString();
             } catch (Exception e) {
-                log.warn("Could not adapt deduplicate record to CDX line: '"
-                         + line + "'", e);
+                log.error("Could not adapt deduplicate record to CDX line: '{}'", line, e);
                 return null;
             }
         } else {
@@ -168,7 +151,7 @@ public class DeduplicateToCDXAdapter implements
                 }
             }
         } catch (IOException e) {
-            log.warn(e);
+            log.error("Exception reading crawl log; {}", e);
         }
     }
 }

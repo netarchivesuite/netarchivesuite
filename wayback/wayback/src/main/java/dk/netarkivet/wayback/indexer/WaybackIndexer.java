@@ -32,6 +32,10 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -39,10 +43,6 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * The WaybackIndexer starts threads to find new files to be indexed and indexes
@@ -58,14 +58,10 @@ import org.apache.commons.logging.LogFactory;
  */
 public class WaybackIndexer implements CleanupIF {
 
-    /**
-     * The logger for this class.
-     */
-    static final Log log = LogFactory.getLog(WaybackIndexer.class);
+    /** The logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(WaybackIndexer.class);
 
-    /**
-     * The singleton instance of this class.
-     */
+    /** The singleton instance of this class. */
     private static WaybackIndexer instance;
 
     /**
@@ -138,7 +134,7 @@ public class WaybackIndexer implements CleanupIF {
                 archiveFile.setIndexed(true);
                 archiveFile.setIndexedDate(today);
                 if (!dao.exists(fileName)) {
-                    log.info("Ingesting '" + fileName + "'");
+                    log.info("Ingesting '{}'", fileName);
                     dao.create(archiveFile);
                 }
             }
@@ -163,11 +159,9 @@ public class WaybackIndexer implements CleanupIF {
                  @Override
                  public void run() {
                      super.run();
-                     log.info("Started thread '" 
-                             + Thread.currentThread().getName() + "'");
+                     log.info("Started thread '{}'", Thread.currentThread().getName());
                      IndexerQueue.getInstance().consume();
-                     log.info("Ending thread '"
-                             + Thread.currentThread().getName() + "'");
+                     log.info("Ending thread '{}'", Thread.currentThread().getName());
 
                  }
              }.start();

@@ -28,8 +28,8 @@ package dk.netarkivet.wayback.indexer;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Singleton class which maintains the basic data structure and methods for
@@ -37,20 +37,13 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IndexerQueue {
 
-    /**
-     * The logger for this class.
-     */
-    private static Log log = LogFactory.getLog(IndexerQueue.class);
+    /** The logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(IndexerQueue.class);
 
-    /**
-     * The unique instance of this class.
-     */
+    /** The unique instance of this class. */
     private static IndexerQueue instance;
 
-    /**
-     * This is the basic underlying datastructure of the indexer - a queue of
-     * files waiting to be indexed.
-     */
+    /** This is the basic underlying datastructure of the indexer - a queue of files waiting to be indexed. */
     private static LinkedBlockingQueue<ArchiveFile> queue;
 
     /**
@@ -79,15 +72,14 @@ public class IndexerQueue {
         List<ArchiveFile> files = (new ArchiveFileDAO())
                 .getFilesAwaitingIndexing();
         if (!files.isEmpty()) {
-            log.info("Will now add '" + files.size() 
-                    + "' unindexed files from object store to queue (if they are not already queued).");
+            log.info("Will now add '{}' unindexed files from object store to queue (if they are not already queued).",
+            		files.size());
         }
         for (ArchiveFile file: files) {
             if (!queue.contains(file)) {
-                log.info("Adding file '" + file.getFilename()
-                        + "' to indexing queue.");
+                log.info("Adding file '{}' to indexing queue.", file.getFilename());
                 queue.add(file);
-                log.info("Files in queue: '" + queue.size() + "'");
+                log.info("Files in queue: '{}'", queue.size());
             }
         }
     }
@@ -104,18 +96,14 @@ public class IndexerQueue {
                 ArchiveFile file = null;
                 try {
                     file = queue.take();
-                    log.info("Taken file '" + file.getFilename()
-                            + "' from indexing queue.");
-                    log.info("Files in queue: '" + queue.size() + "'");
+                    log.info("Taken file '{}' from indexing queue.", file.getFilename());
+                    log.info("Files in queue: '{}'", queue.size());
                 } catch (InterruptedException e) {
-                    String message
-                        = "Unexpected interrupt in indexer while waiting "
-                                + "for new elements";
-                    log.error(message, e);
+                    log.error("Unexpected interrupt in indexer while waiting for new elements", e);
                 }
                 file.index();
             } catch (Exception e) {   //Fault Barrier
-                log.warn("Caught exception at fault barrier for " + Thread.currentThread().getName(), e);
+                log.warn("Caught exception at fault barrier for {}", Thread.currentThread().getName(), e);
             }
         }
     }

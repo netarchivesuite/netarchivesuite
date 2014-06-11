@@ -27,12 +27,12 @@ package dk.netarkivet.wayback.batch;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.warc.WARCRecord;
 import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -47,21 +47,14 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteWARCRecordToSearchRes
  */
 @SuppressWarnings({ "serial"})
 public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
-   /**
-     * Logger for this class.
-     */
-    private final Log log = LogFactory.getLog(getClass().getName());
 
-    /**
-     * Utility for converting an WArcRecord to a CaptureSearchResult
-     * (wayback's representation of a CDX record).
-     */
+	/** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(WaybackCDXExtractionWARCBatchJob.class);
+
+    /** Utility for converting an WArcRecord to a CaptureSearchResult (wayback's representation of a CDX record). */
     private NetarchiveSuiteWARCRecordToSearchResultAdapter aToSAdapter;
 
-    /**
-     * Utility for converting a wayback CaptureSearchResult to a String
-     * representing a line in a CDX file.
-     */
+    /** Utility for converting a wayback CaptureSearchResult to a String representing a line in a CDX file. */
     private SearchResultToCDXLineAdapter srToCDXAdapter;
 
      /**
@@ -96,7 +89,7 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
      */
     @Override
     public void initialize(OutputStream os) {
-        log.info("Starting a " + this.getClass().getName());
+        log.info("Starting a {}", this.getClass().getName());
         aToSAdapter = new NetarchiveSuiteWARCRecordToSearchResultAdapter();
         UrlCanonicalizer uc = UrlCanonicalizerFactory
                 .getDefaultUrlCanonicalizer();
@@ -109,7 +102,7 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
      * @param os unused argument.
      */
     public void finish(OutputStream os) {
-        log.info("Finishing the " + this.getClass().getName());
+        log.info("Finishing the {}", this.getClass().getName());
         //No cleanup required
     }
 
@@ -126,7 +119,7 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
         try {
             csr = aToSAdapter.adapt(record);
         } catch (Exception e) {
-            log.warn(e);
+            log.error("Exception processing WARC record: {}", e);
         }
         try {
             if (csr != null) {
@@ -136,7 +129,8 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
         } catch (IOException e) {
             throw new IOFailure("Write error in batch job", e);
         } catch (Exception e) {
-            log.warn(e);
+            log.error("Exception processing WARC record: {}", e);
         }
     }
+
 }

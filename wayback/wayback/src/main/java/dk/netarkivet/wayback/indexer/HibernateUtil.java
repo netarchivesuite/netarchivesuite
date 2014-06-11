@@ -23,14 +23,14 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.wayback.WaybackSettings;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.wayback.WaybackSettings;
 
 /**
  * This class contains a single static utility method which returns a Hibernate
@@ -42,48 +42,40 @@ import org.hibernate.cfg.AnnotationConfiguration;
 public class HibernateUtil {
 
     /** Logger for this class. */
-    private static final Log log = LogFactory.getLog(
-            HibernateUtil.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(HibernateUtil.class);
 
-    /** Key indicating the connection provider to be used by hibernate.
-     */
-    private static final String CONNECTION_PROVIDER_CLASS
-            = "connection.provider_class";
+    /** Key indicating the connection provider to be used by hibernate. */
+    private static final String CONNECTION_PROVIDER_CLASS = "connection.provider_class";
 
     /**
      * Value indicating use of the c3p0 as connection provider. This is hard
      * coded and no other connection providers have been tested.
      */
-    private static final String
-            ORG_HIBERNATE_CONNECTION_C3_P0_CONNECTION_PROVIDER
-            = "org.hibernate.connection.C3P0ConnectionProvider";
+    private static final String ORG_HIBERNATE_CONNECTION_C3_P0_CONNECTION_PROVIDER =
+    		"org.hibernate.connection.C3P0ConnectionProvider";
 
     // For documentation of these values see the corresponding constants in
     // the WaybackSettings class
-    private static final String C3P0_ACQUIRE_INCREMENT
-            = "c3p0.acquire_increment";
+    private static final String C3P0_ACQUIRE_INCREMENT = "c3p0.acquire_increment";
     private static final String C3P0_IDLE_TEST_PERIOD = "c3p0.idle_test_period";
     private static final String C3P0_MAX_SIZE = "c3p0.max_size";
     private static final String C3P0_MAX_STATEMENTS = "c3p0.max_statements";
     private static final String C3P0_MIN_SIZE = "c3p0.min_size";
     private static final String C3P0_TIMEOUT = "c3p0.timeout";
-    private static final String HIBERNATE_CONNECTION_DRIVER_CLASS
-            = "hibernate.connection.driver_class";
-    private static final String HIBERNATE_CONNECTION_URL
-            = "hibernate.connection.url";
+    private static final String HIBERNATE_CONNECTION_DRIVER_CLASS = "hibernate.connection.driver_class";
+    private static final String HIBERNATE_CONNECTION_URL = "hibernate.connection.url";
     private static final String HIBERNATE_DIALECT = "hibernate.dialect";
     private static final String HIBERNATE_FORMAT_SQL = "hibernate.format_sql";
-    private static final String HIBERNATE_BYTECODE_USE_REFLECTION_OPTIMIZER
-            = "hibernate.bytecode.use_reflection_optimizer";
-    private static final String HIBERNATE_HBM2DDL_AUTO
-            = "hibernate.hbm2ddl.auto";
-    private static final String HIBERNATE_TRANSACTION_FACTORY_CLASS
-            = "hibernate.transaction.factory_class";
+    private static final String HIBERNATE_BYTECODE_USE_REFLECTION_OPTIMIZER =
+    		"hibernate.bytecode.use_reflection_optimizer";
+    private static final String HIBERNATE_HBM2DDL_AUTO = "hibernate.hbm2ddl.auto";
+    private static final String HIBERNATE_TRANSACTION_FACTORY_CLASS =
+    		"hibernate.transaction.factory_class";
     private static final String HIBERNATE_SHOW_SQL = "hibernate.show_sql";
-    private static final String HIBERNATE_CONNECTION_USERNAME
-            = "hibernate.connection.username";
-    private static final String HIBERNATE_CONNECTION_PASSWORD
-            = "hibernate.connection.password";
+    private static final String HIBERNATE_CONNECTION_USERNAME =
+    		"hibernate.connection.username";
+    private static final String HIBERNATE_CONNECTION_PASSWORD =
+    		"hibernate.connection.password";
 
     /**
      * Private constructor as this class is never instantiated.
@@ -211,11 +203,8 @@ public class HibernateUtil {
                 config.addAnnotatedClass(ArchiveFile.class);
                 sessionFactory = config.buildSessionFactory();
             } catch (Throwable ex) {
-                log.fatal("Could not connect to hibernate object store - "
-                          + "exiting", ex);
-                throw new IllegalStateException(
-                        "Could not connect to hibernate "
-                        + "object store - exiting", ex);
+                log.error("Could not connect to hibernate object store - exiting", ex);
+                throw new IllegalStateException("Could not connect to hibernate object store - exiting", ex);
             }
         }
     }

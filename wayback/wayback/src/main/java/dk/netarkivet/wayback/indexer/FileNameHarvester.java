@@ -40,15 +40,13 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FileNameHarvester {
 
-    /**
-     * Logger for this class.
-     */
-    private static Log log = LogFactory.getLog(FileNameHarvester.class);
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(FileNameHarvester.class);
 
     /**
      * This method harvests a list of all the files currently in the
@@ -71,8 +69,7 @@ public class FileNameHarvester {
                     ArchiveFile file = new ArchiveFile();
                     file.setFilename(line.trim());
                     file.setIndexed(false);
-                    log.info("Creating object store entry for '" +
-                            file.getFilename() + "'");
+                    log.info("Creating object store entry for '{}'", file.getFilename());
                     dao.create(file);
                 } // If the file is already known in the persistent store, no
                 // action needs to be taken.
@@ -91,8 +88,7 @@ public class FileNameHarvester {
      */
     public static synchronized void harvestRecentFilenames() {
         ArchiveFileDAO dao = new ArchiveFileDAO();
-        PreservationArcRepositoryClient client = ArcRepositoryClientFactory
-                .getPreservationInstance();
+        PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
         long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
         Date since = new Date(System.currentTimeMillis() - timeAgo);
         BatchStatus status = client.batch(new DatedFileListJob(since),
@@ -107,8 +103,7 @@ public class FileNameHarvester {
                     ArchiveFile file = new ArchiveFile();
                     file.setFilename(line.trim());
                     file.setIndexed(false);
-                    log.info("Creating object store entry for '" +
-                            file.getFilename() + "'");
+                    log.info("Creating object store entry for '{}'", file.getFilename());
                     dao.create(file);
                 } // If the file is already known in the persistent store, no
                 // action needs to be taken.

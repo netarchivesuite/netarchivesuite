@@ -26,12 +26,12 @@ package dk.netarkivet.wayback.batch;
 
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
@@ -44,25 +44,15 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResu
  *
  */
 @SuppressWarnings({ "deprecation", "serial"})
-
 public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
-   /**
-     * Logger for this class.
-     */
-    private final Log log = LogFactory.getLog(getClass().getName());
 
-    /**
-     * Utility for converting an ArcRecord to a CaptureSearchResult
-     * (wayback's representation of a CDX record).
-     */
+	/** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(WaybackCDXExtractionARCBatchJob.class);
+
+    /** Utility for converting an ArcRecord to a CaptureSearchResult (wayback's representation of a CDX record). */
     private NetarchiveSuiteARCRecordToSearchResultAdapter aToSAdapter;
 
-    
-    
-    /**
-     * Utility for converting a wayback CaptureSearchResult to a String
-     * representing a line in a CDX file.
-     */
+    /** Utility for converting a wayback CaptureSearchResult to a String representing a line in a CDX file. */
     private SearchResultToCDXLineAdapter srToCDXAdapter;
 
      /**
@@ -80,7 +70,6 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
         batchJobTimeout = timeout;
     }
 
-
     /**
      *  Initializes the private fields of this class. Some of these are
      *  relatively heavy objects, so it is important that they are only
@@ -89,12 +78,26 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
      */
     @Override
     public void initialize(OutputStream os) {
-        log.info("Starting a " + this.getClass().getName());
+        log.info("Starting a {}", this.getClass().getName());
         aToSAdapter = new NetarchiveSuiteARCRecordToSearchResultAdapter();
         UrlCanonicalizer uc = UrlCanonicalizerFactory
                 .getDefaultUrlCanonicalizer();
         aToSAdapter.setCanonicalizer(uc);
         srToCDXAdapter = new SearchResultToCDXLineAdapter();
+    }
+
+    /**
+     * Does nothing except log the end of the job.
+     * @param os unused argument.
+     */
+    public void finish(OutputStream os) {
+        log.info("Finishing the {}", this.getClass().getName());
+        //No cleanup required
+    }
+    
+    @Override
+    public ARCBatchFilter getFilter() {
+        return ARCBatchFilter.EXCLUDE_FILE_HEADERS;
     }
 
     /**
@@ -107,43 +110,28 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
     @Override
     public void processRecord(ARCRecord record, OutputStream os) {
         CaptureSearchResult csr = null;
-        log.debug("Entered " + this.getClass().getName() + " for '" + record.getHeaderString() + "'");
+        log.debug("Entered {} for '{}'", this.getClass().getName(), record.getHeaderString());
         try {
-            log.debug("Adapting Record '" + record.getHeader() + "'");
+            log.debug("Adapting Record '{}'", record.getHeader());
             csr = aToSAdapter.adapt(record);
-            log.debug("Adapted Record '" + record.getHeader() + "' to '" + csr + "'");
+            log.debug("Adapted Record '{}' to '{}'", record.getHeader(), csr);
         } catch (Exception e) {
-            log.info(e);
+            log.error("Exception processing ARC record: {}", e);
             return;
         }
         try {
             if (csr != null) {
-                log.debug("Adapting Search Result'" + csr + "'");
+                log.debug("Adapting Search Result'{}'", csr);
                 String cdx = srToCDXAdapter.adapt(csr);
                 os.write(cdx.getBytes());
                 os.write("\n".getBytes());
-                log.debug("Adapted Search Result '" + csr + "' + to '" + cdx + "'");
+                log.debug("Adapted Search Result '{}' + to '{}'", csr, cdx);
             } else {
-                String message = "Could not parse '" + record.getHeaderString() + "'";
-                log.info(message);
+                log.info("Could not parse '{}'", record.getHeaderString());
             }
         } catch (Exception e) {
-            log.info(e);
+            log.error("Exception processing ARC record: {}", e);
         }
     }
 
-    /**
-     * Does nothing except log the end of the job.
-     * @param os unused argument.
-     */
-    public void finish(OutputStream os) {
-        log.info("Finishing the " + this.getClass().getName());
-        //No cleanup required
-    }
-    
-    @Override
-    public ARCBatchFilter getFilter() {
-        return ARCBatchFilter.EXCLUDE_FILE_HEADERS;
-    }
-    
 }
