@@ -62,7 +62,7 @@ public class DatabaseAdminTester extends TestCase {
         
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE, 
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(),
                 TestInfo.DATABASE_DIR);
 
         // define the settings for accessing the database

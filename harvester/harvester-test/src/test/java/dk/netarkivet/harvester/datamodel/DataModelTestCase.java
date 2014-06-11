@@ -102,20 +102,19 @@ public class DataModelTestCase extends TestCase {
 		Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
 				RememberNotifications.class.getName());
 		HarvestDAOUtils.resetDAOs();
-        log.info("setup() DatabaseTestUtils.getHDDB " + TestInfo.DBFILE
+        log.debug("setup() DatabaseTestUtils.getHDDB " + TestInfo.DBFILE
                 + "  fullhddb " + TestInfo.TEMPDIR);
 		Connection c = DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
 				TestInfo.TEMPDIR);
 		if (c == null) {
-			fail("No connection to Database: "
-					+ TestInfo.DBFILE.getAbsolutePath());
+            fail("No connection to Database: " + TestInfo.DBFILE);
 		}
 
 		assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL),
 				derbyDBUrl);
-        log.info("setup() DBSpecifics.getInstance().updateTables()");
+        log.debug("setup() DBSpecifics.getInstance().updateTables()");
 		DBSpecifics.getInstance().updateTables();
-        log.info("setup() done");
+        log.debug("setup() done");
 	}
 
 	public void tearDown() throws Exception {
@@ -126,9 +125,9 @@ public class DataModelTestCase extends TestCase {
 		// null field instance in DBSpecifics.
 		Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
 		f.set(null, null);
-        log.info("tearDown() derbyLog.tearDown()");
+        log.debug("tearDown() derbyLog.tearDown()");
 		derbyLog.tearDown();
-        log.info("tearDown() FileUtils.removeRecursively");
+        log.debug("tearDown() FileUtils.removeRecursively");
 
 		//don't work on windows derby.log seem to be locked
 		try{
@@ -138,16 +137,16 @@ public class DataModelTestCase extends TestCase {
 		{
 
 		}
-        log.info("tearDown() HarvestDAOUtils.resetDAOs()");
+        log.debug("tearDown() HarvestDAOUtils.resetDAOs()");
 
 		HarvestDAOUtils.resetDAOs();
-        log.info("tearDown() HarvestDBConnection.cleanup()");
+        log.debug("tearDown() HarvestDBConnection.cleanup()");
 
 		HarvestDBConnection.cleanup();
-        log.info("tearDown() rs.tearDown()");
+        log.debug("tearDown() rs.tearDown()");
 
 		rs.tearDown();
-        log.info("tearDown() done");
+        log.debug("tearDown() done");
 
 	}
 

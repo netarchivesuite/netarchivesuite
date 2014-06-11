@@ -28,6 +28,8 @@ package dk.netarkivet.harvester.datamodel;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -53,6 +55,7 @@ import dk.netarkivet.common.utils.ZipUtils;
  */
 public class DatabaseTestUtils {
 
+    private static final String LEGACY_FILE_PREFIX_FOR_TEST_RESOURCES = "./tests/";
     private static String dburi;
     protected static final Logger log = Logger.getLogger(DatabaseTestUtils.class.getName());
 
@@ -61,15 +64,15 @@ public class DatabaseTestUtils {
      * new transaction that will be rolled back with dropDatabase. Only one
      * connection can be taken at a time.
      * 
-     * @param jarfile
+     * @param resourcePath
      *            A file that contains a test database.
-     * @param dbUnzipDir
+     * @param dbCreationDir
      * @return a connection to the database stored in the given file
      * @throws SQLException
      * @throws IOException
      * @throws IllegalAccessException
      */
-    public static Connection takeDatabase(File jarfile, String dbname, File dbUnzipDir) throws SQLException,
+    public static Connection takeDatabase(String resourcePath, String dbname, File dbCreationDir) throws SQLException,
             IOException, IllegalAccessException {
 
         Settings.set(CommonSettings.DB_MACHINE, "");
@@ -78,14 +81,14 @@ public class DatabaseTestUtils {
         // String dbname = jarfile.getName().substring(0,
         // jarfile.getName().lastIndexOf('.'));
 
-        FileUtils.removeRecursively(new File(dbUnzipDir, dbname));
+        FileUtils.removeRecursively(new File(dbCreationDir, dbname));
 
         // ZipUtils.unzip(jarfile, dbUnzipDir);
 
         // Absolute or relative path should work according to
         // http://incubator.apache.org/derby/docs/ref/rrefjdbc37352.html
 
-        final String dbfile = dbUnzipDir + "/" + dbname;
+        final String dbfile = dbCreationDir + "/" + dbname;
         /*
          * try { Field f =
          * HarvestDBConnection.class.getDeclaredField("connectionPool");
@@ -107,29 +110,11 @@ public class DatabaseTestUtils {
 
         dburi = "jdbc:derby:" + dbfile + ";create=true";
         Connection c = DriverManager.getConnection(dburi);
+        applyStatementsInInputStream(c, DatabaseTestUtils.class.getResourceAsStream("/create-hddb.sql"));
 
-        // now populate it.
-        if (dbname.equals("fullhddb")) {
-            Statement statement = c.createStatement();
-            InputStream is = DatabaseTestUtils.class.getResourceAsStream("/fullhddb.sql");
-            LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
-            String s = "";
-            try {
-            while ((s = br.readLine()) != null) {
-                    log.info(br.getLineNumber() + ": " + s);
-                if (s.trim().startsWith("#")) {
-                    // skip comments
-                } else if (s.trim().length() == 0) {
-                    // skip empty lines
-                } else {
-                    statement.execute(s);
-                }
-            }
-            } catch (SQLException e) {
-                throw new RuntimeException("Line " + br.getLineNumber() + ": " + s, e);
-            }
-            br.close();
-        }
+        // then populate it.
+        FileInputStream is = new FileInputStream(resourcePath);
+        applyStatementsInInputStream(c, is);
 
         //
         return c;
@@ -144,61 +129,54 @@ public class DatabaseTestUtils {
          */
     }
 
+    @SuppressWarnings("unused")
+    private static void applyStatementsInInputStream(Connection connection, InputStream is) throws SQLException,
+            IOException {
+        // if (resourceName.startsWith(LEGACY_FILE_PREFIX_FOR_TEST_RESOURCES)) {
+        // resourceName =
+        // resourceName.substring(LEGACY_FILE_PREFIX_FOR_TEST_RESOURCES.length());
+        // }
+        Statement statement = connection.createStatement();
+        // InputStream is = new FileInputStream(resourceName);
+        // if (is == null) {
+        // throw new IOException("Resource not found: " + resourceName);
+        // }
+        LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
+        String s = "";
+        try {
+            while ((s = br.readLine()) != null) {
+                log.info(br.getLineNumber() + ": " + s);
+                if (s.trim().startsWith("#")) {
+                    // skip comments
+                } else if (s.trim().length() == 0) {
+                    // skip empty lines
+                } else {
+                    statement.execute(s);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Line " + br.getLineNumber() + ": " + s, e);
+        }
+        br.close();
+        statement.close();
+    }
+
     /**
      * Get access to the database stored in the given file. This will start a
      * new transaction that will be rolled back with dropDatabase. Only one
      * connection can be taken at a time.
      * 
-     * @param jarfile
+     * @param resourcePath
      *            A file that contains a test database.
-     * @param dbUnzipDir
+     * @param dbCreationDir
      * @return a connection to the database stored in the given file
      * @throws SQLException
      * @throws IOException
      * @throws IllegalAccessException
      */
-    public static Connection takeDatabase(File jarfile, File dbUnzipDir) throws SQLException, IOException,
+    public static Connection takeDatabase(String resourcePath, File dbCreationDir) throws SQLException, IOException,
             IllegalAccessException {
-        Settings.set(CommonSettings.DB_MACHINE, "");
-        Settings.set(CommonSettings.DB_PORT, "");
-        Settings.set(CommonSettings.DB_DIR, "");
-        // String dbname = jarfile.getName().substring(0,
-        // jarfile.getName().lastIndexOf('.'));
-
-        FileUtils.removeRecursively(dbUnzipDir);
-        ZipUtils.unzip(jarfile, dbUnzipDir);
-        // Absolute or relative path should work according to
-        // http://incubator.apache.org/derby/docs/ref/rrefjdbc37352.html
-
-        final String dbfile = dbUnzipDir.getPath();
-        /*
-         * try { Field f =
-         * HarvestDBConnection.class.getDeclaredField("connectionPool");
-         * f.setAccessible(true); connectionPool =
-         * (WeakHashMap<Thread,Connection>) f.get(null); } catch
-         * (NoSuchFieldException e) { throw new
-         * PermissionDenied("Can't get connectionPool field", e); }
-         */
-        // Make sure we're using the right DB in HarvestDBConnection
-
-        /* Set DB name */
-        try {
-            String driverName = "org.apache.derby.jdbc.EmbeddedDriver";
-            Class.forName(driverName).newInstance();
-        } catch (Exception e) {
-            throw new IOFailure("Can't register driver", e);
-        }
-        dburi = "jdbc:derby:" + dbfile + ";upgrade=true";
-        return DriverManager.getConnection(dburi);
-        // return HarvestDBConnection.get();
-        /*
-         * Field f = HarvestDBConnection.class.getDeclaredField("dbname");
-         * f.setAccessible(true); f.set(null,
-         * Settings.get(Settings.HARVESTDEFINITION_BASEDIR) + "/fullhddb" +
-         * ";restoreFrom=" + new File(extractDir, dbname).getAbsolutePath());
-         * Method m = HarvestDBConnection.class.getDeclaredMethod("getDB", new
-         * Class[0]); m.setAccessible(true); return (Connection)m.invoke(null);
-         */
+        return takeDatabase(resourcePath, "derivenamefromresourcePath", dbCreationDir);
     }
 
     /**
@@ -207,15 +185,16 @@ public class DatabaseTestUtils {
      * 
      * @param samplefile
      *            a sample harvest definition database
-     * @param dbUnzipDir
+     * @param dbCreationDir
      * @return a connection to the given sample harvest definition database
      * @throws SQLException
      * @throws IOException
      * @throws IllegalAccessException
      */
-    public static Connection getHDDB(File samplefile, String dbname, File dbUnzipDir) throws SQLException, IOException,
+    public static Connection getHDDB(String resourcePath, String dbname, File dbCreationDir) throws SQLException,
+            IOException,
             IllegalAccessException {
-        return takeDatabase(samplefile, dbname, dbUnzipDir);
+        return takeDatabase(resourcePath, dbname, dbCreationDir);
     }
 
     /**

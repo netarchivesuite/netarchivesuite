@@ -96,7 +96,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         jmsConnection.setUp();
         rf.setUp();
 
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE,
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(),
                 TestInfo.DATABASE_DIR);
 
         Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
