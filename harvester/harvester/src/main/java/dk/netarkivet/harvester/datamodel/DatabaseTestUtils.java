@@ -78,36 +78,13 @@ public class DatabaseTestUtils {
         Settings.set(CommonSettings.DB_MACHINE, "");
         Settings.set(CommonSettings.DB_PORT, "");
         Settings.set(CommonSettings.DB_DIR, "");
-        // String dbname = jarfile.getName().substring(0,
-        // jarfile.getName().lastIndexOf('.'));
 
         FileUtils.removeRecursively(new File(dbCreationDir, dbname));
 
-        // ZipUtils.unzip(jarfile, dbUnzipDir);
-
-        // Absolute or relative path should work according to
-        // http://incubator.apache.org/derby/docs/ref/rrefjdbc37352.html
-
         final String dbfile = dbCreationDir + "/" + dbname;
-        /*
-         * try { Field f =
-         * HarvestDBConnection.class.getDeclaredField("connectionPool");
-         * f.setAccessible(true); connectionPool =
-         * (WeakHashMap<Thread,Connection>) f.get(null); } catch
-         * (NoSuchFieldException e) { throw new
-         * PermissionDenied("Can't get connectionPool field", e); }
-         */
-        // Make sure we're using the right DB in HarvestDBConnection
 
-        /* Set DB name */
-        // try {
-        // String driverName = "org.apache.derby.jdbc.EmbeddedDriver";
-        // Class.forName(driverName).newInstance();
-        // } catch (Exception e) {
-        // throw new IOFailure("Can't register driver", e);
-        // }
-        // Do _not_ upgrade silently making tests slow, but fail loudly.
-
+        System.err.println("Populating " + dbfile + " from " + resourcePath);
+        // FIXME: change for h2
         dburi = "jdbc:derby:" + dbfile + ";create=true";
         Connection c = DriverManager.getConnection(dburi);
         applyStatementsInInputStream(c, DatabaseTestUtils.class.getResourceAsStream("/create-hddb.sql"));
@@ -116,17 +93,9 @@ public class DatabaseTestUtils {
         FileInputStream is = new FileInputStream(resourcePath);
         applyStatementsInInputStream(c, is);
 
+        System.err.println("Populated...");
         //
         return c;
-        // return HarvestDBConnection.get();
-        /*
-         * Field f = HarvestDBConnection.class.getDeclaredField("dbname");
-         * f.setAccessible(true); f.set(null,
-         * Settings.get(Settings.HARVESTDEFINITION_BASEDIR) + "/fullhddb" +
-         * ";restoreFrom=" + new File(extractDir, dbname).getAbsolutePath());
-         * Method m = HarvestDBConnection.class.getDeclaredMethod("getDB", new
-         * Class[0]); m.setAccessible(true); return (Connection)m.invoke(null);
-         */
     }
 
     @SuppressWarnings("unused")
@@ -143,6 +112,7 @@ public class DatabaseTestUtils {
         // }
         LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
         String s = "";
+        long count = 0;
         try {
             while ((s = br.readLine()) != null) {
                 log.info(br.getLineNumber() + ": " + s);
@@ -151,6 +121,7 @@ public class DatabaseTestUtils {
                 } else if (s.trim().length() == 0) {
                     // skip empty lines
                 } else {
+                    count++;
                     statement.execute(s);
                 }
             }
@@ -159,6 +130,9 @@ public class DatabaseTestUtils {
         }
         br.close();
         statement.close();
+        if (count == 0) {
+            throw new RuntimeException("Executed " + count + " SQL commands.");
+        }
     }
 
     /**

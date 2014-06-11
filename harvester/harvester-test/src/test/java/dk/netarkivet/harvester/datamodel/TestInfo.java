@@ -181,7 +181,7 @@ public class TestInfo {
 
     public static File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
     public static final String DBFILE = TOPDATADIR.getAbsolutePath() + "/fullhddb.sql";
-    static final String EMPTYDBFILE = TOPDATADIR.getAbsolutePath() + "/emptyhddb.jar";
+    static final String EMPTYDBFILE = TOPDATADIR.getAbsolutePath() + "/emptyhddb.sql";
     public static final File NONEXISTINGDIR =
             new File(TEMPDIR, "nonexisting");
     public static final String HARVESTDEFINITION_SITESECTIONCLASS

@@ -76,33 +76,32 @@ public class DataModelTestCase extends TestCase {
 	public void setUp() throws Exception {
         // log.info("setup() 1");
 		super.setUp();
-        // log.info("setup() 2");
         rs.setUp();
-        // log.info("setup() 3");
-		FileUtils.removeRecursively(TestInfo.TEMPDIR);
-        // log.info("setup() 4");
-		assertFalse("Tempdir '" +  TestInfo.TEMPDIR.getAbsolutePath()
+
+        FileUtils.removeRecursively(TestInfo.TEMPDIR);
+
+        assertFalse("Tempdir '" + TestInfo.TEMPDIR.getAbsolutePath()
 				+  "' exists ", TestInfo.TEMPDIR.exists());
 		TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-        // log.info("setup() 5");
+
 		derbyLog.setUp();
-        // log.info("setup() 6");
+
 		String derbyDBUrl = "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath()
 				+ "/fullhddb;create=true";
 		Settings.set(CommonSettings.DB_BASE_URL, derbyDBUrl);
 		Settings.set(CommonSettings.DB_MACHINE, "");
 		Settings.set(CommonSettings.DB_PORT, "");
 		Settings.set(CommonSettings.DB_DIR, "");
-        // log.info("setup() 7");
+
 		commonTempdir.mkdir();
-        // log.info("setup() 8");
+
 		Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
 				commonTempdir.getAbsolutePath());
 
 		Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
 				RememberNotifications.class.getName());
 		HarvestDAOUtils.resetDAOs();
-        log.debug("setup() DatabaseTestUtils.getHDDB " + TestInfo.DBFILE
+        log.trace("setup() DatabaseTestUtils.getHDDB " + TestInfo.DBFILE
                 + "  fullhddb " + TestInfo.TEMPDIR);
 		Connection c = DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
 				TestInfo.TEMPDIR);
@@ -112,22 +111,22 @@ public class DataModelTestCase extends TestCase {
 
 		assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL),
 				derbyDBUrl);
-        log.debug("setup() DBSpecifics.getInstance().updateTables()");
+        log.trace("setup() DBSpecifics.getInstance().updateTables()");
 		DBSpecifics.getInstance().updateTables();
-        log.debug("setup() done");
+        log.trace("setup() done");
 	}
 
 	public void tearDown() throws Exception {
-        log.info("tearDown() super.tearDown()");
+        log.trace("tearDown() super.tearDown()");
 		super.tearDown();
-        log.info("tearDown() DatabaseTestUtils.dropHDDB()");
+        log.trace("tearDown() DatabaseTestUtils.dropHDDB()");
 		DatabaseTestUtils.dropHDDB();
 		// null field instance in DBSpecifics.
 		Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
 		f.set(null, null);
-        log.debug("tearDown() derbyLog.tearDown()");
+        log.trace("tearDown() derbyLog.tearDown()");
 		derbyLog.tearDown();
-        log.debug("tearDown() FileUtils.removeRecursively");
+        log.trace("tearDown() FileUtils.removeRecursively");
 
 		//don't work on windows derby.log seem to be locked
 		try{
@@ -137,16 +136,16 @@ public class DataModelTestCase extends TestCase {
 		{
 
 		}
-        log.debug("tearDown() HarvestDAOUtils.resetDAOs()");
+        log.trace("tearDown() HarvestDAOUtils.resetDAOs()");
 
 		HarvestDAOUtils.resetDAOs();
-        log.debug("tearDown() HarvestDBConnection.cleanup()");
+        log.trace("tearDown() HarvestDBConnection.cleanup()");
 
 		HarvestDBConnection.cleanup();
-        log.debug("tearDown() rs.tearDown()");
+        log.trace("tearDown() rs.tearDown()");
 
 		rs.tearDown();
-        log.debug("tearDown() done");
+        log.trace("tearDown() done");
 
 	}
 
