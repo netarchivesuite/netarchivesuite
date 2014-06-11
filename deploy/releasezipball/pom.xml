@@ -102,13 +102,7 @@
             <artifactId>derbynet</artifactId>
             <version>10.10.1.1</version>
         </dependency>
-<!--
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbyrun</artifactId>
-            <version>10.10.1.1</version>
-        </dependency>
--->
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
