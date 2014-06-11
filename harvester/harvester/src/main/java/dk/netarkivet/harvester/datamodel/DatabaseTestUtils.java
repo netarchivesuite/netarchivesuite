@@ -25,6 +25,8 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,6 +42,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -87,10 +92,11 @@ public class DatabaseTestUtils {
 
         System.err.println("Populating " + dbfile + " from " + resourcePath);
         Connection c = DriverManager.getConnection(dburi + ";create=true");
-        applyStatementsInInputStream(c, DatabaseTestUtils.class.getResourceAsStream("/create-hddb.sql"));
+        applyStatementsInInputStream(c,
+                checkNotNull(DatabaseTestUtils.class.getResourceAsStream("/create-hddb.sql"), "/create-hddb.sql"));
 
         // then populate it.
-        FileInputStream is = new FileInputStream(resourcePath);
+        FileInputStream is = checkNotNull(new FileInputStream(resourcePath), resourcePath);
         applyStatementsInInputStream(c, is);
 
         System.err.println("Populated...");
@@ -100,18 +106,11 @@ public class DatabaseTestUtils {
         return DriverManager.getConnection(dburi);
     }
 
-    @SuppressWarnings("unused")
-    private static void applyStatementsInInputStream(Connection connection, InputStream is) throws SQLException,
+    private static void applyStatementsInInputStream(Connection connection, InputStream is)
+            throws SQLException,
             IOException {
-        // if (resourceName.startsWith(LEGACY_FILE_PREFIX_FOR_TEST_RESOURCES)) {
-        // resourceName =
-        // resourceName.substring(LEGACY_FILE_PREFIX_FOR_TEST_RESOURCES.length());
-        // }
         Statement statement = connection.createStatement();
-        // InputStream is = new FileInputStream(resourceName);
-        // if (is == null) {
-        // throw new IOException("Resource not found: " + resourceName);
-        // }
+
         LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
         String s = "";
         long count = 0;
