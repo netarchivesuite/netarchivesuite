@@ -55,7 +55,6 @@ import dk.netarkivet.common.utils.ZipUtils;
  */
 public class DatabaseTestUtils {
 
-    private static final String LEGACY_FILE_PREFIX_FOR_TEST_RESOURCES = "./tests/";
     private static String dburi;
     protected static final Logger log = Logger.getLogger(DatabaseTestUtils.class.getName());
 
@@ -83,10 +82,11 @@ public class DatabaseTestUtils {
 
         final String dbfile = dbCreationDir + "/" + dbname;
 
-        System.err.println("Populating " + dbfile + " from " + resourcePath);
         // FIXME: change for h2
-        dburi = "jdbc:derby:" + dbfile + ";create=true";
-        Connection c = DriverManager.getConnection(dburi);
+        dburi = "jdbc:derby:" + dbfile;
+
+        System.err.println("Populating " + dbfile + " from " + resourcePath);
+        Connection c = DriverManager.getConnection(dburi + ";create=true");
         applyStatementsInInputStream(c, DatabaseTestUtils.class.getResourceAsStream("/create-hddb.sql"));
 
         // then populate it.
@@ -95,7 +95,9 @@ public class DatabaseTestUtils {
 
         System.err.println("Populated...");
         //
-        return c;
+        c.close();
+
+        return DriverManager.getConnection(dburi);
     }
 
     @SuppressWarnings("unused")
