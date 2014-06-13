@@ -92,6 +92,8 @@ public class DatabaseTestUtils {
 
         System.err.println("Populating " + dbfile + " from " + resourcePath);
         Connection c = DriverManager.getConnection(dburi + ";create=true");
+        c.setAutoCommit(false);  // load faster.
+        
         applyStatementsInInputStream(c,
                 checkNotNull(DatabaseTestUtils.class.getResourceAsStream("/create-hddb.sql"), "/create-hddb.sql"));
 
@@ -99,6 +101,8 @@ public class DatabaseTestUtils {
         FileInputStream is = checkNotNull(new FileInputStream(resourcePath), resourcePath);
         applyStatementsInInputStream(c, is);
 
+        c.commit();
+        
         System.err.println("Populated...");
         //
         c.close();
