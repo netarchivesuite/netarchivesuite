@@ -127,6 +127,10 @@ public class DatabaseTestUtils {
                     // skip empty lines
                 } else {
                     count++;
+                    {
+                        // http://apache-database.10148.n7.nabble.com/Inserting-control-characters-in-SQL-td106944.html
+                        s = s.replace("\\n", "\n");
+                    }
                     statement.execute(s);
                 }
             }
