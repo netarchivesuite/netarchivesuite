@@ -94,8 +94,11 @@ public class DatabaseTestUtils {
         Connection c = DriverManager.getConnection(dburi + ";create=true");
         c.setAutoCommit(false);  // load faster.
         
+        // locate create script first, next to resource
+        File createFile = new File(new File(resourcePath).getParentFile(), "create-hddb.sql");
+        
         applyStatementsInInputStream(c,
-                checkNotNull(DatabaseTestUtils.class.getResourceAsStream("/create-hddb.sql"), "/create-hddb.sql"));
+                checkNotNull(new FileInputStream(createFile), "create-hddb.sql"));
 
         // then populate it.
         FileInputStream is = checkNotNull(new FileInputStream(resourcePath), resourcePath);

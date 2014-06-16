@@ -124,6 +124,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
                 .size());
 
         cal.add(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.MINUTE, 1); // a bit more to avoid rounding errors /tra
         now = cal.getTime();
         generateJobs(now);
         jobs1 = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
