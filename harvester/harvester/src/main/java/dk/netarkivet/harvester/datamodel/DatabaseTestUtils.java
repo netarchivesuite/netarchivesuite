@@ -162,7 +162,7 @@ public class DatabaseTestUtils {
      */
     public static Connection takeDatabase(String resourcePath, File dbCreationDir) throws SQLException, IOException,
             IllegalAccessException {
-        return takeDatabase(resourcePath, "derivenamefromresourcePath", dbCreationDir);
+        return takeDatabase(resourcePath, "derivenamefromresource", dbCreationDir);
     }
 
     /**

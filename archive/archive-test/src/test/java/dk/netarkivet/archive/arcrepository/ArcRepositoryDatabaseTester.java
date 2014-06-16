@@ -174,7 +174,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
                 PrintNotifications.class.getName());
 
         Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
-                "jdbc:derby:" + TestInfo.WORKING_DIR.getAbsolutePath());
+                "jdbc:derby:" + TestInfo.WORKING_DIR.getAbsolutePath()+"/derivenamefromresource");
         Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
                 "");
         Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE,
