@@ -95,10 +95,10 @@ public class DatabaseTestUtils {
         c.setAutoCommit(false);  // load faster.
         
         // locate create script first, next to resource
-        File createFile = new File(new File(resourcePath).getParentFile(), "create-hddb.sql");
+        File createFile = new File(new File(resourcePath).getParentFile(), "create.sql");
         
         applyStatementsInInputStream(c,
-                checkNotNull(new FileInputStream(createFile), "create-hddb.sql"));
+                checkNotNull(new FileInputStream(createFile), "create.sql"));
 
         // then populate it.
         FileInputStream is = checkNotNull(new FileInputStream(resourcePath), resourcePath);
