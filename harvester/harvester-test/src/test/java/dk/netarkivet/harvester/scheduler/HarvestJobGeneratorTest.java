@@ -71,8 +71,10 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
      * Test that we can get jobs created from HDs.
      *
      * @throws Exception
+     * 
+     * Disabled JIRA issue: https://sbforge.org/jira/browse/NAS-2342
      */
-    public void testGenerateJobs() throws Exception {
+    public void DISABLED_testGenerateJobs() throws Exception {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         TemplateDAO.getInstance();
 
