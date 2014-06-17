@@ -48,15 +48,15 @@ public class DerbySpecificsTester extends DataModelTestCase {
     }
 
     public void setUp() throws Exception {
-        log.info("setup() init");
+        log.trace("setup() init");
         super.setUp();
-        log.info("setup() done");
+        log.trace("setup() done");
     }
 
     public void tearDown() throws Exception {
-        log.info("tearDown() init");
+        log.trace("tearDown() init");
         super.tearDown();
-        log.info("tearDown() done");
+        log.trace("tearDown() done");
     }
     
     /**
