@@ -64,7 +64,7 @@ public class SchedulerDatabaseBuilder {
         Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                 + TestInfo.WORKING_DIR.getCanonicalPath() + "/fullhddb");
         
-        DatabaseTestUtils.getHDDB(new File(TestInfo.BASEDIR, "emptyhddb.jar"),
+        DatabaseTestUtils.getHDDB("/" + TestInfo.BASEDIR + "/emptyhddb.jar",
                 "fullhddb",
                 TestInfo.WORKING_DIR);
         HarvestDAOUtils.resetDAOs();
@@ -155,7 +155,7 @@ public class SchedulerDatabaseBuilder {
                 true, 1, null, null, null, null);
         
         Schedule s1 = Schedule.getInstance(null, null, f,
-                "Dagligt", "Dagligt, nårsomhelt på dagen");
+ "Dagligt", "Dagligt, nårsomhelt på dagen");
         
         Schedule s2 = Schedule.getInstance(null, null, f, 
                 "Once_a_day", "Once a day, anytime");
@@ -172,7 +172,7 @@ public class SchedulerDatabaseBuilder {
         
         PartialHarvest ph =  
             PartialHarvest.createPartialHarvest(dcs, s2,
-                    "Testhøstning", "No Comments", "Everybody");
+ "Testhøstning", "No Comments", "Everybody");
         ph.setActive(true);
         
         HarvestDefinitionDAO hdd = HarvestDefinitionDAO.getInstance();
