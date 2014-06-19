@@ -94,7 +94,8 @@ public class DataModelTestCase extends TestCase {
 		derbyLog.setUp();
 
         String derbyDBUrl = H2MemorySpecifics.urlFor(TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
-		Settings.set(CommonSettings.DB_BASE_URL, derbyDBUrl);
+
+        Settings.set(CommonSettings.DB_BASE_URL, derbyDBUrl);
 		Settings.set(CommonSettings.DB_MACHINE, "");
 		Settings.set(CommonSettings.DB_PORT, "");
 		Settings.set(CommonSettings.DB_DIR, "");

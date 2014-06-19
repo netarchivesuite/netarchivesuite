@@ -65,6 +65,7 @@ public class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
 
         Settings.set(CommonSettings.DB_BASE_URL,
                 H2MemorySpecifics.urlFor(HARVEST_DEFINITION_BASEDIR.getCanonicalPath() + "/fullhddb"));
+
         DatabaseTestUtils.getHDDB("./" + TestInfo.DBFILE + "/fullhddb.sql", "fullhddb", HARVEST_DEFINITION_BASEDIR);
         DBSpecifics.getInstance().updateTables();
     }

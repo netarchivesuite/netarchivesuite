@@ -45,11 +45,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 
-//import dk.netarkivet.testutils.ReflectUtils;
-
 /**
- * Utilities to allow testing databases. //FIXME: Rename without Test as these
- * are not specifically test related.
+ * Utilities to allow testing databases built on demand.
  */
 public class DatabaseTestUtils {
 
@@ -85,6 +82,7 @@ public class DatabaseTestUtils {
 
         System.err.println("Populating " + dbfile + " from " + resourcePath);
         Connection c = DriverManager.getConnection(dburi);
+
         c.setAutoCommit(false);  // load faster.
         
         // locate create script first, next to resource
@@ -173,6 +171,7 @@ public class DatabaseTestUtils {
     public static Connection getHDDB(String resourcePath, String dbname, File dbCreationDir) throws SQLException,
             IOException,
             IllegalAccessException {
+
         return takeDatabase(resourcePath, dbname, dbCreationDir);
     }
 
@@ -189,9 +188,6 @@ public class DatabaseTestUtils {
         } catch (SQLException e) {
             log.warning("Expected SQL-exception when shutting down database:" + e);
         }
-        // connectionPool.clear();
-        // null field instance in DBSpecifics.
-
         // inlined to break test dependency /tra 2014-05-19
         // Field f = ReflectUtils.getPrivateField(DBSpecifics.class,
         // "instance");
@@ -199,16 +195,6 @@ public class DatabaseTestUtils {
         f.setAccessible(true);
 
         f.set(null, null);
-        /*
-         * for (Thread t: connectionPool.keySet()) { final Connection connection
-         * = connectionPool.get(t); if (!(connection instanceof
-         * TestDBConnection)) { throw new UnknownID("Illegal connection " +
-         * connection); } try { if (savepoints.containsKey(t)) {
-         * connection.rollback(); // connection.rollback(savepoints.get(t));
-         * savepoints.remove(t); } } catch (SQLException e) {
-         * System.out.println("Can't rollback: " + e); } connection.close(); }
-         * connectionPool.clear();
-         */
     }
 
     /**
