@@ -32,14 +32,17 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
+import dk.netarkivet.harvester.datamodel.H2MemorySpecifics;
 import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import junit.framework.TestCase;
 
 
@@ -80,8 +83,7 @@ public class HarvestdatabaseUpdateApplicationTester extends TestCase {
     }
 
     private void setupDatabase(String dataFile) throws IOException, SQLException, IllegalAccessException {
-        String derbyDBUrl = "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath()
-            + "/" + dataFile;
+        String derbyDBUrl = H2MemorySpecifics.urlFor(TestInfo.TEMPDIR.getCanonicalPath() + "/" + dataFile);
         Settings.set(CommonSettings.DB_BASE_URL, derbyDBUrl);
         Settings.set(CommonSettings.DB_MACHINE, "");
         Settings.set(CommonSettings.DB_PORT, "");

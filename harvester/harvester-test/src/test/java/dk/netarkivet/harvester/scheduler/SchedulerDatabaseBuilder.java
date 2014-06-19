@@ -61,8 +61,8 @@ public class SchedulerDatabaseBuilder {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                 TestInfo.WORKING_DIR);
 
-        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
-                + TestInfo.WORKING_DIR.getCanonicalPath() + "/fullhddb");
+        Settings.set(CommonSettings.DB_BASE_URL,
+                H2MemorySpecifics.urlFor(TestInfo.WORKING_DIR.getCanonicalPath() + "/fullhddb"));
         
         DatabaseTestUtils.getHDDB("/" + TestInfo.BASEDIR + "/emptyhddb.jar",
                 "fullhddb",

@@ -24,6 +24,18 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.sql.SQLException;
+import java.util.regex.Pattern;
+
+import junit.framework.TestCase;
+
+import org.dom4j.Document;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -32,12 +44,6 @@ import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
-import org.dom4j.Document;
-
-import java.io.*;
-import java.sql.SQLException;
-import java.util.regex.Pattern;
 
 /**
  * Unit tests for the HarvestTemplateApplication tool.
@@ -66,7 +72,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
         HarvestDAOUtils.resetDAOs();
         Settings.set(CommonSettings.DB_BASE_URL,
-                "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
+                H2MemorySpecifics.urlFor(TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb"));
         DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
                 TestInfo.TEMPDIR);
         TemplateDAO.getInstance();

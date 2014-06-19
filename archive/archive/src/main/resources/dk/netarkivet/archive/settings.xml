@@ -67,7 +67,7 @@ National Library.
         <admin>
             <class>dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData</class>
             <database>
-                <!-- This database cannot be embedded. -->
+                <!-- This database cannot be embedded. FIXME: Why not?? -->
                 <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
                 <!-- The url is default: jbdc:derby://localhost:1527/admindb -->
                 <baseUrl>jdbc:derby</baseUrl>

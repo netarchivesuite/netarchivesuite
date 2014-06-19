@@ -57,8 +57,8 @@ National Library.
     	</remoteFile>
         <tempDir>./tests/commontempdir</tempDir>
         <database>
-            <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
-            <baseUrl>jdbc:derby:harvestdefinitionbasedir/fullhddb;upgrade=true</baseUrl>
+            <class>dk.netarkivet.harvester.datamodel.H2MemorySpecifics</class>
+            <baseUrl>jdbc:h2:mem:harvestdefinitionbasedir/fullhddb;MODE=Derby</baseUrl>
             <machine></machine>
             <port></port>
             <dir></dir>

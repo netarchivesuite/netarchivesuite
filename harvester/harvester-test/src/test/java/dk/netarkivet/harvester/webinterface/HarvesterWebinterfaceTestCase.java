@@ -32,6 +32,7 @@ import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
+import dk.netarkivet.harvester.datamodel.H2MemorySpecifics;
 import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -62,9 +63,8 @@ public class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
         HarvestDAOUtils.resetDAOs();
         GlobalCrawlerTrapListDBDAO.reset();
 
-        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
-                                            + HARVEST_DEFINITION_BASEDIR.getCanonicalPath()
-                                            + "/fullhddb");
+        Settings.set(CommonSettings.DB_BASE_URL,
+                H2MemorySpecifics.urlFor(HARVEST_DEFINITION_BASEDIR.getCanonicalPath() + "/fullhddb"));
         DatabaseTestUtils.getHDDB("./" + TestInfo.DBFILE + "/fullhddb.sql", "fullhddb", HARVEST_DEFINITION_BASEDIR);
         DBSpecifics.getInstance().updateTables();
     }

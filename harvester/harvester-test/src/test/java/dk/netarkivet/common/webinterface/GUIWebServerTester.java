@@ -24,21 +24,21 @@
  */
 package dk.netarkivet.common.webinterface;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.webinterface.GUIWebServer;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import junit.framework.TestCase;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.H2MemorySpecifics;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests running a web server, represented by the GUIWebServer() class.
@@ -80,8 +80,7 @@ public class GUIWebServerTester extends TestCase {
                 "dk.netarkivet.common.distribute.TestRemoteFile");
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
-        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
-                + WORKING.getCanonicalPath() + "/fullhddb");
+        Settings.set(CommonSettings.DB_BASE_URL, H2MemorySpecifics.urlFor(WORKING.getCanonicalPath() + "/fullhddb"));
 
     }
 

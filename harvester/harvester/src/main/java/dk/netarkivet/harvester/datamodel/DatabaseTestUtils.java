@@ -27,11 +27,8 @@ package dk.netarkivet.harvester.datamodel;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,14 +40,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.ZipUtils;
 
 //import dk.netarkivet.testutils.ReflectUtils;
 
@@ -87,11 +80,11 @@ public class DatabaseTestUtils {
 
         final String dbfile = dbCreationDir + "/" + dbname;
 
-        // FIXME: change for h2
-        dburi = "jdbc:derby:" + dbfile;
+        // http://stackoverflow.com/q/5225700/53897
+        dburi = "jdbc:h2:mem:" + dbfile + ";MODE=Derby;INIT=CREATE SCHEMA IF NOT EXISTS APP\\;SET SCHEMA APP";
 
         System.err.println("Populating " + dbfile + " from " + resourcePath);
-        Connection c = DriverManager.getConnection(dburi + ";create=true");
+        Connection c = DriverManager.getConnection(dburi);
         c.setAutoCommit(false);  // load faster.
         
         // locate create script first, next to resource

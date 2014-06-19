@@ -96,6 +96,18 @@
 			<scope>test</scope>
 		</dependency>
 
+	<dependency>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<version>1.4.178</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.google.guava</groupId>
+		<artifactId>guava</artifactId>
+		<version>17.0</version>
+	</dependency>
+
 		<!-- Ugly test dependencies. -->
 
 		<dependency>
@@ -103,38 +115,6 @@
 			<artifactId>common-test</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.4.178</version>
-		</dependency>
-
-<dependency>
-	<groupId>com.google.guava</groupId>
-	<artifactId>guava</artifactId>
-	<version>17.0</version>
-</dependency>
-		
-		<!-- -->
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derbyclient</artifactId>
-			<version>10.10.1.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<version>10.10.1.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derbytools</artifactId>
-			<version>10.10.1.1</version>
-		</dependency>
-		<!-- -->
 	</dependencies>
 
 	<build>

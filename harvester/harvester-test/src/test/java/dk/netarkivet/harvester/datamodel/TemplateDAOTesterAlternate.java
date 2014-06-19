@@ -24,6 +24,10 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import java.lang.reflect.Field;
+import java.sql.Connection;
+
+import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
@@ -32,10 +36,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
-
-import java.lang.reflect.Field;
-import java.sql.Connection;
 
 /**
  * Alternate unit test class for the TemplateDAO.
@@ -53,8 +53,8 @@ public class TemplateDAOTesterAlternate extends TestCase {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
-                + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
+        Settings.set(CommonSettings.DB_BASE_URL,
+                H2MemorySpecifics.urlFor(TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb"));
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
         HarvestDAOUtils.resetDAOs();
@@ -67,8 +67,8 @@ public class TemplateDAOTesterAlternate extends TestCase {
         }
 
         assertEquals("DBUrl wrong",
-                Settings.get(CommonSettings.DB_BASE_URL), "jdbc:derby:" 
-                + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
+ Settings.get(CommonSettings.DB_BASE_URL),
+                H2MemorySpecifics.urlFor(TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb"));
         TemplateDAO.getInstance();
     }
 
