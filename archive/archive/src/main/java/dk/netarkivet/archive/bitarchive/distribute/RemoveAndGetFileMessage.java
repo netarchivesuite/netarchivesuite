@@ -27,7 +27,8 @@ package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.io.File;
 
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
@@ -44,7 +45,10 @@ import dk.netarkivet.common.utils.FileUtils;
  */
 @SuppressWarnings({ "serial"})
 public class RemoveAndGetFileMessage extends ArchiveMessage {
-    /**  The file to retrieve. */
+
+	private static final Logger log = LoggerFactory.getLogger(RemoveAndGetFileMessage.class);
+
+	/**  The file to retrieve. */
     private String fileName;
     /** The actual data. */
     private RemoteFile remoteFile;
@@ -66,9 +70,8 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
      * @param checksum The checksum of the bad file to remove and retrieve.
      * @param credentials The right credentials for the operation.
      */
-    public RemoveAndGetFileMessage(ChannelID to, ChannelID replyTo, 
-            String fileName, String replicaId, String checksum, 
-            String credentials) {
+    public RemoveAndGetFileMessage(ChannelID to, ChannelID replyTo,  String fileName, String replicaId,
+    		String checksum, String credentials) {
         super(to, replyTo);
         this.fileName = fileName;
         this.replicaId = replicaId;
@@ -109,10 +112,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
             //Just log errors on deleting. They are fairly harmless.
             //Note: Do not make a field of this logger, or if you do, remember
             //to make it transient and reinitialise it in readObject
-            LogFactory.getLog(getClass().getName())
-                .warn("Could not delete"
-                        + " remote file "
-                        + remoteFile.getName());
+            log.warn("Could not delete" + " remote file " + remoteFile.getName());
         }
         return file;
     }

@@ -39,13 +39,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -67,27 +67,19 @@ import dk.netarkivet.common.utils.Settings;
  */
 @Deprecated
 public abstract class AdminData {
-    /** The log.*/
-    private Log log = LogFactory.getLog(AdminData.class.getName());
 
-    /** Admindata version.
-     * VersionNumber is the current version.
-     */
+	/** The log.*/
+    private Logger log = LoggerFactory.getLogger(AdminData.class);
+
+    /** Admindata version. VersionNumber is the current version. */
     public static final String VERSION_NUMBER = "0.4";
     /**
-     * Admindata version.
-     * oldVersionNumber is the earlier but still valid version.
-     */
+     * Admindata version. oldVersionNumber is the earlier but still valid version. */
     private static final String OLD_VERSION_NUMBER = "0.3";
-    /**
-     * Map containing a mapping from arcfilename to ArcRepositoryEntry.
-     */
-    protected Map<String, ArcRepositoryEntry> storeEntries
-            = new HashMap<String, ArcRepositoryEntry>();
-    /**
-     * General delimiter.
-     * TODO add constants class where these constants are placed.
-     */
+    /** Map containing a mapping from arcfilename to ArcRepositoryEntry. */
+    protected Map<String, ArcRepositoryEntry> storeEntries = new HashMap<String, ArcRepositoryEntry>();
+    /** General delimiter.
+     *  TODO add constants class where these constants are placed. */
     private static final String GENERAL_DELIMITER = " ";
 
     /** The directory where the admin data resides, currently the directory:
@@ -111,19 +103,16 @@ public abstract class AdminData {
      * data file.
      */
     protected AdminData() {
-        this.adminDir = new File(Settings.get(
-                ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN));
+        this.adminDir = new File(Settings.get(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN));
         ApplicationUtils.dirMustExist(adminDir);
 
         adminDataFile = new File(adminDir, AdminData.ADMIN_FILE_NAME);
-        log.info("Using admin data file '" + adminDataFile.getAbsolutePath()
-                + "'");
+        log.info("Using admin data file '{}'", adminDataFile.getAbsolutePath());
 
         if (adminDataFile.exists()) {
             read(); // Load admindata into StoreEntries Map
         } else {
-            log.warn("AdminDataFile (" + adminDataFile.getPath()
-                    + ") was not found.");
+            log.warn("AdminDataFile ({}) was not found.", adminDataFile.getPath());
         }
     }
 
@@ -177,8 +166,7 @@ public abstract class AdminData {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
         ArcRepositoryEntry entry = storeEntries.get(arcfileName);
         if (entry == null) {
-            log.warn("No entry found in storeEntries for arcfilename: "
-                    + arcfileName);
+            log.warn("No entry found in storeEntries for arcfilename: {}", arcfileName);
         }
         return entry != null && entry.hasReplyInfo();
     }
@@ -194,12 +182,10 @@ public abstract class AdminData {
      */
     public boolean hasState(String arcfileName, String replicaChannelName) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "String arcfileName");
-        ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, 
-                "String replicaChannelName");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, "String replicaChannelName");
         ArcRepositoryEntry entry = storeEntries.get(arcfileName);
         if (entry == null) {
-            log.warn("No entry found in storeEntries for arcfilename: "
-                    + arcfileName);
+            log.warn("No entry found in storeEntries for arcfilename: {}", arcfileName);
         }
         return entry != null && entry.hasStoreState(replicaChannelName);
     }
@@ -213,14 +199,11 @@ public abstract class AdminData {
      * @return The storage state.
      * @throws UnknownID When no record exists.
      */
-    public ReplicaStoreState getState(String arcfileName, 
-            String replicaChannelName) throws UnknownID {
+    public ReplicaStoreState getState(String arcfileName, String replicaChannelName) throws UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "String arcfileName");
-        ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, 
-        "String replicaChannelName");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, "String replicaChannelName");
         if (!hasState(arcfileName, replicaChannelName)) {
-            throw new UnknownID("No store state recorded for '"
-                    + arcfileName + "' in '" + replicaChannelName + "'");
+            throw new UnknownID("No store state recorded for '" + arcfileName + "' in '" + replicaChannelName + "'");
         }
         return storeEntries.get(arcfileName).getStoreState(replicaChannelName);
     }
@@ -235,12 +218,10 @@ public abstract class AdminData {
      * @throws ArgumentNotValid If the arcFileName is either null or the empty
      * string. 
      */
-    public String getCheckSum(String arcfileName) throws ArgumentNotValid, 
-            UnknownID {
+    public String getCheckSum(String arcfileName) throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
         if (!hasEntry(arcfileName)) {
-            throw new UnknownID("Don't know anything about file '"
-                    + arcfileName + "'");
+            throw new UnknownID("Don't know anything about file '" + arcfileName + "'");
         }
         return storeEntries.get(arcfileName).getChecksum();
     }
@@ -269,7 +250,7 @@ public abstract class AdminData {
                     dataVersion = tempVersion;
                 }
                 if (dataVersion.equals(OLD_VERSION_NUMBER)) {
-                    log.debug("admindata version: " + OLD_VERSION_NUMBER);
+                    log.debug("admindata version: {}", OLD_VERSION_NUMBER);
                     validOldVersion = true;
                 }
                 if (!dataVersion.equals(VERSION_NUMBER) && !validOldVersion) {
@@ -277,7 +258,7 @@ public abstract class AdminData {
                 }
                 //Now read the data file, depending on version.
                 if (dataVersion.equals(VERSION_NUMBER)) {
-                    log.debug("admindata version: " + VERSION_NUMBER);
+                    log.debug("admindata version: {}", VERSION_NUMBER);
                     readCurrentVersion(reader);
                 } else {
                     readValidOldVersion(reader);
@@ -321,9 +302,8 @@ public abstract class AdminData {
                 boolean valid = true;
                 String filename = parts[0];
                 if (parts.length < 2 || parts.length % 2 != 0) {
-                    logMessage = "Corrupt admin data file:  Too few or not "
-                        + "an even number of fields for " + filename
-                        + ": "  + s;
+                    logMessage = "Corrupt admin data file:  Too few or not " + "an even number of fields for "
+                    		+ filename + ": "  + s;
                     log.warn(logMessage);
                     valid = false;
                 }
@@ -331,34 +311,26 @@ public abstract class AdminData {
                     String checksum = parts[1];
                     if (hasEntry(filename)) {
                         if (!checksum.equals(getCheckSum(filename))) {
-                            log.warn("Wrong checksum encountered in"
-                                    + " admin data for known file '" + filename
-                                    + "': Old=" + getCheckSum(filename)
-                                    + " New=" + checksum);
+                            log.warn("Wrong checksum encountered in admin data for known file '{}': Old={} New={}",
+                            		filename, getCheckSum(filename), checksum);
                             // this means, that the existing entry is removed 
                             // from admin.data
                             valid = false; 
                         }
                     } else {
                         StoreMessage replyInfo = null;
-                        storeEntries.put(filename,
-                                new ArcRepositoryEntry(filename, checksum, 
-                                        replyInfo));
+                        storeEntries.put(filename, new ArcRepositoryEntry(filename, checksum, replyInfo));
                     }
                 } else { //parts.length == 1
                     if (hasEntry(filename)) {
-                        log.debug("Entry is invalid, "
-                                + "because no checksumstring found in line: "
-                                + s);
+                        log.debug("Entry is invalid, because no checksumstring found in line: {}", s);
                         //this means, that the existing entry
                         // is removed from admin.data
                         valid = false;
                     } else {
                         // Ignore this entry entirely, if not already
                         // entry for this filename
-                        log.warn("This entry-line is ignored, "
-                                + "because no checksumstring found in line: "
-                                + s);
+                        log.warn("This entry-line is ignored, because no checksumstring found in line: {}", s);
                         continue;
                     }
                 }
@@ -367,11 +339,9 @@ public abstract class AdminData {
                     ArcRepositoryEntry entry = storeEntries.get(filename);
                     for (int i = 2; i < parts.length; i += 2) {
                         try {
-                            entry.setStoreState(parts[i],
-                                    ReplicaStoreState.valueOf(parts[i + 1]));
+                            entry.setStoreState(parts[i],ReplicaStoreState.valueOf(parts[i + 1]));
                         } catch (IllegalArgumentException e) {
-                            log.warn(
-                                    "Corrupt admin data entry. ", e);
+                            log.warn("Corrupt admin data entry. ", e);
                             valid = false;
                             break;
                         }
@@ -379,19 +349,15 @@ public abstract class AdminData {
                 }
                 // Note that the previous if could set valid to false
                 if (!valid) {
-                    log.warn("Entry for file '" + filename
-                            + "' with checksum '"
-                            + storeEntries.get(filename).getChecksum()
-                            + "' is invalid and therefore removed after "
-                            + "reading line with inconsistent information: "
-                            + s);
+                    log.warn("Entry for file '{}' with checksum '{}' is invalid and therefore removed after reading "
+                    		+ "line with inconsistent information: {}",
+                    		filename, storeEntries.get(filename).getChecksum(), s);
                     storeEntries.remove(filename);
                 }
             }
         } catch (IOException e) {
-            final String message = "Failed to read admin data from '"
-                                + adminDataFile.getPath() + "'";
-            log.fatal(message);
+            final String message = "Failed to read admin data from '" + adminDataFile.getPath() + "'";
+            log.error(message);
             throw new IOFailure(message, e);
         }
     }
@@ -421,8 +387,7 @@ public abstract class AdminData {
       * @throws ArgumentNotValid If reader is null.
       * @throws IOFailure If an error occurred with access to the admin.data.
       */
-    private void readCurrentVersion(BufferedReader reader) 
-            throws ArgumentNotValid, IOFailure {
+    private void readCurrentVersion(BufferedReader reader) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(reader, "reader");
         
         // The expected number of elements in first part of a line.
@@ -448,9 +413,7 @@ public abstract class AdminData {
 
                 //Split the line up in parts defined by
                 //the ENTRY_COMPONENT_SEPARATOR_STRING
-                String[] parts =
-                    s.split(ArcRepositoryEntry.
-                            ENTRY_COMPONENT_SEPARATOR_STRING);
+                String[] parts = s.split(ArcRepositoryEntry.ENTRY_COMPONENT_SEPARATOR_STRING);
 
                 // parts[0] should now contain the <filename> <checksum> 
                 // <state> <timestamp-for-last-state-change>
@@ -461,12 +424,9 @@ public abstract class AdminData {
                 String[] firstparts = parts[0].split(GENERAL_DELIMITER);
 
                 if (firstparts.length != firstPartLength) {
-                    String logMessage =
-                        "Corrupt admin data file:  One of the components "
-                        + "'<filename> <checksum> <state> "
-                        + "<timestamp-for-last-state-change>' "
-                        + "is missing from this line: " + s
-                        + "\nIgnoring this line";
+                    String logMessage = "Corrupt admin data file: One of the components '<filename> <checksum> "
+                    		+ "<state> <timestamp-for-last-state-change>' is missing from this line: " + s
+                    		+ "\nIgnoring this line";
                     log.warn(logMessage);
                     continue; // ignore this linie, and go to next line
                 }
@@ -479,36 +439,28 @@ public abstract class AdminData {
                 String checksumString = firstparts[indexFirstPartChecksum];
                 String stateString = firstparts[indexFirstPartState];
                 String timestampString = firstparts[indexFirstPartTimestamp];
-                log.trace("Found (filename, checksum, state, timestamp): "
-                        + filename + "," + checksumString + " , "
-                        + stateString + " , " + timestampString);
+                log.trace("Found (filename, checksum, state, timestamp): {}, {}, {}, {}",
+                		filename, checksumString, stateString, timestampString);
 
-                ReplicaStoreState state =
-                    ReplicaStoreState.valueOf(stateString);
+                ReplicaStoreState state = ReplicaStoreState.valueOf(stateString);
                 Long tempLong = Long.parseLong(timestampString);
                 Date timestampAsDate = new Date(tempLong);
                 
                 // Check, if we already have entry for this filename
                 if (hasEntry(filename)) { 
-
                     // check, if 'checksum' equals checksum-value in 
                     // existing entry
                     if (!checksumString.equals(getCheckSum(filename))) {
-                        log.warn("Wrong checksum encountered in admin data"
-                                + " for known file '" + filename
-                                + "': Old=" + getCheckSum(filename)
-                                + " New=" + checksumString
-                                + ". Entry removed from admin.data and "
-                                + "the remaining line ignored: " + s);
+                        log.warn("Wrong checksum encountered in admin data for known file '{}': Old={} New={}. "
+                        		+ "Entry removed from admin.data and the remaining line ignored: {}",
+                        		filename, getCheckSum(filename), checksumString, s);
                         storeEntries.remove(filename);
                         continue; // Stop processing, and go to next line
                     }
                 } else {
                     // Add new entry for filename:
                     StoreMessage replyInfo = null;
-                    storeEntries.put(filename,
-                            new ArcRepositoryEntry(filename, checksumString,
-                                    replyInfo));
+                    storeEntries.put(filename, new ArcRepositoryEntry(filename, checksumString, replyInfo));
                 }
 
                 // Parse the remaining parts[1..] array
@@ -518,34 +470,25 @@ public abstract class AdminData {
                 for (int i = 1; i < parts.length; i++) {
                     String[] bitparts =  parts[i].split(GENERAL_DELIMITER);
                     if (bitparts.length != otherPartsLength) {
-                        final String message =
-                            "Line incomplete. Expected 3 elements:"
-                            + "<bitarchive> <storestatus> "
-                            + "<timestamp-for-last-state-change>."
-                            + " Found only " + bitparts.length
-                            + " elements in line: " + s;
+                        final String message = "Line incomplete. Expected 3 elements: <bitarchive> <storestatus> "
+                        		+ "<timestamp-for-last-state-change>. Found only " + bitparts.length
+                        		+ " elements in line: " + s;
                         log.warn(message);
-
                     } else {
-                        String bitarchiveString = 
-                            bitparts[indexOtherPartsReplica];
-                        String storestatusString = 
-                            bitparts[indexOtherPartsState];
-                        timestampString = 
-                            bitparts[indexOtherPartsTimestamp];
+                        String bitarchiveString = bitparts[indexOtherPartsReplica];
+                        String storestatusString = bitparts[indexOtherPartsState];
+                        timestampString = bitparts[indexOtherPartsTimestamp];
                         state = ReplicaStoreState.valueOf(storestatusString);
                         tempLong = Long.parseLong(timestampString);
                         timestampAsDate = new Date(tempLong);
-                        entry.setStoreState(bitarchiveString, state,
-                                timestampAsDate);
+                        entry.setStoreState(bitarchiveString, state, timestampAsDate);
                     }
                 }
             }
         } catch (IOException e) {
-                final String message = "Failed to read admin data from '"
-                    + adminDataFile.getPath() + "'";
-                log.fatal(message);
-                throw new IOFailure(message, e);
+        	final String message = "Failed to read admin data from '" + adminDataFile.getPath() + "'";
+        	log.error(message);
+        	throw new IOFailure(message, e);
         }
     }
 
@@ -556,8 +499,7 @@ public abstract class AdminData {
      */
     public Set<String> getAllFileNames() {
         Set<String> knownFiles = new HashSet<String>();
-        for (Map.Entry<String, ArcRepositoryEntry> entry
-                : storeEntries.entrySet()) {
+        for (Map.Entry<String, ArcRepositoryEntry> entry : storeEntries.entrySet()) {
             knownFiles.add(entry.getKey());
         }
         return knownFiles;
@@ -572,14 +514,12 @@ public abstract class AdminData {
      *  ReplicaStoreState.STATE_COMPLETED
      * @return the set of files in the repository with the given state
      */
-    public Set<String> getAllFileNames(Replica replica,
-                                       ReplicaStoreState state) {
+    public Set<String> getAllFileNames(Replica replica, ReplicaStoreState state) {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNull(state, "BitArchiveStoreState state");
         String replicaKey = replica.getIdentificationChannel().getName();
         Set<String> completedFiles = new HashSet<String>();
-        for (Map.Entry<String, ArcRepositoryEntry> entry
-                : storeEntries.entrySet()) {
+        for (Map.Entry<String, ArcRepositoryEntry> entry : storeEntries.entrySet()) {
             if (entry.getValue().getStoreState(replicaKey) == state) {
                 completedFiles.add(entry.getKey());
             }
@@ -599,4 +539,5 @@ public abstract class AdminData {
         out.append(getAllFileNames().toString());
         return out.toString();
     }
+
 }

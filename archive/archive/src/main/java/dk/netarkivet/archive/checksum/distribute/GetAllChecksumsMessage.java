@@ -27,7 +27,8 @@ package dk.netarkivet.archive.checksum.distribute;
 
 import java.io.File;
 
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
@@ -46,7 +47,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 @SuppressWarnings({ "serial"})
 public class GetAllChecksumsMessage extends ArchiveMessage {
-    /** The file containing the output.*/
+
+	private static final Logger log = LoggerFactory.getLogger(GetAllChecksumsMessage.class);
+
+	/** The file containing the output.*/
     private RemoteFile rf;
     /** The id for the replica where this message should be sent.*/
     private String replicaId;
@@ -92,8 +96,7 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
     public void getData(File toFile) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
         if (rf == null) {
-            throw new IOFailure("The remote file is not valid. "
-                    + "Data cannot be retrieved.");
+            throw new IOFailure("The remote file is not valid. Data cannot be retrieved.");
         }
         rf.copyTo(toFile);
         try {
@@ -101,8 +104,7 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
         } catch (IOFailure e) {
             // Just log errors on deleting. They are fairly harmless.
             // Can't make Logger a field, as this class is Serializable
-            LogFactory.getLog(getClass().getName()).warn(
-                    "Could not delete remote file " + rf.getName());
+            log.warn("Could not delete remote file {}", rf.getName());
         }
         rf = null;
     }
@@ -134,4 +136,5 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);
     }
+
 }

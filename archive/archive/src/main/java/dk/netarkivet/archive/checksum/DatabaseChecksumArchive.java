@@ -31,8 +31,8 @@ import java.io.InputStream;
 import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.SerialBinding;
@@ -66,11 +66,9 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
  * done with the {@link LoadDatabaseChecksumArchive} tool.
  */
 public class DatabaseChecksumArchive implements ChecksumArchive {
-    
-    /**
-     * The logger used by this class.
-     */
-    private static Log log = LogFactory.getLog(DatabaseChecksumArchive.class);
+
+    /** The logger used by this class. */
+    private static final Logger log = LoggerFactory.getLogger(DatabaseChecksumArchive.class);
     
     /** The singleton instance of this class. */
     private static DatabaseChecksumArchive instance;
@@ -119,7 +117,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
      * @throws Exception 
      */
     public static synchronized DatabaseChecksumArchive getInstance() throws Exception {
-        if(instance == null) {
+        if (instance == null) {
             instance = new DatabaseChecksumArchive();
         }
         return instance;
@@ -135,12 +133,10 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         super();
         
         // Get the minimum space left setting.
-        long minSpaceLeft = Settings.getLong(
-                ArchiveSettings.CHECKSUM_MIN_SPACE_LEFT);
+        long minSpaceLeft = Settings.getLong(ArchiveSettings.CHECKSUM_MIN_SPACE_LEFT);
         // make sure, that minSpaceLeft is non-negative.
-        if(minSpaceLeft < 0) {
-            String msg = "Wrong setting of minSpaceRequired read from "
-                + "Settings: int " + minSpaceLeft;
+        if (minSpaceLeft < 0) {
+            String msg = "Wrong setting of minSpaceRequired read from Settings: int " + minSpaceLeft;
             log.warn(msg);
             throw new ArgumentNotValid(msg);
         }
@@ -153,12 +149,12 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     }
 
     private void initializeWrongEntryFile() {
-        String WrongEntryFilename = WRONG_FILENAME_PREFIX + Settings.get(
-                    CommonSettings.USE_REPLICA_ID) + WRONG_FILENAME_SUFFIX;
+        String WrongEntryFilename = WRONG_FILENAME_PREFIX + Settings.get(CommonSettings.USE_REPLICA_ID)
+        		+ WRONG_FILENAME_SUFFIX;
         wrongEntryFile = new File(databaseBaseDir, WrongEntryFilename);
         
         // ensure that the file exists.
-        if(!wrongEntryFile.exists()) {
+        if (!wrongEntryFile.exists()) {
             try {
                 wrongEntryFile.createNewFile();
             } catch (IOException e) {
@@ -175,7 +171,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         if (!homeDirectory.isDirectory()) {
             homeDirectory.mkdirs();
         }
-        log.info("Opening ChecksumDB-environment in: " + homeDirectory.getAbsolutePath());
+        log.info("Opening ChecksumDB-environment in: {}", homeDirectory.getAbsolutePath());
 
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setTransactional(true);
@@ -200,8 +196,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
 
     @Override
     public boolean hasEnoughSpace() {
-        if (checkDatabaseDir(databaseBaseDir)
-                && (FileUtils.getBytesFree(databaseBaseDir) > minSpaceLeft)) {
+        if (checkDatabaseDir(databaseBaseDir) && (FileUtils.getBytesFree(databaseBaseDir) > minSpaceLeft)) {
             return true;
         }
         return false;
@@ -210,14 +205,12 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     private boolean checkDatabaseDir(File file) {
         // The file must exist.
         if (!file.isDirectory()) {
-            log.warn("The file '" + file.getAbsolutePath()
-                    + "' is not a valid directory.");
+            log.warn("The file '{}' is not a valid directory.", file.getAbsolutePath());
             return false;
         }
         // It must be writable.
         if (!file.canWrite()) {
-            log.warn("The directory '" + file.getAbsolutePath() 
-                    + "' is not writable");
+            log.warn("The directory '{}' is not writable", file.getAbsolutePath());
             return false;
         }
         return true;
@@ -225,8 +218,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     
 
     @Override
-    public File correct(String filename, File correctFile) throws IOFailure,
-            ArgumentNotValid, IllegalState {
+    public File correct(String filename, File correctFile) throws IOFailure, ArgumentNotValid, IllegalState {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNull(correctFile, "File correctFile");
 
@@ -249,8 +241,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         }
         
         // Make entry in the wrongEntryFile.
-        String badEntry = ChecksumJob.makeLine(filename, 
-                currentChecksum);
+        String badEntry = ChecksumJob.makeLine(filename, currentChecksum);
         appendWrongRecordToWrongEntryFile(badEntry);
         
         // Correct the bad entry, by changing the value to the newChecksum.'
@@ -263,19 +254,17 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         File removedEntryFile; 
         try {
             // Initialise file and writer.
-            removedEntryFile = File.createTempFile(filename, "tmp", 
-                    FileUtils.getTempDir());
+            removedEntryFile = File.createTempFile(filename, "tmp", FileUtils.getTempDir());
             FileWriter fw = new FileWriter(removedEntryFile);
-            
+
             // Write the bad entry.
             fw.write(badEntry);
-            
+
             // flush and close.
             fw.flush();
             fw.close();
         } catch (IOException e) {
-            throw new IOFailure("Unable to create return file for "
-                    + "CorrectMessage", e);
+            throw new IOFailure("Unable to create return file for CorrectMessage", e);
         }
         
         // Return the file containing the removed entry.
@@ -305,9 +294,8 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
             fwrite.flush();
             fwrite.close();
         } catch (IOException e) {
-            String errMsg = "Cannot put a bad record to the 'wrongEntryFile'.";
-            log.warn(errMsg, e);
-            throw new IOFailure(errMsg, e);
+            log.warn("Cannot put a bad record to the 'wrongEntryFile'.", e);
+            throw new IOFailure("Cannot put a bad record to the 'wrongEntryFile'.", e);
         }
     }
 
@@ -325,8 +313,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         try {
             status = checksumDB.get(nullTransaction, key, data, nullLockMode);
         } catch (DatabaseException e) {
-            throw new IOFailure(
-                    "Could not retrieve a checksum for the filename '" + filename + "'", e);
+            throw new IOFailure("Could not retrieve a checksum for the filename '" + filename + "'", e);
         }
         
         String resultChecksum = null;
@@ -356,9 +343,8 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
               // fetch already stored checksum
               String oldChecksum = getChecksum(filename);
               if (newChecksum.equals(oldChecksum)) {
-                  log.warn("Cannot upload archivefile '" + filename + "', "
-                          + "it is already archived with the same checksum: '"
-                          + oldChecksum);
+                  log.warn("Cannot upload archivefile '{}', " + "it is already archived with the same checksum: '{}'",
+                		  filename, oldChecksum);
               } else {
                   throw new IllegalState("Cannot upload archivefile '" + filename 
                           + "', it is already archived with different checksum."
@@ -376,7 +362,6 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
                 IOUtils.closeQuietly(input);
             }
         }
-
     }
     
     /**
@@ -415,8 +400,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     public File getArchiveAsFile() {
         File tempFile = null;
         try {
-            tempFile = File.createTempFile("allFilenamesAndChecksums", "tmp", 
-                    FileUtils.getTempDir());
+            tempFile = File.createTempFile("allFilenamesAndChecksums", "tmp", FileUtils.getTempDir());
             dumpDatabaseToFile(tempFile, false);
         } catch (IOException e) {
             throw new IOFailure(e.toString());
@@ -432,8 +416,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
      * not the checksums
      * @throws IOException If unable to write to file for some reason
      */
-    private void dumpDatabaseToFile(File tempFile, boolean writeOnlyFilenames) 
-            throws IOException {
+    private void dumpDatabaseToFile(File tempFile, boolean writeOnlyFilenames) throws IOException {
         Cursor cursor = null;
         File resultFile = tempFile;
 
@@ -467,7 +450,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
                 try {
                     cursor.close();
                 } catch (DatabaseException e) {
-                    log.warn("Database error occurred when closing the cursor: " + e);
+                    log.warn("Database error occurred when closing the cursor: ", e);
                 }
             }
         }
@@ -477,8 +460,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     public File getAllFilenames()  {
         File tempFile = null;
         try {
-            tempFile = File.createTempFile("allFilenames", "tmp", 
-                    FileUtils.getTempDir());
+            tempFile = File.createTempFile("allFilenames", "tmp", FileUtils.getTempDir());
         } catch (IOException e) {
             throw new IOFailure(e.toString());
         }
@@ -486,7 +468,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         try {
             dumpDatabaseToFile(tempFile, true);
         } catch (IOException e) {
-            throw new IOFailure("Error during the getAllFilenames operation: " + e);
+            throw new IOFailure("Error during the getAllFilenames operation: ", e);
         }
         
         return tempFile;
@@ -498,7 +480,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
             try {
                 checksumDB.close();
             } catch (DatabaseException e) {
-                log.warn("Unable to close database. The error was :" + e);
+                log.warn("Unable to close database. The error was :", e);
             }
         }
     }

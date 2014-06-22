@@ -26,8 +26,8 @@
 
 package dk.netarkivet.archive.arcrepositoryadmin;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.IllegalState;
 
@@ -50,8 +50,9 @@ import dk.netarkivet.common.exceptions.IllegalState;
  */
 @Deprecated 
 public class ReadOnlyAdminData extends AdminData {
-    /** The log.*/
-    private Log log = LogFactory.getLog(getClass().getName());
+
+	/** The log.*/
+    private static final Logger log = LoggerFactory.getLogger(ReadOnlyAdminData.class);
     
     /** The time the underlying file (adminDataFile) was last read in.
      * If 0, we have never read admin data (the file doesn't exist).
@@ -91,10 +92,10 @@ public class ReadOnlyAdminData extends AdminData {
             read();
         }
         if (lastModified == 0) {
-            String msg = "Admin data (file: " + adminDataFile.getAbsolutePath() 
-                + ") not created in time for reading.";
+            String msg = "Admin data (file: " + adminDataFile.getAbsolutePath() + ") not created in time for reading.";
             log.warn(msg);
             throw new IllegalState(msg);
         }
     }
+
 }

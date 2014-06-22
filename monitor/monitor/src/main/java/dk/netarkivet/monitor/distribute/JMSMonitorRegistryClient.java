@@ -27,8 +27,8 @@ package dk.netarkivet.monitor.distribute;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -45,12 +45,11 @@ import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
  * The monitor registry client sends messages with JMS to register the host
  * for JMX monitoring.
  */
-public final class JMSMonitorRegistryClient implements MonitorRegistryClient,
-                                                 CleanupIF {
+public final class JMSMonitorRegistryClient implements MonitorRegistryClient, CleanupIF {
     /** The singleton instance of this class. */
     private static JMSMonitorRegistryClient instance;
     /** The logger for this class. */
-    private final Log log = LogFactory.getLog(getClass());
+    private static final Logger log = LoggerFactory.getLogger(JMSMonitorRegistryClient.class);
     /** The cleanup hook that will clean up this client on VM shutdown. */
     private CleanupHook hook;
     /** The timer that sends messages. */
@@ -93,8 +92,7 @@ public final class JMSMonitorRegistryClient implements MonitorRegistryClient,
     public synchronized void register(final String localHostName,
                                       final int jmxPort,
                                       final int rmiPort) {
-        ArgumentNotValid.checkNotNullOrEmpty(localHostName,
-                                             "String localHostName");
+        ArgumentNotValid.checkNotNullOrEmpty(localHostName,"String localHostName");
         ArgumentNotValid.checkNotNegative(jmxPort, "int jmxPort");
         ArgumentNotValid.checkNotNegative(rmiPort, "int rmiPort");
         if (registryTimer != null) {
@@ -104,47 +102,26 @@ public final class JMSMonitorRegistryClient implements MonitorRegistryClient,
         TimerTask timerTask = new TimerTask() {
             /** The action to be performed by this timer task. */
             public void run() {
-                JMSConnectionFactory.getInstance().send(
-                        new RegisterHostMessage(localHostName,
-                                                jmxPort,
-                                                rmiPort)
-                );
-                log.trace("Registering this client for monitoring,"
-                          + " using hostname '" + localHostName
-                          + "' and JMX/RMI ports "
-                          + jmxPort + "/"
-                          + rmiPort);
+                JMSConnectionFactory.getInstance().send(new RegisterHostMessage(localHostName,jmxPort,rmiPort));
+                log.trace("Registering this client for monitoring, using hostname '{}' and JMX/RMI ports {}/{}",
+                		localHostName, jmxPort, rmiPort);
             }
         };
         
-        long reregisterDelay = Settings.getLong(
-                MonitorSettings.DEFAULT_REREGISTER_DELAY);
+        long reregisterDelay = Settings.getLong(MonitorSettings.DEFAULT_REREGISTER_DELAY);
         try {
-            reregisterDelay = Long.parseLong(Settings.get(
-                    CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY));
+            reregisterDelay = Long.parseLong(Settings.get(CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY));
         } catch (NumberFormatException e1) {
-            log.warn("Couldn't parse setting " 
-                     + CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
-                     + ". Only numbers are allowed. Using defaultvalue "
-                     + MonitorSettings.DEFAULT_REREGISTER_DELAY);
+            log.warn("Couldn't parse setting {}. Only numbers are allowed. Using defaultvalue {}",
+            		CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY, MonitorSettings.DEFAULT_REREGISTER_DELAY);
         } catch(NetarkivetException e2) {
-            log.warn("Couldn't find setting " 
-                    + CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
-                    + ". Using defaultvalue "
-                    + MonitorSettings.DEFAULT_REREGISTER_DELAY);
+            log.warn("Couldn't find setting {}. Using defaultvalue {}",
+            		CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY, MonitorSettings.DEFAULT_REREGISTER_DELAY);
         }
 
-        log.info("Registering this client for monitoring every "
-                 + reregisterDelay
-                 + " minutes, using hostname '"
-                 + localHostName + "' and JMX/RMI ports "
-                 + jmxPort + "/"
-                 + rmiPort);
-        registryTimer.scheduleAtFixedRate(timerTask, NOW,
-                                            reregisterDelay
-                                          * MINUTE_IN_MILLISECONDS);
+        log.info("Registering this client for monitoring every {} minutes, using hostname '{}' and JMX/RMI ports {}/{}", reregisterDelay, localHostName, jmxPort, rmiPort);
+        registryTimer.scheduleAtFixedRate(timerTask, NOW, reregisterDelay * MINUTE_IN_MILLISECONDS);
     }
-
 
     /**
      * Used to clean up a class from within a shutdown hook. Must not do any
@@ -162,4 +139,5 @@ public final class JMSMonitorRegistryClient implements MonitorRegistryClient,
         }
         hook = null;
     }
+
 }

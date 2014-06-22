@@ -30,12 +30,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -46,8 +46,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * <br>2) the actual upload status
  */
 public class FilePreservationState implements PreservationState {
-    /** The log.*/
-    private Log log = LogFactory.getLog(FilePreservationState.class);
+
+	/** The log.*/
+    private static final Logger log = LoggerFactory.getLogger(FilePreservationState.class);
 
     /** the name of the preserved file. */
     private String filename;
@@ -55,7 +56,8 @@ public class FilePreservationState implements PreservationState {
     /** the information as seen by the ArcRepository. */
     private ArcRepositoryEntry adminStatus;
 
-    /** the checksums of the file in the individual replica.
+    /**
+     * The checksums of the file in the individual replica.
      * Normally, there will only be one entry in the list, but it must also
      * handle the case where multiple copies exist in a replica.
      */
@@ -71,13 +73,11 @@ public class FilePreservationState implements PreservationState {
      * @throws ArgumentNotValid if filename is null or empty string, 
      *  or if admindata is null.
      */
-    FilePreservationState(String filename, ArcRepositoryEntry admindata,
-            Map<Replica, List<String>> checksumMap) throws ArgumentNotValid {
+    FilePreservationState(String filename, ArcRepositoryEntry admindata, Map<Replica, List<String>> checksumMap)
+    		throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        ArgumentNotValid.checkNotNull(admindata, "ArcRepositoryEntry "
-                + "admindata");
-        ArgumentNotValid.checkNotNull(checksumMap, "Map<Replica, List<String>>"
-                + " checksumMap");
+        ArgumentNotValid.checkNotNull(admindata, "ArcRepositoryEntry admindata");
+        ArgumentNotValid.checkNotNull(checksumMap, "Map<Replica, List<String>> checksumMap");
         this.filename = filename;
         adminStatus = admindata;
         replica2checksum = checksumMap;
@@ -127,8 +127,7 @@ public class FilePreservationState implements PreservationState {
      * @param replica The replica to get status for
      * @return Status that the admin data knows for this file in the replica.
      */
-    private ReplicaStoreState getAdminBitarchiveStoreState(Replica 
-            replica) {
+    private ReplicaStoreState getAdminBitarchiveStoreState(Replica replica) {
         String bamonname = replica.getIdentificationChannel().getName();
         return adminStatus.getStoreState(bamonname);
     }
@@ -161,8 +160,7 @@ public class FilePreservationState implements PreservationState {
 
             // If we find an error, return false, otherwise go on to the rest.
             if (checksum.size() == 0) {
-                if (adminstate != ReplicaStoreState.UPLOAD_STARTED
-                    && adminstate != ReplicaStoreState.UPLOAD_FAILED) {
+                if (adminstate != ReplicaStoreState.UPLOAD_STARTED && adminstate != ReplicaStoreState.UPLOAD_FAILED) {
                     return false;
                 }
             } else {
@@ -204,8 +202,7 @@ public class FilePreservationState implements PreservationState {
      */
     public Replica getReferenceBitarchive() {
         String referenceCheckSum = getReferenceCheckSum();
-        log.trace("Reference-checksum for file '" + filename + "' is '"
-                + referenceCheckSum + "'");
+        log.trace("Reference-checksum for file '{}' is '{}'", filename, referenceCheckSum);
         if ("".equals(referenceCheckSum)) {
             return null;
         }
@@ -215,15 +212,13 @@ public class FilePreservationState implements PreservationState {
         for (Replica r : Replica.getKnown()) {
             String cs = getUniqueChecksum(r);
             // The replica has to have the correct checksum and be a bitarchive.
-            if (referenceCheckSum.equals(cs) 
-                    &&  (r.getType() == ReplicaType.BITARCHIVE)) {
-                log.debug("Reference archive for file '" + filename + "' is '"
-                        + r.getId() + "'");
+            if (referenceCheckSum.equals(cs) &&  (r.getType() == ReplicaType.BITARCHIVE)) {
+                log.debug("Reference archive for file '{}' is '{}'", filename, r.getId());
                 return r;
             }
         }
 
-        log.trace("No reference archive found for file '" + filename + "'");
+        log.trace("No reference archive found for file '{}'", filename);
         return null;
     }
 
@@ -274,9 +269,8 @@ public class FilePreservationState implements PreservationState {
         // Now determine if a checksum obtained at least half of the votes
         int majorityCount = (Replica.getKnown().size() + 1) / 2 + 1;
         for (Map.Entry<String, Integer> entry : checksumCounts.entrySet()) {
-            log.trace("File '" + filename + "' checksum '" + entry.getKey()
-                    + "' votes " + entry.getValue()
-                    + "  majority count " + majorityCount);
+            log.trace("File '{}' checksum '{}' votes {} majority count {}",
+            		filename, entry.getKey(), entry.getValue(), majorityCount);
             if (entry.getValue() >= majorityCount) {
                 return entry.getKey();
             }
@@ -297,7 +291,7 @@ public class FilePreservationState implements PreservationState {
      */
     public boolean isAdminCheckSumOk() {
         String referenceCheckSum = getReferenceCheckSum();
-        if(referenceCheckSum.isEmpty()) {
+        if (referenceCheckSum.isEmpty()) {
             return true;
         }
         return adminStatus.getChecksum().equals(referenceCheckSum);
@@ -311,10 +305,8 @@ public class FilePreservationState implements PreservationState {
     public String toString() {
         String res = "PreservationStatus for '" + filename + "'\n";
         if (adminStatus != null) {
-            res = res + "General store state: "
-                    + adminStatus.getGeneralStoreState().getState() + " "
-                    + adminStatus.getGeneralStoreState().getLastChanged()
-                    + "\n";
+            res = res + "General store state: " + adminStatus.getGeneralStoreState().getState() + " "
+                    + adminStatus.getGeneralStoreState().getLastChanged() + "\n";
         }
         return res;
     }

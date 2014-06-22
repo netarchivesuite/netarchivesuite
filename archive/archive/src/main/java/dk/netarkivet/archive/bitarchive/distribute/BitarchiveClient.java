@@ -25,8 +25,8 @@
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
@@ -48,9 +48,10 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * bitarchive.
  */
 public final class BitarchiveClient implements ReplicaClient {
-    // Each message is assigned a message id
+
+	// Each message is assigned a message id
     /** The log.*/
-    private static Log log = LogFactory.getLog(BitarchiveClient.class);
+    private static final Logger log = LoggerFactory.getLogger(BitarchiveClient.class);
 
     /** Connection to JMS provider.*/
     private JMSConnection jmsCon;
@@ -75,13 +76,11 @@ public final class BitarchiveClient implements ReplicaClient {
      * @param theBamonIn queue to the bitarchive monitor
      * @throws IOFailure If there is a problem making the connection.
      */
-    private BitarchiveClient(ChannelID allBaIn, ChannelID anyBaIn,
-            ChannelID theBamonIn) throws IOFailure {
+    private BitarchiveClient(ChannelID allBaIn, ChannelID anyBaIn, ChannelID theBamonIn) throws IOFailure {
         this.allBa = allBaIn;
         this.anyBa = anyBaIn;
         this.theBamon = theBamonIn;
-        replicaId = Channels.retrieveReplicaFromIdentifierChannel(
-                theBamon.getName()).getId();
+        replicaId = Channels.retrieveReplicaFromIdentifierChannel(theBamon.getName()).getId();
         jmsCon = JMSConnectionFactory.getInstance();
     }
 
@@ -94,8 +93,8 @@ public final class BitarchiveClient implements ReplicaClient {
      * @return A BitarchiveClient
      * @throws IOFailure If there is a problem making the connection.
      */
-    public static BitarchiveClient getInstance(ChannelID allBaIn,
-            ChannelID anyBaIn, ChannelID theBamonIn) throws IOFailure {
+    public static BitarchiveClient getInstance(ChannelID allBaIn, ChannelID anyBaIn, ChannelID theBamonIn)
+    		throws IOFailure {
         return new BitarchiveClient(allBaIn, anyBaIn, theBamonIn);
     }
 
@@ -126,17 +125,17 @@ public final class BitarchiveClient implements ReplicaClient {
     public void sendGetMessage(GetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
-        log.debug("Resending get message '" + msg + "' to bitarchives");
+        log.debug("Resending get message '{}' to bitarchives", msg);
 
         try {
             jmsCon.resend(msg, Channels.getAllBa());
-        } catch (Throwable e) {
-            log.warn("Failure while resending " + msg, e);
+        } catch (Throwable t) {
+            log.warn("Failure while resending {}", msg, t);
             try {
-                msg.setNotOk(e);
+                msg.setNotOk(t);
                 jmsCon.reply(msg);
-            } catch (Throwable e1) {
-                log.warn("Failed to send error message back", e1);
+            } catch (Throwable t1) {
+                log.warn("Failed to send error message back", t1);
             }
         }
     }
@@ -148,7 +147,7 @@ public final class BitarchiveClient implements ReplicaClient {
      */
     public void sendGetFileMessage(GetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-        log.debug("Resending get file message '" + msg + "' to bitarchives");
+        log.debug("Resending get file message '{}' to bitarchives", msg);
         jmsCon.resend(msg, this.allBa);
     }
 
@@ -173,8 +172,7 @@ public final class BitarchiveClient implements ReplicaClient {
            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(batchID, "String batchID");
         // create and send the BatchTerminationMessage.
-        BatchTerminationMessage msg = new BatchTerminationMessage(this.allBa, 
-                batchID);
+        BatchTerminationMessage msg = new BatchTerminationMessage(this.allBa, batchID);
         jmsCon.send(msg);
     }
 
@@ -185,11 +183,10 @@ public final class BitarchiveClient implements ReplicaClient {
      * @throws IOFailure If access to file denied.
      * @throws ArgumentNotValid If arcfile is null.
      */
-    public void sendUploadMessage(RemoteFile rf) throws IOFailure, 
-            ArgumentNotValid {
+    public void sendUploadMessage(RemoteFile rf) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(rf, "rf");
         UploadMessage up = new UploadMessage(anyBa, clientId, rf);
-        log.debug("Sending upload message\n" + up.toString());
+        log.debug("Sending upload message\n{}", up.toString());
         jmsCon.send(up);
     }
 
@@ -201,11 +198,9 @@ public final class BitarchiveClient implements ReplicaClient {
      * @return The submitted message.
      * @throws ArgumentNotValid If message is null.
      */
-    public BatchMessage sendBatchJob(BatchMessage bMsg) 
-            throws ArgumentNotValid {
+    public BatchMessage sendBatchJob(BatchMessage bMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(bMsg, "bMsg");
-        log.debug("Resending batch message '" + bMsg + "' to bitarchive"
-                + " monitor " + this.theBamon);
+        log.debug("Resending batch message '{}' to bitarchive monitor {}", bMsg, this.theBamon);
         jmsCon.resend(bMsg, this.theBamon);
         return bMsg;
     }
@@ -223,12 +218,10 @@ public final class BitarchiveClient implements ReplicaClient {
      * @throws ArgumentNotValid If any parameter was null.
      * @throws IOFailure If sending the batch message did not succeed.
      */
-    public BatchMessage sendBatchJob(ChannelID replyChannel, FileBatchJob job)
-            throws ArgumentNotValid, IOFailure {
+    public BatchMessage sendBatchJob(ChannelID replyChannel, FileBatchJob job) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(replyChannel, "replyChannel");
         ArgumentNotValid.checkNotNull(job, "job");
-        BatchMessage bMsg = new BatchMessage(this.theBamon, replyChannel, job,
-                replicaId);
+        BatchMessage bMsg = new BatchMessage(this.theBamon, replyChannel, job, replicaId);
         jmsCon.send(bMsg);
         return bMsg;
     }
@@ -253,7 +246,7 @@ public final class BitarchiveClient implements ReplicaClient {
         
         jmsCon.resend(msg, theBamon);
         
-        log.debug("Sending CorrectMessage: '" + msg + "'");
+        log.debug("Sending CorrectMessage: '{}'", msg);
     }
 
     /**
@@ -263,15 +256,13 @@ public final class BitarchiveClient implements ReplicaClient {
      * jms connection to the checksum archive.
      * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
      */
-    public void sendGetAllFilenamesMessage(GetAllFilenamesMessage msg) 
-            throws ArgumentNotValid {
+    public void sendGetAllFilenamesMessage(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
         // send the message to the archive.
         jmsCon.resend(msg, theBamon);
 
         // log message.
-        log.debug("Resending GetAllFilenamesMessage: '" + msg.toString() 
-                + "'.");
+        log.debug("Resending GetAllFilenamesMessage: '{}'.", msg.toString());
     }
 
     /**
@@ -281,14 +272,13 @@ public final class BitarchiveClient implements ReplicaClient {
      * connection to the checksum archive.
      * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
      */
-    public void sendGetAllChecksumsMessage(GetAllChecksumsMessage msg) 
-            throws ArgumentNotValid {
+    public void sendGetAllChecksumsMessage(GetAllChecksumsMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
         // send the message to the archive.
         jmsCon.resend(msg, theBamon);
 
         // log message.
-        log.debug("Sending GetAllChecksumMessage: '" + msg.toString() + "'.");
+        log.debug("Sending GetAllChecksumMessage: '{}'.", msg.toString());
     }
 
     /**
@@ -299,15 +289,14 @@ public final class BitarchiveClient implements ReplicaClient {
      * archive though the jms connection.
      * @throws ArgumentNotValid If the GetChecksumMessage is null.
      */
-    public void sendGetChecksumMessage(GetChecksumMessage msg) 
-            throws ArgumentNotValid {
+    public void sendGetChecksumMessage(GetChecksumMessage msg) throws ArgumentNotValid {
         // Validate arguments
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
 
         jmsCon.resend(msg, theBamon);
 
         // log what we are doing.
-        log.debug("Sending GetChecksumMessage: '" + msg.toString() + "'.");
+        log.debug("Sending GetChecksumMessage: '{}'.", msg.toString());
     }
     
     /**
@@ -321,20 +310,18 @@ public final class BitarchiveClient implements ReplicaClient {
      * @throws ArgumentNotValid If the reply channel is null or if the filename
      * is either null or the empty string.
      */
-    public GetChecksumMessage sendGetChecksumMessage(ChannelID replyChannel, 
-            String filename) throws ArgumentNotValid {
+    public GetChecksumMessage sendGetChecksumMessage(ChannelID replyChannel, String filename) throws ArgumentNotValid {
         // Validate arguments
         ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
         // Send a GetChecksumMessage to the replica.
-        GetChecksumMessage msg = new GetChecksumMessage(theBamon, replyChannel, 
-                filename, replicaId);
+        GetChecksumMessage msg = new GetChecksumMessage(theBamon, replyChannel, filename, replicaId);
         jmsCon.send(msg);
 
         // log what we are doing.
-        log.debug("Sending GetChecksumMessage: '" + msg.toString() + "'.");
-        
+        log.debug("Sending GetChecksumMessage: '{}'.", msg.toString());
+
         return msg;
     }
 
@@ -346,4 +333,5 @@ public final class BitarchiveClient implements ReplicaClient {
     public ReplicaType getType() {
         return ReplicaType.BITARCHIVE;
     }
+
 }

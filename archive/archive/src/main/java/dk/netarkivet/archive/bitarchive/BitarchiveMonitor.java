@@ -41,8 +41,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -69,20 +69,14 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * within a time specified in settings.
  */
 public class BitarchiveMonitor extends Observable implements CleanupIF {
-    /**
-     * The current instance.
-     */
+
+	/** The current instance. */
     private static BitarchiveMonitor instance;
     
-    /**
-     * The time of the latest sign of life received from each bitarchive.
-     */
-    private Map<String, Long> bitarchiveSignsOfLife =
-            Collections.synchronizedMap(new HashMap<String, Long>());
+    /** The time of the latest sign of life received from each bitarchive. */
+    private Map<String, Long> bitarchiveSignsOfLife = Collections.synchronizedMap(new HashMap<String, Long>());
 
-    /**
-     * The acceptable delay in milliseconds between signs of life.
-     */
+    /** The acceptable delay in milliseconds between signs of life. */
     private final long acceptableSignOfLifeDelay;
 
 
@@ -94,20 +88,14 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     private Map<String, BatchJobStatus> runningBatchJobs =
             Collections.synchronizedMap(new HashMap<String, BatchJobStatus>());
 
-    /**
-     * Whether the timer will be created as a daemon-thread.
-     */
+    /** Whether the timer will be created as a daemon-thread. */
     private static final boolean IS_DAEMON = true;
     
-    /**
-     * The timer for keeping track of running batchjobs.
-     */
+    /** The timer for keeping track of running batchjobs. */
     protected final Timer batchTimer = new Timer(IS_DAEMON);
     
-    /**
-     * Logger for this class.
-     */
-    private static Log log = LogFactory.getLog(BitarchiveMonitor.class);
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(BitarchiveMonitor.class);
 
     /**
      * Initialises the bitarchive monitor. During this, the acceptable delay
@@ -115,10 +103,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * logged.
      */
     private BitarchiveMonitor() {
-        acceptableSignOfLifeDelay = Settings.getLong(
-                ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY);
-        log.info("Bitarchive liveness times out after "
-                 + acceptableSignOfLifeDelay + " milliseconds.");
+        acceptableSignOfLifeDelay = Settings.getLong(ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY);
+        log.info("Bitarchive liveness times out after {} milliseconds.", acceptableSignOfLifeDelay);
     }
     
     /**
@@ -144,10 +130,9 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         ArgumentNotValid.checkNotNullOrEmpty(appID, "String appID");
         long now = System.currentTimeMillis();
         if ((!bitarchiveSignsOfLife.containsKey(appID))) {
-            log.info("Bitarchive '" + appID + "' is now known by the bitarchive"
-                     + " monitor");
+            log.info("Bitarchive '{}' is now known by the bitarchive monitor", appID);
         }
-        log.trace("Received sign of life from bitarchive '" + appID + "'");
+        log.trace("Received sign of life from bitarchive '{}'", appID);
         bitarchiveSignsOfLife.put(appID, now);
     }
 
@@ -166,21 +151,16 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * @throws ArgumentNotValid If any argument is null, or either string is 
      *                          empty.
      */
-    public void registerBatch(String requestID, ChannelID requestReplyTo,
-            String bitarchiveBatchID, long timeout) throws ArgumentNotValid {
+    public void registerBatch(String requestID, ChannelID requestReplyTo, String bitarchiveBatchID, long timeout)
+    		throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(requestID, "String requestID");
-        ArgumentNotValid.checkNotNull(requestReplyTo,
-                                      "ChannelID requestReplyTo");
-        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID,
-                                             "String bitarchiveBatchID");
-        BatchJobStatus bjs = new BatchJobStatus(
-                requestID, requestReplyTo, bitarchiveBatchID,
-                getRunningBitarchiveIDs(), timeout
-        );
+        ArgumentNotValid.checkNotNull(requestReplyTo, "ChannelID requestReplyTo");
+        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID, "String bitarchiveBatchID");
+        BatchJobStatus bjs = new BatchJobStatus(requestID, requestReplyTo, bitarchiveBatchID,
+        		getRunningBitarchiveIDs(), timeout);
         runningBatchJobs.put(bitarchiveBatchID, bjs);
-        log.info("Registered Batch job from " + requestID + " with timeout "
-                + timeout + ". Number of outstanding batchjobs are now: " 
-               + runningBatchJobs.size());
+        log.info("Registered Batch job from {} with timeout {}. Number of outstanding batchjobs are now: {}",
+        		requestID, timeout, runningBatchJobs.size());
     }
 
     /**
@@ -200,11 +180,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             if (baID.getValue() + acceptableSignOfLifeDelay > now) {
                 runningApps.add(baID.getKey());
             } else {
-                log.warn("Not listening for replies from the bitarchive '"
-                         + baID.getKey()
-                         + "' which hasn't shown signs of life in "
-                         + (now - baID.getValue())
-                         + " milliseconds");
+                log.warn("Not listening for replies from the bitarchive '{}' which hasn't shown signs of life in {} milliseconds",
+                		baID.getKey(), (now - baID.getValue()));
                 // Remove the bitarchive to ensure this warning is not logged
                 // more than once, and a new message is logged when it returns.
                 bitarchiveSignsOfLife.remove(baID.getKey());
@@ -238,36 +215,26 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * @param exceptions A list of exceptions caught during batch processing.
      * @throws ArgumentNotValid If either ID is null.
      */
-    public void bitarchiveReply(String bitarchiveBatchID, String bitarchiveID, 
-            int noOfFilesProcessed, Collection<File> filesFailed, 
-            RemoteFile remoteFile, String errMsg,
-            List<FileBatchJob.ExceptionOccurrence> exceptions) 
-            throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID,
-                "String bitarchiveBatchID");
-        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveID,
-                "String bitarchiveID");
-        ArgumentNotValid.checkNotNegative(noOfFilesProcessed, 
-                "int noOfFilesProcessed");
+    public void bitarchiveReply(String bitarchiveBatchID, String bitarchiveID, int noOfFilesProcessed,
+    		Collection<File> filesFailed, RemoteFile remoteFile, String errMsg,
+            List<FileBatchJob.ExceptionOccurrence> exceptions) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID, "String bitarchiveBatchID");
+        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveID, "String bitarchiveID");
+        ArgumentNotValid.checkNotNegative(noOfFilesProcessed, "int noOfFilesProcessed");
        
         BatchJobStatus bjs = runningBatchJobs.get(bitarchiveBatchID);
         if (bjs == null) {
             // If the batch ID does not correspond to any of the pending batch
             // jobs, just log and ignore the message.
-            log.debug(
-                    "The batch ID '" + bitarchiveBatchID
-                    + "' of the received reply from bitarchives does not "
-                    + "correspond to any pending batch job. Ignoring and "
-                    + "deleting RemoteFile '" + remoteFile + "'."
-                    + "Only knows batchjob with IDs: "
-                    + runningBatchJobs.keySet());
+            log.debug("The batch ID '{}' of the received reply from bitarchives does not correspond to any pending batch job. "
+            		+ "Ignoring and deleting RemoteFile '{}'." + "Only knows batchjob with IDs: {}",
+            		bitarchiveBatchID, remoteFile, runningBatchJobs.keySet());
            
             if (remoteFile != null) {
                 remoteFile.cleanup();
             }
         } else {
-            bjs.updateWithBitarchiveReply(bitarchiveID, noOfFilesProcessed, 
-                    filesFailed, remoteFile, errMsg);
+            bjs.updateWithBitarchiveReply(bitarchiveID, noOfFilesProcessed, filesFailed, remoteFile, errMsg);
         }
     }
 
@@ -276,14 +243,12 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * @param batchJobStatus The batch job that has ended.
      */
     private void notifyBatchEnded(BatchJobStatus batchJobStatus) {
-        runningBatchJobs.remove(
-                batchJobStatus.bitarchiveBatchID);
+        runningBatchJobs.remove(batchJobStatus.bitarchiveBatchID);
         // Notify observers that this batch is done
         setChanged();
         notifyObservers(batchJobStatus);
-        log.info("Batchjob '" + batchJobStatus.bitarchiveBatchID + "' finished."
-                + "The number of outstanding batchjobs are now: " 
-                + runningBatchJobs.size());
+        log.info("Batchjob '{}' finished. The number of outstanding batchjobs are now: {}",
+        		batchJobStatus.bitarchiveBatchID, runningBatchJobs.size());
     }
 
     /**
@@ -302,65 +267,38 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      */
     public final class BatchJobStatus {
 
-        /**
-         * The timer task that handles timeout of this batch job.
-         */
+        /** The timer task that handles timeout of this batch job. */
         private final BatchTimeoutTask batchTimeoutTask;
-        /**
-         * The ID of the job sent to the bitarchives.
-         */
+        /** The ID of the job sent to the bitarchives. */
         private final String bitarchiveBatchID;
-        /**
-         * Have we begun replying for this batch job?
-         */
+        /** Have we begun replying for this batch job? */
         private boolean notifyInitiated;
 
-        /**
-         * the ID of the original batch request.
-         */
+        /** the ID of the original batch request. */
         public final String originalRequestID;
         
-        /**
-         * The reply channel for the original request.
-         */
+        /** The reply channel for the original request. */
         public final ChannelID originalRequestReplyTo;
         
-        /**
-         * set containing the bitarchives that were alive when we sent the
-         * job, but haven't answered yet.
-         */
+        /** set containing the bitarchives that were alive when we sent the job, but haven't answered yet. */
         public final Set<String> missingRespondents;
         
-        /**
-         * The accumulated number of files processed in replies received so
-         * far.
-         */
+        /** The accumulated number of files processed in replies received so far. */
         public int noOfFilesProcessed;
         
-        /**
-         * The accumulated list of files failed in replies received so far.
-         */
+        /** The accumulated list of files failed in replies received so far. */
         public final Collection<File> filesFailed;
         
-        /**
-         * A string with a concatenation of errors. This error message is null,
-         * if the job is successful.
-         */
+        /** A string with a concatenation of errors. This error message is null, if the job is successful. */
         public String errorMessages;
         
-        /**
-         * A File with a concatenation of results from replies received so far.
-         */
+        /** A File with a concatenation of results from replies received so far. */
         public final File batchResultFile;
         
-        /**
-         * A list of the exceptions that occurred during processing.
-         */
+        /** A list of the exceptions that occurred during processing. */
         public final List<FileBatchJob.ExceptionOccurrence> exceptions;
 
-        /**
-         * The timeout for batch jobs in milliseconds.
-        */
+        /** The timeout for batch jobs in milliseconds. */
         private long batchTimeout;
 
         /**
@@ -378,27 +316,22 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          * @param timeout                Timeout for Batch job
          * @throws IOFailure if a file for batch results cannot be made.
          */
-        private BatchJobStatus(String originalRequestID, 
-                ChannelID originalRequestReplyTo, String bitarchiveBatchID,
-                Set<String> missingRespondents, long timeout) 
-                throws IOFailure {
+        private BatchJobStatus(String originalRequestID,  ChannelID originalRequestReplyTo, String bitarchiveBatchID,
+                Set<String> missingRespondents, long timeout) throws IOFailure {
             this.originalRequestID = originalRequestID;
             this.originalRequestReplyTo = originalRequestReplyTo;
             this.bitarchiveBatchID = bitarchiveBatchID;
             this.missingRespondents = missingRespondents;
-            batchTimeoutTask
-                    = new BatchTimeoutTask(bitarchiveBatchID);
+            batchTimeoutTask = new BatchTimeoutTask(bitarchiveBatchID);
             batchTimeout = timeout;
             batchTimer.schedule(batchTimeoutTask, batchTimeout);
             this.noOfFilesProcessed = 0;
             try {
-                this.batchResultFile = File.createTempFile(
-                        bitarchiveBatchID, "batch_aggregation",
-                        FileUtils.getTempDir());
+                this.batchResultFile = File.createTempFile(bitarchiveBatchID, "batch_aggregation",
+                		FileUtils.getTempDir());
             } catch (IOException e) {
-                final String errMsg = "Unable to create file for batch output";
-                log.warn(errMsg);
-                throw new IOFailure(errMsg, e);
+                log.warn("Unable to create file for batch output");
+                throw new IOFailure("Unable to create file for batch output", e);
             }
             this.filesFailed = new ArrayList<File>();
             //Null indicates no error
@@ -436,15 +369,12 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          * bitarchive.
          * @param errMsg An error message with errors from that bit archive.
          */
-        private synchronized void updateWithBitarchiveReply(String bitarchiveID,
-                int numberOfFilesProcessed, Collection<File> failedFiles, 
-                RemoteFile remoteFile, String errMsg) {
+        private synchronized void updateWithBitarchiveReply(String bitarchiveID, int numberOfFilesProcessed,
+        		Collection<File> failedFiles, RemoteFile remoteFile, String errMsg) {
             if (notifyInitiated) {
-                log.debug("The reply for batch job: '"
-                          + bitarchiveBatchID
-                          + "' from bitarchive '" + bitarchiveID
-                          + "' arrived after we had started replying."
-                          + "Ignoring this reply.");
+                log.debug("The reply for batch job: '{}' from bitarchive '{}' arrived after we had started replying. "
+                		+ "Ignoring this reply.",
+                		bitarchiveBatchID, bitarchiveID);
                 remoteFile.cleanup();
                 return;
             }
@@ -455,10 +385,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             // Handle the reply, even though the bitarchive was not known to be
             // live, but log a warning.
             if (!found) {
-                log.warn("Received a batch reply for: "
-                         + bitarchiveBatchID
-                         + " from an unexpected bit archive: '"
-                         + bitarchiveID + "'");
+                log.warn("Received a batch reply for: {} from an unexpected bit archive: '{}'",
+                		bitarchiveBatchID, bitarchiveID);
             }
             this.noOfFilesProcessed += numberOfFilesProcessed;
             if (failedFiles != null) {
@@ -472,8 +400,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             // we append this error.
             if (errMsg != null) {
                 appendError(errMsg);
-                log.warn("Received batch reply with error: " + errMsg
-                         + " at BA monitor from bitarchive " + bitarchiveID);
+                log.warn("Received batch reply with error: {} at BA monitor from bitarchive {}", errMsg, bitarchiveID);
             }
 
             // if all archives have answered then notify observers that we are
@@ -493,35 +420,30 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             if (rf != null) {
                 OutputStream aggregateStream = null;
                 try {
-                    aggregateStream = new FileOutputStream(
-                            batchResultFile, true);
+                    aggregateStream = new FileOutputStream(batchResultFile, true);
                     rf.appendTo(aggregateStream);
 
                     try {
                         rf.cleanup();
                     } catch (IOFailure e) {
-                        log.warn("Could not remove remotefile '" + rf + "'", e);
+                        log.warn("Could not remove remotefile '{}'", rf, e);
                         //Harmless, though. Continue
                     }
                 } catch (IOFailure e) {
-                    String errMsg = "Exception while aggregating batch "
-                                    + " output for " + rf.getName() + ": "
-                                    + ExceptionUtils.getStackTrace(e);
+                    String errMsg = "Exception while aggregating batch output for " + rf.getName()
+                    		+ ": " + ExceptionUtils.getStackTrace(e);
                     appendError(errMsg);
                 } catch (IOException e) {
-                    String errMsg = "Exception while aggregating batch "
-                                    + " output for " + rf.getName() + ": "
-                                    + ExceptionUtils.getStackTrace(e);
+                    String errMsg = "Exception while aggregating batch output for " + rf.getName()
+                    		+ ": " + ExceptionUtils.getStackTrace(e);
                     appendError(errMsg);
                 } finally {
                     if (aggregateStream != null) {
                         try {
                             aggregateStream.close();
                         } catch (IOException e) {
-                            String errMsg = "Exception while aggregating batch "
-                                            + " output for " + rf.getName()
-                                            + ": "
-                                            + ExceptionUtils.getStackTrace(e);
+                            String errMsg = "Exception while aggregating batch output for " + rf.getName()
+                            		+ ": " + ExceptionUtils.getStackTrace(e);
                             appendError(errMsg);
                         }
                     }
@@ -550,9 +472,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * received.
      */
     private class BatchTimeoutTask extends TimerTask {
-        /**
-         * The ID of the batch job this object handles timeout for.
-         */
+        /** The ID of the batch job this object handles timeout for. */
         private final String bitarchiveBatchID;
 
         /**
@@ -562,8 +482,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          *                          for.
          */
         public BatchTimeoutTask(String bitarchiveBatchID) {
-            ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID,
-                    "String bitarchiveBatchID");
+            ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID, "String bitarchiveBatchID");
             this.bitarchiveBatchID = bitarchiveBatchID;
         }
 
@@ -574,8 +493,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         public void run() {
             // synchronize to ensure timeouts and batchreplies do not interfere
             // with one another
-            BatchJobStatus bjs
-                    = runningBatchJobs.get(bitarchiveBatchID);
+            BatchJobStatus bjs = runningBatchJobs.get(bitarchiveBatchID);
             if (bjs != null) {
                 synchronized (bjs) {
                     if (bjs.notifyInitiated) {
@@ -584,22 +502,16 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                         return;
                     }
                     try {
-                        String errMsg =
-                                "A timeout has occurred for batch job: "
-                                + bjs.bitarchiveBatchID
-                                + ". Missing replies from ["
-                                + StringUtils.conjoin(
-                                        ", ", bjs.missingRespondents)
-                                + "]";
+                        final String errMsg = "A timeout has occurred for batch job: " + bjs.bitarchiveBatchID + ". Missing replies from [" + StringUtils.conjoin( ", ", bjs.missingRespondents) + "]";
                         log.warn(errMsg);
                         bjs.appendError(errMsg);
                         bjs.notifyBatchEnded();
                     } catch (Throwable t) {
-                        log.warn("An error occurred during execution of "
-                                 + "timeout task.", t);
+                        log.warn("An error occurred during execution of timeout task.", t);
                     }
                 }
             }
         }
     }
+
 }

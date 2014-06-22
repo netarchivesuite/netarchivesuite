@@ -31,10 +31,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -45,7 +45,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
  */
 public class PhysicalLocation {
     /** the log, for logging stuff instead of displaying them directly.*/ 
-    private final Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(PhysicalLocation.class);
     /** The root for the branch of this element in the XML-tree.*/
     private Element physLocRoot;
     /** The settings structure.*/
@@ -96,13 +96,10 @@ public class PhysicalLocation {
             File securityPolicy, File dbFile, File arcdbFile, boolean resetDir,
             File externalJarFolder) throws ArgumentNotValid {
         // test if valid arguments
-        ArgumentNotValid.checkNotNull(subTreeRoot, 
-                "Element elem (physLocRoot)");
-        ArgumentNotValid.checkNotNull(parentSettings, 
-        "XmlStructure parentSettings");
+        ArgumentNotValid.checkNotNull(subTreeRoot, "Element elem (physLocRoot)");
+        ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
-        ArgumentNotValid.checkNotNullOrEmpty(netarchiveSuiteSource, 
-        "String netarchiveSuite");
+        ArgumentNotValid.checkNotNullOrEmpty(netarchiveSuiteSource, "String netarchiveSuite");
         ArgumentNotValid.checkNotNull(logProp, "File logProp");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
         
@@ -119,11 +116,10 @@ public class PhysicalLocation {
         jarFolder = externalJarFolder;
         
         // retrieve the specific settings for this instance 
-        Element tmpSet = physLocRoot.element(
-                Constants.COMPLETE_SETTINGS_BRANCH);
+        Element tmpSet = physLocRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
-        if(tmpSet != null) {
+        if (tmpSet != null) {
             settings.overWrite(tmpSet);
         }
         // check if new machine parameters
@@ -142,19 +138,15 @@ public class PhysicalLocation {
      */
     private void extractVariables() {
         // retrieve name
-        Attribute at = physLocRoot.attribute(
-                Constants.PHYSICAL_LOCATION_NAME_ATTRIBUTE);
-        if(at != null) {
+        Attribute at = physLocRoot.attribute(Constants.PHYSICAL_LOCATION_NAME_ATTRIBUTE);
+        if (at != null) {
             name = at.getText().trim();
             // insert the name in settings.
-            String xmlName = XmlStructure.pathAndContentToXML(name, 
-                    Constants.COMPLETE_THIS_PHYSICAL_LOCATION_LEAF);
-            Element physLocName = XmlStructure.makeElementFromString(
-                    xmlName);
+            String xmlName = XmlStructure.pathAndContentToXML(name, Constants.COMPLETE_THIS_PHYSICAL_LOCATION_LEAF);
+            Element physLocName = XmlStructure.makeElementFromString(xmlName);
             settings.overWrite(physLocName);
         } else {
-            throw new IllegalState(
-                    Constants.MSG_ERROR_PHYSICAL_LOCATION_NO_NAME);
+            throw new IllegalState(Constants.MSG_ERROR_PHYSICAL_LOCATION_NO_NAME);
         }
     }
 
@@ -166,13 +158,11 @@ public class PhysicalLocation {
     private void extractMachines() {
         machines = new ArrayList<Machine>();
         List<Element> le = physLocRoot.elements(Constants.DEPLOY_MACHINE);
-        for(Element e : le) {
-            String os = getTrimmedAttributeValue(e, 
-                    Constants.MACHINE_OPERATING_SYSTEM_ATTRIBUTE);
+        for (Element e : le) {
+            String os = getTrimmedAttributeValue(e, Constants.MACHINE_OPERATING_SYSTEM_ATTRIBUTE);
             // only a windows machine, if the 'os' attribute exists and
             // equals (not case-sensitive) 'windows'. Else linux machine
-            if(os != null && os.equalsIgnoreCase(
-                    Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
+            if (os != null && os.equalsIgnoreCase(Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
                 machines.add(new WindowsMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
                         securityPolicyFile, databaseFile, arcDatabaseFile, 
@@ -202,7 +192,7 @@ public class PhysicalLocation {
         // make the script in the directory!
         makeScripts(directory);
         // write all machine at this location
-        for(Machine mac : machines) {
+        for (Machine mac : machines) {
             mac.write(directory);
         }
     }
@@ -219,26 +209,21 @@ public class PhysicalLocation {
      * @throws ArgumentNotValid If the directory is null.
      * @throws IOFailure If an error occurs during the creation of the scripts.
      */
-    private void makeScripts(File directory) throws ArgumentNotValid, 
-            IOFailure {
+    private void makeScripts(File directory) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // make extension (e.g. '_kb.sh' in the script 'killall_kb.sh')
-        String ext = Constants.UNDERSCORE + name 
-                + Constants.SCRIPT_EXTENSION_LINUX;
+        String ext = Constants.UNDERSCORE + name + Constants.SCRIPT_EXTENSION_LINUX;
         // make script files
-        File killall = new File(directory, 
-                Constants.SCRIPT_NAME_KILL_ALL + ext);
-        File install = new File(directory, 
-                Constants.SCRIPT_NAME_INSTALL_ALL + ext);
-        File startall = new File(directory, 
-                Constants.SCRIPT_NAME_START_ALL + ext);
+        File killall = new File(directory, Constants.SCRIPT_NAME_KILL_ALL + ext);
+        File install = new File(directory, Constants.SCRIPT_NAME_INSTALL_ALL + ext);
+        File startall = new File(directory, Constants.SCRIPT_NAME_START_ALL + ext);
         try {
             // Make the killall script for the physical location
             PrintWriter kWriter = new PrintWriter(killall);
             try {
                 kWriter.println(ScriptConstants.BIN_BASH_COMMENT);
                 // insert machine data
-                for(Machine mac : machines) {
+                for (Machine mac : machines) {
                     // write the call to the kill script of each machines
                     kWriter.println(ScriptConstants.writeDashLine());
                     kWriter.print(mac.writeToGlobalKillScript());
@@ -256,7 +241,7 @@ public class PhysicalLocation {
             try {
                 iWriter.println(ScriptConstants.BIN_BASH_COMMENT);
                 // insert machine data
-                for(Machine mac : machines) {
+                for (Machine mac : machines) {
                     // write install script from machines
                     iWriter.println(ScriptConstants.writeDashLine());
                     iWriter.print(mac.writeToGlobalInstallScript());
@@ -286,10 +271,10 @@ public class PhysicalLocation {
                 sWriter.close();
             }
         } catch (IOException e) {
-            String msg = "Cannot create the scripts for the physical "
-                + "location: '" + name + "'.";
+        	String msg = "Cannot create the scripts for the physical " + "location: '" + name + "'.";
             log.trace(msg, e);
             throw new IOFailure(msg, e);
         }
     }
+
 }

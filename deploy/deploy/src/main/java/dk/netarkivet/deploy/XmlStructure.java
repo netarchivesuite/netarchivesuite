@@ -30,8 +30,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.DocumentException;
@@ -47,7 +47,7 @@ import dk.netarkivet.common.utils.XmlUtils;
  */
 public class XmlStructure {
     /** the log, for logging stuff instead of displaying them directly.*/
-    private final Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(XmlStructure.class);
     /** The root of this branch in the XML tree.*/
     private Element root;
 
@@ -61,8 +61,7 @@ public class XmlStructure {
     public XmlStructure(File f, final String encoding) {
         ArgumentNotValid.checkNotNull(f, "File f");
         ArgumentNotValid.checkNotNullOrEmpty(encoding, "String encoding");
-        ArgumentNotValid.checkTrue(f.exists(), "File f : " + f.getName() 
-                + " does not exist!");
+        ArgumentNotValid.checkTrue(f.exists(), "File f : " + f.getName() + " does not exist!");
         // get into 'document' format
         Document doc = loadDocument(f, encoding);
         // get root node
@@ -103,15 +102,14 @@ public class XmlStructure {
         SAXReader reader = new SAXReader();
         reader.setEncoding(encoding);
         if (!f.canRead()) {
-            String msg = "Could not read file: '" + f.getAbsolutePath() + "'";
+        	String msg = "Could not read file: '" + f.getAbsolutePath() + "'";
             log.debug(msg);
             throw new IOFailure(msg);
         }
         try {
             return reader.read(f);
         } catch (DocumentException e) {
-            String msg = "Could not parse file: '" + f.getAbsolutePath() 
-                    + "' as XML.";
+        	String msg = "Could not parse file: '" + f.getAbsolutePath() + "' as XML.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         }
@@ -161,13 +159,12 @@ public class XmlStructure {
         ArgumentNotValid.checkNotNull(name, "String ...name");
         Element e = root;
         // go through the tree to get the correct 
-        for(String n : name) {
-            if(e != null) {
+        for (String n : name) {
+            if (e != null) {
                 e = e.element(n);
             } else {
                 // the element does not exist
-                log.debug("Element " + n 
-                        + " is not a branch in the tree. Null returned");
+                log.debug("Element {} is not a branch in the tree. Null returned", n);
                 return null;
             }
         }
@@ -187,12 +184,11 @@ public class XmlStructure {
     public String getSubChildValue(String ...name) {
         ArgumentNotValid.checkNotNull(name, "String ...name");
         Element e = getSubChild(name);
-        if(e != null) {
-            if(e.isTextOnly()) {
+        if (e != null) {
+            if (e.isTextOnly()) {
                 return e.getText().trim();
             } else {
-                log.debug("Element is not text. The entire XML-branch "
-                        + "is returned.");
+                log.debug("Element is not text. The entire XML-branch is returned.");
                 return e.asXML();
             }
         } else {
@@ -212,7 +208,7 @@ public class XmlStructure {
     public String getLeafValue(String ...path) {
         ArgumentNotValid.checkNotNull(path, "String ...name");
         Element e = getSubChild(path);
-        if(e != null && e.isTextOnly()) {
+        if (e != null && e.isTextOnly()) {
             return e.getText().trim();
         } else {
             log.debug("Element is not text. Null returned.");
@@ -237,13 +233,13 @@ public class XmlStructure {
         // get all leafs along path
         List<Element> elemList = getAllChildrenAlongPath(root, path);
         // check that any leafs exist.
-        if(elemList.isEmpty()) {
+        if (elemList.isEmpty()) {
             return new String[0];
         }
 
         // extract the value of the elements to an array.
         String[] res = new String[elemList.size()];
-        for(int i = 0; i < elemList.size(); i++) {
+        for (int i = 0; i < elemList.size(); i++) {
             res[i] = elemList.get(i).getText().trim();
         }
 
@@ -282,8 +278,7 @@ public class XmlStructure {
      * by a tree
      */
     @SuppressWarnings("unchecked")
-    private void overWriting(Element current, Element overwriter) 
-                throws IllegalState {
+    private void overWriting(Element current, Element overwriter) throws IllegalState {
         ArgumentNotValid.checkNotNull(current, "Element current");
         ArgumentNotValid.checkNotNull(overwriter, "Element overwriter");
         // get the attributes to be overwritten
@@ -291,23 +286,23 @@ public class XmlStructure {
         List<Element> addElements = new ArrayList<Element>();
         
         // add branch if it does not exists
-        for(Element e : attributes) {
+        for (Element e : attributes) {
             // find corresponding attribute in current element
             List<Element> curElems = current.elements(e.getName());
             
             // if no such elements in current tree, add branch.
-            if(curElems.isEmpty()) {
+            if (curElems.isEmpty()) {
                 addElements.add(e);
             } else {
                 // 
                 List<Element> overElems = overwriter.elements(e.getName());
 
                 // if the lists have a 1-1 ratio, then overwrite 
-                if(curElems.size() == 1 && overElems.size() == 1) {
+                if (curElems.size() == 1 && overElems.size() == 1) {
                     // only one branch, thus overwrite
                     Element curE = curElems.get(0);
                     // if leaf overwrite value, otherwise repeat for branches. 
-                    if(curE.isTextOnly()) {
+                    if (curE.isTextOnly()) {
                         curE.setText(e.getText().trim()); // TODO Is this necessary
                     } else {
                         overWriting(curE, e);
@@ -316,7 +311,7 @@ public class XmlStructure {
                     // a different amount of current branches exist (not 0).
                     // Therefore remove the branches in current tree, 
                     // and add replacements.
-                    for(Element curE : curElems) {
+                    for (Element curE : curElems) {
                         current.remove(curE);
                     }
                     // add only current branch, since the others will follow.
@@ -324,9 +319,9 @@ public class XmlStructure {
                 }
             }            
         }
-        
+
         // add all the new branches to the current branch.
-        for(Element e : addElements) {
+        for (Element e : addElements) {
             current.add(e.createCopy());
         }
     }
@@ -342,18 +337,18 @@ public class XmlStructure {
         ArgumentNotValid.checkNotNullOrEmpty(value, "String Value");
         ArgumentNotValid.checkNotNull(path, "String path");
         ArgumentNotValid.checkPositive(path.length, "Size of String path[]");
-        
+
         // get leaf element
         Element current = branch;
-        for(String s : path) {
+        for (String s : path) {
             current = current.element(s);
             
             // Do not overwrite non-existing element.
-            if(current == null) {
+            if (current == null) {
                 return;
             }
         }
-        
+
         // Set the new value
         current.setText(value);
     }
@@ -376,11 +371,11 @@ public class XmlStructure {
         
         // get leaf element
         Element current = branch;
-        for(String s : path) {
+        for (String s : path) {
             current = current.element(s);
             
             // Do not overwrite non-existing element.
-            if(current == null) {
+            if (current == null) {
                 return;
             }
         }
@@ -403,14 +398,11 @@ public class XmlStructure {
         ArgumentNotValid.checkNotNullOrEmpty(content, "String name");
 
         try{
-            ByteArrayInputStream in = new ByteArrayInputStream(
-                    content.getBytes());
+            ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes());
             Document doc = XmlUtils.getXmlDoc(in);
-
             return doc.getRootElement();
         } catch (Exception e) {
-            LogFactory.getLog(XmlStructure.class).warn(
-                    "makeElementFromString error caugth. Null returned.", e);
+            log.warn("makeElementFromString error caugth. Null returned.", e);
             return null;
         }
     }
@@ -424,13 +416,12 @@ public class XmlStructure {
      */
     public static String pathAndContentToXML(String content, String ... path) {
         ArgumentNotValid.checkNotNullOrEmpty(content, "String content");
-        ArgumentNotValid.checkNotNegative(path.length, 
-                "Size of 'String ... path'");
+        ArgumentNotValid.checkNotNegative(path.length, "Size of 'String ... path'");
 
         StringBuilder res = new StringBuilder();
 
         // write path to the leaf
-        for(int i = 0; i<path.length; i++) {
+        for (int i = 0; i<path.length; i++) {
             String st = path[i];
             res.append(Constants.changeToXMLBeginScope(st));
         }
@@ -438,7 +429,7 @@ public class XmlStructure {
         res.append(content);
 
         // write path back from leaf (close xml).
-        for(int i = path.length-1; i >= 0; i--) {
+        for (int i = path.length-1; i >= 0; i--) {
             String st = path[i];
             res.append(Constants.changeToXMLEndScope(st));
         }
@@ -465,20 +456,20 @@ public class XmlStructure {
         List<Element> res = new ArrayList<Element>();
 
         // get value from children
-        if(path.length > 1){
+        if (path.length > 1){
             // create the new path
             String[] nextPath = new String[path.length -1];
-            for(int i = 1; i < path.length; i++) {
+            for (int i = 1; i < path.length; i++) {
                 nextPath[i-1] = path[i];
             }
 
             // Get the list of children at next level of the path.
             List<Element> children = current.elements(path[0]);
-            for(Element el : children) {
+            for (Element el : children) {
                     // the the result of these children.
                 List<Element> childRes = getAllChildrenAlongPath(el, nextPath);
                 // put children result into current result. 
-                for(Element cr : childRes) {
+                for (Element cr : childRes) {
                     res.add(cr);
                 }
             }
@@ -489,4 +480,5 @@ public class XmlStructure {
 
         return res;
     }
+
 }

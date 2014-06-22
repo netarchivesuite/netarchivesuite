@@ -31,11 +31,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -55,15 +55,12 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * archives, and is not considered responsible for making MD5 checksums.
  */
 public class Bitarchive {
-    /**
-     * Administrative data for the current bitarchive.
-     */
+
+	/** Administrative data for the current bitarchive. */
     private BitarchiveAdmin admin;
 
-    /**
-     * Logging output place.
-     */
-    protected final Log log = LogFactory.getLog(getClass().getName());
+    /** Logging output place. */
+    protected static final Logger log = LoggerFactory.getLogger(Bitarchive.class);
 
     /** The instance of the bitarchive. */
     private static Bitarchive instance;
@@ -112,21 +109,19 @@ public class Bitarchive {
          * TODO Change return type into RemoteFile. This should only cause
          * changes in GetFileMessage.
          */
-        log.info("GET: " + arcfile + ":" + index);
+        log.info("GET: {}:{}", arcfile, index);
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "arcfile");
         BitarchiveARCFile barc = admin.lookup(arcfile);
         if (barc == null) {
-            log.debug("Get request for file not on this machine: " + arcfile);
+            log.debug("Get request for file not on this machine: {}", arcfile);
             return null;
         }
         ArchiveReader arcReader = null;
         ArchiveRecord arc = null;
         try {
             if ((barc.getSize() <= index) || (index < 0)) {
-                String s = "GET: index out of bounds: " + arcfile + ":" + index
-                        + " > " + barc.getSize();
-                log.warn(s);
-                throw new ArgumentNotValid(s);
+                log.warn("GET: index out of bounds: {}:{} > {}", arcfile, index, barc.getSize());
+                throw new ArgumentNotValid("GET: index out of bounds: " + arcfile + ":" + index + " > " + barc.getSize());
             }
             File in = barc.getFilePath();
             arcReader = ArchiveReaderFactory.get(in);
@@ -134,8 +129,7 @@ public class Bitarchive {
             BitarchiveRecord result = new BitarchiveRecord(arc, arcfile);
 
             // release resources locked
-            log.info("GET: Got " + result.getLength()
-                    + " bytes of data from " + arcfile + ":" + index);
+            log.info("GET: Got {} bytes of data from {}:{}", result.getLength(), arcfile, index);
             // try {
             // Thread.sleep(1000);
             // } catch (InterruptedException e) {
@@ -143,15 +137,11 @@ public class Bitarchive {
             // }
             return result;
         } catch (IOException e) {
-            final String msg = "Could not get data from " + arcfile + " at: "
-                    + index + "; Stored at: " + barc.getFilePath();
-            log.warn(msg);
-            throw new IOFailure(msg, e);
+            log.warn("Could not get data from {} at: {}; Stored at: {}", arcfile, index, barc.getFilePath());
+            throw new IOFailure("Could not get data from " + arcfile + " at: " + index + "; Stored at: " + barc.getFilePath(), e);
         } catch (IndexOutOfBoundsException e) {
-            final String msg = "Could not get data from " + arcfile + " at: "
-                    + index + "; Stored at: " + barc.getFilePath();
-            log.warn(msg);
-            throw new IOFailure(msg, e);
+            log.warn("Could not get data from {} at: {}; Stored at: {}", arcfile, index, barc.getFilePath());
+            throw new IOFailure("Could not get data from " + arcfile + " at: " + index + "; Stored at: " + barc.getFilePath(), e);
         } finally {
             try {
                 if (arc != null) {
@@ -161,7 +151,7 @@ public class Bitarchive {
                     arcReader.close();
                 }
             } catch (IOException e) {
-                log.warn("Could not close ARCReader or ARCRecord: " + e);
+                log.warn("Could not close ARCReader or ARCRecord!", e);
             }
         }
     }
@@ -181,24 +171,21 @@ public class Bitarchive {
      * @throws ArgumentNotValid
      *             if arcfile is null or the filename is null or empty.
      */
-    public void upload(RemoteFile arcfile, String fileName)
-            throws PermissionDenied, ArgumentNotValid, IOFailure {
-        log.info("Upload: " + arcfile);
+    public void upload(RemoteFile arcfile, String fileName) throws PermissionDenied, ArgumentNotValid, IOFailure {
+        log.info("Upload: {}", arcfile);
         // Verify input parameters
         ArgumentNotValid.checkNotNull(arcfile, "arcfile");
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "fileName");
 
         // Check if file already exists in the archive
         if (admin.lookup(fileName) != null) {
-            String errMsg = "Upload: file already exists: '" + fileName
-                            + "' while uploading '" + arcfile + "'.";
-            log.warn(errMsg);
-            throw new PermissionDenied(errMsg);
+            log.warn("Upload: file already exists: '{}' while uploading '{}'.", fileName, arcfile);
+            throw new PermissionDenied("Upload: file already exists: '" + fileName + "' while uploading '" + arcfile + "'.");
         }
 
         // Everything seems ok, initiate copy of file into archive
         copyRemoteFileToArchive(arcfile, fileName);
-        log.info("Upload: completed uploading " + fileName);
+        log.info("Upload: completed uploading {}", fileName);
     }
 
     /**
@@ -220,32 +207,25 @@ public class Bitarchive {
      */
     public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) 
             throws ArgumentNotValid, IOFailure {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                bitarchiveAppId, "String bitarchiveAppId");
+        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveAppId, "String bitarchiveAppId");
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
-        log.info("Starting batch job on bitarchive application with id '"
-                + bitarchiveAppId + "': '" + job.getClass().getName() 
-                + "', on filename-pattern: '" + job.getFilenamePattern() + "'");
+        log.info("Starting batch job on bitarchive application with id '{}': '{}', on filename-pattern: '{}'",
+        		bitarchiveAppId, job.getClass().getName(), job.getFilenamePattern());
         BatchStatus returnStatus;
         
         File tmpFile = null;
         try {
-            tmpFile = File.createTempFile("BatchOutput", "",
-                    FileUtils.getTempDir());
+            tmpFile = File.createTempFile("BatchOutput", "", FileUtils.getTempDir());
             final OutputStream os = new FileOutputStream(tmpFile);
 
             try {
                 // Run the batch job
-                log.debug("Batch: Job " + job + " started at "
-                        + new Date());
-                File[] processFiles
-                        = admin.getFilesMatching(job.getFilenamePattern());
+                log.debug("Batch: Job {} started at {}", job, new Date());
+                File[] processFiles = admin.getFilesMatching(job.getFilenamePattern());
 
-                final BatchLocalFiles localBatchRunner =
-                    new BatchLocalFiles(processFiles);
+                final BatchLocalFiles localBatchRunner = new BatchLocalFiles(processFiles);
                 localBatchRunner.run(job, os);
-                log.debug("Batch: Job " + job + " finished at "
-                        + new Date());
+                log.debug("Batch: Job {} finished at {}", job, new Date());
             } finally { // Make sure the OutputStream is closed no matter what.
                 // This allows us to delete the file on Windows
                 // in case of error.
@@ -253,25 +233,18 @@ public class Bitarchive {
                     os.close();
                 } catch (IOException e) {
                     // We're cleaning up, failing to close won't stop us
-                    log.warn(
-                            "Failed to close outputstream in batch");
+                    log.warn("Failed to close outputstream in batch");
                 }
             }
             // write output from batch job back to remote file
-            returnStatus = new BatchStatus(bitarchiveAppId,
-                    job.getFilesFailed(),
-                    job.getNoOfFilesProcessed(),
-                    RemoteFileFactory.getMovefileInstance(tmpFile),
-                    job.getExceptions());
+            returnStatus = new BatchStatus(bitarchiveAppId, job.getFilesFailed(), job.getNoOfFilesProcessed(),
+                    RemoteFileFactory.getMovefileInstance(tmpFile), job.getExceptions());
         } catch (IOException e) {
-            log.fatal("Failed to create temporary file for batch "
-                    + job, e);
-            throw new IOFailure("Failed to create temporary file for batch "
-                    + job, e);
+            log.error("Failed to create temporary file for batch {}", job, e);
+            throw new IOFailure("Failed to create temporary file for batch " + job, e);
         }
-        log.info("Finished batch job on bitarchive application with id '"
-                       + bitarchiveAppId + "': '" + job.getClass().getName()
-                       + "', on filename-pattern: '" + job.getFilenamePattern() + "' + with result: " + returnStatus);
+        log.info("Finished batch job on bitarchive application with id '{}': '{}', on filename-pattern: '{}' + with result: {}",
+        		bitarchiveAppId, job.getClass().getName(), job.getFilenamePattern(), returnStatus);
         return returnStatus;
     }
 
@@ -287,10 +260,8 @@ public class Bitarchive {
      * @throws IOFailure
      *             if an error occurs while copying into the archive.
      */
-    private File copyRemoteFileToArchive(RemoteFile arcfile, String fileName)
-            throws IOFailure {
-        File tempDestination = admin.getTemporaryPath(fileName, 
-                arcfile.getSize());
+    private File copyRemoteFileToArchive(RemoteFile arcfile, String fileName) throws IOFailure {
+        File tempDestination = admin.getTemporaryPath(fileName, arcfile.getSize());
         File destination = null;
         try {
             //The file is first copied to a temporary destination on the same
@@ -322,16 +293,16 @@ public class Bitarchive {
      * @throws ArgumentNotValid If arcFileID was null or empty.
      */
     public File getFile(String arcFileID) throws ArgumentNotValid {
-        log.info("Get file '" + arcFileID + "'");
+        log.info("Get file '{}'", arcFileID);
         ArgumentNotValid.checkNotNullOrEmpty(arcFileID, "arcFileID");
         BitarchiveARCFile barc = admin.lookup(arcFileID);
         if (barc == null) { // the file with ID: arcFileID was not found
-            log.debug("File '" + arcFileID + "' not found on this machine");
+            log.debug("File '{}' not found on this machine", arcFileID);
             return null;
         }
 
         File path = barc.getFilePath();
-        log.info("Getting file '" + path + "'");
+        log.info("Getting file '{}'", path);
         return path;
     }
 
@@ -348,4 +319,5 @@ public class Bitarchive {
         }
         return instance;
     }
+
 }

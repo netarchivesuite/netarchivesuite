@@ -1,40 +1,41 @@
 /* $Id$
-* $Revision$
-* $Date$
-* $Author$
-*
-* The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+ * $Revision$
+ * $Date$
+ * $Author$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
  * University Library, the National Library of France and the Austrian
  * National Library.
-*
-* This library is free software; you can redistribute it and/or
-* modify it under the terms of the GNU Lesser General Public
-* License as published by the Free Software Foundation; either
-* version 2.1 of the License, or (at your option) any later version.
-*
-* This library is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-* Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public
-* License along with this library; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 package dk.netarkivet.monitor.jmx;
+
+import java.io.IOException;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -42,11 +43,10 @@ import dk.netarkivet.common.utils.JMXUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.monitor.MonitorSettings;
 
-
 /** Creates RMI-based JMX connections to remote servers. */
-public class RmiProxyConnectionFactory implements
-                                       JMXProxyConnectionFactory {
-    /**
+public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
+
+	/**
      * Returns a JMXProxyFactory for a specific server, jmxport, rmiport,
      * username, and password. Makes sure that an initial context for JNDI has
      * been specified. Then constructs a RMI-based JMXServiceUrl using the
@@ -64,26 +64,20 @@ public class RmiProxyConnectionFactory implements
      *
      * @return a JMXProxyFactory with the above properties.
      */
-    public JMXProxyConnection getConnection(String server, int jmxPort,
-                                            int rmiPort, String userName,
-                                            String password) {
+    public JMXProxyConnection getConnection(String server, int jmxPort, int rmiPort, String userName, String password) {
         ArgumentNotValid.checkNotNullOrEmpty(server, "String server");
         ArgumentNotValid.checkNotNegative(jmxPort, "int jmxPort");
         ArgumentNotValid.checkNotNegative(rmiPort, "int rmiPort");
         ArgumentNotValid.checkNotNullOrEmpty(userName, "String userName");
         ArgumentNotValid.checkNotNullOrEmpty(password, "String password");
-        return
-                new MBeanServerProxyConnection(server, jmxPort, rmiPort,
-                                               userName,
-                                               password);
+        return new MBeanServerProxyConnection(server, jmxPort, rmiPort, userName, password);
     }
 
     /**
      * A JMXProxyFactory that constructs proxies by forwarding method calls
      * through an MBeanServerConnection.
      */
-    private static class MBeanServerProxyConnection
-            implements JMXProxyConnection {
+    private static class MBeanServerProxyConnection implements JMXProxyConnection {
         /** The connection to use for method call forwarding. */
         private MBeanServerConnection connection;
         /** Whether we are currently in the process of connecting. */
@@ -99,11 +93,9 @@ public class RmiProxyConnectionFactory implements
         /** The JMX password on the server. */
         private String password;
         /** The class logger. */
-        private static Log log
-                = LogFactory.getLog(MBeanServerProxyConnection.class);
+        private static final Logger log = LoggerFactory.getLogger(MBeanServerProxyConnection.class);
         /** How long to wait for the proxied JMX connection in milliseconds. */
-        private static final long JMX_TIMEOUT
-                = Settings.getLong(MonitorSettings.JMX_PROXY_TIMEOUT);
+        private static final long JMX_TIMEOUT = Settings.getLong(MonitorSettings.JMX_PROXY_TIMEOUT);
 
         /**
          * Proxies an MBean connection with the given parameters.
@@ -117,11 +109,8 @@ public class RmiProxyConnectionFactory implements
          * @param password the password for access to the MBeanserver on that
          *                 server
          */
-        public MBeanServerProxyConnection(final String server,
-                                          final int jmxPort,
-                                          final int rmiPort,
-                                          final String userName,
-                                          final String password) {
+        public MBeanServerProxyConnection(final String server, final int jmxPort, final int rmiPort,
+        		final String userName, final String password) {
             this.server = server;
             this.jmxPort = jmxPort;
             this.rmiPort = rmiPort;
@@ -143,17 +132,11 @@ public class RmiProxyConnectionFactory implements
                         && connecting.compareAndSet(false, true)) {
                         try {
                             connection = JMXUtils.getMBeanServerConnection(
-                                    server, jmxPort, rmiPort, userName,
-                                    password);
-                            log.info("Connected to remote JMX"
-                                     + " server '" + server + "', port '"
-                                     + jmxPort + "', rmiPort '" + rmiPort
-                                     + "', user '" + userName + "'");
+                            		server, jmxPort, rmiPort, userName, password);
+                            log.info("Connected to remote JMX server '{}', port '{}', rmiPort '{}', user '{}'",
+                            		server, jmxPort, rmiPort, userName);
                         } catch (Exception e) {
-                            log.warn("Unable to connect to remote JMX"
-                                     + " server '" + server + "', port '"
-                                     + jmxPort + "', rmiPort '" + rmiPort
-                                     + "', user '" + userName + "'", e);
+                            log.warn("Unable to connect to remote JMX server '{}', port '{}', rmiPort '{}', user '{}'", server, jmxPort, rmiPort, userName, e);
                         } finally {
                             connecting.set(false);
                             synchronized (connecting) {
@@ -170,12 +153,10 @@ public class RmiProxyConnectionFactory implements
          */
         private void waitForConnection() {
             long timeouttime = System.currentTimeMillis() + JMX_TIMEOUT;
-            while (connecting.get()
-                   && (timeouttime - System.currentTimeMillis() > 0)) {
+            while (connecting.get() && (timeouttime - System.currentTimeMillis() > 0)) {
                 try {
                     synchronized (connecting) {
-                        connecting.wait(Math.max(
-                                timeouttime - System.currentTimeMillis(), 1));
+                        connecting.wait(Math.max(timeouttime - System.currentTimeMillis(), 1));
                     }
                 } catch (InterruptedException e) {
                     //Just ignore it
@@ -200,18 +181,14 @@ public class RmiProxyConnectionFactory implements
                 waitForConnection();
             }
             if (connection == null) {
-                throw new IOFailure(
-                        "Could not get connection for query '" + query + "'");
+                throw new IOFailure("Could not get connection for query '" + query + "'");
             }
             try {
                 return connection.queryNames(new ObjectName(query), null);
             } catch (IOException e) {
-                throw new IOFailure("Unable to query for remote mbeans "
-                                    + "matching '" + query + "'", e);
+                throw new IOFailure("Unable to query for remote mbeans matching '" + query + "'", e);
             } catch (MalformedObjectNameException e) {
-                throw new IOFailure(
-                        "Couldn't construct the objectName with string"
-                        + " argument:' " + query + "'.", e);
+                throw new IOFailure("Couldn't construct the objectName with string argument:' " + query + "'.", e);
             }
         }
 
@@ -257,11 +234,9 @@ public class RmiProxyConnectionFactory implements
         public <T> T createProxy(ObjectName name, Class<T> intf) {
             ArgumentNotValid.checkNotNull(name, "ObjectName name");
             ArgumentNotValid.checkNotNull(intf, "Class<T> intf");
-            return MBeanServerInvocationHandler.newProxyInstance(
-                    connection,
-                    name,
-                    intf,
-                    false); //Set true to enable notifications
+            //Set true to enable notifications
+            return MBeanServerInvocationHandler.newProxyInstance(connection, name, intf, false);
         }
     }
+
 }

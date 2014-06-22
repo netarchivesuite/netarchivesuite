@@ -27,8 +27,8 @@ package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.util.TimerTask;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -44,7 +44,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class HeartBeatSender extends TimerTask {
     /** The log.*/ 
-    private final Log log = LogFactory.getLog(this.getClass().getName());
+    private final Logger log = LoggerFactory.getLogger(HeartBeatSender.class);
     /** the receiver to receive heartbeats. */
     private ChannelID receiver;
     /** the BitarchiveServer of this HeartBeatSender. */
@@ -62,8 +62,7 @@ public class HeartBeatSender extends TimerTask {
      * @throws ArgumentNotValid - if in_baServer is null
      * @throws IOFailure        - if getting an JMSConnection instance fails
      */
-    public HeartBeatSender(ChannelID inReceiver, BitarchiveServer inBaServer)
-            throws ArgumentNotValid, IOFailure {
+    public HeartBeatSender(ChannelID inReceiver, BitarchiveServer inBaServer) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(inBaServer, "inBaServer");
         receiver = inReceiver;
         applicationId = inBaServer.getBitarchiveAppId();
@@ -79,9 +78,7 @@ public class HeartBeatSender extends TimerTask {
         try {
             con.send(new HeartBeatMessage(receiver, applicationId));
         } catch (Throwable t) {
-            log.fatal("An unexpected error occurred."
-                    + "BitarchiveServer couldn't ping BitarchiveMonitorServer.",
-                    t);
+            log.error("An unexpected error occurred. BitarchiveServer couldn't ping BitarchiveMonitorServer.", t);
         }
     }
     
@@ -91,7 +88,7 @@ public class HeartBeatSender extends TimerTask {
      * @return The string representation of this instance.
      */
     public String toString() {
-        return super.toString() + ", Receiver: " + receiver 
-        + ", BitArchiveServer: " + baServer.toString();
+        return super.toString() + ", Receiver: " + receiver + ", BitArchiveServer: " + baServer.toString();
     }
+
 }

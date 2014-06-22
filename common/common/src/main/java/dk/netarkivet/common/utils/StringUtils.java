@@ -38,8 +38,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Utilities for working with strings.
  */
 public final class StringUtils {
-    /** Utility class, do not initialise. */
-    private StringUtils() {}
+
+	/**
+	 * Utility class, do not initialise.
+	 */
+    private StringUtils() {
+    }
 
     /**
      * Replace all occurrences of oldString with newString in a string.
@@ -50,22 +54,20 @@ public final class StringUtils {
      * @return the resulting string, where all occurrences of oldString are
      *  replaced with newString.
      */
-    public static String replace(String sentence, String oldString,
-                                       String newString) {
-        StringBuffer newStr = new StringBuffer();
+    public static String replace(String sentence, String oldString, String newString) {
+        StringBuilder newStr = new StringBuilder();
         int found = 0;
         int lastPointer = 0;
         do {
             found = sentence.indexOf(oldString, lastPointer);
 
             if (found < 0) {
-                newStr.append(sentence
-                        .substring(lastPointer, sentence.length()));
+                newStr.append(sentence.substring(lastPointer, sentence.length()));
             } else {
                 if (found > lastPointer) {
                     newStr.append(sentence.substring(lastPointer, found));
-                newStr.append(newString);
-                lastPointer = found + oldString.length();
+                    newStr.append(newString);
+                    lastPointer = found + oldString.length();
                 }
             }
         } while (found > -1);
@@ -82,8 +84,7 @@ public final class StringUtils {
      * @param <T> The type of objects to conjoin.
      * @return The concatenated string, or null if the list was null.
      */
-    public static <T> String conjoin(String sep, Collection<T> objects
-    ) {
+    public static <T> String conjoin(String sep, Collection<T> objects) {
         if (objects == null) {
             return null;
         }
@@ -116,8 +117,7 @@ public final class StringUtils {
      * amount of entries in the collection.
      * @throws ArgumentNotValid If the separator or the objects are null.
      */
-    public static <T> String conjoin(String separator, Collection<T>
-            objects, int max) throws ArgumentNotValid {
+    public static <T> String conjoin(String separator, Collection<T> objects, int max) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(separator, "String separator");
         ArgumentNotValid.checkNotNull(objects, "Collection<T> objects");
 
@@ -170,8 +170,7 @@ public final class StringUtils {
      * @param post A string that will be put after each string in the list.
      * @return The joined string, or null if strings is null.
      */
-    public static String surjoin(List<String> strings,
-                                       String pre, String post) {
+    public static String surjoin(List<String> strings, String pre, String post) {
         if (strings == null) {
             return null;
         }
@@ -211,8 +210,7 @@ public final class StringUtils {
             try {
                 resultList.add(Integer.parseInt(element));
             } catch (NumberFormatException e) {
-                throw new ArgumentNotValid("Unable to parse '"
-                        +  element + "' as int");
+                throw new ArgumentNotValid("Unable to parse '" +  element + "' as int");
             }
         }
         return resultList;
@@ -242,16 +240,11 @@ public final class StringUtils {
     /** A minute in seconds. */
     private static final long MINUTE = 60;
 
-    /**
-     * Formats a decimal number.
-     */
+    /** Formats a decimal number. */
     private static final DecimalFormat DECIMAL = new DecimalFormat("###.##");
 
-    /**
-     * Default date format : yyyy/MM/dd HH:mm:ss .
-     */
-    private static final SimpleDateFormat DEFAULT_DATE = new SimpleDateFormat(
-            "yyyy/MM/dd HH:mm:ss");
+    /** Default date format : yyyy/MM/dd HH:mm:ss */
+    private static final SimpleDateFormat DEFAULT_DATE = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     /**
      * Formats a duration in seconds as a string of the form "3d 04:12:56".
@@ -263,17 +256,13 @@ public final class StringUtils {
         if (seconds > 0L) {
             long lRest;
 
-            String strDays = formatDurationLpad(String.valueOf(seconds / DAY))
-                    + "d ";
+            String strDays = formatDurationLpad(String.valueOf(seconds / DAY)) + "d ";
             lRest = seconds % DAY;
 
-            String strHours = formatDurationLpad(String.valueOf(lRest / HOUR))
-                    + ":";
+            String strHours = formatDurationLpad(String.valueOf(lRest / HOUR)) + ":";
             lRest %= HOUR;
 
-            String strMinutes = formatDurationLpad(String.valueOf(lRest
-                    / MINUTE))
-                    + ":";
+            String strMinutes = formatDurationLpad(String.valueOf(lRest / MINUTE)) + ":";
             lRest %= MINUTE;
 
             String strSeconds = formatDurationLpad(String.valueOf(lRest));
@@ -381,8 +370,7 @@ public final class StringUtils {
                 // We split after the found blank space so check that this is
                 // meaningful.
                 if (foundIndex != -1 && inputLine.length() > foundIndex + 1) {
-                    inputLine = inputLine.substring(0, foundIndex+1) + "\n"
-                                + inputLine.substring(foundIndex+1);
+                    inputLine = inputLine.substring(0, foundIndex+1) + "\n" + inputLine.substring(foundIndex+1);
                 }
             }
             output.append(inputLine);
@@ -414,8 +402,7 @@ public final class StringUtils {
             while (stillSplitting) {
                 int nextSplittingIndex = lastSplittingIndex + maxLineLength;
                 if (nextSplittingIndex < currentLineLength -1) {
-                    output.append(inputLine.substring(lastSplittingIndex,
-                                                      nextSplittingIndex));
+                    output.append(inputLine.substring(lastSplittingIndex, nextSplittingIndex));
                     output.append("\n");
                     lastSplittingIndex = nextSplittingIndex;
                 } else {

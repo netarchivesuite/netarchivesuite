@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
@@ -60,8 +60,9 @@ import dk.netarkivet.common.exceptions.UnknownID;
  */
 @Deprecated
 public class UpdateableAdminData extends AdminData implements Admin {
-    /** Logger for this class. */
-    private Log log = LogFactory.getLog(getClass().getName());
+
+	/** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(UpdateableAdminData.class);
 
     /** the singleton for the UpdateableAdminData class. */
     private static UpdateableAdminData instance;
@@ -76,8 +77,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
     private UpdateableAdminData() throws IOFailure, PermissionDenied {
         super();
         if (!adminDataFile.exists()) {
-            log.info("Creating new admin data file "
-                    + adminDataFile.getAbsolutePath());
+            log.info("Creating new admin data file {}", adminDataFile.getAbsolutePath());
         }
         // Always rewrite after read, as we're cutting out old entries
         // to shorten the file.
@@ -101,8 +101,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @param replyInfo A replyInfo for this entry (may be null)
      * @param checksum  The Checksum for this file
      */
-    public void addEntry(String filename, StoreMessage replyInfo,
-                         String checksum) {
+    public void addEntry(String filename, StoreMessage replyInfo, String checksum) {
         addEntry(filename, replyInfo, checksum, true);
     }
 
@@ -114,13 +113,10 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @param checksum  The Checksum for this file
      * @param persistNow Shall we persist this entry now?
      */
-    public void addEntry(String filename, StoreMessage replyInfo,
-                         String checksum,
-                         boolean persistNow) {
+    public void addEntry(String filename, StoreMessage replyInfo, String checksum, boolean persistNow) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
-        storeEntries.put(filename,
-                new ArcRepositoryEntry(filename, checksum, replyInfo));
+        storeEntries.put(filename, new ArcRepositoryEntry(filename, checksum, replyInfo));
         if (persistNow) {
             //Persist the new entry
             //Note: This appends the new entry to the end of the admindata file
@@ -136,13 +132,11 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @param replyInfo   A StoreMessage object related to this filename.
      * @throws UnknownID if no info has been registered for the filename.
      */
-    public void setReplyInfo(String fileName, StoreMessage replyInfo)
-            throws UnknownID {
+    public void setReplyInfo(String fileName, StoreMessage replyInfo) throws UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
         ArgumentNotValid.checkNotNull(replyInfo, "replyInfo");
         if (!hasEntry(fileName)) {
-            throw new UnknownID("Cannot set replyinfo '" + replyInfo
-                    + "' for unregistered file '" + fileName + "'");
+            throw new UnknownID("Cannot set replyinfo '" + replyInfo + "' for unregistered file '" + fileName + "'");
         }
         ArcRepositoryEntry entry = storeEntries.get(fileName);
         entry.setReplyInfo(replyInfo); //TODO Should this be persisted
@@ -156,12 +150,10 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @throws UnknownID If the filename is not known.
      *         or no replyInfo is associated with arcfileName.
      */
-    public StoreMessage removeReplyInfo(String fileName)
-            throws UnknownID {
+    public StoreMessage removeReplyInfo(String fileName) throws UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
         if (!hasEntry(fileName)) {
-            throw new UnknownID("Cannot get reply info for unregistered file '"
-                    + fileName + "'");
+            throw new UnknownID("Cannot get reply info for unregistered file '" + fileName + "'");
         }
         if (!hasReplyInfo(fileName)) {
             throw new UnknownID("replyInfo not set for " + fileName);
@@ -179,15 +171,14 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @throws UnknownID If the file does not have a store entry.
      * @throws ArgumentNotValid If the arguments are null or empty
      */
-    public void setState(String fileName, String replicaID,
-            ReplicaStoreState state) throws UnknownID, ArgumentNotValid {
+    public void setState(String fileName, String replicaID, ReplicaStoreState state)
+    		throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
         ArgumentNotValid.checkNotNullOrEmpty(replicaID, "String replicaID");
         ArgumentNotValid.checkNotNull(state, "ReplicaStoreState state");
         if (!hasEntry(fileName)) {
-            final String message = "Unregistered file '" + fileName
-                                + "' cannot be set to state " + state + " in '"
-                                + replicaID + "'";
+            final String message = "Unregistered file '" + fileName + "' cannot be set to state " + state + " in '"
+            		+ replicaID + "'";
             log.warn(message);
             throw new UnknownID(message);
         }
@@ -210,17 +201,13 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @throws ArgumentNotValid If the arcfileName or the checksum is either 
      * null or the empty string.
      */
-    public void setCheckSum(String fileName, String checkSum) 
-            throws ArgumentNotValid, UnknownID {
+    public void setCheckSum(String fileName, String checkSum) throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
         ArgumentNotValid.checkNotNullOrEmpty(checkSum, "String checkSum");
         if (!hasEntry(fileName)) {
-            throw new UnknownID("Cannot change checksum for unregistered file '"
-                    + fileName + "'");
+            throw new UnknownID("Cannot change checksum for unregistered file '" + fileName + "'");
         }
-        log.trace("Changing checksum for " + fileName
-                + " from " + getCheckSum(fileName)
-                + " to " + checkSum);
+        log.trace("Changing checksum for {} from {} to {}", fileName, getCheckSum(fileName), checkSum);
         storeEntries.get(fileName).setChecksum(checkSum);
         write(); // Write everything to persistent storage
     }
@@ -241,17 +228,14 @@ public class UpdateableAdminData extends AdminData implements Admin {
     private void write() throws IOFailure {
         // First write admindata to a temporary file.
         final File adminDataStore = adminDataFile;
-        final File tmpDataStore =
-                new File(adminDir, AdminData.ADMIN_FILE_NAME + ".tmp");
-        final File backupDataStore =
-                new File(adminDir, AdminData.ADMIN_FILE_NAME + ".backup");
+        final File tmpDataStore = new File(adminDir, AdminData.ADMIN_FILE_NAME + ".tmp");
+        final File backupDataStore = new File(adminDir, AdminData.ADMIN_FILE_NAME + ".backup");
         PrintWriter writer = null;
         try {
             final FileWriter out = new FileWriter(tmpDataStore);
             writer = new PrintWriter(out);
             writer.println(VERSION_NUMBER);
-            for (Map.Entry<String, ArcRepositoryEntry> entry
-                    : storeEntries.entrySet()) {
+            for (Map.Entry<String, ArcRepositoryEntry> entry : storeEntries.entrySet()) {
                 final String arcfilename = entry.getKey();
                 final ArcRepositoryEntry arcrepentry = entry.getValue();
                 write(writer, arcfilename, arcrepentry);
@@ -262,8 +246,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
             adminDataStore.renameTo(backupDataStore);
             tmpDataStore.renameTo(adminDataStore);
         } catch (IOException e) {
-            throw new IOFailure("Failed to write admin data to '"
-                    + adminDataFile.getPath() + "'", e);
+            throw new IOFailure("Failed to write admin data to '" + adminDataFile.getPath() + "'", e);
         } finally {
             if (writer != null) {
                 writer.flush();
@@ -288,11 +271,10 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @param arcrepentry The data kept for this arcfile
      * @throws ArgumentNotValid if arcrepentry.getFilename() != arcfilename
      */
-    private void write(PrintWriter writer, String arcfilename,
-            final ArcRepositoryEntry arcrepentry) throws ArgumentNotValid {
-        ArgumentNotValid.checkTrue(
-                arcrepentry.getFilename().equals(arcfilename),
-                "arcrepentry.getFilename() is not equal to arcfilename (!!)");
+    private void write(PrintWriter writer, String arcfilename, final ArcRepositoryEntry arcrepentry)
+    		throws ArgumentNotValid {
+        ArgumentNotValid.checkTrue(arcrepentry.getFilename().equals(arcfilename),
+        		"arcrepentry.getFilename() is not equal to arcfilename (!!)");
 
         arcrepentry.output(writer);
         writer.println();
@@ -313,16 +295,15 @@ public class UpdateableAdminData extends AdminData implements Admin {
             writer = new PrintWriter(out);
             write(writer, filename, entry);
         } catch (IOException e) {
-            throw new IOFailure("Failed to write admin data for '"
-                    + filename + "' to '" + adminDataFile.getName() + "'", e);
+            throw new IOFailure("Failed to write admin data for '" + filename + "' to '" + adminDataFile.getName()
+            		+ "'", e);
         } finally {
             if (writer != null) {
                 writer.flush();
                 writer.close();
             }
         }
-        log.debug("appending entry for filename '" + filename
-                + "' to admin.data");
+        log.debug("appending entry for filename '{}' to admin.data", filename);
     }
 
     /** Makes sure all data is written to disk. */
@@ -332,4 +313,5 @@ public class UpdateableAdminData extends AdminData implements Admin {
         }
         instance = null;
     }
+
 }

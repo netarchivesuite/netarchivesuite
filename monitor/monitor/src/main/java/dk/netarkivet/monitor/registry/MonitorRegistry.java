@@ -30,8 +30,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -41,14 +41,13 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This class is coded to be thread safe.
  */
 public class MonitorRegistry {
-    /** A map from host names to known host entries. */
-    private Map<String, Set<HostEntry>> hostEntries
-            = Collections.synchronizedMap(new HashMap<String,
-            Set<HostEntry>>());
+
+	/** A map from host names to known host entries. */
+    private Map<String, Set<HostEntry>> hostEntries = Collections.synchronizedMap(new HashMap<String, Set<HostEntry>>());
     /** The singleton instance. */
     private static MonitorRegistry instance;
     /** The logger for this class. */
-    private Log log = LogFactory.getLog(getClass());
+    private static final Logger log = LoggerFactory.getLogger(MonitorRegistry.class);
 
     /** Get the singleton instance.
      *
@@ -75,14 +74,14 @@ public class MonitorRegistry {
             hostEntries.put(hostEntry.getName(), set);
         }
         if (set.add(hostEntry)) {
-            log.info("Added host '" + hostEntry.getName() + "' port "
-                     + hostEntry.getJmxPort() + "/" + hostEntry.getRmiPort());
+            log.info("Added host '{}' port {}/{}",
+            		hostEntry.getName(), hostEntry.getJmxPort(), hostEntry.getRmiPort());
         } else {
+        	// TODO WTF?!
             set.remove(hostEntry);
             set.add(hostEntry);
-            log.trace("Updated time for '" + hostEntry.getName() + "' port "
-                     + hostEntry.getJmxPort() + "/" + hostEntry.getRmiPort()
-                     + " to " + hostEntry.getTime());
+            log.trace("Updated time for '{}' port {}/{} to {}",
+            		hostEntry.getName(), hostEntry.getJmxPort(), hostEntry.getRmiPort(), hostEntry.getTime());
         }
     }
 
@@ -93,4 +92,5 @@ public class MonitorRegistry {
     public synchronized Map<String, Set<HostEntry>> getHostEntries() {
         return new HashMap<String, Set<HostEntry>>((hostEntries));
     }
+
 }

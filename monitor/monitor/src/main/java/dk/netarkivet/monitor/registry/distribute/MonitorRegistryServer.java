@@ -24,8 +24,8 @@
  */
 package dk.netarkivet.monitor.registry.distribute;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -39,19 +39,17 @@ import dk.netarkivet.monitor.registry.MonitorRegistry;
  * themselves to the service. The registry lists hosts that can be monitored
  * with JMX.
  */
-public class MonitorRegistryServer extends MonitorMessageHandler
-        implements CleanupIF {
-    private static MonitorRegistryServer instance;
-    private final Log log = LogFactory.getLog(getClass());
+public class MonitorRegistryServer extends MonitorMessageHandler implements CleanupIF {
+
+	private static MonitorRegistryServer instance;
+    private static final Logger log = LoggerFactory.getLogger(MonitorRegistryServer.class);
 
     /**
      * Start listening for registry messages.
      */
     private MonitorRegistryServer() {
-        JMSConnectionFactory.getInstance().setListener(
-                Channels.getTheMonitorServer(), this);
-        log.info("MonitorRegistryServer listening for messages on channel '"
-                 + Channels.getTheMonitorServer() + "'");
+        JMSConnectionFactory.getInstance().setListener(Channels.getTheMonitorServer(), this);
+        log.info("MonitorRegistryServer listening for messages on channel '{}'", Channels.getTheMonitorServer());
     }
 
     /** Get the registry server singleton.
@@ -81,4 +79,5 @@ public class MonitorRegistryServer extends MonitorMessageHandler
         //JMSConnectionFactory.getInstance().removeListener(
         //        Channels.getTheMonitorServer(), this);
     }
+
 }

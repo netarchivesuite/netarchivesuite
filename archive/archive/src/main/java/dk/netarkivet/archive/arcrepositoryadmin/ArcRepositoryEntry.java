@@ -32,8 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
@@ -48,9 +48,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class ArcRepositoryEntry {
 
-    /**
-     * The filename for this entry (only set in the constructor).
-     */
+    /** The log.*/
+    private static final Logger log = LoggerFactory.getLogger(ArcRepositoryEntry.class);
+
+    /** The filename for this entry (only set in the constructor). */
     private String filename;
 
     /** The checksum of this file.
@@ -68,8 +69,7 @@ public class ArcRepositoryEntry {
      * Note: the value 2 below is a hint to the number of bitarchives
      * in our system.
      */
-    private Map<String, ArchiveStoreState> storeStates =
-            new HashMap<String, ArchiveStoreState>(2);
+    private Map<String, ArchiveStoreState> storeStates = new HashMap<String, ArchiveStoreState>(2);
 
     /** The information used to reply about this entry being done.
      * Once a reply has been sent, this entry is set to null.
@@ -81,7 +81,6 @@ public class ArcRepositoryEntry {
      * String used to separate the different parts of the arcRepositoryEntry,
      * when we write the entry to persistent storage.
      * Make package private, so accessable from AdminData
-     *
      */
     static final String ENTRY_COMPONENT_SEPARATOR_STRING = " , ";
 
@@ -92,17 +91,13 @@ public class ArcRepositoryEntry {
      */
     private static final String GENERAL_DELIMITER = " ";
 
-    /** The log.*/
-    private Log log = LogFactory.getLog(ArcRepositoryEntry.class.getName());
-
     /** Create a new entry with given checksum and replyinfo.
      *
      * @param filename The filename for this entry
      * @param md5sum The checksum for this entry
      * @param replyInfo The one-use-only reply info chunk
      */
-    public ArcRepositoryEntry(String filename, String md5sum, 
-            StoreMessage replyInfo) {
+    public ArcRepositoryEntry(String filename, String md5sum, StoreMessage replyInfo) {
         this.filename = filename;
         this.md5sum = md5sum;
         this.replyInfo = replyInfo;
@@ -127,14 +122,13 @@ public class ArcRepositoryEntry {
      * @return the current ArchiveStoreState for the entry in general
      */
     public ArchiveStoreState getGeneralStoreState() {
-        Set<String> bitarchives = storeStates.keySet();
+    	Set<String> bitarchives = storeStates.keySet();
         // Check whether scenario 1.
         if (bitarchives.size() == 0) {
             return new ArchiveStoreState(ReplicaStoreState.UPLOAD_FAILED);
         }
 
-        String[] bitarchiveNames = bitarchives.toArray(
-                new String[bitarchives.size()]);
+        String[] bitarchiveNames = bitarchives.toArray(new String[bitarchives.size()]);
         // Check whether scenario 2.
         if (bitarchives.size() == 1){
            ArchiveStoreState ass = storeStates.get(bitarchiveNames[0]);
@@ -165,8 +159,7 @@ public class ArcRepositoryEntry {
         // Scenario 3A: if the state of one of the bitarchives equals
         // UPLOAD_FAILED.
         if (failState) {
-            return new ArchiveStoreState(ReplicaStoreState.UPLOAD_FAILED,
-                    lastChanged);
+            return new ArchiveStoreState(ReplicaStoreState.UPLOAD_FAILED, lastChanged);
         }
         
         // Scenario 3B:
@@ -193,8 +186,7 @@ public class ArcRepositoryEntry {
      * @param state the new StoreState for this bitarchive.
      * @param lastchanged the time for when the state was changed
      */
-    void setStoreState(String baId, ReplicaStoreState state,
-            Date lastchanged) {
+    void setStoreState(String baId, ReplicaStoreState state, Date lastchanged) {
         ArchiveStoreState ass = new ArchiveStoreState(state, lastchanged);
         storeStates.put(baId, ass);
     }
@@ -265,10 +257,8 @@ public class ArcRepositoryEntry {
         o.print(md5sum);
         o.print(GENERAL_DELIMITER + getGeneralStoreState().toString());
 
-        for (Map.Entry<String, ArchiveStoreState> entry 
-                : storeStates.entrySet()) {
-            o.print(ENTRY_COMPONENT_SEPARATOR_STRING + entry.getKey()
-                    + GENERAL_DELIMITER + entry.getValue());
+        for (Map.Entry<String, ArchiveStoreState> entry : storeStates.entrySet()) {
+            o.print(ENTRY_COMPONENT_SEPARATOR_STRING + entry.getKey() + GENERAL_DELIMITER + entry.getValue());
         }
     }
 
@@ -287,9 +277,9 @@ public class ArcRepositoryEntry {
      */
     void setReplyInfo(StoreMessage replyInfo) {
         if (this.replyInfo != null) {
-            log.warn("Overwriting replyInfo '" + this.replyInfo
-                    + "' with '" + replyInfo + "'");
+            log.warn("Overwriting replyInfo '{}' with '{}'", this.replyInfo, replyInfo);
         }
         this.replyInfo = replyInfo;
     }
+
 }

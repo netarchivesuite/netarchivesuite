@@ -32,9 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 
-import dk.netarkivet.common.utils.LoggingOutputStream;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.Bitarchive;
@@ -54,6 +53,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.LoggingOutputStream;
 import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
@@ -64,62 +64,37 @@ import dk.netarkivet.common.utils.SystemUtils;
  * message which can be received by a bitarchive and returning appropriate data.
  *
  */
-public class BitarchiveServer extends ArchiveMessageHandler implements
-        CleanupIF {
+public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF {
 
-    /**
-     * The bitarchive serviced by this server.
-     */
+    /** The bitarchive serviced by this server. */
     private Bitarchive ba;
 
-    /**
-     * The admin data for the bit archive.
-     */
+    /** The admin data for the bit archive. */
     private BitarchiveAdmin baa;
 
-    /**
-     * The unique instance of this class.
-     */
+    /** The unique instance of this class. */
     private static BitarchiveServer instance;
 
-    /**
-     * the jms connection.
-     */
+    /** the jms connection. */
     private JMSConnection con;
 
-    /**
-     * The logger used by this class.
-     */
-    private static Log log
-            = LogFactory.getLog(BitarchiveServer.class.getName());
+    /** The logger used by this class. */
+    private static final Logger log = LoggerFactory.getLogger(BitarchiveServer.class);
 
-    /**
-     * the thread which sends heartbeat messages from this bitarchive to its
-     * BitarchiveMonitorServer.
-     */
+    /** the thread which sends heartbeat messages from this bitarchive to its BitarchiveMonitorServer. */
     private HeartBeatSender heartBeatSender;
 
-    /**
-     * the unique id of this application.
-     */
+    /** the unique id of this application. */
     private String bitarchiveAppId;
 
-    /**
-     * Channel to listen on for get/batch/correct.
-     */
+    /** Channel to listen on for get/batch/correct. */
     private ChannelID allBa;
-    /**
-     * Topic to listen on for store.
-     */
+    /** Topic to listen on for store. */
     private ChannelID anyBa;
-    /**
-     * Channel to send BatchEnded messages to when replying.
-     */
+    /** Channel to send BatchEnded messages to when replying. */
     private ChannelID baMon;
     
-    /**
-     * Map between running batchjob processes and their message id.
-     */
+    /** Map between running batchjob processes and their message id. */
     public Map<String, Thread> batchProcesses;
 
     /**
@@ -157,8 +132,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * @throws PermissionDenied - if the temporary directory or the file
      *                            directory cannot be written
      */
-    private BitarchiveServer()
-            throws UnknownID, PermissionDenied {
+    private BitarchiveServer() throws UnknownID, PermissionDenied {
         System.setOut(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.INFO, log, "StdOut: ")));
         System.setErr(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.WARN, log, "StdErr: ")));
         boolean listening = false; // are we listening to queue ANY_BA
@@ -167,11 +141,9 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
             serverdir.mkdirs();
         }
         if (!serverdir.canWrite()) {
-            throw new PermissionDenied(
-                    "Not allowed to write to temp directory '"
-                    + serverdir + "'");
+            throw new PermissionDenied("Not allowed to write to temp directory '" + serverdir + "'");
         }
-        log.info("Storing temporary files at '" + serverdir.getPath() + "'");
+        log.info("Storing temporary files at '{}'", serverdir.getPath());
 
         bitarchiveAppId = createBitarchiveAppId();
 
@@ -186,32 +158,27 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
             con.setListener(anyBa, this);
             listening = true;
         } else {
-            log.warn("Not enough space to guarantee store -- not listening "
-                    + "to " + anyBa.getName());
+            log.warn("Not enough space to guarantee store -- not listening to {}", anyBa.getName());
         }
         
         // create map for batchjobs
-        batchProcesses = Collections.synchronizedMap(new HashMap<String, 
-                Thread>());
+        batchProcesses = Collections.synchronizedMap(new HashMap<String, Thread>());
 
         // Create and start the heartbeat sender
         Timer timer = new Timer(true);
         heartBeatSender = new HeartBeatSender(baMon, this);
-        long frequency
-                = Settings.getLong(
-                ArchiveSettings.BITARCHIVE_HEARTBEAT_FREQUENCY);
+        long frequency = Settings.getLong(ArchiveSettings.BITARCHIVE_HEARTBEAT_FREQUENCY);
         timer.scheduleAtFixedRate(heartBeatSender, 0, frequency);
-        log.info("Heartbeat frequency: '" + frequency + "'");
+        log.info("Heartbeat frequency: '{}'", frequency);
         // Next logentry depends on whether we are listening to ANY_BA or not
-        String logmsg = "Created bitarchive server listening on: "
-            + allBa.getName();
+        String logmsg = "Created bitarchive server listening on: " + allBa.getName();
         if (listening) {
             logmsg += " and " + anyBa.getName();
         }
 
         log.info(logmsg);
 
-        log.info("Broadcasting heartbeats on: " + baMon.getName());
+        log.info("Broadcasting heartbeats on: {}", baMon.getName());
     }
 
     /**
@@ -220,14 +187,14 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * Calls cleanup.
      */
     public synchronized void close() {
-        log.info("BitarchiveServer " + getBitarchiveAppId() + " closing down");
+        log.info("BitarchiveServer {} closing down", getBitarchiveAppId());
         cleanup();
         if (con != null) {
             con.removeListener(allBa, this);
             con.removeListener(anyBa, this);
             con = null;
         }
-        log.info("BitarchiveServer " + getBitarchiveAppId() + " closed down");
+        log.info("BitarchiveServer {} closed down", getBitarchiveAppId());
     }
 
     /**
@@ -260,23 +227,21 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
     public void visit(GetMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetMessage msg");
         BitarchiveRecord bar;
-        log.trace("Processing getMessage(" + msg.getArcFile() + ":"
-                + msg.getIndex() + ").");
+        log.trace("Processing getMessage({}:{}).", msg.getArcFile(), msg.getIndex());
         try {
             bar = ba.get(msg.getArcFile(), msg.getIndex());            
-        } catch (Throwable e) {
-            log.warn("Error while processing get message '" + msg + "'", e);
-            msg.setNotOk(e);
+        } catch (Throwable t) {
+            log.warn("Error while processing get message '{}'", msg, t);
+            msg.setNotOk(t);
             con.reply(msg);
             return;
         }
         if (bar != null) {
             msg.setRecord(bar);
-            log.debug("Sending reply: " + msg.toString());
+            log.debug("Sending reply: {}", msg.toString());
             con.reply(msg);
         } else {
-            log.trace("Record(" + msg.getArcFile() + ":" + msg.getIndex() 
-                    + "). not found on this BitarchiveServer");
+            log.trace("Record({}:{}). not found on this BitarchiveServer", msg.getArcFile(), msg.getIndex());
         }
     }
 
@@ -300,25 +265,21 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                     // simultanously.
                     ba.upload(msg.getRemoteFile(), msg.getArcfileName());
                 }
-            } catch (Throwable e) {
-                log.warn("Error while processing upload message '" + msg + "'",
-                         e);
-                msg.setNotOk(e);
+            } catch (Throwable t) {
+                log.warn("Error while processing upload message '{}'", msg, t);
+                msg.setNotOk(t);
             } finally { // Stop listening if disk is now full
                 if (!baa.hasEnoughSpace()) {
-                    log.warn("Cannot guarantee enough space, no longer "
-                            + "listening to " + anyBa.getName() 
-                            + "for uploads");
+                    log.warn("Cannot guarantee enough space, no longer listening to {} for uploads", anyBa.getName());
                     con.removeListener(anyBa, this);
                 }
             }
-        } catch (Throwable e) {
+        } catch (Throwable t) {
             //This block will be executed if the above finally block throws an
             //exception. Therefore the message is not set to notOk here
-            log.warn("Error while removing listener after upload message '"
-                     + msg + "'", e);
+            log.warn("Error while removing listener after upload message '{}'", msg, t);
         } finally {
-            log.info("Sending reply: " + msg.toString());
+            log.info("Sending reply: {}", msg.toString());
             con.reply(msg);
         }
     }
@@ -343,15 +304,15 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
     @Override
     public void visit(RemoveAndGetFileMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "RemoveAndGetFileMessage msg");
-        String mesg = "Request to move file '" + msg.getFileName()
-                      + "' with checksum '" + msg.getCheckSum() + "' to attic";
+        String mesg = "Request to move file '" + msg.getFileName() + "' with checksum '" + msg.getCheckSum()
+        		+ "' to attic";
         log.info(mesg);
         NotificationsFactory.getInstance().notify(mesg, NotificationType.INFO);
 
         File foundFile = ba.getFile(msg.getFileName());
         // Only send an reply if the file was found
         if (foundFile == null) {
-            log.warn("Remove: '" + msg.getFileName() + "' not found");
+            log.warn("Remove: '{}' not found", msg.getFileName());
             return;
         }
 
@@ -360,12 +321,9 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
             log.debug("File located - now checking the credentials");
             // Check credentials
             String credentialsReceived = msg.getCredentials();
-            ArgumentNotValid.checkNotNullOrEmpty(credentialsReceived,
-                    "credentialsReceived");
-            if (!credentialsReceived.equals(Settings.get(
-                    ArchiveSettings.ENVIRONMENT_THIS_CREDENTIALS))) {
-                String message = "Attempt to remove '" + foundFile
-                        + "' with wrong credentials!";
+            ArgumentNotValid.checkNotNullOrEmpty(credentialsReceived, "credentialsReceived");
+            if (!credentialsReceived.equals(Settings.get(ArchiveSettings.ENVIRONMENT_THIS_CREDENTIALS))) {
+                String message = "Attempt to remove '" + foundFile + "' with wrong credentials!";
                 log.warn(message);
                 msg.setNotOk(message);
                 return;
@@ -376,10 +334,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
             String checksum = ChecksumCalculator.calculateMd5(foundFile);
 
             if (!checksum.equals(msg.getCheckSum())) {
-                final String message =
-                        "Attempt to remove '" + foundFile
-                        + " failed due to checksum mismatch: "
-                        + msg.getCheckSum() + " != " + checksum;
+                final String message = "Attempt to remove '" + foundFile + " failed due to checksum mismatch: "
+                		+ msg.getCheckSum() + " != " + checksum;
                 log.warn(message);
                 msg.setNotOk(message);
                 return;
@@ -388,20 +344,16 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
             log.debug("Checksums matched - preparing to move and return file");
             File moveTo = baa.getAtticPath(foundFile);
             if (!foundFile.renameTo(moveTo)) {
-                final String message = "Failed to move the file:" + foundFile
-                        + "to attic";
+                final String message = "Failed to move the file:" + foundFile + "to attic";
                 log.warn(message);
                 msg.setNotOk(message);
                 return;
             }
             msg.setFile(moveTo);
 
-            log.warn("Removed file '" + msg.getFileName()
-                        + "' with checksum '"
-                    + msg.getCheckSum() + "'");
+            log.warn("Removed file '{}' with checksum '{}'", msg.getFileName(), msg.getCheckSum());
         } catch (Exception e) {
-            final String message = "Error while processing message '"
-                                   + msg + "'";
+            final String message = "Error while processing message '" + msg + "'";
             log.warn(message, e);
             msg.setNotOk(e);
         } finally {
@@ -425,38 +377,29 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                     // TODO Possibly tell batch something that will let
                     //  it create more comprehensible file names.
                     // Run the batch job on all files on this machine
-                    BatchStatus batchStatus = ba.batch(bitarchiveAppId,
-                                                       msg.getJob());
+                    BatchStatus batchStatus = ba.batch(bitarchiveAppId, msg.getJob());
 
                     // Create the message which will contain the reply
                     BatchEndedMessage resultMessage
-                            = new BatchEndedMessage(baMon, msg.getID(),
-                                                    batchStatus);
+                            = new BatchEndedMessage(baMon, msg.getID(), batchStatus);
 
                     // Update informational fields in reply message
                     if (batchStatus.getFilesFailed().size() > 0) {
-                        resultMessage.setNotOk(
-                                "Batch job failed on "
-                                + batchStatus.getFilesFailed().size()
-                                + " files.");
+                        resultMessage.setNotOk("Batch job failed on " + batchStatus.getFilesFailed().size()
+                        		+ " files.");
                     }
 
                     // Send the reply
                     con.send(resultMessage);
-                    log.debug("Submitted result message for batch job: "
-                             + msg.getID());
-                } catch (Throwable e) {
-                    log.warn("Batch processing failed for message '"
-                            + msg + "'", e);
-                    BatchEndedMessage failMessage
-                            = new BatchEndedMessage(
-                                    baMon, bitarchiveAppId,
-                                    msg.getID(), new NullRemoteFile());
-                    failMessage.setNotOk(e);
-                    
+                    log.debug("Submitted result message for batch job: {}", msg.getID());
+                } catch (Throwable t) {
+                    log.warn("Batch processing failed for message '{}'", msg, t);
+                    BatchEndedMessage failMessage = new BatchEndedMessage(baMon, bitarchiveAppId, msg.getID(),
+                    		new NullRemoteFile());
+                    failMessage.setNotOk(t);
+
                     con.send(failMessage);
-                    log.debug("Submitted failure message for batch job: "
-                             + msg.getID());
+                    log.debug("Submitted failure message for batch job: {}", msg.getID());
                 } finally {
                     // remove from map
                     batchProcesses.remove(msg.getBatchID());
@@ -469,24 +412,23 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
     
     public void visit(BatchTerminationMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "BatchTerminationMessage msg");
-        log.info("Received BatchTerminationMessage: " + msg);
+        log.info("Received BatchTerminationMessage: {}", msg);
 
         try {
             Thread t = batchProcesses.get(msg.getTerminateID());
 
             // check whether the batchjob is still running.
-            if(t == null) {
-                log.info("The batchjob with ID '" + msg.getTerminateID() 
-                        + "' cannot be found, and must have terminated "
-                        + "by it self.");
+            if (t == null) {
+                log.info("The batchjob with ID '{}' cannot be found, and must have terminated by it self.",
+                		msg.getTerminateID());
                 return;
             }
-            
+
             // try to interrupt.
-            if(t.isAlive()) {
+            if (t.isAlive()) {
                 t.interrupt();
             }
-            
+
             // wait one second, before verifying whether it is dead.
             synchronized(this) {
                 try {
@@ -495,19 +437,16 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                     log.trace("Unimportant InterruptedException caught.", e);
                 }
             }
-            
+
             // Verify that is dead, or log that it might have a problem. 
             if(t.isAlive()) {
-                log.error("The thread '" + t + "' should have been terminated,"
-                        + " but it is apparently still alive.");
+                log.error("The thread '{}' should have been terminated, but it is apparently still alive.", t);
             } else {
-                log.info("The batchjob with ID '" + msg.getTerminateID()
-                        + "' has successfully been terminated!");
+                log.info("The batchjob with ID '{}' has successfully been terminated!", msg.getTerminateID());
             }
-        } catch (Throwable e) {
+        } catch (Throwable t) {
             // log problem and set to NotOK!
-            log.error("An error occured while trying to terminate " 
-                    + msg.getTerminateID(), e);
+            log.error("An error occured while trying to terminate {}", msg.getTerminateID(), t);
         }
     }
 
@@ -529,12 +468,11 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                 //does. This actually creates the RemoteFile object, uploading
                 //the file to the ftp server as it does so.
                 msg.setFile(foundFile);
-                log.info("Sending reply: " + msg.toString());
+                log.info("Sending reply: {}", msg.toString());
                 con.reply(msg);
             }
-        } catch (Throwable e) {
-            log.warn("Error while processing get file message '" + msg + "'",
-                     e);
+        } catch (Throwable t) {
+            log.warn("Error while processing get file message '{}'", msg, t);
         }
     }
 
@@ -572,8 +510,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
         // to the id, if specified in settings.
         // If no APPLICATION_INSTANCE_ID is found do nothing.
         try {
-            String applicationInstanceId = Settings.get(
-                    CommonSettings.APPLICATION_INSTANCE_ID);
+            String applicationInstanceId = Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
             if (!applicationInstanceId.isEmpty()) {
                 id += "_" + applicationInstanceId;
             }
@@ -585,4 +522,5 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
 
         return id;
     }
+
 }

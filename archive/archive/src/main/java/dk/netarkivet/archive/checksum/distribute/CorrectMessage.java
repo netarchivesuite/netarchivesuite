@@ -27,7 +27,8 @@ package dk.netarkivet.archive.checksum.distribute;
 
 import java.io.File;
 
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
@@ -46,7 +47,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 @SuppressWarnings({ "serial"})
 public class CorrectMessage extends ArchiveMessage {
-    /** The file to replace the current bad entry. */
+
+	private static final Logger log = LoggerFactory.getLogger(CorrectMessage.class);
+
+	/** The file to replace the current bad entry. */
     private RemoteFile theRemoteFile;
     /** The name of the arc-file. */
     private String arcFilename;
@@ -73,9 +77,8 @@ public class CorrectMessage extends ArchiveMessage {
      * @throws ArgumentNotValid If any of the arguments are null, or any of the
      * strings are empty.
      */
-    public CorrectMessage(ChannelID to, ChannelID replyTo, String badChecksum, 
-            RemoteFile rf, String repId, String cred) 
-            throws ArgumentNotValid {
+    public CorrectMessage(ChannelID to, ChannelID replyTo, String badChecksum, RemoteFile rf, String repId,
+    		String cred) throws ArgumentNotValid {
         super(to, replyTo);
         // Validate arguments ('super' validates the channels).
         ArgumentNotValid.checkNotNull(rf, "RemoteFile file");
@@ -123,8 +126,7 @@ public class CorrectMessage extends ArchiveMessage {
         } catch (IOFailure e) {
             //Just log errors on deleting. They are fairly harmless.
             // Can't make Logger a field, as this class is Serializable
-            LogFactory.getLog(getClass().getName()).warn(
-                    "Could not cleanup remote file " + theRemoteFile.getName());
+            log.warn("Could not cleanup remote file {}", theRemoteFile.getName());
         }
         theRemoteFile = null;
     }
@@ -173,9 +175,8 @@ public class CorrectMessage extends ArchiveMessage {
      * @throws IOFailure If the removed file is null.
      */
     public RemoteFile getRemovedFile() throws IOFailure {
-        if(removedFile == null) {
-            LogFactory.getLog(CorrectMessage.class).warn("The removed file is "
-                    + "null. Perhaps the message has not been sent.");
+        if (removedFile == null) {
+            log.warn("The removed file is null. Perhaps the message has not been sent.");
         }
         return removedFile;
     }
@@ -207,7 +208,7 @@ public class CorrectMessage extends ArchiveMessage {
      * @return String representation of this object
      */
     public String toString() {
-        return super.toString() + ", Arcfile: " + arcFilename + ", Removed: " 
-        + (removedFile != null);
+        return super.toString() + ", Arcfile: " + arcFilename + ", Removed: " + (removedFile != null);
     }
+
 }

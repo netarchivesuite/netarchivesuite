@@ -25,8 +25,8 @@
  */
 package dk.netarkivet.archive.checksum.distribute;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
@@ -52,16 +52,14 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Can be used in combination with any type of ChecksumServerAPI.
  */
 public class ChecksumClient implements ReplicaClient {
-    /** The log.*/
-    protected static Log log = LogFactory.getLog(ChecksumClient.class);
+
+	/** The log.*/
+    private static final Logger log = LoggerFactory.getLogger(ChecksumClient.class);
 
     /** Connection to JMS provider.*/
     private JMSConnection jmsCon;
 
-    /** 
-     * Connection information.
-     * The connection to contact all checksum archives.
-     */
+    /** Connection information. The connection to contact all checksum archives. */
     private ChannelID theChecksumChannel;
     /** The name of the replica whose client this is.*/
     private String replicaId;
@@ -76,8 +74,7 @@ public class ChecksumClient implements ReplicaClient {
      */
     private ChecksumClient(ChannelID theCRin) throws IOFailure {
         this.theChecksumChannel = theCRin;
-        replicaId = Channels.retrieveReplicaFromIdentifierChannel(
-                theChecksumChannel.getName()).getId();
+        replicaId = Channels.retrieveReplicaFromIdentifierChannel(theChecksumChannel.getName()).getId();
         jmsCon = JMSConnectionFactory.getInstance();
     }
 
@@ -89,8 +86,7 @@ public class ChecksumClient implements ReplicaClient {
      * @throws IOFailure If there is a problem with the connection.
      * @throws ArgumentNotValid If the checksum replica channel is null.
      */
-    public static ChecksumClient getInstance(ChannelID theCRin)
-            throws IOFailure, ArgumentNotValid {
+    public static ChecksumClient getInstance(ChannelID theCRin) throws IOFailure, ArgumentNotValid {
         // validate arguments
         ArgumentNotValid.checkNotNull(theCRin, "ChannelID theCRin");
 
@@ -113,7 +109,7 @@ public class ChecksumClient implements ReplicaClient {
         jmsCon.resend(msg, theChecksumChannel);
         
         // log the message.
-        log.debug("Resending CorrectMessage: " + msg.toString() + "'.");
+        log.debug("Resending CorrectMessage: {}'.", msg.toString());
     }
 
     /**
@@ -123,15 +119,13 @@ public class ChecksumClient implements ReplicaClient {
      * jms connection to the checksum archive.
      * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
      */
-    public void sendGetAllFilenamesMessage(GetAllFilenamesMessage msg) 
-            throws ArgumentNotValid {
+    public void sendGetAllFilenamesMessage(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
         // send the message to the archive.
         jmsCon.resend(msg, theChecksumChannel);
 
         // log message.
-        log.debug("Resending GetAllFilenamesMessage: '" + msg.toString() 
-                + "'.");
+        log.debug("Resending GetAllFilenamesMessage: '{}'.", msg.toString());
     }
 
     /**
@@ -141,14 +135,13 @@ public class ChecksumClient implements ReplicaClient {
      * connection to the checksum archive.
      * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
      */
-    public void sendGetAllChecksumsMessage(GetAllChecksumsMessage msg) 
-            throws ArgumentNotValid {
+    public void sendGetAllChecksumsMessage(GetAllChecksumsMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
         // send the message to the archive.
         jmsCon.resend(msg, theChecksumChannel);
 
         // log message.
-        log.debug("Sending GetAllChecksumMessage: '" + msg.toString() + "'.");
+        log.debug("Sending GetAllChecksumMessage: '{}'.", msg.toString());
     }
 
     /**
@@ -165,7 +158,7 @@ public class ChecksumClient implements ReplicaClient {
         jmsCon.resend(msg, theChecksumChannel);
 
         // log what we are doing.
-        log.debug("Sending GetChecksumMessage: '" + msg.toString() + "'.");
+        log.debug("Sending GetChecksumMessage: '{}'.", msg.toString());
     }
 
     /**
@@ -179,19 +172,17 @@ public class ChecksumClient implements ReplicaClient {
      * @throws ArgumentNotValid If the reply channel is null or if the filename
      * is either null or the empty string.
      */
-    public GetChecksumMessage sendGetChecksumMessage(ChannelID replyChannel, 
-            String filename) throws ArgumentNotValid {
+    public GetChecksumMessage sendGetChecksumMessage(ChannelID replyChannel, String filename) throws ArgumentNotValid {
         // Validate arguments
         ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
         // make GetChecksumMessage for the specific file.
-        GetChecksumMessage msg = new GetChecksumMessage(theChecksumChannel, 
-                replyChannel, filename, replicaId);
+        GetChecksumMessage msg = new GetChecksumMessage(theChecksumChannel, replyChannel, filename, replicaId);
         jmsCon.send(msg);
 
         // log what we are doing.
-        log.debug("Sending GetChecksumMessage: '" + msg.toString() + "'.");
+        log.debug("Sending GetChecksumMessage: '{}'.", msg.toString());
         
         return msg;
     }
@@ -218,12 +209,11 @@ public class ChecksumClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(rf, "RemoteFile rf");
 
         // create and send message.
-        UploadMessage up = new UploadMessage(theChecksumChannel, 
-                Channels.getTheRepos(), rf);
+        UploadMessage up = new UploadMessage(theChecksumChannel, Channels.getTheRepos(), rf);
         jmsCon.send(up);
 
         // log message
-        log.debug("Sending upload message '" + up.toString() + "'.");
+        log.debug("Sending upload message '{}'.", up.toString());
     }
 
     /**
@@ -239,14 +229,12 @@ public class ChecksumClient implements ReplicaClient {
      * a checksum replica.
      * @throws ArgumentNotValid If the channel or the batchjob is null.
      */
-    public BatchMessage sendBatchJob(ChannelID replyChannel, FileBatchJob job) 
-            throws IllegalState, ArgumentNotValid {
+    public BatchMessage sendBatchJob(ChannelID replyChannel, FileBatchJob job) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         
-        String errMsg = "Trying to execute the batchjob '" 
-            + job.getClass().getName() + "' on a checksum replica with reply "
-            + "channel '" + replyChannel + "'. This is not allowed!"; 
+        String errMsg = "Trying to execute the batchjob '" + job.getClass().getName() + "'"
+        		+ " on a checksum replica with reply " + "channel '" + replyChannel + "'. This is not allowed!";
         log.error(errMsg);
         throw new IllegalState(errMsg);
     }
@@ -263,12 +251,10 @@ public class ChecksumClient implements ReplicaClient {
      * a checksum replica.
      * @throws ArgumentNotValid If the message is null.
      */
-    public BatchMessage sendBatchJob(BatchMessage msg) throws IllegalState, 
-            ArgumentNotValid {
+    public BatchMessage sendBatchJob(BatchMessage msg) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "BatchMessage msg");
-        
-        String errMsg = "Trying to execute the batchjob '" + msg.toString()
-                + "' on a checksum replica."; 
+
+        String errMsg = "Trying to execute the batchjob '" + msg.toString() + "' on a checksum replica."; 
         log.error(errMsg);
         throw new IllegalState(errMsg);
     }
@@ -283,12 +269,10 @@ public class ChecksumClient implements ReplicaClient {
      * kind of messages.
      * @throws ArgumentNotValid If the message is null.
      */
-    public void sendGetMessage(GetMessage msg) throws IllegalState, 
-            ArgumentNotValid {
+    public void sendGetMessage(GetMessage msg) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetMessage msg");
-        
-        String errMsg = "A checksum replica cannot handle a GetMessage such "
-            + "as '" + msg + "'";
+
+        String errMsg = "A checksum replica cannot handle a GetMessage such as '" + msg + "'";
         log.error(errMsg);
         throw new IllegalState(errMsg);
     }
@@ -304,12 +288,10 @@ public class ChecksumClient implements ReplicaClient {
      * kind of messages.
      * @throws ArgumentNotValid If the message is null.
      */
-    public void sendGetFileMessage(GetFileMessage gfm) throws IllegalState, 
-            ArgumentNotValid {
+    public void sendGetFileMessage(GetFileMessage gfm) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(gfm, "GetFileMessage gfm");
-        
-        String errMsg = "A checksum replica cannot handle a GetFileMessage "
-            + "such as '" + gfm + "'.";
+
+        String errMsg = "A checksum replica cannot handle a GetFileMessage such as '" + gfm + "'.";
         log.error(errMsg);
         throw new IllegalState(errMsg);
     }
@@ -328,9 +310,8 @@ public class ChecksumClient implements ReplicaClient {
     public void sendRemoveAndGetFileMessage(RemoveAndGetFileMessage msg) 
             throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "RemoveAndGetFileMessage msg");
-        
-        String errMsg = "A checksum replica cannot handle a "
-            + "RemoveAndGetFileMessage such as '" + msg + "'.";
+
+        String errMsg = "A checksum replica cannot handle a RemoveAndGetFileMessage such as '" + msg + "'.";
         log.error(errMsg);
         throw new IllegalState(errMsg);
     }
@@ -339,7 +320,7 @@ public class ChecksumClient implements ReplicaClient {
      * Method for closing this instance.
      */
     public void close() {
-        log.debug("The ChecksumClient for replica '" + replicaId 
-                + "' has been shut down.");
+        log.debug("The ChecksumClient for replica '{}' has been shut down.", replicaId);
     }
+
 }

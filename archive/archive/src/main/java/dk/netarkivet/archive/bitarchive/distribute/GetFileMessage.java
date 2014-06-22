@@ -27,7 +27,8 @@ package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.io.File;
 
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
@@ -43,7 +44,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 @SuppressWarnings({ "serial"})
 public class GetFileMessage extends ArchiveMessage {
-    /** the file to retrieve. */
+
+	private static final Logger log = LoggerFactory.getLogger(GetFileMessage.class);
+
+	/** the file to retrieve. */
     private String arcfileName;
 
     /** The actual data.*/
@@ -59,8 +63,7 @@ public class GetFileMessage extends ArchiveMessage {
      * @param arcfileName The file to retrieve
      * @param replicaId The bitarchive replica id to retrieve it from.
      */
-    public GetFileMessage(ChannelID to, ChannelID replyTo, String arcfileName,
-                          String replicaId) {
+    public GetFileMessage(ChannelID to, ChannelID replyTo, String arcfileName, String replicaId) {
         super(to, replyTo);
         this.arcfileName = arcfileName;
         this.replicaId = replicaId;
@@ -87,8 +90,7 @@ public class GetFileMessage extends ArchiveMessage {
     public void getData(File toFile) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(toFile, "toFile");
         if (remoteFile == null) {
-            throw new IOFailure("No file present in message to get file '"
-                    + arcfileName + "'");
+            throw new IOFailure("No file present in message to get file '" + arcfileName + "'");
         }
         remoteFile.copyTo(toFile);
         try {
@@ -96,8 +98,7 @@ public class GetFileMessage extends ArchiveMessage {
         } catch (IOFailure e) {
             //Just log errors on deleting. They are fairly harmless.
             // Can't make Logger a field, as this class is Serializable
-            LogFactory.getLog(getClass().getName()).warn(
-                    "Could not delete remote file " + remoteFile.getName());
+            log.warn("Could not delete remote file {}", remoteFile.getName());
         }
         remoteFile = null;
     }

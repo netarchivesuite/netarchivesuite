@@ -31,10 +31,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -50,7 +50,7 @@ import dk.netarkivet.common.utils.FileUtils;
  */
 public abstract class Machine {
     /** the log, for logging stuff instead of displaying them directly.*/
-    protected final Log log = LogFactory.getLog(getClass().getName());
+    protected static final Logger log = LoggerFactory.getLogger(Machine.class);
     /** The root-branch for this machine in the XML tree.*/
     protected Element machineRoot;
     /** The settings, inherited from parent and overwritten.*/
@@ -111,11 +111,9 @@ public abstract class Machine {
             File archiveDbFileName, boolean resetDir, File externalJarFolder) 
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element subTreeRoot");
-        ArgumentNotValid.checkNotNull(parentSettings,
-                "XmlStructure parentSettings");
+        ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
-        ArgumentNotValid.checkNotNull(netarchiveSuiteSource,
-                "String netarchiveSuiteSource");
+        ArgumentNotValid.checkNotNull(netarchiveSuiteSource, "String netarchiveSuiteSource");
         ArgumentNotValid.checkNotNull(logProp, "File logProp");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
 
@@ -146,7 +144,7 @@ public abstract class Machine {
                 Constants.COMPLETE_SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
-        if(tmpSet != null) {
+        if (tmpSet != null) {
                 settings.overWrite(tmpSet);
         }
 
@@ -164,9 +162,8 @@ public abstract class Machine {
      */
     private void extractVariables() {
         // retrieve name
-        Attribute at = machineRoot.attribute(
-                Constants.MACHINE_NAME_ATTRIBUTE);
-        if(at != null) {
+        Attribute at = machineRoot.attribute(Constants.MACHINE_NAME_ATTRIBUTE);
+        if (at != null) {
             name = at.getText().trim();
         } else {
             throw new IllegalState("A Machine instance has no name!");
@@ -180,8 +177,7 @@ public abstract class Machine {
     @SuppressWarnings("unchecked")
     private void extractApplications() {
         applications = new ArrayList<Application>();
-        List<Element> le = machineRoot.elements(
-                Constants.DEPLOY_APPLICATION_NAME);
+        List<Element> le = machineRoot.elements(Constants.DEPLOY_APPLICATION_NAME);
         for(Element e : le) {
             applications.add(new Application(e, settings, machineParameters, targetEncoding));
         }
@@ -256,8 +252,7 @@ public abstract class Machine {
      */
     public String writeToGlobalInstallScript() {
         StringBuilder res = new StringBuilder();
-        res.append(ScriptConstants.writeInstallMachineHeader(
-                machineUserLogin()));
+        res.append(ScriptConstants.writeInstallMachineHeader(machineUserLogin()));
         // write the operating system dependent part of the install script
         res.append(osInstallScript());
         return res.toString();
@@ -271,8 +266,7 @@ public abstract class Machine {
      */
     public String writeToGlobalStartScript() {
         StringBuilder res = new StringBuilder();
-        res.append(ScriptConstants.writeStartMachineHeader(
-                machineUserLogin()));
+        res.append(ScriptConstants.writeStartMachineHeader(machineUserLogin()));
         // write the operating system dependent part of the start script
         res.append(osStartScript());
         return res.toString();
@@ -285,11 +279,9 @@ public abstract class Machine {
      * @throws IOFailure If an error occurred during the creation of the 
      * security policy file.
      */
-    protected void createSecurityPolicyFile(File directory) 
-            throws IOFailure {
+    protected void createSecurityPolicyFile(File directory) throws IOFailure {
         // make file
-        File secPolFile = new File(directory, 
-                Constants.SECURITY_POLICY_FILE_NAME);
+        File secPolFile = new File(directory, Constants.SECURITY_POLICY_FILE_NAME);
         try {
             // init writer
             PrintWriter secPrinter = new PrintWriter(secPolFile, getTargetEncoding());
@@ -298,20 +290,15 @@ public abstract class Machine {
                 String prop = FileUtils.readFile(inheritedSecurityPolicyFile);
 
                 // change the jmx monitor role (if defined in settings)
-                String monitorRole = settings.getLeafValue(
-                        Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
-                if(monitorRole != null) {
-                    prop = prop.replace(
-                            Constants.SECURITY_JMX_PRINCIPAL_NAME_TAG, 
-                            monitorRole);
+                String monitorRole = settings.getLeafValue(Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
+                if (monitorRole != null) {
+                    prop = prop.replace(Constants.SECURITY_JMX_PRINCIPAL_NAME_TAG, monitorRole);
                 }
 
                 // Change the common temp dir (if defined in settings)
-                String ctd = settings.getLeafValue(
-                        Constants.SETTINGS_TEMPDIR_LEAF);
-                if(ctd != null) {
-                    prop = prop.replace(Constants.SECURITY_COMMON_TEMP_DIR_TAG, 
-                            ctd);
+                String ctd = settings.getLeafValue(Constants.SETTINGS_TEMPDIR_LEAF);
+                if (ctd != null) {
+                    prop = prop.replace(Constants.SECURITY_COMMON_TEMP_DIR_TAG, ctd);
                 }
 
                 // write to file.
@@ -321,24 +308,22 @@ public abstract class Machine {
                 List<String> dirs = new ArrayList<String>();
 
                 // get all directories to add and put them into the list
-                for(Application app : applications) {
+                for (Application app : applications) {
                     // get archive.fileDir directory.
-                    String[] tmpDirs = app.getSettingsValues(
-                            Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
-                    if(tmpDirs != null && tmpDirs.length > 0) {
-                        for(String st : tmpDirs) {
+                    String[] tmpDirs = app.getSettingsValues(Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
+                    if (tmpDirs != null && tmpDirs.length > 0) {
+                        for (String st : tmpDirs) {
                             dirs.add(st);
                         }
                     }
                 }
 
                 // append file directories
-                if(!dirs.isEmpty()) {
+                if (!dirs.isEmpty()) {
                     secPrinter.write("grant {" + "\n");
-                    for(String dir : dirs) {
-                        secPrinter.write(ScriptConstants
-                                .writeSecurityPolicyDirPermission(
-                                        changeFileDirPathForSecurity(dir)));
+                    for (String dir : dirs) {
+                        secPrinter.write(ScriptConstants.writeSecurityPolicyDirPermission(
+                        		changeFileDirPathForSecurity(dir)));
                     }
                     secPrinter.write("};");
                 }
@@ -346,9 +331,8 @@ public abstract class Machine {
                 secPrinter.close();
             }
         } catch (IOException e) {
-            String errMsg = "Cannot create security policy file."; 
-            log.warn(errMsg, e);
-            throw new IOFailure(errMsg, e);
+            log.warn("IOException while creating security policy file: ", e);
+            throw new IOFailure("Cannot create security policy file.", e);
         }
     }
 
@@ -363,11 +347,9 @@ public abstract class Machine {
      */
     protected void createLogPropertyFiles(File directory) throws IOFailure {
         // make log property file for every application
-        for(Application app : applications) {
+        for (Application app : applications) {
             // make file
-            File logProp = new File(directory, 
-                    Constants.LOG_PROP_APPLICATION_PREFIX 
-                    + app.getIdentification() 
+            File logProp = new File(directory, Constants.LOG_PROP_APPLICATION_PREFIX + app.getIdentification()
                     + Constants.LOG_PROP_APPLICATION_SUFFIX);
             try {
                 // init writer
@@ -378,19 +360,16 @@ public abstract class Machine {
                     String prop = FileUtils.readFile(inheritedLogPropFile);
 
                     // append stuff!
-                    prop = prop.replace(
-                            Constants.LOG_PROPERTY_APPLICATION_ID_TAG, 
-                            app.getIdentification());
-                   prop = modifyLogProperties(prop);
+                    prop = prop.replace(Constants.LOG_PROPERTY_APPLICATION_ID_TAG, app.getIdentification());
+                    prop = modifyLogProperties(prop);
                     // write to file.
                     logPrinter.write(prop);
                 } finally {
-                        logPrinter.close();
+                	logPrinter.close();
                 }
             } catch (IOException e) {
-                String errMsg = "Cannot create log property file.";
-                log.warn(errMsg, e);
-                throw new IOFailure(errMsg, e);
+                log.warn("IOException while creating log property file:", e);
+                throw new IOFailure("Cannot create log property file.", e);
             }
         }
     }
@@ -413,8 +392,7 @@ public abstract class Machine {
      * @throws IOFailure If an error occurred during the creation of the
      * jmx remote password file.  
      */
-    protected void createJmxRemotePasswordFile(File directory) 
-            throws IOFailure {
+    protected void createJmxRemotePasswordFile(File directory) throws IOFailure {
         // make file
         File jmxFile = new File(directory, Constants.JMX_PASSWORD_FILE_NAME);
         try {
@@ -436,9 +414,8 @@ public abstract class Machine {
                 jw.close();
             }
         } catch (IOException e) {
-            String msg = "Cannot create jmxremote.password";
-            log.trace(msg, e);
-            throw new IOFailure(msg, e);
+            log.trace("IOException while creating jmxremote.password:", e);
+            throw new IOFailure("Cannot create jmxremote.password.", e);
         }
     }
     
@@ -449,8 +426,7 @@ public abstract class Machine {
      * @throws IOFailure If an error occurred during the creation of the 
      * jmx remote access file. 
      */
-    protected void createJmxRemoteAccessFile(File directory) 
-            throws IOFailure {
+    protected void createJmxRemoteAccessFile(File directory) throws IOFailure {
         // make file
         File jmxFile = new File(directory, Constants.JMX_ACCESS_FILE_NAME);
         try {
@@ -472,9 +448,8 @@ public abstract class Machine {
                 jw.close();
             }
         } catch (IOException e) {
-            String msg = "Cannot create jmxremote.access file. ";
-            log.trace(msg, e);
-            throw new IOFailure(msg, e);
+            log.trace("IOException while creating jmxremote.access file:", e);
+            throw new IOFailure("Cannot create jmxremote.access file.", e);
         }
     }
     
@@ -497,54 +472,46 @@ public abstract class Machine {
         String[] tmpVals;
 
         // get values from applications and put them into the lists
-        for(Application app : applications) {
+        for (Application app : applications) {
             // get monitor.jmxUsername
-            tmpVals = app.getSettingsValues(
-                    Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
-            if(tmpVals != null && tmpVals.length > 0) {
-                for(String st : tmpVals) {
+            tmpVals = app.getSettingsValues(Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
+            if (tmpVals != null && tmpVals.length > 0) {
+                for (String st : tmpVals) {
                     usernames.add(st);
                 }
             }
             // get monitor.jmxPassword
-            tmpVals = app.getSettingsValues(
-                    Constants.SETTINGS_MONITOR_JMX_PASSWORD_LEAF);
-            if(tmpVals != null && tmpVals.length > 0) {
-                for(String st : tmpVals) {
+            tmpVals = app.getSettingsValues(Constants.SETTINGS_MONITOR_JMX_PASSWORD_LEAF);
+            if (tmpVals != null && tmpVals.length > 0) {
+                for (String st : tmpVals) {
                     passwords.add(st);
                 }
             }
         }
 
         // if different amount of usernames and passwords => DIE
-        if(usernames.size() != passwords.size()) {
-            String msg = "Different amount of usernames and passwords "
-                    + "in monitor under applications on machine: '" 
-                    + name + "'"; 
+        if (usernames.size() != passwords.size()) {
+        	String msg = "Different amount of usernames and passwords in monitor under applications on machine: '" + name + "'";
             log.warn(msg);
             throw new IllegalState(msg);
         }
 
         // warn if no usernames for monitor.
-        if(usernames.size() == 0) {
-            log.warn("No usernames or passwords for monitor on machine: '"
-                    + name + "'");
+        if (usernames.size() == 0) {
+            log.warn("No usernames or passwords for monitor on machine: '{}'", name);
         }
         
         // check if the usernames and passwords are the same.
-        for(int i = 1; i < usernames.size(); i++) {
-            if(!usernames.get(0).equals(usernames.get(i))
-                    || !passwords.get(0)
-                    .equals(passwords.get(i))) {
-                String msg = "Different usernames or passwords "
-                    + "under monitor on the same machine: '" + name + "'";
+        for (int i = 1; i < usernames.size(); i++) {
+            if (!usernames.get(0).equals(usernames.get(i)) || !passwords.get(0).equals(passwords.get(i))) {
+            	String msg = "Different usernames or passwords under monitor on the same machine: '" + name + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
         }
         
         // make the resulting string
-        if(usernames.size() > 0) {
+        if (usernames.size() > 0) {
             res.append(usernames.get(0));
             res.append(Constants.SPACE);
             res.append(passwords.get(0));
@@ -569,22 +536,20 @@ public abstract class Machine {
         String[] tmpVals;
 
         // get values from applications and put them into the lists
-        for(Application app : applications) {
+        for (Application app : applications) {
             // get monitor.jmxUsername
-            tmpVals = app.getSettingsValues(
-                    Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
-            if(tmpVals != null && tmpVals.length > 0) {
-                for(String st : tmpVals) {
+            tmpVals = app.getSettingsValues(Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
+            if (tmpVals != null && tmpVals.length > 0) {
+                for (String st : tmpVals) {
                     usernames.add(st);
                 }
             }
         }
         
         // check if the usernames and passwords are the same.
-        for(int i = 1; i < usernames.size(); i++) {
-            if(!usernames.get(0).equals(usernames.get(i))) {
-                String msg = "Different usernames "
-                    + "for the monitor on the same machine: '" + name + "'";
+        for (int i = 1; i < usernames.size(); i++) {
+            if (!usernames.get(0).equals(usernames.get(i))) {
+            	String msg = "Different usernames for the monitor on the same machine: '" + name + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
@@ -619,46 +584,39 @@ public abstract class Machine {
         String[] tmpVals;
 
         // get values from applications and put them into the lists
-        for(Application app : applications) {
+        for (Application app : applications) {
             // get heritrix.jmxUsername
-            tmpVals = app.getSettingsValues(
-                    Constants.SETTINGS_HERITRIX_JMX_USERNAME_LEAF);
-            if(tmpVals != null && tmpVals.length > 0) {
-                for(String st : tmpVals) {
+            tmpVals = app.getSettingsValues(Constants.SETTINGS_HERITRIX_JMX_USERNAME_LEAF);
+            if (tmpVals != null && tmpVals.length > 0) {
+                for (String st : tmpVals) {
                     usernames.add(st);
                 }
             }
             // get heritrix.jmxPassword
-            tmpVals = app.getSettingsValues(
-                    Constants.SETTINGS_HERITRIX_JMX_PASSWORD_LEAF);
-            if(tmpVals != null && tmpVals.length > 0) {
-                for(String st : tmpVals) {
+            tmpVals = app.getSettingsValues(Constants.SETTINGS_HERITRIX_JMX_PASSWORD_LEAF);
+            if (tmpVals != null && tmpVals.length > 0) {
+                for (String st : tmpVals) {
                     passwords.add(st);
                 }
             }
         }
 
         // if different amount of usernames and passwords. DIE
-        if(usernames.size() != passwords.size()) {
-            String msg = "Different amount of usernames and passwords "
-                    + "in heritrix under applications on machine: '"
-                    + name + "'";
+        if (usernames.size() != passwords.size()) {
+        	String msg = "Different amount of usernames and passwords in heritrix under applications on machine: '" + name + "'";
             log.warn(msg);
             throw new IllegalState(msg);
         }
 
         // if no usernames, and thus no passwords, finish!
-        if(usernames.size() == 0) {
+        if (usernames.size() == 0) {
             return "";
         }
         
         // check if the usernames and passwords are the same.
-        for(int i = 1; i < usernames.size(); i++) {
-            if(!usernames.get(0).equals(usernames.get(i))
-                    || !passwords.get(0)
-                    .equals(passwords.get(i))) {
-                String msg = "Different usernames or passwords "
-                    + "under heritrix on machine: '" + name + "'";
+        for (int i = 1; i < usernames.size(); i++) {
+            if (!usernames.get(0).equals(usernames.get(i)) || !passwords.get(0).equals(passwords.get(i))) {
+            	String msg = "Different usernames or passwords " + "under heritrix on machine: '" + name + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
@@ -688,22 +646,20 @@ public abstract class Machine {
         String[] tmpVals;
 
         // get values from applications and put them into the lists
-        for(Application app : applications) {
+        for (Application app : applications) {
             // get heritrix.jmxUsername
-            tmpVals = app.getSettingsValues(
-                    Constants.SETTINGS_HERITRIX_JMX_USERNAME_LEAF);
-            if(tmpVals != null && tmpVals.length > 0) {
-                for(String st : tmpVals) {
+            tmpVals = app.getSettingsValues(Constants.SETTINGS_HERITRIX_JMX_USERNAME_LEAF);
+            if (tmpVals != null && tmpVals.length > 0) {
+                for (String st : tmpVals) {
                     usernames.add(st);
                 }
             }
         }
 
         // check if the usernames and passwords are the same.
-        for(int i = 1; i < usernames.size(); i++) {
-            if(!usernames.get(0).equals(usernames.get(i))) {
-                String msg = "Different usernames "
-                    + "for Heritrix on the same machine: '" + name + "'";
+        for (int i = 1; i < usernames.size(); i++) {
+            if (!usernames.get(0).equals(usernames.get(i))) {
+            	String msg = "Different usernames for Heritrix on the same machine: '" + name + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
@@ -725,8 +681,7 @@ public abstract class Machine {
      * @return The access through SSH to the machine
      */
     protected String machineUserLogin() {
-        return machineParameters.getMachineUserName().getStringValue().trim()
-                + Constants.AT + name;
+        return machineParameters.getMachineUserName().getStringValue().trim() + Constants.AT + name;
     }
 
     /**
@@ -735,8 +690,7 @@ public abstract class Machine {
      * @return The environment name.
      */
     protected String getEnvironmentName() {
-        return settings.getSubChildValue(
-                Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
+        return settings.getSubChildValue(Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
     }
 
     /**
@@ -895,13 +849,9 @@ public abstract class Machine {
     
     /**
      * This method does the following:
-     * 
      * Retrieves the path to the jmxremote.access and jmxremote.password files.
-     * 
      * Moves these files, if they are different from standard.
-     * 
      * Makes the jmxremote.access and jmxremote.password files readonly.
-     *  
      * @return The commands for handling the jmxremote files.
      */
     protected abstract String getJMXremoteFilesCommand();

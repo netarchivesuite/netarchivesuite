@@ -26,8 +26,8 @@
 
 package dk.netarkivet.archive.arcrepositoryadmin;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Derby-specific implementation of DB methods.
@@ -39,5 +39,5 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class DerbySpecifics extends DBSpecifics {
     /** The log.*/
-    protected Log log = LogFactory.getLog(DerbySpecifics.class);
+    protected static final Logger log = LoggerFactory.getLogger(DerbySpecifics.class);
 }

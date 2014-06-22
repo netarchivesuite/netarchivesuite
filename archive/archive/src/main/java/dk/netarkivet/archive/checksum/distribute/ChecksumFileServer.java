@@ -27,8 +27,8 @@ package dk.netarkivet.archive.checksum.distribute;
 
 import java.io.File;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
@@ -41,11 +41,11 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * The server for the ChecksumFileApplication. 
@@ -53,24 +53,16 @@ import dk.netarkivet.common.utils.FileUtils;
  */
 public class ChecksumFileServer extends ChecksumArchiveServer {
     
-    /**
-     * The logger used by this class.
-     */
-    private static Log log = LogFactory.getLog(ChecksumFileServer.class);
+    /** The logger used by this class. */
+    private static final Logger log = LoggerFactory.getLogger(ChecksumFileServer.class);
     
-    /**
-     * The instance of this server.
-     */
+    /** The instance of this server. */
     protected static ChecksumFileServer instance;
     
-    /**
-     * The archive which contain the actual data.
-     */
+    /** The archive which contain the actual data. */
     protected ChecksumArchive cs;
         
-    /**
-     * The character to separate the applicationInstanceId and the IP address.
-     */
+    /** The character to separate the applicationInstanceId and the IP address. */
     public static final String APPLICATION_ID_SEPARATOR = "_";
     
     /**
@@ -115,20 +107,20 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
         checksumAppId = createAppId();
  
         // log that this instance has successfully been invoked.
-        log.info("ChecksumFileServer '" + checksumAppId + "' initialised.");
+        log.info("ChecksumFileServer '{}' initialised.", checksumAppId);
     }
     
     /**
      * Method for closing the instance.
      */
     public void close() {
-        log.info("ChecksumFileServer '" + checksumAppId + "' closing down.");
+        log.info("ChecksumFileServer '{}' closing down.", checksumAppId);
         cleanup();
         if (jmsCon != null) {
             jmsCon.removeListener(theCR, this);
             jmsCon = null;
         }
-        log.info("ChecksumFileServer '" + checksumAppId + "' closed down.");
+        log.info("ChecksumFileServer '{}' closed down.", checksumAppId);
     }
     
     /**
@@ -162,16 +154,14 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
         // to the id, if specified in settings.
         // If no APPLICATION_INSTANCE_ID is found do nothing.
         try {
-            String applicationInstanceId = Settings
-                    .get(CommonSettings.APPLICATION_INSTANCE_ID);
+            String applicationInstanceId = Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
             if (!applicationInstanceId.isEmpty()) {
                 id += APPLICATION_ID_SEPARATOR + applicationInstanceId;
             }
         } catch (UnknownID e) {
             // Ignore the fact, that there is no APPLICATION_INSTANCE_ID in
             // settings
-            log.warn("No setting APPLICATION_INSTANCE_ID found in settings: "
-                    + e);
+            log.warn("No setting APPLICATION_INSTANCE_ID found in settings: ", e);
         }
         return id;
     }    
@@ -191,7 +181,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             try { 
                 cs.upload(msg.getRemoteFile(), msg.getArcfileName());
             } catch (Throwable e) {
-                log.warn("Cannot process upload message '" + msg + "'", e);
+                log.warn("Cannot process upload message '{}'", msg, e);
                 msg.setNotOk(e);
             } finally { // check if enough space
                 if (!cs.hasEnoughSpace()) {
@@ -200,10 +190,9 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
                 }
             }
         } catch (Throwable e) {
-            log.warn("Cannnot remove listener after upload message '" + msg
-                    + "'", e);
+            log.warn("Cannnot remove listener after upload message '{}'", msg, e);
         } finally {
-            log.debug("Replying to UploadMessage: " + msg.toString());
+            log.debug("Replying to UploadMessage: {}", msg.toString());
             jmsCon.reply(msg);
         }
     }
@@ -226,7 +215,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      */
     public void visit(CorrectMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
-        log.debug("Receiving correct message: " + msg.toString());
+        log.debug("Receiving correct message: {}", msg.toString());
         // the file for containing the received file from the message.
         File correctFile = null;
         try {
@@ -235,7 +224,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             String incorrectCs = msg.getIncorrectChecksum();
             
             // ensure that the entry actually exists.
-            if(currentCs == null) {
+            if (currentCs == null) {
                 // This exception is logged later.
                 throw new IllegalState("Cannot correct an entry for the file '"
                         + filename + "', since it is not within the archive.");
@@ -244,15 +233,14 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             // Check credentials
             String credentialsReceived = msg.getCredentials();
             if (credentialsReceived == null || credentialsReceived.isEmpty()
-                    || !credentialsReceived.equals(Settings.get(
-                    ArchiveSettings.ENVIRONMENT_THIS_CREDENTIALS))) {
+                    || !credentialsReceived.equals(Settings.get(ArchiveSettings.ENVIRONMENT_THIS_CREDENTIALS))) {
                 throw new IllegalState("The received credentials '" 
                         + credentialsReceived + "' were invalid. The entry of "
                         + "file '" + filename + "' will not be corrected.");
             }
             
             // check that the current checksum is incorrect as supposed.
-            if(!currentCs.equals(incorrectCs)) {
+            if (!currentCs.equals(incorrectCs)) {
                 throw new IllegalState("Wrong checksum for the entry for file '"
                         + filename + "' has the checksum '" + currentCs + "', "
                         + "though it was supposed to have the checksum '" 
@@ -260,14 +248,12 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             }
 
             // retrieve the data as a file.
-            correctFile = File.createTempFile("correct", filename, 
-                    FileUtils.getTempDir());
+            correctFile = File.createTempFile("correct", filename, FileUtils.getTempDir());
             msg.getData(correctFile);
             
             // Log and notify
-            String warning = "The record for file '" + filename 
-                    + "' is being corrected at '" 
-                    + Settings.get(CommonSettings.USE_REPLICA_ID) + "'"; 
+            String warning = "The record for file '" + filename + "' is being corrected at '" 
+                    + Settings.get(CommonSettings.USE_REPLICA_ID) + "'";
             log.warn(warning);
             NotificationsFactory.getInstance().notify(warning, NotificationType.WARNING);
             
@@ -276,17 +262,17 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             
             // Send the file containing the removed entry back. 
             msg.setRemovedFile(RemoteFileFactory.getMovefileInstance(badFile));
-        } catch (Throwable e) {
+        } catch (Throwable t) {
             // Handle errors.
-            log.warn("Cannot handle CorrectMessage: '" + msg + "'", e);
-            msg.setNotOk(e);
+            log.warn("Cannot handle CorrectMessage: '{}'", msg, t);
+            msg.setNotOk(t);
         } finally {
             // log and reply at the end.
-            log.info("Replying CorrectMessage: " + msg.toString());
+            log.info("Replying CorrectMessage: {}", msg.toString());
             jmsCon.reply(msg);
             
             // cleanup the data file
-            if(correctFile != null) {
+            if (correctFile != null) {
                 FileUtils.remove(correctFile);
             }
         }
@@ -302,7 +288,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     public void visit(GetChecksumMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
         
-        log.debug("Receiving GetChecksumMessage: " + msg.toString());
+        log.debug("Receiving GetChecksumMessage: {}", msg.toString());
         try {
             // get the name of the arc file
             String filename = msg.getArcfileName();
@@ -315,19 +301,18 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
                 throw new IllegalState("Cannot fetch checksum of an entry, "
                         + filename + ", which is not within the archive.");
             } 
-            
+
             // send the checksum of the arc file.
             msg.setChecksum(checksum);
         } catch (Throwable e) {
             // Handle errors (if the file cannot be found).
-            log.warn("Cannot handle '" + msg.getClass().getName() 
-                    + "' containing the message: " + msg, e);
+            log.warn("Cannot handle '{}' containing the message: {}", msg.getClass().getName(), msg, e);
             msg.setNotOk(e);
         } finally {
             // TODO this should be set elsewhere.
             msg.setIsReply();
             // log the message and reply.
-            log.info("Replying GetChecksumMessage: " + msg.toString());
+            log.info("Replying GetChecksumMessage: {}", msg.toString());
             jmsCon.reply(msg);
         }
     }
@@ -340,18 +325,17 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      */
     public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
-        log.debug("Receiving GetAllFilenamesMessage: " + msg.toString());
+        log.debug("Receiving GetAllFilenamesMessage: {}", msg.toString());
 
         try {
             // get all the file names
             msg.setFile(cs.getAllFilenames());
         } catch (Throwable e) {
-            log.warn("Cannot retrieve the filenames to reply on the " 
-                    + msg.getClass().getName() + " : " + msg, e);
+            log.warn("Cannot retrieve the filenames to reply on the {} : {}", msg.getClass().getName(), msg, e);
             msg.setNotOk(e);
         } finally {
             // log the message and reply.
-            log.info("Replying GetAllFilenamesMessage: " + msg.toString());
+            log.info("Replying GetAllFilenamesMessage: {}", msg.toString());
             jmsCon.reply(msg);
         }
     }
@@ -365,7 +349,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      */
     public void visit(GetAllChecksumsMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
-        log.debug("Receiving GetAllChecksumsMessage: " + msg.toString());
+        log.debug("Receiving GetAllChecksumsMessage: {}", msg.toString());
 
         try {
             msg.setFile(cs.getArchiveAsFile());
@@ -374,8 +358,9 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             msg.setNotOk(e);
         } finally {
             // log the message and reply
-            log.info("Replying GetAllChecksumsMessage: " + msg.toString());
+            log.info("Replying GetAllChecksumsMessage: {}", msg.toString());
             jmsCon.reply(msg);
         }
     }
+
 }

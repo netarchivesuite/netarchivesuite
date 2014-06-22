@@ -27,8 +27,8 @@ package dk.netarkivet.archive.arcrepository.distribute;
 import java.io.File;
 import java.util.Collections;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
@@ -56,8 +56,9 @@ import dk.netarkivet.common.utils.Settings;
  * a corresponding visit method on BitarchiveClient.
  */
 public class ArcRepositoryServer extends ArchiveMessageHandler {
-    /** The log.*/
-    private final Log log = LogFactory.getLog(getClass());
+
+	/** The log.*/
+    private static final Logger log = LoggerFactory.getLogger(ArcRepositoryServer.class);
     /** The ArcRepository connected to this server.*/
     private final ArcRepository ar;
 
@@ -70,8 +71,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(ar, "ArcRepository ar");
         this.ar = ar;
         ChannelID channel = Channels.getTheRepos();
-        log.info("Listening for arc repository messages on channel '"
-                 + channel + "'");
+        log.info("Listening for arc repository messages on channel '{}'", channel);
         JMSConnectionFactory.getInstance().setListener(channel, this);
     }
 
@@ -181,14 +181,12 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(msg, "BatchMessage msg");
 
         try {
-            ReplicaClient rc = ar.getReplicaClientFromReplicaId(
-                    msg.getReplicaId());
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
             rc.sendBatchJob(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle batch request", t);
-            BatchReplyMessage replyMessage = new BatchReplyMessage(
-                    msg.getReplyTo(), Channels.getTheRepos(), msg.getID(),
-                    0, Collections.<File>emptyList(), null);
+            BatchReplyMessage replyMessage = new BatchReplyMessage(msg.getReplyTo(), Channels.getTheRepos(),
+            		msg.getID(), 0, Collections.<File>emptyList(), null);
             replyMessage.setNotOk(t);
             JMSConnectionFactory.getInstance().send(replyMessage);
         }
@@ -206,8 +204,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(msg, "GetMessage msg");
 
         try {
-            ReplicaClient rc = ar.getReplicaClientFromReplicaId(
-                Settings.get(CommonSettings.USE_REPLICA_ID));
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(Settings.get(CommonSettings.USE_REPLICA_ID));
             rc.sendGetMessage(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle get request", t);
@@ -228,8 +225,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(msg, "GetFileMessage msg");
 
         try {
-            ReplicaClient rc =
-                ar.getReplicaClientFromReplicaId(msg.getReplicaId());
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
             rc.sendGetFileMessage(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle get file request", t);
@@ -249,11 +245,10 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         
         try {
             // retrieve the checksum client
-            ReplicaClient rc = ar.getReplicaClientFromReplicaId(
-                    msg.getReplicaId());
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
             rc.sendGetAllFilenamesMessage(msg);
         } catch (Throwable t) {
-            log.warn("Failed to handle GetAllFilenamesMessage: " + msg, t);
+            log.warn("Failed to handle GetAllFilenamesMessage: {}", msg, t);
             msg.setNotOk(t);
             JMSConnectionFactory.getInstance().reply(msg);
         }
@@ -270,16 +265,15 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         
         try {
             // retrieve the checksum client
-            ReplicaClient rc = ar.getReplicaClientFromReplicaId(
-                    msg.getReplicaId());
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
             rc.sendGetAllChecksumsMessage(msg);
         } catch (Throwable t) {
-            log.warn("Failed to handle GetAllChecksumsMessage: " + msg, t);
+            log.warn("Failed to handle GetAllChecksumsMessage: {}", msg, t);
             msg.setNotOk(t);
             JMSConnectionFactory.getInstance().reply(msg);
         }
     }
-    
+
     /**
      * Method for handling the results of a GetChecksumMessage.
      * This should be handled similar to a ReplyBatchMessage, when a batchjob
@@ -289,9 +283,9 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      */
     public void visit(GetChecksumMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "GetChecksum msg");
-        
-        log.info("Received GetChecksumMessage '" + msg + "'.");
-        
+
+        log.info("Received GetChecksumMessage '{}'.", msg);
+
         // If it is a reply, then handle by arc-repository. 
         // Otherwise send further.
         if(msg.getIsReply()) {
@@ -302,17 +296,16 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
             }
         } else {
             try {
-                ReplicaClient rc = ar.getReplicaClientFromReplicaId(
-                        msg.getReplicaId());
+                ReplicaClient rc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
                 rc.sendGetChecksumMessage(msg);
-            } catch (Throwable e) {
-                log.warn("Failed to handle GetChecksumMessage.", e);
-                msg.setNotOk(e);
+            } catch (Throwable t) {
+                log.warn("Failed to handle GetChecksumMessage.", t);
+                msg.setNotOk(t);
                 JMSConnectionFactory.getInstance().reply(msg);
             }
         }
     }
-    
+
     /**
      * Method for handling CorrectMessages. This message is just sent along to
      * the corresponding replica archive, where the 'bad' entry will be 
@@ -323,15 +316,14 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      */
     public void visit(CorrectMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
-        log.debug("Receiving CorrectMessage: " + msg.toString());
-        
+        log.debug("Receiving CorrectMessage: {}", msg);
+
         try {
-            ReplicaClient rc = ar.getReplicaClientFromReplicaId(
-                    msg.getReplicaId());
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
             rc.sendCorrectMessage(msg);
-        } catch (Throwable e) {
-            log.warn("Could not handle Correct message properly.", e);
-            msg.setNotOk(e);
+        } catch (Throwable t) {
+            log.warn("Could not handle Correct message properly.", t);
+            msg.setNotOk(t);
             JMSConnectionFactory.getInstance().reply(msg);
         }
     }
@@ -340,7 +332,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Removes the ArcRepositoryMessageHandler as listener.
      */
     public void close() {
-        JMSConnectionFactory.getInstance().removeListener(
-                Channels.getTheRepos(), this);
+        JMSConnectionFactory.getInstance().removeListener(Channels.getTheRepos(), this);
     }
+
 }

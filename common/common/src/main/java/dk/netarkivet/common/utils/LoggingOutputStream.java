@@ -1,9 +1,9 @@
 package dk.netarkivet.common.utils;
 
-import org.apache.commons.logging.Log;
-
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.slf4j.Logger;
 
 /**
  * OutputStream which can be used to redirect all stdout and stderr to a logger.
@@ -13,24 +13,16 @@ import java.io.OutputStream;
  */
 public class LoggingOutputStream extends OutputStream {
 
-    /**
-     * Enum representing the standard logging levels for commons logging.
-     */
+    /** Enum representing the standard logging levels for commons logging. */
     public static enum LoggingLevel {TRACE, DEBUG, INFO, WARN, ERROR};
 
-    /**
-     * The level at which messages are logged.
-     */
+    /** The level at which messages are logged. */
     private LoggingLevel loggingLevel;
 
-    /**
-     * The Log to which messages are logged.
-     */
-    private Log logger;
+    /** The Log to which messages are logged. */
+    private Logger logger;
 
-    /**
-     * A prefix by which log-messages from this class can be recognised.
-     */
+    /** A prefix by which log-messages from this class can be recognised. */
     private String prefix;
 
     private String lineSeparator = System.getProperty("line.separator");
@@ -42,12 +34,13 @@ public class LoggingOutputStream extends OutputStream {
      * @param logger The logger to which messages will be logged.
      * @param prefix A prefix by which output from this instance can be identified.
      */
-    public LoggingOutputStream(LoggingLevel loggingLevel, Log logger, String prefix) {
+    public LoggingOutputStream(LoggingLevel loggingLevel, Logger logger, String prefix) {
         this.loggingLevel= loggingLevel;
         this.logger = logger;
         this.prefix = prefix;
     }
 
+    // FIXME cosmically ineffective not to implemente the other write methods.
     @Override
     public void write(int b) throws IOException {
         this.buffer.append((char) b);

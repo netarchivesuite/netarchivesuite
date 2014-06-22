@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
@@ -70,12 +70,10 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
  */
 @SuppressWarnings({ "deprecation"})
 public final class FileChecksumArchive implements ChecksumArchive {
-    /**
-     * The character sequence for separating the filename from the checksum.
-     */
-    private static final String CHECKSUM_SEPARATOR 
-        = ChecksumJob.STRING_FILENAME_SEPARATOR;
-    
+
+	/** The character sequence for separating the filename from the checksum. */
+    private static final String CHECKSUM_SEPARATOR = ChecksumJob.STRING_FILENAME_SEPARATOR;
+
     /** The prefix to the filename. */
     private static final String FILENAME_PREFIX = "checksum_";
     /** The suffix to the filename. */
@@ -88,30 +86,26 @@ public final class FileChecksumArchive implements ChecksumArchive {
     private static final String WRONG_FILENAME_PREFIX = "removed_";
     /** The suffix to the removedEntryFile. */
     private static final String WRONG_FILENAME_SUFFIX = ".checksum";
-    
-    /**
-     * The logger used by this class.
-     */
-    private static Log log = LogFactory.getLog(FileChecksumArchive.class);
-    
-    /**
-     * The current instance of this class.
-     */
+
+    /** The logger used by this class. */
+    private static final Logger log = LoggerFactory.getLogger(FileChecksumArchive.class);
+
+    /** The current instance of this class. */
     private static FileChecksumArchive instance;
-    
+
     /**
      * The file to store the checksum.
      * Each line should contain the following:
      * arc-filename + ## + checksum.
      */
     private File checksumFile;
-    
+
     /**
      * The file for storing all the deleted entries.
      * Each entry should be: 'date :' + 'wrongEntry'.
      */
     private File wrongEntryFile;
-    
+
     /**
      * The last modified date for the checksum file. This variable is used
      * for determining whether to reload the archive from the checksum file, 
@@ -127,12 +121,9 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * 
      * Map(file -> checksum).
      */
-    private Map<String, String> checksumArchive = Collections.synchronizedMap(
-            new HashMap<String, String>());
+    private Map<String, String> checksumArchive = Collections.synchronizedMap(new HashMap<String, String>());
     
-    /**
-     * The minimum space left.
-     */
+    /** The minimum space left. */
     private long minSpaceLeft;
     
     /**
@@ -143,7 +134,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * @return The current instance of this class.
      */
     public static synchronized FileChecksumArchive getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new FileChecksumArchive();
         }
         return instance;
@@ -160,14 +151,12 @@ public final class FileChecksumArchive implements ChecksumArchive {
      */
     private FileChecksumArchive() throws IOFailure, ArgumentNotValid {
         super();
-        
+
         // Get the minimum space left setting.
-        minSpaceLeft = Settings.getLong(
-                ArchiveSettings.CHECKSUM_MIN_SPACE_LEFT);
+        minSpaceLeft = Settings.getLong(ArchiveSettings.CHECKSUM_MIN_SPACE_LEFT);
         // make sure, that minSpaceLeft is non-negative.
-        if(minSpaceLeft < 0) {
-            String msg = "Wrong setting of minSpaceRequired read from "
-                + "Settings: int " + minSpaceLeft;
+        if (minSpaceLeft < 0) {
+            String msg = "Wrong setting of minSpaceRequired read from " + "Settings: int " + minSpaceLeft;
             log.warn(msg);
             throw new ArgumentNotValid(msg);
         }
@@ -175,7 +164,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         // Initialize the archive and bad-entry files.
         initializeFiles();
     }
-    
+
     /**
      * Method for retrieving the name of the checksum file.
      * 
@@ -184,7 +173,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
     public String getFileName() {
         return checksumFile.getPath();
     }
-    
+
     /**
      * Method for retrieving the name of the wrongEntryFile.
      * 
@@ -201,8 +190,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      */
     public boolean hasEnoughSpace() {
         // The file must be valid and have enough space.
-        if (checkArchiveFile(checksumFile)
-                && (FileUtils.getBytesFree(checksumFile) > minSpaceLeft)) {
+        if (checkArchiveFile(checksumFile) && (FileUtils.getBytesFree(checksumFile) > minSpaceLeft)) {
             return true;
         }
         return false;
@@ -217,8 +205,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
     private boolean hasEnoughSpaceForRecreate() {
         // check if the checksum file is larger than space left and the minimum
         // space left.
-        if(checksumFile.length() + minSpaceLeft 
-                > FileUtils.getBytesFree(checksumFile)) {
+        if (checksumFile.length() + minSpaceLeft > FileUtils.getBytesFree(checksumFile)) {
             return false;
         }
         
@@ -233,8 +220,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      */
     private void initializeFiles() {
         // Extract the dir-name and create the dir (if it does not yet exist).
-        File checksumDir = new File(Settings.get(
-                ArchiveSettings.CHECKSUM_BASEDIR));
+        File checksumDir = new File(Settings.get(ArchiveSettings.CHECKSUM_BASEDIR));
         if(!checksumDir.exists()) {
             checksumDir.mkdir();
         }
@@ -308,10 +294,9 @@ public final class FileChecksumArchive implements ChecksumArchive {
         String checksum;
 
         // go through all entries and extract their filename and checksum.
-        for(String record : entries) {
+        for (String record : entries) {
             try {
-                KeyValuePair<String, String> entry = 
-                    ChecksumJob.parseLine(record);
+                KeyValuePair<String, String> entry = ChecksumJob.parseLine(record);
                 // extract the filename and checksum
                 filename = entry.getKey();
                 checksum = entry.getValue();
@@ -319,8 +304,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
                 // into the archive.
                 checksumArchive.put(filename, checksum);
             } catch (IllegalState e) {
-                log.warn("An invalid entry in the loaded file: '" + record 
-                        + "' This will be put in the wrong entry file.", e);
+                log.warn("An invalid entry in the loaded file: '{}' This will be put in the wrong entry file.", record, e);
                 // put into wrongEntryFile!
                 appendWrongRecordToWrongEntryFile(record);
                 recreate = true;
@@ -330,7 +314,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         // If a bad entry is found, then the archive file should be recreated.
         // Otherwise the bad entries might still be in the archive file next 
         // time the FileChecksumArchive is initialized/restarted.
-        if(recreate) {
+        if (recreate) {
             recreateArchiveFile();
         }
         
@@ -371,11 +355,11 @@ public final class FileChecksumArchive implements ChecksumArchive {
                     return;
                 }
                 if(!line.contains(AdminData.VERSION_NUMBER)) {
-                    log.warn("The first line in Admin.data tells the version. "
-                            + "Expected '" + AdminData.VERSION_NUMBER 
-                            + "', but got: " + line + ". Continues any way.");
+                    log.warn("The first line in Admin.data tells the version. Expected '{}', but got: {}. "
+                    		+ "Continuing anyway.",
+                    		AdminData.VERSION_NUMBER, line);
                 } else {
-                    log.debug("Admin.data version: " + line);
+                    log.debug("Admin.data version: {}", line);
                 }
                 
                 // go through the lines, parse them and put them in the archive.
@@ -385,7 +369,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
                     
                     // Check if enough elements
                     if(entryData.length < lineLength) {
-                        log.warn("bad line in admin data: " + line);
+                        log.warn("bad line in admin data: {}", line);
                         continue;
                     }
                     
@@ -393,16 +377,15 @@ public final class FileChecksumArchive implements ChecksumArchive {
                     String checksum = entryData[1];
                     String uploadState = entryData[2];
                     
-                    if(uploadState.equals(
-                            ReplicaStoreState.UPLOAD_COMPLETED.toString())) {
+                    if(uploadState.equals(ReplicaStoreState.UPLOAD_COMPLETED.toString())) {
                         if(checksumArchive.containsKey(filename)) {
                             recreate = true;
                         }
                         checksumArchive.put(filename, checksum);
                         appendEntryToFile(filename, checksum);
-                        log.debug("AdminData line inserted: " + line);
+                        log.debug("AdminData line inserted: {}", line);
                     } else {
-                        log.trace("AdminData line ignored: " + line);
+                        log.trace("AdminData line ignored: {}", line);
                     }
                 }
             } finally {
@@ -411,11 +394,10 @@ public final class FileChecksumArchive implements ChecksumArchive {
                 }
             }
         } catch (IOException e) {
-                String msg = "An error occurred during reading the admin data "
-                    + "file " + adminFile.getAbsolutePath();
+                String msg = "An error occurred during reading the admin data file " + adminFile.getAbsolutePath();
                 throw new IOFailure(msg, e);
         }
-        
+
         // If a entry have been written twice, then recreate the archive file.
         if(recreate) {
             recreateArchiveFile();
@@ -438,30 +420,24 @@ public final class FileChecksumArchive implements ChecksumArchive {
             // Handle the case, when there is not enough space left for 
             // recreating the 
             if(!hasEnoughSpaceForRecreate()) {
-                String errMsg = "Not enough space left to recreate the "
-                    + "checksum file.";
-                log.error(errMsg);
-                throw new IOFailure(errMsg);
+                log.error("Not enough space left to recreate the checksum file.");
+                throw new IOFailure("Not enough space left to recreate the checksum file.");
             }
 
             // This should be synchronized, so no new entries can be made
             // while recreating the archive file.
             synchronized(checksumFile) {
                 // initialize and create the file.
-                File recreateFile = new File(checksumFile.getParentFile(), 
-                        makeRecreateFileName());
+                File recreateFile = new File(checksumFile.getParentFile(), makeRecreateFileName());
                 if(!recreateFile.createNewFile()) {
-                    log.warn("Cannot create new file. The recreate checksum "
-                            + "file did already exist.");
+                    log.warn("Cannot create new file. The recreate checksum file did already exist.");
                 }
 
                 // put the archive into the file.
                 FileWriter fw = new FileWriter(recreateFile);
                 try {
-                    for(Map.Entry<String, String> entry
-                            : checksumArchive.entrySet()) {
-                        String record = entry.getKey() + CHECKSUM_SEPARATOR 
-                        + entry.getValue();
+                    for(Map.Entry<String, String> entry : checksumArchive.entrySet()) {
+                        String record = entry.getKey() + CHECKSUM_SEPARATOR  + entry.getValue();
                         fw.append(record + "\n");
                     }
                 } finally {
@@ -473,9 +449,8 @@ public final class FileChecksumArchive implements ChecksumArchive {
                 FileUtils.moveFile(recreateFile, checksumFile);
             }
         } catch (IOException e) {
-            String errMsg = "The checksum file has not been recreated as "
-                + "attempted. The archive in memory and the one on file are "
-                + "no longer identical.";
+            String errMsg = "The checksum file has not been recreated as attempted. "
+            		+ "The archive in memory and the one on file are no longer identical.";
             log.error(errMsg, e);
             throw new IOFailure(errMsg, e);
         }
@@ -488,8 +463,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * @return The name of the file.
      */
     private String makeChecksumFileName() {
-        return FILENAME_PREFIX + Settings.get(CommonSettings.USE_REPLICA_ID) 
-                + FILENAME_SUFFIX;
+        return FILENAME_PREFIX + Settings.get(CommonSettings.USE_REPLICA_ID) + FILENAME_SUFFIX;
     }
     
     /**
@@ -499,8 +473,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * @return The name of the file for recreating the checksum file.
      */
     private String makeRecreateFileName() {
-        return RECREATE_PREFIX + Settings.get(CommonSettings.USE_REPLICA_ID)
-                + RECREATE_SUFFIX;
+        return RECREATE_PREFIX + Settings.get(CommonSettings.USE_REPLICA_ID) + RECREATE_SUFFIX;
     }
     
     /**
@@ -510,8 +483,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * @return The name of the wrongEntryFile.
      */
     private String makeWrongEntryFileName() {
-        return WRONG_FILENAME_PREFIX + Settings.get(
-                CommonSettings.USE_REPLICA_ID) + WRONG_FILENAME_SUFFIX;
+        return WRONG_FILENAME_PREFIX + Settings.get(CommonSettings.USE_REPLICA_ID) + WRONG_FILENAME_SUFFIX;
     }
     
     /**
@@ -528,14 +500,12 @@ public final class FileChecksumArchive implements ChecksumArchive {
     private boolean checkArchiveFile(File file) {
         // The file must exist.
         if (!file.isFile()) {
-            log.warn("The file '" + file.getAbsolutePath()
-                    + "' is not a valid file.");
+            log.warn("The file '{}' is not a valid file.", file.getAbsolutePath());
             return false;
         }
         // It must be writable.
         if (!file.canWrite()) {
-            log.warn("The file '" + file.getAbsolutePath() 
-                    + "' is not writable");
+            log.warn("The file '{}' is not writable", file.getAbsolutePath());
             return false;
         }
         return true;
@@ -549,8 +519,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * @param checksum The checksum of the file to add.
      * @throws IOFailure If something is wrong when writing to the file.
      */
-    private synchronized void appendEntryToFile(String filename, String 
-            checksum) throws IOFailure {
+    private synchronized void appendEntryToFile(String filename, String checksum) throws IOFailure {
         // initialise the record.
         String record = filename + CHECKSUM_SEPARATOR + checksum + "\n";
         
@@ -570,8 +539,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
                     fwrite.close();
                 }
             } catch(IOException e) {
-                throw new IOFailure("An error occurred while appending an entry"
-                        + " to the archive file.", e);
+                throw new IOFailure("An error occurred while appending an entry to the archive file.", e);
             }
             
             // The checksum file has been updated and so has its timestamp. 
@@ -588,8 +556,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * @param wrongRecord The record to append.
      * @throws IOFailure If the wrong record cannot be appended correctly.
      */
-    private synchronized void appendWrongRecordToWrongEntryFile(String 
-            wrongRecord) throws IOFailure {
+    private synchronized void appendWrongRecordToWrongEntryFile(String wrongRecord) throws IOFailure {
         try {
             // Create the string to append: date + 'wrong record'.
             String entry = new Date().toString() + " : " + wrongRecord + "\n";
@@ -603,9 +570,8 @@ public final class FileChecksumArchive implements ChecksumArchive {
             fwrite.flush();
             fwrite.close();
         } catch (IOException e) {
-            String errMsg = "Cannot put a bad record to the 'wrongEntryFile'.";
-            log.warn(errMsg, e);
-            throw new IOFailure(errMsg, e);
+            log.warn("Cannot put a bad record to the 'wrongEntryFile'.", e);
+            throw new IOFailure("Cannot put a bad record to the 'wrongEntryFile'.", e);
         }
     }
 
@@ -632,11 +598,10 @@ public final class FileChecksumArchive implements ChecksumArchive {
             synchronizeMemoryWithFile();
             String checksum = calculateChecksum(input);
 
-            if(checksumArchive.containsKey(filename)) {
+            if (checksumArchive.containsKey(filename)) {
                 if(checksumArchive.get(filename).equals(checksum)) {
-                    log.warn("Cannot upload arcfile '" + filename + "', "
-                            + "it is already archived with the same checksum: '"
-                            + checksum);
+                    log.warn("Cannot upload arcfile '{}', it is already archived with the same checksum: '{}",
+                    		filename, checksum);
                 } else {
                     throw new IllegalState("Cannot upload arcfile '" + filename 
                             + "', it is already archived with different checksum."
@@ -736,8 +701,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * entry has a different checksum than the incorrectChecksum.
      */
     @Override
-    public File correct(String filename, File correctFile) 
-            throws IOFailure, ArgumentNotValid, IllegalState {
+    public File correct(String filename, File correctFile) throws IOFailure, ArgumentNotValid, IllegalState {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNull(correctFile, "File correctFile");
         
@@ -763,8 +727,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         }
         
         // Make entry in the wrongEntryFile.
-        String badEntry = ChecksumJob.makeLine(filename, 
-                currentChecksum);
+        String badEntry = ChecksumJob.makeLine(filename, currentChecksum);
         appendWrongRecordToWrongEntryFile(badEntry);
         
         // Correct the bad entry, by changing the value to the newChecksum.'
@@ -780,8 +743,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         File removedEntryFile; 
         try {
             // Initialise file and writer.
-            removedEntryFile = File.createTempFile(filename, "tmp", 
-                    FileUtils.getTempDir());
+            removedEntryFile = File.createTempFile(filename, "tmp", FileUtils.getTempDir());
             FileWriter fw = new FileWriter(removedEntryFile);
             
             // Write the bad entry.
@@ -791,8 +753,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
             fw.flush();
             fw.close();
         } catch (IOException e) {
-            throw new IOFailure("Unable to create return file for "
-                    + "CorrectMessage", e);
+            throw new IOFailure("Unable to create return file for CorrectMessage", e);
         }
         
         // Return the file containing the removed entry.
@@ -813,16 +774,14 @@ public final class FileChecksumArchive implements ChecksumArchive {
         
         try {
             // create new temporary file of the archive.
-            File tempFile = File.createTempFile("tmp", "tmp", 
-                    FileUtils.getTempDir());
+            File tempFile = File.createTempFile("tmp", "tmp", FileUtils.getTempDir());
             synchronized(checksumFile) {
                 FileUtils.copyFile(checksumFile, tempFile);
             }
             
             return tempFile;
         } catch (IOException e) {
-            String msg = "Cannot create the output file containing all the "
-                + "entries of this archive.";
+            String msg = "Cannot create the output file containing all the entries of this archive.";
             log.warn(msg);
             throw new IOFailure(msg);
         }
@@ -841,8 +800,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         synchronizeMemoryWithFile();
         
         try {
-            File tempFile = File.createTempFile("tmp", "tmp", 
-                    FileUtils.getTempDir());
+            File tempFile = File.createTempFile("tmp", "tmp", FileUtils.getTempDir());
             FileWriter fw = new FileWriter(tempFile);
 
             try {
@@ -859,8 +817,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
             }
             return tempFile;
         } catch (IOException e) {
-            String msg = "Cannot create the output file containing the "
-                + "filenames of all the entries of this archive.";
+            String msg = "Cannot create the output file containing the filenames of all the entries of this archive.";
             log.warn(msg);
             throw new IOFailure(msg);
         }
@@ -900,4 +857,5 @@ public final class FileChecksumArchive implements ChecksumArchive {
             checksumArchive.clear();
         }
     }
+
 }

@@ -27,8 +27,8 @@ package dk.netarkivet.archive.distribute;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
@@ -57,11 +57,10 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
  * @see ArchiveMessageVisitor
  *
  */
-public abstract class ArchiveMessageHandler
-        implements ArchiveMessageVisitor, MessageListener {
+public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, MessageListener {
 
     /** The log.*/
-    private final Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(ArchiveMessageHandler.class);
 
     /**
      * Creates a ArchiveMessageHandler object.
@@ -79,13 +78,13 @@ public abstract class ArchiveMessageHandler
      */
     public void onMessage(Message msg) {
         ArgumentNotValid.checkNotNull(msg, "Message msg");
-        log.trace("Message received:\n" + msg.toString());
+        log.trace("Message received:\n{}", msg.toString());
         try {
             ((ArchiveMessage) JMSConnection.unpack(msg)).accept(this);
         } catch (ClassCastException e) {
             log.warn("Invalid message type", e);
-        } catch (Throwable e) {
-            log.warn("Error processing message '" + msg + "'", e);
+        } catch (Throwable t) {
+            log.warn("Error processing message '{}'", msg, t);
         }
     }
 
@@ -95,9 +94,8 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied Always
      */
     private void deny(ArchiveMessage msg) throws PermissionDenied {
-        throw new PermissionDenied("'" + this + "' provides no handling for "
-                + msg + " of type " + msg.getClass().getName()
-                + " and should not be invoked!");
+        throw new PermissionDenied("'" + this + "' provides no handling for " + msg
+        		+ " of type " + msg.getClass().getName() + " and should not be invoked!");
     }
 
     /**

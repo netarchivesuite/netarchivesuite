@@ -27,7 +27,8 @@ package dk.netarkivet.archive.checksum.distribute;
 
 import java.io.File;
 
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
@@ -43,10 +44,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 @SuppressWarnings({ "serial"})
 public class GetAllFilenamesMessage extends ArchiveMessage {
-    /** 
-     * The file with the current content, which will be retrieved from the 
-     * sender of this message.
-     */
+
+	private static final Logger log = LoggerFactory.getLogger(GetAllFilenamesMessage.class);
+
+	/** The file with the current content, which will be retrieved from the sender of this message. */
     private RemoteFile remoteFile;
     /** The id for the replica where this message should be sent.*/
     private String replicaId;
@@ -85,8 +86,8 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
     public void getData(File toFile) {
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
         if (remoteFile == null) {
-            throw new IOFailure("No remote file has been retrieved. This "
-                    + "message is either NotOK or has never been sent.");
+            throw new IOFailure("No remote file has been retrieved. "
+            		+ "This message is either NotOK or has never been sent.");
         }
         remoteFile.copyTo(toFile);
         try {
@@ -94,8 +95,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
         } catch (IOFailure e) {
             //Just log errors on deleting. They are fairly harmless.
             // Can't make Logger a field, as this class is Serializable
-            LogFactory.getLog(getClass().getName()).warn(
-                    "Could not delete remote file " + remoteFile.getName());
+            log.warn("Could not delete remote file {}", remoteFile.getName());
         }
         remoteFile = null;
     }
@@ -127,4 +127,5 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);
     }
+
 }

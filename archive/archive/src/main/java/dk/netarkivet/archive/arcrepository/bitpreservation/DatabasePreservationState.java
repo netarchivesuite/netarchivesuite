@@ -31,8 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.arcrepositoryadmin.ChecksumStatus;
 import dk.netarkivet.archive.arcrepositoryadmin.FileListStatus;
@@ -48,18 +48,16 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * Contains the ReplicaFileInfos corresponding to the file. 
  */
 public class DatabasePreservationState implements PreservationState {
-    /** The log.*/
-    private Log log = LogFactory.getLog(DatabasePreservationState.class);
+
+	/** The log.*/
+    private static final Logger log = LoggerFactory.getLogger(DatabasePreservationState.class);
     
     /**
      * The map containing all the entries for in the replicafileinfo table in 
      * the database and the replica they correspond to.
      */
-    private Map<Replica, ReplicaFileInfo> entries = new HashMap<Replica, 
-            ReplicaFileInfo>();
-    /**
-     * The name of the file.
-     */
+    private Map<Replica, ReplicaFileInfo> entries = new HashMap<Replica, ReplicaFileInfo>();
+    /** The name of the file. */
     private String filename;
     
     /**
@@ -71,16 +69,14 @@ public class DatabasePreservationState implements PreservationState {
      * @throws ArgumentNotValid If the filename is null or the empty string, or
      * if the list of ReplicaFileInfos are null or empty. 
      */
-    public DatabasePreservationState(String fileName, 
-            List<ReplicaFileInfo> rfis) throws ArgumentNotValid {
+    public DatabasePreservationState(String fileName, List<ReplicaFileInfo> rfis) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
-        ArgumentNotValid.checkNotNullOrEmpty(rfis, 
-                "List<ReplicaFileInfo> rfis");
+        ArgumentNotValid.checkNotNullOrEmpty(rfis, "List<ReplicaFileInfo> rfis");
         
         this.filename = fileName;
         
         // retrieve the replica, and put it into the map along the fileinfo.
-        for(ReplicaFileInfo rfi : rfis) {
+        for (ReplicaFileInfo rfi : rfis) {
             Replica rep = Replica.getReplicaFromId(rfi.getReplicaId());
             entries.put(rep, rfi);
         }
@@ -94,13 +90,11 @@ public class DatabasePreservationState implements PreservationState {
     * is returned if no file is present or if an error occurred.
     * @throws ArgumentNotValid If the replica is null.
     */
-    public List<String> getReplicaChecksum(Replica replica) 
-            throws ArgumentNotValid {
+    public List<String> getReplicaChecksum(Replica replica) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         
         // return empty list if the file is missing from replica.
-        if(entries.get(replica).getFileListState().equals(
-                FileListStatus.MISSING)) {
+        if (entries.get(replica).getFileListState().equals(FileListStatus.MISSING)) {
             return new ArrayList<String>(0);
         }
         
@@ -131,8 +125,7 @@ public class DatabasePreservationState implements PreservationState {
      * @return Status that the admin data knows for this file in the replica.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public String getAdminReplicaState(Replica replica) 
-            throws ArgumentNotValid {
+    public String getAdminReplicaState(Replica replica) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         
         return entries.get(replica).getUploadState().toString();
@@ -161,23 +154,20 @@ public class DatabasePreservationState implements PreservationState {
      * @return the name of the reference replica or null if no reference exists.
      */
     public Replica getReferenceBitarchive() {
-        for(Map.Entry<Replica, ReplicaFileInfo> entry : entries.entrySet()) {
+        for (Map.Entry<Replica, ReplicaFileInfo> entry : entries.entrySet()) {
             // Check whether it is a bitarchive with OK checksum.
-            if(entry.getKey().getType().equals(ReplicaType.BITARCHIVE) 
-                    && entry.getValue().getChecksumStatus().equals(
-                            ChecksumStatus.OK)) {
-                log.debug("Found reference bitarchive replica for file '" 
-                        + filename + "'.");
+            if (entry.getKey().getType().equals(ReplicaType.BITARCHIVE) &&
+            		entry.getValue().getChecksumStatus().equals(ChecksumStatus.OK)) {
+                log.debug("Found reference bitarchive replica for file '{}'.", filename);
                 return entry.getKey();
             }
         }
 
         // If no replica is found, then report and return null.
-        log.warn("Cannot find a reference bitarchive for the file '"
-                + filename + "'. Returning null.");
+        log.warn("Cannot find a reference bitarchive for the file '{}'. Returning null.", filename);
         return null;
     }
-    
+
    /** 
     * Get a checksum that the whole replica agrees upon, or else "".
     *
@@ -191,11 +181,10 @@ public class DatabasePreservationState implements PreservationState {
        ArgumentNotValid.checkNotNull(replica, "Replica replica");
        
        // return "" if the file is missing.
-       if(entries.get(replica).getFileListState().equals(
-               FileListStatus.MISSING)) {
+       if (entries.get(replica).getFileListState().equals(FileListStatus.MISSING)) {
            return "";
        }
-       
+
        return entries.get(replica).getChecksum();
    }
 
@@ -230,16 +219,16 @@ public class DatabasePreservationState implements PreservationState {
        log.debug("Creating checksum count map for voting.");
        
        // Insert all the checksum of all the entries into the map.
-       for(ReplicaFileInfo rfi : entries.values()) {
+       for (ReplicaFileInfo rfi : entries.values()) {
            String checksum = rfi.getChecksum();
            
            // ignore if the checksum is invalid.
-           if(checksum == null || checksum.isEmpty()) {
-               log.warn("invalid checksum for replicafileinfo: " + rfi);
+           if (checksum == null || checksum.isEmpty()) {
+               log.warn("invalid checksum for replicafileinfo: {}", rfi);
                continue;
            }
            
-           if(checksumCount.containsKey(checksum)) {
+           if (checksumCount.containsKey(checksum)) {
                // retrieve the count and add one
                Integer count = checksumCount.get(checksum) + 1;
                // put the count back into the map.
@@ -256,10 +245,9 @@ public class DatabasePreservationState implements PreservationState {
        int largest = -1;
        String res = "NO CHECKSUMS!";
        boolean unique = false;
-       for(Map.Entry<String, Integer> checksumEntry 
-               : checksumCount.entrySet()) {
+       for (Map.Entry<String, Integer> checksumEntry : checksumCount.entrySet()) {
            // check whether this has the highest count.
-           if(checksumEntry.getValue().intValue() > largest) {
+           if (checksumEntry.getValue().intValue() > largest) {
                unique = true;
                largest = checksumEntry.getValue().intValue();
                res = checksumEntry.getKey();
@@ -273,15 +261,15 @@ public class DatabasePreservationState implements PreservationState {
        // Check whether unique, and report other wise.
        if(!unique) {
            // TODO handle differently? send notification?
-           String errMsg = "No common checksum was found for the file '" 
-               + filename + "'. The checksums found: " + checksumCount;
+           String errMsg = "No common checksum was found for the file '" + filename + "'."
+           		+ " The checksums found: " + checksumCount;
            log.error(errMsg);
            throw new IllegalState(errMsg);
        }
        
        // log the results.
-       log.info("The replicas have voted about the checksum for the file '" 
-               + filename + "' and have elected the checksum '" + res + "'.");
+       log.info("The replicas have voted about the checksum for the file '{}' and have elected the checksum '{}'.",
+    		   filename, res);
        
        return res;
    }
@@ -308,7 +296,7 @@ public class DatabasePreservationState implements PreservationState {
     */
    public String toString() {
        String res = "DatabasePreservationStatus for '" + filename + "'\n";
-       for(ReplicaFileInfo rfi : entries.values()) {
+       for (ReplicaFileInfo rfi : entries.values()) {
            res += rfi.toString() + "\n";
        }
        return res;
@@ -323,4 +311,5 @@ public class DatabasePreservationState implements PreservationState {
    public String getFilename() {
        return filename;
    }
+
 }

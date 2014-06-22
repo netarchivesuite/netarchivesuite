@@ -28,8 +28,8 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -46,13 +46,14 @@ import dk.netarkivet.common.utils.FileUtils;
  * 
  */
 public class EvaluateConfigFile {
-    /** The elements to check the settings against.*/
+
+	/** The elements to check the settings against.*/
     private Element completeSettings;
     /** The root element in the xml tree.*/
     private XmlStructure root;
     /** the log, for logging stuff instead of displaying them directly.*/
-    private final Log log = LogFactory.getLog(getClass().getName());
-    
+    private static final Logger log = LoggerFactory.getLogger(EvaluateConfigFile.class);
+
     /**
      * Constructor.
      * Only initialises the config file and settings list.
@@ -61,8 +62,7 @@ public class EvaluateConfigFile {
      * @param encoding the encoding to use to read from file
      */
     public EvaluateConfigFile(File deployConfigFile, String encoding) {
-        ArgumentNotValid.checkNotNull(deployConfigFile, 
-                "File deployConfigFile");
+        ArgumentNotValid.checkNotNull(deployConfigFile, "File deployConfigFile");
         initLoadDefaultSettings();
         root = new XmlStructure(deployConfigFile, encoding);
     }
@@ -77,29 +77,23 @@ public class EvaluateConfigFile {
         try {
             // check global settings
             evaluateElement(root.getChild(Constants.COMPLETE_SETTINGS_BRANCH));
-            List<Element> physLocs = root.getChildren(
-                    Constants.DEPLOY_PHYSICAL_LOCATION);
+            List<Element> physLocs = root.getChildren(Constants.DEPLOY_PHYSICAL_LOCATION);
             for(Element pl : physLocs) {
                 // check physical location settings
                 evaluateElement(pl.element(Constants.COMPLETE_SETTINGS_BRANCH));
                 List<Element> macs = pl.elements(Constants.DEPLOY_MACHINE);
                 for(Element mac : macs) {
                     // check machine settings 
-                    evaluateElement(mac
-                            .element(Constants.COMPLETE_SETTINGS_BRANCH));
-                    List<Element> apps = mac
-                            .elements(Constants.DEPLOY_APPLICATION_NAME);
+                    evaluateElement(mac.element(Constants.COMPLETE_SETTINGS_BRANCH));
+                    List<Element> apps = mac.elements(Constants.DEPLOY_APPLICATION_NAME);
                     for(Element app : apps) {
                         // check application settings
-                        evaluateElement(app
-                                .element(Constants.COMPLETE_SETTINGS_BRANCH));
+                        evaluateElement(app.element(Constants.COMPLETE_SETTINGS_BRANCH));
                     }
                 }
             }
         } catch (Exception e) {
-            String msg = "Error occured during evaluation: " + e;  
-            System.err.println(msg);
-            log.trace(msg);
+            log.error("Error occured during evaluation: ", e);
         }
     }
     
@@ -109,8 +103,7 @@ public class EvaluateConfigFile {
      * are to be used or not.
      */
     private void initLoadDefaultSettings() {
-        File f = FileUtils.getResourceFileFromClassPath(
-                Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH);
+        File f = FileUtils.getResourceFileFromClassPath(Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH);
         try {
             Document doc;
             SAXReader reader = new SAXReader();
@@ -118,13 +111,11 @@ public class EvaluateConfigFile {
                 doc =  reader.read(f);
                 completeSettings = doc.getRootElement();
             } else {
-                log.warn("Cannot read file: '" 
-                        + f.getAbsolutePath() + "'");
+                log.warn("Cannot read file: '{}'", f.getAbsolutePath());
             }
         } catch (DocumentException e) {
-            String errMsg = "Cannot handle complete settings file.";
-            log.error(errMsg, e);
-            throw new IOFailure(errMsg, e);
+            log.error("Cannot handle complete settings file.", e);
+            throw new IOFailure("Cannot handle complete settings file.", e);
         }
     }
     
@@ -158,8 +149,7 @@ public class EvaluateConfigFile {
                 }
             } else {
                 // Print out the 'illegal' branches.
-                System.out.println("Branch in settings not found: " 
-                        + path.replace(Constants.SLASH, Constants.DOT));
+                System.out.println("Branch in settings not found: "  + path.replace(Constants.SLASH, Constants.DOT));
             }
         }
     }
@@ -196,11 +186,11 @@ public class EvaluateConfigFile {
         StringBuilder res = new StringBuilder();
         int i = 0;
         // find the index for settings
-        while(i < elList.length && !elList[i].equalsIgnoreCase(
-                Constants.COMPLETE_SETTINGS_BRANCH)) {
-            i++;
+        while(i < elList.length && !elList[i].equalsIgnoreCase(Constants.COMPLETE_SETTINGS_BRANCH)) {
+        	++i;
         }
 
+        // TODO WTF?!
         for(i++; i<elList.length; i++) {
             res.append(elList[i]);
             res.append(Constants.SLASH);
@@ -211,4 +201,5 @@ public class EvaluateConfigFile {
 
        return res.toString();
     }
+
 }
