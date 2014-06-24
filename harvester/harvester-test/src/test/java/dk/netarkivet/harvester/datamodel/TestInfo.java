@@ -180,8 +180,8 @@ public class TestInfo {
     public static final int NO_OF_TESTDOMAINS = 7;
 
     public static File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
-    public static final File DBFILE = new File(TOPDATADIR, "fullhddb.jar");
-    static final File EMPTYDBFILE = new File(TOPDATADIR, "emptyhddb.jar");
+    public static final String DBFILE = TOPDATADIR.getAbsolutePath() + "/fullhddb.sql";
+    static final String EMPTYDBFILE = TOPDATADIR.getAbsolutePath() + "/emptyhddb.sql";
     public static final File NONEXISTINGDIR =
             new File(TEMPDIR, "nonexisting");
     public static final String HARVESTDEFINITION_SITESECTIONCLASS
