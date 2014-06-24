@@ -1,26 +1,3 @@
-/* File:        $Id: NetarchiveResourceStoreTester.java 2360 2012-06-01 15:31:11Z svc $
- * Revision:    $Revision: 2360 $
- * Author:      $Author: svc $
- * Date:        $Date: 2012-06-01 17:31:11 +0200 (Fri, 01 Jun 2012) $
- *
- * Copyright 2004-2012 The Royal Danish Library, the Danish State and
- * University Library, the National Library of France and the Austrian
- * National Library.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */
 package dk.netarkivet.wayback;
 
 import java.io.ByteArrayInputStream;

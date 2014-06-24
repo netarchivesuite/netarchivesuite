@@ -52,10 +52,12 @@
     <url>https://sbforge.org/display/NAS</url>
 
     <organization>
-        <name>The Royal Danish Library, the Danish State and University Library, the National Library of France and
-            the Austrian National Library.</name>
+        <name>The Royal Danish Library, the Danish State and University Library,
+            the National Library of France and the Austrian National Library.</name>
         <url>https://sbforge.org/display/BITMAG</url>
     </organization>
+
+    <inceptionYear>2005</inceptionYear>
 
     <scm>
         <url>https://github.com/netarchivesuite/netarchivesuite</url>
@@ -159,6 +161,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
+                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
                     <canUpdateCopyright>true</canUpdateCopyright>
                     <canUpdateDescription>true</canUpdateDescription>
                     <generateBundle>true</generateBundle>
@@ -166,7 +169,7 @@
                     <licenseName>lgpl_v2_1</licenseName>
                     <useMissingFile>true</useMissingFile>
                     <includes>
-                        <include>java</include>
+                        <include>**/*.java</include>
                     </includes>
                 </configuration>
             </plugin>
