@@ -171,6 +171,10 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
+                    <excludes>
+                        <exclude>**/is/hi/bok/deduplicator/*.java</exclude>
+                        <exclude>**/ExtractorJS.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
