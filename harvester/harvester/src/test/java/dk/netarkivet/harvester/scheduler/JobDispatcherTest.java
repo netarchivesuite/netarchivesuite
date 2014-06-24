@@ -24,16 +24,8 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.tools.OrderXmlBuilder;
 import dk.netarkivet.harvester.datamodel.AliasInfo;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -44,19 +36,35 @@ import dk.netarkivet.harvester.datamodel.SparsePartialHarvest;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
-import junit.framework.TestCase;
+import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.tree.DefaultDocument;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.mockito.Mockito.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test JobDispatcher class.
  */
-public class JobDispatcherTester extends TestCase {
-    /** The JobDispatcher used for testing. */
+public class JobDispatcherTest {
     private JobDispatcher jobDispatcher;
     private HarvestDefinitionDAO harvestDefinitionDAO;
     private JobDAO jobDAO;
@@ -67,11 +75,7 @@ public class JobDispatcherTester extends TestCase {
     private Job jobMock = createJob(1);
     private SparsePartialHarvest harvest = createDefaultSparsePartialHarvest();
 
-
-    public JobDispatcherTester(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() {
         harvestDefinitionDAO = mock(HarvestDefinitionDAO.class);
         jobDAO = mock(JobDAO.class);
@@ -82,6 +86,7 @@ public class JobDispatcherTester extends TestCase {
     /**
      * Simple test of new job submitting.
      */
+    @Test
     public void testSubmitNewJobs() throws DocumentException {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
 
@@ -95,12 +100,13 @@ public class JobDispatcherTester extends TestCase {
         assertEquals(
                 HarvesterChannels.getHarvestJobChannelId(SELECTIVE_HARVEST_CHANNEL),
                 crawlMessageCaptor.getValue().getTo());
-        assertEquals(harvest.getName(),crawlMessageCaptor.getValue().getOrigHarvestInfo().getOrigHarvestName());
+        assertEquals(harvest.getName(), crawlMessageCaptor.getValue().getOrigHarvestInfo().getOrigHarvestName());
     }
 
     /**
      * Test that runNewJobs generates correct alias information for the job.s
      */
+    @Test
     public void testSubmitNewJobsMakesAliasInfo() throws SQLException {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
         String originalDomain = "netarkiv.dk";
@@ -113,13 +119,14 @@ public class JobDispatcherTester extends TestCase {
         verify(jmsConnection).send(crawlMessageCaptor.capture());
         assertEquals("Should have 1 metadata entry in last received message",
                 1, crawlMessageCaptor.getValue().getMetadata().size());
-        assertEquals(aliasDomain +" is an alias for " + originalDomain + "\n",
+        assertEquals(aliasDomain + " is an alias for " + originalDomain + "\n",
                 new String(crawlMessageCaptor.getValue().getMetadata().get(0).getData()));
     }
 
     /**
      * Test that runNewJobs makes correct duplication reduction information.
      */
+    @Test
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws DocumentException {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
         Document doc = OrderXmlBuilder.create().enableDeduplication().getOrderXml();
@@ -147,7 +154,7 @@ public class JobDispatcherTester extends TestCase {
                         "&harvestnum=" + jobMock.getHarvestNum() +
                         "&jobid=" + jobMock.getJobID(),
                 metadataEntry.getURL());
-        assertEquals("Should have right data", jobIDsForDuplicateReduction.get(0) +"", new String(
+        assertEquals("Should have right data", jobIDsForDuplicateReduction.get(0) + "", new String(
                 metadataEntry.getData()));
     }
 
@@ -157,6 +164,7 @@ public class JobDispatcherTester extends TestCase {
      * Test sending + check that we send a message
      * Uses MessageTestHandler()
      */
+    @Test
     public void testSendingToCorrectQueue() {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
 
@@ -183,6 +191,7 @@ public class JobDispatcherTester extends TestCase {
      * Verify handling of NULL value for Job
      * Uses MessageTestHandler()
      */
+    @Test
     public void testNullJob() {
         try {
             jobDispatcher.doOneCrawl((Job)null, "test", "test", "test", SELECTIVE_HARVEST_CHANNEL,

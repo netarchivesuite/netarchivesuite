@@ -1,4 +1,4 @@
-package dk.netarkivet.common.tools;
+package dk.netarkivet.harvester.test.utils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -27,22 +27,26 @@ package dk.netarkivet.harvester.scheduler;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Matchers;
+
+import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import javax.inject.Provider;
-import junit.framework.TestCase;
-import static org.mockito.Matchers.any;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class JobSupervisorTest extends TestCase {
+public class JobSupervisorTest {
     private JobSupervisor jobSupervisor;
     private JobDAO jobDaoMock = mock(JobDAO.class);
     private Provider<JobDAO> jobDAOProvider;
 
+    @Before
     public void setUp() {
         jobDAOProvider = new Provider<JobDAO>() {
             @Override
@@ -52,6 +56,7 @@ public class JobSupervisorTest extends TestCase {
         };
     }
 
+    @Test
     public void testCleanOldJobsMultipleJobs() {
         Long jobTimeoutTime = 1L;
         jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
@@ -85,13 +90,14 @@ public class JobSupervisorTest extends TestCase {
         verify(pastActiveMock).getActualStart();
         verify(futureActiveMock).getActualStart();
         verify(pastObsoleteJobMock).setStatus(JobStatus.FAILED);
-        verify(pastObsoleteJobMock).appendHarvestErrors(any(String.class));
+        verify(pastObsoleteJobMock).appendHarvestErrors(Matchers.any(String.class));
         verifyNoMoreInteractions(pastActiveMock, futureActiveMock);
 
         verify(jobDaoMock).update(pastObsoleteJobMock);
         verifyNoMoreInteractions(jobDaoMock);
     }
 
+    @Test
     public void testCleanOldJobsNoJobs() {
         Long jobTimeoutTime = 1L;
         jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
@@ -105,6 +111,7 @@ public class JobSupervisorTest extends TestCase {
         verifyNoMoreInteractions(jobDaoMock);
     }
 
+    @Test
     public void testRescheduleMultipleSubmittedJobs() {
         Long jobTimeoutTime = 1L;
         jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
@@ -120,6 +127,7 @@ public class JobSupervisorTest extends TestCase {
         verifyNoMoreInteractions(jobDaoMock);
     }
 
+    @Test
     public void testRescheduleNoSubmittedJobs() {
         Long jobTimeoutTime = 1L;
         jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
