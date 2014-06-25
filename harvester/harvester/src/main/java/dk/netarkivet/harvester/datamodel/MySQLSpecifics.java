@@ -28,8 +28,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -40,8 +40,9 @@ import dk.netarkivet.common.utils.ExceptionUtils;
  * MySQL-specific implementation of DB methods.
  */
 public class MySQLSpecifics extends DBSpecifics {
-    /** The log. */
-    Log log = LogFactory.getLog(MySQLSpecifics.class);
+
+	/** The log. */
+    private static final Logger log = LoggerFactory.getLogger(MySQLSpecifics.class);
 
     /**
      * Get an instance of the MySQL specifics class.
@@ -51,7 +52,8 @@ public class MySQLSpecifics extends DBSpecifics {
         return new MySQLSpecifics();
     }
 
-    /** Get a temporary table for short-time use.  The table should be
+    /**
+     * Get a temporary table for short-time use.  The table should be
      * disposed of with dropTemporaryTable.  The table has two columns
      * domain_name varchar(Constants.MAX_NAME_SIZE)
      * config_name varchar(Constants.MAX_NAME_SIZE)
@@ -62,11 +64,9 @@ public class MySQLSpecifics extends DBSpecifics {
      */
     public String getJobConfigsTmpTable(Connection c) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
-        PreparedStatement s = c.prepareStatement("CREATE TEMPORARY TABLE  "
-                + "jobconfignames "
+        PreparedStatement s = c.prepareStatement("CREATE TEMPORARY TABLE  jobconfignames "
                 + "( domain_name varchar(" + Constants.MAX_NAME_SIZE + "), "
-                + " config_name varchar(" + Constants.MAX_NAME_SIZE
-                + ") )");
+                + " config_name varchar(" + Constants.MAX_NAME_SIZE + ") )");
         s.execute();
         s.close();
         return "jobconfignames";
@@ -89,8 +89,7 @@ public class MySQLSpecifics extends DBSpecifics {
             s = c.prepareStatement("DROP TEMPORARY TABLE " +  tableName);
             s.execute();
         } catch (SQLException e) {
-            log.warn("Couldn't drop temporary table " + tableName + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e), e);
+            log.warn("Couldn't drop temporary table {}\n{}", ExceptionUtils.getSQLExceptionCause(e), tableName, e);
         }
     }
 
@@ -104,7 +103,8 @@ public class MySQLSpecifics extends DBSpecifics {
         return "com.mysql.jdbc.Driver";
     }
 
-    /** Migrates the 'jobs' table from version 3 to version 4
+    /**
+     * Migrates the 'jobs' table from version 3 to version 4
      * consisting of a change of the field forcemaxbytes from int to bigint
      * and setting its default to -1.
      * Furthermore the default value for field num_configs is set to 0.
@@ -112,28 +112,27 @@ public class MySQLSpecifics extends DBSpecifics {
      */
     protected synchronized void migrateJobsv3tov4() {
         String[] sqlStatements = {
-            "ALTER TABLE jobs CHANGE COLUMN forcemaxbytes forcemaxbytes"
-            + " bigint not null default -1",
-            "ALTER TABLE jobs CHANGE COLUMN num_configs num_configs"
-            + " int not null default 0"
+            "ALTER TABLE jobs CHANGE COLUMN forcemaxbytes forcemaxbytes bigint not null default -1",
+            "ALTER TABLE jobs CHANGE COLUMN num_configs num_configs int not null default 0"
         };
         HarvestDBConnection.updateTable("jobs", 4, sqlStatements);
     }
 
-    /** Migrates the 'jobs' table from version 4 to version 5
+    /**
+     * Migrates the 'jobs' table from version 4 to version 5
      * consisting of adding new fields 'resubmitted_as_job' and 'submittedDate'.
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected synchronized void migrateJobsv4tov5() {
         String[] sqlStatements = {
-                "ALTER TABLE jobs ADD COLUMN submitteddate datetime "
-                    + "AFTER enddate",
+                "ALTER TABLE jobs ADD COLUMN submitteddate datetime AFTER enddate",
                 "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"
             };
         HarvestDBConnection.updateTable("jobs", 5, sqlStatements);
     }
 
-    /** Migrates the 'configurations' table from version 3 to version 4.
+    /**
+     * Migrates the 'configurations' table from version 3 to version 4.
      * This consists of altering the default value of field 'maxbytes' to -1.
      */
     protected synchronized void migrateConfigurationsv3ov4() {
@@ -174,8 +173,7 @@ public class MySQLSpecifics extends DBSpecifics {
                                  + "primary key,"
                                  + "    crawler_trap_list_id INT NOT NULL, "
                                  + "    trap_expression VARCHAR(1000) )";
-        HarvestDBConnection.updateTable("global_crawler_trap_expressions", 1,
-                              createStatement);
+        HarvestDBConnection.updateTable("global_crawler_trap_expressions", 1, createStatement);
     }
 
     @Override
@@ -299,8 +297,7 @@ public class MySQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateRunningJobsHistoryTableV1ToV2() {
         String[] sqlStatements = {
-                "ALTER TABLE runningJobsHistory "
-                + "ADD COLUMN retiredQueuesCount bigint not null"
+                "ALTER TABLE runningJobsHistory ADD COLUMN retiredQueuesCount bigint not null"
         };
         HarvestDBConnection.updateTable("runningjobshistory", 2, sqlStatements);
     }
@@ -312,8 +309,7 @@ public class MySQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateRunningJobsMonitorTableV1ToV2() {
         String[] sqlStatements = {
-                "ALTER TABLE runningJobsMonitor "
-                + "ADD COLUMN retiredQueuesCount bigint not null"
+                "ALTER TABLE runningJobsMonitor ADD COLUMN retiredQueuesCount bigint not null"
         };
         HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
     }
@@ -321,32 +317,36 @@ public class MySQLSpecifics extends DBSpecifics {
 
     @Override
     protected void migrateDomainsv2tov3() {
-        String[] sqlStatements = {"ALTER TABLE domains MODIFY crawlertraps LONGTEXT "};
+        String[] sqlStatements = {
+        		"ALTER TABLE domains MODIFY crawlertraps LONGTEXT "
+        };
         HarvestDBConnection.updateTable("domains", 3, sqlStatements);
     }
 
     @Override
     protected void migrateConfigurationsv4tov5() {
      // Update configurations table to version 5
-        String[] sqlStatements
-            = {"ALTER TABLE configurations MODIFY maxobjects bigint" };
+        String[] sqlStatements = {
+        		"ALTER TABLE configurations MODIFY maxobjects bigint"
+        };
         HarvestDBConnection.updateTable("configurations", 5, sqlStatements);
     }
 
     @Override
     protected void migrateFullharvestsv3tov4() {
         // Update fullharvests table to version 4
-        String[] sqlStatements
-            = {"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"};
+        String[] sqlStatements = {
+        		"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"
+        };
         HarvestDBConnection.updateTable("fullharvests", 4, sqlStatements);
-
     }
 
     @Override
     protected void migrateJobsv5tov6() {
      // Update jobs table to version 6
-        String[] sqlStatements
-            = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0 AFTER forcemaxcount"};
+        String[] sqlStatements = {
+        		"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0 AFTER forcemaxcount"
+        };
         HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
 
     }
@@ -354,24 +354,23 @@ public class MySQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateFullharvestsv4tov5() {
         // Update fullharvests table to version 4
-        String[] sqlStatements
-            = {"ALTER TABLE fullharvests ADD COLUMN isindexready int NOT NULL DEFAULT 0"};
+        String[] sqlStatements = {
+        		"ALTER TABLE fullharvests ADD COLUMN isindexready int NOT NULL DEFAULT 0"
+        };
         HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
     }
 
     @Override
     protected void createExtendedFieldTypeTable() {
         String[] statements = new String[3];
-        statements[0] = "" + "CREATE TABLE extendedfieldtype " + "  ( "
+        statements[0] = "CREATE TABLE extendedfieldtype " + "  ( "
                 + "     extendedfieldtype_id BIGINT NOT NULL PRIMARY KEY, "
                 + "     name             VARCHAR(50) NOT NULL " + "  )";
 
-        statements[1] =
-            "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )"
-            + " VALUES ( 1, 'domains')";
-        statements[2] = 
-            "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )"
-            + " VALUES ( 2, 'harvestdefinitions')";
+        statements[1] = "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )"
+        		+ " VALUES ( 1, 'domains')";
+        statements[2] = "INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )"
+        		+ " VALUES ( 2, 'harvestdefinitions')";
 
         HarvestDBConnection.updateTable("extendedfieldtype", 1, statements);
     }
@@ -379,7 +378,7 @@ public class MySQLSpecifics extends DBSpecifics {
     
     @Override
     protected void createExtendedFieldTable() {
-        String createStatement = "" + "CREATE TABLE extendedfield " + "  ( "
+        String createStatement = "CREATE TABLE extendedfield " + "  ( "
                 + "     extendedfield_id BIGINT NOT NULL PRIMARY KEY, "
                 + "     extendedfieldtype_id BIGINT NOT NULL, "
                 + "     name             VARCHAR(50) NOT NULL, "
@@ -395,7 +394,7 @@ public class MySQLSpecifics extends DBSpecifics {
 
     @Override
     protected void createExtendedFieldValueTable() {
-        String createStatement = "" + "CREATE TABLE extendedfieldvalue "
+        String createStatement = "CREATE TABLE extendedfieldvalue "
                 + "  ( "
                 + "     extendedfieldvalue_id BIGINT NOT NULL PRIMARY KEY, "
                 + "     extendedfield_id      BIGINT NOT NULL, "
@@ -424,7 +423,7 @@ public class MySQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateJobsv8tov9() {
         String[] sqlStatements = {
-        "ALTER TABLE jobs ADD COLUMN harvestname_prefix VARCHAR(100)"};
+        		"ALTER TABLE jobs ADD COLUMN harvestname_prefix VARCHAR(100)"};
         HarvestDBConnection.updateTable("jobs", 9, sqlStatements);
     }
     
@@ -486,7 +485,6 @@ public class MySQLSpecifics extends DBSpecifics {
         String[] sqlStatements = {
                 "ALTER TABLE extendedfield ADD COLUMN maxlen INT",
                 "ALTER TABLE extendedfield MODIFY options TEXT"
-        		
         };
         HarvestDBConnection.updateTable("extendedfield", 2, sqlStatements);   
     }
@@ -501,4 +499,5 @@ public class MySQLSpecifics extends DBSpecifics {
         };
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
     }
+
 }

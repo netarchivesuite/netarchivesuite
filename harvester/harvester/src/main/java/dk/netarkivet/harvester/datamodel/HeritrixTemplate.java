@@ -24,18 +24,19 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.archive.crawler.deciderules.DecidingScope;
 import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -58,8 +59,8 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
  * <a href="http://crawler.archive.org">http://crawler.archive.org<a/>
  */
 public class HeritrixTemplate {
-    
-    private static Log log = LogFactory.getLog(HeritrixTemplate.class.getName());
+
+    private static final Logger log = LoggerFactory.getLogger(HeritrixTemplate.class);
     
     /** the dom4j Document hiding behind this instance of HeritrixTemplate. */
     private Document template;
@@ -148,7 +149,6 @@ public class HeritrixTemplate {
      */
     public static final String DEDUPLICATOR_ENABLED
             = HeritrixTemplate.DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
-
     
     /** Xpath for the 'disk-path' in the order.xml . */
     public static final String DISK_PATH_XPATH =
@@ -205,8 +205,7 @@ public class HeritrixTemplate {
     
     /** Map from required xpaths to a regular expression describing
      * legal content for the path text. */
-    private static final Map<String, Pattern> requiredXpaths
-            = new HashMap<String, Pattern>();
+    private static final Map<String, Pattern> requiredXpaths = new HashMap<String, Pattern>();
 
     /** A regular expression that matches a whole number, possibly negative,
      * and with optional whitespace around it.
@@ -223,8 +222,7 @@ public class HeritrixTemplate {
      * field in order.xml.  It should be used with DOTALL.  An example match is
      * "Org (ourCrawler, see +http://org.org/aPage for details) harvest".
      */
-    private static final String USER_AGENT_REGEXP
-            = "\\S+.*\\(.*\\+http(s)?://\\S+\\.\\S+.*\\).*";
+    private static final String USER_AGENT_REGEXP = "\\S+.*\\(.*\\+http(s)?://\\S+\\.\\S+.*\\).*";
     /** A regular expression that matches Heritrix' specs for the from
      * field.  This should be a valid email address.
      */
@@ -232,33 +230,26 @@ public class HeritrixTemplate {
     
     /** Xpath to check, that all templates have the max-time-sec attribute.
      */
-    public static final String MAXTIMESEC_PATH_XPATH =
-        "/crawl-order/controller/long[@name='max-time-sec']";
+    public static final String MAXTIMESEC_PATH_XPATH = "/crawl-order/controller/long[@name='max-time-sec']";
 
     static {
-        requiredXpaths.put(GROUP_MAX_FETCH_SUCCESS_XPATH,
-                           Pattern.compile(WHOLE_NUMBER_REGEXP));
-        requiredXpaths.put(QUEUE_TOTAL_BUDGET_XPATH,
-                Pattern.compile(WHOLE_NUMBER_REGEXP));
-        requiredXpaths.put(GROUP_MAX_ALL_KB_XPATH,
-                           Pattern.compile(WHOLE_NUMBER_REGEXP));
+        requiredXpaths.put(GROUP_MAX_FETCH_SUCCESS_XPATH, Pattern.compile(WHOLE_NUMBER_REGEXP));
+        requiredXpaths.put(QUEUE_TOTAL_BUDGET_XPATH, Pattern.compile(WHOLE_NUMBER_REGEXP));
+        requiredXpaths.put(GROUP_MAX_ALL_KB_XPATH, Pattern.compile(WHOLE_NUMBER_REGEXP));
 
         //Required that we use DecidingScope
         //requiredXpaths.put(DECIDINGSCOPE_XPATH,
         //                    Pattern.compile(EVERYTHING_REGEXP));
 
         //Required that we have a rules map used to add crawlertraps
-        requiredXpaths.put(DECIDERULES_MAP_XPATH,
-                           Pattern.compile(EVERYTHING_REGEXP, Pattern.DOTALL));
+        requiredXpaths.put(DECIDERULES_MAP_XPATH, Pattern.compile(EVERYTHING_REGEXP, Pattern.DOTALL));
 
-        requiredXpaths.put(HERITRIX_USER_AGENT_XPATH,
-                           Pattern.compile(USER_AGENT_REGEXP, Pattern.DOTALL));
+        requiredXpaths.put(HERITRIX_USER_AGENT_XPATH, Pattern.compile(USER_AGENT_REGEXP, Pattern.DOTALL));
         requiredXpaths.put(HERITRIX_FROM_XPATH, Pattern.compile(FROM_REGEXP));
 
         // max-time-sec attribute needed, so we can't override it set
         // a timelimit on broad crawls.
-        requiredXpaths.put(MAXTIMESEC_PATH_XPATH, Pattern.compile(
-                WHOLE_NUMBER_REGEXP));
+        requiredXpaths.put(MAXTIMESEC_PATH_XPATH, Pattern.compile(WHOLE_NUMBER_REGEXP));
     }
 
     /** Constructor for HeritrixTemplate class.
@@ -278,19 +269,13 @@ public class HeritrixTemplate {
             for (Map.Entry<String, Pattern> required: requiredXpaths.entrySet()) {
                 xpath = required.getKey();
                 node = doc.selectSingleNode(xpath);
-                ArgumentNotValid.checkTrue(node != null,
-                        "Template error: Missing node: "
-                        + xpath);
+                ArgumentNotValid.checkTrue(node != null, "Template error: Missing node: " + xpath);
 
                 pattern = required.getValue();
                 matcher = pattern.matcher(node.getText().trim());
 
-                ArgumentNotValid.checkTrue(
-                        matcher.matches(),
-                        "Template error: Value '" + node.getText()
-                        + "' of node '" + xpath
-                        + "' does not match required regexp '"
-                        + pattern + "'");
+                ArgumentNotValid.checkTrue(matcher.matches(), "Template error: Value '" + node.getText()
+                        + "' of node '" + xpath + "' does not match required regexp '" + pattern + "'");
             }
             verified = true;
             //Required that Heritrix write its ARC/WARC files to the correct dir
@@ -300,34 +285,24 @@ public class HeritrixTemplate {
             int validArchivePaths = 0;
             node = doc.selectSingleNode(ARC_ARCHIVER_PATH_XPATH);
             if (node != null) {
-                pattern = Pattern.compile(
-                        dk.netarkivet.common.Constants.ARCDIRECTORY_NAME);
+                pattern = Pattern.compile(dk.netarkivet.common.Constants.ARCDIRECTORY_NAME);
                 matcher = pattern.matcher(node.getText().trim());
-                ArgumentNotValid.checkTrue(
-                        matcher.matches(),
-                        "Template error: Value '" + node.getText()
-                        + "' of node '" + ARC_ARCHIVER_PATH_XPATH
-                        + "' does not match required regexp '"
-                        + pattern + "'");
+                ArgumentNotValid.checkTrue(matcher.matches(), "Template error: Value '" + node.getText()
+                        + "' of node '" + ARC_ARCHIVER_PATH_XPATH + "' does not match required regexp '"
+                		+ pattern + "'");
                 ++validArchivePaths;
             }
             node = doc.selectSingleNode(WARC_ARCHIVER_PATH_XPATH);
             if (node != null) {
-                pattern = Pattern.compile(
-                        dk.netarkivet.common.Constants.WARCDIRECTORY_NAME);
+                pattern = Pattern.compile(dk.netarkivet.common.Constants.WARCDIRECTORY_NAME);
                 matcher = pattern.matcher(node.getText().trim());
-                ArgumentNotValid.checkTrue(
-                        matcher.matches(),
-                        "Template error: Value '" + node.getText()
-                        + "' of node '" + WARC_ARCHIVER_PATH_XPATH
-                        + "' does not match required regexp '"
+                ArgumentNotValid.checkTrue(matcher.matches(), "Template error: Value '" + node.getText()
+                        + "' of node '" + WARC_ARCHIVER_PATH_XPATH + "' does not match required regexp '"
                         + pattern + "'");
                 ++validArchivePaths;
             }
-            ArgumentNotValid.checkTrue(
-                    validArchivePaths > 0,
-                    "Template error: "
-                    + "An ARC or WARC writer processor seems to be missing");
+            ArgumentNotValid.checkTrue(validArchivePaths > 0, "Template error: "
+            		+ "An ARC or WARC writer processor seems to be missing");
         }
         this.template = (Document) doc.clone();
     }
@@ -373,7 +348,7 @@ public class HeritrixTemplate {
       */
      @SuppressWarnings("unchecked")
      public static void editOrderXMLAddCrawlerTraps(Document orderXMLdoc, String elementName,
-                                              List<String> crawlerTraps) {
+    		 List<String> crawlerTraps) {
          if (crawlerTraps.size() == 0) {
              return;
          }
@@ -385,9 +360,7 @@ public class HeritrixTemplate {
          
          Node rulesMapNode = orderXMLdoc.selectSingleNode(HeritrixTemplate.DECIDERULES_MAP_XPATH);
          if (rulesMapNode == null || !(rulesMapNode instanceof Element)) {
-             throw new IllegalState(
-                     "Unable to update order.xml document."
-                     + "It does not have the right form to add"
+             throw new IllegalState("Unable to update order.xml document. It does not have the right form to add"
                      + "crawler trap deciderules.");
          }
          
@@ -398,7 +371,7 @@ public class HeritrixTemplate {
          
          // If an acceptiIfPrerequisite node exists, detach and insert before it
          Node acceptIfPrerequisiteNode = orderXMLdoc.selectSingleNode(
-                 HeritrixTemplate.DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
+        		 HeritrixTemplate.DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
          if (acceptIfPrerequisiteNode != null) {
             List<Node> elements = rulesMap.elements();
             int insertPosition = elements.indexOf(acceptIfPrerequisiteNode);
@@ -410,8 +383,7 @@ public class HeritrixTemplate {
          
          // Add all regexps in the list to a single MatchesListRegExpDecideRule        
          decideRule.addAttribute("name", elementName);
-         decideRule.addAttribute("class",
-                 MatchesListRegExpDecideRule.class.getName()
+         decideRule.addAttribute("class", MatchesListRegExpDecideRule.class.getName()
              );
 
          Element decision = decideRule.addElement("string");
@@ -425,7 +397,7 @@ public class HeritrixTemplate {
          Element regexpList = decideRule.addElement("stringList");
          regexpList.addAttribute("name", "regexp-list");
          for (String trap : crawlerTraps) {
-                 regexpList.addElement("string").addText(trap);
+        	 regexpList.addElement("string").addText(trap);
          }
      }
 
@@ -462,7 +434,6 @@ public class HeritrixTemplate {
       * Throws ArgumentNotValid If the chosen archiveFormat is not supported.
       */
      public static void editOrderXML_ArchiveFormat(Document orderXML, String archiveFormat) {
-
          boolean arcMode = false;
          boolean warcMode = false;
 
@@ -473,9 +444,8 @@ public class HeritrixTemplate {
              warcMode = true;
              log.debug("WARC format selected to be used by Heritrix");
          } else {
-             throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.HERITRIX_ARCHIVE_FORMAT 
-                     + "' is invalid! Unrecognized format '"
-                     + archiveFormat + "'.");
+             throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.HERITRIX_ARCHIVE_FORMAT
+                     + "' is invalid! Unrecognized format '" + archiveFormat + "'.");
          }
 
          if (arcMode) {
@@ -534,19 +504,16 @@ public class HeritrixTemplate {
              }
 
          } else {
-             throw new IllegalState(
-                     "Unknown state: Should have selected either ARC or WARC as heritrix archive format");
+             throw new IllegalState("Unknown state: "
+             		+ "Should have selected either ARC or WARC as heritrix archive format");
          }
      }
 
-     
-     
      private static void setIfFound(Document doc, String Xpath, String param, String value) {
          if (doc.selectSingleNode(Xpath) != null) {
              XmlUtils.setNode(doc, Xpath, value);
          } else {
-             log.warn("Could not replace setting value of '" + param 
-                     + "' in template. Xpath not found: " + Xpath);
+             log.warn("Could not replace setting value of '" + param + "' in template. Xpath not found: " + Xpath);
          }
      }
      
@@ -560,11 +527,9 @@ public class HeritrixTemplate {
          if (groupMaxTimeSecNode != null) {
              String currentMaxTimeSec = groupMaxTimeSecNode.getText();
              groupMaxTimeSecNode.setText(Long.toString(maxJobRunningTime));
-             log.trace("Value of groupMaxTimeSecNode changed from " 
-                     + currentMaxTimeSec + " to " + maxJobRunningTime);
+             log.trace("Value of groupMaxTimeSecNode changed from " + currentMaxTimeSec + " to " + maxJobRunningTime);
          } else {
-             throw new IOFailure(
-                     "Unable to locate xpath '" + xpath + "' in the order.xml: "
+             throw new IOFailure("Unable to locate xpath '" + xpath + "' in the order.xml: "
                      + orderXMLdoc.asXML());
          }
      }
@@ -590,21 +555,17 @@ public class HeritrixTemplate {
       * TODO The group-max-fetch-success check should also be performed in
       * TemplateDAO.create, TemplateDAO.update
       */
-     public static void editOrderXML_maxObjectsPerDomain(
-             Document orderXMLdoc, long forceMaxObjectsPerDomain, boolean maxObjectsIsSetByQuotaEnforcer) {
+     public static void editOrderXML_maxObjectsPerDomain(Document orderXMLdoc, long forceMaxObjectsPerDomain,
+    		 boolean maxObjectsIsSetByQuotaEnforcer) {
 
          String xpath = (maxObjectsIsSetByQuotaEnforcer ?
-                 HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH :
-                     HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
+        		 HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH : HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
 
          Node orderXmlNode = orderXMLdoc.selectSingleNode(xpath);
          if (orderXmlNode != null) {
-             orderXmlNode.setText(
-                     String.valueOf(forceMaxObjectsPerDomain));
+        	 orderXmlNode.setText(String.valueOf(forceMaxObjectsPerDomain));
          } else {
-             throw new IOFailure(
-                     "Unable to locate " +  xpath + " element in order.xml: "
-                     + orderXMLdoc.asXML());
+             throw new IOFailure("Unable to locate " +  xpath + " element in order.xml: " + orderXMLdoc.asXML());
          }
      }
 
@@ -623,9 +584,8 @@ public class HeritrixTemplate {
       * @param forceMaxBytesPerDomain The number of max bytes per domain enforced (can be no limit)
       * @param forceMaxObjectsPerDomain The number of max objects per domain enforced (can be no limit)
       */
-     public static void editOrderXML_configureQuotaEnforcer(Document orderXMLdoc, 
-             boolean maxObjectsIsSetByQuotaEnforcer, long forceMaxBytesPerDomain, 
-             long forceMaxObjectsPerDomain ) {
+     public static void editOrderXML_configureQuotaEnforcer(Document orderXMLdoc,
+    		 boolean maxObjectsIsSetByQuotaEnforcer, long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain ) {
 
          boolean quotaEnabled = true;
 
@@ -637,9 +597,8 @@ public class HeritrixTemplate {
          } else {
              // Object limit is set by quota enforcer, so it should be enabled whether
              // a byte or object limit is set.
-             quotaEnabled =
-                     forceMaxObjectsPerDomain != Constants.HERITRIX_MAXOBJECTS_INFINITY
-                 || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
+             quotaEnabled = forceMaxObjectsPerDomain != Constants.HERITRIX_MAXOBJECTS_INFINITY
+            		 || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
          }
 
          String xpath = HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
@@ -647,9 +606,7 @@ public class HeritrixTemplate {
          if (qeNode != null) {
              qeNode.setText(Boolean.toString(quotaEnabled));
          } else {
-             throw new IOFailure(
-                     "Unable to locate " +  xpath
-                     + " element in order.xml: " + orderXMLdoc.asXML());
+             throw new IOFailure("Unable to locate " + xpath + " element in order.xml: " + orderXMLdoc.asXML());
          }
      }
 
@@ -684,19 +641,14 @@ public class HeritrixTemplate {
              } else if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
                  // Divide by 1024 since Heritrix uses KB rather than bytes,
                  // and add 1 to avoid to low limit due to rounding.
-                 groupMaxSuccessKbNode.setText(
-                         Long.toString((forceMaxBytesPerDomain
-                                        / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT)
-                                       + 1)
+                 groupMaxSuccessKbNode.setText(Long.toString(
+                		 (forceMaxBytesPerDomain / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1)
                  );
              } else {
-                 groupMaxSuccessKbNode.setText(
-                         String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY));
+                 groupMaxSuccessKbNode.setText(String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY));
              }
          } else {
-             throw new IOFailure(
-                     "Unable to locate QuotaEnforcer object in order.xml: "
-                     + orderXMLdoc.asXML());
+             throw new IOFailure("Unable to locate QuotaEnforcer object in order.xml: " + orderXMLdoc.asXML());
          }
      }
      
@@ -710,9 +662,7 @@ public class HeritrixTemplate {
      public static boolean isDeduplicationEnabledInTemplate(Document doc) {
          ArgumentNotValid.checkNotNull(doc, "Document doc");
          Node xpathNode = doc.selectSingleNode(HeritrixTemplate.DEDUPLICATOR_ENABLED);
-         return xpathNode != null
-                && xpathNode.getText().trim().equals("true");
-
+         return xpathNode != null && xpathNode.getText().trim().equals("true");
      }
      
      /**
@@ -738,22 +688,18 @@ public class HeritrixTemplate {
       */
      public static void makeOrderfileReadyForHeritrix(HeritrixFiles files) throws IOFailure {
          Document doc = XmlUtils.getXmlDoc(files.getOrderXmlFile());
-         XmlUtils.setNode(doc, HeritrixTemplate.DISK_PATH_XPATH,
-                          files.getCrawlDir().getAbsolutePath());
+         XmlUtils.setNode(doc, HeritrixTemplate.DISK_PATH_XPATH, files.getCrawlDir().getAbsolutePath());
 
          XmlUtils.setNodes(doc, HeritrixTemplate.ARCHIVEFILE_PREFIX_XPATH, files.getArchiveFilePrefix());
 
-         XmlUtils.setNode(doc, HeritrixTemplate.SEEDS_FILE_XPATH,
-                          files.getSeedsTxtFile().getAbsolutePath());
-
+         XmlUtils.setNode(doc, HeritrixTemplate.SEEDS_FILE_XPATH, files.getSeedsTxtFile().getAbsolutePath());
          
          if (isDeduplicationEnabledInTemplate(doc)) {
              XmlUtils.setNode(doc, HeritrixTemplate.DEDUPLICATOR_INDEX_LOCATION_XPATH,
-                              files.getIndexDir().getAbsolutePath());
+            		 files.getIndexDir().getAbsolutePath());
          }
 
          files.writeOrderXml(doc);
      }
-
      
 }

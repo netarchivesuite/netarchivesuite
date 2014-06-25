@@ -30,7 +30,6 @@ import java.util.Date;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Named;
 
-
 /**
  * This class implements a schedule that can be either repeating or timed,
  * depending on the subclass.
@@ -45,12 +44,12 @@ import dk.netarkivet.common.utils.Named;
  */
 @SuppressWarnings({ "serial"})
 public abstract class Schedule implements Serializable, Named {
-    /**Human readable name for the schedule. */
+
+	/**Human readable name for the schedule. */
     protected String name;
     /** Any comments added by the user. */
     protected String comments;
-    /**first run of job: date, time (hour:min:sec). May be null, meaning at any
-     * time */
+    /**first run of job: date, time (hour:min:sec). May be null, meaning at any time */
     protected Date startDate;
     /** Frequency of runs, possibly with a time it should happen at.*/
     protected Frequency frequency;
@@ -96,8 +95,7 @@ public abstract class Schedule implements Serializable, Named {
      * @throws ArgumentNotValid if frequency, name or comments is null, or name
      * is ""
      */
-    public static Schedule getInstance(Date startDate, Date endDate,
-                                       Frequency freq, String name, String comments) {
+    public static Schedule getInstance(Date startDate, Date endDate, Frequency freq, String name, String comments) {
         return new TimedSchedule(startDate, endDate, freq, name, comments);
     }
 
@@ -114,8 +112,7 @@ public abstract class Schedule implements Serializable, Named {
      * @throws ArgumentNotValid if frequency, name or comments is null, or name
      * is "" or repeats is 0 or negative
      */
-    public static Schedule getInstance(Date startDate, int repeats,
-                                       Frequency freq, String name, String comments) {
+    public static Schedule getInstance(Date startDate, int repeats, Frequency freq, String name, String comments) {
         return new RepeatingSchedule(startDate, repeats, freq, name, comments);
     }
 
@@ -257,4 +254,5 @@ public abstract class Schedule implements Serializable, Named {
     boolean hasID() {
         return id != null;
     }
+
 }

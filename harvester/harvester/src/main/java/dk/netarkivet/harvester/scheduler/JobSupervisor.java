@@ -24,6 +24,16 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.inject.Provider;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
@@ -31,20 +41,15 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
-import javax.inject.Provider;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Responsible for cleaning obsolete jobs, see {@link #start()} for details.
  */
 public class JobSupervisor implements ComponentLifeCycle {
-    /** The logger to use. */
-    private final Log log = LogFactory.getLog(getClass());
+
+	/** The logger to use. */
+    private static final Logger log = LoggerFactory.getLogger(JobSupervisor.class);
+
     /** For scheduling tasks */
     private final Timer timer = new Timer();
 
@@ -102,12 +107,10 @@ public class JobSupervisor implements ComponentLifeCycle {
         while (jobs.hasNext()) {
             long oldID = jobs.next();
             long newID = jobDaoProvider.get().rescheduleJob(oldID);
-            if (log.isInfoEnabled()) {
-                log.info("Resubmitting old job " + oldID + " as " + newID);
-            }
-            resubmitcount++;
+            log.info("Resubmitting old job {} as {}", oldID, newID);
+            ++resubmitcount;
         }
-        log.info(resubmitcount + " jobs has been resubmitted.");
+        log.info("{} jobs has been resubmitted.", resubmitcount);
     }
 
     /**
@@ -135,14 +138,15 @@ public class JobSupervisor implements ComponentLifeCycle {
                     job.setStatus(JobStatus.FAILED);
                     job.appendHarvestErrors(msg);
                     jobDaoProvider.get().update(job);
-                    stoppedJobs++;
+                    ++stoppedJobs;
                 }
             }
             if (stoppedJobs > 0) {
-                log.warn("Changed " + stoppedJobs + " jobs from STARTED to FAILED");
+                log.warn("Changed {} jobs from STARTED to FAILED", stoppedJobs);
             }
-        } catch (Throwable thr) {
-            log.error("Unable to stop obsolete jobs", thr);
+        } catch (Throwable t) {
+            log.error("Unable to stop obsolete jobs", t);
         }
     }
+
 }

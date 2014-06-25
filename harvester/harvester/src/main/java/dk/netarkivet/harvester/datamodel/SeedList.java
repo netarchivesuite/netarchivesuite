@@ -44,7 +44,6 @@ import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
-
 /**
  * Representation of the list of harvesting seeds.
  * Basically just a list of URL's.
@@ -52,7 +51,8 @@ import dk.netarkivet.harvester.HarvesterSettings;
  */
 @SuppressWarnings({ "serial"})
 public class SeedList implements Serializable, Named {
-    /** The name of the seedlist. Used for sorting. */
+
+	/** The name of the seedlist. Used for sorting. */
     private String name;
     /** The List of Seeds; Each String in the List holds one seed. */
     private List<String> seeds;
@@ -74,8 +74,7 @@ public class SeedList implements Serializable, Named {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(seedsAsString, "seeds");
 
-        BufferedReader urlreader = new BufferedReader(
-                new StringReader(seedsAsString));
+        BufferedReader urlreader = new BufferedReader(new StringReader(seedsAsString));
         seeds = new LinkedList<String>();
         String url;
         try {
@@ -83,13 +82,11 @@ public class SeedList implements Serializable, Named {
                 if (isAcceptableURL(url)) {
                     seeds.add(url);
                 } else {
-                    throw new ArgumentNotValid("The URL '" + url
-                                               + "' is not valid");
+                    throw new ArgumentNotValid("The URL '" + url + "' is not valid");
                 }
             }
         } catch (IOException e) {
-            throw new IOFailure("Should never happen: "
-                                + "IO Failure while reading a string", e);
+            throw new IOFailure("Should never happen: " + "IO Failure while reading a string", e);
         }
         this.name = name;
         this.comments = "";
@@ -102,8 +99,7 @@ public class SeedList implements Serializable, Named {
      * @return true, if it is accepted
      */
     private boolean isAcceptableURL(String url) {
-        Pattern validSeedPattern = Pattern.compile(
-                Settings.get(HarvesterSettings.VALID_SEED_REGEX));
+        Pattern validSeedPattern = Pattern.compile(Settings.get(HarvesterSettings.VALID_SEED_REGEX));
         if (!validSeedPattern.matcher(url).matches()) {
             return false;
         }
@@ -176,7 +172,6 @@ public class SeedList implements Serializable, Named {
         comments = s;
     }
 
-
     /** Get the ID of this seedlist.  Only for use by DBDAO
      * @return the ID of this seedlist
      */
@@ -246,4 +241,5 @@ public class SeedList implements Serializable, Named {
         result = 29 * result + comments.hashCode();
         return result;
     }
+
 }

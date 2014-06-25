@@ -74,8 +74,7 @@ public enum JobStatus {
 
 
     /** Internationalisation object. */
-    private static final I18n I18N
-            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+    private static final I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     
     /** Constant representing ALL states. */
     public static final int ALL_STATUS_CODE = -1;
@@ -95,10 +94,7 @@ public enum JobStatus {
     /** Localization key for a unknown JobStatus. */
     public static String JOBSTATUS_UNKNOWN_KEY = "status.job.unknown";
     /** Localization key for a JobStatus FAILED_REJECTED. */
-    public static String JOBSTATUS_FAILED_REJECTED_KEY 
-        = "status.job.failed_rejected";
-    
-    
+    public static String JOBSTATUS_FAILED_REJECTED_KEY = "status.job.failed_rejected";
 
     /** Helper method that gives a proper object from e.g. a DB-stored value.
      *
@@ -108,15 +104,22 @@ public enum JobStatus {
      */
     public static JobStatus fromOrdinal(int status) {
         switch (status) {
-            case 0: return NEW;
-            case 1: return SUBMITTED;
-            case 2: return STARTED;
-            case 3: return DONE;
-            case 4: return FAILED;
-            case 5: return RESUBMITTED;
-            case 6: return FAILED_REJECTED;
-            default: throw new ArgumentNotValid(
-                    "Invalid job status '" + status + "'");
+            case 0:
+            	return NEW;
+            case 1:
+            	return SUBMITTED;
+            case 2:
+            	return STARTED;
+            case 3:
+            	return DONE;
+            case 4:
+            	return FAILED;
+            case 5:
+            	return RESUBMITTED;
+            case 6:
+            	return FAILED_REJECTED;
+            default:
+            	throw new ArgumentNotValid("Invalid job status '" + status + "'");
         }
     }
     
@@ -163,8 +166,7 @@ public enum JobStatus {
             case FAILED_REJECTED:
                 return I18N.getString(l, JOBSTATUS_FAILED_REJECTED_KEY);
             default:
-                return I18N.getString(l, JOBSTATUS_UNKNOWN_KEY,
-                        this.toString());
+                return I18N.getString(l, JOBSTATUS_UNKNOWN_KEY, this.toString());
         }
     }
 
@@ -176,8 +178,8 @@ public enum JobStatus {
      */
     public boolean legalChange(JobStatus newStatus) {
         ArgumentNotValid.checkNotNull(newStatus, "JobStatus newStatus");
-        return newStatus.ordinal() >= ordinal()
-               || (newStatus.equals(FAILED) 
-                       && fromOrdinal(ordinal()).equals(FAILED_REJECTED));
+        return newStatus.ordinal() >= ordinal() || (newStatus.equals(FAILED)
+        		&& fromOrdinal(ordinal()).equals(FAILED_REJECTED));
     }
+
 }

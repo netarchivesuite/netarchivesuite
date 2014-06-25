@@ -32,7 +32,8 @@ import java.io.Serializable;
  */
 @SuppressWarnings({ "serial"})
 public class ExtendedFieldType implements Serializable {
-    /** The id of this ExtendedFieldType. */
+
+	/** The id of this ExtendedFieldType. */
     private Long extendedFieldTypeID;
     /** The name of this ExtendedFieldType. */
     private String name;
@@ -77,4 +78,5 @@ public class ExtendedFieldType implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
 }

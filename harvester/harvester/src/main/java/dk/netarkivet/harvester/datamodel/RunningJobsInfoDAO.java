@@ -40,9 +40,7 @@ import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
  */
 public abstract class RunningJobsInfoDAO implements DAO {
 
-    /**
-     * The singleton instance of this class.
-     */
+    /** The singleton instance of this class. */
     private static RunningJobsInfoDAO instance;
 
     /**
@@ -79,8 +77,7 @@ public abstract class RunningJobsInfoDAO implements DAO {
      * @return the full listing of started job information, partitioned by
      *         harvest definition name.
      */
-    public abstract Map<String, List<StartedJobInfo>>
-        getMostRecentByHarvestName();
+    public abstract Map<String, List<StartedJobInfo>> getMostRecentByHarvestName();
 
     /**
      * Returns an array of all progress records chronologically sorted for the
@@ -102,10 +99,7 @@ public abstract class RunningJobsInfoDAO implements DAO {
      * given job ID, starting at a given crawl time, and limited to a given
      * number of record.
      */
-    public abstract StartedJobInfo[] getMostRecentByJobId(
-            long jobId,
-            long startTime,
-            int limit);
+    public abstract StartedJobInfo[] getMostRecentByJobId(long jobId, long startTime, int limit);
 
     /**
      * Returns the most recent progress record for the given job ID.
@@ -129,8 +123,7 @@ public abstract class RunningJobsInfoDAO implements DAO {
      * @param jobId The ID of the harvestjob responsible for this report
      * @return the update count
      */
-    public abstract int storeFrontierReport(
-            String filterId, InMemoryFrontierReport report, Long jobId);
+    public abstract int storeFrontierReport(String filterId, InMemoryFrontierReport report, Long jobId);
 
     /**
      * Returns the list of the available frontier report types.
@@ -145,8 +138,7 @@ public abstract class RunningJobsInfoDAO implements DAO {
      * @param filterId the id of the filter that produced the report
      * @return a frontier report
      */
-    public abstract InMemoryFrontierReport getFrontierReport(
-            long jobId, String filterId);
+    public abstract InMemoryFrontierReport getFrontierReport(long jobId, String filterId);
 
     /**
      * Deletes all frontier report data pertaining to the given job id from

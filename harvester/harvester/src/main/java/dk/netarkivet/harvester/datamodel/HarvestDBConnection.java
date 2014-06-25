@@ -29,8 +29,8 @@ import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -40,7 +40,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.Settings;
-
 
 /**
  * This class handles connections to the harvest definition database, and also
@@ -62,12 +61,9 @@ import dk.netarkivet.common.utils.Settings;
  */
 public final class HarvestDBConnection {
 
-    private static final Log log =
-        LogFactory.getLog(HarvestDBConnection.class);
+    private static final Logger log = LoggerFactory.getLogger(HarvestDBConnection.class);
 
-    /**
-     * The c3p0 pooled datasource backing this implementation.
-     */
+    /** The c3p0 pooled datasource backing this implementation. */
     private static ComboPooledDataSource dataSource = null;
 
     /**
@@ -93,7 +89,6 @@ public final class HarvestDBConnection {
      * driver).
      */
     public static synchronized Connection get() {
-
         DBSpecifics dbSpec = DBSpecifics.getInstance();
         String jdbcUrl = getDBUrl();
 
@@ -114,9 +109,7 @@ public final class HarvestDBConnection {
                 + jdbcUrl + "' using driver '"
                 + dbSpec.getDriverClassName() + "'" + "\n"
                 + ExceptionUtils.getSQLExceptionCause(e);
-            if (log.isWarnEnabled()) {
-                log.warn(message, e);
-            }
+            log.warn(message, e);
             throw new IOFailure(message, e);
         }
 
@@ -134,30 +127,21 @@ public final class HarvestDBConnection {
      * updates.
      * @throws IOFailure in case of problems in interacting with the database
      */
-    protected static void updateTable(final String table,
-            final int newVersion,
-            final String... updates) {
+    protected static void updateTable(final String table, final int newVersion, final String... updates) {
 
         Connection c = get();
         updateTable(c, table, newVersion, updates);
     }
     
-    public static void updateTable(Connection c, final String table,
-            final int newVersion,
-            final String... updates) {
-
-        if (log.isInfoEnabled()) {
-            log.info("Updating table '" + table + "' to version " + newVersion);
-        }
+    public static void updateTable(Connection c, final String table, final int newVersion, final String... updates) {
+        log.info("Updating table '{}' to version {}", table, newVersion);
 
         String[] sqlStatements = new String[updates.length + 1];
         String updateSchemaversionSql = null;
         if (newVersion == 1) {
-            updateSchemaversionSql = "INSERT INTO schemaversions(tablename, "
-                + "version) VALUES ('" + table + "', 1)";
+            updateSchemaversionSql = "INSERT INTO schemaversions(tablename, version) VALUES ('" + table + "', 1)";
         } else {
-            updateSchemaversionSql =
-                "UPDATE schemaversions SET version = "
+            updateSchemaversionSql = "UPDATE schemaversions SET version = "
                 + newVersion + " WHERE tablename = '" + table + "'";
         }
         System.arraycopy(updates, 0, sqlStatements, 0, updates.length);
@@ -211,7 +195,6 @@ public final class HarvestDBConnection {
      * Closes the underlying data source.
      */
     public static synchronized void cleanup() {
-
         if (dataSource == null) {
             return;
         }
@@ -221,13 +204,10 @@ public final class HarvestDBConnection {
             // Anyway log if there are some.
             int numUnclosedConn = dataSource.getNumBusyConnections();
             if (numUnclosedConn > 0) {
-                log.error("There are "
-                        + numUnclosedConn + " unclosed connections!");
+                log.error("There are {} unclosed connections!", numUnclosedConn);
             }
         } catch (SQLException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not query pool status", e);
-            }
+            log.warn("Could not query pool status", e);
         }
         if (dataSource != null) {
             dataSource.close();
@@ -254,16 +234,13 @@ public final class HarvestDBConnection {
      * @param jdbcUrl the JDBC URL to connect to.
      * @throws SQLException 
      */
-    private static void initDataSource(DBSpecifics dbSpec, String jdbcUrl)
-    throws SQLException {
-
+    private static void initDataSource(DBSpecifics dbSpec, String jdbcUrl) throws SQLException {
         dataSource = new ComboPooledDataSource();
         try {
             dataSource.setDriverClass(dbSpec.getDriverClassName());
         } catch (PropertyVetoException e) {
-            final String message =
-                "Failed to set datasource JDBC driver class '"
-                + dbSpec.getDriverClassName() + "'" + "\n";
+            final String message = "Failed to set datasource JDBC driver class '"
+            		+ dbSpec.getDriverClassName() + "'" + "\n";
             throw new IOFailure(message, e);
         }
         dataSource.setJdbcUrl(jdbcUrl);
@@ -276,12 +253,9 @@ public final class HarvestDBConnection {
             dataSource.setPassword(password);
         }
         // Configure pool size
-        dataSource.setMinPoolSize(
-                Settings.getInt(CommonSettings.DB_POOL_MIN_SIZE));
-        dataSource.setMaxPoolSize(
-                Settings.getInt(CommonSettings.DB_POOL_MAX_SIZE));
-        dataSource.setAcquireIncrement(
-                Settings.getInt(CommonSettings.DB_POOL_ACQ_INC));
+        dataSource.setMinPoolSize(Settings.getInt(CommonSettings.DB_POOL_MIN_SIZE));
+        dataSource.setMaxPoolSize(Settings.getInt(CommonSettings.DB_POOL_MAX_SIZE));
+        dataSource.setAcquireIncrement(Settings.getInt(CommonSettings.DB_POOL_ACQ_INC));
 
         // Configure idle connection testing
         int testPeriod =
@@ -289,21 +263,17 @@ public final class HarvestDBConnection {
         //TODO This looks odd. Why is checkin-testing inside this if statement?
         if (testPeriod > 0) {
             dataSource.setIdleConnectionTestPeriod(testPeriod);
-            dataSource.setTestConnectionOnCheckin(
-                    Settings.getBoolean(
-                            CommonSettings.DB_POOL_IDLE_CONN_TEST_ON_CHECKIN));
-            String testQuery =
-                Settings.get(CommonSettings.DB_POOL_IDLE_CONN_TEST_QUERY);
+            dataSource.setTestConnectionOnCheckin(Settings.getBoolean(
+            		CommonSettings.DB_POOL_IDLE_CONN_TEST_ON_CHECKIN));
+            String testQuery = Settings.get(CommonSettings.DB_POOL_IDLE_CONN_TEST_QUERY);
             if (!testQuery.isEmpty()) {
                 dataSource.setPreferredTestQuery(testQuery);
             }
         }
 
         // Configure statement pooling
-        dataSource.setMaxStatements(
-                Settings.getInt(CommonSettings.DB_POOL_MAX_STM));
-        dataSource.setMaxStatementsPerConnection(
-                Settings.getInt(CommonSettings.DB_POOL_MAX_STM_PER_CONN));
+        dataSource.setMaxStatements(Settings.getInt(CommonSettings.DB_POOL_MAX_STM));
+        dataSource.setMaxStatementsPerConnection(Settings.getInt(CommonSettings.DB_POOL_MAX_STM_PER_CONN));
 
         //dataSource.setTestConnectionOnCheckout(true);
         //dataSource.setBreakAfterAcquireFailure(false);
@@ -311,21 +281,24 @@ public final class HarvestDBConnection {
         //dataSource.setAcquireRetryDelay(10);
 
         if (log.isInfoEnabled()) {
-            String msg = 
-                    "Connection pool initialized with the following values:";
-            msg += "\n- minPoolSize=" + dataSource.getMinPoolSize();
-            msg += "\n- maxPoolSize=" + dataSource.getMaxPoolSize();
-            msg += "\n- acquireIncrement=" + dataSource.getAcquireIncrement();
-            msg += "\n- maxStatements=" + dataSource.getMaxStatements();
-            msg += "\n- maxStatementsPerConnection="
-                + dataSource.getMaxStatementsPerConnection();
-            msg += "\n- idleConnTestPeriod="
-                + dataSource.getIdleConnectionTestPeriod();
-            msg += "\n- idleConnTestQuery='"
-                + dataSource.getPreferredTestQuery() + "'";
-            msg += "\n- idleConnTestOnCheckin="
-                + dataSource.isTestConnectionOnCheckin();
-            log.info(msg.toString());
+            log.info("Connection pool initialized with the following values:\n"
+            		+ "- minPoolSize={}\n"
+            		+ "- maxPoolSize={}\n"
+            		+ "- acquireIncrement={}\n"
+            		+ "- maxStatements={}\n"
+            		+ "- maxStatementsPerConnection={}\n"
+            		+ "- idleConnTestPeriod={}\n"
+    				+ "- idleConnTestQuery='{}'\n"
+					+ "- idleConnTestOnCheckin={}",
+					dataSource.getMinPoolSize(),
+					dataSource.getMaxPoolSize(),
+					dataSource.getAcquireIncrement(),
+					dataSource.getMaxStatements(),
+					dataSource.getMaxStatementsPerConnection(),
+					dataSource.getIdleConnectionTestPeriod(),
+					dataSource.getPreferredTestQuery(),
+					dataSource.isTestConnectionOnCheckin()
+			);
         }
     }
 

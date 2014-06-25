@@ -36,7 +36,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  */
 public class HourlyFrequency extends Frequency {
-    /** The minute of the hour the event should happen at.*/
+
+	/** The minute of the hour the event should happen at.*/
     private int minute;
 
     /** Create a new HourlyFrequency that happens every numUnits hours, at an
@@ -60,13 +61,9 @@ public class HourlyFrequency extends Frequency {
     public HourlyFrequency(int numUnits, int minute) {
         super(numUnits, false);
         Calendar cal = GregorianCalendar.getInstance();
-        if (minute < cal.getMinimum(Calendar.MINUTE)
-            || minute > cal.getMaximum(Calendar.MINUTE)) {
-            throw new ArgumentNotValid("Minute must be in legal range '"
-                                       + cal.getMinimum(Calendar.MINUTE)
-                                       + "' to '"
-                                       + cal.getMaximum(Calendar.MINUTE)
-                                       + "'");
+        if (minute < cal.getMinimum(Calendar.MINUTE) || minute > cal.getMaximum(Calendar.MINUTE)) {
+            throw new ArgumentNotValid("Minute must be in legal range '" + cal.getMinimum(Calendar.MINUTE)
+            		+ "' to '" + cal.getMaximum(Calendar.MINUTE) + "'");
         }
 
         this.minute = minute;
@@ -217,4 +214,5 @@ public class HourlyFrequency extends Frequency {
         }
         return "every " + getNumUnits() + " hours at " + minute;
     }
+
 }

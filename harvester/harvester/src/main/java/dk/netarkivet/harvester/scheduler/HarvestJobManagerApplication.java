@@ -40,4 +40,5 @@ public class HarvestJobManagerApplication {
     public static void main(String[] args) {
         ApplicationUtils.startApp(new HarvestJobManager());
     }
+
 }

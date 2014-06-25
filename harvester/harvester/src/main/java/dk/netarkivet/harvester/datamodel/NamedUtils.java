@@ -38,7 +38,8 @@ import dk.netarkivet.common.utils.Named;
  * datamodel, which have a name and a comment.
  */
 public class NamedUtils {
-    /**
+
+	/**
      * Sorts List of Named objects according to language defined in parameter
      * loc. The sorting is done via a compare function on named objects. The
      * compare function uses Collator for sorting according to language in loc.
@@ -49,17 +50,13 @@ public class NamedUtils {
      * @param list contains list to be sorted. Objects in the List must
      *             implement Named
      */
-    public static <T extends Named> void sortNamedObjectList(
-            final Locale loc, List<T> list) {
-        Collections.sort(list,
-                         new Comparator<Named>() {
-                             public int compare(Named o1, Named o2) {
-                                 Collator myCollator
-                                         = Collator.getInstance(loc);
-                                 return myCollator.compare(o1.getName(),
-                                                           o2.getName());
-                             }
-                         }
-        );
+    public static <T extends Named> void sortNamedObjectList(final Locale loc, List<T> list) {
+        Collections.sort(list, new Comparator<Named>() {
+            public int compare(Named o1, Named o2) {
+                Collator myCollator = Collator.getInstance(loc);
+                return myCollator.compare(o1.getName(), o2.getName());
+            }
+        });
     }
+
 }

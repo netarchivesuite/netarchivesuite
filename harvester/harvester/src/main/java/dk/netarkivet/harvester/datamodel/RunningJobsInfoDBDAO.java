@@ -41,8 +41,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -59,9 +59,11 @@ import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
 /**
  * Class implementing the persistence of running job infos.
- *
  */
 public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
+
+    /** The logger. */
+    private static final Logger log = LoggerFactory.getLogger(RunningJobsInfoDBDAO.class);
 
     /** Max length of urls stored in tables. */
     private static final int MAX_URL_LENGTH = 1000;
@@ -113,33 +115,25 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         }
     }
 
-    /** The logger. */
-    private final Log log = LogFactory.getLog(getClass());
-
     /**
      * Date of last history record per job.
      */
-    private static Map<Long, Long> lastSampleDateByJobId =
-        new HashMap<Long, Long>();
+    private static Map<Long, Long> lastSampleDateByJobId = new HashMap<Long, Long>();
 
     /**
      * Rate in milliseconds at which history records should be sampled
      * for a running job.
      */
-    private static final long HISTORY_SAMPLE_RATE =
-        1000 * Settings.getLong(
-                HarvesterSettings.HARVEST_MONITOR_HISTORY_SAMPLE_RATE);
+    private static final long HISTORY_SAMPLE_RATE = 1000 * Settings.getLong(
+    		HarvesterSettings.HARVEST_MONITOR_HISTORY_SAMPLE_RATE);
     /**
      * The constructor of RunningJobsInfoDBDAO.
      * Attempts to update/install the necessary database tables, 
      * if they need to be updated.
      */
     public RunningJobsInfoDBDAO() {
-
         Connection connection = HarvestDBConnection.get();
-
         try {
-
             /** Update if necessary the current version of the tables 
              * 'runningJobsHistory',
              * 'runningJobsMonitor' and 'frontierReportMonitor'.
@@ -161,8 +155,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      */
     @Override
     public synchronized void store(StartedJobInfo startedJobInfo) {
-        ArgumentNotValid.checkNotNull(
-                startedJobInfo, "StartedJobInfo startedJobInfo");
+        ArgumentNotValid.checkNotNull(startedJobInfo, "StartedJobInfo startedJobInfo");
 
         Connection c = HarvestDBConnection.get();
 
@@ -172,8 +165,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             // First is there a record in the monitor table?
             boolean update = false;
             try {
-                stm = c.prepareStatement("SELECT jobId FROM runningJobsMonitor"
-                        + " WHERE jobId=? AND harvestName=?");
+                stm = c.prepareStatement("SELECT jobId FROM runningJobsMonitor WHERE jobId=? AND harvestName=?");
                 stm.setLong(1, startedJobInfo.getJobId());
                 stm.setString(2, startedJobInfo.getHarvestName());
 
@@ -181,8 +173,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 update = stm.executeQuery().next();
 
             } catch (SQLException e) {
-                String message = "SQL error checking running jobs monitor table"
-                    + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+                String message = "SQL error checking running jobs monitor table" + "\n"
+            + ExceptionUtils.getSQLExceptionCause(e);
                 log.warn(message, e);
                 throw new IOFailure(message, e);
             }
@@ -197,6 +189,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                     sql.append("UPDATE runningJobsMonitor SET ");
 
                     StringBuffer columns = new StringBuffer();
+                    // FIXME Seriously, construct an identical SQL string every time and use an enum...?!
                     for (HM_COLUMN setCol : HM_COLUMN.values()) {
                         columns.append(setCol.name() + "=?, ");
                     }
@@ -210,94 +203,50 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 }
 
                 stm = c.prepareStatement(sql.toString());
-                stm.setLong(
-                        HM_COLUMN.jobId.rank(), startedJobInfo.getJobId());
-                stm.setString(
-                        HM_COLUMN.harvestName.rank(),
-                        startedJobInfo.getHarvestName());
-                stm.setLong(
-                        HM_COLUMN.elapsedSeconds.rank(),
-                        startedJobInfo.getElapsedSeconds());
-                stm.setString(
-                        HM_COLUMN.hostUrl.rank(), startedJobInfo.getHostUrl());
-                stm.setDouble(
-                        HM_COLUMN.progress.rank(),
-                        startedJobInfo.getProgress());
-                stm.setLong(
-                        HM_COLUMN.queuedFilesCount.rank(),
-                        startedJobInfo.getQueuedFilesCount());
-                stm.setLong(
-                        HM_COLUMN.totalQueuesCount.rank(),
-                        startedJobInfo.getTotalQueuesCount());
-                stm.setLong(
-                        HM_COLUMN.activeQueuesCount.rank(),
-                        startedJobInfo.getActiveQueuesCount());
-                stm.setLong(
-                        HM_COLUMN.retiredQueuesCount.rank(),
-                        startedJobInfo.getRetiredQueuesCount());
-                stm.setLong(
-                        HM_COLUMN.exhaustedQueuesCount.rank(),
-                        startedJobInfo.getExhaustedQueuesCount());
-                stm.setLong(
-                        HM_COLUMN.alertsCount.rank(),
-                        startedJobInfo.getAlertsCount());
-                stm.setLong(
-                        HM_COLUMN.downloadedFilesCount.rank(),
-                        startedJobInfo.getDownloadedFilesCount());
-                stm.setLong(
-                        HM_COLUMN.currentProcessedKBPerSec.rank(),
-                        startedJobInfo.getCurrentProcessedKBPerSec());
-                stm.setLong(
-                        HM_COLUMN.processedKBPerSec.rank(),
-                        startedJobInfo.getProcessedKBPerSec());
-                stm.setDouble(
-                        HM_COLUMN.currentProcessedDocsPerSec.rank(),
-                        startedJobInfo.getCurrentProcessedDocsPerSec());
-                stm.setDouble(
-                        HM_COLUMN.processedDocsPerSec.rank(),
-                        startedJobInfo.getProcessedDocsPerSec());
-                stm.setInt(
-                        HM_COLUMN.activeToeCount.rank(),
-                        startedJobInfo.getActiveToeCount());
-                stm.setInt(
-                        HM_COLUMN.status.rank(),
-                        startedJobInfo.getStatus().ordinal());
-                stm.setTimestamp(
-                        HM_COLUMN.tstamp.rank(),
-                        new Timestamp(startedJobInfo.getTimestamp().getTime()));
+                stm.setLong(HM_COLUMN.jobId.rank(), startedJobInfo.getJobId());
+                stm.setString(HM_COLUMN.harvestName.rank(), startedJobInfo.getHarvestName());
+                stm.setLong(HM_COLUMN.elapsedSeconds.rank(), startedJobInfo.getElapsedSeconds());
+                stm.setString(HM_COLUMN.hostUrl.rank(), startedJobInfo.getHostUrl());
+                stm.setDouble(HM_COLUMN.progress.rank(), startedJobInfo.getProgress());
+                stm.setLong(HM_COLUMN.queuedFilesCount.rank(), startedJobInfo.getQueuedFilesCount());
+                stm.setLong(HM_COLUMN.totalQueuesCount.rank(), startedJobInfo.getTotalQueuesCount());
+                stm.setLong(HM_COLUMN.activeQueuesCount.rank(), startedJobInfo.getActiveQueuesCount());
+                stm.setLong(HM_COLUMN.retiredQueuesCount.rank(), startedJobInfo.getRetiredQueuesCount());
+                stm.setLong(HM_COLUMN.exhaustedQueuesCount.rank(), startedJobInfo.getExhaustedQueuesCount());
+                stm.setLong(HM_COLUMN.alertsCount.rank(), startedJobInfo.getAlertsCount());
+                stm.setLong(HM_COLUMN.downloadedFilesCount.rank(), startedJobInfo.getDownloadedFilesCount());
+                stm.setLong(HM_COLUMN.currentProcessedKBPerSec.rank(), startedJobInfo.getCurrentProcessedKBPerSec());
+                stm.setLong(HM_COLUMN.processedKBPerSec.rank(), startedJobInfo.getProcessedKBPerSec());
+                stm.setDouble(HM_COLUMN.currentProcessedDocsPerSec.rank(),
+                		startedJobInfo.getCurrentProcessedDocsPerSec());
+                stm.setDouble(HM_COLUMN.processedDocsPerSec.rank(), startedJobInfo.getProcessedDocsPerSec());
+                stm.setInt(HM_COLUMN.activeToeCount.rank(), startedJobInfo.getActiveToeCount());
+                stm.setInt(HM_COLUMN.status.rank(), startedJobInfo.getStatus().ordinal());
+                stm.setTimestamp(HM_COLUMN.tstamp.rank(), new Timestamp(startedJobInfo.getTimestamp().getTime()));
 
                 if (update)  {
-                    stm.setLong(
-                            HM_COLUMN.values().length + 1,
-                            startedJobInfo.getJobId());
-
-                    stm.setString(
-                            HM_COLUMN.values().length + 2,
-                            startedJobInfo.getHarvestName());
+                    stm.setLong(HM_COLUMN.values().length + 1, startedJobInfo.getJobId());
+                    stm.setString(HM_COLUMN.values().length + 2, startedJobInfo.getHarvestName());
                 }
 
                 stm.executeUpdate();
 
                 c.commit();
             } catch (SQLException e) {
-                String message = "SQL error storing started job info "
-                    + startedJobInfo + " in monitor table"
-                    + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+                String message = "SQL error storing started job info " + startedJobInfo + " in monitor table" + "\n"
+                		+ ExceptionUtils.getSQLExceptionCause(e);
                 log.warn(message, e);
                 throw new IOFailure(message, e);
             } finally {
                 DBUtils.closeStatementIfOpen(stm);
-                DBUtils.rollbackIfNeeded(
-                        c, "store started job info", startedJobInfo);
+                DBUtils.rollbackIfNeeded(c, "store started job info", startedJobInfo);
             }
 
             // Should we store an history record?
-            Long lastHistoryStore =
-                lastSampleDateByJobId.get(startedJobInfo.getJobId());
+            Long lastHistoryStore = lastSampleDateByJobId.get(startedJobInfo.getJobId());
 
             long time  = System.currentTimeMillis();
-            boolean shouldSample = lastHistoryStore == null
-                || time >= lastHistoryStore + HISTORY_SAMPLE_RATE;
+            boolean shouldSample = lastHistoryStore == null || time >= lastHistoryStore + HISTORY_SAMPLE_RATE;
 
             if (!shouldSample) {
                 return;  // we're done
@@ -306,78 +255,40 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             try {
                 c.setAutoCommit(false);
 
-                stm = c.prepareStatement("INSERT INTO runningJobsHistory ("
-                        + HM_COLUMN.getColumnsInOrder()
+                stm = c.prepareStatement("INSERT INTO runningJobsHistory (" + HM_COLUMN.getColumnsInOrder()
                         + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                stm.setLong(
-                        HM_COLUMN.jobId.rank(), startedJobInfo.getJobId());
-                stm.setString(
-                        HM_COLUMN.harvestName.rank(),
-                        startedJobInfo.getHarvestName());
-                stm.setLong(
-                        HM_COLUMN.elapsedSeconds.rank(),
-                        startedJobInfo.getElapsedSeconds());
-                stm.setString(
-                        HM_COLUMN.hostUrl.rank(), startedJobInfo.getHostUrl());
-                stm.setDouble(
-                        HM_COLUMN.progress.rank(), 
-                        startedJobInfo.getProgress());
-                stm.setLong(
-                        HM_COLUMN.queuedFilesCount.rank(),
-                        startedJobInfo.getQueuedFilesCount());
-                stm.setLong(
-                        HM_COLUMN.totalQueuesCount.rank(),
-                        startedJobInfo.getTotalQueuesCount());
-                stm.setLong(
-                        HM_COLUMN.activeQueuesCount.rank(),
-                        startedJobInfo.getActiveQueuesCount());
-                stm.setLong(
-                        HM_COLUMN.retiredQueuesCount.rank(),
-                        startedJobInfo.getRetiredQueuesCount());
-                stm.setLong(
-                        HM_COLUMN.exhaustedQueuesCount.rank(),
-                        startedJobInfo.getExhaustedQueuesCount());
-                stm.setLong(
-                        HM_COLUMN.alertsCount.rank(),
-                        startedJobInfo.getAlertsCount());
-                stm.setLong(
-                        HM_COLUMN.downloadedFilesCount.rank(),
-                        startedJobInfo.getDownloadedFilesCount());
-                stm.setLong(
-                        HM_COLUMN.currentProcessedKBPerSec.rank(),
-                        startedJobInfo.getCurrentProcessedKBPerSec());
-                stm.setLong(
-                        HM_COLUMN.processedKBPerSec.rank(),
-                        startedJobInfo.getProcessedKBPerSec());
-                stm.setDouble(
-                        HM_COLUMN.currentProcessedDocsPerSec.rank(),
-                        startedJobInfo.getCurrentProcessedDocsPerSec());
-                stm.setDouble(
-                        HM_COLUMN.processedDocsPerSec.rank(),
-                        startedJobInfo.getProcessedDocsPerSec());
-                stm.setInt(
-                        HM_COLUMN.activeToeCount.rank(),
-                        startedJobInfo.getActiveToeCount());
-                stm.setInt(
-                        HM_COLUMN.status.rank(),
-                        startedJobInfo.getStatus().ordinal());
-                stm.setTimestamp(
-                        HM_COLUMN.tstamp.rank(),
-                        new Timestamp(startedJobInfo.getTimestamp().getTime()));
+                stm.setLong(HM_COLUMN.jobId.rank(), startedJobInfo.getJobId());
+                stm.setString(HM_COLUMN.harvestName.rank(), startedJobInfo.getHarvestName());
+                stm.setLong(HM_COLUMN.elapsedSeconds.rank(), startedJobInfo.getElapsedSeconds());
+                stm.setString(HM_COLUMN.hostUrl.rank(), startedJobInfo.getHostUrl());
+                stm.setDouble(HM_COLUMN.progress.rank(), startedJobInfo.getProgress());
+                stm.setLong(HM_COLUMN.queuedFilesCount.rank(), startedJobInfo.getQueuedFilesCount());
+                stm.setLong(HM_COLUMN.totalQueuesCount.rank(), startedJobInfo.getTotalQueuesCount());
+                stm.setLong(HM_COLUMN.activeQueuesCount.rank(), startedJobInfo.getActiveQueuesCount());
+                stm.setLong(HM_COLUMN.retiredQueuesCount.rank(), startedJobInfo.getRetiredQueuesCount());
+                stm.setLong(HM_COLUMN.exhaustedQueuesCount.rank(), startedJobInfo.getExhaustedQueuesCount());
+                stm.setLong(HM_COLUMN.alertsCount.rank(), startedJobInfo.getAlertsCount());
+                stm.setLong(HM_COLUMN.downloadedFilesCount.rank(), startedJobInfo.getDownloadedFilesCount());
+                stm.setLong(HM_COLUMN.currentProcessedKBPerSec.rank(), startedJobInfo.getCurrentProcessedKBPerSec());
+                stm.setLong(HM_COLUMN.processedKBPerSec.rank(), startedJobInfo.getProcessedKBPerSec());
+                stm.setDouble(HM_COLUMN.currentProcessedDocsPerSec.rank(),
+                		startedJobInfo.getCurrentProcessedDocsPerSec());
+                stm.setDouble(HM_COLUMN.processedDocsPerSec.rank(), startedJobInfo.getProcessedDocsPerSec());
+                stm.setInt(HM_COLUMN.activeToeCount.rank(), startedJobInfo.getActiveToeCount());
+                stm.setInt(HM_COLUMN.status.rank(), startedJobInfo.getStatus().ordinal());
+                stm.setTimestamp(HM_COLUMN.tstamp.rank(), new Timestamp(startedJobInfo.getTimestamp().getTime()));
 
                 stm.executeUpdate();
 
                 c.commit();
             } catch (SQLException e) {
-                String message = "SQL error storing started job info "
-                    + startedJobInfo + " in history table"
-                    + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+                String message = "SQL error storing started job info " + startedJobInfo + " in history table" + "\n"
+                		+ ExceptionUtils.getSQLExceptionCause(e);
                 log.warn(message, e);
                 throw new IOFailure(message, e);
             } finally {
                 DBUtils.closeStatementIfOpen(stm);
-                DBUtils.rollbackIfNeeded(
-                        c, "store started job info", startedJobInfo);
+                DBUtils.rollbackIfNeeded(c, "store started job info", startedJobInfo);
             }
 
             // Remember last sampling date
@@ -399,24 +310,18 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement stm = null;
         try {
-            stm = c.prepareStatement("SELECT "
-                    + HM_COLUMN.getColumnsInOrder()
-                    + " FROM runningJobsHistory"
-                    + " WHERE jobId=?"
-                    + " ORDER BY elapsedSeconds ASC");
+            stm = c.prepareStatement("SELECT " + HM_COLUMN.getColumnsInOrder() + " FROM runningJobsHistory"
+                    + " WHERE jobId=?" + " ORDER BY elapsedSeconds ASC");
             stm.setLong(1, jobId);
 
             ResultSet rs = stm.executeQuery();
             List<StartedJobInfo> infosForJob = listFromResultSet(rs);
 
-            return (StartedJobInfo[]) infosForJob.toArray(
-                    new StartedJobInfo[infosForJob.size()]);
+            return (StartedJobInfo[]) infosForJob.toArray(new StartedJobInfo[infosForJob.size()]);
 
         } catch (SQLException e) {
-            String message =
-                "SQL error querying runningJobsHistory for job ID " + jobId
-                + " from database"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error querying runningJobsHistory for job ID " + jobId + " from database" + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -433,20 +338,15 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      */
     @Override
     public Map<String, List<StartedJobInfo>> getMostRecentByHarvestName() {
-
         Connection c = HarvestDBConnection.get();
 
-        Map<String, List<StartedJobInfo>> infoMap =
-            new TreeMap<String, List<StartedJobInfo>>();
+        Map<String, List<StartedJobInfo>> infoMap = new TreeMap<String, List<StartedJobInfo>>();
         Statement stm = null;
         try {
             stm = c.createStatement();
-            ResultSet rs = stm.executeQuery(
-                    "SELECT " + HM_COLUMN.getColumnsInOrder()
-                    + " FROM runningJobsMonitor");
+            ResultSet rs = stm.executeQuery("SELECT " + HM_COLUMN.getColumnsInOrder() + " FROM runningJobsMonitor");
 
             while (rs.next()) {
-
                 long jobId = rs.getLong(HM_COLUMN.jobId.rank());
                 String harvestName = rs.getString(HM_COLUMN.harvestName.rank());
 
@@ -458,41 +358,23 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
                 StartedJobInfo sji = new StartedJobInfo(harvestName, jobId);
 
-                sji.setElapsedSeconds(
-                        rs.getLong(HM_COLUMN.elapsedSeconds.rank()));
+                sji.setElapsedSeconds(rs.getLong(HM_COLUMN.elapsedSeconds.rank()));
                 sji.setHostUrl(rs.getString(HM_COLUMN.hostUrl.rank()));
                 sji.setProgress(rs.getDouble(HM_COLUMN.progress.rank()));
-                sji.setQueuedFilesCount(
-                        rs.getLong(HM_COLUMN.queuedFilesCount.rank()));
-                sji.setTotalQueuesCount(
-                        rs.getLong(HM_COLUMN.totalQueuesCount.rank()));
-                sji.setActiveQueuesCount(
-                        rs.getLong(HM_COLUMN.activeQueuesCount.rank()));
-                sji.setRetiredQueuesCount(
-                        rs.getLong(HM_COLUMN.retiredQueuesCount.rank()));
-                sji.setExhaustedQueuesCount(
-                        rs.getLong(HM_COLUMN.exhaustedQueuesCount.rank()));
-                sji.setAlertsCount(
-                        rs.getLong(HM_COLUMN.alertsCount.rank()));
-                sji.setDownloadedFilesCount(
-                        rs.getLong(HM_COLUMN.downloadedFilesCount.rank()));
-                sji.setCurrentProcessedKBPerSec(
-                        rs.getLong(
-                                HM_COLUMN.currentProcessedKBPerSec.rank()));
-                sji.setProcessedKBPerSec(
-                        rs.getLong(HM_COLUMN.processedKBPerSec.rank()));
-                sji.setCurrentProcessedDocsPerSec(
-                        rs.getDouble(
-                              HM_COLUMN.currentProcessedDocsPerSec.rank()));
-                sji.setProcessedDocsPerSec(
-                        rs.getDouble(HM_COLUMN.processedDocsPerSec.rank()));
-                sji.setActiveToeCount(
-                        rs.getInt(HM_COLUMN.activeToeCount.rank()));
-                sji.setStatus(
-                        CrawlStatus.values()[
-                                       rs.getInt(HM_COLUMN.status.rank())]);
-                sji.setTimestamp(new Date(
-                        rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
+                sji.setQueuedFilesCount(rs.getLong(HM_COLUMN.queuedFilesCount.rank()));
+                sji.setTotalQueuesCount(rs.getLong(HM_COLUMN.totalQueuesCount.rank()));
+                sji.setActiveQueuesCount(rs.getLong(HM_COLUMN.activeQueuesCount.rank()));
+                sji.setRetiredQueuesCount(rs.getLong(HM_COLUMN.retiredQueuesCount.rank()));
+                sji.setExhaustedQueuesCount(rs.getLong(HM_COLUMN.exhaustedQueuesCount.rank()));
+                sji.setAlertsCount(rs.getLong(HM_COLUMN.alertsCount.rank()));
+                sji.setDownloadedFilesCount(rs.getLong(HM_COLUMN.downloadedFilesCount.rank()));
+                sji.setCurrentProcessedKBPerSec(rs.getLong(HM_COLUMN.currentProcessedKBPerSec.rank()));
+                sji.setProcessedKBPerSec(rs.getLong(HM_COLUMN.processedKBPerSec.rank()));
+                sji.setCurrentProcessedDocsPerSec(rs.getDouble(HM_COLUMN.currentProcessedDocsPerSec.rank()));
+                sji.setProcessedDocsPerSec(rs.getDouble(HM_COLUMN.processedDocsPerSec.rank()));
+                sji.setActiveToeCount(rs.getInt(HM_COLUMN.activeToeCount.rank()));
+                sji.setStatus(CrawlStatus.values()[rs.getInt(HM_COLUMN.status.rank())]);
+                sji.setTimestamp(new Date(rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
 
                 infosForHarvest.add(sji);
             }
@@ -500,8 +382,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             return infoMap;
 
         } catch (SQLException e) {
-            String message = "SQL error querying runningJobsMonitor"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error querying runningJobsMonitor" + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -518,15 +399,12 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      */
     @Override
     public Set<Long> getHistoryRecordIds() {
-
         Connection c = HarvestDBConnection.get();
         Set<Long> jobIds = new TreeSet<Long>();
         Statement stm = null;
         try {
             stm = c.createStatement();
-            ResultSet rs = stm.executeQuery(
-                    "SELECT DISTINCT " + HM_COLUMN.jobId
-                    + " FROM runningJobsMonitor");
+            ResultSet rs = stm.executeQuery("SELECT DISTINCT " + HM_COLUMN.jobId + " FROM runningJobsMonitor");
 
             while (rs.next()) {
                 jobIds.add(rs.getLong(HM_COLUMN.jobId.name()));
@@ -534,9 +412,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             stm.close();
             
             stm = c.createStatement();
-            rs = stm.executeQuery(
-                    "SELECT DISTINCT " + HM_COLUMN.jobId
-                    + " FROM runningJobsHistory");
+            rs = stm.executeQuery("SELECT DISTINCT " + HM_COLUMN.jobId + " FROM runningJobsHistory");
 
             while (rs.next()) {
                 jobIds.add(rs.getLong(HM_COLUMN.jobId.name()));
@@ -544,9 +420,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             stm.close();
             
             stm = c.createStatement(); 
-            rs = stm.executeQuery(
-                    "SELECT DISTINCT " + HM_COLUMN.jobId
-                    + " FROM frontierReportMonitor");
+            rs = stm.executeQuery("SELECT DISTINCT " + HM_COLUMN.jobId + " FROM frontierReportMonitor");
 
             while (rs.next()) {
                 jobIds.add(rs.getLong(HM_COLUMN.jobId.name()));
@@ -554,8 +428,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
             return Collections.unmodifiableSet(jobIds);
         } catch (SQLException e) {
-            String message = "SQL error querying running jobs history"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error querying running jobs history" + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -586,27 +459,20 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement stm = null;
         try {
-            stm = c.prepareStatement("SELECT "
-                    + HM_COLUMN.getColumnsInOrder()
-                    + " FROM runningJobsHistory"
-                    + " WHERE jobId=? AND elapsedSeconds >= ?"
-                    + " ORDER BY elapsedSeconds DESC"
-                    + " " + DBSpecifics.getInstance()
-                        .getOrderByLimitAndOffsetSubClause(limit, 0));
+            stm = c.prepareStatement("SELECT " + HM_COLUMN.getColumnsInOrder() + " FROM runningJobsHistory"
+                    + " WHERE jobId=? AND elapsedSeconds >= ?" + " ORDER BY elapsedSeconds DESC"
+                    + " " + DBSpecifics.getInstance().getOrderByLimitAndOffsetSubClause(limit, 0));
             stm.setLong(1, jobId);
             stm.setLong(2, startTime);
 
             ResultSet rs = stm.executeQuery();
             List<StartedJobInfo> infosForJob = listFromResultSet(rs);
 
-            return (StartedJobInfo[]) infosForJob.toArray(
-                    new StartedJobInfo[infosForJob.size()]);
+            return (StartedJobInfo[]) infosForJob.toArray(new StartedJobInfo[infosForJob.size()]);
 
         } catch (SQLException e) {
-            String message =
-                "SQL error querying runningJobsHistory for job ID " + jobId
-                + " from database"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error querying runningJobsHistory for job ID " + jobId + " from database" + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -626,57 +492,36 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         Statement stm = null;
         try {
             stm = c.createStatement();
-            ResultSet rs = stm.executeQuery(
-                    "SELECT " + HM_COLUMN.getColumnsInOrder()
-                    + " FROM runningJobsMonitor"
+            ResultSet rs = stm.executeQuery("SELECT " + HM_COLUMN.getColumnsInOrder() + " FROM runningJobsMonitor"
                     + " WHERE jobId=" + jobId);
 
             if (rs.next()) {
                 String harvestName = rs.getString(HM_COLUMN.harvestName.rank());
                 StartedJobInfo sji = new StartedJobInfo(harvestName, jobId);
 
-                sji.setElapsedSeconds(
-                        rs.getLong(HM_COLUMN.elapsedSeconds.rank()));
+                sji.setElapsedSeconds(rs.getLong(HM_COLUMN.elapsedSeconds.rank()));
                 sji.setHostUrl(rs.getString(HM_COLUMN.hostUrl.rank()));
                 sji.setProgress(rs.getDouble(HM_COLUMN.progress.rank()));
-                sji.setQueuedFilesCount(
-                        rs.getLong(HM_COLUMN.queuedFilesCount.rank()));
-                sji.setTotalQueuesCount(
-                        rs.getLong(HM_COLUMN.totalQueuesCount.rank()));
-                sji.setActiveQueuesCount(
-                        rs.getLong(HM_COLUMN.activeQueuesCount.rank()));
-                sji.setRetiredQueuesCount(
-                        rs.getLong(HM_COLUMN.retiredQueuesCount.rank()));
-                sji.setExhaustedQueuesCount(
-                        rs.getLong(HM_COLUMN.exhaustedQueuesCount.rank()));
-                sji.setAlertsCount(
-                        rs.getLong(HM_COLUMN.alertsCount.rank()));
-                sji.setDownloadedFilesCount(
-                        rs.getLong(HM_COLUMN.downloadedFilesCount.rank()));
-                sji.setCurrentProcessedKBPerSec(
-                        rs.getLong(
-                                HM_COLUMN.currentProcessedKBPerSec.rank()));
-                sji.setProcessedKBPerSec(
-                        rs.getLong(HM_COLUMN.processedKBPerSec.rank()));
-                sji.setCurrentProcessedDocsPerSec(
-                        rs.getDouble(
-                              HM_COLUMN.currentProcessedDocsPerSec.rank()));
-                sji.setProcessedDocsPerSec(
-                        rs.getDouble(HM_COLUMN.processedDocsPerSec.rank()));
-                sji.setActiveToeCount(
-                        rs.getInt(HM_COLUMN.activeToeCount.rank()));
-                sji.setStatus(
-                        CrawlStatus.values()[
-                                       rs.getInt(HM_COLUMN.status.rank())]);
-                sji.setTimestamp(new Date(
-                        rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
+                sji.setQueuedFilesCount(rs.getLong(HM_COLUMN.queuedFilesCount.rank()));
+                sji.setTotalQueuesCount(rs.getLong(HM_COLUMN.totalQueuesCount.rank()));
+                sji.setActiveQueuesCount(rs.getLong(HM_COLUMN.activeQueuesCount.rank()));
+                sji.setRetiredQueuesCount(rs.getLong(HM_COLUMN.retiredQueuesCount.rank()));
+                sji.setExhaustedQueuesCount(rs.getLong(HM_COLUMN.exhaustedQueuesCount.rank()));
+                sji.setAlertsCount(rs.getLong(HM_COLUMN.alertsCount.rank()));
+                sji.setDownloadedFilesCount(rs.getLong(HM_COLUMN.downloadedFilesCount.rank()));
+                sji.setCurrentProcessedKBPerSec(rs.getLong(HM_COLUMN.currentProcessedKBPerSec.rank()));
+                sji.setProcessedKBPerSec(rs.getLong(HM_COLUMN.processedKBPerSec.rank()));
+                sji.setCurrentProcessedDocsPerSec(rs.getDouble(HM_COLUMN.currentProcessedDocsPerSec.rank()));
+                sji.setProcessedDocsPerSec(rs.getDouble(HM_COLUMN.processedDocsPerSec.rank()));
+                sji.setActiveToeCount(rs.getInt(HM_COLUMN.activeToeCount.rank()));
+                sji.setStatus(CrawlStatus.values()[rs.getInt(HM_COLUMN.status.rank())]);
+                sji.setTimestamp(new Date(rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
 
                 return sji;
             }
 
         } catch (SQLException e) {
-            String message = "SQL error querying runningJobsMonitor"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error querying runningJobsMonitor" + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -704,23 +549,20 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         try {
             // Delete from monitor table
             c.setAutoCommit(false);
-            stm = c.prepareStatement(
-                    "DELETE FROM runningJobsMonitor WHERE jobId=?");
+            stm = c.prepareStatement("DELETE FROM runningJobsMonitor WHERE jobId=?");
             stm.setLong(1, jobId);
             deleteCount = stm.executeUpdate();
             c.commit();
             stm.close();
             // Delete from history table
             c.setAutoCommit(false);
-            stm = c.prepareStatement(
-                    "DELETE FROM runningJobsHistory WHERE jobId=?");
+            stm = c.prepareStatement("DELETE FROM runningJobsHistory WHERE jobId=?");
             stm.setLong(1, jobId);
             deleteCount += stm.executeUpdate();
             c.commit();
         }  catch (SQLException e) {
-            String message =
-                "SQL error deleting from history records for job ID " + jobId
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error deleting from history records for job ID " + jobId + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -781,10 +623,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      * @param jobId The ID of the job responsible for this report
      * @return the update count
      */
-    public int storeFrontierReport(
-            String filterId,
-            InMemoryFrontierReport report,
-            Long jobId) {
+    public int storeFrontierReport(String filterId, InMemoryFrontierReport report, Long jobId) {
         ArgumentNotValid.checkNotNull(report, "report");
         ArgumentNotValid.checkNotNull(jobId, "jobId");
         
@@ -796,8 +635,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             try {
                 c.setAutoCommit(false);
 
-                stm = c.prepareStatement("DELETE FROM frontierReportMonitor"
-                        + " WHERE jobId=? AND filterId=?");
+                stm = c.prepareStatement("DELETE FROM frontierReportMonitor WHERE jobId=? AND filterId=?");
                 stm.setLong(1, jobId);
                 stm.setString(2, filterId);
 
@@ -805,70 +643,45 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
                 c.commit();
             } catch (SQLException e) {
-                String message =
-                    "SQL error dropping records for job ID " + jobId
-                    + " and filterId " + filterId
-                    + "\n" + ExceptionUtils.getSQLExceptionCause(e);
+                String message = "SQL error dropping records for job ID " + jobId + " and filterId " + filterId + "\n"
+                		+ ExceptionUtils.getSQLExceptionCause(e);
                 log.warn(message, e);
                 return 0;
             } finally {
                 DBUtils.closeStatementIfOpen(stm);
-                DBUtils.rollbackIfNeeded(
-                        c, "storeFrontierReport delete", jobId);
+                DBUtils.rollbackIfNeeded(c, "storeFrontierReport delete", jobId);
             }
 
             // Now batch insert report lines
             try {
                 c.setAutoCommit(false);
 
-                stm = c.prepareStatement("INSERT INTO frontierReportMonitor("
-                        + FR_COLUMN.getColumnsInOrder()
+                stm = c.prepareStatement("INSERT INTO frontierReportMonitor(" + FR_COLUMN.getColumnsInOrder()
                         + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
                 for (FrontierReportLine frl : report.getLines()) {
                     stm.setLong(FR_COLUMN.jobId.rank(), jobId);
                     stm.setString(FR_COLUMN.filterId.rank(), filterId);
-                    stm.setTimestamp(
-                            FR_COLUMN.tstamp.rank(),
-                            new Timestamp(report.getTimestamp()));
-                    stm.setString(
-                            FR_COLUMN.domainName.rank(), frl.getDomainName());
-                    stm.setLong(
-                            FR_COLUMN.currentSize.rank(), frl.getCurrentSize());
-                    stm.setLong(
-                            FR_COLUMN.totalEnqueues.rank(),
-                            frl.getTotalEnqueues());
-                    stm.setLong(
-                            FR_COLUMN.sessionBalance.rank(),
-                            frl.getSessionBalance());
-                    stm.setDouble(
-                            FR_COLUMN.lastCost.rank(), frl.getLastCost());
-                    stm.setDouble(
-                            FR_COLUMN.averageCost.rank(), 
-                                correctNumericIfIllegalAverageCost(frl.getAverageCost()));
-                    stm.setString(
-                            FR_COLUMN.lastDequeueTime.rank(),
-                            frl.getLastDequeueTime());
-                    stm.setString(
-                            FR_COLUMN.wakeTime.rank(), frl.getWakeTime());
-                    stm.setLong(
-                            FR_COLUMN.totalSpend.rank(), frl.getTotalSpend());
-                    stm.setLong(
-                            FR_COLUMN.totalBudget.rank(), frl.getTotalBudget());
-                    stm.setLong(
-                            FR_COLUMN.errorCount.rank(), frl.getErrorCount());
+                    stm.setTimestamp(FR_COLUMN.tstamp.rank(), new Timestamp(report.getTimestamp()));
+                    stm.setString(FR_COLUMN.domainName.rank(), frl.getDomainName());
+                    stm.setLong(FR_COLUMN.currentSize.rank(), frl.getCurrentSize());
+                    stm.setLong(FR_COLUMN.totalEnqueues.rank(), frl.getTotalEnqueues());
+                    stm.setLong(FR_COLUMN.sessionBalance.rank(), frl.getSessionBalance());
+                    stm.setDouble(FR_COLUMN.lastCost.rank(), frl.getLastCost());
+                    stm.setDouble(FR_COLUMN.averageCost.rank(),
+                    		correctNumericIfIllegalAverageCost(frl.getAverageCost()));
+                    stm.setString(FR_COLUMN.lastDequeueTime.rank(), frl.getLastDequeueTime());
+                    stm.setString(FR_COLUMN.wakeTime.rank(), frl.getWakeTime());
+                    stm.setLong(FR_COLUMN.totalSpend.rank(), frl.getTotalSpend());
+                    stm.setLong(FR_COLUMN.totalBudget.rank(), frl.getTotalBudget());
+                    stm.setLong(FR_COLUMN.errorCount.rank(), frl.getErrorCount());
 
                     // URIs are to be truncated to 1000 characters
                     // (see SQL scripts)
-                    DBUtils.setStringMaxLength(
-                            stm,
-                            FR_COLUMN.lastPeekUri.rank(), frl.getLastPeekUri(), 
+                    DBUtils.setStringMaxLength(stm, FR_COLUMN.lastPeekUri.rank(), frl.getLastPeekUri(), 
                             MAX_URL_LENGTH, frl, "lastPeekUri");
-                    DBUtils.setStringMaxLength(
-                            stm,
-                            FR_COLUMN.lastQueuedUri.rank(), 
-                            frl.getLastQueuedUri(), MAX_URL_LENGTH, frl, 
-                            "lastQueuedUri");
+                    DBUtils.setStringMaxLength(stm,FR_COLUMN.lastQueuedUri.rank(), frl.getLastQueuedUri(),
+                    		MAX_URL_LENGTH, frl, "lastQueuedUri");
 
                     stm.addBatch();
                 }
@@ -883,16 +696,13 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
                 return updCountTotal;
             } catch (SQLException e) {
-                String message =
-                    "SQL error writing records for job ID " + jobId
-                    + " and filterId " + filterId
-                    + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+                String message = "SQL error writing records for job ID " + jobId + " and filterId " + filterId + "\n"
+                		+ ExceptionUtils.getSQLExceptionCause(e);
                 log.warn(message, e);
                 return 0;
             } finally {
                 DBUtils.closeStatementIfOpen(stm);
-                DBUtils.rollbackIfNeeded(
-                        c, "storeFrontierReport insert", jobId);
+                DBUtils.rollbackIfNeeded(c, "storeFrontierReport insert", jobId);
             }
 
         } finally {
@@ -908,8 +718,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      */
     private double correctNumericIfIllegalAverageCost(double value) {
         if (value == 4.9E-324) {
-            log.warn("Found illegal double value '" + 4.9E-324 
-                    + "'. Changed it to 0.0");
+            log.warn("Found illegal double value '" + 4.9E-324 + "'. Changed it to 0.0");
             return 0.0;
         } else {
             return value;
@@ -927,8 +736,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement stm = null;
         try {
-            stm = c.prepareStatement(
-                    "SELECT DISTINCT filterId FROM frontierReportMonitor");
+            stm = c.prepareStatement("SELECT DISTINCT filterId FROM frontierReportMonitor");
 
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
@@ -936,9 +744,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             }
 
         } catch (SQLException e) {
-            String message =
-                "SQL error fetching filter IDs"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error fetching filter IDs" + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
         } finally {
             DBUtils.closeStatementIfOpen(stm);
@@ -954,22 +761,17 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      * @param filterId the id of the filter that produced the report
      * @return a frontier report
      */
-    public InMemoryFrontierReport getFrontierReport(
-            long jobId,
-            String filterId) {
+    public InMemoryFrontierReport getFrontierReport(long jobId, String filterId) {
 
         ArgumentNotValid.checkNotNull(jobId, "jobId");
         ArgumentNotValid.checkNotNull(filterId, "filterId");
 
-        InMemoryFrontierReport report =
-            new InMemoryFrontierReport(Long.toString(jobId));
+        InMemoryFrontierReport report = new InMemoryFrontierReport(Long.toString(jobId));
 
         Connection c = HarvestDBConnection.get();
         PreparedStatement stm = null;
         try {
-            stm = c.prepareStatement(
-                    "SELECT " + FR_COLUMN.getColumnsInOrder()
-                    + " FROM frontierReportMonitor"
+            stm = c.prepareStatement("SELECT " + FR_COLUMN.getColumnsInOrder() + " FROM frontierReportMonitor"
                     + " WHERE jobId=? AND filterId=?");
             stm.setLong(1, jobId);
             stm.setString(2, filterId);
@@ -978,8 +780,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
             // Process first line to get report timestamp
             if (rs.next()) {
-                report.setTimestamp(
-                        rs.getTimestamp(FR_COLUMN.tstamp.rank()).getTime());
+                report.setTimestamp(rs.getTimestamp(FR_COLUMN.tstamp.rank()).getTime());
                 report.addLine(getLine(rs));
 
                 while (rs.next()) {
@@ -989,9 +790,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
         } catch (SQLException e) {
             String message =
-                "SQL error fetching report for job ID " + jobId
-                + " and filterId " + filterId
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+                "SQL error fetching report for job ID " + jobId + " and filterId " + filterId + "\n"
+                		+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
         } finally {
             DBUtils.closeStatementIfOpen(stm);
@@ -1015,8 +815,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         try {
             c.setAutoCommit(false);
 
-            stm = c.prepareStatement(
-                    "DELETE FROM frontierReportMonitor WHERE jobId=?");
+            stm = c.prepareStatement("DELETE FROM frontierReportMonitor WHERE jobId=?");
             stm.setLong(1, jobId);
 
             int delCount = stm.executeUpdate();
@@ -1025,9 +824,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
             return delCount;
         } catch (SQLException e) {
-            String message =
-                "SQL error deleting report lines for job ID " + jobId
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error deleting report lines for job ID " + jobId + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             return 0;
         } finally {
@@ -1074,40 +872,24 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             throws SQLException {
         List<StartedJobInfo> list = new LinkedList<StartedJobInfo>();
         while (rs.next()) {
-            StartedJobInfo sji = new StartedJobInfo(
-                    rs.getString(HM_COLUMN.harvestName.rank()),
-                    rs.getLong(HM_COLUMN.jobId.rank()));
-            sji.setElapsedSeconds(
-                    rs.getLong(HM_COLUMN.elapsedSeconds.rank()));
+            StartedJobInfo sji = new StartedJobInfo(rs.getString(HM_COLUMN.harvestName.rank()),
+            		rs.getLong(HM_COLUMN.jobId.rank()));
+            sji.setElapsedSeconds(rs.getLong(HM_COLUMN.elapsedSeconds.rank()));
             sji.setHostUrl(rs.getString(HM_COLUMN.hostUrl.rank()));
             sji.setProgress(rs.getDouble(HM_COLUMN.progress.rank()));
-            sji.setQueuedFilesCount(
-                    rs.getLong(HM_COLUMN.queuedFilesCount.rank()));
-            sji.setTotalQueuesCount(
-                    rs.getLong(HM_COLUMN.totalQueuesCount.rank()));
-            sji.setActiveQueuesCount(
-                    rs.getLong(HM_COLUMN.activeQueuesCount.rank()));
-            sji.setExhaustedQueuesCount(
-                    rs.getLong(HM_COLUMN.exhaustedQueuesCount.rank()));
+            sji.setQueuedFilesCount(rs.getLong(HM_COLUMN.queuedFilesCount.rank()));
+            sji.setTotalQueuesCount(rs.getLong(HM_COLUMN.totalQueuesCount.rank()));
+            sji.setActiveQueuesCount(rs.getLong(HM_COLUMN.activeQueuesCount.rank()));
+            sji.setExhaustedQueuesCount(rs.getLong(HM_COLUMN.exhaustedQueuesCount.rank()));
             sji.setAlertsCount(rs.getLong(HM_COLUMN.alertsCount.rank()));
-            sji.setDownloadedFilesCount(
-                    rs.getLong(HM_COLUMN.downloadedFilesCount.rank()));
-            sji.setCurrentProcessedKBPerSec(
-                    rs.getLong(HM_COLUMN.currentProcessedKBPerSec.rank()));
-            sji.setProcessedKBPerSec(
-                    rs.getLong(HM_COLUMN.processedKBPerSec.rank()));
-            sji.setCurrentProcessedDocsPerSec(
-                    rs.getDouble(
-                            HM_COLUMN.currentProcessedDocsPerSec.rank()));
-            sji.setProcessedDocsPerSec(
-                    rs.getDouble(HM_COLUMN.processedDocsPerSec.rank()));
-            sji.setActiveToeCount(
-                    rs.getInt(HM_COLUMN.activeToeCount.rank()));
-            sji.setStatus(
-                    CrawlStatus.values()[
-                                    rs.getInt(HM_COLUMN.status.rank())]);
-            sji.setTimestamp(new Date(
-                    rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
+            sji.setDownloadedFilesCount(rs.getLong(HM_COLUMN.downloadedFilesCount.rank()));
+            sji.setCurrentProcessedKBPerSec(rs.getLong(HM_COLUMN.currentProcessedKBPerSec.rank()));
+            sji.setProcessedKBPerSec(rs.getLong(HM_COLUMN.processedKBPerSec.rank()));
+            sji.setCurrentProcessedDocsPerSec(rs.getDouble(HM_COLUMN.currentProcessedDocsPerSec.rank()));
+            sji.setProcessedDocsPerSec(rs.getDouble(HM_COLUMN.processedDocsPerSec.rank()));
+            sji.setActiveToeCount(rs.getInt(HM_COLUMN.activeToeCount.rank()));
+            sji.setStatus(CrawlStatus.values()[rs.getInt(HM_COLUMN.status.rank())]);
+            sji.setTimestamp(new Date(rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
 
             list.add(sji);
         }

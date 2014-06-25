@@ -31,7 +31,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Class for holding a value of one ExtendedField.
  */
 public class ExtendedFieldValue {
-    /** The ID of the value of the ExtendedField. */
+
+	/** The ID of the value of the ExtendedField. */
     private Long extendedFieldValueID;
     /** The ID of the ExtendedField. */
     private Long extendedFieldID;
@@ -53,8 +54,7 @@ public class ExtendedFieldValue {
      * @param extendedFieldValueID the ID of the value of the ExtendedField
      */
     public void setExtendedFieldValueID(Long extendedFieldValueID) {
-        ArgumentNotValid.checkNotNull(
-                extendedFieldValueID, "Long extendedFieldValueID");
+        ArgumentNotValid.checkNotNull(extendedFieldValueID, "Long extendedFieldValueID");
         this.extendedFieldValueID = extendedFieldValueID;
     }
 
@@ -70,8 +70,7 @@ public class ExtendedFieldValue {
      * @param extendedFieldID the ID of the ExtendedField
      */
     public void setExtendedFieldID(Long extendedFieldID) {
-        ArgumentNotValid.checkNotNull(
-                extendedFieldID, "Long extendedFieldID");
+        ArgumentNotValid.checkNotNull(extendedFieldID, "Long extendedFieldID");
         this.extendedFieldID = extendedFieldID;
     }
     
@@ -121,8 +120,7 @@ public class ExtendedFieldValue {
      * @param aContent The contents of the value (the value itself)
      * TODO argument validation
      */
-    public ExtendedFieldValue(Long aExtendedFieldValueID,
-            Long aExtendedFieldID, Long aInstanceID, String aContent) {
+    public ExtendedFieldValue(Long aExtendedFieldValueID, Long aExtendedFieldID, Long aInstanceID, String aContent) {
         extendedFieldValueID = aExtendedFieldValueID;
         extendedFieldID = aExtendedFieldID;
         instanceID = aInstanceID;

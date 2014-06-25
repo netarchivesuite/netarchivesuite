@@ -44,11 +44,9 @@ public class SparseDomainConfiguration {
      * @param configurationName Name of configuration.
      * @throws ArgumentNotValid if either argument is null or empty.
      */
-    public SparseDomainConfiguration(String domainName,
-                              String configurationName){
+    public SparseDomainConfiguration(String domainName, String configurationName){
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
-        ArgumentNotValid.checkNotNullOrEmpty(configurationName,
-                                             "configurationName");
+        ArgumentNotValid.checkNotNullOrEmpty(configurationName, "configurationName");
         this.domainName = domainName;
         this.configurationName = configurationName;
     }
@@ -97,6 +95,5 @@ public class SparseDomainConfiguration {
         result = 29 * result + configurationName.hashCode();
         return result;
     }
-    
-    
+
 }

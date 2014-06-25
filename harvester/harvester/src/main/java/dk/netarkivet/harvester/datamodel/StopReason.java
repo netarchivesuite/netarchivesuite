@@ -23,7 +23,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 package dk.netarkivet.harvester.datamodel;
 
 import java.util.Locale;
@@ -51,7 +50,8 @@ import dk.netarkivet.common.utils.I18n;
  *
  */
 public enum StopReason {
-    /** 
+
+	/** 
      * Stop reason is download complete, when all pages within the scope of the
      * harvest template have been downloaded.
      */
@@ -91,8 +91,8 @@ public enum StopReason {
     TIME_LIMIT;
 
     /** Internationalisation object. */
-    private static final I18n I18N
-          = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+    private static final I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+
     /**
      * Get the StopReason corresponding to the given positive integer.
      * @param stopreasonNum a given positive integer
@@ -117,8 +117,7 @@ public enum StopReason {
             case 6:
                 return TIME_LIMIT;
             default:
-                throw new UnknownID("No stop reason assigned to "
-                                    + stopreasonNum);
+                throw new UnknownID("No stop reason assigned to " + stopreasonNum);
         }
     }
     
@@ -139,8 +138,7 @@ public enum StopReason {
            case SIZE_LIMIT :
                return I18N.getString(l, "stopreason.max.bytes.limit.reached");
            case CONFIG_SIZE_LIMIT :
-               return I18N.getString(l, 
-                       "stopreason.max.domainconfig.limit.reached");
+               return I18N.getString(l, "stopreason.max.domainconfig.limit.reached");
            case DOWNLOAD_UNFINISHED:
                return I18N.getString(l, "stopreason.download.unfinished");
            case TIME_LIMIT:
@@ -149,4 +147,5 @@ public enum StopReason {
                return I18N.getString(l, "stopreason.unknown.0", this);
        }
    }
+
 }

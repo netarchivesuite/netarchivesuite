@@ -32,7 +32,8 @@ import java.util.Date;
  *
  */
 public class JobStatusInfo {
-    /** The ID of the job. */
+
+	/** The ID of the job. */
     private final long jobID;
     /** The current status of the Job. */
     private final JobStatus status;
@@ -58,9 +59,8 @@ public class JobStatusInfo {
     private final Date startDate;
     /** The time when this job finished. */
     private final Date endDate;
-    /**
-     * The ID of the job this job was resubmitted as.
-     */
+
+    /** The ID of the job this job was resubmitted as. */
     private final Long resubmittedAsJobWithID;
     
     /**
@@ -84,12 +84,9 @@ public class JobStatusInfo {
      * @param resubmittedAsJobWithID The id of the job this job was resubmitted
      *  as (possibly null)
      */
-    JobStatusInfo(long jobID, JobStatus status,
-                  long harvestDefinitionID, String harvestDefinition,
-                  int harvestNum, String harvestErrors, String uploadErrors,
-                  String orderXMLname, int domainCount, Date submittedDate,
-                  Date creationDate,
-                  Date startDate, Date endDate, Long resubmittedAsJobWithID) {
+    JobStatusInfo(long jobID, JobStatus status, long harvestDefinitionID, String harvestDefinition, int harvestNum,
+    		String harvestErrors, String uploadErrors, String orderXMLname, int domainCount, Date submittedDate,
+    		Date creationDate, Date startDate, Date endDate, Long resubmittedAsJobWithID) {
         this.jobID = jobID;
         this.status = status;
         this.harvestDefinitionID = harvestDefinitionID;
@@ -104,7 +101,6 @@ public class JobStatusInfo {
         this.startDate = startDate;
         this.endDate = endDate;
         this.resubmittedAsJobWithID = resubmittedAsJobWithID;
-        
     }
 
     /**
@@ -205,4 +201,5 @@ public class JobStatusInfo {
     public Long getResubmittedAsJob() {
         return this.resubmittedAsJobWithID;
     }
+
 }

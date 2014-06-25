@@ -34,7 +34,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  */
 public class NumberUtils {
-    /**
+
+	/**
      * Return the smallest value of two given positive longs, with the addition
      * that -1 means infinity.
      * @param l1 The first value
@@ -42,8 +43,7 @@ public class NumberUtils {
      * @return Smallest value
      */
     public static long minInf(long l1, long l2) {
-        if (l1 != Constants.HERITRIX_MAXBYTES_INFINITY
-                && l2 != Constants.HERITRIX_MAXBYTES_INFINITY) {
+        if (l1 != Constants.HERITRIX_MAXBYTES_INFINITY && l2 != Constants.HERITRIX_MAXBYTES_INFINITY) {
             return Math.min(l1, l2);
         } else if (l2 != Constants.HERITRIX_MAXBYTES_INFINITY) {
             return l2;

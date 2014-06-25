@@ -428,17 +428,16 @@ public enum HarvesterDatabaseTables {
     * @param table The table to check up against required version
     * @throws IllegalState if the version isn't as required.
     */
-   public static void checkVersion(Connection connection,
-                                        HarvesterDatabaseTables table) {
+   public static void checkVersion(Connection connection, HarvesterDatabaseTables table) {
        ArgumentNotValid.checkNotNull(connection, "Connection connection");
        ArgumentNotValid.checkNotNull(table, "HarvesterDatabaseTables table");
        
        int actualVersion = DBUtils.getTableVersion(connection, table.getTablename());
        if (actualVersion != table.getRequiredVersion()) {
-           String message = "Wrong table version for '" + table.getTablename()
-                   + "': Should be " + table.getRequiredVersion()
-                   + ", but is " + actualVersion;
+           String message = "Wrong table version for '" + table.getTablename() + "': "
+           		+ "Should be " + table.getRequiredVersion() + ", but is " + actualVersion;
            throw new IllegalState(message);
        }
    }
+
 }

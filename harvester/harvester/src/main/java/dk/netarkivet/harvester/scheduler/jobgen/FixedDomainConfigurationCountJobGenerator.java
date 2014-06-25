@@ -30,8 +30,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -52,22 +52,19 @@ import dk.netarkivet.harvester.datamodel.JobDAO;
  */
 public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenerator {
 
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(FixedDomainConfigurationCountJobGenerator.class);
+
     /**
      * A compound key used to split domain configurations in jobs.
      */
     private class DomainConfigurationKey {
 
-        /**
-         * The name of the Heritrix crawl order template.
-         */
+        /** The name of the Heritrix crawl order template. */
         private final String orderXmlName;
-        /**
-         * The crawl budget in URI.
-         */
+        /** The crawl budget in URI. */
         private final long maxObjects;
-        /**
-         * The crawl budget in bytes.
-         */
+        /** The crawl budget in bytes. */
         private final long maxBytes;
 
         /**
@@ -95,8 +92,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
             int result = 1;
             result = prime * result + (int) (maxBytes ^ (maxBytes >>> 32));
             result = prime * result + (int) (maxObjects ^ (maxObjects >>> 32));
-            result = prime * result
-                    + ((orderXmlName == null) ? 0 : orderXmlName.hashCode());
+            result = prime * result + ((orderXmlName == null) ? 0 : orderXmlName.hashCode());
             return result;
         }
 
@@ -106,9 +102,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
                 return false;
             }
             DomainConfigurationKey dc = (DomainConfigurationKey) obj;
-            return orderXmlName.equals(dc.orderXmlName)
-                    && maxBytes == dc.maxBytes
-                    && maxObjects == dc.maxObjects;
+            return orderXmlName.equals(dc.orderXmlName) && maxBytes == dc.maxBytes && maxObjects == dc.maxObjects;
         }
 
         @Override
@@ -127,14 +121,12 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
      */
     @SuppressWarnings("serial")
 	private class HarvestJobGenerationState extends HashMap<DomainConfigurationKey,Job> {
-    	
     }
 
     /**
      * Compare two configurations in alphabetical order of their name.
      */
-    private static class ConfigNamesComparator
-    implements Comparator<DomainConfiguration> {
+    private static class ConfigNamesComparator implements Comparator<DomainConfiguration> {
 
         @Override
         public int compare(DomainConfiguration dc1, DomainConfiguration dc2) {
@@ -143,27 +135,19 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
     }
 
-    /**
-     * Constant : how many {@link DomainConfiguration}s we want in a focused harvest job.
-     */
+    /** Constant : how many {@link DomainConfiguration}s we want in a focused harvest job. */
     private static long CONFIG_COUNT_FOCUSED = Settings.getLong(
             HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_FOCUSED);
 
-    /**
-     * Constant : how many {@link DomainConfiguration}s we want in a snapshot harvest job.
-     */
+    /** Constant : how many {@link DomainConfiguration}s we want in a snapshot harvest job. */
     private static long CONFIG_COUNT_SNAPSHOT = Settings.getLong(
             HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
     
-    /**
-     * Constant : exclude {@link DomainConfiguration}s with a budget of zero (bytes or objects).
-     */
+    /** Constant : exclude {@link DomainConfiguration}s with a budget of zero (bytes or objects). */
     private static boolean EXCLUDE_ZERO_BUDGET = Settings.getBoolean(
             HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_EXCLUDE_ZERO_BUDGET);
 
-    /**
-     * The singleton instance.
-     */
+    /** The singleton instance. */
     public static FixedDomainConfigurationCountJobGenerator instance;
 
     /**
@@ -173,13 +157,8 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
      */
     private Map<Long, HarvestJobGenerationState> state;
 
-    /**
-     * The job DAO instance (singleton).
-     */
+    /** The job DAO instance (singleton). */
     private JobDAO dao = JobDAO.getInstance();
-    
-    /** Logger for this class. */
-    private Log log = LogFactory.getLog(getClass());
     
     private FixedDomainConfigurationCountJobGenerator() {
     	this.state = new HashMap<Long, HarvestJobGenerationState>();
@@ -196,23 +175,20 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     }
 
     @Override
-    protected Comparator<DomainConfiguration> getDomainConfigurationSubsetComparator(
-            HarvestDefinition harvest) {
+    protected Comparator<DomainConfiguration> getDomainConfigurationSubsetComparator(HarvestDefinition harvest) {
         return new ConfigNamesComparator();
     }
 
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
-    	return job.getDomainConfigurationMap().size() <
-                (job.isSnapshot() ? CONFIG_COUNT_SNAPSHOT : CONFIG_COUNT_FOCUSED);
+    	return job.getDomainConfigurationMap().size() < (job.isSnapshot() ? CONFIG_COUNT_SNAPSHOT : CONFIG_COUNT_FOCUSED);
     }
 
     @Override
     public int generateJobs(HarvestDefinition harvest) {
-        
     	HarvestJobGenerationState jobsUnderConstruction = getStateForHarvest(harvest);
 
-        try {
+    	try {
             int jobsComplete = super.generateJobs(harvest);
 
             // Look if we have jobs that have not reached their limit, but are complete
@@ -224,7 +200,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
                     dao.create(job);
 
                     // Increment counter
-                    jobsComplete++;
+                    ++jobsComplete;
                 }
             }
 
@@ -235,22 +211,17 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     }
 
     @Override
-    protected int processDomainConfigurationSubset(
-            HarvestDefinition harvest,
-            Iterator<DomainConfiguration> domainConfSubset) {
-    	
+    protected int processDomainConfigurationSubset(HarvestDefinition harvest,
+    		Iterator<DomainConfiguration> domainConfSubset) {
     	HarvestJobGenerationState jobsUnderConstruction = getExistingStateForHarvest(harvest);
         int jobsComplete = 0;
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
             
             // Should we exclude a configuration with a budget of zero?
-            if (EXCLUDE_ZERO_BUDGET
-            		&& (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
-            	log.info("[JobGen] Config '" + cfg.getName() + "' for '" + cfg.getDomainName() + "'" 
-            			+ " excluded (0"
-            			+ (cfg.getMaxBytes() == 0 ? " bytes" : " objects")
-            			+ ")");
+            if (EXCLUDE_ZERO_BUDGET && (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
+            	log.info("[JobGen] Config '{}' for '{}' excluded (0{})",
+            			cfg.getName(), cfg.getDomainName(), (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
             	continue;
             }
             
@@ -267,7 +238,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
                     dao.create(match);
 
                     // Increment counter
-                    jobsComplete++;
+                    ++jobsComplete;
 
                     // Start construction of a new job
                     initNewJob(harvest, cfg);
@@ -290,16 +261,14 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
         return job;
     }
     
-    private synchronized HarvestJobGenerationState getStateForHarvest(
-    		final HarvestDefinition harvest,
+    private synchronized HarvestJobGenerationState getStateForHarvest(final HarvestDefinition harvest,
     		final boolean failIfNotExists) {
     	
     	long harvestId = harvest.getOid();
     	HarvestJobGenerationState harvestState = this.state.get(harvestId);
     	if (harvestState == null) {
     		if (failIfNotExists) {
-    			throw new NoSuchElementException(
-    					"No job generation state for harvest " + harvestId);
+    			throw new NoSuchElementException("No job generation state for harvest " + harvestId);
     		}
     		harvestState = new HarvestJobGenerationState();
     		this.state.put(harvestId, harvestState);
@@ -307,15 +276,15 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     	
     	return harvestState;
     }
-    
+
     private HarvestJobGenerationState getStateForHarvest(final HarvestDefinition harvest) {
     	return getStateForHarvest(harvest, false);
     }
-    
+
     private HarvestJobGenerationState getExistingStateForHarvest(final HarvestDefinition harvest) {
     	return getStateForHarvest(harvest, true);
     }
-    
+
     private synchronized void dropStateForHarvest(final HarvestDefinition harvest) {
     	long harvestId = harvest.getOid();
     	HarvestJobGenerationState harvestState = this.state.remove(harvestId);

@@ -29,8 +29,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -47,7 +47,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 public class PostgreSQLSpecifics extends DBSpecifics {
 
     /** The log. */
-    Log log = LogFactory.getLog(PostgreSQLSpecifics.class);
+    private static final Logger log = LoggerFactory.getLogger(PostgreSQLSpecifics.class);
 
     /**
      * Get an instance of the PostgreSQL specifics class.
@@ -72,10 +72,9 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      */
     public String getJobConfigsTmpTable(Connection c) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
-        PreparedStatement s = c.prepareStatement("CREATE TEMPORARY TABLE  "
-                + "jobconfignames " + "( domain_name varchar("
-                + Constants.MAX_NAME_SIZE + "), " + " config_name varchar("
-                + Constants.MAX_NAME_SIZE + ") ) ON COMMIT DROP");
+        PreparedStatement s = c.prepareStatement("CREATE TEMPORARY TABLE jobconfignames " + "( domain_name varchar("
+                + Constants.MAX_NAME_SIZE + "), " + " config_name varchar(" + Constants.MAX_NAME_SIZE + ") )"
+                		+ " ON COMMIT DROP");
         s.execute();
         s.close();
         return "jobconfignames";
@@ -92,7 +91,6 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      *            The name of the temporary table
      */
     public void dropJobConfigsTmpTable(Connection c, String tableName) {
-
     }
 
     /**
@@ -129,7 +127,8 @@ public class PostgreSQLSpecifics extends DBSpecifics {
                 "ALTER TABLE jobs DROP COLUMN forcemaxbytes",
                 "ALTER TABLE jobs ADD COLUMN forcemaxbytes bigint not null default -1",
                 "ALTER TABLE jobs DROP COLUMN num_configs",
-                "ALTER TABLE jobs ADD COLUMN num_configs int not null default 0" };
+                "ALTER TABLE jobs ADD COLUMN num_configs int not null default 0"
+        };
         HarvestDBConnection.updateTable("jobs", 4, sqlStatements);
     }
 
@@ -142,9 +141,9 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      */
     protected synchronized void migrateJobsv4tov5() {
         String[] sqlStatements = {
-                "ALTER TABLE jobs ADD COLUMN submitteddate datetime "
-                        + "AFTER enddate",
-                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint" };
+                "ALTER TABLE jobs ADD COLUMN submitteddate datetime AFTER enddate",
+                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"
+        };
         HarvestDBConnection.updateTable("jobs", 5, sqlStatements);
     }
 
@@ -154,8 +153,9 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      */
     protected synchronized void migrateConfigurationsv3ov4() {
         // Update configurations table to version 4
-        String[] sqlStatements
-            = {"ALTER TABLE configurations ALTER maxbytes SET DEFAULT -1" };
+        String[] sqlStatements = {
+        		"ALTER TABLE configurations ALTER maxbytes SET DEFAULT -1"
+        };
         HarvestDBConnection.updateTable("configurations", 4, sqlStatements);
     }
 
@@ -165,8 +165,9 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      */
     protected synchronized void migrateFullharvestsv2tov3() {
         // Update fullharvests table to version 3
-        String[] sqlStatements
-            = { "ALTER TABLE fullharvests ALTER maxbytes SET DEFAULT -1" };
+        String[] sqlStatements = {
+        		"ALTER TABLE fullharvests ALTER maxbytes SET DEFAULT -1"
+        };
         HarvestDBConnection.updateTable("fullharvests", 3, sqlStatements);
     }
 
@@ -211,8 +212,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateRunningJobsHistoryTableV1ToV2() {
         String[] sqlStatements = {
-                "ALTER TABLE runningjobshistory "
-                + "ADD COLUMN retiredQueuesCount bigint not null"
+                "ALTER TABLE runningjobshistory ADD COLUMN retiredQueuesCount bigint not null"
         };
         HarvestDBConnection.updateTable("runningjobshistory", 2, sqlStatements);
     }
@@ -224,8 +224,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateRunningJobsMonitorTableV1ToV2() {
         String[] sqlStatements = {
-                "ALTER TABLE runningjobsmonitor "
-                + "ADD COLUMN retiredQueuesCount bigint not null"
+                "ALTER TABLE runningjobsmonitor ADD COLUMN retiredQueuesCount bigint not null"
         };
         HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
     }
@@ -233,8 +232,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateDomainsv2tov3() {
         String[] sqlStatements = {
-                "ALTER TABLE domains "
-                + "ALTER COLUMN crawlertraps type text"
+                "ALTER TABLE domains ALTER COLUMN crawlertraps type text"
         };
         HarvestDBConnection.updateTable("domains", 3, sqlStatements);
     }
@@ -242,31 +240,35 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateConfigurationsv4tov5() {
         // Update configurations table to version 5
-        String[] sqlStatements
-            = {"ALTER TABLE configurations ALTER COLUMN maxobjects TYPE bigint" };
+        String[] sqlStatements = {
+        		"ALTER TABLE configurations ALTER COLUMN maxobjects TYPE bigint"
+        };
         HarvestDBConnection.updateTable("configurations", 5, sqlStatements);
     }
 
     @Override
     protected void migrateFullharvestsv3tov4() {
         // Update fullharvests table to version 4
-        String[] sqlStatements
-            = {"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"};
+        String[] sqlStatements = {
+        		"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"
+        };
         HarvestDBConnection.updateTable("fullharvests", 4, sqlStatements);
     }
 
     @Override
     protected void migrateJobsv5tov6() {
-        String[] sqlStatements
-        = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0"};
+        String[] sqlStatements = {
+        		"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0"
+        };
         HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
     }
 
     @Override
     protected void migrateFullharvestsv4tov5() {
         // Update fullharvests table to version 5
-        String[] sqlStatements
-            = {"ALTER TABLE fullharvests ADD COLUMN isindexready bool NOT NULL DEFAULT false"};
+        String[] sqlStatements = {
+        		"ALTER TABLE fullharvests ADD COLUMN isindexready bool NOT NULL DEFAULT false"
+        };
         HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
         
     }
@@ -274,7 +276,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     @Override
     protected void createExtendedFieldTypeTable() {
         String[] statements = new String[3];
-        statements[0] = "" + "CREATE TABLE extendedfieldtype " + "  ( "
+        statements[0] = "CREATE TABLE extendedfieldtype " + "  ( "
                 + "     extendedfieldtype_id BIGINT NOT NULL PRIMARY KEY, "
                 + "     name             VARCHAR(50) NOT NULL " + "  )";
 
@@ -409,7 +411,6 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      * Migrates the 'ExtendedFieldValueTable' from version 1 to version 2 changing the maxlen of content to 30000
      */
     protected  void migrateExtendedFieldTableValueV1toV2() {
-    	
         String[] sqlStatements = {
         		"ALTER TABLE extendedfieldvalue ALTER COLUMN content TYPE VARCHAR(30000), ALTER COLUMN content SET NOT NULL"
         };

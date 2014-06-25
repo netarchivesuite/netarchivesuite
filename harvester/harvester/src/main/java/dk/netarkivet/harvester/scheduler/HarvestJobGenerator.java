@@ -32,8 +32,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
@@ -57,40 +57,34 @@ import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
  */
 public class HarvestJobGenerator implements ComponentLifeCycle {
 
+    /** The class logger. */
+    private static final Logger log = LoggerFactory.getLogger(HarvestJobGenerator.class);
+
     /** The set of HDs (or rather their OIDs) that are currently being
      * scheduled in a separate thread.
      * This set is a SynchronizedSet
      */
-    protected static Set<Long> harvestDefinitionsBeingScheduled =
-        Collections.synchronizedSet(new HashSet<Long>());
+    protected static Set<Long> harvestDefinitionsBeingScheduled = Collections.synchronizedSet(new HashSet<Long>());
+
     /** Used the store the currenttimeMillis when the scheduling of
      *  a particular harvestdefinition # started or when last
      *  a warning was issued.
      */
-    protected static Map<Long, Long> schedulingStartedMap =
-            Collections.synchronizedMap(new HashMap<Long, Long>());
+    protected static Map<Long, Long> schedulingStartedMap = Collections.synchronizedMap(new HashMap<Long, Long>());
     
-    /** The class logger. */
-    private static final Log log =
-        LogFactory.getLog(HarvestJobGenerator.class.getName());
-
     /** The executor used to schedule the generator jobs. */
     private PeriodicTaskExecutor genExec;
     
-    /**
-     * @see HarvesterSettings#JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL
-     */
+    /** @see HarvesterSettings#JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL. */
     private static final boolean postponeUnregisteredChannel = Settings.getBoolean(
-            HarvesterSettings.JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL);
+    		HarvesterSettings.JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL);
     
     /** The HarvestDefinitionDAO used by the HarvestJobGenerator. */
-    private static final HarvestDefinitionDAO haDefinitionDAO =
-        HarvestDefinitionDAO.getInstance();
+    private static final HarvestDefinitionDAO haDefinitionDAO = HarvestDefinitionDAO.getInstance();
     
     private final HarvestChannelRegistry harvestChannelRegistry;
     
-    public HarvestJobGenerator(
-            final HarvestChannelRegistry harvestChannelRegistry) {
+    public HarvestJobGenerator(final HarvestChannelRegistry harvestChannelRegistry) {
         this.harvestChannelRegistry = harvestChannelRegistry;
     }
 
@@ -103,7 +97,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 "JobGeneratorTask",
                 new JobGeneratorTask(harvestChannelRegistry),
                 0,
-                Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD));
+                Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD)
+        );
     }
 
     @Override
@@ -143,10 +138,9 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
          * points-in-time
          */
         void generateJobs(Date timeToGenerateJobsFor) {
-            final Iterable<Long> readyHarvestDefinitions =
-                haDefinitionDAO.getReadyHarvestDefinitions(
-                        timeToGenerateJobsFor);
-            
+            final Iterable<Long> readyHarvestDefinitions = haDefinitionDAO.getReadyHarvestDefinitions(
+            		timeToGenerateJobsFor);
+
             HarvestChannelDAO hChanDao = HarvestChannelDAO.getInstance();
             
             for (final Long id : readyHarvestDefinitions) {
@@ -158,10 +152,10 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                                 + id + " (" + harvestName + ")"
                                 + " as the previous scheduling is still running";
                         if (haDefinitionDAO.isSnapshot(id)) {
-                        // Log only at level debug if the ID represents 
-                        // is a snapshot harvestdefinition, which are only run 
-                        // once anyway
-                        log.debug(errMsg);
+                            // Log only at level debug if the ID represents 
+                            // is a snapshot harvestdefinition, which are only run 
+                            // once anyway
+                            log.debug(errMsg);
                         } else { // Log at level WARN, and send a notification, if it is time
                             log.warn(errMsg);
                             NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
@@ -176,16 +170,14 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 if (!harvestDefinition.isSnapShot()) {
                     Long chanId = harvestDefinition.getChannelId();
 
-                    HarvestChannel chan = (chanId == null ?
-                            hChanDao.getDefaultChannel(false) : hChanDao.getById(chanId));
+                    HarvestChannel chan =
+                    		(chanId == null ? hChanDao.getDefaultChannel(false) : hChanDao.getById(chanId));
 
                     String channelName = chan.getName();
-                    if (postponeUnregisteredChannel 
-                            && !harvestChannelRegistry.isRegistered(channelName)) {
-                        log.info("Harvest channel '" + channelName + "' has not yet been registered"
-                                + " by any harvester, hence harvest definition '"
-                                + harvestDefinition.getName() + "' (" + id
-                                + ") cannot be processed by the job generator for now.");
+                    if (postponeUnregisteredChannel && !harvestChannelRegistry.isRegistered(channelName)) {
+                        log.info("Harvest channel '{}' has not yet been registered by any harvester, hence harvest "
+                        		+ "definition '{}' ({}) cannot be processed by the job generator for now.",
+                        		channelName, harvestDefinition.getName(), id);
                         continue;
                     }
                 }
@@ -194,15 +186,12 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 schedulingStartedMap.put(id, System.currentTimeMillis());
 
                 if (!harvestDefinition.runNow(timeToGenerateJobsFor)) {
-                    log.trace("The harvestdefinition #" + id + "'"
-                            + harvestDefinition.getName() 
-                            + "' should not run now.");
-                    log.trace("numEvents: " + harvestDefinition.getNumEvents());
+                    log.trace("The harvestdefinition #{}'{}' should not run now.", id, harvestDefinition.getName());
+                    log.trace("numEvents: {}", harvestDefinition.getNumEvents());
                     continue;
                 }
 
-                log.info("Starting to create jobs for harvest definition #" + id + "("
-                        + harvestDefinition.getName() + ")");
+                log.info("Starting to create jobs for harvest definition #{}({})", id, harvestDefinition.getName());
 
                 new Thread("JobGeneratorTask-" + id) {
                     public void run() {
@@ -210,36 +199,30 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             JobGenerator jobGen = JobGeneratorFactory.getInstance();
                             int jobsMade = jobGen.generateJobs(harvestDefinition);
                             if (jobsMade > 0) {
-                                log.info("Created " + jobsMade
-                                    + " jobs for harvest definition ("
-                                    + harvestDefinition.getName() + ")");
+                                log.info("Created {} jobs for harvest definition ({})",
+                                		jobsMade, harvestDefinition.getName());
                             } else {
-                                String msg = "No jobs created for harvest definition '"
-                                        + harvestDefinition.getName() + "'. Probable cause: "
-                                        + "harvest tries to continue harvest that is already finished "; 
+                                String msg = "No jobs created for harvest definition '" + harvestDefinition.getName()
+                                		+ "'. Probable cause: harvest tries to continue harvest that is already finished "; 
                                 log.warn(msg);
                                 NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
                             }
                             haDefinitionDAO.update(harvestDefinition);
                         } catch (Throwable e) {
                             try {
-                                HarvestDefinition hd = haDefinitionDAO.read(
-                                        harvestDefinition.getOid());
+                                HarvestDefinition hd = haDefinitionDAO.read(harvestDefinition.getOid());
                                 hd.setActive(false);
                                 haDefinitionDAO.update(hd);
-                                String errMsg = "Exception while scheduling"
-                                    + "harvestdefinition #" + id + "("
-                                    + harvestDefinition.getName() + "). The "
-                                    + "harvestdefinition has been deactivated!";
+                                String errMsg = "Exception while scheduling harvestdefinition #" + id + "("
+                                		+ harvestDefinition.getName() + "). The harvestdefinition has been "
+                                		+ "deactivated!";
                                 log.warn(errMsg, e);
                                 NotificationsFactory.getInstance().
                                 notify(errMsg, NotificationType.ERROR, e);
                             } catch (Exception e1) {
-                                String errMsg = "Exception while scheduling"
-                                    + "harvestdefinition #" + id + "("
-                                    + harvestDefinition.getName()
-                                    + "). The harvestdefinition couldn't be "
-                                    +   "deactivated!";
+                                String errMsg = "Exception while scheduling harvestdefinition #" + id + "("
+                                    + harvestDefinition.getName() + "). The harvestdefinition couldn't be "
+                                    + "deactivated!";
                                 log.warn(errMsg, e);
                                 log.warn("Unable to deactivate", e1);
                                 NotificationsFactory.getInstance().
@@ -249,11 +232,9 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             harvestDefinitionsBeingScheduled.
                             remove(id);
                             schedulingStartedMap.remove(id);
-                            log.debug("Removed HD #" + id + "(" + harvestDefinition.getName()
-                                    + ") from list of harvestdefinitions to be "
-                                    + "scheduled. Harvestdefinitions still to "
-                                    + "be scheduled: "
-                                    + harvestDefinitionsBeingScheduled);
+                            log.debug("Removed HD #{}({}) from list of harvestdefinitions to be scheduled. "
+                            		+ "Harvestdefinitions still to be scheduled: {}",
+                            		id, harvestDefinition.getName(), harvestDefinitionsBeingScheduled);
                         }
                     }
                 }.start();
@@ -288,4 +269,5 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
             }
         }
     }
+
 }

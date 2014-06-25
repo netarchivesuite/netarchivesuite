@@ -28,8 +28,8 @@ package dk.netarkivet.harvester.datamodel;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -51,7 +51,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     /** The instance of the DBSpecifics class. */
     private static DBSpecifics instance;
 
-    Log log = LogFactory.getLog(DBSpecifics.class);
+    private static final Logger log = LoggerFactory.getLogger(DBSpecifics.class);
 
     /**
      * Get the singleton instance of the DBSpecifics implementation class.
@@ -78,8 +78,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      *             if there is a problem getting the table.
      * @return The name of the created table
      */
-    public abstract String getJobConfigsTmpTable(Connection c)
-    throws SQLException;
+    public abstract String getJobConfigsTmpTable(Connection c) throws SQLException;
 
     /**
      * Dispose of a temporary table gotten with getTemporaryTable. This can be
@@ -135,14 +134,11 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             // Nothing to do. Version of table is already correct.
             return;
         }
-        log.info("Trying to migrate table '" + tableName + "' from version '"
-                + currentVersion + "' to version '" + toVersion + "'.");
+        log.info("Trying to migrate table '" + tableName + "' from version '" + currentVersion + "' to version '" + toVersion + "'.");
 
         if (currentVersion > toVersion) {
-            throw new IllegalState("Database is in an illegalState: "
-                    + "The current version of table '" + tableName
-                    + "' is not acceptable "
-                    + "(current version is greater than requested version).");
+            throw new IllegalState("Database is in an illegalState: The current version of table '" + tableName
+                    + "' is not acceptable (current version is greater than requested version).");
         }
 
         if (tableName.equals(HarvesterDatabaseTables.JOBS.getTablename())) {
@@ -175,8 +171,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             upgradeHarvestchannelTable(currentVersion, toVersion);
             // Add new if else when other tables need to be upgraded
         } else {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '" + tableName
+            throw new NotImplementedException("No method exists for migrating table '" + tableName
                     + "' to version " + toVersion);
         }
     }
@@ -184,8 +179,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     private void upgradeHarvestdefinitionsTable(int currentVersion,
             int toVersion) {
         if (currentVersion < 2) {
-            throw new IllegalState("Database is in an illegalState: "
-                    + "The current version " + currentVersion
+            throw new IllegalState("Database is in an illegalState: The current version " + currentVersion
                     + " of table '" + HarvesterDatabaseTables.HARVESTDEFINITIONS.getTablename() 
                     + "' is not acceptable. The current table version is less than open source version 2. "
                     + "Probably a wrong entry in the schemaversions table");
@@ -200,8 +194,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
         // insert new migrations here
         if (currentVersion != HarvesterDatabaseTables.HARVESTDEFINITIONS.getRequiredVersion()) {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '"
+            throw new NotImplementedException("No method exists for migrating table '"
                     + HarvesterDatabaseTables.HARVESTDEFINITIONS.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
@@ -215,11 +208,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             currentVersion = 1;
         }
         if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELDTYPE.getRequiredVersion()) {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '"
-                            + HarvesterDatabaseTables.EXTENDEDFIELDTYPE.getTablename() 
-                            + "' from version " + currentVersion 
-                            + " to version " + toVersion);
+            throw new NotImplementedException("No method exists for migrating table '"
+                    + HarvesterDatabaseTables.EXTENDEDFIELDTYPE.getTablename() 
+                    + "' from version " + currentVersion 
+                    + " to version " + toVersion);
         }
     }
 
@@ -235,11 +227,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
         
         if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELDVALUE.getRequiredVersion()) {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '"
-                            + HarvesterDatabaseTables.EXTENDEDFIELDVALUE.getTablename() 
-                            + "' from version " + currentVersion 
-                            + " to version " + toVersion);
+            throw new NotImplementedException("No method exists for migrating table '"
+                    + HarvesterDatabaseTables.EXTENDEDFIELDVALUE.getTablename() 
+                    + "' from version " + currentVersion 
+                    + " to version " + toVersion);
         }
     }
 
@@ -253,11 +244,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             currentVersion = 2;
         }
         if (currentVersion > HarvesterDatabaseTables.EXTENDEDFIELD.getRequiredVersion()) {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '"
-                            + HarvesterDatabaseTables.EXTENDEDFIELD.getTablename() 
-                            + "' from version " + currentVersion 
-                            + " to version " + toVersion);
+            throw new NotImplementedException("No method exists for migrating table '"
+                    + HarvesterDatabaseTables.EXTENDEDFIELD.getTablename() 
+                    + "' from version " + currentVersion 
+                    + " to version " + toVersion);
         }
     }
 
@@ -267,16 +257,14 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * table
      * @param toVersion the required version of the frontierreportmonitor table
      */
-    private void upgradeFrontierreportmonitorTable(int currentVersion,
-            int toVersion) {
+    private void upgradeFrontierreportmonitorTable(int currentVersion, int toVersion) {
         if (currentVersion == 0 && toVersion == 1) {
             createFrontierReportMonitorTable();
             currentVersion = 1;
         }
         // insert new migrations here
         if (currentVersion > HarvesterDatabaseTables.FRONTIERREPORTMONITOR.getRequiredVersion()) {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '"
+            throw new NotImplementedException("No method exists for migrating table '"
                     + HarvesterDatabaseTables.FRONTIERREPORTMONITOR.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
@@ -298,8 +286,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             currentVersion = 2;
         }
         if (currentVersion > HarvesterDatabaseTables.RUNNINGJOBSMONITOR.getRequiredVersion()) {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '" 
+            throw new NotImplementedException("No method exists for migrating table '" 
                     + HarvesterDatabaseTables.RUNNINGJOBSMONITOR.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
@@ -311,8 +298,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * @param currentVersion the current version of the runningjobshistory table
      * @param toVersion The required version of the runningjobshistory table
      */
-    private void upgradeRunningjobshistoryTable(int currentVersion,
-            int toVersion) {
+    private void upgradeRunningjobshistoryTable(int currentVersion, int toVersion) {
         if (currentVersion == 0 && toVersion >= 1) {
             createRunningJobsHistoryTable();
             currentVersion = 1;
@@ -323,8 +309,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
         // insert new migrations here
         if (currentVersion > HarvesterDatabaseTables.RUNNINGJOBSHISTORY.getRequiredVersion()) {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '" 
+            throw new NotImplementedException("No method exists for migrating table '" 
                     + HarvesterDatabaseTables.RUNNINGJOBSHISTORY.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
@@ -343,10 +328,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             currentVersion = 1;
         }
         // insert new migrations here
-        if (currentVersion 
-                > HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS.getRequiredVersion()) {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '" 
+        if (currentVersion > HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS.getRequiredVersion()) {
+            throw new NotImplementedException("No method exists for migrating table '" 
                     + HarvesterDatabaseTables.GLOBALCRAWLERTRAPEXPRESSIONS.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
@@ -360,8 +343,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * @param toVersion The required version of the 
      * globalecrawlertraplists table
      */
-    private void upgradeGlobalcrawlertraplistsTable(int currentVersion,
-            int toVersion) {
+    private void upgradeGlobalcrawlertraplistsTable(int currentVersion, int toVersion) {
         if (currentVersion == 0 && toVersion >= 1) {
             createGlobalCrawlerTrapLists();
             currentVersion = 1;
@@ -420,9 +402,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         // future updates of the jobs table are inserted here
         if (currentVersion == HarvesterDatabaseTables.JOBS.getRequiredVersion() 
                 && toVersion >= HarvesterDatabaseTables.JOBS.getRequiredVersion() + 1) {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '" 
-                            + HarvesterDatabaseTables.JOBS.getTablename()
+            throw new NotImplementedException("No method exists for migrating table '" 
+                    + HarvesterDatabaseTables.JOBS.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
         }
@@ -433,7 +414,6 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                     + ") of table '" + HarvesterDatabaseTables.JOBS.getTablename()
                     + "' is not an acceptable/known version. ");
         }
-
     }
 
     /** Migrate the configurations table.
@@ -461,8 +441,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         // insert future migrations here
         if (currentVersion == HarvesterDatabaseTables.CONFIGURATIONS.getRequiredVersion()
                 && toVersion >= HarvesterDatabaseTables.CONFIGURATIONS.getRequiredVersion()+ 1) {
-            throw new NotImplementedException(
-                    "No method exists for migrating table '" 
+            throw new NotImplementedException("No method exists for migrating table '" 
                     + HarvesterDatabaseTables.CONFIGURATIONS.getTablename()
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
@@ -527,7 +506,6 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                     + "' from version " + currentVersion
                     + " to version " + toVersion);
         }
-
     }
     
     /** Migrate the harvestchannel table.
@@ -741,4 +719,5 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             updateTable(table.getTablename(), table.getRequiredVersion());
         }
     }
+
 }

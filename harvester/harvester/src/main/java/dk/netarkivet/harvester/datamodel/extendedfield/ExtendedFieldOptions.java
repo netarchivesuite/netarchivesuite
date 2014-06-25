@@ -34,7 +34,8 @@ import java.util.StringTokenizer;
  * Class to represent options for Extended Fields. 
  */
 public class ExtendedFieldOptions {
-    /** Key-Value separator. */
+
+	/** Key-Value separator. */
     public static final String KEYVALUESEPARATOR = "=";
     /** Line separator. */
     public static final String NEWLINE = System.getProperty("line.separator");
@@ -52,7 +53,6 @@ public class ExtendedFieldOptions {
      */
     public ExtendedFieldOptions(String aLines) {
         lines = aLines;
-
         parsing();
     }
     
@@ -64,8 +64,7 @@ public class ExtendedFieldOptions {
             return;
         }
 
-        StringTokenizer st = new StringTokenizer(lines.trim(), System
-                .getProperty("line.separator"));
+        StringTokenizer st = new StringTokenizer(lines.trim(), System.getProperty("line.separator"));
 
         String key = null;
         String value = null;
@@ -116,8 +115,7 @@ public class ExtendedFieldOptions {
 
         if (isValid()) {
             for (String key : options.keySet()) {
-                str += key + KEYVALUESEPARATOR + options.get(key) 
-                    + NEWLINE;
+                str += key + KEYVALUESEPARATOR + options.get(key) + NEWLINE;
             }
         }
 
@@ -138,4 +136,5 @@ public class ExtendedFieldOptions {
         }
         return false;
     }
+
 }

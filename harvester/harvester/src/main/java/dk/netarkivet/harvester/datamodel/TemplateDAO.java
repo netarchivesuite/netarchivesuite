@@ -34,9 +34,8 @@ import dk.netarkivet.common.utils.FilterIterator;
  *
  */
 public abstract class TemplateDAO implements DAO {
-    /**
-     * The singleton TemplateDAO.
-     */
+
+	/** The singleton TemplateDAO. */
     private static TemplateDAO instance;
 
     /**
@@ -64,7 +63,6 @@ public abstract class TemplateDAO implements DAO {
      * @return The contents of this order.xml document
      */
     public abstract HeritrixTemplate read(String orderXmlName);
-
 
     /**
      * Returns an iterator with all names of order.xml-templates.
@@ -117,4 +115,5 @@ public abstract class TemplateDAO implements DAO {
     static void resetSingleton() {
         instance = null;
     }
+
 }

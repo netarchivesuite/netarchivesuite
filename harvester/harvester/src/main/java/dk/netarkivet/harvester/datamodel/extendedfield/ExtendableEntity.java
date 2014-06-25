@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ExtendableEntity {
-    protected static final Log log = LogFactory.getLog(ExtendableEntity.class);
+
+	private static final Logger log = LoggerFactory.getLogger(ExtendableEntity.class);
 	
     /** List of extended Fields. */
     protected List<ExtendedFieldValue> extendedFieldValues = new ArrayList<ExtendedFieldValue>();
@@ -52,8 +53,7 @@ public abstract class ExtendableEntity {
                 return extendedFieldValues.get(i);
             }
         }
-        log.debug("ExtendedFieldValue w/ id = " + aExtendedFieldId 
-                + " does not exist. Returning empty object");
+        log.debug("ExtendedFieldValue w/ id = {} does not exist. Returning empty object", aExtendedFieldId);
         return new ExtendedFieldValue();
     }
 
@@ -64,8 +64,7 @@ public abstract class ExtendableEntity {
      * @param aContent id content to set
      * 
      */
-    public void updateExtendedFieldValue(Long aExtendedFieldId, 
-            String aContent) {
+    public void updateExtendedFieldValue(Long aExtendedFieldId, String aContent) {
         for (int i = 0; i < extendedFieldValues.size(); i++) {
             if (extendedFieldValues.get(i).getExtendedFieldID().equals(aExtendedFieldId)) {
                 extendedFieldValues.get(i).setContent(aContent);
@@ -74,15 +73,12 @@ public abstract class ExtendableEntity {
         }
     }
 
-
-
     /**
      * Adds Defaultvalues for all extended fields of this entity.
      */
     public void addExtendedFieldValues() {
         ExtendedFieldDAO extendedFieldDAO = ExtendedFieldDAO.getInstance();
-        List<ExtendedField> list = extendedFieldDAO
-                .getAll(getExtendedFieldType());
+        List<ExtendedField> list = extendedFieldDAO.getAll(getExtendedFieldType());
 
         Iterator<ExtendedField> it = list.iterator();
         while (it.hasNext()) {
@@ -101,4 +97,5 @@ public abstract class ExtendableEntity {
      * @return ExtendedFieldType
      */
     abstract protected int getExtendedFieldType(); 
+
 }

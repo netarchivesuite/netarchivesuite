@@ -28,14 +28,14 @@ package dk.netarkivet.harvester.datamodel;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Named;
 
-
 /**
  * Immutable password class. Represents a http credentials password.
  * See RFC 2617: HTTP Authentication: Basic and Digest Access Authentication
  */
 
 public final class Password implements Named {
-    /** The name of the Password. Used for sorting. */
+
+	/** The name of the Password. Used for sorting. */
     private final String name;
     /** Any comments given to the Password. */
     private final String comments;
@@ -63,8 +63,8 @@ public final class Password implements Named {
      * @param username the username
      * @param password the password
      */
-    public Password(String name, String comments, String passwordDomain,
-                    String realm, String username, String password) {
+    public Password(String name, String comments, String passwordDomain, String realm, String username,
+    		String password) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(comments, "comments");
         ArgumentNotValid.checkNotNullOrEmpty(passwordDomain, "passwordDomain");
@@ -100,21 +100,25 @@ public final class Password implements Named {
     public String getPasswordDomain() {
         return passwordDomain;
     }
+
     /**
      * @return the Realm for the Password
      */
     public String getRealm() {
         return realm;
     }
+
     /**
      * @return the username.
      */
     public String getUsername() {
         return username;
     }
+
     /**
      * @return the password.
      */
+
     public String getPassword() {
         return password;
     }
@@ -153,18 +157,13 @@ public final class Password implements Named {
 
         final Password password1 = (Password) o;
 
-        if (comments != null ? !comments.equals(password1.comments)
-                : password1.comments != null) return false;
-        if (name != null ? !name.equals(password1.name) 
-                : password1.name != null) return false;
-        if (password != null ? !password.equals(password1.password) 
-                : password1.password != null) return false;
+        if (comments != null ? !comments.equals(password1.comments) : password1.comments != null) return false;
+        if (name != null ? !name.equals(password1.name) : password1.name != null) return false;
+        if (password != null ? !password.equals(password1.password)  : password1.password != null) return false;
         if (passwordDomain != null ? !passwordDomain.equals(password1.passwordDomain)
-                : password1.passwordDomain != null) return false;
-        if (realm != null ? !realm.equals(password1.realm) 
-                : password1.realm != null) return false;
-        if (username != null ? !username.equals(password1.username) 
-                : password1.username != null) return false;
+        		: password1.passwordDomain != null) return false;
+        if (realm != null ? !realm.equals(password1.realm) : password1.realm != null) return false;
+        if (username != null ? !username.equals(password1.username) : password1.username != null) return false;
 
         return true;
     }
@@ -178,11 +177,11 @@ public final class Password implements Named {
         int result;
         result = (name != null ? name.hashCode() : 0);
         result = 29 * result + (comments != null ? comments.hashCode() : 0);
-        result = 29 * result + 
-            (passwordDomain != null ? passwordDomain.hashCode() : 0);
+        result = 29 * result + (passwordDomain != null ? passwordDomain.hashCode() : 0);
         result = 29 * result + (realm != null ? realm.hashCode() : 0);
         result = 29 * result + (username != null ? username.hashCode() : 0);
         result = 29 * result + (password != null ? password.hashCode() : 0);
         return result;
     }
+
 }

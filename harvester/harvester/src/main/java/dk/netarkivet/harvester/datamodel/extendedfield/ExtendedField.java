@@ -27,8 +27,8 @@ package dk.netarkivet.harvester.datamodel.extendedfield;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
@@ -38,16 +38,15 @@ import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
  */
 @SuppressWarnings({ "serial"})
 public class ExtendedField implements Serializable {
-    private final Log log = LogFactory.getLog(getClass());
+
+	private static final Logger log = LoggerFactory.getLogger(ExtendedField.class);
 
     /** persistent id of this extended field. */
     private Long extendedFieldID;
     /** The Id of the Reference to which the extended field belongs. */
     private Long extendedFieldTypeID;
 
-    /**
-     * name of the extended Field. This name will not be translated.
-     */
+    /** name of the extended Field. This name will not be translated. */
     private String name;
     /** formatting patterns of the extended Field. */
     private String formattingPattern;
@@ -126,8 +125,7 @@ public class ExtendedField implements Serializable {
      * @param aFormattingPattern a formatting pattern for this extendedfield
      */
     public void setFormattingPattern(String aFormattingPattern) {
-        ArgumentNotValid.checkNotNull(aFormattingPattern, 
-                "String aFormattingPattern");
+        ArgumentNotValid.checkNotNull(aFormattingPattern, "String aFormattingPattern");
         this.formattingPattern = aFormattingPattern;
     }
 
@@ -212,8 +210,7 @@ public class ExtendedField implements Serializable {
     public void setMaxlen(int aMaxlen) {
         maxlen = aMaxlen;
     }
-    
-    
+
     /**
      * Set the options of the extendedField.
      * @param options the options of the extendedField
@@ -228,8 +225,7 @@ public class ExtendedField implements Serializable {
      * @param aExtendedFieldTypeID the Id of the extendededfieldtype
      */
     public ExtendedField(String aExtendedFieldTypeID) {
-        ArgumentNotValid.checkNotNull(aExtendedFieldTypeID,
-                "aExtendedFieldTypeID");
+        ArgumentNotValid.checkNotNull(aExtendedFieldTypeID, "aExtendedFieldTypeID");
 
         extendedFieldTypeID = Long.parseLong(aExtendedFieldTypeID);
         datatype = ExtendedFieldDataTypes.STRING;
@@ -253,10 +249,8 @@ public class ExtendedField implements Serializable {
      * @param aOptions The options of the extendedfield
      * @param aMaxlen The maxlen of the extendedfield
      */
-    public ExtendedField(Long aExtendedFieldID, Long aExtendedFieldTypeID,
-            String aName, String aFormattingPattern, int aDatatype,
-            boolean aMandatory, int aSequenceNr, String aDefaultValue,
-            String aOptions, int aMaxlen) {
+    public ExtendedField(Long aExtendedFieldID, Long aExtendedFieldTypeID, String aName, String aFormattingPattern,
+    		int aDatatype, boolean aMandatory, int aSequenceNr, String aDefaultValue, String aOptions, int aMaxlen) {
         extendedFieldID = aExtendedFieldID;
         extendedFieldTypeID = aExtendedFieldTypeID;
         name = aName;
@@ -282,8 +276,7 @@ public class ExtendedField implements Serializable {
     * @return the JSP field name.
     */
     public String getJspFieldname() {
-        return ExtendedFieldConstants.EXTF_PREFIX + getExtendedFieldID() + "_"
-                + getDatatype();
+        return ExtendedFieldConstants.EXTF_PREFIX + getExtendedFieldID() + "_" + getDatatype();
     }
     
     public String toString() {
@@ -308,9 +301,6 @@ public class ExtendedField implements Serializable {
                 + "]\n"
                 + "maxlen:[" +  maxlen
                 + "]\n";
-
-
     }
-    
 
 }

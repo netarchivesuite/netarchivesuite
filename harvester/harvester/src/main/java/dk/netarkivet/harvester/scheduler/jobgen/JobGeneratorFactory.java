@@ -28,7 +28,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.harvester.HarvesterSettings;
 
-
 /**
  * Factory class for instantiating a specific implementation
  * of {@link JobGenerator}. The implementation class is defined
@@ -45,10 +44,8 @@ public class JobGeneratorFactory extends SettingsFactory<JobGenerator> {
      * @param args the arguments to the constructor or factory method
      * @return the {@link JobGenerator} instance.
      */
-    public static JobGenerator getInstance(Object ...args)
-    throws ArgumentNotValid {
-        return SettingsFactory.getInstance(
-                HarvesterSettings.JOBGEN_CLASS, args);
+    public static JobGenerator getInstance(Object ...args) throws ArgumentNotValid {
+        return SettingsFactory.getInstance(HarvesterSettings.JOBGEN_CLASS, args);
     }
 
 }

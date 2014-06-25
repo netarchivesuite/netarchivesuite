@@ -32,7 +32,8 @@ import java.util.Date;
  * domain.
  */
 public class DomainHarvestInfo {
-    /** The name of the domain. */
+
+	/** The name of the domain. */
     private final String domainName;
     /** The Id of the job. */
     private final long jobID;
@@ -201,4 +202,5 @@ public class DomainHarvestInfo {
                 ", reason=" + reason +
                 '}';
     }
+
 }

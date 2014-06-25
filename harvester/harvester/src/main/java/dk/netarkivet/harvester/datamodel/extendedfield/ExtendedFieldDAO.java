@@ -35,7 +35,8 @@ import dk.netarkivet.harvester.datamodel.DAO;
  * Interface for creating and accessing extended fields in persistent storage.
  */
 public abstract class ExtendedFieldDAO implements DAO {
-    /** The database singleton model. */
+
+	/** The database singleton model. */
     protected static ExtendedFieldDAO instance;
 
     /**
@@ -116,4 +117,5 @@ public abstract class ExtendedFieldDAO implements DAO {
         }
         return instance;
     }
+
 }

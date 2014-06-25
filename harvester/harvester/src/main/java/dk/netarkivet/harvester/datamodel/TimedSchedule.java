@@ -33,10 +33,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This class implements a schedule that runs over a specified period of time.
  *
  */
-
 @SuppressWarnings({ "serial"})
 public class TimedSchedule extends Schedule {
-    /** The day this schedule should end.*/
+
+	/** The day this schedule should end.*/
     private final Date endDate;
 
     /** Create a new TimedSchedule that runs over a period of time.
@@ -52,8 +52,7 @@ public class TimedSchedule extends Schedule {
      * @throws ArgumentNotValid if frequency, name or comments is null, or name
      * is "" or
      */
-    TimedSchedule(Date startDate, Date endDate, Frequency frequency,
-                         String name, String comments) {
+    TimedSchedule(Date startDate, Date endDate, Frequency frequency, String name, String comments) {
         super(startDate, frequency, name, comments);
         this.endDate = endDate;
     }
@@ -70,8 +69,7 @@ public class TimedSchedule extends Schedule {
 
         final TimedSchedule timedSchedule = (TimedSchedule) o;
 
-        if (endDate != null ? !endDate.equals(timedSchedule.endDate)
-                : timedSchedule.endDate != null) return false;
+        if (endDate != null ? !endDate.equals(timedSchedule.endDate) : timedSchedule.endDate != null) return false;
 
         return true;
     }
@@ -100,8 +98,7 @@ public class TimedSchedule extends Schedule {
      * @throws ArgumentNotValid if numPreviousEvents is negative
      */
     public Date getNextEvent(Date lastEvent, int numPreviousEvents) {
-        ArgumentNotValid.checkNotNegative(numPreviousEvents,
-                                          "numPreviousEvents");
+        ArgumentNotValid.checkNotNegative(numPreviousEvents, "numPreviousEvents");
 
         if (lastEvent == null) {
             return null;
@@ -132,14 +129,12 @@ public class TimedSchedule extends Schedule {
         if (startDate == null && endDate == null) {
             return name + ": " + frequency + "(" + comments + ")";
         } else if (endDate == null) {
-            return name + ": from " + startDate + " forever " + frequency
-                   + "(" + comments + ")";
+            return name + ": from " + startDate + " forever " + frequency + "(" + comments + ")";
         } else if (startDate == null) {
-            return name + ": until " + endDate.getTime() + " " + frequency
-                   + "(" + comments + ")";
+            return name + ": until " + endDate.getTime() + " " + frequency + "(" + comments + ")";
         } else {
-            return name + ": from " + startDate + " to " + endDate.getTime()
-                   + " " + frequency + "(" + comments + ")";
+            return name + ": from " + startDate + " to " + endDate.getTime() + " " + frequency + "(" + comments + ")";
         }
     }
+
 }

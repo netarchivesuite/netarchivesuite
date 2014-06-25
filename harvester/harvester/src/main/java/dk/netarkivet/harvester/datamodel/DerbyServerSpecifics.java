@@ -25,7 +25,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-
 /**
  * Implementation of DB-specific functions for the server-based Derby.
  */
@@ -46,4 +45,5 @@ public class DerbyServerSpecifics extends DerbySpecifics {
     public String getDriverClassName() {
         return "org.apache.derby.jdbc.ClientDriver";
     }
+
 }

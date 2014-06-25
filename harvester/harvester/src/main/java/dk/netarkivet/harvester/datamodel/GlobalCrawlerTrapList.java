@@ -42,9 +42,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class GlobalCrawlerTrapList {
 
-    /**
-     * The unique id of this collection of crawler traps.
-     */
+    /** The unique id of this collection of crawler traps. */
     private int id;
 
     /**
@@ -55,36 +53,13 @@ public class GlobalCrawlerTrapList {
      */
     private Set<String> traps;
 
-    /**
-     * Get the name of the list.
-     * @return  the name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Set the name of the list.
-     * @param name the name.
-     */
-    public void setName(String name) {
-        ArgumentNotValid.checkNotNullOrEmpty(name, "name");
-        this.name = name;
-    }
-
-    /**
-     * A unique name by which this list is identified.
-     */
+    /** A unique name by which this list is identified. */
     private String name;
 
-    /**
-     * A free-text description of the traps in this collection.
-     */
+    /** A free-text description of the traps in this collection. */
     private String description;
 
-    /**
-     * Whether or not this set of traps is active (in use).
-     */
+    /** Whether or not this set of traps is active (in use). */
     private boolean isActive;
 
     /**
@@ -184,6 +159,23 @@ public class GlobalCrawlerTrapList {
     }
 
     /**
+     * Get the name of the list.
+     * @return  the name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set the name of the list.
+     * @param name the name.
+     */
+    public void setName(String name) {
+        ArgumentNotValid.checkNotNullOrEmpty(name, "name");
+        this.name = name;
+    }
+
+    /**
      * Get the trap expressions for this list.
      * @return the trap expressions.
      */
@@ -274,4 +266,5 @@ public class GlobalCrawlerTrapList {
         result = 31 * result + (isActive ? 1 : 0);
         return result;
     }
+
 }

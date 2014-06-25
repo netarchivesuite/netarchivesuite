@@ -24,8 +24,6 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import javax.servlet.jsp.PageContext;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -41,9 +39,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.jsp.PageContext;
+
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -52,7 +52,6 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 
-
 /**
  * This class contains the specific properties and operations
  * of harvest definitions which are not snapshot harvest definitions.
@@ -60,7 +59,8 @@ import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
  *
  */
 public class PartialHarvest extends HarvestDefinition {
-    private final Log log = LogFactory.getLog(getClass());
+
+	private static final Logger log = LoggerFactory.getLogger(PartialHarvest.class);
 
     /** Set of domain configurations being harvested by this harvest.
      * Entries in this set are unique on configuration name + domain name.
@@ -86,19 +86,15 @@ public class PartialHarvest extends HarvestDefinition {
      * @param comments             comments
      * @param audience             The intended audience for this harvest (could be null)
      */
-    public PartialHarvest(List<DomainConfiguration> domainConfigurations,
-                          Schedule schedule,
-                          String harvestDefName,
-                          String comments,
-                          String audience) {
+    public PartialHarvest(List<DomainConfiguration> domainConfigurations, Schedule schedule, String harvestDefName,
+    		String comments, String audience) {
 
         ArgumentNotValid.checkNotNull(schedule, "schedule");
         ScheduleDAO.getInstance().read(schedule.getName());
 
         ArgumentNotValid.checkNotNullOrEmpty(harvestDefName, "harvestDefName");
         ArgumentNotValid.checkNotNull(comments, "comments");
-        ArgumentNotValid.checkNotNull(domainConfigurations,
-                "domainConfigurations");
+        ArgumentNotValid.checkNotNull(domainConfigurations, "domainConfigurations");
 
         this.numEvents = 0;
         addConfigurations(domainConfigurations);
@@ -160,8 +156,7 @@ public class PartialHarvest extends HarvestDefinition {
     public void removeDomainConfiguration(SparseDomainConfiguration dcKey) {
         ArgumentNotValid.checkNotNull(dcKey, "DomainConfigurationKey dcKey");
         if (domainConfigurations.remove(dcKey) == null) {
-            log.warn("Unable to delete domainConfiguration '" 
-                    + dcKey + "' from " + this + ". Reason: didn't exist.");
+            log.warn("Unable to delete domainConfiguration '{}' from {}. Reason: didn't exist.", dcKey, this);
         }
     }
     
@@ -169,14 +164,10 @@ public class PartialHarvest extends HarvestDefinition {
      * @param newConfiguration A new DomainConfiguration
      */
     public void addDomainConfiguration(DomainConfiguration newConfiguration) {
-        ArgumentNotValid.checkNotNull(newConfiguration, 
-                "DomainConfiguration newConfiguration");
-        SparseDomainConfiguration key = new SparseDomainConfiguration(
-                newConfiguration);
+        ArgumentNotValid.checkNotNull(newConfiguration, "DomainConfiguration newConfiguration");
+        SparseDomainConfiguration key = new SparseDomainConfiguration(newConfiguration);
         if (domainConfigurations.containsKey(key)) {
-            log.warn("Unable to add domainConfiguration '" 
-                    + newConfiguration + "' from " + this 
-                    + ". Reason: does already exist.");
+            log.warn("Unable to add domainConfiguration '{}' from {}. Reason: does already exist.", newConfiguration, this);
         } else {
             domainConfigurations.put(key, newConfiguration);
         }
@@ -296,22 +287,19 @@ public class PartialHarvest extends HarvestDefinition {
      * @param maxBytes Maximum number of bytes to harvest per domain
      * @param maxObjects Maximum number of objects to harvest per domain
      */
-    public void addSeeds(Set<String> seeds, String templateName, long maxBytes,
-                          int maxObjects) {
+    public void addSeeds(Set<String> seeds, String templateName, long maxBytes, int maxObjects) {
         ArgumentNotValid.checkNotNull(seeds, "seeds");
         ArgumentNotValid.checkNotNullOrEmpty(templateName, "templateName");
         if (!TemplateDAO.getInstance().exists(templateName)) {
             throw new UnknownID("No such template: " + templateName);
         }
         
-        Map<String, Set<String>> acceptedSeeds
-                = new HashMap<String, Set<String>>();
-        StringBuilder invalidMessage =
-                new StringBuilder("Unable to create an event harvest.\n"
-                                  + "The following seeds are invalid:\n");
+        Map<String, Set<String>> acceptedSeeds = new HashMap<String, Set<String>>();
+        StringBuilder invalidMessage = new StringBuilder("Unable to create an event harvest.\n"
+        		+ "The following seeds are invalid:\n");
         boolean valid = true;
         //validate:
-        
+
         for (String seed : seeds) {
             boolean seedValid = processSeed(seed, invalidMessage, acceptedSeeds);
             if (!seedValid) {
@@ -333,8 +321,7 @@ public class PartialHarvest extends HarvestDefinition {
      * @param maxBytes Maximum number of bytes to harvest per domain
      * @param maxObjects Maximum number of objects to harvest per domain
      */
-    public void addSeedsFromFile(File seedsFile, String templateName, long maxBytes,
-            int maxObjects) {
+    public void addSeedsFromFile(File seedsFile, String templateName, long maxBytes, int maxObjects) {
         ArgumentNotValid.checkNotNull(seedsFile, "seeds");
         ArgumentNotValid.checkTrue(seedsFile.isFile(), "seedsFile does not exist");
         ArgumentNotValid.checkNotNullOrEmpty(templateName, "templateName");
@@ -343,9 +330,8 @@ public class PartialHarvest extends HarvestDefinition {
         }
 
         Map<String, Set<String>> acceptedSeeds = new HashMap<String, Set<String>>();
-        StringBuilder invalidMessage =
-                new StringBuilder("Unable to create an event harvest.\n"
-                        + "The following seeds are invalid:\n");
+        StringBuilder invalidMessage = new StringBuilder("Unable to create an event harvest.\n"
+        		+ "The following seeds are invalid:\n");
         boolean valid = true;
 
         //validate all the seeds in the file
@@ -386,8 +372,7 @@ public class PartialHarvest extends HarvestDefinition {
             Map<String, Set<String>> acceptedSeeds) {
         seed = seed.trim();
         if (seed.length() != 0) {
-            if (!(seed.startsWith("http://")
-                    || seed.startsWith("https://"))) {
+            if (!(seed.startsWith("http://") || seed.startsWith("https://"))) {
                 seed = "http://" + seed;
             }
             URL url = null;
@@ -440,8 +425,7 @@ public class PartialHarvest extends HarvestDefinition {
             maxObjectsS = maxObjectsS + maxobjectsSuffix;
         }
 
-        String name = harvestDefName + "_" + templateName + "_"
-                  + maxBytesS+ "_" + maxObjectsS;
+        String name = harvestDefName + "_" + templateName + "_" + maxBytesS+ "_" + maxObjectsS;
         
         
         Set<DomainConfiguration> newDcs = new HashSet<DomainConfiguration>();
@@ -471,8 +455,7 @@ public class PartialHarvest extends HarvestDefinition {
             if (domain.hasConfiguration(name)) {
                 dc = domain.getConfiguration(name);
             } else {
-                dc = new DomainConfiguration(name, domain, seedListList,
-                                             new ArrayList<Password>());
+                dc = new DomainConfiguration(name, domain, seedListList, new ArrayList<Password>());
                 dc.setOrderXmlName(templateName);
 
                 dc.setMaxBytes(maxBytes);
@@ -496,14 +479,12 @@ public class PartialHarvest extends HarvestDefinition {
             DomainDAO.getInstance().update(domain);
         }
 
-        boolean thisInDAO = HarvestDefinitionDAO.getInstance().exists(
-                this.harvestDefName);
+        boolean thisInDAO = HarvestDefinitionDAO.getInstance().exists(this.harvestDefName);
         if (thisInDAO) {
             HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
             for (DomainConfiguration dc : newDcs) {
                 addConfiguration(dc);
-                hddao.addDomainConfiguration(this, new SparseDomainConfiguration(
-                        dc));
+                hddao.addDomainConfiguration(this, new SparseDomainConfiguration(dc));
             }
             hddao.update(this);
         } else {
@@ -514,4 +495,5 @@ public class PartialHarvest extends HarvestDefinition {
         }
 
     }
+
 }

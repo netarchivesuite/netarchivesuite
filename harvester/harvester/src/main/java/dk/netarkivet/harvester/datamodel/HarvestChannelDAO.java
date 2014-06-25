@@ -37,17 +37,12 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * @author ngiraud
  *
  */
-public abstract class HarvestChannelDAO implements DAO,
-        Iterable<HarvestChannel> {
+public abstract class HarvestChannelDAO implements DAO, Iterable<HarvestChannel> {
 
-    /**
-     * The singleton instance
-     */
+    /** The singleton instance */
     private static HarvestChannelDAO instance;
 
-    /**
-     * Default empty constructor
-     */
+    /** Default empty constructor */
     HarvestChannelDAO() {
 
     }
@@ -74,8 +69,7 @@ public abstract class HarvestChannelDAO implements DAO,
      * @throws ArgumentNotValid if not ID is supplied
      * @throws UnknownID if the ID is not present in the persistent storage.
      */
-    public abstract HarvestChannel getById(long id)
-            throws ArgumentNotValid, UnknownID;
+    public abstract HarvestChannel getById(long id) throws ArgumentNotValid, UnknownID;
 
     /**
      * Retrieves a {@link HarvestChannel} by its unique name.
@@ -84,8 +78,7 @@ public abstract class HarvestChannelDAO implements DAO,
      * @throws ArgumentNotValid if not name is supplied
      * @throws UnknownID if the name is not present in the persistent storage.
      */
-    public abstract HarvestChannel getByName(String name)
-            throws ArgumentNotValid, UnknownID;
+    public abstract HarvestChannel getByName(String name) throws ArgumentNotValid, UnknownID;
 
     /**
      * Creates a {@link HarvestChannel} object in the storage backend.

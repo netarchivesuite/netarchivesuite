@@ -27,8 +27,8 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -36,12 +36,10 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 /**
  * This class defines various frequencies at which things can happen, such
  * as midnight every day, 13:45 the first monday of a month, etc.
- *
  */
-
 public abstract class Frequency {
     
-    private static final Log log = LogFactory.getLog(Frequency.class);
+    private static final Logger log = LoggerFactory.getLogger(Frequency.class);
     
     /** How many units of time between each event? */
     private int numUnits;
@@ -189,11 +187,8 @@ public abstract class Frequency {
      * @throws NotImplementedException If we can't yet make a
      * Frequency for a legal timeunit. 
      */
-    public static Frequency getNewInstance(int timeunit, boolean anytime,
-                                               int numtimeunits,
-                                               Integer minute, Integer hour,
-                                               Integer dayofweek,
-                                               Integer dayofmonth) {
+    public static Frequency getNewInstance(int timeunit, boolean anytime, int numtimeunits, Integer minute,
+    		Integer hour, Integer dayofweek, Integer dayofmonth) {
         ArgumentNotValid.checkPositive(timeunit, "int timeunit");
         ArgumentNotValid.checkPositive(numtimeunits, "int timeunits");
                 
@@ -201,8 +196,7 @@ public abstract class Frequency {
         TimeUnit tu = TimeUnit.fromOrdinal(timeunit);
         log.debug("Creating a " + tu.name() + " frequency."); 
         if (!anytime) {
-            ArgumentNotValid.checkTrue(minute != null,
-                    "Arg. minute should not be null, if anytime is false");
+            ArgumentNotValid.checkTrue(minute != null, "Arg. minute should not be null, if anytime is false");
             ArgumentNotValid.checkTrue(hour != null || tu.equals(TimeUnit.HOURLY),
                     "Arg. hour should not be null, if anytime is false unless"
                     + " we are creating a Hourly frequency.");
@@ -255,4 +249,5 @@ public abstract class Frequency {
         }
         return freq;
     }
+
 }

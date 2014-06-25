@@ -28,7 +28,8 @@ package dk.netarkivet.harvester.datamodel.extendedfield;
  * Interface for creating and accessing extended fields in persistent storage.
  */
 public abstract class ExtendedFieldValueDAO {
-    /** The one and only instance of this DAO. */
+
+	/** The one and only instance of this DAO. */
     protected static ExtendedFieldValueDAO instance;
 
     /**
@@ -66,8 +67,7 @@ public abstract class ExtendedFieldValueDAO {
      * @param aInstanceID A given instanceID
      * @return the ExtendedFieldValue with the given extendedFieldID.
      */
-    public abstract ExtendedFieldValue read(Long aExtendedFieldID, 
-            Long aInstanceID);
+    public abstract ExtendedFieldValue read(Long aExtendedFieldID, Long aInstanceID);
     
     /**
      * Update a ExtendedFieldValue in persistent storage.
@@ -90,5 +90,5 @@ public abstract class ExtendedFieldValueDAO {
         }
         return instance;
     }
-}
 
+}

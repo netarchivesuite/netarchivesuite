@@ -31,7 +31,6 @@ import java.util.List;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldType;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 
@@ -48,20 +47,17 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
  */
 @SuppressWarnings("unused")
 public abstract class HarvestDefinition extends ExtendableEntity implements Named {
-    protected Long oid;
+
+	protected Long oid;
     protected String harvestDefName;
     /** The intended audience for the harvest. */
     protected String audience;
     
-    /**
-     * The time this harvest definition was first written.
-     */
+    /** The time this harvest definition was first written. */
     protected Date submissionDate;
     protected String comments;
 
-    /**
-     * Edition is used by the DAO to keep track of changes.
-     */
+    /** Edition is used by the DAO to keep track of changes. */
     protected long edition = -1;
 
     /** Determines if the harvest definition is active and ready
@@ -72,14 +68,10 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
      * */
     protected boolean isActive = true;
 
-    /**
-     * The number of times this event has already run.
-     */
+    /** The number of times this event has already run. */
     protected int numEvents;
 
-    /**
-     * The id of the associated harvest channel, or null if the default one is to be used. 
-     */
+    /** The id of the associated harvest channel, or null if the default one is to be used. */
     protected Long channelId;
     
     /**
@@ -301,8 +293,7 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
         if (!comments.equals(harvestDefinition.comments)) return false;
         if (!harvestDefName.equals(harvestDefinition.harvestDefName))
             return false;
-        if (oid != null ? !oid.equals(harvestDefinition.oid)
-                : harvestDefinition.oid != null) return false;
+        if (oid != null ? !oid.equals(harvestDefinition.oid) : harvestDefinition.oid != null) return false;
 
         if ((extendedFieldValues == null && harvestDefinition.getExtendedFieldValues() != null) ||
                 (extendedFieldValues != null && harvestDefinition.getExtendedFieldValues() == null)) {
@@ -406,4 +397,5 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
     protected int getExtendedFieldType() {
     	return ExtendedFieldTypes.HARVESTDEFINITION;
     }
+
 }

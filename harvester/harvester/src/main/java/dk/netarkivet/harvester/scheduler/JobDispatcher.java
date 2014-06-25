@@ -29,8 +29,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -53,10 +53,13 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefi
  * This class handles dispatching of Harvest jobs to the Harvesters.
  */
 public class JobDispatcher {
-    /** The logger to use.    */
-    private final Log log = LogFactory.getLog(getClass());
+
+	/** The logger to use.    */
+    private static final Logger log = LoggerFactory.getLogger(JobDispatcher.class);
+
     /** Connection to JMS provider. */
     private final JMSConnection jmsConnection;
+
     private final HarvestDefinitionDAO harvestDefinitionDAO;
     private final JobDAO jobDao;
     
@@ -83,20 +86,14 @@ public class JobDispatcher {
     protected void submitNextNewJob(HarvestChannel channel) {
         Job jobToSubmit = prepareNextJobForSubmission(channel);
         if (jobToSubmit == null) {
-            if (log.isTraceEnabled()) {
-                log.trace("No " + channel.getName() + " jobs to be run at this time");
-            }
+            log.trace("No {} jobs to be run at this time", channel.getName());
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Submitting new " + channel.getName() + " job"
-                        + jobToSubmit.getJobID());
-            }
+            log.debug("Submitting new {} job {}", channel.getName(), jobToSubmit.getJobID());
             try {
                 List<MetadataEntry> metadata = createMetadata(jobToSubmit);
                 
                 // Extract documentary information about the harvest
-                String hName = harvestDefinitionDAO.getHarvestName(
-                        jobToSubmit.getOrigHarvestDefinitionID());
+                String hName = harvestDefinitionDAO.getHarvestName(jobToSubmit.getOrigHarvestDefinitionID());
 
                 String schedule = "";
                 String hdComments = "";
@@ -105,14 +102,11 @@ public class JobDispatcher {
                 if (fh != null) {
                     hdComments = fh.getComments();
                 } else {
-                    SparsePartialHarvest ph =
-                            harvestDefinitionDAO.getSparsePartialHarvest(hName);
+                    SparsePartialHarvest ph = harvestDefinitionDAO.getSparsePartialHarvest(hName);
 
                     if (ph == null) {
-                        throw new ArgumentNotValid("No harvest definition "
-                                + "found for id '"
-                                + jobToSubmit.getOrigHarvestDefinitionID()
-                                + "', named '" + hName + "'");
+                        throw new ArgumentNotValid("No harvest definition found for id '"
+                                + jobToSubmit.getOrigHarvestDefinitionID() + "', named '" + hName + "'");
                     }
 
                     // The schedule name can only be documented for
@@ -125,18 +119,15 @@ public class JobDispatcher {
 
                 doOneCrawl(jobToSubmit, hName, hdComments, schedule, channel, hdAudience, metadata);
 
-                log.info("Job #" + jobToSubmit.getJobID() + " submitted");
-
-            } catch (Throwable e) {
-                String message = "Error while dispatching job " + 
-                        jobToSubmit.getJobID()
-                        + ". Job status changed to FAILED";
-                log.warn(message, e);
+                log.info("Job #{} submitted", jobToSubmit.getJobID());
+            } catch (Throwable t) {
+                String message = "Error while dispatching job " + jobToSubmit.getJobID()
+                		+ ". Job status changed to FAILED";
+                log.warn(message, t);
                 if (jobToSubmit != null) {
                     jobToSubmit.setStatus(JobStatus.FAILED);
                     jobToSubmit.appendHarvestErrors(message);
-                    jobToSubmit.appendHarvestErrorDetails(
-                            ExceptionUtils.getStackTrace(e));
+                    jobToSubmit.appendHarvestErrorDetails(ExceptionUtils.getStackTrace(t));
                     jobDao.update(jobToSubmit);
                 }
             }
@@ -153,8 +144,7 @@ public class JobDispatcher {
      * @return A job ready to be submitted.
      */
     private synchronized Job prepareNextJobForSubmission(HarvestChannel channel) {
-        Iterator<Long> jobsToSubmit = 
-                jobDao.getAllJobIds(JobStatus.NEW, channel);
+        Iterator<Long> jobsToSubmit = jobDao.getAllJobIds(JobStatus.NEW, channel);
         if (!jobsToSubmit.hasNext()) {
             return null;
         } else {
@@ -176,27 +166,25 @@ public class JobDispatcher {
      */
     private List<MetadataEntry> createMetadata(Job job) {
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
-        MetadataEntry aliasMetadataEntry =
-                MetadataEntry.makeAliasMetadataEntry(
-                        job.getJobAliasInfo(),
-                        job.getOrigHarvestDefinitionID(),
-                        job.getHarvestNum(),
-                        job.getJobID());
+        MetadataEntry aliasMetadataEntry = MetadataEntry.makeAliasMetadataEntry(
+                job.getJobAliasInfo(),
+                job.getOrigHarvestDefinitionID(),
+                job.getHarvestNum(),
+                job.getJobID()
+        );
         if (aliasMetadataEntry != null) {
             // Add an entry documenting that this job 
             // contains domains that has aliases
             metadata.add(aliasMetadataEntry);
         }
 
-        if (HeritrixTemplate.isDeduplicationEnabledInTemplate(
-                job.getOrderXMLdoc())) {
-            MetadataEntry duplicateReductionMetadataEntry
-            = MetadataEntry.makeDuplicateReductionMetadataEntry(
+        if (HeritrixTemplate.isDeduplicationEnabledInTemplate(job.getOrderXMLdoc())) {
+            MetadataEntry duplicateReductionMetadataEntry = MetadataEntry.makeDuplicateReductionMetadataEntry(
                     jobDao.getJobIDsForDuplicateReduction(job.getJobID()),
                     job.getOrigHarvestDefinitionID(),
                     job.getHarvestNum(),
                     job.getJobID()
-                    );
+            );
             // Always add a duplicationReductionMetadataEntry when deduplication is enabled
             // even if the list of JobIDs for deduplication is empty!
             metadata.add(duplicateReductionMetadataEntry);
@@ -217,31 +205,19 @@ public class JobDispatcher {
      * @throws IOFailure if unable to send the doOneCrawl request to a
      * harvestControllerServer
      */
-    public void doOneCrawl(
-            Job job,
-            String origHarvestName,
-            String origHarvestDesc,
-            String origHarvestSchedule,
-            HarvestChannel channel,
-            String origHarvestAudience,
-            List<MetadataEntry> metadata)
-                    throws ArgumentNotValid, IOFailure {
+    public void doOneCrawl(Job job, String origHarvestName, String origHarvestDesc, String origHarvestSchedule,
+            HarvestChannel channel, String origHarvestAudience, List<MetadataEntry> metadata)
+            		throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
         
         if (origHarvestAudience != null && !origHarvestAudience.isEmpty()) {
             job.setHarvestAudience(origHarvestAudience);
         }
-        DoOneCrawlMessage nMsg = new DoOneCrawlMessage(
-                job,
-                HarvesterChannels.getHarvestJobChannelId(channel),
-                new HarvestDefinitionInfo(
-                        origHarvestName, origHarvestDesc, origHarvestSchedule),
-                        metadata);
-        if (log.isDebugEnabled()) {
-            log.debug("Send crawl request: " + nMsg);
-        }
+        DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, HarvesterChannels.getHarvestJobChannelId(channel),
+                new HarvestDefinitionInfo(origHarvestName, origHarvestDesc, origHarvestSchedule), metadata);
+        log.debug("Send crawl request: {}", nMsg);
         jmsConnection.send(nMsg);
     }
-    
+
 }

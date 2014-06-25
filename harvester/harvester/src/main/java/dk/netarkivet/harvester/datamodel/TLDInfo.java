@@ -34,10 +34,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  */
 public class TLDInfo implements Comparable<TLDInfo> {
-    /** The name of this TLD. */
+
+	/** The name of this TLD. */
     private final String tldName;
-    /** Number of subdomains we have registered under this TLD.  All IP
-    * addresses are lumped together as one TLD. */
+    /** Number of subdomains we have registered under this TLD.  All IP addresses are lumped together as one TLD. */
     private int count = 0;
     /** The special name for IP adresses, since they have no TLD. */
     static final String IP_ADDRESS_NAME = "IP Address";
@@ -79,13 +79,10 @@ public class TLDInfo implements Comparable<TLDInfo> {
     void addSubdomain(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         if (tldName.equals(IP_ADDRESS_NAME)) {
-            ArgumentNotValid.checkTrue(
-                    dk.netarkivet.common.Constants.IP_KEY_REGEXP
-                            .matcher(name).matches(),
-                    "name must be an IP address");
+            ArgumentNotValid.checkTrue(dk.netarkivet.common.Constants.IP_KEY_REGEXP.matcher(name).matches(),
+            		"name must be an IP address");
         } else {
-            ArgumentNotValid.checkTrue(name.endsWith("." + tldName),
-                    "name must end with '." + tldName + "'");
+            ArgumentNotValid.checkTrue(name.endsWith("." + tldName), "name must end with '." + tldName + "'");
         }
         count++;
     }
@@ -136,8 +133,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     static String getTLD(String domain) {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
         String tld;
-        if (dk.netarkivet.common.Constants.IP_KEY_REGEXP.matcher(domain)
-                .matches()) {
+        if (dk.netarkivet.common.Constants.IP_KEY_REGEXP.matcher(domain).matches()) {
             tld = IP_ADDRESS_NAME;
         } else {
             // We know the format of domains, so we can assume a dot
@@ -153,11 +149,9 @@ public class TLDInfo implements Comparable<TLDInfo> {
     */
    static String getMultiLevelTLD(String domain, int maxLevel) {
        ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
-       ArgumentNotValid .checkPositive(maxLevel, "max level must be equal to 1" 
-               +" or more");
+       ArgumentNotValid .checkPositive(maxLevel, "max level must be equal to 1" +" or more");
        String tld;
-       if (dk.netarkivet.common.Constants.IP_KEY_REGEXP.matcher(domain)
-               .matches()) {
+       if (dk.netarkivet.common.Constants.IP_KEY_REGEXP.matcher(domain).matches()) {
            tld = IP_ADDRESS_NAME;
        } else {
            // We know the format of domains, so we can assume one or more dot
@@ -165,7 +159,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
            tld = domain;
            while (numberOfLevel>=maxLevel){
                tld = tld.substring(tld.indexOf('.') + 1);
-               numberOfLevel--;
+               --numberOfLevel;
            }
        }
        return tld;
@@ -185,7 +179,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
                for(int i = 0; i < domain.length(); i++) {
                    char c = domain.charAt(i);
                    if(c == '.') {
-                        nbLevel++;
+                	   ++nbLevel;
                    }
                }
                return nbLevel;
@@ -199,4 +193,5 @@ public class TLDInfo implements Comparable<TLDInfo> {
     public boolean isIP() {
         return tldName.equals(IP_ADDRESS_NAME);
     }
+
 }

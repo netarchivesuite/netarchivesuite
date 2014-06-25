@@ -31,7 +31,6 @@ import java.util.TreeSet;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-
 /**
  * Container for the historical information available for a domain.
  *
@@ -173,4 +172,5 @@ public class DomainHistory {
         //Return maximum uncompleted harvest, or null if never harvested
         return best;
     }
+
 }

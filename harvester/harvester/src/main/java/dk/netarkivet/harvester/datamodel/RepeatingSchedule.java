@@ -33,10 +33,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This class implements a schedule that should run a certain number of times.
  *
  */
-
 @SuppressWarnings({ "serial"})
 public class RepeatingSchedule extends Schedule {
-    /** How many times this schedule should be repeated.*/
+
+	/** How many times this schedule should be repeated.*/
     private final int repeats;
 
     /** Create a new RepeatingSchedule that runs a given number of times.
@@ -51,8 +51,7 @@ public class RepeatingSchedule extends Schedule {
      * @throws ArgumentNotValid if frequency, name or comments is null, or name
      * is "" or repeats is 0 or negative
      */
-    public RepeatingSchedule(Date startDate, int repeats, Frequency frequency,
-                             String name, String comments) {
+    public RepeatingSchedule(Date startDate, int repeats, Frequency frequency, String name, String comments) {
         super(startDate, frequency, name, comments);
         ArgumentNotValid.checkPositive(repeats, "repeats");
 
@@ -95,8 +94,7 @@ public class RepeatingSchedule extends Schedule {
      * @throws ArgumentNotValid if numPreviousEvents is negative
      */
     public Date getNextEvent(Date lastEvent, int numPreviousEvents) {
-        ArgumentNotValid.checkNotNegative(numPreviousEvents,
-                                          "numPreviousEvents");
+        ArgumentNotValid.checkNotNegative(numPreviousEvents, "numPreviousEvents");
 
         if (lastEvent == null) {
             return null;
@@ -119,7 +117,7 @@ public class RepeatingSchedule extends Schedule {
      * @return Human readble representation
      */
     public String toString() {
-        return name + ": " + repeats + " times "
-               + frequency + "(" + comments + ")";
+        return name + ": " + repeats + " times " + frequency + "(" + comments + ")";
     }
+
 }

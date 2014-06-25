@@ -28,9 +28,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * A Data Access Object for managing persistent collections of global crawler
- * traps.
- *
+ * A Data Access Object for managing persistent collections of global crawler traps.
  */
 public abstract class GlobalCrawlerTrapListDAO implements DAO {
 
@@ -84,8 +82,7 @@ public abstract class GlobalCrawlerTrapListDAO implements DAO {
      * @return the id of the created list
      * @throws ArgumentNotValid if the trapList is null.
      */
-    public abstract int create(GlobalCrawlerTrapList trapList)
-    throws ArgumentNotValid;
+    public abstract int create(GlobalCrawlerTrapList trapList) throws ArgumentNotValid;
 
     /**
      * Deletes a crawler trap list from the database.
@@ -101,8 +98,7 @@ public abstract class GlobalCrawlerTrapListDAO implements DAO {
      * @throws UnknownID if the id of the trapList argument does not correspond
      * to an existing trap list in the database.
      */
-    public abstract void update(GlobalCrawlerTrapList trapList)
-    throws UnknownID;
+    public abstract void update(GlobalCrawlerTrapList trapList) throws UnknownID;
 
     /**
      * Get a traplist from the database.
@@ -120,4 +116,5 @@ public abstract class GlobalCrawlerTrapListDAO implements DAO {
      * in the database; otherwise false
      */
     public abstract boolean exists(String name);
+
 }

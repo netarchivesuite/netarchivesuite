@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.harvesting.HarvestController;
@@ -24,15 +24,11 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationReques
 public class HarvestChannelRegistry {
 
     /** The class logger. */
-    private static final Log LOG = LogFactory.getLog(HarvestChannelRegistry.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(HarvestChannelRegistry.class);
 
-    private Map<String, Set<String>> harvesterChannelRegistry =
-            new HashMap<String, Set<String>>();
+    private Map<String, Set<String>> harvesterChannelRegistry = new HashMap<String, Set<String>>();
 
-    public synchronized void register(
-            final String channelName,
-            final String harvesterInstanceId) {
-
+    public synchronized void register(final String channelName, final String harvesterInstanceId) {
         // First remove any reference to this instanceId
         // This is done in case a Harvester has been unexpectedly shut down and restarted
         clearHarvester(harvesterInstanceId);
@@ -44,7 +40,7 @@ public class HarvestChannelRegistry {
         instanceIds.add(harvesterInstanceId);
         harvesterChannelRegistry.put(channelName, instanceIds);
 
-        LOG.info("Harvester " + harvesterInstanceId + " registered on channel " + channelName);
+        LOG.info("Harvester {} registered on channel {}", harvesterInstanceId, channelName);
         logStatus();
     }
 
@@ -53,15 +49,17 @@ public class HarvestChannelRegistry {
     }
 
     private void logStatus() {
-        String msg = HarvestChannelRegistry.class.getSimpleName() + " status:";
-        for (String channel : harvesterChannelRegistry.keySet()) {
-            msg += "\n\t- " + channel + " { ";
-            for (String id : harvesterChannelRegistry.get(channel)) {
-                msg += id + ", ";
+    	if (LOG.isInfoEnabled()) {
+            String msg = HarvestChannelRegistry.class.getSimpleName() + " status:";
+            for (String channel : harvesterChannelRegistry.keySet()) {
+                msg += "\n\t- " + channel + " { ";
+                for (String id : harvesterChannelRegistry.get(channel)) {
+                    msg += id + ", ";
+                }
+                msg = msg.substring(0, msg.lastIndexOf(",")) + " }";
             }
-            msg = msg.substring(0, msg.lastIndexOf(",")) + " }";
-        }
-        LOG.info(msg);
+            LOG.info(msg);
+    	}
     }
 
     /**
@@ -77,12 +75,12 @@ public class HarvestChannelRegistry {
                 if (instanceIds.isEmpty()) {
                     keysToRemove.add(channel);
                 }
-                LOG.info("Cleared former registration of '" + channel + "' to '"
-                         + harvesterInstanceId + "'");
+                LOG.info("Cleared former registration of '{}' to '{}'", channel, harvesterInstanceId);
             }
         }
         for (String key : keysToRemove) {
             harvesterChannelRegistry.remove(key);
         }
     }
+
 }

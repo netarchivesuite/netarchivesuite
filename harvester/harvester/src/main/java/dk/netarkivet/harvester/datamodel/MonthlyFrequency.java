@@ -33,11 +33,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * This class implements a frequency of a number of months.
- *
  */
 
 public class MonthlyFrequency extends Frequency {
-    /** The minute of the hour the event should happen at.*/
+
+	/** The minute of the hour the event should happen at.*/
     private int minute;
     /** The hour of the day the event should happen at.*/
     private int hour;
@@ -70,29 +70,17 @@ public class MonthlyFrequency extends Frequency {
         super(numUnits, false);
 
         Calendar cal = GregorianCalendar.getInstance();
-        if (dayOfMonth < cal.getMinimum(Calendar.DAY_OF_MONTH)
-            || dayOfMonth > cal.getMaximum(Calendar.DAY_OF_MONTH)) {
-            throw new ArgumentNotValid("Day of month must be in legal range '"
-                                       + cal.getMinimum(Calendar.DAY_OF_MONTH)
-                                       + "' to '"
-                                       + cal.getMaximum(Calendar.DAY_OF_MONTH)
-                                       + "'");
+        if (dayOfMonth < cal.getMinimum(Calendar.DAY_OF_MONTH) || dayOfMonth > cal.getMaximum(Calendar.DAY_OF_MONTH)) {
+            throw new ArgumentNotValid("Day of month must be in legal range '" + cal.getMinimum(Calendar.DAY_OF_MONTH)
+            		+ "' to '" + cal.getMaximum(Calendar.DAY_OF_MONTH) + "'");
         }
-        if (hour < cal.getMinimum(Calendar.HOUR_OF_DAY)
-             || hour > cal.getMaximum(Calendar.HOUR_OF_DAY)) {
-            throw new ArgumentNotValid("Hour of day must be in legal range '"
-                                       + cal.getMinimum(Calendar.HOUR_OF_DAY)
-                                       + "' to '"
-                                       + cal.getMaximum(Calendar.HOUR_OF_DAY)
-                                       + "'");
+        if (hour < cal.getMinimum(Calendar.HOUR_OF_DAY) || hour > cal.getMaximum(Calendar.HOUR_OF_DAY)) {
+            throw new ArgumentNotValid("Hour of day must be in legal range '" + cal.getMinimum(Calendar.HOUR_OF_DAY)
+            		+ "' to '" + cal.getMaximum(Calendar.HOUR_OF_DAY) + "'");
         }
-        if (minute < cal.getMinimum(Calendar.MINUTE)
-            || minute > cal.getMaximum(Calendar.MINUTE)) {
-            throw new ArgumentNotValid("Minute must be in legal range '"
-                                       + cal.getMinimum(Calendar.MINUTE)
-                                       + "' to '"
-                                       + cal.getMaximum(Calendar.MINUTE)
-                                       + "'");
+        if (minute < cal.getMinimum(Calendar.MINUTE) || minute > cal.getMaximum(Calendar.MINUTE)) {
+            throw new ArgumentNotValid("Minute must be in legal range '" + cal.getMinimum(Calendar.MINUTE)
+            		+ "' to '" + cal.getMaximum(Calendar.MINUTE) + "'");
         }
         this.dayOfMonth = dayOfMonth;
         this.hour = hour;
@@ -140,35 +128,34 @@ public class MonthlyFrequency extends Frequency {
         start.set(Calendar.MINUTE, minute);
         start.set(Calendar.HOUR_OF_DAY, hour);
         // set day in month, to the given value if possible, or maximum
-        start.set(Calendar.DAY_OF_MONTH,
-                Math.min(start.getActualMaximum(Calendar.DAY_OF_MONTH),
-                        dayOfMonth));
+        start.set(Calendar.DAY_OF_MONTH, Math.min(start.getActualMaximum(Calendar.DAY_OF_MONTH), dayOfMonth));
         if (start.getTime().before(startTime)) {
             start.add(Calendar.MONTH, 1);
         }
         // reset day in month, the last day might be later in this month
-        start.set(Calendar.DAY_OF_MONTH,
-                Math.min(start.getActualMaximum(Calendar.DAY_OF_MONTH),
-                        dayOfMonth));
+        start.set(Calendar.DAY_OF_MONTH, Math.min(start.getActualMaximum(Calendar.DAY_OF_MONTH), dayOfMonth));
         return start.getTime();
 
     }
 
-    /** If not anytime, the minute at which events should start.
+    /**
+     * If not anytime, the minute at which events should start.
      * @return the minute
      */
     public int getMinute() {
         return minute;
     }
 
-    /** If not anytime, the hour at which events should start.
+    /**
+     * If not anytime, the hour at which events should start.
      * @return the hour
      */
     public int getHour() {
         return hour;
     }
 
-    /** If not anytime, the day in the month at which events should start.
+    /**
+     * If not anytime, the day in the month at which events should start.
      * @return the day
      */
     public int getDayOfMonth() {
@@ -275,7 +262,7 @@ public class MonthlyFrequency extends Frequency {
         if (isAnytime()) {
             return "every " + getNumUnits() + " months";
         }
-        return "every " + getNumUnits() + " months, on day " + dayOfMonth
-                   + " at " + hour + ":" + minute;
+        return "every " + getNumUnits() + " months, on day " + dayOfMonth + " at " + hour + ":" + minute;
     }
+
 }

@@ -31,10 +31,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
@@ -61,7 +61,7 @@ import dk.netarkivet.harvester.datamodel.Schedule;
 abstract class AbstractJobGenerator implements JobGenerator {
 
     /** Logger for this class. */
-    private static Log log = LogFactory.getLog(AbstractJobGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractJobGenerator.class);
 
     /**
      * How many domain configurations to process in one go.
@@ -75,25 +75,19 @@ abstract class AbstractJobGenerator implements JobGenerator {
 
     @Override
     public int generateJobs(HarvestDefinition harvest) {
-        log.info("Generating jobs for harvestdefinition # " + harvest.getOid());
+        log.info("Generating jobs for harvestdefinition #{}", harvest.getOid());
         int jobsMade = 0;
-        final Iterator<DomainConfiguration> domainConfigurations =
-                harvest.getDomainConfigurations();
+        final Iterator<DomainConfiguration> domainConfigurations = harvest.getDomainConfigurations();
         
         while (domainConfigurations.hasNext()) {
             List<DomainConfiguration> subset = new ArrayList<DomainConfiguration>();
-            while (domainConfigurations.hasNext()
-                    && subset.size() < DOMAIN_CONFIG_SUBSET_SIZE) {
+            while (domainConfigurations.hasNext() && subset.size() < DOMAIN_CONFIG_SUBSET_SIZE) {
                 subset.add(domainConfigurations.next());
             }
             
-            Collections.sort(
-                    subset,
-                    getDomainConfigurationSubsetComparator(harvest));
-            if (log.isTraceEnabled()) {
-                log.trace(subset.size() + " domainconfigs now sorted and ready to processing "
-                        + "for harvest #" + harvest.getOid());
-            }
+            Collections.sort(subset, getDomainConfigurationSubsetComparator(harvest));
+            log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}",
+            		subset.size(), harvest.getOid());
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
         }
         harvest.setNumEvents(harvest.getNumEvents() + 1);
@@ -112,27 +106,22 @@ abstract class AbstractJobGenerator implements JobGenerator {
                 int eventsSkipped = 0;
                 while (nextEvent != null && nextEvent.before(now)) {
                     nextEvent = schedule.getNextEvent(nextEvent, numEvents);
-                    eventsSkipped++;
+                    ++eventsSkipped;
                 }
-                if (log.isWarnEnabled()) {
-                    log.warn("Refusing to schedule harvest definition '"
-                            + harvest.getName() + "' in the past. Skipped "
-                            + eventsSkipped + " events. Old nextDate was "
-                            + focused.getNextDate()
-                            + " new nextDate is " + nextEvent);
-                }
+                log.warn("Refusing to schedule harvest definition '{}' in the past. Skipped {} events. "
+                		+ "Old nextDate was {} new nextDate is {}",
+                		harvest.getName(), eventsSkipped, focused.getNextDate(), nextEvent);
             }
 
             //Set next event
             focused.setNextDate(nextEvent);
             if (log.isTraceEnabled()) {
-                log.trace("Next event for harvest definition " + harvest.getName()
-                        + " happens: "
-                        + (nextEvent == null ? "Never" : nextEvent.toString()));
+                log.trace("Next event for harvest definition {} happens: {}",
+                		harvest.getName(), (nextEvent == null ? "Never" : nextEvent.toString()));
             }
         }
         
-        log.info("Finished generating " + jobsMade + " jobs for harvestdefinition # " + harvest.getOid());
+        log.info("Finished generating {} jobs for harvestdefinition #{}", jobsMade, harvest.getOid());
         return jobsMade;
     }
 
@@ -146,8 +135,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
     	HarvestChannelDAO harvestChannelDao = HarvestChannelDAO.getInstance();
     	HarvestChannel channel = harvestChannelDao.getChannelForHarvestDefinition(harvest.getOid());
     	if (channel == null) {
-    		log.info("No channel mapping registered for harvest id " + harvest.getOid()
-    				+ ", will use default.");
+    		log.info("No channel mapping registered for harvest id {}, will use default.", harvest.getOid());
     		channel = harvestChannelDao.getDefaultChannel(harvest.isSnapShot());
     	}
         if (harvest.isSnapShot()) {
@@ -169,8 +157,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * @param harvest the {@link HarvestDefinition} being processed.
      * @return a comparator
      */
-    protected abstract Comparator<DomainConfiguration>
-    getDomainConfigurationSubsetComparator(HarvestDefinition harvest);
+    protected abstract Comparator<DomainConfiguration> getDomainConfigurationSubsetComparator(HarvestDefinition harvest);
 
     /**
      * Create new jobs from a collection of configurations.
@@ -183,9 +170,8 @@ abstract class AbstractJobGenerator implements JobGenerator {
      *                          or if the cfglist does not contain any
      *                          configurations
      */
-    protected abstract int processDomainConfigurationSubset(
-            HarvestDefinition harvest,
-            Iterator<DomainConfiguration> domainConfSubset);
+    protected abstract int processDomainConfigurationSubset(HarvestDefinition harvest,
+    		Iterator<DomainConfiguration> domainConfSubset);
 
     @Override
     public boolean canAccept(Job job, DomainConfiguration cfg) {
@@ -205,9 +191,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * @param cfg the {@link DomainConfiguration} to test
      * @return true if the configuration passes the conditions.
      */
-    protected abstract boolean checkSpecificAcceptConditions(
-            Job job,
-            DomainConfiguration cfg);
+    protected abstract boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg);
 
     /**
      * Once the job has been filled with {@link DomainConfiguration}s, performs the
@@ -224,23 +208,16 @@ abstract class AbstractJobGenerator implements JobGenerator {
            // Check that the Deduplicator element is present in the
            //OrderXMl and enabled. If missing or disabled log a warning
             if (!HeritrixTemplate.isDeduplicationEnabledInTemplate(doc)) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Unable to perform deduplication for this job"
-                            + " as the required DeDuplicator element is "
-                            + "disabled or missing from template");
-                }
+                log.warn("Unable to perform deduplication for this job as the required DeDuplicator element is "
+                		+ "disabled or missing from template");
             }
         } else {
             // Remove deduplicator Element from OrderXML if present
-            Node xpathNode = doc.selectSingleNode(
-                    HeritrixTemplate.DEDUPLICATOR_XPATH);
+            Node xpathNode = doc.selectSingleNode(HeritrixTemplate.DEDUPLICATOR_XPATH);
             if (xpathNode != null) {
                 xpathNode.detach();
                 job.setOrderXMLDoc(doc);
-                if (log.isInfoEnabled()) {
-                    log.info("Removed DeDuplicator element because "
-                            + "Deduplication is disabled");
-                }
+                log.info("Removed DeDuplicator element because Deduplication is disabled");
             }
         }
     }
@@ -264,22 +241,16 @@ abstract class AbstractJobGenerator implements JobGenerator {
         // check if domain in DomainConfiguration cfg is not already in this job
         // domainName is used as key in domainConfigurationMap
         if (job.getDomainConfigurationMap().containsKey(cfg.getDomainName())) {
-            if (log.isDebugEnabled()) {
-                log.debug("Job already has a configuration for Domain '"
-                        + cfg.getDomainName() +"'.");
-            }
+            log.debug("Job already has a configuration for Domain '{}'.", cfg.getDomainName());
             return false;
         }
 
         // check if template is same as this job.
         String orderXMLname = job.getOrderXMLName();
         if (!orderXMLname.equals(cfg.getOrderXmlName())) {
-            if (log.isDebugEnabled()) {
-                log.debug("This Job only accept configurations "
-                        + "using the harvest template '" + orderXMLname
-                        + "'. This configuration uses the harvest template '"
-                        + cfg.getOrderXmlName() + "'.");
-            }
+            log.debug("This Job only accept configurations using the harvest template '{}'."
+            		+ " This configuration uses the harvest template '{}'.",
+            		orderXMLname, cfg.getOrderXmlName());
             return false;
         }
 

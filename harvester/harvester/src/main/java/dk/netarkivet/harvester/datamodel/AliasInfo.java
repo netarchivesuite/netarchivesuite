@@ -61,9 +61,7 @@ public class AliasInfo {
         ArgumentNotValid.checkNotNullOrEmpty(aliasOf, "aliasOf");
         ArgumentNotValid.checkNotNull(lastChange, "lastChange");
         if (domain.equals(aliasOf)) {
-            throw new
-                ArgumentNotValid(
-                        "the aliasOf argument must not be equal to the domain");
+            throw new ArgumentNotValid("the aliasOf argument must not be equal to the domain");
         }
         this.domain = domain;
         this.aliasOf = aliasOf;
@@ -110,8 +108,7 @@ public class AliasInfo {
      * in the future.
      */
     public Date getExpirationDate() {
-        Date aliasTimeoutDate = new Date(this.lastChange.getTime()
-                + Constants.ALIAS_TIMEOUT_IN_MILLISECONDS);
+        Date aliasTimeoutDate = new Date(this.lastChange.getTime() + Constants.ALIAS_TIMEOUT_IN_MILLISECONDS);
         return aliasTimeoutDate;
     }
 
@@ -120,7 +117,7 @@ public class AliasInfo {
      * @return String representation of this AliasInfo object.
      */
     public String toString() {
-        return "Domain '" + getDomain() + "' is an alias of '" + getAliasOf()
-               + "', last updated " + getLastChange();
+        return "Domain '" + getDomain() + "' is an alias of '" + getAliasOf() + "', last updated " + getLastChange();
     }
+
 }

@@ -30,8 +30,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -42,23 +42,21 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class ExtendedFieldDefaultValue {
     
     /** The logger. */    
-    private static final Log log = LogFactory.getLog(
-            ExtendedFieldDefaultValue.class);
+    private static final Logger log = LoggerFactory.getLogger(ExtendedFieldDefaultValue.class);
+
     /** Array of strings considered to be "true" values. */
-    static final String[] possibleTrueValues = {"true", "t", "1"};
+    protected static final String[] possibleTrueValues = {"true", "t", "1"};
     /** Array of strings considered to be "false" values. */
-    static final String[] possibleFalseValues = {"false", "f", "0"};
-    /**
-     * The valid state of this ExtendedFieldDefaultValue.
-     */
-    final boolean valid;
+    protected static final String[] possibleFalseValues = {"false", "f", "0"};
+    /** The valid state of this ExtendedFieldDefaultValue. */
+    protected final boolean valid;
     
     /** The value of this ExtendedFieldDefaultValue. */
-    String value;
+    protected String value;
     /** The formatting pattern of this ExtendedFieldDefaultValue. */
-    String format;
+    protected String format;
     /** The datatype of this ExtendedFieldDefaultValue. */
-    int datatype;
+    protected int datatype;
 
     /**
      * Constructor for the ExtendedFieldDefaultValues class.
@@ -66,12 +64,10 @@ public class ExtendedFieldDefaultValue {
      * @param aFormat the given formatting pattern
      * @param aDatatype the given datatype
      */
-    public ExtendedFieldDefaultValue(String aValue, String aFormat,
-            int aDatatype) {
+    public ExtendedFieldDefaultValue(String aValue, String aFormat, int aDatatype) {
         value = aValue;
         format = aFormat;
         datatype = aDatatype;
-
         valid = validate();
     }
     
@@ -107,7 +103,7 @@ public class ExtendedFieldDefaultValue {
                     decimalFormat.parse(value);
                     isValid = true;
                 } catch (ParseException e) {
-                    log.debug("Invalid NUMBER: " + value);
+                    log.debug("Invalid NUMBER: {}", value);
                 }
             } else {
                 isValid = true;
@@ -131,7 +127,7 @@ public class ExtendedFieldDefaultValue {
                     dateFormat.parse(value);
                     isValid = true;
                 } catch (ParseException e) {
-                    log.debug("Invalid TIMESTAMP: " + value);
+                    log.debug("Invalid TIMESTAMP: {}", value);
                 }
             } else {
                 isValid = true;
@@ -144,8 +140,7 @@ public class ExtendedFieldDefaultValue {
             isValid = true; // Any kind of SELECT value currently accepted.
             break;   
         default:
-            throw new ArgumentNotValid("Unable to validate unknown datatype: " 
-                    +  datatype);
+            throw new ArgumentNotValid("Unable to validate unknown datatype: " + datatype);
         }
         
         return isValid;
@@ -170,8 +165,7 @@ public class ExtendedFieldDefaultValue {
                 return true;
             }
         }
-        log.debug("The string '" + aBooleanValue
-                + "' is not a valid Boolean value");
+        log.debug("The string '{}' is not a valid Boolean value", aBooleanValue);
         return false;
     }
 
@@ -200,7 +194,7 @@ public class ExtendedFieldDefaultValue {
             		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     	            return String.valueOf(sdf.parse(value).getTime());
                 } catch (ParseException e) {
-                    log.debug("Invalid TIMESTAMP: " + value);
+                    log.debug("Invalid TIMESTAMP: {}", value);
                 }
     		}
     		else if (ExtendedFieldDataTypes.NUMBER == datatype) {
@@ -208,7 +202,7 @@ public class ExtendedFieldDefaultValue {
             		// a Double Value will be stored String
     	            return String.valueOf(new DecimalFormat(format).parse(value).doubleValue());
                 } catch (ParseException e) {
-                    log.debug("Invalid NUMBER: " + value);
+                    log.debug("Invalid NUMBER: {}", value);
                 }
     		} 
     	}

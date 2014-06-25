@@ -30,7 +30,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Enumeration of the possible time units used for frequencies in schedules.
  */
 public enum TimeUnit {
-    /** 
+
+	/** 
      * 'No time unit' is only included for historic reasons, since 0 did not 
      *  denote a timeunit.
      **/    
@@ -75,12 +76,19 @@ public enum TimeUnit {
      */
     public static TimeUnit fromOrdinal(int tu) {
         switch (tu) {
-            case 1: return HOURLY;
-            case 2: return DAILY;
-            case 3: return WEEKLY;
-            case 4: return MONTHLY;
-            case 5: return MINUTE;
-            default: throw new ArgumentNotValid("Invalid time unit " + tu);
+            case 1:
+            	return HOURLY;
+            case 2:
+            	return DAILY;
+            case 3:
+            	return WEEKLY;
+            case 4:
+            	return MONTHLY;
+            case 5:
+            	return MINUTE;
+            default:
+            	throw new ArgumentNotValid("Invalid time unit " + tu);
         }
     } 
+
 }

@@ -36,13 +36,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  */
 public class SparseDomain {
-    /**
-     * The domain name.
-     */
+
+	/** The domain name. */
     private final String domainName;
-    /**
-     * List of names of all configurations.
-     */
+    /** List of names of all configurations. */
     private final List<String> domainConfigurationNames;
 
     /**
@@ -53,11 +50,9 @@ public class SparseDomain {
      *                                 domain.
      * @throws ArgumentNotValid if either of the arguments are null or empty.
      */
-    public SparseDomain(String domainName,
-                        List<String> domainConfigurationNames) {
+    public SparseDomain(String domainName, List<String> domainConfigurationNames) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
-        ArgumentNotValid.checkNotNullOrEmpty(domainConfigurationNames,
-                                             "domainConfigurationNames");
+        ArgumentNotValid.checkNotNullOrEmpty(domainConfigurationNames, "domainConfigurationNames");
         this.domainName = domainName;
         this.domainConfigurationNames = domainConfigurationNames;
     }
@@ -79,4 +74,5 @@ public class SparseDomain {
     public Iterable<String> getDomainConfigurationNames() {
         return domainConfigurationNames;
     }
+
 }

@@ -33,7 +33,8 @@ import java.util.Map;
  * Information on a single run of a harvest.
  */
 public class HarvestRunInfo {
-    /** Which harvest def ID this is a run of. */
+
+	/** Which harvest def ID this is a run of. */
     private final long harvestID;
     /** The name of the harvest def.*/
     private final String harvestName;
@@ -48,8 +49,8 @@ public class HarvestRunInfo {
     /** How many documents were harvested total. */
     private long docsHarvested;
     /** Status of the jobs used to run this harvest. */
-    private final Map<JobStatus, Integer> jobCounts
-            = new HashMap<JobStatus, Integer>();
+    private final Map<JobStatus, Integer> jobCounts = new HashMap<JobStatus, Integer>();
+
     /**
      * Constructor used to read harvest run information from database. 
      * @param harvestID the ID of the harvest job
@@ -61,18 +62,22 @@ public class HarvestRunInfo {
         this.harvestName = harvestName;
         this.runNr = runNr;
     }
+
     /** @return the harvest id of this job */
     public long getHarvestID() {
         return harvestID;
     }
+
     /** @return the harvest name of this job*/
     public String getHarvestName() {
         return harvestName;
     }
+
     /** @return the harvest run number of this job */
     public int getRunNr() {
         return runNr;
     }
+
     /** @return the date when this job started */
     public Date getStartDate() {
         return startDate;
@@ -81,6 +86,7 @@ public class HarvestRunInfo {
     public Date getEndDate() {
         return endDate;
     }
+
     /** @return bytes harvested by the job */
     public long getBytesHarvested() {
         return bytesHarvested;
@@ -113,6 +119,7 @@ public class HarvestRunInfo {
             return 0;
         }
     }
+
     /**
      * Set the start Date for this harvest job.
      * @param startDate the start date
@@ -120,6 +127,7 @@ public class HarvestRunInfo {
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
+
     /**
      * Set the end Date for this harvest job.
      * @param endDate The end date
@@ -152,4 +160,5 @@ public class HarvestRunInfo {
     public void setStatusCount(JobStatus status, int count) {
         jobCounts.put(status, count);
     }
+
 }

@@ -29,14 +29,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
-import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables;
 
@@ -44,14 +43,14 @@ import dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables;
  * Implementation class for the ExtendedFieldValueDAO interface.
  */
 public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
-    /** The logger. */    
-    private final Log log = LogFactory.getLog(getClass());
+
+	/** The logger. */    
+    private static final Logger log = LoggerFactory.getLogger(ExtendedFieldValueDBDAO.class);
 
     /**
      * Constructor for the ExtendedFieldValueDBDAO class.
      */
     public ExtendedFieldValueDBDAO() {
-
         Connection connection = HarvestDBConnection.get();
         try {
             HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.EXTENDEDFIELD);
@@ -70,31 +69,24 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
      * @param aCommit Should we commit this or not
      * @throws SQLException In case of Database access problems.
      */
-    public void create(Connection aConnection,
-            ExtendedFieldValue aExtendedFieldValue, boolean aCommit)
+    public void create(Connection aConnection, ExtendedFieldValue aExtendedFieldValue, boolean aCommit)
             throws SQLException {
-        ArgumentNotValid.checkNotNull(aExtendedFieldValue,
-                "aExtendedFieldValue");
+        ArgumentNotValid.checkNotNull(aExtendedFieldValue, "aExtendedFieldValue");
 
         if (aExtendedFieldValue.getExtendedFieldValueID() != null) {
-            log.warn("The extendedFieldValueID for this extendedField Value "
-                    + "is already set. This should probably never happen.");
+            log.warn("The extendedFieldValueID for this extendedField Value is already set. "
+            		+ "This should probably never happen.");
         } else {
-            aExtendedFieldValue
-                    .setExtendedFieldValueID(generateNextID(aConnection));
+            aExtendedFieldValue.setExtendedFieldValueID(generateNextID(aConnection));
         }
 
-        log.debug("Creating " + aExtendedFieldValue.toString());
+        log.debug("Creating {}", aExtendedFieldValue.toString());
 
         PreparedStatement statement = null;
         aConnection.setAutoCommit(false);
-        statement = aConnection.prepareStatement(""
-                + "INSERT INTO extendedfieldvalue "
-                + "            (extendedfieldvalue_id, "
-                + "             extendedfield_id, " 
-                + "             content, "
-                + "             instance_id) " + "VALUES      (?, "
-                + "             ?, " + "             ?, " + "             ?) ");
+        statement = aConnection.prepareStatement("INSERT INTO extendedfieldvalue ("
+        		+ "extendedfieldvalue_id, extendedfield_id, content, instance_id) "
+        		+ "VALUES (?, ?, ?, ?)");
 
         statement.setLong(1, aExtendedFieldValue.getExtendedFieldValueID());
         statement.setLong(2, aExtendedFieldValue.getExtendedFieldID());
@@ -114,14 +106,11 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
         try {
             create(connection, aExtendedFieldValue, true);
         } catch (SQLException e) {
-            String message = "SQL error creating extendedfield value "
-                    + aExtendedFieldValue + " in database" + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error creating extendedfield value " + aExtendedFieldValue + " in database" + "\n";
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.rollbackIfNeeded(connection, "create extendedfield value",
-                    aExtendedFieldValue);
+            DBUtils.rollbackIfNeeded(connection, "create extendedfield value", aExtendedFieldValue);
             HarvestDBConnection.release(connection);
         }
     }
@@ -131,8 +120,8 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
      * @return the ID for next extendedvFieldValue inserted.
      */
     private Long generateNextID(Connection c) {
-        Long maxVal = DBUtils.selectLongValue(c,
-                "SELECT max(extendedfieldvalue_id) FROM extendedfieldvalue");
+    	// FIXME synchonize or use identity row or generator.
+        Long maxVal = DBUtils.selectLongValue(c, "SELECT max(extendedfieldvalue_id) FROM extendedfieldvalue");
 
         if (maxVal == null) {
             maxVal = 0L;
@@ -142,39 +131,31 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
 
     @Override
     public void delete(long aExtendedfieldValueID) throws IOFailure {
-        ArgumentNotValid.checkNotNull(aExtendedfieldValueID,
-                "aExtendedfieldValueID");
+        ArgumentNotValid.checkNotNull(aExtendedfieldValueID, "aExtendedfieldValueID");
 
         Connection c = HarvestDBConnection.get();
         PreparedStatement stm = null;
         try {
             c.setAutoCommit(false);
 
-            stm = c.prepareStatement("DELETE FROM extendedfieldvalue "
-                    + "WHERE extendedfieldvalue_id = ?");
+            stm = c.prepareStatement("DELETE FROM extendedfieldvalue WHERE extendedfieldvalue_id = ?");
             stm.setLong(1, aExtendedfieldValueID);
             stm.executeUpdate();
 
             c.commit();
-
         } catch (SQLException e) {
-            String message = "SQL error deleting extendedfieldvalue for ID "
-                    + aExtendedfieldValueID + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error deleting extendedfieldvalue for ID " + aExtendedfieldValueID + "\n";
             log.warn(message, e);
         } finally {
             DBUtils.closeStatementIfOpen(stm);
-            DBUtils.rollbackIfNeeded(c, "delete extendedfield value",
-                    aExtendedfieldValueID);
+            DBUtils.rollbackIfNeeded(c, "delete extendedfield value", aExtendedfieldValueID);
             HarvestDBConnection.release(c);
         }
-
     }
 
     @Override
     public boolean exists(Long aExtendedFieldValueID) {
-        ArgumentNotValid.checkNotNull(aExtendedFieldValueID,
-                "Long aExtendedFieldValueID");
+        ArgumentNotValid.checkNotNull(aExtendedFieldValueID, "Long aExtendedFieldValueID");
 
         Connection c = HarvestDBConnection.get();
         try {
@@ -195,17 +176,12 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
      */
     private synchronized boolean exists(Connection c, 
             Long aExtendedFieldValueID) {
-        return 1 == DBUtils
-                .selectLongValue(
-                        c,
-                        "SELECT COUNT(*) FROM extendedfieldvalue "
-                        + "WHERE extendedfieldvalue_id = ?",
-                        aExtendedFieldValueID);
+        return 1 == DBUtils.selectLongValue(c,
+        		"SELECT COUNT(*) FROM extendedfieldvalue " + "WHERE extendedfieldvalue_id = ?", aExtendedFieldValueID);
     }
 
     @Override
-    public synchronized ExtendedFieldValue read(Long aExtendedFieldID,
-            Long aInstanceID) {
+    public synchronized ExtendedFieldValue read(Long aExtendedFieldID, Long aInstanceID) {
         ArgumentNotValid.checkNotNull(aExtendedFieldID, "aExtendedFieldID");
         ArgumentNotValid.checkNotNull(aInstanceID, "aInstanceID");
         Connection connection = HarvestDBConnection.get();
@@ -223,8 +199,7 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
      * @param aInstanceID A given instanceID
      * @return the ExtendedFieldValue with the given extendedFieldID.
      */
-    private synchronized ExtendedFieldValue read(Connection connection,
-            Long aExtendedFieldID, Long aInstanceID) {
+    private synchronized ExtendedFieldValue read(Connection connection, Long aExtendedFieldID, Long aInstanceID) {
         ExtendedFieldValue extendedFieldValue = null;
         PreparedStatement statement = null;
         try {
@@ -247,14 +222,11 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
             long instanceId = aInstanceID;
             String content = result.getString(3);
 
-            extendedFieldValue = new ExtendedFieldValue(extendedfieldvalueId,
-                    extendedfieldId, instanceId, content);
+            extendedFieldValue = new ExtendedFieldValue(extendedfieldvalueId, extendedfieldId, instanceId, content);
 
             return extendedFieldValue;
         } catch (SQLException e) {
-            String message = "SQL error reading extended Field "
-                    + aExtendedFieldID + " in database" + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error reading extended Field " + aExtendedFieldID + " in database" + "\n";
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -267,16 +239,13 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
      * @param aCommit Should we commit this or not
      * @throws SQLException In case of database problems.
      */
-    public void update(Connection aConnection,
-            ExtendedFieldValue aExtendedFieldValue, boolean aCommit)
-            throws SQLException {
+    public void update(Connection aConnection, ExtendedFieldValue aExtendedFieldValue, boolean aCommit)
+    		throws SQLException {
         PreparedStatement statement = null;
-        final Long extendedfieldvalueId = aExtendedFieldValue
-                .getExtendedFieldID();
+        final Long extendedfieldvalueId = aExtendedFieldValue.getExtendedFieldID();
         if (!exists(aConnection, extendedfieldvalueId)) {
-            throw new UnknownID("Extended Field Value id "
-                    + extendedfieldvalueId
-                    + " is not known in persistent storage");
+            throw new UnknownID("Extended Field Value id " + extendedfieldvalueId + " is not known in "
+            		+ "persistent storage");
         }
 
         aConnection.setAutoCommit(false);
@@ -301,22 +270,19 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
     }
 
     @Override
-    public void update(ExtendedFieldValue aExtendedFieldValue) 
-            throws IOFailure {
+    public void update(ExtendedFieldValue aExtendedFieldValue) throws IOFailure {
         Connection connection = HarvestDBConnection.get();
 
         try {
             update(connection, aExtendedFieldValue, true);
         } catch (SQLException e) {
-            String message = "SQL error updating extendedfield Value "
-                    + aExtendedFieldValue + " in database" + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error updating extendedfield Value " + aExtendedFieldValue + " in database" + "\n";
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.rollbackIfNeeded(connection, "update extendedfield Value",
-                    aExtendedFieldValue);
+            DBUtils.rollbackIfNeeded(connection, "update extendedfield Value", aExtendedFieldValue);
             HarvestDBConnection.release(connection);
         }
     }
+
 }

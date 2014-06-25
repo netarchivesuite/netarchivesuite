@@ -35,11 +35,11 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -56,8 +56,9 @@ import dk.netarkivet.common.utils.ExceptionUtils;
  */
 
 public class TemplateDBDAO extends TemplateDAO {
-    /** the log.*/
-    private final Log log = LogFactory.getLog(getClass());
+
+	/** the log.*/
+    private static final Logger log = LoggerFactory.getLogger(TemplateDBDAO.class);
 
     /** Default constructor.
      * Only used by TemplateDAO,getInstance().
@@ -78,13 +79,10 @@ public class TemplateDBDAO extends TemplateDAO {
      * @return The contents of this order.xml document
      */
     public synchronized HeritrixTemplate read(String orderXmlName) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                orderXmlName, "String orderXmlName");
+        ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
-        try {
-            s = c.prepareStatement(
-                    "SELECT orderxml FROM ordertemplates WHERE name = ?");
+        try {s = c.prepareStatement("SELECT orderxml FROM ordertemplates WHERE name = ?");
             s.setString(1, orderXmlName);
             ResultSet res = s.executeQuery();
             if (!res.next()) {
@@ -102,14 +100,12 @@ public class TemplateDBDAO extends TemplateDAO {
             Document orderXMLdoc = reader.read(orderTemplateReader);
             return new HeritrixTemplate(orderXMLdoc);
         } catch (SQLException e) {
-            final String message = "SQL error finding order.xml for "
-                + orderXmlName
-                + "\n" + ExceptionUtils.getSQLExceptionCause(e);
+            final String message = "SQL error finding order.xml for " + orderXmlName + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } catch (DocumentException e) {
-            final String message = "Error parsing order.xml string for "
-                + orderXmlName;
+            final String message = "Error parsing order.xml string for " + orderXmlName;
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -126,9 +122,7 @@ public class TemplateDBDAO extends TemplateDAO {
     public synchronized Iterator<String> getAll() {
         Connection c = HarvestDBConnection.get();
         try {
-            List<String> names = DBUtils.selectStringList(
-                    c,
-                    "SELECT name FROM ordertemplates ORDER BY name");
+            List<String> names = DBUtils.selectStringList(c, "SELECT name FROM ordertemplates ORDER BY name");
             return names.iterator();
         } finally {
             HarvestDBConnection.release(c);
@@ -142,8 +136,7 @@ public class TemplateDBDAO extends TemplateDAO {
      * @throws ArgumentNotValid If the orderXmlName is null or an empty String
      */
     public synchronized boolean exists(String orderXmlName) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                orderXmlName, "String orderXmlName");
+        ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
 
         Connection c = HarvestDBConnection.get();
         try {
@@ -160,10 +153,7 @@ public class TemplateDBDAO extends TemplateDAO {
     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
     */
    private synchronized boolean exists(Connection c, String orderXmlName) {
-       int count = DBUtils.selectIntValue(
-               c,
-               "SELECT COUNT(*) FROM ordertemplates WHERE name = ?",
-               orderXmlName);
+       int count = DBUtils.selectIntValue(c, "SELECT COUNT(*) FROM ordertemplates WHERE name = ?", orderXmlName);
        return count == 1;
    }
 
@@ -174,30 +164,24 @@ public class TemplateDBDAO extends TemplateDAO {
      * @throws ArgumentNotValid If the orderXmlName is null or an empty String,
      * or the orderXml is null.
      */
-    public synchronized void create(String orderXmlName,
-            HeritrixTemplate orderXml) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                orderXmlName, "String orderXmlName");
+    public synchronized void create(String orderXmlName, HeritrixTemplate orderXml) {
+        ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
         ArgumentNotValid.checkNotNull(orderXml, "HeritrixTemplate orderXml");
 
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
             if (exists(c, orderXmlName)) {
-                throw new PermissionDenied("An order template called "
-                        + orderXmlName + " already exists");
+                throw new PermissionDenied("An order template called " + orderXmlName + " already exists");
             }
 
-            s = c.prepareStatement("INSERT INTO ordertemplates "
-                    + "( name, orderxml ) VALUES ( ?, ? )");
-            DBUtils.setStringMaxLength(s, 1, orderXmlName,
-                    Constants.MAX_NAME_SIZE, orderXmlName, "length");
-            DBUtils.setClobMaxLength(s, 2, orderXml.getXML(),
-                    Constants.MAX_ORDERXML_SIZE, "size", orderXmlName);
+            s = c.prepareStatement("INSERT INTO ordertemplates " + "( name, orderxml ) VALUES ( ?, ? )");
+            DBUtils.setStringMaxLength(s, 1, orderXmlName, Constants.MAX_NAME_SIZE, orderXmlName, "length");
+            DBUtils.setClobMaxLength(s, 2, orderXml.getXML(), Constants.MAX_ORDERXML_SIZE, "size", orderXmlName);
             s.executeUpdate();
         } catch (SQLException e) {
-            throw new IOFailure("SQL error creating template " + orderXmlName
-                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error creating template " + orderXmlName + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -212,32 +196,27 @@ public class TemplateDBDAO extends TemplateDAO {
      * @throws ArgumentNotValid If the orderXmlName is null or an empty String,
      * or the orderXml is null.
      */
-    public synchronized void update(String orderXmlName,
-            HeritrixTemplate orderXml) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                orderXmlName, "String orderXmlName");
+    public synchronized void update(String orderXmlName, HeritrixTemplate orderXml) {
+        ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
         ArgumentNotValid.checkNotNull(orderXml, "HeritrixTemplate orderXml");
 
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
             if (!exists(c, orderXmlName)) {
-                throw new PermissionDenied("No order template called "
-                        + orderXmlName + " exists");
+                throw new PermissionDenied("No order template called " + orderXmlName + " exists");
             }
 
-            s = c.prepareStatement("UPDATE ordertemplates "
-                    + "SET orderxml = ? "
-                    + "WHERE name = ?");
-            DBUtils.setClobMaxLength(s, 1, orderXml.getXML(),
-                    Constants.MAX_ORDERXML_SIZE, "size", orderXmlName);
+            s = c.prepareStatement("UPDATE ordertemplates SET orderxml = ? WHERE name = ?");
+            DBUtils.setClobMaxLength(s, 1, orderXml.getXML(), Constants.MAX_ORDERXML_SIZE, "size", orderXmlName);
             s.setString(2, orderXmlName);
             s.executeUpdate();
         } catch (SQLException e) {
-            throw new IOFailure("SQL error updating template " + orderXmlName
-                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error updating template " + orderXmlName + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             HarvestDBConnection.release(c);
         }
     }
+
 }

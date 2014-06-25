@@ -36,9 +36,9 @@ import dk.netarkivet.harvester.HarvesterSettings;
  *
  */
 public final class Constants {
-    /** Pattern not used by anyone, except unittests. */
-    private static final Pattern ID_PATTERN =
-            Pattern.compile(".*_(\\d+)\\.xml");
+
+	/** Pattern not used by anyone, except unittests. */
+    private static final Pattern ID_PATTERN = Pattern.compile(".*_(\\d+)\\.xml");
     /** Regexp for checking, if URL contains a protocol, 
      * like ftp://, http:// . */
     static final String PROTOCOL_REGEXP = "^[a-zA-Z]+:.*";
@@ -84,37 +84,31 @@ public final class Constants {
     /** This is the default number set as max bytes harvested.
      * Set to the max number of bytes we harvest from any domain per harvest,
      * unless explicitly deciding otherwise. */
-    public static final long DEFAULT_MAX_BYTES
-            = Settings.getLong(HarvesterSettings.DOMAIN_CONFIG_MAXBYTES);
+    public static final long DEFAULT_MAX_BYTES = Settings.getLong(HarvesterSettings.DOMAIN_CONFIG_MAXBYTES);
     
     /** This is the default number set as max harvested objects. */
-    public static final long DEFAULT_MAX_OBJECTS 
-        = Settings.getLong(HarvesterSettings.DOMAIN_CONFIG_MAXOBJECTS);
+    public static final long DEFAULT_MAX_OBJECTS = Settings.getLong(HarvesterSettings.DOMAIN_CONFIG_MAXOBJECTS);
     
     /**
      * The default maximum time in seconds available for each harvesting job.
      * Set to unlimited (0) in the default settings. 
      * Used to restrict the running time for snapshot harvest jobs.
      */
-    public static final long DEFAULT_MAX_JOB_RUNNING_TIME
-        = Settings.getLong(HarvesterSettings.JOBS_MAX_TIME_TO_COMPLETE);
+    public static final long DEFAULT_MAX_JOB_RUNNING_TIME = Settings.getLong(HarvesterSettings.JOBS_MAX_TIME_TO_COMPLETE);
 
     /**
      * The value for alias timeout, in milliseconds.
      */
-    public static final long ALIAS_TIMEOUT_IN_MILLISECONDS 
-        = Settings.getLong(HarvesterSettings.ALIAS_TIMEOUT) * 1000L;
+    public static final long ALIAS_TIMEOUT_IN_MILLISECONDS = Settings.getLong(HarvesterSettings.ALIAS_TIMEOUT) * 1000L;
     
     /** Settings used in JobDBDao after admin machine break down. **/
-    public static final String NEXT_JOB_ID =
-                "settings.harvester.datamodel.domain.nextJobId";
+    public static final String NEXT_JOB_ID = "settings.harvester.datamodel.domain.nextJobId";
 
     /**
      * The name used for the element in order.xml which contains
      * global crawler traps.
      */
-    public static final String GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME =
-            "dk.netarkivet.global_crawler_traps";
+    public static final String GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME = "dk.netarkivet.global_crawler_traps";
     
     public static final long BYTES_PER_HERITRIX_BYTELIMIT_UNIT = 1024;
     
@@ -130,4 +124,5 @@ public final class Constants {
     public static Matcher getIdMatcher() {
         return ID_PATTERN.matcher("");
     }
+
 }

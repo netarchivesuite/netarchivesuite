@@ -47,6 +47,6 @@ public final class ExtendedFieldTypes {
      * arrays representing the two different types, and which database table
      * they are associated with. used for testing.
      */
-    protected static String[] tableNames = {
-        "", "domains", "harvestdefinitions"};
+    protected static final String[] tableNames = {"", "domains", "harvestdefinitions"};
+
 }

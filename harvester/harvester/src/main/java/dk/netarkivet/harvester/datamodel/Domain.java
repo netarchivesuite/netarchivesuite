@@ -36,8 +36,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -52,7 +52,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
-
 
 /**
  * Represents known information about a domain A domain is identified by a
@@ -71,8 +70,9 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
  */
 @SuppressWarnings({ "rawtypes" })
 public class Domain extends ExtendableEntity implements Named {
-    /** Prefix all domain names with this string. */
-    protected static final Log log = LogFactory.getLog(Domain.class);
+
+	/** Prefix all domain names with this string. */
+    protected static final Logger log = LoggerFactory.getLogger(Domain.class);
 
     /** The identification used to lookup the domain. */
     
@@ -145,10 +145,8 @@ public class Domain extends ExtendableEntity implements Named {
     protected Domain(String theDomainName) {
         ArgumentNotValid.checkNotNullOrEmpty(theDomainName, "theDomainName");
         if (!DomainUtils.isValidDomainName(theDomainName)) {
-            throw new ArgumentNotValid("Domain '" + theDomainName
-                    + "' does not match the regexp "
-                    + "defining valid domains: "
-                    + DomainUtils.VALID_DOMAIN_MATCHER.pattern());
+            throw new ArgumentNotValid("Domain '" + theDomainName + "' does not match the regexp "
+                    + "defining valid domains: " + DomainUtils.VALID_DOMAIN_MATCHER.pattern());
         }
         domainName = theDomainName;
         comments = "";
@@ -175,33 +173,27 @@ public class Domain extends ExtendableEntity implements Named {
 
         // Create default seed list containing one seed: http://www.domain
         // or http://1.2.3.4 for IP-named domains.
-        String defaultSeedListName = Settings.get(
-                HarvesterSettings.DEFAULT_SEEDLIST);
+        String defaultSeedListName = Settings.get(HarvesterSettings.DEFAULT_SEEDLIST);
 
         SeedList seedlist;
         if (Constants.IP_KEY_REGEXP.matcher(domainName).matches()) {
             // IP domains should not get www
-            seedlist = new SeedList(defaultSeedListName,
-                                    "http://" + domainName);
+            seedlist = new SeedList(defaultSeedListName, "http://" + domainName);
         } else {
-            seedlist = new SeedList(defaultSeedListName,
-                                    "http://www." + domainName);
+            seedlist = new SeedList(defaultSeedListName, "http://www." + domainName);
         }
         myDomain.addSeedList(seedlist);
 
         List<SeedList> seedlists = Arrays.asList(seedlist);
 
         // Create default configuration using the default seedlist
-        String domainDefaultConfig = Settings.get(
-                HarvesterSettings.DOMAIN_DEFAULT_CONFIG);
+        String domainDefaultConfig = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_CONFIG);
 
         DomainConfiguration cfg = new DomainConfiguration(domainDefaultConfig,
                 myDomain, seedlists, new ArrayList<Password>());
-        cfg.setOrderXmlName(Settings
-                .get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML));
+        cfg.setOrderXmlName(Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML));
 
-        cfg.setMaxRequestRate(Integer.parseInt(Settings.get(
-                HarvesterSettings.DOMAIN_CONFIG_MAXRATE)));
+        cfg.setMaxRequestRate(Integer.parseInt(Settings.get(HarvesterSettings.DOMAIN_CONFIG_MAXRATE)));
 
         myDomain.addConfiguration(cfg);
         myDomain.addExtendedFieldValues();
@@ -227,8 +219,7 @@ public class Domain extends ExtendableEntity implements Named {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
 
         if (domainConfigurations.containsKey(cfg.getName())) {
-            throw new PermissionDenied(
-                    "A configuration already exists with the name:"
+            throw new PermissionDenied("A configuration already exists with the name:"
                     + cfg.getName() + "; in the domain:" + getName() + ";");
         }
 
@@ -265,18 +256,14 @@ public class Domain extends ExtendableEntity implements Named {
      * @param <T>      The type contained in items iterator. 
      *  The type extends Named                 
      */
-    private <T extends Named> void checkListContainsNamed(
-            DomainConfiguration cfg,
-            final Iterator<T> items,
+    private <T extends Named> void checkListContainsNamed(DomainConfiguration cfg, final Iterator<T> items,
             final String typename, final Map m) {
         while (items.hasNext()) {
             Named named = items.next();
 
             if (!m.containsKey(named.getName())) {
-                throw new UnknownID("Configuration:" + cfg.getName()
-                                    + "; uses unknown " + typename + ":"
-                                    + named.getName()
-                                    + "; in the domain:" + getName() + ";");
+                throw new UnknownID("Configuration:" + cfg.getName() + "; uses unknown " + typename + ":"
+                		+ named.getName() + "; in the domain:" + getName() + ";");
             }
         }
     }
@@ -295,19 +282,16 @@ public class Domain extends ExtendableEntity implements Named {
      * @param value     the object to add to m
      * @param <T>       The type contained as values in the map m. 
      */
-    private <T extends Named> void put(Map<String, T> m, String name,
-                                       boolean addAction, T value) {
+    private <T extends Named> void put(Map<String, T> m, String name, boolean addAction, T value) {
         boolean alreadyExist = m.containsKey(name);
 
         if (addAction && alreadyExist) {
-            throw new PermissionDenied("An entry already exists with the name:"
-                                       + name + "; in the domain:" + getName()
-                                       + ";");
+            throw new PermissionDenied("An entry already exists with the name:" + name + "; in the domain:" + getName()
+            		+ ";");
         }
 
         if ((!addAction) && (!alreadyExist)) {
-            throw new UnknownID("No entry exists with the name '" + name
-                                + "' in the domain '" + getName() + "'");
+            throw new UnknownID("No entry exists with the name '" + name + "' in the domain '" + getName() + "'");
         }
 
         m.put(name, value);
@@ -381,9 +365,8 @@ public class Domain extends ExtendableEntity implements Named {
         ArgumentNotValid.checkNotNullOrEmpty(cfgName, "cfgName");
 
         if (!domainConfigurations.containsKey(cfgName)) {
-            throw new UnknownID("Default configuration not registered:"
-                                + cfgName + "; in the domain:" + getName()
-                                + ";");
+            throw new UnknownID("Default configuration not registered:" + cfgName + "; in the domain:" + getName()
+            		+ ";");
         }
 
         defaultConfigName = cfgName;
@@ -403,9 +386,7 @@ public class Domain extends ExtendableEntity implements Named {
         ArgumentNotValid.checkNotNullOrEmpty(cfgName, "cfgName");
 
         if (!domainConfigurations.containsKey(cfgName)) {
-            throw new UnknownID("Configuration '" + cfgName
-                                + "' not registered in the domain '" + getName()
-                                + "'");
+            throw new UnknownID("Configuration '" + cfgName + "' not registered in the domain '" + getName() + "'");
         }
         DomainConfiguration cfg = domainConfigurations.get(cfgName);
         cfg.setDomainhistory(this.getHistory());
@@ -423,9 +404,7 @@ public class Domain extends ExtendableEntity implements Named {
      */
     public DomainConfiguration getDefaultConfiguration() {
         if (domainConfigurations.size() == 0) {
-            throw new UnknownID(
-                    "No configurations have been registered in the domain:"
-                    + getName() + ";");
+            throw new UnknownID("No configurations have been registered in the domain:" + getName() + ";");
         }
 
         return getConfiguration(defaultConfigName);
@@ -471,9 +450,7 @@ public class Domain extends ExtendableEntity implements Named {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
 
         if (!hasSeedList(name)) {
-            throw new UnknownID("Seedlist '" + name
-                                + " has not been registered in the domain '"
-                                + getName() + "'");
+            throw new UnknownID("Seedlist '" + name + " has not been registered in the domain '" + getName() + "'");
         }
 
         return seedlists.get(name);
@@ -508,13 +485,11 @@ public class Domain extends ExtendableEntity implements Named {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
 
         if (!seedlists.containsKey(name)) {
-            throw new UnknownID("Seedlist has not been registered:" + name
-                                + "; in the domain:" + getName() + ";");
+            throw new UnknownID("Seedlist has not been registered:" + name + "; in the domain:" + getName() + ";");
         }
 
         if (seedlists.size() <= 1) {
-            throw new PermissionDenied("Can not remove the last seedlist:"
-                                       + name + ";");
+            throw new PermissionDenied("Can not remove the last seedlist:" + name + ";");
         }
 
         for (String cfgname : domainConfigurations.keySet()) {
@@ -524,8 +499,7 @@ public class Domain extends ExtendableEntity implements Named {
                 SeedList seedlist = i.next();
 
                 if (seedlist.getName().equals(name)) {
-                    throw new PermissionDenied("The seedlist:" + name
-                            + "; is used by the configuration:" 
+                    throw new PermissionDenied("The seedlist:" + name + "; is used by the configuration:" 
                             + cfgname + ";");
                 }
             }
@@ -551,17 +525,14 @@ public class Domain extends ExtendableEntity implements Named {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
 
         if (!passwords.containsKey(name)) {
-            throw new UnknownID("Password has not been registered:" + name
-                                + "; in the domain:" + getName() + ";");
+            throw new UnknownID("Password has not been registered:" + name + "; in the domain:" + getName() + ";");
         }
 
         for (String cfgname : domainConfigurations.keySet()) {
             DomainConfiguration cfg = domainConfigurations.get(cfgname);
 
             if (cfg.usesPassword(name)) {
-                throw new PermissionDenied("The password:" + name
-                                           + "; is used by the configuration:"
-                                           + cfgname + ";");
+                throw new PermissionDenied("The password:" + name + "; is used by the configuration:" + cfgname + ";");
             }
         }
 
@@ -586,14 +557,11 @@ public class Domain extends ExtendableEntity implements Named {
         ArgumentNotValid.checkNotNullOrEmpty(configName, "configName");
 
         if (defaultConfigName.equals(configName)) {
-            throw new PermissionDenied(
-                    "The default configuration can not be removed:" + configName
-                    + ";");
+            throw new PermissionDenied("The default configuration can not be removed:" + configName + ";");
         }
 
         if (!domainConfigurations.containsKey(configName)) {
-            throw new UnknownID("Configuration not registered:" + configName
-                    + ";");
+            throw new UnknownID("Configuration not registered:" + configName + ";");
         }
 
         // Test that no harvest definition uses this configuration
@@ -607,19 +575,16 @@ public class Domain extends ExtendableEntity implements Named {
             List<String> usages = new ArrayList<String>();
             while (hds.hasNext()) {
                 HarvestDefinition hd = hds.next();
-                Iterator<DomainConfiguration> configs = hd
-                        .getDomainConfigurations();
+                Iterator<DomainConfiguration> configs = hd.getDomainConfigurations();
                 while (configs.hasNext()) {
                     DomainConfiguration dc = configs.next();
-                    if (dc.getName().equals(configName)
-                        && dc.getDomainName().equals(getName())) {
+                    if (dc.getName().equals(configName) && dc.getDomainName().equals(getName())) {
                         usages.add(hd.getName());
                     }
                 }
             }
-            throw new PermissionDenied("Cannot delete domain configuration '"
-                    + configName + "', because it is used by the following "
-                    + "harvest definitions: " + usages);
+            throw new PermissionDenied("Cannot delete domain configuration '" + configName + "', because it is used "
+            		+ "by the following " + "harvest definitions: " + usages);
         }
 
         domainConfigurations.remove(configName);
@@ -661,12 +626,9 @@ public class Domain extends ExtendableEntity implements Named {
      * @return all configurations belonging to this domain sorted according to
      *         language
      */
-    public List<DomainConfiguration> getAllConfigurationsAsSortedList(
-            Locale loc) {
+    public List<DomainConfiguration> getAllConfigurationsAsSortedList(Locale loc) {
         ArgumentNotValid.checkNotNull(loc, "loc");
-        List<DomainConfiguration> resultSet
-                = new ArrayList<DomainConfiguration>(
-                domainConfigurations.values());
+        List<DomainConfiguration> resultSet = new ArrayList<DomainConfiguration>(domainConfigurations.values());
         NamedUtils.sortNamedObjectList(loc, resultSet);
         return resultSet;
     }
@@ -734,8 +696,7 @@ public class Domain extends ExtendableEntity implements Named {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
 
         if (!passwords.containsKey(name)) {
-            throw new UnknownID("Password has not been registered:" + name
-                                + "; in the domain:" + getName() + ";");
+            throw new UnknownID("Password has not been registered:" + name + "; in the domain:" + getName() + ";");
         }
 
         return passwords.get(name);
@@ -763,9 +724,8 @@ public class Domain extends ExtendableEntity implements Named {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
 
         if (!domainConfigurations.containsKey(cfg.getName())) {
-            throw new UnknownID("No configuration exists with the name:"
-                                + cfg.getName() + "; in the domain:" + getName()
-                                + ";");
+            throw new UnknownID("No configuration exists with the name:" + cfg.getName() + "; in the domain:"
+            		+ getName() + ";");
         }
 
         putConfiguration(cfg);
@@ -872,11 +832,9 @@ public class Domain extends ExtendableEntity implements Named {
         
         for (int i = 0; i < extendedFieldValues.size(); i++) {
             ExtendedFieldValue efv = extendedFieldValues.get(i);
-            sb.append("\t")
-                    .append(efv.getExtendedFieldID() + ": " + efv.getContent())
-                    .append(";\n");
+            sb.append("\t").append(efv.getExtendedFieldID() + ": " + efv.getContent()).append(";\n");
         }
-        
+
         sb.append("---------------\n");
 
         return sb.toString();
@@ -896,8 +854,7 @@ public class Domain extends ExtendableEntity implements Named {
      * invalid regular expressions (unless strictMode is false).
      */
     public void setCrawlerTraps(List<String> regExps, boolean strictMode) {
-        ArgumentNotValid.checkNotNull(regExps,
-                                      "List<String> regExps");
+        ArgumentNotValid.checkNotNull(regExps, "List<String> regExps");
         List<String> cleanedListOfCrawlerTraps = new ArrayList<String>();
         for (String crawlerTrap : regExps) {
             log.trace("original trap: '" + crawlerTrap + "'");
@@ -914,8 +871,8 @@ public class Domain extends ExtendableEntity implements Named {
             try {
                 Pattern.compile(regexp);
             } catch (PatternSyntaxException e) {
-                final String errMsg = "The regular expression '" + regexp
-                        + "' is invalid. Please correct the expression.";
+                final String errMsg = "The regular expression '" + regexp + "' is invalid. "
+                		+ "Please correct the expression.";
                 if (strictMode) {
                     throw new ArgumentNotValid(errMsg, e);
                 } else {
@@ -962,8 +919,7 @@ public class Domain extends ExtendableEntity implements Named {
      */
     public void updateAlias(String alias) {
         if (getName().equals(alias)) {
-            String message = "Cannot make domain '" + this.getName()
-                             + "' an alias of itself";
+            String message = "Cannot make domain '" + this.getName() + "' an alias of itself";
             log.debug(message);
             throw new IllegalState(message);
         }
@@ -972,11 +928,8 @@ public class Domain extends ExtendableEntity implements Named {
             DomainDAO dao = DomainDAO.getInstance();
             Domain otherD = dao.read(alias);
             if (otherD.aliasInfo != null) {
-                String message = "Cannot make domain '" + this.getName()
-                                 + "' an alias of '"
-                                 + otherD.getName() + "', as that domain is "
-                                 + "already an alias of '"
-                                 + otherD.aliasInfo.getAliasOf() + "'";
+                String message = "Cannot make domain '" + this.getName() + "' an alias of '" + otherD.getName() + "',"
+                		+ " as that domain is already an alias of '" + otherD.aliasInfo.getAliasOf() + "'";
                 log.debug(message);
                 throw new IllegalState(message);
             }
@@ -985,14 +938,9 @@ public class Domain extends ExtendableEntity implements Named {
                 for (AliasInfo ai : dao.getAliases(getName())) {
                     aliasesForThisDomain.add(ai.getDomain());
                 }
-                String message = "Cannot make domain '" + this.getName()
-                                 + "' an alias of '" + otherD.getName()
-                                 + "', as the domains '"
-                                 + StringUtils
-                        .conjoin(",", aliasesForThisDomain)
-                                 + "' are "
-                                 + "already aliases of '" + this.getName()
-                                 + "'";
+                String message = "Cannot make domain '" + this.getName() + "' an alias of '" + otherD.getName() + "',"
+                		+ " as the domains '" + StringUtils.conjoin(",", aliasesForThisDomain) + "' are "
+                                 + "already aliases of '" + this.getName() + "'";
                 log.debug(message);
                 throw new IllegalState(message);
             }
@@ -1030,8 +978,7 @@ public class Domain extends ExtendableEntity implements Named {
      */
     public HarvestInfo getBestHarvestInfoExpectation(String configName) {
         ArgumentNotValid.checkNotNullOrEmpty(configName, "String configName");
-        return DomainHistory.getBestHarvestInfoExpectation(configName,
-                this.getHistory());
+        return DomainHistory.getBestHarvestInfoExpectation(configName, this.getHistory());
     }
     
     /**
@@ -1042,4 +989,5 @@ public class Domain extends ExtendableEntity implements Named {
     protected int getExtendedFieldType() {
     	return ExtendedFieldTypes.DOMAIN;
     }
+
 }

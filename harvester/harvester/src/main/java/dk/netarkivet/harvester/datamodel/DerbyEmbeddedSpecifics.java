@@ -25,12 +25,12 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-
 /**
  * A class that implement functionality specific to the embedded Derby system.
  */
 public class DerbyEmbeddedSpecifics extends DerbySpecifics {
-    /**
+
+	/**
      * Get an instance of the Embedded Derby specifics.
      * @return Instance of the Derby specifics implementation
      */
@@ -46,6 +46,5 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
     public String getDriverClassName() {
         return "org.apache.derby.jdbc.EmbeddedDriver";
     }
-
 
 }

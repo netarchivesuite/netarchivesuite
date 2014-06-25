@@ -28,13 +28,13 @@ import java.util.Date;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-
 /**
  * Summary information about a specific harvest of a domain. This class is
  * immutable.
  */
 public class HarvestInfo {
-    /** The date the harvest information was created. */
+
+	/** The date the harvest information was created. */
     private final Date date;
 
     /** The identifier of the harvest. */
@@ -73,12 +73,9 @@ public class HarvestInfo {
      * @param countObjectRetrieved The number of objects retrieved for this Domain
      * @param stopReason The reason why the current harvest terminated
      */
-    public HarvestInfo(Long harvestID,
-                       String domainName, String domainCfgName, Date date,
-                       long sizeDataRetrieved, long countObjectRetrieved,
-                       StopReason stopReason) {
-        this(harvestID, null, domainName, domainCfgName, date,
-                sizeDataRetrieved, countObjectRetrieved, stopReason);
+    public HarvestInfo(Long harvestID, String domainName, String domainCfgName, Date date, long sizeDataRetrieved,
+    		long countObjectRetrieved, StopReason stopReason) {
+        this(harvestID, null, domainName, domainCfgName, date, sizeDataRetrieved, countObjectRetrieved, stopReason);
     }
 
     /**
@@ -92,17 +89,14 @@ public class HarvestInfo {
      * @param countObjectRetrieved The number of objects retrieved for this Domain
      * @param stopReason The reason why the current harvest terminated
      */
-    public HarvestInfo(Long harvestID, Long jobID,
-                       String domainName, String domainCfgName, Date date,
-                       long sizeDataRetrieved, long countObjectRetrieved,
-                       StopReason stopReason) {
+    public HarvestInfo(Long harvestID, Long jobID, String domainName, String domainCfgName, Date date,
+    		long sizeDataRetrieved, long countObjectRetrieved, StopReason stopReason) {
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
         ArgumentNotValid.checkNotNull(date, "date");
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         ArgumentNotValid.checkNotNullOrEmpty(domainCfgName, "domainCfgName");
         ArgumentNotValid.checkNotNegative(sizeDataRetrieved, "sizeDataRetrieved");
-        ArgumentNotValid.checkNotNegative(countObjectRetrieved,
-                "countObjectRetrieved");
+        ArgumentNotValid.checkNotNegative(countObjectRetrieved, "countObjectRetrieved");
         ArgumentNotValid.checkNotNull(stopReason, "stopReason");
 
         this.harvestID = harvestID;
@@ -248,10 +242,8 @@ public class HarvestInfo {
         int result;
         result = date.hashCode();
         result = 29 * result + harvestID.hashCode();
-        result = 29 * result
-                 + (int) (countObjectRetrieved ^ (countObjectRetrieved >>> 32));
-        result = 29 * result
-                 + (int) (sizeDataRetrieved ^ (sizeDataRetrieved >>> 32));
+        result = 29 * result + (int) (countObjectRetrieved ^ (countObjectRetrieved >>> 32));
+        result = 29 * result + (int) (sizeDataRetrieved ^ (sizeDataRetrieved >>> 32));
         result = 29 * result + stopReason.hashCode();
         result = 29 * result + domainName.hashCode();
         result = 29 * result + domainCfgName.hashCode();
@@ -268,4 +260,5 @@ public class HarvestInfo {
                + countObjectRetrieved + "objects / "
                + sizeDataRetrieved + "bytes\n";
     }
+
 }

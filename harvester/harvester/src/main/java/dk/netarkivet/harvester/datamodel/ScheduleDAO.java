@@ -31,7 +31,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 
-
 /**
  * A DAO for reading and writing schedules by name.
  *
@@ -126,4 +125,5 @@ public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
     static void reset() {
         instance = null;
     }
+
 }

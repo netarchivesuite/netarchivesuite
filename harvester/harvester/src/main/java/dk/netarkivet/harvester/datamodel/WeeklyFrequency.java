@@ -37,7 +37,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 
 public class WeeklyFrequency extends Frequency {
-    /** The minute of the hour the event should happen at.*/
+
+	/** The minute of the hour the event should happen at.*/
     private int minute;
     /** The hour of the day the event should happen at.*/
     private int hour;
@@ -71,11 +72,8 @@ public class WeeklyFrequency extends Frequency {
         Calendar cal = GregorianCalendar.getInstance();
         if (dayOfWeek < cal.getMinimum(Calendar.DAY_OF_WEEK)
             || dayOfWeek > cal.getMaximum(Calendar.DAY_OF_WEEK)) {
-            throw new ArgumentNotValid("Day in week must be in legal range '"
-                                       + cal.getMinimum(Calendar.DAY_OF_WEEK)
-                                       + "' to '"
-                                       + cal.getMaximum(Calendar.DAY_OF_WEEK)
-                                       + "'");
+            throw new ArgumentNotValid("Day in week must be in legal range '" + cal.getMinimum(Calendar.DAY_OF_WEEK)
+            		+ "' to '" + cal.getMaximum(Calendar.DAY_OF_WEEK) + "'");
         }
         if (hour < cal.getMinimum(Calendar.HOUR_OF_DAY)
             || hour > cal.getMaximum(Calendar.HOUR_OF_DAY)) {
@@ -85,13 +83,9 @@ public class WeeklyFrequency extends Frequency {
                                        + cal.getMaximum(Calendar.HOUR_OF_DAY)
                                        + "'");
         }
-        if (minute < cal.getMinimum(Calendar.MINUTE)
-            || minute > cal.getMaximum(Calendar.MINUTE)) {
-            throw new ArgumentNotValid("Minute must be in legal range '"
-                                       + cal.getMinimum(Calendar.MINUTE)
-                                       + "' to '"
-                                       + cal.getMaximum(Calendar.MINUTE)
-                                       + "'");
+        if (minute < cal.getMinimum(Calendar.MINUTE) || minute > cal.getMaximum(Calendar.MINUTE)) {
+            throw new ArgumentNotValid("Minute must be in legal range '" + cal.getMinimum(Calendar.MINUTE)
+            		+ "' to '" + cal.getMaximum(Calendar.MINUTE) + "'");
         }
 
         this.dayOfWeek = dayOfWeek;
@@ -266,7 +260,7 @@ public class WeeklyFrequency extends Frequency {
         if (isAnytime()) {
             return "every " + getNumUnits() + " weeks";
         }
-        return "every " + getNumUnits() + " weeks, on weekday " + dayOfWeek
-                   + " at " + hour + ":" + minute;
+        return "every " + getNumUnits() + " weeks, on weekday " + dayOfWeek + " at " + hour + ":" + minute;
     }
+
 }

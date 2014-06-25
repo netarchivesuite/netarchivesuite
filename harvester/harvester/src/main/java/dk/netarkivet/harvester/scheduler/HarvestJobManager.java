@@ -25,6 +25,8 @@
 
 package dk.netarkivet.harvester.scheduler;
 
+import javax.inject.Provider;
+
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
@@ -34,14 +36,14 @@ import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
-import javax.inject.Provider;
 
 /**
  * Handles the dispatching of scheduled harvest to the harvest servers based on
  * the harvests defined in the database. <p>
  */
 public class HarvestJobManager extends LifeCycleComponent {
-    private final JMSConnection jmsConnection;
+
+	private final JMSConnection jmsConnection;
 
     /**
      * Creates the components handling the harvest job management and hooks them
@@ -66,8 +68,7 @@ public class HarvestJobManager extends LifeCycleComponent {
         
         addChild(new HarvestSchedulerMonitorServer());
         
-        addChild(new JobSupervisor(createJobDaoProvider(),
-                Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)));
+        addChild(new JobSupervisor(createJobDaoProvider(), Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)));
     }
 
     @Override
@@ -86,4 +87,5 @@ public class HarvestJobManager extends LifeCycleComponent {
             }
         };
     }
+
 }

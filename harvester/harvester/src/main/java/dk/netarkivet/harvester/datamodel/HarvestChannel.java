@@ -56,14 +56,10 @@ import dk.netarkivet.harvester.harvesting.HarvestController;
 @SuppressWarnings("serial")
 public class HarvestChannel implements Serializable {
 
-	/**
-	 * The unique {@link dk.netarkivet.harvester.datamodel.HarvestChannel} for snapshot harvests.
-	 */
+	/** The unique {@link dk.netarkivet.harvester.datamodel.HarvestChannel} for snapshot harvests. */
 	//public static final HarvestChannel SNAPSHOT = new HarvestChannel();
 
-	/**
-	 * Defines acceptable channel names: at least one word character.
-	 */
+	/** Defines acceptable channel names: at least one word character. */
 	public static final String ACCEPTABLE_NAME_PATTERN = "^\\w+$";
 
 	/** The unique numeric id. */
@@ -82,8 +78,7 @@ public class HarvestChannel implements Serializable {
 	/** Whether this channel is the default one for the given type (snapshot or focused). */
 	private boolean isDefault;
 
-	/** Comments.
-	 */
+	/** Comments. */
 	private String comments;
 
 	/**
@@ -109,8 +104,7 @@ public class HarvestChannel implements Serializable {
 	 */
 	public HarvestChannel(String name, boolean isSnapshot, boolean isDefault, String comments) {
 		if (!isAcceptableName(name)) {
-			throw new ArgumentNotValid("'" + name + "' does not match pattern '"
-					+ ACCEPTABLE_NAME_PATTERN + "'");
+			throw new ArgumentNotValid("'" + name + "' does not match pattern '" + ACCEPTABLE_NAME_PATTERN + "'");
 		}
 		this.name = name;
 		this.isSnapshot = isSnapshot;
@@ -130,8 +124,7 @@ public class HarvestChannel implements Serializable {
 	public HarvestChannel(long id, String name, boolean isSnapshot, boolean isDefault, String comments) {
 		ArgumentNotValid.checkNotNullOrEmpty(name, "name");
 		if (!isAcceptableName(name)) {
-			throw new ArgumentNotValid("'" + name + "' does not match pattern '"
-					+ ACCEPTABLE_NAME_PATTERN + "'");
+			throw new ArgumentNotValid("'" + name + "' does not match pattern '" + ACCEPTABLE_NAME_PATTERN + "'");
 		}
 		this.id = id;
 		this.name = name;
@@ -215,10 +208,8 @@ public class HarvestChannel implements Serializable {
 	 * @return a localized description.
 	 */
 	public static String getSnapshotDescription(PageContext context) {
-		return I18n.getString(
-				dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE,
-				context.getResponse().getLocale(),
-				"harvest.channel.snapshot.desc");
+		return I18n.getString(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE,
+				context.getResponse().getLocale(), "harvest.channel.snapshot.desc");
 	}
 
 	/**

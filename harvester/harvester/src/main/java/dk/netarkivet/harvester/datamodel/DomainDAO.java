@@ -38,9 +38,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
  */
 public abstract class DomainDAO implements DAO, Iterable<Domain> {
 
-    /**
-     * The Singleton DomainDAO.
-     */
+    /** The Singleton DomainDAO. */
     private static DomainDAO instance;
 
     /**
@@ -126,7 +124,6 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
             HarvestDBConnection.release(c);
         }
     }
-
 
     /**
      * Read a domain from the persistent storage.
@@ -292,9 +289,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      * @return The HarvestInfo object for a certain job and DomainConfiguration
      *  or null, if job has not yet been started.
      */
-    public abstract HarvestInfo getDomainJobInfo(
-            Job job, String domainName, String configName);
-
+    public abstract HarvestInfo getDomainJobInfo(Job job, String domainName, String configName);
 
     /** Get a list of info about harvests performed on a given domain.
      *
@@ -310,8 +305,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      * domain.
      *
      */
-    public abstract List<DomainHarvestInfo> listDomainHarvestInfo(
-            String domainName, String orderBy, boolean asc);
+    public abstract List<DomainHarvestInfo> listDomainHarvestInfo(String domainName, String orderBy, boolean asc);
 
     /**
      * Get the DomainConfiguration given a specific domainName and a
@@ -321,8 +315,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      * @return the DomainConfiguration, if the specified configuration exists;
      * otherwise throws UnknownID
      */
-    public abstract DomainConfiguration getDomainConfiguration(
-            String domainName, String configName);
+    public abstract DomainConfiguration getDomainConfiguration(String domainName, String configName);
 
     /**
      * Get the domainHistory for a specific domain.
@@ -357,4 +350,5 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      * @return The list of ID for the used configurations.
      */
     public abstract List<Long> findUsedConfigurations(Long domainID);
+
 }

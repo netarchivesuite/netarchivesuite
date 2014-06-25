@@ -24,7 +24,6 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -33,8 +32,6 @@ import java.util.Set;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A Data Access Object for harvest definitions.
@@ -42,16 +39,10 @@ import org.apache.commons.logging.LogFactory;
  * handles the transformation from harvest definitions to persistent storage.
  *
  */
-public abstract class HarvestDefinitionDAO implements DAO,
-        Iterable<HarvestDefinition> {
+public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefinition> {
 
-    /** The one and only instance of the HarvestDefinitionDAO class to ensure
-      * thread-safety.
-      */
+    /** The one and only instance of the HarvestDefinitionDAO class to ensure thread-safety. */
     private static HarvestDefinitionDAO instance;
-
-    /** The log. */
-    protected final Log log = LogFactory.getLog(getClass());
 
     /**
      * Default constructor.
@@ -90,8 +81,7 @@ public abstract class HarvestDefinitionDAO implements DAO,
      *                   correct ID, or
      *                   otherwise fails to load correctly.
      */
-    public abstract HarvestDefinition read(Long harvestDefinitionID)
-            throws UnknownID, IOFailure;
+    public abstract HarvestDefinition read(Long harvestDefinitionID) throws UnknownID, IOFailure;
 
     /**
      * Update an existing harvest definition with new info
@@ -189,8 +179,7 @@ public abstract class HarvestDefinitionDAO implements DAO,
      *         for unknown harvest definitions.
      * @throws ArgumentNotValid on null argument.
      */
-    public abstract List<SparseDomainConfiguration>
-            getSparseDomainConfigurations(Long harvestDefinitionID);
+    public abstract List<SparseDomainConfiguration> getSparseDomainConfigurations(Long harvestDefinitionID);
 
     /**
      * Get a sparse version of a partial harvest for GUI purposes.
@@ -199,8 +188,7 @@ public abstract class HarvestDefinitionDAO implements DAO,
      * @return Sparse version of partial harvest or null for none.
      * @throws ArgumentNotValid on null or empty name.
      */
-    public abstract SparsePartialHarvest getSparsePartialHarvest(
-            String harvestName);
+    public abstract SparsePartialHarvest getSparsePartialHarvest(String harvestName);
 
     /**
      * Get all sparse versions of partial harvests for GUI purposes.
@@ -209,8 +197,7 @@ public abstract class HarvestDefinitionDAO implements DAO,
      * returned.
      * @return An iterable (possibly empty) of SparsePartialHarvests
      */
-    public abstract Iterable<SparsePartialHarvest>
-           getSparsePartialHarvestDefinitions(boolean excludeInactive);
+    public abstract Iterable<SparsePartialHarvest> getSparsePartialHarvestDefinitions(boolean excludeInactive);
 
     /**
      * Get a sparse version of a full harvest for GUI purposes.
@@ -226,8 +213,7 @@ public abstract class HarvestDefinitionDAO implements DAO,
      *
      * @return An iterable (possibly empty) of SparseFullHarvests
      */
-    public abstract Iterable<SparseFullHarvest>
-            getAllSparseFullHarvestDefinitions();
+    public abstract Iterable<SparseFullHarvest> getAllSparseFullHarvestDefinitions();
 
     /** Get the name of a harvest given its ID.
      *
@@ -257,8 +243,7 @@ public abstract class HarvestDefinitionDAO implements DAO,
     * @throws ArgumentNotValid on null argument
     * @throws IOFailure        on any other error talking to the database
     */
-    public abstract List<String> getListOfDomainsOfHarvestDefinition(
-            String harvestName);
+    public abstract List<String> getListOfDomainsOfHarvestDefinition(String harvestName);
 
     /** Get a sorted list of all seeds of a Domain in a HarvestDefinition.
     *
@@ -268,16 +253,14 @@ public abstract class HarvestDefinitionDAO implements DAO,
     * @throws ArgumentNotValid on null argument
     * @throws IOFailure        on any other error talking to the database
     */
-    public abstract List<String> getListOfSeedsOfDomainOfHarvestDefinition(
-            String harvestName, String domainName);
+    public abstract List<String> getListOfSeedsOfDomainOfHarvestDefinition(String harvestName, String domainName);
 
     /**
      * Get a collection of jobIds for snapshot deduplication index.
      * @param harvestId the id of the harvest
      * @return a collection of jobIds to create a deduplication index.
      */
-    public abstract Set<Long> getJobIdsForSnapshotDeduplicationIndex(
-            Long harvestId);
+    public abstract Set<Long> getJobIdsForSnapshotDeduplicationIndex(Long harvestId);
 
     /**
      * Set the isindexready field available for snapshot harvests.
@@ -292,8 +275,8 @@ public abstract class HarvestDefinitionDAO implements DAO,
      * @param key a SparseDomainConfiguration uniquely identifying the
      * domainconfig.
      */
-    public abstract void removeDomainConfiguration(Long harvestId,
-            SparseDomainConfiguration key);
+    public abstract void removeDomainConfiguration(Long harvestId, SparseDomainConfiguration key);
+
     /**
      * Update the given PartialHarvest (i.e. Selective Harvest) with a new
      * time for the next harvestrun. If no selective harvest matching the given id is
@@ -309,14 +292,14 @@ public abstract class HarvestDefinitionDAO implements DAO,
      * @param sparseDomainConfiguration a reduced domainconfiguration object
      */
     public abstract void addDomainConfiguration(PartialHarvest hdd,
-            SparseDomainConfiguration sparseDomainConfiguration);
+    		SparseDomainConfiguration sparseDomainConfiguration);
+
     /**
      * Reset the list of domainconfiguration for a PartialHarvest.
      * @param hdd a given PartialHarvest
      * @param dcList the new list of domainconfigurations
      */
-    public abstract void resetDomainConfigurations(PartialHarvest hdd,
-            List<DomainConfiguration> dcList);
+    public abstract void resetDomainConfigurations(PartialHarvest hdd, List<DomainConfiguration> dcList);
     
     /**
      * Maps a harvest definition to a harvest channel.
@@ -324,5 +307,5 @@ public abstract class HarvestDefinitionDAO implements DAO,
      * @param channel the harvest channel
      */
     public abstract void mapToHarvestChannel(long harvestDefinitionId, HarvestChannel channel);
-    
+
 }

@@ -16,7 +16,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class MinuteFrequency extends Frequency {
 
-
     /**
      * Constructor specifying the number of minutes between runs scheduled with
      * this frequency.
@@ -80,7 +79,6 @@ public class MinuteFrequency extends Frequency {
         return TimeUnit.MINUTE.ordinal();
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -108,6 +106,5 @@ public class MinuteFrequency extends Frequency {
         result = 31 * result + getNumUnits();
         return result;
     }
-
 
 }

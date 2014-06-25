@@ -35,9 +35,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This class implements a frequency of a number of days.
  *
  */
-
 public class DailyFrequency extends Frequency {
-    /** The minute of the hour the event should happen at.*/
+
+	/** The minute of the hour the event should happen at.*/
     private int minute;
     /** The hour of the day the event should happen at.*/
     private int hour;
@@ -63,21 +63,13 @@ public class DailyFrequency extends Frequency {
     public DailyFrequency(int numUnits, int hour, int minute) {
         super(numUnits, false);
         Calendar cal = GregorianCalendar.getInstance();
-        if (hour < cal.getMinimum(Calendar.HOUR_OF_DAY)
-                || hour > cal.getMaximum(Calendar.HOUR_OF_DAY)) {
-            throw new ArgumentNotValid("Hour of day must be in legal range '"
-                                       + cal.getMinimum(Calendar.HOUR_OF_DAY)
-                                       + "' to '"
-                                       + cal.getMaximum(Calendar.HOUR_OF_DAY)
-                                       + "'");
+        if (hour < cal.getMinimum(Calendar.HOUR_OF_DAY) || hour > cal.getMaximum(Calendar.HOUR_OF_DAY)) {
+            throw new ArgumentNotValid("Hour of day must be in legal range '" + cal.getMinimum(Calendar.HOUR_OF_DAY)
+            		+ "' to '" + cal.getMaximum(Calendar.HOUR_OF_DAY) + "'");
         }
-        if (minute < cal.getMinimum(Calendar.MINUTE)
-                || minute > cal.getMaximum(Calendar.MINUTE)) {
-            throw new ArgumentNotValid("Minute must be in legal range '"
-                                       + cal.getMinimum(Calendar.MINUTE)
-                                       + "' to '"
-                                       + cal.getMaximum(Calendar.MINUTE)
-                                       + "'");
+        if (minute < cal.getMinimum(Calendar.MINUTE) || minute > cal.getMaximum(Calendar.MINUTE)) {
+            throw new ArgumentNotValid("Minute must be in legal range '" + cal.getMinimum(Calendar.MINUTE)
+            		+ "' to '" + cal.getMaximum(Calendar.MINUTE) + "'");
         }
 
         this.minute = minute;
@@ -243,4 +235,5 @@ public class DailyFrequency extends Frequency {
         }
         return "every " + getNumUnits() + " days at " + hour + ":" + minute;
     }
+
 }

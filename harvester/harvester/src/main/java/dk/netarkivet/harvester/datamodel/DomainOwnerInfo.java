@@ -120,4 +120,5 @@ public class DomainOwnerInfo implements Comparable {
         }
         return date.compareTo(((DomainOwnerInfo) other).date);
     }
+
 }

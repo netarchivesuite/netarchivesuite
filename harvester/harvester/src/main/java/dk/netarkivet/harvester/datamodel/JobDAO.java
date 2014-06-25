@@ -39,7 +39,8 @@ import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
  * Interface for creating and accessing jobs in persistent storage.
  */
 public abstract class JobDAO implements DAO, Iterable<Job> {
-    /** The database singleton model. */
+
+	/** The database singleton model. */
     private static JobDAO instance;
 
     /**
@@ -98,8 +99,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      *                          does not exist in persistent storage.
      * @throws IOFailure If the loaded ID of job does not match the expected.
      */
-    public abstract Job read(Long jobID)
-            throws ArgumentNotValid, UnknownID, IOFailure;
+    public abstract Job read(Long jobID) throws ArgumentNotValid, UnknownID, IOFailure;
 
     /**
      * Update a Job in persistent storage.
@@ -148,8 +148,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      * @return A list of all job_id's representing jobs with given status
      * and channel.
      */
-    public abstract Iterator<Long> getAllJobIds(JobStatus status,
-            HarvestChannel channel);
+    public abstract Iterator<Long> getAllJobIds(JobStatus status, HarvestChannel channel);
 
     /**
      * Return a list of all jobs .
@@ -208,8 +207,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      * @throws UnknownID if job ID is unknown
      * @throws IOFailure on trouble getting ids from metadata storage
      */
-    public abstract List<Long> getJobIDsForDuplicateReduction(long jobID)
-            throws UnknownID;
+    public abstract List<Long> getJobIDsForDuplicateReduction(long jobID) throws UnknownID;
 
     /** Reschedule a job by creating a new job (in status NEW) and setting the
      * old job to status RESUBMITTED.
@@ -232,4 +230,5 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      * @throws UnknownID if no job exists with id jobID
      */
     public abstract JobStatus getJobStatus(Long jobID);
+
 }
