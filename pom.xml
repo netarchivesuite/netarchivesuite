@@ -2,115 +2,182 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>dk.netarkivet.netarchivesuite</groupId>
-    <artifactId>parent</artifactId>
-    <version>5.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+  <groupId>dk.netarkivet.netarchivesuite</groupId>
+  <artifactId>parent</artifactId>
+  <version>5.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-    <name>Netarchivesuite - parent</name>
+  <name>Netarchivesuite - parent</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.7</slf4j.version>
-    </properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <slf4j.version>1.7.7</slf4j.version>
+  </properties>
 
-    <modules>
-        <module>archive</module>
-        <module>common</module>
-        <module>deploy</module>
-        <module>harvester</module>
-        <module>monitor</module>
-        <module>wayback</module>
-        <module>integration-test</module>
-    </modules>
+  <modules>
+    <module>archive</module>
+    <module>common</module>
+    <module>deploy</module>
+    <module>harvester</module>
+    <module>monitor</module>
+    <module>wayback</module>
+    <module>integration-test</module>
+  </modules>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
+  <licenses>
+    <license>
+      <name>LGPL v2.1</name>
+      <distribution>repo</distribution>
+      <url>http://www.gnu.org/licenses/lgpl-2.1.txt</url>
+    </license>
+  </licenses>
 
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jul-to-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://sbforge.org/jira/browse/NAS</url>
+  </issueManagement>
 
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>log4j-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>https://sbforge.org/jenkins/view/NetarchiveSuite/</url>
+  </ciManagement>
 
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
+  <description>The NetarchiveSuite is a complete web archiving software package developed from 2004 and onwards. The
+    primary function of the NetarchiveSuite is to plan, schedule and run web harvests of parts of the Internet. It
+    scales to a wide range of tasks, from small, thematic harvests (e.g. related to special events, or special
+    domains) to harvesting and archiving the content of an entire national domain. The NetarchiveSuite is built
+    around the Heritrix web crawler.</description>
+  <url>https://sbforge.org/display/NAS</url>
 
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>test</scope>
-                <optional>true</optional>
-            </dependency>
+  <organization>
+    <name>The Royal Danish Library, the Danish State and University Library,
+      the National Library of France and the Austrian National Library.</name>
+    <url>https://sbforge.org/display/BITMAG</url>
+  </organization>
 
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.0.13</version>
-            </dependency>
+  <inceptionYear>2005</inceptionYear>
 
-<!-- Too much hurting now.
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.11</version>
-                <scope>test</scope>
-            </dependency>
--->
-        </dependencies>
-    </dependencyManagement>
+  <scm>
+    <url>https://github.com/netarchivesuite/netarchivesuite</url>
+    <connection>scm:git:https://github.com/netarchivesuite/netarchivesuite.git</connection>
+    <developerConnection>scm:git:git@github.com:netarchivesuite/netarchivesuite.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
 
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.17</version>
-                </plugin>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jul-to-slf4j</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
 
-                <plugin>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                </plugin>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>log4j-over-slf4j</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
 
-                <plugin>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
 
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>${slf4j.version}</version>
+        <scope>test</scope>
+        <optional>true</optional>
+      </dependency>
+
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.0.13</version>
+      </dependency>
+
+      <!-- Too much hurting now.
+                  <dependency>
+                      <groupId>junit</groupId>
+                      <artifactId>junit</artifactId>
+                      <version>4.11</version>
+                      <scope>test</scope>
+                  </dependency>
+      -->
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.17</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.9.1</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>1.7</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+          <canUpdateCopyright>true</canUpdateCopyright>
+          <canUpdateDescription>true</canUpdateDescription>
+          <generateBundle>true</generateBundle>
+          <failIfWarning>true</failIfWarning>
+          <licenseName>lgpl_v2_1</licenseName>
+          <useMissingFile>true</useMissingFile>
+          <includes>
+            <include>**/*.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/is/hi/bok/deduplicator/*.java</exclude>
+            <exclude>**/ExtractorJS.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 </project>

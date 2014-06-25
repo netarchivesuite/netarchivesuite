@@ -13,40 +13,31 @@
     <name>NetarchiveSuite System test</name>
     <description>Contains the automatic NetarchiveSuite system tests</description>
 
-    <properties>
-        <slf4j.version>1.7.5</slf4j.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
         </dependency>
 
         <!-- Hook up the other loggers to use SLF4J -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
@@ -124,6 +115,12 @@
                                 </configuration>
                             </execution>
                         </executions>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <systemtest.deploy>true</systemtest.deploy>
+                                <deployable.postfix>${deployable.postfix}</deployable.postfix>
+                            </systemPropertyVariables>
+                        </configuration>
                     </plugin>
 
                     <plugin>
@@ -173,16 +170,6 @@
                                 <version>1.9.1</version>
                             </dependency>
                         </dependencies>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <systemtest.deploy>true</systemtest.deploy>
-                                <deployable.postfix>${deployable.postfix}</deployable.postfix>
-                            </systemPropertyVariables>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

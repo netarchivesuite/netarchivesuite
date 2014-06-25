@@ -1,48 +1,50 @@
-/* File:    $Id$
- * Revision: $Revision$
- * Author:   $Author$
- * Date:     $Date$
- *
- * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2012 The Royal Danish Library, the Danish State and
- * University Library, the National Library of France and the Austrian
- * National Library.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
+/*
+ * #%L
+ * Netarchivesuite - harvester
+ * %%
+ * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ *             the National Library of France and the Austrian National Library.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation,dk.netarkivet.harvester.schedulerFloor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
  */
 package dk.netarkivet.harvester.scheduler;
 
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Matchers;
+
+import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import javax.inject.Provider;
-import junit.framework.TestCase;
-import static org.mockito.Matchers.any;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class JobSupervisorTest extends TestCase {
+public class JobSupervisorTest {
     private JobSupervisor jobSupervisor;
     private JobDAO jobDaoMock = mock(JobDAO.class);
     private Provider<JobDAO> jobDAOProvider;
 
+    @Before
     public void setUp() {
         jobDAOProvider = new Provider<JobDAO>() {
             @Override
@@ -52,6 +54,7 @@ public class JobSupervisorTest extends TestCase {
         };
     }
 
+    @Test
     public void testCleanOldJobsMultipleJobs() {
         Long jobTimeoutTime = 1L;
         jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
@@ -85,13 +88,14 @@ public class JobSupervisorTest extends TestCase {
         verify(pastActiveMock).getActualStart();
         verify(futureActiveMock).getActualStart();
         verify(pastObsoleteJobMock).setStatus(JobStatus.FAILED);
-        verify(pastObsoleteJobMock).appendHarvestErrors(any(String.class));
+        verify(pastObsoleteJobMock).appendHarvestErrors(Matchers.any(String.class));
         verifyNoMoreInteractions(pastActiveMock, futureActiveMock);
 
         verify(jobDaoMock).update(pastObsoleteJobMock);
         verifyNoMoreInteractions(jobDaoMock);
     }
 
+    @Test
     public void testCleanOldJobsNoJobs() {
         Long jobTimeoutTime = 1L;
         jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
@@ -105,6 +109,7 @@ public class JobSupervisorTest extends TestCase {
         verifyNoMoreInteractions(jobDaoMock);
     }
 
+    @Test
     public void testRescheduleMultipleSubmittedJobs() {
         Long jobTimeoutTime = 1L;
         jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
@@ -120,6 +125,7 @@ public class JobSupervisorTest extends TestCase {
         verifyNoMoreInteractions(jobDaoMock);
     }
 
+    @Test
     public void testRescheduleNoSubmittedJobs() {
         Long jobTimeoutTime = 1L;
         jobSupervisor = new JobSupervisor(jobDAOProvider, jobTimeoutTime);
