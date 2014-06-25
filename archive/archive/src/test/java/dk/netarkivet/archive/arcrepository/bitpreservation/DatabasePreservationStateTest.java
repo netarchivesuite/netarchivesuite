@@ -25,10 +25,20 @@
 
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import org.junit.Test;
 
 import dk.netarkivet.archive.arcrepositoryadmin.ChecksumStatus;
 import dk.netarkivet.archive.arcrepositoryadmin.FileListStatus;
@@ -37,10 +47,10 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.IllegalState;
-import junit.framework.TestCase;
 
-public class DatabasePreservationStateTester extends TestCase {
+public class DatabasePreservationStateTest {
 
+    @Test
     public void testState() {
 
         Replica r1 = Replica.getReplicaFromId("ONE");
@@ -150,6 +160,7 @@ public class DatabasePreservationStateTester extends TestCase {
         
     }
     
+    @Test
     public void testError() {
         long guid = 0L;
         long fileId = 1L;

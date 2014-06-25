@@ -46,10 +46,10 @@ public class ArchiveArcRepositoryAdminTesterSuite
 
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(AdminDataTester.class);
-        suite.addTestSuite(ChecksumStatusTester.class);
+        // suite.addTestSuite(ChecksumStatusTester.class);
         //suite.addTestSuite(DatabaseAdminTester.class); All tests have been disabled.
         suite.addTestSuite(DBTester.class);
-        suite.addTestSuite(FileListStatusTester.class);
+        // suite.addTestSuite(FileListStatusTester.class);
         suite.addTestSuite(ReadOnlyAdminDataTester.class);
         suite.addTestSuite(ReplicaCacheDatabaseTester.class);
     }

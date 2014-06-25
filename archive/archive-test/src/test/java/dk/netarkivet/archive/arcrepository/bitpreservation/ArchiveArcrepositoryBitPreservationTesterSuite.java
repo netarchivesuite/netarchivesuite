@@ -52,12 +52,12 @@ public class ArchiveArcrepositoryBitPreservationTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ChecksumJobTester.class);
         //suite.addTestSuite(DatabaseBasedActiveBitPreservationTester.class); Failing, see https://sbforge.org/jira/browse/NAS-2264
-        suite.addTestSuite(DatabasePreservationStateTester.class);
+        // suite.addTestSuite(DatabasePreservationStateTester.class);
         suite.addTestSuite(FileBasedActiveBitPreservationTester.class);
         suite.addTestSuite(FileListJobTester.class);
         suite.addTestSuite(FilePreservationStateTester.class);
         suite.addTestSuite(WorkFilesTester.class);
-        suite.addTestSuite(UtilityTester.class);
+        // suite.addTestSuite(UtilityTester.class);
     }
 
     public static void main(String[] args) {

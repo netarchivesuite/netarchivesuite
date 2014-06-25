@@ -24,7 +24,12 @@
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -33,7 +38,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Unittests for the HearBeatMessage class.
  */
-public class HeartBeatMessageTester extends TestCase {
+public class HeartBeatMessageTest {
 
     private String baID = "BA_ID";
     private ChannelID baMon = Channels.getTheBamon();
@@ -42,6 +47,7 @@ public class HeartBeatMessageTester extends TestCase {
      * Verify that the constructor only fails if it is given
      * a null ChannelID or a null or empty applicationId:
      */
+    @Test
     public void testConstructor() {
 
         HeartBeatMessage hbm = null;
@@ -78,6 +84,7 @@ public class HeartBeatMessageTester extends TestCase {
      * Verify that getTimestamp(), getApplicationId() and getLogLevel()
      * behave as expected.
      */
+    @Test
     public void testGetters() {
 
         long time = System.currentTimeMillis();
