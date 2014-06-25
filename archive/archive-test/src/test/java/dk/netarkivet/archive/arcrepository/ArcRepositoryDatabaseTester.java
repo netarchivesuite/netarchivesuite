@@ -162,7 +162,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // Database admin test.
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE,
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(),
                 TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
@@ -172,7 +172,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
                 PrintNotifications.class.getName());
 
         Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
-                "jdbc:derby:" + TestInfo.WORKING_DIR.getAbsolutePath());
+                "jdbc:derby:" + TestInfo.WORKING_DIR.getAbsolutePath()+"/derivenamefromresource");
         Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
                 "");
         Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE,

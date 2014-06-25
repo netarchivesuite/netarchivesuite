@@ -63,8 +63,7 @@ public class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
         Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                                             + HARVEST_DEFINITION_BASEDIR.getCanonicalPath()
                                             + "/fullhddb");
-        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
-                                  HARVEST_DEFINITION_BASEDIR);
+        DatabaseTestUtils.getHDDB("./" + TestInfo.DBFILE + "/fullhddb.sql", "fullhddb", HARVEST_DEFINITION_BASEDIR);
         DBSpecifics.getInstance().updateTables();
     }
 

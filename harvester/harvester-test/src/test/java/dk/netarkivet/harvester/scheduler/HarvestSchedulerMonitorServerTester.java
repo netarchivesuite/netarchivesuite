@@ -98,7 +98,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         //JobDAO.reset();
         Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
                 + WORKING.getCanonicalPath() + "/fullhddb");
-        DatabaseTestUtils.getHDDB(new File(BASEDIR, "fullhddb.jar"),
+        DatabaseTestUtils.getHDDB("/" + BASEDIR + "/fullhddb.sql",
                 "fullhddb", WORKING);
         theDAO = JobDAO.getInstance();
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,

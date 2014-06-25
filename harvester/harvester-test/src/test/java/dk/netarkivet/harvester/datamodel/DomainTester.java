@@ -931,12 +931,12 @@ public class DomainTester extends DataModelTestCase {
         assertFalse("Nodot should not be valid",
                     DomainUtils.isValidDomainName("dk"));
         assertTrue("Danish characters should be valid",
-                   DomainUtils.isValidDomainName("æøåÆØÅëËüÜéÉ.dk"));
+ DomainUtils.isValidDomainName("æøåÆØÅëËüÜéÉ.dk"));
         // The following command will extract all non-LDH chars from
         // a domain list:
         //  sed 's/\(.\)/\1\n/g;' <dk-domains-10102005.utf-8.txt | grep -v '[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-]' | sort -u
         assertTrue("Characters from the domain list should be legal",
-                   DomainUtils.isValidDomainName("åäæéöøü.dk"));
+ DomainUtils.isValidDomainName("åäæéöøü.dk"));
         assertTrue("Raw IP numbers should be legal",
                    DomainUtils.isValidDomainName("192.168.0.1"));
         assertFalse("Mixed IP/DNS names should not be legal",
@@ -1150,10 +1150,10 @@ public class DomainTester extends DataModelTestCase {
 
         // With java 5: 
         // DK sequence is "abe liste", "Abe liste", "Anden liste", "defaultseeds", "ny liste", "Plidderpladder"
-        //                                   "Æble liste", "ø liste", "åse liste", "Åse liste"
+        // "Æble liste", "ø liste", "åse liste", "Åse liste"
         // With java 6: 
         // DK sequence is "Abe liste", "abe liste", "Anden liste", "defaultseeds", "ny liste", "Plidderpladder"
-        //                                   "Æble liste", "ø liste", "Åse liste", "åse liste"
+        // "Æble liste", "ø liste", "Åse liste", "åse liste"
         
         allSeeds = d.getAllSeedListsAsSortedList(dkLocale);
 
@@ -1176,8 +1176,9 @@ public class DomainTester extends DataModelTestCase {
                 + origDefault.getLanguage() + " to " + Locale.getDefault().getLanguage(), 
                 Locale.getDefault().getLanguage() == origDefault.getLanguage());
 
-        // Now we check, that UK sequence is "abe liste", "Abe liste", "Æble liste", "Anden liste", "åse liste", "Åse liste","ny liste",
-        //                                   "ø liste", "Plidderpladder"
+        // Now we check, that UK sequence is "abe liste", "Abe liste",
+        // "Æble liste", "Anden liste", "åse liste", "Åse liste","ny liste",
+        // "ø liste", "Plidderpladder"
         
         allSeeds = d.getAllSeedListsAsSortedList(ukLocale);
         
@@ -1204,8 +1205,8 @@ public class DomainTester extends DataModelTestCase {
         DomainConfiguration dc2 = cloneConfigWithNewName(defaultConfig, "gurli"); 
         DomainConfiguration dc3 = cloneConfigWithNewName(defaultConfig, "cirkus");
         DomainConfiguration dc4 = cloneConfigWithNewName(defaultConfig, "åse");
-        DomainConfiguration dc5 = cloneConfigWithNewName(defaultConfig,"ø");
-        DomainConfiguration dc6 = cloneConfigWithNewName(defaultConfig,"Åse");
+        DomainConfiguration dc5 = cloneConfigWithNewName(defaultConfig, "ø");
+        DomainConfiguration dc6 = cloneConfigWithNewName(defaultConfig, "Åse");
         DomainConfiguration dc7 = cloneConfigWithNewName(defaultConfig, "abe");
         DomainConfiguration dc8 = cloneConfigWithNewName(defaultConfig, "æble");
                 
@@ -1221,12 +1222,14 @@ public class DomainTester extends DataModelTestCase {
         DomainConfiguration dcDefault = d.getConfiguration("defaultconfig");
 
         // With Java 5:
-        // Now we check DK sorting, that sequence is "abe", "cirkus", "defaultconfig", "gurli", "SvendBent", "æble"
-        //                                           "ø", "åse", "Åse"
+        // Now we check DK sorting, that sequence is "abe", "cirkus",
+        // "defaultconfig", "gurli", "SvendBent", "æble"
+        // "ø", "åse", "Åse"
         
         // With Java 6:
-        // Now we check DK sorting, that sequence is "abe", "cirkus", "defaultconfig", "gurli", "SvendBent", "æble"
-        //                                           "ø", "Åse", "åse"
+        // Now we check DK sorting, that sequence is "abe", "cirkus",
+        // "defaultconfig", "gurli", "SvendBent", "æble"
+        // "ø", "Åse", "åse"
         
         List<DomainConfiguration> configsSortedbyDkLocale = d.getAllConfigurationsAsSortedList(dkLocale);
         names = extractNamesFromItems(dc7, dc3, dcDefault, dc2, dc1, dc8, dc5, dc6, dc4);
@@ -1243,7 +1246,8 @@ public class DomainTester extends DataModelTestCase {
         assertTrue("At 4. check Locale default value has change from " + origDefault.getLanguage() 
                 + " to " + Locale.getDefault().getLanguage(), Locale.getDefault().getLanguage() == origDefault.getLanguage());
 
-        // Now we check UK sorting, that sequence is "abe", "æble", "åse", "Åse", "cirkus", "defaultconfig", "gurli", "SvendBent", "ø"
+        // Now we check UK sorting, that sequence is "abe", "æble", "åse",
+        // "Åse", "cirkus", "defaultconfig", "gurli", "SvendBent", "ø"
         
         List<DomainConfiguration> configsSortedbyUkLocale = d.getAllConfigurationsAsSortedList(ukLocale);
         
@@ -1283,12 +1287,16 @@ public class DomainTester extends DataModelTestCase {
 
         
         // With java 5:
-        // Correct sequence in DK: "abePassword" "defaultpassword", "ditPassword", "HansPassword", "mitPassword", "æblePassword", "øPassword"
-        //                         "AAseassword", "åsePassword", "ÅsePassword"
+        // Correct sequence in DK: "abePassword" "defaultpassword",
+        // "ditPassword", "HansPassword", "mitPassword", "æblePassword",
+        // "øPassword"
+        // "AAseassword", "åsePassword", "ÅsePassword"
         
         // With java 6:
-        // Correct sequence in DK: "abePassword" "defaultpassword", "ditPassword", "HansPassword", "mitPassword", "æblePassword", "øPassword"
-        //                          "AAseassword", "ÅsePassword", "åsePassword"
+        // Correct sequence in DK: "abePassword" "defaultpassword",
+        // "ditPassword", "HansPassword", "mitPassword", "æblePassword",
+        // "øPassword"
+        // "AAseassword", "ÅsePassword", "åsePassword"
         
         List<Password> passswordsSortedByDkLocale = d.getAllPasswordsAsSortedList(dkLocale);
         
@@ -1301,8 +1309,9 @@ public class DomainTester extends DataModelTestCase {
         assertTrue("At 6. check Locale default value has change from " + origDefault.getLanguage() + " to " + Locale.getDefault().getLanguage(), Locale.getDefault().getLanguage() == origDefault.getLanguage());
 
         
-        // Correct sequence in UK: "AAseassword", "abePassword", "æblePassword", "åsePassword", "ÅsePassword", "defaultpassword",
-        //                         "ditPassword", "HansPassword", "mitPassword", "øPassword"
+        // Correct sequence in UK: "AAseassword", "abePassword", "æblePassword",
+        // "åsePassword", "ÅsePassword", "defaultpassword",
+        // "ditPassword", "HansPassword", "mitPassword", "øPassword"
 
         List<Password> passswordsSortedByUkLocale = d.getAllPasswordsAsSortedList(ukLocale);
         names = extractNamesFromItems(p5, p8, p9, p10, p7, p1, p3, p4, p2, p6);        

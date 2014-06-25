@@ -93,7 +93,9 @@ public class TemplateDBDAO extends TemplateDAO {
                 Clob clob = res.getClob(1);
                 orderTemplateReader = clob.getCharacterStream();
             } else {
-                orderTemplateReader = new StringReader(res.getString(1));
+                String string = res.getString(1);
+                //log.debug("clob=" + string);
+                orderTemplateReader = new StringReader(string);
             }
             SAXReader reader = new SAXReader();
             // TODO Check what happens on non-ascii

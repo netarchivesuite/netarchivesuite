@@ -61,8 +61,7 @@ public class TemplateDAOTesterAlternate extends TestCase {
                 "emptyhddb", TestInfo.TEMPDIR);
 
         if (c == null) {
-            fail("No connection to Database: "
-                    + TestInfo.EMPTYDBFILE.getAbsolutePath());
+            fail("No connection to Database: " + TestInfo.EMPTYDBFILE);
         }
 
         assertEquals("DBUrl wrong",

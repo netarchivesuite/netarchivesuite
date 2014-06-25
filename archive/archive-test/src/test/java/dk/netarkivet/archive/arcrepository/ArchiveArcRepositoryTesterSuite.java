@@ -48,7 +48,8 @@ public class ArchiveArcRepositoryTesterSuite {
         suite.addTestSuite(ArcRepositoryTesterGet.class);
         suite.addTestSuite(ArcRepositoryTesterLog.class);
         suite.addTestSuite(ArcRepositoryTesterBatch.class);
-        suite.addTestSuite(ArcRepositoryDatabaseTester.class);
+        // Disabled /tra - https://sbforge.org/jira/browse/NAS-2344 
+        //suite.addTestSuite(ArcRepositoryDatabaseTester.class);
     }
 
     public static void main(String[] args) {

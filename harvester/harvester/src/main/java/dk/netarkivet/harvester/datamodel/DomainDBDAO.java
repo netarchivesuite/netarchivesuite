@@ -1345,7 +1345,7 @@ public class DomainDBDAO extends DomainDAO {
         Connection c = HarvestDBConnection.get();
         try {
             return DBUtils.selectStringList(
-                    c, "SELECT name FROM domains WHERE name LIKE ?", sqlGlob);
+c, "SELECT name FROM domains WHERE name LIKE ? ORDER BY name", sqlGlob);
         } finally {
             HarvestDBConnection.release(c);
         }

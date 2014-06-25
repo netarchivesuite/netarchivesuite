@@ -25,6 +25,7 @@ package dk.netarkivet.archive.arcrepositoryadmin;
 
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.apache.commons.logging.Log;
@@ -238,6 +239,8 @@ public final class ArchiveDBConnection {
                 + dbSpec.getDriverClassName() + "'" + "\n";
             throw new IOFailure(message, e);
         }
+        
+        log.info("Using jdbc url: " + jdbcUrl);
         dataSource.setJdbcUrl(jdbcUrl);
 
         // Configure pool size
@@ -268,6 +271,10 @@ public final class ArchiveDBConnection {
                 Settings.getInt(ArchiveSettings.DB_POOL_MAX_STM));
         dataSource.setMaxStatementsPerConnection(
                 Settings.getInt(ArchiveSettings.DB_POOL_MAX_STM_PER_CONN));
+        
+        // FIXME: unreturnedConnectionTimeout for testing.
+        dataSource.setUnreturnedConnectionTimeout(10000);
+        dataSource.setDebugUnreturnedConnectionStackTraces(true);
 
         if (log.isInfoEnabled()) {
             String msg = 

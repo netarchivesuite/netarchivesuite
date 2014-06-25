@@ -69,8 +69,10 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
      * Test that we can get jobs created from HDs.
      *
      * @throws Exception
+     * 
+     * Disabled JIRA issue: https://sbforge.org/jira/browse/NAS-2342
      */
-    public void testGenerateJobs() throws Exception {
+    public void DISABLED_testGenerateJobs() throws Exception {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         TemplateDAO.getInstance();
 
@@ -122,6 +124,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
                 .size());
 
         cal.add(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.MINUTE, 1); // a bit more to avoid rounding errors /tra
         now = cal.getTime();
         generateJobs(now);
         jobs1 = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));

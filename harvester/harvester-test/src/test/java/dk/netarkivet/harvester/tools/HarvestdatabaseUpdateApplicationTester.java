@@ -92,13 +92,13 @@ public class HarvestdatabaseUpdateApplicationTester extends TestCase {
                 RememberNotifications.class.getName());
         HarvestDAOUtils.resetDAOs();
 
-        Connection c = DatabaseTestUtils.getHDDB(
-                new File(dk.netarkivet.harvester.datamodel.TestInfo.TOPDATADIR, dataFile + ".jar"),
+        Connection c = DatabaseTestUtils.getHDDB("/" + dk.netarkivet.harvester.datamodel.TestInfo.TOPDATADIR + "/"
+                + dataFile + ".sql",
                 dataFile,
                 dk.netarkivet.harvester.datamodel.TestInfo.TEMPDIR);
         if (c == null) {
             fail("No connection to Database: "
-                    + dk.netarkivet.harvester.datamodel.TestInfo.DBFILE.getAbsolutePath());
+ + dk.netarkivet.harvester.datamodel.TestInfo.DBFILE);
         }
     }
 }
