@@ -29,6 +29,46 @@
     <module>build-tools</module>
   </modules>
 
+  <licenses>
+    <license>
+      <name>LGPL v2.1</name>
+      <distribution>repo</distribution>
+      <url>http://www.gnu.org/licenses/lgpl-2.1.txt</url>
+    </license>
+  </licenses>
+
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://sbforge.org/jira/browse/NAS</url>
+  </issueManagement>
+
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>https://sbforge.org/jenkins/view/NetarchiveSuite/</url>
+  </ciManagement>
+
+  <description>The NetarchiveSuite is a complete web archiving software package developed from 2004 and onwards. The
+    primary function of the NetarchiveSuite is to plan, schedule and run web harvests of parts of the Internet. It
+    scales to a wide range of tasks, from small, thematic harvests (e.g. related to special events, or special
+    domains) to harvesting and archiving the content of an entire national domain. The NetarchiveSuite is built
+    around the Heritrix web crawler.</description>
+  <url>https://sbforge.org/display/NAS</url>
+
+  <organization>
+    <name>The Royal Danish Library, the Danish State and University Library,
+      the National Library of France and the Austrian National Library.</name>
+    <url>https://sbforge.org/display/BITMAG</url>
+  </organization>
+
+  <inceptionYear>2005</inceptionYear>
+
+  <scm>
+    <url>https://github.com/netarchivesuite/netarchivesuite</url>
+    <connection>scm:git:https://github.com/netarchivesuite/netarchivesuite.git</connection>
+    <developerConnection>scm:git:git@github.com:netarchivesuite/netarchivesuite.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -69,8 +109,14 @@
         <version>1.0.13</version>
       </dependency>
 
-      <!-- Too much hurting now. <dependency> <groupId>junit</groupId> <artifactId>junit</artifactId> <version>4.11</version> 
-        <scope>test</scope> </dependency> -->
+<!-- Too much hurting now.
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
+-->
     </dependencies>
   </dependencyManagement>
 
@@ -95,6 +141,11 @@
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>1.7</version>
         </plugin>
 
   <!--  mvn com.googlecode.maven-java-formatter-plugin:maven-java-formatter-plugin:format -->
@@ -126,6 +177,28 @@
           <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+          <canUpdateCopyright>true</canUpdateCopyright>
+          <canUpdateDescription>true</canUpdateDescription>
+          <generateBundle>true</generateBundle>
+          <failIfWarning>true</failIfWarning>
+          <licenseName>lgpl_v2_1</licenseName>
+          <useMissingFile>true</useMissingFile>
+          <includes>
+            <include>**/*.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/is/hi/bok/deduplicator/*.java</exclude>
+            <exclude>**/ExtractorJS.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 </project>
