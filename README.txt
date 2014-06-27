@@ -22,3 +22,8 @@ Open Window->Preferences->Validation and click the [Disable All] button to
 disable all validation.  [Ok] then rebuilds the project without errors.
 
 /tra 2014-05-09
+
+Eclipse configuration files moved to build-tools/src/main/resources so
+maven-java-formatter-plugin can run from the command line.
+
+/tra 2014-06-27
