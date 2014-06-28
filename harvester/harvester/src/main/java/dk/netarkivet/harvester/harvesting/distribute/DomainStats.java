@@ -22,10 +22,10 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.io.Serializable;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.StopReason;
-
-import java.io.Serializable;
 
 /** Tuple class to hold domain harvest statistics for a single domain. */
 
@@ -48,8 +48,7 @@ public class DomainStats implements Serializable {
      * @throws ArgumentNotValid If initObjectCount < 0, initByteCount < 0, or
      *          defaultStopReason is null.
      */
-    public DomainStats(long initObjectCount, long initByteCount,
-            StopReason defaultStopReason) {
+    public DomainStats(long initObjectCount, long initByteCount, StopReason defaultStopReason) {
         ArgumentNotValid.checkNotNegative(initObjectCount, "initObjectCount");
         ArgumentNotValid.checkNotNegative(initByteCount, "initByteCount");
         ArgumentNotValid.checkNotNull(defaultStopReason, "defaultStopReason");

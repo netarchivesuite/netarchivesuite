@@ -45,16 +45,12 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 @SuppressWarnings({ "serial"})
 public class HarvesterRegistrationRequest extends HarvesterMessage {
 
-    /**
-     * The harvest channel name to check.
-     */
+    /** The harvest channel name to check. */
     private final String harvestChannelName;
     
     private final String instanceId;
 
-    public HarvesterRegistrationRequest(
-    		final String harvestChannelName,
-    		final String instanceId) {
+    public HarvesterRegistrationRequest(final String harvestChannelName, final String instanceId) {
         super(HarvesterChannels.getHarvesterRegistrationRequestChannel(), Channels.getError());
         this.harvestChannelName = harvestChannelName;
         this.instanceId = instanceId;

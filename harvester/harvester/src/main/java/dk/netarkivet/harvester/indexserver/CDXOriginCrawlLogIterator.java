@@ -23,14 +23,15 @@
 
 package dk.netarkivet.harvester.indexserver;
 
+import is.hi.bok.deduplicator.CrawlDataItem;
+import is.hi.bok.deduplicator.CrawlLogIterator;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 
-import is.hi.bok.deduplicator.CrawlDataItem;
-import is.hi.bok.deduplicator.CrawlLogIterator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -42,15 +43,18 @@ import dk.netarkivet.common.utils.cdx.CDXRecord;
  * are read in parallel.
  */
 public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
-    /** The reader of the (sorted) CDX index. */
+
+    /** The log. */
+    private static final Logger log = LoggerFactory.getLogger(CDXOriginCrawlLogIterator.class);
+
+	/** The reader of the (sorted) CDX index. */
     protected BufferedReader reader;
+
     /** The last record we read from the reader.  We may overshoot on the
      * CDX reading if there are entries not in CDX, so we hang onto this
      * until the reading of the crawl.log catches up. */
     protected CDXRecord lastRecord;
-    /** The log. */
-    private Log log = LogFactory.getLog(
-            CDXOriginCrawlLogIterator.class.getName());
+
     /** The constant prefixed checksums in newer versions of Heritrix 
      * indicating the digest method.  The deduplicator currently doesn't use 
      * the equivalent prefix, so we need to strip it off (see bug #1004).
@@ -66,8 +70,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
      * @throws IOException If the underlying CrawlLogIterator fails, e.g.
      * due to missing files.
      */
-    public CDXOriginCrawlLogIterator(File source, BufferedReader cdx)
-            throws IOException {
+    public CDXOriginCrawlLogIterator(File source, BufferedReader cdx) throws IOException {
         super(source.getAbsolutePath());
         ArgumentNotValid.checkNotNull(cdx, "BufferedReader cdx");
         reader = cdx;
@@ -92,7 +95,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
      */
     protected CrawlDataItem parseLine(String line) throws IOFailure {
         CrawlDataItem item;
-        log.trace("Processing crawl-log line: " + line);
+        log.trace("Processing crawl-log line: {}", line);
         try {
             item = super.parseLine(line);
         } catch (RuntimeException e) {
@@ -101,11 +104,9 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
         }
 
         // Hack that works around bug #1004: sha1: prefix not accounted for
-        if (item != null && item.getContentDigest() != null 
-                && item.getContentDigest().toLowerCase().startsWith(
-                        SHA1_PREFIX)) {
-            item.setContentDigest(item.getContentDigest().substring(
-                    SHA1_PREFIX.length()));
+        if (item != null && item.getContentDigest() != null
+        		&& item.getContentDigest().toLowerCase().startsWith(SHA1_PREFIX)) {
+            item.setContentDigest(item.getContentDigest().substring(SHA1_PREFIX.length()));
         }
 
         //If a origin was found in the crawl log, we accept that as correct.
@@ -115,23 +116,17 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
             // and lastRecord.getURL() is lexicographically higher than
             // item.getURL(), indicating that there are no more matches.
             CDXRecord foundRecord = null;
-            while (lastRecord == null
-                    || lastRecord.getURL().compareTo(item.getURL()) <= 0) {
+            while (lastRecord == null || lastRecord.getURL().compareTo(item.getURL()) <= 0) {
                 // If the cdx URL is the one we are looking for, we have a
                 // potential origin.
-                if (lastRecord != null
-                    && lastRecord.getURL().equals(item.getURL())) {
+                if (lastRecord != null && lastRecord.getURL().equals(item.getURL())) {
                     // If this is our first potential origin, or if it is better
                     // than the one we currently consider best, we remember this
                     // entry. A better origin is defined as one with a later
                     // date than the current choice.
-                    if (foundRecord == null
-                        || lastRecord.getDate().compareTo(
-                                foundRecord.getDate()) > 0) {
+                    if (foundRecord == null || lastRecord.getDate().compareTo(foundRecord.getDate()) > 0) {
                         foundRecord = lastRecord;
-                      log.trace("Foundrecord set to '"
-                                + foundRecord.getArcfile() + ","
-                                + foundRecord.getOffset() + "'");  
+                      log.trace("Foundrecord set to '{},{}'", foundRecord.getArcfile(), foundRecord.getOffset());  
                     }
                 }
 
@@ -147,34 +142,30 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                     try {
                         lastRecord = new CDXRecord(record);
                     } catch (ArgumentNotValid e) {
-                        log.debug("Skipping over bad CDX line '" 
-                                + record + "'", e);
+                        log.debug("Skipping over bad CDX line '{}'", record, e);
                         continue;
                     }
-                    log.trace("lastrecord is '" + record + "'");
+                    log.trace("lastrecord is '{}'", record);
                 } catch (IOException e) {
                     throw new IOFailure("Error reading CDX record", e);
                 }
             }
             if (foundRecord == null) {
                 if(lastRecord == null) {
-                    log.trace("No matching CDX for URL '" + item.getURL() 
-                            + "'. No last CDX was found.");
+                    log.trace("No matching CDX for URL '{}'. No last CDX was found.", item.getURL());
                 } else {
-                    log.trace("No matching CDX for URL '" + item.getURL()
-                            + "'. Last CDX was for URL '" + lastRecord.getURL()
-                            + "'");
+                    log.trace("No matching CDX for URL '{}'. Last CDX was for URL '{}'",
+                    		item.getURL(), lastRecord.getURL());
                 }
                 
                 return null;
             }
 
-            String origin = foundRecord.getArcfile()
-            + "," + foundRecord.getOffset();
+            String origin = foundRecord.getArcfile() + "," + foundRecord.getOffset();
             item.setOrigin(origin);
-            log.trace("URL '" +  item.getURL() + "' combined with origin '"
-                    +  origin + "'.");
+            log.trace("URL '{}' combined with origin '{}'.", item.getURL(), origin);
         }
         return item;
     }
+
 }

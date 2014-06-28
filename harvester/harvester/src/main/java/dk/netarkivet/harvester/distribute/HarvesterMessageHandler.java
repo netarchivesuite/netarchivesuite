@@ -26,8 +26,8 @@ package dk.netarkivet.harvester.distribute;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
@@ -52,10 +52,9 @@ import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
  * @see HarvesterMessageVisitor
  *
  */
-public abstract class HarvesterMessageHandler
-        implements HarvesterMessageVisitor, MessageListener {
+public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor, MessageListener {
 
-    private final Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(HarvesterMessageHandler.class);
 
     /**
      * Creates a HarvesterMessageHandler object.
@@ -73,12 +72,12 @@ public abstract class HarvesterMessageHandler
     @Override
     public void onMessage(Message msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-        log.trace("Message received:\n" + msg.toString());
+        log.trace("Message received:\n{}", msg.toString());
         try {
             NetarkivetMessage unpackedMsg = JMSConnection.unpack(msg);
             ((HarvesterMessage)unpackedMsg).accept(this);
-        } catch (Throwable e) {
-            log.warn("Error processing message '" + msg + "'", e);
+        } catch (Throwable t) {
+            log.warn("Error processing message '{}'", msg, t);
         }
     }
 
@@ -88,9 +87,8 @@ public abstract class HarvesterMessageHandler
      * @throws PermissionDenied Always
      */
     private void deny(HarvesterMessage msg) {
-        throw new PermissionDenied("'" + this + "' provides no handling for "
-                + msg + " of type " + msg.getClass().getName()
-                + " and should not be invoked!");
+        throw new PermissionDenied("'" + this + "' provides no handling for " + msg
+        		+ " of type " + msg.getClass().getName() + " and should not be invoked!");
     }
 
     /**

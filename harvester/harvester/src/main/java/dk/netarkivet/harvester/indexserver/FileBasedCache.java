@@ -32,8 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.indexserver.Index;
@@ -47,13 +47,15 @@ import dk.netarkivet.common.utils.Settings;
  * placement of the cache directory and adding/getting files using the
  * subclasses' methods for generating filenames.
  * 
- * @param <I> The type of cache. 
+ * @param <T> The type of cache. 
  */
-public abstract class FileBasedCache<I> {
-    /** Cache directory. */
-    protected File cacheDir;
+public abstract class FileBasedCache<T> {
+
     /** Logger. */
-    private Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(FileBasedCache.class);
+
+	/** Cache directory. */
+    protected File cacheDir;
 
     /**
      * Creates a new FileBasedCache object.  This creates a directory under the
@@ -65,11 +67,8 @@ public abstract class FileBasedCache<I> {
      */
     public FileBasedCache(String cacheName) {
         ArgumentNotValid.checkNotNullOrEmpty(cacheName, "cacheName");
-        this.cacheDir = new File(new File(
-                Settings.get(CommonSettings.CACHE_DIR)),
-                                 cacheName).getAbsoluteFile();
-        log.info("Metadata cache for '" + cacheName + "' uses directory '"
-                 + getCacheDir().getAbsolutePath() + "'");
+        this.cacheDir = new File(new File(Settings.get(CommonSettings.CACHE_DIR)), cacheName).getAbsoluteFile();
+        log.info("Metadata cache for '{}' uses directory '{}'", cacheName, getCacheDir().getAbsolutePath());
         FileUtils.createDir(getCacheDir());
     }
 
@@ -93,7 +92,7 @@ public abstract class FileBasedCache<I> {
      * @return A file (possibly nonexistant or empty) that can cache the data
      *         for the id.
      */
-    public abstract File getCacheFile(I id);
+    public abstract File getCacheFile(T id);
 
     /**
      * Fill in actual data in the file in the cache.  This is the workhorse
@@ -108,7 +107,7 @@ public abstract class FileBasedCache<I> {
      *         not the same as id, the file will not contain cached data, and
      *         may not even exist.
      */
-    protected abstract I cacheData(I id);
+    protected abstract T cacheData(T id);
 
     /**
      * Ensure that a file containing the appropriate content exists for the ID.
@@ -135,26 +134,22 @@ public abstract class FileBasedCache<I> {
      *         the type parameter I does not allow subsets, or a subset of id if
      *         it does.  This subset should be immediately cacheable.
      */
-    public I cache(I id) {
+    public T cache(T id) {
         ArgumentNotValid.checkNotNull(id, "id");
         File cachedFile = getCacheFile(id);
         try {
-            File fileBehindLockFile
-                    = new File(cachedFile.getAbsolutePath() + ".working");
-            FileOutputStream lockFile = new FileOutputStream(
-                    fileBehindLockFile);
+            File fileBehindLockFile = new File(cachedFile.getAbsolutePath() + ".working");
+            FileOutputStream lockFile = new FileOutputStream(fileBehindLockFile);
             FileLock lock = null;
             // Make sure no other thread tries to create this
-            log.debug("Waiting to enter synchronization on " 
-                    + fileBehindLockFile.getAbsolutePath().intern());
+            // FIXME welcome to a memory leak, intern strings are never freed from memory again!
+            log.debug("Waiting to enter synchronization on {}", fileBehindLockFile.getAbsolutePath().intern());
             // FIXME Potential memory leak. intern() remembers all strings until JVM exits.
             synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
                 try {
                     // Make sure no other process tries to create this.
-                    log.debug("locking filechannel for file '"
-                              + fileBehindLockFile.getAbsolutePath()
-                              + "' (thread = "
-                              + Thread.currentThread().getName() + ")");
+                    log.debug("locking filechannel for file '{}' (thread = {})",
+                    		fileBehindLockFile.getAbsolutePath(), Thread.currentThread().getName());
                     try {
                         lock = lockFile.getChannel().lock();
                     } catch (OverlappingFileLockException e) {
@@ -169,16 +164,14 @@ public abstract class FileBasedCache<I> {
                     return cacheData(id);
                 } finally {
                     if (lock != null) {
-                        log.debug("release lock on filechannel "
-                                  + lockFile.getChannel());
+                        log.debug("release lock on filechannel {}", lockFile.getChannel());
                         lock.release();
                     }
                     lockFile.close();
                 }
             }
         } catch (IOException e) {
-            String errMsg = "Error obtaining lock for file '"
-                            + cachedFile.getAbsolutePath() + "'.";
+            String errMsg = "Error obtaining lock for file '" + cachedFile.getAbsolutePath() + "'.";
             log.warn(errMsg, e);
             throw new IOFailure(errMsg, e);
         }
@@ -196,10 +189,10 @@ public abstract class FileBasedCache<I> {
      *         If caching failed, even partially, for an ID, the entry for the
      *         ID doesn't exist.
      */
-    public Map<I, File> get(Set<I> ids) {
+    public Map<T, File> get(Set<T> ids) {
         ArgumentNotValid.checkNotNull(ids, "Set<I> ids");
-        Map<I, File> result = new HashMap<I, File>(ids.size());
-        for (I id : ids) {
+        Map<T, File> result = new HashMap<T, File>(ids.size());
+        for (T id : ids) {
             if (id.equals(cache(id))) {
                 result.put(id, getCacheFile(id));
             } else {
@@ -222,24 +215,20 @@ public abstract class FileBasedCache<I> {
      *
      * @see #cache for more information.
      */
-    public Index<I> getIndex(I id) {
-        I response = id;
-        I lastResponse = null;
+    public Index<T> getIndex(T id) {
+        T response = id;
+        T lastResponse = null;
         while (response != null && !response.equals(lastResponse)) {
             if (lastResponse != null) {
-                log.info("Requested index of type '"
-                         + this.getCacheDir().getName() + "' data '"
-                         + lastResponse
-                         + "' not available. Retrying with available subset '"
-                         + response + "'");
+                log.info("Requested index of type '{}' data '{}' not available. Retrying with available subset '{}'",
+                		this.getCacheDir().getName(), lastResponse, response);
             }
             lastResponse = response;
             response = cache(lastResponse);
         }
         File cacheFile = getCacheFile(response);
-        log.info("Generated index '" + cacheFile + "' of id '" + response
-                 + "', request was for '" + id + "'");
-        return new Index<I>(cacheFile, response);
+        log.info("Generated index '{}' of id '{}', request was for '{}'", cacheFile, response, id);
+        return new Index<T>(cacheFile, response);
     }
-}
 
+}

@@ -35,7 +35,8 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
  *
  */
 public class DedupCrawlLogIndexCache extends CrawlLogIndexCache {
-    /**
+
+	/**
      * Constructor.
      * Calls the constructor of the inherited class with the correct values.
      */
@@ -45,8 +46,7 @@ public class DedupCrawlLogIndexCache extends CrawlLogIndexCache {
 
     @Override
     public void requestIndex(Set<Long> jobSet, Long harvestId) {
-        throw new NotImplementedException(
-        "This feature is not implemented for the cdxIndexCache");        
+        throw new NotImplementedException("This feature is not implemented for the cdxIndexCache");        
     }
-}
 
+}

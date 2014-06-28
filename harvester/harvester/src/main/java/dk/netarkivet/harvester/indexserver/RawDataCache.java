@@ -32,7 +32,8 @@ import java.util.Set;
  * job IDs.
  */
 public interface RawDataCache {
-    /** Cache the raw data associated with the given ID as a file, or null if
+
+	/** Cache the raw data associated with the given ID as a file, or null if
      * we could not find any such data.  The data can be found in the file
      * specified by getCacheFile(ID), if this call is successfull.
      *
@@ -50,4 +51,5 @@ public interface RawDataCache {
      * if data could not be found.
      */
     Map<Long, File> get(Set<Long> ids);
+
 }

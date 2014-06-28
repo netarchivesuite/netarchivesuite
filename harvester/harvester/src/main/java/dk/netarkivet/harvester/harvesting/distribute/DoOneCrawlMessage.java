@@ -47,9 +47,7 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
     /** the Job to crawl.    */
     private Job submittedJob;
 
-    /**
-     * The original harvest info.
-     */
+    /** The original harvest info. */
     private final HarvestDefinitionInfo origHarvestInfo;
 
     /** Extra metadata associated with the crawl-job. */
@@ -63,11 +61,8 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
      * @param metadata A list of job-metadata
      * @throws ArgumentNotValid when submittedJob is null
      */
-    public DoOneCrawlMessage(
-            Job submittedJob, ChannelID to,
-            HarvestDefinitionInfo harvestInfo,
-            List<MetadataEntry> metadata)
-    throws ArgumentNotValid {
+    public DoOneCrawlMessage(Job submittedJob, ChannelID to, HarvestDefinitionInfo harvestInfo,
+    		List<MetadataEntry> metadata) throws ArgumentNotValid {
         super(to, Channels.getError());
         ArgumentNotValid.checkNotNull(submittedJob, "submittedJob");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
@@ -112,9 +107,7 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
      * @return a String that represents the message - only for debugging !
      */
     public String toString() {
-        return super.toString()
-               + " Job: " + submittedJob
-               + ", metadata: " +  metadata;
+        return super.toString() + " Job: " + submittedJob + ", metadata: " +  metadata;
     }
 
     /**
@@ -124,8 +117,7 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
      * class.
      * @throws IOException On I/O trouble reading the object.
      */
-    private void readObject(ObjectInputStream s)
-            throws ClassNotFoundException, IOException {
+    private void readObject(ObjectInputStream s) throws ClassNotFoundException, IOException {
         s.defaultReadObject();
     }
 

@@ -27,8 +27,8 @@ import is.hi.bok.deduplicator.DigestIndexer;
 import java.io.File;
 import java.util.concurrent.Callable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -39,8 +39,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class DigestIndexerWorker implements Callable<Boolean> {
 
     /** The log. */
-    private static Log log
-            = LogFactory.getLog(DigestIndexerWorker.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(DigestIndexerWorker.class);
+
     /** The full path to the index. */
     private String indexlocation;
     /** The ID of the job which logfiles are being indexed. */
@@ -65,13 +65,12 @@ public class DigestIndexerWorker implements Callable<Boolean> {
      * @param indexingOptions The options for the indexing process.
      * @param taskID string defining this task
      */
-    public DigestIndexerWorker(String indexpath, Long jobId, File crawllogfile, 
-            File cdxFile, DigestOptions indexingOptions, String taskID) {
+    public DigestIndexerWorker(String indexpath, Long jobId, File crawllogfile, File cdxFile,
+    		DigestOptions indexingOptions, String taskID) {
         ArgumentNotValid.checkNotNullOrEmpty(indexpath, "String indexpath");
         ArgumentNotValid.checkNotNull(crawllogfile, "File crawllogfile");
         ArgumentNotValid.checkNotNull(cdxFile, "File cdxFile");
-        ArgumentNotValid.checkNotNull(indexingOptions, 
-                "DigestOptions indexingOptions");
+        ArgumentNotValid.checkNotNull(indexingOptions, "DigestOptions indexingOptions");
         ArgumentNotValid.checkNotNullOrEmpty(taskID, "String taskID");
         this.indexlocation = indexpath;
         this.jobId = jobId;
@@ -89,24 +88,20 @@ public class DigestIndexerWorker implements Callable<Boolean> {
     @Override
     public Boolean call() {
         try {
-            log.info("Starting subindexing task (" + taskID + ") of data from job "
-                    + this.jobId);
-            DigestIndexer localindexer
-                = CrawlLogIndexCache.createStandardIndexer(indexlocation);
-            CrawlLogIndexCache.indexFile(jobId, crawlLog, cdxfile, localindexer,
-                    indexingOptions);
-            
-            log.info("Completed subindexing task (" + taskID + ") of data from job "
-                    + this.jobId + " w/ " + localindexer.getIndex().numDocs()        
-                    + " index-entries)");
-            
+            log.info("Starting subindexing task ({}) of data from job {}", taskID, this.jobId);
+            DigestIndexer localindexer = CrawlLogIndexCache.createStandardIndexer(indexlocation);
+            CrawlLogIndexCache.indexFile(jobId, crawlLog, cdxfile, localindexer, indexingOptions);
+
+            log.info("Completed subindexing task ({}) of data from job {} w/ {} index-entries)",
+            		taskID, this.jobId, localindexer.getIndex().numDocs());
+
             localindexer.close();
-            
-        } catch (Throwable e) {
+        } catch (Throwable t) {
             successful = false;
-            log.warn("Indexing for job w/ id " + jobId + " failed.", e);
+            log.warn("Indexing for job w/ id {} failed.", jobId, t);
         }
         return successful;
  
     }
+
 }

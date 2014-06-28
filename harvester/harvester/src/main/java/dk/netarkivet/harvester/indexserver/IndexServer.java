@@ -41,7 +41,8 @@ import java.util.Set;
  * making up a Lucene index of all files.
  * */
 public class IndexServer implements CleanupIF{
-    /** The remote server that hands us indexes. */
+
+	/** The remote server that hands us indexes. */
     private IndexRequestServerInterface remoteServer;
     /** The singleton instance of this class. */
     private static IndexServer instance;
@@ -49,10 +50,8 @@ public class IndexServer implements CleanupIF{
     /** Instantiates the two handlers, and starts listening for requests. */
     protected IndexServer() {
         FileBasedCache<Set<Long>> cdxCache = new CDXIndexCache();
-        FileBasedCache<Set<Long>> dedupCrawlLogCache
-                = new DedupCrawlLogIndexCache();
-        FileBasedCache<Set<Long>> fullCrawlLogCache
-                = new FullCrawlLogIndexCache();
+        FileBasedCache<Set<Long>> dedupCrawlLogCache = new DedupCrawlLogIndexCache();
+        FileBasedCache<Set<Long>> fullCrawlLogCache = new FullCrawlLogIndexCache();
         //prompt the empty indices to pre-generated
         Set<Long> emptySet = new HashSet<Long>();
         cdxCache.getIndex(emptySet);
@@ -62,10 +61,8 @@ public class IndexServer implements CleanupIF{
         remoteServer = IndexRequestServerFactory.getInstance();
 
         remoteServer.setHandler(RequestType.CDX, cdxCache);
-        remoteServer.setHandler(RequestType.DEDUP_CRAWL_LOG,
-                dedupCrawlLogCache);
-        remoteServer.setHandler(RequestType.FULL_CRAWL_LOG,
-                fullCrawlLogCache);
+        remoteServer.setHandler(RequestType.DEDUP_CRAWL_LOG, dedupCrawlLogCache);
+        remoteServer.setHandler(RequestType.FULL_CRAWL_LOG, fullCrawlLogCache);
         remoteServer.start();
     }
 
@@ -86,4 +83,5 @@ public class IndexServer implements CleanupIF{
         remoteServer.close();
         instance = null;
     }
+
 }

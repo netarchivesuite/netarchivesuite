@@ -39,17 +39,12 @@ import dk.netarkivet.harvester.scheduler.HarvestSchedulerMonitorServer;
  * should be freed.
  */
 @SuppressWarnings({ "serial"})
-public class JobEndedMessage extends HarvesterMessage
-implements Serializable {
+public class JobEndedMessage extends HarvesterMessage implements Serializable {
 
-    /**
-     * The associated job's ID.
-     */
+    /** The associated job's ID. */
     private final long jobId;
 
-    /**
-     * The associated job's current status.
-     */
+    /** The associated job's current status. */
     private final JobStatus jobStatus;
 
     /**
@@ -58,15 +53,12 @@ implements Serializable {
      * @param jobStatus the job's current status.
      */
     public JobEndedMessage(long jobId, JobStatus jobStatus) {
-        super(HarvestMonitor.HARVEST_MONITOR_CHANNEL_ID,
-                Channels.getError());
+        super(HarvestMonitor.HARVEST_MONITOR_CHANNEL_ID, Channels.getError());
         ArgumentNotValid.checkNotNull(jobStatus, "jobStatus");
         this.jobId = jobId;
-        if (! (JobStatus.DONE.equals(jobStatus)
-                || JobStatus.FAILED.equals(jobStatus))) {
-            throw new ArgumentNotValid("Got status '" + jobStatus.name()
-                    + "', expected either '" + JobStatus.DONE.name()
-                    + "' or '" + JobStatus.FAILED.name() + "'");
+        if (! (JobStatus.DONE.equals(jobStatus) || JobStatus.FAILED.equals(jobStatus))) {
+            throw new ArgumentNotValid("Got status '" + jobStatus.name() + "', expected either '"
+            		+ JobStatus.DONE.name() + "' or '" + JobStatus.FAILED.name() + "'");
         }
         this.jobStatus = jobStatus;
     }

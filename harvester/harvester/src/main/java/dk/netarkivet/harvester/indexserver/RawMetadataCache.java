@@ -25,8 +25,8 @@ package dk.netarkivet.harvester.indexserver;
 import java.io.File;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -46,23 +46,22 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * mime-type of ARC entries for the kind of metadata we want.
  *
  */
-public class RawMetadataCache extends FileBasedCache<Long>
-        implements RawDataCache {
-    /** A regular expression object that matches everything. */
+public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCache {
+
+    /** The logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(RawMetadataCache.class);
+
+	/** A regular expression object that matches everything. */
     public static final Pattern MATCH_ALL_PATTERN = Pattern.compile(".*");
     /** The prefix (cache name) that this cache uses. */
     private final String prefix;
     /** The arc repository interface.
      * This does not need to be closed, it is a singleton.
      */
-    private ViewerArcRepositoryClient arcrep
-        = ArcRepositoryClientFactory.getViewerInstance();
+    private ViewerArcRepositoryClient arcrep = ArcRepositoryClientFactory.getViewerInstance();
 
     /** The job that we use to dig through metadata files. */
     private final ArchiveBatchJob job;
-
-    /** The logger for this class. */
-    private final Log log = LogFactory.getLog(getClass());
 
     /** Create a new RawMetadataCache.  For a given job ID, this will fetch
      * and cache selected content from metadata files
@@ -79,8 +78,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
      * @param mimeMatcher A pattern for matching mime-types of the desired
      * entries.  If null, a .* pattern will be used.
      */
-    public RawMetadataCache(String prefix, Pattern urlMatcher,
-                            Pattern mimeMatcher) {
+    public RawMetadataCache(String prefix, Pattern urlMatcher, Pattern mimeMatcher) {
         super(prefix);
         this.prefix = prefix;
         Pattern urlMatcher1;
@@ -95,9 +93,8 @@ public class RawMetadataCache extends FileBasedCache<Long>
         } else {
             mimeMatcher1 = MATCH_ALL_PATTERN;
         }
-        log.info("Metadata cache for '" + prefix + "' is fetching"
-                 + " metadata with urls matching '" + urlMatcher1.toString()
-                 + "' and mimetype matching '" + mimeMatcher1 + "'");
+        log.info("Metadata cache for '{}' is fetching metadata with urls matching '{}' and mimetype matching '{}'",
+        		prefix, urlMatcher1.toString(), mimeMatcher1);
         job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
     }
 
@@ -123,65 +120,50 @@ public class RawMetadataCache extends FileBasedCache<Long>
      */
     protected Long cacheData(Long id) {
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);
-        log.debug("Extract using a batchjob of type '"
-                + job.getClass().getName()
-                + "' cachedata from files matching '"
-                + id + Constants.METADATA_FILE_PATTERN_SUFFIX
-                + "' on replica '" 
-                + replicaUsed + "'");
-        job.processOnlyFilesMatching(id
-                + Constants.METADATA_FILE_PATTERN_SUFFIX);
+        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}{}' on replica '{}'",
+        		job.getClass().getName(), id, Constants.METADATA_FILE_PATTERN_SUFFIX, replicaUsed);
+        job.processOnlyFilesMatching(id + Constants.METADATA_FILE_PATTERN_SUFFIX);
         BatchStatus b = arcrep.batch(job, replicaUsed);
         
         // This check ensures that we got data from at least one file.
         // Mind you, the data may be empty, but at least one file was
         // successfully processed.
-        if (b.hasResultFile()
-                && b.getNoOfFilesProcessed() > b.getFilesFailed().size()) {
+        if (b.hasResultFile() && b.getNoOfFilesProcessed() > b.getFilesFailed().size()) {
             File cacheFileName = getCacheFile(id);
             b.copyResults(cacheFileName);
-            log.debug("Cached data for job '" + id
-                    + "' for '" + prefix + "'");
+            log.debug("Cached data for job '{}' for '{}'", id, prefix);
             return id;
         } else {
             // Look for data in other bitarchive replicas, if this option is enabled
-            if (!Settings.getBoolean(
-                    HarvesterSettings.INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS)) {
-                log.info("No data found for job '" + id + "' for '" + prefix 
-                        + "' in local bitarchive '" + replicaUsed + "'. ");
+            if (!Settings.getBoolean(HarvesterSettings.INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS)) {
+                log.info("No data found for job '{}' for '{}' in local bitarchive '{}'. ", id, prefix, replicaUsed);
                 return null;
             } else {
-                log.info("No data found for job '" + id + "' for '" + prefix 
-                    + "' in local bitarchive '" + replicaUsed + "'. "
-                    + "Trying other replicas.");
+                log.info("No data found for job '{}' for '{}' in local bitarchive '{}'. Trying other replicas.",
+                		id, prefix, replicaUsed);
                 for(Replica rep : Replica.getKnown()) {
                     // Only use different bitarchive replicas than replicaUsed
-                    if(rep.getType().equals(ReplicaType.BITARCHIVE) 
-                        && !rep.getId().equals(replicaUsed)) {
-                        log.debug("Trying to retrieve index data for job '"
-                            + id + "' from '" + rep.getId() + "'.");
+                    if(rep.getType().equals(ReplicaType.BITARCHIVE) && !rep.getId().equals(replicaUsed)) {
+                        log.debug("Trying to retrieve index data for job '{}' from '{}'.", id, rep.getId());
                         b = arcrep.batch(job, rep.getId());
                     
                         // Perform same check as for the batchresults from
                         // the default replica.
-                        if (b.hasResultFile() && (b.getNoOfFilesProcessed() 
-                            > b.getFilesFailed().size())) {
+                        if (b.hasResultFile() && (b.getNoOfFilesProcessed() > b.getFilesFailed().size())) {
                             File cacheFileName = getCacheFile(id);
                             b.copyResults(cacheFileName);
-                            log.info("Cached data for job '" + id
-                                + "' for '" + prefix + "' from '" + rep 
-                                + " instead of " + replicaUsed);
+                            log.info("Cached data for job '{}' for '{}' from '{}' instead of '{}'",
+                            		id, prefix, rep, replicaUsed);
                             return id;
                         } else {
-                            log.trace("No data found for job '" + id + "' for '" 
-                                + prefix + "' in bitarchive '" + rep + "'. ");
+                            log.trace("No data found for job '{}' for '{}' in bitarchive '{}'. ", id, prefix, rep);
                         }
                     }
                 }
-                log.info("No data found for job '" + id + "' for '" + prefix 
-                        + "' in all bitarchive replicas");
+                log.info("No data found for job '{}' for '{}' in all bitarchive replicas", id, prefix);
                 return null;
             }
         }
     }
+
 }

@@ -29,8 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -47,18 +47,15 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
  * Message for requesting and index from the index server, and for giving back
  * the reply.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class IndexRequestMessage extends HarvesterMessage {
-    /** The log.*/
-    private transient Log log
-            = LogFactory.getLog(IndexRequestMessage.class.getName());
-    /**
-     * List of jobs for which an index is requested. Should always be set.
-     */
+
+	/** The log.*/
+    private transient static final Logger log = LoggerFactory.getLogger(IndexRequestMessage.class);
+
+    /** List of jobs for which an index is requested. Should always be set. */
     private Set<Long> requestedJobs;
-    /**
-     * Type of index is requested. Should always be set.
-     */
+    /** Type of index is requested. Should always be set. */
     private RequestType requestType;
     /**
      * List of jobs for which an index _can_ be generated. Should only be set on
@@ -97,7 +94,6 @@ public class IndexRequestMessage extends HarvesterMessage {
      * to use for the RemoteFile. Only applicable when using FTPRemoteFile.
      */
     private RemoteFileSettings optionalConnectionSettings;
-    
 
     /**
      * Generate an index request message. Receiver is always the index server
@@ -110,8 +106,7 @@ public class IndexRequestMessage extends HarvesterMessage {
      * 
      * @throws ArgumentNotValid if any argument is null.
      */
-    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, 
-            RemoteFileSettings ftpconnectionInfo) 
+    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, RemoteFileSettings ftpconnectionInfo) 
             throws ArgumentNotValid {
         super(Channels.getTheIndexServer(), Channels.getThisIndexClient());
         ArgumentNotValid.checkNotNull(requestType, "RequestType requestType");
@@ -132,9 +127,8 @@ public class IndexRequestMessage extends HarvesterMessage {
      * @param returnIndex If true, include the index in the reply.
      * @param harvestId The harvestId needing this index for its jobs
      */
-    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, 
-            ChannelID replyTo,
-            boolean returnIndex, Long harvestId)  {
+    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, ChannelID replyTo, boolean returnIndex,
+    		Long harvestId)  {
        super(Channels.getTheIndexServer(), replyTo);
        ArgumentNotValid.checkNotNull(requestType, "RequestType requestType");
        ArgumentNotValid.checkNotNull(jobSet, "Set<Long> jobSet");
@@ -151,7 +145,6 @@ public class IndexRequestMessage extends HarvesterMessage {
     public RemoteFileSettings getRemoteFileSettings() {
         return this.optionalConnectionSettings;
     }
-    
     
     /**
      * 
@@ -235,8 +228,7 @@ public class IndexRequestMessage extends HarvesterMessage {
     public RemoteFile getResultFile() throws IllegalState {
         if (resultFiles != null) {
             if (isIndexIsStoredInDirectory()) {
-                throw new IllegalState("This message carries multiple result "
-                        + "files: " + resultFiles);
+                throw new IllegalState("This message carries multiple result files: " + resultFiles);
             }
             return resultFiles.get(0);
         } else {
@@ -253,8 +245,7 @@ public class IndexRequestMessage extends HarvesterMessage {
     public List<RemoteFile> getResultFiles() throws IllegalState {
         if (resultFiles != null) {
             if (!isIndexIsStoredInDirectory()) {
-                throw new IllegalState("This message carries a single result "
-                        + "file: '" + resultFiles.get(0) + "'");
+                throw new IllegalState("This message carries a single result file: '" + resultFiles.get(0) + "'");
             }
             return resultFiles;
         } else {
@@ -270,12 +261,10 @@ public class IndexRequestMessage extends HarvesterMessage {
      * @throws ArgumentNotValid on null argument.
      * @throws IllegalState if the result file has already been set.
      */
-    public void setResultFile(RemoteFile resultFile) throws IllegalState, 
-            ArgumentNotValid {
+    public void setResultFile(RemoteFile resultFile) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(resultFile, "RemoteFile resultFile");
         if (this.resultFiles != null) {
-            throw new IllegalState(this + " already has result files "
-                    + this.resultFiles + " set.");
+            throw new IllegalState(this + " already has result files " + this.resultFiles + " set.");
         }
         resultFiles = new ArrayList<RemoteFile>(1);
         resultFiles.add(resultFile);
@@ -289,22 +278,17 @@ public class IndexRequestMessage extends HarvesterMessage {
      * @throws ArgumentNotValid on null argument or null element in list.
      * @throws IllegalState if the result files have already been set.
      * */
-    public void setResultFiles(List<RemoteFile> resultFiles) 
-            throws IllegalState, ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(resultFiles,
-                "List<RemoteFile> resultFiles");
+    public void setResultFiles(List<RemoteFile> resultFiles) throws IllegalState, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(resultFiles, "List<RemoteFile> resultFiles");
         for (RemoteFile rf : resultFiles) {
             if (rf == null) {
-                throw new ArgumentNotValid("List of result files contains"
-                        + " a null element: " + resultFiles);
+                throw new ArgumentNotValid("List of result files contains a null element: " + resultFiles);
             }
         }
-                if (this.resultFiles != null) {
-            throw new IllegalState(this + " already has result files "
-                    + this.resultFiles + " set.");
+        if (this.resultFiles != null) {
+        	throw new IllegalState(this + " already has result files " + this.resultFiles + " set.");
         }
-        log.debug("Sending result containing "
-                + resultFiles.size() + " files");
+        log.debug("Sending result containing {} files", resultFiles.size());
         this.resultFiles = resultFiles;
         indexIsStoredInDirectory = true;
     }
@@ -330,7 +314,6 @@ public class IndexRequestMessage extends HarvesterMessage {
         } catch (Exception e) {
             throw new IOFailure("Unexpected error during deserialization", e);
         }
-        log = LogFactory.getLog(getClass().getName());
     }
 
     /**

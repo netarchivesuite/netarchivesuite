@@ -27,8 +27,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -39,8 +39,10 @@ import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 /** A batch job that extracts metadata. */
 @SuppressWarnings({ "serial"})
 public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
-    /** The logger for this class. */
-    private final Log log = LogFactory.getLog(getClass());
+
+	/** The logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(GetMetadataArchiveBatchJob.class);
+
     /** The pattern for matching the urls.*/
     private final Pattern urlMatcher;
     /** The pattern for the mimetype matcher.*/
@@ -81,8 +83,7 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
      * the arc record.
      */
     @Override
-    public void processRecord(ArchiveRecordBase record, OutputStream os) 
-            throws IOFailure {
+    public void processRecord(ArchiveRecordBase record, OutputStream os) throws IOFailure {
         ArchiveHeaderBase header = record.getHeader();
         InputStream in = record.getInputStream();
         
@@ -90,19 +91,16 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
             return;
         }
         log.info(header.getUrl() + " - " + header.getMimetype());
-        if (urlMatcher.matcher(header.getUrl()).matches()
-                && mimeMatcher.matcher(
-                        header.getMimetype()).matches()) {
+        if (urlMatcher.matcher(header.getUrl()).matches() && mimeMatcher.matcher(header.getMimetype()).matches()) {
             try {
                 byte[] buf = new byte[Constants.IO_BUFFER_SIZE];
                 int bytesRead;
                 while ((bytesRead = in.read(buf)) != -1) {
-                    os.write(buf, 0, bytesRead);
+                	os.write(buf, 0, bytesRead);
                 }
             } catch (IOException e) {
                 // TODO is getOffset() correct using the IA archiveReader?
-                String message = "Error writing body of Archive entry '"
-                        + header.getArchiveFile() + "' offset '"
+                String message = "Error writing body of Archive entry '" + header.getArchiveFile() + "' offset '"
                         + header.getOffset() + "'";
                 throw new IOFailure(message, e);
             }
@@ -133,7 +131,7 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
      */
     @Override
     public String toString() {
-        return getClass().getName() + ", with arguments: URLMatcher = " 
-        + urlMatcher + ", mimeMatcher = " + mimeMatcher;
+        return getClass().getName() + ", with arguments: URLMatcher = " + urlMatcher + ", mimeMatcher = " + mimeMatcher;
     }
+
 }

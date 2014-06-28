@@ -31,7 +31,7 @@ public class IndexingState {
     
     /** The Id of the job being indexed. */
     private final Long jobIdentifier;
-    /**  The full path to the index. */
+    /** The full path to the index. */
     private final String index;
     /** The result object for the indexing task. */
     private final Future<Boolean> resultObject;
@@ -42,11 +42,9 @@ public class IndexingState {
      * @param indexingpath The full path to the index.
      * @param result The result object for the indexing task
      */
-    public IndexingState(Long jobId, String indexingpath, 
-            Future<Boolean> result) {
+    public IndexingState(Long jobId, String indexingpath, Future<Boolean> result) {
         ArgumentNotValid.checkNotNull(jobId, "Long jobId");
-        ArgumentNotValid.checkNotNullOrEmpty(
-                indexingpath, "String indexingpath");
+        ArgumentNotValid.checkNotNullOrEmpty(indexingpath, "String indexingpath");
         ArgumentNotValid.checkNotNull(result, "Future<Boolean> result");
         this.jobIdentifier = jobId;
         this.index = indexingpath;
@@ -78,8 +76,8 @@ public class IndexingState {
     }
     
     public String toString() {
-        return "IndexingState for JobID #" + jobIdentifier 
-                + ": (index = " + index + ", IndexingDone = " 
-                + resultObject.isDone() + ")";
+        return "IndexingState for JobID #" + jobIdentifier + ": (index = " + index + ", IndexingDone = "
+        		+ resultObject.isDone() + ")";
     }
+
 }

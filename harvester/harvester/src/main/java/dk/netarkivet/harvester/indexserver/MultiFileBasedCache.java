@@ -36,8 +36,7 @@ import dk.netarkivet.common.utils.FileUtils;
  *
  * @param <T> The cache type, must extend java.lang.Comparable.
  */
-public abstract class MultiFileBasedCache<T extends Comparable<T>>
-        extends FileBasedCache<Set<T>> {
+public abstract class MultiFileBasedCache<T extends Comparable<T>> extends FileBasedCache<Set<T>> {
 
     /**
      * Creates a new FileBasedCache object.  This creates a directory under the
@@ -63,4 +62,5 @@ public abstract class MultiFileBasedCache<T extends Comparable<T>>
         String fileName = FileUtils.generateFileNameFromSet(ids, "-cache");
         return new File(getCacheDir(), fileName);
     }
+
 }

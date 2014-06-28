@@ -33,15 +33,14 @@ import java.io.InputStreamReader;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.harvester.indexserver.CDXOriginCrawlLogIterator;
 
 /**
  * Some Lucene Utilities used in some of our tests.
  */
 public class LuceneUtils {
 
-    static final File ORIGINALS_DIR =
-        new File("tests/dk/netarkivet/harvester/harvesting/data/launcher/originals");
+	// FIXME WTF?!
+    static final File ORIGINALS_DIR = new File("tests/dk/netarkivet/harvester/harvesting/data/launcher/originals");
     static final File EMPTY_CRAWLLOG_FILE = new File(ORIGINALS_DIR, "empty_crawl.log");
 
     /**
@@ -53,9 +52,8 @@ public class LuceneUtils {
     public static void makeDummyIndex(File indexLocation) throws IOFailure  {
         try {
         // use empty crawl.log to generate default lucene index
-        generateIndex(EMPTY_CRAWLLOG_FILE, new BufferedReader
-                (new InputStreamReader(new ByteArrayInputStream(new byte[0]))),
-                indexLocation);
+        generateIndex(EMPTY_CRAWLLOG_FILE, new BufferedReader(new InputStreamReader(
+        		new ByteArrayInputStream(new byte[0]))), indexLocation);
         } catch (IOFailure e) {
             throw new IOFailure("Unable to create dummy lucene index", e);
         }
@@ -67,14 +65,13 @@ public class LuceneUtils {
      * @param cdxreader some CDXReader
      * @param indexDir Destinationdirector for the Lucene index.
      */
-    public static void generateIndex(File CrawlLog, BufferedReader cdxreader,
-                                     File indexDir) {
+    public static void generateIndex(File CrawlLog, BufferedReader cdxreader, File indexDir) {
         ArgumentNotValid.checkNotNull(CrawlLog, "File CrawlLog");
         ArgumentNotValid.checkNotNull(cdxreader, "BufferedReader cdxreader");
         ArgumentNotValid.checkNotNull(indexDir, "File indexDir");
-        ArgumentNotValid.checkTrue(CrawlLog.exists(), "The crawl log '"
-                + CrawlLog.getAbsolutePath() + "' does not exist.");
-        
+        ArgumentNotValid.checkTrue(CrawlLog.exists(), "The crawl log '" + CrawlLog.getAbsolutePath()
+        		+ "' does not exist.");
+
         try {
             // Setup Lucene for indexing our crawllogs
             String indexLocation = indexDir.getAbsolutePath();
@@ -85,13 +82,8 @@ public class LuceneUtils {
             boolean includeTimestamp = true;     // used to be 'timestamp' setting
             boolean includeEtag = true;           // used to be 'etag' setting
             boolean addToExistingIndex = false;
-            DigestIndexer indexer =
-                new DigestIndexer(indexLocation,
-                        indexingMode,
-                        includeNormalizedURL,
-                        includeTimestamp,
-                        includeEtag,
-                        addToExistingIndex);
+            DigestIndexer indexer = new DigestIndexer(indexLocation, indexingMode, includeNormalizedURL,
+            		includeTimestamp, includeEtag, addToExistingIndex);
 
             /** The blacklist set to true results in docs matching the mimefilter being ignored. */
             boolean blacklist = true;
@@ -110,8 +102,8 @@ public class LuceneUtils {
                 }
             indexer.close();
         } catch (IOException e) {
-            throw new IOFailure("Error setting up craw.log index framework for "
-                    + indexDir, e);
+            throw new IOFailure("Error setting up craw.log index framework for " + indexDir, e);
         }
     }
+
 }

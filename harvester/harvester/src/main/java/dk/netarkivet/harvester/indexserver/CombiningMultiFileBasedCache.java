@@ -44,8 +44,7 @@ import dk.netarkivet.common.utils.FileUtils;
  * @param <T> A comparable instance. Must inherit the 
  * java.lang.Comparable interface.
  */
-public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>>
-        extends MultiFileBasedCache<T> {
+public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> extends MultiFileBasedCache<T> {
 
     /** The raw data cache that this cache gets data from. */
     protected FileBasedCache<T> rawcache;
@@ -55,8 +54,7 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>>
      * @param name The name of the cache
      * @param rawcache The underlying cache of single files.
      */
-    protected CombiningMultiFileBasedCache(String name,
-            FileBasedCache<T> rawcache) {
+    protected CombiningMultiFileBasedCache(String name, FileBasedCache<T> rawcache) {
         super(name);
         this.rawcache = rawcache;
     }
@@ -110,4 +108,5 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>>
      * data cache.  The map must not contain any null values.
      */
     protected abstract void combine(Map<T, File> filesFound);
+
 }

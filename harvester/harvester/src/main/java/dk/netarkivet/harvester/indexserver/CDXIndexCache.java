@@ -51,13 +51,13 @@ import dk.netarkivet.common.utils.FileUtils;
  * as that one is optimized for handling large, disk-based sorts.
  *
  */
-public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
-        implements JobIndexCache {
-    /** A suffix used by the sortFile method in the sorting process. */
+public class CDXIndexCache extends CombiningMultiFileBasedCache<Long> implements JobIndexCache {
+
+	/** A suffix used by the sortFile method in the sorting process. */
     private static final String WORK_SUFFIX = ".unsorted";
 
-    /** Creates a new cache for CDX index files.
-     *
+    /**
+     * Creates a new cache for CDX index files.
      */
     public CDXIndexCache() {
         super("cdxindex", new CDXDataCache());
@@ -85,8 +85,7 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
      * @param files The files to concatenate.
      * @param resultFile The file where the files are concatenated into.
      */
-    private static void concatenateFiles(Collection<File> files,
-            File resultFile) {
+    private static void concatenateFiles(Collection<File> files, File resultFile) {
         try {
             BufferedWriter out = null;
             try {
@@ -112,14 +111,13 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
                 }
             }
         } catch (IOException e) {
-            throw new IOFailure("Couldn't combine indexes for " + files.size()
-                    + " jobs into " + resultFile, e);
+            throw new IOFailure("Couldn't combine indexes for " + files.size() + " jobs into " + resultFile, e);
         }
     }
 
     @Override
     public void requestIndex(Set<Long> jobSet, Long harvestId) {
-        throw new NotImplementedException(
-                "This feature is not implemented for this type of cache");
+        throw new NotImplementedException("This feature is not implemented for this type of cache");
     }
+
 }

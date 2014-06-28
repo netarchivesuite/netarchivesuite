@@ -30,7 +30,8 @@ import dk.netarkivet.common.utils.ApplicationUtils;
  * @see IndexServer
  */
 public class IndexServerApplication {
-    /**
+
+	/**
      * Constructor.
      * Private to avoid internal instantiation of this class.
      */
@@ -45,4 +46,5 @@ public class IndexServerApplication {
    public static void main(String[] args) {
        ApplicationUtils.startApp(IndexServer.class, args);
    }
+
 }

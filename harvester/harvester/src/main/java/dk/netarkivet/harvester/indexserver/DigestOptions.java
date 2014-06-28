@@ -30,14 +30,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
  public class DigestOptions {
 
-     /** the useBlacklist set to true results in docs matching the
-         mimefilter being ignored. 
-     */
+     /** the useBlacklist set to true results in docs matching the mimefilter being ignored. */
      private final boolean useBlacklist;
  
-     /** An regular expression for the mimetypes to include or exclude from
-      * the index. According to the useBlacklist setting.
-      */
+     /** An regular expression for the mimetypes to include or exclude from the index.
+      *  According to the useBlacklist setting. */
      private final String mimeFilter;
      
      /** Avoid logging to STDOUT when indexing. */
@@ -50,10 +47,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
       * @param verboseIndexing print logging to stdout while indexing, or not.
       * @param theMimeFilter The given black or whitelist according to mimetype.
       */
-     public DigestOptions(boolean useMimefilterAsBlacklist, 
-             boolean verboseIndexing, String theMimeFilter) {
-         ArgumentNotValid.checkNotNullOrEmpty(
-                 theMimeFilter, "String theMimeFilter");
+     public DigestOptions(boolean useMimefilterAsBlacklist, boolean verboseIndexing, String theMimeFilter) {
+         ArgumentNotValid.checkNotNullOrEmpty(theMimeFilter, "String theMimeFilter");
          this.useBlacklist = useMimefilterAsBlacklist;
          this.mimeFilter = theMimeFilter;
          this.verbose = verboseIndexing;
